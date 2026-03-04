@@ -1,3 +1,7 @@
+// HARDCODED DATA PROHIBITED — all values must come from Supabase queries
+// parameterized by account_id and location_id. Demo data below is wrapped
+// in isDemoMode guards and never reaches production render paths.
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {

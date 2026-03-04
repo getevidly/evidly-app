@@ -1,7 +1,7 @@
-import { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Plus, FileText, Download, Trash2, Share2, Search, AlertTriangle, CheckCircle, Clock, Upload, Pencil } from 'lucide-react';
+import { Plus, FileText, Download, Trash2, Share2, Search, AlertTriangle, CheckCircle, Clock, Upload, Pencil, Loader2, ShieldCheck, ShieldAlert, ChevronRight } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { supabase } from '../lib/supabase';
@@ -19,6 +19,14 @@ import { Camera } from 'lucide-react';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { useTranslation } from '../contexts/LanguageContext';
+import { AiAnalysisPanel, NeedsAttentionBadge } from '../components/documents/AiAnalysisPanel';
+import {
+  type DocumentAiAnalysis,
+  DEMO_AI_ANALYSIS,
+  documentNeedsAttention,
+} from '../data/documentAiDemoData';
+
+type ScanStatus = 'scanning' | 'available' | 'quarantined';
 
 interface Document {
   id: string;
@@ -31,6 +39,12 @@ interface Document {
   provided_by?: string;
   categorization_source?: 'ai' | 'manual';
   manual_category_override?: boolean;
+  scan_status?: ScanStatus;
+  ai_analysis?: DocumentAiAnalysis | null;
+  needs_attention?: boolean;
+  import_source?: 'direct' | 'google_drive' | 'onedrive' | 'dropbox';
+  original_filename?: string;
+  imported_at?: string;
 }
 
 interface SharedItem {
@@ -149,6 +163,44 @@ function DocStatusBadge({ status, label }: { status: 'current' | 'expiring' | 'e
   );
 }
 
+function ScanStatusBadge({ scanStatus }: { scanStatus?: ScanStatus }) {
+  if (!scanStatus || scanStatus === 'available') {
+    return (
+      <span
+        title="File verified"
+        className="inline-flex items-center gap-1"
+        style={{ color: '#16a34a', fontSize: '12px', fontWeight: 500 }}
+      >
+        <ShieldCheck size={14} />
+        Verified
+      </span>
+    );
+  }
+  if (scanStatus === 'scanning') {
+    return (
+      <span
+        title="File being scanned"
+        className="inline-flex items-center gap-1"
+        style={{ color: '#d97706', fontSize: '12px', fontWeight: 500 }}
+      >
+        <Loader2 size={14} className="animate-spin" />
+        Scanning
+      </span>
+    );
+  }
+  // quarantined
+  return (
+    <span
+      title="File quarantined — content type mismatch detected"
+      className="inline-flex items-center gap-1"
+      style={{ color: '#dc2626', fontSize: '12px', fontWeight: 600 }}
+    >
+      <ShieldAlert size={14} />
+      Quarantined
+    </span>
+  );
+}
+
 export function Documents() {
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -171,6 +223,7 @@ export function Documents() {
   const { userRole, getAccessibleLocations, showAllLocationsOption } = useRole();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [editingDocId, setEditingDocId] = useState<string | null>(null);
+  const [expandedDocId, setExpandedDocId] = useState<string | null>(null);
   const docAccessibleLocs = getAccessibleLocations();
   const DOC_LOCATIONS = showAllLocationsOption()
     ? ['All Locations', ...docAccessibleLocs.map(l => l.locationName)]
@@ -243,7 +296,16 @@ export function Documents() {
   useEffect(() => {
     if (isDemoMode) {
       setTimeout(() => {
-        setDocuments(SAMPLE_DOCUMENTS);
+        // Attach pre-built AI analysis to demo documents
+        const docsWithAi = SAMPLE_DOCUMENTS.map(doc => {
+          const analysis = DEMO_AI_ANALYSIS[doc.id] || null;
+          return {
+            ...doc,
+            ai_analysis: analysis,
+            needs_attention: documentNeedsAttention(analysis),
+          };
+        });
+        setDocuments(docsWithAi);
         setSharedItems(SHARED_ITEMS);
         setLoading(false);
       }, 500);
@@ -615,6 +677,9 @@ export function Documents() {
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           {t('pages.documents.status')}
                         </th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
+                          Scan
+                        </th>
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
                           {t('pages.documents.uploaded')}
                         </th>
@@ -629,8 +694,19 @@ export function Documents() {
                     <tbody className="bg-white divide-y divide-gray-200">
                       {filteredDocuments.map((doc) => {
                         const docStatus = getDocStatus(doc);
+                        const hasAi = !!doc.ai_analysis;
+                        const isExpanded = expandedDocId === doc.id;
                         return (
-                          <tr key={doc.id} className={selectedDocs.includes(doc.id) ? 'bg-blue-50' : 'hover:bg-gray-50'}>
+                          <React.Fragment key={doc.id}>
+                          <tr
+                            className={`${selectedDocs.includes(doc.id) ? 'bg-blue-50' : 'hover:bg-gray-50'} ${hasAi ? 'cursor-pointer' : ''}`}
+                            onClick={(e) => {
+                              // Don't toggle if clicking checkbox, button, or select
+                              const target = e.target as HTMLElement;
+                              if (target.closest('input, button, select, a')) return;
+                              if (hasAi) setExpandedDocId(isExpanded ? null : doc.id);
+                            }}
+                          >
                             <td className="px-4 py-4 whitespace-nowrap">
                               <input
                                 type="checkbox"
@@ -641,9 +717,28 @@ export function Documents() {
                             </td>
                             <td className="px-4 py-4">
                               <div className="flex items-center">
-                                <FileText className="h-5 w-5 text-gray-400 mr-2 flex-shrink-0" />
+                                {hasAi ? (
+                                  <ChevronRight
+                                    size={16}
+                                    className={`text-gray-400 mr-2 flex-shrink-0 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
+                                  />
+                                ) : (
+                                  <FileText className="h-5 w-5 text-gray-400 mr-2 flex-shrink-0" />
+                                )}
                                 <div>
-                                  <div className="text-sm font-medium text-gray-900">{doc.title}</div>
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-sm font-medium text-gray-900">{doc.title}</span>
+                                    {doc.needs_attention && <NeedsAttentionBadge />}
+                                    {doc.import_source && doc.import_source !== 'direct' && (
+                                      <span
+                                        className="text-[10px] px-1.5 py-0.5 rounded font-medium"
+                                        style={{ backgroundColor: '#eef4f8', color: '#1e4d6b' }}
+                                        title={`Imported from ${doc.import_source.replace('_', ' ')}`}
+                                      >
+                                        Cloud
+                                      </span>
+                                    )}
+                                  </div>
                                   {doc.provided_by && (
                                     <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '2px' }}>
                                       {t('pages.documents.providedBy')} <span style={{ color: '#1e4d6b', fontWeight: 500 }}>{doc.provided_by}</span>
@@ -700,6 +795,9 @@ export function Documents() {
                             <td className="px-4 py-4 whitespace-nowrap">
                               <DocStatusBadge status={docStatus} label={statusLabelMap[docStatus]} />
                             </td>
+                            <td className="px-4 py-4 whitespace-nowrap hidden md:table-cell">
+                              <ScanStatusBadge scanStatus={doc.scan_status} />
+                            </td>
                             <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
                               {format(new Date(doc.created_at), 'MMM d, yyyy')}
                             </td>
@@ -744,6 +842,21 @@ export function Documents() {
                               </div>
                             </td>
                           </tr>
+                          {/* AI Analysis expansion row */}
+                          {hasAi && isExpanded && doc.ai_analysis && (
+                            <tr>
+                              <td colSpan={9} className="p-0">
+                                <div className="bg-gray-50 border-t border-b border-gray-100">
+                                  <AiAnalysisPanel
+                                    analysis={doc.ai_analysis}
+                                    isOpen={true}
+                                    onToggle={() => setExpandedDocId(null)}
+                                  />
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                          </React.Fragment>
                         );
                       })}
                     </tbody>
@@ -824,7 +937,7 @@ export function Documents() {
           isOpen={showSmartUpload}
           onClose={() => setShowSmartUpload(false)}
           onSave={(classifiedFiles: ClassifiedFile[]) => {
-            // Add classified files as new documents in the local list
+            // Add classified files as new documents — initially in 'scanning' status
             const newDocs: Document[] = classifiedFiles.map((cf, i) => {
               const wasEdited = cf.overrides.documentType !== (cf.classification?.documentType ?? '');
               return {
@@ -838,10 +951,26 @@ export function Documents() {
                 provided_by: cf.overrides.vendorName || undefined,
                 categorization_source: wasEdited ? 'manual' as const : 'ai' as const,
                 manual_category_override: wasEdited,
+                scan_status: 'scanning' as ScanStatus,
               };
             });
             setDocuments((prev) => [...newDocs, ...prev]);
             setShowSmartUpload(false);
+
+            // Simulate scan completion — in demo mode, transition to 'available' after delay.
+            // In production, the document-scan edge function updates the DB record and a
+            // realtime subscription (or polling) would update the UI.
+            if (isDemoMode) {
+              setTimeout(() => {
+                setDocuments((prev) =>
+                  prev.map((d) =>
+                    newDocs.some((nd) => nd.id === d.id)
+                      ? { ...d, scan_status: 'available' as ScanStatus }
+                      : d,
+                  ),
+                );
+              }, 2500);
+            }
           }}
           batchMode
         />

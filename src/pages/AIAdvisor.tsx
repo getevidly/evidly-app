@@ -13,6 +13,12 @@ import {
   extractActionItems,
   parseMarkdown,
 } from '../lib/aiAdvisor';
+import {
+  detectLocationFromQuestion,
+  getDataDateRange,
+  buildLocationContextPayload,
+} from '../lib/aiAdvisorLocationContext';
+import { locations as demoLocations } from '../data/demoData';
 
 /* ─── Types ─── */
 type Mode = 'chat' | 'inspection' | 'document';
@@ -32,16 +38,35 @@ interface InspectionScore {
   failed: number;
 }
 
-/* ─── Demo responses ─── */ // demo
-const getDemoResponse = (question: string): { text: string; suggestions: string[] } => { // demo
+/* ─── Demo responses — data-enriched ─── */ // demo
+const getDemoResponse = (question: string, locationId?: string | null): { text: string; suggestions: string[] } => { // demo
   const lowerQ = question.toLowerCase();
   let text = '';
   let suggestions: string[] = [];
 
-  if (lowerQ.includes('compliance score') && lowerQ.includes('airport')) { // demo
-    text = `Your compliance status at **Location 2** changed to **Action Required** over the past 7 days. Here's the breakdown:\n\n**Food Safety (Satisfactory)**\n• 3 missed temperature logs on Feb 3–5 (Walk-in Cooler #2)\n• Opening checklist incomplete on Feb 4\n\n**Facility Safety (Fail)**\n• Hood cleaning certificate from Valley Fire Systems expired Feb 1\n• Fire extinguisher monthly check overdue by 3 days\n\n**Recommended actions:**\n1. Complete the 3 missed temp logs retroactively\n2. Contact Valley Fire Systems to schedule hood cleaning\n3. Assign fire extinguisher check to a team member today`; // demo
-    suggestions = ['Show me Location 2 temp trends', 'Create action items for Location 2', 'Compare Location 2 to other locations']; // demo
-  } else if (lowerQ.includes('vendor') && lowerQ.includes('expire')) { // demo
+  // ── Enriched: "What are the biggest risks at Location 3?" ──
+  if ((lowerQ.includes('risk') && (lowerQ.includes('location 3') || lowerQ.includes('university') || lowerQ.includes('loc 3')))
+    || (lowerQ.includes('risk') && locationId === 'university')) {
+    const p = buildLocationContextPayload('university');
+    const ca = p?.openCorrectiveActions;
+    const tempRate = p?.temperatureCompliance.currentWeekRate ?? 81;
+    const clRate = p?.checklistCompletion.averageRate ?? 68;
+    const juris = p?.jurisdictionStatus.foodSafety;
+    text = `Here are the **top risks at Location 3** (${p?.county || 'Stanislaus County'}) ranked by compliance impact:\n\n**Current scores:** Food Safety ${p?.currentScores.foodSafety ?? 72}% · Facility Safety ${p?.currentScores.facilitySafety ?? 64}%\n**Jurisdiction:** ${juris?.authority ?? 'Stanislaus County DER'} (${juris?.model ?? 'violation_based'} model) — Status: ${juris?.gradeDisplay ?? 'Action Required'}\n\n🔴 **Critical Risks**\n1. **Open corrective actions: ${ca?.count ?? 2}** (${ca?.high ?? 1} high, ${ca?.low ?? 1} low)\n${ca?.items.map(i => `   • [${i.severity.toUpperCase()}] ${i.title} (${i.status})`).join('\n') ?? '   • Missing hood suppression inspection certificate\n   • Employee food handler card expiring'}\n2. **Temperature compliance at ${tempRate}%** — ${p?.temperatureCompliance.trendDirection ?? 'improving'}\n   • Below your downtown location's 98% benchmark\n   • Inconsistent weekend logging drives the gap\n\n🟡 **Medium Risks**\n3. **Checklist completion rate at ${clRate}%**\n${p?.checklistCompletion.templates.filter(t => t.rate < 80).map(t => `   • ${t.template}: ${t.rate}% (${t.missed} missed)`).join('\n') || '   • Closing Checklist and Equipment Check need attention'}\n4. **Score trend:** ${p?.scoreTrend.direction ?? 'improving'} — last 4 weeks food safety: ${p?.scoreTrend.recentWeeks.map(w => w.foodSafety + '%').join(' → ') ?? '55% → 55% → 58%'}\n\n${p?.lastInspection === null ? '⚠️ **No prior inspection history** — this is a new location. First health inspection could come any time.\n\n' : ''}Action: Schedule hood suppression re-inspection with certified vendor immediately\nAction: Set up automated temp log reminders for weekend shifts\nAction: Brief the team on checklist completion — target 90%+ on all templates\nAction: Register staff for food handler card renewal before expiration`; // demo
+    suggestions = ['Create all action items from this', 'How fast can Location 3 improve?', 'Compare Location 3 to Location 1'];
+  }
+  // ── Enriched: "Why did my compliance score drop at Location 2?" ──
+  else if ((lowerQ.includes('score') && (lowerQ.includes('drop') || lowerQ.includes('change') || lowerQ.includes('went down') || lowerQ.includes('decrease')) && (lowerQ.includes('location 2') || lowerQ.includes('airport') || lowerQ.includes('loc 2')))
+    || (lowerQ.includes('compliance score') && lowerQ.includes('airport'))) {
+    const p = buildLocationContextPayload('airport');
+    const delta = p?.scoreDelta;
+    const insp = p?.lastInspection;
+    const jStatus = p?.jurisdictionStatus;
+    text = `Here's the full picture for **Location 2** (${p?.county || 'Merced County'}):\n\n**Score movement (30-day delta):**\n• Food Safety: ${p?.currentScores.foodSafety ?? 84}% (${delta && delta.foodSafety >= 0 ? '+' : ''}${delta?.foodSafety ?? '+2'} from 30d ago)\n• Facility Safety: ${p?.currentScores.facilitySafety ?? 79}% (${delta && delta.facilitySafety >= 0 ? '+' : ''}${delta?.facilitySafety ?? '+3'} from 30d ago)\n\n**Why the status is still "${jStatus?.facilitySafety.gradeDisplay ?? 'Fail'}" on Facility Safety despite improving scores:**\n\n1. **Walk-in Cooler #2 temperature excursion** — CCP-2 flagged\n   • Cooler logged above 41°F for 3 consecutive daily checks\n   • Compressor repair scheduled but not yet completed\n   • This is the single biggest driver of the "Fail" status\n\n2. **Hood cleaning ${(() => { const days = Math.round((Date.now() - new Date('2025-10-20').getTime()) / 86400000); return days > 90 ? `${days} days` : '47+ days'; })() } overdue** (NFPA 96)\n   • Last cleaning: Oct 20, 2025 by ABC Fire Protection\n   • Quarterly cleaning was due Jan 20, 2026\n\n**Last inspection:** ${insp ? `${insp.date} — Score: ${insp.score} (${insp.inspector}, ${insp.agency})` : 'No recent inspection'}\n${insp?.topViolations.length ? `Top violations:\n${insp.topViolations.map(v => `   • ${v}`).join('\n')}` : ''}\n\n**Temperature compliance:** ${p?.temperatureCompliance.currentWeekRate ?? 88}% (${p?.temperatureCompliance.trendDirection ?? 'improving'})\n**Checklist completion:** ${p?.checklistCompletion.averageRate ?? 82}% average\n\n**Bottom line:** The scores are actually **improving** month-over-month, but the facility safety status remains "Fail" until the cooler repair is complete and the hood cleaning is done. Fix those two items and the status will flip.\n\nAction: Complete Walk-in Cooler #2 compressor repair — this is the #1 priority\nAction: Schedule hood cleaning with ABC Fire Protection this week\nAction: Ensure Michael Torres completes food handler card renewal by Mar 1`; // demo
+    suggestions = ['Show me Location 2 temp trends', 'Create action items for Location 2', 'Compare Location 2 to other locations'];
+  }
+  // ── Existing responses (unchanged) ──
+  else if (lowerQ.includes('vendor') && lowerQ.includes('expire')) { // demo
     text = `You have **4 vendor documents expiring this month** across your locations:\n\n1. **Valley Fire Systems** — Certificate of Insurance\n   📍 Location 2 · Expires **Feb 10, 2026** ⚠️ 2 days away\n2. **ABC Fire Protection** — Service Agreement\n   📍 Location 1 · Expires **Feb 15, 2026**\n3. **CleanVent Services** — Hood Cleaning Certificate\n   📍 Location 2 · Expires **Feb 18, 2026**\n4. **Pacific Pest Control** — Monthly Service Report\n   📍 Location 3 · Expires **Feb 28, 2026**\n\nAction: Send renewal reminders to Valley Fire Systems and ABC Fire Protection\nAction: Contact CleanVent Services for updated hood cleaning certificate\nAction: Request monthly service report from Pacific Pest Control`; // demo
     suggestions = ['Send renewal reminders now', 'Which vendors are most critical?', 'Show me vendor compliance history'];
   } else if (lowerQ.includes('health inspection') || (lowerQ.includes('ready') && lowerQ.includes('inspection'))) { // demo
@@ -50,15 +75,12 @@ const getDemoResponse = (question: string): { text: string; suggestions: string[
   } else if (lowerQ.includes('corrective action') && lowerQ.includes('overdue')) { // demo
     text = `You have **5 overdue corrective actions** across your locations:\n\n🔴 **Critical (2)**\n1. **Walk-in Cooler #2 temp above 41°F** — Location 2\n   Logged Feb 3 · Assigned to Ana Torres · 4 days overdue\n2. **Grease trap cleaning overdue** — Location 1\n   Due Feb 1 · Unassigned · 6 days overdue\n\n🟡 **Medium (2)**\n3. **Sanitizer concentration low at prep station** — Location 3\n   Logged Feb 5 · Assigned to James Park · 2 days overdue\n4. **Damaged door gasket on Prep Fridge** — Location 2\n   Logged Jan 28 · Assigned to Ana Torres · 10 days overdue\n\n🟢 **Low (1)**\n5. **Update allergen menu signage** — Location 1\n   Due Jan 30 · Assigned to Alex Kim · 8 days overdue\n\nAction: Assign grease trap cleaning to a team member immediately\nAction: Follow up with Ana Torres on Location 2 items\nAction: Send reminder to James Park about sanitizer levels`; // demo
     suggestions = ['Send reminders to assigned staff', 'Which items affect our score most?', 'Create action items from these'];
-  } else if (lowerQ.includes('temperature') && lowerQ.includes('downtown')) { // demo
+  } else if (lowerQ.includes('temperature') && (lowerQ.includes('downtown') || lowerQ.includes('location 1'))) { // demo
     text = `Here are the **temperature trends for Location 1** (past 7 days):\n\n**Walk-in Cooler** — Avg: 37.2°F ✅\n• Range: 35°F – 39°F (within 32–41°F safe zone)\n• All 14 logs recorded on time\n\n**Walk-in Freezer** — Avg: -2°F ✅\n• Range: -4°F – 0°F (within safe zone)\n• All 14 logs recorded on time\n\n**Prep Line Fridge** — Avg: 39.8°F ⚠️\n• Range: 37°F – 42°F\n• ⚠️ 2 readings above 41°F on Feb 5 (41.5°F, 42°F)\n• Trend: Slightly rising — recommend checking door gasket\n\n**Hot Holding Station** — Avg: 148°F ✅\n• Range: 145°F – 152°F (above 135°F minimum)\n\nAction: Schedule a technician to inspect the Prep Line Fridge door gasket`; // demo
     suggestions = ['Alert me if temps go out of range', 'Compare temp compliance across locations', 'What causes fridge temps to rise?'];
   } else if (lowerQ.includes('compare') && (lowerQ.includes('location') || lowerQ.includes('compliance'))) { // demo
     text = `Here's a **compliance comparison** across all your locations:\n\n**Location 1 — Compliant** 🟢\n• Food Safety: Compliant · Facility Safety: Pass\n• Strengths: Consistent temp logging, all certs current\n\n**Location 2 — Action Required** 🟡\n• Food Safety: Satisfactory · Facility Safety: Fail\n• Issues: 3 missed temp logs, expired hood cleaning cert\n\n**Location 3 — Action Required** 🔴\n• Food Safety: Action Required · Facility Safety: Fail\n• Issues: Incomplete checklists, multiple expired docs\n\nAction: Create focused improvement plan for Location 3\nAction: Address Location 2 equipment maintenance backlog\nAction: Review Location 3 documentation gaps with team lead`; // demo
     suggestions = ['What would improve Location 3 fastest?', 'Show me the trend over 6 months', 'Create an improvement plan']; // demo
-  } else if (lowerQ.includes('risk') && lowerQ.includes('university')) { // demo
-    text = `Here are the **top risks at Location 3** ranked by compliance impact:\n\n🔴 **Critical Risks**\n1. **Documentation gaps** — Score: 52%\n   • 4 expired vendor certificates not renewed\n   • Employee training records incomplete for 3 staff\n2. **Equipment maintenance overdue** — Score: 55%\n   • Walk-in cooler last serviced 4 months ago\n   • Fire extinguisher monthly check missed twice\n\n🟡 **Medium Risks**\n3. **Inconsistent temperature logging** — Score: 62%\n   • 12 missed logs in the past 30 days\n4. **Checklist completion rate at 68%**\n   • Closing checklists skipped 3x per week on average\n\nAction: Assign a documentation lead to clear the expired cert backlog\nAction: Schedule equipment service visits this week\nAction: Set up automated temp log reminders for weekend shifts\nAction: Brief the team on checklist importance and tie to leaderboard`; // demo
-    suggestions = ['Create all action items from this', 'Who should lead the improvement?', 'How fast can we fix this?'];
   } else if (lowerQ.includes('team') && lowerQ.includes('certif')) { // demo
     text = `You have **3 team members with expiring certifications** in the next 60 days:\n\n🔴 **Michael Torres** — Food Handler Certificate\n   📍 Location 2 · Expires **Feb 26, 2026** (19 days away)\n\n🟡 **Sarah Chen** — ServSafe Manager Certification\n   📍 Location 1 · Expires **Mar 15, 2026** (36 days away)\n\n🟡 **David Park** — Food Handler Certificate\n   📍 Location 3 · Expires **Apr 2, 2026** (54 days away)\n\nAll other team certifications are current. Your organization has 12 active team members with 28 total certifications on file.\n\nAction: Register Michael Torres for renewal course immediately\nAction: Schedule Sarah Chen for ServSafe exam retake\nAction: Remind David Park to schedule renewal before expiry`; // demo
     suggestions = ['Send renewal reminders now', 'What certifications are required?', 'Show me training compliance'];
@@ -71,9 +93,17 @@ const getDemoResponse = (question: string): { text: string; suggestions: string[
   } else if (lowerQ.includes('mock') || lowerQ.includes('inspection drill') || lowerQ.includes('inspection prep')) {
     text = `I'd be happy to run a mock inspection! Switch to the **Inspection Prep** tab above to start a full mock health department inspection.\n\nI'll ask you questions one at a time about:\n• Temperature controls and cold storage\n• Food handling and cross-contamination prevention\n• Sanitation and cleaning procedures\n• Pest control documentation\n• Employee hygiene and certifications\n• Equipment maintenance\n\nEach answer will be scored as Pass, Needs Improvement, or Fail with explanations.`;
     suggestions = ['Switch to Inspection Prep mode', 'What should I prepare first?', 'Show me common inspection failures'];
-  } else { // demo
-    text = `Based on your compliance data, here's what I can tell you:\n\nYour organization **Pacific Coast Dining** manages 3 active locations with an overall compliance score of **76%**.\n\n**Quick Summary:**\n• Location 1: 92% — Inspection Ready ✅\n• Location 2: 74% — Needs Attention ⚠️\n• Location 3: 57% — Critical 🔴\n\n**Top priorities this week:**\n1. Renew Location 3 health permit (expired)\n2. Complete 3 missed temp checks at Location 2\n3. Schedule overdue fire suppression at Location 3\n\nI can help with compliance scores, temperature trends, vendor documents, inspection readiness, corrective actions, team certifications, and more. What would you like to focus on?`; // demo
-    suggestions = ['Why did Location 2 score drop?', 'Am I ready for a health inspection?', 'What corrective actions are overdue?']; // demo
+  } else { // demo — org-wide summary with real data
+    const allPayloads = demoLocations.map(l => buildLocationContextPayload(l.urlId)).filter(Boolean);
+    const locLines = allPayloads.map(p => {
+      if (!p) return '';
+      const status = p.currentScores.foodSafety >= 90 ? 'Inspection Ready ✅' : p.currentScores.foodSafety >= 70 ? 'Needs Attention ⚠️' : 'Critical 🔴';
+      return `• **${p.locationName}** (${p.county}): Food Safety ${p.currentScores.foodSafety}% · Facility Safety ${p.currentScores.facilitySafety}% — ${status}`;
+    }).join('\n');
+    const avgFood = allPayloads.length > 0 ? Math.round(allPayloads.reduce((s, p) => s + (p?.currentScores.foodSafety ?? 0), 0) / allPayloads.length) : 0;
+    const avgFac = allPayloads.length > 0 ? Math.round(allPayloads.reduce((s, p) => s + (p?.currentScores.facilitySafety ?? 0), 0) / allPayloads.length) : 0;
+    text = `Based on your compliance data, here's what I can tell you:\n\nYour organization **Pacific Coast Dining** manages ${allPayloads.length} active locations.\n\n**Org averages:** Food Safety ${avgFood}% · Facility Safety ${avgFac}%\n\n${locLines}\n\n**Top priorities this week:**\n1. Complete Walk-in Cooler #2 compressor repair at Location 2\n2. Schedule hood cleaning at Location 2 (NFPA 96 overdue)\n3. Address open corrective actions at Location 3\n\nI can help with compliance scores, temperature trends, vendor documents, inspection readiness, corrective actions, team certifications, and more. What would you like to focus on?`; // demo
+    suggestions = ['What are the biggest risks at Location 3?', 'Why did my compliance score drop at Location 2?', 'Am I ready for a health inspection?']; // demo
   }
 
   return { text, suggestions };
@@ -122,13 +152,13 @@ const DEMO_PAST_CONVERSATIONS: Conversation[] = [ // demo
 ];
 
 const STARTER_CARDS = [ // demo
-  'Why did my compliance score drop at Location 2?', // demo
+  'What are the biggest risks at Location 3?', // demo — enriched
+  'Why did my compliance score drop at Location 2?', // demo — enriched
   'Which vendor documents expire this month?',
   'Am I ready for a health inspection?',
   'What corrective actions are overdue?',
   'Show me temperature trends for Location 1', // demo
   'Compare compliance across all my locations',
-  'What are the biggest risks at Location 3?', // demo
   'Which team members have expiring certifications?',
 ];
 
@@ -153,6 +183,7 @@ export function AIAdvisor() {
   const [isTyping, setIsTyping] = useState(false);
   const [showSidebar, setShowSidebar] = useState(true);
   const [showContextPanel, setShowContextPanel] = useState(false);
+  const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
 
   // Inspection
   const [inspectionTemplate, setInspectionTemplate] = useState<string | null>(null);
@@ -171,7 +202,7 @@ export function AIAdvisor() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const context: ComplianceContext = useMemo(() => getDemoContext(), []);
+  const context: ComplianceContext = useMemo(() => getDemoContext(selectedLocationId), [selectedLocationId]);
 
   const activeConv = conversations.find((c) => c.id === activeConvId) || null;
   const messages = activeConv?.messages || [];
@@ -215,13 +246,17 @@ export function AIAdvisor() {
     setIsTyping(true);
 
     if (isDemoMode) {
-      // Demo: use hardcoded responses
+      // Demo: use hardcoded responses with location detection
       await new Promise((r) => setTimeout(r, 800 + Math.random() * 800));
-      const { text: responseText, suggestions } = getDemoResponse(text);
+      const detectedLoc = detectLocationFromQuestion(text);
+      const effectiveLoc = selectedLocationId || detectedLoc;
+      const { text: responseText, suggestions } = getDemoResponse(text, effectiveLoc);
       const actions = extractActionItems(responseText);
+      const dateRange = getDataDateRange();
       const aiMsg: AiMessage = {
         id: uid(), role: 'assistant', content: responseText,
         timestamp: Date.now(), suggestions, hasActions: actions.length > 0,
+        dataDateRange: dateRange,
       };
       addMessage(convId!, aiMsg);
       setIsTyping(false);
@@ -634,6 +669,11 @@ export function AIAdvisor() {
                         style={{ fontSize: '13px', lineHeight: '1.6', whiteSpace: 'pre-line' }}
                         dangerouslySetInnerHTML={{ __html: parseMarkdown(msg.content) }}
                       />
+                      {msg.role === 'assistant' && msg.dataDateRange && (
+                        <div style={{ marginTop: '10px', paddingTop: '8px', borderTop: '1px solid #f0f0f0', fontSize: '10px', fontStyle: 'italic', color: '#9ca3af' }}>
+                          Based on data from {msg.dataDateRange.from} to {msg.dataDateRange.to}
+                        </div>
+                      )}
                     </div>
                     {msg.role === 'user' && (
                       <div style={{ fontSize: '10px', color: 'var(--text-secondary, #3D5068)', textAlign: 'right', marginTop: '4px' }}>{fmtTime(msg.timestamp)}</div>
@@ -710,6 +750,28 @@ export function AIAdvisor() {
               }}
               style={{ borderTop: '1px solid #e5e7eb', background: '#fff', padding: '12px 16px' }}
             >
+              {/* Location selector pills — chat mode only */}
+              {mode === 'chat' && (
+                <div style={{ display: 'flex', gap: '6px', marginBottom: '8px', flexWrap: 'wrap' }}>
+                  {[{ id: null as string | null, label: 'All Locations' }, ...demoLocations.map(l => ({ id: l.urlId, label: l.name }))].map((loc) => (
+                    <button
+                      key={loc.id ?? 'all'}
+                      type="button"
+                      onClick={() => setSelectedLocationId(loc.id)}
+                      style={{
+                        padding: '4px 12px', borderRadius: '16px', fontSize: '11px', fontWeight: 600,
+                        cursor: 'pointer', transition: 'all 0.15s', ...F,
+                        border: selectedLocationId === loc.id ? '1.5px solid #1e4d6b' : '1px solid #d1d5db',
+                        background: selectedLocationId === loc.id ? '#eef4f8' : '#fff',
+                        color: selectedLocationId === loc.id ? '#1e4d6b' : '#6b7280',
+                      }}
+                    >
+                      {loc.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+
               {/* Upload button for document mode */}
               {mode === 'document' && activeConv && (
                 <div style={{ marginBottom: '8px' }}>
@@ -817,28 +879,38 @@ export function AIAdvisor() {
 
           {showContextPanel && (
             <div style={{ width: '240px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '12px', overflowY: 'auto' }}>
-              {/* Compliance Snapshot */}
+              {/* Compliance Snapshot — Two Pillar */}
               <div style={{ background: '#fff', borderRadius: '12px', border: '1px solid #e5e7eb', padding: '16px' }}>
                 <div style={{ fontSize: '12px', fontWeight: 700, color: '#1e4d6b', marginBottom: '12px', ...F }}>Compliance Snapshot</div>
-                <div style={{ textAlign: 'center', marginBottom: '12px' }}>
-                  <div style={{
-                    width: '60px', height: '60px', borderRadius: '50%', margin: '0 auto',
-                    border: `4px solid ${context.overallScore >= 90 ? '#22c55e' : context.overallScore >= 75 ? '#eab308' : context.overallScore >= 60 ? '#f59e0b' : '#ef4444'}`,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  }}>
-                    <span style={{ fontSize: '20px', fontWeight: 800, color: '#1e4d6b' }}>{context.overallScore}</span>
-                  </div>
-                  <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '4px' }}>Overall Score</div>
-                </div>
-                {context.locations.map((loc) => (
-                  <div key={loc.name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderTop: '1px solid #f3f4f6' }}>
-                    <span style={{ fontSize: '11px', color: '#374151', fontWeight: 500 }}>{loc.name}</span>
-                    <span style={{
-                      fontSize: '11px', fontWeight: 700,
-                      color: loc.score >= 90 ? '#22c55e' : loc.score >= 75 ? '#eab308' : loc.score >= 60 ? '#f59e0b' : '#ef4444',
-                    }}>{loc.score}%</span>
-                  </div>
-                ))}
+                {(() => {
+                  const avgFood = Math.round(context.locations.reduce((s, l) => s + l.foodSafety, 0) / context.locations.length);
+                  const avgFac = Math.round(context.locations.reduce((s, l) => s + l.facilitySafety, 0) / context.locations.length);
+                  const scoreColor = (v: number) => v >= 90 ? '#22c55e' : v >= 75 ? '#eab308' : v >= 60 ? '#f59e0b' : '#ef4444';
+                  return (
+                    <>
+                      <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                        <div style={{ flex: 1, textAlign: 'center', padding: '8px 4px', borderRadius: '8px', background: '#f8fafc' }}>
+                          <div style={{ fontSize: '18px', fontWeight: 800, color: scoreColor(avgFood) }}>{avgFood}%</div>
+                          <div style={{ fontSize: '10px', color: '#6b7280', marginTop: '2px' }}>Food Safety</div>
+                        </div>
+                        <div style={{ flex: 1, textAlign: 'center', padding: '8px 4px', borderRadius: '8px', background: '#f8fafc' }}>
+                          <div style={{ fontSize: '18px', fontWeight: 800, color: scoreColor(avgFac) }}>{avgFac}%</div>
+                          <div style={{ fontSize: '10px', color: '#6b7280', marginTop: '2px' }}>Facility Safety</div>
+                        </div>
+                      </div>
+                      {context.locations.map((loc) => (
+                        <div key={loc.name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderTop: '1px solid #f3f4f6' }}>
+                          <span style={{ fontSize: '11px', color: '#374151', fontWeight: 500 }}>{loc.name}</span>
+                          <div style={{ display: 'flex', gap: '8px' }}>
+                            <span style={{ fontSize: '10px', fontWeight: 600, color: scoreColor(loc.foodSafety) }}>{loc.foodSafety}%</span>
+                            <span style={{ fontSize: '10px', color: '#d1d5db' }}>|</span>
+                            <span style={{ fontSize: '10px', fontWeight: 600, color: scoreColor(loc.facilitySafety) }}>{loc.facilitySafety}%</span>
+                          </div>
+                        </div>
+                      ))}
+                    </>
+                  );
+                })()}
               </div>
 
               {/* Inspection Scorecard — only in inspection mode */}

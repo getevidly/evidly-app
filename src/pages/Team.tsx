@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Plus, Users, Mail, Clock, X, Smartphone, RotateCw, Search, Award, Activity, MapPin, CheckCircle2, TrendingUp, Calendar, MoreVertical, KeyRound, GraduationCap } from 'lucide-react';
+import { Plus, Users, Mail, Clock, X, Smartphone, RotateCw, Search, Award, Activity, MapPin, CheckCircle2, TrendingUp, Calendar, MoreVertical, KeyRound, GraduationCap, ShieldAlert } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
@@ -12,6 +12,8 @@ import { format } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { useEmulation } from '../contexts/EmulationContext';
+import type { UserRole } from '../contexts/RoleContext';
 
 interface TeamMember {
   id: string;
@@ -73,6 +75,16 @@ interface Certification {
   issue_date: string | null;
   expiration_date: string | null;
   status: string;
+}
+
+/** Map a demo member's simplified role string to the full UserRole type. */
+function demoRoleToUserRole(role: string): UserRole {
+  const map: Record<string, UserRole> = {
+    admin: 'owner_operator',
+    manager: 'kitchen_manager',
+    staff: 'kitchen_staff',
+  };
+  return map[role] || 'kitchen_staff';
 }
 
 const DEMO_MEMBERS: TeamMember[] = [
@@ -189,6 +201,8 @@ export function Team() {
 
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const { isDemoMode } = useDemo();
+  const { isEmulating, startEmulation, isOperationBlocked, showBlockedModal } = useEmulation();
+  const [showEmulationDemoModal, setShowEmulationDemoModal] = useState(false);
 
   useEffect(() => {
     if (isDemoMode) {
@@ -816,11 +830,48 @@ export function Team() {
                               {canManageTeam() && (
                                 <button
                                   onMouseDown={(e) => e.preventDefault()}
-                                  onClick={() => { setOpenActionMenu(null); guardAction('edit', 'team management', () => { setResetMember(member); setShowResetModal(true); }); }}
+                                  onClick={() => {
+                                    setOpenActionMenu(null);
+                                    if (isOperationBlocked('password_reset')) {
+                                      showBlockedModal('password_reset');
+                                      return;
+                                    }
+                                    guardAction('edit', 'team management', () => { setResetMember(member); setShowResetModal(true); });
+                                  }}
                                   className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
                                 >
                                   <KeyRound className="h-4 w-4 text-gray-400" />
                                   Reset Password
+                                </button>
+                              )}
+                              {userRole === 'platform_admin' && !isEmulating && (
+                                <button
+                                  onMouseDown={(e) => e.preventDefault()}
+                                  onClick={() => {
+                                    setOpenActionMenu(null);
+                                    if (isDemoMode) {
+                                      setShowEmulationDemoModal(true);
+                                      return;
+                                    }
+                                    startEmulation(
+                                      {
+                                        id: member.id,
+                                        full_name: member.full_name,
+                                        email: member.email,
+                                        role: demoRoleToUserRole(member.role),
+                                        location: member.location,
+                                      },
+                                      {
+                                        adminRole: userRole,
+                                        adminName: profile?.full_name || 'Admin',
+                                        adminId: profile?.id || '',
+                                      },
+                                    );
+                                  }}
+                                  className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                                >
+                                  <ShieldAlert className="h-4 w-4 text-gray-400" />
+                                  Emulate User
                                 </button>
                               )}
                             </div>
@@ -898,7 +949,14 @@ export function Team() {
             {canManageTeam() && (
               <div className="mb-6 flex gap-2">
                 <button
-                  onClick={() => { setShowDetailsModal(false); guardAction('edit', 'team management', () => { setResetMember(selectedMember); setShowResetModal(true); }); }}
+                  onClick={() => {
+                    if (isOperationBlocked('password_reset')) {
+                      showBlockedModal('password_reset');
+                      return;
+                    }
+                    setShowDetailsModal(false);
+                    guardAction('edit', 'team management', () => { setResetMember(selectedMember); setShowResetModal(true); });
+                  }}
                   className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#1e4d6b] bg-[#eef4f8] hover:bg-[#dce8f0] rounded-lg transition-colors"
                 >
                   <KeyRound className="h-4 w-4" />
@@ -1097,6 +1155,31 @@ export function Team() {
 
       {showUpgrade && (
         <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
+      )}
+
+      {/* Emulation Not Available in Demo Mode Modal */}
+      {showEmulationDemoModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl p-5 w-full max-w-md">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="h-10 w-10 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
+                <ShieldAlert className="h-5 w-5 text-amber-600" />
+              </div>
+              <h3 className="text-lg font-bold text-gray-900">Emulation Not Available</h3>
+            </div>
+            <p className="text-sm text-gray-600 mb-6">
+              User emulation is not available in demo mode. In a live environment, platform admins can emulate any user to see the app from their perspective while maintaining full audit logging.
+            </p>
+            <div className="flex justify-end">
+              <button
+                onClick={() => setShowEmulationDemoModal(false)}
+                className="px-4 py-2 text-sm font-medium text-white bg-[#1e4d6b] hover:bg-[#2a6a8f] rounded-lg transition-colors"
+              >
+                Understood
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </>
   );

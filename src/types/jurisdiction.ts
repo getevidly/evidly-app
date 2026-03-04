@@ -22,6 +22,53 @@
 // TODO: Track CalCode 2026 legislative changes: SB 68 (allergen disclosure), AB 660 (date labels)
 // TODO: Verify FDA Food Code 2026 full revision when published (currently 2022 + 2024 Supplement)
 
+// Fire AHJ jurisdiction configuration (from fire_jurisdiction_config JSONB column)
+export interface FireJurisdictionConfig {
+  fire_ahj_name: string;
+  fire_ahj_type: 'city_fire' | 'county_fire' | 'state_fire' | 'federal' | 'contract';
+  fire_code_edition: string; // e.g. "2022 CFC"
+  nfpa_96_cleaning_frequencies: {
+    type_i_hood: string;   // e.g. "monthly" | "quarterly"
+    type_ii_hood: string;  // e.g. "semi-annual" | "annual"
+  };
+  hood_suppression: {
+    system_type: string;         // e.g. "UL-300 wet chemical"
+    inspection_interval: string; // e.g. "semi-annual"
+    standard: string;            // e.g. "NFPA 96 / UL-300"
+  };
+  ansul_system: {
+    required: boolean;
+    inspection_interval: string; // e.g. "semi-annual"
+    standard: string;            // e.g. "NFPA 17A"
+  };
+  fire_extinguisher: {
+    types: string[];               // e.g. ["K-class", "ABC"]
+    inspection_interval: string;   // e.g. "annual"
+    hydrostatic_interval: string;  // e.g. "5-year" | "12-year"
+  };
+  fire_alarm: {
+    required: boolean;
+    monitoring_type: string;     // e.g. "central station" | "local"
+    inspection_interval: string; // e.g. "annual"
+  };
+  sprinkler_system: {
+    required: boolean;
+    inspection_interval: string; // e.g. "annual"
+    type: string;                // e.g. "wet" | "dry" | "pre-action"
+  };
+  grease_trap: {
+    required: boolean;
+    cleaning_interval: string;   // e.g. "90 days"
+    interceptor_type: string;    // e.g. "gravity" | "hydromechanical"
+  };
+  ahj_split_notes: string | null;   // Multi-AHJ areas (e.g. LA County city vs unincorporated)
+  federal_overlay: {
+    agency: string;      // e.g. "NPS" | "DOD"
+    authority: string;   // e.g. "36 CFR §2.10"
+    notes: string;
+  } | null;
+}
+
 // A single authority (either food safety or facility safety)
 export interface AuthorityRecord {
   id: string;
@@ -37,6 +84,7 @@ export interface AuthorityRecord {
   inspection_frequency: number | null;
   is_verified: boolean;
   local_amendments: string | null;
+  fire_jurisdiction_config?: FireJurisdictionConfig | null;
 }
 
 // A location's complete jurisdiction profile

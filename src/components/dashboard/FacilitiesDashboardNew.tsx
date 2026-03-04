@@ -1,10 +1,12 @@
-﻿import { useMemo } from 'react';
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Flame,
   Wrench,
   AlertTriangle,
   CheckCircle2,
+  ArrowRight,
+  ShieldAlert,
 } from 'lucide-react';
 import { useRole } from '../../contexts/RoleContext';
 import { useTooltip } from '../../hooks/useTooltip';
@@ -14,16 +16,15 @@ import { DEMO_LOCATION_GRADE_OVERRIDES } from '../../data/demoJurisdictions';
 import { DEMO_ORG } from '../../data/demoData';
 import { FireStatusBars } from '../shared/FireStatusBars';
 import { useTranslation } from '../../contexts/LanguageContext';
-import { FONT, JIE_LOC_MAP, DEMO_ROLE_NAMES } from './shared/constants';
+import { FONT, NAVY, JIE_LOC_MAP, DEMO_ROLE_NAMES } from './shared/constants';
 import { DashboardHero } from './shared/DashboardHero';
-import { WhereDoIStartSection, type PriorityItem } from './shared/WhereDoIStartSection';
 import { TabbedDetailSection } from './shared/TabbedDetailSection';
 import { CalendarCard } from './shared/CalendarCard';
 import { FACILITIES_EVENTS, FACILITIES_CALENDAR } from '../../data/calendarDemoEvents';
 import { ErrorBoundary } from '../ErrorBoundary';
 import { SelfDiagCard } from './shared/SelfDiagCard';
 import { ServiceCostSection } from './shared/ServiceCostSection';
-import { ComplianceBanner } from './shared/ComplianceBanner';
+import { HealthBanner, type HealthStatus } from './shared/HealthBanner';
 import { NFPAReminder } from '../ui/NFPAReminder';
 import { OnboardingChecklistCard } from './shared/OnboardingChecklistCard';
 
@@ -38,6 +39,7 @@ interface FacilitiesAttentionItem {
   detail: string;
   actionLabel: string;
   actionRoute: string;
+  riskType: 'liability' | 'cost' | 'operational';
 }
 
 const DEMO_FACILITIES_ATTENTION: FacilitiesAttentionItem[] = [
@@ -48,6 +50,7 @@ const DEMO_FACILITIES_ATTENTION: FacilitiesAttentionItem[] = [
     detail: 'ABC Fire Protection notified',
     actionLabel: 'Schedule Service',
     actionRoute: '/vendors',
+    riskType: 'liability',
   },
   {
     id: 'fac-2',
@@ -56,6 +59,25 @@ const DEMO_FACILITIES_ATTENTION: FacilitiesAttentionItem[] = [
     detail: 'Last serviced: 8 months ago',
     actionLabel: 'View Equipment',
     actionRoute: '/equipment',
+    riskType: 'cost',
+  },
+  {
+    id: 'fac-3',
+    severity: 'critical',
+    title: 'Fire extinguisher annual tag expired — Location 3',
+    detail: 'AHJ requires current tags for occupancy',
+    actionLabel: 'Schedule Inspection',
+    actionRoute: '/equipment?category=fire_extinguisher',
+    riskType: 'liability',
+  },
+  {
+    id: 'fac-4',
+    severity: 'warning',
+    title: 'Exhaust fan bearing noise reported by kitchen staff',
+    detail: 'Submitted via Self-Diagnosis 2 days ago',
+    actionLabel: 'View Report',
+    actionRoute: '/self-diagnosis',
+    riskType: 'operational',
   },
 ];
 
@@ -97,9 +119,31 @@ const DEMO_EQUIPMENT_ALERTS: EquipmentAlert[] = [
   { name: 'Walk-in Freezer #1', alert: 'Compressor runtime up 23% this month', severity: 'warning' },
   { name: 'Hood System', alert: null, status: 'All normal' },
   { name: 'Fire Suppression System', alert: null, status: 'All normal' },
-  { name: 'Walk-in Cooler #1', alert: null, status: 'All normal' }, // demo
+  { name: 'Walk-in Cooler #1', alert: null, status: 'All normal' },
   { name: 'Walk-in Cooler #2', alert: null, status: 'All normal' },
 ];
+
+// --------------- Do This Next actions ---------------
+
+interface DoThisNextAction {
+  id: string;
+  label: string;
+  route: string;
+}
+
+const DEMO_DO_THIS_NEXT: DoThisNextAction[] = [
+  { id: 'dtn-1', label: 'Schedule fire suppression re-inspection before expiry', route: '/vendors' },
+  { id: 'dtn-2', label: 'Replace expired extinguisher tags at Location 3', route: '/equipment?category=fire_extinguisher' },
+  { id: 'dtn-3', label: 'Follow up on exhaust fan noise report', route: '/self-diagnosis' },
+];
+
+// --------------- Risk type badge config ---------------
+
+const RISK_BADGE_CONFIG: Record<string, { label: string; bg: string; text: string }> = {
+  liability: { label: 'Liability', bg: '#fef2f2', text: '#dc2626' },
+  cost: { label: 'Cost', bg: '#fffbeb', text: '#b45309' },
+  operational: { label: 'Operational', bg: '#eff6ff', text: '#2563eb' },
+};
 
 
 // --------------- Helpers ---------------
@@ -111,20 +155,6 @@ function Card({ children, className = '' }: { children: React.ReactNode; classNa
       style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.1)', fontFamily: 'Inter, sans-serif' }}
     >
       {children}
-    </div>
-  );
-}
-
-function SectionHeader({ icon: Icon, children }: { icon: typeof Flame; children: React.ReactNode }) {
-  return (
-    <div className="flex items-center gap-2 mb-3">
-      <Icon size={16} className="text-gray-400" />
-      <h3
-        className="text-xs font-semibold uppercase"
-        style={{ letterSpacing: '0.1em', color: '#6b7280', fontFamily: 'Inter, sans-serif' }}
-      >
-        {children}
-      </h3>
     </div>
   );
 }
@@ -161,9 +191,9 @@ const SEVERITY_BORDER: Record<string, string> = {
 // ===============================================
 
 const FAC_LOC_NAMES: Record<string, string> = {
-  downtown: 'Location 1', // demo
-  airport: 'Location 2', // demo
-  university: 'Location 3', // demo
+  downtown: 'Location 1',
+  airport: 'Location 2',
+  university: 'Location 3',
 };
 
 export default function FacilitiesDashboardNew() {
@@ -174,8 +204,6 @@ export default function FacilitiesDashboardNew() {
 
   // Extract useTooltip calls to top of component (rules-of-hooks)
   const equipmentCardTooltip = useTooltip('equipmentCard', userRole);
-  const urgentItemsTooltip = useTooltip('urgentItems', userRole);
-  const facilitySafetyTooltip = useTooltip('facilitySafety', userRole);
   const scheduleCalendarTooltip = useTooltip('scheduleCalendar', userRole);
 
   const accessibleLocations = useMemo(() => getAccessibleLocations(), [getAccessibleLocations]);
@@ -183,27 +211,37 @@ export default function FacilitiesDashboardNew() {
 
   const jieKey = JIE_LOC_MAP[defaultLoc] || `demo-loc-${defaultLoc}`;
   const override = DEMO_LOCATION_GRADE_OVERRIDES[jieKey];
-  const locationName = FAC_LOC_NAMES[defaultLoc] || 'Location 1'; // demo
+  const locationName = FAC_LOC_NAMES[defaultLoc] || 'Location 1';
 
-  const fireGrade = override?.facilitySafety?.grade || 'Pending';
   const fireDisplay = override?.facilitySafety?.gradeDisplay || 'Pending Verification';
   const fireSummary = override?.facilitySafety?.summary || '';
-  const fireStatus = override?.facilitySafety?.status || 'unknown';
-
-  const priorityItems: PriorityItem[] = DEMO_FACILITIES_ATTENTION.map(item => ({
-    id: item.id,
-    severity: item.severity,
-    title: item.title,
-    detail: item.detail,
-    actionLabel: item.actionLabel,
-    route: item.actionRoute,
-  }));
 
   // Equipment status counts for exception-based view
   const equipmentOverdue = DEMO_EQUIPMENT_ALERTS.filter(e => e.severity === 'critical').length;
   const equipmentWarning = DEMO_EQUIPMENT_ALERTS.filter(e => e.severity === 'warning').length;
   const equipmentCurrent = DEMO_EQUIPMENT_ALERTS.filter(e => !e.alert).length;
   const allCurrent = equipmentOverdue === 0 && equipmentWarning === 0;
+
+  // Derive health status from DEMO_FACILITIES_ATTENTION data
+  const healthStatus: HealthStatus = useMemo(() => {
+    const hasOverdue = DEMO_FACILITIES_ATTENTION.some(item => item.severity === 'critical');
+    if (hasOverdue) return 'risk';
+    const hasDueSoon = DEMO_FACILITIES_ATTENTION.some(item => item.severity === 'warning');
+    if (hasDueSoon) return 'attention';
+    return 'healthy';
+  }, []);
+
+  const healthMessage = useMemo(() => {
+    if (healthStatus === 'risk') {
+      const overdueCount = DEMO_FACILITIES_ATTENTION.filter(i => i.severity === 'critical').length;
+      return `${overdueCount} overdue fire safety item${overdueCount > 1 ? 's' : ''} require immediate action`;
+    }
+    if (healthStatus === 'attention') {
+      const warningCount = DEMO_FACILITIES_ATTENTION.filter(i => i.severity === 'warning').length;
+      return `${warningCount} item${warningCount > 1 ? 's' : ''} due within 30 days — schedule service now`;
+    }
+    return 'All fire safety and equipment items are current';
+  }, [healthStatus]);
 
   // Live mode empty state
   if (!isDemoMode) {
@@ -227,23 +265,158 @@ export default function FacilitiesDashboardNew() {
 
   return (
     <div className="space-y-6" style={FONT}>
-      {/* Steel-Slate Hero Banner */}
+      {/* ============================================================ */}
+      {/* 1. DashboardHero                                              */}
+      {/* ============================================================ */}
       <DashboardHero
         orgName={companyName || DEMO_ORG.name}
         locationName={locationName}
       />
 
-      {/* Onboarding checklist */}
+      {/* ============================================================ */}
+      {/* 2. OnboardingChecklistCard                                    */}
+      {/* ============================================================ */}
       <OnboardingChecklistCard />
 
-      {/* Compliance Score Banner — threshold-based alerts */}
-      <ComplianceBanner />
+      {/* ============================================================ */}
+      {/* 3. HealthBanner — Facility Health scope                       */}
+      {/* ============================================================ */}
+      <HealthBanner
+        status={healthStatus}
+        scope="Facility Health"
+        message={healthMessage}
+      />
 
       {/* ============================================================ */}
-      {/* ABOVE THE FOLD — Exception-based equipment status             */}
+      {/* 4. Fire Safety Standing — NFPA 96 compliance via FireStatusBars */}
       {/* ============================================================ */}
+      <Card>
+        <div className="flex items-center gap-2 mb-1">
+          <Flame size={16} className="text-gray-400" />
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+            Fire Safety Standing
+          </h3>
+        </div>
 
-      {/* Equipment Issue Status — red/yellow/green counts */}
+        {/* AHJ name + grade display */}
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <p className="text-sm font-semibold text-gray-700">{fireSummary}</p>
+            <p className="text-xs text-gray-400 mt-0.5">{fireDisplay}</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => navigate('/facility-safety')}
+            className="text-xs font-medium px-2.5 py-1 rounded-full hover:bg-gray-100 transition-colors"
+            style={{ color: '#1e4d6b', border: '1px solid #D1D9E6' }}
+          >
+            View Details
+          </button>
+        </div>
+
+        {/* FireStatusBars for permit/hood/extinguisher/ansul */}
+        {override && (
+          <FireStatusBars
+            permitStatus={override.facilitySafety.permitStatus}
+            hoodStatus={override.facilitySafety.hoodStatus}
+            extinguisherStatus={override.facilitySafety.extinguisherStatus}
+            ansulStatus={override.facilitySafety.ansulStatus}
+            onCardClick={(key) => {
+              const routes: Record<string, string> = {
+                permit: '/equipment?category=permit',
+                extinguisher: '/equipment?category=fire_extinguisher',
+                hood: '/calendar?category=hood_cleaning',
+                ansul: '/calendar?category=fire_suppression',
+              };
+              navigate(routes[key] || '/equipment');
+            }}
+          />
+        )}
+      </Card>
+
+      {/* ============================================================ */}
+      {/* 5. What Needs Attention — equipment + fire safety gaps         */}
+      {/* ============================================================ */}
+      <Card>
+        <div className="flex items-center gap-2 mb-3">
+          <ShieldAlert size={16} className="text-gray-400" />
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+            What Needs Attention
+          </h3>
+        </div>
+        <div className="space-y-2">
+          {DEMO_FACILITIES_ATTENTION.map(item => {
+            const badgeCfg = RISK_BADGE_CONFIG[item.riskType];
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => navigate(item.actionRoute)}
+                className="w-full flex items-center gap-3 p-3 rounded-lg text-left hover:bg-gray-50 transition-colors"
+                style={{ borderLeft: `3px solid ${SEVERITY_BORDER[item.severity]}` }}
+              >
+                <AlertTriangle
+                  size={16}
+                  className="shrink-0"
+                  style={{ color: item.severity === 'critical' ? '#dc2626' : '#d97706' }}
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <p className="text-sm font-semibold text-gray-900">{item.title}</p>
+                    <span
+                      className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded"
+                      style={{ backgroundColor: badgeCfg.bg, color: badgeCfg.text }}
+                    >
+                      {badgeCfg.label}
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-0.5">{item.detail}</p>
+                </div>
+                <span className="text-xs font-semibold px-2.5 py-1 rounded-md shrink-0 text-white" style={{ backgroundColor: item.severity === 'critical' ? '#dc2626' : '#d97706' }}>
+                  {item.actionLabel}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </Card>
+
+      {/* ============================================================ */}
+      {/* 6. Do This Next — max 3 prioritized actions                   */}
+      {/* ============================================================ */}
+      <Card>
+        <div className="flex items-center gap-2 mb-3">
+          <ArrowRight size={16} className="text-gray-400" />
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+            Do This Next
+          </h3>
+        </div>
+        <div className="space-y-2">
+          {DEMO_DO_THIS_NEXT.slice(0, 3).map((action, i) => (
+            <button
+              key={action.id}
+              type="button"
+              onClick={() => navigate(action.route)}
+              className="w-full flex items-center gap-3 p-3 rounded-lg text-left hover:bg-gray-50 transition-colors"
+              style={{ border: '1px solid #E8EDF5' }}
+            >
+              {/* Numbered circle with NAVY background */}
+              <span
+                className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white"
+                style={{ backgroundColor: NAVY }}
+              >
+                {i + 1}
+              </span>
+              <p className="text-sm font-medium text-gray-800 flex-1">{action.label}</p>
+              <ArrowRight size={16} style={{ color: NAVY }} className="shrink-0" />
+            </button>
+          ))}
+        </div>
+      </Card>
+
+      {/* ============================================================ */}
+      {/* 7. Equipment Summary — current/due soon/overdue counts        */}
+      {/* ============================================================ */}
       <Card>
         <div className="flex items-center gap-2 mb-3">
           <Wrench size={16} className="text-gray-400" />
@@ -279,32 +452,6 @@ export default function FacilitiesDashboardNew() {
         )}
       </Card>
 
-      {/* ONE Overdue Item — most urgent, only if exists */}
-      {!allCurrent && (
-        <Card>
-          {(() => {
-            const urgentItem = DEMO_FACILITIES_ATTENTION[0];
-            if (!urgentItem) return null;
-            return (
-              <button
-                type="button"
-                onClick={() => navigate(urgentItem.actionRoute)}
-                className="w-full flex items-center gap-3 text-left"
-              >
-                <AlertTriangle size={18} className="text-amber-500 shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-gray-900">{urgentItem.title}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">{urgentItem.detail}</p>
-                </div>
-                <span className="text-xs font-semibold px-3 py-1.5 rounded-md shrink-0" style={{ backgroundColor: '#d97706', color: '#fff' }}>
-                  {urgentItem.actionLabel} &rarr;
-                </span>
-              </button>
-            );
-          })()}
-        </Card>
-      )}
-
       {/* ============================================================ */}
       {/* BELOW THE FOLD                                                */}
       {/* ============================================================ */}
@@ -317,55 +464,6 @@ export default function FacilitiesDashboardNew() {
 
       {/* Service Cost & Risk Calculator */}
       <ServiceCostSection />
-
-      {/* Where Do I Start */}
-      <WhereDoIStartSection items={priorityItems} staggerOffset={1} tooltipContent={urgentItemsTooltip} />
-
-      {/* Facility Safety Detail — moved below fold, no score shown */}
-      <Card>
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-3">
-            <Flame size={24} style={{ color: fireStatus === 'passing' ? '#16a34a' : '#dc2626' }} />
-            <div>
-              <div className="flex items-center gap-2">
-                <button type="button" onClick={() => navigate('/facility-safety')} className="text-sm font-semibold text-gray-700 hover:opacity-70 transition-opacity">Facility Safety Equipment</button>
-                <SectionTooltip content={facilitySafetyTooltip} />
-              </div>
-              <p className="text-xs text-gray-500 mt-0.5">{fireDisplay}</p>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={() => navigate('/equipment')}
-            className="flex items-center gap-1.5 bg-gray-100 px-2.5 py-1 rounded-full hover:bg-gray-200 transition-colors"
-          >
-            <Wrench size={14} className="text-gray-500" />
-            <span className="text-xs font-medium text-gray-600">Equipment: {DEMO_EQUIPMENT_COUNT} units</span>
-          </button>
-        </div>
-
-        {/* Fire AHJ */}
-        <p className="text-xs text-gray-400 mb-3">{fireSummary}</p>
-
-        {/* Status indicators */}
-        {override && (
-          <FireStatusBars
-            permitStatus={override.facilitySafety.permitStatus}
-            hoodStatus={override.facilitySafety.hoodStatus}
-            extinguisherStatus={override.facilitySafety.extinguisherStatus}
-            ansulStatus={override.facilitySafety.ansulStatus}
-            onCardClick={(key) => {
-              const routes: Record<string, string> = {
-                permit: '/equipment?category=permit',
-                extinguisher: '/equipment?category=fire_extinguisher',
-                hood: '/calendar?category=hood_cleaning',
-                ansul: '/calendar?category=fire_suppression',
-              };
-              navigate(routes[key] || '/equipment');
-            }}
-          />
-        )}
-      </Card>
 
       {/* Schedule Calendar */}
       <ErrorBoundary level="widget">

@@ -9,9 +9,23 @@
 import { useState, useEffect } from 'react';
 import type { LocationJurisdiction } from '../types/jurisdiction';
 import { demoLocationJurisdictions } from '../data/demoJurisdictions';
+import { demoFireJurisdictionConfigs } from '../data/demoFireJurisdictionConfigs';
 
 // SUGGESTION: In live mode, query Supabase jurisdictions table by location's jurisdiction_id
-// and build the dual-authority record from the DB row + a fire AHJ lookup.
+// and build the dual-authority record from the DB row + fire_jurisdiction_config column.
+
+// Merge fire jurisdiction config into a LocationJurisdiction record
+function withFireConfig(j: LocationJurisdiction): LocationJurisdiction {
+  const fireConfig = demoFireJurisdictionConfigs[j.location_id];
+  if (!fireConfig) return j;
+  return {
+    ...j,
+    facilitySafety: {
+      ...j.facilitySafety,
+      fire_jurisdiction_config: fireConfig,
+    },
+  };
+}
 
 export function useJurisdiction(
   locationId: string | null,
@@ -26,21 +40,21 @@ export function useJurisdiction(
     }
 
     if (isDemoMode) {
-      const demoData = demoLocationJurisdictions[locationId] ?? null;
-      setData(demoData);
+      const raw = demoLocationJurisdictions[locationId] ?? null;
+      setData(raw ? withFireConfig(raw) : null);
       return;
     }
 
-    // SUGGESTION: Live mode implementation — query Supabase
+    // SUGGESTION: Live mode — query Supabase jurisdictions table including fire_jurisdiction_config column
     // const { data: row } = await supabase
     //   .from('jurisdictions')
-    //   .select('*')
+    //   .select('*, fire_jurisdiction_config')
     //   .eq('id', location.jurisdiction_id)
     //   .single();
-    // Then build LocationJurisdiction from the row + fire AHJ lookup.
+    // Then build LocationJurisdiction with fire_jurisdiction_config from the DB row.
     // For now, fall back to demo data.
-    const demoData = demoLocationJurisdictions[locationId] ?? null;
-    setData(demoData);
+    const raw = demoLocationJurisdictions[locationId] ?? null;
+    setData(raw ? withFireConfig(raw) : null);
   }, [locationId, isDemoMode]);
 
   return data;
@@ -58,17 +72,17 @@ export function useAllLocationJurisdictions(
       const result: Record<string, LocationJurisdiction> = {};
       for (const id of locationIds) {
         const j = demoLocationJurisdictions[id];
-        if (j) result[id] = j;
+        if (j) result[id] = withFireConfig(j);
       }
       setData(result);
       return;
     }
 
-    // SUGGESTION: Live mode — batch query for all location jurisdictions
+    // SUGGESTION: Live mode — batch query including fire_jurisdiction_config column
     const result: Record<string, LocationJurisdiction> = {};
     for (const id of locationIds) {
       const j = demoLocationJurisdictions[id];
-      if (j) result[id] = j;
+      if (j) result[id] = withFireConfig(j);
     }
     setData(result);
   }, [locationIds.join(','), isDemoMode]);

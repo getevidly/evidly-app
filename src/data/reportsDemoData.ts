@@ -20,7 +20,7 @@ export interface LocationScore {
 }
 
 // ── Score trend data (from old Reports.tsx) ─────────────────────────────
-const SCORE_TRENDS: Record<string, { week: string; foodSafety: number; facilitySafety: number }[]> = {
+export const SCORE_TRENDS: Record<string, { week: string; foodSafety: number; facilitySafety: number }[]> = {
   downtown: [
     { week: 'Wk 1', foodSafety: 86, facilitySafety: 82 }, { week: 'Wk 2', foodSafety: 87, facilitySafety: 83 },
     { week: 'Wk 3', foodSafety: 87, facilitySafety: 83 }, { week: 'Wk 4', foodSafety: 88, facilitySafety: 85 },
@@ -91,7 +91,7 @@ export function getExecutiveSummaryData(location: string) {
 }
 
 // ── Checklist completion data ──────────────────────────────────────────
-const CHECKLIST_COMPLETION: Record<string, { template: string; rate: number; completed: number; missed: number }[]> = {
+export const CHECKLIST_COMPLETION: Record<string, { template: string; rate: number; completed: number; missed: number }[]> = {
   downtown: [
     { template: 'Opening Checklist', rate: 100, completed: 10, missed: 0 },
     { template: 'Closing Checklist', rate: 95, completed: 9, missed: 1 },
@@ -116,7 +116,7 @@ const CHECKLIST_COMPLETION: Record<string, { template: string; rate: number; com
 };
 
 // ── Temperature compliance data ────────────────────────────────────────
-const TEMP_COMPLIANCE: Record<string, { week: string; compliance: number }[]> = {
+export const TEMP_COMPLIANCE: Record<string, { week: string; compliance: number }[]> = {
   downtown: [
     { week: 'Wk 1', compliance: 94 }, { week: 'Wk 2', compliance: 96 }, { week: 'Wk 3', compliance: 95 },
     { week: 'Wk 4', compliance: 97 }, { week: 'Wk 5', compliance: 98 }, { week: 'Wk 6', compliance: 97 },

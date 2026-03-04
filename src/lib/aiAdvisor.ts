@@ -9,6 +9,13 @@
  */
 
 import { DEMO_INTELLIGENCE_INSIGHTS, type IntelligenceInsight } from '../data/demoIntelligenceData';
+import {
+  buildAllLocationPayloads,
+  formatPayloadForPrompt,
+  formatOrgSummaryForPrompt,
+  getDataDateRange,
+  type LocationContextPayload,
+} from './aiAdvisorLocationContext';
 
 /** Format top intelligence insights as a context string for the system prompt. */
 function formatDemoIntelForContext(insights: IntelligenceInsight[]): string {
@@ -22,6 +29,7 @@ export interface AiMessage {
   id: string;
   suggestions?: string[];
   hasActions?: boolean;
+  dataDateRange?: { from: string; to: string };
 }
 
 export interface ComplianceContext {
@@ -33,6 +41,8 @@ export interface ComplianceContext {
   upcomingDeadlines: string[];
   copilotInsights?: string[];
   intelligenceFeed?: string;
+  locationPayloads?: LocationContextPayload[];
+  focusedLocationId?: string | null;
 }
 
 const DEMO_CONTEXT: ComplianceContext = { // demo
@@ -70,8 +80,19 @@ const DEMO_CONTEXT: ComplianceContext = { // demo
   intelligenceFeed: formatDemoIntelForContext(DEMO_INTELLIGENCE_INSIGHTS.slice(0, 5)),
 };
 
-export function getDemoContext(): ComplianceContext {
-  return DEMO_CONTEXT;
+// Lazy-build location payloads on first access
+let _cachedPayloads: LocationContextPayload[] | null = null;
+function getLocationPayloads(): LocationContextPayload[] {
+  if (!_cachedPayloads) _cachedPayloads = buildAllLocationPayloads();
+  return _cachedPayloads;
+}
+
+export function getDemoContext(focusedLocationId?: string | null): ComplianceContext {
+  return {
+    ...DEMO_CONTEXT,
+    locationPayloads: getLocationPayloads(),
+    focusedLocationId: focusedLocationId ?? null,
+  };
 }
 
 function buildSystemPrompt(context: ComplianceContext, mode: 'chat' | 'inspection'): string {
@@ -130,7 +151,26 @@ IMPORTANT GUARDRAILS:
 - If asked about topics outside commercial kitchen compliance (medical, financial, personal), politely redirect to compliance topics.${context.intelligenceFeed ? `
 
 Current EvidLY Intelligence Feed:
-${context.intelligenceFeed}` : ''}`;
+${context.intelligenceFeed}` : ''}${(() => {
+  // Inject location-specific data if available
+  if (!context.locationPayloads?.length) return '';
+  if (context.focusedLocationId) {
+    const focused = context.locationPayloads.find(p => p.locationId === context.focusedLocationId);
+    if (focused) {
+      return `
+
+═══ FOCUSED LOCATION DATA ═══
+Data range: ${focused.dataDateRange.from} to ${focused.dataDateRange.to}
+${formatPayloadForPrompt(focused)}
+When answering, reference this location's specific data points (scores, trends, corrective actions, temperature compliance, inspection results). Be precise with numbers.`;
+    }
+  }
+  // No focused location — inject summaries of all
+  return `
+
+${formatOrgSummaryForPrompt(context.locationPayloads)}
+When answering, reference specific location data points (scores, trends, corrective actions, temperature compliance). Be precise with numbers.`;
+})()}`;
 }
 
 /**

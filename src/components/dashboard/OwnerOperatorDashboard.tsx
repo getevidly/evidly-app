@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   AlertTriangle, Check,
   CheckCircle2, Hammer, AlertCircle,
+  UtensilsCrossed, Flame, ArrowRight,
 } from 'lucide-react';
 import { useDemo } from '../../contexts/DemoContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -12,21 +13,18 @@ import {
   useDashboardData,
   type TaskItem,
   type LocationWithScores,
+  type ImpactItem,
 } from '../../hooks/useDashboardData';
 import { useAllLocationJurisdictions } from '../../hooks/useJurisdiction';
 import { useAllComplianceScores } from '../../hooks/useComplianceScore';
 import type { LocationScore, LocationJurisdiction } from '../../types/jurisdiction';
-import { GOLD, NAVY, BODY_TEXT, FONT, JIE_LOC_MAP } from './shared/constants';
-import { CorrectiveActionsWidget } from './CorrectiveActionsWidget';
-import { TrainingComplianceWidget } from './TrainingComplianceWidget';
-import { IncidentSummaryWidget } from './IncidentSummaryWidget';
+import { GOLD, NAVY, BODY_TEXT, FONT, JIE_LOC_MAP, MUTED } from './shared/constants';
 import { ReScoreAlertsWidget } from './ReScoreAlertsWidget';
-import { EquipmentHealthWidget } from '../EquipmentHealthWidget';
 import { K2CWidget } from '../referral/K2CWidget';
 import { K2CInviteModal } from '../referral/K2CInviteModal';
 import { demoReferral } from '../../data/demoData';
-import { ComplianceBanner } from './shared/ComplianceBanner';
 import { OnboardingChecklistCard } from './shared/OnboardingChecklistCard';
+import { HealthBanner, type HealthStatus } from './shared/HealthBanner';
 
 
 // ================================================================
@@ -110,13 +108,10 @@ function TodaysTasks({ navigate, tasks }: { navigate: (path: string) => void; ta
 
   return (
     <div className="bg-white rounded-lg" style={{ border: '1px solid #e5e7eb' }}>
-      {/* Header */}
       <div className="flex items-center justify-between px-4 py-3" style={{ borderBottom: '1px solid #F0F0F0' }}>
         <h3 className="text-sm font-semibold" style={{ color: BODY_TEXT }}>Today's Tasks</h3>
         <span className="text-xs font-medium" style={{ color: NAVY }}>{done}/{tasks.length} complete</span>
       </div>
-
-      {/* Task rows */}
       <div>
         {tasks.length === 0 && (
           <div className="px-4 py-6 text-center">
@@ -155,8 +150,6 @@ function TodaysTasks({ navigate, tasks }: { navigate: (path: string) => void; ta
           );
         })}
       </div>
-
-      {/* View all link */}
       {hasMore && (
         <button
           type="button"
@@ -221,7 +214,30 @@ function ErrorBanner({ message, onRetry }: { message: string; onRetry: () => voi
 
 
 // ================================================================
-// MAIN COMPONENT — 5 ELEMENTS ONLY
+// RISK TYPE HELPERS
+// ================================================================
+
+type RiskType = 'liability' | 'revenue' | 'cost' | 'operational';
+const RISK_ORDER: Record<RiskType, number> = { liability: 0, revenue: 1, cost: 2, operational: 3 };
+
+function getRiskType(item: ImpactItem): RiskType {
+  if (item.pillar === 'Facility Safety' && item.severity === 'critical') return 'liability';
+  if (item.pillar === 'Food Safety' && item.severity === 'critical') return 'liability';
+  if (item.pillar === 'Facility Safety') return 'cost';
+  if (item.pillar === 'Food Safety') return 'revenue';
+  return 'operational';
+}
+
+const RISK_LABEL_COLOR: Record<RiskType, { bg: string; text: string; label: string }> = {
+  liability: { bg: '#fef2f2', text: '#991b1b', label: 'Liability' },
+  revenue: { bg: '#fffbeb', text: '#92400e', label: 'Revenue' },
+  cost: { bg: '#f0f4ff', text: '#3730a3', label: 'Cost' },
+  operational: { bg: '#f0fdf4', text: '#166534', label: 'Operational' },
+};
+
+
+// ================================================================
+// MAIN COMPONENT
 // ================================================================
 
 export default function OwnerOperatorDashboard() {
@@ -260,26 +276,66 @@ export default function OwnerOperatorDashboard() {
   );
   const allGreen = !isSingleLocation && nonGreenRows.length === 0;
 
-  // ONE priority alert — highest severity, most recent
-  const impact = data.impact ?? [];
-  const topAlert = useMemo(() => {
-    if (impact.length === 0) return null;
-    const sorted = [...impact].sort((a, b) => {
-      const sevOrder = { critical: 0, high: 1, medium: 2, low: 3 } as Record<string, number>;
-      return (sevOrder[a.severity] ?? 3) - (sevOrder[b.severity] ?? 3);
+  // ── Health Banner derivation ──
+  const healthStatus: HealthStatus = useMemo(() => {
+    const impactItems = data.impact ?? [];
+    const tasks = data.tasks ?? [];
+    const hasCritical = impactItems.some(i => i.severity === 'critical');
+    const hasOverdueTasks = tasks.some(t => t.status === 'overdue');
+    const anyFailing = locations.some(loc => {
+      const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
+      const score = jieScores[jieLocId];
+      return score?.foodSafety?.status === 'failing' || score?.facilitySafety?.status === 'failing';
     });
-    return sorted[0];
-  }, [impact]);
 
-  // Conditional referral: only show when has locations, all >= 80, AND zero critical/high alerts
-  const showReferral = useMemo(() => {
-    if (locations.length === 0) return false;
-    const allCompliant = locations.every(l => l.score >= 80);
-    const noCriticalOrHighAlerts = !impact.some(
-      i => i.severity === 'critical' || i.severity === 'warning',
-    );
-    return allCompliant && noCriticalOrHighAlerts;
-  }, [locations, impact]);
+    if (anyFailing || hasCritical) return 'risk';
+    if (hasOverdueTasks || impactItems.length > 0) return 'attention';
+    return 'healthy';
+  }, [data.impact, data.tasks, locations, jieScores]);
+
+  const healthMessage = useMemo(() => {
+    if (healthStatus === 'healthy') return 'All operations running smoothly \u2014 no outstanding issues.';
+    if (healthStatus === 'risk') {
+      const criticalItems = (data.impact ?? []).filter(i => i.severity === 'critical');
+      if (criticalItems.length > 0) return criticalItems[0].action;
+      return 'Critical compliance issue requires immediate attention.';
+    }
+    const overdue = (data.tasks ?? []).filter(t => t.status === 'overdue');
+    if (overdue.length > 0) return `${overdue.length} overdue task${overdue.length > 1 ? 's' : ''} need attention.`;
+    return `${(data.impact ?? []).length} item${(data.impact ?? []).length > 1 ? 's' : ''} need attention.`;
+  }, [healthStatus, data.impact, data.tasks]);
+
+  // ── "What Needs Attention" — risk-ranked impact items ──
+  const attentionItems = useMemo(() => {
+    const impactItems = data.impact ?? [];
+    return [...impactItems].sort((a, b) => {
+      const riskDiff = RISK_ORDER[getRiskType(a)] - RISK_ORDER[getRiskType(b)];
+      if (riskDiff !== 0) return riskDiff;
+      return a.severity === 'critical' ? -1 : 1;
+    });
+  }, [data.impact]);
+
+  // ── "Do This Next" — top 3 actions ──
+  const doThisNext = useMemo(() => attentionItems.slice(0, 3), [attentionItems]);
+
+  // ── "Today's Operations" summary ──
+  const opsSummary = useMemo(() => {
+    const moduleStatuses = data.moduleStatuses ?? [];
+    const deadlines = data.deadlines ?? [];
+    const tasks = data.tasks ?? [];
+
+    const checklistMod = moduleStatuses.find(m => m.id === 'mod-checklists');
+    const tempMod = moduleStatuses.find(m => m.id === 'mod-temp');
+    const openCAs = (data.impact ?? []).filter(i => i.severity === 'critical').length;
+    const soonestCert = deadlines.filter(d => d.severity !== 'normal').sort((a, b) => a.daysLeft - b.daysLeft)[0];
+
+    return {
+      tempLogs: tempMod?.metric ?? `${tasks.filter(t => t.status === 'done').length}/${tasks.length}`,
+      checklists: checklistMod?.metric ?? '\u2014',
+      openCAs,
+      certExpiring: soonestCert ? `${soonestCert.label} \u2014 ${soonestCert.dueDate}` : 'None upcoming',
+    };
+  }, [data]);
 
   // Greeting + date
   const todayStr = new Date().toLocaleDateString('en-US', {
@@ -322,73 +378,193 @@ export default function OwnerOperatorDashboard() {
         <OnboardingChecklistCard />
       </div>
 
-      {/* ─── ELEMENT 1: Compliance Warning Banners ──────────────── */}
+      {/* ─── ELEMENT 1: Health Banner ───────────────────────────── */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
-        <ComplianceBanner isSingleLocation={isSingleLocation} />
+        <HealthBanner status={healthStatus} scope="Business Health" message={healthMessage} />
       </div>
 
-      {/* ─── ELEMENT 2: Today's Tasks ───────────────────────────── */}
+      {/* ─── ELEMENT 2: Where Things Stand (per-location pillar cards) ── */}
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Where Things Stand</h3>
+        <div className="space-y-3">
+          {locations.map(loc => {
+            const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
+            const score = jieScores[jieLocId];
+            const jur = jurisdictions[jieLocId];
+
+            const foodStatus = score?.foodSafety?.status ?? 'unknown';
+            const foodGrade = score?.foodSafety?.gradeDisplay ?? 'Pending';
+            const foodSummary = (score?.foodSafety?.details as Record<string, any>)?.summary;
+            const foodAgency = jur?.foodSafety?.agency_name ?? 'Health Dept';
+            const foodGradingType = jur?.foodSafety?.grading_type;
+
+            const fireStatus = score?.facilitySafety?.status ?? 'unknown';
+            const fireGrade = score?.facilitySafety?.grade ?? 'Pending';
+            const fireAgency = jur?.facilitySafety?.agency_name ?? 'Fire AHJ';
+
+            const foodStatusColor = foodStatus === 'passing' ? '#16a34a' : foodStatus === 'failing' ? '#dc2626' : foodStatus === 'at_risk' ? '#d97706' : '#6b7280';
+            const fireStatusColor = fireStatus === 'passing' ? '#16a34a' : fireStatus === 'failing' ? '#dc2626' : fireStatus === 'at_risk' ? '#d97706' : '#6b7280';
+
+            return (
+              <div key={loc.id}>
+                {!isSingleLocation && (
+                  <p className="text-xs font-medium text-gray-400 mb-1.5 ml-1">{loc.name}</p>
+                )}
+                <div className="grid grid-cols-2 gap-3">
+                  {/* Food Safety Pillar */}
+                  <button
+                    type="button"
+                    onClick={() => navigate('/compliance')}
+                    className="bg-white rounded-lg p-4 text-left transition-all hover:shadow-md"
+                    style={{ border: '1px solid #e5e7eb', borderLeft: `3px solid ${foodStatusColor}` }}
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <UtensilsCrossed size={14} style={{ color: MUTED }} />
+                      <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">Food Safety</span>
+                    </div>
+                    <p className="text-lg font-bold" style={{ color: foodStatusColor }}>{foodGrade}</p>
+                    <p className="text-[11px] text-gray-500 mt-1">{foodAgency}</p>
+                    {foodGradingType && (
+                      <p className="text-[10px] text-gray-400">{foodGradingType}</p>
+                    )}
+                    {foodSummary && (
+                      <p className="text-[10px] text-gray-400 mt-0.5">{foodSummary}</p>
+                    )}
+                  </button>
+
+                  {/* Facility Safety Pillar */}
+                  <button
+                    type="button"
+                    onClick={() => navigate('/facility-safety')}
+                    className="bg-white rounded-lg p-4 text-left transition-all hover:shadow-md"
+                    style={{ border: '1px solid #e5e7eb', borderLeft: `3px solid ${fireStatusColor}` }}
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <Flame size={14} style={{ color: MUTED }} />
+                      <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">Facility Safety</span>
+                    </div>
+                    <p className="text-lg font-bold" style={{ color: fireStatusColor }}>{fireGrade}</p>
+                    <p className="text-[11px] text-gray-500 mt-1">{fireAgency}</p>
+                    <p className="text-[10px] text-gray-400">NFPA 96</p>
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ─── ELEMENT 3: What Needs Attention ─────────────────── */}
+      {attentionItems.length > 0 && (
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">What Needs Attention</h3>
+          <div className="bg-white rounded-lg overflow-hidden" style={{ border: '1px solid #e5e7eb' }}>
+            {attentionItems.slice(0, 5).map(item => {
+              const riskType = getRiskType(item);
+              const riskStyle = RISK_LABEL_COLOR[riskType];
+              const isCritical = item.severity === 'critical';
+
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => navigate(item.route)}
+                  className="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-gray-50"
+                  style={{ borderBottom: '1px solid #F0F0F0' }}
+                >
+                  {isCritical
+                    ? <AlertTriangle size={16} className="text-red-500 shrink-0" />
+                    : <AlertCircle size={16} className="text-amber-500 shrink-0" />
+                  }
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[13px] font-semibold text-gray-800">{item.action}</p>
+                    <p className="text-[11px] text-gray-500 mt-0.5">{item.location} &middot; {item.pillar}</p>
+                  </div>
+                  <span
+                    className="text-[10px] font-bold px-2 py-0.5 rounded shrink-0"
+                    style={{ backgroundColor: riskStyle.bg, color: riskStyle.text }}
+                  >
+                    {riskStyle.label}
+                  </span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded shrink-0" style={{
+                    backgroundColor: isCritical ? '#fef2f2' : '#fffbeb',
+                    color: isCritical ? '#991b1b' : '#92400e',
+                  }}>
+                    {isCritical ? 'High' : 'Medium'}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* ─── ELEMENT 4: Do This Next (max 3 actions) ─────────── */}
+      {doThisNext.length > 0 && (
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Do This Next</h3>
+          <div className="space-y-2">
+            {doThisNext.map((item, idx) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => navigate(item.route)}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-white text-left transition-all hover:shadow-md"
+                style={{ border: '1px solid #e5e7eb' }}
+              >
+                <span
+                  className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
+                  style={{ backgroundColor: NAVY }}
+                >
+                  {idx + 1}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[13px] font-semibold text-gray-800">{item.action}</p>
+                  <p className="text-[11px] text-gray-500">{item.location}</p>
+                </div>
+                <ArrowRight size={16} className="text-gray-400 shrink-0" />
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ─── ELEMENT 5: Today's Operations ────────────────────── */}
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Today's Operations</h3>
+        <div className="bg-white rounded-lg overflow-hidden" style={{ border: '1px solid #e5e7eb' }}>
+          <button type="button" onClick={() => navigate('/temp-logs')} className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50 transition-colors" style={{ borderBottom: '1px solid #F0F0F0' }}>
+            <span className="text-[13px] text-gray-700">Temp Logs</span>
+            <span className="text-[13px] font-semibold" style={{ color: NAVY }}>{opsSummary.tempLogs}</span>
+          </button>
+          <button type="button" onClick={() => navigate('/checklists')} className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50 transition-colors" style={{ borderBottom: '1px solid #F0F0F0' }}>
+            <span className="text-[13px] text-gray-700">Checklists</span>
+            <span className="text-[13px] font-semibold" style={{ color: NAVY }}>{opsSummary.checklists}</span>
+          </button>
+          <button type="button" onClick={() => navigate('/corrective-actions')} className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50 transition-colors" style={{ borderBottom: '1px solid #F0F0F0' }}>
+            <span className="text-[13px] text-gray-700">Open CAs</span>
+            <span className={`text-[13px] font-semibold ${opsSummary.openCAs > 0 ? 'text-red-600' : 'text-green-600'}`}>
+              {opsSummary.openCAs}
+            </span>
+          </button>
+          <button type="button" onClick={() => navigate('/documents')} className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50 transition-colors">
+            <span className="text-[13px] text-gray-700">Cert Expiring</span>
+            <span className="text-[13px] font-semibold text-gray-600">{opsSummary.certExpiring}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* ─── ELEMENT 6: Today's Tasks ────────────────────────── */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
         <TodaysTasks navigate={navigate} tasks={data.tasks ?? []} />
       </div>
 
-      {/* ─── ELEMENT 3: ONE Priority Alert ──────────────────────── */}
-      {topAlert && (
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
-          <button
-            type="button"
-            onClick={() => navigate(topAlert.route)}
-            className="w-full flex items-start gap-3 p-4 rounded-lg text-left transition-colors hover:opacity-90"
-            style={{
-              backgroundColor: 'white',
-              border: `1px solid ${topAlert.severity === 'critical' ? '#fecaca' : '#fde68a'}`,
-              borderLeftWidth: 4,
-              borderLeftColor: topAlert.severity === 'critical' ? '#DC2626' : '#F59E0B',
-            }}
-          >
-            <AlertTriangle
-              size={16}
-              className={`shrink-0 mt-0.5 ${topAlert.severity === 'critical' ? 'text-red-500' : 'text-amber-500'}`}
-            />
-            <div className="flex-1 min-w-0">
-              <p className="text-[13px] font-semibold text-gray-800">{topAlert.action}</p>
-              <p className="text-[11px] text-gray-500 mt-0.5">
-                {topAlert.location} &middot; {topAlert.pillar} &middot; +{topAlert.points} pts
-              </p>
-            </div>
-            <span className="text-xs font-semibold shrink-0" style={{ color: NAVY }}>
-              Fix Now &rarr;
-            </span>
-          </button>
-        </div>
-      )}
-
-      {/* ─── ELEMENT 3.5: Corrective Actions Widget ──────────────── */}
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
-        <CorrectiveActionsWidget navigate={navigate} />
-      </div>
-
-      {/* ─── ELEMENT 3.6: Training Compliance Widget ───────────────── */}
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
-        <TrainingComplianceWidget navigate={navigate} />
-      </div>
-
-      {/* ─── ELEMENT 3.7: Equipment Health Widget ──────────────────── */}
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
-        <EquipmentHealthWidget locationId="all" />
-      </div>
-
-      {/* ─── ELEMENT 3.8: Incident Summary Widget ──────────────────── */}
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
-        <IncidentSummaryWidget navigate={navigate} />
-      </div>
-
-      {/* ─── ELEMENT 3.9: Re-Score Alerts Widget ─────────────────── */}
+      {/* ─── ELEMENT 7: Re-Score Alerts Widget ───────────────── */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
         <ReScoreAlertsWidget navigate={navigate} />
       </div>
 
-      {/* ─── ELEMENT 4: Location Status Rows (multi-location only) ── */}
+      {/* ─── ELEMENT 8: Location Status Rows (multi-location only) ── */}
       {!isSingleLocation && (
         <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
           {allGreen ? (
@@ -409,7 +585,7 @@ export default function OwnerOperatorDashboard() {
         </div>
       )}
 
-      {/* ─── ELEMENT 5: K2C Widget (always visible) ─────────────── */}
+      {/* ─── ELEMENT 9: K2C Widget (always visible) ─────────────── */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
         <K2CWidget onInviteClick={() => setShowInviteModal(true)} />
       </div>

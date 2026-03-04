@@ -75,6 +75,10 @@ function buildFacilitySafetyScore(
   locationId: string,
   jurisdiction: LocationJurisdiction,
 ): AuthorityScore {
+  const fireConfig = jurisdiction.facilitySafety.fire_jurisdiction_config;
+  const ahjName = fireConfig?.fire_ahj_name ?? jurisdiction.facilitySafety.agency_name;
+  const codeEdition = fireConfig?.fire_code_edition ?? 'NFPA 96 (2024)';
+
   // Check for verified override first
   const override = DEMO_LOCATION_GRADE_OVERRIDES[locationId];
   if (override) {
@@ -87,11 +91,15 @@ function buildFacilitySafetyScore(
       status: override.facilitySafety.status,
       details: {
         summary: override.facilitySafety.summary,
-        codeEdition: 'NFPA 96 (2024)',
+        fireCodeEdition: codeEdition,
+        ahjName,
+        codeEdition,
         permitStatus: override.facilitySafety.permitStatus,
         hoodStatus: override.facilitySafety.hoodStatus,
         extinguisherStatus: override.facilitySafety.extinguisherStatus,
         ansulStatus: override.facilitySafety.ansulStatus,
+        ...(fireConfig?.federal_overlay ? { federalOverlay: fireConfig.federal_overlay } : {}),
+        ...(fireConfig?.ahj_split_notes ? { ahjSplitNotes: fireConfig.ahj_split_notes } : {}),
       },
     };
   }
@@ -111,7 +119,11 @@ function buildFacilitySafetyScore(
     status: operationalPermitValid ? 'passing' : 'failing',
     details: {
       operationalPermitValid,
-      codeEdition: 'NFPA 96 (2024)',
+      fireCodeEdition: codeEdition,
+      ahjName,
+      codeEdition,
+      ...(fireConfig?.federal_overlay ? { federalOverlay: fireConfig.federal_overlay } : {}),
+      ...(fireConfig?.ahj_split_notes ? { ahjSplitNotes: fireConfig.ahj_split_notes } : {}),
     },
   };
 }

@@ -22,6 +22,7 @@ import { QuickActionsBar } from './QuickActionsBar';
 import { AutoBreadcrumb } from './AutoBreadcrumb';
 import { useDemo } from '../../contexts/DemoContext';
 import { useAuth } from '../../contexts/AuthContext';
+import { useEmulation } from '../../contexts/EmulationContext';
 import { useNotifications } from '../../contexts/NotificationContext';
 import { useRealtimeNotifications } from '../../hooks/useRealtimeNotifications';
 import { useMobile } from '../../hooks/useMobile';
@@ -50,6 +51,7 @@ interface LayoutProps {
 export function Layout({ children, title, locations, selectedLocation, onLocationChange, demoMode = false }: LayoutProps) {
   const { tourActive, isDemoMode, presenterMode } = useDemo();
   const { session } = useAuth();
+  const { isEmulating } = useEmulation();
   const { setNotifications, notifications: currentNotifications } = useNotifications();
   const [guidedTourActive, setGuidedTourActive] = useState(false);
   const handleGuidedTourActiveChange = useCallback((active: boolean) => setGuidedTourActive(active), []);
@@ -114,7 +116,7 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
   }, []);
 
   return (
-    <div className="h-screen flex flex-col" style={{ background: 'var(--bg-main)' }}>
+    <div className="h-screen flex flex-col" style={{ background: 'var(--bg-main)', paddingTop: isEmulating ? '44px' : undefined }}>
       <Helmet>
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>

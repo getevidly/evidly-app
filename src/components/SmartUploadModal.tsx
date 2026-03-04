@@ -6,11 +6,12 @@ import {
 } from 'lucide-react';
 import { useDemo } from '../contexts/DemoContext';
 import {
-  canClassify, classifyDocument, classifyDocumentDemo,
+  canClassify, validateFileForUpload, classifyDocument, classifyDocumentDemo,
   getConfidenceLevel, getConfidenceColor, getConfidenceIcon,
   PILLAR_OPTIONS, DOCUMENT_TYPE_OPTIONS,
   type ClassificationResult,
 } from '../lib/documentClassifier';
+import { CloudImportPicker, type CloudImportResult } from './documents/CloudImportPicker';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -32,6 +33,9 @@ export interface ClassifiedFile {
   };
   /** Whether user has accepted the AI result (possibly with edits) */
   accepted: boolean;
+  /** Cloud import metadata */
+  importSource?: 'direct' | 'google_drive' | 'onedrive' | 'dropbox';
+  originalFilename?: string;
 }
 
 export interface SmartUploadModalProps {
@@ -54,7 +58,7 @@ export interface SmartUploadModalProps {
 
 const MAX_CONCURRENT = 3;
 
-const ACCEPT_TYPES = '.pdf,.jpg,.jpeg,.png,.webp';
+const ACCEPT_TYPES = '.pdf,.docx,.xlsx,.jpg,.jpeg,.png,.csv';
 
 // ---------------------------------------------------------------------------
 // Component
@@ -83,8 +87,18 @@ export function SmartUploadModal({
     const fileArray = Array.from(newFiles);
     const limit = batchMode ? maxFiles : 1;
 
-    // If not batch mode, replace existing
-    const toAdd = fileArray.slice(0, limit);
+    // Layer 1: Client-side pre-screening — validate each file before accepting
+    const validated: File[] = [];
+    for (const file of fileArray) {
+      const result = validateFileForUpload(file);
+      if (!result.ok) {
+        toast.error(`${file.name}: ${result.reason}`);
+        continue;
+      }
+      validated.push(file);
+    }
+
+    const toAdd = validated.slice(0, limit);
     if (toAdd.length === 0) return;
 
     const newEntries: ClassifiedFile[] = toAdd.map((file) => ({
@@ -209,6 +223,28 @@ export function SmartUploadModal({
       );
     }
   };
+
+  // -----------------------------------------------------------------------
+  // Cloud import handler
+  // -----------------------------------------------------------------------
+
+  const handleCloudImport = useCallback((results: CloudImportResult[]) => {
+    const cloudFiles = results.map(r => r.file);
+    // Cloud-imported files go through the exact same pipeline
+    addFiles(cloudFiles);
+    // Tag the entries with import metadata after they're added
+    setFiles(prev => prev.map(f => {
+      const match = results.find(r => r.file === f.file);
+      if (match) {
+        return {
+          ...f,
+          importSource: match.importSource,
+          originalFilename: match.originalFilename,
+        };
+      }
+      return f;
+    }));
+  }, [addFiles]);
 
   // -----------------------------------------------------------------------
   // Drag & Drop
@@ -336,7 +372,7 @@ export function SmartUploadModal({
                 Drag &amp; drop or click to browse
               </p>
               <p className="text-xs text-gray-400 mt-1">
-                PDF, JPG, or PNG &middot; Max 10 MB
+                PDF, DOCX, XLSX, JPG, PNG, CSV &middot; Max 10 MB
                 {batchMode && ' &middot; Multiple files OK'}
               </p>
               <input
@@ -348,6 +384,14 @@ export function SmartUploadModal({
                 onChange={handleFileInput}
               />
             </div>
+          )}
+
+          {/* Import from Cloud */}
+          {files.length < maxFiles && (
+            <CloudImportPicker
+              onFilesImported={handleCloudImport}
+              disabled={files.length >= maxFiles}
+            />
           )}
 
           {/* File list */}

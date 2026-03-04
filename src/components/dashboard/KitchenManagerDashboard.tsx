@@ -1,4 +1,4 @@
-﻿import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   CheckCircle2,
@@ -6,6 +6,7 @@ import {
   Clock,
   Radio,
   AlertTriangle,
+  ArrowRight,
 } from 'lucide-react';
 import { useRole } from '../../contexts/RoleContext';
 import { useTranslation } from '../../contexts/LanguageContext';
@@ -23,6 +24,7 @@ import { ErrorBoundary } from '../ErrorBoundary';
 import { SelfDiagCard } from './shared/SelfDiagCard';
 import { NFPAReminder } from '../ui/NFPAReminder';
 import { OnboardingChecklistCard } from './shared/OnboardingChecklistCard';
+import { HealthBanner, type HealthStatus } from './shared/HealthBanner';
 
 // --------------- Demo Data ---------------
 
@@ -53,14 +55,14 @@ const DEMO_CHECKLISTS: DemoChecklist[] = [
 ];
 
 const DEMO_TEMPERATURES: DemoTemperature[] = [
-  { id: 'cooler-1', name: 'Walk-in Cooler #1', temp: 37.8, unit: '\u00B0F', status: 'normal', source: 'iot', lastReading: '2 min ago' }, // demo
+  { id: 'cooler-1', name: 'Walk-in Cooler #1', temp: 37.8, unit: '\u00B0F', status: 'normal', source: 'iot', lastReading: '2 min ago' },
   { id: 'cooler-2', name: 'Walk-in Cooler #2', temp: 39.5, unit: '\u00B0F', status: 'normal', source: 'iot', lastReading: '4 min ago' },
   { id: 'freezer', name: 'Walk-in Freezer', temp: -2, unit: '\u00B0F', status: 'normal', source: 'iot', lastReading: '6 min ago' },
   { id: 'prep', name: 'Prep Cooler', temp: null, unit: '\u00B0F', status: 'needs_log', source: 'manual', lastReading: '4 hours ago' },
 ];
 
 const DEMO_TEAM = [
-  { name: 'Maria', done: 5, total: 6, activities: ['Opening checklist \u2705', '3 temp logs'] }, // demo
+  { name: 'Maria', done: 5, total: 6, activities: ['Opening checklist \u2705', '3 temp logs'] },
   { name: 'Carlos', done: 2, total: 5, activities: ['Midday checklist \uD83D\uDD28', '2 temp logs'] },
   { name: 'Sofia', done: 1, total: 3, activities: ['1 temp log'] },
 ];
@@ -153,6 +155,29 @@ function HealthTile({ label, status, detail, navigate, route }: {
 }
 
 // ===============================================
+// RISK TYPE BADGE
+// ===============================================
+
+const RISK_TYPE_COLORS: Record<string, { bg: string; text: string }> = {
+  liability: { bg: '#fef2f2', text: '#991b1b' },
+  revenue: { bg: '#eff6ff', text: '#1e40af' },
+  cost: { bg: '#fffbeb', text: '#92400e' },
+  operational: { bg: '#f0fdf4', text: '#166534' },
+};
+
+function RiskBadge({ type }: { type: string }) {
+  const colors = RISK_TYPE_COLORS[type] || RISK_TYPE_COLORS.operational;
+  return (
+    <span
+      className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full shrink-0"
+      style={{ backgroundColor: colors.bg, color: colors.text, letterSpacing: '0.05em' }}
+    >
+      {type}
+    </span>
+  );
+}
+
+// ===============================================
 // KITCHEN MANAGER DASHBOARD
 // ===============================================
 
@@ -174,11 +199,11 @@ export default function KitchenManagerDashboard() {
   const [selectedLocationUrlId, setSelectedLocationUrlId] = useState(accessibleLocations[0]?.locationUrlId || 'downtown');
 
   const KM_LOC_NAMES: Record<string, string> = {
-    downtown: 'Location 1', // demo
-    airport: 'Location 2', // demo
-    university: 'Location 3', // demo
+    downtown: 'Location 1',
+    airport: 'Location 2',
+    university: 'Location 3',
   };
-  const locationName = KM_LOC_NAMES[selectedLocationUrlId] || 'Location 1'; // demo
+  const locationName = KM_LOC_NAMES[selectedLocationUrlId] || 'Location 1';
 
   // Animated progress bar
   const [animatedProgress, setAnimatedProgress] = useState(0);
@@ -187,11 +212,52 @@ export default function KitchenManagerDashboard() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Priority items for "Where Do I Start" section
-  const priorityItems: PriorityItem[] = [
-    { id: 'km-1', severity: 'warning', title: 'Complete midday checklist (4 items remaining)', detail: 'Carlos is working on it', actionLabel: 'View', route: '/checklists' },
-    { id: 'km-2', severity: 'warning', title: 'Log Prep Cooler temp', detail: 'Last logged 4 hours ago', actionLabel: 'Log Temp', route: '/temp-logs' },
+  // ---------- Derived health metrics ----------
+
+  const needsLogCount = DEMO_TEMPERATURES.filter(t => t.status === 'needs_log').length;
+  const notStartedChecklists = DEMO_CHECKLISTS.filter(c => c.status === 'not_started');
+  const doneChecklists = DEMO_CHECKLISTS.filter(c => c.status === 'done');
+  const checklistSummary = `${doneChecklists.length}/${DEMO_CHECKLISTS.length} complete`;
+
+  const teamTotalDone = DEMO_TEAM.reduce((s, m) => s + m.done, 0);
+  const teamTotalAll = DEMO_TEAM.reduce((s, m) => s + m.total, 0);
+  const teamPct = Math.round((teamTotalDone / teamTotalAll) * 100);
+
+  // Determine HealthBanner status from demo data
+  const healthStatus: HealthStatus = useMemo(() => {
+    const hasOverdueChecklist = notStartedChecklists.length > 0;
+    const hasMissedTemp = needsLogCount > 0;
+    // risk: checklist overdue AND missed temp logs
+    if (hasOverdueChecklist && hasMissedTemp) return 'risk';
+    // attention: either issue OR team below 70%
+    if (hasOverdueChecklist || hasMissedTemp || teamPct < 70) return 'attention';
+    return 'healthy';
+  }, [notStartedChecklists.length, needsLogCount, teamPct]);
+
+  const healthMessage = useMemo(() => {
+    if (healthStatus === 'risk') {
+      return `${notStartedChecklists.length} checklist not started and ${needsLogCount} temp log overdue -- take action now.`;
+    }
+    if (healthStatus === 'attention') {
+      const parts: string[] = [];
+      if (notStartedChecklists.length > 0) parts.push(`${notStartedChecklists.length} checklist not started`);
+      if (needsLogCount > 0) parts.push(`${needsLogCount} temp log overdue`);
+      if (teamPct < 70) parts.push(`team at ${teamPct}% completion`);
+      return parts.join(', ') + '.';
+    }
+    return 'All checklists done, temps logged, team on track.';
+  }, [healthStatus, notStartedChecklists.length, needsLogCount, teamPct]);
+
+  // Priority items with risk type labels
+  const priorityItems: (PriorityItem & { riskType: string })[] = [
+    { id: 'km-1', severity: 'warning', title: 'Complete midday checklist (4 items remaining)', detail: 'Carlos is working on it', actionLabel: 'View', route: '/checklists', riskType: 'liability' },
+    { id: 'km-2', severity: 'warning', title: 'Log Prep Cooler temp', detail: 'Last logged 4 hours ago', actionLabel: 'Log Temp', route: '/temp-logs', riskType: 'liability' },
+    { id: 'km-3', severity: 'info', title: 'Assign Closing Checklist', detail: 'No assignee yet -- evening shift starts at 4 PM', actionLabel: 'Assign', route: '/checklists', riskType: 'operational' },
+    { id: 'km-4', severity: 'info', title: 'Sofia has 2 tasks remaining', detail: 'Temp log and receiving check', actionLabel: 'View', route: '/team', riskType: 'operational' },
   ];
+
+  // "Do This Next" -- top 3 actions
+  const doThisNextItems = priorityItems.slice(0, 3);
 
   // Live mode empty state
   if (!isDemoMode) {
@@ -216,52 +282,123 @@ export default function KitchenManagerDashboard() {
 
   return (
     <div className="space-y-6" style={{ fontFamily: 'Inter, sans-serif' }}>
-      {/* Hero Banner */}
+      {/* 1. Hero Banner */}
       <DashboardHero
         firstName={DEMO_ROLE_NAMES[userRole]?.firstName || 'Chef'}
         orgName={companyName || DEMO_ORG.name}
         locationName={locationName}
       />
 
-      {/* Onboarding checklist */}
+      {/* 2. Onboarding checklist */}
       <OnboardingChecklistCard />
 
-      {/* ============================================================ */}
-      {/* ABOVE THE FOLD — Kitchen Health                               */}
-      {/* ============================================================ */}
+      {/* 3. HealthBanner */}
+      <HealthBanner
+        status={healthStatus}
+        scope="Operations Health"
+        message={healthMessage}
+      />
 
-      {/* 4 health status tiles */}
+      {/* ============================================================ */}
+      {/* 4. Kitchen Status -- 2x2 grid (NO Facility Safety)           */}
+      {/* ============================================================ */}
       <div>
-        <SectionHeader>Kitchen Health<SectionTooltip content={overallScoreTooltip} /></SectionHeader>
+        <SectionHeader>Kitchen Status<SectionTooltip content={overallScoreTooltip} /></SectionHeader>
         <div className="grid grid-cols-2 gap-3">
-          <HealthTile label="Food Safety" status="green" detail="Compliant — no open majors" navigate={navigate} route="/compliance" />
-          <HealthTile label="Facility Safety" status="green" detail="All equipment current" navigate={navigate} route="/facility-safety" />
-          <HealthTile label="Temperature Readings" status="yellow" detail="Prep cooler needs logging" navigate={navigate} route="/temp-logs" />
-          <HealthTile label="Team Tasks" status="yellow" detail="52% complete — midday open" navigate={navigate} route="/checklists" />
+          <HealthTile
+            label="Food Safety"
+            status="green"
+            detail="Compliant -- no open majors"
+            navigate={navigate}
+            route="/compliance"
+          />
+          <HealthTile
+            label="Temp Logs"
+            status={needsLogCount > 0 ? 'yellow' : 'green'}
+            detail={needsLogCount > 0 ? `${needsLogCount} reading needs logging` : 'All readings current'}
+            navigate={navigate}
+            route="/temp-logs"
+          />
+          <HealthTile
+            label="Checklists"
+            status={notStartedChecklists.length > 0 ? 'yellow' : 'green'}
+            detail={checklistSummary}
+            navigate={navigate}
+            route="/checklists"
+          />
+          <HealthTile
+            label="Team Tasks"
+            status={teamPct < 70 ? 'yellow' : 'green'}
+            detail={`${teamPct}% complete -- ${teamTotalDone}/${teamTotalAll} tasks`}
+            navigate={navigate}
+            route="/team"
+          />
         </div>
       </div>
 
-      {/* Priority alert */}
+      {/* ============================================================ */}
+      {/* 5. "What Needs Attention" -- operational gaps ranked by risk  */}
+      {/* ============================================================ */}
       {priorityItems.length > 0 && (
-        <Card>
-          <button
-            type="button"
-            onClick={() => navigate(priorityItems[0].route)}
-            className="w-full flex items-center gap-3 text-left"
-          >
-            <AlertTriangle size={18} className="text-amber-500 shrink-0" />
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-gray-900">{priorityItems[0].title}</p>
-              <p className="text-xs text-gray-500 mt-0.5">{priorityItems[0].detail}</p>
-            </div>
-            <span className="text-xs font-semibold px-3 py-1.5 rounded-md text-white shrink-0" style={{ backgroundColor: '#d97706' }}>
-              {priorityItems[0].actionLabel} &rarr;
-            </span>
-          </button>
-        </Card>
+        <div>
+          <SectionHeader>What Needs Attention</SectionHeader>
+          <div className="space-y-2">
+            {priorityItems.map((item) => {
+              const iconColor = item.severity === 'critical' ? '#dc2626' : item.severity === 'warning' ? '#d97706' : '#6b7280';
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => navigate(item.route)}
+                  className="w-full bg-white rounded-lg p-3 text-left hover:shadow-md transition-shadow flex items-center gap-3"
+                  style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}
+                >
+                  <AlertTriangle size={16} className="shrink-0" style={{ color: iconColor }} />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-gray-900">{item.title}</p>
+                    {item.detail && <p className="text-xs text-gray-500 mt-0.5">{item.detail}</p>}
+                  </div>
+                  <RiskBadge type={item.riskType} />
+                </button>
+              );
+            })}
+          </div>
+        </div>
       )}
 
-      {/* Team Progress with progress bars */}
+      {/* ============================================================ */}
+      {/* 6. "Do This Next" -- max 3 actions                           */}
+      {/* ============================================================ */}
+      <div>
+        <SectionHeader>Do This Next</SectionHeader>
+        <div className="space-y-2">
+          {doThisNextItems.map((item, idx) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => navigate(item.route)}
+              className="w-full bg-white rounded-lg p-3 text-left hover:shadow-md transition-shadow flex items-center gap-3"
+              style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}
+            >
+              <span
+                className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
+                style={{ backgroundColor: '#163a5f' }}
+              >
+                {idx + 1}
+              </span>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-gray-900">{item.title}</p>
+                {item.detail && <p className="text-xs text-gray-500 mt-0.5">{item.detail}</p>}
+              </div>
+              <ArrowRight size={16} className="shrink-0 text-gray-400" />
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* ============================================================ */}
+      {/* 7. Team Progress with progress bars                          */}
+      {/* ============================================================ */}
       <Card>
         <SectionHeader>Team Progress</SectionHeader>
         <div className="space-y-3">
@@ -287,13 +424,13 @@ export default function KitchenManagerDashboard() {
       </Card>
 
       {/* ============================================================ */}
-      {/* BELOW THE FOLD                                                */}
+      {/* 8. BELOW THE FOLD                                            */}
       {/* ============================================================ */}
 
       {/* NFPA Monthly Reminder */}
       <NFPAReminder />
 
-      {/* Self-Diagnosis — Kitchen Problem */}
+      {/* Self-Diagnosis -- Kitchen Problem */}
       <SelfDiagCard />
 
       {/* Location tabs (if multiple locations) */}

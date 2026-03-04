@@ -1,9 +1,10 @@
-﻿import { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Flame, CalendarDays, ClipboardCheck,
+  Flame, CalendarDays, ClipboardCheck, UtensilsCrossed,
   ChevronDown, ChevronUp, ExternalLink, Phone,
-  AlertCircle, BookOpen,
+  AlertCircle, AlertTriangle, BookOpen, ArrowRight,
+  FileWarning, ShieldAlert, Info,
 } from 'lucide-react';
 import { useDemo } from '../../contexts/DemoContext';
 import { useRole } from '../../contexts/RoleContext';
@@ -14,24 +15,23 @@ import { DEMO_ORG, LOCATIONS_WITH_SCORES } from '../../data/demoData';
 import { useAllLocationJurisdictions } from '../../hooks/useJurisdiction';
 import { useAllComplianceScores } from '../../hooks/useComplianceScore';
 import { DEMO_LOCATION_GRADE_OVERRIDES } from '../../data/demoJurisdictions';
-import { AlertBanner, type AlertBannerItem } from '../shared/AlertBanner';
 import { FireStatusBars } from '../shared/FireStatusBars';
 import { FoodSafetyWidget } from '../shared/FoodSafetyWidget';
 
 // Shared dashboard infrastructure
 import {
-  GOLD, NAVY, PAGE_BG, BODY_TEXT, FONT,
+  GOLD, NAVY, PAGE_BG, BODY_TEXT, MUTED, FONT,
   JIE_LOC_MAP, KEYFRAMES,
-  stagger, DEMO_ROLE_NAMES,
+  stagger, DEMO_ROLE_NAMES, statusColor,
 } from './shared/constants';
 import { DashboardHero } from './shared/DashboardHero';
 import { HeroJurisdictionSummary } from './shared/HeroJurisdictionSummary';
-import { WhereDoIStartSection, type PriorityItem } from './shared/WhereDoIStartSection';
 import { TabbedDetailSection, type TabDef } from './shared/TabbedDetailSection';
 import { CalendarCard } from './shared/CalendarCard';
 import { COMPLIANCE_EVENTS, COMPLIANCE_CALENDAR } from '../../data/calendarDemoEvents';
 import { ErrorBoundary } from '../ErrorBoundary';
 import { OnboardingChecklistCard } from './shared/OnboardingChecklistCard';
+import { HealthBanner, type HealthStatus } from './shared/HealthBanner';
 
 // ================================================================
 // HELPERS (component-specific)
@@ -52,32 +52,54 @@ function gradingTypeLabel(gradingType: string | null): string {
 // ALERT DATA
 // ================================================================
 
-const COMPLIANCE_ALERTS: AlertBannerItem[] = [
+const COMPLIANCE_ALERTS: {
+  id: string;
+  severity: 'critical' | 'warning' | 'info';
+  message: string;
+  location?: string;
+  pillar?: string;
+  actionLabel: string;
+  route: string;
+  riskType: 'liability' | 'revenue' | 'cost' | 'operational';
+}[] = [
   {
     id: 'ca1',
     severity: 'critical',
-    message: 'Location 3 \u2014 3 open major violations require reinspection within 30 days', // demo
-    location: 'Location 3', // demo
+    message: 'Location 3 \u2014 3 open major violations require reinspection within 30 days',
+    location: 'Location 3',
     pillar: 'Food Safety',
     actionLabel: 'View Details',
     route: '/dashboard?location=university',
+    riskType: 'liability',
   },
   {
     id: 'ca2',
     severity: 'warning',
-    message: 'Location 2 approaching satisfactory threshold \u2014 9 violation points (limit: 13)', // demo
-    location: 'Location 2', // demo
-    pillar: 'Food Safety',
+    message: 'Fire Suppression Cert expiring Mar 15 \u2014 Location 2',
+    location: 'Location 2',
+    pillar: 'Facility Safety',
     actionLabel: 'Review',
-    route: '/dashboard?location=airport',
+    route: '/documents',
+    riskType: 'cost',
   },
   {
     id: 'ca3',
+    severity: 'warning',
+    message: 'Location 2 approaching satisfactory threshold \u2014 9 violation points (limit: 13)',
+    location: 'Location 2',
+    pillar: 'Food Safety',
+    actionLabel: 'Review',
+    route: '/dashboard?location=airport',
+    riskType: 'revenue',
+  },
+  {
+    id: 'ca4',
     severity: 'info',
     message: 'CalCode amendment AB-1228 effective March 1 \u2014 updated allergen labeling requirements',
     pillar: 'Regulatory',
     actionLabel: 'Read More',
     route: '/regulatory-alerts',
+    riskType: 'operational',
   },
 ];
 
@@ -85,29 +107,23 @@ const COMPLIANCE_ALERTS: AlertBannerItem[] = [
 // WHERE DO I START — PRIORITY ITEMS
 // ================================================================
 
-const COMPLIANCE_PRIORITIES: PriorityItem[] = [
+const COMPLIANCE_PRIORITIES = [
   {
     id: 'cp1',
-    severity: 'critical',
-    title: 'Prepare for reinspection \u2014 Airport',
+    title: 'Prepare for reinspection \u2014 Location 3',
     detail: '3 major violations must be corrected before Feb 28 reinspection',
-    actionLabel: 'View Violations',
-    route: '/dashboard?location=airport',
+    route: '/dashboard?location=university',
   },
   {
     id: 'cp2',
-    severity: 'warning',
     title: 'Schedule self-inspection \u2014 Location 1',
     detail: 'Monthly self-inspection due Mar 10 \u2014 last score 94%',
-    actionLabel: 'Start Inspection',
     route: '/self-inspection',
   },
   {
     id: 'cp3',
-    severity: 'info',
-    title: 'Resolve CFM assignment \u2014 University',
+    title: 'Resolve CFM assignment \u2014 Location 3',
     detail: 'Certified Food Manager assignment lapsed \u2014 renewal required',
-    actionLabel: 'Review',
     route: '/dashboard?location=university',
   },
 ];
@@ -117,15 +133,15 @@ const COMPLIANCE_PRIORITIES: PriorityItem[] = [
 // ================================================================
 
 const DEMO_INSPECTIONS = [
-  { location: 'Location 1', type: 'Food Safety \u2014 Annual', agency: 'Fresno County DPH', date: 'Mar 15, 2026', status: 'scheduled' as const }, // demo
-  { location: 'Location 2', type: 'Fire Suppression Inspection', agency: 'Merced County Fire', date: 'Feb 28, 2026', status: 'scheduled' as const }, // demo
-  { location: 'Location 3', type: 'Food Safety \u2014 Reinspection', agency: 'Stanislaus County DEH', date: 'Feb 22, 2026', status: 'urgent' as const }, // demo
+  { location: 'Location 1', type: 'Food Safety \u2014 Annual', agency: 'Fresno County DPH', date: 'Mar 15, 2026', status: 'scheduled' as const },
+  { location: 'Location 2', type: 'Fire Suppression Inspection', agency: 'Merced County Fire', date: 'Feb 28, 2026', status: 'scheduled' as const },
+  { location: 'Location 3', type: 'Food Safety \u2014 Reinspection', agency: 'Stanislaus County DEH', date: 'Feb 22, 2026', status: 'urgent' as const },
 ];
 
 const DEMO_SELF_INSPECTIONS = [
-  { location: 'Location 1', lastCompleted: 'Feb 10, 2026', score: '94%', nextDue: 'Mar 10, 2026', status: 'current' as const }, // demo
-  { location: 'Location 2', lastCompleted: 'Jan 28, 2026', score: '87%', nextDue: 'Feb 28, 2026', status: 'due_soon' as const }, // demo
-  { location: 'Location 3', lastCompleted: 'Dec 15, 2025', score: '72%', nextDue: 'Jan 15, 2026', status: 'overdue' as const }, // demo
+  { location: 'Location 1', lastCompleted: 'Feb 10, 2026', score: '94%', nextDue: 'Mar 10, 2026', status: 'current' as const },
+  { location: 'Location 2', lastCompleted: 'Jan 28, 2026', score: '87%', nextDue: 'Feb 28, 2026', status: 'due_soon' as const },
+  { location: 'Location 3', lastCompleted: 'Dec 15, 2025', score: '72%', nextDue: 'Jan 15, 2026', status: 'overdue' as const },
 ];
 
 const DEMO_REGULATORY = [
@@ -133,6 +149,29 @@ const DEMO_REGULATORY = [
   { date: 'Feb 5, 2026', title: 'NFPA 96 (2024) Operational Permit Updates', summary: 'Revised operational fire permit requirements for commercial kitchen hoods.', impact: 'medium' as const },
   { date: 'Jan 20, 2026', title: 'HACCP Plan Verification Schedule Change', summary: 'Annual HACCP plan verification now required within 60 days of license renewal.', impact: 'low' as const },
 ];
+
+// ================================================================
+// RISK TYPE CONFIG
+// ================================================================
+
+const RISK_TYPE_CONFIG: Record<string, { label: string; bg: string; color: string }> = {
+  liability: { label: 'Liability', bg: '#fef2f2', color: '#991b1b' },
+  revenue:   { label: 'Revenue',   bg: '#fffbeb', color: '#92400e' },
+  cost:      { label: 'Cost',      bg: '#fff7ed', color: '#9a3412' },
+  operational: { label: 'Operational', bg: '#eff6ff', color: '#1e40af' },
+};
+
+const SEVERITY_BADGE_CONFIG: Record<string, { bg: string; color: string; label: string }> = {
+  critical: { bg: '#dc2626', color: '#fff', label: 'Critical' },
+  warning:  { bg: '#d97706', color: '#fff', label: 'Warning' },
+  info:     { bg: '#2563eb', color: '#fff', label: 'Info' },
+};
+
+const SEVERITY_ICON_MAP: Record<string, typeof AlertCircle> = {
+  critical: ShieldAlert,
+  warning: AlertTriangle,
+  info: Info,
+};
 
 // ================================================================
 // MAIN COMPONENT
@@ -145,8 +184,6 @@ export default function ComplianceManagerDashboard() {
   const { t } = useTranslation();
 
   // Pre-extract tooltip strings (hooks cannot be called inside JSX)
-  const alertBannerTooltip = useTooltip('alertBanner', userRole);
-  const urgentItemsTooltip = useTooltip('urgentItems', userRole);
   const locationCardsTooltip = useTooltip('locationCards', userRole);
   const scheduleCalendarTooltip = useTooltip('scheduleCalendar', userRole);
 
@@ -157,18 +194,6 @@ export default function ComplianceManagerDashboard() {
   );
   const jurisdictions = useAllLocationJurisdictions(jieLocIds, isDemoMode);
   const jieScores = useAllComplianceScores(jurisdictions, isDemoMode);
-
-  // Dismissed alerts (session-only), capped at 2 highest severity
-  const SEVERITY_ORDER: Record<string, number> = { critical: 0, warning: 1, info: 2 };
-  const [dismissedAlerts, setDismissedAlerts] = useState<Set<string>>(new Set());
-  const allVisibleAlerts = COMPLIANCE_ALERTS
-    .filter(a => !dismissedAlerts.has(a.id))
-    .sort((a, b) => (SEVERITY_ORDER[a.severity] ?? 9) - (SEVERITY_ORDER[b.severity] ?? 9));
-  const hasMoreAlerts = allVisibleAlerts.length > 2;
-  const visibleAlerts = allVisibleAlerts.slice(0, 2);
-  const handleDismissAlert = (id: string) => {
-    setDismissedAlerts(prev => new Set(prev).add(id));
-  };
 
   // Expanded location cards
   const [expandedLocations, setExpandedLocations] = useState<Set<string>>(new Set());
@@ -184,7 +209,30 @@ export default function ComplianceManagerDashboard() {
   const locs = LOCATIONS_WITH_SCORES;
 
   // ================================================================
-  // TABBED BOTTOM SECTION — tab definitions
+  // DERIVE HEALTH STATUS FROM jieScores
+  // ================================================================
+  const healthStatus: HealthStatus = useMemo(() => {
+    const scores = Object.values(jieScores);
+    if (scores.length === 0) return 'healthy';
+    const hasFailing = scores.some(
+      s => s.foodSafety?.status === 'failing' || s.facilitySafety?.status === 'failing',
+    );
+    if (hasFailing) return 'risk';
+    const hasAtRisk = scores.some(
+      s => s.foodSafety?.status === 'at_risk' || s.facilitySafety?.status === 'at_risk',
+    );
+    if (hasAtRisk) return 'attention';
+    return 'healthy';
+  }, [jieScores]);
+
+  const healthMessage = useMemo(() => {
+    if (healthStatus === 'risk') return '1 location has failing status \u2014 immediate attention required';
+    if (healthStatus === 'attention') return '1 location approaching threshold \u2014 review recommended';
+    return 'All locations in good standing across both pillars';
+  }, [healthStatus]);
+
+  // ================================================================
+  // TABBED BOTTOM SECTION -- tab definitions
   // ================================================================
 
   const bottomTabs: TabDef[] = useMemo(() => [
@@ -251,10 +299,10 @@ export default function ComplianceManagerDashboard() {
           </div>
           <div className="space-y-2">
             {[
-              { name: 'HACCP Plan — Location 1', status: 'current', expires: 'Sep 2026' }, // demo
+              { name: 'HACCP Plan \u2014 Location 1', status: 'current', expires: 'Sep 2026' },
               { name: 'Food Handler Permits (12 staff)', status: 'current', expires: 'Various' },
-              { name: 'Fire Suppression Cert — Location 2', status: 'expiring', expires: 'Mar 15, 2026' },
-              { name: 'Health Permit — Location 3', status: 'current', expires: 'Dec 2026' }, // demo
+              { name: 'Fire Suppression Cert \u2014 Location 2', status: 'expiring', expires: 'Mar 15, 2026' },
+              { name: 'Health Permit \u2014 Location 3', status: 'current', expires: 'Dec 2026' },
             ].map((doc, idx) => (
               <button
                 key={idx}
@@ -439,7 +487,7 @@ export default function ComplianceManagerDashboard() {
       <style>{KEYFRAMES}</style>
 
       {/* ============================================================ */}
-      {/* HERO BANNER — DashboardHero shared component                 */}
+      {/* 1. HERO BANNER                                               */}
       {/* ============================================================ */}
       <div style={{ padding: '20px 24px 0' }}>
         <DashboardHero
@@ -452,7 +500,9 @@ export default function ComplianceManagerDashboard() {
         </DashboardHero>
       </div>
 
-      {/* Onboarding checklist */}
+      {/* ============================================================ */}
+      {/* 2. ONBOARDING CHECKLIST                                      */}
+      {/* ============================================================ */}
       <div style={{ padding: '0 24px' }}>
         <div className="mt-4">
           <OnboardingChecklistCard />
@@ -460,88 +510,274 @@ export default function ComplianceManagerDashboard() {
       </div>
 
       {/* ============================================================ */}
-      {/* ABOVE THE FOLD — Score is this role's primary tool            */}
+      {/* 3. HEALTH BANNER                                             */}
       {/* ============================================================ */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-4" style={stagger(1)}>
+        <HealthBanner
+          status={healthStatus}
+          scope="Compliance Health"
+          message={healthMessage}
+        />
+      </div>
 
-      {/* Portfolio Score — large, prominent */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-4">
-        <div
-          className="rounded-xl p-6 text-center"
-          style={{
-            backgroundColor: '#fff',
-            border: '1px solid #e5e7eb',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-          }}
-        >
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-2">Portfolio Compliance Score</p>
-          <p className="text-5xl font-bold" style={{ color: '#d97706' }}>72<span className="text-2xl text-gray-400">%</span></p>
-          <p className="text-xs text-gray-500 mt-1">Across 3 locations · 1 critical, 1 at risk, 1 compliant</p>
+      {/* ============================================================ */}
+      {/* 4. STANDING BY JURISDICTION                                   */}
+      {/* ============================================================ */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-6" style={stagger(2)}>
+        <h3 className="text-xs font-semibold uppercase tracking-wider mb-4" style={{ color: MUTED }}>
+          Standing by Jurisdiction
+        </h3>
+        <div className="space-y-4">
+          {locs.map(loc => {
+            const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
+            const score = jieScores[jieLocId];
+            const jur = jurisdictions[jieLocId];
+            const override = DEMO_LOCATION_GRADE_OVERRIDES[jieLocId];
+
+            const foodStatus = score?.foodSafety?.status ?? 'unknown';
+            const foodGradeDisplay = score?.foodSafety?.gradeDisplay ?? 'Not assessed';
+            const foodSummary = (score?.foodSafety?.details as Record<string, any>)?.summary ?? undefined;
+            const foodGradingType = jur?.foodSafety?.grading_type ?? null;
+            const foodAgencyName = jur?.foodSafety?.agency_name ?? 'Health Dept';
+            const foodScoringMethod = jur?.foodSafety?.scoring_method ?? null;
+
+            const fireStatus = score?.facilitySafety?.status ?? 'unknown';
+            const fireGradeDisplay = score?.facilitySafety?.gradeDisplay ?? 'Not assessed';
+            const fireAHJName = jur?.facilitySafety?.agency_name ?? 'Fire AHJ';
+            const fireConfig = jur?.facilitySafety?.fire_jurisdiction_config;
+            const nfpaEdition = fireConfig?.fire_code_edition ?? 'NFPA 96 (2024)';
+            const county = jur?.county ?? '';
+
+            return (
+              <div key={loc.id} style={stagger(2)}>
+                {/* Location header */}
+                <div className="flex items-center gap-2 mb-2">
+                  <button
+                    type="button"
+                    onClick={() => navigate(`/locations/${loc.id}`)}
+                    className="text-sm font-semibold hover:opacity-70 transition-opacity"
+                    style={{ color: BODY_TEXT }}
+                  >
+                    {loc.name}
+                  </button>
+                  {county && (
+                    <span
+                      className="text-[10px] font-medium px-2 py-0.5 rounded-full"
+                      style={{ backgroundColor: '#f1f5f9', color: '#475569', border: '1px solid #e2e8f0' }}
+                    >
+                      {county}
+                    </span>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {/* Food Safety Card */}
+                  <button
+                    type="button"
+                    onClick={() => navigate('/compliance')}
+                    className="w-full text-left bg-white rounded-xl p-4 transition-all hover:shadow-md"
+                    style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)', borderLeft: `3px solid ${statusColor(foodStatus)}` }}
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <UtensilsCrossed size={14} style={{ color: statusColor(foodStatus) }} />
+                      <span className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: MUTED }}>
+                        Food Safety
+                      </span>
+                    </div>
+                    <p className="text-[13px] font-semibold" style={{ color: BODY_TEXT }}>{foodGradeDisplay}</p>
+                    {foodSummary && (
+                      <p className="text-[11px] text-gray-500 mt-0.5">{foodSummary}</p>
+                    )}
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="text-[10px]" style={{ color: MUTED }}>{foodAgencyName}</span>
+                      {(gradingTypeLabel(foodGradingType) || foodScoringMethod) && (
+                        <>
+                          <span className="text-[10px] text-gray-300">&middot;</span>
+                          <span className="text-[10px]" style={{ color: MUTED }}>
+                            {gradingTypeLabel(foodGradingType) || foodScoringMethod}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                    <div className="mt-2">
+                      <span
+                        className="text-[10px] font-bold px-1.5 py-0.5 rounded"
+                        style={{
+                          backgroundColor: foodStatus === 'passing' ? '#dcfce7'
+                            : foodStatus === 'failing' ? '#fef2f2'
+                            : foodStatus === 'at_risk' ? '#fffbeb'
+                            : '#f1f5f9',
+                          color: statusColor(foodStatus),
+                        }}
+                      >
+                        {foodStatus === 'passing' ? 'Compliant'
+                          : foodStatus === 'failing' ? 'Action Required'
+                          : foodStatus === 'at_risk' ? 'At Risk'
+                          : 'Unknown'}
+                      </span>
+                    </div>
+                  </button>
+
+                  {/* Facility Safety Card */}
+                  <button
+                    type="button"
+                    onClick={() => navigate('/facility-safety')}
+                    className="w-full text-left bg-white rounded-xl p-4 transition-all hover:shadow-md"
+                    style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)', borderLeft: `3px solid ${statusColor(fireStatus)}` }}
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <Flame size={14} style={{ color: statusColor(fireStatus) }} />
+                      <span className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: MUTED }}>
+                        Facility Safety
+                      </span>
+                    </div>
+                    <p className="text-[13px] font-semibold" style={{ color: BODY_TEXT }}>
+                      {fireAHJName}
+                    </p>
+                    <p className="text-[11px] text-gray-500 mt-0.5">{nfpaEdition}</p>
+                    <div className="mt-2">
+                      <span
+                        className="text-[10px] font-bold px-1.5 py-0.5 rounded"
+                        style={{
+                          backgroundColor: fireStatus === 'passing' ? '#dcfce7'
+                            : fireStatus === 'failing' ? '#fef2f2'
+                            : fireStatus === 'at_risk' ? '#fffbeb'
+                            : '#f1f5f9',
+                          color: statusColor(fireStatus),
+                        }}
+                      >
+                        {fireStatus === 'passing' ? 'Pass'
+                          : fireStatus === 'failing' ? 'Fail'
+                          : fireStatus === 'at_risk' ? 'At Risk'
+                          : 'Unknown'}
+                      </span>
+                    </div>
+                    {/* FireStatusBars compact */}
+                    {override && (
+                      <div className="mt-2">
+                        <FireStatusBars
+                          permitStatus={override.facilitySafety.permitStatus}
+                          hoodStatus={override.facilitySafety.hoodStatus}
+                          extinguisherStatus={override.facilitySafety.extinguisherStatus}
+                          ansulStatus={override.facilitySafety.ansulStatus}
+                          compact
+                          onCardClick={(key) => {
+                            const routes: Record<string, string> = {
+                              permit: '/equipment?category=permit',
+                              extinguisher: '/equipment?category=fire_extinguisher',
+                              hood: '/calendar?category=hood_cleaning',
+                              ansul: '/calendar?category=fire_suppression',
+                            };
+                            navigate(routes[key] || '/equipment');
+                          }}
+                        />
+                      </div>
+                    )}
+                  </button>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      {/* 4 Metric Tiles — Score · Open CAs · Next Deadline · Docs Current */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-4">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <button
-            type="button"
-            onClick={() => navigate('/compliance')}
-            className="rounded-xl p-4 text-center transition-all hover:shadow-md"
-            style={{ backgroundColor: '#fffbeb', border: '1px solid #fde68a' }}
-          >
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Score</p>
-            <p className="text-xl font-bold" style={{ color: '#92400e' }}>72%</p>
-            <p className="text-[11px] text-amber-700">At risk</p>
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate('/corrective-actions')}
-            className="rounded-xl p-4 text-center transition-all hover:shadow-md"
-            style={{ backgroundColor: '#fef2f2', border: '1px solid #fecaca' }}
-          >
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Open CAs</p>
-            <p className="text-xl font-bold text-red-700">4</p>
-            <p className="text-[11px] text-red-600">1 critical</p>
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate('/calendar')}
-            className="rounded-xl p-4 text-center transition-all hover:shadow-md"
-            style={{ backgroundColor: '#fffbeb', border: '1px solid #fde68a' }}
-          >
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Next Deadline</p>
-            <p className="text-lg font-bold" style={{ color: '#92400e' }}>Feb 22</p>
-            <p className="text-[11px] text-amber-700">Reinspection</p>
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate('/documents')}
-            className="rounded-xl p-4 text-center transition-all hover:shadow-md"
-            style={{ backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0' }}
-          >
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Docs Current</p>
-            <p className="text-xl font-bold text-green-700">11/12</p>
-            <p className="text-[11px] text-green-600">1 expiring</p>
-          </button>
+      {/* ============================================================ */}
+      {/* 5. WHAT NEEDS ATTENTION                                       */}
+      {/* ============================================================ */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-8" style={stagger(3)}>
+        <h3 className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: MUTED }}>
+          What Needs Attention
+        </h3>
+        <div className="space-y-2">
+          {COMPLIANCE_ALERTS.map(alert => {
+            const SevIcon = SEVERITY_ICON_MAP[alert.severity] || Info;
+            const sevBadge = SEVERITY_BADGE_CONFIG[alert.severity];
+            const riskBadge = RISK_TYPE_CONFIG[alert.riskType];
+
+            return (
+              <button
+                key={alert.id}
+                type="button"
+                onClick={() => navigate(alert.route)}
+                className="w-full flex items-center gap-3 p-4 rounded-xl text-left transition-all hover:shadow-md bg-white"
+                style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
+              >
+                <SevIcon
+                  size={18}
+                  className="shrink-0"
+                  style={{ color: sevBadge.bg }}
+                />
+                <div className="flex-1 min-w-0">
+                  <p className="text-[13px] font-semibold" style={{ color: BODY_TEXT }}>
+                    {alert.message}
+                  </p>
+                  <div className="flex items-center gap-2 mt-1 flex-wrap">
+                    {alert.location && (
+                      <span className="text-[10px] text-gray-500">{alert.location}</span>
+                    )}
+                    {alert.pillar && (
+                      <>
+                        <span className="text-[10px] text-gray-300">&middot;</span>
+                        <span className="text-[10px] text-gray-500">{alert.pillar}</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span
+                    className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded"
+                    style={{ backgroundColor: riskBadge.bg, color: riskBadge.color }}
+                  >
+                    {riskBadge.label}
+                  </span>
+                  <span
+                    className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded"
+                    style={{ backgroundColor: sevBadge.bg, color: sevBadge.color }}
+                  >
+                    {sevBadge.label}
+                  </span>
+                </div>
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      {/* ONE most urgent corrective action */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-4">
-        <button
-          type="button"
-          onClick={() => navigate('/dashboard?location=university')}
-          className="w-full flex items-center gap-3 p-4 rounded-xl text-left transition-all hover:shadow-md"
-          style={{ backgroundColor: '#fef2f2', border: '1px solid #fecaca' }}
-        >
-          <AlertCircle size={20} className="text-red-500 shrink-0" />
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-red-900">Location 3 — 3 open major violations</p> {/* demo */}
-            <p className="text-xs text-red-700 mt-0.5">Reinspection due Feb 22 · Stanislaus County DEH</p>
-          </div>
-          <span className="text-xs font-semibold px-3 py-1.5 rounded-md text-white shrink-0" style={{ backgroundColor: '#dc2626' }}>
-            View All &rarr;
-          </span>
-        </button>
+      {/* ============================================================ */}
+      {/* 6. DO THIS NEXT                                               */}
+      {/* ============================================================ */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-8" style={stagger(4)}>
+        <h3 className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: MUTED }}>
+          Do This Next
+        </h3>
+        <div className="space-y-2">
+          {COMPLIANCE_PRIORITIES.slice(0, 3).map((item, idx) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => navigate(item.route)}
+              className="w-full flex items-center gap-3 p-4 rounded-xl text-left transition-all hover:shadow-md bg-white"
+              style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
+            >
+              {/* Numbered circle */}
+              <div
+                className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-xs font-bold text-white"
+                style={{ backgroundColor: NAVY }}
+              >
+                {idx + 1}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[13px] font-semibold" style={{ color: BODY_TEXT }}>
+                  {item.title}
+                </p>
+                {item.detail && (
+                  <p className="text-[11px] text-gray-500 mt-0.5">{item.detail}</p>
+                )}
+              </div>
+              <ArrowRight size={16} className="shrink-0" style={{ color: NAVY }} />
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* ============================================================ */}
@@ -549,32 +785,14 @@ export default function ComplianceManagerDashboard() {
       {/* ============================================================ */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-8 space-y-6">
 
-        {/* Alert Banners */}
-        <div style={stagger(2)}>
-          {visibleAlerts.length > 0 && (
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1 flex items-center">{t('cards.alerts')}<SectionTooltip content={alertBannerTooltip} /></h4>
-          )}
-          <AlertBanner alerts={visibleAlerts} onDismiss={handleDismissAlert} navigate={navigate} />
-          {hasMoreAlerts && (
-            <button
-              type="button"
-              onClick={() => navigate('/regulatory-alerts')}
-              className="mt-2 text-xs font-medium hover:underline"
-              style={{ color: NAVY }}
-            >
-              {t('cards.viewAll')} alerts &rarr;
-            </button>
-          )}
-        </div>
-
-        {/* Where Do I Start? */}
-        <WhereDoIStartSection items={COMPLIANCE_PRIORITIES} staggerOffset={3} tooltipContent={urgentItemsTooltip} />
-
         {/* ============================================================ */}
-        {/* 1. LOCATION COMPLIANCE OVERVIEW                              */}
+        {/* LOCATION COMPLIANCE OVERVIEW (expandable per-location cards) */}
         {/* ============================================================ */}
-        <div style={stagger(4)}>
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4 flex items-center">{t('cards.locationComplianceOverview')}<SectionTooltip content={locationCardsTooltip} /></h3>
+        <div style={stagger(5)}>
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4 flex items-center">
+            {t('cards.locationComplianceOverview')}
+            <SectionTooltip content={locationCardsTooltip} />
+          </h3>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             {locs.map(loc => {
               const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
@@ -741,7 +959,7 @@ export default function ComplianceManagerDashboard() {
         </div>
 
         {/* Schedule Calendar */}
-        <div style={stagger(5)}>
+        <div style={stagger(6)}>
           <ErrorBoundary level="widget">
             <CalendarCard
               events={COMPLIANCE_EVENTS}
@@ -754,9 +972,9 @@ export default function ComplianceManagerDashboard() {
         </div>
 
         {/* ============================================================ */}
-        {/* 2. TABBED DETAIL SECTION                                     */}
+        {/* TABBED DETAIL SECTION                                        */}
         {/* ============================================================ */}
-        <div style={stagger(5)}>
+        <div style={stagger(7)}>
           <TabbedDetailSection tabs={bottomTabs} defaultTab="inspections" />
         </div>
 

@@ -1,4 +1,4 @@
-﻿import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   CheckCircle2,
@@ -6,6 +6,7 @@ import {
   Clock,
   Radio,
   AlertTriangle,
+  ArrowRight,
 } from 'lucide-react';
 import { useRole } from '../../contexts/RoleContext';
 import { useTranslation } from '../../contexts/LanguageContext';
@@ -15,6 +16,7 @@ import { useDemo } from '../../contexts/DemoContext';
 import { DEMO_ORG } from '../../data/demoData';
 import { DEMO_ROLE_NAMES } from './shared/constants';
 import { DashboardHero } from './shared/DashboardHero';
+import { HealthBanner, type HealthStatus } from './shared/HealthBanner';
 import { WhereDoIStartSection, type PriorityItem } from './shared/WhereDoIStartSection';
 import { TabbedDetailSection, type TabDef } from './shared/TabbedDetailSection';
 import { CalendarCard } from './shared/CalendarCard';
@@ -166,6 +168,32 @@ function HACCPTile({ tile, navigate }: { tile: typeof HACCP_TILES[0]; navigate: 
 }
 
 // ===============================================
+// Derive HealthBanner status from HACCP tiles
+// ===============================================
+
+function deriveKitchenHealth(tiles: typeof HACCP_TILES): { status: HealthStatus; message: string } {
+  const hasRed = tiles.some(t => t.status === 'red');
+  const hasYellow = tiles.some(t => t.status === 'yellow');
+
+  if (hasRed) {
+    return {
+      status: 'risk',
+      message: 'One or more CCPs are out of range — immediate action required.',
+    };
+  }
+  if (hasYellow) {
+    return {
+      status: 'attention',
+      message: 'A CCP is trending out of range. Monitor closely.',
+    };
+  }
+  return {
+    status: 'healthy',
+    message: 'All CCPs within range. Certs valid.',
+  };
+}
+
+// ===============================================
 // CHEF DASHBOARD
 // ===============================================
 
@@ -201,9 +229,13 @@ export default function ChefDashboard() {
   const foodSafetyLocations = isDemoMode ? CHEF_FOOD_SAFETY_LOCATIONS : [];
   const haccpTiles = isDemoMode ? HACCP_TILES : [];
   const priorityItems: PriorityItem[] = isDemoMode ? [
-    { id: 'km-1', severity: 'warning', title: 'Complete midday checklist (4 items remaining)', detail: 'Carlos is working on it', actionLabel: 'View', route: '/checklists' },
-    { id: 'km-2', severity: 'warning', title: 'Log Prep Cooler temp', detail: 'Last logged 4 hours ago', actionLabel: 'Log Temp', route: '/temp-logs' },
+    { id: 'km-1', severity: 'warning', title: 'Hot Hold Station 2 trending low', detail: 'Check holding temperature — CCP out of range', actionLabel: 'Check Now', route: '/temp-logs' },
+    { id: 'km-2', severity: 'warning', title: 'Log Prep Cooler temp', detail: 'Last logged 4 hours ago — overdue', actionLabel: 'Log Temp', route: '/temp-logs' },
+    { id: 'km-3', severity: 'info', title: 'Complete midday checklist (4 items remaining)', detail: 'Carlos is working on it', actionLabel: 'View', route: '/checklists' },
   ] : [];
+
+  // Derive health banner status from HACCP tiles
+  const kitchenHealth = useMemo(() => deriveKitchenHealth(haccpTiles), [haccpTiles]);
 
   // Animated progress bar
   const [animatedProgress, setAnimatedProgress] = useState(0);
@@ -233,25 +265,31 @@ export default function ChefDashboard() {
     );
   }
 
+  // Build "Do This Next" actions (max 3, from priorityItems)
+  const doThisNextItems = priorityItems.slice(0, 3);
+
   return (
     <div className="space-y-6" style={{ fontFamily: 'Inter, sans-serif' }}>
-      {/* Hero Banner */}
+      {/* 1. Hero Banner */}
       <DashboardHero
         firstName={DEMO_ROLE_NAMES[userRole]?.firstName || 'Chef'}
         orgName={companyName || DEMO_ORG.name}
         locationName={locationName}
       />
 
-      {/* Onboarding checklist */}
+      {/* 2. Onboarding checklist */}
       <OnboardingChecklistCard />
 
-      {/* ============================================================ */}
-      {/* ABOVE THE FOLD — HACCP Status                                 */}
-      {/* ============================================================ */}
+      {/* 3. HealthBanner — Kitchen Health */}
+      <HealthBanner
+        status={kitchenHealth.status}
+        scope="Kitchen Health"
+        message={kitchenHealth.message}
+      />
 
-      {/* HACCP 2x2 tiles */}
+      {/* 4. HACCP CCP Status — 2x2 grid */}
       <div>
-        <SectionHeader>HACCP Status<SectionTooltip content={overallScoreTooltip} /></SectionHeader>
+        <SectionHeader>HACCP CCP Status<SectionTooltip content={overallScoreTooltip} /></SectionHeader>
         <div className="grid grid-cols-2 gap-3">
           {haccpTiles.map(tile => (
             <HACCPTile key={tile.id} tile={tile} navigate={navigate} />
@@ -259,7 +297,7 @@ export default function ChefDashboard() {
         </div>
       </div>
 
-      {/* CCP alert if any out of range */}
+      {/* 5. CCP alert card — if any CCP not green */}
       {haccpTiles.some(t => t.status !== 'green') && (
         <Card>
           <button
@@ -279,7 +317,79 @@ export default function ChefDashboard() {
         </Card>
       )}
 
-      {/* Team on Shift (compact) */}
+      {/* 6. What Needs Attention — CCP gaps + expiring certs ranked by risk */}
+      {priorityItems.length > 0 && (
+        <div>
+          <SectionHeader>What Needs Attention</SectionHeader>
+          <div className="space-y-2">
+            {priorityItems.map(item => {
+              const riskType = item.id === 'km-1' ? 'liability' : item.id === 'km-2' ? 'liability' : 'operational';
+              const riskBg = riskType === 'liability' ? '#fef2f2' : '#eff6ff';
+              const riskColor = riskType === 'liability' ? '#dc2626' : '#2563eb';
+              const riskLabel = riskType === 'liability' ? 'Liability' : 'Operational';
+              const iconColor = item.severity === 'warning' ? '#d97706' : '#6b7280';
+
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => navigate(item.route)}
+                  className="w-full rounded-lg p-3 text-left hover:shadow-md transition-shadow bg-white"
+                  style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}
+                >
+                  <div className="flex items-start gap-3">
+                    <AlertTriangle size={16} className="shrink-0 mt-0.5" style={{ color: iconColor }} />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <p className="text-sm font-semibold text-gray-900">{item.title}</p>
+                        <span
+                          className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0"
+                          style={{ backgroundColor: riskBg, color: riskColor }}
+                        >
+                          {riskLabel}
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-500">{item.detail}</p>
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* 7. Do This Next — max 3 actions */}
+      {doThisNextItems.length > 0 && (
+        <div>
+          <SectionHeader>Do This Next</SectionHeader>
+          <div className="space-y-2">
+            {doThisNextItems.map((item, index) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => navigate(item.route)}
+                className="w-full rounded-lg p-3 text-left hover:shadow-md transition-shadow bg-white flex items-center gap-3"
+                style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}
+              >
+                <div
+                  className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
+                  style={{ backgroundColor: '#163a5f' }}
+                >
+                  {index + 1}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-gray-900">{item.title}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">{item.actionLabel}</p>
+                </div>
+                <ArrowRight size={16} className="shrink-0 text-gray-400" />
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 8. Team on Shift (compact) */}
       <Card>
         <SectionHeader>Team on Shift</SectionHeader>
         <div className="space-y-2">
@@ -295,6 +405,26 @@ export default function ChefDashboard() {
               <span className="text-xs text-gray-500">{member.done}/{member.total} done</span>
             </div>
           ))}
+        </div>
+      </Card>
+
+      {/* 9. Today's Progress (animated bar) */}
+      <Card>
+        <SectionHeader>{t('cards.todaysProgress')}<SectionTooltip content={todaysProgressTooltip} /></SectionHeader>
+        <div className="space-y-2">
+          <div className="w-full bg-gray-200 rounded-full" style={{ height: 12 }}>
+            <div
+              className="rounded-full transition-all duration-700 ease-out"
+              style={{
+                width: `${animatedProgress}%`,
+                height: 12,
+                backgroundColor: getProgressColor(animatedProgress),
+              }}
+            />
+          </div>
+          <p className="text-sm font-medium" style={{ color: getProgressColor(DEMO_PROGRESS) }}>
+            {progress}% {t('status.complete').toLowerCase()}
+          </p>
         </div>
       </Card>
 
@@ -326,26 +456,6 @@ export default function ChefDashboard() {
           ))}
         </div>
       )}
-
-      {/* Today's Progress */}
-      <Card>
-        <SectionHeader>{t('cards.todaysProgress')}<SectionTooltip content={todaysProgressTooltip} /></SectionHeader>
-        <div className="space-y-2">
-          <div className="w-full bg-gray-200 rounded-full" style={{ height: 12 }}>
-            <div
-              className="rounded-full transition-all duration-700 ease-out"
-              style={{
-                width: `${animatedProgress}%`,
-                height: 12,
-                backgroundColor: getProgressColor(animatedProgress),
-              }}
-            />
-          </div>
-          <p className="text-sm font-medium" style={{ color: getProgressColor(DEMO_PROGRESS) }}>
-            {progress}% {t('status.complete').toLowerCase()}
-          </p>
-        </div>
-      </Card>
 
       {/* Food Safety locations */}
       <div>

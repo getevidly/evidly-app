@@ -15,6 +15,7 @@ import { PhotoButton, type PhotoRecord } from '../components/PhotoEvidence';
 import { useTranslation } from '../contexts/LanguageContext';
 import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
+import { useJurisdiction } from '../hooks/useJurisdiction';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { InfoTooltip } from '../components/ui/InfoTooltip';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
@@ -145,6 +146,11 @@ export function FacilitySafety() {
 
   const locations = isDemoMode ? DEMO_LOCATIONS : [];
   const locationParam = searchParams.get('location') || 'downtown';
+  const jieLocKey = `demo-loc-${locationParam}`;
+  const jurisdiction = useJurisdiction(jieLocKey, isDemoMode);
+  const fireConfig = jurisdiction?.facilitySafety?.fire_jurisdiction_config;
+  const ahjLabel = fireConfig?.fire_ahj_name ?? null;
+  const codeLabel = fireConfig?.fire_code_edition ?? null;
   const [activeTab, setActiveTab] = useState<Frequency>('daily');
   const [responses, setResponses] = useState<Record<string, CheckResponse>>(() => {
     return isDemoMode ? (DEMO_PREFILLED[locationParam] || {}) : {};
@@ -155,8 +161,7 @@ export function FacilitySafety() {
   const [aiFields, setAiFields] = useState<Set<string>>(new Set());
   const [detailModal, setDetailModal] = useState<{ category: string; status: AnyStatus } | null>(null);
 
-  const jieKey = `demo-loc-${locationParam}`;
-  const override = DEMO_LOCATION_GRADE_OVERRIDES[jieKey];
+  const override = DEMO_LOCATION_GRADE_OVERRIDES[jieLocKey];
   const fireGrade = override?.facilitySafety?.grade || 'Pending';
   const fireDisplay = override?.facilitySafety?.gradeDisplay || 'Pending Verification';
   const fireSummary = override?.facilitySafety?.summary || '';
@@ -232,7 +237,10 @@ export function FacilitySafety() {
           </div>
           <div>
             <h1 className="text-xl font-bold text-gray-900">{t('pages.facilitySafety.checklist')}<InfoTooltip content="Track fire suppression, hood cleaning, pest control, grease trap, and other facility safety compliance." /></h1>
-            <p className="text-sm text-gray-500">NFPA 96 · NFPA 10 · NFPA 17A · NFPA 101 · IFC/CFC</p>
+            <p className="text-sm text-gray-500">
+              {ahjLabel ? `${ahjLabel} — ` : ''}
+              {codeLabel ? `${codeLabel} · ` : ''}NFPA 96 · NFPA 10 · NFPA 17A · NFPA 101
+            </p>
           </div>
         </div>
 
@@ -416,12 +424,13 @@ export function FacilitySafety() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-sm font-semibold text-gray-900">{item.title}</span>
-                      {/* Authority badge */}
+                      {/* Authority badge — annotated with AHJ when config available */}
                       <span
                         className="text-[10px] font-semibold px-1.5 py-0.5 rounded"
                         style={{ color: auth.color, backgroundColor: auth.bg }}
+                        title={ahjLabel ? `Authority: ${ahjLabel}` : undefined}
                       >
-                        {auth.label}{item.authoritySection ? ` ${item.authoritySection}` : ''}
+                        {auth.label}{item.authoritySection ? ` ${item.authoritySection}` : ''}{codeLabel && (item.authoritySource === 'cfc' || item.authoritySource === 'nfpa_96') ? ` (${codeLabel})` : ''}
                       </span>
                       {needsCorrectiveAction && (
                         <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-red-100 text-red-700">
@@ -632,10 +641,10 @@ export function FacilitySafety() {
           <div className="border-t border-gray-100 p-4">
             <div className="space-y-3">
               {[
-                { service: 'Hood Cleaning', freq: 'Semi-annual / Quarterly', authority: 'NFPA 96 §11.4', vendor: 'IKECA-certified vendor' },
-                { service: 'Ansul System Service', freq: 'Semi-annual', authority: 'NFPA 17A §8.3 / UL 300', vendor: 'Licensed fire protection vendor' },
-                { service: 'Fire Extinguisher Annual', freq: 'Annual', authority: 'NFPA 10 §7.3', vendor: 'Professional fire equipment company' },
-                { service: 'Grease Trap Cleaning', freq: 'Per schedule', authority: 'Local plumbing code', vendor: 'Licensed hauler' },
+                { service: 'Hood Cleaning', freq: fireConfig ? `Type I: ${fireConfig.nfpa_96_cleaning_frequencies.type_i_hood} / Type II: ${fireConfig.nfpa_96_cleaning_frequencies.type_ii_hood}` : 'Semi-annual / Quarterly', authority: 'NFPA 96 §11.4', vendor: 'IKECA-certified vendor' },
+                { service: 'Ansul System Service', freq: fireConfig?.ansul_system?.inspection_interval ?? 'Semi-annual', authority: `${fireConfig?.ansul_system?.standard ?? 'NFPA 17A'} / UL 300`, vendor: 'Licensed fire protection vendor' },
+                { service: 'Fire Extinguisher Annual', freq: fireConfig?.fire_extinguisher?.inspection_interval ?? 'Annual', authority: 'NFPA 10 §7.3', vendor: 'Professional fire equipment company' },
+                { service: 'Grease Trap Cleaning', freq: fireConfig?.grease_trap?.cleaning_interval ? `Every ${fireConfig.grease_trap.cleaning_interval}` : 'Per schedule', authority: 'Local plumbing code', vendor: 'Licensed hauler' },
               ].map(svc => (
                 <div key={svc.service} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
                   <div>
@@ -676,7 +685,7 @@ export function FacilitySafety() {
         <FacilityDetailModal
           open={!!detailModal}
           onClose={() => setDetailModal(null)}
-          data={getFacilityDetail(`demo-loc-${locationParam}`, detailModal.category, detailModal.status)}
+          data={getFacilityDetail(jieLocKey, detailModal.category, detailModal.status)}
           onAction={(action, category) => {
             guardAction(action, `Facility Safety — ${category}`, () => {
               setDetailModal(null);

@@ -200,15 +200,27 @@ export default function KitchenStaffTaskList() {
           <div
             className="rounded-xl p-5 text-center"
             style={{
-              backgroundColor: '#fff',
-              border: '1px solid #e5e7eb',
+              backgroundColor: progressPct === 100 ? '#f0fdf4' : '#fff',
+              border: `1px solid ${progressPct === 100 ? '#bbf7d0' : '#e5e7eb'}`,
               boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
             }}
           >
-            <p className="text-4xl font-bold" style={{ color: getProgressColor(progressPct) }}>
-              {doneCount} / {totalTasks}
-            </p>
-            <p className="text-sm text-gray-500 mt-1">{s.tasksDone(doneCount, totalTasks)}</p>
+            {progressPct === 100 ? (
+              <>
+                <CheckCircle2 size={32} className="text-green-500 mx-auto mb-2" />
+                <p className="text-xl font-bold text-green-800">
+                  {lang === 'es' ? '\u00a1Gran turno!' : 'All done \u2014 great shift!'}
+                </p>
+                <p className="text-sm text-green-600 mt-1">{s.tasksDone(doneCount, totalTasks)}</p>
+              </>
+            ) : (
+              <>
+                <p className="text-4xl font-bold" style={{ color: getProgressColor(progressPct) }}>
+                  {doneCount} / {totalTasks}
+                </p>
+                <p className="text-sm text-gray-500 mt-1">{s.tasksDone(doneCount, totalTasks)}</p>
+              </>
+            )}
             <div className="w-full bg-gray-200 rounded-full mt-3" style={{ height: 14 }}>
               <div
                 className="rounded-full transition-all duration-500 ease-out"

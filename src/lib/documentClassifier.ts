@@ -21,24 +21,115 @@ export interface ClassificationResponse {
 }
 
 // ---------------------------------------------------------------------------
-// File validation
+// File validation — Layer 1: Client-side pre-screening
 // ---------------------------------------------------------------------------
 
-const CLASSIFIABLE_TYPES = [
-  'image/jpeg', 'image/png', 'image/webp', 'application/pdf',
-];
-const MIN_FILE_SIZE = 5 * 1024;       // 5 KB
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+const MIN_FILE_SIZE = 5 * 1024;          // 5 KB
 
-export function canClassify(file: File): { ok: boolean; reason?: string } {
-  if (!CLASSIFIABLE_TYPES.includes(file.type)) {
-    return { ok: false, reason: 'Unsupported file type. Use JPEG, PNG, WebP, or PDF.' };
+/** Allowlisted file types: extension → expected MIME types */
+const ALLOWED_FILE_TYPES: Record<string, string[]> = {
+  '.pdf':  ['application/pdf'],
+  '.docx': ['application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+  '.xlsx': ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
+  '.jpg':  ['image/jpeg'],
+  '.jpeg': ['image/jpeg'],
+  '.png':  ['image/png'],
+  '.csv':  ['text/csv', 'text/plain', 'application/vnd.ms-excel'],
+};
+
+/** Types that can be sent to AI classification (images + PDF) */
+const CLASSIFIABLE_TYPES = [
+  'image/jpeg', 'image/png', 'application/pdf',
+];
+
+/**
+ * Extract the file extension from a filename.
+ * Returns lowercase extension including the dot, or empty string.
+ */
+function getFileExtension(filename: string): string {
+  const lastDot = filename.lastIndexOf('.');
+  if (lastDot === -1 || lastDot === 0) return '';
+  return filename.slice(lastDot).toLowerCase();
+}
+
+/**
+ * Detect double extensions (e.g., .pdf.exe, .jpg.scr).
+ * Returns true if the filename has more than one extension-like segment.
+ */
+function hasDoubleExtension(filename: string): boolean {
+  // Strip leading path separators
+  const base = filename.split(/[/\\]/).pop() || filename;
+  // Count segments that look like extensions (dot followed by 1-5 alphanumeric chars)
+  const parts = base.split('.');
+  if (parts.length <= 2) return false; // name.ext is fine
+  // Check if multiple trailing parts look like extensions
+  const extensionLikeParts = parts.slice(1).filter(p => /^[a-zA-Z0-9]{1,5}$/.test(p));
+  return extensionLikeParts.length >= 2;
+}
+
+export interface FileValidationResult {
+  ok: boolean;
+  reason?: string;
+  /** Whether the file can be sent to AI classification (images/PDF only) */
+  classifiable?: boolean;
+}
+
+/**
+ * Validate a file for upload — Layer 1 client-side pre-screening.
+ * Checks: allowlisted types, extension-MIME match, size, no double extension.
+ */
+export function validateFileForUpload(file: File): FileValidationResult {
+  const filename = file.name;
+  const ext = getFileExtension(filename);
+
+  // Reject files with no extension
+  if (!ext) {
+    return { ok: false, reason: 'File has no extension. Accepted types: PDF, DOCX, XLSX, JPG, PNG, CSV.' };
   }
-  if (file.size < MIN_FILE_SIZE) {
-    return { ok: false, reason: 'File too small (min 5 KB).' };
+
+  // Reject double extensions (e.g., report.pdf.exe)
+  if (hasDoubleExtension(filename)) {
+    return { ok: false, reason: `Suspicious filename "${filename}" — double extensions are not allowed.` };
   }
+
+  // Check extension is in allowlist
+  const allowedMimes = ALLOWED_FILE_TYPES[ext];
+  if (!allowedMimes) {
+    return { ok: false, reason: `File type "${ext}" is not allowed. Accepted types: PDF, DOCX, XLSX, JPG, PNG, CSV.` };
+  }
+
+  // Validate MIME type matches extension
+  if (!allowedMimes.includes(file.type) && file.type !== '') {
+    return {
+      ok: false,
+      reason: `File extension "${ext}" does not match the file content type "${file.type}". This may indicate a renamed file.`,
+    };
+  }
+
+  // Enforce 10 MB maximum
   if (file.size > MAX_FILE_SIZE) {
-    return { ok: false, reason: 'File too large (max 10 MB).' };
+    return { ok: false, reason: 'File too large. Maximum file size is 10 MB.' };
+  }
+
+  // Enforce minimum size
+  if (file.size < MIN_FILE_SIZE) {
+    return { ok: false, reason: 'File too small (minimum 5 KB).' };
+  }
+
+  const classifiable = CLASSIFIABLE_TYPES.includes(file.type);
+  return { ok: true, classifiable };
+}
+
+/**
+ * Legacy compatibility wrapper — used by SmartUploadModal classification flow.
+ * Now delegates to validateFileForUpload with classifiable check.
+ */
+export function canClassify(file: File): { ok: boolean; reason?: string } {
+  const result = validateFileForUpload(file);
+  if (!result.ok) return { ok: false, reason: result.reason };
+  if (!result.classifiable) {
+    return { ok: false, reason: 'This file type cannot be AI-classified. It will be uploaded without classification.' };
   }
   return { ok: true };
 }

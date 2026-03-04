@@ -7,7 +7,7 @@
  * per-location grades, statuses, and FireStatusBars.
  */
 
-import { UtensilsCrossed, Flame } from 'lucide-react';
+import { UtensilsCrossed, Flame, Shield, Info } from 'lucide-react';
 import { useTranslation } from '../../../contexts/LanguageContext';
 import { useTooltip } from '../../../hooks/useTooltip';
 import { SectionTooltip } from '../../ui/SectionTooltip';
@@ -90,14 +90,22 @@ export function HeroJurisdictionSummary({ jieScores, jurisdictions, navigate, us
           <Flame size={16} style={{ color: '#e2e8f0' }} />
           <span className="text-sm font-semibold text-white">{t('cards.facilitySafety')}</span>
           <SectionTooltip content={useTooltip('facilitySafety', userRole)} />
-          <span className="text-[10px] text-slate-200 ml-auto">NFPA 96 (2024)</span>
+          <span className="text-[10px] text-slate-200 ml-auto">
+            {(() => {
+              const firstLocId = LOCATIONS_WITH_SCORES[0] ? (JIE_LOC_MAP[LOCATIONS_WITH_SCORES[0].id] || LOCATIONS_WITH_SCORES[0].id) : null;
+              const firstJur = firstLocId ? jurisdictions[firstLocId] : null;
+              return firstJur?.facilitySafety?.fire_jurisdiction_config?.fire_code_edition ?? 'NFPA 96 (2024)';
+            })()}
+          </span>
         </div>
         <div className="space-y-3">
           {LOCATIONS_WITH_SCORES.map(loc => {
             const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
             const score = jieScores[jieLocId];
+            const jur = jurisdictions[jieLocId];
             const override = DEMO_LOCATION_GRADE_OVERRIDES[jieLocId];
             const isPassing = score?.facilitySafety?.status === 'passing';
+            const fireConfig = jur?.facilitySafety?.fire_jurisdiction_config;
             return (
               <button
                 key={loc.id}
@@ -106,12 +114,30 @@ export function HeroJurisdictionSummary({ jieScores, jurisdictions, navigate, us
                 className="w-full text-left rounded-lg p-3 transition-colors hover:bg-white/10"
                 style={{ backgroundColor: 'rgba(255,255,255,0.04)' }}
               >
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center justify-between mb-1">
                   <span className="text-xs text-white font-medium">{loc.name}</span>
-                  <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${isPassing ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'}`}>
-                    {isPassing ? t('status.pass') : t('status.fail')}
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    {fireConfig?.federal_overlay && (
+                      <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 flex items-center gap-0.5">
+                        <Shield size={9} />
+                        {fireConfig.federal_overlay.agency}
+                      </span>
+                    )}
+                    <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${isPassing ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'}`}>
+                      {isPassing ? t('status.pass') : t('status.fail')}
+                    </span>
+                  </div>
                 </div>
+                {fireConfig && (
+                  <div className="flex items-center gap-1 mb-1.5">
+                    <span className="text-[10px] text-slate-200 truncate">{fireConfig.fire_ahj_name}</span>
+                    {fireConfig.ahj_split_notes && (
+                      <span title={fireConfig.ahj_split_notes}>
+                        <Info size={10} className="text-slate-400 shrink-0" />
+                      </span>
+                    )}
+                  </div>
+                )}
                 {override && (
                   <FireStatusBars
                     permitStatus={override.facilitySafety.permitStatus}

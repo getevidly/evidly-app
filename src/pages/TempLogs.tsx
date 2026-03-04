@@ -22,6 +22,7 @@ import { AddCurrentReadingModal, type CurrentReadingSaveData } from '../componen
 import { AddReceivingReadingModal, type ReceivingReadingSaveData } from '../components/temp-logs/AddReceivingReadingModal';
 import { AddHoldingReadingModal, type HoldingReadingSaveData } from '../components/temp-logs/AddHoldingReadingModal';
 import { AddCooldownReadingModal, type CooldownSaveData } from '../components/temp-logs/AddCooldownReadingModal';
+import { VendorCombobox } from '../components/temp-logs/VendorCombobox';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 
 interface TemperatureEquipment {
@@ -174,7 +175,6 @@ export function TempLogs() {
   const [receivingNotes, setReceivingNotes] = useState('');
   const [receivingItems, setReceivingItems] = useState<ReceivingItem[]>([]);
   const [receivedBy, setReceivedBy] = useState('');
-  const [showVendorOther, setShowVendorOther] = useState(false);
 
   // CCP-04 corrective action state
   const [showCcpModal, setShowCcpModal] = useState(false);
@@ -1497,7 +1497,6 @@ export function TempLogs() {
   const isWithinRange = selectedEquipment && tempValue >= selectedEquipment.min_temp && tempValue <= selectedEquipment.max_temp;
 
   const locations = isDemoMode ? ['Location 1', 'Location 2', 'Location 3'] : [];
-  const vendors = isDemoMode ? ['Sysco', 'US Foods', 'Performance Food Group', 'Restaurant Depot', 'Other'] : [];
 
   return (
     <>
@@ -1821,35 +1820,7 @@ export function TempLogs() {
               {/* Vendor Name */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">{t('tempLogs.vendorName')}</label>
-                <select
-                  value={showVendorOther ? 'Other' : vendorName}
-                  onChange={(e) => {
-                    if (e.target.value === 'Other') {
-                      setShowVendorOther(true);
-                      setVendorName('');
-                    } else {
-                      setShowVendorOther(false);
-                      setVendorName(e.target.value);
-                    }
-                  }}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
-                >
-                  <option value="">Select vendor...</option>
-                  {vendors.map(vendor => (
-                    <option key={vendor} value={vendor}>{vendor}</option>
-                  ))}
-                </select>
-                {showVendorOther && (
-                  <input
-                    type="text"
-                    value={vendorName}
-                    onChange={(e) => setVendorName(e.target.value)}
-                    placeholder="Enter vendor name"
-                    required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37] mt-2"
-                  />
-                )}
+                <VendorCombobox value={vendorName} onChange={setVendorName} />
               </div>
 
               {/* Current Item Form */}
@@ -3740,7 +3711,6 @@ export function TempLogs() {
       <AddReceivingReadingModal
         open={showAddReceivingModal}
         onClose={() => setShowAddReceivingModal(false)}
-        vendors={vendors}
         categoryConfig={CATEGORY_TEMP_CONFIG}
         onSave={handleSaveReceivingReading}
       />

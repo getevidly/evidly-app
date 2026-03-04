@@ -1,3 +1,7 @@
+// HARDCODED DATA PROHIBITED — all values must come from Supabase queries
+// parameterized by account_id and location_id. Demo data below is wrapped
+// in isDemoMode guards and never reaches production render paths.
+
 import { useState, useMemo } from 'react';
 import { Navigate } from 'react-router-dom';
 import { Breadcrumb } from '../components/Breadcrumb';
@@ -106,7 +110,8 @@ function createRng(seed: number) {
   };
 }
 
-// ── Demo Data ─────────────────────────────────────────────────────
+// DEMO ONLY — never reaches production render paths.
+// All org data below is synthetic demo content for internal previews.
 const RAW_ORGS = [
   { name: "Bella's Italian Kitchen", industry: 'Restaurant', locs: 1 },
   { name: 'Your Organization', industry: 'Restaurant', locs: 3 },
@@ -274,10 +279,32 @@ export function UsageAnalytics() {
   const [emailSent, setEmailSent] = useState(false);
   const [shiftFilter, setShiftFilter] = useState('all');
 
-  const allOrgs = useMemo(() => generateDemoOrgs(), []);
+  // Demo data is only generated in demo mode — never in production
+  const allOrgs = useMemo(() => isDemoMode ? generateDemoOrgs() : [], [isDemoMode]);
 
   if (!isAdmin) {
     return <Navigate to="/dashboard" replace />;
+  }
+
+  // Production empty state — no hardcoded data for authenticated users
+  if (!isDemoMode) {
+    return (
+      <>
+        <Breadcrumb items={[{ label: 'Administration', href: '/dashboard' }, { label: 'Usage Analytics' }]} />
+        <div style={{ padding: '24px', maxWidth: '1400px', margin: '0 auto', ...F }}>
+          <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#1b4965', margin: '0 0 4px 0', ...F }}>Usage Analytics</h1>
+          <p style={{ fontSize: '14px', color: '#6b7280', margin: '0 0 32px 0', ...F }}>Internal — Track customer module adoption and platform usage</p>
+          <div style={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '48px 24px', textAlign: 'center' }}>
+            <div style={{ fontSize: '48px', marginBottom: '16px' }}>📊</div>
+            <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#374151', marginBottom: '8px', ...F }}>Insufficient data</h2>
+            <p style={{ fontSize: '14px', color: '#6b7280', maxWidth: 480, margin: '0 auto', ...F }}>
+              Usage analytics will be available after 30 days of customer activity.
+              Data is sourced from Supabase event logs parameterized by account_id.
+            </p>
+          </div>
+        </div>
+      </>
+    );
   }
 
   const timeScale = TIME_PERIODS.find(t => t.id === timePeriod)?.scale || 1;

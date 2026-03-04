@@ -146,6 +146,7 @@ const en = {
     analytics: 'Analytics',
     intelligence: 'Compliance Intelligence',
     foodSafetyOverview: 'Food Safety Overview',
+    allEquipment: 'All Equipment',
   },
 
   // ── Common ──────────────────────────────────────────
@@ -1584,6 +1585,7 @@ const es: typeof en = {
     analytics: 'Analítica',
     intelligence: 'Inteligencia de Cumplimiento',
     foodSafetyOverview: 'Resumen de Seguridad Alimentaria',
+    allEquipment: 'Todo el Equipo',
   },
 
   common: {

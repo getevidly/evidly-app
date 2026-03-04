@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Check, X as XIcon } from 'lucide-react';
 import { ModalShell, FormField, ReadingMethodSelect, formatDateTimeLocal, INPUT_CLASS, BTN_PRIMARY, BTN_CANCEL } from './shared';
+import { VendorCombobox } from './VendorCombobox';
 import type { ReadingMethod, CategoryTempConfig } from './types';
 import { AIAssistButton, AIGeneratedIndicator } from '../../components/ui/AIAssistButton';
 
@@ -18,16 +19,15 @@ export interface ReceivingReadingSaveData {
 interface Props {
   open: boolean;
   onClose: () => void;
-  vendors: string[];
+  locationId?: string;
   categoryConfig: CategoryTempConfig;
   onSave: (data: ReceivingReadingSaveData) => void;
 }
 
-export function AddReceivingReadingModal({ open, onClose, vendors, categoryConfig, onSave }: Props) {
+export function AddReceivingReadingModal({ open, onClose, locationId, categoryConfig, onSave }: Props) {
   const [itemDescription, setItemDescription] = useState('');
   const [foodCategory, setFoodCategory] = useState('');
   const [vendorName, setVendorName] = useState('');
-  const [showVendorOther, setShowVendorOther] = useState(false);
   const [temperature, setTemperature] = useState('');
   const [readingMethod, setReadingMethod] = useState<ReadingMethod>('manual_thermometer');
   const [readingTime, setReadingTime] = useState(formatDateTimeLocal(new Date()));
@@ -42,7 +42,7 @@ export function AddReceivingReadingModal({ open, onClose, vendors, categoryConfi
 
   const resetForm = () => {
     setItemDescription(''); setFoodCategory(''); setVendorName('');
-    setShowVendorOther(false); setTemperature('');
+    setTemperature('');
     setReadingMethod('manual_thermometer');
     setReadingTime(formatDateTimeLocal(new Date()));
     setNotes('');
@@ -90,21 +90,7 @@ export function AddReceivingReadingModal({ open, onClose, vendors, categoryConfi
         </FormField>
 
         <FormField label="Supplier / Vendor">
-          <select
-            value={showVendorOther ? 'Other' : vendorName}
-            onChange={e => {
-              if (e.target.value === 'Other') { setShowVendorOther(true); setVendorName(''); }
-              else { setShowVendorOther(false); setVendorName(e.target.value); }
-            }}
-            className={INPUT_CLASS}
-          >
-            <option value="">Select vendor...</option>
-            {vendors.map(v => <option key={v} value={v}>{v}</option>)}
-            <option value="Other">Other</option>
-          </select>
-          {showVendorOther && (
-            <input type="text" value={vendorName} onChange={e => setVendorName(e.target.value)} placeholder="Enter vendor name" className={`${INPUT_CLASS} mt-2`} />
-          )}
+          <VendorCombobox value={vendorName} onChange={setVendorName} locationId={locationId} />
         </FormField>
 
         {tempRequired && (

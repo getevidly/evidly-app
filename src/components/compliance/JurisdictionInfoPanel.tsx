@@ -1,7 +1,8 @@
 // src/components/compliance/JurisdictionInfoPanel.tsx
 // Role-aware jurisdiction info — returns null for staff role
-import React from 'react';
+import React, { useState } from 'react';
 import { UserRole, canViewJurisdictionInfo } from '../../utils/roleAccess';
+import type { FireJurisdictionConfig } from '../../types/jurisdiction';
 
 interface JurisdictionInfo {
   county: string;
@@ -15,6 +16,7 @@ interface JurisdictionInfo {
   opsWeight: number | null;
   docsWeight: number | null;
   fireAhjName: string;
+  fireJurisdictionConfig?: FireJurisdictionConfig | null;
 }
 
 interface JurisdictionInfoPanelProps {
@@ -56,6 +58,153 @@ const THRESHOLD_DESCRIPTIONS: Record<string, string> = {
   three_tier_rating: 'Good (0-6 points), Satisfactory (7-13 points), Unsatisfactory (14+ points).',
   report_only: 'Inspection report filed but no public-facing grade or placard.',
 };
+
+// Expandable fire authority detail section
+function FireAuthoritySection({ fireAhjName, fireConfig }: { fireAhjName: string; fireConfig?: FireJurisdictionConfig | null }) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={() => setExpanded(!expanded)}
+        style={{
+          background: 'none',
+          border: 'none',
+          padding: 0,
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px',
+          width: '100%',
+        }}
+      >
+        <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#616161', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+          Fire Authority
+        </span>
+        <span style={{ fontSize: '0.7rem', color: '#9E9E9E' }}>{expanded ? '▾' : '▸'}</span>
+      </button>
+      <p style={{ margin: '4px 0 0', fontSize: '0.9rem', color: '#424242' }}>
+        {fireAhjName}
+      </p>
+      {fireConfig && (
+        <p style={{ margin: '2px 0 0', fontSize: '0.8rem', color: '#757575' }}>
+          {fireConfig.fire_code_edition}
+        </p>
+      )}
+      {expanded && fireConfig && (
+        <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #E0E0E0' }}>
+          {/* NFPA 96 Hood Cleaning Frequencies */}
+          <div style={{ marginBottom: '10px' }}>
+            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#757575' }}>
+              NFPA 96 Hood Cleaning
+            </span>
+            <div style={{ display: 'flex', gap: '12px', marginTop: '4px' }}>
+              <div style={{ flex: 1, backgroundColor: '#FFF3E0', borderRadius: '6px', padding: '6px 10px' }}>
+                <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#E65100' }}>
+                  {fireConfig.nfpa_96_cleaning_frequencies.type_i_hood}
+                </div>
+                <div style={{ fontSize: '0.7rem', color: '#BF360C' }}>Type I Hood</div>
+              </div>
+              <div style={{ flex: 1, backgroundColor: '#FFF8E1', borderRadius: '6px', padding: '6px 10px' }}>
+                <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#F57F17' }}>
+                  {fireConfig.nfpa_96_cleaning_frequencies.type_ii_hood}
+                </div>
+                <div style={{ fontSize: '0.7rem', color: '#F57F17' }}>Type II Hood</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Hood Suppression */}
+          <div style={{ marginBottom: '10px' }}>
+            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#757575' }}>
+              Hood Suppression System
+            </span>
+            <p style={{ margin: '2px 0 0', fontSize: '0.8rem', color: '#424242' }}>
+              {fireConfig.hood_suppression.system_type} — inspected {fireConfig.hood_suppression.inspection_interval}
+            </p>
+            <p style={{ margin: '1px 0 0', fontSize: '0.75rem', color: '#9E9E9E' }}>
+              Standard: {fireConfig.hood_suppression.standard}
+            </p>
+          </div>
+
+          {/* Fire Extinguishers */}
+          <div style={{ marginBottom: '10px' }}>
+            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#757575' }}>
+              Fire Extinguishers
+            </span>
+            <p style={{ margin: '2px 0 0', fontSize: '0.8rem', color: '#424242' }}>
+              Types: {fireConfig.fire_extinguisher.types.join(', ')} — inspected {fireConfig.fire_extinguisher.inspection_interval}
+            </p>
+            <p style={{ margin: '1px 0 0', fontSize: '0.75rem', color: '#9E9E9E' }}>
+              Hydrostatic test: {fireConfig.fire_extinguisher.hydrostatic_interval}
+            </p>
+          </div>
+
+          {/* Ansul System */}
+          {fireConfig.ansul_system.required && (
+            <div style={{ marginBottom: '10px' }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#757575' }}>
+                Ansul System
+              </span>
+              <p style={{ margin: '2px 0 0', fontSize: '0.8rem', color: '#424242' }}>
+                Inspected {fireConfig.ansul_system.inspection_interval} per {fireConfig.ansul_system.standard}
+              </p>
+            </div>
+          )}
+
+          {/* Grease Trap */}
+          {fireConfig.grease_trap.required && (
+            <div style={{ marginBottom: '10px' }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#757575' }}>
+                Grease Trap / Interceptor
+              </span>
+              <p style={{ margin: '2px 0 0', fontSize: '0.8rem', color: '#424242' }}>
+                {fireConfig.grease_trap.interceptor_type} — cleaned every {fireConfig.grease_trap.cleaning_interval}
+              </p>
+            </div>
+          )}
+
+          {/* AHJ Split Notes */}
+          {fireConfig.ahj_split_notes && (
+            <div style={{
+              marginBottom: '10px',
+              backgroundColor: '#E3F2FD',
+              borderRadius: '6px',
+              padding: '8px 12px',
+            }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#1565C0' }}>
+                Multi-AHJ Note
+              </span>
+              <p style={{ margin: '2px 0 0', fontSize: '0.8rem', color: '#1565C0' }}>
+                {fireConfig.ahj_split_notes}
+              </p>
+            </div>
+          )}
+
+          {/* Federal Overlay */}
+          {fireConfig.federal_overlay && (
+            <div style={{
+              backgroundColor: '#E8EAF6',
+              borderRadius: '6px',
+              padding: '8px 12px',
+            }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#283593' }}>
+                Federal Overlay — {fireConfig.federal_overlay.agency}
+              </span>
+              <p style={{ margin: '2px 0 0', fontSize: '0.8rem', color: '#283593' }}>
+                {fireConfig.federal_overlay.authority}
+              </p>
+              <p style={{ margin: '2px 0 0', fontSize: '0.75rem', color: '#3949AB' }}>
+                {fireConfig.federal_overlay.notes}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export const JurisdictionInfoPanel: React.FC<JurisdictionInfoPanelProps> = ({
   jurisdiction,
@@ -154,14 +303,10 @@ export const JurisdictionInfoPanel: React.FC<JurisdictionInfoPanelProps> = ({
       </div>
 
       {/* Fire AHJ */}
-      <div>
-        <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#616161', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-          Fire Authority
-        </span>
-        <p style={{ margin: '4px 0 0', fontSize: '0.9rem', color: '#424242' }}>
-          {jurisdiction.fireAhjName}
-        </p>
-      </div>
+      <FireAuthoritySection
+        fireAhjName={jurisdiction.fireAhjName}
+        fireConfig={jurisdiction.fireJurisdictionConfig}
+      />
     </div>
   );
 };

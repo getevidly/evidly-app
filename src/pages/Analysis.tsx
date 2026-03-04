@@ -1,3 +1,7 @@
+// HARDCODED DATA PROHIBITED — all values must come from Supabase queries
+// parameterized by account_id and location_id. Demo data below is wrapped
+// in isDemoMode guards and never reaches production render paths.
+
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Breadcrumb } from '../components/Breadcrumb';
@@ -35,10 +39,12 @@ interface PredictiveAlert {
 // ── Font ───────────────────────────────────────────────────────────
 const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
 
-// ── Team members for assign dropdown ───────────────────────────────
+// DEMO ONLY — never reaches production render paths.
+// Team members for demo assign dropdown; production reads from Supabase team table.
 const TEAM_MEMBERS = ['Maria Garcia', 'John Smith', 'Sarah Lee', 'Michael Torres', 'Emma Davis', 'James Chen'];
 
-// ── Demo alerts ────────────────────────────────────────────────────
+// DEMO ONLY — never reaches production render paths.
+// Demo alerts; production reads from ai_insights table.
 const DEMO_ALERTS: PredictiveAlert[] = [
   {
     id: 'pa-1',
@@ -416,11 +422,13 @@ export function Analysis() {
   const lowCount = activeAlerts.filter(a => a.severity === 'low').length;
   const resolvedThisWeek = alerts.filter(a => a.status === 'resolved' && a.resolved_at && (Date.now() - new Date(a.resolved_at).getTime()) < 7 * 24 * 60 * 60 * 1000).length;
 
-  // ── Sidebar data ──────────────────────────────────────────────
-  const alertTrends = [
+  // ── Sidebar data — demo only for historical trends ──────────
+  const alertTrends = isDemoMode ? [
     { week: '4 weeks ago', generated: 8, resolved: 6 },
     { week: '3 weeks ago', generated: 11, resolved: 9 },
     { week: '2 weeks ago', generated: 7, resolved: 5 },
+    { week: 'This week', generated: filteredAlerts.length, resolved: resolvedThisWeek },
+  ] : [
     { week: 'This week', generated: filteredAlerts.length, resolved: resolvedThisWeek },
   ];
 
@@ -440,8 +448,9 @@ export function Analysis() {
   // ── Unique locations for filter ───────────────────────────────
   const alertLocations = [...new Set(alerts.map(a => a.location))];
 
-  // ── Existing chart data ───────────────────────────────────────
-  const scoreProjectionData = [
+  // ── Chart data — DEMO ONLY, never reaches production render paths ──
+  // In production, these charts show empty states until real compliance_score_snapshots data exists.
+  const scoreProjectionData = isDemoMode ? [
     { week: '12w ago', actual: 65, noAction: null, recommended: null },
     { week: '11w ago', actual: 68, noAction: null, recommended: null },
     { week: '10w ago', actual: 70, noAction: null, recommended: null },
@@ -459,47 +468,49 @@ export function Analysis() {
     { week: '+2w', actual: null, noAction: 70, recommended: 78 },
     { week: '+3w', actual: null, noAction: 67, recommended: 80 },
     { week: '+4w', actual: null, noAction: 65, recommended: 82 },
-  ];
+  ] : [];
 
-  const foodSafetyTrend = [
+  const foodSafetyTrend = isDemoMode ? [
     { week: '12w', score: 72 }, { week: '11w', score: 74 }, { week: '10w', score: 76 },
     { week: '9w', score: 75 }, { week: '8w', score: 77 }, { week: '7w', score: 78 },
     { week: '6w', score: 79 }, { week: '5w', score: 80 }, { week: '4w', score: 81 },
     { week: '3w', score: 82 }, { week: '2w', score: 83 }, { week: 'Now', score: 84 },
-  ];
-  const facilitySafetyTrend = [
+  ] : [];
+  const facilitySafetyTrend = isDemoMode ? [
     { week: '12w', score: 68 }, { week: '11w', score: 70 }, { week: '10w', score: 71 },
     { week: '9w', score: 70 }, { week: '8w', score: 72 }, { week: '7w', score: 73 },
     { week: '6w', score: 74 }, { week: '5w', score: 75 }, { week: '4w', score: 76 },
     { week: '3w', score: 77 }, { week: '2w', score: 78 }, { week: 'Now', score: 79 },
-  ];
-  const downtownTrends = {
+  ] : [];
+  const downtownTrends = isDemoMode ? {
     foodSafety: foodSafetyTrend.map((d) => ({ ...d, score: Math.min(100, d.score + 10) })),
     facilitySafety: facilitySafetyTrend.map((d) => ({ ...d, score: Math.min(100, d.score + 12) })),
-  };
-  const airportTrends = {
+  } : { foodSafety: [] as { week: string; score: number }[], facilitySafety: [] as { week: string; score: number }[] };
+  const airportTrends = isDemoMode ? {
     foodSafety: foodSafetyTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 4) })),
     facilitySafety: facilitySafetyTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 8) })),
-  };
-  const universityTrends = {
+  } : { foodSafety: [] as { week: string; score: number }[], facilitySafety: [] as { week: string; score: number }[] };
+  const universityTrends = isDemoMode ? {
     foodSafety: foodSafetyTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 18) })),
     facilitySafety: facilitySafetyTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 22) })),
-  };
-  const allTrends = {
+  } : { foodSafety: [] as { week: string; score: number }[], facilitySafety: [] as { week: string; score: number }[] };
+  const allTrends = isDemoMode ? {
     foodSafety: foodSafetyTrend.map((d, i) => ({ ...d, score: Math.round((downtownTrends.foodSafety[i].score + airportTrends.foodSafety[i].score + universityTrends.foodSafety[i].score) / 3) })),
     facilitySafety: facilitySafetyTrend.map((d, i) => ({ ...d, score: Math.round((downtownTrends.facilitySafety[i].score + airportTrends.facilitySafety[i].score + universityTrends.facilitySafety[i].score) / 3) })),
-  };
+  } : { foodSafety: [] as { week: string; score: number }[], facilitySafety: [] as { week: string; score: number }[] };
   const locationTrends = {
     'all': allTrends, 'downtown': downtownTrends, 'airport': airportTrends, 'university': universityTrends,
   } as Record<string, { foodSafety: typeof foodSafetyTrend; facilitySafety: typeof facilitySafetyTrend }>;
 
   const currentTrends = locationTrends[selectedLocation] || locationTrends['all'];
-  const opStart = currentTrends.foodSafety[0].score;
-  const opEnd = currentTrends.foodSafety[currentTrends.foodSafety.length - 1].score;
-  const eqStart = currentTrends.facilitySafety[0].score;
-  const eqEnd = currentTrends.facilitySafety[currentTrends.facilitySafety.length - 1].score;
+  const opStart = currentTrends.foodSafety.length > 0 ? currentTrends.foodSafety[0].score : 0;
+  const opEnd = currentTrends.foodSafety.length > 0 ? currentTrends.foodSafety[currentTrends.foodSafety.length - 1].score : 0;
+  const eqStart = currentTrends.facilitySafety.length > 0 ? currentTrends.facilitySafety[0].score : 0;
+  const eqEnd = currentTrends.facilitySafety.length > 0 ? currentTrends.facilitySafety[currentTrends.facilitySafety.length - 1].score : 0;
 
   // ── Actions to improve score (existing table) ─────────────────
+  // DEMO ONLY — scoreImpactData comes from demoData.ts; production will query
+  // compliance_action_items from Supabase parameterized by account_id + location_id.
   const getRecoverablePoints = (impact: string): number => {
     const match = impact.match(/(\d+)\s*of\s*(\d+)/);
     if (match) return parseInt(match[2]) - parseInt(match[1]);
@@ -508,7 +519,7 @@ export function Analysis() {
     return 0;
   };
 
-  const allActionsToImproveScore = scoreImpactData
+  const allActionsToImproveScore = isDemoMode ? scoreImpactData
     .filter(item => item.status !== 'current')
     .map(item => ({
       priority: item.status === 'overdue' || item.status === 'expired' || item.status === 'missing' ? 'HIGH' : item.status === 'due_soon' ? 'MEDIUM' : 'LOW',
@@ -525,7 +536,7 @@ export function Analysis() {
       const prioDiff = (prioOrder[a.priority] ?? 3) - (prioOrder[b.priority] ?? 3);
       if (prioDiff !== 0) return prioDiff;
       return b.pointImpact - a.pointImpact;
-    });
+    }) : [];
 
   const actionsToImproveScore = allActionsToImproveScore.filter(a => {
     if (actionLocationFilter !== 'all' && a.locationId !== actionLocationFilter) return false;
@@ -815,30 +826,40 @@ export function Analysis() {
             {/* Score Projection */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6" style={{ marginBottom: '24px' }}>
               <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#111827', marginBottom: '16px', ...F }}>Score Projection</h2>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={scoreProjectionData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="week" tick={{ fontSize: 12 }} />
-                  <YAxis domain={[50, 100]} />
-                  <Tooltip />
-                  <Legend />
-                  <ReferenceLine y={90} stroke="#22c55e" strokeDasharray="3 3" label={{ value: 'Inspection Ready', position: 'right', fill: '#22c55e', fontSize: 11 }} />
-                  <ReferenceLine y={70} stroke="#eab308" strokeDasharray="3 3" label={{ value: 'Needs Attention', position: 'right', fill: '#eab308', fontSize: 11 }} />
-                  <Line type="monotone" dataKey="actual" stroke="#1e4d6b" strokeWidth={2} dot={{ r: 3 }} name="Actual Score" connectNulls={false} />
-                  <Line type="monotone" dataKey="noAction" stroke="#ef4444" strokeWidth={2} strokeDasharray="6 4" dot={{ r: 3 }} name="No Action" connectNulls={false} />
-                  <Line type="monotone" dataKey="recommended" stroke="#22c55e" strokeWidth={2} strokeDasharray="6 4" dot={{ r: 3 }} name="Recommended Actions" connectNulls={false} />
-                </LineChart>
-              </ResponsiveContainer>
-              <div style={{ display: 'flex', gap: '16px', marginTop: '12px', fontSize: '13px', flexWrap: 'wrap', ...F }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <TrendingDown className="h-4 w-4" style={{ color: '#ef4444' }} />
-                  <span style={{ color: '#991b1b' }}>No action: score drops to ~65 in 4 weeks</span>
+              {scoreProjectionData.length > 0 ? (
+                <>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <LineChart data={scoreProjectionData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="week" tick={{ fontSize: 12 }} />
+                      <YAxis domain={[50, 100]} />
+                      <Tooltip />
+                      <Legend />
+                      <ReferenceLine y={90} stroke="#22c55e" strokeDasharray="3 3" label={{ value: 'Inspection Ready', position: 'right', fill: '#22c55e', fontSize: 11 }} />
+                      <ReferenceLine y={70} stroke="#eab308" strokeDasharray="3 3" label={{ value: 'Needs Attention', position: 'right', fill: '#eab308', fontSize: 11 }} />
+                      <Line type="monotone" dataKey="actual" stroke="#1e4d6b" strokeWidth={2} dot={{ r: 3 }} name="Actual Score" connectNulls={false} />
+                      <Line type="monotone" dataKey="noAction" stroke="#ef4444" strokeWidth={2} strokeDasharray="6 4" dot={{ r: 3 }} name="No Action" connectNulls={false} />
+                      <Line type="monotone" dataKey="recommended" stroke="#22c55e" strokeWidth={2} strokeDasharray="6 4" dot={{ r: 3 }} name="Recommended Actions" connectNulls={false} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                  <div style={{ display: 'flex', gap: '16px', marginTop: '12px', fontSize: '13px', flexWrap: 'wrap', ...F }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <TrendingDown className="h-4 w-4" style={{ color: '#ef4444' }} />
+                      <span style={{ color: '#991b1b' }}>No action: score drops to ~65 in 4 weeks</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <TrendingUp className="h-4 w-4" style={{ color: '#22c55e' }} />
+                      <span style={{ color: '#166534' }}>Complete actions: score reaches ~82 in 4 weeks</span>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div style={{ textAlign: 'center', padding: '48px 20px', color: '#9ca3af' }}>
+                  <TrendingUp className="h-10 w-10 mx-auto mb-3" style={{ color: '#d1d5db' }} />
+                  <p style={{ fontSize: '14px', fontWeight: 500, color: '#6b7280', marginBottom: '4px', ...F }}>Insufficient data</p>
+                  <p style={{ fontSize: '13px', ...F }}>Score projections available after 30 days of activity</p>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <TrendingUp className="h-4 w-4" style={{ color: '#22c55e' }} />
-                  <span style={{ color: '#166534' }}>Complete actions: score reaches ~82 in 4 weeks</span>
-                </div>
-              </div>
+              )}
             </div>
 
             {/* Actions to Improve Score */}
@@ -881,7 +902,7 @@ export function Analysis() {
                     {actionsToImproveScore.length === 0 ? (
                       <tr>
                         <td colSpan={6} className="px-4 sm:px-6 py-8 text-center text-sm text-gray-500">
-                          No actions match the selected filters. Try adjusting the location or severity filter.
+                          {isDemoMode ? 'No actions match the selected filters. Try adjusting the location or severity filter.' : 'Insufficient data — available after 30 days of activity'}
                         </td>
                       </tr>
                     ) : actionsToImproveScore.map((action, index) => (
@@ -910,40 +931,48 @@ export function Analysis() {
             {/* Compliance Trends */}
             <div>
               <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#111827', marginBottom: '16px', ...F }}>Compliance Trends</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4">
-                  <h3 className="text-sm font-semibold text-gray-700 mb-3">Food Safety</h3>
-                  <ResponsiveContainer width="100%" height={150}>
-                    <LineChart data={currentTrends.foodSafety}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="week" tick={{ fontSize: 10 }} />
-                      <YAxis domain={[0, 100]} tick={{ fontSize: 10 }} />
-                      <Tooltip />
-                      <Line type="monotone" dataKey="score" stroke="#1e4d6b" strokeWidth={2} dot={{ r: 2 }} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                  <p className={`text-xs mt-2 flex items-center ${opEnd >= opStart ? 'text-green-600' : 'text-red-600'}`}>
-                    {opEnd >= opStart ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
-                    {opEnd >= opStart ? '+' : ''}{opEnd - opStart} points over 12 weeks
-                  </p>
+              {currentTrends.foodSafety.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4">
+                    <h3 className="text-sm font-semibold text-gray-700 mb-3">Food Safety</h3>
+                    <ResponsiveContainer width="100%" height={150}>
+                      <LineChart data={currentTrends.foodSafety}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="week" tick={{ fontSize: 10 }} />
+                        <YAxis domain={[0, 100]} tick={{ fontSize: 10 }} />
+                        <Tooltip />
+                        <Line type="monotone" dataKey="score" stroke="#1e4d6b" strokeWidth={2} dot={{ r: 2 }} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                    <p className={`text-xs mt-2 flex items-center ${opEnd >= opStart ? 'text-green-600' : 'text-red-600'}`}>
+                      {opEnd >= opStart ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
+                      {opEnd >= opStart ? '+' : ''}{opEnd - opStart} points over 12 weeks
+                    </p>
+                  </div>
+                  <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4">
+                    <h3 className="text-sm font-semibold text-gray-700 mb-3">Facility Safety</h3>
+                    <ResponsiveContainer width="100%" height={150}>
+                      <LineChart data={currentTrends.facilitySafety}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="week" tick={{ fontSize: 10 }} />
+                        <YAxis domain={[0, 100]} tick={{ fontSize: 10 }} />
+                        <Tooltip />
+                        <Line type="monotone" dataKey="score" stroke="#1e4d6b" strokeWidth={2} dot={{ r: 2 }} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                    <p className={`text-xs mt-2 flex items-center ${eqEnd >= eqStart ? 'text-green-600' : 'text-red-600'}`}>
+                      {eqEnd >= eqStart ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
+                      {eqEnd >= eqStart ? '+' : ''}{eqEnd - eqStart} points over 12 weeks
+                    </p>
+                  </div>
                 </div>
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4">
-                  <h3 className="text-sm font-semibold text-gray-700 mb-3">Facility Safety</h3>
-                  <ResponsiveContainer width="100%" height={150}>
-                    <LineChart data={currentTrends.facilitySafety}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="week" tick={{ fontSize: 10 }} />
-                      <YAxis domain={[0, 100]} tick={{ fontSize: 10 }} />
-                      <Tooltip />
-                      <Line type="monotone" dataKey="score" stroke="#1e4d6b" strokeWidth={2} dot={{ r: 2 }} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                  <p className={`text-xs mt-2 flex items-center ${eqEnd >= eqStart ? 'text-green-600' : 'text-red-600'}`}>
-                    {eqEnd >= eqStart ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
-                    {eqEnd >= eqStart ? '+' : ''}{eqEnd - eqStart} points over 12 weeks
-                  </p>
+              ) : (
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6" style={{ textAlign: 'center' }}>
+                  <TrendingUp className="h-10 w-10 mx-auto mb-3" style={{ color: '#d1d5db' }} />
+                  <p style={{ fontSize: '14px', fontWeight: 500, color: '#6b7280', marginBottom: '4px', ...F }}>Insufficient data</p>
+                  <p style={{ fontSize: '13px', color: '#9ca3af', ...F }}>Compliance trends available after 30 days of activity</p>
                 </div>
-              </div>
+              )}
             </div>
           </div>
 
@@ -989,31 +1018,39 @@ export function Analysis() {
               </div>
             </div>
 
-            {/* Prevention Score */}
+            {/* Prevention Score — DEMO ONLY values; production computes from resolved vs missed alerts */}
             <div style={{ backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', padding: '16px' }}>
               <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#111827', marginBottom: '12px', ...F }}>Prevention Score</h3>
-              <div style={{ textAlign: 'center', padding: '12px 0' }}>
-                <div style={{ position: 'relative', width: '100px', height: '100px', margin: '0 auto' }}>
-                  <svg width="100" height="100" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="42" fill="none" stroke="#e5e7eb" strokeWidth="8" />
-                    <circle cx="50" cy="50" r="42" fill="none" stroke="#16a34a" strokeWidth="8" strokeDasharray={`${78 * 2.64} ${100 * 2.64}`} strokeDashoffset="0" transform="rotate(-90 50 50)" strokeLinecap="round" />
-                  </svg>
-                  <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '24px', fontWeight: 700, color: '#166534', ...F }}>78%</div>
+              {isDemoMode ? (
+                <>
+                  <div style={{ textAlign: 'center', padding: '12px 0' }}>
+                    <div style={{ position: 'relative', width: '100px', height: '100px', margin: '0 auto' }}>
+                      <svg width="100" height="100" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="42" fill="none" stroke="#e5e7eb" strokeWidth="8" />
+                        <circle cx="50" cy="50" r="42" fill="none" stroke="#16a34a" strokeWidth="8" strokeDasharray={`${78 * 2.64} ${100 * 2.64}`} strokeDashoffset="0" transform="rotate(-90 50 50)" strokeLinecap="round" />
+                      </svg>
+                      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '24px', fontWeight: 700, color: '#166534', ...F }}>78%</div>
+                    </div>
+                    <p style={{ fontSize: '12px', color: '#6b7280', marginTop: '8px', lineHeight: '1.4', ...F }}>
+                      Alerts resolved before becoming actual violations
+                    </p>
+                  </div>
+                  <div style={{ borderTop: '1px solid #f3f4f6', paddingTop: '12px', marginTop: '4px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', ...F }}>
+                      <span style={{ color: '#6b7280' }}>Prevented</span>
+                      <span style={{ color: '#166534', fontWeight: 600 }}>32 violations</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginTop: '4px', ...F }}>
+                      <span style={{ color: '#6b7280' }}>Missed</span>
+                      <span style={{ color: '#991b1b', fontWeight: 600 }}>9 violations</span>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div style={{ textAlign: 'center', padding: '16px 0' }}>
+                  <p style={{ fontSize: '13px', color: '#9ca3af', ...F }}>Available after 30 days of activity</p>
                 </div>
-                <p style={{ fontSize: '12px', color: '#6b7280', marginTop: '8px', lineHeight: '1.4', ...F }}>
-                  Alerts resolved before becoming actual violations
-                </p>
-              </div>
-              <div style={{ borderTop: '1px solid #f3f4f6', paddingTop: '12px', marginTop: '4px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', ...F }}>
-                  <span style={{ color: '#6b7280' }}>Prevented</span>
-                  <span style={{ color: '#166534', fontWeight: 600 }}>32 violations</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginTop: '4px', ...F }}>
-                  <span style={{ color: '#6b7280' }}>Missed</span>
-                  <span style={{ color: '#991b1b', fontWeight: 600 }}>9 violations</span>
-                </div>
-              </div>
+              )}
             </div>
           </div>
         </div>
