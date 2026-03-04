@@ -131,6 +131,9 @@ const RolesPermissions = lazy(() => import('./pages/RolesPermissions').then(m =>
 const CaliforniaCompliance = lazy(() => import('./pages/public/CaliforniaCompliance').then(m => ({ default: m.CaliforniaCompliance })));
 const CountyCompliance = lazy(() => import('./pages/public/CountyCompliance').then(m => ({ default: m.CountyCompliance })));
 const AssessmentTool = lazy(() => import('./pages/public/AssessmentTool').then(m => ({ default: m.AssessmentTool })));
+const CountyLandingPage = lazy(() => import('./pages/public/CountyLandingPage'));
+const ScoreTableCountyPage = lazy(() => import('./pages/public/ScoreTableCountyPage'));
+const KitchenCheckPage = lazy(() => import('./pages/public/KitchenCheckPage'));
 
 const VendorServiceUpdate = lazy(() => import('./pages/VendorServiceUpdate').then(m => ({ default: m.VendorServiceUpdate })));
 const AssessmentLeads = lazy(() => import('./pages/admin/AssessmentLeads'));
@@ -384,6 +387,8 @@ function AppRoutes() {
         <Route path="/compliance/california" element={<Suspense fallback={<PageSkeleton />}><CaliforniaCompliance /></Suspense>} />
         <Route path="/compliance/california/:countySlug" element={<Suspense fallback={<PageSkeleton />}><CountyCompliance /></Suspense>} />
         <Route path="/assessment" element={<Suspense fallback={<PageSkeleton />}><AssessmentTool /></Suspense>} />
+        <Route path="/scoretable/:slug" element={<Suspense fallback={<PageSkeleton />}><ScoreTableCountyPage /></Suspense>} />
+        <Route path="/kitchen-check/:slug" element={<Suspense fallback={<PageSkeleton />}><KitchenCheckPage /></Suspense>} />
         <Route path="/kitchen-to-community" element={<Suspense fallback={<PageSkeleton />}><KitchenToCommunity /></Suspense>} />
         <Route path="/temp/log" element={<Suspense fallback={<PageSkeleton />}><TempLogQuick /></Suspense>} />
         <Route path="/temp-logs/scan" element={<Suspense fallback={<PageSkeleton />}><TempLogScan /></Suspense>} />
@@ -403,6 +408,9 @@ function AppRoutes() {
         <Route path="/vendor/upload/:token" element={<Suspense fallback={<PageSkeleton />}><VendorSecureUpload /></Suspense>} />
           <Route path="/vendor/invite/:code" element={<Suspense fallback={<PageSkeleton />}><VendorInviteLanding /></Suspense>} />
         <Route path="/vendor-update/:token" element={<Suspense fallback={<PageSkeleton />}><VendorServiceUpdate /></Suspense>} />
+
+        {/* Catch-all county landing page — must be AFTER all other public routes */}
+        <Route path="/:slug" element={<Suspense fallback={<PageSkeleton />}><CountyLandingPage /></Suspense>} />
 
         {/* Protected routes without shared layout */}
         <Route path="/vendor/dashboard" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><VendorDashboard /></Suspense></ErrorBoundary></ProtectedRoute>} />
