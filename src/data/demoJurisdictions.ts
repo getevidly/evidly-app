@@ -6,8 +6,8 @@
 
 import type { LocationJurisdiction } from '../types/jurisdiction';
 
-export type ScoringType = 'weighted_deduction' | 'heavy_weighted' | 'major_violation_count' | 'negative_scale' | 'major_minor_reinspect' | 'violation_point_accumulation' | 'point_accumulation' | 'numeric_score' | 'violation_report' | 'report_only';
-export type GradingType = 'letter_grade' | 'letter_grade_strict' | 'letter_grade_abc' | 'color_placard' | 'score_100' | 'score_negative' | 'numeric_score_no_letter' | 'pass_reinspect' | 'three_tier_rating' | 'point_accumulation_tiered' | 'violation_report_only' | 'report_only';
+export type ScoringType = 'weighted_deduction' | 'heavy_weighted' | 'major_violation_count' | 'negative_scale' | 'major_minor_reinspect' | 'violation_point_accumulation' | 'point_accumulation' | 'numeric_score' | 'violation_report' | 'report_only' | 'color_placard_with_numeric_score';
+export type GradingType = 'letter_grade' | 'letter_grade_strict' | 'letter_grade_abc' | 'color_placard' | 'score_100' | 'score_negative' | 'numeric_score_no_letter' | 'pass_reinspect' | 'three_tier_rating' | 'point_accumulation_tiered' | 'violation_report_only' | 'report_only' | 'green_yellow_red_with_score';
 
 export interface DemoJurisdiction {
   id: string;
@@ -173,25 +173,47 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     demoPassFail: 'fail',
   },
   {
+    // ═══ SANTA CLARA COUNTY — STANDARDIZED (March 2026) ═══
+    // GYR placard (based on major violation COUNT) + numeric score (100-pt deductive).
+    // GREEN=pass (≤1 major corrected), YELLOW=conditional (2+ majors corrected),
+    // RED=closure (imminent threat). Transparency: HIGH. SCCDineOut app.
+    // Source: deh.santaclaracounty.gov, eservices.sccgov.org/facilityinspection
     id: 'demo-santa-clara',
     county: 'Santa Clara',
-    agencyName: 'Santa Clara County DEH',
-    scoringType: 'heavy_weighted',
-    gradingType: 'color_placard',
-    gradingConfig: { green: { max_majors: 0 }, yellow: { max_majors: 2 }, red: { min_majors: 3 } },
+    agencyName: 'Santa Clara County Department of Environmental Health',
+    scoringType: 'color_placard_with_numeric_score',
+    gradingType: 'green_yellow_red_with_score',
+    gradingConfig: {
+      displayFormat: 'color_placard_with_score',
+      placards: [
+        { color: 'green', status: 'pass', label: 'PASS', criteria: 'No more than 1 major violation observed, corrected during inspection' },
+        { color: 'yellow', status: 'conditional_pass', label: 'CONDITIONAL PASS', criteria: '2+ major violations observed, all corrected during inspection. Reinspection within 3 business days.' },
+        { color: 'red', status: 'closed', label: 'CLOSURE', criteria: 'Imminent threat to health/safety; violations not corrected during inspection.' },
+      ],
+      numericScore: true,
+      scoreBase: 100,
+      scoreDirection: 'downward_deduction',
+      violationPoints: { major: 8, moderate: 3, minor: 2 },
+      scoreNote: 'Numeric score is compliance indicator only — separate from placard color. Placard = status; score = compliance depth.',
+      placardPosted: true,
+      inspectionFrequency: 'risk_based_1_to_3_per_year',
+      transparencyLevel: 'high',
+      sccDineOutApp: true,
+      programLaunched: '2014-10-01',
+    },
     passThreshold: null,
     warningThreshold: null,
     criticalThreshold: null,
-    fireAhjName: 'Santa Clara County Fire / San Jose FD',
+    fireAhjName: 'Santa Clara County Fire Dept / City departments (San Jose, Sunnyvale, etc.)',
     hoodCleaningDefault: 'quarterly',
     facilityCount: 10000,
-    dataSourceTier: 3,
-    gradeLabel: '\u{1F7E1}',
-    gradeExplanation: 'Color Placard — 8-point major violations. Stricter than standard.',
-    passFailLabel: 'CONDITIONAL',
-    demoScore: 88,
-    demoGrade: '\u{1F7E1} Yellow',
-    demoPassFail: 'warning',
+    dataSourceTier: 1,
+    gradeLabel: '\u{1F7E2} 92',
+    gradeExplanation: 'GYR Placard + Numeric Score — Green=pass (≤1 major), Yellow=conditional (2+ majors), Red=closure. Score: 100-pt deductive (Major=8, Moderate=3, Minor=2).',
+    passFailLabel: 'PASS',
+    demoScore: 92,
+    demoGrade: '\u{1F7E2} Green — 92',
+    demoPassFail: 'pass',
   },
   {
     id: 'demo-slo',
@@ -900,6 +922,43 @@ export function calculateDemoGrade(score: number, jurisdiction: DemoJurisdiction
         uncorrectedMajors: 0, totalPoints: 0,
       };
     }
+    case 'green_yellow_red_with_score': {
+      // Santa Clara County — GYR placard + numeric score
+      // Placard based on major violation COUNT (not score)
+      // Score: Start 100, Major=8pts, Moderate=3pts, Minor=2pts
+      const gyrConfig = jurisdiction.gradingConfig || {};
+      const vp = gyrConfig.violationPoints || { major: 8, moderate: 3, minor: 2 };
+      // Demo: estimate violations from normalized score
+      const gyrMajors = Math.max(0, Math.floor((100 - score) / (vp.major || 8)));
+      const gyrMinors = Math.max(0, Math.floor(((100 - score) % (vp.major || 8)) / (vp.minor || 2)));
+      const gyrUncorrected = score < 60 ? gyrMajors : 0; // Below 60 = imminent threat
+      // Placard: GREEN ≤1 major corrected, YELLOW 2+ corrected, RED imminent threat
+      if (gyrUncorrected > 0) {
+        return {
+          grade: 'Red',
+          passFail: 'fail',
+          display: `\u{1F534} Red — ${score} (${gyrUncorrected} major uncorrected)`,
+          majorViolations: gyrMajors, minorViolations: gyrMinors,
+          uncorrectedMajors: gyrUncorrected, totalPoints: 0,
+        };
+      }
+      if (gyrMajors >= 2) {
+        return {
+          grade: 'Yellow',
+          passFail: 'warning',
+          display: `\u{1F7E1} Yellow — ${score} (${gyrMajors} major corrected)`,
+          majorViolations: gyrMajors, minorViolations: gyrMinors,
+          uncorrectedMajors: 0, totalPoints: 0,
+        };
+      }
+      return {
+        grade: 'Green',
+        passFail: 'pass',
+        display: `\u{1F7E2} Green — ${score}`,
+        majorViolations: gyrMajors, minorViolations: gyrMinors,
+        uncorrectedMajors: 0, totalPoints: 0,
+      };
+    }
     case 'report_only':
     default:
       // DEPRECATED — treat same as pass_reinspect for backward compatibility
@@ -977,7 +1036,7 @@ export const ALL_CA_JURISDICTIONS: Array<{
   { county: 'Riverside', agencyName: 'Riverside County Department of Environmental Health', scoringType: 'weighted_deduction', gradingType: 'letter_grade_strict', facilityCount: 12000, tier: 3 },
   { county: 'San Bernardino', agencyName: 'San Bernardino County DPH — Environmental Health Services', scoringType: 'weighted_deduction', gradingType: 'letter_grade', facilityCount: 15000, tier: 3 },
   { county: 'Alameda', agencyName: 'Alameda County DEH', scoringType: 'weighted_deduction', gradingType: 'color_placard', facilityCount: 8500, tier: 3 },
-  { county: 'Santa Clara', agencyName: 'Santa Clara County DEH', scoringType: 'heavy_weighted', gradingType: 'color_placard', facilityCount: 10000, tier: 3 },
+  { county: 'Santa Clara', agencyName: 'Santa Clara County Department of Environmental Health', scoringType: 'color_placard_with_numeric_score', gradingType: 'green_yellow_red_with_score', facilityCount: 10000, tier: 1 },
   { county: 'Contra Costa', agencyName: 'Contra Costa Health', scoringType: 'major_violation_count', gradingType: 'color_placard', facilityCount: 5500, tier: 3 },
   { county: 'Fresno', agencyName: 'Fresno County Department of Public Health — Environmental Health Division', scoringType: 'violation_report', gradingType: 'violation_report_only', facilityCount: 11000, tier: 3 },
   { county: 'Kern', agencyName: 'Kern County Public Health Services — Environmental Health Division', scoringType: 'weighted_deduction', gradingType: 'letter_grade_abc', facilityCount: 3500, tier: 1 },

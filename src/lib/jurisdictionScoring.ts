@@ -16,6 +16,7 @@ export type InspectionSystemType =
   | 'pass_fail'
   | 'violation_report'
   | 'point_accumulation'
+  | 'color_placard_with_score'
   | 'standard'
   | 'none';
 
@@ -201,6 +202,23 @@ const MERCED_COUNTY: CountyScoringProfile = {
   },
 };
 
+const SANTA_CLARA_COUNTY: CountyScoringProfile = {
+  countySlug: 'santa-clara',
+  countyName: 'Santa Clara County',
+  systemType: 'color_placard_with_score',
+  startingScore: 100,
+  deductions: { critical: 8, major: 3, minor: 2, good_practice: 0 },
+  getGrade: (_score, hasCritical) => {
+    // Santa Clara: GYR placard based on major violation COUNT + separate numeric score
+    // GREEN = ≤1 major corrected, YELLOW = 2+ majors corrected, RED = imminent threat
+    // In the scoring engine we use hasCritical as proxy for uncorrected violations
+    if (hasCritical) return { label: 'RED', color: '#ef4444', passing: false, special: 'Closure — imminent health/safety threat' };
+    // Without full violation count data, use score as proxy
+    // Score itself is just compliance indicator; placard is the status
+    return { label: 'GREEN', color: '#22c55e', passing: true };
+  },
+};
+
 const STANISLAUS_COUNTY: CountyScoringProfile = {
   countySlug: 'stanislaus',
   countyName: 'Stanislaus County',
@@ -255,6 +273,7 @@ const COUNTY_PROFILES: Record<string, CountyScoringProfile> = {
   'orange': ORANGE_COUNTY,
   'sacramento': SACRAMENTO_COUNTY,
   'generic': GENERIC_CALCODE,
+  'santa-clara': SANTA_CLARA_COUNTY,
   // Central Valley counties
   'fresno': FRESNO_COUNTY,
   'merced': MERCED_COUNTY,

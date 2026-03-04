@@ -270,14 +270,56 @@ const SPECIFIC_ZIP_OVERRIDES: Record<string, { countyId: string; countyName: str
   '92683': { countyId: 'county-orange', countyName: 'Orange County' },
   '92701': { countyId: 'county-orange', countyName: 'Orange County' },
   '92802': { countyId: 'county-orange', countyName: 'Orange County' },
-  // Santa Clara / San Jose
-  '95110': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' },
-  '95112': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' },
-  '95113': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' },
-  '95125': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' },
-  '95128': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' },
-  '95131': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' },
-  '95132': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' },
+  // Santa Clara County — Silicon Valley core
+  '95008': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // Campbell
+  '95014': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // Cupertino
+  '95020': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // Gilroy
+  '95030': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // Los Gatos
+  '95032': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // Los Gatos
+  '95035': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // Milpitas
+  '95037': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // Morgan Hill
+  '95046': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // San Martin
+  '95050': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // Santa Clara (city)
+  '95051': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // Santa Clara (city)
+  '95054': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // Santa Clara (city)
+  '95070': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // Saratoga
+  '95101': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // San Jose
+  '95110': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // San Jose (downtown)
+  '95111': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // San Jose (south)
+  '95112': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // San Jose (east)
+  '95113': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // San Jose (downtown core)
+  '95116': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // San Jose (east)
+  '95117': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // San Jose (west)
+  '95118': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // San Jose (south)
+  '95120': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // San Jose (Almaden)
+  '95121': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // San Jose (east)
+  '95122': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // San Jose (east)
+  '95123': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // San Jose (south)
+  '95124': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // San Jose (south)
+  '95125': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // San Jose (Willow Glen)
+  '95126': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // San Jose (Rose Garden)
+  '95127': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // San Jose (east foothills)
+  '95128': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // San Jose (west)
+  '95129': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // San Jose (west)
+  '95130': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // San Jose (west)
+  '95131': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // San Jose (north)
+  '95132': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // San Jose (north)
+  '95133': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // San Jose (northeast)
+  '95134': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // San Jose (north/Alviso)
+  '95135': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // San Jose (east hills)
+  '95136': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // San Jose (south)
+  '95138': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // San Jose (south)
+  '95139': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // San Jose (south)
+  '95148': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // San Jose (east)
+  '94022': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // Los Altos
+  '94024': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // Los Altos
+  '94040': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // Mountain View
+  '94041': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // Mountain View
+  '94043': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // Mountain View (NASA Ames)
+  '94085': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // Sunnyvale
+  '94086': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // Sunnyvale
+  '94087': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // Sunnyvale
+  '94089': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // Sunnyvale
   // Alameda / Oakland
   '94501': { countyId: 'county-alameda', countyName: 'Alameda County' },
   '94536': { countyId: 'county-alameda', countyName: 'Alameda County' },

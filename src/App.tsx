@@ -60,6 +60,7 @@ const ScoringBreakdown = lazy(() => import('./pages/ScoringBreakdown').then(m =>
 const Benchmarks = lazy(() => import('./pages/Benchmarks').then(m => ({ default: m.Benchmarks })));
 const ComplianceTrends = lazy(() => import('./pages/ComplianceTrends').then(m => ({ default: m.ComplianceTrends })));
 const ComplianceIndex = lazy(() => import('./pages/ComplianceIndex').then(m => ({ default: m.ComplianceIndex })));
+const ComplianceOverview = lazy(() => import('./pages/ComplianceOverview').then(m => ({ default: m.ComplianceOverview })));
 const InsuranceRisk = lazy(() => import('./pages/InsuranceRisk').then(m => ({ default: m.InsuranceRisk })));
 const InsuranceRiskShared = lazy(() => import('./pages/InsuranceRiskShared'));
 const ImproveScore = lazy(() => import('./pages/ImproveScore').then(m => ({ default: m.ImproveScore })));
@@ -452,6 +453,7 @@ function AppRoutes() {
           <Route path="/compliance-trends" element={<ComplianceTrends />} />
           <Route path="/org-hierarchy" element={<OrgHierarchy />} />
           <Route path="/compliance-index" element={<ComplianceIndex />} />
+          <Route path="/compliance-overview" element={<ComplianceOverview />} />
           <Route path="/insurance-risk" element={<InsuranceRisk />} />
           <Route path="/improve-score" element={<ImproveScore />} />
           <Route path="/insurance-settings" element={<InsuranceSettings />} />
