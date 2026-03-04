@@ -159,6 +159,11 @@ export function useRegulatoryChanges(): UseRegulatoryChangesReturn {
       return;
     }
 
+    if (!profile?.organization_id) {
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -180,6 +185,7 @@ export function useRegulatoryChanges(): UseRegulatoryChangesReturn {
         supabase
           .from('locations')
           .select('name, address, county')
+          .eq('organization_id', profile.organization_id)
           .order('name')
       ),
     ]);
@@ -199,7 +205,7 @@ export function useRegulatoryChanges(): UseRegulatoryChangesReturn {
     setDbSources((sourcesRes.data as any) ?? []);
     setDbLocations((locationsRes.data as any) ?? []);
     setLoading(false);
-  }, [isDemoMode]);
+  }, [isDemoMode, profile?.organization_id]);
 
   useEffect(() => {
     let cancelled = false;
