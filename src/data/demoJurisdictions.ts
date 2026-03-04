@@ -6,8 +6,8 @@
 
 import type { LocationJurisdiction } from '../types/jurisdiction';
 
-export type ScoringType = 'weighted_deduction' | 'heavy_weighted' | 'major_violation_count' | 'negative_scale' | 'major_minor_reinspect' | 'violation_point_accumulation' | 'point_accumulation' | 'numeric_score' | 'violation_report' | 'report_only' | 'color_placard_with_numeric_score';
-export type GradingType = 'letter_grade' | 'letter_grade_strict' | 'letter_grade_abc' | 'color_placard' | 'score_100' | 'score_negative' | 'numeric_score_no_letter' | 'pass_reinspect' | 'three_tier_rating' | 'point_accumulation_tiered' | 'violation_report_only' | 'report_only' | 'green_yellow_red_with_score';
+export type ScoringType = 'weighted_deduction' | 'heavy_weighted' | 'major_violation_count' | 'negative_scale' | 'major_minor_reinspect' | 'violation_point_accumulation' | 'point_accumulation' | 'numeric_score' | 'violation_report' | 'report_only' | 'color_placard_with_numeric_score' | 'inspection_report';
+export type GradingType = 'letter_grade' | 'letter_grade_strict' | 'letter_grade_abc' | 'color_placard' | 'score_100' | 'score_negative' | 'numeric_score_no_letter' | 'pass_reinspect' | 'three_tier_rating' | 'point_accumulation_tiered' | 'violation_report_only' | 'report_only' | 'green_yellow_red_with_score' | 'inspection_report';
 
 export interface DemoJurisdiction {
   id: string;
@@ -595,6 +595,46 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     demoGrade: 'No Open Majors',
     demoPassFail: 'pass',
   },
+  {
+    // ═══ MONTEREY COUNTY — STANDARDIZED (March 2026) ═══
+    // NO letter grades, NO numeric scores, NO color placards.
+    // Inspection report only + Gold Seal Program (recognition, not scoring).
+    // Transparency: MEDIUM — reports via MC Food Inspection Findings app.
+    // Source: countyofmonterey.gov, MC Food Inspection Findings app
+    id: 'demo-monterey',
+    county: 'Monterey',
+    agencyName: 'Monterey County Health Department — Environmental Health Bureau',
+    scoringType: 'inspection_report',
+    gradingType: 'inspection_report',
+    gradingConfig: {
+      displayFormat: 'inspection_report',
+      placards: [],
+      numericScore: false,
+      placardPosted: false,
+      reportPdfOnline: false,
+      reportViaApp: true,
+      appName: 'MC Food Inspection Findings',
+      inspectionFrequency: 'risk_based_2_to_4_per_year',
+      transparencyLevel: 'medium',
+      goldSealProgram: true,
+      goldSealDescription: 'Awarded to facilities with multiple consecutive inspections showing minimal or no violations. Gold Seal placard posted at facility entrance.',
+      violationTypes: ['major', 'minor'],
+      programNote: 'Monterey County uses inspection reports and a Gold Seal recognition program only. No letter grade, numeric score, or color placard is issued or posted. Three branch offices serve the county.',
+    },
+    passThreshold: null,
+    warningThreshold: null,
+    criticalThreshold: null,
+    fireAhjName: 'CAL FIRE / Monterey County Regional Fire District / City Fire Departments',
+    hoodCleaningDefault: 'quarterly',
+    facilityCount: 2000,
+    dataSourceTier: 2,
+    gradeLabel: 'No Open Majors',
+    gradeExplanation: 'Inspection Report Only — No letter grade, no numeric score, no placard. Gold Seal for top performers. Reports via MC Food Inspection Findings app.',
+    passFailLabel: 'No Grade',
+    demoScore: 92,
+    demoGrade: 'No Open Majors',
+    demoPassFail: 'pass',
+  },
 ];
 
 // ═══════════════════════════════════════════════════════════
@@ -959,6 +999,34 @@ export function calculateDemoGrade(score: number, jurisdiction: DemoJurisdiction
         uncorrectedMajors: 0, totalPoints: 0,
       };
     }
+    case 'inspection_report': {
+      // Monterey County model — inspection report only + Gold Seal recognition
+      // NO letter grade, NO numeric score, NO color placard
+      // Demo: simulate violation counts from normalized score
+      const irMajors = Math.max(0, Math.floor((100 - score) / 5));
+      const irMinors = Math.max(0, Math.floor((100 - score) / 4));
+      const irUncorrected = score >= 80 ? 0 : Math.max(1, Math.floor((80 - score) / 8));
+      const goldSeal = score >= 95 && irMajors === 0;
+      if (irUncorrected > 0) {
+        return {
+          grade: 'Major Violations',
+          passFail: 'fail',
+          display: `${irUncorrected} Major Violation${irUncorrected > 1 ? 's' : ''} Open`,
+          majorViolations: irMajors, minorViolations: irMinors,
+          uncorrectedMajors: irUncorrected, totalPoints: 0,
+        };
+      }
+      const irDisplay = goldSeal
+        ? 'Gold Seal — No violations'
+        : irMajors > 0 ? `${irMajors} major corrected on-site` : 'No violations';
+      return {
+        grade: goldSeal ? 'Gold Seal' : 'No Open Majors',
+        passFail: 'pass',
+        display: irDisplay,
+        majorViolations: irMajors, minorViolations: irMinors,
+        uncorrectedMajors: 0, totalPoints: 0,
+      };
+    }
     case 'report_only':
     default:
       // DEPRECATED — treat same as pass_reinspect for backward compatibility
@@ -1045,7 +1113,7 @@ export const ALL_CA_JURISDICTIONS: Array<{
   { county: 'San Joaquin', agencyName: 'San Joaquin County Environmental Health Department', scoringType: 'violation_report', gradingType: 'violation_report_only', facilityCount: 2882, tier: 3 },
   { county: 'Santa Barbara', agencyName: 'SB County PHD', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 2800, tier: 3 },
   { county: 'Stanislaus', agencyName: 'Stanislaus County Environmental Resources', scoringType: 'violation_report', gradingType: 'violation_report_only', facilityCount: 2500, tier: 3 },
-  { county: 'Monterey', agencyName: 'Monterey County Health', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 2500, tier: 3 },
+  { county: 'Monterey', agencyName: 'Monterey County Health Department — Environmental Health Bureau', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 2000, tier: 2 },
   { county: 'Tulare', agencyName: 'Tulare County Division of Environmental Health', scoringType: 'numeric_score', gradingType: 'numeric_score_no_letter', facilityCount: 3500, tier: 3 },
   { county: 'Placer', agencyName: 'Placer County Health', scoringType: 'major_violation_count', gradingType: 'color_placard', facilityCount: 2200, tier: 3 },
   { county: 'Solano', agencyName: 'Solano County DRM', scoringType: 'major_violation_count', gradingType: 'color_placard', facilityCount: 2200, tier: 3 },

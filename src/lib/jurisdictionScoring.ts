@@ -17,6 +17,7 @@ export type InspectionSystemType =
   | 'violation_report'
   | 'point_accumulation'
   | 'color_placard_with_score'
+  | 'inspection_report'
   | 'standard'
   | 'none';
 
@@ -219,6 +220,19 @@ const SANTA_CLARA_COUNTY: CountyScoringProfile = {
   },
 };
 
+const MONTEREY_COUNTY: CountyScoringProfile = {
+  countySlug: 'monterey',
+  countyName: 'Monterey County',
+  systemType: 'inspection_report',
+  startingScore: 100,
+  deductions: { critical: 4, major: 2, minor: 1, good_practice: 0 },
+  getGrade: (_score, hasCritical) => {
+    // Monterey has NO letter grade, NO numeric score, NO placard — inspection report + Gold Seal
+    if (hasCritical) return { label: 'Major Violations', color: '#ef4444', passing: false };
+    return { label: 'No Open Majors', color: '#22c55e', passing: true };
+  },
+};
+
 const STANISLAUS_COUNTY: CountyScoringProfile = {
   countySlug: 'stanislaus',
   countyName: 'Stanislaus County',
@@ -274,6 +288,7 @@ const COUNTY_PROFILES: Record<string, CountyScoringProfile> = {
   'sacramento': SACRAMENTO_COUNTY,
   'generic': GENERIC_CALCODE,
   'santa-clara': SANTA_CLARA_COUNTY,
+  'monterey': MONTEREY_COUNTY,
   // Central Valley counties
   'fresno': FRESNO_COUNTY,
   'merced': MERCED_COUNTY,

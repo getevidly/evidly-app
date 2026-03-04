@@ -320,6 +320,31 @@ const SPECIFIC_ZIP_OVERRIDES: Record<string, { countyId: string; countyName: str
   '94086': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // Sunnyvale
   '94087': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // Sunnyvale
   '94089': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // Sunnyvale
+  // Monterey County — coastal and inland
+  '93901': { countyId: 'county-monterey', countyName: 'Monterey County' }, // Salinas (downtown)
+  '93905': { countyId: 'county-monterey', countyName: 'Monterey County' }, // Salinas (east)
+  '93906': { countyId: 'county-monterey', countyName: 'Monterey County' }, // Salinas (north/HQ)
+  '93907': { countyId: 'county-monterey', countyName: 'Monterey County' }, // Salinas (northwest)
+  '93908': { countyId: 'county-monterey', countyName: 'Monterey County' }, // Salinas (south)
+  '93921': { countyId: 'county-monterey', countyName: 'Monterey County' }, // Carmel-by-the-Sea
+  '93923': { countyId: 'county-monterey', countyName: 'Monterey County' }, // Carmel
+  '93924': { countyId: 'county-monterey', countyName: 'Monterey County' }, // Carmel Valley
+  '93925': { countyId: 'county-monterey', countyName: 'Monterey County' }, // Gonzales
+  '93926': { countyId: 'county-monterey', countyName: 'Monterey County' }, // Greenfield
+  '93927': { countyId: 'county-monterey', countyName: 'Monterey County' }, // Jolon
+  '93928': { countyId: 'county-monterey', countyName: 'Monterey County' }, // King City (branch office)
+  '93930': { countyId: 'county-monterey', countyName: 'Monterey County' }, // King City
+  '93932': { countyId: 'county-monterey', countyName: 'Monterey County' }, // Lockwood
+  '93933': { countyId: 'county-monterey', countyName: 'Monterey County' }, // Marina
+  '93940': { countyId: 'county-monterey', countyName: 'Monterey County' }, // Monterey
+  '93942': { countyId: 'county-monterey', countyName: 'Monterey County' }, // Monterey
+  '93943': { countyId: 'county-monterey', countyName: 'Monterey County' }, // Monterey (Naval Postgraduate)
+  '93944': { countyId: 'county-monterey', countyName: 'Monterey County' }, // Monterey
+  '93950': { countyId: 'county-monterey', countyName: 'Monterey County' }, // Pacific Grove
+  '93953': { countyId: 'county-monterey', countyName: 'Monterey County' }, // Pebble Beach
+  '93955': { countyId: 'county-monterey', countyName: 'Monterey County' }, // Seaside
+  '93960': { countyId: 'county-monterey', countyName: 'Monterey County' }, // Soledad
+  '93962': { countyId: 'county-monterey', countyName: 'Monterey County' }, // Spreckels
   // Alameda / Oakland
   '94501': { countyId: 'county-alameda', countyName: 'Alameda County' },
   '94536': { countyId: 'county-alameda', countyName: 'Alameda County' },
