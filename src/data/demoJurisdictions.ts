@@ -671,6 +671,56 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     demoGrade: 'No Open Majors',
     demoPassFail: 'pass',
   },
+  {
+    // ═══ VENTURA COUNTY — STANDARDIZED (March 2026) ═══
+    // Pass/fail inspection placard. NOT Green/Yellow/Red color-coded.
+    // Placard = dated pass card with inspector name, EHD website, EHD phone.
+    // Closure notice posted separately. Online results via VC Safe Diner (daily).
+    // Transparency: MEDIUM-HIGH. ~5,000 facilities.
+    // Source: rma.venturacounty.gov, VC Safe Diner, Ventura County Grand Jury 2008-09 report
+    id: 'demo-ventura',
+    county: 'Ventura',
+    agencyName: 'Ventura County Resource Management Agency — Environmental Health Division',
+    scoringType: 'pass_fail_placard',
+    gradingType: 'pass_fail_placard',
+    gradingConfig: {
+      displayFormat: 'pass_fail_placard',
+      placards: [
+        {
+          status: 'pass',
+          label: 'PASSED INSPECTION',
+          criteria: 'Facility passed routine inspection. Placard shows date, inspector name, EHD website, and phone number.',
+        },
+        {
+          status: 'closed',
+          label: 'CLOSED',
+          criteria: 'Significant violations found that could cause foodborne illness. Facility closed until corrected.',
+        },
+      ],
+      numericScore: false,
+      colorCoded: false,
+      reportOnline: true,
+      appName: 'VC Safe Diner',
+      onlinePortal: 'eco.vcrma.org',
+      resultsUpdatedDaily: true,
+      inspectionFrequency: 'annual_minimum',
+      transparencyLevel: 'medium_high',
+      programNote: 'Ventura County posts a dated pass placard (not color-coded) and publishes full inspection results online via VC Safe Diner. No numeric score or letter grade. Closure notices posted on EHD website. ~5,000 facilities across multiple district offices.',
+    },
+    passThreshold: null,
+    warningThreshold: null,
+    criticalThreshold: null,
+    fireAhjName: 'Ventura County Fire Department / City Fire Departments',
+    hoodCleaningDefault: 'quarterly',
+    facilityCount: 5000,
+    dataSourceTier: 2,
+    gradeLabel: 'PASS',
+    gradeExplanation: 'Pass/Fail Placard — Dated pass card posted at facility. No letter grade. No numeric score. Not color-coded. VC Safe Diner app.',
+    passFailLabel: 'PASS',
+    demoScore: 88,
+    demoGrade: 'PASSED INSPECTION',
+    demoPassFail: 'pass',
+  },
 ];
 
 // ═══════════════════════════════════════════════════════════
@@ -1144,7 +1194,7 @@ export const ALL_CA_JURISDICTIONS: Array<{
   { county: 'Contra Costa', agencyName: 'Contra Costa Health', scoringType: 'major_violation_count', gradingType: 'color_placard', facilityCount: 5500, tier: 3 },
   { county: 'Fresno', agencyName: 'Fresno County Department of Public Health — Environmental Health Division', scoringType: 'violation_report', gradingType: 'violation_report_only', facilityCount: 11000, tier: 3 },
   { county: 'Kern', agencyName: 'Kern County Public Health Services — Environmental Health Division', scoringType: 'weighted_deduction', gradingType: 'letter_grade_abc', facilityCount: 3500, tier: 1 },
-  { county: 'Ventura', agencyName: 'Ventura County EHD', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 4500, tier: 3 },
+  { county: 'Ventura', agencyName: 'Ventura County Resource Management Agency — Environmental Health Division', scoringType: 'pass_fail_placard', gradingType: 'pass_fail_placard', facilityCount: 5000, tier: 2 },
   { county: 'San Mateo', agencyName: 'San Mateo County Health', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 3800, tier: 3 },
   { county: 'San Joaquin', agencyName: 'San Joaquin County Environmental Health Department', scoringType: 'violation_report', gradingType: 'violation_report_only', facilityCount: 2882, tier: 3 },
   { county: 'Santa Barbara', agencyName: 'SB County PHD', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 2800, tier: 3 },

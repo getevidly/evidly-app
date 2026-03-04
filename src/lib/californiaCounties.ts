@@ -739,19 +739,30 @@ export const ADDITIONAL_COUNTIES: JurisdictionProfile[] = [
     requiredPostings: [],
     serviceFrequencies: [],
     inspectionSystem: {
-      type: 'standard',
-      details: 'Standard CalCode enforcement with risk-based inspection frequency.',
+      type: 'inspection_report',
+      details: 'NO letter grade, NO numeric score, NO color placard. Inspection report only. Violations classified as critical (major/minor) and general. Reports available at scceh.com and via My Santa Cruz County app. 2-4 inspections/year.',
+      grades: [
+        { label: 'No Open Violations', range: 'All violations corrected or no violations found' },
+        { label: 'Critical Major', range: 'Imminent risk — highest severity critical violation' },
+        { label: 'Critical Minor', range: 'Lower degree of critical risk' },
+        { label: 'General', range: 'Non-critical sanitation and facility conditions' },
+      ],
     },
     populationTier: 'medium',
     healthDepartment: {
       name: 'Santa Cruz County Environmental Health',
       phone: '(831) 454-2022',
-      website: 'https://www.santacruzhealth.org/HSADivision/EnvironmentalHealth.aspx',
-      inspectionFrequency: 'Risk-based: high risk annually, moderate every 18 months',
+      website: 'https://scceh.com/NewHome/Programs/ConsumerProtection/Food.aspx',
+      inspectionFrequency: '2-4 times per year depending on facility type',
       permitRenewal: 'Annual',
     },
     specialRequirements: [
-      'Standard CalCode enforcement',
+      'NO letter grades, NO numeric scores, NO color placards — inspection report only',
+      'Violations classified as critical (major/minor) and general',
+      'Reports available at scceh.com and My Santa Cruz County app',
+      '2-4 inspections per year depending on facility type',
+      'Complaint process: email or phone, anonymous accepted',
+      // SUGGESTION: Verify if any recognition program exists (similar to Monterey Gold Seal)
     ],
   },
 

@@ -288,6 +288,21 @@ const SANTA_CRUZ_COUNTY: CountyScoringProfile = {
   },
 };
 
+const VENTURA_COUNTY: CountyScoringProfile = {
+  countySlug: 'ventura',
+  countyName: 'Ventura County',
+  systemType: 'pass_fail',
+  startingScore: 100,
+  deductions: { critical: 100, major: 2, minor: 1, good_practice: 0 },
+  getGrade: (_score, hasCritical) => {
+    // Ventura uses pass/fail placard — NOT Green/Yellow/Red
+    // Placard = dated pass card with inspector name, EHD website, EHD phone
+    // Closure notice posted separately if facility fails
+    if (hasCritical) return { label: 'CLOSED', color: '#ef4444', passing: false, special: 'Facility closed until violations corrected' };
+    return { label: 'PASS', color: '#22c55e', passing: true };
+  },
+};
+
 const GENERIC_CALCODE: CountyScoringProfile = {
   countySlug: 'generic',
   countyName: 'California (Standard CalCode)',
@@ -323,6 +338,8 @@ const COUNTY_PROFILES: Record<string, CountyScoringProfile> = {
   'tulare': TULARE_COUNTY,
   'santa-cruz': SANTA_CRUZ_COUNTY,
   'san-benito': SAN_BENITO_COUNTY,
+  // Southern California
+  'ventura': VENTURA_COUNTY,
 };
 
 /**
