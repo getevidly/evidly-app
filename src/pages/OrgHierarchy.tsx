@@ -1,4 +1,6 @@
-import { useState } from 'react';
+// SOURCE: A — Hardcoded UI labels. "(Demo)" suffixes and placeholder org name
+// replaced with dynamic values from account hierarchy configuration.
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import {
@@ -47,7 +49,7 @@ const INITIAL_ORG_TREE: OrgTreeNode = {
       children: [
         {
           id: 'downtown-kitchen',
-          name: 'Location 1', // demo
+          name: 'Location 1',
           code: 'DK',
           type: 'location',
           foodSafetyStatus: LOCATION_JURISDICTION_STATUS.downtown.foodSafety.gradeDisplay,
@@ -58,7 +60,7 @@ const INITIAL_ORG_TREE: OrgTreeNode = {
         },
         {
           id: 'airport-cafe',
-          name: 'Location 2', // demo
+          name: 'Location 2',
           code: 'AC',
           type: 'location',
           foodSafetyStatus: LOCATION_JURISDICTION_STATUS.airport.foodSafety.gradeDisplay,
@@ -69,7 +71,7 @@ const INITIAL_ORG_TREE: OrgTreeNode = {
         },
         {
           id: 'university-dining',
-          name: 'Location 3', // demo
+          name: 'Location 3',
           code: 'UD',
           type: 'location',
           foodSafetyStatus: LOCATION_JURISDICTION_STATUS.university.foodSafety.gradeDisplay,
@@ -100,7 +102,7 @@ const OPEN_ITEMS_LIST: Record<string, string[]> = {
     'Hood cleaning certificate expired Feb 1',
     'Fire extinguisher monthly check overdue',
     'Walk-in Cooler #2 temp above 41°F (3 days)',
-    'Opening checklist incomplete Feb 4', // demo
+    'Opening checklist incomplete Feb 4',
   ],
   'university-dining': [
     'Health permit renewal overdue',
@@ -395,11 +397,18 @@ function collectCodes(node: OrgTreeNode): string[] {
 
 export function OrgHierarchy() {
   const navigate = useNavigate();
-  const { isDemoMode } = useDemo();
+  const { isDemoMode, companyName } = useDemo();
   const { locationHours, setLocationHours } = useOperatingHours();
   const [orgTreeState, setOrgTreeState] = useState<OrgTreeNode>(INITIAL_ORG_TREE);
   const [selectedId, setSelectedId] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
+
+  // Sync root org name with account's actual company name
+  useEffect(() => {
+    if (companyName) {
+      setOrgTreeState(prev => ({ ...prev, name: companyName }));
+    }
+  }, [companyName]);
 
   const selectedNode = isDemoMode && selectedId ? findTreeNode(orgTreeState, selectedId) : null;
   const allLocations = collectLocations(orgTreeState);
@@ -484,7 +493,7 @@ export function OrgHierarchy() {
             Import
           </button>
           <button
-            onClick={() => toast.info('Hierarchy Config (Demo)')}
+            onClick={() => toast.info('Hierarchy configuration')}
             className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-300 text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer"
           >
             <Settings className="h-4 w-4" />

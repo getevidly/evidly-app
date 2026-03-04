@@ -288,7 +288,7 @@ export function BrandingSettings() {
             <label className="block text-xs font-medium text-gray-700 mb-1">SSO Provider</label>
             <select
               value={branding.sso.provider || ''}
-              onChange={() => toast.info('SSO changes require admin approval (Demo)')}
+              onChange={() => toast.info('SSO changes require admin approval')}
               className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg bg-gray-50"
             >
               <option value="">None</option>

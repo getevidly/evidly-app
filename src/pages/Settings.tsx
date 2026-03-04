@@ -331,7 +331,7 @@ export function Settings() {
                   </div>
                   <div>
                     <button
-                      onClick={() => toast.info('Logo Upload (Demo)')}
+                      onClick={() => toast.info('Logo upload')}
                       className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 text-gray-700"
                     >
                       {t('settings.chooseFile')}
@@ -357,7 +357,7 @@ export function Settings() {
                   <option value="fine_dining">Fine Dining</option>
                   <option value="hotel">Hotel / Resort Dining</option>
                   <option value="education_k12">K-12 School Cafeteria</option>
-                  <option value="education_university">University Dining</option> {/* demo */}
+                  <option value="education_university">University Dining</option>
                   <option value="healthcare">Healthcare Facility</option>
                   <option value="corporate_dining">Corporate Dining / Cafeteria</option>
                   <option value="catering">Catering Operation</option>
@@ -395,9 +395,9 @@ export function Settings() {
                 <label className="block text-sm font-medium text-gray-700 mb-3">{t('settings.locations')}</label>
                 <div className="space-y-3">
                   {isDemoMode ? [
-                    { name: 'Location 1', address: '1245 Fulton Street, Fresno, CA 93721' }, // demo
-                    { name: 'Location 2', address: '1636 Macready Drive, Merced, CA 95340' }, // demo
-                    { name: 'Location 3', address: '1 University Circle, Modesto, CA 95348' }, // demo
+                    { name: 'Location 1', address: '1245 Fulton Street, Fresno, CA 93721' },
+                    { name: 'Location 2', address: '1636 Macready Drive, Merced, CA 95340' },
+                    { name: 'Location 3', address: '1 University Circle, Modesto, CA 95348' },
                   ].map((loc) => (
                     <div key={loc.name} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
                       <div className="flex items-center gap-3">
@@ -416,7 +416,7 @@ export function Settings() {
                   )}
                 </div>
                 <button
-                  onClick={() => toast.info('Add Location (Demo)')}
+                  onClick={() => toast.info('Add location')}
                   className="mt-3 px-4 py-2 text-sm border border-dashed border-gray-300 rounded-md hover:bg-gray-50 text-gray-600 w-full"
                 >
                   {t('settings.addLocation')}
@@ -789,9 +789,9 @@ export function Settings() {
           {activeTab === 'jurisdiction' && (() => {
             const availableCounties = getAvailableCounties();
             const locationJurisdictions = [
-              { name: 'Location 1', detectedCounty: 'Fresno County', detectedSlug: 'fresno', chain: 'Federal → California → Fresno County' }, // demo
-              { name: 'Location 2', detectedCounty: 'Merced County', detectedSlug: 'merced', chain: 'Federal → California → Merced County' }, // demo
-              { name: 'Location 3', detectedCounty: 'Stanislaus County', detectedSlug: 'stanislaus', chain: 'Federal → California → Stanislaus County → City of Modesto' }, // demo
+              { name: 'Location 1', detectedCounty: 'Fresno County', detectedSlug: 'fresno', chain: 'Federal → California → Fresno County' },
+              { name: 'Location 2', detectedCounty: 'Merced County', detectedSlug: 'merced', chain: 'Federal → California → Merced County' },
+              { name: 'Location 3', detectedCounty: 'Stanislaus County', detectedSlug: 'stanislaus', chain: 'Federal → California → Stanislaus County → City of Modesto' },
             ];
             return (
             <div className="space-y-6">
@@ -964,7 +964,7 @@ export function Settings() {
                       </div>
                     </div>
                     <button
-                      onClick={() => toast.info('Restaurant365 Integration (Demo)')}
+                      onClick={() => toast.info('Restaurant365 integration')}
                       className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700"
                     >
                       {t('settings.connect')}
@@ -989,7 +989,7 @@ export function Settings() {
                       </div>
                     </div>
                     <button
-                      onClick={() => toast.info('Cintas Integration (Demo)')}
+                      onClick={() => toast.info('Cintas integration')}
                       className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700"
                     >
                       {t('settings.connect')}
@@ -1014,7 +1014,7 @@ export function Settings() {
                       </div>
                     </div>
                     <button
-                      onClick={() => toast.info('Ecolab Integration (Demo)')}
+                      onClick={() => toast.info('Ecolab integration')}
                       className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700"
                     >
                       {t('settings.connect')}

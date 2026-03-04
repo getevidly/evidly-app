@@ -1030,7 +1030,7 @@ export function Team() {
                 </div>
               ) : (
                 <div className="text-sm text-gray-500 italic p-4 bg-gray-50 rounded-lg">
-                  Activity Log (Demo)
+                  Activity Log
                 </div>
               )}
             </div>

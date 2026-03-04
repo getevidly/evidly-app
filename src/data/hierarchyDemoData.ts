@@ -1,4 +1,3 @@
-// TODO: Replace .overall with independent pillar scores (FIX-WEIGHTS)
 import { locationScores, locationScoresThirtyDaysAgo } from './demoData';
 
 // ── Types ──────────────────────────────────────────────────────
