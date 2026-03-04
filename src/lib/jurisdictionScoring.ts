@@ -376,6 +376,22 @@ const EL_DORADO_COUNTY: CountyScoringProfile = {
   },
 };
 
+const NAPA_COUNTY: CountyScoringProfile = {
+  countySlug: 'napa',
+  countyName: 'Napa County',
+  systemType: 'letter_grade',
+  startingScore: 100,
+  deductions: { critical: 4, major: 2, minor: 1, good_practice: 0 },
+  getGrade: (score) => {
+    // Napa: A=90-100, B=80-89, C=70-79, Closure=<70 (min 24-hr, no grade issued)
+    // Only letter-grade county in Bay Area batch. Rescore option 1/year (fee).
+    if (score >= 90) return { label: 'A', color: '#22c55e', passing: true };
+    if (score >= 80) return { label: 'B', color: '#eab308', passing: true };
+    if (score >= 70) return { label: 'C', color: '#ef4444', passing: false };
+    return { label: 'Closure', color: '#ef4444', passing: false, special: 'Minimum 24-hour closure — no grade issued' };
+  },
+};
+
 const GENERIC_CALCODE: CountyScoringProfile = {
   countySlug: 'generic',
   countyName: 'California (Standard CalCode)',
@@ -404,6 +420,23 @@ const BUTTE_COUNTY: CountyScoringProfile = {
   },
 };
 
+const SAN_FRANCISCO: CountyScoringProfile = {
+  countySlug: 'san-francisco',
+  countyName: 'San Francisco (City & County)',
+  systemType: 'color_placard_with_score',
+  startingScore: 100,
+  // CRITICAL: SF uses High/Moderate/Low RISK TIERS — not Major/Minor
+  // Do NOT map to other counties' violation weights
+  deductions: { critical: 4, major: 3, minor: 1, good_practice: 0 },
+  getGrade: (score) => {
+    // GYR placard + numeric score (both published)
+    // GREEN=90-100, YELLOW=70-89, RED=<70 or imminent hazard
+    if (score >= 90) return { label: 'GREEN', color: '#22c55e', passing: true };
+    if (score >= 70) return { label: 'YELLOW', color: '#f59e0b', passing: true };
+    return { label: 'RED', color: '#ef4444', passing: false, special: 'Closed — imminent health hazard' };
+  },
+};
+
 // ── Profile Registry ──────────────────────────────────────────
 
 const COUNTY_PROFILES: Record<string, CountyScoringProfile> = {
@@ -416,6 +449,7 @@ const COUNTY_PROFILES: Record<string, CountyScoringProfile> = {
   'alameda': ALAMEDA_COUNTY,
   'orange': ORANGE_COUNTY,
   'sacramento': SACRAMENTO_COUNTY,
+  'san-francisco': SAN_FRANCISCO,
   'generic': GENERIC_CALCODE,
   'santa-clara': SANTA_CLARA_COUNTY,
   'monterey': MONTEREY_COUNTY,

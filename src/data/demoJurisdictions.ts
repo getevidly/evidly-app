@@ -955,6 +955,60 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     demoGrade: 'No Open Majors',
     demoPassFail: 'pass',
   },
+  {
+    // ═══ NAPA COUNTY — STANDARDIZED (March 2026) ═══
+    // Letter grade A/B/C. Points deducted from 100. ONLY letter-grade county in Bay Area batch.
+    // A=90-100, B=80-89, C=70-79, Closure=below 70 (no grade, min 24-hr).
+    // Rescore: 1/year, fee required. April 2025: 90%+ A, 98%+ A or B.
+    // Napa Valley wine country — high-end food/culinary tourism market.
+    // Transparency: HIGH.
+    // Source: countyofnapa.org/1000/Environmental-Health — verified March 2026
+    id: 'demo-napa',
+    county: 'Napa',
+    agencyName: 'Napa County Health and Human Services — Division of Environmental Health',
+    scoringType: 'letter_grade',
+    gradingType: 'letter_grade',
+    gradingConfig: {
+      displayFormat: 'letter_grade',
+      grades: [
+        { grade: 'A', scoreRange: '90–100', pointsDeducted: '0–10',
+          criteria: 'Excellent compliance. Posted at facility.' },
+        { grade: 'B', scoreRange: '80–89', pointsDeducted: '11–20',
+          criteria: 'Good compliance with some violations noted.' },
+        { grade: 'C', scoreRange: '70–79', pointsDeducted: '21–30',
+          criteria: 'Marginal compliance. Reinspection likely required.' },
+        { grade: 'CLOSURE', scoreRange: 'Below 70', pointsDeducted: '31+',
+          criteria: 'Minimum 24-hour closure. No grade issued. Must correct before reopening.' },
+      ],
+      rescoreOption: { available: true, frequency: 'once_per_year', feeRequired: true },
+      numericScore: true,
+      scoreMax: 100,
+      scoreMin: 0,
+      passThreshold: 70,
+      gradeAThreshold: 90,
+      gradeBThreshold: 80,
+      gradeCThreshold: 70,
+      placardPosted: true,
+      reportOnline: true,
+      realWorldData: { asOf: 'April 2025', aGrade: '90%+', aBGrade: '98%+' },
+      inspectionFrequency: 'risk_based',
+      transparencyLevel: 'high',
+      programNote: 'Napa County is the ONLY letter-grade jurisdiction in the Bay Area batch. A=90-100, B=80-89, C=70-79, closure=below 70. Operators may request one rescore per year (fee required). April 2025: 90%+ A grade; 98%+ A or B.',
+    },
+    passThreshold: 70,
+    warningThreshold: 80,
+    criticalThreshold: 70,
+    fireAhjName: 'CAL FIRE / City of Napa Fire / City of American Canyon Fire',
+    hoodCleaningDefault: 'quarterly',
+    facilityCount: null,
+    dataSourceTier: 2,
+    gradeLabel: 'B',
+    gradeExplanation: 'Letter Grade A/B/C — A (90-100) PASS, B (80-89), C (70-79), Closure (<70, no grade). Only letter-grade county in Bay Area. Rescore 1/year.',
+    passFailLabel: 'PASS',
+    demoScore: 88,
+    demoGrade: 'B — 88',
+    demoPassFail: 'pass',
+  },
 ];
 
 // ═══════════════════════════════════════════════════════════
@@ -1529,7 +1583,7 @@ export const ALL_CA_JURISDICTIONS: Array<{
   { county: 'Placer', agencyName: 'Placer County Health and Human Services — Environmental Health Division', scoringType: 'color_placard', gradingType: 'green_yellow_red', facilityCount: 2200, tier: 1 },
   { county: 'Solano', agencyName: 'Solano County Department of Resource Management — Environmental Health Division', scoringType: 'inspection_report', gradingType: 'violation_report_only', facilityCount: 2200, tier: 3 },
   { county: 'Marin', agencyName: 'Marin County CDA', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 1800, tier: 3 },
-  { county: 'Napa', agencyName: 'Napa County PH', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 1100, tier: 3 },
+  { county: 'Napa', agencyName: 'Napa County Health and Human Services — Division of Environmental Health', scoringType: 'letter_grade', gradingType: 'letter_grade', facilityCount: null, tier: 2 },
   { county: 'Santa Cruz', agencyName: 'Santa Cruz County Environmental Health', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 2000, tier: 3 },
   { county: 'Butte', agencyName: 'Butte County Public Health Department — Environmental Health Division', scoringType: 'color_placard', gradingType: 'green_yellow_red', facilityCount: 1200, tier: 2 },
   { county: 'Shasta', agencyName: 'Shasta County Department of Resource Management — Environmental Health Division', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: null, tier: 3 },
