@@ -376,6 +376,21 @@ const GENERIC_CALCODE: CountyScoringProfile = {
   },
 };
 
+const BUTTE_COUNTY: CountyScoringProfile = {
+  countySlug: 'butte',
+  countyName: 'Butte County',
+  systemType: 'color_placard',
+  startingScore: 100,
+  deductions: { critical: 4, major: 2, minor: 1, good_practice: 0 },
+  getGrade: (score, hasCritical) => {
+    // GYR placard — RED = imminent hazard/closed, YELLOW = conditional, GREEN = compliant
+    if (score < 60) return { label: 'RED', color: '#ef4444', passing: false, special: 'Closed — imminent health hazard' };
+    if (hasCritical) return { label: 'YELLOW', color: '#f59e0b', passing: false };
+    if (score < 85) return { label: 'YELLOW', color: '#f59e0b', passing: true };
+    return { label: 'GREEN', color: '#22c55e', passing: true };
+  },
+};
+
 // ── Profile Registry ──────────────────────────────────────────
 
 const COUNTY_PROFILES: Record<string, CountyScoringProfile> = {
@@ -404,6 +419,7 @@ const COUNTY_PROFILES: Record<string, CountyScoringProfile> = {
   'santa-barbara': SANTA_BARBARA_COUNTY,
   'ventura': VENTURA_COUNTY,
   'placer': PLACER_COUNTY,
+  'butte': BUTTE_COUNTY,
   'el-dorado': EL_DORADO_COUNTY,
 };
 
