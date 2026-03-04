@@ -34,7 +34,7 @@ export interface DemoJurisdiction {
 }
 
 // ═══════════════════════════════════════════════════════════
-// THE 7 DEMO JURISDICTIONS
+// THE 12 DEMO JURISDICTIONS
 // These power the jurisdiction switcher in sales demos.
 // Each demonstrates a different scoring/grading model.
 // ═══════════════════════════════════════════════════════════
@@ -402,6 +402,51 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     passFailLabel: 'PASS',
     demoScore: 88,
     demoGrade: 'Pass',
+    demoPassFail: 'pass',
+  },
+  {
+    // ═══ SAN JOAQUIN COUNTY — STANDARDIZED (March 2026) ═══
+    // NO letter grade. NO score. NO placard. Violation report only.
+    // Transparency: MEDIUM — searchable online portal.
+    // Annual inspections (1/year). Stockton county seat.
+    // Source: sjcehd.com, app.sjgov.org/restaurant-inspection/
+    id: 'demo-san-joaquin',
+    county: 'San Joaquin',
+    agencyName: 'San Joaquin County Environmental Health Department',
+    scoringType: 'violation_report',
+    gradingType: 'violation_report_only',
+    gradingConfig: {
+      displayFormat: 'violation_report',
+      grades: null,
+      letterGrade: false,
+      numericScore: false,
+      placardPosted: false,
+      gradeCardPosted: false,
+      violationCategories: ['major', 'minor'],
+      majorViolationAction: 'must_correct_reinspection_may_be_required',
+      minorViolationAction: 'correction_required',
+      onSiteReportRequired: true,
+      publicPostingRequired: false,
+      voluntaryPostingAllowed: true,
+      inspectionFrequencyNote: 'Annual (1/year) — less frequent than most CA counties',
+      transparencyLevel: 'medium',
+      transparencyNote: 'Searchable online portal at app.sjgov.org/restaurant-inspection/. No grade, no score, no placard. Restaurants must allow public to view on-site report on request.',
+      publicPortal: 'https://app.sjgov.org/restaurant-inspection/',
+      gradingNote: 'NO letter grade. NO score. NO placard. Violation report only. Annual inspections (1/year).',
+      localAuthority: 'Stockton Municipal Code Section 7-111.1(h) supplements CalCode',
+    },
+    passThreshold: null,
+    warningThreshold: null,
+    criticalThreshold: null,
+    fireAhjName: 'San Joaquin County OES / local city fire departments',
+    hoodCleaningDefault: 'quarterly',
+    facilityCount: 2882,
+    dataSourceTier: 3,
+    gradeLabel: 'No Open Majors',
+    gradeExplanation: 'Violation Report Only — No letter grade, no numeric score, no placard. Annual inspections.',
+    passFailLabel: 'No Grade',
+    demoScore: 88,
+    demoGrade: 'No Open Majors',
     demoPassFail: 'pass',
   },
 ];
@@ -793,7 +838,7 @@ export const ALL_CA_JURISDICTIONS: Array<{
   { county: 'Kern', agencyName: 'Kern County PHS', scoringType: 'weighted_deduction', gradingType: 'letter_grade', facilityCount: 4000, tier: 3 },
   { county: 'Ventura', agencyName: 'Ventura County EHD', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 4500, tier: 3 },
   { county: 'San Mateo', agencyName: 'San Mateo County Health', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 3800, tier: 3 },
-  { county: 'San Joaquin', agencyName: 'San Joaquin County PHS', scoringType: 'major_minor_reinspect', gradingType: 'pass_reinspect', facilityCount: 3500, tier: 3 },
+  { county: 'San Joaquin', agencyName: 'San Joaquin County Environmental Health Department', scoringType: 'violation_report', gradingType: 'violation_report_only', facilityCount: 2882, tier: 3 },
   { county: 'Santa Barbara', agencyName: 'SB County PHD', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 2800, tier: 3 },
   { county: 'Stanislaus', agencyName: 'Stanislaus County Environmental Resources', scoringType: 'violation_report', gradingType: 'violation_report_only', facilityCount: 2500, tier: 3 },
   { county: 'Monterey', agencyName: 'Monterey County Health', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 2500, tier: 3 },
