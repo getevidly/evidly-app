@@ -149,7 +149,7 @@ const I: Record<string, NavItem> = {
     roles: [], description: 'Instant access mode when an inspector arrives — surfaces documents, recent logs, and compliance status.',
   },
   iotSensors: {
-    id: 'iot-sensors', label: 'Internet of Things Sensors', path: '/sensors', icon: '📡',
+    id: 'iot-sensors', label: 'Manage Sensors', path: '/sensors', icon: '📡',
     roles: [], description: 'Add, configure, and manage Internet of Things temperature sensors across your locations.',
   },
   foodSafetyOverview: {

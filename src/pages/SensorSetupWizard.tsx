@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, ArrowRight, Check, Cloud, Zap, Upload, Bluetooth,
   Thermometer, Lock, Key, Wifi, Radio, Bell, Clock,
-  ChevronDown, Mail, Phone, MessageSquare, AlertTriangle,
+  ChevronDown, Mail, Phone, MessageSquare, AlertTriangle, Plus, MapPin,
 } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
-import { iotSensorProviders } from '../data/demoData';
+import { iotSensorProviders, locations } from '../data/demoData';
 import { toast } from 'sonner';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
@@ -20,6 +20,8 @@ const LIGHT_BG = '#eef4f8';
 /* ── Types ────────────────────────────────────────────────── */
 
 type Step = 1 | 2 | 3 | 4 | 5;
+
+type ManualSensorType = 'temperature' | 'humidity' | 'co2' | 'door_contact';
 
 interface WizardState {
   provider: string | null;
@@ -39,6 +41,14 @@ interface WizardState {
   escalationEnabled: boolean;
   // Frequency
   pollingInterval: number;
+  // Manual add fields
+  manualSensorName: string;
+  manualSensorType: ManualSensorType;
+  manualLocationId: string;
+  manualEquipmentId: string;
+  manualMinThreshold: number | null;
+  manualMaxThreshold: number | null;
+  manualPollingInterval: number;
 }
 
 interface DiscoveredSensor {
@@ -86,6 +96,44 @@ const ZONE_PRESETS: Record<string, ZoneThreshold> = {
   'Receiving': { zone: 'Receiving', maxTempF: 41, minTempF: null, warningBuffer: 2, maxHumidity: null },
 };
 
+/* ── Equipment Options (by location) ────────────────────── */
+
+const EQUIPMENT_OPTIONS = [
+  { id: 'eq-wic-01', name: 'Walk-in Cooler #1', locationId: '1' },
+  { id: 'eq-wif-01', name: 'Walk-in Freezer', locationId: '1' },
+  { id: 'eq-hh-01', name: 'Hot Hold Station', locationId: '1' },
+  { id: 'eq-ri-01', name: 'Reach-in Cooler', locationId: '1' },
+  { id: 'eq-wic-02', name: 'Walk-in Cooler A', locationId: '2' },
+  { id: 'eq-wif-02', name: 'Walk-in Freezer A', locationId: '2' },
+  { id: 'eq-hh-02', name: 'Hot Hold Station', locationId: '2' },
+  { id: 'eq-wic-03', name: 'Main Walk-in', locationId: '3' },
+  { id: 'eq-wif-03', name: 'Walk-in Freezer', locationId: '3' },
+];
+
+/* ── Sensor Type Threshold Defaults ─────────────────────── */
+
+const SENSOR_TYPE_DEFAULTS: Record<ManualSensorType, { min: number | null; max: number | null; unit: string }> = {
+  temperature: { min: null, max: 41, unit: '°F' },
+  humidity: { min: 20, max: 70, unit: '%' },
+  co2: { min: null, max: 1000, unit: 'ppm' },
+  door_contact: { min: null, max: null, unit: '' },
+};
+
+const SENSOR_TYPE_LABELS: Record<ManualSensorType, string> = {
+  temperature: 'Temperature',
+  humidity: 'Humidity',
+  co2: 'CO₂',
+  door_contact: 'Door Contact',
+};
+
+const POLLING_OPTIONS = [
+  { value: 1, label: '1 min' },
+  { value: 5, label: '5 min' },
+  { value: 15, label: '15 min' },
+  { value: 30, label: '30 min' },
+  { value: 60, label: '1 hour' },
+];
+
 const STEP_LABELS = ['Select Brand', 'Authenticate', 'Thresholds', 'Alerts', 'Frequency'];
 
 /* ── Component ────────────────────────────────────────────── */
@@ -110,14 +158,39 @@ export function SensorSetupWizard() {
     alertDelay: 0,
     escalationEnabled: true,
     pollingInterval: 5,
+    manualSensorName: '',
+    manualSensorType: 'temperature',
+    manualLocationId: '',
+    manualEquipmentId: '',
+    manualMinThreshold: null,
+    manualMaxThreshold: 41,
+    manualPollingInterval: 5,
   });
   const [complete, setComplete] = useState(false);
+  const isManualMode = state.provider === 'manual';
+
+  function handleManualSensorTypeChange(type: ManualSensorType) {
+    const defaults = SENSOR_TYPE_DEFAULTS[type];
+    setState(prev => ({
+      ...prev,
+      manualSensorType: type,
+      manualMinThreshold: defaults.min,
+      manualMaxThreshold: defaults.max,
+    }));
+  }
+
+  function handleManualSubmit() {
+    guardAction('create', 'IoT Sensors', () => {
+      toast.success('Sensor added successfully');
+      navigate('/sensors');
+    });
+  }
 
   if (!isDemoMode) {
     return (
       <div className="p-6 max-w-3xl mx-auto" style={F}>
         <button onClick={() => navigate('/sensors')} className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-4">
-          <ArrowLeft className="h-4 w-4" /> Back to Sensor Hub
+          <ArrowLeft className="h-4 w-4" /> Back to Manage Sensors
         </button>
         <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
           <Radio className="h-12 w-12 mx-auto mb-4 text-gray-300" />
@@ -200,7 +273,7 @@ export function SensorSetupWizard() {
           <p className="text-sm text-gray-500 mb-2">
             {state.discoveredSensors.filter(s => s.selected).length} sensor{state.discoveredSensors.filter(s => s.selected).length !== 1 ? 's' : ''} from {selectedProvider?.name} are now ingesting data.
           </p>
-          <p className="text-xs text-gray-400">Redirecting to Sensor Hub...</p>
+          <p className="text-xs text-gray-400">Redirecting to Manage Sensors...</p>
         </div>
       </div>
     );
@@ -210,41 +283,237 @@ export function SensorSetupWizard() {
     <div className="p-6 max-w-3xl mx-auto" style={F}>
       {/* Back */}
       <button onClick={() => step === 1 ? navigate('/sensors') : setStep((step - 1) as Step)} className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-4">
-        <ArrowLeft className="h-4 w-4" /> {step === 1 ? 'Back to Sensor Hub' : 'Previous Step'}
+        <ArrowLeft className="h-4 w-4" /> {step === 1 ? 'Back to Manage Sensors' : 'Previous Step'}
       </button>
 
-      {/* Progress */}
-      <div className="flex items-center gap-2 mb-8">
-        {STEP_LABELS.map((label, i) => {
-          const stepNum = (i + 1) as Step;
-          const active = step === stepNum;
-          const done = step > stepNum;
-          return (
-            <div key={label} className="flex items-center gap-2 flex-1">
-              <div className="flex items-center gap-2">
-                <div
-                  className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold"
-                  style={{
-                    backgroundColor: done ? '#22c55e' : active ? PRIMARY : '#e5e7eb',
-                    color: done || active ? 'white' : '#9ca3af',
-                  }}
-                >
-                  {done ? <Check className="h-3.5 w-3.5" /> : stepNum}
+      {/* Progress — hidden in manual mode */}
+      {!isManualMode && (
+        <div className="flex items-center gap-2 mb-8">
+          {STEP_LABELS.map((label, i) => {
+            const stepNum = (i + 1) as Step;
+            const active = step === stepNum;
+            const done = step > stepNum;
+            return (
+              <div key={label} className="flex items-center gap-2 flex-1">
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold"
+                    style={{
+                      backgroundColor: done ? '#22c55e' : active ? PRIMARY : '#e5e7eb',
+                      color: done || active ? 'white' : '#9ca3af',
+                    }}
+                  >
+                    {done ? <Check className="h-3.5 w-3.5" /> : stepNum}
+                  </div>
+                  <span className={`text-xs font-medium hidden md:block ${active ? 'text-gray-900' : 'text-gray-400'}`}>{label}</span>
                 </div>
-                <span className={`text-xs font-medium hidden md:block ${active ? 'text-gray-900' : 'text-gray-400'}`}>{label}</span>
+                {i < 4 && <div className="flex-1 h-px" style={{ backgroundColor: done ? '#22c55e' : '#e5e7eb' }} />}
               </div>
-              {i < 4 && <div className="flex-1 h-px" style={{ backgroundColor: done ? '#22c55e' : '#e5e7eb' }} />}
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
 
       <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+
+        {/* ── Manual Add Sensor Form ──────────────────────────── */}
+        {isManualMode && (
+          <div>
+            <h2 className="text-lg font-bold text-gray-900 mb-1">Add Sensor Manually</h2>
+            <p className="text-sm text-gray-500 mb-6">Configure an individual sensor without connecting to a cloud provider.</p>
+
+            <div className="space-y-5">
+              {/* 1. Sensor Name */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">Sensor Name</label>
+                <input
+                  type="text"
+                  placeholder="e.g., Walk-in Cooler #1"
+                  value={state.manualSensorName}
+                  onChange={e => setState(prev => ({ ...prev, manualSensorName: e.target.value }))}
+                  className="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#1e4d6b]"
+                />
+              </div>
+
+              {/* 2. Sensor Type */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">Sensor Type</label>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                  {(['temperature', 'humidity', 'co2', 'door_contact'] as ManualSensorType[]).map(type => {
+                    const selected = state.manualSensorType === type;
+                    return (
+                      <button
+                        key={type}
+                        onClick={() => handleManualSensorTypeChange(type)}
+                        className="text-left p-3 rounded-xl border-2 transition-all"
+                        style={{
+                          borderColor: selected ? PRIMARY : '#e5e7eb',
+                          backgroundColor: selected ? LIGHT_BG : 'white',
+                        }}
+                      >
+                        <div className="text-sm font-semibold" style={{ color: selected ? PRIMARY : '#374151' }}>
+                          {SENSOR_TYPE_LABELS[type]}
+                        </div>
+                        <div className="text-[10px] text-gray-400 mt-0.5">
+                          {type === 'temperature' ? 'Cold/hot storage' : type === 'humidity' ? 'Moisture levels' : type === 'co2' ? 'Air quality' : 'Open/close events'}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 3. Location Assignment */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">Location</label>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <select
+                    value={state.manualLocationId}
+                    onChange={e => setState(prev => ({ ...prev, manualLocationId: e.target.value, manualEquipmentId: '' }))}
+                    className="w-full pl-9 pr-3 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#1e4d6b] appearance-none bg-white"
+                  >
+                    <option value="">Select a location...</option>
+                    {locations.map(loc => (
+                      <option key={loc.id} value={loc.id}>{loc.name} — {loc.address}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* 4. Equipment Assignment (optional) */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">
+                  Link to Equipment <span className="font-normal text-gray-400">(optional)</span>
+                </label>
+                <select
+                  value={state.manualEquipmentId}
+                  onChange={e => setState(prev => ({ ...prev, manualEquipmentId: e.target.value }))}
+                  disabled={!state.manualLocationId}
+                  className="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#1e4d6b] appearance-none bg-white disabled:bg-gray-50 disabled:text-gray-400"
+                >
+                  <option value="">{state.manualLocationId ? 'None — standalone sensor' : 'Select a location first'}</option>
+                  {EQUIPMENT_OPTIONS
+                    .filter(eq => eq.locationId === state.manualLocationId)
+                    .map(eq => (
+                      <option key={eq.id} value={eq.id}>{eq.name}</option>
+                    ))}
+                </select>
+              </div>
+
+              {/* 5. Alert Thresholds */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">Alert Thresholds</label>
+                {state.manualSensorType === 'door_contact' ? (
+                  <div className="p-3 rounded-lg text-sm" style={{ backgroundColor: LIGHT_BG }}>
+                    <Bell className="h-4 w-4 inline mr-1.5" style={{ color: PRIMARY }} />
+                    Alerts trigger on open/close events. Duration-based alerts configurable post-setup.
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase mb-1">
+                        Min ({SENSOR_TYPE_DEFAULTS[state.manualSensorType].unit})
+                      </label>
+                      <input
+                        type="number"
+                        value={state.manualMinThreshold ?? ''}
+                        onChange={e => setState(prev => ({ ...prev, manualMinThreshold: e.target.value ? Number(e.target.value) : null }))}
+                        placeholder="No minimum"
+                        className="w-full px-2.5 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#1e4d6b]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase mb-1">
+                        Max ({SENSOR_TYPE_DEFAULTS[state.manualSensorType].unit})
+                      </label>
+                      <input
+                        type="number"
+                        value={state.manualMaxThreshold ?? ''}
+                        onChange={e => setState(prev => ({ ...prev, manualMaxThreshold: e.target.value ? Number(e.target.value) : null }))}
+                        placeholder="No maximum"
+                        className="w-full px-2.5 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#1e4d6b]"
+                      />
+                    </div>
+                  </div>
+                )}
+                {state.manualSensorType === 'temperature' && (
+                  <p className="text-xs text-gray-400 mt-1.5">FDA cold holding default: max 41°F. Adjust based on your jurisdiction requirements.</p>
+                )}
+              </div>
+
+              {/* 6. Polling Interval */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-2">Reading Frequency</label>
+                <div className="flex flex-wrap gap-2">
+                  {POLLING_OPTIONS.map(opt => {
+                    const selected = state.manualPollingInterval === opt.value;
+                    return (
+                      <button
+                        key={opt.value}
+                        onClick={() => setState(prev => ({ ...prev, manualPollingInterval: opt.value }))}
+                        className="px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all"
+                        style={{
+                          borderColor: selected ? PRIMARY : '#e5e7eb',
+                          backgroundColor: selected ? LIGHT_BG : 'white',
+                          color: selected ? PRIMARY : '#6b7280',
+                        }}
+                      >
+                        {opt.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* Submit */}
+            <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-100">
+              <button
+                onClick={() => setState(prev => ({ ...prev, provider: null }))}
+                className="text-sm text-gray-500 hover:text-gray-700"
+              >
+                Back to Brand Selection
+              </button>
+              <button
+                onClick={handleManualSubmit}
+                disabled={!state.manualSensorName.trim() || !state.manualLocationId}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors"
+                style={{ backgroundColor: (state.manualSensorName.trim() && state.manualLocationId) ? PRIMARY : '#d1d5db' }}
+              >
+                <Plus className="h-4 w-4" /> Add Sensor
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Step 1: Select Brand */}
-        {step === 1 && (
+        {step === 1 && !isManualMode && (
           <div>
             <h2 className="text-lg font-bold text-gray-900 mb-1">Select Your Sensor Brand</h2>
-            <p className="text-sm text-gray-500 mb-6">Choose the hardware platform you want to connect to EvidLY.</p>
+            <p className="text-sm text-gray-500 mb-6">Choose the hardware platform you want to connect, or add a sensor manually.</p>
+
+            {/* Manual Entry card */}
+            <button
+              onClick={() => setState(prev => ({ ...prev, provider: 'manual' }))}
+              className="w-full text-left p-4 rounded-xl border-2 border-dashed transition-all mb-4"
+              style={{ borderColor: '#b8d4e8', backgroundColor: LIGHT_BG }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = PRIMARY; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = '#b8d4e8'; }}
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: PRIMARY }}>
+                  <Plus className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <div className="text-sm font-bold text-gray-900">Manual Entry</div>
+                  <div className="text-xs text-gray-500">Add an individual sensor without a cloud integration</div>
+                </div>
+              </div>
+            </button>
+
+            <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Or connect a sensor platform</div>
+
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {iotSensorProviders.map(p => {
                 const selected = state.provider === p.slug;
@@ -738,27 +1007,29 @@ export function SensorSetupWizard() {
           </div>
         )}
 
-        {/* Navigation */}
-        <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-100">
-          <button
-            onClick={() => step > 1 ? setStep((step - 1) as Step) : navigate('/sensors')}
-            className="text-sm text-gray-500 hover:text-gray-700"
-          >
-            {step === 1 ? 'Cancel' : 'Back'}
-          </button>
-          <button
-            onClick={() => step < 5 ? setStep((step + 1) as Step) : handleFinish()}
-            disabled={!canNext()}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors"
-            style={{ backgroundColor: canNext() ? PRIMARY : '#d1d5db' }}
-          >
-            {step < 5 ? (
-              <>Next <ArrowRight className="h-4 w-4" /></>
-            ) : (
-              <>Finish Setup <Check className="h-4 w-4" /></>
-            )}
-          </button>
-        </div>
+        {/* Navigation — hidden in manual mode (manual form has own buttons) */}
+        {!isManualMode && (
+          <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-100">
+            <button
+              onClick={() => step > 1 ? setStep((step - 1) as Step) : navigate('/sensors')}
+              className="text-sm text-gray-500 hover:text-gray-700"
+            >
+              {step === 1 ? 'Cancel' : 'Back'}
+            </button>
+            <button
+              onClick={() => step < 5 ? setStep((step + 1) as Step) : handleFinish()}
+              disabled={!canNext()}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors"
+              style={{ backgroundColor: canNext() ? PRIMARY : '#d1d5db' }}
+            >
+              {step < 5 ? (
+                <>Next <ArrowRight className="h-4 w-4" /></>
+              ) : (
+                <>Finish Setup <Check className="h-4 w-4" /></>
+              )}
+            </button>
+          </div>
+        )}
       </div>
 
       {showUpgrade && (

@@ -50,7 +50,7 @@ const ROUTE_HIERARCHY: Record<string, { label: string; parent?: string }> = {
   '/iot-monitoring': { label: 'IoT Dashboard', parent: '/insights' },
   '/audit-trail': { label: 'Audit Trail', parent: '/insights' },
   '/weekly-digest': { label: 'Weekly Digest', parent: '/insights' },
-  '/sensors': { label: 'Sensor Hub', parent: '/insights' },
+  '/sensors': { label: 'Manage Sensors', parent: '/admin' },
   '/sensors/add': { label: 'Add Sensor', parent: '/sensors' },
   '/iot-platform': { label: 'IoT Platform', parent: '/insights' },
 

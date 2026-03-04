@@ -1,11 +1,11 @@
 import { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import {
   Thermometer, Wifi, WifiOff, Battery, BatteryWarning,
   AlertTriangle, CheckCircle, XCircle, Clock, Activity,
   Radio, Signal, Cloud, Bluetooth, FileText, Upload,
   Search, Filter, Plus, ChevronRight, Zap,
-  ArrowUpRight, ArrowDownRight, MoreHorizontal,
+  ArrowUpRight, ArrowDownRight, MoreHorizontal, Info,
 } from 'lucide-react';
 import {
   iotSensorProviders, iotSensors, iotSensorReadings,
@@ -13,6 +13,20 @@ import {
   type IoTSensor,
 } from '../data/demoData';
 import { useDemo } from '../contexts/DemoContext';
+
+/* ── Real-Time Connectivity (Post-Launch) ────────────────────
+ * When a sensor is added (manual or provider-based), EvidLY will:
+ *   1. INSERT row into `iot_sensors` / `sensor_devices` via Supabase
+ *   2. Subscribe to Supabase Realtime channel for that sensor's readings
+ *   3. On each new reading, evaluate against configured alert thresholds
+ *   4. If threshold violated, INSERT into `iot_sensor_alerts` and push notification
+ *   5. This Manage Sensors page subscribes to `iot_sensors` table changes
+ *      so new sensors appear without page refresh
+ *
+ * Pre-launch mode: Static demo data from demoData.ts. No Supabase writes.
+ * Post-launch edge functions: iot-sensor-pull (API polling), iot-sensor-webhook
+ *   (push receiver), sensor-threshold-evaluate (real-time threshold check)
+ * ─────────────────────────────────────────────────────────── */
 
 const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
 const PRIMARY = '#1e4d6b';
@@ -162,7 +176,7 @@ export function SensorHub() {
       <div className="px-3 sm:px-6 py-6 max-w-[1400px] mx-auto" style={F}>
         <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
           <Radio className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">Sensor Hub</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">Manage Sensors</h2>
           <p className="text-sm text-gray-500 max-w-md mx-auto">
             Set up and manage your IoT sensors.
           </p>
@@ -181,8 +195,8 @@ export function SensorHub() {
               <Radio className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-gray-900">IoT Sensor Hub</h1>
-              <p className="text-sm text-gray-500">Your sensors. Our intelligence. Zero manual logging.</p>
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Manage Sensors</h1>
+              <p className="text-sm text-gray-500">Add, configure, and manage IoT sensors across your locations.</p>
             </div>
           </div>
         </div>
@@ -195,6 +209,26 @@ export function SensorHub() {
         >
           <Plus className="h-4 w-4" /> Add Sensor
         </button>
+      </div>
+
+      {/* Admin vs Dashboard distinction banner */}
+      <div
+        className="flex items-center justify-between flex-wrap gap-2 px-4 py-2.5 rounded-lg mb-6"
+        style={{ backgroundColor: LIGHT_BG, border: `1px solid ${BORDER}` }}
+      >
+        <div className="flex items-center gap-2 text-sm" style={{ color: '#3D5068' }}>
+          <Info className="h-4 w-4 flex-shrink-0" style={{ color: PRIMARY }} />
+          <span><strong>Manage Sensors</strong> (Admin) &mdash; Add and configure individual sensors</span>
+        </div>
+        <Link
+          to="/iot-monitoring"
+          className="flex items-center gap-1 text-sm font-medium transition-colors"
+          style={{ color: PRIMARY }}
+          onMouseEnter={e => (e.currentTarget.style.color = '#2a6a8f')}
+          onMouseLeave={e => (e.currentTarget.style.color = PRIMARY)}
+        >
+          View Live IoT Dashboard <ArrowUpRight className="h-3.5 w-3.5" />
+        </Link>
       </div>
 
       {/* Stats Cards */}

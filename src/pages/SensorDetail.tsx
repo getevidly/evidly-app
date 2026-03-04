@@ -251,7 +251,7 @@ export function SensorDetail() {
     return (
       <div className="p-6" style={F}>
         <button onClick={() => navigate('/sensors')} className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-4">
-          <ArrowLeft className="h-4 w-4" /> Back to Sensor Hub
+          <ArrowLeft className="h-4 w-4" /> Back to Manage Sensors
         </button>
         <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
           <Thermometer className="h-12 w-12 mx-auto mb-4 text-gray-300" />
@@ -268,7 +268,7 @@ export function SensorDetail() {
     return (
       <div className="p-6" style={F}>
         <button onClick={() => navigate('/sensors')} className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-4">
-          <ArrowLeft className="h-4 w-4" /> Back to Sensor Hub
+          <ArrowLeft className="h-4 w-4" /> Back to Manage Sensors
         </button>
         <div className="text-center py-12 text-gray-400">Sensor not found.</div>
       </div>
@@ -282,7 +282,7 @@ export function SensorDetail() {
     <div className="px-3 sm:px-6 py-6 max-w-[1200px] mx-auto" style={F}>
       {/* Back nav */}
       <button onClick={() => navigate('/sensors')} className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-4">
-        <ArrowLeft className="h-4 w-4" /> Back to Sensor Hub
+        <ArrowLeft className="h-4 w-4" /> Back to Manage Sensors
       </button>
 
       {/* Header */}
