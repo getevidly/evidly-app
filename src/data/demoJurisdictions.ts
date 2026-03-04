@@ -1049,6 +1049,41 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     demoPassFail: 'no_grade',
   },
   {
+    // ═══ TEHAMA COUNTY — STANDARDIZED (March 2026) ═══
+    // NO letter grade. NO numeric score. NO confirmed placard.
+    // Inspection report only. Monthly PDF inspection reports published on county website by period.
+    // Transparency: MEDIUM.
+    // Source: tehama.gov/government/departments/environmental-health/food-inspection-reports — verified March 2026
+    id: 'demo-tehama',
+    county: 'Tehama',
+    agencyName: 'Tehama County Environmental Health Department',
+    scoringType: 'inspection_report',
+    gradingType: 'inspection_report',
+    gradingConfig: {
+      displayFormat: 'inspection_report',
+      placards: [],
+      numericScore: false,
+      placardPosted: false,
+      reportOnline: true,
+      inspectionFrequency: 'risk_based',
+      transparencyLevel: 'medium',
+      programNote: 'Monthly PDF publication model. MEDIUM transparency. Red Bluff is county seat. Corning is largest city in north county.',
+    },
+    passThreshold: null,
+    warningThreshold: null,
+    criticalThreshold: null,
+    fireAhjName: 'CAL FIRE / City of Red Bluff Fire / City of Corning Fire',
+    hoodCleaningDefault: 'semi-annual',
+    facilityCount: 500,
+    dataSourceTier: 4,
+    gradeLabel: 'N/A',
+    gradeExplanation: 'No grade system — inspection report only. ~400–600 facilities. MEDIUM transparency.',
+    passFailLabel: 'No Grade',
+    demoScore: 85,
+    demoGrade: 'No Grade',
+    demoPassFail: 'no_grade',
+  },
+  {
     // ═══ GLENN COUNTY — STANDARDIZED (March 2026) ═══
     // NO letter grade. NO numeric score. NO confirmed placard.
     // Inspection report only. PDF reports posted online by facility name.
@@ -1078,6 +1113,45 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     dataSourceTier: 4,
     gradeLabel: 'N/A',
     gradeExplanation: 'No grade system — inspection report only. ~200-300 facilities. MEDIUM transparency.',
+    passFailLabel: 'No Grade',
+    demoScore: 85,
+    demoGrade: 'No Grade',
+    demoPassFail: 'no_grade',
+  },
+  {
+    // ═══ YUBA COUNTY — STANDARDIZED (March 2026) ═══
+    // NO letter grade. NO numeric score. NO confirmed placard.
+    // Inspection report only. ~500–700 facilities.
+    // IMPORTANT: Yuba County ≠ Sutter County. Yuba City → Sutter. Marysville → Yuba.
+    // Sutter County uses GYR placard; Yuba County does NOT.
+    // Transparency: MEDIUM.
+    // Source: yuba.org/departments/community_development/environmental_health/ — verified March 2026
+    id: 'demo-yuba',
+    county: 'Yuba',
+    agencyName: 'Yuba County Community Development Department — Environmental Health Division',
+    scoringType: 'inspection_report',
+    gradingType: 'inspection_report',
+    gradingConfig: {
+      displayFormat: 'inspection_report',
+      placards: [],
+      numericScore: false,
+      placardPosted: false,
+      reportOnline: false,
+      reportAtFacility: true,
+      reportAtOffice: true,
+      inspectionFrequency: 'risk_based',
+      transparencyLevel: 'medium',
+      programNote: 'Inspection report only — no letter grade, no numeric score, no confirmed placard. ~500–700 facilities. Marysville is county seat. Adjacent Sutter County uses GYR placard — Yuba does NOT. Single EHD office at 915 8th Street, Marysville.',
+    },
+    passThreshold: null,
+    warningThreshold: null,
+    criticalThreshold: null,
+    fireAhjName: 'CAL FIRE / City of Marysville Fire / Yuba County Fire',
+    hoodCleaningDefault: 'semi-annual',
+    facilityCount: 600,
+    dataSourceTier: 3,
+    gradeLabel: 'N/A',
+    gradeExplanation: 'No grade system — inspection report only. ~500–700 facilities. MEDIUM transparency. Different from adjacent Sutter County (GYR placard).',
     passFailLabel: 'No Grade',
     demoScore: 85,
     demoGrade: 'No Grade',
@@ -1639,13 +1713,13 @@ export const ALL_CA_JURISDICTIONS: Array<{
   { county: 'Nevada', agencyName: 'Nevada County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 700, tier: 4 },
   { county: 'Mendocino', agencyName: 'Mendocino County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 600, tier: 4 },
   { county: 'Sutter', agencyName: 'Sutter County Development Services — Environmental Health Division', scoringType: 'color_placard', gradingType: 'green_yellow_red', facilityCount: 500, tier: 3 },
-  { county: 'Yuba', agencyName: 'Yuba County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 400, tier: 4 },
+  { county: 'Yuba', agencyName: 'Yuba County Community Development Department — Environmental Health Division', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 600, tier: 4 },
   { county: 'Lake', agencyName: 'Lake County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 400, tier: 4 },
   { county: 'Tehama', agencyName: 'Tehama County Environmental Health Department', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 500, tier: 4 },
   { county: 'Calaveras', agencyName: 'Calaveras County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 300, tier: 4 },
   { county: 'Siskiyou', agencyName: 'Siskiyou County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 300, tier: 4 },
   { county: 'San Benito', agencyName: 'San Benito County Health & Human Services Agency — Environmental Health', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 400, tier: 4 },
-  { county: 'Amador', agencyName: 'Amador County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 300, tier: 4 },
+  { county: 'Amador', agencyName: 'Amador County Environmental Health Department', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 400, tier: 4 },
   { county: 'Glenn', agencyName: 'Glenn County Environmental Health — Planning and Community Development Services', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 200, tier: 4 },
   { county: 'Del Norte', agencyName: 'Del Norte County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 200, tier: 4 },
   { county: 'Lassen', agencyName: 'Lassen County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 200, tier: 4 },
