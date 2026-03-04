@@ -134,6 +134,7 @@ const AssessmentTool = lazy(() => import('./pages/public/AssessmentTool').then(m
 const CountyLandingPage = lazy(() => import('./pages/public/CountyLandingPage'));
 const ScoreTableCountyPage = lazy(() => import('./pages/public/ScoreTableCountyPage'));
 const KitchenCheckPage = lazy(() => import('./pages/public/KitchenCheckPage'));
+const NewLandingPage = lazy(() => import('./pages/public/LandingPage'));
 const CountyWrapper = () => { const { slug } = useParams(); return <CountyLandingPage county={slug?.replace("-county", "")} />; };
 const ScoreTableWrapper = () => { const { slug } = useParams(); return <ScoreTableCountyPage county={slug?.replace("-county", "")} />; };
 const KitchenCheckWrapper = () => { const { slug } = useParams(); return <KitchenCheckPage county={slug?.replace("-county", "")} />; };
@@ -373,7 +374,7 @@ function AppRoutes() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<LandingPage />} />
+        <Route path="/" element={<Suspense fallback={<PageSkeleton />}><NewLandingPage /></Suspense>} />
 
         {/* Public routes */}
         <Route path="/verify/:code" element={<Suspense fallback={<PageSkeleton />}><PublicVerification /></Suspense>} />
