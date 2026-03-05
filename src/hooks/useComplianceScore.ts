@@ -12,14 +12,16 @@
 import { useState, useEffect } from 'react';
 import type { LocationScore, LocationJurisdiction, AuthorityScore } from '../types/jurisdiction';
 import { DEMO_LOCATIONS, DEMO_LOCATION_GRADE_OVERRIDES, calculateDemoGrade } from '../data/demoJurisdictions';
+import { supabase } from '../lib/supabase';
 
-// SUGGESTION: In live mode, call the calculate-compliance-score Edge Function
+// ── Demo-only helpers ────────────────────────────────────────────────────────
+// These functions are ONLY called when isDemoMode === true.
+// They must never be called for authenticated production users.
 
 function buildFoodSafetyScore(
   locationId: string,
   jurisdiction: LocationJurisdiction,
 ): AuthorityScore {
-  // Check for verified override first (spec-exact display strings)
   const override = DEMO_LOCATION_GRADE_OVERRIDES[locationId];
   if (override) {
     return {
@@ -27,7 +29,7 @@ function buildFoodSafetyScore(
       authority: jurisdiction.foodSafety,
       grade: override.foodSafety.grade,
       gradeDisplay: override.foodSafety.gradeDisplay,
-      numericScore: null, // jurisdiction-native — no fabricated numeric score
+      numericScore: null,
       status: override.foodSafety.status,
       details: {
         summary: override.foodSafety.summary,
@@ -36,7 +38,6 @@ function buildFoodSafetyScore(
     };
   }
 
-  // Fallback: derive from calculateDemoGrade (for jurisdiction switcher demo)
   const loc = DEMO_LOCATIONS.find(l => l.id === locationId);
   if (!loc) {
     return {
@@ -79,7 +80,6 @@ function buildFacilitySafetyScore(
   const ahjName = fireConfig?.fire_ahj_name ?? jurisdiction.facilitySafety.agency_name;
   const codeEdition = fireConfig?.fire_code_edition ?? 'NFPA 96 (2024)';
 
-  // Check for verified override first
   const override = DEMO_LOCATION_GRADE_OVERRIDES[locationId];
   if (override) {
     return {
@@ -87,7 +87,7 @@ function buildFacilitySafetyScore(
       authority: jurisdiction.facilitySafety,
       grade: override.facilitySafety.grade,
       gradeDisplay: override.facilitySafety.gradeDisplay,
-      numericScore: null, // fire is pass/fail per NFPA 96 (2024) — no numeric score
+      numericScore: null,
       status: override.facilitySafety.status,
       details: {
         summary: override.facilitySafety.summary,
@@ -104,7 +104,6 @@ function buildFacilitySafetyScore(
     };
   }
 
-  // Fallback for non-overridden locations
   const loc = DEMO_LOCATIONS.find(l => l.id === locationId);
   const operationalPermitValid = loc ? loc.facilitySafety.ops >= 70 : true;
 
@@ -128,6 +127,55 @@ function buildFacilitySafetyScore(
   };
 }
 
+// ── Empty state for live users with no data yet ───────────────────────────────
+function buildEmptyScore(
+  locationId: string,
+  jurisdiction: LocationJurisdiction,
+): LocationScore {
+  return {
+    location_id: locationId,
+    foodSafety: {
+      pillar: 'food_safety',
+      authority: jurisdiction.foodSafety,
+      grade: null,
+      gradeDisplay: null,
+      numericScore: null,
+      status: 'unknown',
+      details: null,
+    },
+    facilitySafety: {
+      pillar: 'facility_safety',
+      authority: jurisdiction.facilitySafety,
+      grade: null,
+      gradeDisplay: null,
+      numericScore: null,
+      status: 'unknown',
+      details: null,
+    },
+    federalFoodOverlay: null,
+    federalFireOverlay: null,
+  };
+}
+
+// ── Live mode: call calculate-compliance-score Edge Function ─────────────────
+async function fetchLiveScore(
+  locationId: string,
+  jurisdiction: LocationJurisdiction,
+): Promise<LocationScore> {
+  const { data, error } = await supabase.functions.invoke('calculate-compliance-score', {
+    body: { locationId },
+  });
+
+  if (error || !data) {
+    console.error('[useComplianceScore] Edge function error:', error);
+    // Return empty state — never fall back to demo data for live users
+    return buildEmptyScore(locationId, jurisdiction);
+  }
+
+  return data as LocationScore;
+}
+
+// ── useComplianceScore ────────────────────────────────────────────────────────
 export function useComplianceScore(
   locationId: string | null,
   jurisdiction: LocationJurisdiction | null,
@@ -141,6 +189,7 @@ export function useComplianceScore(
       return;
     }
 
+    // DEMO MODE: use local demo data, no DB calls
     if (isDemoMode) {
       setScore({
         location_id: locationId,
@@ -152,20 +201,22 @@ export function useComplianceScore(
       return;
     }
 
-    // SUGGESTION: Live mode — call Edge Function
-    setScore({
-      location_id: locationId,
-      foodSafety: buildFoodSafetyScore(locationId, jurisdiction),
-      facilitySafety: buildFacilitySafetyScore(locationId, jurisdiction),
-      federalFoodOverlay: null,
-      federalFireOverlay: null,
+    // LIVE MODE: call the Edge Function
+    // Never use demo data for authenticated production users
+    let cancelled = false;
+    fetchLiveScore(locationId, jurisdiction).then(result => {
+      if (!cancelled) setScore(result);
     });
-  }, [locationId, jurisdiction, isDemoMode]);
+
+    return () => { cancelled = true; };
+  }, [locationId, jurisdiction?.foodSafety?.agency_id, isDemoMode]);
 
   return score;
 }
 
-// Returns scores for ALL demo locations at once
+// ── useAllComplianceScores ────────────────────────────────────────────────────
+// Returns scores for all locations. Demo mode only — live mode fetches
+// per-location via useComplianceScore to avoid bulk edge function calls.
 export function useAllComplianceScores(
   jurisdictions: Record<string, LocationJurisdiction>,
   isDemoMode: boolean,
@@ -173,17 +224,46 @@ export function useAllComplianceScores(
   const [scores, setScores] = useState<Record<string, LocationScore>>({});
 
   useEffect(() => {
-    const result: Record<string, LocationScore> = {};
-    for (const [locId, jurisdiction] of Object.entries(jurisdictions)) {
-      result[locId] = {
-        location_id: locId,
-        foodSafety: buildFoodSafetyScore(locId, jurisdiction),
-        facilitySafety: buildFacilitySafetyScore(locId, jurisdiction),
-        federalFoodOverlay: null,
-        federalFireOverlay: null,
-      };
+    const locationIds = Object.keys(jurisdictions);
+    if (locationIds.length === 0) {
+      setScores({});
+      return;
     }
-    setScores(result);
+
+    if (isDemoMode) {
+      // Demo mode: build scores locally from demo data
+      const result: Record<string, LocationScore> = {};
+      for (const [locId, jurisdiction] of Object.entries(jurisdictions)) {
+        result[locId] = {
+          location_id: locId,
+          foodSafety: buildFoodSafetyScore(locId, jurisdiction),
+          facilitySafety: buildFacilitySafetyScore(locId, jurisdiction),
+          federalFoodOverlay: null,
+          federalFireOverlay: null,
+        };
+      }
+      setScores(result);
+      return;
+    }
+
+    // LIVE MODE: fetch each location from the Edge Function
+    // Never use demo data for authenticated production users
+    let cancelled = false;
+
+    Promise.all(
+      locationIds.map(locId =>
+        fetchLiveScore(locId, jurisdictions[locId]).then(score => ({ locId, score }))
+      )
+    ).then(results => {
+      if (cancelled) return;
+      const result: Record<string, LocationScore> = {};
+      for (const { locId, score } of results) {
+        result[locId] = score;
+      }
+      setScores(result);
+    });
+
+    return () => { cancelled = true; };
   }, [Object.keys(jurisdictions).join(','), isDemoMode]);
 
   return scores;
