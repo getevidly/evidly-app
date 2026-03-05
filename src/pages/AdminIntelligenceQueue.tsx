@@ -30,6 +30,7 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
+import AdminBreadcrumb from '../components/admin/AdminBreadcrumb';
 
 interface QueueInsight {
   id: string;
@@ -232,6 +233,7 @@ export function AdminIntelligenceQueue() {
 
   return (
     <div className="p-4 sm:p-6 max-w-5xl mx-auto">
+      <AdminBreadcrumb crumbs={[{ label: 'Intelligence Queue' }]} />
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
         <div className="flex items-center gap-3">

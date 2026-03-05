@@ -34,6 +34,7 @@ import {
   MapPin,
 } from 'lucide-react';
 import { setDemoJurisdictionFilter, setDemoClientProfile, INDUSTRY_MULTIPLIERS, type ClientProfile } from '../../lib/businessImpactContext';
+import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 
 // ── Types ────────────────────────────────────────────────────
 
@@ -81,6 +82,8 @@ interface Stats {
 const MIDNIGHT_NAVY = '#0B1628';
 const BRAND_BLUE = '#1e4d6b';
 const BRAND_GOLD = '#d4af37';
+const TEXT_PRIMARY = '#0B1628';
+const TEXT_SECONDARY = '#3D5068';
 
 const SEVERITY_STYLES: Record<string, { dot: string; bg: string; border: string; label: string }> = {
   critical: { dot: '#ef4444', bg: '#fef2f2', border: '#fecaca', label: 'Critical' },
@@ -489,23 +492,24 @@ export function IntelligenceAdmin() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#F4F6FA' }}>
-      {/* ── Header ──────────────────────────────────────────── */}
-      <div className="px-4 sm:px-6 py-4" style={{ backgroundColor: MIDNIGHT_NAVY }}>
-        <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4">
+        <AdminBreadcrumb crumbs={[{ label: 'Intelligence Admin' }]} />
+        {/* ── Header ──────────────────────────────────────────── */}
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'rgba(212,175,55,0.15)' }}>
-              <Brain className="h-5 w-5" style={{ color: BRAND_GOLD }} />
+            <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eff6ff' }}>
+              <Brain className="h-5 w-5" style={{ color: BRAND_BLUE }} />
             </div>
             <div>
-              <h1 className="text-base font-bold text-white">Intelligence Admin</h1>
-              <p className="text-[11px]" style={{ color: '#94A3B8' }}>Review and publish AI-generated intelligence insights</p>
+              <h1 className="text-base font-bold" style={{ color: TEXT_PRIMARY }}>Intelligence Admin</h1>
+              <p className="text-[11px]" style={{ color: TEXT_SECONDARY }}>Review and publish AI-generated intelligence insights</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={() => { fetchInsights(); fetchStats(); }}
               className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors"
-              style={{ color: '#94A3B8', border: '1px solid #1e3a5f' }}
+              style={{ color: TEXT_SECONDARY, border: '1px solid #D1D9E6' }}
             >
               <RefreshCw className="h-3.5 w-3.5" />
               Refresh
@@ -520,9 +524,6 @@ export function IntelligenceAdmin() {
             </button>
           </div>
         </div>
-      </div>
-
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4">
         {/* ── Demo Banner ─────────────────────────────────────── */}
         {isDemoMode && (
           <div

@@ -20,6 +20,7 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useDemo } from '../../contexts/DemoContext';
 import { useCommandCenter } from '../../hooks/useCommandCenter';
+import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import type {
   Signal,
   GamePlan,
@@ -360,6 +361,15 @@ function SignalQueueTab({
       </div>
 
       {/* Signal cards */}
+      {filteredSignals.length === 0 && (
+        <div className="text-center py-12 rounded-lg border border-dashed" style={{ borderColor: CARD_BORDER }}>
+          <Zap size={28} style={{ color: TEXT_TERTIARY, margin: '0 auto 8px' }} />
+          <div className="text-sm font-medium" style={{ color: TEXT_PRIMARY }}>No signals found</div>
+          <div className="text-xs mt-1" style={{ color: TEXT_TERTIARY }}>
+            {signals.length > 0 ? 'Try adjusting your filters' : 'Signals will appear here when the crawl pipeline detects new events'}
+          </div>
+        </div>
+      )}
       <div className="space-y-3">
         {filteredSignals.map(signal => {
           const isExpanded = selectedSignalId === signal.id;
@@ -781,6 +791,15 @@ function PlatformUpdatesTab({
         <span className="text-xs" style={{ color: TEXT_TERTIARY }}>{filtered.length} updates</span>
       </div>
 
+      {filtered.length === 0 && (
+        <div className="text-center py-12 rounded-lg border border-dashed" style={{ borderColor: CARD_BORDER }}>
+          <FileText size={28} style={{ color: TEXT_TERTIARY, margin: '0 auto 8px' }} />
+          <div className="text-sm font-medium" style={{ color: TEXT_PRIMARY }}>No platform updates</div>
+          <div className="text-xs mt-1" style={{ color: TEXT_TERTIARY }}>
+            Updates created from signals or game plans will appear here
+          </div>
+        </div>
+      )}
       <div className="space-y-3">
         {filtered.map(update => {
           const typeInfo = UPDATE_TYPE_LABELS[update.update_type] || { label: update.update_type, icon: '\uD83D\uDCC1' };
@@ -999,6 +1018,15 @@ function NotificationsTab({
         <span className="text-xs" style={{ color: TEXT_TERTIARY }}>{filtered.length} notifications</span>
       </div>
 
+      {filtered.length === 0 && (
+        <div className="text-center py-12 rounded-lg border border-dashed" style={{ borderColor: CARD_BORDER }}>
+          <Bell size={28} style={{ color: TEXT_TERTIARY, margin: '0 auto 8px' }} />
+          <div className="text-sm font-medium" style={{ color: TEXT_PRIMARY }}>No notifications</div>
+          <div className="text-xs mt-1" style={{ color: TEXT_TERTIARY }}>
+            Client notifications will appear here when created from signals
+          </div>
+        </div>
+      )}
       <div className="space-y-3">
         {filtered.map(notif => {
           const isEditing = editingId === notif.id;
@@ -1237,8 +1265,19 @@ function CrawlHealthTab({
         </div>
       )}
 
+      {/* Empty state */}
+      {sourceHealth.length === 0 && crawlLog.length === 0 && (
+        <div className="text-center py-12 rounded-lg border border-dashed" style={{ borderColor: CARD_BORDER }}>
+          <Activity size={28} style={{ color: TEXT_TERTIARY, margin: '0 auto 8px' }} />
+          <div className="text-sm font-medium" style={{ color: TEXT_PRIMARY }}>No crawl data yet</div>
+          <div className="text-xs mt-1" style={{ color: TEXT_TERTIARY }}>
+            Source health and crawl logs will appear here after the first crawl run
+          </div>
+        </div>
+      )}
+
       {/* Data freshness matrix */}
-      <div className="mb-6">
+      {sourceHealth.length > 0 && <div className="mb-6">
         <div className="text-sm font-semibold mb-3" style={{ color: TEXT_PRIMARY }}>Data Freshness</div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
           {sourceHealth.map(source => (
@@ -1258,7 +1297,7 @@ function CrawlHealthTab({
             </div>
           ))}
         </div>
-      </div>
+      </div>}
 
       {/* Source registry */}
       <div className="mb-6">
@@ -1395,6 +1434,7 @@ export default function CommandCenter() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: PAGE_BG }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <AdminBreadcrumb crumbs={[{ label: 'Command Center' }]} />
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
