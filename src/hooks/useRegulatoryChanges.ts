@@ -4,8 +4,6 @@ import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import { toast } from 'sonner';
 import {
-  DEMO_ALERTS,
-  MONITORED_SOURCES,
   type RegulatoryAlert,
   type AlertStatus,
   type Jurisdiction,
@@ -40,73 +38,7 @@ export interface AdminRegChange {
   createdAt: string;
 }
 
-// ── Demo data for admin page (moved from AdminRegulatoryChanges.tsx) ──
-
-const DEMO_ADMIN_CHANGES: AdminRegChange[] = [
-  {
-    id: 'rc-001',
-    sourceId: '',
-    sourceShort: 'calcode',
-    sourceName: 'California Retail Food Code (CalCode)',
-    changeType: 'amendment',
-    title: 'CalCode §114099.7 — Grease trap sizing requirements updated',
-    summary: 'California has updated minimum grease trap sizing for commercial kitchens producing over 200 meals per day. Minimum capacity increased from 30 to 50 gallons for high-volume operations.',
-    impactDescription: 'Verify your grease trap meets the new 50-gallon minimum. If undersized, schedule replacement before July 1. Contact your plumbing vendor for assessment.',
-    impactLevel: 'moderate',
-    affectedPillars: ['facility_safety', 'vendor_compliance'],
-    affectedStates: ['CA'],
-    effectiveDate: '2026-07-01',
-    sourceUrl: 'https://www.cdph.ca.gov/Programs/CEH/DFDCS/Pages/FDBPrograms/FoodSafetyProgram.aspx',
-    rawInputText: null,
-    aiGenerated: true,
-    published: false,
-    publishedAt: null,
-    affectedLocationCount: 0,
-    createdAt: '2026-02-10T09:00:00Z',
-  },
-  {
-    id: 'rc-002',
-    sourceId: '',
-    sourceShort: 'fda_food_code',
-    sourceName: 'FDA Food Code',
-    changeType: 'guidance',
-    title: 'FDA Guidance — Updated cold holding best practices',
-    summary: 'The FDA has released updated guidance on cold holding procedures for ready-to-eat foods. The guidance recommends monitoring cold holding temperatures every 2 hours instead of every 4 hours for high-risk items.',
-    impactDescription: 'Review your cold holding monitoring frequency. Consider increasing temperature checks to every 2 hours for high-risk items like cut leafy greens, sliced deli meats, and prepared salads.',
-    impactLevel: 'informational',
-    affectedPillars: ['food_safety'],
-    affectedStates: null,
-    effectiveDate: null,
-    sourceUrl: 'https://www.fda.gov/food/retail-food-protection/fda-food-code',
-    rawInputText: null,
-    aiGenerated: true,
-    published: false,
-    publishedAt: null,
-    affectedLocationCount: 0,
-    createdAt: '2026-02-08T14:00:00Z',
-  },
-  {
-    id: 'rc-003',
-    sourceId: '',
-    sourceShort: 'nfpa_96',
-    sourceName: 'NFPA 96 (Ventilation & Fire Protection)',
-    changeType: 'amendment',
-    title: 'NFPA 96 (2024) Table 12.4 — Exhaust fan inspection frequency clarified',
-    summary: 'NFPA 96 has clarified that exhaust fan inspection must occur at the same frequency as hood exhaust system cleaning. Fan bearing lubrication must be documented separately from cleaning.',
-    impactDescription: 'Ensure your exhaust fan inspections are scheduled at the same frequency as hood cleaning. Ask your vendor to separately document fan bearing lubrication on each service report.',
-    impactLevel: 'moderate',
-    affectedPillars: ['facility_safety'],
-    affectedStates: null,
-    effectiveDate: '2026-07-01',
-    sourceUrl: 'https://www.nfpa.org/codes-and-standards/nfpa-96-standard-development/96',
-    rawInputText: null,
-    aiGenerated: true,
-    published: true,
-    publishedAt: '2026-02-10T16:00:00Z',
-    affectedLocationCount: 47,
-    createdAt: '2026-02-06T10:00:00Z',
-  },
-];
+// ── (DEMO_ADMIN_CHANGES removed — DB is source of truth) ──
 
 // ── Return type ─────────────────────────────────────────
 
@@ -217,7 +149,7 @@ export function useRegulatoryChanges(): UseRegulatoryChangesReturn {
   // ── Derived: User-facing alerts ─────────────────────────
 
   const alerts = useMemo<RegulatoryAlert[]>(() => {
-    if (isDemoMode) return DEMO_ALERTS;
+    if (isDemoMode) return [];
 
     return dbChanges
       .filter(c => c.published && c.regulatory_sources)
@@ -326,7 +258,7 @@ export function useRegulatoryChanges(): UseRegulatoryChangesReturn {
   // ── Derived: Monitoring sources for display ────────────
 
   const monitoringSources = useMemo<MonitoredSource[]>(() => {
-    if (isDemoMode) return MONITORED_SOURCES;
+    if (isDemoMode) return [];
 
     if (dbSources.length === 0) return [];
 
@@ -342,7 +274,7 @@ export function useRegulatoryChanges(): UseRegulatoryChangesReturn {
   // ── Derived: Admin changes ──────────────────────────────
 
   const adminChanges = useMemo<AdminRegChange[]>(() => {
-    if (isDemoMode) return DEMO_ADMIN_CHANGES;
+    if (isDemoMode) return [];
 
     return dbChanges
       .filter(row => row.regulatory_sources)

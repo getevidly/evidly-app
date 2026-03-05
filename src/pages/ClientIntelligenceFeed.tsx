@@ -54,95 +54,7 @@ const RISK_DOT: Record<string, string> = {
   informational: '#9CA3AF',
 };
 
-// Demo advisories for demo mode
-const DEMO_ADVISORIES: Advisory[] = [
-  {
-    id: 'demo-1',
-    title: 'LA County Inspection Frequency Increasing in Q2',
-    summary: 'Los Angeles County Department of Public Health announced a 15% increase in routine inspection capacity for Q2 2026. Restaurants with B or C grades will be prioritized. Ensure all corrective actions are closed and self-inspection scores are at or above 90.',
-    dimension: 'liability',
-    risk_level: 'high',
-    advisory_type: 'risk',
-    recommended_actions: [
-      { action: 'Complete self-inspection at all LA County locations', priority: 'high' },
-      { action: 'Close any open corrective actions before April 15', priority: 'critical' },
-      { action: 'Review temperature logs for last 30 days', priority: 'medium' },
-    ],
-    published_at: '2026-03-01T10:00:00Z',
-    is_active: true,
-  },
-  {
-    id: 'demo-2',
-    title: 'New FDA Food Traceability Rule — Compliance Deadline Approaching',
-    summary: 'The FDA FSMA 204 food traceability rule requires additional record-keeping for foods on the Food Traceability List. Compliance deadline is January 2027, but early preparation is recommended. EvidLY\'s document management module can help organize traceability records.',
-    dimension: 'operational',
-    risk_level: 'medium',
-    advisory_type: 'action_required',
-    recommended_actions: [
-      { action: 'Review which menu items contain FTL foods', priority: 'medium' },
-      { action: 'Set up supplier traceability document collection', priority: 'high' },
-    ],
-    published_at: '2026-02-28T14:00:00Z',
-    is_active: true,
-  },
-  {
-    id: 'demo-3',
-    title: 'Insurance Premium Reduction Opportunity Detected',
-    summary: 'Based on your current compliance scores (91 Downtown, 69 Airport), carriers in the EvidLY network are offering 8-12% premium reductions for operators who maintain A-grade scores for 12+ consecutive months. Your Downtown location qualifies.',
-    dimension: 'revenue',
-    risk_level: 'low',
-    advisory_type: 'opportunity',
-    recommended_actions: [
-      { action: 'Request insurance quote via Insurance Risk page', priority: 'medium' },
-      { action: 'Maintain Downtown score above 90 for 3 more months', priority: 'low' },
-    ],
-    published_at: '2026-02-25T09:00:00Z',
-    is_active: true,
-  },
-  {
-    id: 'demo-4',
-    title: 'NFPA 96 Hood Cleaning Frequency Update',
-    summary: 'NFPA 96 2026 edition clarifies that high-volume operations (cooking > 16 hours/day) require monthly hood cleaning rather than quarterly. Your Airport location operates 18 hours/day and may need to adjust its cleaning schedule.',
-    dimension: 'cost',
-    risk_level: 'medium',
-    advisory_type: 'update',
-    recommended_actions: [
-      { action: 'Verify Airport location operating hours', priority: 'medium' },
-      { action: 'Contact hood cleaning vendor about monthly schedule', priority: 'medium' },
-    ],
-    published_at: '2026-02-20T11:00:00Z',
-    is_active: true,
-  },
-  {
-    id: 'demo-5',
-    title: 'SB 1383 Enforcement Ramp-Up in California',
-    summary: 'CalRecycle is increasing SB 1383 organic waste diversion enforcement. Penalties of $50-$10,000/day are being issued. Ensure food recovery agreements are documented and diversion tracking is up to date in EvidLY.',
-    dimension: 'liability',
-    risk_level: 'critical',
-    advisory_type: 'risk',
-    recommended_actions: [
-      { action: 'Verify food recovery agreement is uploaded in Documents', priority: 'critical' },
-      { action: 'Check Food Recovery module for diversion tracking gaps', priority: 'high' },
-      { action: 'Document waste hauler contract and pickup schedule', priority: 'medium' },
-    ],
-    published_at: '2026-02-18T16:00:00Z',
-    is_active: true,
-  },
-  {
-    id: 'demo-6',
-    title: 'Kitchen-to-Community Tax Deduction Window Closing',
-    summary: 'Q1 2026 food donations through the Kitchen-to-Community program may qualify for enhanced Section 170(e)(3) tax deductions. Deadline for claiming Q1 deductions is April 15. Your organization has donated 847 meals worth an estimated $6,355.',
-    dimension: 'revenue',
-    risk_level: 'informational',
-    advisory_type: 'opportunity',
-    recommended_actions: [
-      { action: 'Export K2C donation records for tax filing', priority: 'medium' },
-      { action: 'Consult tax advisor about enhanced deduction eligibility', priority: 'low' },
-    ],
-    published_at: '2026-02-15T08:00:00Z',
-    is_active: true,
-  },
-];
+// (DEMO_ADVISORIES removed — DB is source of truth)
 
 export function ClientIntelligenceFeed() {
   useDemoGuard();
@@ -158,7 +70,7 @@ export function ClientIntelligenceFeed() {
   const loadAdvisories = useCallback(async () => {
     setLoading(true);
     if (isDemoMode) {
-      setAdvisories(DEMO_ADVISORIES);
+      setAdvisories([]);
       setLoading(false);
       return;
     }
@@ -290,9 +202,13 @@ export function ClientIntelligenceFeed() {
       ) : filtered.length === 0 ? (
         <div className="text-center py-16 bg-white rounded-xl border" style={{ borderColor: BORDER }}>
           <div className="text-4xl mb-3">{'\uD83D\uDD14'}</div>
-          <div className="text-sm font-semibold" style={{ color: NAVY }}>No advisories match your filters</div>
+          <div className="text-sm font-semibold" style={{ color: NAVY }}>
+            {advisories.length === 0 ? 'No advisories yet' : 'No advisories match your filters'}
+          </div>
           <div className="text-xs mt-1" style={{ color: TEXT_SEC }}>
-            Adjust your filters or check back later for new intelligence.
+            {advisories.length === 0
+              ? 'Intelligence advisories will appear here as they are published.'
+              : 'Adjust your filters or check back later for new intelligence.'}
           </div>
         </div>
       ) : (

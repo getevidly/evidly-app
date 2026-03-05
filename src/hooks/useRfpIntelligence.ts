@@ -10,7 +10,6 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useDemo } from '../contexts/DemoContext';
 import { supabase } from '../lib/supabase';
 import { toast } from 'sonner';
-import { getDemoRfpListings, getDemoRfpStats, getDemoRfpSources } from '../data/rfpDemoData';
 import type {
   RfpSource,
   RfpListingWithDetails,
@@ -134,9 +133,7 @@ function sortByRelevance(items: RfpListingWithDetails[]): RfpListingWithDetails[
 
 function computeStats(
   listings: RfpListingWithDetails[],
-  demoStats?: RfpDashboardStats,
 ): RfpDashboardStats {
-  if (demoStats) return demoStats;
 
   const now = Date.now();
   const weekMs = 7 * 24 * 60 * 60 * 1000;
@@ -218,14 +215,9 @@ export function useRfpIntelligence(): UseRfpIntelligenceReturn {
 
       try {
         if (isDemoMode) {
-          const demoListings = getDemoRfpListings();
-          const demoSources = getDemoRfpSources();
-          if (!cancelled) {
-            setListings(demoListings);
-            setSources(demoSources);
-          }
+          // Demo mode: no DB session — show empty state
+          if (!cancelled) { setListings([]); setSources([]); }
         } else {
-          // Live mode: query Supabase
           const { data: listingRows, error: listingErr } = await supabase
             .from('rfp_listings')
             .select(`
@@ -264,9 +256,8 @@ export function useRfpIntelligence(): UseRfpIntelligenceReturn {
         console.error('[RFP Intelligence] Load error:', err);
         if (!cancelled) {
           setError(err.message ?? 'Failed to load RFP data');
-          // Fallback to demo data
-          setListings(getDemoRfpListings());
-          setSources(getDemoRfpSources());
+          setListings([]);
+          setSources([]);
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -285,9 +276,8 @@ export function useRfpIntelligence(): UseRfpIntelligenceReturn {
 
   // ── Stats ───────────────────────────────────────────
   const stats = useMemo<RfpDashboardStats>(() => {
-    if (isDemoMode) return getDemoRfpStats();
     return computeStats(listings);
-  }, [listings, isDemoMode]);
+  }, [listings]);
 
   // ── Actions ─────────────────────────────────────────
   const handleAction = useCallback(
