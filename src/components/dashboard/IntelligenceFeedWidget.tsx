@@ -1,7 +1,7 @@
 /**
  * IntelligenceFeedWidget — Dashboard widget for intelligence feed
  *
- * Shows latest intelligence items with risk dimension cards.
+ * Shows latest intelligence items with 4 risk dimension cards.
  * Supports mark-as-actioned and dismiss actions.
  * Used on OwnerOperatorDashboard.
  */
@@ -14,85 +14,112 @@ const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
 const MUTED = '#6B7F96';
 
+interface RiskDim {
+  level: string;  // critical, high, moderate, low, none, n/a
+  note?: string;
+}
+
 interface FeedItem {
   id: string;
   title: string;
   summary: string;
-  dimension: 'revenue' | 'liability' | 'cost' | 'operational';
-  risk_level: 'critical' | 'high' | 'medium' | 'low' | 'informational';
+  category?: string;
+  signal_type?: string;
+  priority: string;  // critical, high, normal, low
+  revenue_risk: RiskDim;
+  liability_risk: RiskDim;
+  cost_risk: RiskDim;
+  operational_risk: RiskDim;
+  recommended_action?: string;
+  action_deadline?: string;
   feed_type: string;
-  recommended_actions?: { action: string; priority: string }[];
   created_at: string;
   is_actioned?: boolean;
   is_dismissed?: boolean;
 }
 
-const DIMENSION_CONFIG: Record<string, { icon: string; bg: string; text: string; label: string }> = {
-  revenue:     { icon: '💰', bg: '#FFFBEB', text: '#92400E', label: 'Revenue' },
-  liability:   { icon: '⚖️', bg: '#FEF2F2', text: '#991B1B', label: 'Liability' },
-  cost:        { icon: '📊', bg: '#EFF6FF', text: '#1E40AF', label: 'Cost' },
-  operational: { icon: '⚙️', bg: '#F0FDF4', text: '#166534', label: 'Operational' },
+const DIM_META: Record<string, { icon: string; label: string; color: string }> = {
+  revenue:     { icon: '\uD83D\uDCB0', label: 'Revenue',     color: '#92400E' },
+  liability:   { icon: '\u2696\uFE0F', label: 'Liability',   color: '#991B1B' },
+  cost:        { icon: '\uD83D\uDCB8', label: 'Cost',        color: '#1E40AF' },
+  operational: { icon: '\u2699\uFE0F', label: 'Operational', color: '#166534' },
 };
 
-const RISK_DOT: Record<string, string> = {
+const LEVEL_COLORS: Record<string, { bg: string; text: string }> = {
+  critical: { bg: '#FEF2F2', text: '#DC2626' },
+  high:     { bg: '#FFFBEB', text: '#D97706' },
+  moderate: { bg: '#EFF6FF', text: '#2563EB' },
+  low:      { bg: '#F9FAFB', text: '#6B7280' },
+};
+
+const PRIORITY_DOT: Record<string, string> = {
   critical: '#DC2626',
   high: '#D97706',
-  medium: '#2563EB',
+  normal: '#2563EB',
   low: '#6B7280',
-  informational: '#9CA3AF',
 };
 
-// Demo feed items — matches the SQL seed data
+// Demo feed items — jurisdiction intelligence per location
 const DEMO_FEED: FeedItem[] = [
   {
     id: 'demo-cif-1',
     title: 'Merced County prioritizing cold-holding enforcement',
     summary: 'Your Airport location operates in Merced County, which has elevated cold-holding temperature compliance to priority enforcement.',
-    dimension: 'liability',
-    risk_level: 'critical',
+    category: 'food_safety',
+    signal_type: 'enforcement_priority',
+    priority: 'critical',
+    revenue_risk:     { level: 'high',     note: 'Grade card at risk if not corrected' },
+    liability_risk:   { level: 'critical', note: 'Direct liability if temp violations found' },
+    cost_risk:        { level: 'low',      note: 'No new equipment — process change only' },
+    operational_risk: { level: 'critical', note: 'Immediate cold-holding protocol update required' },
+    recommended_action: 'Audit all cold-holding units at Airport location. Verify digital probe calibration records.',
     feed_type: 'jurisdiction',
-    recommended_actions: [
-      { action: 'Audit all cold-holding units at Airport location', priority: 'critical' },
-      { action: 'Verify digital probe calibration records', priority: 'high' },
-    ],
     created_at: new Date(Date.now() - 86400000).toISOString(),
   },
   {
     id: 'demo-cif-2',
     title: 'Fresno County inspection frequency increasing',
     summary: 'Downtown location: routine inspections moving from annual to semi-annual for high-risk facilities starting April 2026.',
-    dimension: 'revenue',
-    risk_level: 'high',
+    category: 'food_safety',
+    signal_type: 'inspection_frequency',
+    priority: 'high',
+    revenue_risk:     { level: 'high',     note: 'More frequent inspections = more grade risk' },
+    liability_risk:   { level: 'moderate', note: 'Repeat violations trigger mandatory re-inspection' },
+    cost_risk:        { level: 'low' },
+    operational_risk: { level: 'high',     note: 'Resolve open CAs before next cycle' },
+    recommended_action: 'Resolve all open corrective actions at Downtown. Schedule pre-inspection internal audit.',
     feed_type: 'jurisdiction',
-    recommended_actions: [
-      { action: 'Resolve all open corrective actions at Downtown', priority: 'high' },
-      { action: 'Schedule pre-inspection internal audit', priority: 'medium' },
-    ],
     created_at: new Date(Date.now() - 172800000).toISOString(),
   },
   {
     id: 'demo-cif-3',
     title: 'Stanislaus DER adds allergen management scoring',
     summary: 'University location will be scored on food allergen management. Written protocols and training records required.',
-    dimension: 'operational',
-    risk_level: 'high',
+    category: 'food_safety',
+    signal_type: 'methodology_change',
+    priority: 'high',
+    revenue_risk:     { level: 'moderate', note: 'New scoring category could lower overall grade' },
+    liability_risk:   { level: 'critical', note: 'Allergen failure = immediate critical violation' },
+    cost_risk:        { level: 'low' },
+    operational_risk: { level: 'high',     note: 'Written allergen protocol + staff training required' },
+    recommended_action: 'Develop written allergen management protocol. Schedule allergen awareness training.',
     feed_type: 'jurisdiction',
-    recommended_actions: [
-      { action: 'Develop written allergen protocol', priority: 'high' },
-      { action: 'Schedule allergen training', priority: 'high' },
-    ],
     created_at: new Date(Date.now() - 43200000).toISOString(),
   },
   {
     id: 'demo-cif-4',
     title: 'Annual hood suppression testing now required',
     summary: 'Stanislaus County Fire: annual UL-300 compliance testing required (was biennial). University location must schedule before April 15.',
-    dimension: 'cost',
-    risk_level: 'high',
+    category: 'facility_safety',
+    signal_type: 'fire_code_update',
+    priority: 'high',
+    revenue_risk:     { level: 'none' },
+    liability_risk:   { level: 'high',     note: 'Fire code violation = Notice of Violation' },
+    cost_risk:        { level: 'high',     note: 'UL-300 test ~$400-800 annually' },
+    operational_risk: { level: 'moderate', note: 'Schedule with certified technician' },
+    recommended_action: 'Schedule UL-300 suppression test at University location before April 15.',
+    action_deadline: '2026-04-15',
     feed_type: 'jurisdiction',
-    recommended_actions: [
-      { action: 'Schedule UL-300 suppression test at University', priority: 'critical' },
-    ],
     created_at: new Date(Date.now() - 21600000).toISOString(),
   },
 ];
@@ -109,7 +136,7 @@ export function IntelligenceFeedWidget() {
   }, [isDemoMode, dismissed]);
 
   const unactioned = items.filter(i => !actioned.has(i.id));
-  const criticalCount = unactioned.filter(i => i.risk_level === 'critical').length;
+  const criticalCount = unactioned.filter(i => i.priority === 'critical').length;
 
   if (items.length === 0) return null;
 
@@ -127,6 +154,37 @@ export function IntelligenceFeedWidget() {
     if (hours < 1) return 'Just now';
     if (hours < 24) return `${hours}h ago`;
     return `${Math.floor(hours / 24)}d ago`;
+  };
+
+  const renderRiskDims = (item: FeedItem) => {
+    const dims = [
+      { key: 'revenue', ...item.revenue_risk },
+      { key: 'liability', ...item.liability_risk },
+      { key: 'cost', ...item.cost_risk },
+      { key: 'operational', ...item.operational_risk },
+    ].filter(d => d.level && d.level !== 'none' && d.level !== 'n/a');
+
+    if (dims.length === 0) return null;
+
+    return (
+      <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginTop: 6 }}>
+        {dims.map(d => {
+          const meta = DIM_META[d.key];
+          const lc = LEVEL_COLORS[d.level] || LEVEL_COLORS.low;
+          return (
+            <span key={d.key} title={d.note || `${meta.label}: ${d.level}`}
+              style={{
+                fontSize: 9, fontWeight: 700, padding: '2px 6px', borderRadius: 6,
+                background: lc.bg, color: lc.text, border: `1px solid ${lc.text}18`,
+                display: 'inline-flex', alignItems: 'center', gap: 2,
+              }}>
+              <span style={{ fontSize: 10 }}>{meta.icon}</span>
+              {d.level === 'critical' ? 'CRIT' : d.level.toUpperCase().slice(0, 4)}
+            </span>
+          );
+        })}
+      </div>
+    );
   };
 
   return (
@@ -155,9 +213,8 @@ export function IntelligenceFeedWidget() {
 
       {/* Feed items (show max 3) */}
       {items.slice(0, 3).map(item => {
-        const dim = DIMENSION_CONFIG[item.dimension];
         const isActioned = actioned.has(item.id);
-        const dotColor = RISK_DOT[item.risk_level] || RISK_DOT.medium;
+        const dotColor = PRIORITY_DOT[item.priority] || PRIORITY_DOT.normal;
 
         return (
           <div
@@ -170,27 +227,35 @@ export function IntelligenceFeedWidget() {
             }}
           >
             <div className="flex items-start gap-3">
-              {/* Risk dot */}
+              {/* Priority dot */}
               <span className="shrink-0 mt-1.5 rounded-full" style={{ width: 8, height: 8, backgroundColor: dotColor }} />
 
               <div className="flex-1 min-w-0">
-                {/* Dimension badge + time */}
+                {/* Priority badge + category + time */}
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded" style={{ background: dim.bg, color: dim.text }}>
-                    {dim.icon} {dim.label}
+                  <span className="text-[9px] font-black px-1.5 py-0.5 rounded"
+                    style={{ background: PRIORITY_DOT[item.priority] + '15', color: PRIORITY_DOT[item.priority] || MUTED }}>
+                    {item.priority.toUpperCase()}
                   </span>
+                  {item.category && (
+                    <span className="text-[9px] font-medium px-1.5 py-0.5 rounded" style={{ background: '#F0FDF4', color: '#065F46' }}>
+                      {item.category.replace(/_/g, ' ')}
+                    </span>
+                  )}
                   <span className="text-[10px]" style={{ color: MUTED }}>{timeAgo(item.created_at)}</span>
                 </div>
                 {/* Title */}
                 <p className="text-[13px] font-semibold" style={{ color: isActioned ? MUTED : NAVY }}>{item.title}</p>
                 {/* Summary */}
                 <p className="text-[11px] mt-0.5" style={{ color: MUTED, lineHeight: 1.5 }}>{item.summary}</p>
-                {/* Top recommended action */}
-                {item.recommended_actions && item.recommended_actions.length > 0 && !isActioned && (
-                  <div className="mt-1.5 flex items-center gap-1.5">
-                    <AlertTriangle size={10} style={{ color: dotColor }} />
+                {/* Risk dimensions */}
+                {!isActioned && renderRiskDims(item)}
+                {/* Recommended action */}
+                {item.recommended_action && !isActioned && (
+                  <div className="mt-1.5 flex items-start gap-1.5">
+                    <AlertTriangle size={10} className="shrink-0 mt-0.5" style={{ color: dotColor }} />
                     <span className="text-[10px] font-medium" style={{ color: NAVY }}>
-                      {item.recommended_actions[0].action}
+                      {item.recommended_action}
                     </span>
                   </div>
                 )}

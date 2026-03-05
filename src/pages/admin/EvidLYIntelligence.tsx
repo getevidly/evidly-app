@@ -177,7 +177,13 @@ export default function EvidLYIntelligence() {
 
   // Publish Advisory modal
   const [publishModal, setPublishModal] = useState<{ open: boolean; signal: Signal | null }>({ open: false, signal: null });
-  const [pubForm, setPubForm] = useState({ dimension: 'operational', risk_level: 'medium', advisory_type: 'risk', title: '', summary: '' });
+  const [pubForm, setPubForm] = useState({
+    title: '', summary: '',
+    revenueRisk: 'none' as string, liabilityRisk: 'none' as string,
+    costRisk: 'none' as string, operationalRisk: 'none' as string,
+    revenueNote: '', liabilityNote: '', costNote: '', operationalNote: '',
+    recommendedAction: '', actionDeadline: '',
+  });
 
   // ScoreTable analytics
   const [scoreTableData, setScoreTableData] = useState<{ county_slug: string; total_views: number; unique_sessions: number; views_7d: number; views_30d: number; last_viewed: string | null }[]>([]);
@@ -301,13 +307,24 @@ export default function EvidLYIntelligence() {
 
   const openPublishModal = (signal: Signal) => {
     setPubForm({
-      dimension: 'operational',
-      risk_level: signal.ai_urgency || 'medium',
-      advisory_type: signal.ai_urgency === 'critical' ? 'action_required' : 'risk',
       title: signal.title,
       summary: signal.ai_summary || signal.summary || '',
+      revenueRisk: signal.risk_revenue || 'none',
+      liabilityRisk: signal.risk_liability || 'none',
+      costRisk: signal.risk_cost || 'none',
+      operationalRisk: signal.risk_operational || 'none',
+      revenueNote: '', liabilityNote: '', costNote: '', operationalNote: '',
+      recommendedAction: '', actionDeadline: '',
     });
     setPublishModal({ open: true, signal });
+  };
+
+  const computePriority = (form: typeof pubForm) => {
+    const levels = [form.revenueRisk, form.liabilityRisk, form.costRisk, form.operationalRisk];
+    if (levels.includes('critical')) return 'critical';
+    if (levels.includes('high')) return 'high';
+    if (levels.includes('moderate')) return 'normal';
+    return 'low';
   };
 
   const deliverToClients = async (type: 'advisory' | 'jurisdiction_update', id: string, title: string) => {
@@ -325,18 +342,44 @@ export default function EvidLYIntelligence() {
   const submitAdvisory = async () => {
     const sig = publishModal.signal;
     if (!sig) return;
+    // 1. Update signal with risk dimensions + published status
+    await supabase.from('intelligence_signals').update({
+      risk_revenue: pubForm.revenueRisk,
+      risk_liability: pubForm.liabilityRisk,
+      risk_cost: pubForm.costRisk,
+      risk_operational: pubForm.operationalRisk,
+      revenue_risk_note: pubForm.revenueNote || null,
+      liability_risk_note: pubForm.liabilityNote || null,
+      cost_risk_note: pubForm.costNote || null,
+      operational_risk_note: pubForm.operationalNote || null,
+      recommended_action: pubForm.recommendedAction || null,
+      action_deadline: pubForm.actionDeadline || null,
+      is_published: true,
+      published_at: new Date().toISOString(),
+      published_by: user?.email,
+    }).eq('id', sig.id);
+    // 2. Also insert into client_advisories for backwards compat
+    const primaryDim = [
+      { key: 'liability', val: pubForm.liabilityRisk },
+      { key: 'revenue', val: pubForm.revenueRisk },
+      { key: 'cost', val: pubForm.costRisk },
+      { key: 'operational', val: pubForm.operationalRisk },
+    ].sort((a, b) => {
+      const order = ['critical', 'high', 'moderate', 'low', 'none'];
+      return order.indexOf(a.val) - order.indexOf(b.val);
+    })[0];
     const { data: advisory } = await supabase.from('client_advisories').insert({
       signal_id: sig.id,
       title: pubForm.title,
       summary: pubForm.summary,
-      dimension: pubForm.dimension,
-      risk_level: pubForm.risk_level,
-      advisory_type: pubForm.advisory_type,
+      dimension: primaryDim.key,
+      risk_level: primaryDim.val === 'moderate' ? 'medium' : primaryDim.val,
+      advisory_type: primaryDim.val === 'critical' ? 'action_required' : 'risk',
       published_by: user?.email,
     }).select('id').single();
     await updateSignalStatus(sig.id, 'published');
     setPublishModal({ open: false, signal: null });
-    // Auto-deliver to clients
+    // 3. Deliver to affected clients
     if (advisory?.id) {
       await deliverToClients('advisory', advisory.id, pubForm.title);
     } else {
@@ -1100,91 +1143,135 @@ export default function EvidLYIntelligence() {
         </>
       )}
 
-      {/* ────────── PUBLISH ADVISORY MODAL ────────── */}
-      {publishModal.open && (
-        <div style={{
-          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 1000,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}
-          onClick={() => setPublishModal({ open: false, signal: null })}
-        >
-          <div
-            style={{
-              background: '#fff', borderRadius: 14, padding: 28, width: '100%', maxWidth: 520,
-              boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
-            }}
-            onClick={e => e.stopPropagation()}
+      {/* ────────── PUBLISH ADVISORY MODAL (4-Dimension Risk Form) ────────── */}
+      {publishModal.open && (() => {
+        const riskSelectStyle: React.CSSProperties = { ...inputStyle, width: '100%', cursor: 'pointer', fontSize: 11 };
+        const noteInputStyle: React.CSSProperties = { ...inputStyle, width: '100%', fontSize: 11 };
+        const DIMS = [
+          { key: 'revenueRisk' as const, noteKey: 'revenueNote' as const, icon: '\uD83D\uDCB0', label: 'Revenue Risk', desc: 'Threat to score, grade, permit, revenue' },
+          { key: 'liabilityRisk' as const, noteKey: 'liabilityNote' as const, icon: '\u2696\uFE0F', label: 'Liability Risk', desc: 'Legal/regulatory exposure, fines' },
+          { key: 'costRisk' as const, noteKey: 'costNote' as const, icon: '\uD83D\uDCB8', label: 'Cost Risk', desc: 'Equipment, training, remediation spend' },
+          { key: 'operationalRisk' as const, noteKey: 'operationalNote' as const, icon: '\u2699\uFE0F', label: 'Operational Risk', desc: 'Process/procedure changes required' },
+        ];
+        return (
+          <div style={{
+            position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 1000,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'auto', padding: 20,
+          }}
+            onClick={() => setPublishModal({ open: false, signal: null })}
           >
-            <div style={{ fontSize: 16, fontWeight: 800, color: NAVY, marginBottom: 4 }}>Publish Client Advisory</div>
-            <div style={{ fontSize: 12, color: TEXT_MUTED, marginBottom: 20 }}>
-              Create an advisory from this signal and publish it to the client intelligence feed.
-            </div>
+            <div
+              style={{
+                background: '#fff', borderRadius: 14, padding: 28, width: '100%', maxWidth: 600,
+                boxShadow: '0 20px 60px rgba(0,0,0,0.15)', maxHeight: '90vh', overflow: 'auto',
+              }}
+              onClick={e => e.stopPropagation()}
+            >
+              <div style={{ fontSize: 16, fontWeight: 800, color: NAVY, marginBottom: 4 }}>Publish Intelligence Signal</div>
+              <div style={{ fontSize: 12, color: TEXT_MUTED, marginBottom: 16 }}>
+                Tag risk dimensions and publish to affected client intelligence feeds.
+              </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <div>
-                <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Title</label>
-                <input value={pubForm.title} onChange={e => setPubForm(f => ({ ...f, title: e.target.value }))}
-                  style={{ ...inputStyle, width: '100%' }} />
-              </div>
-              <div>
-                <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Summary</label>
-                <textarea value={pubForm.summary} onChange={e => setPubForm(f => ({ ...f, summary: e.target.value }))}
-                  rows={4} style={{ ...inputStyle, width: '100%', resize: 'vertical' }} />
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
-                <div>
-                  <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Dimension</label>
-                  <select value={pubForm.dimension} onChange={e => setPubForm(f => ({ ...f, dimension: e.target.value }))}
-                    style={{ ...inputStyle, width: '100%', cursor: 'pointer' }}>
-                    <option value="revenue">Revenue</option>
-                    <option value="liability">Liability</option>
-                    <option value="cost">Cost</option>
-                    <option value="operational">Operational</option>
-                  </select>
-                </div>
-                <div>
-                  <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Risk Level</label>
-                  <select value={pubForm.risk_level} onChange={e => setPubForm(f => ({ ...f, risk_level: e.target.value }))}
-                    style={{ ...inputStyle, width: '100%', cursor: 'pointer' }}>
-                    <option value="critical">Critical</option>
-                    <option value="high">High</option>
-                    <option value="medium">Medium</option>
-                    <option value="low">Low</option>
-                    <option value="informational">Informational</option>
-                  </select>
-                </div>
-                <div>
-                  <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Type</label>
-                  <select value={pubForm.advisory_type} onChange={e => setPubForm(f => ({ ...f, advisory_type: e.target.value }))}
-                    style={{ ...inputStyle, width: '100%', cursor: 'pointer' }}>
-                    <option value="risk">Risk</option>
-                    <option value="opportunity">Opportunity</option>
-                    <option value="update">Update</option>
-                    <option value="action_required">Action Required</option>
-                  </select>
+              {/* Signal info */}
+              <div style={{ background: '#F9FAFB', borderRadius: 8, padding: '10px 14px', marginBottom: 16, border: `1px solid ${BORDER}` }}>
+                <div style={{ fontSize: 12, fontWeight: 600, color: NAVY }}>{publishModal.signal?.title}</div>
+                <div style={{ fontSize: 10, color: TEXT_MUTED, marginTop: 2 }}>
+                  Source: {publishModal.signal?.source_key} · {publishModal.signal?.signal_type?.replace(/_/g, ' ')}
+                  {publishModal.signal?.affected_jurisdictions?.length ? ` · Counties: ${publishModal.signal.affected_jurisdictions.join(', ')}` : ''}
                 </div>
               </div>
-            </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 20 }}>
-              <button onClick={() => setPublishModal({ open: false, signal: null })}
-                style={{
-                  padding: '8px 18px', background: '#fff', border: `1px solid ${BORDER}`,
-                  borderRadius: 8, color: TEXT_SEC, fontSize: 13, fontWeight: 600, cursor: 'pointer',
-                }}>
-                Cancel
-              </button>
-              <button onClick={submitAdvisory}
-                style={{
-                  padding: '8px 18px', background: GOLD, border: 'none',
-                  borderRadius: 8, color: '#fff', fontSize: 13, fontWeight: 700, cursor: 'pointer',
-                }}>
-                Publish Advisory
-              </button>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                {/* Title + Summary */}
+                <div>
+                  <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Title (shown to clients)</label>
+                  <input value={pubForm.title} onChange={e => setPubForm(f => ({ ...f, title: e.target.value }))}
+                    style={{ ...inputStyle, width: '100%' }} />
+                </div>
+                <div>
+                  <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Summary</label>
+                  <textarea value={pubForm.summary} onChange={e => setPubForm(f => ({ ...f, summary: e.target.value }))}
+                    rows={3} style={{ ...inputStyle, width: '100%', resize: 'vertical' }} />
+                </div>
+
+                {/* Risk Dimension Tagging — 4 rows */}
+                <div style={{ borderTop: `1px solid ${BORDER}`, paddingTop: 14 }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: NAVY, marginBottom: 10 }}>Risk Dimension Tagging</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    {DIMS.map(dim => (
+                      <div key={dim.key} style={{ display: 'grid', gridTemplateColumns: '140px 100px 1fr', gap: 8, alignItems: 'center' }}>
+                        <div>
+                          <span style={{ fontSize: 12 }}>{dim.icon}</span>
+                          <span style={{ fontSize: 11, fontWeight: 600, color: NAVY, marginLeft: 4 }}>{dim.label}</span>
+                        </div>
+                        <select value={pubForm[dim.key]} onChange={e => setPubForm(f => ({ ...f, [dim.key]: e.target.value }))}
+                          style={riskSelectStyle}>
+                          <option value="none">None</option>
+                          <option value="critical">Critical</option>
+                          <option value="high">High</option>
+                          <option value="moderate">Moderate</option>
+                          <option value="low">Low</option>
+                        </select>
+                        <input value={pubForm[dim.noteKey]} onChange={e => setPubForm(f => ({ ...f, [dim.noteKey]: e.target.value }))}
+                          placeholder={dim.desc} style={noteInputStyle} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Recommended Action + Deadline */}
+                <div style={{ borderTop: `1px solid ${BORDER}`, paddingTop: 14 }}>
+                  <div>
+                    <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>
+                      Recommended Action (shown to client)
+                    </label>
+                    <textarea value={pubForm.recommendedAction}
+                      onChange={e => setPubForm(f => ({ ...f, recommendedAction: e.target.value }))}
+                      rows={2} placeholder="What should the client do?"
+                      style={{ ...inputStyle, width: '100%', resize: 'vertical' }} />
+                  </div>
+                  <div style={{ marginTop: 10 }}>
+                    <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>
+                      Action Deadline
+                    </label>
+                    <input type="date" value={pubForm.actionDeadline}
+                      onChange={e => setPubForm(f => ({ ...f, actionDeadline: e.target.value }))}
+                      style={{ ...inputStyle, width: 180 }} />
+                  </div>
+                </div>
+
+                {/* Priority preview */}
+                {(() => {
+                  const p = computePriority(pubForm);
+                  const pColor = p === 'critical' ? '#DC2626' : p === 'high' ? '#D97706' : p === 'normal' ? '#2563EB' : '#6B7280';
+                  return (
+                    <div style={{ fontSize: 11, color: TEXT_SEC }}>
+                      Computed priority: <span style={{ fontWeight: 700, color: pColor }}>{p.toUpperCase()}</span>
+                    </div>
+                  );
+                })()}
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 20, borderTop: `1px solid ${BORDER}`, paddingTop: 16 }}>
+                <button onClick={() => setPublishModal({ open: false, signal: null })}
+                  style={{
+                    padding: '8px 18px', background: '#fff', border: `1px solid ${BORDER}`,
+                    borderRadius: 8, color: TEXT_SEC, fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                  }}>
+                  Cancel
+                </button>
+                <button onClick={submitAdvisory}
+                  style={{
+                    padding: '8px 18px', background: GOLD, border: 'none',
+                    borderRadius: 8, color: '#fff', fontSize: 13, fontWeight: 700, cursor: 'pointer',
+                  }}>
+                  Publish to Clients
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
     </div>
   );
 }
