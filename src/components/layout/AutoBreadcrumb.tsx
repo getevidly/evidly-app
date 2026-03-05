@@ -91,7 +91,7 @@ const ROUTE_HIERARCHY: Record<string, { label: string; parent?: string }> = {
   '/help': { label: 'Help & Support', parent: '/dashboard' },
 
   // ── Admin-only routes ──
-  '/admin/onboard-client': { label: 'Client Onboarding', parent: '/admin' },
+  '/admin/onboarding': { label: 'Client Onboarding', parent: '/admin' },
   '/admin/usage-analytics': { label: 'Usage Analytics', parent: '/admin' },
   '/admin/regulatory-changes': { label: 'Regulatory Changes', parent: '/admin' },
   '/admin/intelligence-queue': { label: 'Intelligence Queue', parent: '/admin' },

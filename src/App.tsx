@@ -177,7 +177,9 @@ const VendorServiceUpdate = lazy(() => import('./pages/VendorServiceUpdate').the
 const AssessmentLeads = lazy(() => import('./pages/admin/AssessmentLeads'));
 const InsuranceApiKeys = lazy(() => import('./pages/admin/InsuranceApiKeys'));
 const DemoGenerator = lazy(() => import('./pages/admin/DemoGenerator'));
+const DemoLauncher = lazy(() => import('./pages/admin/DemoLauncher'));
 const DemoPipeline = lazy(() => import('./pages/admin/DemoPipeline'));
+const GtmDashboard = lazy(() => import('./pages/admin/GtmDashboard'));
 const DemoRequest = lazy(() => import('./pages/DemoRequest'));
 const DemoSchedule = lazy(() => import('./pages/DemoSchedule'));
 const DemoExpired = lazy(() => import('./pages/DemoExpired'));
@@ -189,23 +191,6 @@ const AdminHub = lazy(() => import('./pages/AdminHub').then(m => ({ default: m.A
 const VendorSetup = lazy(() => import('./pages/VendorSetup').then(m => ({ default: m.VendorSetup })));
 const VendorInviteLanding = lazy(() => import('./pages/VendorInviteLanding').then(m => ({ default: m.VendorInviteLanding })));
 
-import Navigation from './components/Navigation';
-import Hero from './components/Hero';
-import DailyOperations from './components/DailyOperations';
-import Features from './components/Features';
-import BeforeAfter from './components/BeforeAfter';
-import QRFeature from './components/QRFeature';
-import Pricing from './components/Pricing';
-import AllFeatures from './components/AllFeatures';
-import Trust from './components/Trust';
-import FinalCTA from './components/FinalCTA';
-import Footer from './components/Footer';
-import MobileStickyBar from './components/MobileStickyBar';
-import AIChatWidget from './components/landing/AIChatWidget';
-import AppInstallSection from './components/landing/AppInstallSection';
-import WebinarSection from './components/landing/WebinarSection';
-import MobileInstallBanner from './components/landing/MobileInstallBanner';
-import K2CBannerStrip from './components/K2CBannerStrip';
 import { CookieConsent } from './components/CookieConsent';
 import { usePageTracking } from './hooks/usePageTracking';
 
@@ -239,30 +224,6 @@ function dbRoleToUserRole(dbRole: string | undefined | null): UserRole {
     kitchen_staff: 'kitchen_staff',
   };
   return MAP[dbRole || ''] || 'owner_operator';
-}
-
-function LandingPage() {
-  return (
-    <div className="min-h-screen">
-      <MobileInstallBanner />
-      <Navigation />
-      <Hero />
-      <K2CBannerStrip />
-      <DailyOperations />
-      <Features />
-      <BeforeAfter />
-      <QRFeature />
-      <AllFeatures />
-      <AppInstallSection />
-      <Pricing />
-      <WebinarSection />
-      <Trust />
-      <FinalCTA />
-      <Footer />
-      <MobileStickyBar />
-      <AIChatWidget />
-    </div>
-  );
 }
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -561,7 +522,8 @@ function AppRoutes() {
           <Route path="/insurance-risk" element={<InsuranceRisk />} />
           <Route path="/improve-score" element={<ImproveScore />} />
           <Route path="/insurance-settings" element={<InsuranceSettings />} />
-          <Route path="/admin/onboard-client" element={<AdminClientOnboarding />} />
+          <Route path="/admin/onboarding" element={<AdminClientOnboarding />} />
+          <Route path="/admin/onboard-client" element={<Navigate to="/admin/onboarding" replace />} />
           <Route path="/admin/usage-analytics" element={<UsageAnalytics />} />
           <Route path="/iot-platform" element={<IoTSensorPlatform />} />
           <Route path="/sensors" element={<SensorHub />} />
@@ -600,6 +562,7 @@ function AppRoutes() {
           <Route path="/admin/intelligence-queue" element={<AdminIntelligenceQueue />} />
           <Route path="/admin/rfp-intelligence" element={<RfpIntelligence />} />
           <Route path="/admin/demo-generator" element={<SalesGuard><DemoGenerator /></SalesGuard>} />
+          <Route path="/admin/demo-launcher" element={<SalesGuard><DemoLauncher /></SalesGuard>} />
           <Route path="/admin/demos" element={<SalesGuard><DemoPipeline /></SalesGuard>} />
           <Route path="/admin/assessments" element={<SalesGuard><AssessmentLeads /></SalesGuard>} />
           <Route path="/admin/api-keys" element={<InsuranceApiKeys />} />
@@ -620,7 +583,8 @@ function AppRoutes() {
           <Route path="/admin/vault" element={<DocumentVault />} />
           <Route path="/admin/event-log" element={<EventLog />} />
           <Route path="/admin/campaigns" element={<SalesGuard><MarketingCampaigns /></SalesGuard>} />
-          <Route path="/admin/pipeline" element={<SalesGuard><SalesPipeline /></SalesGuard>} />
+          <Route path="/admin/sales" element={<SalesGuard><SalesPipeline /></SalesGuard>} />
+          <Route path="/admin/pipeline" element={<Navigate to="/admin/sales" replace />} />
           <Route path="/admin/users" element={<UserProvisioning />} />
           <Route path="/admin/support" element={<SupportTickets />} />
           <Route path="/admin/remote-connect" element={<RemoteConnect />} />
@@ -628,6 +592,7 @@ function AppRoutes() {
           <Route path="/admin/intelligence" element={<EvidLYIntelligence />} />
           <Route path="/admin/reports" element={<AdminReports />} />
           <Route path="/admin/system/edge-functions" element={<EdgeFunctions />} />
+          <Route path="/admin/gtm" element={<SalesGuard><GtmDashboard /></SalesGuard>} />
           <Route path="/insights/intelligence" element={<ClientIntelligenceFeed />} />
           <Route path="/insights/reports" element={<ClientReports />} />
           {/* Stub routes for upcoming features */}

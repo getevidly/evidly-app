@@ -1,6 +1,6 @@
 /**
  * Sales Pipeline — Kanban board + table view for prospect-to-close tracking
- * Route: /admin/pipeline
+ * Route: /admin/sales
  * Access: platform_admin / @getevidly.com
  */
 

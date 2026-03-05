@@ -38,10 +38,11 @@ const NAV_SECTIONS: NavSection[] = [
   {
     title: 'Growth',
     items: [
-      { label: 'Sales Pipeline', path: '/admin/pipeline', salesOnly: true },
+      { label: 'Demo Launcher', path: '/admin/demo-launcher', salesOnly: true },
+      { label: 'Sales Pipeline', path: '/admin/sales', salesOnly: true },
       { label: 'Campaigns', path: '/admin/campaigns', salesOnly: true },
       { label: 'Guided Tours', path: '/admin/guided-tours', salesOnly: true },
-      { label: 'Client Onboarding', path: '/admin/onboard-client', salesOnly: true },
+      { label: 'Client Onboarding', path: '/admin/onboarding', salesOnly: true },
       { label: 'Leads', path: '/admin/leads', salesOnly: true },
       { label: 'GTM Dashboard', path: '/admin/gtm', salesOnly: true },
     ],

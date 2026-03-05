@@ -216,7 +216,7 @@ const ADMIN_CARDS: AdminCard[] = [
     title: 'Sales Pipeline',
     description: 'Kanban pipeline \u2014 from prospect to closed, with MRR tracking.',
     icon: '\uD83C\uDFAF',
-    route: '/admin/pipeline',
+    route: '/admin/sales',
     badge: 'NEW',
   },
   {
