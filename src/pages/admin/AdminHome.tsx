@@ -5,13 +5,33 @@
  * Access: @getevidly.com or isEvidlyAdmin
  */
 
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
 const CARD_BORDER = '#E2D9C8';
 const CARD_BORDER_HOVER = GOLD;
 const TEXT_MUTED = '#8A96A8';
+
+// Known constants — these are facts, not fake data
+const LAUNCH_DATE = new Date('2026-05-05T00:00:00-07:00'); // May 5, 2026 Pacific
+
+const Skeleton = () => (
+  <span className="inline-block w-14 h-[18px] rounded animate-pulse" style={{ background: '#E5E0D8' }} />
+);
+
+function TickerCell({ label, border, children }: { label: string; border?: boolean; children: React.ReactNode }) {
+  return (
+    <div className="px-5 py-3" style={{ borderRight: border ? `1px solid ${CARD_BORDER}` : undefined }}>
+      <div className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: TEXT_MUTED }}>{label}</div>
+      <div className="text-lg font-medium mt-0.5" style={{ color: NAVY, fontFamily: "'DM Mono', monospace" }}>
+        {children}
+      </div>
+    </div>
+  );
+}
 
 interface AdminCard {
   id: string;
@@ -193,17 +213,48 @@ const ADMIN_CARDS: AdminCard[] = [
   },
 ];
 
-const TICKER_ITEMS = [
-  { label: 'MRR', value: '$4,200' },
-  { label: 'Organizations', value: '3' },
-  { label: 'Locations', value: '7' },
-  { label: 'Crawl Live', value: '37/37' },
-  { label: 'Launch Date', value: 'TBD' },
-  { label: 'Countdown', value: '\u2014' },
-];
-
 export default function AdminHome() {
   const navigate = useNavigate();
+
+  // All null until query returns — never initialized to fake numbers
+  const [mrr, setMrr] = useState<number | null>(null);
+  const [orgCount, setOrgCount] = useState<number | null>(null);
+  const [locCount, setLocCount] = useState<number | null>(null);
+  const [crawlLive, setCrawlLive] = useState<number | null>(null);
+  const [crawlTotal, setCrawlTotal] = useState<number | null>(null);
+  const [countdown, setCountdown] = useState<string>('');
+
+  const updateCountdown = useCallback(() => {
+    const now = new Date();
+    const diff = LAUNCH_DATE.getTime() - now.getTime();
+    if (diff <= 0) { setCountdown('LAUNCHED'); return; }
+    const days = Math.floor(diff / 86400000);
+    const hours = Math.floor((diff % 86400000) / 3600000);
+    const mins = Math.floor((diff % 3600000) / 60000);
+    const secs = Math.floor((diff % 60000) / 1000);
+    setCountdown(days > 0 ? `${days}d ${hours}h ${mins}m` : `${hours}h ${mins}m ${secs}s`);
+  }, []);
+
+  useEffect(() => {
+    const loadStats = async () => {
+      const [subRes, orgRes, locRes, crawlRes] = await Promise.all([
+        supabase.from('billing_subscriptions').select('mrr_cents').eq('status', 'active'),
+        supabase.from('organizations').select('id', { count: 'exact', head: true }).eq('status', 'active'),
+        supabase.from('locations').select('id', { count: 'exact', head: true }).eq('status', 'active'),
+        supabase.from('crawl_health').select('status'),
+      ]);
+      setMrr((subRes.data || []).reduce((sum, s) => sum + (s.mrr_cents || 0), 0) / 100);
+      setOrgCount(orgRes.count ?? 0);
+      setLocCount(locRes.count ?? 0);
+      const sources = crawlRes.data || [];
+      setCrawlLive(sources.filter(s => s.status === 'active').length);
+      setCrawlTotal(sources.length);
+    };
+    loadStats();
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
+    return () => clearInterval(interval);
+  }, [updateCountdown]);
 
   return (
     <div className="space-y-6">
@@ -221,28 +272,36 @@ export default function AdminHome() {
 
       {/* Ticker bar */}
       <div
-        className="flex flex-wrap gap-0 rounded-xl border bg-white overflow-hidden"
+        className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 rounded-xl border bg-white overflow-hidden"
         style={{ borderColor: CARD_BORDER }}
       >
-        {TICKER_ITEMS.map((item, i) => (
-          <div
-            key={item.label}
-            className="flex-1 min-w-[120px] px-5 py-3"
-            style={{
-              borderRight: i < TICKER_ITEMS.length - 1 ? `1px solid ${CARD_BORDER}` : undefined,
-            }}
-          >
-            <div className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: TEXT_MUTED }}>
-              {item.label}
-            </div>
-            <div
-              className="text-lg font-medium mt-0.5"
-              style={{ color: NAVY, fontFamily: "'DM Mono', monospace" }}
-            >
-              {item.value}
-            </div>
-          </div>
-        ))}
+        <TickerCell label="MRR" border>
+          {mrr === null ? <Skeleton /> : mrr === 0
+            ? <span style={{ color: TEXT_MUTED }}>$0</span>
+            : `$${mrr.toLocaleString('en-US', { maximumFractionDigits: 0 })}`}
+        </TickerCell>
+        <TickerCell label="Organizations" border>
+          {orgCount === null ? <Skeleton /> :
+            <span style={{ color: orgCount === 0 ? TEXT_MUTED : NAVY }}>{orgCount}</span>}
+        </TickerCell>
+        <TickerCell label="Locations" border>
+          {locCount === null ? <Skeleton /> :
+            <span style={{ color: locCount === 0 ? TEXT_MUTED : NAVY }}>{locCount}</span>}
+        </TickerCell>
+        <TickerCell label="Crawl Live" border>
+          {crawlLive === null || crawlTotal === null ? <Skeleton /> : (
+            <span>
+              <span style={{ color: crawlLive < crawlTotal * 0.8 ? '#D97706' : '#059669' }}>{crawlLive}</span>
+              <span style={{ color: TEXT_MUTED, fontSize: 13 }}>/{crawlTotal}</span>
+            </span>
+          )}
+        </TickerCell>
+        <TickerCell label="Launch Date" border>
+          <span style={{ color: GOLD }}>May 5 '26</span>
+        </TickerCell>
+        <TickerCell label="Countdown">
+          {countdown ? <span style={{ color: countdown === 'LAUNCHED' ? '#059669' : NAVY }}>{countdown}</span> : <Skeleton />}
+        </TickerCell>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
