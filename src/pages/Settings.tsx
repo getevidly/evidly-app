@@ -1050,7 +1050,7 @@ export function Settings() {
                 <h3 className="text-xl font-bold text-gray-900" style={{ fontFamily: 'DM Sans, sans-serif' }}>Security & Access</h3>
                 <p className="text-sm text-gray-600 mt-1">Manage access control, audit trails, and compliance reporting.</p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                 {[
                   {
                     icon: KeyRound,
@@ -1069,6 +1069,12 @@ export function Settings() {
                     title: 'Audit Report',
                     description: 'Generate inspection and compliance reports',
                     path: '/audit-report',
+                  },
+                  {
+                    icon: Globe,
+                    title: 'Domain Security',
+                    description: 'HTTPS, headers, CORS, and domain verification',
+                    path: '/admin/security-settings',
                   },
                 ].map((card) => (
                   <button

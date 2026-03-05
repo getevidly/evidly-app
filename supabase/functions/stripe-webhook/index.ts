@@ -225,6 +225,35 @@ Deno.serve(async (req: Request) => {
           } else {
             console.log(`Guarantee window started for subscription ${subscriptionId}`);
           }
+
+          // Trigger K2C donation for this org
+          const { data: sub } = await supabase
+            .from("subscriptions")
+            .select("user_id")
+            .eq("stripe_subscription_id", subscriptionId)
+            .maybeSingle();
+          if (sub?.user_id) {
+            const { data: profile } = await supabase
+              .from("user_profiles")
+              .select("organization_id")
+              .eq("user_id", sub.user_id)
+              .maybeSingle();
+            if (profile?.organization_id) {
+              // Fire-and-forget K2C processor
+              fetch(`${supabaseUrl}/functions/v1/k2c-processor`, {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${supabaseServiceKey}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  orgId: profile.organization_id,
+                  billingEventId: invoice.id,
+                  triggerType: "stripe_webhook",
+                }),
+              }).catch((e) => console.error("K2C processor call failed:", e.message));
+            }
+          }
         }
         break;
       }

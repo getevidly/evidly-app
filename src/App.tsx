@@ -117,7 +117,20 @@ const AdminIntelligenceQueue = lazy(() => import('./pages/AdminIntelligenceQueue
 const CommandCenter = lazy(() => import('./pages/admin/CommandCenter'));
 const RfpIntelligence = lazy(() => import('./pages/admin/RfpIntelligence'));
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
+const AdminHome = lazy(() => import('./pages/admin/AdminHome'));
+const SecuritySettings = lazy(() => import('./pages/admin/SecuritySettings').then(m => ({ default: m.SecuritySettings })));
 const EdgeFunctions = lazy(() => import('./pages/admin/system/EdgeFunctions'));
+const GuidedTours = lazy(() => import('./pages/admin/GuidedTours'));
+const Configure = lazy(() => import('./pages/admin/Configure'));
+const UserEmulation = lazy(() => import('./pages/admin/UserEmulation'));
+const AdminBilling = lazy(() => import('./pages/admin/AdminBilling'));
+const AdminCrawlMonitor = lazy(() => import('./pages/admin/AdminCrawlMonitor'));
+const SystemMessages = lazy(() => import('./pages/admin/SystemMessages'));
+const AdminK2C = lazy(() => import('./pages/admin/AdminK2C'));
+const DatabaseBackup = lazy(() => import('./pages/admin/DatabaseBackup'));
+const MaintenanceMode = lazy(() => import('./pages/admin/MaintenanceMode'));
+const DocumentVault = lazy(() => import('./pages/admin/DocumentVault'));
+const EventLog = lazy(() => import('./pages/admin/EventLog'));
 const AuthCallback = lazy(() => import('./pages/AuthCallback').then(m => ({ default: m.AuthCallback })));
 const ReferralDashboard = lazy(() => import('./pages/ReferralDashboard').then(m => ({ default: m.ReferralDashboard })));
 const ReferralRedirect = lazy(() => import('./pages/ReferralRedirect'));
@@ -294,6 +307,17 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+/** Show AdminHome (17-card grid) for platform_admin, AdminHub (tenant cards) for everyone else */
+function AdminRoute() {
+  const { isEvidlyAdmin } = useAuth();
+  const { isDemoMode } = useDemo();
+  const { userRole } = useRole();
+  if (isEvidlyAdmin || userRole === 'platform_admin') {
+    return <AdminHome />;
+  }
+  return <AdminHub />;
+}
+
 function ProtectedLayout() {
   const { user, profile, loading, isEvidlyAdmin } = useAuth();
   const { isDemoMode, isDemoExpired, isAuthenticatedDemo } = useDemo();
@@ -436,7 +460,7 @@ function AppRoutes() {
           <Route path="/compliance" element={<ComplianceHub />} />
           <Route path="/insights" element={<InsightsHub />} />
           <Route path="/tools" element={<ToolsHub />} />
-          <Route path="/admin" element={<AdminHub />} />
+          <Route path="/admin" element={<AdminRoute />} />
           <Route path="/temp-logs" element={<TempLogs />} />
           <Route path="/iot-monitoring" element={<IoTMonitoring />} />
           <Route path="/checklists" element={<Checklists />} />
@@ -525,7 +549,22 @@ function AppRoutes() {
           <Route path="/admin/demos" element={<DemoPipeline />} />
           <Route path="/admin/assessments" element={<AssessmentLeads />} />
           <Route path="/admin/api-keys" element={<InsuranceApiKeys />} />
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/dashboard" element={<Navigate to="/admin" replace />} />
+          <Route path="/admin/command-center" element={<CommandCenter />} />
+          <Route path="/admin/guided-tours" element={<GuidedTours />} />
+          <Route path="/admin/leads" element={<AssessmentLeads />} />
+          <Route path="/admin/configure" element={<Configure />} />
+          <Route path="/admin/emulate" element={<UserEmulation />} />
+          <Route path="/admin/billing" element={<AdminBilling />} />
+          <Route path="/admin/crawl-monitor" element={<AdminCrawlMonitor />} />
+          <Route path="/admin/rfp-monitor" element={<RfpIntelligence />} />
+          <Route path="/admin/messages" element={<SystemMessages />} />
+          <Route path="/admin/k2c" element={<AdminK2C />} />
+          <Route path="/admin/backup" element={<DatabaseBackup />} />
+          <Route path="/admin/maintenance" element={<MaintenanceMode />} />
+          <Route path="/admin/security-settings" element={<SecuritySettings />} />
+          <Route path="/admin/vault" element={<DocumentVault />} />
+          <Route path="/admin/event-log" element={<EventLog />} />
           <Route path="/admin/system/edge-functions" element={<EdgeFunctions />} />
           {/* Stub routes for upcoming features */}
           <Route path="/corrective-actions" element={<CorrectiveActions />} />

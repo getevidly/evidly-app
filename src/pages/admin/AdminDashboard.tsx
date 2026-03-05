@@ -18,8 +18,9 @@ import { format } from 'date-fns';
 import {
   Loader2, RefreshCw, Activity, Key, Users, Bug, Terminal,
   ScrollText, Play, Heart, BarChart3, Globe, Shield, AlertTriangle,
-  CheckCircle, XCircle, Clock, Zap, ChevronDown,
+  CheckCircle, XCircle, Clock, Zap, ChevronDown, UserCog,
 } from 'lucide-react';
+import { EmulationPanel } from '../../components/admin/EmulationPanel';
 
 // ── Colors ──────────────────────────────────────────────────
 const BRAND = '#1e4d6b';
@@ -73,7 +74,7 @@ interface K2CRow {
 
 // ── Tabs ────────────────────────────────────────────────────
 
-type TabId = 'command' | 'crawl' | 'events' | 'apikeys' | 'leads' | 'edge' | 'demos' | 'k2c' | 'usage' | 'web';
+type TabId = 'command' | 'crawl' | 'events' | 'apikeys' | 'leads' | 'edge' | 'demos' | 'k2c' | 'usage' | 'web' | 'emulation';
 
 const TABS: { id: TabId; label: string; icon: React.ReactNode }[] = [
   { id: 'command', label: 'Command Center', icon: <Activity size={15} /> },
@@ -86,6 +87,7 @@ const TABS: { id: TabId; label: string; icon: React.ReactNode }[] = [
   { id: 'k2c',     label: 'K2C',            icon: <Heart size={15} /> },
   { id: 'usage',   label: 'Usage',          icon: <BarChart3 size={15} /> },
   { id: 'web',     label: 'Web Analytics',  icon: <Globe size={15} /> },
+  { id: 'emulation', label: 'User Emulation', icon: <UserCog size={15} /> },
 ];
 
 // ── Demo data ───────────────────────────────────────────────
@@ -315,9 +317,10 @@ export default function AdminDashboard() {
             {activeTab === 'leads' && <LeadsTab leads={leads} />}
             {activeTab === 'edge' && <EdgeFunctionsTab events={events} />}
             {activeTab === 'demos' && <DemoSessionsTab sessions={demoSessions} />}
-            {activeTab === 'k2c' && <K2CTab donations={k2cData} />}
-            {activeTab === 'usage' && <UsageTab orgCount={orgCount} locCount={locCount} />}
+            {activeTab === 'k2c' && <K2CTab donations={k2cData} onRefresh={fetchAll} isDemoMode={isDemoMode} />}
+            {activeTab === 'usage' && <UsageTab orgCount={orgCount} locCount={locCount} isDemoMode={isDemoMode} />}
             {activeTab === 'web' && <WebAnalyticsTab leads={leads} />}
+            {activeTab === 'emulation' && <EmulationPanel />}
           </>
         )}
       </div>
@@ -696,13 +699,48 @@ function DemoSessionsTab({ sessions }: { sessions: DemoSessionRow[] }) {
 
 // ── K2C ─────────────────────────────────────────────────────
 
-function K2CTab({ donations }: { donations: K2CRow[] }) {
+function K2CTab({ donations, onRefresh, isDemoMode }: { donations: K2CRow[]; onRefresh: () => void; isDemoMode: boolean }) {
+  const [processing, setProcessing] = useState(false);
   const totalMeals = donations.reduce((sum, d) => sum + d.meals_count, 0);
   const totalDollars = donations.reduce((sum, d) => sum + d.amount_cents, 0) / 100;
 
+  const processK2C = async () => {
+    setProcessing(true);
+    try {
+      if (isDemoMode) {
+        await new Promise(r => setTimeout(r, 1500));
+        toast.success('Demo mode — K2C processor simulated');
+      } else {
+        const { data, error } = await supabase.functions.invoke('k2c-processor', {
+          body: { triggerType: 'manual_admin' },
+        });
+        if (error) throw error;
+        toast.success(`K2C processed: ${data.processed} orgs recorded, ${data.skipped} already done this period`);
+        onRefresh();
+      }
+    } catch (err: any) {
+      toast.error(`K2C processing failed: ${err.message}`);
+    } finally {
+      setProcessing(false);
+    }
+  };
+
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold" style={{ color: BRAND }}>Kitchen to Community</h3>
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold" style={{ color: BRAND }}>Kitchen to Community</h3>
+        <button
+          onClick={processK2C}
+          disabled={processing}
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-white transition-colors disabled:opacity-50"
+          style={{ backgroundColor: '#16a34a' }}
+          onMouseEnter={e => { if (!processing) e.currentTarget.style.backgroundColor = '#15803d'; }}
+          onMouseLeave={e => e.currentTarget.style.backgroundColor = '#16a34a'}
+        >
+          {processing ? <Loader2 size={14} className="animate-spin" /> : <Heart size={14} />}
+          {processing ? 'Processing...' : 'Process Now'}
+        </button>
+      </div>
       <div className="grid grid-cols-2 gap-3">
         <MiniStat label="Total Meals" value={totalMeals.toLocaleString()} color="#16a34a" />
         <MiniStat label="Total Donated" value={`$${totalDollars.toLocaleString()}`} color={BRAND} />
@@ -726,18 +764,134 @@ function K2CTab({ donations }: { donations: K2CRow[] }) {
 
 // ── Usage ───────────────────────────────────────────────────
 
-function UsageTab({ orgCount, locCount }: { orgCount: number; locCount: number }) {
+function UsageTab({ orgCount, locCount, isDemoMode }: { orgCount: number; locCount: number; isDemoMode: boolean }) {
+  const [metrics, setMetrics] = useState<{
+    temp_logs: number; checklists: number; documents: number;
+    corrective_actions: number; time_saved_hours: number; money_saved_dollars: number;
+  } | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  useEffect(() => {
+    if (isDemoMode) {
+      setMetrics({ temp_logs: 4200, checklists: 1850, documents: 340, corrective_actions: 42, time_saved_hours: 1342, money_saved_dollars: 38926 });
+      return;
+    }
+    (async () => {
+      const { data } = await supabase
+        .from('platform_metrics_daily')
+        .select('*')
+        .order('metric_date', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (data) {
+        // Compute from stored counts
+        const tempLogs = data.temp_logs_count || 0;
+        const checklists = data.checklists_count || 0;
+        const docs = data.docs_uploaded_count || 0;
+        const corrective = data.corrective_actions_count || 0;
+        const timeMins = tempLogs * 8 + checklists * 12 + docs * 20 + corrective * 25;
+        const timeHrs = Math.round(timeMins / 60);
+        const labor = timeHrs * 28;
+        const fines = Math.round(corrective * 500 * 0.15);
+        const insurance = Math.round((data.locations_count || 0) * (200 / 12));
+        setMetrics({
+          temp_logs: tempLogs, checklists, documents: docs,
+          corrective_actions: corrective,
+          time_saved_hours: timeHrs,
+          money_saved_dollars: labor + fines + insurance,
+        });
+      }
+    })();
+  }, [isDemoMode]);
+
+  const refreshMetrics = async () => {
+    if (isDemoMode) { toast.success('Demo mode — metrics refresh simulated'); return; }
+    setRefreshing(true);
+    try {
+      const { error } = await supabase.functions.invoke('platform-metrics-refresh', { body: {} });
+      if (error) throw error;
+      toast.success('Metrics refreshed — reloading...');
+      // Re-fetch
+      const { data } = await supabase
+        .from('platform_metrics_daily')
+        .select('*')
+        .order('metric_date', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (data) {
+        const tempLogs = data.temp_logs_count || 0;
+        const checklists = data.checklists_count || 0;
+        const docs = data.docs_uploaded_count || 0;
+        const corrective = data.corrective_actions_count || 0;
+        const timeMins = tempLogs * 8 + checklists * 12 + docs * 20 + corrective * 25;
+        const timeHrs = Math.round(timeMins / 60);
+        const labor = timeHrs * 28;
+        const fines = Math.round(corrective * 500 * 0.15);
+        const insurance = Math.round((data.locations_count || 0) * (200 / 12));
+        setMetrics({
+          temp_logs: tempLogs, checklists, documents: docs,
+          corrective_actions: corrective,
+          time_saved_hours: timeHrs,
+          money_saved_dollars: labor + fines + insurance,
+        });
+      }
+    } catch (err: any) {
+      toast.error(`Refresh failed: ${err.message}`);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold" style={{ color: BRAND }}>Platform Usage</h3>
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold" style={{ color: BRAND }}>Platform Usage</h3>
+        <button
+          onClick={refreshMetrics}
+          disabled={refreshing}
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors disabled:opacity-50"
+          style={{ borderColor: '#D1D9E6', color: TEXT_SEC }}
+        >
+          <RefreshCw size={14} className={refreshing ? 'animate-spin' : ''} />
+          Refresh Metrics
+        </button>
+      </div>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <MiniStat label="Organizations" value={orgCount} color={BRAND} />
         <MiniStat label="Locations" value={locCount} color={BRAND} />
+        {metrics && (
+          <>
+            <MiniStat label="Temp Logs" value={metrics.temp_logs.toLocaleString()} color="#dc2626" />
+            <MiniStat label="Checklists" value={metrics.checklists.toLocaleString()} color="#2563eb" />
+          </>
+        )}
       </div>
-      <p className="text-sm" style={{ color: TEXT_TERT }}>
-        Detailed module-level usage analytics require the <code>usage_events</code> table.
-        Connect Plausible or PostHog for full behavioral tracking.
-      </p>
+      {metrics && (
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <MiniStat label="Documents" value={metrics.documents.toLocaleString()} color="#ea580c" />
+          <MiniStat label="Corrective Actions" value={metrics.corrective_actions.toLocaleString()} color="#d97706" />
+          <div className="relative group">
+            <MiniStat label="Time Saved" value={`${metrics.time_saved_hours.toLocaleString()} hrs`} color="#8b5cf6" />
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-10">
+              <div className="bg-gray-900 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-lg">
+                8 min/temp log + 12 min/checklist + 20 min/doc + 25 min/corrective action
+              </div>
+            </div>
+          </div>
+          <div className="relative group">
+            <MiniStat label="Est. Money Saved" value={`$${metrics.money_saved_dollars.toLocaleString()}`} color={GOLD} />
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-10">
+              <div className="bg-gray-900 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-lg">
+                $28/hr labor + $500 x 15% fine avoidance + $200/loc/yr insurance
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      <div className="flex items-center gap-2 mt-3 px-3 py-2 rounded-lg" style={{ background: '#eef4f8', border: '1px solid #D1D9E6' }}>
+        <Shield size={14} style={{ color: BRAND, flexShrink: 0 }} />
+        <span className="text-xs" style={{ color: TEXT_SEC }}>Emulation sessions are excluded from all usage metrics. Formulas use real DB counts from platform_metrics_daily.</span>
+      </div>
     </div>
   );
 }
