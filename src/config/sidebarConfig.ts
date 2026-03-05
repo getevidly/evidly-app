@@ -276,6 +276,12 @@ const I: Record<string, NavItem> = {
     badge: 'NEW',
   },
 
+  // ── Integrations Hub ──
+  integrations: {
+    id: 'integrations', label: 'Integrations', path: '/integrations', icon: '🔌',
+    roles: [], description: 'Connect EvidLY with POS, accounting, HR, IoT, insurance, and 25+ other platforms.',
+  },
+
   // ── System (Admin) ──
   edgeFunctions: {
     id: 'edge-functions', label: 'Edge Functions', path: '/admin/system/edge-functions', icon: '⚡',
@@ -349,8 +355,8 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         '/tools',
       ),
       section('administration', 'Administration', '⚙️',
-        'Administration', 'Equipment, Internet of Things sensors, locations, settings, team, vendors, and role permissions.',
-        [I.equipment, I.iotSensors, I.locations, I.settings, I.rolesPermissions, I.team, I.trainingRecords, I.trainingCatalog, I.vendors],
+        'Administration', 'Equipment, Internet of Things sensors, integrations, locations, settings, team, vendors, and role permissions.',
+        [I.equipment, I.integrations, I.iotSensors, I.locations, I.settings, I.rolesPermissions, I.team, I.trainingRecords, I.trainingCatalog, I.vendors],
         '/admin',
       ),
       section('system', 'System', '🖥️',
@@ -608,8 +614,8 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         '/tools',
       ),
       section('administration', 'Administration', '⚙️',
-        'Administration', 'Equipment, Internet of Things sensors, locations, settings, team, vendors, and role permissions.',
-        [I.equipment, I.iotSensors, I.locations, I.settings, I.rolesPermissions, I.team, I.trainingRecords, I.trainingCatalog, I.vendors],
+        'Administration', 'Equipment, integrations, Internet of Things sensors, locations, settings, team, vendors, and role permissions.',
+        [I.equipment, I.integrations, I.iotSensors, I.locations, I.settings, I.rolesPermissions, I.team, I.trainingRecords, I.trainingCatalog, I.vendors],
         '/admin',
       ),
       section('help', 'Help', '❓',
@@ -654,8 +660,8 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         '/tools',
       ),
       section('administration', 'Administration', '⚙️',
-        'Administration', 'Account settings, role permissions, and training records.',
-        [I.settings, I.rolesPermissions, I.trainingRecords],
+        'Administration', 'Account settings, integrations, role permissions, and training records.',
+        [I.integrations, I.settings, I.rolesPermissions, I.trainingRecords],
         '/admin',
       ),
       section('help', 'Help', '❓',
