@@ -37,6 +37,7 @@ const HACCP = lazy(() => import('./pages/HACCP').then(m => ({ default: m.HACCP }
 const Alerts = lazy(() => import('./pages/Alerts').then(m => ({ default: m.Alerts })));
 const AIAdvisor = lazy(() => import('./pages/AIAdvisor').then(m => ({ default: m.AIAdvisor })));
 const Leaderboard = lazy(() => import('./pages/Leaderboard').then(m => ({ default: m.Leaderboard })));
+const LeaderboardPreview = lazy(() => import('./pages/LeaderboardPreview').then(m => ({ default: m.LeaderboardPreview })));
 const Analysis = lazy(() => import('./pages/Analysis').then(m => ({ default: m.Analysis })));
 const Team = lazy(() => import('./pages/Team').then(m => ({ default: m.Team })));
 const Settings = lazy(() => import('./pages/Settings').then(m => ({ default: m.Settings })));
@@ -133,6 +134,7 @@ const DocumentVault = lazy(() => import('./pages/admin/DocumentVault'));
 const EventLog = lazy(() => import('./pages/admin/EventLog'));
 const MarketingCampaigns = lazy(() => import('./pages/admin/MarketingCampaigns'));
 const SalesPipeline = lazy(() => import('./pages/admin/SalesPipeline'));
+const UserProvisioning = lazy(() => import('./pages/admin/UserProvisioning'));
 const AuthCallback = lazy(() => import('./pages/AuthCallback').then(m => ({ default: m.AuthCallback })));
 const ReferralDashboard = lazy(() => import('./pages/ReferralDashboard').then(m => ({ default: m.ReferralDashboard })));
 const ReferralRedirect = lazy(() => import('./pages/ReferralRedirect'));
@@ -197,8 +199,11 @@ const KitchenToCommunity = lazy(() => import('./pages/KitchenToCommunity'));
 const DemoBookingBanner = lazy(() => import('./components/landing/DemoBookingBanner'));
 import { PageSkeleton } from './components/LoadingSkeleton';
 import { Layout } from './components/layout/Layout';
+import { AdminShell } from './components/layout/AdminShell';
 import { PageTransition } from './components/PageTransition';
 import { PageExplanation } from './components/PageExplanation';
+
+import { useEmulation } from './contexts/EmulationContext';
 
 import { useRole } from './contexts/RoleContext';
 import { isRouteAllowedForRole } from './lib/routeGuards';
@@ -324,9 +329,10 @@ function AdminRoute() {
 }
 
 function ProtectedLayout() {
-  const { user, profile, loading, isEvidlyAdmin } = useAuth();
+  const { user, profile, loading, isEvidlyAdmin, isAdmin } = useAuth();
   const { isDemoMode, isDemoExpired, isAuthenticatedDemo } = useDemo();
   const { userRole } = useRole();
+  const { isEmulating } = useEmulation();
   const location = useLocation();
 
   // Synchronous fallback: if DemoContext state hasn't propagated yet but
@@ -370,23 +376,39 @@ function ProtectedLayout() {
     }
   }
 
+  // ── Admin shell: platform_admin (not emulating, not demo) gets AdminShell ──
+  const useAdminShell = isAdmin && !isEmulating && !effectiveDemoMode;
+
+  const content = (
+    <ErrorBoundary level="page" resetKey={location.pathname}>
+      <Suspense fallback={
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#d4af37] mx-auto"></div>
+            <p className="mt-3 text-sm text-gray-500">Loading...</p>
+          </div>
+        </div>
+      }>
+        <PageTransition key={location.pathname}>
+          <PageExplanation />
+          <Outlet />
+        </PageTransition>
+      </Suspense>
+    </ErrorBoundary>
+  );
+
+  if (useAdminShell) {
+    return (
+      <AdminShell>
+        {content}
+        <EnvBadge />
+      </AdminShell>
+    );
+  }
+
   return (
     <Layout>
-      <ErrorBoundary level="page" resetKey={location.pathname}>
-        <Suspense fallback={
-          <div className="flex items-center justify-center py-12">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#d4af37] mx-auto"></div>
-              <p className="mt-3 text-sm text-gray-500">Loading...</p>
-            </div>
-          </div>
-        }>
-          <PageTransition key={location.pathname}>
-            <PageExplanation />
-            <Outlet />
-          </PageTransition>
-        </Suspense>
-      </ErrorBoundary>
+      {content}
       {isDemoMode && (
         <Suspense fallback={null}>
           <DemoBookingBanner />
@@ -423,6 +445,7 @@ function AppRoutes() {
         <Route path="/scoretable/:slug" element={<Suspense fallback={<PageSkeleton />}><ScoreTableWrapper /></Suspense>} />
         <Route path="/kitchen-check/:slug" element={<Suspense fallback={<PageSkeleton />}><KitchenCheckWrapper /></Suspense>} />
         <Route path="/kitchen-to-community" element={<Suspense fallback={<PageSkeleton />}><KitchenToCommunity /></Suspense>} />
+        <Route path="/leaderboard-preview" element={<Suspense fallback={<PageSkeleton />}><LeaderboardPreview /></Suspense>} />
         <Route path="/temp/log" element={<Suspense fallback={<PageSkeleton />}><TempLogQuick /></Suspense>} />
         <Route path="/temp-logs/scan" element={<Suspense fallback={<PageSkeleton />}><TempLogScan /></Suspense>} />
         <Route path="/login" element={<PublicRoute><Suspense fallback={<PageSkeleton />}><Login /></Suspense></PublicRoute>} />
@@ -579,6 +602,7 @@ function AppRoutes() {
           <Route path="/admin/event-log" element={<EventLog />} />
           <Route path="/admin/campaigns" element={<MarketingCampaigns />} />
           <Route path="/admin/pipeline" element={<SalesPipeline />} />
+          <Route path="/admin/users" element={<UserProvisioning />} />
           <Route path="/admin/system/edge-functions" element={<EdgeFunctions />} />
           {/* Stub routes for upcoming features */}
           <Route path="/corrective-actions" element={<CorrectiveActions />} />

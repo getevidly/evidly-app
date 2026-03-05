@@ -64,6 +64,14 @@ const ADMIN_CARDS: AdminCard[] = [
     badge: 'NEW',
   },
   {
+    id: 'user-provisioning',
+    title: 'User Provisioning',
+    description: 'Invite users, create accounts, manage roles and permissions across all organizations.',
+    icon: '\uD83D\uDC65',
+    route: '/admin/users',
+    badge: 'NEW',
+  },
+  {
     id: 'billing',
     title: 'Billing',
     description: 'Subscription management, MRR tracking, invoice history, and revenue projections.',
@@ -177,6 +185,15 @@ const ADMIN_CARDS: AdminCard[] = [
   },
 ];
 
+const TICKER_ITEMS = [
+  { label: 'MRR', value: '$4,200' },
+  { label: 'Organizations', value: '3' },
+  { label: 'Locations', value: '7' },
+  { label: 'Crawl Live', value: '37/37' },
+  { label: 'Launch Date', value: 'TBD' },
+  { label: 'Countdown', value: '\u2014' },
+];
+
 export default function AdminHome() {
   const navigate = useNavigate();
 
@@ -192,6 +209,32 @@ export default function AdminHome() {
         <p className="mt-1 text-sm" style={{ color: TEXT_MUTED }}>
           Platform operations, billing, security, and system monitoring.
         </p>
+      </div>
+
+      {/* Ticker bar */}
+      <div
+        className="flex flex-wrap gap-0 rounded-xl border bg-white overflow-hidden"
+        style={{ borderColor: CARD_BORDER }}
+      >
+        {TICKER_ITEMS.map((item, i) => (
+          <div
+            key={item.label}
+            className="flex-1 min-w-[120px] px-5 py-3"
+            style={{
+              borderRight: i < TICKER_ITEMS.length - 1 ? `1px solid ${CARD_BORDER}` : undefined,
+            }}
+          >
+            <div className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: TEXT_MUTED }}>
+              {item.label}
+            </div>
+            <div
+              className="text-lg font-medium mt-0.5"
+              style={{ color: NAVY, fontFamily: "'DM Mono', monospace" }}
+            >
+              {item.value}
+            </div>
+          </div>
+        ))}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

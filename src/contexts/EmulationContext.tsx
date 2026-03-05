@@ -198,7 +198,7 @@ export function EmulationProvider({ children }: { children: ReactNode }) {
             left: 0,
             right: 0,
             zIndex: 99999,
-            background: 'linear-gradient(90deg, #dc2626, #b91c1c)',
+            background: '#A08C5A',
             color: '#ffffff',
             padding: '10px 16px',
             display: 'flex',
@@ -208,7 +208,7 @@ export function EmulationProvider({ children }: { children: ReactNode }) {
             fontFamily: "'DM Sans', sans-serif",
             fontSize: '14px',
             fontWeight: 600,
-            boxShadow: '0 4px 12px rgba(220, 38, 38, 0.4)',
+            boxShadow: '0 4px 12px rgba(160, 140, 90, 0.4)',
             minHeight: '44px',
           }}
         >
@@ -324,7 +324,7 @@ export function EmulationProvider({ children }: { children: ReactNode }) {
                   borderRadius: '8px',
                   fontSize: '14px',
                   fontWeight: 700,
-                  background: '#dc2626',
+                  background: '#A08C5A',
                   border: 'none',
                   color: '#ffffff',
                   cursor: 'pointer',
