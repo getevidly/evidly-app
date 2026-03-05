@@ -116,6 +116,14 @@ const ADMIN_CARDS: AdminCard[] = [
     badge: null,
   },
   {
+    id: 'reports',
+    title: 'Reports',
+    description: 'Generate and share internal, client, partner, and investor reports.',
+    icon: '\uD83D\uDCCA',
+    route: '/admin/reports',
+    badge: 'NEW',
+  },
+  {
     id: 'crawl-monitor',
     title: 'Crawl Monitor',
     description: 'Live status of all 37 JIE intelligence feeds with auto-retry monitoring.',

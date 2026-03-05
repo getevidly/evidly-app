@@ -13,7 +13,7 @@ const TEXT_SEC = '#6B7F96';
 const TEXT_MUTED = '#9CA3AF';
 const BORDER = '#E5E0D8';
 
-type Tab = 'overview' | 'signals' | 'sources' | 'jie' | 'correlations';
+type Tab = 'overview' | 'signals' | 'sources' | 'jie' | 'correlations' | 'scoretable';
 
 interface Source {
   id: string;
@@ -135,18 +135,51 @@ export default function EvidLYIntelligence() {
   const [srcStatusFilter, setSrcStatusFilter] = useState('');
   const [srcDemoOnly, setSrcDemoOnly] = useState(false);
 
+  // Publish Advisory modal
+  const [publishModal, setPublishModal] = useState<{ open: boolean; signal: Signal | null }>({ open: false, signal: null });
+  const [pubForm, setPubForm] = useState({ dimension: 'operational', risk_level: 'medium', advisory_type: 'risk', title: '', summary: '' });
+
+  // ScoreTable analytics
+  const [scoreTableData, setScoreTableData] = useState<{ county_slug: string; total_views: number; unique_sessions: number; views_7d: number; views_30d: number; last_viewed: string | null }[]>([]);
+
   const loadAll = useCallback(async () => {
     setLoading(true);
-    const [sourcesRes, signalsRes, jieRes, corrRes] = await Promise.all([
+    const [sourcesRes, signalsRes, jieRes, corrRes, stRes] = await Promise.all([
       supabase.from('intelligence_sources').select('*').order('category').order('name'),
       supabase.from('intelligence_signals').select('*').order('discovered_at', { ascending: false }).limit(200),
       supabase.from('jie_updates').select('*').order('created_at', { ascending: false }).limit(50),
       supabase.from('intelligence_correlations').select('*').order('created_at', { ascending: false }).limit(100),
+      supabase.from('scoretable_views').select('county_slug, viewed_at, session_id').order('viewed_at', { ascending: false }).limit(5000),
     ]);
     if (sourcesRes.data) setSources(sourcesRes.data);
     if (signalsRes.data) setSignals(signalsRes.data);
     if (jieRes.data) setJieUpdates(jieRes.data);
     if (corrRes.data) setCorrelations(corrRes.data);
+    // Aggregate ScoreTable views client-side
+    if (stRes.data && stRes.data.length > 0) {
+      const now = Date.now();
+      const d7 = 7 * 86400000;
+      const d30 = 30 * 86400000;
+      const byCounty: Record<string, { total: number; sessions: Set<string>; v7: number; v30: number; last: string }> = {};
+      for (const row of stRes.data) {
+        const slug = row.county_slug;
+        if (!byCounty[slug]) byCounty[slug] = { total: 0, sessions: new Set(), v7: 0, v30: 0, last: '' };
+        byCounty[slug].total++;
+        if (row.session_id) byCounty[slug].sessions.add(row.session_id);
+        const age = now - new Date(row.viewed_at).getTime();
+        if (age < d7) byCounty[slug].v7++;
+        if (age < d30) byCounty[slug].v30++;
+        if (!byCounty[slug].last || row.viewed_at > byCounty[slug].last) byCounty[slug].last = row.viewed_at;
+      }
+      setScoreTableData(Object.entries(byCounty).map(([slug, d]) => ({
+        county_slug: slug,
+        total_views: d.total,
+        unique_sessions: d.sessions.size,
+        views_7d: d.v7,
+        views_30d: d.v30,
+        last_viewed: d.last,
+      })).sort((a, b) => b.total_views - a.total_views));
+    }
     setLoading(false);
   }, []);
 
@@ -195,6 +228,34 @@ export default function EvidLYIntelligence() {
       .update({ published_to_clients: true })
       .eq('id', updateId);
     setJieUpdates(prev => prev.map(u => u.id === updateId ? { ...u, published_to_clients: true } : u));
+  };
+
+  const openPublishModal = (signal: Signal) => {
+    setPubForm({
+      dimension: 'operational',
+      risk_level: signal.ai_urgency || 'medium',
+      advisory_type: signal.ai_urgency === 'critical' ? 'action_required' : 'risk',
+      title: signal.title,
+      summary: signal.ai_summary || signal.summary || '',
+    });
+    setPublishModal({ open: true, signal });
+  };
+
+  const submitAdvisory = async () => {
+    const sig = publishModal.signal;
+    if (!sig) return;
+    await supabase.from('client_advisories').insert({
+      signal_id: sig.id,
+      title: pubForm.title,
+      summary: pubForm.summary,
+      dimension: pubForm.dimension,
+      risk_level: pubForm.risk_level,
+      advisory_type: pubForm.advisory_type,
+      published_by: user?.email,
+    });
+    await updateSignalStatus(sig.id, 'published');
+    setPublishModal({ open: false, signal: null });
+    alert('Advisory published to client intelligence feed.');
   };
 
   const inputStyle: React.CSSProperties = {
@@ -269,6 +330,7 @@ export default function EvidLYIntelligence() {
           { key: 'sources' as Tab, label: `Sources (${totalSources})` },
           { key: 'jie' as Tab, label: 'JIE Updates' },
           { key: 'correlations' as Tab, label: 'Correlations' },
+          { key: 'scoretable' as Tab, label: `ScoreTable${scoreTableData.length > 0 ? ` (${scoreTableData.reduce((s, d) => s + d.total_views, 0)})` : ''}` },
         ]).map(t => (
           <button key={t.key} onClick={() => setActiveTab(t.key)} style={{
             padding: '10px 20px', fontSize: 13, cursor: 'pointer', background: 'none', border: 'none',
@@ -496,6 +558,13 @@ export default function EvidLYIntelligence() {
                       <option value="published">Publish</option>
                       <option value="dismissed">Dismiss</option>
                     </select>
+                    <button onClick={() => openPublishModal(sig)}
+                      style={{
+                        fontSize: 10, fontWeight: 700, padding: '4px 10px', borderRadius: 6, cursor: 'pointer',
+                        background: GOLD, color: '#fff', border: 'none', width: '100%',
+                      }}>
+                      Publish Advisory
+                    </button>
                     {sig.ai_impact_score != null && (
                       <div style={{ textAlign: 'center', fontSize: 10, color: TEXT_MUTED }}>
                         Impact: <strong style={{
@@ -710,6 +779,161 @@ export default function EvidLYIntelligence() {
             </div>
           )}
         </>
+      )}
+
+      {/* ────────── TAB: SCORETABLE ────────── */}
+      {activeTab === 'scoretable' && (
+        <>
+          <div style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.6, marginBottom: 8 }}>
+            Public ScoreTable pages (/scoretable/[county]-county) drive SEO traffic and convert operators into assessment leads.
+            Track views, sessions, and conversion signals across all 62 county pages.
+          </div>
+
+          {/* ScoreTable KPIs */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginBottom: 16 }}>
+            {[
+              { label: 'Total Pages', value: scoreTableData.length || 62, color: NAVY },
+              { label: 'Total Views', value: scoreTableData.reduce((s, d) => s + d.total_views, 0), color: GOLD },
+              { label: 'Views (7d)', value: scoreTableData.reduce((s, d) => s + d.views_7d, 0), color: '#2563EB' },
+              { label: 'Views (30d)', value: scoreTableData.reduce((s, d) => s + d.views_30d, 0), color: '#059669' },
+            ].map(k => (
+              <div key={k.label} style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 9, padding: '14px 16px' }}>
+                <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 22, fontWeight: 700, color: k.color }}>
+                  {loading ? '\u2014' : k.value}
+                </div>
+                <div style={{ fontSize: 11, color: '#4A5568', marginTop: 3 }}>{k.label}</div>
+              </div>
+            ))}
+          </div>
+
+          {loading ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} h={32} />)}
+            </div>
+          ) : scoreTableData.length === 0 ? (
+            <EmptyState
+              icon={'\uD83D\uDCCA'}
+              title="No ScoreTable views yet"
+              subtitle="ScoreTable page views will appear here once users visit /scoretable/[county]-county pages. All 62 counties are tracked automatically."
+            />
+          ) : (
+            <div style={{ background: '#fff', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                <thead>
+                  <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
+                    {['County', 'Total Views', 'Unique Sessions', '7-Day', '30-Day', 'Last Viewed'].map(h => (
+                      <th key={h} style={thStyle}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {scoreTableData.map(d => (
+                    <tr key={d.county_slug} style={{ borderBottom: `1px solid ${BORDER}` }}
+                      onMouseEnter={e => e.currentTarget.style.background = '#F9FAFB'}
+                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                      <td style={{ ...tdStyle, fontWeight: 500, color: NAVY }}>
+                        {d.county_slug.replace(/-county$/, '').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())} County
+                      </td>
+                      <td style={{ ...tdStyle, fontFamily: "'DM Mono', monospace", fontWeight: 600, color: NAVY }}>{d.total_views}</td>
+                      <td style={{ ...tdStyle, fontFamily: "'DM Mono', monospace", color: TEXT_SEC }}>{d.unique_sessions}</td>
+                      <td style={{ ...tdStyle, fontFamily: "'DM Mono', monospace", color: d.views_7d > 0 ? '#2563EB' : TEXT_MUTED }}>{d.views_7d}</td>
+                      <td style={{ ...tdStyle, fontFamily: "'DM Mono', monospace", color: d.views_30d > 0 ? '#059669' : TEXT_MUTED }}>{d.views_30d}</td>
+                      <td style={{ ...tdStyle, fontSize: 11, fontFamily: "'DM Mono', monospace", color: TEXT_MUTED }}>
+                        {d.last_viewed ? new Date(d.last_viewed).toLocaleDateString() : '\u2014'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* ────────── PUBLISH ADVISORY MODAL ────────── */}
+      {publishModal.open && (
+        <div style={{
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 1000,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}
+          onClick={() => setPublishModal({ open: false, signal: null })}
+        >
+          <div
+            style={{
+              background: '#fff', borderRadius: 14, padding: 28, width: '100%', maxWidth: 520,
+              boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div style={{ fontSize: 16, fontWeight: 800, color: NAVY, marginBottom: 4 }}>Publish Client Advisory</div>
+            <div style={{ fontSize: 12, color: TEXT_MUTED, marginBottom: 20 }}>
+              Create an advisory from this signal and publish it to the client intelligence feed.
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div>
+                <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Title</label>
+                <input value={pubForm.title} onChange={e => setPubForm(f => ({ ...f, title: e.target.value }))}
+                  style={{ ...inputStyle, width: '100%' }} />
+              </div>
+              <div>
+                <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Summary</label>
+                <textarea value={pubForm.summary} onChange={e => setPubForm(f => ({ ...f, summary: e.target.value }))}
+                  rows={4} style={{ ...inputStyle, width: '100%', resize: 'vertical' }} />
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
+                <div>
+                  <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Dimension</label>
+                  <select value={pubForm.dimension} onChange={e => setPubForm(f => ({ ...f, dimension: e.target.value }))}
+                    style={{ ...inputStyle, width: '100%', cursor: 'pointer' }}>
+                    <option value="revenue">Revenue</option>
+                    <option value="liability">Liability</option>
+                    <option value="cost">Cost</option>
+                    <option value="operational">Operational</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Risk Level</label>
+                  <select value={pubForm.risk_level} onChange={e => setPubForm(f => ({ ...f, risk_level: e.target.value }))}
+                    style={{ ...inputStyle, width: '100%', cursor: 'pointer' }}>
+                    <option value="critical">Critical</option>
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                    <option value="informational">Informational</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Type</label>
+                  <select value={pubForm.advisory_type} onChange={e => setPubForm(f => ({ ...f, advisory_type: e.target.value }))}
+                    style={{ ...inputStyle, width: '100%', cursor: 'pointer' }}>
+                    <option value="risk">Risk</option>
+                    <option value="opportunity">Opportunity</option>
+                    <option value="update">Update</option>
+                    <option value="action_required">Action Required</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 20 }}>
+              <button onClick={() => setPublishModal({ open: false, signal: null })}
+                style={{
+                  padding: '8px 18px', background: '#fff', border: `1px solid ${BORDER}`,
+                  borderRadius: 8, color: TEXT_SEC, fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                }}>
+                Cancel
+              </button>
+              <button onClick={submitAdvisory}
+                style={{
+                  padding: '8px 18px', background: GOLD, border: 'none',
+                  borderRadius: 8, color: '#fff', fontSize: 13, fontWeight: 700, cursor: 'pointer',
+                }}>
+                Publish Advisory
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

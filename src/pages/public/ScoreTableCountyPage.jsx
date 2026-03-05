@@ -28,7 +28,7 @@
  * - Cross-links to /[county] and /kitchen-check/[county]
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 // ═══ PALETTE ═══
@@ -352,6 +352,32 @@ export default function ScoreTableCountyPage({county: countyProp}){
   var [simEmail,setSimEmail]=useState("");
   var simGateReady=simName&&simPhone&&simBiz&&simEmail;
   var [cookie,setCookie]=useState(true);
+
+  // Track ScoreTable view for intelligence analytics
+  useEffect(function(){
+    try {
+      var sid = sessionStorage.getItem("st_session") || crypto.randomUUID();
+      sessionStorage.setItem("st_session", sid);
+      var params = new URLSearchParams(window.location.search);
+      fetch((import.meta.env.VITE_SUPABASE_URL || "") + "/rest/v1/scoretable_views", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": import.meta.env.VITE_SUPABASE_ANON_KEY || "",
+          "Authorization": "Bearer " + (import.meta.env.VITE_SUPABASE_ANON_KEY || ""),
+          "Prefer": "return=minimal"
+        },
+        body: JSON.stringify({
+          county_slug: countyKey + "-county",
+          referrer: document.referrer || null,
+          session_id: sid,
+          utm_source: params.get("utm_source") || null,
+          utm_medium: params.get("utm_medium") || null,
+          utm_campaign: params.get("utm_campaign") || null,
+        })
+      }).catch(function(){});
+    } catch(e){}
+  }, [countyKey]);
 
   // Vendor quote state
   var [vqVendor,setVqVendor]=useState(null);

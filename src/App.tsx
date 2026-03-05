@@ -38,6 +38,8 @@ const Alerts = lazy(() => import('./pages/Alerts').then(m => ({ default: m.Alert
 const AIAdvisor = lazy(() => import('./pages/AIAdvisor').then(m => ({ default: m.AIAdvisor })));
 const Leaderboard = lazy(() => import('./pages/Leaderboard').then(m => ({ default: m.Leaderboard })));
 const LeaderboardPreview = lazy(() => import('./pages/LeaderboardPreview').then(m => ({ default: m.LeaderboardPreview })));
+const FoodRecovery = lazy(() => import('./pages/FoodRecovery').then(m => ({ default: m.FoodRecovery })));
+const USDAProductionRecords = lazy(() => import('./pages/USDAProductionRecords').then(m => ({ default: m.USDAProductionRecords })));
 const Analysis = lazy(() => import('./pages/Analysis').then(m => ({ default: m.Analysis })));
 const Team = lazy(() => import('./pages/Team').then(m => ({ default: m.Team })));
 const Settings = lazy(() => import('./pages/Settings').then(m => ({ default: m.Settings })));
@@ -136,6 +138,10 @@ const MarketingCampaigns = lazy(() => import('./pages/admin/MarketingCampaigns')
 const SalesPipeline = lazy(() => import('./pages/admin/SalesPipeline'));
 const UserProvisioning = lazy(() => import('./pages/admin/UserProvisioning'));
 const EvidLYIntelligence = lazy(() => import('./pages/admin/EvidLYIntelligence'));
+const AdminReports = lazy(() => import('./pages/admin/AdminReports'));
+const ClientIntelligenceFeed = lazy(() => import('./pages/ClientIntelligenceFeed').then(m => ({ default: m.ClientIntelligenceFeed })));
+const ClientReports = lazy(() => import('./pages/ClientReports').then(m => ({ default: m.ClientReports })));
+const SharedReport = lazy(() => import('./pages/public/SharedReport').then(m => ({ default: m.SharedReport })));
 const AuthCallback = lazy(() => import('./pages/AuthCallback').then(m => ({ default: m.AuthCallback })));
 const ReferralDashboard = lazy(() => import('./pages/ReferralDashboard').then(m => ({ default: m.ReferralDashboard })));
 const ReferralRedirect = lazy(() => import('./pages/ReferralRedirect'));
@@ -432,6 +438,7 @@ function AppRoutes() {
         <Route path="/verify/:code" element={<Suspense fallback={<PageSkeleton />}><PublicVerification /></Suspense>} />
         <Route path="/ref/:code" element={<Suspense fallback={<PageSkeleton />}><ReferralRedirect /></Suspense>} />
         <Route path="/risk/:shareToken" element={<Suspense fallback={<PageSkeleton />}><InsuranceRiskShared /></Suspense>} />
+        <Route path="/report/:token" element={<Suspense fallback={<PageSkeleton />}><SharedReport /></Suspense>} />
         <Route path="/passport/demo" element={<Suspense fallback={<PageSkeleton />}><PassportDemo /></Suspense>} />
         <Route path="/passport/:id" element={<Suspense fallback={<PageSkeleton />}><Passport /></Suspense>} />
         <Route path="/partners/insurance" element={<Suspense fallback={<PageSkeleton />}><CarrierPartnership /></Suspense>} />
@@ -527,6 +534,8 @@ function AppRoutes() {
           <Route path="/weekly-digest" element={<WeeklyDigest />} />
           <Route path="/audit-report" element={<AuditReport />} />
           <Route path="/facility-safety" element={<FacilitySafety />} />
+          <Route path="/food-recovery" element={<FoodRecovery />} />
+          <Route path="/usda/production-records" element={<USDAProductionRecords />} />
           <Route path="/equipment" element={<Equipment />} />
           <Route path="/equipment/:equipmentId" element={<EquipmentDetail />} />
           <Route path="/equipment/:equipmentId/service/new" element={<ServiceRecordEntry />} />
@@ -605,7 +614,10 @@ function AppRoutes() {
           <Route path="/admin/pipeline" element={<SalesPipeline />} />
           <Route path="/admin/users" element={<UserProvisioning />} />
           <Route path="/admin/intelligence" element={<EvidLYIntelligence />} />
+          <Route path="/admin/reports" element={<AdminReports />} />
           <Route path="/admin/system/edge-functions" element={<EdgeFunctions />} />
+          <Route path="/insights/intelligence" element={<ClientIntelligenceFeed />} />
+          <Route path="/insights/reports" element={<ClientReports />} />
           {/* Stub routes for upcoming features */}
           <Route path="/corrective-actions" element={<CorrectiveActions />} />
           <Route path="/corrective-actions/:actionId" element={<CorrectiveActionDetail />} />
