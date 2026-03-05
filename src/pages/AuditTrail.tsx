@@ -67,7 +67,7 @@ const EQUIPMENT = [
 
 const VENDOR_SERVICES = [
   { vendor: 'CleanVent Services', service: 'Hood Cleaning', cert: 'Hood Cleaning Certificate' },
-  { vendor: 'Valley Fire Protection', service: 'Fire Suppression', cert: 'Fire Suppression Cert' },
+  { vendor: 'Fire Suppression Vendor', service: 'Fire Suppression', cert: 'Fire Suppression Cert' },
   { vendor: 'ProTrap Solutions', service: 'Grease Trap', cert: 'Grease Trap Service Record' },
   { vendor: 'PestShield Inc', service: 'Pest Control', cert: 'Pest Control Log' },
   { vendor: 'FireSafe Equipment', service: 'Fire Extinguisher', cert: 'Fire Extinguisher Inspection' },

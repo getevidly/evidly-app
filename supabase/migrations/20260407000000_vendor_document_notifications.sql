@@ -70,6 +70,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trg_vendor_documents_updated_at ON vendor_documents;
 CREATE TRIGGER trg_vendor_documents_updated_at
   BEFORE UPDATE ON vendor_documents
   FOR EACH ROW
@@ -78,6 +79,7 @@ CREATE TRIGGER trg_vendor_documents_updated_at
 -- RLS
 ALTER TABLE vendor_documents ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS vendor_documents_org_select ON vendor_documents;
 CREATE POLICY vendor_documents_org_select ON vendor_documents
   FOR SELECT USING (
     organization_id IN (
@@ -85,6 +87,7 @@ CREATE POLICY vendor_documents_org_select ON vendor_documents
     )
   );
 
+DROP POLICY IF EXISTS vendor_documents_org_insert ON vendor_documents;
 CREATE POLICY vendor_documents_org_insert ON vendor_documents
   FOR INSERT WITH CHECK (
     organization_id IN (
@@ -92,6 +95,7 @@ CREATE POLICY vendor_documents_org_insert ON vendor_documents
     )
   );
 
+DROP POLICY IF EXISTS vendor_documents_org_update ON vendor_documents;
 CREATE POLICY vendor_documents_org_update ON vendor_documents
   FOR UPDATE USING (
     organization_id IN (
@@ -99,6 +103,7 @@ CREATE POLICY vendor_documents_org_update ON vendor_documents
     )
   );
 
+DROP POLICY IF EXISTS vendor_documents_service_role ON vendor_documents;
 CREATE POLICY vendor_documents_service_role ON vendor_documents
   FOR ALL USING (auth.role() = 'service_role');
 
@@ -148,6 +153,7 @@ CREATE INDEX IF NOT EXISTS idx_vdn_unread
 -- RLS
 ALTER TABLE vendor_document_notifications ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS vdn_org_select ON vendor_document_notifications;
 CREATE POLICY vdn_org_select ON vendor_document_notifications
   FOR SELECT USING (
     organization_id IN (
@@ -155,6 +161,7 @@ CREATE POLICY vdn_org_select ON vendor_document_notifications
     )
   );
 
+DROP POLICY IF EXISTS vdn_org_insert ON vendor_document_notifications;
 CREATE POLICY vdn_org_insert ON vendor_document_notifications
   FOR INSERT WITH CHECK (
     organization_id IN (
@@ -162,6 +169,7 @@ CREATE POLICY vdn_org_insert ON vendor_document_notifications
     )
   );
 
+DROP POLICY IF EXISTS vdn_org_update ON vendor_document_notifications;
 CREATE POLICY vdn_org_update ON vendor_document_notifications
   FOR UPDATE USING (
     organization_id IN (
@@ -169,6 +177,7 @@ CREATE POLICY vdn_org_update ON vendor_document_notifications
     )
   );
 
+DROP POLICY IF EXISTS vdn_service_role ON vendor_document_notifications;
 CREATE POLICY vdn_service_role ON vendor_document_notifications
   FOR ALL USING (auth.role() = 'service_role');
 
@@ -209,6 +218,7 @@ CREATE INDEX IF NOT EXISTS idx_vdr_org_status
 -- RLS
 ALTER TABLE vendor_document_reviews ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS vdr_org_select ON vendor_document_reviews;
 CREATE POLICY vdr_org_select ON vendor_document_reviews
   FOR SELECT USING (
     organization_id IN (
@@ -216,6 +226,7 @@ CREATE POLICY vdr_org_select ON vendor_document_reviews
     )
   );
 
+DROP POLICY IF EXISTS vdr_org_insert ON vendor_document_reviews;
 CREATE POLICY vdr_org_insert ON vendor_document_reviews
   FOR INSERT WITH CHECK (
     organization_id IN (
@@ -223,6 +234,7 @@ CREATE POLICY vdr_org_insert ON vendor_document_reviews
     )
   );
 
+DROP POLICY IF EXISTS vdr_org_update ON vendor_document_reviews;
 CREATE POLICY vdr_org_update ON vendor_document_reviews
   FOR UPDATE USING (
     organization_id IN (
@@ -230,9 +242,14 @@ CREATE POLICY vdr_org_update ON vendor_document_reviews
     )
   );
 
+DROP POLICY IF EXISTS vdr_service_role ON vendor_document_reviews;
 CREATE POLICY vdr_service_role ON vendor_document_reviews
   FOR ALL USING (auth.role() = 'service_role');
 
 
 -- ── Enable realtime for in-app notifications ────────────────────
-ALTER PUBLICATION supabase_realtime ADD TABLE vendor_document_notifications;
+DO $$ BEGIN
+  ALTER PUBLICATION supabase_realtime ADD TABLE vendor_document_notifications;
+EXCEPTION WHEN duplicate_object THEN
+  NULL; -- already added
+END $$;

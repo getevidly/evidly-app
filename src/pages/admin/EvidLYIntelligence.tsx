@@ -13,7 +13,7 @@ const TEXT_SEC = '#6B7F96';
 const TEXT_MUTED = '#9CA3AF';
 const BORDER = '#E5E0D8';
 
-type Tab = 'overview' | 'signals' | 'sources' | 'jie' | 'correlations' | 'scoretable';
+type Tab = 'overview' | 'signals' | 'sources' | 'jie' | 'correlations' | 'scoretable' | 'jurisdiction_updates';
 
 interface Source {
   id: string;
@@ -49,6 +49,10 @@ interface Signal {
   ai_platform_impact: string | null;
   ai_confidence: number | null;
   status: string;
+  risk_revenue: string | null;
+  risk_liability: string | null;
+  risk_cost: string | null;
+  risk_operational: string | null;
 }
 
 interface JIEUpdate {
@@ -78,6 +82,41 @@ interface Correlation {
   action_description: string | null;
   created_at: string;
 }
+
+interface JurisdictionIntelUpdate {
+  id: string;
+  jurisdiction_key: string;
+  jurisdiction_name: string;
+  county: string | null;
+  pillar: string;
+  update_type: string;
+  title: string;
+  description: string | null;
+  effective_date: string | null;
+  risk_revenue: string | null;
+  risk_liability: string | null;
+  risk_cost: string | null;
+  risk_operational: string | null;
+  verified: boolean;
+  verified_by: string | null;
+  published: boolean;
+  published_by: string | null;
+  created_at: string;
+}
+
+const RISK_DIM_COLORS: Record<string, { bg: string; text: string; label: string }> = {
+  critical: { bg: '#FEF2F2', text: '#DC2626', label: 'CRIT' },
+  high:     { bg: '#FFFBEB', text: '#D97706', label: 'HIGH' },
+  moderate: { bg: '#EFF6FF', text: '#2563EB', label: 'MOD' },
+  low:      { bg: '#F9FAFB', text: '#6B7280', label: 'LOW' },
+  none:     { bg: 'transparent', text: 'transparent', label: '' },
+};
+
+const PILLAR_COLORS: Record<string, { bg: string; text: string }> = {
+  food_safety:     { bg: '#ECFDF5', text: '#065F46' },
+  facility_safety: { bg: '#FFF7ED', text: '#9A3412' },
+  both:            { bg: '#F5F3FF', text: '#5B21B6' },
+};
 
 const URGENCY_COLORS: Record<string, { bg: string; text: string }> = {
   critical:      { bg: '#FEF2F2', text: '#DC2626' },
@@ -126,6 +165,7 @@ export default function EvidLYIntelligence() {
   const [signals, setSignals] = useState<Signal[]>([]);
   const [jieUpdates, setJieUpdates] = useState<JIEUpdate[]>([]);
   const [correlations, setCorrelations] = useState<Correlation[]>([]);
+  const [jurisdictionUpdates, setJurisdictionUpdates] = useState<JurisdictionIntelUpdate[]>([]);
   const [activeTab, setActiveTab] = useState<Tab>('overview');
   const [loading, setLoading] = useState(true);
 
@@ -144,17 +184,19 @@ export default function EvidLYIntelligence() {
 
   const loadAll = useCallback(async () => {
     setLoading(true);
-    const [sourcesRes, signalsRes, jieRes, corrRes, stRes] = await Promise.all([
+    const [sourcesRes, signalsRes, jieRes, corrRes, stRes, jiuRes] = await Promise.all([
       supabase.from('intelligence_sources').select('*').order('category').order('name'),
       supabase.from('intelligence_signals').select('*').order('discovered_at', { ascending: false }).limit(200),
       supabase.from('jie_updates').select('*').order('created_at', { ascending: false }).limit(50),
       supabase.from('intelligence_correlations').select('*').order('created_at', { ascending: false }).limit(100),
       supabase.from('scoretable_views').select('county_slug, viewed_at, session_id').order('viewed_at', { ascending: false }).limit(5000),
+      supabase.from('jurisdiction_intel_updates').select('*').order('created_at', { ascending: false }).limit(100),
     ]);
     if (sourcesRes.data) setSources(sourcesRes.data);
     if (signalsRes.data) setSignals(signalsRes.data);
     if (jieRes.data) setJieUpdates(jieRes.data);
     if (corrRes.data) setCorrelations(corrRes.data);
+    if (jiuRes.data) setJurisdictionUpdates(jiuRes.data);
     // Aggregate ScoreTable views client-side
     if (stRes.data && stRes.data.length > 0) {
       const now = Date.now();
@@ -223,6 +265,33 @@ export default function EvidLYIntelligence() {
     alert('[Demo] Intelligence crawl triggered. In production, this invokes the intelligence-collect edge function.');
   };
 
+  const updateSignalRisk = async (signalId: string, dimension: string, level: string) => {
+    const col = `risk_${dimension}` as keyof Signal;
+    await supabase.from('intelligence_signals')
+      .update({ [col]: level })
+      .eq('id', signalId);
+    setSignals(prev => prev.map(s => s.id === signalId ? { ...s, [col]: level } : s));
+  };
+
+  const publishJurisdictionUpdate = async (updateId: string) => {
+    await supabase.from('jurisdiction_intel_updates')
+      .update({ published: true, published_by: user?.email, published_at: new Date().toISOString() })
+      .eq('id', updateId);
+    const updated = jurisdictionUpdates.find(u => u.id === updateId);
+    setJurisdictionUpdates(prev => prev.map(u => u.id === updateId ? { ...u, published: true, published_by: user?.email || null } : u));
+    // Auto-deliver to affected clients
+    if (updated) {
+      await deliverToClients('jurisdiction_update', updateId, updated.title);
+    }
+  };
+
+  const verifyJurisdictionUpdate = async (updateId: string) => {
+    await supabase.from('jurisdiction_intel_updates')
+      .update({ verified: true, verified_by: user?.email, verified_at: new Date().toISOString() })
+      .eq('id', updateId);
+    setJurisdictionUpdates(prev => prev.map(u => u.id === updateId ? { ...u, verified: true, verified_by: user?.email || null } : u));
+  };
+
   const publishJIEUpdate = async (updateId: string) => {
     await supabase.from('jie_updates')
       .update({ published_to_clients: true })
@@ -241,10 +310,22 @@ export default function EvidLYIntelligence() {
     setPublishModal({ open: true, signal });
   };
 
+  const deliverToClients = async (type: 'advisory' | 'jurisdiction_update', id: string, title: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('intelligence-deliver', {
+        body: { type, id },
+      });
+      if (error) throw error;
+      alert(`Delivered "${title}" to ${data?.delivered || 0} organizations. ${data?.emailed || 0} email notifications sent.`);
+    } catch {
+      alert(`[Demo] Intelligence delivery triggered for "${title}". In production, this sends email notifications to all affected clients.`);
+    }
+  };
+
   const submitAdvisory = async () => {
     const sig = publishModal.signal;
     if (!sig) return;
-    await supabase.from('client_advisories').insert({
+    const { data: advisory } = await supabase.from('client_advisories').insert({
       signal_id: sig.id,
       title: pubForm.title,
       summary: pubForm.summary,
@@ -252,10 +333,15 @@ export default function EvidLYIntelligence() {
       risk_level: pubForm.risk_level,
       advisory_type: pubForm.advisory_type,
       published_by: user?.email,
-    });
+    }).select('id').single();
     await updateSignalStatus(sig.id, 'published');
     setPublishModal({ open: false, signal: null });
-    alert('Advisory published to client intelligence feed.');
+    // Auto-deliver to clients
+    if (advisory?.id) {
+      await deliverToClients('advisory', advisory.id, pubForm.title);
+    } else {
+      alert('Advisory published to client intelligence feed.');
+    }
   };
 
   const inputStyle: React.CSSProperties = {
@@ -330,6 +416,7 @@ export default function EvidLYIntelligence() {
           { key: 'sources' as Tab, label: `Sources (${totalSources})` },
           { key: 'jie' as Tab, label: 'JIE Updates' },
           { key: 'correlations' as Tab, label: 'Correlations' },
+          { key: 'jurisdiction_updates' as Tab, label: `Jurisdiction${jurisdictionUpdates.length > 0 ? ` (${jurisdictionUpdates.length})` : ''}` },
           { key: 'scoretable' as Tab, label: `ScoreTable${scoreTableData.length > 0 ? ` (${scoreTableData.reduce((s, d) => s + d.total_views, 0)})` : ''}` },
         ]).map(t => (
           <button key={t.key} onClick={() => setActiveTab(t.key)} style={{
@@ -546,6 +633,28 @@ export default function EvidLYIntelligence() {
                         <strong>Platform impact:</strong> {sig.ai_platform_impact}
                       </div>
                     )}
+                    {/* Risk Dimensions */}
+                    {(sig.risk_revenue && sig.risk_revenue !== 'none') || (sig.risk_liability && sig.risk_liability !== 'none') ||
+                     (sig.risk_cost && sig.risk_cost !== 'none') || (sig.risk_operational && sig.risk_operational !== 'none') ? (
+                      <div style={{ display: 'flex', gap: 6, marginTop: 8, flexWrap: 'wrap' }}>
+                        {[
+                          { key: 'Revenue', val: sig.risk_revenue },
+                          { key: 'Liability', val: sig.risk_liability },
+                          { key: 'Cost', val: sig.risk_cost },
+                          { key: 'Operational', val: sig.risk_operational },
+                        ].filter(d => d.val && d.val !== 'none').map(d => {
+                          const rc = RISK_DIM_COLORS[d.val!] || RISK_DIM_COLORS.low;
+                          return (
+                            <span key={d.key} style={{
+                              fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 8,
+                              background: rc.bg, color: rc.text, border: `1px solid ${rc.text}20`,
+                            }}>
+                              {d.key}: {rc.label}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    ) : null}
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 6, minWidth: 100 }}>
                     <select value={sig.status}
@@ -572,6 +681,21 @@ export default function EvidLYIntelligence() {
                         }}>{sig.ai_impact_score}/100</strong>
                       </div>
                     )}
+                    {/* Risk dimension quick-tag */}
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 3, marginTop: 4 }}>
+                      {(['revenue','liability','cost','operational'] as const).map(dim => (
+                        <select key={dim} value={(sig as any)[`risk_${dim}`] || 'none'}
+                          onChange={e => updateSignalRisk(sig.id, dim, e.target.value)}
+                          style={{ fontSize: 9, padding: '2px 3px', border: `1px solid ${BORDER}`, borderRadius: 4,
+                            background: '#FAFAFA', color: TEXT_SEC, cursor: 'pointer' }}>
+                          <option value="none">{dim.slice(0,3).toUpperCase()}</option>
+                          <option value="critical">Crit</option>
+                          <option value="high">High</option>
+                          <option value="moderate">Mod</option>
+                          <option value="low">Low</option>
+                        </select>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -776,6 +900,132 @@ export default function EvidLYIntelligence() {
                   })}
                 </tbody>
               </table>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* ────────── TAB: JURISDICTION UPDATES ────────── */}
+      {activeTab === 'jurisdiction_updates' && (
+        <>
+          <div style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.6, marginBottom: 8 }}>
+            Jurisdiction-specific food safety and facility safety regulatory changes.
+            Each update is tagged with risk dimensions and published to affected clients.
+          </div>
+
+          {/* Pillar filter pills */}
+          <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+            {[
+              { key: '', label: 'All', count: jurisdictionUpdates.length },
+              { key: 'food_safety', label: 'Food Safety', count: jurisdictionUpdates.filter(u => u.pillar === 'food_safety' || u.pillar === 'both').length },
+              { key: 'facility_safety', label: 'Facility Safety', count: jurisdictionUpdates.filter(u => u.pillar === 'facility_safety' || u.pillar === 'both').length },
+            ].map(f => (
+              <button key={f.key} onClick={() => setSigFilter(prev => ({ ...prev, type: f.key }))}
+                style={{
+                  padding: '5px 14px', borderRadius: 20, fontSize: 11, fontWeight: 600, cursor: 'pointer',
+                  background: sigFilter.type === f.key ? NAVY : '#fff',
+                  color: sigFilter.type === f.key ? '#fff' : TEXT_SEC,
+                  border: `1px solid ${sigFilter.type === f.key ? NAVY : BORDER}`,
+                }}>
+                {f.label} ({f.count})
+              </button>
+            ))}
+          </div>
+
+          {loading ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} h={60} />)}
+            </div>
+          ) : jurisdictionUpdates.length === 0 ? (
+            <EmptyState
+              icon="🏛"
+              title="No jurisdiction intelligence updates"
+              subtitle="Updates appear here when jurisdiction food safety or facility safety requirements change — scoring changes, new requirements, fire code updates, and more."
+            />
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {jurisdictionUpdates
+                .filter(u => !sigFilter.type || u.pillar === sigFilter.type || u.pillar === 'both')
+                .map(u => {
+                const pc = PILLAR_COLORS[u.pillar] || PILLAR_COLORS.both;
+                return (
+                  <div key={u.id} style={{
+                    background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '16px 18px',
+                    borderLeft: `4px solid ${pc.text}`,
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+                      <div style={{ flex: 1 }}>
+                        {/* Badges row */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6, flexWrap: 'wrap' }}>
+                          <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: pc.bg, color: pc.text }}>
+                            {u.pillar.replace(/_/g, ' ').toUpperCase()}
+                          </span>
+                          <span style={{ fontSize: 9, fontWeight: 600, padding: '2px 8px', borderRadius: 10, background: '#F9FAFB', color: TEXT_SEC, border: `1px solid ${BORDER}` }}>
+                            {u.update_type.replace(/_/g, ' ')}
+                          </span>
+                          <span style={{ fontSize: 10, color: GOLD, fontWeight: 500 }}>{u.jurisdiction_name}</span>
+                          {u.county && <span style={{ fontSize: 10, color: TEXT_MUTED }}>{u.county} County</span>}
+                        </div>
+                        {/* Title + description */}
+                        <div style={{ fontSize: 13, fontWeight: 600, color: NAVY, marginBottom: 4 }}>{u.title}</div>
+                        {u.description && (
+                          <div style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.6, marginBottom: 8 }}>{u.description}</div>
+                        )}
+                        {/* Risk dimensions */}
+                        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                          {[
+                            { key: 'Revenue', val: u.risk_revenue },
+                            { key: 'Liability', val: u.risk_liability },
+                            { key: 'Cost', val: u.risk_cost },
+                            { key: 'Operational', val: u.risk_operational },
+                          ].filter(d => d.val && d.val !== 'none').map(d => {
+                            const rc = RISK_DIM_COLORS[d.val!] || RISK_DIM_COLORS.low;
+                            return (
+                              <span key={d.key} style={{
+                                fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 8,
+                                background: rc.bg, color: rc.text, border: `1px solid ${rc.text}20`,
+                              }}>
+                                {d.key}: {rc.label}
+                              </span>
+                            );
+                          })}
+                        </div>
+                        {/* Effective date */}
+                        {u.effective_date && (
+                          <div style={{ fontSize: 10, color: TEXT_MUTED, marginTop: 6 }}>
+                            Effective: <span style={{ fontFamily: "'DM Mono', monospace", fontWeight: 600 }}>{u.effective_date}</span>
+                          </div>
+                        )}
+                      </div>
+                      {/* Actions */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6, minWidth: 100 }}>
+                        {u.verified ? (
+                          <span style={{ fontSize: 10, color: '#059669', fontWeight: 600 }}>✓ Verified</span>
+                        ) : (
+                          <button onClick={() => verifyJurisdictionUpdate(u.id)}
+                            style={{
+                              fontSize: 10, fontWeight: 700, padding: '4px 10px', borderRadius: 6, cursor: 'pointer',
+                              background: '#fff', color: '#059669', border: '1px solid #BBF7D0', width: '100%',
+                            }}>
+                            Verify
+                          </button>
+                        )}
+                        {u.published ? (
+                          <span style={{ fontSize: 10, color: GOLD, fontWeight: 600 }}>✓ Published</span>
+                        ) : (
+                          <button onClick={() => publishJurisdictionUpdate(u.id)}
+                            style={{
+                              fontSize: 10, fontWeight: 700, padding: '4px 10px', borderRadius: 6, cursor: 'pointer',
+                              background: GOLD, color: '#fff', border: 'none', width: '100%',
+                            }}>
+                            Publish
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           )}
         </>

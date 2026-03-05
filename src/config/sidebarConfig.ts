@@ -205,8 +205,18 @@ const I: Record<string, NavItem> = {
     roles: [], description: 'SB 1383 organic waste diversion tracking, food recovery agreements, and CalRecycle compliance.',
     badge: 'NEW',
   },
+  sb1383: {
+    id: 'sb1383', label: 'SB 1383 Compliance', path: '/sb1383', icon: '♻️',
+    roles: [], description: 'Full SB 1383 organic waste reduction module — log entries, hauler records, annual reports.',
+    badge: 'NEW',
+  },
 
-  // ── USDA K-12 ──
+  // ── K-12 Food Safety ──
+  k12Compliance: {
+    id: 'k12-compliance', label: 'K-12 Food Safety', path: '/k12', icon: '🏫',
+    roles: [], description: 'Audit readiness dashboard — USDA + County EH dual authority, meal metrics, NSLP claims.',
+    badge: 'NEW',
+  },
   usdaProductionRecords: {
     id: 'usda-production-records', label: 'USDA Production Records', path: '/usda/production-records', icon: '🏫',
     roles: [], description: 'USDA Child Nutrition Program meal production records, meal pattern compliance, and CN label tracking.',
@@ -699,16 +709,16 @@ const ORG_TYPE_OVERLAYS: OrgTypeSectionOverlay[] = [
     section: section('food-recovery', 'Food Recovery', '♻️',
       'Food Recovery (SB 1383)',
       'Organic waste diversion tracking, food recovery agreements, and CalRecycle SB 1383 compliance.',
-      [I.foodRecovery],
+      [I.foodRecovery, I.sb1383],
     ),
   },
   {
     orgTypes: ['K12_EDUCATION'],
     roles: ['platform_admin', 'owner_operator', 'executive', 'compliance_manager', 'kitchen_manager', 'chef'],
-    section: section('usda-k12', 'USDA K-12', '🏫',
-      'USDA K-12 Meal Program',
-      'USDA Child Nutrition Program production records, meal pattern compliance, and CN label tracking.',
-      [I.usdaProductionRecords],
+    section: section('usda-k12', 'K-12 Food Safety', '🏫',
+      'K-12 Food Safety & USDA',
+      'Audit readiness, dual authority dashboard, meal metrics, NSLP claims, and USDA production records.',
+      [I.k12Compliance, I.usdaProductionRecords],
     ),
   },
 ];

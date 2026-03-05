@@ -12,6 +12,7 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useDemo } from '../../contexts/DemoContext';
 import { useRfpIntelligence, type RfpTab, type RfpViewMode } from '../../hooks/useRfpIntelligence';
+import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import type {
   RfpListingWithDetails,
   RfpSource,
@@ -1311,6 +1312,9 @@ export default function RfpIntelligence() {
 
   return (
     <div className="min-h-screen" style={{ background: PAGE_BG }}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-4">
+        <AdminBreadcrumb crumbs={[{ label: 'RFP Monitor' }]} />
+      </div>
       {/* Header */}
       <div className="px-4 sm:px-6 py-4" style={{ background: MIDNIGHT_NAVY }}>
         <div className="max-w-7xl mx-auto flex items-center justify-between">

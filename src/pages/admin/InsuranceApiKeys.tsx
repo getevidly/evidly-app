@@ -5,7 +5,7 @@ import {
   AlertTriangle, CheckCircle2, XCircle, ArrowLeft,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { Breadcrumb } from '../../components/Breadcrumb';
+import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { useDemo } from '../../contexts/DemoContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../../components/DemoUpgradePrompt';
@@ -245,7 +245,7 @@ export default function InsuranceApiKeys() {
   if (showRequestLog) {
     return (
       <div style={{ fontFamily: "'DM Sans', 'Inter', sans-serif" }}>
-        <Breadcrumb items={[{ label: 'Admin', href: '/admin' }, { label: 'API Keys', href: '/admin/api-keys' }, { label: 'Request Log' }]} />
+        <AdminBreadcrumb crumbs={[{ label: 'API Keys', path: '/admin/api-keys' }, { label: 'Request Log' }]} />
 
         <button onClick={() => setShowRequestLog(false)} className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-4">
           <ArrowLeft size={16} /> Back to API Keys
@@ -295,7 +295,7 @@ export default function InsuranceApiKeys() {
   // ── Main View ──────────────────────────────────────────
   return (
     <div style={{ fontFamily: "'DM Sans', 'Inter', sans-serif" }}>
-      <Breadcrumb items={[{ label: 'Admin', href: '/admin' }, { label: 'API Keys' }]} />
+      <AdminBreadcrumb crumbs={[{ label: 'API Keys' }]} />
 
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
         <div>

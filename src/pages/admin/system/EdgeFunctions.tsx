@@ -19,6 +19,7 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useDemo } from '../../../contexts/DemoContext';
 import { useEdgeFunctions } from '../../../hooks/useEdgeFunctions';
+import AdminBreadcrumb from '../../../components/admin/AdminBreadcrumb';
 import type {
   FunctionHealthRow,
   EdgeFunctionInvocation,
@@ -986,6 +987,7 @@ export default function EdgeFunctions() {
 
   return (
     <div style={{ maxWidth: 1400, margin: '0 auto', padding: '0 0 40px' }}>
+      <AdminBreadcrumb crumbs={[{ label: 'Edge Functions' }]} />
       {/* Header */}
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',

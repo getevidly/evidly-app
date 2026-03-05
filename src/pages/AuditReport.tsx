@@ -46,7 +46,7 @@ const CHECKLIST_NAMES = ['Opening Checklist', 'Closing Checklist', 'Mid-Day Food
 
 const VENDOR_SERVICES = [
   { vendor: 'CleanVent Services', service: 'Hood Cleaning', cert: 'Hood Cleaning Certificate' },
-  { vendor: 'Valley Fire Protection', service: 'Fire Suppression', cert: 'Fire Suppression Cert' },
+  { vendor: 'Fire Suppression Vendor', service: 'Fire Suppression', cert: 'Fire Suppression Cert' },
   { vendor: 'ProTrap Solutions', service: 'Grease Trap', cert: 'Grease Trap Service Record' },
   { vendor: 'AirFlow HVAC', service: 'HVAC Maintenance', cert: 'HVAC Maintenance Agreement' },
   { vendor: 'PestShield Inc', service: 'Pest Control', cert: 'Pest Control Log' },

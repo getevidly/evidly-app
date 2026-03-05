@@ -12,6 +12,7 @@ import { useDemo } from '../../contexts/DemoContext';
 import { useRole } from '../../contexts/RoleContext';
 import { supabase } from '../../lib/supabase';
 import { gradeColor, formatDollars } from '../../lib/assessmentScoring';
+import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import {
   ClipboardList,
   Search,
@@ -241,6 +242,7 @@ function AssessmentLeadsPage() {
 
   return (
     <div>
+      <AdminBreadcrumb crumbs={[{ label: 'Assessment Leads' }]} />
       {/* Header */}
       <div className="rounded-xl p-6 mb-6" style={{ background: `linear-gradient(135deg, ${NAVY} 0%, #162640 100%)` }}>
         <div className="flex items-center gap-3 mb-4">

@@ -41,13 +41,13 @@ const DEMO_DIGEST: DigestData = {
     { priority: 'high', title: 'Renew Location 3 health permit', assignee: 'Maria Rodriguez', dueDate: 'Overdue' }, // demo
     { priority: 'high', title: 'Schedule fire suppression inspection — Location 2', assignee: 'Maria Lopez', dueDate: 'Feb 10' }, // demo
     { priority: 'high', title: 'Schedule fire suppression — Location 3', assignee: 'Maria Rodriguez', dueDate: 'Overdue' }, // demo
-    { priority: 'medium', title: 'Request updated COI from Valley Fire Systems', assignee: 'Maria Lopez', dueDate: 'Feb 14' },
+    { priority: 'medium', title: 'Request updated COI from Fire Suppression Vendor', assignee: 'Maria Lopez', dueDate: 'Feb 14' },
     { priority: 'low', title: 'Review closing checklist completion at Location 2', assignee: 'Sarah Chen', dueDate: 'Feb 16' }, // demo
   ],
   vendorUpdates: [
-    { serviceType: 'Hood Cleaning', vendorName: 'ABC Fire Protection', lastService: 'Jan 15', nextDue: 'Apr 15', status: 'current' },
-    { serviceType: 'Pest Control', vendorName: 'Pacific Pest Control', lastService: 'Jan 28', nextDue: 'Feb 28', status: 'upcoming' },
-    { serviceType: 'Fire Suppression', vendorName: 'Valley Fire Systems', lastService: 'Jan 20', nextDue: 'Jul 20', status: 'overdue' },
+    { serviceType: 'Hood Cleaning', vendorName: 'Hood Cleaning Vendor', lastService: 'Jan 15', nextDue: 'Apr 15', status: 'current' },
+    { serviceType: 'Pest Control', vendorName: 'Pest Control Vendor', lastService: 'Jan 28', nextDue: 'Feb 28', status: 'upcoming' },
+    { serviceType: 'Fire Suppression', vendorName: 'Fire Suppression Vendor', lastService: 'Jan 20', nextDue: 'Jul 20', status: 'overdue' },
   ],
 };
 

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Calendar, CheckCircle2, Clock, Eye, MapPin, Phone, Mail, Plus, Sparkles, RefreshCw, Trash2, ArrowRight, XCircle, Building2, Users, AlertTriangle } from 'lucide-react';
 import { useDemo } from '../../contexts/DemoContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
+import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { demoPipelineData, getPipelineCounts, getKitchenTypeLabel, getOperationLabel } from '../../data/demoGeneratorData';
 import type { DemoSession } from '../../data/demoGeneratorData';
 import { DemoConversionModal } from '../../components/demo/DemoConversionModal';
@@ -375,6 +376,7 @@ export function DemoPipeline() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
+      <AdminBreadcrumb crumbs={[{ label: 'Demo Pipeline' }]} />
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">

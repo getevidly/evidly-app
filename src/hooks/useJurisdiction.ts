@@ -3,7 +3,7 @@
 // Returns DUAL-AUTHORITY jurisdiction data for a single location.
 // Each location has its OWN jurisdiction — no shared global jurisdiction.
 // DEMO mode: reads from demoJurisdictions.ts
-// LIVE mode: queries Supabase jurisdiction_configs table
+// LIVE mode: queries Supabase jurisdictions table
 // ═══════════════════════════════════════════════════════════
 
 import { useState, useEffect, useMemo } from 'react';
@@ -43,7 +43,7 @@ async function fetchLiveJurisdiction(locationId: string): Promise<LocationJurisd
 
   // Then get the jurisdiction config
   const { data: config, error: configError } = await supabase
-    .from('jurisdiction_configs')
+    .from('jurisdictions')
     .select('*')
     .eq('id', location.jurisdiction_id)
     .maybeSingle();

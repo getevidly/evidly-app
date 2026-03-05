@@ -13,7 +13,7 @@ const fresnoFireConfig: FireJurisdictionConfig = {
   fire_ahj_type: 'city_fire',
   fire_code_edition: '2022 CFC',
   nfpa_96_cleaning_frequencies: {
-    type_i_hood: 'monthly',
+    type_i_hood: 'quarterly', // NFPA 96 Table 11.4 — quarterly for non-solid-fuel cooking
     type_ii_hood: 'semi-annual',
   },
   hood_suppression: {

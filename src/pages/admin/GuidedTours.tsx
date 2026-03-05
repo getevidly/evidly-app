@@ -7,7 +7,9 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { Breadcrumb } from '../../components/Breadcrumb';
+import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
+import OrgCombobox, { type OrgOption } from '../../components/admin/OrgCombobox';
+import { ALL_MODULES } from '../../config/tourModules';
 import { toast } from 'sonner';
 import {
   Play, Plus, Clock, Users, DollarSign, TrendingUp, Target,
@@ -38,7 +40,60 @@ const STAGE_LABELS: Record<string, string> = {
   proposal_sent: 'Proposal Sent', negotiating: 'Negotiating',
   won: 'Won', lost: 'Lost', nurture: 'Nurture',
 };
-const MODULES = ['temp', 'checklists', 'corrective_actions', 'documents', 'facility_safety', 'haccp', 'equipment', 'vendors', 'benchmarks', 'leaderboard', 'business_intelligence', 'risk_analysis', 'analytics', 'iot', 'regulatory_updates'];
+
+// ── PRICING — EXACT RULES ──
+// Pilot:    $49 covers 1st location. +$49 each additional.  (Founder testing tier)
+// Founder:  $99 covers 1st location. +$49 each additional.
+// Standard: $199 covers 1st location. +$99 each additional.
+// Enterprise: custom — manual entry.
+//
+// Verified matrix:
+// Plan       | 1 loc | 2 locs | 3 locs | 5 locs | 10 locs
+// -----------|-------|--------|--------|--------|--------
+// Pilot      | $49   | $98    | $147   | $245   | $490
+// Founder    | $99   | $148   | $197   | $295   | $540
+// Standard   | $199  | $298   | $397   | $595   | $1,090
+
+const PLANS = {
+  pilot:      { label: 'Pilot',      addonLabel: 'FOUNDER TESTING' as string | null },
+  founder:    { label: 'Founder',    addonLabel: null },
+  standard:   { label: 'Standard',   addonLabel: null },
+  enterprise: { label: 'Enterprise', addonLabel: null },
+} as const;
+
+type PlanKey = keyof typeof PLANS;
+
+const calculateMRR = (plan: PlanKey, locationCount: number): number => {
+  const add = Math.max(0, locationCount - 1);
+  if (plan === 'pilot')    return 4900  + (add * 4900);
+  if (plan === 'founder')  return 9900  + (add * 4900);
+  if (plan === 'standard') return 19900 + (add * 9900);
+  return 0; // enterprise — manual entry
+};
+
+const CONTACT_ROLES = [
+  { value: 'owner_operator',     label: 'Owner / Operator' },
+  { value: 'gm',                 label: 'General Manager' },
+  { value: 'kitchen_manager',    label: 'Kitchen Manager' },
+  { value: 'facilities',         label: 'Facility Manager' },
+  { value: 'chef',               label: 'Chef' },
+  { value: 'kitchen_staff',      label: 'Kitchen Staff' },
+  { value: 'compliance_officer', label: 'Compliance Officer' },
+] as const;
+
+interface LocationContact {
+  role: string;
+  fullName: string;
+  email: string;
+  phone: string;
+}
+
+interface TourLocation {
+  id: string;
+  name: string;
+  address: string;
+  contacts: LocationContact[];
+}
 
 function formatCents(cents: number): string {
   return '$' + (cents / 100).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
@@ -55,11 +110,107 @@ function daysAgo(d: string): number {
   return Math.floor((Date.now() - new Date(d).getTime()) / 86400000);
 }
 
-const calculateEstimatedMRR = (locations: number, segment: string): number => {
-  const base = segment === 'enterprise' ? 19900 : 9900;
-  const perLoc = segment === 'enterprise' ? 9900 : 4900;
-  return base + (perLoc * locations);
-};
+// ════════════════════════════════════════════════════════════
+// ModuleGroupToggles — used in TemplateModal and SetupTourTab
+// ════════════════════════════════════════════════════════════
+
+function ModuleGroupToggles({
+  enabled,
+  onChange,
+}: {
+  enabled: string[];
+  onChange: (modules: string[]) => void;
+}) {
+  const toggle = (id: string) => {
+    onChange(enabled.includes(id)
+      ? enabled.filter(m => m !== id)
+      : [...enabled, id]);
+  };
+
+  const toggleGroup = (groupModules: readonly { id: string }[]) => {
+    const ids = groupModules.map(m => m.id);
+    const allOn = ids.every(id => enabled.includes(id));
+    if (allOn) {
+      onChange(enabled.filter(id => !ids.includes(id)));
+    } else {
+      onChange([...new Set([...enabled, ...ids])]);
+    }
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {ALL_MODULES.map(group => {
+        const groupIds = group.modules.map(m => m.id);
+        const allOn  = groupIds.every(id => enabled.includes(id));
+        const someOn = groupIds.some(id => enabled.includes(id));
+
+        return (
+          <div key={group.group} style={{
+            background: '#FAFAF8', border: '1px solid #E5E0D8',
+            borderRadius: 10, overflow: 'hidden',
+          }}>
+            {/* Group header */}
+            <div style={{
+              padding: '11px 16px', display: 'flex', alignItems: 'center',
+              justifyContent: 'space-between', borderBottom: '1px solid #E5E0D8',
+              background: '#fff',
+            }}>
+              <div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: '#1E2D4D' }}>{group.group}</div>
+                <div style={{ fontSize: 10, color: '#9CA3AF', marginTop: 2 }}>{group.description}</div>
+              </div>
+              <button
+                type="button"
+                onClick={() => toggleGroup(group.modules)}
+                style={{
+                  fontSize: 10, fontWeight: 600, padding: '3px 10px', borderRadius: 6,
+                  cursor: 'pointer', border: '1px solid',
+                  background:  allOn ? '#FAF7F2' : '#fff',
+                  borderColor: allOn ? '#A08C5A' : '#E5E0D8',
+                  color:       allOn ? '#A08C5A' : '#9CA3AF',
+                }}
+              >
+                {allOn ? 'Deselect All' : 'Select All'}
+              </button>
+            </div>
+
+            {/* Module list */}
+            <div style={{ padding: '8px 12px', display: 'flex', flexDirection: 'column', gap: 4 }}>
+              {group.modules.map(mod => {
+                const on = enabled.includes(mod.id);
+                return (
+                  <label key={mod.id} style={{
+                    display: 'flex', alignItems: 'flex-start', gap: 10,
+                    padding: '7px 8px', borderRadius: 7, cursor: 'pointer',
+                    background: on ? 'rgba(160,140,90,0.06)' : 'transparent',
+                    transition: 'background 0.12s',
+                  }}>
+                    <input
+                      type="checkbox"
+                      checked={on}
+                      onChange={() => toggle(mod.id)}
+                      style={{ marginTop: 2, accentColor: '#A08C5A' }}
+                    />
+                    <div>
+                      <div style={{ fontSize: 12, fontWeight: on ? 600 : 400, color: on ? '#1E2D4D' : '#4A5568' }}>
+                        {mod.label}
+                      </div>
+                      <div style={{ fontSize: 10, color: '#9CA3AF', marginTop: 1 }}>{mod.description}</div>
+                    </div>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════════════════════
+// MAIN COMPONENT
+// ════════════════════════════════════════════════════════════
 
 export default function GuidedTours() {
   const navigate = useNavigate();
@@ -71,26 +222,35 @@ export default function GuidedTours() {
   const [campaigns, setCampaigns] = useState<any[]>([]);
   const [touchpoints, setTouchpoints] = useState<any[]>([]);
   const [templates, setTemplates] = useState<any[]>([]);
+  const [orgs, setOrgs] = useState<{ id: string; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
 
   const loadData = useCallback(async () => {
     setLoading(true);
-    const [sessRes, pipeRes, campRes, touchRes, tplRes] = await Promise.all([
+    const [sessRes, pipeRes, campRes, touchRes, tplRes, orgRes] = await Promise.all([
       supabase.from('demo_sessions').select('*').order('started_at', { ascending: false }),
       supabase.from('sales_pipeline').select('*').order('estimated_mrr_cents', { ascending: false }),
       supabase.from('marketing_campaigns').select('*').order('created_at', { ascending: false }),
       supabase.from('marketing_touchpoints').select('*').order('created_at', { ascending: false }),
       supabase.from('guided_tour_templates').select('*').order('created_at'),
+      supabase.from('organizations').select('id, name').order('name'),
     ]);
     if (sessRes.data) setSessions(sessRes.data);
     if (pipeRes.data) setPipeline(pipeRes.data);
     if (campRes.data) setCampaigns(campRes.data);
     if (touchRes.data) setTouchpoints(touchRes.data);
     if (tplRes.data) setTemplates(tplRes.data);
+    if (orgRes.data) setOrgs(orgRes.data);
     setLoading(false);
   }, []);
 
   useEffect(() => { loadData(); }, [loadData]);
+
+  // Breadcrumb label per tab
+  const tabBreadcrumb = activeTab === 'setup' ? 'Setup Tour'
+    : activeTab === 'history' ? 'Active & History'
+    : activeTab === 'templates' ? 'Templates'
+    : null;
 
   if (loading) {
     return (
@@ -102,7 +262,11 @@ export default function GuidedTours() {
 
   return (
     <div style={{ fontFamily: "'DM Sans', 'Inter', sans-serif" }}>
-      <Breadcrumb items={[{ label: 'Admin', href: '/admin' }, { label: 'Guided Tours' }]} />
+      <AdminBreadcrumb crumbs={
+        tabBreadcrumb
+          ? [{ label: 'Guided Tours', path: '/admin/guided-tours' }, { label: tabBreadcrumb }]
+          : [{ label: 'Guided Tours' }]
+      } />
 
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
         <div>
@@ -139,7 +303,7 @@ export default function GuidedTours() {
         <OverviewTab sessions={sessions} pipeline={pipeline} campaigns={campaigns} touchpoints={touchpoints} />
       )}
       {activeTab === 'setup' && (
-        <SetupTourTab templates={templates} campaigns={campaigns} onLaunch={loadData} />
+        <SetupTourTab templates={templates} campaigns={campaigns} orgs={orgs} onLaunch={loadData} />
       )}
       {activeTab === 'history' && (
         <HistoryTab sessions={sessions} pipeline={pipeline} onRefresh={loadData} />
@@ -152,7 +316,7 @@ export default function GuidedTours() {
 }
 
 // ════════════════════════════════════════════════════════════
-// TAB 1 — OVERVIEW
+// TAB 1 — OVERVIEW (unchanged)
 // ════════════════════════════════════════════════════════════
 
 function OverviewTab({ sessions, pipeline, campaigns, touchpoints }: {
@@ -162,20 +326,13 @@ function OverviewTab({ sessions, pipeline, campaigns, touchpoints }: {
   const thisMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).getTime();
   const thisWeek = now - 7 * 86400000;
 
-  // Funnel stages
   const funnelStages = ['tour_scheduled', 'tour_completed', 'proposal_sent', 'negotiating', 'won'];
-  const funnelCounts = funnelStages.map(s =>
-    sessions.filter(sess => sess.sales_stage === s).length +
-    pipeline.filter(p => p.stage === s).length
-  );
-  // Deduplicate: prefer pipeline stage
   const stageCounts: Record<string, number> = {};
   funnelStages.forEach(s => {
     stageCounts[s] = pipeline.filter(p => p.stage === s).length || sessions.filter(sess => sess.sales_stage === s).length;
   });
   const totalLeads = sessions.length;
 
-  // KPIs
   const toursTotal = sessions.length;
   const toursMonth = sessions.filter(s => new Date(s.started_at).getTime() >= thisMonth).length;
   const toursWeek = sessions.filter(s => new Date(s.started_at).getTime() >= thisWeek).length;
@@ -193,7 +350,6 @@ function OverviewTab({ sessions, pipeline, campaigns, touchpoints }: {
     ? Math.round(wonDeals.reduce((sum, p) => sum + (new Date(p.won_date).getTime() - new Date(p.created_at).getTime()) / 86400000, 0) / wonDeals.length)
     : 0;
 
-  // Source breakdown
   const sourceBreakdown = sessions.reduce((acc, s) => {
     const src = s.source || 'unknown';
     acc[src] = (acc[src] || 0) + 1;
@@ -201,13 +357,11 @@ function OverviewTab({ sessions, pipeline, campaigns, touchpoints }: {
   }, {} as Record<string, number>);
   const maxSource = Math.max(...Object.values(sourceBreakdown) as number[], 1);
 
-  // Revenue
   const wonMRR = pipeline.filter(p => p.stage === 'won').reduce((sum, p) => sum + (p.estimated_mrr_cents || 0), 0);
   const openMRR = openDeals.reduce((sum, p) => sum + (p.estimated_mrr_cents || 0), 0);
   const launchGoalAccounts = 100;
   const wonAccounts = wonTotal;
   const progress = Math.min(Math.round(wonAccounts / launchGoalAccounts * 100), 100);
-
   const activeCampaigns = campaigns.filter(c => c.status === 'active');
 
   const kpis = [
@@ -266,10 +420,7 @@ function OverviewTab({ sessions, pipeline, campaigns, touchpoints }: {
             <div key={source} className="flex items-center gap-3">
               <span className="text-xs font-medium text-gray-600 w-28 truncate">{source.replace(/_/g, ' ')}</span>
               <div className="flex-1 bg-gray-100 rounded-full h-5 overflow-hidden">
-                <div
-                  className="h-full rounded-full transition-all"
-                  style={{ width: `${(count as number) / maxSource * 100}%`, backgroundColor: NAVY }}
-                />
+                <div className="h-full rounded-full transition-all" style={{ width: `${(count as number) / maxSource * 100}%`, backgroundColor: NAVY }} />
               </div>
               <span className="text-xs font-bold text-gray-700 w-8 text-right">{count as number}</span>
             </div>
@@ -332,80 +483,143 @@ function OverviewTab({ sessions, pipeline, campaigns, touchpoints }: {
 }
 
 // ════════════════════════════════════════════════════════════
-// TAB 2 — SETUP TOUR
+// TAB 2 — SETUP TOUR (major rewrite)
 // ════════════════════════════════════════════════════════════
 
-function SetupTourTab({ templates, campaigns, onLaunch }: {
-  templates: any[]; campaigns: any[]; onLaunch: () => void;
+function SetupTourTab({ templates, campaigns, orgs, onLaunch }: {
+  templates: any[]; campaigns: any[]; orgs: { id: string; name: string }[]; onLaunch: () => void;
 }) {
   const navigate = useNavigate();
-  const [form, setForm] = useState({
-    companyName: '', county: '', contactName: '', title: '', email: '', phone: '',
-    locations: 1, industry: 'restaurant', segment: 'restaurant_single',
-    source: 'cold_outreach', campaignId: '', templateId: '',
-    scheduleType: 'now' as 'now' | 'later', scheduleDate: '', notes: '',
-  });
+
+  // Prospect form
+  const [selectedOrg, setSelectedOrg] = useState<OrgOption | null>(null);
+  const [county, setCounty] = useState('');
+  const [contactName, setContactName] = useState('');
+  const [title, setTitle] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [industry, setIndustry] = useState('restaurant');
+  const [segment, setSegment] = useState('restaurant_single');
+  const [source, setSource] = useState('cold_outreach');
+  const [campaignId, setCampaignId] = useState('');
+  const [templateId, setTemplateId] = useState('');
+  const [scheduleType, setScheduleType] = useState<'now' | 'later'>('now');
+  const [scheduleDate, setScheduleDate] = useState('');
+  const [notes, setNotes] = useState('');
+
+  // Plan selector
+  const [plan, setPlan] = useState<PlanKey>('founder');
+  const [customMRR, setCustomMRR] = useState<number | null>(null);
+
+  // Locations builder
+  const [locations, setLocations] = useState<TourLocation[]>([
+    { id: crypto.randomUUID(), name: '', address: '', contacts: [] },
+  ]);
+
+  // Module customization
+  const [showCustomModules, setShowCustomModules] = useState(false);
+  const [customModules, setCustomModules] = useState<string[]>([]);
+
   const [launching, setLaunching] = useState(false);
 
-  const selectedTemplate = templates.find(t => t.id === form.templateId);
+  const selectedTemplate = templates.find(t => t.id === templateId);
 
-  const updateForm = (key: string, value: any) => setForm(prev => ({ ...prev, [key]: value }));
+  // When template is selected, seed customModules from it
+  useEffect(() => {
+    if (selectedTemplate) {
+      setCustomModules(selectedTemplate.modules_enabled || []);
+      setShowCustomModules(false);
+    }
+  }, [templateId]);
+
+  const estimatedMRR = plan === 'enterprise' ? (customMRR || 0) : calculateMRR(plan, locations.length);
+
+  const activeCampaigns = campaigns.filter(c => c.status === 'active');
+
+  // Location helpers
+  const addLocation = () => setLocations(p => [...p, { id: crypto.randomUUID(), name: '', address: '', contacts: [] }]);
+  const removeLocation = (id: string) => setLocations(p => p.length > 1 ? p.filter(l => l.id !== id) : p);
+  const updateLocation = (id: string, field: 'name' | 'address', value: string) =>
+    setLocations(p => p.map(l => l.id === id ? { ...l, [field]: value } : l));
+  const addContact = (lid: string) =>
+    setLocations(p => p.map(l => l.id === lid
+      ? { ...l, contacts: [...l.contacts, { role: 'owner_operator', fullName: '', email: '', phone: '' }] }
+      : l));
+  const updateContact = (lid: string, idx: number, field: keyof LocationContact, value: string) =>
+    setLocations(p => p.map(l => l.id === lid
+      ? { ...l, contacts: l.contacts.map((c, i) => i === idx ? { ...c, [field]: value } : c) }
+      : l));
+  const removeContact = (lid: string, idx: number) =>
+    setLocations(p => p.map(l => l.id === lid
+      ? { ...l, contacts: l.contacts.filter((_, i) => i !== idx) }
+      : l));
+
+  const companyName = selectedOrg?.name || '';
 
   const handleLaunch = async () => {
-    if (!form.companyName.trim()) { toast.error('Company name is required'); return; }
+    if (!companyName.trim()) { toast.error('Company name is required'); return; }
     setLaunching(true);
     try {
       const instanceId = `gt_${Date.now()}`;
       const { data: session, error: sessErr } = await supabase.from('demo_sessions').insert({
-        account_name: form.companyName.trim(),
-        county: form.county || null,
-        user_email: form.email || null,
-        prospect_name: form.contactName || null,
-        prospect_title: form.title || null,
-        location_count: form.locations,
-        industry: form.industry,
-        segment: form.segment,
-        source: form.source,
-        template_id: form.templateId || null,
+        account_name: companyName.trim(),
+        county: county || null,
+        user_email: email || null,
+        prospect_name: contactName || null,
+        prospect_title: title || null,
+        location_count: locations.length,
+        industry,
+        segment,
+        source,
+        template_id: templateId || null,
         sales_stage: 'tour_scheduled',
         instance_id: instanceId,
+        plan,
+        metadata: {
+          plan,
+          estimated_mrr_cents: estimatedMRR,
+          modules: customModules,
+          locations: locations.map(l => ({
+            name: l.name, address: l.address, contacts: l.contacts,
+          })),
+        },
       }).select().single();
 
       if (sessErr) throw sessErr;
 
       await supabase.from('sales_pipeline').insert({
         session_id: session.id,
-        org_name: form.companyName.trim(),
-        contact_name: form.contactName || null,
-        contact_email: form.email || null,
-        contact_title: form.title || null,
-        segment: form.segment,
-        industry: form.industry,
-        location_count: form.locations,
-        estimated_mrr_cents: calculateEstimatedMRR(form.locations, form.segment),
+        org_name: companyName.trim(),
+        contact_name: contactName || null,
+        contact_email: email || null,
+        contact_title: title || null,
+        segment,
+        industry,
+        location_count: locations.length,
+        estimated_mrr_cents: estimatedMRR,
         stage: 'tour_scheduled',
         probability_pct: 20,
       });
 
-      if (form.campaignId) {
+      if (campaignId) {
         await supabase.from('marketing_touchpoints').insert({
-          campaign_id: form.campaignId,
+          campaign_id: campaignId,
           session_id: session.id,
           touchpoint_type: 'first_touch',
-          channel: form.source,
+          channel: source,
         });
       }
 
       await supabase.from('admin_event_log').insert({
         level: 'INFO', category: 'guided_tour',
-        message: `Guided tour launched: ${form.companyName} (${form.county || 'N/A'}) — ${form.contactName || 'N/A'}`,
+        message: `Guided tour launched: ${companyName} (${county || 'N/A'}) — ${contactName || 'N/A'} [${PLANS[plan].label}, ${locations.length} loc, ${formatCents(estimatedMRR)}/mo]`,
       });
 
       toast.success('Tour launched successfully');
       onLaunch();
 
-      if (form.scheduleType === 'now') {
-        navigate(`/dashboard?guidedTour=true&instance=${instanceId}&org=${encodeURIComponent(form.companyName)}&county=${form.county}`);
+      if (scheduleType === 'now') {
+        navigate(`/dashboard?guidedTour=true&instance=${instanceId}&org=${encodeURIComponent(companyName)}&county=${county}`);
       }
     } catch (err) {
       toast.error((err as Error).message);
@@ -414,101 +628,324 @@ function SetupTourTab({ templates, campaigns, onLaunch }: {
     }
   };
 
-  const activeCampaigns = campaigns.filter(c => c.status === 'active');
+  const inputStyle: React.CSSProperties = {
+    width: '100%', padding: '8px 12px', border: '1px solid #D1D5DB',
+    borderRadius: 8, fontSize: 13, color: '#1E2D4D', background: '#fff',
+    outline: 'none',
+  };
 
   return (
     <div className="max-w-2xl">
       <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-6">
-        {/* Prospect info */}
+        {/* ── Prospect info ── */}
         <div>
           <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-3">Prospect Information</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Input label="Company Name *" value={form.companyName} onChange={v => updateForm('companyName', v)} placeholder="Clean Kitchen Co." />
-            <Input label="County" value={form.county} onChange={v => updateForm('county', v)} placeholder="Los Angeles" />
-            <Input label="Contact Name" value={form.contactName} onChange={v => updateForm('contactName', v)} placeholder="Jane Smith" />
-            <Input label="Title" value={form.title} onChange={v => updateForm('title', v)} placeholder="Owner" />
-            <Input label="Email" value={form.email} onChange={v => updateForm('email', v)} placeholder="jane@example.com" type="email" />
-            <Input label="Phone" value={form.phone} onChange={v => updateForm('phone', v)} placeholder="(555) 123-4567" />
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Locations</label>
-              <input type="number" min={1} value={form.locations} onChange={e => updateForm('locations', parseInt(e.target.value) || 1)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
-            </div>
-            <Select label="Industry" value={form.industry} onChange={v => updateForm('industry', v)} options={INDUSTRIES.map(i => ({ value: i, label: i.replace(/_/g, ' ') }))} />
+            <OrgCombobox
+              label="Company Name *"
+              orgs={orgs}
+              value={selectedOrg}
+              onChange={setSelectedOrg}
+              placeholder="Search or create company..."
+            />
+            <Input label="County" value={county} onChange={setCounty} placeholder="Los Angeles" />
+            <Input label="Contact Name" value={contactName} onChange={setContactName} placeholder="Jane Smith" />
+            <Input label="Title" value={title} onChange={setTitle} placeholder="Owner" />
+            <Input label="Email" value={email} onChange={setEmail} placeholder="jane@example.com" type="email" />
+            <Input label="Phone" value={phone} onChange={setPhone} placeholder="(555) 123-4567" />
+            <Select label="Industry" value={industry} onChange={setIndustry} options={INDUSTRIES.map(i => ({ value: i, label: i.replace(/_/g, ' ') }))} />
+            <Select label="Segment" value={segment} onChange={setSegment} options={SEGMENTS.map(s => ({ value: s, label: s.replace(/_/g, ' ') }))} />
           </div>
         </div>
 
-        {/* Source */}
+        {/* ── Plan selector ── */}
+        <div>
+          <label style={{ fontSize: 12, fontWeight: 600, color: '#4A5568', marginBottom: 8, display: 'block' }}>
+            Plan Type
+          </label>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 8 }}>
+            {(Object.keys(PLANS) as PlanKey[]).map(p => (
+              <button key={p} type="button" onClick={() => setPlan(p)} style={{
+                padding: '10px 8px', borderRadius: 8, cursor: 'pointer', textAlign: 'center',
+                border: plan === p ? '2px solid #A08C5A' : '1.5px solid #E5E0D8',
+                background: plan === p ? '#FAF7F2' : '#fff',
+                color: plan === p ? '#A08C5A' : '#9CA3AF',
+                fontWeight: plan === p ? 700 : 400,
+                fontSize: 12, transition: 'all 0.15s',
+              }}>
+                <div>{PLANS[p].label}</div>
+                {PLANS[p].addonLabel && (
+                  <div style={{ fontSize: 9, fontWeight: 800, color: '#D97706', marginTop: 2, letterSpacing: '0.5px' }}>
+                    {PLANS[p].addonLabel}
+                  </div>
+                )}
+                <div style={{ fontSize: 10, color: '#9CA3AF', marginTop: 3, fontWeight: 400 }}>
+                  {p === 'pilot' && '$49 \u00B7 +$49/loc'}
+                  {p === 'founder' && '$99 \u00B7 +$49/loc'}
+                  {p === 'standard' && '$199 \u00B7 +$99/loc'}
+                  {p === 'enterprise' && 'Custom'}
+                </div>
+              </button>
+            ))}
+          </div>
+          {plan === 'pilot' && (
+            <div style={{ marginTop: 10, padding: '10px 14px', borderRadius: 8,
+              background: '#FFFBEB', border: '1px solid #FDE68A', fontSize: 12, color: '#92400E' }}>
+              <strong>Pilot pricing</strong> is for Founder-tier customers testing before committing.
+              $49/mo flat per location. Converts to Founder ($99 + $49/loc) at full launch.
+            </div>
+          )}
+        </div>
+
+        {/* ── Source ── */}
         <div>
           <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-3">How Did They Find Us?</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Select label="Source" value={form.source} onChange={v => updateForm('source', v)} options={SOURCES.map(s => ({ value: s, label: s.replace(/_/g, ' ') }))} />
-            <Select label="Campaign" value={form.campaignId} onChange={v => updateForm('campaignId', v)}
+            <Select label="Source" value={source} onChange={setSource} options={SOURCES.map(s => ({ value: s, label: s.replace(/_/g, ' ') }))} />
+            <Select label="Campaign" value={campaignId} onChange={setCampaignId}
               options={[{ value: '', label: '— None —' }, ...activeCampaigns.map(c => ({ value: c.id, label: c.name }))]} />
           </div>
         </div>
 
-        {/* Tour config */}
+        {/* ── Locations builder ── */}
         <div>
-          <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-3">Tour Configuration</h3>
-          <Select label="Template" value={form.templateId} onChange={v => updateForm('templateId', v)}
-            options={[{ value: '', label: '— No template —' }, ...templates.filter(t => t.is_active).map(t => ({ value: t.id, label: `${t.name} (${t.duration_minutes}m)` }))]} />
-          {selectedTemplate && (
-            <div className="mt-2 text-xs text-gray-500 bg-gray-50 rounded-lg p-3">
-              <span className="font-medium">Modules:</span> {(selectedTemplate.modules_enabled || []).join(', ') || 'None'}
-              <span className="ml-3 font-medium">Duration:</span> {selectedTemplate.duration_minutes} min
-              {selectedTemplate.description && <p className="mt-1 text-gray-400">{selectedTemplate.description}</p>}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: '#1E2D4D', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+                Locations ({locations.length})
+              </div>
+              <div style={{ fontSize: 11, color: '#9CA3AF', marginTop: 2 }}>
+                Name each location and add the key contacts within it
+              </div>
             </div>
-          )}
-          <Select label="Segment" value={form.segment} onChange={v => updateForm('segment', v)} options={SEGMENTS.map(s => ({ value: s, label: s.replace(/_/g, ' ') }))} />
+            <button type="button" onClick={addLocation}
+              style={{ fontSize: 12, fontWeight: 600, padding: '7px 14px', borderRadius: 7,
+                background: '#1E2D4D', color: '#fff', border: 'none', cursor: 'pointer' }}>
+              + Add Location
+            </button>
+          </div>
+
+          {locations.map((loc, locIdx) => (
+            <div key={loc.id} style={{
+              background: '#FAFAF8', border: '1px solid #E5E0D8',
+              borderRadius: 10, padding: 18, marginBottom: 12,
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: '#1E2D4D' }}>
+                  Location {locIdx + 1}{loc.name ? ` \u2014 ${loc.name}` : ''}
+                </div>
+                {locations.length > 1 && (
+                  <button type="button" onClick={() => removeLocation(loc.id)}
+                    style={{ fontSize: 11, color: '#DC2626', background: 'none', border: 'none', cursor: 'pointer' }}>
+                    Remove
+                  </button>
+                )}
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 16 }}>
+                <div>
+                  <label style={{ fontSize: 11, color: '#9CA3AF', marginBottom: 4, display: 'block' }}>Location Name *</label>
+                  <input placeholder="e.g. Downtown Fresno"
+                    value={loc.name} onChange={e => updateLocation(loc.id, 'name', e.target.value)}
+                    style={inputStyle} />
+                </div>
+                <div>
+                  <label style={{ fontSize: 11, color: '#9CA3AF', marginBottom: 4, display: 'block' }}>Address</label>
+                  <input placeholder="Street, City, State"
+                    value={loc.address} onChange={e => updateLocation(loc.id, 'address', e.target.value)}
+                    style={inputStyle} />
+                </div>
+              </div>
+
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: '#4A5568', marginBottom: 8 }}>Staff Contacts</div>
+                {loc.contacts.length === 0 && (
+                  <div style={{ fontSize: 11, color: '#9CA3AF', fontStyle: 'italic', marginBottom: 8 }}>
+                    Add the key people at this location
+                  </div>
+                )}
+                {loc.contacts.map((c, ci) => (
+                  <div key={ci} style={{
+                    background: '#fff', border: '1px solid #E5E0D8', borderRadius: 8,
+                    padding: '10px 12px', marginBottom: 8,
+                    display: 'grid', gridTemplateColumns: '170px 1fr 1fr 1fr 28px',
+                    gap: 8, alignItems: 'center',
+                  }}>
+                    <select value={c.role} onChange={e => updateContact(loc.id, ci, 'role', e.target.value)}
+                      style={{ ...inputStyle, width: '100%', cursor: 'pointer' }}>
+                      {CONTACT_ROLES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
+                    </select>
+                    <input placeholder="Full name" value={c.fullName}
+                      onChange={e => updateContact(loc.id, ci, 'fullName', e.target.value)} style={inputStyle} />
+                    <input placeholder="Email" type="email" value={c.email}
+                      onChange={e => updateContact(loc.id, ci, 'email', e.target.value)} style={inputStyle} />
+                    <input placeholder="Phone" value={c.phone}
+                      onChange={e => updateContact(loc.id, ci, 'phone', e.target.value)} style={inputStyle} />
+                    <button type="button" onClick={() => removeContact(loc.id, ci)}
+                      style={{ background: 'none', border: 'none', color: '#DC2626',
+                        cursor: 'pointer', fontSize: 18, lineHeight: 1, padding: 0 }}>
+                      {'\u00D7'}
+                    </button>
+                  </div>
+                ))}
+                <button type="button" onClick={() => addContact(loc.id)}
+                  style={{ width: '100%', fontSize: 11, color: '#A08C5A', background: 'none',
+                    border: '1px dashed #E8D9B8', borderRadius: 7, padding: '6px 12px', cursor: 'pointer' }}>
+                  + Add Contact
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
 
-        {/* Schedule */}
+        {/* ── Tour config ── */}
+        <div>
+          <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-3">Tour Configuration</h3>
+          <Select label="Template" value={templateId} onChange={setTemplateId}
+            options={[{ value: '', label: '— No template —' }, ...templates.filter(t => t.is_active).map(t => ({ value: t.id, label: `${t.name} (${t.duration_minutes}m)` }))]} />
+
+          {selectedTemplate && (
+            <div style={{ marginTop: 10 }}>
+              <div style={{
+                padding: '12px 14px', background: '#F9F8F6',
+                border: '1px solid #E5E0D8', borderRadius: 8,
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: '#1E2D4D' }}>
+                    {selectedTemplate.name} {'\u00B7'} {selectedTemplate.duration_minutes} min
+                  </div>
+                  <span style={{ fontSize: 10, color: '#9CA3AF' }}>
+                    {selectedTemplate.modules_enabled?.length || 0} modules
+                  </span>
+                </div>
+                {selectedTemplate.description && (
+                  <div style={{ fontSize: 11, color: '#9CA3AF', marginBottom: 10 }}>
+                    {selectedTemplate.description}
+                  </div>
+                )}
+
+                {/* Module pills by group */}
+                {ALL_MODULES.map(group => {
+                  const active = group.modules.filter(m => selectedTemplate.modules_enabled?.includes(m.id));
+                  if (!active.length) return null;
+                  return (
+                    <div key={group.group} style={{ marginBottom: 8 }}>
+                      <div style={{ fontSize: 9, fontWeight: 700, color: '#9CA3AF',
+                        textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 4 }}>
+                        {group.group}
+                      </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+                        {active.map(m => (
+                          <span key={m.id} style={{
+                            fontSize: 10, padding: '2px 8px', borderRadius: 10,
+                            background: '#fff', border: '1px solid #E5E0D8', color: '#6B7280',
+                          }}>
+                            {m.label}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+
+                <button type="button" onClick={() => setShowCustomModules(!showCustomModules)}
+                  style={{ marginTop: 8, fontSize: 11, color: '#A08C5A', background: 'none',
+                    border: 'none', cursor: 'pointer', padding: 0, fontWeight: 600 }}>
+                  {showCustomModules ? '\u25B2 Hide custom modules' : '\u25BC Customize modules for this tour'}
+                </button>
+              </div>
+
+              {showCustomModules && (
+                <div style={{ marginTop: 12 }}>
+                  <div style={{ fontSize: 11, color: '#9CA3AF', marginBottom: 10 }}>
+                    These overrides apply to this tour session only — the template is not changed.
+                  </div>
+                  <ModuleGroupToggles enabled={customModules} onChange={setCustomModules} />
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* ── Scheduling ── */}
         <div>
           <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-3">Scheduling</h3>
           <div className="flex gap-4 mb-3">
             <label className="flex items-center gap-2 cursor-pointer">
-              <input type="radio" name="schedule" checked={form.scheduleType === 'now'} onChange={() => updateForm('scheduleType', 'now')} className="h-4 w-4" />
+              <input type="radio" name="schedule" checked={scheduleType === 'now'} onChange={() => setScheduleType('now')} className="h-4 w-4" />
               <span className="text-sm font-medium text-gray-700">Launch Now</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
-              <input type="radio" name="schedule" checked={form.scheduleType === 'later'} onChange={() => updateForm('scheduleType', 'later')} className="h-4 w-4" />
+              <input type="radio" name="schedule" checked={scheduleType === 'later'} onChange={() => setScheduleType('later')} className="h-4 w-4" />
               <span className="text-sm font-medium text-gray-700">Schedule for Later</span>
             </label>
           </div>
-          {form.scheduleType === 'later' && (
-            <input type="datetime-local" value={form.scheduleDate} onChange={e => updateForm('scheduleDate', e.target.value)}
+          {scheduleType === 'later' && (
+            <input type="datetime-local" value={scheduleDate} onChange={e => setScheduleDate(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
           )}
         </div>
 
-        {/* Notes */}
+        {/* ── Notes ── */}
         <div>
           <label className="block text-xs font-medium text-gray-700 mb-1">Notes (internal)</label>
-          <textarea value={form.notes} onChange={e => updateForm('notes', e.target.value)} rows={3} placeholder="Internal notes — not shown to prospect"
+          <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={3} placeholder="Internal notes — not shown to prospect"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] resize-none" />
         </div>
 
-        {/* Est. MRR preview */}
-        <div className="bg-gray-50 rounded-lg p-3 text-sm">
-          <span className="text-gray-500">Estimated MRR:</span>
-          <span className="ml-2 font-bold" style={{ color: DARK }}>
-            {formatCents(calculateEstimatedMRR(form.locations, form.segment))}/mo
-          </span>
-          <span className="text-gray-400 ml-2 text-xs">($99 + $49/location)</span>
+        {/* ── MRR bar ── */}
+        <div style={{
+          padding: '14px 18px', borderRadius: 9,
+          background: '#FAF7F2', border: '1px solid #E8D9B8',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        }}>
+          <div>
+            <div style={{ fontSize: 11, color: '#9CA3AF' }}>Estimated Monthly Recurring Revenue</div>
+            {plan !== 'enterprise' && (
+              <div style={{ fontSize: 10, color: '#9CA3AF', marginTop: 2 }}>
+                {locations.length === 1
+                  ? `${PLANS[plan].label} \u00B7 1 location (included in base)`
+                  : `${PLANS[plan].label} \u00B7 1 base + ${locations.length - 1} additional location${locations.length > 2 ? 's' : ''}`
+                }
+              </div>
+            )}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            {plan === 'enterprise' ? (
+              <input type="number" placeholder="Enter MRR" value={customMRR || ''}
+                onChange={e => setCustomMRR(Number(e.target.value))}
+                style={{ width: 130, textAlign: 'right', fontSize: 20, fontWeight: 800,
+                  color: '#A08C5A', border: '1px solid #E8D9B8', borderRadius: 6, padding: '4px 10px' }} />
+            ) : (
+              <span style={{ fontSize: 24, fontWeight: 800, color: '#A08C5A', fontFamily: 'DM Mono, monospace' }}>
+                ${(estimatedMRR / 100).toFixed(0)}/mo
+              </span>
+            )}
+            <span style={{
+              fontSize: 10, fontWeight: 800, padding: '3px 10px', borderRadius: 10,
+              background: plan === 'pilot'     ? '#FEF9C3' :
+                          plan === 'founder'   ? '#FEF3C7' :
+                          plan === 'standard'  ? '#EEF2FF' : '#F0FDF4',
+              color:      plan === 'pilot'     ? '#A16207' :
+                          plan === 'founder'   ? '#D97706' :
+                          plan === 'standard'  ? '#3730A3' : '#065F46',
+            }}>
+              {PLANS[plan].label.toUpperCase()}
+            </span>
+          </div>
         </div>
 
-        {/* Actions */}
+        {/* ── Launch button ── */}
         <div className="flex gap-3">
           <button
             onClick={handleLaunch}
-            disabled={!form.companyName.trim() || launching}
+            disabled={!companyName.trim() || launching}
             className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] text-white rounded-lg text-sm font-bold disabled:opacity-40"
             style={{ backgroundColor: NAVY }}
           >
             {launching ? 'Launching...' : (
-              <>{form.scheduleType === 'now' ? <Play className="h-4 w-4" /> : <Calendar className="h-4 w-4" />}
-              {form.scheduleType === 'now' ? 'Launch Guided Tour' : 'Schedule Tour'}</>
+              <>{scheduleType === 'now' ? <Play className="h-4 w-4" /> : <Calendar className="h-4 w-4" />}
+              {scheduleType === 'now' ? 'Launch Guided Tour' : 'Schedule Tour'}</>
             )}
           </button>
         </div>
@@ -518,7 +955,7 @@ function SetupTourTab({ templates, campaigns, onLaunch }: {
 }
 
 // ════════════════════════════════════════════════════════════
-// TAB 3 — ACTIVE & HISTORY
+// TAB 3 — ACTIVE & HISTORY (unchanged)
 // ════════════════════════════════════════════════════════════
 
 function HistoryTab({ sessions, pipeline, onRefresh }: {
@@ -530,7 +967,6 @@ function HistoryTab({ sessions, pipeline, onRefresh }: {
   const activeSessions = sessions.filter(s => s.last_active_at && (now - new Date(s.last_active_at).getTime()) < 3600000);
   const completedSessions = sessions.filter(s => !activeSessions.includes(s)).slice(0, 100);
 
-  // Follow-ups due within 7 days
   const followUps = sessions.filter(s =>
     s.follow_up_at &&
     new Date(s.follow_up_at).getTime() <= now + 7 * 86400000 &&
@@ -544,13 +980,11 @@ function HistoryTab({ sessions, pipeline, onRefresh }: {
 
     await supabase.from('demo_sessions').update(updates).eq('id', sessionId);
 
-    // Also update pipeline
     const pipelineRow = pipeline.find(p => p.session_id === sessionId);
     if (pipelineRow) {
       const pipeUpdates: any = { stage: newStage, updated_at: new Date().toISOString() };
       if (newStage === 'won') pipeUpdates.won_date = new Date().toISOString().split('T')[0];
       if (newStage === 'lost') pipeUpdates.lost_date = new Date().toISOString().split('T')[0];
-      // Update probability
       const probMap: Record<string, number> = {
         tour_scheduled: 20, tour_completed: 35, proposal_sent: 50, negotiating: 70, won: 100, lost: 0,
       };
@@ -581,7 +1015,6 @@ function HistoryTab({ sessions, pipeline, onRefresh }: {
 
   return (
     <div className="space-y-6">
-      {/* Follow-up tracker */}
       {followUps.length > 0 && (
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
           <h3 className="text-sm font-bold text-amber-800 mb-3 flex items-center gap-2">
@@ -604,12 +1037,9 @@ function HistoryTab({ sessions, pipeline, onRefresh }: {
         </div>
       )}
 
-      {/* Active tours */}
       <div className="bg-white rounded-xl border border-gray-200 p-5">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide">
-            Active Tours ({activeSessions.length})
-          </h3>
+          <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide">Active Tours ({activeSessions.length})</h3>
           <button onClick={onRefresh} className="text-xs text-gray-500 hover:text-gray-700 flex items-center gap-1">
             <RefreshCw className="h-3 w-3" /> Refresh
           </button>
@@ -640,11 +1070,8 @@ function HistoryTab({ sessions, pipeline, onRefresh }: {
         )}
       </div>
 
-      {/* Completed tours */}
       <div className="bg-white rounded-xl border border-gray-200 p-5">
-        <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4">
-          Tour History ({completedSessions.length})
-        </h3>
+        <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4">Tour History ({completedSessions.length})</h3>
         {completedSessions.length === 0 ? (
           <p className="text-sm text-gray-400">No completed tours yet.</p>
         ) : (
@@ -715,7 +1142,7 @@ function SessionRow({ session: s, updatingId, onStageUpdate, onFollowUp, onAddNo
 }
 
 // ════════════════════════════════════════════════════════════
-// TAB 4 — TEMPLATES
+// TAB 4 — TEMPLATES (updated with ModuleGroupToggles)
 // ════════════════════════════════════════════════════════════
 
 function TemplatesTab({ templates, onRefresh }: { templates: any[]; onRefresh: () => void }) {
@@ -756,41 +1183,62 @@ function TemplatesTab({ templates, onRefresh }: { templates: any[]; onRefresh: (
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {templates.map(t => (
-          <div key={t.id} className="bg-white rounded-xl border border-gray-200 p-5">
-            <div className="flex items-start justify-between mb-2">
-              <div>
-                <span className="font-semibold text-gray-900">{t.name}</span>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">{t.target_segment?.replace(/_/g, ' ')}</span>
-                  <span className="text-xs text-gray-400">{t.duration_minutes} min</span>
-                  {!t.is_active && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">Inactive</span>}
+        {templates.map(t => {
+          const moduleCount = (t.modules_enabled || []).length;
+          return (
+            <div key={t.id} className="bg-white rounded-xl border border-gray-200 p-5">
+              <div className="flex items-start justify-between mb-2">
+                <div>
+                  <span className="font-semibold text-gray-900">{t.name}</span>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">{t.target_segment?.replace(/_/g, ' ')}</span>
+                    <span className="text-xs text-gray-400">{t.duration_minutes} min</span>
+                    <span className="text-xs text-gray-400">{moduleCount} module{moduleCount !== 1 ? 's' : ''}</span>
+                    {!t.is_active && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">Inactive</span>}
+                  </div>
                 </div>
+                <button
+                  onClick={() => handleToggleActive(t.id, t.is_active)}
+                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${t.is_active ? 'border-green-300 text-green-700 bg-green-50' : 'border-gray-300 text-gray-500'}`}
+                >
+                  {t.is_active ? 'Active' : 'Inactive'}
+                </button>
               </div>
-              <button
-                onClick={() => handleToggleActive(t.id, t.is_active)}
-                className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${t.is_active ? 'border-green-300 text-green-700 bg-green-50' : 'border-gray-300 text-gray-500'}`}
-              >
-                {t.is_active ? 'Active' : 'Inactive'}
-              </button>
+              {t.description && <p className="text-xs text-gray-500 mb-2">{t.description}</p>}
+              {/* Module pills grouped */}
+              <div className="mb-3">
+                {ALL_MODULES.map(group => {
+                  const active = group.modules.filter(m => (t.modules_enabled || []).includes(m.id));
+                  if (!active.length) return null;
+                  return (
+                    <div key={group.group} style={{ marginBottom: 4 }}>
+                      <span style={{ fontSize: 9, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                        {group.group}:
+                      </span>
+                      <span style={{ fontSize: 10, color: '#6B7280', marginLeft: 4 }}>
+                        {active.map(m => m.label).join(', ')}
+                      </span>
+                    </div>
+                  );
+                })}
+                {moduleCount === 0 && (
+                  <span className="text-xs text-gray-400">No modules selected</span>
+                )}
+              </div>
+              <div className="flex gap-2">
+                <button onClick={() => setEditId(t.id)} className="px-2 py-1 text-xs border border-gray-200 rounded hover:bg-gray-50 flex items-center gap-1">
+                  <Edit2 className="h-3 w-3" /> Edit
+                </button>
+                <button onClick={() => handleDuplicate(t)} className="px-2 py-1 text-xs border border-gray-200 rounded hover:bg-gray-50 flex items-center gap-1">
+                  <Copy className="h-3 w-3" /> Duplicate
+                </button>
+                <button onClick={() => handleDelete(t.id)} className="px-2 py-1 text-xs border border-red-200 rounded hover:bg-red-50 text-red-600 flex items-center gap-1">
+                  <Trash2 className="h-3 w-3" /> Delete
+                </button>
+              </div>
             </div>
-            {t.description && <p className="text-xs text-gray-500 mb-2">{t.description}</p>}
-            <div className="text-xs text-gray-400 mb-3">
-              <span className="font-medium">Modules:</span> {(t.modules_enabled || []).join(', ') || 'None'}
-            </div>
-            <div className="flex gap-2">
-              <button onClick={() => setEditId(t.id)} className="px-2 py-1 text-xs border border-gray-200 rounded hover:bg-gray-50 flex items-center gap-1">
-                <Edit2 className="h-3 w-3" /> Edit
-              </button>
-              <button onClick={() => handleDuplicate(t)} className="px-2 py-1 text-xs border border-gray-200 rounded hover:bg-gray-50 flex items-center gap-1">
-                <Copy className="h-3 w-3" /> Duplicate
-              </button>
-              <button onClick={() => handleDelete(t.id)} className="px-2 py-1 text-xs border border-red-200 rounded hover:bg-red-50 text-red-600 flex items-center gap-1">
-                <Trash2 className="h-3 w-3" /> Delete
-              </button>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {(showCreate || editId) && (
@@ -814,19 +1262,10 @@ function TemplateModal({ template, onClose, onSave }: {
     county: template?.county || '',
     industry: template?.industry || '',
     duration_minutes: template?.duration_minutes || 20,
-    modules_enabled: template?.modules_enabled || [],
+    modules_enabled: template?.modules_enabled || [] as string[],
     is_active: template?.is_active ?? true,
   });
   const [saving, setSaving] = useState(false);
-
-  const toggleModule = (mod: string) => {
-    setForm(prev => ({
-      ...prev,
-      modules_enabled: prev.modules_enabled.includes(mod)
-        ? prev.modules_enabled.filter((m: string) => m !== mod)
-        : [...prev.modules_enabled, mod],
-    }));
-  };
 
   const handleSave = async () => {
     if (!form.name.trim()) { toast.error('Name is required'); return; }
@@ -852,7 +1291,7 @@ function TemplateModal({ template, onClose, onSave }: {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] max-w-lg max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto">
         <h3 className="text-lg font-bold text-gray-900 mb-4">{template ? 'Edit Template' : 'New Template'}</h3>
         <div className="space-y-4">
           <Input label="Name *" value={form.name} onChange={v => setForm(p => ({ ...p, name: v }))} />
@@ -869,21 +1308,25 @@ function TemplateModal({ template, onClose, onSave }: {
             <input type="number" min={5} value={form.duration_minutes} onChange={e => setForm(p => ({ ...p, duration_minutes: parseInt(e.target.value) || 20 }))}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
           </div>
+
+          {/* Module group toggles — replaces flat pill list */}
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-2">Modules to Highlight</label>
-            <div className="flex flex-wrap gap-2">
-              {MODULES.map(mod => (
-                <button key={mod} type="button" onClick={() => toggleModule(mod)}
-                  className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-colors ${
-                    form.modules_enabled.includes(mod)
-                      ? 'bg-[#1e4d6b] text-white border-[#1e4d6b]'
-                      : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
-                  }`}>
-                  {mod.replace(/_/g, ' ')}
-                </button>
-              ))}
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#4A5568', marginBottom: 8, display: 'block' }}>
+              Modules to Include in This Template
+            </label>
+            <div style={{ fontSize: 11, color: '#9CA3AF', marginBottom: 12 }}>
+              Select which features are highlighted during a tour using this template.
+              Grouped by how staff use the platform — start with daily tasks, end with admin.
+            </div>
+            <ModuleGroupToggles
+              enabled={form.modules_enabled}
+              onChange={mods => setForm(t => ({ ...t, modules_enabled: mods }))}
+            />
+            <div style={{ marginTop: 10, fontSize: 11, color: '#9CA3AF' }}>
+              {form.modules_enabled.length} module{form.modules_enabled.length !== 1 ? 's' : ''} selected
             </div>
           </div>
+
           <label className="flex items-center gap-2 cursor-pointer">
             <input type="checkbox" checked={form.is_active} onChange={e => setForm(p => ({ ...p, is_active: e.target.checked }))} className="h-4 w-4 rounded" />
             <span className="text-sm text-gray-700">Active</span>

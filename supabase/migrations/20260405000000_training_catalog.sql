@@ -24,6 +24,7 @@ CREATE INDEX IF NOT EXISTS idx_training_catalog_category ON training_catalog(cat
 ALTER TABLE training_catalog ENABLE ROW LEVEL SECURITY;
 
 -- Everyone in the org can read their catalog + system items
+DROP POLICY IF EXISTS "training_catalog_select" ON training_catalog;
 CREATE POLICY "training_catalog_select" ON training_catalog
   FOR SELECT USING (
     is_system = true
@@ -31,6 +32,7 @@ CREATE POLICY "training_catalog_select" ON training_catalog
   );
 
 -- Only owners / admins can insert org-specific items
+DROP POLICY IF EXISTS "training_catalog_insert" ON training_catalog;
 CREATE POLICY "training_catalog_insert" ON training_catalog
   FOR INSERT WITH CHECK (
     org_id IN (
@@ -41,6 +43,7 @@ CREATE POLICY "training_catalog_insert" ON training_catalog
   );
 
 -- Only owners / admins can update org-specific items
+DROP POLICY IF EXISTS "training_catalog_update" ON training_catalog;
 CREATE POLICY "training_catalog_update" ON training_catalog
   FOR UPDATE USING (
     org_id IN (

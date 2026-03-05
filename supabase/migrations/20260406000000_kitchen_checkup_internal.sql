@@ -36,20 +36,24 @@ ALTER TABLE kitchen_checkups ENABLE ROW LEVEL SECURITY;
 ALTER TABLE kitchen_checkup_responses ENABLE ROW LEVEL SECURITY;
 
 -- Users can read/write their own checkups
+DROP POLICY IF EXISTS "Users can insert own checkups" ON kitchen_checkups;
 CREATE POLICY "Users can insert own checkups"
   ON kitchen_checkups FOR INSERT TO authenticated
   WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can read own checkups" ON kitchen_checkups;
 CREATE POLICY "Users can read own checkups"
   ON kitchen_checkups FOR SELECT TO authenticated
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert own responses" ON kitchen_checkup_responses;
 CREATE POLICY "Users can insert own responses"
   ON kitchen_checkup_responses FOR INSERT TO authenticated
   WITH CHECK (
     checkup_id IN (SELECT id FROM kitchen_checkups WHERE user_id = auth.uid())
   );
 
+DROP POLICY IF EXISTS "Users can read own responses" ON kitchen_checkup_responses;
 CREATE POLICY "Users can read own responses"
   ON kitchen_checkup_responses FOR SELECT TO authenticated
   USING (
@@ -57,10 +61,12 @@ CREATE POLICY "Users can read own responses"
   );
 
 -- Service role has full access
+DROP POLICY IF EXISTS "Service role full access checkups" ON kitchen_checkups;
 CREATE POLICY "Service role full access checkups"
   ON kitchen_checkups FOR ALL TO service_role
   USING (true) WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Service role full access responses" ON kitchen_checkup_responses;
 CREATE POLICY "Service role full access responses"
   ON kitchen_checkup_responses FOR ALL TO service_role
   USING (true) WITH CHECK (true);

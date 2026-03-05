@@ -167,7 +167,7 @@ export const DEMO_ATTENTION_ITEMS: AttentionItem[] = [
     pillar: 'facility_safety',
     severity: 'warning',
     title: 'Fire suppression inspection expires in 12 days',
-    detail: 'ABC Fire Protection notified',
+    detail: 'Vendor notified',
     actionLabel: 'Schedule',
     actionRoute: '/vendors',
     locationId: 'airport',

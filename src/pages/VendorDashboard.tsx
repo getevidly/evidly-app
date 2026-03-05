@@ -144,7 +144,7 @@ export function VendorDashboard() {
     navigate('/vendor/login');
   };
 
-  // Filter reviews for ABC Fire Protection (the demo vendor)
+  // Filter reviews for Hood Cleaning Vendor (the demo vendor)
   const vendorReviews = useMemo(() =>
     marketplaceReviews.filter(r => r.vendorSlug === 'abc-fire-protection'),
     []

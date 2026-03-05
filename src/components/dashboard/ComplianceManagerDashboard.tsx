@@ -467,7 +467,7 @@ export default function ComplianceManagerDashboard() {
         <div style={{ padding: '20px 24px 0' }}>
           <DashboardHero
             firstName={DEMO_ROLE_NAMES.compliance_manager.firstName}
-            orgName={companyName || DEMO_ORG.name}
+            orgName={companyName || 'Your Organization'}
           />
         </div>
         <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-6">

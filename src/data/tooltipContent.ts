@@ -53,13 +53,13 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
   },
   facilitySafety: {
     platform_admin:
-      'Pass/Fail status per NFPA 96 (2024) for each Authority Having Jurisdiction. One red bar at any location is a compliance failure.',
+      'Pass/Fail status per NFPA 96 for each Authority Having Jurisdiction. One red bar at any location is a compliance failure.',
     owner_operator:
-      'Pass/Fail status per NFPA 96 (2024) for each Authority Having Jurisdiction. One red bar at any location is a compliance failure.',
+      'Pass/Fail status per NFPA 96 for each Authority Having Jurisdiction. One red bar at any location is a compliance failure.',
     executive:
       'Facility safety is binary — Pass or Fail. A single failed system exposes the entire location to permit suspension or closure.',
     compliance_manager:
-      'Verified against NFPA 96 (2024) Table 12.4. Each AHJ is mapped to your specific location — no generic defaults.',
+      'Verified against NFPA 96 Table 12.4. Each AHJ is mapped to your specific location — no generic defaults.',
     chef:
       'All four systems must show green for your location to pass fire inspection. Contact your Facilities Manager if any bar is red.',
     facilities_manager:
@@ -192,7 +192,7 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
     chef:
       'Kitchen equipment assigned to your location. Flag anything that needs repair \u2014 overdue equipment affects inspection scores.',
     facilities_manager:
-      'Your primary asset register. Tracks service intervals, vendor assignments, and next-due dates per NFPA 96 (2024) requirements.',
+      'Your primary asset register. Tracks service intervals, vendor assignments, and next-due dates per NFPA 96 requirements.',
     kitchen_manager:
       'Equipment at your location and its current service status. Tap to log a maintenance request or view service history.',
     kitchen_staff:
@@ -491,13 +491,13 @@ export const tooltipContentEs: Record<TooltipSection, Record<UserRole, string>> 
   },
   facilitySafety: {
     platform_admin:
-      'Estado de Aprobado/Reprobado según NFPA 96 (2024) para cada Authority Having Jurisdiction. Una barra roja en cualquier ubicación es una falla de cumplimiento.',
+      'Estado de Aprobado/Reprobado según NFPA 96 para cada Authority Having Jurisdiction. Una barra roja en cualquier ubicación es una falla de cumplimiento.',
     owner_operator:
-      'Estado de Aprobado/Reprobado según NFPA 96 (2024) para cada Authority Having Jurisdiction. Una barra roja en cualquier ubicación es una falla de cumplimiento.',
+      'Estado de Aprobado/Reprobado según NFPA 96 para cada Authority Having Jurisdiction. Una barra roja en cualquier ubicación es una falla de cumplimiento.',
     executive:
       'La seguridad contra incendios es binaria — Aprobado o Reprobado. Un solo sistema fallido expone toda la ubicación a suspensión o cierre del permiso.',
     compliance_manager:
-      'Verificado contra NFPA 96 (2024) Tabla 12.4. Cada AHJ está mapeado a su ubicación específica — sin valores genéricos predeterminados.',
+      'Verificado contra NFPA 96 Tabla 12.4. Cada AHJ está mapeado a su ubicación específica — sin valores genéricos predeterminados.',
     chef:
       'Los cuatro sistemas deben mostrar verde para que su ubicación apruebe la inspección de incendios. Contacte a su Gerente de Instalaciones si alguna barra está en rojo.',
     facilities_manager:
@@ -630,7 +630,7 @@ export const tooltipContentEs: Record<TooltipSection, Record<UserRole, string>> 
     chef:
       'Equipo de cocina asignado a su ubicación. Señale cualquier cosa que necesite reparación — el equipo atrasado afecta las puntuaciones de inspección.',
     facilities_manager:
-      'Su registro principal de activos. Rastrea intervalos de servicio, asignaciones de proveedores y fechas de vencimiento según los requisitos de NFPA 96 (2024).',
+      'Su registro principal de activos. Rastrea intervalos de servicio, asignaciones de proveedores y fechas de vencimiento según los requisitos de NFPA 96.',
     kitchen_manager:
       'Equipo en su ubicación y su estado de servicio actual. Toque para registrar una solicitud de mantenimiento o ver el historial de servicio.',
     kitchen_staff:

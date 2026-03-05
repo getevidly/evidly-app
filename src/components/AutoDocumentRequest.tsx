@@ -13,9 +13,9 @@ interface DocRequest {
 }
 
 const demoRequests: DocRequest[] = [
-  { id: '1', vendorName: 'ABC Fire Protection', documentType: 'Hood Cleaning Certificate', status: 'received', sentDate: 'Jan 20, 2026', dueDate: 'Feb 3, 2026', reminderCount: 0, secureLink: '' },
-  { id: '2', vendorName: 'Valley Fire Systems', documentType: 'Fire Suppression Report', status: 'overdue', sentDate: 'Jan 10, 2026', dueDate: 'Jan 24, 2026', reminderCount: 3, secureLink: 'https://app.getevidly.com/upload/abc123' },
-  { id: '3', vendorName: 'Pacific Pest Control', documentType: 'Service Report', status: 'sent', sentDate: 'Feb 4, 2026', dueDate: 'Feb 18, 2026', reminderCount: 0, secureLink: 'https://app.getevidly.com/upload/def456' },
+  { id: '1', vendorName: 'Hood Cleaning Vendor', documentType: 'Hood Cleaning Certificate', status: 'received', sentDate: 'Jan 20, 2026', dueDate: 'Feb 3, 2026', reminderCount: 0, secureLink: '' },
+  { id: '2', vendorName: 'Fire Suppression Vendor', documentType: 'Fire Suppression Report', status: 'overdue', sentDate: 'Jan 10, 2026', dueDate: 'Jan 24, 2026', reminderCount: 3, secureLink: 'https://app.getevidly.com/upload/abc123' },
+  { id: '3', vendorName: 'Pest Control Vendor', documentType: 'Service Report', status: 'sent', sentDate: 'Feb 4, 2026', dueDate: 'Feb 18, 2026', reminderCount: 0, secureLink: 'https://app.getevidly.com/upload/def456' },
   { id: '4', vendorName: 'Grease Masters', documentType: 'Certificate of Insurance', status: 'reminded', sentDate: 'Jan 28, 2026', dueDate: 'Feb 11, 2026', reminderCount: 1, secureLink: 'https://app.getevidly.com/upload/ghi789' },
 ];
 

@@ -34,7 +34,7 @@ export const SCENARIOS: Scenario[] = [
     contextFields: [
       { key: 'location',        label: 'Location That Failed',        placeholder: 'e.g. Location 3',            type: 'text',     required: true }, // demo
       { key: 'violationType',   label: 'Violation Type',              placeholder: '',                                  type: 'select',   required: true,
-        options: ['Food Safety \u2014 Major Violation', 'Food Safety \u2014 Multiple Minor Violations', 'Facility Safety \u2014 NFPA 96 (2024) Non-Compliance', 'Both Food and Facility Safety', 'Permit / Documentation'] },
+        options: ['Food Safety \u2014 Major Violation', 'Food Safety \u2014 Multiple Minor Violations', 'Facility Safety \u2014 NFPA 96 Non-Compliance', 'Both Food and Facility Safety', 'Permit / Documentation'] },
       { key: 'reinspectionDate',label: 'Reinspection Date',           placeholder: 'Select date',                       type: 'date',     required: true },
       { key: 'dailyRevenue',    label: 'Daily Revenue at This Location', placeholder: 'e.g. 2500',                      type: 'text',     required: true },
     ],
@@ -70,7 +70,7 @@ LEVEL 1 \u2014 INSPECTION CATCH: AHJ finds expired documentation. Specific conse
 
 LEVEL 2 \u2014 ENFORCEMENT ACTION: If operator does not proactively address. Fines + closure duration + remediation + documentation to reopen + inspection fee cascade.
 
-LEVEL 3 \u2014 INSURANCE EXPOSURE: Expired permits at time of covered incident (fire, illness, injury) give carrier grounds to contest. Calculate as percentage of coverage value. Reference NFPA 96 (2024) Table 12.4 for hood cleaning certificate requirements.
+LEVEL 3 \u2014 INSURANCE EXPOSURE: Expired permits at time of covered incident (fire, illness, injury) give carrier grounds to contest. Calculate as percentage of coverage value. Reference NFPA 96 Table 12.4 for hood cleaning certificate requirements.
 
 For each level: probability, timeline, single action that breaks the cascade.`,
   },
@@ -82,7 +82,7 @@ For each level: probability, timeline, single action that breaks the cascade.`,
     description: 'The real cost of delaying hood cleaning, fan service, or roof containment by 6\u201312 months.',
     contextFields: [
       { key: 'deferredService', label: 'Service Being Deferred', placeholder: '', type: 'select', required: true,
-        options: ['Hood & Duct Cleaning \u2014 past NFPA 96 (2024) Table 12.4 schedule', 'Fan Performance Management \u2014 12+ months no service', 'Filter Exchange \u2014 filters washed on-site', 'Rooftop Grease Containment \u2014 no system installed', 'Multiple services deferred'] },
+        options: ['Hood & Duct Cleaning \u2014 past NFPA 96 Table 12.4 schedule', 'Fan Performance Management \u2014 12+ months no service', 'Filter Exchange \u2014 filters washed on-site', 'Rooftop Grease Containment \u2014 no system installed', 'Multiple services deferred'] },
       { key: 'monthsDeferred',  label: 'Months Since Last Service (or Never)', placeholder: 'e.g. 18',       type: 'text',   required: true },
       { key: 'dailyRevenue',    label: 'Average Daily Revenue',                placeholder: 'e.g. 3000',     type: 'text',   required: false },
       { key: 'propertyValue',   label: 'Building / Leasehold Value',           placeholder: 'e.g. 400000',   type: 'text',   required: false },
@@ -96,7 +96,7 @@ THREE time horizons:
 
 90-DAY: How does deferral compound? Additional cleaning cost from buildup (hood/filter). Increased fan failure probability (fan service). Additional membrane degradation (rooftop). Dollar difference between acting now vs. 90 days.
 
-12-MONTH: Full annual cost of continued deferral \u2014 additional service frequency to return to compliance, equipment replacement probability, insurance premium impact, regulatory exposure. Compare to annual cost if maintained on schedule. Reference NFPA 96 (2024) Table 12.4 for hood cleaning intervals.
+12-MONTH: Full annual cost of continued deferral \u2014 additional service frequency to return to compliance, equipment replacement probability, insurance premium impact, regulatory exposure. Compare to annual cost if maintained on schedule. Reference NFPA 96 Table 12.4 for hood cleaning intervals.
 
 End with specific breakeven: when does cost of deferral exceed cost of the service?`,
   },

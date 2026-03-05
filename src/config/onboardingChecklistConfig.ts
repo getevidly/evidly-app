@@ -201,6 +201,35 @@ export const ONBOARDING_STEPS: OnboardingStepDef[] = [
     roles: ['owner_operator', 'executive', 'compliance_manager', 'platform_admin'],
   },
 
+  // ── SB 1383 ──────────────────────────────────────────────
+  {
+    id: 'sb1383_setup',
+    label: 'Set up SB 1383 Tracking',
+    description: 'Log your first organic waste compliance entry to start tracking SB 1383 diversion.',
+    hint: 'Required for California commercial food generators',
+    route: '/food-recovery',
+    actionLabel: 'Set Up SB 1383',
+    section: 'safety_setup',
+    order: 5,
+    roles: ['owner_operator', 'executive', 'compliance_manager', 'platform_admin'],
+    // Visibility controlled by sb1383_enrolled flag in resolveVisibleSteps
+  },
+
+  // ── K-12 USDA ──────────────────────────────────────────
+  {
+    id: 'k12_setup',
+    label: 'Configure K-12 Food Safety',
+    description: 'Add your school details and USDA enrollment status for meal program compliance.',
+    hint: 'NSLP and USDA meal pattern tracking',
+    route: '/usda/production-records',
+    actionLabel: 'Set Up K-12',
+    section: 'safety_setup',
+    order: 6,
+    industries: ['K12_EDUCATION'],
+    roles: ['owner_operator', 'executive', 'compliance_manager', 'platform_admin'],
+    // Visibility controlled by k12_enrolled flag in resolveVisibleSteps
+  },
+
   // ── Platform Tour ─────────────────────────────────────────
   {
     id: 'take_tour',
@@ -271,6 +300,7 @@ export function resolveVisibleSteps(
   industryType: string | null,
   plannedLocationCount: number,
   userRole?: UserRole,
+  enrollmentFlags?: { isSB1383Enrolled?: boolean; isK12Enrolled?: boolean },
 ): OnboardingStepDef[] {
   const tier: LocationTier =
     plannedLocationCount >= 11 ? 'enterprise' :
@@ -289,6 +319,14 @@ export function resolveVisibleSteps(
     }
     // Tier filter
     if (step.minTier && TIER_RANK[tier] < TIER_RANK[step.minTier]) {
+      return false;
+    }
+    // Enrollment flag filter — sb1383_setup only shows when sb1383_enrolled
+    if (step.id === 'sb1383_setup' && !enrollmentFlags?.isSB1383Enrolled) {
+      return false;
+    }
+    // k12_setup only shows when k12_enrolled (industry filter already handles K12_EDUCATION)
+    if (step.id === 'k12_setup' && !enrollmentFlags?.isK12Enrolled) {
       return false;
     }
     return true;

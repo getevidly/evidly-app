@@ -23,8 +23,9 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   isEvidlyAdmin: boolean;
+  isAdmin: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signUp: (email: string, password: string, fullName: string, phone: string, orgName: string, industryType?: string, industrySubtype?: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, fullName: string, phone: string, orgName: string, industryType?: string, industrySubtype?: string, qualificationFlags?: { k12_enrolled?: boolean; k12_enrolled_at?: string | null; sb1383_enrolled?: boolean; sb1383_enrolled_at?: string | null; org_type?: string }) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
@@ -151,7 +152,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error };
   };
 
-  const signUp = async (email: string, password: string, fullName: string, phone: string, orgName: string, industryType?: string, industrySubtype?: string) => {
+  const signUp = async (email: string, password: string, fullName: string, phone: string, orgName: string, industryType?: string, industrySubtype?: string, qualificationFlags?: { k12_enrolled?: boolean; k12_enrolled_at?: string | null; sb1383_enrolled?: boolean; sb1383_enrolled_at?: string | null; org_type?: string }) => {
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
@@ -176,6 +177,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         name: orgName,
         industry_type: industryType || null,
         industry_subtype: industrySubtype || null,
+        org_type: qualificationFlags?.org_type || 'standard',
+        k12_enrolled: qualificationFlags?.k12_enrolled || false,
+        k12_enrolled_at: qualificationFlags?.k12_enrolled_at || null,
+        sb1383_enrolled: qualificationFlags?.sb1383_enrolled || false,
+        sb1383_enrolled_at: qualificationFlags?.sb1383_enrolled_at || null,
       }])
       .select()
       .single();
@@ -229,10 +235,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const isEvidlyAdmin = Boolean(user?.email?.endsWith('@getevidly.com'));
+  const isAdmin = isEvidlyAdmin || profile?.role === 'platform_admin';
 
   return (
     <AuthContext.Provider
-      value={{ user, profile, session, loading, isEvidlyAdmin, signIn, signUp, signOut, refreshProfile }}
+      value={{ user, profile, session, loading, isEvidlyAdmin, isAdmin, signIn, signUp, signOut, refreshProfile }}
     >
       {children}
     </AuthContext.Provider>

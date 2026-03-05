@@ -705,7 +705,7 @@ function FileClassificationCard({
               <input
                 type="text"
                 className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]"
-                placeholder="e.g. Valley Fire Systems"
+                placeholder="e.g. Acme Hood Cleaning"
                 value={entry.overrides.vendorName}
                 onChange={(e) => onUpdateOverride('vendorName', e.target.value)}
               />

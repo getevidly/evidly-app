@@ -204,6 +204,28 @@ export function getFeatureDefinition(id: string): FeatureDefinition | undefined 
   return FEATURES[id];
 }
 
+/** Check if SB 1383 module is enabled for a given organization. */
+export async function isSB1383Enabled(organizationId: string): Promise<boolean> {
+  const { supabase } = await import('./supabase');
+  const { data } = await supabase
+    .from('organizations')
+    .select('sb1383_enrolled')
+    .eq('id', organizationId)
+    .single();
+  return data?.sb1383_enrolled === true;
+}
+
+/** Check if K-12 module is enabled for a given organization. */
+export async function isK12Enabled(organizationId: string): Promise<boolean> {
+  const { supabase } = await import('./supabase');
+  const { data } = await supabase
+    .from('organizations')
+    .select('k12_enrolled, org_type')
+    .eq('id', organizationId)
+    .single();
+  return data?.k12_enrolled === true || data?.org_type === 'k12';
+}
+
 // Get badge type for sidebar. Returns null if user has access.
 export function getFeatureBadge(featureId: string, userTier: PlanTier): 'PRO' | 'ENT' | null {
   const feature = FEATURES[featureId];

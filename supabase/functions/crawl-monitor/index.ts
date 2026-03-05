@@ -5,19 +5,27 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Feed definitions — URL + expected content signals
-const FEED_URLS: Record<string, { url: string; method: string; keywords: string[] }> = {
-  cdph_la:          { url: "https://www.lapublichealth.org/eh/programs/food-safety",            method: "GET", keywords: ["inspection","violation","food safety"] },
-  cdph_merced:      { url: "https://www.countyofmerced.com/189/Food-Safety",                    method: "GET", keywords: ["inspection","food"] },
-  cdph_fresno:      { url: "https://www.co.fresno.ca.us/departments/public-health-and-safety/environmental-health/food-program", method: "GET", keywords: ["food","inspection"] },
-  fda_recalls:      { url: "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",method: "GET", keywords: ["recall","food","alert"] },
-  fda_foodcode:     { url: "https://www.fda.gov/food/fda-food-code/food-code-2022",              method: "GET", keywords: ["food code","2022","adoption"] },
-  ca_fire_marshal:  { url: "https://osfm.fire.ca.gov/divisions/fire-engineering-and-investigations", method: "GET", keywords: ["fire","safety","commercial","kitchen"] },
-  nfpa96:           { url: "https://www.nfpa.org/codes-and-standards/nfpa-96-standard-for-ventilation-control-and-fire-protection-of-commercial-cooking-operations", method: "GET", keywords: ["NFPA 96","edition","commercial cooking"] },
-  osha_ca_kitchen:  { url: "https://www.dir.ca.gov/dosh/dosh1.html",                            method: "GET", keywords: ["restaurant","kitchen","safety"] },
-  nps_yosemite:     { url: "https://www.nps.gov/yose/learn/management/foodsafety.htm",           method: "GET", keywords: ["food safety","inspection"] },
-  usda_fsis:        { url: "https://www.fsis.usda.gov/recalls",                                  method: "GET", keywords: ["recall","food","alert"] },
-  calcode_updates:  { url: "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?sectionNum=113700.&lawCode=HSC", method: "GET", keywords: ["health","safety","retail food"] },
+// Feed definitions — URL + expected content signals + DB metadata
+interface FeedDef {
+  url: string;
+  method: string;
+  keywords: string[];
+  feed_name: string;
+  pillar: "food_safety" | "fire_safety";
+}
+
+const FEED_URLS: Record<string, FeedDef> = {
+  cdph_la:          { url: "https://ehservices.publichealth.lacounty.gov/servlet/guest",         method: "GET", keywords: ["inspection","violation","food safety"],   feed_name: "CDPH — Los Angeles",    pillar: "food_safety" },
+  cdph_merced:      { url: "https://www.countyofmerced.com/189/Food-Safety",                    method: "GET", keywords: ["inspection","food"],                      feed_name: "CDPH — Merced",         pillar: "food_safety" },
+  cdph_fresno:      { url: "https://www.fresnocountyca.gov/departments/public-health/environmental-health/food-program", method: "GET", keywords: ["food","inspection"], feed_name: "CDPH — Fresno",         pillar: "food_safety" },
+  fda_recalls:      { url: "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",method: "GET", keywords: ["recall","food","alert"],                 feed_name: "FDA Recalls",           pillar: "food_safety" },
+  fda_foodcode:     { url: "https://www.fda.gov/food/fda-food-code/food-code-2022",              method: "GET", keywords: ["food code","2022","adoption"],            feed_name: "FDA Food Code Updates", pillar: "food_safety" },
+  ca_fire_marshal:  { url: "https://osfm.fire.ca.gov/divisions/fire-prevention",                method: "GET", keywords: ["fire","safety","commercial","kitchen"],   feed_name: "CA State Fire Marshal",  pillar: "fire_safety" },
+  nfpa96:           { url: "https://www.nfpa.org/codes-and-standards/96",                        method: "GET", keywords: ["NFPA 96","edition","commercial cooking"], feed_name: "NFPA 96 Updates",       pillar: "fire_safety" },
+  osha_ca_kitchen:  { url: "https://www.dir.ca.gov/dosh/dosh1.html",                            method: "GET", keywords: ["restaurant","kitchen","safety"],          feed_name: "OSHA CA Kitchen",       pillar: "fire_safety" },
+  nps_yosemite:     { url: "https://www.nps.gov/yose/planyourvisit/food.htm",                    method: "GET", keywords: ["food safety","inspection"],               feed_name: "NPS / Yosemite",        pillar: "fire_safety" },
+  usda_fsis:        { url: "https://www.fsis.usda.gov/recalls-alerts",                            method: "GET", keywords: ["recall","food","alert"],                 feed_name: "USDA FSIS Alerts",      pillar: "food_safety" },
+  calcode_updates:  { url: "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?sectionNum=113700.&lawCode=HSC", method: "GET", keywords: ["health","safety","retail food"], feed_name: "CalCode Amendments", pillar: "food_safety" },
 };
 
 async function hashContent(text: string): Promise<string> {
@@ -28,7 +36,7 @@ async function hashContent(text: string): Promise<string> {
   return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
 }
 
-async function checkFeed(feedId: string, feedDef: { url: string; method: string; keywords: string[] }) {
+async function checkFeed(feedId: string, feedDef: FeedDef) {
   const startMs = Date.now();
   try {
     const controller = new AbortController();
@@ -103,17 +111,23 @@ Deno.serve(async (req) => {
       ? new Date(Date.now() + 30 * 60 * 1000).toISOString()
       : null;
 
-    await supabase.from("crawl_health").upsert({
+    const upsertRow: Record<string, unknown> = {
       feed_id: feedId,
+      feed_name: feedDef.feed_name,
+      pillar: feedDef.pillar,
       status: result.status,
       last_checked_at: new Date().toISOString(),
-      last_success_at: result.status === "live" ? new Date().toISOString() : undefined,
       response_ms: result.responseMs,
       error_message: result.error,
       retry_count: result.status === "live" ? 0 : ((prev?.retry_count || 0) + 1),
-      content_hash: result.hash || prev?.content_hash,
+      content_hash: result.hash || prev?.content_hash || null,
       auto_retry_at: autoRetryAt,
-    }, { onConflict: "feed_id" });
+    };
+    if (result.status === "live") {
+      upsertRow.last_success_at = new Date().toISOString();
+    }
+
+    await supabase.from("crawl_health").upsert(upsertRow, { onConflict: "feed_id" });
 
     await supabase.from("admin_event_log").insert({
       level: result.status === "live" ? "INFO" : result.status === "waf_block" ? "WARN" : "ERROR",

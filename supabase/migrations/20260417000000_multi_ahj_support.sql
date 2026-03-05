@@ -17,9 +17,25 @@
 
 -- ── 1. Add jurisdiction_layer to existing table ──────────────────
 
+-- Add missing columns needed for multi-AHJ resolution
 ALTER TABLE location_jurisdictions
-  ADD COLUMN IF NOT EXISTS jurisdiction_layer TEXT NOT NULL DEFAULT 'primary'
-    CHECK (jurisdiction_layer IN ('primary', 'federal_overlay', 'state_overlay'));
+  ADD COLUMN IF NOT EXISTS pillar TEXT;
+
+ALTER TABLE location_jurisdictions
+  ADD COLUMN IF NOT EXISTS current_status TEXT;
+
+ALTER TABLE location_jurisdictions
+  ADD COLUMN IF NOT EXISTS agency_name TEXT;
+
+-- jurisdiction_layer may already exist from original table definition
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'location_jurisdictions' AND column_name = 'jurisdiction_layer'
+  ) THEN
+    ALTER TABLE location_jurisdictions ADD COLUMN jurisdiction_layer TEXT NOT NULL DEFAULT 'primary';
+  END IF;
+END $$;
 
 COMMENT ON COLUMN location_jurisdictions.jurisdiction_layer IS
   'Authority layer: primary (county/city), federal_overlay (NPS, military), state_overlay (CDPH)';
@@ -109,25 +125,27 @@ COMMENT ON VIEW v_resolved_ahj_status IS
 ALTER TABLE federal_overlay_jurisdictions ENABLE ROW LEVEL SECURITY;
 
 -- Read: authenticated users can read overlays for their org's locations
+DROP POLICY IF EXISTS "Users can read federal overlays for their locations" ON federal_overlay_jurisdictions;
 CREATE POLICY "Users can read federal overlays for their locations"
   ON federal_overlay_jurisdictions FOR SELECT
   USING (
     location_id IN (
       SELECT l.id FROM locations l
-      JOIN organization_members om ON om.organization_id = l.organization_id
-      WHERE om.user_id = auth.uid()
+      JOIN user_profiles up ON up.organization_id = l.organization_id
+      WHERE up.id = auth.uid()
     )
   );
 
 -- Write: only org admins
+DROP POLICY IF EXISTS "Admins can manage federal overlays" ON federal_overlay_jurisdictions;
 CREATE POLICY "Admins can manage federal overlays"
   ON federal_overlay_jurisdictions FOR ALL
   USING (
     location_id IN (
       SELECT l.id FROM locations l
-      JOIN organization_members om ON om.organization_id = l.organization_id
-      WHERE om.user_id = auth.uid()
-        AND om.role IN ('owner_operator', 'executive', 'platform_admin')
+      JOIN user_profiles up ON up.organization_id = l.organization_id
+      WHERE up.id = auth.uid()
+        AND up.role IN ('owner_operator', 'executive', 'platform_admin')
     )
   );
 
@@ -141,6 +159,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trg_federal_overlay_updated_at ON federal_overlay_jurisdictions;
 CREATE TRIGGER trg_federal_overlay_updated_at
   BEFORE UPDATE ON federal_overlay_jurisdictions
   FOR EACH ROW

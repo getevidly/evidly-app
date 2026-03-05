@@ -270,7 +270,7 @@ function LocationDetail({ node }: { node: OrgTreeNode }) {
         </div>
         <div className="flex items-center justify-between">
           <p className="text-gray-500 text-xs">{node.facilitySafetyAhj}</p>
-          <p className="text-gray-400 text-[10px]">NFPA 96 (2024)</p>
+          <p className="text-gray-400 text-[10px]">NFPA 96</p>
         </div>
         <div className="space-y-2">
           <FireEquipmentBar label="Permit" pass={equip.permit} />

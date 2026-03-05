@@ -63,13 +63,13 @@ export const JURISDICTION_DATABASE: JurisdictionScore[] = [
     agencyName: 'City of Fresno Fire Department — Fire Prevention Bureau',
     county: 'Fresno', state: 'CA', pillar: 'facility_safety',
     gradingScale: 'Pass / Fail / Conditional',
-    passingThreshold: 'Pass — all NFPA 96 (2024) requirements met',
+    passingThreshold: 'Pass — all NFPA 96 requirements met',
     inspectionFrequency: 'Annual + complaint-triggered',
     transparencyLevel: 'medium',
     agencyWebsite: 'https://www.fresno.gov/fire/',
     agencyPhone: '(559) 621-4100',
     publicResultsUrl: 'https://www.fresno.gov/fire/fire-prevention/',
-    nfpaAdoption: 'NFPA 96 (2024) — enforced per California Fire Code. Verify specific requirements with your AHJ.',
+    nfpaAdoption: 'NFPA 96 — enforced per California Fire Code. Verify specific requirements with your AHJ.',
     lastVerified: '2026-02-01',
   },
   // ── MERCED COUNTY ─────────────────────────────
@@ -109,7 +109,7 @@ export const JURISDICTION_DATABASE: JurisdictionScore[] = [
     agencyWebsite: 'https://www.cityofmerced.org/depts/fire/',
     agencyPhone: '(209) 388-7440',
     publicResultsUrl: 'https://www.cityofmerced.org/depts/fire/',
-    nfpaAdoption: 'NFPA 96 (2024) — enforced per California Fire Code. Verify specific requirements with your AHJ.',
+    nfpaAdoption: 'NFPA 96 — enforced per California Fire Code. Verify specific requirements with your AHJ.',
     lastVerified: '2026-02-01',
   },
   // ── STANISLAUS COUNTY ─────────────────────────
@@ -146,7 +146,7 @@ export const JURISDICTION_DATABASE: JurisdictionScore[] = [
     agencyWebsite: 'https://www.modestogov.com/fire',
     agencyPhone: '(209) 342-9300',
     publicResultsUrl: 'https://www.modestogov.com/fire',
-    nfpaAdoption: 'NFPA 96 (2024) — enforced per California Fire Code. Verify specific requirements with your AHJ.',
+    nfpaAdoption: 'NFPA 96 — enforced per California Fire Code. Verify specific requirements with your AHJ.',
     lastVerified: '2026-02-01',
   },
   // ── MARIPOSA COUNTY ───────────────────────────
@@ -174,7 +174,7 @@ export const JURISDICTION_DATABASE: JurisdictionScore[] = [
     agencyWebsite: 'https://www.fire.ca.gov/locations/madera-mariposa-merced-unit',
     agencyPhone: '(209) 966-3622',
     publicResultsUrl: 'https://www.fire.ca.gov/',
-    nfpaAdoption: 'NFPA 96 (2024) — enforced per California Fire Code',
+    nfpaAdoption: 'NFPA 96 — enforced per California Fire Code',
     lastVerified: '2026-02-01',
   },
   // ── NPS (YOSEMITE — FEDERAL OVERLAY) ────────────
@@ -203,7 +203,7 @@ export const JURISDICTION_DATABASE: JurisdictionScore[] = [
     agencyWebsite: 'https://www.nps.gov/yose/',
     agencyPhone: '(209) 372-0200',
     publicResultsUrl: 'https://www.nps.gov/yose/',
-    nfpaAdoption: 'NFPA 96 (2024) + NPS Director\'s Order 58 (structural fire)',
+    nfpaAdoption: 'NFPA 96 + NPS Director\'s Order 58 (structural fire)',
     lastVerified: '2026-02-01',
   },
 ];

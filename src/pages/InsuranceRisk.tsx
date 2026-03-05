@@ -368,7 +368,7 @@ async function generateInsuranceReportPDF(result: InsuranceRiskResult, locationL
     { label: 'Hood & Duct Cleaning Schedule', ref: 'NFPA 96-2024', factor: fireCat?.factors.find(f => f.name.includes('Hood cleaning')) },
     { label: 'Fire Extinguisher Inspection', ref: 'NFPA 10-2025', factor: fireCat?.factors.find(f => f.name.includes('Fire extinguisher')) },
     { label: 'Fire Alarm System', ref: 'NFPA 72-2025', factor: fireCat?.factors.find(f => f.name.includes('Fire alarm')) },
-    { label: 'Automatic Shutoff Systems', ref: 'NFPA 96 (2024) Chapter 10', factor: fireCat?.factors.find(f => f.name.includes('shutoff')) },
+    { label: 'Automatic Shutoff Systems', ref: 'NFPA 96 Chapter 10', factor: fireCat?.factors.find(f => f.name.includes('shutoff')) },
   ];
 
   for (const pse of pseItems) {
@@ -765,7 +765,7 @@ export function InsuranceRisk() {
             <p className="text-xs text-gray-600 mb-2">Fire is the #1 underwriting concern for commercial kitchens. Carriers evaluate:</p>
             <ul className="text-xs text-gray-600 space-y-1">
               <li className="flex items-start gap-1.5"><CheckCircle className="h-3 w-3 text-red-400 mt-0.5 flex-shrink-0" /> ANSUL/UL 300 wet chemical systems installed and inspected</li>
-              <li className="flex items-start gap-1.5"><CheckCircle className="h-3 w-3 text-red-400 mt-0.5 flex-shrink-0" /> Hood and duct cleaning per NFPA 96 (2024) schedule</li>
+              <li className="flex items-start gap-1.5"><CheckCircle className="h-3 w-3 text-red-400 mt-0.5 flex-shrink-0" /> Hood and duct cleaning per NFPA 96 schedule</li>
               <li className="flex items-start gap-1.5"><CheckCircle className="h-3 w-3 text-red-400 mt-0.5 flex-shrink-0" /> Fire suppression semi-annual inspection (NFPA 17A, 2025 Edition)</li>
               <li className="flex items-start gap-1.5"><CheckCircle className="h-3 w-3 text-red-400 mt-0.5 flex-shrink-0" /> Fire extinguisher annual inspection (NFPA 10, 2025 Edition)</li>
             </ul>

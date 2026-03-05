@@ -103,7 +103,7 @@ export function NotificationDropdown({ isOpen, onClose, demoMode = false }: Noti
       {
         id: 'demo-5',
         icon: 'success',
-        message: 'Vendor upload received — ABC Fire Protection',
+        message: 'Vendor upload received',
         time: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
         read: false,
         link: '/vendors',

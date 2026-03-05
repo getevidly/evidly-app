@@ -81,6 +81,9 @@ export default function UserProvisioning() {
   const [auditLog, setAuditLog] = useState<AuditRow[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Detail drawer
+  const [selectedUser, setSelectedUser] = useState<UserRow | null>(null);
+
   // Filters
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
@@ -217,7 +220,7 @@ export default function UserProvisioning() {
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                 <thead>
                   <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
-                    {['Name', 'Email', 'Role', 'Organization', 'Status', 'Last Active', 'Actions'].map(h => (
+                    {['Name', 'Email', 'Role', 'Organization', 'Status', 'Last Active'].map(h => (
                       <th key={h} style={{ textAlign: 'left', padding: '10px 14px', color: TEXT_SEC, fontWeight: 600, fontSize: 11, textTransform: 'uppercase' }}>{h}</th>
                     ))}
                   </tr>
@@ -227,7 +230,7 @@ export default function UserProvisioning() {
                     const org = orgs.find(o => o.id === u.organization_id);
                     const roleColor = ROLE_COLORS[u.role] || TEXT_SEC;
                     return (
-                      <tr key={u.id} style={{ borderBottom: `1px solid ${BORDER}` }}
+                      <tr key={u.id} onClick={() => setSelectedUser(u)} style={{ borderBottom: `1px solid ${BORDER}`, cursor: 'pointer' }}
                         onMouseEnter={e => e.currentTarget.style.background = '#F9FAFB'}
                         onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                         <td style={{ padding: '10px 14px', color: NAVY, fontWeight: 600 }}>{u.full_name || '\u2014'}</td>
@@ -245,20 +248,6 @@ export default function UserProvisioning() {
                         </td>
                         <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>
                           {u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleDateString() : 'Never'}
-                        </td>
-                        <td style={{ padding: '10px 14px', display: 'flex', gap: 6 }}>
-                          <button
-                            onClick={() => alert(`[Demo] Edit user: ${u.email}`)}
-                            style={{ padding: '4px 10px', background: '#F9FAFB', border: `1px solid ${BORDER}`, borderRadius: 4, color: GOLD, fontSize: 11, fontWeight: 600, cursor: 'pointer' }}
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => alert(`[Demo] Suspend user: ${u.email}`)}
-                            style={{ padding: '4px 10px', background: '#FEF2F2', border: 'none', borderRadius: 4, color: '#DC2626', fontSize: 11, fontWeight: 600, cursor: 'pointer' }}
-                          >
-                            Suspend
-                          </button>
                         </td>
                       </tr>
                     );
@@ -402,6 +391,138 @@ export default function UserProvisioning() {
           )}
         </div>
       )}
+
+      {/* User Detail Drawer */}
+      {selectedUser && (
+        <UserDetailDrawer
+          user={selectedUser}
+          org={orgs.find(o => o.id === selectedUser.organization_id) || null}
+          onClose={() => setSelectedUser(null)}
+        />
+      )}
     </div>
+  );
+}
+
+// ── User Detail Drawer ──
+
+function UserDetailDrawer({ user, org, onClose }: { user: UserRow; org: OrgRow | null; onClose: () => void }) {
+  const [drawerTab, setDrawerTab] = useState('Profile');
+  const [events, setEvents] = useState<any[]>([]);
+  const [eventsLoading, setEventsLoading] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      setEventsLoading(true);
+      const { data } = await supabase
+        .from('admin_event_log')
+        .select('id, event_time, level, message')
+        .ilike('message', `%${user.email}%`)
+        .order('event_time', { ascending: false })
+        .limit(50);
+      if (data) setEvents(data);
+      setEventsLoading(false);
+    })();
+  }, [user.email]);
+
+  const roleColor = ROLE_COLORS[user.role] || TEXT_SEC;
+
+  const tabBtn = (t: string): React.CSSProperties => ({
+    padding: '10px 14px', fontSize: 13, fontWeight: 600, border: 'none', background: 'none', cursor: 'pointer',
+    borderBottom: drawerTab === t ? `2px solid ${NAVY}` : '2px solid transparent', marginBottom: -1,
+    color: drawerTab === t ? NAVY : TEXT_MUTED, whiteSpace: 'nowrap',
+  });
+
+  return (
+    <>
+      <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.2)', zIndex: 40 }} />
+      <div style={{
+        position: 'fixed', top: 0, right: 0, bottom: 0, width: 580, maxWidth: '100vw',
+        background: '#FFFFFF', zIndex: 50, boxShadow: '-4px 0 24px rgba(0,0,0,0.12)',
+        display: 'flex', flexDirection: 'column', overflow: 'hidden',
+      }}>
+        {/* Header */}
+        <div style={{ padding: '20px 24px', borderBottom: `1px solid ${BORDER}`, flexShrink: 0 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div>
+              <h2 style={{ fontSize: 18, fontWeight: 700, color: NAVY, margin: 0 }}>{user.full_name || user.email}</h2>
+              <div style={{ fontSize: 13, color: TEXT_SEC, marginTop: 2 }}>{user.email}</div>
+              <div style={{ display: 'flex', gap: 6, marginTop: 6 }}>
+                <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 700, background: `${roleColor}15`, color: roleColor }}>
+                  {user.role.replace(/_/g, ' ')}
+                </span>
+                {org && <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 600, background: '#F3F4F6', color: TEXT_SEC }}>{org.name}</span>}
+              </div>
+            </div>
+            <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 22, color: TEXT_MUTED, cursor: 'pointer' }}>{'\u00D7'}</button>
+          </div>
+        </div>
+
+        {/* Tabs */}
+        <div style={{ display: 'flex', borderBottom: `1px solid ${BORDER}`, padding: '0 24px', flexShrink: 0 }}>
+          {['Profile', 'Activity'].map(t => (
+            <button key={t} onClick={() => setDrawerTab(t)} style={tabBtn(t)}>{t}</button>
+          ))}
+        </div>
+
+        {/* Content */}
+        <div style={{ flex: 1, overflowY: 'auto', padding: '20px 24px' }}>
+          {drawerTab === 'Profile' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {([
+                ['Full Name', user.full_name],
+                ['Email', user.email],
+                ['Role', user.role.replace(/_/g, ' ')],
+                ['Organization', org?.name],
+                ['Status', 'Active'],
+                ['Last Active', user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleString() : 'Never'],
+                ['Account Created', new Date(user.created_at).toLocaleDateString()],
+              ] as [string, string | null | undefined][]).map(([label, value]) => (
+                <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #F3F4F6' }}>
+                  <span style={{ fontSize: 12, color: TEXT_SEC, fontWeight: 600 }}>{label}</span>
+                  <span style={{ fontSize: 13, color: NAVY, fontWeight: 500 }}>{value || '\u2014'}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {drawerTab === 'Activity' && (
+            eventsLoading ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {Array.from({ length: 5 }).map((_, i) => <EmptyState key={i} icon="" title="" subtitle="" />).slice(0, 0)}
+                <div style={{ width: '100%', height: 20, background: '#E5E7EB', borderRadius: 6, animation: 'pulse 1.5s ease-in-out infinite' }} />
+              </div>
+            ) : events.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: 30, color: TEXT_MUTED, fontSize: 13 }}>No activity recorded.</div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                {events.map((ev: any) => (
+                  <div key={ev.id} style={{ padding: '6px 0', borderBottom: '1px solid #F3F4F6', fontSize: 12 }}>
+                    <span style={{ color: TEXT_SEC }}>{new Date(ev.event_time).toLocaleString()}</span>
+                    <span style={{ marginLeft: 8, color: NAVY }}>{ev.message}</span>
+                  </div>
+                ))}
+              </div>
+            )
+          )}
+        </div>
+
+        {/* Footer */}
+        <div style={{ padding: '14px 24px', borderTop: `1px solid ${BORDER}`, flexShrink: 0, display: 'flex', gap: 10 }}>
+          <button onClick={() => alert('[Demo] Edit user')} style={{ padding: '8px 16px', borderRadius: 8, border: 'none', background: NAVY, color: '#fff', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>
+            Edit User
+          </button>
+          <button onClick={() => alert('[Demo] Reset password')} style={{ padding: '8px 16px', borderRadius: 8, border: `1px solid ${BORDER}`, background: '#F9FAFB', color: TEXT_SEC, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+            Reset Password
+          </button>
+          <button onClick={() => alert('[Demo] Emulate user')} style={{ padding: '8px 16px', borderRadius: 8, border: `1px solid ${BORDER}`, background: '#FAF7F2', color: NAVY, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+            Emulate
+          </button>
+          <button onClick={() => alert('[Demo] Suspend user')} style={{ padding: '8px 16px', borderRadius: 8, border: '1px solid #FECACA', background: '#FEF2F2', color: '#DC2626', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+            Suspend
+          </button>
+        </div>
+      </div>
+    </>
   );
 }

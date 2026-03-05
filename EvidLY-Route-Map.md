@@ -1,5 +1,18 @@
 # EvidLY Route Map
 
+## Leaderboard Routes (LEADERBOARD-BUILD-02)
+
+| Route | Component | Auth | Description |
+|-------|-----------|------|-------------|
+| `/leaderboard` | `Leaderboard.tsx` | Protected | Production leaderboard — queries `v_location_leaderboard` view, shows only opted-in orgs, gamified UI with XP/badges/podium |
+| `/leaderboard-preview` | `LeaderboardPreview.tsx` | Public | Marketing preview — hardcoded demo data, zero Supabase calls, sticky CTA banner + bottom CTA |
+
+### Settings Integration
+- Opt-in toggle in Settings > Privacy tab (owner_operator only)
+- Writes `leaderboard_opted_in` to `organizations` table
+
+---
+
 ## Fire Safety & Equipment Routes (FS-1)
 
 | Route | Component | Description |

@@ -60,6 +60,7 @@ RETURNS TRIGGER AS $$
 BEGIN NEW.updated_at = now(); RETURN NEW; END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trg_corrective_action_templates_updated_at ON corrective_action_templates;
 CREATE TRIGGER trg_corrective_action_templates_updated_at
   BEFORE UPDATE ON corrective_action_templates
   FOR EACH ROW EXECUTE FUNCTION update_corrective_action_templates_updated_at();
@@ -69,6 +70,7 @@ RETURNS TRIGGER AS $$
 BEGIN NEW.updated_at = now(); RETURN NEW; END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trg_corrective_actions_updated_at ON corrective_actions;
 CREATE TRIGGER trg_corrective_actions_updated_at
   BEFORE UPDATE ON corrective_actions
   FOR EACH ROW EXECUTE FUNCTION update_corrective_actions_updated_at();
@@ -78,29 +80,37 @@ ALTER TABLE corrective_action_templates ENABLE ROW LEVEL SECURITY;
 ALTER TABLE corrective_actions ENABLE ROW LEVEL SECURITY;
 
 -- Templates: system templates (org_id IS NULL) readable by all, org templates by org members
+DROP POLICY IF EXISTS "templates_select" ON corrective_action_templates;
 CREATE POLICY "templates_select" ON corrective_action_templates
   FOR SELECT USING (organization_id IS NULL OR organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
 
+DROP POLICY IF EXISTS "templates_insert" ON corrective_action_templates;
 CREATE POLICY "templates_insert" ON corrective_action_templates
   FOR INSERT WITH CHECK (organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
 
+DROP POLICY IF EXISTS "templates_update" ON corrective_action_templates;
 CREATE POLICY "templates_update" ON corrective_action_templates
   FOR UPDATE USING (organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
 
 -- Corrective actions: org-scoped
+DROP POLICY IF EXISTS "ca_select" ON corrective_actions;
 CREATE POLICY "ca_select" ON corrective_actions
   FOR SELECT USING (organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
 
+DROP POLICY IF EXISTS "ca_insert" ON corrective_actions;
 CREATE POLICY "ca_insert" ON corrective_actions
   FOR INSERT WITH CHECK (organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
 
+DROP POLICY IF EXISTS "ca_update" ON corrective_actions;
 CREATE POLICY "ca_update" ON corrective_actions
   FOR UPDATE USING (organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
 
 -- Service role bypass
+DROP POLICY IF EXISTS "templates_service_all" ON corrective_action_templates;
 CREATE POLICY "templates_service_all" ON corrective_action_templates
   FOR ALL USING (auth.role() = 'service_role');
 
+DROP POLICY IF EXISTS "ca_service_all" ON corrective_actions;
 CREATE POLICY "ca_service_all" ON corrective_actions
   FOR ALL USING (auth.role() = 'service_role');
 

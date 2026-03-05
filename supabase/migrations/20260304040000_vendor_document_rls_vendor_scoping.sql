@@ -7,6 +7,8 @@
 -- FIX: Add linked_vendor_id to user_profiles. Replace vendor_documents
 -- SELECT/INSERT/UPDATE policies with vendor-scoping for vendor users.
 -- Internal org users retain full org-scoped access.
+-- NOTE: vendor_documents table may not exist yet (created in 20260407).
+-- Steps 2-5 are guarded with IF EXISTS and run only if table is present.
 -- ══════════════════════════════════════════════════════════════════════
 
 -- ── Step 1: Add linked_vendor_id to user_profiles ─────────────────
@@ -24,138 +26,108 @@ DO $$ BEGIN
 END $$;
 
 
--- ── Step 2: Replace vendor_documents SELECT policy ────────────────
--- Internal org users (linked_vendor_id IS NULL): org-scoped access (unchanged)
--- Vendor-portal users (linked_vendor_id IS NOT NULL): restricted to own vendor_id
-DROP POLICY IF EXISTS vendor_documents_org_select ON vendor_documents;
-
-CREATE POLICY vendor_documents_org_select ON vendor_documents
-  FOR SELECT USING (
-    -- Internal org users: full org access
-    (
-      EXISTS (
-        SELECT 1 FROM user_profiles
-        WHERE id = auth.uid()
-          AND organization_id = vendor_documents.organization_id
-          AND linked_vendor_id IS NULL
-      )
-    )
-    OR
-    -- Vendor-portal users: only their own vendor docs
-    (
-      EXISTS (
-        SELECT 1 FROM user_profiles
-        WHERE id = auth.uid()
-          AND linked_vendor_id = vendor_documents.vendor_id
-      )
-    )
-    OR
-    -- Service role bypass
-    (auth.role() = 'service_role')
-  );
-
-
--- ── Step 3: Replace vendor_documents INSERT policy ────────────────
-DROP POLICY IF EXISTS vendor_documents_org_insert ON vendor_documents;
-
-CREATE POLICY vendor_documents_org_insert ON vendor_documents
-  FOR INSERT WITH CHECK (
-    -- Internal org users
-    (
-      EXISTS (
-        SELECT 1 FROM user_profiles
-        WHERE id = auth.uid()
-          AND organization_id = vendor_documents.organization_id
-          AND linked_vendor_id IS NULL
-      )
-    )
-    OR
-    -- Vendor users: only insert for their own vendor_id
-    (
-      EXISTS (
-        SELECT 1 FROM user_profiles
-        WHERE id = auth.uid()
-          AND linked_vendor_id = vendor_documents.vendor_id
-      )
-    )
-    OR
-    (auth.role() = 'service_role')
-  );
-
-
--- ── Step 4: Replace vendor_documents UPDATE policy ────────────────
-DROP POLICY IF EXISTS vendor_documents_org_update ON vendor_documents;
-
-CREATE POLICY vendor_documents_org_update ON vendor_documents
-  FOR UPDATE USING (
-    -- Internal org users
-    (
-      EXISTS (
-        SELECT 1 FROM user_profiles
-        WHERE id = auth.uid()
-          AND organization_id = vendor_documents.organization_id
-          AND linked_vendor_id IS NULL
-      )
-    )
-    OR
-    -- Vendor users: only update their own docs
-    (
-      EXISTS (
-        SELECT 1 FROM user_profiles
-        WHERE id = auth.uid()
-          AND linked_vendor_id = vendor_documents.vendor_id
-      )
-    )
-    OR
-    (auth.role() = 'service_role')
-  );
-
-
--- ── Step 5: Fix vendor_document_notifications SELECT ──────────────
--- Vendor users should only see notifications for their own vendor docs
-DROP POLICY IF EXISTS vendor_doc_notifications_org_select ON vendor_document_notifications;
-
+-- ── Steps 2-5: vendor_documents and vendor_document_notifications policies ──
+-- Only run if vendor_documents table exists (may be created in a later migration)
 DO $$ BEGIN
   IF EXISTS (
-    SELECT 1 FROM pg_policies
-    WHERE tablename = 'vendor_document_notifications' AND policyname = 'vendor_doc_notifications_org_select'
+    SELECT 1 FROM information_schema.tables
+    WHERE table_schema = 'public' AND table_name = 'vendor_documents'
   ) THEN
-    RAISE NOTICE 'Policy already replaced';
+    -- Step 2: Replace vendor_documents SELECT policy
+    EXECUTE 'DROP POLICY IF EXISTS vendor_documents_org_select ON vendor_documents';
+    EXECUTE '
+      CREATE POLICY vendor_documents_org_select ON vendor_documents
+        FOR SELECT USING (
+          (EXISTS (
+            SELECT 1 FROM user_profiles
+            WHERE id = auth.uid()
+              AND organization_id = vendor_documents.organization_id
+              AND linked_vendor_id IS NULL
+          ))
+          OR
+          (EXISTS (
+            SELECT 1 FROM user_profiles
+            WHERE id = auth.uid()
+              AND linked_vendor_id = vendor_documents.vendor_id
+          ))
+          OR
+          (auth.role() = ''service_role'')
+        )';
+
+    -- Step 3: Replace vendor_documents INSERT policy
+    EXECUTE 'DROP POLICY IF EXISTS vendor_documents_org_insert ON vendor_documents';
+    EXECUTE '
+      CREATE POLICY vendor_documents_org_insert ON vendor_documents
+        FOR INSERT WITH CHECK (
+          (EXISTS (
+            SELECT 1 FROM user_profiles
+            WHERE id = auth.uid()
+              AND organization_id = vendor_documents.organization_id
+              AND linked_vendor_id IS NULL
+          ))
+          OR
+          (EXISTS (
+            SELECT 1 FROM user_profiles
+            WHERE id = auth.uid()
+              AND linked_vendor_id = vendor_documents.vendor_id
+          ))
+          OR
+          (auth.role() = ''service_role'')
+        )';
+
+    -- Step 4: Replace vendor_documents UPDATE policy
+    EXECUTE 'DROP POLICY IF EXISTS vendor_documents_org_update ON vendor_documents';
+    EXECUTE '
+      CREATE POLICY vendor_documents_org_update ON vendor_documents
+        FOR UPDATE USING (
+          (EXISTS (
+            SELECT 1 FROM user_profiles
+            WHERE id = auth.uid()
+              AND organization_id = vendor_documents.organization_id
+              AND linked_vendor_id IS NULL
+          ))
+          OR
+          (EXISTS (
+            SELECT 1 FROM user_profiles
+            WHERE id = auth.uid()
+              AND linked_vendor_id = vendor_documents.vendor_id
+          ))
+          OR
+          (auth.role() = ''service_role'')
+        )';
+
+    RAISE NOTICE 'Updated vendor_documents RLS policies with vendor scoping';
   ELSE
-    -- Try dropping any existing policy name variants
-    BEGIN
-      EXECUTE 'DROP POLICY IF EXISTS vendor_document_notifications_select ON vendor_document_notifications';
-    EXCEPTION WHEN OTHERS THEN NULL;
-    END;
+    RAISE NOTICE 'vendor_documents table does not exist yet — skipping policy updates';
+  END IF;
+
+  -- Step 5: Fix vendor_document_notifications SELECT
+  IF EXISTS (
+    SELECT 1 FROM information_schema.tables
+    WHERE table_schema = 'public' AND table_name = 'vendor_document_notifications'
+  ) THEN
+    EXECUTE 'DROP POLICY IF EXISTS vendor_doc_notifications_org_select ON vendor_document_notifications';
+    EXECUTE 'DROP POLICY IF EXISTS vendor_document_notifications_select ON vendor_document_notifications';
+    EXECUTE '
+      CREATE POLICY vendor_doc_notifications_vendor_scoped ON vendor_document_notifications
+        FOR SELECT USING (
+          (EXISTS (
+            SELECT 1 FROM user_profiles
+            WHERE id = auth.uid()
+              AND organization_id = vendor_document_notifications.organization_id
+              AND linked_vendor_id IS NULL
+          ))
+          OR
+          (EXISTS (
+            SELECT 1 FROM user_profiles
+            WHERE id = auth.uid()
+              AND linked_vendor_id = vendor_document_notifications.vendor_id
+          ))
+          OR
+          (auth.role() = ''service_role'')
+        )';
+    RAISE NOTICE 'Updated vendor_document_notifications RLS with vendor scoping';
+  ELSE
+    RAISE NOTICE 'vendor_document_notifications table does not exist yet — skipping';
   END IF;
 END $$;
-
-CREATE POLICY vendor_doc_notifications_vendor_scoped ON vendor_document_notifications
-  FOR SELECT USING (
-    -- Internal org users: full org access
-    (
-      EXISTS (
-        SELECT 1 FROM user_profiles
-        WHERE id = auth.uid()
-          AND organization_id = vendor_document_notifications.organization_id
-          AND linked_vendor_id IS NULL
-      )
-    )
-    OR
-    -- Vendor users: only their own vendor notifications
-    (
-      EXISTS (
-        SELECT 1 FROM user_profiles
-        WHERE id = auth.uid()
-          AND linked_vendor_id = vendor_document_notifications.vendor_id
-      )
-    )
-    OR
-    (auth.role() = 'service_role')
-  );
-
--- ══════════════════════════════════════════════════════════════════════
--- VERIFICATION: After running, confirm with:
---   SELECT policyname, cmd, qual FROM pg_policies WHERE tablename = 'vendor_documents';
---   SELECT policyname, cmd, qual FROM pg_policies WHERE tablename = 'vendor_document_notifications';
--- ══════════════════════════════════════════════════════════════════════

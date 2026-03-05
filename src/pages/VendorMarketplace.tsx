@@ -439,7 +439,7 @@ function ProductionMarketplace() {
                     type="text"
                     value={inviteForm.companyName}
                     onChange={e => setInviteForm(prev => ({ ...prev, companyName: e.target.value }))}
-                    placeholder="e.g., ABC Fire Protection"
+                    placeholder="e.g., Hood Cleaning Vendor"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20"
                   />
                 </div>

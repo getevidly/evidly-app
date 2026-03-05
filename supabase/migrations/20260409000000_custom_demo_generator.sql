@@ -67,11 +67,47 @@ CREATE TABLE IF NOT EXISTS demo_sessions (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Ensure columns exist (table may have been created by an earlier migration with fewer columns)
+ALTER TABLE demo_sessions ADD COLUMN IF NOT EXISTS created_by UUID REFERENCES auth.users(id);
+ALTER TABLE demo_sessions ADD COLUMN IF NOT EXISTS created_by_type TEXT;
+ALTER TABLE demo_sessions ADD COLUMN IF NOT EXISTS sales_rep_email TEXT;
+ALTER TABLE demo_sessions ADD COLUMN IF NOT EXISTS prospect_name TEXT;
+ALTER TABLE demo_sessions ADD COLUMN IF NOT EXISTS prospect_email TEXT;
+ALTER TABLE demo_sessions ADD COLUMN IF NOT EXISTS prospect_phone TEXT;
+ALTER TABLE demo_sessions ADD COLUMN IF NOT EXISTS company_name TEXT;
+ALTER TABLE demo_sessions ADD COLUMN IF NOT EXISTS company_type TEXT;
+ALTER TABLE demo_sessions ADD COLUMN IF NOT EXISTS location_id UUID;
+ALTER TABLE demo_sessions ADD COLUMN IF NOT EXISTS address TEXT;
+ALTER TABLE demo_sessions ADD COLUMN IF NOT EXISTS city TEXT;
+ALTER TABLE demo_sessions ADD COLUMN IF NOT EXISTS state TEXT DEFAULT 'CA';
+ALTER TABLE demo_sessions ADD COLUMN IF NOT EXISTS zip_code TEXT;
+ALTER TABLE demo_sessions ADD COLUMN IF NOT EXISTS health_authority TEXT;
+ALTER TABLE demo_sessions ADD COLUMN IF NOT EXISTS fire_authority TEXT;
+ALTER TABLE demo_sessions ADD COLUMN IF NOT EXISTS jurisdiction_config_id UUID;
+ALTER TABLE demo_sessions ADD COLUMN IF NOT EXISTS num_locations INTEGER DEFAULT 1;
+ALTER TABLE demo_sessions ADD COLUMN IF NOT EXISTS operation_type TEXT DEFAULT 'moderate';
+ALTER TABLE demo_sessions ADD COLUMN IF NOT EXISTS demo_duration_days INTEGER DEFAULT 14;
+ALTER TABLE demo_sessions ADD COLUMN IF NOT EXISTS include_insights JSONB;
+ALTER TABLE demo_sessions ADD COLUMN IF NOT EXISTS status TEXT;
+ALTER TABLE demo_sessions ADD COLUMN IF NOT EXISTS scheduled_at TIMESTAMPTZ;
+ALTER TABLE demo_sessions ADD COLUMN IF NOT EXISTS calendly_event_url TEXT;
+ALTER TABLE demo_sessions ADD COLUMN IF NOT EXISTS assigned_rep_email TEXT;
+ALTER TABLE demo_sessions ADD COLUMN IF NOT EXISTS expires_at TIMESTAMPTZ;
+ALTER TABLE demo_sessions ADD COLUMN IF NOT EXISTS converted_at TIMESTAMPTZ;
+ALTER TABLE demo_sessions ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+ALTER TABLE demo_sessions ADD COLUMN IF NOT EXISTS assigned_plan TEXT;
+ALTER TABLE demo_sessions ADD COLUMN IF NOT EXISTS total_logins INTEGER DEFAULT 0;
+ALTER TABLE demo_sessions ADD COLUMN IF NOT EXISTS pages_visited JSONB DEFAULT '[]';
+ALTER TABLE demo_sessions ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
+ALTER TABLE demo_sessions ADD COLUMN IF NOT EXISTS county TEXT;
+
 ALTER TABLE demo_sessions ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users see own demo" ON demo_sessions;
 CREATE POLICY "Users see own demo" ON demo_sessions
   FOR SELECT USING (created_by = auth.uid() OR prospect_email = (SELECT email FROM auth.users WHERE id = auth.uid()));
 
+DROP POLICY IF EXISTS "Admins see all demos" ON demo_sessions;
 CREATE POLICY "Admins see all demos" ON demo_sessions
   FOR SELECT USING (
     EXISTS (
@@ -81,9 +117,11 @@ CREATE POLICY "Admins see all demos" ON demo_sessions
     )
   );
 
+DROP POLICY IF EXISTS "Authenticated users can create demos" ON demo_sessions;
 CREATE POLICY "Authenticated users can create demos" ON demo_sessions
   FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "Admins can update demos" ON demo_sessions;
 CREATE POLICY "Admins can update demos" ON demo_sessions
   FOR UPDATE USING (
     EXISTS (
@@ -105,6 +143,7 @@ CREATE TABLE IF NOT EXISTS demo_generated_data (
 
 ALTER TABLE demo_generated_data ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Admins manage demo data" ON demo_generated_data;
 CREATE POLICY "Admins manage demo data" ON demo_generated_data
   FOR ALL USING (
     EXISTS (

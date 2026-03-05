@@ -56,7 +56,7 @@ export function FacilitiesDashboard() {
       lastService: 'Aug 10, 2025',
       nextDue: 'Feb 10, 2026',
       status: 'overdue',
-      vendor: 'Valley Fire Systems'
+      vendor: 'Your fire suppression vendor'
     },
     {
       id: '3',
@@ -65,7 +65,7 @@ export function FacilitiesDashboard() {
       lastService: 'Nov 1, 2025',
       nextDue: 'May 1, 2026',
       status: 'on_track',
-      vendor: 'ABC Fire Protection'
+      vendor: 'Your fire extinguisher vendor'
     },
     {
       id: '4',
@@ -90,7 +90,7 @@ export function FacilitiesDashboard() {
   const [vendorActions] = useState<VendorAction[]>([
     {
       id: '1',
-      vendor: 'Valley Fire Systems',
+      vendor: 'Your fire suppression vendor',
       message: 'Fire Suppression OVERDUE. Contact vendor to schedule.',
       link: '/vendors',
       priority: 'high'
@@ -104,7 +104,7 @@ export function FacilitiesDashboard() {
     },
     {
       id: '3',
-      vendor: 'ABC Fire Protection',
+      vendor: 'Your fire extinguisher vendor',
       message: 'COI expires Mar 15. Request updated certificate.',
       link: '/vendors',
       priority: 'medium'

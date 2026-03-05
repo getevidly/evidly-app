@@ -25,3 +25,7 @@ dist-ssr
 .claude/settings.local.json
 .vercel
 nul
+
+# Sanity Studio
+studio/node_modules
+studio/dist

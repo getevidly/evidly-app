@@ -6,8 +6,6 @@
 -- 3. New equipment types for backflow, grease interceptor, and solid-fuel
 -- ============================================================================
 
-BEGIN;
-
 -- ─── 1. Grease Trap / FOG Compliance Tracking ──────────────────────────
 
 CREATE TABLE IF NOT EXISTS grease_trap_services (
@@ -118,16 +116,16 @@ BEGIN
       true
     ) RETURNING id INTO v_template_id;
 
-    -- Insert checklist items
-    INSERT INTO checklist_template_items (template_id, item_text, authority_note, pillar, "order") VALUES
-      (v_template_id, 'Dedicated exhaust system inspection', 'Verify solid-fuel exhaust is not shared with standard hoods — NFPA 96 §14.4', 'facility_safety', 1),
-      (v_template_id, 'Spark arrestor inspection', 'Inspect spark arrestor for damage, blockage, and proper installation — NFPA 96 §14.5', 'facility_safety', 2),
-      (v_template_id, 'Grease removal device rated for solid fuel', 'Confirm grease removal device is listed for solid-fuel applications — NFPA 96 §14.6', 'facility_safety', 3),
-      (v_template_id, 'Ash disposal protocol documented', 'Verify written ash disposal procedure exists and is followed — NFPA 96 §14.7', 'facility_safety', 4),
-      (v_template_id, 'Clearance to combustibles verified', 'Measure and document clearances from solid-fuel appliance to combustible materials — NFPA 96 §14.8', 'facility_safety', 5),
-      (v_template_id, 'Creosote inspection (separate from grease)', 'Inspect exhaust system for creosote buildup — requires separate inspection from standard grease — NFPA 96 §14.9', 'facility_safety', 6),
-      (v_template_id, 'Monthly hood cleaning verification', 'Confirm hood cleaning was performed within the last 30 days — NFPA 96 Table 12.4 requires monthly for solid-fuel', 'facility_safety', 7),
-      (v_template_id, 'Solid-fuel storage area inspection', 'Verify fuel storage meets clearance requirements and is properly contained — NFPA 96 §14.3', 'facility_safety', 8);
+    -- Insert checklist items (title + item_type are NOT NULL on the original table)
+    INSERT INTO checklist_template_items (template_id, title, item_text, item_type, authority_note, pillar, "order") VALUES
+      (v_template_id, 'Dedicated exhaust system inspection', 'Verify solid-fuel exhaust is not shared with standard hoods — NFPA 96 §14.4', 'check', 'NFPA 96 §14.4', 'facility_safety', 1),
+      (v_template_id, 'Spark arrestor inspection', 'Inspect spark arrestor for damage, blockage, and proper installation — NFPA 96 §14.5', 'check', 'NFPA 96 §14.5', 'facility_safety', 2),
+      (v_template_id, 'Grease removal device rated for solid fuel', 'Confirm grease removal device is listed for solid-fuel applications — NFPA 96 §14.6', 'check', 'NFPA 96 §14.6', 'facility_safety', 3),
+      (v_template_id, 'Ash disposal protocol documented', 'Verify written ash disposal procedure exists and is followed — NFPA 96 §14.7', 'check', 'NFPA 96 §14.7', 'facility_safety', 4),
+      (v_template_id, 'Clearance to combustibles verified', 'Measure and document clearances from solid-fuel appliance to combustible materials — NFPA 96 §14.8', 'check', 'NFPA 96 §14.8', 'facility_safety', 5),
+      (v_template_id, 'Creosote inspection (separate from grease)', 'Inspect exhaust system for creosote buildup — requires separate inspection from standard grease — NFPA 96 §14.9', 'check', 'NFPA 96 §14.9', 'facility_safety', 6),
+      (v_template_id, 'Monthly hood cleaning verification', 'Confirm hood cleaning was performed within the last 30 days — NFPA 96 Table 12.4 requires monthly for solid-fuel', 'check', 'NFPA 96 Table 12.4', 'facility_safety', 7),
+      (v_template_id, 'Solid-fuel storage area inspection', 'Verify fuel storage meets clearance requirements and is properly contained — NFPA 96 §14.3', 'check', 'NFPA 96 §14.3', 'facility_safety', 8);
   END IF;
 END $$;
 

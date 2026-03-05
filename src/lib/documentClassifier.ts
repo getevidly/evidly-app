@@ -269,11 +269,11 @@ const DEMO_CLASSIFICATIONS: Record<string, ClassificationResult> = {
     documentType: 'vendor_coi',
     documentLabel: 'Vendor Certificate of Insurance',
     pillar: 'vendor',
-    vendorName: 'Valley Fire Systems',
+    vendorName: 'Fire Suppression Vendor',
     serviceDate: '2026-01-01',
     expiryDate: '2027-01-01',
     confidence: 0.93,
-    summary: 'Certificate of insurance for Valley Fire Systems. General liability $1M/$2M aggregate.',
+    summary: 'Certificate of insurance for fire suppression vendor. General liability $1M/$2M aggregate.',
     suggestedFields: { coverage: '$1M/$2M' },
   },
   business_license: {

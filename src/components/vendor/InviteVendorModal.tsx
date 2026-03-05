@@ -151,7 +151,7 @@ export function InviteVendorModal({
                 type="text"
                 value={form.vendorName}
                 onChange={(e) => setForm(prev => ({ ...prev, vendorName: e.target.value }))}
-                placeholder="e.g., Valley Fire Systems"
+                placeholder="e.g., Acme Hood Cleaning"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
               />
             </div>

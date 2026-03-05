@@ -9,9 +9,9 @@
 // DONE: Fresno County food safety — Major/Minor violations (CalCode). Source: Grand Jury 2023-24.
 // DONE: Merced County food safety — Good/Satisfactory/Unsatisfactory (0-6/7-13/14+). Verified.
 // DONE (partial): Stanislaus County food safety — Major/Minor violations (verified). Full methodology pending JIE crawl.
-// TODO: Verify if Fresno County/City has formally adopted NFPA 96 (2024) or still on prior edition
-// TODO: Verify if Merced County/City has formally adopted NFPA 96 (2024) or still on prior edition
-// TODO: Verify if Stanislaus County / City of Modesto has formally adopted NFPA 96 (2024)
+// TODO: Verify if Fresno County/City has formally adopted NFPA 96 or still on prior edition
+// TODO: Verify if Merced County/City has formally adopted NFPA 96 or still on prior edition
+// TODO: Verify if Stanislaus County / City of Modesto has formally adopted NFPA 96
 // TODO: Research individual fire AHJ grading methodology beyond NFPA 96 pass/fail for each demo jurisdiction
 // TODO: Research Fresno County local requirements added on top of CalCode
 // TODO: Research Merced County local requirements added on top of CalCode

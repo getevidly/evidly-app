@@ -45,7 +45,7 @@ export const demoReferral = {
 // ============================================================
 // Status comes from jurisdiction-verified data only.
 // Food Safety: county health dept grade/status
-// Facility Safety: NFPA 96 (2024) pass/fail
+// Facility Safety: NFPA 96 pass/fail
 // NO numeric overall scores. NO Vendor Compliance pillar.
 // ============================================================
 
@@ -66,15 +66,15 @@ export interface LocationJurisdictionStatus {
 export const LOCATION_JURISDICTION_STATUS: Record<string, LocationJurisdictionStatus> = {
   downtown: {
     foodSafety: { status: 'passing', gradeDisplay: 'Compliant', authority: 'Fresno County DPH', model: 'violation_based' },
-    facilitySafety: { status: 'passing', gradeDisplay: 'Pass', authority: 'NFPA 96 (2024)' },
+    facilitySafety: { status: 'passing', gradeDisplay: 'Pass', authority: 'NFPA 96' },
   },
   airport: {
     foodSafety: { status: 'at_risk', gradeDisplay: 'Satisfactory', authority: 'Merced County DPH', model: 'three_tier_points' },
-    facilitySafety: { status: 'failing', gradeDisplay: 'Fail', authority: 'NFPA 96 (2024)' },
+    facilitySafety: { status: 'failing', gradeDisplay: 'Fail', authority: 'NFPA 96' },
   },
   university: {
     foodSafety: { status: 'failing', gradeDisplay: 'Action Required', authority: 'Stanislaus County DER', model: 'violation_based' },
-    facilitySafety: { status: 'failing', gradeDisplay: 'Fail', authority: 'NFPA 96 (2024)' },
+    facilitySafety: { status: 'failing', gradeDisplay: 'Fail', authority: 'NFPA 96' },
   },
 };
 
@@ -551,7 +551,7 @@ export const needsAttentionItems: NeedsAttentionItem[] = [
   { id: '17', title: '3 Vendor COIs Expired', detail: 'Location 3 — action required', color: 'red', url: '/documents', roles: ['owner_operator', 'facilities_manager'], locationId: '3' },
   { id: '18', title: '2 Food Handler Certs Expired', detail: 'Location 3 — −10 pts Documentation', color: 'red', url: '/training', roles: ['owner_operator', 'kitchen_staff'], locationId: '3' },
   { id: '19', title: 'Pest Control Service Due Soon', detail: 'Pacific Pest — due Mar 1', color: 'amber', url: '/vendors', roles: ['owner_operator', 'facilities_manager'], locationId: '3' },
-  { id: '20', title: 'Exhaust Fan — Bearing Noise Reported', detail: 'Location 2 — monitor at next quarterly service (NFPA 96 (2024) Chapter 7)', color: 'amber', url: '/equipment', roles: ['owner_operator', 'facilities_manager'], locationId: '2' },
+  { id: '20', title: 'Exhaust Fan — Bearing Noise Reported', detail: 'Location 2 — monitor at next quarterly service (NFPA 96 Chapter 7)', color: 'amber', url: '/equipment', roles: ['owner_operator', 'facilities_manager'], locationId: '2' },
 ];
 
 export interface ScoreImpactItem {
@@ -693,7 +693,7 @@ export const marketplaceVendors: MarketplaceVendor[] = [
   // ─── Existing companies (mapped as marketplace listings) ───
   {
     id: 'mv-1', slug: 'abc-fire-protection', companyName: 'ABC Fire Protection',
-    description: 'Full-service commercial kitchen fire protection specialists. IKECA-certified hood cleaning with NFPA 96 (2024) compliance documentation provided after every service. Serving the Central Valley since 2008.',
+    description: 'Full-service commercial kitchen fire protection specialists. IKECA-certified hood cleaning with NFPA 96 compliance documentation provided after every service. Serving the Central Valley since 2008.',
     tier: 'certified', rating: 4.6, reviewCount: 23, yearsInBusiness: 16,
     serviceArea: ['Fresno', 'Clovis', 'Madera', 'Visalia'],
     responseTimeHours: 6, categories: ['Facility Safety'], subcategories: ['Hood Cleaning', 'Fire Extinguisher'],
@@ -707,7 +707,7 @@ export const marketplaceVendors: MarketplaceVendor[] = [
       { type: 'Workers Compensation', verified: true, expirationDate: '2026-09-15' },
     ],
     serviceOfferings: [
-      { name: 'Hood & Duct Cleaning', description: 'Complete kitchen exhaust system cleaning per NFPA 96 (2024) schedule. Includes before/after photos and bare metal verification.', frequencyOptions: ['Monthly', 'Quarterly', 'Semi-Annual'], pricingDisplay: '$350 - $750' },
+      { name: 'Hood & Duct Cleaning', description: 'Complete kitchen exhaust system cleaning per NFPA 96 schedule. Includes before/after photos and bare metal verification.', frequencyOptions: ['Monthly', 'Quarterly', 'Semi-Annual'], pricingDisplay: '$350 - $750' },
       { name: 'Fire Extinguisher Inspection', description: 'Annual inspection, 6-year maintenance, and 12-year hydrostatic testing per NFPA 10 (2025).', frequencyOptions: ['Annual'], pricingDisplay: '$25/unit' },
     ],
     contactName: 'John Smith', phone: '(555) 123-4567', email: 'john@abcfire.com', website: 'abcfireprotection.com',
@@ -1058,7 +1058,7 @@ export const marketplaceReviews: MarketplaceReview[] = [
 
 export const cleaningProsPlus: MarketplaceVendor = {
   id: 'mv-16', slug: 'cleaning-pros-plus', companyName: 'Cleaning Pros Plus',
-  description: 'Central Valley\'s premier commercial kitchen exhaust cleaning company. IKECA Master Certified with 90+ active accounts including major food service operations and national park hospitality. Specializing in NFPA 96 (2024) compliant hood and duct cleaning with bare-metal verification photography on every job. Family-owned since 2008.',
+  description: 'Central Valley\'s premier commercial kitchen exhaust cleaning company. IKECA Master Certified with 90+ active accounts including major food service operations and national park hospitality. Specializing in NFPA 96 compliant hood and duct cleaning with bare-metal verification photography on every job. Family-owned since 2008.',
   tier: 'preferred', rating: 4.8, reviewCount: 34, yearsInBusiness: 18,
   serviceArea: ['Fresno', 'Clovis', 'Madera', 'Merced', 'Visalia', 'Tulare', 'Stanislaus', 'Mariposa'],
   responseTimeHours: 2, categories: ['Facility Safety'], subcategories: ['Hood Cleaning'],
@@ -1076,7 +1076,7 @@ export const cleaningProsPlus: MarketplaceVendor = {
     { type: 'Pollution Liability', verified: true, expirationDate: '2026-12-31' },
   ],
   serviceOfferings: [
-    { name: 'Hood & Duct Cleaning (NFPA 96-2024)', description: 'Complete exhaust system cleaning to bare metal per NFPA 96 (2024) and IKECA standards. Includes before/after photographic documentation, access panel installation if needed, and compliance certificate.', frequencyOptions: ['Monthly', 'Quarterly', 'Semi-Annual'], pricingDisplay: '$450 - $1,200' },
+    { name: 'Hood & Duct Cleaning (NFPA 96-2024)', description: 'Complete exhaust system cleaning to bare metal per NFPA 96 and IKECA standards. Includes before/after photographic documentation, access panel installation if needed, and compliance certificate.', frequencyOptions: ['Monthly', 'Quarterly', 'Semi-Annual'], pricingDisplay: '$450 - $1,200' },
     { name: 'Kitchen Equipment Cleaning', description: 'Deep cleaning of all commercial kitchen equipment including grills, fryers, ovens, and prep surfaces. Restaurant-grade degreasers and sanitizers used.', frequencyOptions: ['Weekly', 'Monthly', 'Quarterly'], pricingDisplay: '$200 - $600' },
     { name: 'Rooftop Grease Containment', description: 'Installation and maintenance of rooftop grease containment systems. Prevents grease buildup on roofs that can cause structural damage and fire hazard.', frequencyOptions: ['Quarterly', 'Semi-Annual'], pricingDisplay: '$150 - $350' },
   ],
@@ -1088,7 +1088,7 @@ marketplaceVendors.push(cleaningProsPlus);
 
 // Cleaning Pros Plus reviews
 marketplaceReviews.push(
-  { id: 'mr-26', vendorSlug: 'cleaning-pros-plus', reviewerName: 'Richard T.', reviewerOrg: 'Pacific Coast Food Services', rating: 5, text: 'Cleaning Pros Plus handles all our coastal hospitality locations. Marco\'s crew does bare-metal cleaning every time with photographic proof. Their IKECA Master Certification gives us full confidence in NFPA 96 (2024) compliance.', serviceType: 'Hood Cleaning', date: '2026-01-20', vendorResponse: 'Thank you Richard! We\'re proud to partner with EvidLY Demo Org across your coastal properties. Safety is always job one.' },
+  { id: 'mr-26', vendorSlug: 'cleaning-pros-plus', reviewerName: 'Richard T.', reviewerOrg: 'Pacific Coast Food Services', rating: 5, text: 'Cleaning Pros Plus handles all our coastal hospitality locations. Marco\'s crew does bare-metal cleaning every time with photographic proof. Their IKECA Master Certification gives us full confidence in NFPA 96 compliance.', serviceType: 'Hood Cleaning', date: '2026-01-20', vendorResponse: 'Thank you Richard! We\'re proud to partner with EvidLY Demo Org across your coastal properties. Safety is always job one.' },
   { id: 'mr-27', vendorSlug: 'cleaning-pros-plus', reviewerName: 'Patricia V.', reviewerOrg: 'Central Valley School District', rating: 5, text: 'They clean all 14 of our school cafeteria kitchens. Always on schedule, documentation uploaded same day, and they work around our school calendar. The best in the Valley.', serviceType: 'Hood Cleaning', date: '2025-12-08' },
   { id: 'mr-28', vendorSlug: 'cleaning-pros-plus', reviewerName: 'David L.', reviewerOrg: 'Visalia Hotel Group', rating: 5, text: 'Switched to Cleaning Pros after our previous vendor failed an inspection. Night and day difference — their bare metal photos are impressive and the compliance certificate arrives before we even ask.', serviceType: 'Hood Cleaning', date: '2025-10-15', vendorResponse: 'Glad we could help David. Consistent quality and fast documentation is what sets us apart. See you next quarter!' },
 );
@@ -1180,7 +1180,7 @@ export const vendorDashboardStats = {
 };
 
 export const vendorLeads: VendorLead[] = [
-  { id: 'vl-1', operatorName: 'Maria Rodriguez', operatorOrg: 'EvidLY Demo Org', serviceType: 'Hood Cleaning', locationDetails: '1247 Fulton St, Fresno', urgency: 'high', status: 'new', receivedAt: '2026-02-10T08:30:00', description: 'Hood system cleaning for 3 stations. Last cleaned 7 months ago. Need NFPA 96 (2024) compliance cert for upcoming inspection.' },
+  { id: 'vl-1', operatorName: 'Maria Rodriguez', operatorOrg: 'EvidLY Demo Org', serviceType: 'Hood Cleaning', locationDetails: '1247 Fulton St, Fresno', urgency: 'high', status: 'new', receivedAt: '2026-02-10T08:30:00', description: 'Hood system cleaning for 3 stations. Last cleaned 7 months ago. Need NFPA 96 compliance cert for upcoming inspection.' },
   { id: 'vl-2', operatorName: 'Ana Torres', operatorOrg: 'Campus Dining Services', serviceType: 'Fire Extinguisher', locationDetails: '3400 N First St, Fresno', urgency: 'normal', status: 'new', receivedAt: '2026-02-09T14:15:00', description: '12 fire extinguishers due for annual inspection. Mix of ABC and K-class units.' },
   { id: 'vl-3', operatorName: 'Robert Chang', operatorOrg: 'Valley Restaurant Group', serviceType: 'Hood Cleaning', locationDetails: '890 E Shaw Ave, Fresno', urgency: 'normal', status: 'quoted', receivedAt: '2026-02-07T10:00:00', respondedAt: '2026-02-07T13:45:00', quoteAmount: 650, description: 'Quarterly hood cleaning for single-station restaurant. Standard 8ft hood.' },
   { id: 'vl-4', operatorName: 'Susan Park', operatorOrg: 'Clovis Bistro', serviceType: 'Hood Cleaning', locationDetails: '445 Pollasky Ave, Clovis', urgency: 'high', status: 'quoted', receivedAt: '2026-02-05T09:20:00', respondedAt: '2026-02-05T11:00:00', quoteAmount: 875, description: 'Full exhaust system including rooftop unit. Health inspection in 3 weeks.' },
@@ -2449,7 +2449,7 @@ export interface TrainingCourse {
 export const trainingCourses: TrainingCourse[] = [
   { id: 'tc-01', organizationId: null, title: 'California Food Handler Card', description: 'Complete food handler training to satisfy CA SB 476 requirements. Covers personal hygiene, time & temperature, cross-contamination, cleaning & sanitizing, food storage, foodborne illness, receiving, and allergen awareness.', category: 'food_safety_handler', categoryLabel: 'Food Safety – Handler', language: 'en', estimatedDurationMin: 150, passingScorePercent: 70, maxAttempts: 0, cooldownHours: 24, isSystemCourse: true, isActive: true, thumbnailColor: '#15803d', moduleCount: 8, enrolledCount: 38, completedCount: 29, createdAt: '2025-08-01T00:00:00Z' },
   { id: 'tc-02', organizationId: null, title: 'ServSafe Manager Exam Prep', description: 'Comprehensive CFPM preparation covering HACCP, active managerial control, FDA Food Code, temperature management, and crisis response. Prepares employees to pass the ServSafe Manager certification exam.', category: 'food_safety_manager', categoryLabel: 'Food Safety – Manager', language: 'en', estimatedDurationMin: 480, passingScorePercent: 70, maxAttempts: 0, cooldownHours: 24, isSystemCourse: true, isActive: true, thumbnailColor: '#1e4d6b', moduleCount: 9, enrolledCount: 8, completedCount: 3, createdAt: '2025-08-01T00:00:00Z' },
-  { id: 'tc-03', organizationId: null, title: 'Kitchen Facility Safety & Equipment', description: 'Fire extinguisher types, PASS technique, commercial hood systems, NFPA 96 (2024) compliance, fire suppression activation, grease fire response, and emergency evacuation.', category: 'facility_safety', categoryLabel: 'Facility Safety', language: 'en', estimatedDurationMin: 95, passingScorePercent: 70, maxAttempts: 0, cooldownHours: 24, isSystemCourse: true, isActive: true, thumbnailColor: '#dc2626', moduleCount: 7, enrolledCount: 42, completedCount: 35, createdAt: '2025-08-01T00:00:00Z' },
+  { id: 'tc-03', organizationId: null, title: 'Kitchen Facility Safety & Equipment', description: 'Fire extinguisher types, PASS technique, commercial hood systems, NFPA 96 compliance, fire suppression activation, grease fire response, and emergency evacuation.', category: 'facility_safety', categoryLabel: 'Facility Safety', language: 'en', estimatedDurationMin: 95, passingScorePercent: 70, maxAttempts: 0, cooldownHours: 24, isSystemCourse: true, isActive: true, thumbnailColor: '#dc2626', moduleCount: 7, enrolledCount: 42, completedCount: 35, createdAt: '2025-08-01T00:00:00Z' },
   { id: 'tc-04', organizationId: null, title: 'EvidLY Compliance Operations', description: 'Learn how to use EvidLY effectively: daily checklists, temperature logging, corrective actions, vendor verification, compliance scoring, and QR Passport.', category: 'compliance_ops', categoryLabel: 'Compliance Ops', language: 'en', estimatedDurationMin: 55, passingScorePercent: 70, maxAttempts: 0, cooldownHours: 0, isSystemCourse: true, isActive: true, thumbnailColor: '#d4af37', moduleCount: 6, enrolledCount: 52, completedCount: 48, createdAt: '2025-08-01T00:00:00Z' },
   { id: 'tc-05', organizationId: null, title: 'Tarjeta de Manipulador de Alimentos de California', description: 'Entrenamiento completo de manipulación de alimentos para cumplir con los requisitos de CA SB 476. En español.', category: 'food_safety_handler', categoryLabel: 'Food Safety – Handler', language: 'es', estimatedDurationMin: 150, passingScorePercent: 70, maxAttempts: 0, cooldownHours: 24, isSystemCourse: true, isActive: true, thumbnailColor: '#15803d', moduleCount: 8, enrolledCount: 12, completedCount: 8, createdAt: '2025-09-15T00:00:00Z' },
   { id: 'tc-06', organizationId: 'org-demo', title: 'New Hire Orientation — EvidLY Demo', description: 'Custom onboarding training for new employees. Covers company policies, kitchen layout, emergency contacts, and first-day procedures.', category: 'custom', categoryLabel: 'Custom', language: 'en', estimatedDurationMin: 30, passingScorePercent: 80, maxAttempts: 3, cooldownHours: 0, isSystemCourse: false, isActive: true, thumbnailColor: '#7c3aed', moduleCount: 3, enrolledCount: 14, completedCount: 12, createdAt: '2025-11-01T00:00:00Z' },
@@ -3008,7 +3008,7 @@ export const playbookTemplates: PlaybookTemplate[] = [
   {
     id: 'pb-kitchen-fire',
     title: 'Kitchen Fire Response',
-    shortDescription: 'Emergency evacuation, fire suppression, regulatory notification, and facility restoration protocol following NFPA 96 (2024) requirements.',
+    shortDescription: 'Emergency evacuation, fire suppression, regulatory notification, and facility restoration protocol following NFPA 96 requirements.',
     category: 'facility_safety',
     defaultSeverity: 'critical',
     icon: 'Flame',
@@ -3057,10 +3057,10 @@ export const playbookTemplates: PlaybookTemplate[] = [
     color: '#0369a1',
     stepCount: 6,
     estimatedMinutes: 120,
-    regulatoryBasis: 'FDA Food Code 4-301.11; NFPA 96 (2024) Table 12.4',
+    regulatoryBasis: 'FDA Food Code 4-301.11; NFPA 96 Table 12.4',
     steps: [
       { id: 'ef-1', stepNumber: 1, title: 'Identify & Assess', description: 'Determine what equipment failed, whether it is a total or partial failure, what food/operations are affected, and if there is a safety hazard (gas leak, electrical, water). If safety hazard exists: evacuate the area and call 911 or the utility company.', actionItems: [{ id: 'ef-1a', label: 'Identify failed equipment', required: true }, { id: 'ef-1b', label: 'Assess total vs partial failure', required: true }, { id: 'ef-1c', label: 'Identify affected food/operations', required: true }, { id: 'ef-1d', label: 'Check for safety hazards', required: true }], photoRequired: true, photoPrompt: 'Photo equipment error display, current temperature, visible damage' },
-      { id: 'ef-2', stepNumber: 2, title: 'Food Protection', description: 'Walk-in cooler failure: transfer food to backup unit or coolers with ice. Freezer failure: keep door closed (holds 48 hrs if full). Hot-holding failure: serve within 4 hours or reheat to 165°F. Dishwasher failure: switch to 3-compartment sink. Hood system failure: CEASE ALL COOKING OPERATIONS per NFPA 96 (2024).', actionItems: [{ id: 'ef-2a', label: 'Transfer at-risk food to backup storage', required: true }, { id: 'ef-2b', label: 'Begin temperature monitoring every 30 min', required: true }, { id: 'ef-2c', label: 'Cease cooking if hood system failed', required: false }], photoRequired: true, photoPrompt: 'Photo food transfer process and temperature readings', criticalWarning: 'Hood system failure = NO COOKING until repaired (NFPA 96-2024). Cannot operate cooking equipment without functioning exhaust hood.', regulatoryReference: 'NFPA 96 (2024) Table 12.4; FDA Food Code 4-301.11' },
+      { id: 'ef-2', stepNumber: 2, title: 'Food Protection', description: 'Walk-in cooler failure: transfer food to backup unit or coolers with ice. Freezer failure: keep door closed (holds 48 hrs if full). Hot-holding failure: serve within 4 hours or reheat to 165°F. Dishwasher failure: switch to 3-compartment sink. Hood system failure: CEASE ALL COOKING OPERATIONS per NFPA 96.', actionItems: [{ id: 'ef-2a', label: 'Transfer at-risk food to backup storage', required: true }, { id: 'ef-2b', label: 'Begin temperature monitoring every 30 min', required: true }, { id: 'ef-2c', label: 'Cease cooking if hood system failed', required: false }], photoRequired: true, photoPrompt: 'Photo food transfer process and temperature readings', criticalWarning: 'Hood system failure = NO COOKING until repaired (NFPA 96-2024). Cannot operate cooking equipment without functioning exhaust hood.', regulatoryReference: 'NFPA 96 Table 12.4; FDA Food Code 4-301.11' },
       { id: 'ef-3', stepNumber: 3, title: 'Contact Repair Service', description: 'Call equipment repair service from your vendor directory. Request emergency/priority service. Record ticket number, estimated arrival, and estimated repair time. If repair will take >24 hours, arrange temporary equipment rental.', actionItems: [{ id: 'ef-3a', label: 'Contact equipment vendor/service', required: true }, { id: 'ef-3b', label: 'Record service ticket number', required: true }, { id: 'ef-3c', label: 'Record estimated repair timeline', required: true }, { id: 'ef-3d', label: 'Arrange temp equipment if >24hr repair', required: false }], photoRequired: false, notePrompt: 'Record vendor name, ticket #, ETA, and estimated cost' },
       { id: 'ef-4', stepNumber: 4, title: 'Operational Adjustment', description: 'Modify menu if needed based on what equipment is down. Notify staff of operational changes. If must close: notify customers, update online hours, post signage. Document estimated revenue impact for insurance.', actionItems: [{ id: 'ef-4a', label: 'Adjust menu/operations as needed', required: true }, { id: 'ef-4b', label: 'Brief staff on changes', required: true }, { id: 'ef-4c', label: 'Document revenue impact', required: true }], photoRequired: false, notePrompt: 'Record menu changes and estimated revenue impact' },
       { id: 'ef-5', stepNumber: 5, title: 'Repair & Restoration', description: 'Document the repair: what was wrong, what was fixed, parts replaced, cost. Verify equipment operating properly post-repair (temperature reaches safe range within expected time). Return food to repaired equipment only after verified safe.', actionItems: [{ id: 'ef-5a', label: 'Document repair details and cost', required: true }, { id: 'ef-5b', label: 'Verify equipment operating properly', required: true }, { id: 'ef-5c', label: 'Return food only after verified safe', required: true }], photoRequired: true, photoPrompt: 'Photo repaired equipment operating normally with temp display' },
@@ -3643,7 +3643,7 @@ export const copilotInsights: CopilotInsight[] = [
     locationName: 'Location 1',
     insightType: 'alert',
     severity: 'warning',
-    title: 'Regulatory Update: NFPA 96 (2024) Table 12.4 — Exhaust fan inspection clarified',
+    title: 'Regulatory Update: NFPA 96 Table 12.4 — Exhaust fan inspection clarified',
     message: 'NFPA 96 has clarified that exhaust fan inspection must occur at the same frequency as hood exhaust system cleaning. Fan bearing lubrication must be documented separately. Effective July 1, 2026.\n\nWhat you need to do:\nEnsure your exhaust fan inspections are scheduled at the same frequency as hood cleaning. Ask your vendor to separately document fan bearing lubrication on each service report.',
     sourceModule: 'regulatory',
     actionType: 'view_report',
@@ -4128,7 +4128,7 @@ export const demoIntelligence = {
       description: 'Certificate expiration will compound existing Facility Safety Fail status.',
       daysToImpact: 18,
       location: 'Location 2',
-      regulatoryBasis: 'NFPA 96 (2024) Table 12.4',
+      regulatoryBasis: 'NFPA 96 Table 12.4',
     },
     {
       id: 'threat_3',

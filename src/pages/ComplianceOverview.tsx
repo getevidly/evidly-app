@@ -597,7 +597,7 @@ export function ComplianceOverview() {
       configured: !allNoStatus,
       grade: fs.gradeDisplay,
       summary: fs.summary,
-      authority: jEntry?.agencyName || jurisdictionData?.facilitySafety?.agency_name || 'NFPA 96 (2024)',
+      authority: jEntry?.agencyName || jurisdictionData?.facilitySafety?.agency_name || 'NFPA 96',
       status: fs.status,
     };
   }, [gradeData, county, jurisdictionData]);

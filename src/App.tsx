@@ -42,6 +42,7 @@ const LeaderboardPreview = lazy(() => import('./pages/LeaderboardPreview').then(
 const FoodRecovery = lazy(() => import('./pages/FoodRecovery').then(m => ({ default: m.FoodRecovery })));
 const USDAProductionRecords = lazy(() => import('./pages/USDAProductionRecords').then(m => ({ default: m.USDAProductionRecords })));
 const SB1383Compliance = lazy(() => import('./pages/SB1383Compliance').then(m => ({ default: m.SB1383Compliance })));
+const K12Compliance = lazy(() => import('./pages/K12Compliance').then(m => ({ default: m.K12Compliance })));
 const Analysis = lazy(() => import('./pages/Analysis').then(m => ({ default: m.Analysis })));
 const Team = lazy(() => import('./pages/Team').then(m => ({ default: m.Team })));
 const Settings = lazy(() => import('./pages/Settings').then(m => ({ default: m.Settings })));
@@ -141,6 +142,7 @@ const SalesPipeline = lazy(() => import('./pages/admin/SalesPipeline'));
 const UserProvisioning = lazy(() => import('./pages/admin/UserProvisioning'));
 const EvidLYIntelligence = lazy(() => import('./pages/admin/EvidLYIntelligence'));
 const SupportTickets = lazy(() => import('./pages/admin/SupportTickets'));
+const SurveyPage = lazy(() => import('./pages/admin/SurveyPage'));
 const RemoteConnect = lazy(() => import('./pages/admin/RemoteConnect'));
 const StaffRoles = lazy(() => import('./pages/admin/StaffRoles'));
 const AdminReports = lazy(() => import('./pages/admin/AdminReports'));
@@ -477,6 +479,7 @@ function AppRoutes() {
         <Route path="/vendor/upload/:token" element={<Suspense fallback={<PageSkeleton />}><VendorSecureUpload /></Suspense>} />
           <Route path="/vendor/invite/:code" element={<Suspense fallback={<PageSkeleton />}><VendorInviteLanding /></Suspense>} />
         <Route path="/vendor-update/:token" element={<Suspense fallback={<PageSkeleton />}><VendorServiceUpdate /></Suspense>} />
+        <Route path="/support/survey/:token" element={<Suspense fallback={<PageSkeleton />}><SurveyPage /></Suspense>} />
 
         {/* City landing pages */}
         <Route path="/city/:citySlug" element={<Suspense fallback={<PageSkeleton />}><CityPage /></Suspense>} />
@@ -541,6 +544,7 @@ function AppRoutes() {
           <Route path="/facility-safety" element={<FacilitySafety />} />
           <Route path="/food-recovery" element={<FoodRecovery />} />
           <Route path="/sb1383" element={<SB1383Compliance />} />
+          <Route path="/k12" element={<K12Compliance />} />
           <Route path="/usda/production-records" element={<USDAProductionRecords />} />
           <Route path="/equipment" element={<Equipment />} />
           <Route path="/equipment/:equipmentId" element={<EquipmentDetail />} />

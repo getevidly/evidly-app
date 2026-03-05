@@ -52,7 +52,7 @@ const AUTHORITY_LABELS: Record<string, { label: string; color: string; bg: strin
   calcode: { label: 'CalCode', color: '#0369a1', bg: '#e0f2fe' },
   nfpa_96: { label: 'NFPA 96', color: '#b91c1c', bg: '#fef2f2' },
   nfpa_10: { label: 'NFPA 10', color: '#b91c1c', bg: '#fef2f2' },
-  cfc: { label: 'NFPA 96 (2024)', color: '#c2410c', bg: '#fff7ed' },
+  cfc: { label: 'NFPA 96', color: '#c2410c', bg: '#fff7ed' },
   evidly_best_practice: { label: 'Best Practice', color: '#1e4d6b', bg: '#eef4f8' },
 };
 
@@ -293,14 +293,14 @@ const TEMPLATE_CATEGORIES = [
         items: [
           'Inspect fan belt tension and condition — replace if cracked or glazed',
           'Check grease containment and drain — clear any blockages',
-          'Test hinge kit operation — fan opens fully for cleaning access (NFPA 96 (2024) Chapter 7)',
+          'Test hinge kit operation — fan opens fully for cleaning access (NFPA 96 Chapter 7)',
           'Verify fan interlock — fan starts with hood, stops when hood is off (IMC §507.2.1)',
           'Check for excessive vibration — indicates imbalance or bearing wear',
         ],
       },
       {
         key: 'exhaust_fan_quarterly',
-        name: 'Exhaust Fan Quarterly Service (NFPA 96 (2024) Table 12.4)',
+        name: 'Exhaust Fan Quarterly Service (NFPA 96 Table 12.4)',
         itemCount: 6,
         estimatedTime: '30-45 min',
         role: 'Manager',
@@ -528,7 +528,7 @@ const PREBUILT_TEMPLATES = {
     }),
   },
   exhaust_fan_quarterly: {
-    name: 'Exhaust Fan Quarterly Service (NFPA 96 (2024) Table 12.4)',
+    name: 'Exhaust Fan Quarterly Service (NFPA 96 Table 12.4)',
     type: 'custom',
     frequency: 'monthly',
     items: TEMPLATE_CATEGORIES[2].templates[3].items.map(item => {

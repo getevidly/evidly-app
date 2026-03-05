@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
+import AdminBreadcrumb from '../components/admin/AdminBreadcrumb';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 import {
   Scale,
@@ -202,6 +203,7 @@ export function AdminRegulatoryChanges() {
 
   return (
     <div className="p-4 sm:p-6 max-w-5xl mx-auto">
+      <AdminBreadcrumb crumbs={[{ label: 'Regulatory Changes' }]} />
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
         <div className="flex items-center gap-3">

@@ -1,0 +1,814 @@
+import { loadStripe, Stripe } from '@stripe/stripe-js';
+import { supabase } from './supabase';
+
+let stripePromise: Promise<Stripe | null> | null = null;
+
+export function getStripe(): Promise<Stripe | null> {
+  if (!stripePromise) {
+    const key = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+    if (!key) {
+      console.warn('Missing VITE_STRIPE_PUBLISHABLE_KEY. Stripe will not load.');
+      return Promise.resolve(null);
+    }
+    stripePromise = loadStripe(key);
+  }
+  return stripePromise;
+}
+
+export interface Plan {
+  id: string;
+  name: string;
+  price: string;
+  priceId: string | null;
+  features: string[];
+}
+
+export const PLANS: Plan[] = [
+  {
+    id: 'founder',
+    name: "Founder's Edition",
+    price: '$99/mo',
+    priceId: import.meta.env.VITE_STRIPE_FOUNDER_PRICE_ID || 'price_founder_monthly',
+    features: [
+      'Up to 3 locations',
+      'All compliance features',
+      'AI Advisor',
+      'Priority support',
+      'Locked-in pricing forever',
+    ],
+  },
+  {
+    id: 'professional',
+    name: 'Professional',
+    price: '$149/mo',
+    priceId: 'price_professional_monthly',
+    features: [
+      'Up to 10 locations',
+      "Everything in Founder's",
+      'White-label reports',
+      'API access',
+    ],
+  },
+  {
+    id: 'enterprise',
+    name: 'Enterprise',
+    price: 'Custom',
+    priceId: null,
+    features: [
+      'Unlimited locations',
+      'SSO/SCIM',
+      'Dedicated CSM',
+      'Custom integrations',
+      'SLA guarantee',
+    ],
+  },
+];
+
+export async function createCheckoutSession(priceId: string) {
+  const { data, error } = await supabase.functions.invoke('stripe-create-checkout', {
+    body: { priceId },
+  });
+  if (error) throw error;
+  return data as { url: string };
+}
+
+export async function createPortalSession() {
+  const { data, error } = await supabase.functions.invoke('stripe-customer-portal');
+  if (error) throw error;
+  return data as { url: string };
+}
+==BILLING==
+import { useState } from 'react';
+import { CheckCircle2, Crown, ExternalLink, Loader2, Gift, Clock } from 'lucide-react';
+import { EvidlyIcon } from './ui/EvidlyIcon';
+import { toast } from 'sonner';
+import { useAuth } from '../contexts/AuthContext';
+import { useDemo } from '../contexts/DemoContext';
+import { PLANS, createCheckoutSession, createPortalSession, type Plan } from '../lib/stripe';
+
+export function BillingPanel() {
+  const { profile } = useAuth();
+  const { isDemoMode } = useDemo();
+  const [loading, setLoading] = useState<string | null>(null);
+  const [portalLoading, setPortalLoading] = useState(false);
+
+  // Read current plan from profile or default to 'free'
+  const currentPlan = (profile as any)?.plan || 'free';
+
+  const handleSubscribe = async (plan: Plan) => {
+    if (isDemoMode) {
+      toast.info('Stripe checkout available in production');
+      return;
+    }
+
+    if (!plan.priceId) {
+      toast.info('Contact sales@getevidly.com for Enterprise pricing');
+      return;
+    }
+
+    setLoading(plan.id);
+    try {
+      const { url } = await createCheckoutSession(plan.priceId);
+      if (url) {
+        window.location.href = url;
+      }
+    } catch (err) {
+      console.error('Checkout error:', err);
+      toast.error('Failed to start checkout. Please try again');
+    } finally {
+      setLoading(null);
+    }
+  };
+
+  const handleManageSubscription = async () => {
+    if (isDemoMode) {
+      toast.info('Billing portal available in production');
+      return;
+    }
+
+    setPortalLoading(true);
+    try {
+      const { url } = await createPortalSession();
+      if (url) {
+        window.location.href = url;
+      }
+    } catch (err) {
+      console.error('Portal error:', err);
+      toast.error('Failed to open billing portal. Please try again');
+    } finally {
+      setPortalLoading(false);
+    }
+  };
+
+  // Demo trial state — simulates a user on day 12 of their 30-day trial
+  const demoTrialActive = isDemoMode;
+  const demoTrialDaysLeft = 18;
+  const demoGuaranteeDaysLeft = 33;
+  const demoTrialEndDate = new Date(Date.now() + demoTrialDaysLeft * 86400000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+  const getButtonLabel = (plan: Plan) => {
+    if (plan.id === currentPlan) return 'Current Plan';
+    if (plan.id === 'enterprise') return 'Contact Sales';
+    return 'Start Free Trial';
+  };
+
+  const isCurrentPlan = (plan: Plan) => plan.id === currentPlan;
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-xl font-bold text-gray-900">Billing & Subscription</h3>
+        <p className="text-sm text-gray-600 mt-1">
+          Manage your subscription plan and billing details.
+        </p>
+      </div>
+
+      {/* Current plan banner */}
+      <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-lg p-5 text-white">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm text-gray-200">Current Plan</p>
+            <h4 className="text-lg font-semibold mt-0.5">
+              {currentPlan === 'free'
+                ? 'Free Trial'
+                : PLANS.find((p) => p.id === currentPlan)?.name || currentPlan}
+            </h4>
+          </div>
+          {currentPlan !== 'free' && (
+            <button
+              onClick={handleManageSubscription}
+              disabled={portalLoading}
+              className="px-4 py-2 rounded-xl bg-white/20 hover:bg-white/30 text-white text-sm font-medium transition-colors flex items-center gap-2 disabled:opacity-50"
+            >
+              {portalLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <ExternalLink className="h-4 w-4" />
+              )}
+              Manage Subscription
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Trial Status Banner */}
+      {demoTrialActive && (
+        <div className="rounded-lg border-2 border-[#16a34a] bg-[#f0fdf4] p-5">
+          <div className="flex items-start gap-4">
+            <div className="w-10 h-10 rounded-full bg-[#16a34a] flex items-center justify-center flex-shrink-0">
+              <Gift className="h-5 w-5 text-white" />
+            </div>
+            <div className="flex-1">
+              <h4 className="text-lg font-bold text-[#166534]">Free Trial Active</h4>
+              <p className="text-sm text-[#166534] mt-1">
+                You have <strong>{demoTrialDaysLeft} days remaining</strong> in your free trial (ends {demoTrialEndDate}).
+                Full access to all features — no charge until your trial ends.
+              </p>
+              <div className="flex flex-wrap items-center gap-4 mt-3">
+                <div className="flex items-center gap-1.5 text-sm text-[#166534]">
+                  <Clock className="h-4 w-4" />
+                  <span>{demoTrialDaysLeft} days left in trial</span>
+                </div>
+                <div className="flex items-center gap-1.5 text-sm text-[#166534]">
+                  <EvidlyIcon size={16} />
+                  <span>{demoGuaranteeDaysLeft} days left on money-back guarantee</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 45-Day Guarantee Info */}
+      <div className="rounded-lg p-4" style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}>
+        <div className="flex items-center gap-3">
+          <EvidlyIcon size={20} className="flex-shrink-0" />
+          <div>
+            <p className="font-semibold text-sm" style={{ color: '#1e4d6b' }}>45-Day Money-Back Guarantee</p>
+            <p className="text-xs mt-0.5" style={{ color: '#3a6d8a' }}>
+              Not satisfied within 45 days of your first payment? Get a full refund — no questions asked.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Plan cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {PLANS.map((plan) => {
+          const isCurrent = isCurrentPlan(plan);
+          const isPopular = plan.id === 'founder';
+          const isEnterprise = plan.id === 'enterprise';
+          const isLoading = loading === plan.id;
+
+          return (
+            <div
+              key={plan.id}
+              className={`relative rounded-lg border-2 p-5 transition-all ${
+                isCurrent
+                  ? 'border-[#1e4d6b] bg-[#eef4f8]'
+                  : 'border-gray-200 bg-white hover:border-gray-300'
+              }`}
+            >
+              {/* Most Popular badge */}
+              {isPopular && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                  <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-[#d4af37] text-white shadow-sm">
+                    <Crown className="h-3 w-3" />
+                    Most Popular
+                  </span>
+                </div>
+              )}
+
+              <div className={isPopular ? 'mt-2' : ''}>
+                <h4 className="text-lg font-bold text-gray-900">{plan.name}</h4>
+                <div className="mt-2 mb-4">
+                  <span className="text-2xl font-bold text-gray-900">{plan.price}</span>
+                </div>
+
+                {/* Features */}
+                <ul className="space-y-2 mb-6">
+                  {plan.features.map((feature) => (
+                    <li key={feature} className="flex items-start gap-2 text-sm text-gray-700">
+                      <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                {/* Action button */}
+                <button
+                  onClick={() => handleSubscribe(plan)}
+                  disabled={isCurrent || isLoading}
+                  className={`w-full py-2.5 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2 ${
+                    isCurrent
+                      ? 'bg-gray-100 text-gray-500 cursor-default'
+                      : isEnterprise
+                        ? 'border-2 border-[#1e4d6b] text-[#1e4d6b] hover:bg-[#1e4d6b] hover:text-white'
+                        : 'bg-[#1e4d6b] text-white hover:bg-[#163a52]'
+                  } disabled:opacity-60 disabled:cursor-not-allowed`}
+                >
+                  {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+                  {getButtonLabel(plan)}
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Manage billing link for active subscribers */}
+      {currentPlan !== 'free' && (
+        <div className="border border-gray-200 rounded-lg p-4 flex items-center justify-between">
+          <div>
+            <h4 className="text-sm font-semibold text-gray-900">Need to update payment method or cancel?</h4>
+            <p className="text-xs text-gray-500 mt-0.5">
+              Manage invoices, payment methods, and cancellation through the Stripe billing portal.
+            </p>
+          </div>
+          <button
+            onClick={handleManageSubscription}
+            disabled={portalLoading}
+            className="px-4 py-2 text-sm font-medium text-[#1e4d6b] hover:text-[#163a52] hover:underline flex items-center gap-1 disabled:opacity-50"
+          >
+            {portalLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <ExternalLink className="h-4 w-4" />
+            )}
+            Open Billing Portal
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+==CHECKOUT==
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from "npm:@supabase/supabase-js@2";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers":
+    "Content-Type, Authorization, X-Client-Info, Apikey",
+};
+
+Deno.serve(async (req: Request) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { status: 200, headers: corsHeaders });
+  }
+
+  try {
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const stripeSecretKey = Deno.env.get("STRIPE_SECRET_KEY")!;
+    const appUrl = Deno.env.get("APP_URL") || "https://app.getevidly.com";
+
+    // Authenticate user from the Authorization header
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: "Missing authorization" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const supabaseAuth = createClient(supabaseUrl, supabaseServiceKey);
+    const token = authHeader.replace("Bearer ", "");
+    const supabaseClient = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!, {
+      global: { headers: { Authorization: `Bearer ${token}` } },
+    });
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+
+    if (authError || !user) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Parse request body
+    const { priceId } = await req.json();
+    if (!priceId) {
+      return new Response(JSON.stringify({ error: "priceId is required" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Look up existing Stripe customer
+    const { data: existingCustomer } = await supabaseAuth
+      .from("stripe_customers")
+      .select("stripe_customer_id")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    let stripeCustomerId = existingCustomer?.stripe_customer_id;
+
+    // Create Stripe customer if not found
+    if (!stripeCustomerId) {
+      const customerRes = await fetch("https://api.stripe.com/v1/customers", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${stripeSecretKey}`,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          email: user.email || "",
+          "metadata[supabase_user_id]": user.id,
+        }),
+      });
+      const customer = await customerRes.json();
+
+      if (customer.error) {
+        throw new Error(customer.error.message);
+      }
+
+      stripeCustomerId = customer.id;
+
+      await supabaseAuth.from("stripe_customers").insert({
+        user_id: user.id,
+        stripe_customer_id: stripeCustomerId,
+      });
+    }
+
+    // Create Stripe Checkout Session
+    const sessionRes = await fetch("https://api.stripe.com/v1/checkout/sessions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${stripeSecretKey}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        customer: stripeCustomerId!,
+        mode: "subscription",
+        "line_items[0][price]": priceId,
+        "line_items[0][quantity]": "1",
+        "subscription_data[trial_period_days]": "30",
+        "subscription_data[metadata][supabase_user_id]": user.id,
+        success_url: `${appUrl}/settings?tab=billing&session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${appUrl}/settings?tab=billing`,
+        "metadata[supabase_user_id]": user.id,
+      }),
+    });
+    const session = await sessionRes.json();
+
+    if (session.error) {
+      throw new Error(session.error.message);
+    }
+
+    return new Response(JSON.stringify({ url: session.url }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    console.error("Stripe checkout error:", error);
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+});
+==PORTAL==
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from "npm:@supabase/supabase-js@2";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers":
+    "Content-Type, Authorization, X-Client-Info, Apikey",
+};
+
+Deno.serve(async (req: Request) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { status: 200, headers: corsHeaders });
+  }
+
+  try {
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const stripeSecretKey = Deno.env.get("STRIPE_SECRET_KEY")!;
+    const appUrl = Deno.env.get("APP_URL") || "https://app.getevidly.com";
+
+    // Authenticate user
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: "Missing authorization" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const token = authHeader.replace("Bearer ", "");
+    const supabaseClient = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!, {
+      global: { headers: { Authorization: `Bearer ${token}` } },
+    });
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+
+    if (authError || !user) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Look up Stripe customer
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+    const { data: customer } = await supabaseAdmin
+      .from("stripe_customers")
+      .select("stripe_customer_id")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (!customer?.stripe_customer_id) {
+      return new Response(
+        JSON.stringify({ error: "No billing account found. Please subscribe to a plan first." }),
+        { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Create Stripe Billing Portal session
+    const portalRes = await fetch("https://api.stripe.com/v1/billing_portal/sessions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${stripeSecretKey}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        customer: customer.stripe_customer_id,
+        return_url: `${appUrl}/settings?tab=billing`,
+      }),
+    });
+    const portal = await portalRes.json();
+
+    if (portal.error) {
+      throw new Error(portal.error.message);
+    }
+
+    return new Response(JSON.stringify({ url: portal.url }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    console.error("Stripe portal error:", error);
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+});
+==WEBHOOK==
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from "npm:@supabase/supabase-js@2";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers":
+    "Content-Type, Authorization, X-Client-Info, Apikey",
+};
+
+// Map Stripe price IDs to human-readable plan names
+function getPlanName(priceId: string): string {
+  if (priceId.includes("founder")) return "founder";
+  if (priceId.includes("professional")) return "professional";
+  if (priceId.includes("enterprise")) return "enterprise";
+  return "unknown";
+}
+
+async function verifyStripeSignature(
+  body: string,
+  signature: string,
+  secret: string
+): Promise<boolean> {
+  const encoder = new TextEncoder();
+  const parts = signature.split(",");
+  const timestamp = parts.find((p) => p.startsWith("t="))?.split("=")[1];
+  const v1Signature = parts.find((p) => p.startsWith("v1="))?.split("=")[1];
+
+  if (!timestamp || !v1Signature) return false;
+
+  const payload = `${timestamp}.${body}`;
+  const key = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  const signatureBuffer = await crypto.subtle.sign(
+    "HMAC",
+    key,
+    encoder.encode(payload)
+  );
+  const computedSignature = Array.from(new Uint8Array(signatureBuffer))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+
+  return computedSignature === v1Signature;
+}
+
+Deno.serve(async (req: Request) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { status: 200, headers: corsHeaders });
+  }
+
+  try {
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const webhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET")!;
+
+    const body = await req.text();
+    const signature = req.headers.get("stripe-signature");
+
+    if (!signature) {
+      return new Response(JSON.stringify({ error: "Missing stripe-signature header" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Verify webhook signature
+    const isValid = await verifyStripeSignature(body, signature, webhookSecret);
+    if (!isValid) {
+      console.error("Invalid Stripe webhook signature");
+      return new Response(JSON.stringify({ error: "Invalid signature" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const event = JSON.parse(body);
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    console.log(`Processing Stripe event: ${event.type}`);
+
+    switch (event.type) {
+      case "checkout.session.completed": {
+        const session = event.data.object;
+        const userId = session.metadata?.supabase_user_id;
+        const subscriptionId = session.subscription;
+
+        if (!userId || !subscriptionId) {
+          console.error("Missing userId or subscriptionId in checkout session");
+          break;
+        }
+
+        // Fetch the full subscription from Stripe to get price details
+        const stripeSecretKey = Deno.env.get("STRIPE_SECRET_KEY")!;
+        const subRes = await fetch(
+          `https://api.stripe.com/v1/subscriptions/${subscriptionId}`,
+          {
+            headers: { Authorization: `Bearer ${stripeSecretKey}` },
+          }
+        );
+        const subscription = await subRes.json();
+
+        const priceId = subscription.items?.data?.[0]?.price?.id || "";
+        const planName = getPlanName(priceId);
+
+        await supabase.from("subscriptions").upsert(
+          {
+            user_id: userId,
+            stripe_subscription_id: subscriptionId,
+            stripe_price_id: priceId,
+            plan_name: planName,
+            status: subscription.status || "active",
+            current_period_start: new Date(
+              subscription.current_period_start * 1000
+            ).toISOString(),
+            current_period_end: new Date(
+              subscription.current_period_end * 1000
+            ).toISOString(),
+            cancel_at: subscription.cancel_at
+              ? new Date(subscription.cancel_at * 1000).toISOString()
+              : null,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "stripe_subscription_id" }
+        );
+
+        console.log(`Subscription created for user ${userId}: ${planName}`);
+        break;
+      }
+
+      case "customer.subscription.updated": {
+        const subscription = event.data.object;
+        const priceId = subscription.items?.data?.[0]?.price?.id || "";
+        const planName = getPlanName(priceId);
+
+        const { error } = await supabase
+          .from("subscriptions")
+          .update({
+            stripe_price_id: priceId,
+            plan_name: planName,
+            status: subscription.status,
+            current_period_start: new Date(
+              subscription.current_period_start * 1000
+            ).toISOString(),
+            current_period_end: new Date(
+              subscription.current_period_end * 1000
+            ).toISOString(),
+            cancel_at: subscription.cancel_at
+              ? new Date(subscription.cancel_at * 1000).toISOString()
+              : null,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("stripe_subscription_id", subscription.id);
+
+        if (error) {
+          console.error("Error updating subscription:", error);
+        } else {
+          console.log(`Subscription updated: ${subscription.id} -> ${planName} (${subscription.status})`);
+        }
+        break;
+      }
+
+      case "customer.subscription.deleted": {
+        const subscription = event.data.object;
+
+        const { error } = await supabase
+          .from("subscriptions")
+          .update({
+            status: "canceled",
+            cancel_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          })
+          .eq("stripe_subscription_id", subscription.id);
+
+        if (error) {
+          console.error("Error canceling subscription:", error);
+        } else {
+          console.log(`Subscription canceled: ${subscription.id}`);
+        }
+        break;
+      }
+
+      case "customer.subscription.trial_will_end": {
+        // Trial ending in 3 days — Stripe sends this automatically
+        const subscription = event.data.object;
+        const userId = subscription.metadata?.supabase_user_id;
+
+        if (userId) {
+          // Record trial ending notification for in-app display
+          await supabase.from("notifications").insert({
+            user_id: userId,
+            type: "trial_ending",
+            title: "Your free trial ends in 3 days",
+            message: "Your 30-day free trial is ending soon. Your card will be charged automatically. You can cancel anytime from Settings > Billing.",
+            read: false,
+            created_at: new Date().toISOString(),
+          });
+          console.log(`Trial ending notification created for user ${userId}`);
+        }
+        break;
+      }
+
+      case "invoice.paid": {
+        // First payment after trial — start 45-day guarantee window
+        const invoice = event.data.object;
+        const subscriptionId = invoice.subscription;
+
+        if (subscriptionId && invoice.billing_reason === "subscription_cycle") {
+          const { error } = await supabase
+            .from("subscriptions")
+            .update({
+              status: "active",
+              guarantee_start: new Date().toISOString(),
+              guarantee_end: new Date(Date.now() + 45 * 86400000).toISOString(),
+              updated_at: new Date().toISOString(),
+            })
+            .eq("stripe_subscription_id", subscriptionId);
+
+          if (error) {
+            console.error("Error updating guarantee dates:", error);
+          } else {
+            console.log(`Guarantee window started for subscription ${subscriptionId}`);
+          }
+        }
+        break;
+      }
+
+      case "invoice.payment_failed": {
+        // Payment failed — notify user
+        const invoice = event.data.object;
+        const subscriptionId = invoice.subscription;
+
+        if (subscriptionId) {
+          // Look up user from subscription
+          const { data: sub } = await supabase
+            .from("subscriptions")
+            .select("user_id")
+            .eq("stripe_subscription_id", subscriptionId)
+            .maybeSingle();
+
+          if (sub?.user_id) {
+            await supabase.from("notifications").insert({
+              user_id: sub.user_id,
+              type: "payment_failed",
+              title: "Payment failed",
+              message: "We couldn't process your payment. Please update your payment method in Settings > Billing to avoid service interruption.",
+              read: false,
+              created_at: new Date().toISOString(),
+            });
+            console.log(`Payment failed notification created for user ${sub.user_id}`);
+          }
+        }
+        break;
+      }
+
+      default:
+        console.log(`Unhandled event type: ${event.type}`);
+    }
+
+    return new Response(JSON.stringify({ received: true }), {
+      status: 200,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    console.error("Webhook error:", error);
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+});

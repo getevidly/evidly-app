@@ -21,7 +21,7 @@ interface Org { id: string; name: string; plan: string | null; status: string; i
   primary_contact_name?: string | null; primary_contact_email?: string | null; primary_contact_phone?: string | null;
   alternate_contact_name?: string | null; alternate_contact_email?: string | null; alternate_contact_phone?: string | null;
   main_phone?: string | null; billing_email?: string | null; }
-interface Location { id: string; name: string; county: string | null; address: string | null; city: string | null; status: string; created_at: string; organizations?: { name: string } | null;
+interface Location { id: string; name: string; county: string | null; address: string | null; city: string | null; status: string; created_at: string; organization_id?: string | null; organizations?: { name: string } | null;
   site_contact_name?: string | null; site_contact_email?: string | null; site_contact_phone?: string | null;
   site_phone?: string | null; manager_name?: string | null; manager_phone?: string | null; }
 interface UserProfile { user_id: string; full_name: string | null; email: string | null; role: string; organization_id: string | null; last_sign_in_at: string | null; created_at: string; phone?: string | null; }
@@ -85,6 +85,12 @@ export default function Configure() {
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+
+  // Detail drawer
+  const [selectedOrg, setSelectedOrg] = useState<Org | null>(null);
+  const [selectedLoc, setSelectedLoc] = useState<Location | null>(null);
+  const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
+  const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
 
   // Modal states
   const [addOrgOpen, setAddOrgOpen] = useState(false);
@@ -170,13 +176,13 @@ export default function Configure() {
             {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} h={32} />)}
           </div>
         ) : tab === 'organizations' ? (
-          <OrgsTable orgs={orgs} search={search} onAdd={() => setAddOrgOpen(true)} />
+          <OrgsTable orgs={orgs} search={search} onAdd={() => setAddOrgOpen(true)} onSelect={setSelectedOrg} />
         ) : tab === 'locations' ? (
-          <LocsTable locs={locs} search={search} onAdd={() => setAddLocOpen(true)} />
+          <LocsTable locs={locs} search={search} onAdd={() => setAddLocOpen(true)} onSelect={setSelectedLoc} />
         ) : tab === 'users' ? (
-          <UsersTable users={users} orgs={orgs} search={search} onAdd={() => setAddUserOpen(true)} />
+          <UsersTable users={users} orgs={orgs} search={search} onAdd={() => setAddUserOpen(true)} onSelect={setSelectedUser} />
         ) : (
-          <VendorsTable vendors={vendors} search={search} onAdd={() => setAddVendorOpen(true)} />
+          <VendorsTable vendors={vendors} search={search} onAdd={() => setAddVendorOpen(true)} onSelect={setSelectedVendor} />
         )}
       </div>
 
@@ -185,6 +191,12 @@ export default function Configure() {
       {addLocOpen && <AddLocModal orgs={orgs} onClose={() => setAddLocOpen(false)} onSaved={loadData} />}
       {addUserOpen && <AddUserModal orgs={orgs} onClose={() => setAddUserOpen(false)} onSaved={loadData} userEmail={user?.email} />}
       {addVendorOpen && <AddVendorModal onClose={() => setAddVendorOpen(false)} onSaved={loadData} />}
+
+      {/* Detail drawers */}
+      {selectedOrg && <OrgDrawer org={selectedOrg} onClose={() => setSelectedOrg(null)} onRefresh={loadData} />}
+      {selectedLoc && <LocDrawer loc={selectedLoc} onClose={() => setSelectedLoc(null)} onRefresh={loadData} />}
+      {selectedUser && <UserDrawer user={selectedUser} orgs={orgs} onClose={() => setSelectedUser(null)} onRefresh={loadData} />}
+      {selectedVendor && <VendorDrawer vendor={selectedVendor} onClose={() => setSelectedVendor(null)} onRefresh={loadData} />}
     </div>
   );
 }
@@ -214,15 +226,15 @@ const TD = ({ children, fw, fs }: { children: React.ReactNode; fw?: boolean; fs?
   <td style={{ padding: '10px 14px', color: fw ? NAVY : TEXT_SEC, fontWeight: fw ? 600 : 400, fontSize: fs || 13 }}>{children}</td>
 );
 
-function OrgsTable({ orgs, search, onAdd }: { orgs: Org[]; search: string; onAdd: () => void }) {
+function OrgsTable({ orgs, search, onAdd, onSelect }: { orgs: Org[]; search: string; onAdd: () => void; onSelect: (o: Org) => void }) {
   const q = search.toLowerCase();
   const filtered = orgs.filter(o => !q || o.name.toLowerCase().includes(q));
   if (filtered.length === 0) return <EmptyAction icon="🏢" title="No organizations yet" subtitle="Add your first organization to get started." actionLabel="+ Add Organization" onAction={onAdd} />;
   return (
     <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-      <thead><tr style={{ borderBottom: `1px solid ${BORDER}` }}><TH>Name</TH><TH>Primary Contact</TH><TH>Phone</TH><TH>Plan</TH><TH>Locations</TH><TH>Status</TH><TH>Actions</TH></tr></thead>
+      <thead><tr style={{ borderBottom: `1px solid ${BORDER}` }}><TH>Name</TH><TH>Primary Contact</TH><TH>Phone</TH><TH>Plan</TH><TH>Locations</TH><TH>Status</TH></tr></thead>
       <tbody>{filtered.map(o => (
-        <tr key={o.id} style={{ borderBottom: `1px solid ${BORDER}` }} onMouseEnter={e => e.currentTarget.style.background = '#F9FAFB'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+        <tr key={o.id} onClick={() => onSelect(o)} style={{ borderBottom: `1px solid ${BORDER}`, cursor: 'pointer' }} onMouseEnter={e => e.currentTarget.style.background = '#F9FAFB'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
           <TD fw>{o.name}</TD>
           <td style={{ padding: '10px 14px' }}>
             <div style={{ fontSize: 13, color: NAVY }}>{o.primary_contact_name || '\u2014'}</div>
@@ -231,57 +243,47 @@ function OrgsTable({ orgs, search, onAdd }: { orgs: Org[]; search: string; onAdd
           <TD fs={12}>{o.primary_contact_phone || o.main_phone || '\u2014'}</TD>
           <TD>{o.plan || '\u2014'}</TD><TD>{o.locations?.[0]?.count ?? 0}</TD>
           <td style={{ padding: '10px 14px' }}><span style={statusBadge(o.status)}>{o.status}</span></td>
-          <td style={{ padding: '10px 14px' }}>
-            <button onClick={() => alert(`[Demo] Edit org: ${o.name}`)} style={{ padding: '3px 10px', background: '#F9FAFB', border: `1px solid ${BORDER}`, borderRadius: 4, color: GOLD, fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>Edit</button>
-          </td>
         </tr>
       ))}</tbody>
     </table>
   );
 }
 
-function LocsTable({ locs, search, onAdd }: { locs: Location[]; search: string; onAdd: () => void }) {
+function LocsTable({ locs, search, onAdd, onSelect }: { locs: Location[]; search: string; onAdd: () => void; onSelect: (l: Location) => void }) {
   const q = search.toLowerCase();
   const filtered = locs.filter(l => !q || l.name.toLowerCase().includes(q) || (l.county || '').toLowerCase().includes(q));
   if (filtered.length === 0) return <EmptyAction icon="📍" title="No locations yet" subtitle="Add a location to begin configuring sites." actionLabel="+ Add Location" onAction={onAdd} />;
   return (
     <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-      <thead><tr style={{ borderBottom: `1px solid ${BORDER}` }}><TH>Name</TH><TH>Organization</TH><TH>Site Contact</TH><TH>Phone</TH><TH>County</TH><TH>Status</TH><TH>Actions</TH></tr></thead>
+      <thead><tr style={{ borderBottom: `1px solid ${BORDER}` }}><TH>Name</TH><TH>Organization</TH><TH>Site Contact</TH><TH>Phone</TH><TH>County</TH><TH>Status</TH></tr></thead>
       <tbody>{filtered.map(l => (
-        <tr key={l.id} style={{ borderBottom: `1px solid ${BORDER}` }} onMouseEnter={e => e.currentTarget.style.background = '#F9FAFB'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+        <tr key={l.id} onClick={() => onSelect(l)} style={{ borderBottom: `1px solid ${BORDER}`, cursor: 'pointer' }} onMouseEnter={e => e.currentTarget.style.background = '#F9FAFB'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
           <TD fw>{l.name}</TD><TD>{l.organizations?.name || '\u2014'}</TD>
           <TD fs={12}>{l.site_contact_name || l.manager_name || '\u2014'}</TD>
           <TD fs={12}>{l.site_contact_phone || l.site_phone || l.manager_phone || '\u2014'}</TD>
           <TD>{l.county || '\u2014'}</TD>
           <td style={{ padding: '10px 14px' }}><span style={statusBadge(l.status)}>{l.status}</span></td>
-          <td style={{ padding: '10px 14px' }}>
-            <button onClick={() => alert(`[Demo] Edit location: ${l.name}`)} style={{ padding: '3px 10px', background: '#F9FAFB', border: `1px solid ${BORDER}`, borderRadius: 4, color: GOLD, fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>Edit</button>
-          </td>
         </tr>
       ))}</tbody>
     </table>
   );
 }
 
-function UsersTable({ users, orgs, search, onAdd }: { users: UserProfile[]; orgs: Org[]; search: string; onAdd: () => void }) {
+function UsersTable({ users, orgs, search, onAdd, onSelect }: { users: UserProfile[]; orgs: Org[]; search: string; onAdd: () => void; onSelect: (u: UserProfile) => void }) {
   const q = search.toLowerCase();
   const filtered = users.filter(u => !q || (u.full_name || '').toLowerCase().includes(q) || (u.email || '').toLowerCase().includes(q));
   if (filtered.length === 0) return <EmptyAction icon="👥" title="No users yet" subtitle="Invite or provision users to get started." actionLabel="+ Invite User" onAction={onAdd} />;
   return (
     <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-      <thead><tr style={{ borderBottom: `1px solid ${BORDER}` }}><TH>Name</TH><TH>Email</TH><TH>Role</TH><TH>Organization</TH><TH>Last Login</TH><TH>Created</TH><TH>Actions</TH></tr></thead>
+      <thead><tr style={{ borderBottom: `1px solid ${BORDER}` }}><TH>Name</TH><TH>Email</TH><TH>Role</TH><TH>Organization</TH><TH>Last Login</TH><TH>Created</TH></tr></thead>
       <tbody>{filtered.map(u => {
         const org = orgs.find(o => o.id === u.organization_id);
         return (
-          <tr key={u.user_id} style={{ borderBottom: `1px solid ${BORDER}` }} onMouseEnter={e => e.currentTarget.style.background = '#F9FAFB'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+          <tr key={u.user_id} onClick={() => onSelect(u)} style={{ borderBottom: `1px solid ${BORDER}`, cursor: 'pointer' }} onMouseEnter={e => e.currentTarget.style.background = '#F9FAFB'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
             <TD fw>{u.full_name || '\u2014'}</TD><TD fs={12}>{u.email || '\u2014'}</TD><TD>{u.role}</TD>
             <TD fs={12}>{org?.name || '\u2014'}</TD>
             <TD fs={12}>{u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleString() : 'Never'}</TD>
             <TD fs={12}>{new Date(u.created_at).toLocaleDateString()}</TD>
-            <td style={{ padding: '10px 14px', display: 'flex', gap: 6 }}>
-              <button onClick={() => alert(`[Demo] Edit user: ${u.email}`)} style={{ padding: '3px 10px', background: '#F9FAFB', border: `1px solid ${BORDER}`, borderRadius: 4, color: GOLD, fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>Edit</button>
-              <button onClick={() => alert(`[Demo] Emulate: ${u.email}`)} style={{ padding: '3px 10px', background: '#FAF7F2', border: `1px solid ${BORDER}`, borderRadius: 4, color: NAVY, fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>Emulate</button>
-            </td>
           </tr>
         );
       })}</tbody>
@@ -289,15 +291,15 @@ function UsersTable({ users, orgs, search, onAdd }: { users: UserProfile[]; orgs
   );
 }
 
-function VendorsTable({ vendors, search, onAdd }: { vendors: Vendor[]; search: string; onAdd: () => void }) {
+function VendorsTable({ vendors, search, onAdd, onSelect }: { vendors: Vendor[]; search: string; onAdd: () => void; onSelect: (v: Vendor) => void }) {
   const q = search.toLowerCase();
   const filtered = vendors.filter(v => !q || v.company_name.toLowerCase().includes(q) || (v.service_type || '').toLowerCase().includes(q));
   if (filtered.length === 0) return <EmptyAction icon="🔧" title="No vendors yet" subtitle="Add vendors to the platform below." actionLabel="+ Add Vendor" onAction={onAdd} />;
   return (
     <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-      <thead><tr style={{ borderBottom: `1px solid ${BORDER}` }}><TH>Company</TH><TH>Service</TH><TH>Primary Contact</TH><TH>Phone</TH><TH>Partner</TH><TH>Status</TH><TH>Actions</TH></tr></thead>
+      <thead><tr style={{ borderBottom: `1px solid ${BORDER}` }}><TH>Company</TH><TH>Service</TH><TH>Primary Contact</TH><TH>Phone</TH><TH>Partner</TH><TH>Status</TH></tr></thead>
       <tbody>{filtered.map(v => (
-        <tr key={v.id} style={{ borderBottom: `1px solid ${BORDER}` }} onMouseEnter={e => e.currentTarget.style.background = '#F9FAFB'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+        <tr key={v.id} onClick={() => onSelect(v)} style={{ borderBottom: `1px solid ${BORDER}`, cursor: 'pointer' }} onMouseEnter={e => e.currentTarget.style.background = '#F9FAFB'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
           <TD fw>{v.company_name}</TD><TD>{v.service_type || '\u2014'}</TD>
           <td style={{ padding: '10px 14px' }}>
             <div style={{ fontSize: 13, color: NAVY }}>{v.primary_contact_name || v.contact_name || '\u2014'}</div>
@@ -306,10 +308,6 @@ function VendorsTable({ vendors, search, onAdd }: { vendors: Vendor[]; search: s
           <TD fs={12}>{v.primary_contact_phone || v.phone || v.main_phone || '\u2014'}</TD>
           <td style={{ padding: '10px 14px' }}>{v.is_partner ? <span style={{ fontSize: 10, fontWeight: 700, color: '#059669', background: '#F0FFF4', padding: '2px 8px', borderRadius: 4 }}>Partner</span> : '\u2014'}</td>
           <td style={{ padding: '10px 14px' }}><span style={statusBadge(v.status)}>{v.status}</span></td>
-          <td style={{ padding: '10px 14px', display: 'flex', gap: 6 }}>
-            <button onClick={() => alert(`[Demo] Edit vendor: ${v.company_name}`)} style={{ padding: '3px 10px', background: '#F9FAFB', border: `1px solid ${BORDER}`, borderRadius: 4, color: GOLD, fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>Edit</button>
-            <button onClick={() => alert(`[Demo] Deactivate: ${v.company_name}`)} style={{ padding: '3px 10px', background: '#FEF2F2', border: 'none', borderRadius: 4, color: '#DC2626', fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>Deactivate</button>
-          </td>
         </tr>
       ))}</tbody>
     </table>
@@ -658,5 +656,617 @@ function AddVendorModal({ onClose, onSaved }: { onClose: () => void; onSaved: ()
         </div>
       </div>
     </Modal>
+  );
+}
+
+// ══════════════ DETAIL DRAWERS ══════════════
+
+const drawerOverlay: React.CSSProperties = { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.2)', zIndex: 40 };
+const drawerPanel: React.CSSProperties = {
+  position: 'fixed', top: 0, right: 0, bottom: 0, width: 580, maxWidth: '100vw',
+  background: '#FFFFFF', zIndex: 50, boxShadow: '-4px 0 24px rgba(0,0,0,0.12)',
+  display: 'flex', flexDirection: 'column', overflow: 'hidden',
+};
+const drawerHeader: React.CSSProperties = { padding: '20px 24px', borderBottom: `1px solid ${BORDER}`, flexShrink: 0 };
+const drawerBody: React.CSSProperties = { flex: 1, overflowY: 'auto', padding: '20px 24px' };
+const drawerFooter: React.CSSProperties = { padding: '14px 24px', borderTop: `1px solid ${BORDER}`, flexShrink: 0, display: 'flex', gap: 10 };
+
+function DrawerTabBar({ tabs, active, onChange }: { tabs: string[]; active: string; onChange: (t: string) => void }) {
+  return (
+    <div style={{ display: 'flex', borderBottom: `1px solid ${BORDER}`, padding: '0 24px', flexShrink: 0, overflowX: 'auto' }}>
+      {tabs.map(t => (
+        <button key={t} onClick={() => onChange(t)} style={{
+          padding: '10px 14px', fontSize: 13, fontWeight: 600, border: 'none', background: 'none', cursor: 'pointer',
+          borderBottom: active === t ? `2px solid ${NAVY}` : '2px solid transparent', marginBottom: -1,
+          color: active === t ? NAVY : TEXT_MUTED, whiteSpace: 'nowrap',
+        }}>{t}</button>
+      ))}
+    </div>
+  );
+}
+
+function DetailRow({ label, value }: { label: string; value: React.ReactNode }) {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #F3F4F6' }}>
+      <span style={{ fontSize: 12, color: TEXT_SEC, fontWeight: 600 }}>{label}</span>
+      <span style={{ fontSize: 13, color: NAVY, fontWeight: 500, textAlign: 'right', maxWidth: '60%' }}>{value || '\u2014'}</span>
+    </div>
+  );
+}
+
+function FooterBtn({ label, color, bg, border, onClick }: { label: string; color: string; bg: string; border?: string; onClick: () => void }) {
+  return (
+    <button onClick={onClick} style={{
+      padding: '8px 16px', borderRadius: 8, border: border || 'none', background: bg,
+      color, fontSize: 12, fontWeight: 700, cursor: 'pointer',
+    }}>{label}</button>
+  );
+}
+
+// ── Organization Drawer ──
+
+function OrgDrawer({ org, onClose, onRefresh }: { org: Org; onClose: () => void; onRefresh: () => void }) {
+  const [tab, setTab] = useState('Overview');
+  const [locs, setLocs] = useState<any[]>([]);
+  const [users, setUsers] = useState<any[]>([]);
+  const [tickets, setTickets] = useState<any[]>([]);
+  const [orgVendors, setOrgVendors] = useState<any[]>([]);
+  const [events, setEvents] = useState<any[]>([]);
+  const [relLoading, setRelLoading] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      setRelLoading(true);
+      const [locRes, userRes, ticketRes, vendorRes, eventRes] = await Promise.all([
+        supabase.from('locations').select('id, name, county, address, city, status').eq('organization_id', org.id).order('name'),
+        supabase.from('user_profiles').select('user_id, full_name, email, role, last_sign_in_at').eq('organization_id', org.id).order('full_name'),
+        supabase.from('support_tickets').select('id, ticket_number, subject, priority, status, created_at').eq('org_id', org.id).order('created_at', { ascending: false }).limit(20),
+        supabase.from('vendors').select('id, company_name, service_type, status, is_partner').order('company_name'),
+        supabase.from('admin_event_log').select('id, event_time, level, message').ilike('message', `%${org.name}%`).order('event_time', { ascending: false }).limit(30),
+      ]);
+      if (locRes.data) setLocs(locRes.data);
+      if (userRes.data) setUsers(userRes.data);
+      if (ticketRes.data) setTickets(ticketRes.data);
+      if (vendorRes.data) setOrgVendors(vendorRes.data);
+      if (eventRes.data) setEvents(eventRes.data);
+      setRelLoading(false);
+    })();
+  }, [org.id, org.name]);
+
+  return (
+    <>
+      <div style={drawerOverlay} onClick={onClose} />
+      <div style={drawerPanel}>
+        <div style={drawerHeader}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div>
+              <h2 style={{ fontSize: 18, fontWeight: 700, color: NAVY, margin: 0 }}>{org.name}</h2>
+              <div style={{ display: 'flex', gap: 6, marginTop: 6 }}>
+                <span style={statusBadge(org.status)}>{org.status}</span>
+                {org.plan && <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 700, background: '#EFF6FF', color: '#2563EB' }}>{org.plan}</span>}
+                {org.industry_type && <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 600, background: '#F3F4F6', color: TEXT_SEC }}>{org.industry_type.replace(/_/g, ' ')}</span>}
+              </div>
+            </div>
+            <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 22, color: TEXT_MUTED, cursor: 'pointer' }}>{'\u00D7'}</button>
+          </div>
+        </div>
+        <DrawerTabBar tabs={['Overview', 'Locations', 'Users', 'Vendors', 'Tickets', 'Activity']} active={tab} onChange={setTab} />
+        <div style={drawerBody}>
+          {tab === 'Overview' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
+                <div style={{ background: '#F9FAFB', borderRadius: 8, padding: '12px 14px', textAlign: 'center' }}>
+                  <div style={{ fontSize: 20, fontWeight: 800, color: NAVY }}>{locs.length}</div>
+                  <div style={{ fontSize: 11, color: TEXT_SEC }}>Locations</div>
+                </div>
+                <div style={{ background: '#F9FAFB', borderRadius: 8, padding: '12px 14px', textAlign: 'center' }}>
+                  <div style={{ fontSize: 20, fontWeight: 800, color: NAVY }}>{users.length}</div>
+                  <div style={{ fontSize: 11, color: TEXT_SEC }}>Users</div>
+                </div>
+                <div style={{ background: '#F9FAFB', borderRadius: 8, padding: '12px 14px', textAlign: 'center' }}>
+                  <div style={{ fontSize: 20, fontWeight: 800, color: NAVY }}>{tickets.filter(t => t.status === 'open').length}</div>
+                  <div style={{ fontSize: 11, color: TEXT_SEC }}>Open Tickets</div>
+                </div>
+              </div>
+              <div>
+                <h4 style={{ fontSize: 12, fontWeight: 700, color: NAVY, marginBottom: 8 }}>Primary Contact</h4>
+                <DetailRow label="Name" value={org.primary_contact_name} />
+                <DetailRow label="Email" value={org.primary_contact_email} />
+                <DetailRow label="Phone" value={org.primary_contact_phone} />
+              </div>
+              <div>
+                <h4 style={{ fontSize: 12, fontWeight: 700, color: NAVY, marginBottom: 8 }}>Alternate Contact</h4>
+                <DetailRow label="Name" value={org.alternate_contact_name} />
+                <DetailRow label="Email" value={org.alternate_contact_email} />
+                <DetailRow label="Phone" value={org.alternate_contact_phone} />
+              </div>
+              <div>
+                <h4 style={{ fontSize: 12, fontWeight: 700, color: NAVY, marginBottom: 8 }}>Details</h4>
+                <DetailRow label="Main Phone" value={org.main_phone} />
+                <DetailRow label="Billing Email" value={org.billing_email} />
+                <DetailRow label="Created" value={new Date(org.created_at).toLocaleDateString()} />
+              </div>
+            </div>
+          )}
+          {tab === 'Locations' && (
+            relLoading ? <Skeleton h={100} /> : locs.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: 30, color: TEXT_MUTED, fontSize: 13 }}>No locations found.</div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {locs.map(l => (
+                  <div key={l.id} style={{ background: '#F9FAFB', border: `1px solid ${BORDER}`, borderRadius: 8, padding: '10px 14px' }}>
+                    <div style={{ fontWeight: 600, color: NAVY, fontSize: 13 }}>{l.name}</div>
+                    <div style={{ fontSize: 12, color: TEXT_SEC }}>{[l.address, l.city, l.county].filter(Boolean).join(', ') || 'No address'}</div>
+                    <span style={{ ...statusBadge(l.status), marginTop: 4, display: 'inline-block' }}>{l.status}</span>
+                  </div>
+                ))}
+              </div>
+            )
+          )}
+          {tab === 'Users' && (
+            relLoading ? <Skeleton h={100} /> : users.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: 30, color: TEXT_MUTED, fontSize: 13 }}>No users found.</div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {users.map((u: any) => (
+                  <div key={u.user_id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', background: '#F9FAFB', borderRadius: 6, border: `1px solid ${BORDER}` }}>
+                    <div>
+                      <div style={{ fontWeight: 600, color: NAVY, fontSize: 13 }}>{u.full_name || u.email}</div>
+                      <div style={{ fontSize: 11, color: TEXT_SEC }}>{u.email}</div>
+                    </div>
+                    <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 700, background: '#F3F4F6', color: TEXT_SEC }}>{u.role?.replace(/_/g, ' ')}</span>
+                  </div>
+                ))}
+              </div>
+            )
+          )}
+          {tab === 'Vendors' && (
+            relLoading ? <Skeleton h={100} /> : orgVendors.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: 30, color: TEXT_MUTED, fontSize: 13 }}>No vendors found.</div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {orgVendors.map((v: any) => (
+                  <div key={v.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', background: '#F9FAFB', borderRadius: 6, border: `1px solid ${BORDER}` }}>
+                    <div>
+                      <div style={{ fontWeight: 600, color: NAVY, fontSize: 13 }}>{v.company_name}</div>
+                      <div style={{ fontSize: 11, color: TEXT_SEC }}>{v.service_type || 'No service type'}</div>
+                    </div>
+                    <div style={{ display: 'flex', gap: 4 }}>
+                      {v.is_partner && <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 700, background: '#F0FFF4', color: '#059669' }}>Partner</span>}
+                      <span style={statusBadge(v.status)}>{v.status}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )
+          )}
+          {tab === 'Tickets' && (
+            relLoading ? <Skeleton h={100} /> : tickets.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: 30, color: TEXT_MUTED, fontSize: 13 }}>No tickets found.</div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {tickets.map((t: any) => {
+                  const sc = { open: { bg: '#EFF6FF', text: '#2563EB' }, in_progress: { bg: '#FFFBEB', text: '#D97706' }, resolved: { bg: '#F0FFF4', text: '#059669' }, closed: { bg: '#F3F4F6', text: '#6B7280' } }[t.status as string] || { bg: '#F3F4F6', text: '#6B7280' };
+                  return (
+                    <div key={t.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', background: '#F9FAFB', borderRadius: 6, border: `1px solid ${BORDER}` }}>
+                      <div>
+                        <div style={{ fontWeight: 600, color: NAVY, fontSize: 13 }}>{t.subject}</div>
+                        <div style={{ fontSize: 11, color: TEXT_SEC }}>{t.ticket_number} &middot; {new Date(t.created_at).toLocaleDateString()}</div>
+                      </div>
+                      <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 700, background: sc.bg, color: sc.text }}>{t.status}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            )
+          )}
+          {tab === 'Activity' && (
+            relLoading ? <Skeleton h={100} /> : events.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: 30, color: TEXT_MUTED, fontSize: 13 }}>No activity recorded.</div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                {events.map((ev: any) => (
+                  <div key={ev.id} style={{ padding: '6px 0', borderBottom: '1px solid #F3F4F6', fontSize: 12 }}>
+                    <span style={{ color: TEXT_SEC }}>{new Date(ev.event_time).toLocaleString()}</span>
+                    <span style={{ marginLeft: 8, color: NAVY }}>{ev.message}</span>
+                  </div>
+                ))}
+              </div>
+            )
+          )}
+        </div>
+        <div style={drawerFooter}>
+          <FooterBtn label="Edit Organization" color="#fff" bg={NAVY} onClick={() => alert('[Demo] Edit organization')} />
+          <FooterBtn label="View Billing" color={NAVY} bg="#F9FAFB" border={`1px solid ${BORDER}`} onClick={() => alert('[Demo] View billing')} />
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ── Location Drawer ──
+
+function LocDrawer({ loc, onClose, onRefresh }: { loc: Location; onClose: () => void; onRefresh: () => void }) {
+  const [tab, setTab] = useState('Overview');
+  const [events, setEvents] = useState<any[]>([]);
+  const [users, setUsers] = useState<any[]>([]);
+  const [tickets, setTickets] = useState<any[]>([]);
+  const [jurisdiction, setJurisdiction] = useState<any>(null);
+  const [relLoading, setRelLoading] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      setRelLoading(true);
+      const queries: Promise<any>[] = [
+        supabase.from('admin_event_log').select('id, event_time, level, message')
+          .ilike('message', `%${loc.name}%`).order('event_time', { ascending: false }).limit(30),
+      ];
+      if (loc.organization_id) {
+        queries.push(
+          supabase.from('user_profiles').select('user_id, full_name, email, role, last_sign_in_at')
+            .eq('organization_id', loc.organization_id).order('full_name'),
+          supabase.from('support_tickets').select('id, ticket_number, subject, priority, status, created_at')
+            .eq('org_id', loc.organization_id).order('created_at', { ascending: false }).limit(20),
+        );
+      }
+      if (loc.county) {
+        queries.push(
+          supabase.from('jurisdictions').select('name, county, scoring_method, grading_method, inspection_frequency, fire_ahj_name, fire_ahj_type')
+            .eq('county', loc.county).maybeSingle(),
+        );
+      }
+      const results = await Promise.all(queries);
+      if (results[0]?.data) setEvents(results[0].data);
+      if (loc.organization_id) {
+        if (results[1]?.data) setUsers(results[1].data);
+        if (results[2]?.data) setTickets(results[2].data);
+        if (loc.county && results[3]?.data) setJurisdiction(results[3].data);
+      } else if (loc.county && results[1]?.data) {
+        setJurisdiction(results[1].data);
+      }
+      setRelLoading(false);
+    })();
+  }, [loc.name, loc.organization_id, loc.county]);
+
+  return (
+    <>
+      <div style={drawerOverlay} onClick={onClose} />
+      <div style={drawerPanel}>
+        <div style={drawerHeader}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div>
+              <h2 style={{ fontSize: 18, fontWeight: 700, color: NAVY, margin: 0 }}>{loc.name}</h2>
+              <div style={{ display: 'flex', gap: 6, marginTop: 6 }}>
+                <span style={statusBadge(loc.status)}>{loc.status}</span>
+                {loc.county && <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 600, background: '#F3F4F6', color: TEXT_SEC }}>{loc.county} County</span>}
+              </div>
+            </div>
+            <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 22, color: TEXT_MUTED, cursor: 'pointer' }}>{'\u00D7'}</button>
+          </div>
+        </div>
+        <DrawerTabBar tabs={['Overview', 'Compliance', 'Users', 'Tickets', 'Activity']} active={tab} onChange={setTab} />
+        <div style={drawerBody}>
+          {tab === 'Overview' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
+                <div style={{ background: '#F9FAFB', borderRadius: 8, padding: '12px 14px', textAlign: 'center' }}>
+                  <div style={{ fontSize: 20, fontWeight: 800, color: NAVY }}>{users.length}</div>
+                  <div style={{ fontSize: 11, color: TEXT_SEC }}>Users</div>
+                </div>
+                <div style={{ background: '#F9FAFB', borderRadius: 8, padding: '12px 14px', textAlign: 'center' }}>
+                  <div style={{ fontSize: 20, fontWeight: 800, color: NAVY }}>{tickets.filter(t => t.status === 'open').length}</div>
+                  <div style={{ fontSize: 11, color: TEXT_SEC }}>Open Tickets</div>
+                </div>
+                <div style={{ background: '#F9FAFB', borderRadius: 8, padding: '12px 14px', textAlign: 'center' }}>
+                  <div style={{ fontSize: 20, fontWeight: 800, color: jurisdiction ? '#059669' : TEXT_MUTED }}>{jurisdiction ? '✓' : '—'}</div>
+                  <div style={{ fontSize: 11, color: TEXT_SEC }}>Jurisdiction</div>
+                </div>
+              </div>
+              <div>
+                <h4 style={{ fontSize: 12, fontWeight: 700, color: NAVY, marginBottom: 8 }}>Address</h4>
+                <DetailRow label="Street" value={loc.address} />
+                <DetailRow label="City" value={loc.city} />
+                <DetailRow label="County" value={loc.county} />
+              </div>
+              <div>
+                <h4 style={{ fontSize: 12, fontWeight: 700, color: NAVY, marginBottom: 8 }}>Organization</h4>
+                <DetailRow label="Org Name" value={loc.organizations?.name} />
+              </div>
+              <div>
+                <h4 style={{ fontSize: 12, fontWeight: 700, color: NAVY, marginBottom: 8 }}>Site Contact</h4>
+                <DetailRow label="Name" value={loc.site_contact_name} />
+                <DetailRow label="Email" value={loc.site_contact_email} />
+                <DetailRow label="Phone" value={loc.site_contact_phone} />
+              </div>
+              <div>
+                <h4 style={{ fontSize: 12, fontWeight: 700, color: NAVY, marginBottom: 8 }}>Manager</h4>
+                <DetailRow label="Name" value={loc.manager_name} />
+                <DetailRow label="Phone" value={loc.manager_phone} />
+              </div>
+              <DetailRow label="Site Phone" value={loc.site_phone} />
+              <DetailRow label="Created" value={new Date(loc.created_at).toLocaleDateString()} />
+            </div>
+          )}
+          {tab === 'Compliance' && (
+            relLoading ? <Skeleton h={100} /> : !jurisdiction ? (
+              <div style={{ textAlign: 'center', padding: 30, color: TEXT_MUTED, fontSize: 13 }}>
+                {loc.county ? `No jurisdiction config found for ${loc.county} County.` : 'No county assigned to this location.'}
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <div>
+                  <h4 style={{ fontSize: 12, fontWeight: 700, color: NAVY, marginBottom: 8 }}>Food Safety Jurisdiction</h4>
+                  <DetailRow label="Authority" value={jurisdiction.name} />
+                  <DetailRow label="County" value={jurisdiction.county} />
+                  <DetailRow label="Scoring Method" value={jurisdiction.scoring_method?.replace(/_/g, ' ')} />
+                  <DetailRow label="Grading Method" value={jurisdiction.grading_method?.replace(/_/g, ' ')} />
+                  <DetailRow label="Inspection Frequency" value={jurisdiction.inspection_frequency} />
+                </div>
+                <div>
+                  <h4 style={{ fontSize: 12, fontWeight: 700, color: NAVY, marginBottom: 8 }}>Fire Safety AHJ</h4>
+                  <DetailRow label="Fire AHJ" value={jurisdiction.fire_ahj_name} />
+                  <DetailRow label="AHJ Type" value={jurisdiction.fire_ahj_type?.replace(/_/g, ' ')} />
+                </div>
+              </div>
+            )
+          )}
+          {tab === 'Users' && (
+            relLoading ? <Skeleton h={100} /> : users.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: 30, color: TEXT_MUTED, fontSize: 13 }}>No users found for this organization.</div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {users.map((u: any) => (
+                  <div key={u.user_id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', background: '#F9FAFB', borderRadius: 6, border: `1px solid ${BORDER}` }}>
+                    <div>
+                      <div style={{ fontWeight: 600, color: NAVY, fontSize: 13 }}>{u.full_name || u.email}</div>
+                      <div style={{ fontSize: 11, color: TEXT_SEC }}>{u.email}</div>
+                    </div>
+                    <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 700, background: '#F3F4F6', color: TEXT_SEC }}>{u.role?.replace(/_/g, ' ')}</span>
+                  </div>
+                ))}
+              </div>
+            )
+          )}
+          {tab === 'Tickets' && (
+            relLoading ? <Skeleton h={100} /> : tickets.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: 30, color: TEXT_MUTED, fontSize: 13 }}>No tickets found.</div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {tickets.map((t: any) => {
+                  const sc = { open: { bg: '#EFF6FF', text: '#2563EB' }, in_progress: { bg: '#FFFBEB', text: '#D97706' }, resolved: { bg: '#F0FFF4', text: '#059669' }, closed: { bg: '#F3F4F6', text: '#6B7280' } }[t.status as string] || { bg: '#F3F4F6', text: '#6B7280' };
+                  return (
+                    <div key={t.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', background: '#F9FAFB', borderRadius: 6, border: `1px solid ${BORDER}` }}>
+                      <div>
+                        <div style={{ fontWeight: 600, color: NAVY, fontSize: 13 }}>{t.subject}</div>
+                        <div style={{ fontSize: 11, color: TEXT_SEC }}>{t.ticket_number} &middot; {new Date(t.created_at).toLocaleDateString()}</div>
+                      </div>
+                      <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 700, background: sc.bg, color: sc.text }}>{t.status}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            )
+          )}
+          {tab === 'Activity' && (
+            events.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: 30, color: TEXT_MUTED, fontSize: 13 }}>No activity recorded.</div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                {events.map((ev: any) => (
+                  <div key={ev.id} style={{ padding: '6px 0', borderBottom: '1px solid #F3F4F6', fontSize: 12 }}>
+                    <span style={{ color: TEXT_SEC }}>{new Date(ev.event_time).toLocaleString()}</span>
+                    <span style={{ marginLeft: 8, color: NAVY }}>{ev.message}</span>
+                  </div>
+                ))}
+              </div>
+            )
+          )}
+        </div>
+        <div style={drawerFooter}>
+          <FooterBtn label="Edit Location" color="#fff" bg={NAVY} onClick={() => alert('[Demo] Edit location')} />
+          <FooterBtn label="View Organization" color={NAVY} bg="#F9FAFB" border={`1px solid ${BORDER}`} onClick={() => alert('[Demo] View organization')} />
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ── User Drawer ──
+
+function UserDrawer({ user, orgs, onClose, onRefresh }: { user: UserProfile; orgs: Org[]; onClose: () => void; onRefresh: () => void }) {
+  const [tab, setTab] = useState('Profile');
+  const [events, setEvents] = useState<any[]>([]);
+  const [tickets, setTickets] = useState<any[]>([]);
+
+  const org = orgs.find(o => o.id === user.organization_id);
+
+  useEffect(() => {
+    (async () => {
+      const [eventRes, ticketRes] = await Promise.all([
+        supabase.from('admin_event_log').select('id, event_time, level, message').ilike('message', `%${user.email}%`).order('event_time', { ascending: false }).limit(30),
+        supabase.from('support_tickets').select('id, ticket_number, subject, priority, status, created_at').eq('contact_email', user.email).order('created_at', { ascending: false }).limit(20),
+      ]);
+      if (eventRes.data) setEvents(eventRes.data);
+      if (ticketRes.data) setTickets(ticketRes.data);
+    })();
+  }, [user.email]);
+
+  return (
+    <>
+      <div style={drawerOverlay} onClick={onClose} />
+      <div style={drawerPanel}>
+        <div style={drawerHeader}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div>
+              <h2 style={{ fontSize: 18, fontWeight: 700, color: NAVY, margin: 0 }}>{user.full_name || user.email}</h2>
+              <div style={{ fontSize: 13, color: TEXT_SEC, marginTop: 2 }}>{user.email}</div>
+              <div style={{ display: 'flex', gap: 6, marginTop: 6 }}>
+                <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 700, background: '#EFF6FF', color: '#2563EB' }}>{user.role.replace(/_/g, ' ')}</span>
+                {org && <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 600, background: '#F3F4F6', color: TEXT_SEC }}>{org.name}</span>}
+              </div>
+            </div>
+            <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 22, color: TEXT_MUTED, cursor: 'pointer' }}>{'\u00D7'}</button>
+          </div>
+        </div>
+        <DrawerTabBar tabs={['Profile', 'Tickets', 'Activity']} active={tab} onChange={setTab} />
+        <div style={drawerBody}>
+          {tab === 'Profile' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <DetailRow label="Full Name" value={user.full_name} />
+              <DetailRow label="Email" value={user.email} />
+              <DetailRow label="Phone" value={user.phone} />
+              <DetailRow label="Role" value={user.role.replace(/_/g, ' ')} />
+              <DetailRow label="Organization" value={org?.name} />
+              <DetailRow label="Last Login" value={user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleString() : 'Never'} />
+              <DetailRow label="Created" value={new Date(user.created_at).toLocaleDateString()} />
+            </div>
+          )}
+          {tab === 'Tickets' && (
+            tickets.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: 30, color: TEXT_MUTED, fontSize: 13 }}>No tickets found.</div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {tickets.map((t: any) => (
+                  <div key={t.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', background: '#F9FAFB', borderRadius: 6, border: `1px solid ${BORDER}` }}>
+                    <div>
+                      <div style={{ fontWeight: 600, color: NAVY, fontSize: 13 }}>{t.subject}</div>
+                      <div style={{ fontSize: 11, color: TEXT_SEC }}>{t.ticket_number}</div>
+                    </div>
+                    <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 700, background: '#F3F4F6', color: TEXT_SEC }}>{t.status}</span>
+                  </div>
+                ))}
+              </div>
+            )
+          )}
+          {tab === 'Activity' && (
+            events.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: 30, color: TEXT_MUTED, fontSize: 13 }}>No activity recorded.</div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                {events.map((ev: any) => (
+                  <div key={ev.id} style={{ padding: '6px 0', borderBottom: '1px solid #F3F4F6', fontSize: 12 }}>
+                    <span style={{ color: TEXT_SEC }}>{new Date(ev.event_time).toLocaleString()}</span>
+                    <span style={{ marginLeft: 8, color: NAVY }}>{ev.message}</span>
+                  </div>
+                ))}
+              </div>
+            )
+          )}
+        </div>
+        <div style={drawerFooter}>
+          <FooterBtn label="Edit User" color="#fff" bg={NAVY} onClick={() => alert('[Demo] Edit user')} />
+          <FooterBtn label="Emulate" color={NAVY} bg="#FAF7F2" border={`1px solid ${BORDER}`} onClick={() => alert('[Demo] Start emulation')} />
+          <FooterBtn label="Reset Password" color={TEXT_SEC} bg="#F9FAFB" border={`1px solid ${BORDER}`} onClick={() => alert('[Demo] Reset password')} />
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ── Vendor Drawer ──
+
+function VendorDrawer({ vendor, onClose, onRefresh }: { vendor: Vendor; onClose: () => void; onRefresh: () => void }) {
+  const [tab, setTab] = useState('Profile');
+  const [events, setEvents] = useState<any[]>([]);
+  const [servedLocations, setServedLocations] = useState<any[]>([]);
+  const [relLoading, setRelLoading] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      setRelLoading(true);
+      const [eventRes, locRes] = await Promise.all([
+        supabase.from('admin_event_log').select('id, event_time, level, message')
+          .ilike('message', `%${vendor.company_name}%`).order('event_time', { ascending: false }).limit(30),
+        supabase.from('locations').select('id, name, county, city, status, organizations(name)').order('name'),
+      ]);
+      if (eventRes.data) setEvents(eventRes.data);
+      if (locRes.data) setServedLocations(locRes.data);
+      setRelLoading(false);
+    })();
+  }, [vendor.company_name]);
+
+  return (
+    <>
+      <div style={drawerOverlay} onClick={onClose} />
+      <div style={drawerPanel}>
+        <div style={drawerHeader}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div>
+              <h2 style={{ fontSize: 18, fontWeight: 700, color: NAVY, margin: 0 }}>{vendor.company_name}</h2>
+              <div style={{ display: 'flex', gap: 6, marginTop: 6 }}>
+                <span style={statusBadge(vendor.status)}>{vendor.status}</span>
+                {vendor.service_type && <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 600, background: '#F3F4F6', color: TEXT_SEC }}>{vendor.service_type}</span>}
+                {vendor.is_partner && <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 700, background: '#F0FFF4', color: '#059669' }}>Partner</span>}
+              </div>
+            </div>
+            <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 22, color: TEXT_MUTED, cursor: 'pointer' }}>{'\u00D7'}</button>
+          </div>
+        </div>
+        <DrawerTabBar tabs={['Profile', 'Locations Served', 'Activity']} active={tab} onChange={setTab} />
+        <div style={drawerBody}>
+          {tab === 'Profile' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div>
+                <h4 style={{ fontSize: 12, fontWeight: 700, color: NAVY, marginBottom: 8 }}>Company Info</h4>
+                <DetailRow label="Website" value={vendor.website} />
+                <DetailRow label="Main Phone" value={vendor.main_phone || vendor.phone} />
+                <DetailRow label="Service Type" value={vendor.service_type} />
+              </div>
+              <div>
+                <h4 style={{ fontSize: 12, fontWeight: 700, color: NAVY, marginBottom: 8 }}>Primary Contact</h4>
+                <DetailRow label="Name" value={vendor.primary_contact_name || vendor.contact_name} />
+                <DetailRow label="Email" value={vendor.primary_contact_email || vendor.email} />
+                <DetailRow label="Phone" value={vendor.primary_contact_phone} />
+              </div>
+              <div>
+                <h4 style={{ fontSize: 12, fontWeight: 700, color: NAVY, marginBottom: 8 }}>Alternate Contact</h4>
+                <DetailRow label="Name" value={vendor.alternate_contact_name} />
+                <DetailRow label="Email" value={vendor.alternate_contact_email} />
+                <DetailRow label="Phone" value={vendor.alternate_contact_phone} />
+              </div>
+              <DetailRow label="Created" value={new Date(vendor.created_at).toLocaleDateString()} />
+            </div>
+          )}
+          {tab === 'Locations Served' && (
+            relLoading ? <Skeleton h={100} /> : servedLocations.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: 30, color: TEXT_MUTED, fontSize: 13 }}>No locations in the system yet.</div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {servedLocations.map((l: any) => (
+                  <div key={l.id} style={{ background: '#F9FAFB', border: `1px solid ${BORDER}`, borderRadius: 8, padding: '10px 14px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <div style={{ fontWeight: 600, color: NAVY, fontSize: 13 }}>{l.name}</div>
+                        <div style={{ fontSize: 11, color: TEXT_SEC }}>{[l.city, l.county].filter(Boolean).join(', ') || 'No address'} &middot; {(l.organizations as any)?.name || ''}</div>
+                      </div>
+                      <span style={statusBadge(l.status)}>{l.status}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )
+          )}
+          {tab === 'Activity' && (
+            events.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: 30, color: TEXT_MUTED, fontSize: 13 }}>No activity recorded.</div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                {events.map((ev: any) => (
+                  <div key={ev.id} style={{ padding: '6px 0', borderBottom: '1px solid #F3F4F6', fontSize: 12 }}>
+                    <span style={{ color: TEXT_SEC }}>{new Date(ev.event_time).toLocaleString()}</span>
+                    <span style={{ marginLeft: 8, color: NAVY }}>{ev.message}</span>
+                  </div>
+                ))}
+              </div>
+            )
+          )}
+        </div>
+        <div style={drawerFooter}>
+          <FooterBtn label="Edit Vendor" color="#fff" bg={NAVY} onClick={() => alert('[Demo] Edit vendor')} />
+          <FooterBtn label="Send Portal Invite" color={NAVY} bg="#FAF7F2" border={`1px solid ${BORDER}`} onClick={() => alert('[Demo] Send portal invite')} />
+          <FooterBtn label="Deactivate" color="#DC2626" bg="#FEF2F2" border="1px solid #FECACA" onClick={() => alert('[Demo] Deactivate vendor')} />
+        </div>
+      </div>
+    </>
   );
 }

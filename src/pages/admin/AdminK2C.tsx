@@ -3,16 +3,14 @@
  * Route: /admin/k2c
  */
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 
-const BG = '#0F1629';
-const CARD = '#1A2540';
+const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
-const TEXT = '#F0EBE0';
-const TEXT_DIM = '#8A9AB8';
-const TEXT_MUTED = '#4A5C7A';
-const BORDER = '#1E2D4D';
+const TEXT_SEC = '#6B7F96';
+const TEXT_MUTED = '#9CA3AF';
+const BORDER = '#E2D9C8';
 
 interface DonationRow {
   id: string;
@@ -26,19 +24,18 @@ interface DonationRow {
 }
 
 const Skeleton = ({ w = '100%', h = 20 }: { w?: string | number; h?: number }) => (
-  <div style={{ width: w, height: h, background: BORDER, borderRadius: 6, animation: 'pulse 1.5s ease-in-out infinite' }} />
+  <div style={{ width: w, height: h, background: '#E5E7EB', borderRadius: 6, animation: 'pulse 1.5s ease-in-out infinite' }} />
 );
 
 const EmptyState = ({ icon, title, subtitle }: { icon: string; title: string; subtitle: string }) => (
-  <div style={{ textAlign: 'center', padding: '60px 20px', color: TEXT_MUTED }}>
+  <div style={{ textAlign: 'center', padding: '60px 20px', background: '#FAF7F2', border: '2px dashed #E2D9C8', borderRadius: 12, margin: 16 }}>
     <div style={{ fontSize: 40, marginBottom: 16 }}>{icon}</div>
-    <div style={{ fontSize: 16, fontWeight: 700, color: TEXT_DIM, marginBottom: 8 }}>{title}</div>
-    <div style={{ fontSize: 13, color: TEXT_MUTED, maxWidth: 400, margin: '0 auto' }}>{subtitle}</div>
+    <div style={{ fontSize: 16, fontWeight: 700, color: NAVY, marginBottom: 8 }}>{title}</div>
+    <div style={{ fontSize: 13, color: TEXT_SEC, maxWidth: 400, margin: '0 auto' }}>{subtitle}</div>
   </div>
 );
 
 export default function AdminK2C() {
-  const navigate = useNavigate();
   const [donations, setDonations] = useState<DonationRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [formName, setFormName] = useState('');
@@ -104,34 +101,33 @@ export default function AdminK2C() {
   };
 
   const KpiCard = ({ label, value, color }: { label: string; value: string | number; color?: string }) => (
-    <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 10, padding: '16px 20px', flex: 1, minWidth: 140 }}>
-      <div style={{ fontSize: 11, color: TEXT_DIM, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>{label}</div>
-      <div style={{ fontSize: 24, fontWeight: 800, color: color || TEXT }}>{value}</div>
+    <div style={{ background: '#FFFFFF', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '16px 20px', flex: 1, minWidth: 140 }}>
+      <div style={{ fontSize: 11, color: TEXT_SEC, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>{label}</div>
+      <div style={{ fontSize: 24, fontWeight: 800, color: color || NAVY }}>{value}</div>
     </div>
   );
 
-  const inputStyle: React.CSSProperties = { padding: '8px 12px', background: '#0A0F1E', border: `1px solid ${BORDER}`, borderRadius: 6, color: TEXT, fontSize: 13, flex: 1, minWidth: 120 };
+  const inputStyle: React.CSSProperties = { padding: '8px 12px', background: '#F9FAFB', border: '1px solid #D1D5DB', borderRadius: 6, color: NAVY, fontSize: 13, flex: 1, minWidth: 120 };
 
   return (
-    <div style={{ minHeight: '100vh', background: BG, padding: '32px 40px', fontFamily: 'Inter, sans-serif' }}>
-      <button onClick={() => navigate('/admin')} style={{ marginBottom: 24, background: 'none', border: 'none', cursor: 'pointer', color: GOLD, fontSize: 13 }}>&larr; Admin</button>
-
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
+    <div className="space-y-6">
+      <AdminBreadcrumb crumbs={[{ label: 'K2C' }]} />
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <h1 style={{ fontSize: 24, fontWeight: 800, color: TEXT, margin: 0 }}>Kitchen to Community</h1>
-          <p style={{ fontSize: 13, color: TEXT_DIM, marginTop: 4 }}>Donation tracking &mdash; meals, amounts, contributing locations</p>
+          <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Kitchen to Community</h1>
+          <p style={{ fontSize: 13, color: TEXT_SEC, marginTop: 4 }}>Donation tracking — meals, amounts, contributing locations</p>
         </div>
-        <button onClick={exportCsv} style={{ padding: '6px 14px', background: CARD, border: `1px solid ${BORDER}`, borderRadius: 6, color: TEXT_DIM, fontSize: 12, cursor: 'pointer' }}>Export CSV</button>
+        <button onClick={exportCsv} style={{ padding: '6px 14px', background: '#FFFFFF', border: `1px solid ${BORDER}`, borderRadius: 6, color: TEXT_SEC, fontSize: 12, cursor: 'pointer' }}>Export CSV</button>
       </div>
 
       {/* KPIs */}
       {loading ? (
-        <div style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
+        <div style={{ display: 'flex', gap: 12 }}>
           {Array.from({ length: 4 }).map((_, i) => <div key={i} style={{ flex: 1 }}><Skeleton h={70} /></div>)}
         </div>
       ) : (
-        <div style={{ display: 'flex', gap: 12, marginBottom: 24, flexWrap: 'wrap' }}>
-          <KpiCard label="Total Meals" value={totalMeals.toLocaleString()} color="#34D399" />
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+          <KpiCard label="Total Meals" value={totalMeals.toLocaleString()} color="#059669" />
           <KpiCard label="Total Donated" value={`$${totalDollars.toLocaleString()}`} color={GOLD} />
           <KpiCard label="Contributing Accounts" value={contribOrgs} />
           <KpiCard label="This Month" value={`${thisMonthMeals.toLocaleString()} meals`} />
@@ -139,41 +135,41 @@ export default function AdminK2C() {
       )}
 
       {/* Running total banner */}
-      <div style={{ background: '#0f3326', border: '1px solid #1a5940', borderRadius: 10, padding: '16px 24px', marginBottom: 24, textAlign: 'center' }}>
-        <span style={{ fontSize: 15, color: '#34D399', fontWeight: 700 }}>
+      <div style={{ background: '#F0FFF4', border: '1px solid #BBF7D0', borderRadius: 10, padding: '16px 24px', textAlign: 'center' }}>
+        <span style={{ fontSize: 15, color: '#059669', fontWeight: 700 }}>
           EvidLY has contributed {totalMeals.toLocaleString()} meals to California communities
         </span>
       </div>
 
       {/* Manual entry */}
-      <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 12, padding: 20, marginBottom: 24 }}>
-        <h3 style={{ fontSize: 14, fontWeight: 700, color: TEXT, marginBottom: 12 }}>Add Donation</h3>
+      <div style={{ background: '#FFFFFF', border: `1px solid ${BORDER}`, borderRadius: 12, padding: 20 }}>
+        <h3 style={{ fontSize: 14, fontWeight: 700, color: NAVY, marginBottom: 12 }}>Add Donation</h3>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'flex-end' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1, minWidth: 150 }}>
-            <label style={{ fontSize: 11, color: TEXT_DIM }}>Account Name</label>
+            <label style={{ fontSize: 11, color: TEXT_SEC }}>Account Name</label>
             <input value={formName} onChange={e => setFormName(e.target.value)} style={inputStyle} placeholder="Account name" />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1, minWidth: 120 }}>
-            <label style={{ fontSize: 11, color: TEXT_DIM }}>County</label>
+            <label style={{ fontSize: 11, color: TEXT_SEC }}>County</label>
             <input value={formCounty} onChange={e => setFormCounty(e.target.value)} style={inputStyle} placeholder="County" />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1, minWidth: 100 }}>
-            <label style={{ fontSize: 11, color: TEXT_DIM }}>Amount ($)</label>
+            <label style={{ fontSize: 11, color: TEXT_SEC }}>Amount ($)</label>
             <input value={formAmount} onChange={e => setFormAmount(e.target.value)} style={inputStyle} placeholder="0.00" type="number" step="0.01" />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1, minWidth: 100 }}>
-            <label style={{ fontSize: 11, color: TEXT_DIM }}>Meals</label>
+            <label style={{ fontSize: 11, color: TEXT_SEC }}>Meals</label>
             <input value={formMeals} onChange={e => setFormMeals(e.target.value)} style={inputStyle} placeholder="0" type="number" />
           </div>
           <button onClick={addDonation} disabled={submitting || !formName || !formAmount || !formMeals}
-            style={{ padding: '8px 20px', background: submitting ? BORDER : GOLD, border: 'none', borderRadius: 6, color: '#1E2D4D', fontSize: 13, fontWeight: 700, cursor: submitting ? 'default' : 'pointer', whiteSpace: 'nowrap' }}>
+            style={{ padding: '8px 20px', background: submitting ? '#E5E7EB' : GOLD, border: 'none', borderRadius: 6, color: '#FFFFFF', fontSize: 13, fontWeight: 700, cursor: submitting ? 'default' : 'pointer', whiteSpace: 'nowrap' }}>
             {submitting ? 'Adding...' : 'Add Donation'}
           </button>
         </div>
       </div>
 
       {/* Donations table */}
-      <div style={{ background: CARD, borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
+      <div style={{ background: '#FFFFFF', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
         {loading ? (
           <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
             {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} h={32} />)}
@@ -185,19 +181,19 @@ export default function AdminK2C() {
             <thead>
               <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
                 {['Account', 'County', 'Amount', 'Meals', 'Period', 'Created'].map(h => (
-                  <th key={h} style={{ textAlign: 'left', padding: '10px 14px', color: TEXT_DIM, fontWeight: 600, fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5 }}>{h}</th>
+                  <th key={h} style={{ textAlign: 'left', padding: '10px 14px', color: TEXT_SEC, fontWeight: 600, fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5 }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {donations.map(d => (
                 <tr key={d.id} style={{ borderBottom: `1px solid ${BORDER}` }}>
-                  <td style={{ padding: '10px 14px', color: TEXT, fontWeight: 600 }}>{d.account_name}</td>
-                  <td style={{ padding: '10px 14px', color: TEXT_DIM }}>{d.county || '—'}</td>
+                  <td style={{ padding: '10px 14px', color: NAVY, fontWeight: 600 }}>{d.account_name}</td>
+                  <td style={{ padding: '10px 14px', color: TEXT_SEC }}>{d.county || '—'}</td>
                   <td style={{ padding: '10px 14px', color: GOLD, fontWeight: 600 }}>${(d.amount_cents / 100).toFixed(2)}</td>
-                  <td style={{ padding: '10px 14px', color: '#34D399', fontWeight: 600 }}>{d.meals_count}</td>
-                  <td style={{ padding: '10px 14px', color: TEXT_DIM, fontSize: 12 }}>{d.donation_period}</td>
-                  <td style={{ padding: '10px 14px', color: TEXT_DIM, fontSize: 12 }}>{new Date(d.created_at).toLocaleDateString()}</td>
+                  <td style={{ padding: '10px 14px', color: '#059669', fontWeight: 600 }}>{d.meals_count}</td>
+                  <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>{d.donation_period}</td>
+                  <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>{new Date(d.created_at).toLocaleDateString()}</td>
                 </tr>
               ))}
             </tbody>

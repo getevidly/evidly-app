@@ -329,15 +329,17 @@ export function Calendar() {
 
   // ── Vendor Lookup ──────────────────────────────────────────────
   const getVendorForCategory = useCallback((category: string, location: string) => {
+    if (!isDemoMode) return null;
     const serviceType = CATEGORY_TO_SERVICE_TYPE[category];
     if (!serviceType) return null;
     const locId = LOCATION_ID_MAP[location];
     if (!locId) return null;
     const vendor = demoVendors.find(v => v.serviceType === serviceType && v.locationId === locId);
     return vendor ? { id: vendor.id, name: vendor.companyName } : null;
-  }, []);
+  }, [isDemoMode]);
 
   const getVendorsForCategory = useCallback((category: string, location: string, excludeId?: string) => {
+    if (!isDemoMode) return [];
     const serviceType = CATEGORY_TO_SERVICE_TYPE[category];
     if (!serviceType) return [];
     // In demo mode, show all vendors with this service type (any location)
@@ -347,7 +349,7 @@ export function Calendar() {
         if (!acc.find(a => a.companyName === v.companyName)) acc.push(v);
         return acc;
       }, [] as typeof demoVendors);
-  }, []);
+  }, [isDemoMode]);
 
   // ── Frequency Lookup ──────────────────────────────────────────
   const getExistingFrequency = useCallback((category: string): string | null => {
@@ -2158,7 +2160,7 @@ export function Calendar() {
                         backgroundPosition: 'right 10px center',
                       }}
                     >
-                      {LOCATIONS.map(loc => (
+                      {isDemoMode && LOCATIONS.map(loc => (
                         <option key={loc} value={loc}>{loc}</option>
                       ))}
                     </select>
@@ -2231,7 +2233,7 @@ export function Calendar() {
                                   if (v === '__add_new__') {
                                     return;
                                   }
-                                  const found = demoVendors.find(dv => dv.id === v);
+                                  const found = isDemoMode ? demoVendors.find(dv => dv.id === v) : null;
                                   setVendorChangeForm(prev => ({ ...prev, newVendorId: v, newVendorName: found?.companyName || '' }));
                                 }}
                                 style={{

@@ -219,6 +219,30 @@ const ADMIN_CARDS: AdminCard[] = [
     route: '/admin/pipeline',
     badge: 'NEW',
   },
+  {
+    id: 'support',
+    title: 'Support Tickets',
+    description: 'Customer support queue \u2014 tickets, replies, SLA tracking, CSAT.',
+    icon: '\uD83C\uDFAB',
+    route: '/admin/support',
+    badge: 'NEW',
+  },
+  {
+    id: 'remote-connect',
+    title: 'Remote Connect',
+    description: 'Screen share or co-browse with customers for live support.',
+    icon: '\uD83D\uDDA5\uFE0F',
+    route: '/admin/remote-connect',
+    badge: 'NEW',
+  },
+  {
+    id: 'staff-roles',
+    title: 'Staff & Roles',
+    description: 'EvidLY team accounts with granular role-based permissions.',
+    icon: '\uD83D\uDC65',
+    route: '/admin/staff',
+    badge: 'NEW',
+  },
 ];
 
 export default function AdminHome() {

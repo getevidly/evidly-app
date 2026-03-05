@@ -159,7 +159,7 @@ export default function ExecutiveDashboard() {
       <div style={{ ...FONT, backgroundColor: PAGE_BG, minHeight: '100vh', paddingBottom: 80 }}>
         <DashboardHero
           firstName={DEMO_ROLE_NAMES.executive.firstName}
-          orgName={companyName || DEMO_ORG.name}
+          orgName={companyName || 'Your Organization'}
         />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-6">
           <div className="bg-white rounded-xl p-8 text-center" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>

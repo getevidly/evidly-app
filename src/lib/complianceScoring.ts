@@ -19,7 +19,7 @@ export interface LocationCompliance {
     note?: string;
   };
   facilitySafety: {
-    reference: 'NFPA 96 (2024)';
+    reference: 'NFPA 96';
     ahj: string;
     verdict: FacilitySafetyVerdict;
     bars: { label: 'Permit' | 'Hood' | 'Ext' | 'Ansul'; status: 'pass' | 'fail' }[];

@@ -1,0 +1,174 @@
+// ═══════════════════════════════════════════════════════════
+// src/hooks/useJurisdiction.ts
+// Returns DUAL-AUTHORITY jurisdiction data for a single location.
+// Each location has its OWN jurisdiction — no shared global jurisdiction.
+// DEMO mode: reads from demoJurisdictions.ts
+// LIVE mode: queries Supabase jurisdictions table
+// ═══════════════════════════════════════════════════════════
+
+import { useState, useEffect, useMemo } from 'react';
+import type { LocationJurisdiction } from '../types/jurisdiction';
+import { demoLocationJurisdictions, DEMO_JURISDICTIONS, ALL_CA_JURISDICTIONS, type DemoJurisdiction } from '../data/demoJurisdictions';
+import { demoFireJurisdictionConfigs } from '../data/demoFireJurisdictionConfigs';
+
+// SUGGESTION: In live mode, query Supabase jurisdictions table by location's jurisdiction_id
+// and build the dual-authority record from the DB row + fire_jurisdiction_config column.
+
+// Merge fire jurisdiction config into a LocationJurisdiction record
+function withFireConfig(j: LocationJurisdiction): LocationJurisdiction {
+  const fireConfig = demoFireJurisdictionConfigs[j.location_id];
+  if (!fireConfig) return j;
+  return {
+    ...j,
+    facilitySafety: {
+      ...j.facilitySafety,
+      fire_jurisdiction_config: fireConfig,
+    },
+  };
+}
+
+export function useJurisdiction(
+  locationId: string | null,
+  isDemoMode: boolean,
+): LocationJurisdiction | null {
+  const [data, setData] = useState<LocationJurisdiction | null>(null);
+
+  useEffect(() => {
+    if (!locationId) {
+      setData(null);
+      return;
+    }
+
+    if (isDemoMode) {
+      const raw = demoLocationJurisdictions[locationId] ?? null;
+      setData(raw ? withFireConfig(raw) : null);
+      return;
+    }
+
+    // SUGGESTION: Live mode — query Supabase jurisdictions table including fire_jurisdiction_config column
+    // const { data: row } = await supabase
+    //   .from('jurisdictions')
+    //   .select('*, fire_jurisdiction_config')
+    //   .eq('id', location.jurisdiction_id)
+    //   .single();
+    // Then build LocationJurisdiction with fire_jurisdiction_config from the DB row.
+    // For now, fall back to demo data.
+    const raw = demoLocationJurisdictions[locationId] ?? null;
+    setData(raw ? withFireConfig(raw) : null);
+  }, [locationId, isDemoMode]);
+
+  return data;
+}
+
+// Returns jurisdiction data for ALL demo locations at once
+export function useAllLocationJurisdictions(
+  locationIds: string[],
+  isDemoMode: boolean,
+): Record<string, LocationJurisdiction> {
+  const [data, setData] = useState<Record<string, LocationJurisdiction>>({});
+
+  useEffect(() => {
+    if (isDemoMode) {
+      const result: Record<string, LocationJurisdiction> = {};
+      for (const id of locationIds) {
+        const j = demoLocationJurisdictions[id];
+        if (j) result[id] = withFireConfig(j);
+      }
+      setData(result);
+      return;
+    }
+
+    // SUGGESTION: Live mode — batch query including fire_jurisdiction_config column
+    const result: Record<string, LocationJurisdiction> = {};
+    for (const id of locationIds) {
+      const j = demoLocationJurisdictions[id];
+      if (j) result[id] = withFireConfig(j);
+    }
+    setData(result);
+  }, [locationIds.join(','), isDemoMode]);
+
+  return data;
+}
+
+/**
+ * Resolve a DemoJurisdiction by county + optional city.
+ * Searches DEMO_JURISDICTIONS first (detailed configs), then falls back
+ * to ALL_CA_JURISDICTIONS. Independent cities (Long Beach, Pasadena,
+ * Vernon, Berkeley) are matched by city name first.
+ */
+export function useJurisdictionByCountyCity(
+  county: string,
+  city?: string,
+): DemoJurisdiction | null {
+  return useMemo(() => {
+    // Try city-level match first for independent cities
+    if (city) {
+      const cityMatch = DEMO_JURISDICTIONS.find(
+        (j) => j.county === county && j.city === city,
+      );
+      if (cityMatch) return cityMatch;
+    }
+
+    // Try county-level match in DEMO_JURISDICTIONS (detailed configs)
+    const countyMatch = DEMO_JURISDICTIONS.find(
+      (j) => j.county === county && !j.city,
+    );
+    if (countyMatch) return countyMatch;
+
+    // Fall back to ALL_CA_JURISDICTIONS (minimal configs)
+    const allMatch = ALL_CA_JURISDICTIONS.find((j) =>
+      city
+        ? j.county === county && j.city === city
+        : j.county === county && !j.city,
+    );
+    if (!allMatch) return null;
+
+    // Build a minimal DemoJurisdiction from ALL_CA_JURISDICTIONS entry
+    return {
+      id: `all-ca-${allMatch.county.toLowerCase().replace(/\s/g, '-')}${allMatch.city ? `-${allMatch.city.toLowerCase().replace(/\s/g, '-')}` : ''}`,
+      county: allMatch.county,
+      city: allMatch.city,
+      agencyName: allMatch.agencyName,
+      scoringType: allMatch.scoringType,
+      gradingType: allMatch.gradingType,
+      gradingConfig: {},
+      passThreshold: null,
+      warningThreshold: null,
+      criticalThreshold: null,
+      fireAhjName: '',
+      hoodCleaningDefault: 'Semi-annual',
+      facilityCount: allMatch.facilityCount ?? 0,
+      dataSourceTier: allMatch.tier,
+      gradeLabel: 'N/A',
+      gradeExplanation: 'Not configured',
+      passFailLabel: 'No Grade',
+      demoScore: 0,
+      demoGrade: 'N/A',
+      demoPassFail: 'no_grade',
+    } satisfies DemoJurisdiction;
+  }, [county, city]);
+}
+==IMPORTS==
+src/components/compliance/DemoJurisdictionSwitcher.tsx:4:import { DEMO_JURISDICTIONS, DemoJurisdiction, calculateDemoGrade } from '../../data/demoJurisdictions';
+src/components/dashboard/ComplianceManagerDashboard.tsx:17:import { DEMO_LOCATION_GRADE_OVERRIDES } from '../../data/demoJurisdictions';
+src/components/dashboard/FacilitiesDashboardNew.tsx:15:import { DEMO_LOCATION_GRADE_OVERRIDES } from '../../data/demoJurisdictions';
+src/components/dashboard/shared/HeroJurisdictionSummary.tsx:15:import { DEMO_LOCATION_GRADE_OVERRIDES } from '../../../data/demoJurisdictions';
+src/data/demoFireJurisdictionConfigs.ts:4:// Separate file — does NOT modify demoJurisdictions.ts.
+src/data/demoJurisdictions.ts:2:// src/data/demoJurisdictions.ts
+src/data/selfInspectionJurisdictionMap.ts:8:import type { ScoringType, GradingType } from './demoJurisdictions';
+src/data/selfInspectionJurisdictionMap.ts:9:import { DEMO_JURISDICTIONS } from './demoJurisdictions';
+src/hooks/useComplianceScore.ts:8:// DEMO mode: uses demoScoring.ts with jurisdiction data from demoJurisdictions
+src/hooks/useComplianceScore.ts:14:import { DEMO_LOCATIONS, DEMO_LOCATION_GRADE_OVERRIDES, calculateDemoGrade } from '../data/demoJurisdictions';
+src/hooks/useJurisdiction.ts:5:// DEMO mode: reads from demoJurisdictions.ts
+src/hooks/useJurisdiction.ts:11:import { demoLocationJurisdictions, DEMO_JURISDICTIONS, ALL_CA_JURISDICTIONS, type DemoJurisdiction } from '../data/demoJurisdictions';
+src/hooks/useRegulatoryChanges.ts:15:import { demoLocationJurisdictions } from '../data/demoJurisdictions';
+src/lib/businessImpactContext.ts:9: * Do NOT import from demoData.ts or demoJurisdictions.ts.
+src/lib/selfInspectionScoring.ts:9:import type { DemoJurisdiction } from '../data/demoJurisdictions';
+src/lib/selfInspectionScoring.ts:10:import { calculateDemoGrade } from '../data/demoJurisdictions';
+src/lib/selfInspectionScoring.ts:166: * Delegates to calculateDemoGrade() from demoJurisdictions.ts.
+src/lib/__tests__/selfInspectionScoring.test.ts:16:import { DEMO_JURISDICTIONS } from '../../data/demoJurisdictions';
+src/pages/ComplianceOverview.tsx:36:} from '../data/demoJurisdictions';
+src/pages/FacilitySafety.tsx:10:import { DEMO_LOCATION_GRADE_OVERRIDES } from '../data/demoJurisdictions';
+src/pages/ScoringBreakdown.tsx:10:import { DEMO_LOCATION_GRADE_OVERRIDES } from '../data/demoJurisdictions';
+src/pages/SelfAudit.tsx:20:import { DEMO_JURISDICTIONS, type DemoJurisdiction } from '../data/demoJurisdictions';
+src/utils/demoScoring.ts:12:import { DEMO_JURISDICTIONS, DEMO_LOCATIONS, calculateDemoGrade } from '../data/demoJurisdictions';

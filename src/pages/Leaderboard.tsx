@@ -1,295 +1,397 @@
-import { useState, useEffect, useMemo } from 'react';
-import { Trophy, Medal, Award, TrendingUp, Flame, Target, Zap, Star } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
+import { useState, useEffect } from 'react';
+import { Trophy, Flame, Star, TrendingUp, TrendingDown, Minus, Shield, Target, Zap } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Breadcrumb } from '../components/Breadcrumb';
-import { useRole } from '../contexts/RoleContext';
 
-interface LocationLeaderboard {
-  location_id: string;
-  location_name: string;
-  total_temp_logs: number;
-  total_checklists: number;
-  total_documents: number;
-  compliance_status: string;
-  total_points: number;
+interface LeaderboardEntry {
+  id: string;
+  name: string;
+  city: string;
+  state: string;
+  organization_id: string;
+  organization_name: string;
+  industry_type: string;
+  temp_compliance_pct: number | null;
+  checklist_completion_pct: number | null;
+  streak_days: number;
+  created_at: string;
 }
 
-function getComplianceStatus(locationName: string): string {
-  switch (locationName) {
-    case 'Location 1': return 'Compliant'; // demo
-    case 'Location 2': return 'Action Required'; // demo
-    case 'Location 3': return 'Unsatisfactory'; // demo
-    default: return 'Pending';
-  }
+const INDUSTRIES = ['All', 'casual_dining', 'quick_service', 'fine_dining', 'hotel', 'education_k12', 'education_university', 'healthcare', 'corporate_dining', 'catering'];
+const INDUSTRY_LABELS: Record<string, string> = {
+  All: 'All',
+  casual_dining: 'Casual Dining',
+  quick_service: 'Quick Service',
+  fine_dining: 'Fine Dining',
+  hotel: 'Hospitality',
+  education_k12: 'K-12',
+  education_university: 'University',
+  healthcare: 'Healthcare',
+  corporate_dining: 'Corporate',
+  catering: 'Catering',
+};
+
+const calcXP = (temp: number, checklist: number, streak: number) =>
+  Math.round((temp * 0.4) + (checklist * 0.4) + (streak * 0.2));
+
+function getBadges(entry: LeaderboardEntry): string[] {
+  const badges: string[] = [];
+  const temp = entry.temp_compliance_pct ?? 0;
+  const checklist = entry.checklist_completion_pct ?? 0;
+  const streak = entry.streak_days;
+
+  if (temp >= 98 && checklist >= 98) badges.push('\ud83c\udfc6');
+  if (streak >= 30) badges.push('\ud83d\udd25');
+  if (temp >= 95) badges.push('\u26a1');
+  if (checklist >= 95) badges.push('\ud83c\udfaf');
+  if (streak >= 14) badges.push('\ud83d\udcaa');
+  return badges;
 }
 
-function getStatusColor(status: string): string {
-  switch (status) {
-    case 'Compliant': return '#22c55e';
-    case 'Satisfactory': return '#22c55e';
-    case 'Action Required': return '#f59e0b';
-    case 'Unsatisfactory': return '#ef4444';
-    default: return '#6b7280';
-  }
+function getLevel(xp: number): number {
+  return Math.floor(xp / 40) + 1;
 }
 
-const DEMO_LEADERBOARD: LocationLeaderboard[] = [
-  { location_id: '1', location_name: 'Location 1', total_temp_logs: 186, total_checklists: 92, total_documents: 24, compliance_status: 'Compliant', total_points: 4520 }, // demo
-  { location_id: '2', location_name: 'Location 2', total_temp_logs: 142, total_checklists: 78, total_documents: 18, compliance_status: 'Action Required', total_points: 3640 }, // demo
-  { location_id: '3', location_name: 'Location 3', total_temp_logs: 98, total_checklists: 45, total_documents: 12, compliance_status: 'Unsatisfactory', total_points: 2285 }, // demo
-];
+function RankChange({ change }: { change: number }) {
+  if (change > 0) return <span style={{ color: '#22c55e', fontSize: 12, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 2 }}><TrendingUp size={14} /> +{change}</span>;
+  if (change < 0) return <span style={{ color: '#ef4444', fontSize: 12, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 2 }}><TrendingDown size={14} /> {change}</span>;
+  return <span style={{ color: '#6b7280', fontSize: 12, display: 'flex', alignItems: 'center', gap: 2 }}><Minus size={14} /> -</span>;
+}
 
-function HorizontalBar({ label, value, max, color, suffix }: { label: string; value: number; max: number; color: string; suffix?: string }) {
-  const pct = Math.round((value / max) * 100);
+function XPBar({ xp, level }: { xp: number; level: number }) {
+  const xpInLevel = xp % 40;
+  const pct = Math.round((xpInLevel / 40) * 100);
   return (
-    <div style={{ marginBottom: '12px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-        <span style={{ fontSize: '14px', color: '#374151', fontWeight: 500 }}>{label}</span>
-        <span style={{ fontSize: '14px', color: '#6b7280', fontWeight: 600 }}>{value}{suffix || ''}</span>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <span style={{ fontSize: 11, fontWeight: 700, color: '#A08C5A', minWidth: 38 }}>Lv.{level}</span>
+      <div style={{ flex: 1, height: 8, backgroundColor: '#e5e7eb', borderRadius: 4, overflow: 'hidden' }}>
+        <div style={{ height: '100%', width: `${pct}%`, background: 'linear-gradient(90deg, #A08C5A, #d4af37)', borderRadius: 4, transition: 'width 1s ease' }} />
       </div>
-      <div style={{ height: '10px', backgroundColor: '#e5e7eb', borderRadius: '5px', overflow: 'hidden' }}>
-        <div style={{ height: '100%', width: `${pct}%`, backgroundColor: color, borderRadius: '5px', transition: 'width 0.8s ease' }} />
-      </div>
+      <span style={{ fontSize: 10, color: '#6b7280', minWidth: 30, textAlign: 'right' }}>{xp} XP</span>
     </div>
   );
 }
 
 export function Leaderboard() {
-  const { profile } = useAuth();
-  const { getAccessibleLocations } = useRole();
-  const accessibleLocationIds = useMemo(
-    () => getAccessibleLocations().map(l => l.locationId),
-    [getAccessibleLocations]
-  );
-  const [locations, setLocations] = useState<LocationLeaderboard[]>([]);
+  const navigate = useNavigate();
+  const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [industryFilter, setIndustryFilter] = useState('All');
 
   useEffect(() => {
-    if (profile?.organization_id) {
-      fetchLeaderboard();
-    } else {
-      setLocations(DEMO_LEADERBOARD.filter(l => accessibleLocationIds.includes(l.location_id)));
-    }
-  }, [profile, accessibleLocationIds]);
+    fetchLeaderboard();
+  }, []);
 
   const fetchLeaderboard = async () => {
-    const { data } = await supabase
+    setLoading(true);
+    const { data, error } = await supabase
       .from('v_location_leaderboard')
       .select('*')
-      .eq('organization_id', profile?.organization_id)
-      .order('total_points', { ascending: false });
+      .order('temp_compliance_pct', { ascending: false, nullsFirst: false });
 
     if (data && data.length > 0) {
-      setLocations(data.filter(l => accessibleLocationIds.includes(l.location_id)));
+      setEntries(data);
     } else {
-      setLocations(DEMO_LEADERBOARD.filter(l => accessibleLocationIds.includes(l.location_id)));
+      setEntries([]);
     }
+    setLoading(false);
   };
 
-  const getRankIcon = (index: number) => {
-    switch (index) {
-      case 0:
-        return <Trophy className="h-6 w-6" style={{ color: '#d4af37' }} />;
-      case 1:
-        return <Medal className="h-6 w-6" style={{ color: '#9ca3af' }} />;
-      case 2:
-        return <Award className="h-6 w-6" style={{ color: '#92400e' }} />;
-      default:
-        return <span className="text-lg font-semibold text-gray-500">#{index + 1}</span>;
-    }
-  };
+  const filtered = industryFilter === 'All'
+    ? entries
+    : entries.filter(e => e.industry_type === industryFilter);
 
-  const maxPoints = Math.max(...locations.map(l => l.total_points), 1);
+  const ranked = filtered.map((e, i) => ({
+    ...e,
+    rank: i + 1,
+    change: 0, // rank change requires historical data — placeholder
+    xp: calcXP(e.temp_compliance_pct ?? 0, e.checklist_completion_pct ?? 0, e.streak_days),
+    badges: getBadges(e),
+  }));
+
+  const top3 = ranked.slice(0, 3);
+  const rest = ranked.slice(3);
+
+  // Empty state
+  if (!loading && entries.length === 0) {
+    return (
+      <>
+        <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Leaderboard' }]} />
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 20px', textAlign: 'center' }}>
+          <div style={{ fontSize: 64, marginBottom: 16 }}>{'\ud83c\udfc6'}</div>
+          <h3 style={{ fontSize: 24, fontWeight: 800, color: '#1E2D4D', marginBottom: 8 }}>The Leaderboard is warming up.</h3>
+          <p style={{ color: '#6b7280', fontSize: 15, maxWidth: 440, lineHeight: 1.7, marginBottom: 28 }}>
+            Be the first kitchen to compete. Opt in from your Settings page
+            to claim your spot and compete for monthly rewards.
+          </p>
+          <button
+            onClick={() => navigate('/settings')}
+            style={{
+              background: '#1E2D4D', color: 'white', padding: '14px 28px', borderRadius: 10,
+              fontWeight: 700, fontSize: 14, border: 'none', cursor: 'pointer', marginBottom: 12,
+            }}
+          >
+            Join the Leaderboard {'\u2192'}
+          </button>
+          <a
+            href="/leaderboard-preview"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: '#A08C5A', fontSize: 13, fontWeight: 600, textDecoration: 'none' }}
+          >
+            Preview what it looks like {'\u2192'}
+          </a>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Leaderboard' }]} />
       <div className="space-y-6">
         {/* Header */}
-        <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-xl p-6 text-white">
-          <div className="flex items-center space-x-3 mb-2">
-            <Trophy className="h-8 w-8 text-[#d4af37]" />
-            <h2 className="text-2xl font-bold">Location Leaderboard</h2>
+        <div style={{
+          background: 'linear-gradient(135deg, #1E2D4D 0%, #2E4270 100%)',
+          borderRadius: 16, padding: '28px 32px', color: 'white',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
+            <Trophy size={28} style={{ color: '#d4af37' }} />
+            <h2 style={{ fontSize: 24, fontWeight: 800 }}>EvidLY Compliance Leaderboard</h2>
           </div>
-          <p className="text-gray-300">Track performance across all your locations</p>
+          <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 14 }}>
+            Real kitchens competing on operational excellence. Rankings update daily.
+          </p>
         </div>
 
-        {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {(() => {
-            // Show the best status across locations
-            const hasUnsatisfactory = locations.some(l => l.compliance_status === 'Unsatisfactory');
-            const hasActionRequired = locations.some(l => l.compliance_status === 'Action Required');
-            const overallStatus = hasUnsatisfactory ? 'Action Required' : hasActionRequired ? 'Action Required' : 'Compliant';
-            const statusColor = getStatusColor(overallStatus);
-            return (
-              <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: `4px solid ${statusColor}` }}>
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <TrendingUp className="h-4 w-4" style={{ color: statusColor }} />
-                  <span className="text-sm text-gray-500 font-medium">Overall Status</span>
-                </div>
-                <div className="text-lg font-bold text-center" style={{ color: statusColor }}>
-                  {overallStatus}
-                </div>
-              </div>
-            );
-          })()}
-          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #d4af37' }}>
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <Trophy className="h-4 w-4 text-[#d4af37]" />
-              <span className="text-sm text-gray-500 font-medium">Active Locations</span>
-            </div>
-            <div className="text-3xl font-bold text-[#1e4d6b] text-center">{locations.length}</div>
+        {/* Rewards Banner */}
+        <div style={{
+          background: 'white', borderRadius: 16, padding: '20px 28px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.06)', border: '1px solid #e5e7eb',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+            <Star size={20} style={{ color: '#d4af37' }} />
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: '#111827' }}>Monthly Rewards</h3>
           </div>
-          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #d4af37' }}>
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <Award className="h-4 w-4 text-[#d4af37]" />
-              <span className="text-sm text-gray-500 font-medium">Total Points</span>
-            </div>
-            <div className="text-3xl font-bold text-[#d4af37] text-center">{locations.reduce((sum, l) => sum + l.total_points, 0).toLocaleString()}</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12 }}>
+            {[
+              { icon: '\ud83e\udd47', title: '1st Place', desc: '1 free month + Champion plaque' },
+              { icon: '\ud83e\udd48', title: '2nd Place', desc: '50% off + K2C 2x multiplier' },
+              { icon: '\ud83e\udd49', title: '3rd Place', desc: '25% off + K2C 1.5x multiplier' },
+              { icon: '\ud83c\udf1f', title: 'Top 10', desc: 'Featured Passport badge' },
+            ].map(r => (
+              <div key={r.title} style={{ backgroundColor: '#f9fafb', borderRadius: 12, padding: 14, textAlign: 'center' }}>
+                <div style={{ fontSize: 24 }}>{r.icon}</div>
+                <h4 style={{ fontSize: 12, fontWeight: 700, color: '#374151', marginTop: 6 }}>{r.title}</h4>
+                <p style={{ fontSize: 11, color: '#6b7280', marginTop: 2 }}>{r.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Rankings Table */}
-        <div style={{ background: 'white', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', overflow: 'hidden' }}>
-          <div style={{ padding: '16px 24px', borderBottom: '1px solid #e5e7eb' }}>
-            <h3 style={{ fontSize: '20px', fontWeight: 600, color: '#111827' }}>Rankings</h3>
-          </div>
-          <div>
-            {locations.length === 0 ? (
-              <div style={{ padding: '48px', textAlign: 'center' }}>
-                <Trophy className="h-12 w-12 mx-auto mb-4" style={{ color: '#9ca3af' }} />
-                <p style={{ color: '#6b7280' }}>No locations yet</p>
-              </div>
-            ) : (
-              locations.map((location, index) => (
-                <div
-                  key={location.location_id}
-                  style={{ padding: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: index < locations.length - 1 ? '1px solid #f3f4f6' : 'none' }}
-                  className="hover:bg-gray-50"
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1 }}>
-                    <div style={{ width: '48px', display: 'flex', justifyContent: 'center' }}>{getRankIcon(index)}</div>
-                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#1e4d6b', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 500, flexShrink: 0 }}>
-                      {location.location_name.charAt(0)}
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 500, color: '#111827' }}>{location.location_name}</div>
-                      <div style={{ fontSize: '14px', color: '#6b7280' }}>
-                        {location.total_temp_logs} logs · {location.total_checklists} checklists · {location.compliance_status}
-                      </div>
-                    </div>
-                  </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontSize: '24px', fontWeight: 700, color: '#d4af37' }}>{location.total_points.toLocaleString()}</div>
-                    <div style={{ fontSize: '14px', color: '#6b7280' }}>points</div>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
+        {/* Industry Filter */}
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          {INDUSTRIES.map(ind => (
+            <button
+              key={ind}
+              onClick={() => setIndustryFilter(ind)}
+              style={{
+                padding: '8px 16px', borderRadius: 20, fontSize: 13, fontWeight: 600,
+                border: 'none', cursor: 'pointer', transition: 'all 0.2s',
+                backgroundColor: industryFilter === ind ? '#1E2D4D' : '#e5e7eb',
+                color: industryFilter === ind ? 'white' : '#374151',
+              }}
+            >
+              {INDUSTRY_LABELS[ind] || ind}
+            </button>
+          ))}
         </div>
 
-        {/* Two side-by-side charts */}
-        {locations.length > 0 && (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
-            {/* Compliance Status */}
-            <div style={{ background: 'white', borderRadius: '12px', padding: '24px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-              <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#111827', marginBottom: '20px' }}>Compliance Status</h3>
-              {locations.map((loc) => (
-                <div key={loc.location_id} style={{ marginBottom: '12px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                    <span style={{ fontSize: '14px', color: '#374151', fontWeight: 500 }}>{loc.location_name}</span>
-                    <span style={{ fontSize: '13px', fontWeight: 600, color: getStatusColor(loc.compliance_status), padding: '1px 10px', borderRadius: '12px', backgroundColor: loc.compliance_status === 'Compliant' ? '#f0fdf4' : loc.compliance_status === 'Action Required' ? '#fffbeb' : '#fef2f2' }}>
-                      {loc.compliance_status}
-                    </span>
+        {/* Podium — Top 3 */}
+        {top3.length >= 3 && (
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, alignItems: 'end' }}>
+            {[top3[1], top3[0], top3[2]].map((loc, idx) => {
+              const isFirst = idx === 1;
+              const medalEmoji = idx === 0 ? '\ud83e\udd48' : idx === 1 ? '\ud83e\udd47' : '\ud83e\udd49';
+              const height = isFirst ? 200 : idx === 0 ? 170 : 150;
+              return (
+                <div key={loc.id} style={{
+                  background: 'white', borderRadius: 16, padding: '24px 16px', textAlign: 'center',
+                  boxShadow: isFirst ? '0 8px 32px rgba(30,77,107,0.15)' : '0 2px 8px rgba(0,0,0,0.06)',
+                  border: isFirst ? '2px solid #d4af37' : '1px solid #e5e7eb',
+                  minHeight: height,
+                  display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
+                  transform: isFirst ? 'scale(1.05)' : 'scale(1)',
+                }}>
+                  <div style={{ fontSize: 36, marginBottom: 8 }}>{medalEmoji}</div>
+                  <div style={{ width: 40, height: 40, borderRadius: '50%', backgroundColor: '#1E2D4D', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700, fontSize: 16, marginBottom: 4 }}>
+                    {loc.name.charAt(0)}
+                  </div>
+                  <h4 style={{ fontSize: 14, fontWeight: 700, color: '#111827', marginBottom: 2 }}>{loc.name}</h4>
+                  <p style={{ fontSize: 11, color: '#6b7280', marginBottom: 8 }}>{loc.organization_name}</p>
+                  <div style={{ fontSize: 22, fontWeight: 900, color: '#A08C5A' }}>
+                    {loc.xp} XP
+                  </div>
+                  <div style={{ display: 'flex', gap: 4, marginTop: 8, justifyContent: 'center' }}>
+                    {loc.badges.slice(0, 4).map((b, i) => (
+                      <span key={i} style={{ fontSize: 16 }}>{b}</span>
+                    ))}
                   </div>
                 </div>
-              ))}
-              <div style={{ display: 'flex', gap: '16px', marginTop: '16px', fontSize: '11px', color: '#6b7280' }}>
-                <span><span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '2px', backgroundColor: '#22c55e', marginRight: '4px' }} />Compliant</span>
-                <span><span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '2px', backgroundColor: '#f59e0b', marginRight: '4px' }} />Action Required</span>
-                <span><span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '2px', backgroundColor: '#ef4444', marginRight: '4px' }} />Unsatisfactory</span>
-              </div>
-            </div>
-
-            {/* Total Points Chart */}
-            <div style={{ background: 'white', borderRadius: '12px', padding: '24px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-              <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#111827', marginBottom: '20px' }}>Total Points</h3>
-              {locations.map((loc) => (
-                <HorizontalBar
-                  key={loc.location_id}
-                  label={loc.location_name}
-                  value={loc.total_points}
-                  max={maxPoints}
-                  color="#1e4d6b"
-                />
-              ))}
-            </div>
+              );
+            })}
           </div>
         )}
 
+        {/* Rankings Table */}
+        <div style={{ background: 'white', borderRadius: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.06)', overflow: 'hidden' }}>
+          <div style={{ padding: '16px 24px', borderBottom: '1px solid #e5e7eb', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h3 style={{ fontSize: 18, fontWeight: 700, color: '#111827' }}>Full Rankings</h3>
+            <span style={{ fontSize: 12, color: '#6b7280' }}>{ranked.length} opted-in locations</span>
+          </div>
+
+          {loading ? (
+            <div style={{ padding: 48, textAlign: 'center', color: '#6b7280' }}>Loading leaderboard...</div>
+          ) : ranked.length === 0 ? (
+            <div style={{ padding: 48, textAlign: 'center' }}>
+              <Trophy size={40} style={{ color: '#9ca3af', margin: '0 auto 12px' }} />
+              <p style={{ color: '#6b7280' }}>No locations match this filter</p>
+            </div>
+          ) : (
+            ranked.map((loc, i) => {
+              const temp = loc.temp_compliance_pct ?? 0;
+              const checklist = loc.checklist_completion_pct ?? 0;
+              const level = getLevel(loc.xp);
+              return (
+                <div
+                  key={loc.id}
+                  style={{
+                    display: 'grid', gridTemplateColumns: '50px 50px 1fr 90px 90px 70px 70px 90px',
+                    padding: '14px 24px', alignItems: 'center',
+                    borderBottom: i < ranked.length - 1 ? '1px solid #f3f4f6' : 'none',
+                    transition: 'background 0.15s, transform 0.15s',
+                    cursor: 'default',
+                    animation: `fadeUp 0.4s ease ${i * 0.06}s both`,
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = '#f9fafb'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                >
+                  <span style={{ fontSize: 16, fontWeight: 800, color: loc.rank <= 3 ? '#A08C5A' : '#374151' }}>#{loc.rank}</span>
+                  <RankChange change={loc.change} />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
+                    <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#1E2D4D', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 600, fontSize: 14, flexShrink: 0 }}>
+                      {loc.name.charAt(0)}
+                    </div>
+                    <div style={{ minWidth: 0 }}>
+                      <div style={{ fontWeight: 600, color: '#111827', fontSize: 14, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{loc.name}</div>
+                      <div style={{ fontSize: 11, color: '#6b7280' }}>{loc.organization_name} {'\u00b7'} {loc.city}</div>
+                      <XPBar xp={loc.xp} level={level} />
+                    </div>
+                  </div>
+                  <span style={{ fontSize: 14, fontWeight: 600, color: temp >= 95 ? '#22c55e' : temp >= 85 ? '#f59e0b' : '#ef4444' }}>{temp > 0 ? `${temp}%` : '--'}</span>
+                  <span style={{ fontSize: 14, fontWeight: 600, color: checklist >= 95 ? '#22c55e' : checklist >= 85 ? '#f59e0b' : '#ef4444' }}>{checklist > 0 ? `${checklist}%` : '--'}</span>
+                  <span style={{ fontSize: 14, fontWeight: 600, color: '#111827', display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <Flame size={14} style={{ color: loc.streak_days >= 20 ? '#ef4444' : '#f59e0b' }} />
+                    {loc.streak_days}d
+                  </span>
+                  <div style={{ display: 'flex', gap: 2 }}>
+                    {loc.badges.slice(0, 3).map((b, bi) => <span key={bi} style={{ fontSize: 14 }}>{b}</span>)}
+                    {loc.badges.length > 3 && <span style={{ fontSize: 10, color: '#6b7280', fontWeight: 600 }}>+{loc.badges.length - 3}</span>}
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <span style={{ fontSize: 18, fontWeight: 800, color: '#A08C5A' }}>{loc.xp}</span>
+                    <span style={{ fontSize: 10, color: '#6b7280', marginLeft: 2 }}>XP</span>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+
         {/* Achievement Badges */}
-        <div style={{ background: 'white', borderRadius: '12px', padding: '24px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-          <h3 style={{ fontSize: '20px', fontWeight: 600, color: '#111827', marginBottom: '4px' }}>Achievement Badges</h3>
-          <p style={{ fontSize: '14px', color: '#6b7280', marginBottom: '24px' }}>
-            Earn badges by maintaining excellent compliance across your locations
+        <div style={{ background: 'white', borderRadius: 16, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+          <h3 style={{ fontSize: 18, fontWeight: 700, color: '#111827', marginBottom: 4 }}>Achievement Badges</h3>
+          <p style={{ fontSize: 13, color: '#6b7280', marginBottom: 20 }}>
+            Earn badges by maintaining excellent compliance
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Perfect Week - EARNED */}
-            <div style={{ background: 'linear-gradient(135deg, #f0f7fc 0%, #e1eef6 100%)', border: '2px solid #1e4d6b', borderRadius: '12px', padding: '24px', textAlign: 'center' }}>
-              <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#1e4d6b', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
-                <Flame className="h-8 w-8" style={{ color: '#d4af37' }} />
+            {[
+              { icon: <Flame className="h-7 w-7" style={{ color: '#d4af37' }} />, title: 'Perfect Week', desc: '100% compliance for 7 consecutive days', earned: true },
+              { icon: <Target className="h-7 w-7" style={{ color: '#d4af37' }} />, title: '100% Temp Logs', desc: 'All temperature logs current for 30 days', earned: true },
+              { icon: <Zap className="h-7 w-7" style={{ color: '#9ca3af' }} />, title: 'Zero Overdue Docs', desc: 'All vendor documents current and valid', earned: false },
+              { icon: <Star className="h-7 w-7" style={{ color: '#9ca3af' }} />, title: 'Gold Standard', desc: 'Top ranking maintained for 90 days', earned: false },
+            ].map(badge => (
+              <div key={badge.title} style={{
+                background: badge.earned ? 'linear-gradient(135deg, #f0f7fc 0%, #e1eef6 100%)' : '#f9fafb',
+                border: badge.earned ? '2px solid #1e4d6b' : '2px solid #e5e7eb',
+                borderRadius: 12, padding: 24, textAlign: 'center',
+                opacity: badge.earned ? 1 : 0.6,
+              }}>
+                <div style={{
+                  width: 56, height: 56, borderRadius: '50%',
+                  background: badge.earned ? '#1e4d6b' : '#d1d5db',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px',
+                }}>
+                  {badge.icon}
+                </div>
+                <h4 style={{ fontWeight: 700, color: badge.earned ? '#111827' : '#6b7280', marginBottom: 4 }}>{badge.title}</h4>
+                <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8 }}>{badge.desc}</p>
+                <span style={{
+                  fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 4,
+                  color: badge.earned ? '#1e4d6b' : '#6b7280',
+                  backgroundColor: badge.earned ? '#dbeafe' : '#e5e7eb',
+                }}>
+                  {badge.earned ? 'EARNED' : 'LOCKED'}
+                </span>
               </div>
-              <h4 style={{ fontWeight: 700, color: '#111827', marginBottom: '4px' }}>Perfect Week</h4>
-              <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '8px' }}>100% compliance for 7 consecutive days</p>
-              <span style={{ fontSize: '11px', fontWeight: 600, color: '#1e4d6b', backgroundColor: '#dbeafe', padding: '3px 10px', borderRadius: '4px' }}>EARNED</span>
-            </div>
-
-            {/* 100% Temperature Readings - EARNED */}
-            <div style={{ background: 'linear-gradient(135deg, #f0f7fc 0%, #e1eef6 100%)', border: '2px solid #1e4d6b', borderRadius: '12px', padding: '24px', textAlign: 'center' }}>
-              <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#1e4d6b', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
-                <Target className="h-8 w-8" style={{ color: '#d4af37' }} />
-              </div>
-              <h4 style={{ fontWeight: 700, color: '#111827', marginBottom: '4px' }}>100% Temperature Readings</h4>
-              <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '8px' }}>All temperature logs current for 30 days</p>
-              <span style={{ fontSize: '11px', fontWeight: 600, color: '#1e4d6b', backgroundColor: '#dbeafe', padding: '3px 10px', borderRadius: '4px' }}>EARNED</span>
-            </div>
-
-            {/* Zero Overdue Docs - LOCKED */}
-            <div style={{ background: '#f9fafb', border: '2px solid #e5e7eb', borderRadius: '12px', padding: '24px', textAlign: 'center', opacity: 0.7 }}>
-              <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#d1d5db', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
-                <Zap className="h-8 w-8" style={{ color: '#9ca3af' }} />
-              </div>
-              <h4 style={{ fontWeight: 700, color: '#6b7280', marginBottom: '4px' }}>Zero Overdue Docs</h4>
-              <p style={{ fontSize: '13px', color: '#9ca3af', marginBottom: '8px' }}>All vendor documents current and valid</p>
-              <span style={{ fontSize: '11px', fontWeight: 600, color: '#6b7280', backgroundColor: '#e5e7eb', padding: '3px 10px', borderRadius: '4px' }}>LOCKED</span>
-            </div>
-
-            {/* Gold Standard - LOCKED (grayed out) */}
-            <div style={{ background: '#f9fafb', border: '2px dashed #d1d5db', borderRadius: '12px', padding: '24px', textAlign: 'center', opacity: 0.5 }}>
-              <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#d1d5db', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
-                <Star className="h-8 w-8" style={{ color: '#9ca3af' }} />
-              </div>
-              <h4 style={{ fontWeight: 700, color: '#9ca3af', marginBottom: '4px' }}>Gold Standard</h4>
-              <p style={{ fontSize: '13px', color: '#9ca3af', marginBottom: '8px' }}>Compliant status maintained for 90 days</p>
-              <span style={{ fontSize: '11px', fontWeight: 600, color: '#9ca3af', backgroundColor: '#e5e7eb', padding: '3px 10px', borderRadius: '4px' }}>LOCKED</span>
-            </div>
+            ))}
           </div>
         </div>
 
-        {/* How to earn points */}
-        <div style={{ background: '#f0f7fc', border: '1px solid #bfdbfe', borderRadius: '12px', padding: '20px' }}>
-          <h4 style={{ fontWeight: 600, color: '#1e4d6b', marginBottom: '8px' }}>How to earn points:</h4>
-          <ul style={{ fontSize: '14px', color: '#1e4d6b', listStyle: 'none', padding: 0, margin: 0 }}>
-            <li style={{ marginBottom: '4px' }}>· Complete temperature logs: 10 points</li>
-            <li style={{ marginBottom: '4px' }}>· Finish checklists: 25 points</li>
-            <li style={{ marginBottom: '4px' }}>· Upload documents: 15 points</li>
-            <li style={{ marginBottom: '4px' }}>· Resolve alerts: 20 points</li>
-            <li>· Perfect week streak: 100 bonus points</li>
-          </ul>
+        {/* How XP Works */}
+        <div style={{ background: 'white', borderRadius: 16, padding: '20px 28px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+            <Shield size={18} style={{ color: '#1E2D4D' }} />
+            <h4 style={{ fontSize: 14, fontWeight: 700, color: '#111827' }}>How XP Works</h4>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>
+            {[
+              { label: 'Temperature Compliance', weight: '40%', desc: '% of on-time, in-range temp logs (30d)' },
+              { label: 'Checklist Completion', weight: '40%', desc: '% of checklists completed (30d)' },
+              { label: 'Consistency Streak', weight: '20%', desc: 'Consecutive days with logged actions' },
+            ].map(item => (
+              <div key={item.label} style={{ backgroundColor: '#f9fafb', borderRadius: 12, padding: 14 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: '#374151' }}>{item.label}</span>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: '#A08C5A' }}>{item.weight}</span>
+                </div>
+                <p style={{ fontSize: 11, color: '#6b7280', lineHeight: 1.4 }}>{item.desc}</p>
+              </div>
+            ))}
+          </div>
+          <p style={{ fontSize: 11, color: '#9ca3af', marginTop: 12, fontStyle: 'italic' }}>
+            XP is an engagement metric only and does not represent official compliance standing.
+          </p>
+        </div>
+
+        {/* Jurisdiction Disclaimer */}
+        <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 12, padding: '14px 18px', display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+          <Shield size={16} style={{ color: '#d97706', flexShrink: 0, marginTop: 2 }} />
+          <p style={{ fontSize: 11, color: '#78350f', lineHeight: 1.6 }}>
+            <strong>Jurisdiction Disclaimer:</strong> Leaderboard rankings reflect self-reported operational data tracked within EvidLY.
+            Inspection results are shown as reported by the relevant health authority and are never generated or modified by EvidLY.
+            Rankings do not constitute an official compliance rating.
+          </p>
         </div>
       </div>
+
+      <style>{`
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(12px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </>
   );
 }

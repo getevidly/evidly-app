@@ -88,7 +88,7 @@ const DEMO_NOTIFICATIONS: Notification[] = [
   {
     id: 'n-8',
     severity: 'advisory',
-    title: 'Vendor COI Expired — Valley Fire Protection',
+    title: 'Vendor COI Expired',
     body: 'Liability insurance expired 3 days ago. Affects Location 2.', // demo
     link: '/vendors',
     status: 'unread',

@@ -72,16 +72,16 @@ const SAMPLE_DOCUMENTS: Document[] = [
   { id: '7', title: 'Health Department Permit', category: 'Permit', expiration_date: d(15), created_at: d(-260), status: 'active', location: 'Location 2' }, // demo
   { id: '8', title: 'Health Department Inspection Report', category: 'Permit', expiration_date: d(330), created_at: d(-35), status: 'active', location: 'Location 1' }, // demo
   { id: '9', title: 'Health Department Inspection Report', category: 'Permit', expiration_date: d(310), created_at: d(-55), status: 'active', location: 'Location 3' }, // demo
-  { id: '10', title: 'Facility Safety Inspection Report', category: 'Permit', expiration_date: d(280), created_at: d(-30), status: 'active', location: 'Location 1', provided_by: 'Valley Fire Systems' }, // demo
+  { id: '10', title: 'Facility Safety Inspection Report', category: 'Permit', expiration_date: d(280), created_at: d(-30), status: 'active', location: 'Location 1' }, // demo
 
   // === Certificates ===
   { id: '11', title: 'ServSafe Manager Certificate - Mike Johnson', category: 'Certificate', expiration_date: d(540), created_at: d(-200), status: 'active', location: 'Location 1' }, // demo
   { id: '12', title: 'ServSafe Manager Certificate - Sarah Chen', category: 'Certificate', expiration_date: d(380), created_at: d(-180), status: 'active', location: 'Location 2' }, // demo
-  { id: '13', title: 'Ansul System Certification', category: 'Certificate', expiration_date: d(-15), created_at: d(-380), status: 'active', location: 'Location 2', provided_by: 'Valley Fire Systems' }, // demo
+  { id: '13', title: 'Ansul System Certification', category: 'Certificate', expiration_date: d(-15), created_at: d(-380), status: 'active', location: 'Location 2' }, // demo
 
   // === Insurance ===
   { id: '14', title: 'General Liability Insurance', category: 'Insurance', expiration_date: d(250), created_at: d(-100), status: 'active', location: 'All Locations' },
-  { id: '15', title: 'Vendor COI - Valley Fire Systems', category: 'Insurance', expiration_date: d(190), created_at: d(-60), status: 'active', location: 'All Locations', provided_by: 'Valley Fire Systems' },
+  { id: '15', title: 'Vendor COI - Fire Suppression', category: 'Insurance', expiration_date: d(190), created_at: d(-60), status: 'active', location: 'All Locations' },
   { id: '16', title: 'Vendor COI - GreenShield Pest Control', category: 'Insurance', expiration_date: d(8), created_at: d(-50), status: 'active', location: 'All Locations', provided_by: 'GreenShield Pest Control' },
   { id: '17', title: "Worker's Compensation Insurance", category: 'Insurance', expiration_date: d(300), created_at: d(-90), status: 'active', location: 'All Locations' },
 
@@ -95,12 +95,12 @@ const SAMPLE_DOCUMENTS: Document[] = [
   // === Other (service reports) ===
   { id: '23', title: 'Hood Cleaning Report - Q4 2025', category: 'Other', expiration_date: null, created_at: d(-45), status: 'active', location: 'Location 1', provided_by: 'SparkClean Hoods' }, // demo
   { id: '24', title: 'Hood Cleaning Report - Q4 2025', category: 'Other', expiration_date: null, created_at: d(-40), status: 'active', location: 'Location 2', provided_by: 'SparkClean Hoods' }, // demo
-  { id: '25', title: 'Fire Extinguisher Inspection Tags', category: 'Other', expiration_date: d(330), created_at: d(-35), status: 'active', location: 'Location 1', provided_by: 'Valley Fire Systems' }, // demo
+  { id: '25', title: 'Fire Extinguisher Inspection Tags', category: 'Other', expiration_date: d(330), created_at: d(-35), status: 'active', location: 'Location 1', provided_by: 'Fire Suppression Vendor' }, // demo
   { id: '26', title: 'Grease Trap Service Record', category: 'Other', expiration_date: null, created_at: d(-20), status: 'active', location: 'Location 1', provided_by: 'Pacific Grease Services' }, // demo
   { id: '27', title: 'Pest Control Report - Jan 2026', category: 'Other', expiration_date: null, created_at: d(-7), status: 'active', location: 'Location 1', provided_by: 'GreenShield Pest Control' }, // demo
   { id: '28', title: 'Pest Control Report - Jan 2026', category: 'Other', expiration_date: null, created_at: d(-5), status: 'active', location: 'Location 2', provided_by: 'GreenShield Pest Control' }, // demo
   { id: '29', title: 'HVAC Maintenance Record', category: 'Other', expiration_date: null, created_at: d(-25), status: 'active', location: 'Location 2' }, // demo
-  { id: '30', title: 'Fire Suppression System Inspection', category: 'Other', expiration_date: d(-45), created_at: d(-410), status: 'active', location: 'Location 2', provided_by: 'Valley Fire Systems' }, // demo
+  { id: '30', title: 'Fire Suppression System Inspection', category: 'Other', expiration_date: d(-45), created_at: d(-410), status: 'active', location: 'Location 2', provided_by: 'Fire Suppression Vendor' }, // demo
 ];
 
 const SHARED_ITEMS: SharedItem[] = [

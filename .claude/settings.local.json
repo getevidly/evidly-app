@@ -60,7 +60,25 @@
       "WebFetch(domain:rivcoeh.org)",
       "Bash(npx vite build:*)",
       "Bash(git show:*)",
-      "Bash(xargs:*)"
+      "Bash(xargs:*)",
+      "Bash(unzip:*)",
+      "Bash(npx vitest run:*)",
+      "Bash(bash:*)",
+      "Bash(Select-String \"insurance_api\")",
+      "Bash(copy \"C:\\\\Users\\\\newpa\\\\Downloads\\\\evidly-demo-final\\\\evidly-app-main\\\\supabase\\\\functions\\\\generate-alerts\\\\index.ts\" \"C:\\\\Users\\\\newpa\\\\Downloads\\\\evidly-demo-final\\\\evidly-app-main\\\\supabase\\\\functions\\\\generate-alerts\\\\index.ts\")",
+      "Bash(cmd /c copy:*)",
+      "Bash(cmd /c \"Get-Content src\\\\data\\\\demoFireJurisdictionConfigs.ts > fire-configs.txt\")",
+      "Bash(powershell -Command:*)",
+      "Bash(for f in src/pages/*.tsx)",
+      "Bash(do grep -q \"supabase\\\\.\" \"$f\")",
+      "Bash(echo:*)",
+      "Bash(cmd /c \"findstr /s /n /i \"\"supabase\\\\.\"\" src\\\\pages\\\\*.tsx\")",
+      "Bash(cmd /c \"findstr /s /n /i \"\"supabase\\\\.\"\" src\\\\hooks\\\\*.ts src\\\\hooks\\\\*.tsx\")",
+      "Bash(while read f)",
+      "Bash(\"C:\\\\Users\\\\newpa\\\\Downloads\\\\evidly-demo-final\\\\evidly-app-main\\\\_gen_sitemap.js\" << 'SCRIPT'\nconst fs = require\\('fs'\\);\nconst content = fs.readFileSync\\('src/pages/public/CityPage.jsx', 'utf8'\\);\nconst match = content.match\\(/var _c=\\\\{\\([\\\\s\\\\S]*?\\)\\\\};/\\);\nif \\(!match\\) { console.error\\('Could not find _c mapping'\\); process.exit\\(1\\); }\nconst lines = match[1].split\\('\\\\n'\\);\nconst cities = [];\nfor \\(const line of lines\\) {\n  const arrayMatch = line.match\\(/\\\\[\\([^\\\\]]+\\)\\\\]/\\);\n  if \\(arrayMatch\\) {\n    const slugs = arrayMatch[1].match\\(/\"\\([^\"]+\\)\"/g\\);\n    if \\(slugs\\) {\n      for \\(const s of slugs\\) {\n        cities.push\\(s.replace\\(/\"/g, ''\\)\\);\n      }\n    }\n  }\n}\ncities.sort\\(\\);\nlet xml = '  <!-- City Pages -->\\\\n';\nfor \\(const city of cities\\) {\n  xml += '  <url><loc>https://getevidly.com/city/' + city + '</loc><lastmod>2026-03-05</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>\\\\n';\n}\nxml += '\\\\nTotal cities: ' + cities.length;\nfs.writeFileSync\\('_sitemap_cities.txt', xml\\);\nconsole.log\\('Done. Total cities: ' + cities.length\\);\nSCRIPT)",
+      "Bash(node _gen_sitemap.js:*)",
+      "WebFetch(domain:getevidly.com)",
+      "Bash(wc:*)"
     ]
   }
 }

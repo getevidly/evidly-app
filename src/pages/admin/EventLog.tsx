@@ -3,23 +3,21 @@
  * Route: /admin/event-log
  */
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 
 const PAGE_SIZE = 50;
-const BG = '#0F1629';
-const CARD = '#1A2540';
+const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
-const TEXT = '#F0EBE0';
-const TEXT_DIM = '#8A9AB8';
-const TEXT_MUTED = '#4A5C7A';
-const BORDER = '#1E2D4D';
+const TEXT_SEC = '#6B7F96';
+const TEXT_MUTED = '#9CA3AF';
+const BORDER = '#E2D9C8';
 
 const LEVEL_COLORS: Record<string, { bg: string; text: string }> = {
-  INFO:  { bg: '#0f3326', text: '#34D399' },
-  WARN:  { bg: '#3b2f10', text: '#FBBF24' },
-  ERROR: { bg: '#3b1414', text: '#F87171' },
-  DEBUG: { bg: '#1a2540', text: '#8A9AB8' },
+  INFO:  { bg: '#F0FFF4', text: '#059669' },
+  WARN:  { bg: '#FFFBEB', text: '#D97706' },
+  ERROR: { bg: '#FEF2F2', text: '#DC2626' },
+  DEBUG: { bg: '#F3F4F6', text: '#6B7280' },
 };
 
 const CATEGORIES = ['all', 'crawl', 'auth', 'k2c', 'security', 'emulation', 'backup', 'maintenance', 'system'];
@@ -34,19 +32,18 @@ interface EventRow {
 }
 
 const Skeleton = ({ w = '100%', h = 20 }: { w?: string | number; h?: number }) => (
-  <div style={{ width: w, height: h, background: BORDER, borderRadius: 6, animation: 'pulse 1.5s ease-in-out infinite' }} />
+  <div style={{ width: w, height: h, background: '#E5E7EB', borderRadius: 6, animation: 'pulse 1.5s ease-in-out infinite' }} />
 );
 
 const EmptyState = ({ icon, title, subtitle }: { icon: string; title: string; subtitle: string }) => (
-  <div style={{ textAlign: 'center', padding: '60px 20px', color: TEXT_MUTED }}>
+  <div style={{ textAlign: 'center', padding: '60px 20px', background: '#FAF7F2', border: '2px dashed #E2D9C8', borderRadius: 12, margin: 16 }}>
     <div style={{ fontSize: 40, marginBottom: 16 }}>{icon}</div>
-    <div style={{ fontSize: 16, fontWeight: 700, color: TEXT_DIM, marginBottom: 8 }}>{title}</div>
-    <div style={{ fontSize: 13, color: TEXT_MUTED, maxWidth: 360, margin: '0 auto' }}>{subtitle}</div>
+    <div style={{ fontSize: 16, fontWeight: 700, color: NAVY, marginBottom: 8 }}>{title}</div>
+    <div style={{ fontSize: 13, color: TEXT_SEC, maxWidth: 360, margin: '0 auto' }}>{subtitle}</div>
   </div>
 );
 
 export default function EventLog() {
-  const navigate = useNavigate();
   const [events, setEvents] = useState<EventRow[]>([]);
   const [totalCount, setTotalCount] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
@@ -117,47 +114,50 @@ export default function EventLog() {
     URL.revokeObjectURL(url);
   };
 
-  return (
-    <div style={{ minHeight: '100vh', background: BG, padding: '32px 40px', fontFamily: 'Inter, sans-serif' }}>
-      <button onClick={() => navigate('/admin')} style={{ marginBottom: 24, background: 'none', border: 'none', cursor: 'pointer', color: GOLD, fontSize: 13 }}>&larr; Admin</button>
+  const inputStyle: React.CSSProperties = {
+    padding: '6px 12px', background: '#F9FAFB', border: '1px solid #D1D5DB', borderRadius: 6, color: NAVY, fontSize: 12,
+  };
 
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
+  return (
+    <div className="space-y-6">
+      <AdminBreadcrumb crumbs={[{ label: 'Event Log' }]} />
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <h1 style={{ fontSize: 24, fontWeight: 800, color: TEXT, margin: 0 }}>Event Log</h1>
-          <p style={{ fontSize: 13, color: TEXT_DIM, marginTop: 4 }}>
+          <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Event Log</h1>
+          <p style={{ fontSize: 13, color: TEXT_SEC, marginTop: 4 }}>
             {totalCount !== null ? `${totalCount.toLocaleString()} events` : '—'}
           </p>
         </div>
         <div style={{ display: 'flex', gap: 12 }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: TEXT_DIM, cursor: 'pointer' }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: TEXT_SEC, cursor: 'pointer' }}>
             <input type="checkbox" checked={autoRefresh} onChange={e => setAutoRefresh(e.target.checked)} />
             Auto-refresh (10s)
           </label>
-          <button onClick={exportCsv} style={{ padding: '6px 14px', background: CARD, border: `1px solid ${BORDER}`, borderRadius: 6, color: TEXT_DIM, fontSize: 12, cursor: 'pointer' }}>Export CSV</button>
-          <button onClick={loadEvents} style={{ padding: '6px 14px', background: GOLD, border: 'none', borderRadius: 6, color: '#1E2D4D', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>Refresh</button>
+          <button onClick={exportCsv} style={{ padding: '6px 14px', background: '#FFFFFF', border: `1px solid ${BORDER}`, borderRadius: 6, color: TEXT_SEC, fontSize: 12, cursor: 'pointer' }}>Export CSV</button>
+          <button onClick={loadEvents} style={{ padding: '6px 14px', background: GOLD, border: 'none', borderRadius: 6, color: '#FFFFFF', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>Refresh</button>
         </div>
       </div>
 
       {/* Filters */}
-      <div style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
         <select value={levelFilter} onChange={e => { setLevelFilter(e.target.value); setPage(0); }}
-          style={{ padding: '6px 12px', background: CARD, border: `1px solid ${BORDER}`, borderRadius: 6, color: TEXT, fontSize: 12 }}>
+          style={inputStyle}>
           <option value="all">All Levels</option>
           {['INFO', 'WARN', 'ERROR', 'DEBUG'].map(l => <option key={l} value={l}>{l}</option>)}
         </select>
         <select value={categoryFilter} onChange={e => { setCategoryFilter(e.target.value); setPage(0); }}
-          style={{ padding: '6px 12px', background: CARD, border: `1px solid ${BORDER}`, borderRadius: 6, color: TEXT, fontSize: 12 }}>
+          style={inputStyle}>
           {CATEGORIES.map(c => <option key={c} value={c}>{c === 'all' ? 'All Categories' : c}</option>)}
         </select>
         <input
           value={search} onChange={e => { setSearch(e.target.value); setPage(0); }}
           placeholder="Search messages..."
-          style={{ padding: '6px 12px', background: CARD, border: `1px solid ${BORDER}`, borderRadius: 6, color: TEXT, fontSize: 12, flex: 1, minWidth: 200 }}
+          style={{ ...inputStyle, flex: 1, minWidth: 200 }}
         />
       </div>
 
       {/* Table */}
-      <div style={{ background: CARD, borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
+      <div style={{ background: '#FFFFFF', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
         {loading ? (
           <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
             {Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} h={32} />)}
@@ -169,7 +169,7 @@ export default function EventLog() {
             <thead>
               <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
                 {['Time', 'Level', 'Category', 'Message'].map(h => (
-                  <th key={h} style={{ textAlign: 'left', padding: '10px 14px', color: TEXT_DIM, fontWeight: 600, fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5 }}>{h}</th>
+                  <th key={h} style={{ textAlign: 'left', padding: '10px 14px', color: TEXT_SEC, fontWeight: 600, fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5 }}>{h}</th>
                 ))}
               </tr>
             </thead>
@@ -181,10 +181,10 @@ export default function EventLog() {
                   <tr key={e.id}
                     onClick={() => setExpandedId(isExpanded ? null : e.id)}
                     style={{ borderBottom: `1px solid ${BORDER}`, cursor: e.metadata ? 'pointer' : 'default', transition: 'background 0.15s' }}
-                    onMouseEnter={ev => ev.currentTarget.style.background = '#1E2D4D33'}
+                    onMouseEnter={ev => ev.currentTarget.style.background = '#F9FAFB'}
                     onMouseLeave={ev => ev.currentTarget.style.background = 'transparent'}
                   >
-                    <td style={{ padding: '10px 14px', color: TEXT_DIM, whiteSpace: 'nowrap', fontSize: 12 }}>
+                    <td style={{ padding: '10px 14px', color: TEXT_SEC, whiteSpace: 'nowrap', fontSize: 12 }}>
                       {new Date(e.event_time).toLocaleString()}
                     </td>
                     <td style={{ padding: '10px 14px' }}>
@@ -192,11 +192,11 @@ export default function EventLog() {
                         {e.level}
                       </span>
                     </td>
-                    <td style={{ padding: '10px 14px', color: TEXT_DIM, fontSize: 12 }}>{e.category || '—'}</td>
-                    <td style={{ padding: '10px 14px', color: TEXT }}>
+                    <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>{e.category || '—'}</td>
+                    <td style={{ padding: '10px 14px', color: NAVY }}>
                       {e.message}
                       {isExpanded && e.metadata && (
-                        <pre style={{ marginTop: 8, padding: 12, background: '#0A0F1E', borderRadius: 6, fontSize: 11, color: TEXT_DIM, overflow: 'auto', maxHeight: 200 }}>
+                        <pre style={{ marginTop: 8, padding: 12, background: '#F3F4F6', borderRadius: 6, fontSize: 11, color: TEXT_SEC, overflow: 'auto', maxHeight: 200 }}>
                           {JSON.stringify(e.metadata, null, 2)}
                         </pre>
                       )}
@@ -211,16 +211,16 @@ export default function EventLog() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginTop: 16 }}>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 8 }}>
           <button disabled={page === 0} onClick={() => setPage(p => p - 1)}
-            style={{ padding: '6px 14px', background: CARD, border: `1px solid ${BORDER}`, borderRadius: 6, color: page === 0 ? TEXT_MUTED : TEXT, fontSize: 12, cursor: page === 0 ? 'default' : 'pointer' }}>
+            style={{ padding: '6px 14px', background: '#FFFFFF', border: `1px solid ${BORDER}`, borderRadius: 6, color: page === 0 ? TEXT_MUTED : NAVY, fontSize: 12, cursor: page === 0 ? 'default' : 'pointer' }}>
             Previous
           </button>
-          <span style={{ padding: '6px 14px', fontSize: 12, color: TEXT_DIM }}>
+          <span style={{ padding: '6px 14px', fontSize: 12, color: TEXT_SEC }}>
             Page {page + 1} of {totalPages}
           </span>
           <button disabled={page >= totalPages - 1} onClick={() => setPage(p => p + 1)}
-            style={{ padding: '6px 14px', background: CARD, border: `1px solid ${BORDER}`, borderRadius: 6, color: page >= totalPages - 1 ? TEXT_MUTED : TEXT, fontSize: 12, cursor: page >= totalPages - 1 ? 'default' : 'pointer' }}>
+            style={{ padding: '6px 14px', background: '#FFFFFF', border: `1px solid ${BORDER}`, borderRadius: 6, color: page >= totalPages - 1 ? TEXT_MUTED : NAVY, fontSize: 12, cursor: page >= totalPages - 1 ? 'default' : 'pointer' }}>
             Next
           </button>
         </div>

@@ -1,6 +1,15 @@
 // ── Vendor Service Token — validation & submission utilities ─────────
 // Demo mode uses DEMO_TOKEN_MAP; production calls edge function.
 
+/** Check demo mode without React context (lib-safe) */
+function isDemoSession(): boolean {
+  try {
+    return sessionStorage.getItem('evidly_demo_mode') === 'true';
+  } catch {
+    return false;
+  }
+}
+
 export interface ServiceTokenData {
   valid: boolean;
   error?: string;
@@ -107,12 +116,13 @@ const DEMO_TOKEN_MAP: Record<string, ServiceTokenData> = {
  * Production calls the vendor-service-token edge function.
  */
 export async function validateServiceToken(token: string): Promise<ServiceTokenData> {
-  // Check demo tokens first
-  const demoData = DEMO_TOKEN_MAP[token];
-  if (demoData) {
-    // Simulate network delay
-    await new Promise(r => setTimeout(r, 600));
-    return demoData;
+  // Check demo tokens only when demo mode is active
+  if (isDemoSession()) {
+    const demoData = DEMO_TOKEN_MAP[token];
+    if (demoData) {
+      await new Promise(r => setTimeout(r, 600));
+      return demoData;
+    }
   }
 
   // Production: call edge function
@@ -143,8 +153,8 @@ export async function submitServiceUpdate(
   token: string,
   data: ServiceUpdateData
 ): Promise<ServiceUpdateResult> {
-  // Demo tokens always succeed
-  if (DEMO_TOKEN_MAP[token]) {
+  // Demo tokens only succeed in demo mode
+  if (isDemoSession() && DEMO_TOKEN_MAP[token]) {
     await new Promise(r => setTimeout(r, 800));
     return { success: true, updateId: `update-demo-${Date.now()}` };
   }

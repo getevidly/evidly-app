@@ -35,6 +35,10 @@ interface Ticket {
   resolved_at: string | null;
   closed_at: string | null;
   created_at: string;
+  csat_token: string | null;
+  csat_sent_at: string | null;
+  csat_comment: string | null;
+  csat_completed_at: string | null;
   organizations?: { name: string } | null;
 }
 
@@ -148,6 +152,11 @@ export default function SupportTickets() {
   const [sendingReply, setSendingReply] = useState(false);
   const [drawerStatus, setDrawerStatus] = useState('');
   const [drawerAssigned, setDrawerAssigned] = useState('');
+
+  // CSAT prompt
+  const [showCsatPrompt, setShowCsatPrompt] = useState(false);
+  const [csatResolvedTicket, setCsatResolvedTicket] = useState<Ticket | null>(null);
+  const [csatSending, setCsatSending] = useState(false);
 
   // Create modal
   const [showCreate, setShowCreate] = useState(false);
@@ -338,13 +347,55 @@ export default function SupportTickets() {
   const handleResolveAndClose = async () => {
     if (!selectedTicket) return;
     const now = new Date().toISOString();
+    const token = crypto.randomUUID();
     await supabase.from('support_tickets').update({
       status: 'closed',
       resolved_at: selectedTicket.resolved_at || now,
       closed_at: now,
+      csat_token: token,
     }).eq('id', selectedTicket.id);
     await loadTickets();
+    const resolvedTicket = { ...selectedTicket, status: 'closed', resolved_at: selectedTicket.resolved_at || now, closed_at: now, csat_token: token };
     closeDrawer();
+    // Show CSAT prompt if there's a contact email
+    if (resolvedTicket.contact_email) {
+      setCsatResolvedTicket(resolvedTicket);
+      setShowCsatPrompt(true);
+    }
+  };
+
+  const handleSendCsat = async () => {
+    if (!csatResolvedTicket) return;
+    setCsatSending(true);
+    const surveyUrl = `${window.location.origin}/support/survey/${csatResolvedTicket.csat_token}`;
+    try {
+      await supabase.functions.invoke('send-email', {
+        body: {
+          to: csatResolvedTicket.contact_email,
+          subject: `How was your support experience? — ${csatResolvedTicket.ticket_number}`,
+          html: `<p>Hi ${csatResolvedTicket.contact_name || 'there'},</p>
+<p>Your support ticket <strong>${csatResolvedTicket.ticket_number}</strong> — "${csatResolvedTicket.subject}" — has been resolved.</p>
+<p>We'd love your feedback. Please take a moment to rate your experience:</p>
+<p><a href="${surveyUrl}" style="display:inline-block;padding:12px 24px;background:#A08C5A;color:#fff;text-decoration:none;border-radius:8px;font-weight:bold;">Rate Your Experience</a></p>
+<p style="color:#6B7F96;font-size:12px;">Or copy this link: ${surveyUrl}</p>`,
+        },
+      });
+    } catch {
+      // Edge function may not exist — log the survey URL for demo
+      alert(`CSAT survey link (send-email unavailable):\n${surveyUrl}`);
+    }
+    await supabase.from('support_tickets').update({
+      csat_sent_at: new Date().toISOString(),
+    }).eq('id', csatResolvedTicket.id);
+    await loadTickets();
+    setCsatSending(false);
+    setShowCsatPrompt(false);
+    setCsatResolvedTicket(null);
+  };
+
+  const handleSkipCsat = () => {
+    setShowCsatPrompt(false);
+    setCsatResolvedTicket(null);
   };
 
   const handleCreateTicket = async () => {
@@ -621,6 +672,47 @@ export default function SupportTickets() {
         />
       )}
 
+      {/* CSAT Prompt Modal */}
+      {showCsatPrompt && csatResolvedTicket && (
+        <div style={{
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 60,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <div style={{
+            background: '#FFFFFF', borderRadius: 14, width: 420, maxWidth: '90vw',
+            padding: '28px 24px', boxShadow: '0 12px 40px rgba(0,0,0,0.15)', textAlign: 'center',
+          }}>
+            <div style={{ fontSize: 36, marginBottom: 12 }}>&#9993;</div>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: NAVY, margin: '0 0 8px' }}>
+              Send CSAT Survey?
+            </h3>
+            <p style={{ fontSize: 13, color: TEXT_SEC, lineHeight: 1.5, marginBottom: 6 }}>
+              Ticket <strong>{csatResolvedTicket.ticket_number}</strong> has been resolved.
+            </p>
+            <p style={{ fontSize: 13, color: TEXT_SEC, lineHeight: 1.5, marginBottom: 20 }}>
+              Send a satisfaction survey to <strong>{csatResolvedTicket.contact_email}</strong>?
+            </p>
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
+              <button onClick={handleSkipCsat}
+                style={{
+                  padding: '8px 20px', background: '#F3F4F6', border: `1px solid ${BORDER}`,
+                  borderRadius: 8, color: TEXT_SEC, fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                }}>
+                Skip
+              </button>
+              <button onClick={handleSendCsat} disabled={csatSending}
+                style={{
+                  padding: '8px 20px', background: csatSending ? '#E5E7EB' : GOLD,
+                  border: 'none', borderRadius: 8, color: '#FFFFFF', fontSize: 13, fontWeight: 700,
+                  cursor: csatSending ? 'default' : 'pointer',
+                }}>
+                {csatSending ? 'Sending...' : 'Send Survey'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Create Ticket Modal */}
       {showCreate && (
         <CreateTicketModal
@@ -787,6 +879,41 @@ function TicketDrawer({
               ))}
             </select>
           </div>
+
+          {/* CSAT Status */}
+          {(ticket.satisfaction_score || ticket.csat_sent_at) && (
+            <div style={{ marginTop: 12, padding: '10px 12px', background: '#F9FAFB', borderRadius: 8, border: `1px solid ${BORDER}` }}>
+              <div style={{ fontSize: 10, fontWeight: 600, color: TEXT_MUTED, textTransform: 'uppercase', marginBottom: 6 }}>
+                Customer Satisfaction
+              </div>
+              {ticket.satisfaction_score ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div style={{ display: 'flex', gap: 2 }}>
+                    {[1, 2, 3, 4, 5].map(s => (
+                      <span key={s} style={{ fontSize: 16, color: s <= ticket.satisfaction_score! ? '#F59E0B' : '#D1D5DB' }}>
+                        &#9733;
+                      </span>
+                    ))}
+                  </div>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: NAVY }}>{ticket.satisfaction_score}/5</span>
+                  {ticket.csat_completed_at && (
+                    <span style={{ fontSize: 10, color: TEXT_MUTED, marginLeft: 'auto' }}>
+                      {formatDate(ticket.csat_completed_at)}
+                    </span>
+                  )}
+                </div>
+              ) : (
+                <div style={{ fontSize: 12, color: TEXT_SEC }}>
+                  Survey sent {formatDateTime(ticket.csat_sent_at)} — awaiting response
+                </div>
+              )}
+              {ticket.csat_comment && (
+                <div style={{ marginTop: 6, fontSize: 12, color: NAVY, fontStyle: 'italic', lineHeight: 1.4 }}>
+                  "{ticket.csat_comment}"
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Description */}

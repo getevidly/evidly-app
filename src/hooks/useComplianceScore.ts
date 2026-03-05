@@ -78,7 +78,7 @@ function buildFacilitySafetyScore(
 ): AuthorityScore {
   const fireConfig = jurisdiction.facilitySafety.fire_jurisdiction_config;
   const ahjName = fireConfig?.fire_ahj_name ?? jurisdiction.facilitySafety.agency_name;
-  const codeEdition = fireConfig?.fire_code_edition ?? 'NFPA 96 (2024)';
+  const codeEdition = fireConfig?.fire_code_edition ?? '2022 CFC';
 
   const override = DEMO_LOCATION_GRADE_OVERRIDES[locationId];
   if (override) {

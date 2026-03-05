@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Building2, MapPin, Users, Mail, Send } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
-import { Breadcrumb } from '../components/Breadcrumb';
+import AdminBreadcrumb from '../components/admin/AdminBreadcrumb';
 import { useDemo } from '../contexts/DemoContext';
 
 export function AdminClientOnboarding() {
@@ -101,7 +101,7 @@ export function AdminClientOnboarding() {
 
   return (
     <>
-      <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Client Onboarding' }]} />
+      <AdminBreadcrumb crumbs={[{ label: 'Client Onboarding' }]} />
       <div className="max-w-3xl mx-auto">
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
           <div className="mb-6">

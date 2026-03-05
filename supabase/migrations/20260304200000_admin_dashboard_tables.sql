@@ -106,12 +106,19 @@ ALTER TABLE admin_event_log  ENABLE ROW LEVEL SECURITY;
 ALTER TABLE demo_sessions    ENABLE ROW LEVEL SECURITY;
 ALTER TABLE k2c_donations    ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "admin_only" ON admin_api_keys;
 CREATE POLICY "admin_only" ON admin_api_keys   FOR ALL USING (auth.jwt() ->> 'email' LIKE '%@getevidly.com');
+DROP POLICY IF EXISTS "admin_only" ON assessment_leads;
 CREATE POLICY "admin_only" ON assessment_leads FOR ALL USING (auth.jwt() ->> 'email' LIKE '%@getevidly.com');
+DROP POLICY IF EXISTS "admin_only" ON crawl_health;
 CREATE POLICY "admin_only" ON crawl_health     FOR ALL USING (auth.jwt() ->> 'email' LIKE '%@getevidly.com');
+DROP POLICY IF EXISTS "admin_only" ON crawl_runs;
 CREATE POLICY "admin_only" ON crawl_runs       FOR ALL USING (auth.jwt() ->> 'email' LIKE '%@getevidly.com');
+DROP POLICY IF EXISTS "admin_only" ON admin_event_log;
 CREATE POLICY "admin_only" ON admin_event_log  FOR ALL USING (auth.jwt() ->> 'email' LIKE '%@getevidly.com');
+DROP POLICY IF EXISTS "admin_only" ON demo_sessions;
 CREATE POLICY "admin_only" ON demo_sessions    FOR ALL USING (auth.jwt() ->> 'email' LIKE '%@getevidly.com');
+DROP POLICY IF EXISTS "admin_only" ON k2c_donations;
 CREATE POLICY "admin_only" ON k2c_donations    FOR ALL USING (auth.jwt() ->> 'email' LIKE '%@getevidly.com');
 
 -- Seed crawl_health with 37 known feeds
@@ -154,6 +161,15 @@ INSERT INTO crawl_health (feed_id, feed_name, pillar, status, jurisdiction_id) V
   ('nifc_alerts',      'NIFC Fire Alerts',       'fire_safety', 'pending', NULL),
   ('camtc_cert',       'CAMTC Certifications',   'food_safety', 'pending', NULL)
 ON CONFLICT DO NOTHING;
+
+-- Ensure columns exist on k2c_donations (may have been created by prior partial run without all columns)
+ALTER TABLE k2c_donations ADD COLUMN IF NOT EXISTS organization_id UUID;
+ALTER TABLE k2c_donations ADD COLUMN IF NOT EXISTS account_name TEXT;
+ALTER TABLE k2c_donations ADD COLUMN IF NOT EXISTS county TEXT;
+ALTER TABLE k2c_donations ADD COLUMN IF NOT EXISTS amount_cents INT;
+ALTER TABLE k2c_donations ADD COLUMN IF NOT EXISTS meals_count INT;
+ALTER TABLE k2c_donations ADD COLUMN IF NOT EXISTS donation_period DATE;
+ALTER TABLE k2c_donations ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT now();
 
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_crawl_health_status ON crawl_health(status);

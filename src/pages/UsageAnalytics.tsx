@@ -4,7 +4,7 @@
 
 import { useState, useMemo } from 'react';
 import { Navigate } from 'react-router-dom';
-import { Breadcrumb } from '../components/Breadcrumb';
+import AdminBreadcrumb from '../components/admin/AdminBreadcrumb';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 
@@ -290,8 +290,10 @@ export function UsageAnalytics() {
   if (!isDemoMode) {
     return (
       <>
-        <Breadcrumb items={[{ label: 'Administration', href: '/dashboard' }, { label: 'Usage Analytics' }]} />
-        <div style={{ padding: '24px', maxWidth: '1400px', margin: '0 auto', ...F }}>
+        <div style={{ padding: '24px 24px 0', maxWidth: '1400px', margin: '0 auto' }}>
+          <AdminBreadcrumb crumbs={[{ label: 'Usage Analytics' }]} />
+        </div>
+        <div style={{ padding: '0 24px 24px', maxWidth: '1400px', margin: '0 auto', ...F }}>
           <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#1b4965', margin: '0 0 4px 0', ...F }}>Usage Analytics</h1>
           <p style={{ fontSize: '14px', color: '#6b7280', margin: '0 0 32px 0', ...F }}>Internal — Track customer module adoption and platform usage</p>
           <div style={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '48px 24px', textAlign: 'center' }}>
@@ -466,9 +468,11 @@ Generated ${today} · This is an automated report from EvidLY Analytics
   // ── RENDER ──────────────────────────────────────────────────────
   return (
     <>
-      <Breadcrumb items={[{ label: 'Administration', href: '/dashboard' }, { label: 'Usage Analytics' }]} />
+      <div style={{ padding: '24px 24px 0', maxWidth: '1400px', margin: '0 auto' }}>
+        <AdminBreadcrumb crumbs={[{ label: 'Usage Analytics' }]} />
+      </div>
 
-      <div style={{ padding: '24px', maxWidth: '1400px', margin: '0 auto', ...F }}>
+      <div style={{ padding: '0 24px 24px', maxWidth: '1400px', margin: '0 auto', ...F }}>
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
           <div>

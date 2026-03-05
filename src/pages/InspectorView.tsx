@@ -10,7 +10,7 @@
 //   - Evidence strings: specific temps (36°F, 37°F, 38°F, 142°F), dates,
 //     vendor names (Valley Fresh Produce, Pacific Seafood, Central Meats,
 //     Mission Dairy, Sierra Dry Goods), permit numbers (#2026-FHF-04821),
-//     service company names (ABC Fire Protection, Valley Fire Systems,
+//     service company names (Hood Cleaning Vendor, Fire Suppression Vendor,
 //     Valley Pest Solutions), employee names (Ana Torres), cert numbers
 //   - Cert panel: 3 CFPMs, 8 food handlers, 4 facility safety records
 //     all with hardcoded names, cert numbers, dates

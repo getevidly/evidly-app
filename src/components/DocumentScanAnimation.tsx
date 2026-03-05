@@ -18,7 +18,7 @@ export function DocumentScanAnimation({ onComplete }: DocumentScanAnimationProps
 
   const fields: ExtractedField[] = [
     { label: 'Document Type', value: 'Hood Cleaning Certificate', delay: 0 },
-    { label: 'Vendor', value: 'ABC Fire Protection', delay: 200 },
+    { label: 'Vendor', value: 'Hood Cleaning Vendor', delay: 200 },
     { label: 'Issue Date', value: 'Jan 15, 2026', delay: 400 },
     { label: 'Expiration', value: 'Jul 15, 2026', delay: 600 },
   ];

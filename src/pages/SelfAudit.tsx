@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { useSearchParams } from 'react-router-dom';
 import {
   Thermometer, Users, Package, Wrench, Flame, Building2, FileText,
   CheckCircle2, XCircle, MinusCircle, ChevronLeft, ChevronRight,
@@ -14,6 +15,28 @@ import { getStateLabel } from '../lib/stateCodes';
 import { PhotoEvidence, PhotoButton, type PhotoRecord } from '../components/PhotoEvidence';
 import { PhotoGallery } from '../components/PhotoGallery';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
+import { useJurisdiction } from '../hooks/useJurisdiction';
+import { useDemo } from '../contexts/DemoContext';
+import { DEMO_JURISDICTIONS, type DemoJurisdiction } from '../data/demoJurisdictions';
+import {
+  INSPECTION_SECTIONS,
+  INSPECTION_ITEMS,
+  FDA_OVERLAY_ITEMS,
+  FDA_OVERLAY_SECTION_ADDITIONS,
+  getVariancesForJurisdiction,
+  getItemVariance,
+  type InspectionItemDef,
+} from '../data/selfInspectionChecklist';
+import { getJurisdictionScoringConfig, type JurisdictionScoringConfig } from '../data/selfInspectionJurisdictionMap';
+import {
+  computeJurisdictionScore,
+  gradeInspection,
+  getScoringMethodLabel,
+  getGradingFormatLabel,
+  type CompletedItem,
+} from '../lib/selfInspectionScoring';
+import { JurisdictionProfileHeader } from '../components/self-inspection/JurisdictionProfileHeader';
+import { VarianceIndicator } from '../components/self-inspection/VarianceIndicator';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -28,6 +51,9 @@ interface AuditItem {
   status: ItemStatus;
   notes: string;
   severity: Severity;
+  itemDefId?: string;   // Links back to InspectionItemDef.id
+  citation?: string;    // Jurisdiction-specific citation
+  category?: 'food_safety' | 'facility_safety';
 }
 
 interface AuditSection {
@@ -73,110 +99,43 @@ const SECTION_ICONS = [
   <FileText className="h-5 w-5" />,
 ];
 
-function buildSections(): AuditSection[] {
-  const raw: { name: string; citation: string; items: string[] }[] = [
-    {
-      name: 'Food Temperature Control',
-      citation: `${stateLabel} \u00A7113996`,
-      items: [
-        'Cold holding below 41\u00B0F',
-        'Hot holding above 135\u00B0F',
-        'Cooling from 135\u00B0F to 70\u00B0F within 2 hours',
-        'Reheating to 165\u00B0F within 1 hour',
-        'Time as temperature control procedures posted',
-        'Thermometer calibration verified',
-      ],
-    },
-    {
-      name: 'Employee Hygiene & Health',
-      citation: `${stateLabel} \u00A7113968`,
-      items: [
-        'Proper handwashing observed',
-        'Hair restraints worn',
-        'No bare hand contact with RTE food',
-        'Ill employee exclusion/restriction policy',
-        'Clean uniforms/aprons',
-      ],
-    },
-    {
-      name: 'Food Storage & Labeling',
-      citation: `${stateLabel} \u00A7114047`,
-      items: [
-        'FIFO rotation followed',
-        'Date marking on opened TCS foods',
-        'Foods stored 6\u2033 above floor',
-        'Raw/cooked separation maintained',
-        'Allergen labeling present',
-        'Chemical storage separated',
-      ],
-    },
-    {
-      name: 'Equipment & Utensils',
-      citation: `${stateLabel} \u00A7114130`,
-      items: [
-        'Food contact surfaces clean and sanitized',
-        'Sanitizer concentration verified (quat/chlorine)',
-        'Ice machine clean (FDA \u00A74-602.11)',
-        'Cutting boards in good repair',
-        '3-compartment sink setup correct',
-      ],
-    },
-    {
-      name: 'Facility Safety & Suppression',
-      citation: 'NFPA 96 (2024) \u00A712.4',
-      items: [
-        'Hood suppression system inspection current',
-        'Fire extinguishers accessible and tagged',
-        'Grease filter cleaning schedule current',
-        'Ansul system last service within 6 months',
-        'Emergency exit paths clear',
-      ],
-    },
-    {
-      name: 'Facility & Pest Control',
-      citation: `${stateLabel} \u00A7114259`,
-      items: [
-        'Floors, walls, ceiling in good repair',
-        'Adequate ventilation operational',
-        'Pest control service current',
-        'No evidence of pest activity',
-        'Restrooms clean and stocked',
-        'Garbage areas clean and covered',
-      ],
-    },
-    {
-      name: 'Documentation & Records',
-      citation: `${stateLabel} \u00A7113725`,
-      items: [
-        'Health permit displayed and current',
-        'Food handler certifications on file',
-        'Manager food safety certification valid',
-        'HACCP plan available (if applicable)',
-        'Vendor service records current',
-        'Food supplier licenses verified',
-        'Delivery temperature logs maintained',
-        'Receiving inspection procedures followed',
-      ],
-    },
-  ];
-
-  return raw.map((s, si) => ({
-    id: si,
-    name: s.name,
-    citation: s.citation,
-    icon: SECTION_ICONS[si],
-    items: s.items.map((text, ii) => ({
-      id: `s${si}-i${ii}`,
-      text,
-      status: null,
-      notes: '',
-      severity: 'major' as Severity,
-    })),
-  }));
+function buildSections(useFdaOverlay = false): AuditSection[] {
+  return INSPECTION_SECTIONS.map((sectionDef, si) => {
+    const extras = useFdaOverlay ? (FDA_OVERLAY_SECTION_ADDITIONS[sectionDef.id] || []) : [];
+    const allItemIds = [...sectionDef.itemIds, ...extras];
+    const items: AuditItem[] = allItemIds.map((itemId, ii) => {
+      const def = INSPECTION_ITEMS[itemId] || FDA_OVERLAY_ITEMS[itemId];
+      if (!def) {
+        return { id: `s${si}-i${ii}`, text: itemId, status: null, notes: '', severity: 'major' as Severity, itemDefId: itemId };
+      }
+      const citation = useFdaOverlay && def.fdaCitation && def.codeBasis === 'calcode'
+        ? def.fdaCitation
+        : def.citation;
+      return {
+        id: `s${si}-i${ii}`,
+        text: def.text,
+        status: null,
+        notes: '',
+        severity: def.defaultSeverity,
+        itemDefId: def.id,
+        citation,
+        category: def.category,
+      };
+    });
+    return {
+      id: si,
+      name: sectionDef.name,
+      citation: useFdaOverlay && sectionDef.category === 'food_safety'
+        ? sectionDef.defaultCitation.replace('CalCode', 'FDA Food Code 2022')
+        : sectionDef.defaultCitation,
+      icon: SECTION_ICONS[si],
+      items,
+    };
+  });
 }
 
-function buildDemoSections(): AuditSection[] {
-  const sections = buildSections();
+function buildDemoSections(useFdaOverlay = false): AuditSection[] {
+  const sections = buildSections(useFdaOverlay);
   // Sections 0-5 completed with mostly passes and 3 failures
   const demoFails: Record<string, { severity: Severity; notes: string }> = {
     's0-i2': { severity: 'major', notes: 'Walk-in cooler cooling log showed 135\u00B0F to 80\u00B0F in 2 hours. Needs recalibration.' },
@@ -285,21 +244,29 @@ function severityBadge(sev: Severity) {
   );
 }
 
-function computeScore(sections: AuditSection[]): number {
-  const penaltyMap: Record<Severity, number> = { critical: 10, major: 5, minor: 2 };
-  let totalItems = 0;
-  let totalPenalty = 0;
+function computeScore(sections: AuditSection[], config?: JurisdictionScoringConfig): number {
+  const weights = config?.penaltyWeights || { critical: 10, major: 5, minor: 2 };
+  const items: CompletedItem[] = [];
   sections.forEach((s) =>
     s.items.forEach((it) => {
-      if (it.status === 'na' || it.status === null) return;
-      totalItems++;
-      if (it.status === 'fail') totalPenalty += penaltyMap[it.severity];
+      items.push({ id: it.id, status: it.status, severity: it.severity });
     }),
   );
-  if (totalItems === 0) return 100;
-  const maxPoints = totalItems * 10;
-  const score = Math.max(0, Math.round(((maxPoints - totalPenalty) / maxPoints) * 100));
-  return score;
+  const result = computeJurisdictionScore(items, config || {
+    key: 'default',
+    county: 'Unknown',
+    agencyName: 'Unknown',
+    penaltyWeights: weights,
+    scoringType: 'violation_report',
+    gradingType: 'violation_report_only',
+    codeBasis: 'calcode',
+    inspectionFrequency: 'Annual',
+    configLastUpdated: 'Not verified',
+    isVerified: false,
+    dataSourceTier: 4,
+    varianceNotes: [],
+  });
+  return result.rawScore;
 }
 
 function answeredCount(sections: AuditSection[]): number {
@@ -330,12 +297,58 @@ function correctiveAction(item: AuditItem, sectionName: string): string {
 export function SelfAudit() {
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
 
+  // Jurisdiction awareness
+  const [searchParams] = useSearchParams();
+  const { isDemoMode } = useDemo();
+  const locationParam = searchParams.get('location') || 'downtown';
+  const jieLocKey = `demo-loc-${locationParam}`;
+  const locationJurisdiction = useJurisdiction(jieLocKey, isDemoMode);
+
+  // Resolve DemoJurisdiction for scoring
+  const demoJurisdiction = useMemo<DemoJurisdiction | null>(() => {
+    if (!locationJurisdiction) return DEMO_JURISDICTIONS[0]; // Fresno default
+    return DEMO_JURISDICTIONS.find(
+      (j) => j.county === locationJurisdiction.county,
+    ) || DEMO_JURISDICTIONS[0];
+  }, [locationJurisdiction]);
+
+  // Resolve scoring config from 62-jurisdiction map
+  const scoringConfig = useMemo<JurisdictionScoringConfig>(() => {
+    if (!locationJurisdiction) return getJurisdictionScoringConfig('Fresno');
+    return getJurisdictionScoringConfig(locationJurisdiction.county);
+  }, [locationJurisdiction]);
+
+  // Dual-jurisdiction detection (Yosemite)
+  const isDualJurisdiction = locationJurisdiction?.federalFoodOverlay != null;
+  const [activeTrack, setActiveTrack] = useState<'primary' | 'federal'>('primary');
+
+  // Federal overlay scoring config (for NPS track)
+  const federalScoringConfig = useMemo<JurisdictionScoringConfig | null>(() => {
+    if (!isDualJurisdiction) return null;
+    return {
+      ...scoringConfig,
+      key: 'NPS',
+      county: 'Mariposa',
+      agencyName: 'NPS \u2014 Yosemite Environmental Health',
+      codeBasis: 'fda_food_code_2022',
+      configLastUpdated: 'Not verified',
+      isVerified: false,
+      dataSourceTier: 4,
+      varianceNotes: ['Federal overlay \u2014 FDA Food Code 2022 + NPS Reference Manual 83'],
+    };
+  }, [isDualJurisdiction, scoringConfig]);
+
+  // Jurisdiction variances for current jurisdiction
+  const variances = useMemo(() => {
+    return getVariancesForJurisdiction(scoringConfig.county);
+  }, [scoringConfig.county]);
+
   // View state
   const [activeTab, setActiveTab] = useState<'audit' | 'history'>('audit');
   const [auditPhase, setAuditPhase] = useState<'overview' | 'walkthrough' | 'results'>('overview');
 
   // Audit state
-  const [sections, setSections] = useState<AuditSection[]>(buildSections);
+  const [sections, setSections] = useState<AuditSection[]>(() => buildSections(false));
   const [currentSection, setCurrentSection] = useState(0);
   const [startedAt, setStartedAt] = useState<string | null>(null);
 
@@ -379,9 +392,11 @@ export function SelfAudit() {
   }, [sections, currentSection, saveState, auditPhase]);
 
   // Handlers
-  const startAudit = () => {
-    const demo = buildDemoSections();
+  const startAudit = (track: 'primary' | 'federal' = 'primary') => {
+    const useFda = track === 'federal';
+    const demo = buildDemoSections(useFda);
     setSections(demo);
+    setActiveTrack(track);
     setCurrentSection(6); // land on section 7 (index 6)
     setStartedAt(new Date().toISOString());
     setAuditPhase('walkthrough');
@@ -423,7 +438,7 @@ export function SelfAudit() {
 
   const resetAudit = () => {
     localStorage.removeItem(STORAGE_KEY);
-    setSections(buildSections());
+    setSections(buildSections(activeTrack === 'federal'));
     setCurrentSection(0);
     setStartedAt(null);
     setAuditPhase('overview');
@@ -484,7 +499,16 @@ export function SelfAudit() {
   };
 
   // Derived
-  const score = computeScore(sections);
+  const activeScoringConfig = activeTrack === 'federal' && federalScoringConfig
+    ? federalScoringConfig
+    : scoringConfig;
+  const score = computeScore(sections, activeScoringConfig);
+
+  // Jurisdiction-native grade
+  const jurisdictionGrade = useMemo(() => {
+    if (!demoJurisdiction) return null;
+    return gradeInspection(score, demoJurisdiction);
+  }, [score, demoJurisdiction]);
   const answered = answeredCount(sections);
   const total = totalItemCount(sections);
   const pct = total > 0 ? Math.round((answered / total) * 100) : 0;
@@ -507,42 +531,95 @@ export function SelfAudit() {
 
   const renderOverview = () => (
     <div className="space-y-6">
+      {/* Jurisdiction Profile Header */}
+      <JurisdictionProfileHeader
+        config={scoringConfig}
+        federalOverlay={federalScoringConfig}
+      />
+
       <div className="bg-white rounded-xl border border-[#b8d4e8] p-4 sm:p-5">
         <div className="flex items-center gap-3 mb-2">
           <ClipboardList className="h-6 w-6 text-[#1e4d6b]" />
           <h2 className="text-xl font-bold text-[#1e4d6b]">Self-Inspection Checklist</h2>
         </div>
         <p className="text-sm text-gray-600 mb-4">
-          Walk through 7 compliance sections covering {total} checklist items. Score your location,
-          identify gaps, and generate a corrective action plan.
+          Walk through 7 compliance sections covering {total} checklist items. Score your location
+          using <span className="font-medium">{scoringConfig.agencyName}</span> inspection criteria.
         </p>
-        <div className="flex flex-wrap gap-3">
-          <button
-            onClick={startAudit}
-            className="px-6 py-2.5 rounded-lg font-semibold text-sm text-[#1e4d6b] bg-[#d4af37] hover:bg-[#c49a2b] transition-colors"
-          >
-            <Play className="h-4 w-4 inline mr-1.5 -mt-0.5" />
-            Start Inspection
-          </button>
-          {hasSavedState && (
-            <>
+
+        {/* Dual-jurisdiction track selection for Yosemite */}
+        {isDualJurisdiction ? (
+          <div className="space-y-3">
+            <div className="grid gap-3 sm:grid-cols-2">
               <button
-                onClick={resumeAudit}
-                className="px-6 py-2.5 rounded-lg font-semibold text-sm text-[#1e4d6b] border-2 border-[#d4af37] hover:bg-[#eef4f8] transition-colors"
+                onClick={() => startAudit('primary')}
+                className="px-5 py-3 rounded-lg font-semibold text-sm text-[#1e4d6b] bg-[#d4af37] hover:bg-[#c49a2b] transition-colors text-left"
               >
-                <RotateCcw className="h-4 w-4 inline mr-1.5 -mt-0.5" />
-                Resume Inspection
+                <Play className="h-4 w-4 inline mr-1.5 -mt-0.5" />
+                Start CalCode Track
+                <span className="block text-xs font-normal mt-0.5 opacity-80">
+                  Mariposa County \u2014 CalCode
+                </span>
               </button>
               <button
-                onClick={discardDraft}
-                className="px-4 py-2.5 rounded-lg text-sm text-red-600 hover:bg-red-50 transition-colors"
+                onClick={() => startAudit('federal')}
+                className="px-5 py-3 rounded-lg font-semibold text-sm text-[#1e4d6b] bg-[#d4af37] hover:bg-[#c49a2b] transition-colors text-left"
               >
-                <Trash2 className="h-4 w-4 inline mr-1.5 -mt-0.5" />
-                Discard Draft
+                <Play className="h-4 w-4 inline mr-1.5 -mt-0.5" />
+                Start FDA Food Code Track
+                <span className="block text-xs font-normal mt-0.5 opacity-80">
+                  NPS \u2014 FDA Food Code 2022
+                </span>
               </button>
-            </>
-          )}
-        </div>
+            </div>
+            {hasSavedState && (
+              <div className="flex gap-3">
+                <button
+                  onClick={resumeAudit}
+                  className="px-6 py-2.5 rounded-lg font-semibold text-sm text-[#1e4d6b] border-2 border-[#d4af37] hover:bg-[#eef4f8] transition-colors"
+                >
+                  <RotateCcw className="h-4 w-4 inline mr-1.5 -mt-0.5" />
+                  Resume Inspection
+                </button>
+                <button
+                  onClick={discardDraft}
+                  className="px-4 py-2.5 rounded-lg text-sm text-red-600 hover:bg-red-50 transition-colors"
+                >
+                  <Trash2 className="h-4 w-4 inline mr-1.5 -mt-0.5" />
+                  Discard Draft
+                </button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={() => startAudit('primary')}
+              className="px-6 py-2.5 rounded-lg font-semibold text-sm text-[#1e4d6b] bg-[#d4af37] hover:bg-[#c49a2b] transition-colors"
+            >
+              <Play className="h-4 w-4 inline mr-1.5 -mt-0.5" />
+              Start Inspection
+            </button>
+            {hasSavedState && (
+              <>
+                <button
+                  onClick={resumeAudit}
+                  className="px-6 py-2.5 rounded-lg font-semibold text-sm text-[#1e4d6b] border-2 border-[#d4af37] hover:bg-[#eef4f8] transition-colors"
+                >
+                  <RotateCcw className="h-4 w-4 inline mr-1.5 -mt-0.5" />
+                  Resume Inspection
+                </button>
+                <button
+                  onClick={discardDraft}
+                  className="px-4 py-2.5 rounded-lg text-sm text-red-600 hover:bg-red-50 transition-colors"
+                >
+                  <Trash2 className="h-4 w-4 inline mr-1.5 -mt-0.5" />
+                  Discard Draft
+                </button>
+              </>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Section cards grid */}
@@ -594,6 +671,15 @@ export function SelfAudit() {
           </div>
         </div>
 
+        {/* Active track indicator for dual-jurisdiction */}
+        {isDualJurisdiction && (
+          <div className="flex items-center gap-2 rounded-md bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700 border border-blue-200">
+            {activeTrack === 'primary'
+              ? 'Track: Mariposa County \u2014 CalCode'
+              : 'Track: NPS \u2014 FDA Food Code 2022'}
+          </div>
+        )}
+
         {/* Back link */}
         <button
           onClick={() => setAuditPhase('overview')}
@@ -638,7 +724,12 @@ export function SelfAudit() {
               <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-900">{item.text}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">{sec.citation}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">{item.citation || sec.citation}</p>
+                  {/* Jurisdiction Variance indicator */}
+                  {item.itemDefId && (() => {
+                    const variance = getItemVariance(item.itemDefId!, scoringConfig.county);
+                    return variance ? <VarianceIndicator variance={variance} /> : null;
+                  })()}
                 </div>
                 <div className="flex gap-2 shrink-0">
                   <button
@@ -785,23 +876,37 @@ export function SelfAudit() {
 
     // Section scores for bar chart
     const sectionScores = sections.map((s) => {
-      const penaltyMap: Record<Severity, number> = { critical: 10, major: 5, minor: 2 };
-      let items = 0;
-      let penalty = 0;
-      s.items.forEach((it) => {
-        if (it.status === 'na' || it.status === null) return;
-        items++;
-        if (it.status === 'fail') penalty += penaltyMap[it.severity];
-      });
-      if (items === 0) return 100;
-      return Math.max(0, Math.round(((items * 10 - penalty) / (items * 10)) * 100));
+      const sItems: CompletedItem[] = s.items.map((it) => ({
+        id: it.id, status: it.status, severity: it.severity,
+      }));
+      return computeJurisdictionScore(sItems, activeScoringConfig).rawScore;
     });
 
     return (
       <div className="space-y-6">
+        {/* Jurisdiction context */}
+        <JurisdictionProfileHeader
+          config={activeScoringConfig}
+          federalOverlay={activeTrack === 'federal' ? null : undefined}
+        />
+
         {/* Score overview */}
         <div className="bg-white rounded-xl border border-[#b8d4e8] p-4 sm:p-5 text-center">
           <h2 className="text-lg font-bold text-[#1e4d6b] mb-4">Inspection Results</h2>
+
+          {/* Jurisdiction-native grade display */}
+          {jurisdictionGrade && jurisdictionGrade.passFail !== 'no_grade' && (
+            <div className="mb-3">
+              <span className={`inline-block text-2xl font-extrabold px-4 py-1 rounded-lg ${
+                jurisdictionGrade.passFail === 'pass' ? 'bg-green-100 text-green-700' :
+                jurisdictionGrade.passFail === 'warning' ? 'bg-yellow-100 text-yellow-700' :
+                'bg-red-100 text-red-700'
+              }`}>
+                {jurisdictionGrade.display}
+              </span>
+            </div>
+          )}
+
           <div className="flex justify-center mb-4">
             <svg width={circleSize} height={circleSize} className="-rotate-90">
               <circle
@@ -826,9 +931,15 @@ export function SelfAudit() {
               />
             </svg>
             <div className="absolute flex items-center justify-center" style={{ width: circleSize, height: circleSize }}>
-              <span className={`text-3xl font-bold ${getScoreColor(score)}`}>{score}%</span>
+              <span className={`text-3xl font-bold ${getScoreColor(score)}`}>{score}</span>
             </div>
           </div>
+
+          {/* Scoring method label */}
+          <p className="text-xs text-gray-500 mb-1">
+            {getScoringMethodLabel(activeScoringConfig.scoringType)} — {activeScoringConfig.agencyName}
+          </p>
+
           <p className="text-sm text-gray-600">
             {failedItems.length} failed item{failedItems.length !== 1 ? 's' : ''} out of{' '}
             {sections.reduce((a, s) => a + s.items.filter((i) => i.status !== null && i.status !== 'na').length, 0)} scored

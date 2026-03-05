@@ -423,22 +423,22 @@ function generateEmployeeCerts(locationUrlId: string): EmployeeCert[] {
 function generateFacilitySafety(locationUrlId: string): FacilitySafetyItem[] {
   const items: Record<string, FacilitySafetyItem[]> = {
     'downtown': [
-      { equipment: 'Kitchen Hood Suppression System', location: 'Main kitchen', lastInspection: '2026-01-15', nextDue: '2026-07-15', status: 'current', inspector: 'ABC Fire Protection', certNumber: 'FS-2026-0115' },
-      { equipment: 'Fire Extinguishers (4)', location: 'Kitchen, dining, storage, office', lastInspection: '2025-12-10', nextDue: '2026-12-10', status: 'current', inspector: 'Valley Fire Systems', certNumber: 'FE-2025-1210' },
+      { equipment: 'Kitchen Hood Suppression System', location: 'Main kitchen', lastInspection: '2026-01-15', nextDue: '2026-07-15', status: 'current', inspector: 'Hood Cleaning Vendor', certNumber: 'FS-2026-0115' },
+      { equipment: 'Fire Extinguishers (4)', location: 'Kitchen, dining, storage, office', lastInspection: '2025-12-10', nextDue: '2026-12-10', status: 'current', inspector: 'Fire Suppression Vendor', certNumber: 'FE-2025-1210' },
       { equipment: 'Fire Alarm System', location: 'Building-wide', lastInspection: '2026-02-01', nextDue: '2027-02-01', status: 'current', inspector: 'A1 Fire Protection', certNumber: 'FA-2026-0201' },
-      { equipment: 'Emergency Exit Lighting', location: 'All exits (3)', lastInspection: '2026-01-20', nextDue: '2026-07-20', status: 'current', inspector: 'Valley Fire Systems', certNumber: 'EL-2026-0120' },
+      { equipment: 'Emergency Exit Lighting', location: 'All exits (3)', lastInspection: '2026-01-20', nextDue: '2026-07-20', status: 'current', inspector: 'Fire Suppression Vendor', certNumber: 'EL-2026-0120' },
     ],
     'airport': [
-      { equipment: 'Kitchen Hood Suppression System', location: 'Kitchen', lastInspection: '2026-01-20', nextDue: '2026-07-20', status: 'current', inspector: 'Valley Fire Systems', certNumber: 'FS-2026-0120' },
-      { equipment: 'Fire Extinguishers (3)', location: 'Kitchen, dining, storage', lastInspection: '2026-01-20', nextDue: '2026-07-20', status: 'current', inspector: 'Valley Fire Systems', certNumber: 'FE-2026-0120' },
-      { equipment: 'Fire Alarm System', location: 'Building-wide', lastInspection: '2025-08-15', nextDue: '2026-08-15', status: 'current', inspector: 'Valley Fire Systems', certNumber: 'FA-2025-0815' },
-      { equipment: 'Ansul System', location: 'Fryer station', lastInspection: '2025-10-04', nextDue: '2026-04-04', status: 'due-soon', inspector: 'ABC Fire Protection', certNumber: 'AN-2025-1004' },
+      { equipment: 'Kitchen Hood Suppression System', location: 'Kitchen', lastInspection: '2026-01-20', nextDue: '2026-07-20', status: 'current', inspector: 'Fire Suppression Vendor', certNumber: 'FS-2026-0120' },
+      { equipment: 'Fire Extinguishers (3)', location: 'Kitchen, dining, storage', lastInspection: '2026-01-20', nextDue: '2026-07-20', status: 'current', inspector: 'Fire Suppression Vendor', certNumber: 'FE-2026-0120' },
+      { equipment: 'Fire Alarm System', location: 'Building-wide', lastInspection: '2025-08-15', nextDue: '2026-08-15', status: 'current', inspector: 'Fire Suppression Vendor', certNumber: 'FA-2025-0815' },
+      { equipment: 'Ansul System', location: 'Fryer station', lastInspection: '2025-10-04', nextDue: '2026-04-04', status: 'due-soon', inspector: 'Hood Cleaning Vendor', certNumber: 'AN-2025-1004' },
     ],
     'university': [
-      { equipment: 'Kitchen Hood Suppression System', location: 'Main kitchen', lastInspection: '2025-04-10', nextDue: '2025-10-10', status: 'overdue', inspector: 'Valley Fire Systems', certNumber: 'FS-2025-0410' },
-      { equipment: 'Fire Extinguishers (6)', location: 'Kitchen, dining (3), storage, office', lastInspection: '2025-11-15', nextDue: '2026-11-15', status: 'current', inspector: 'ABC Fire Protection', certNumber: 'FE-2025-1115' },
-      { equipment: 'Fire Alarm System', location: 'Building-wide', lastInspection: '2025-06-01', nextDue: '2026-06-01', status: 'current', inspector: 'Valley Fire Systems', certNumber: 'FA-2025-0601' },
-      { equipment: 'Ansul System', location: 'Fryer station', lastInspection: '2025-07-20', nextDue: '2026-01-20', status: 'overdue', inspector: 'Valley Fire Systems', certNumber: 'AN-2025-0720' },
+      { equipment: 'Kitchen Hood Suppression System', location: 'Main kitchen', lastInspection: '2025-04-10', nextDue: '2025-10-10', status: 'overdue', inspector: 'Fire Suppression Vendor', certNumber: 'FS-2025-0410' },
+      { equipment: 'Fire Extinguishers (6)', location: 'Kitchen, dining (3), storage, office', lastInspection: '2025-11-15', nextDue: '2026-11-15', status: 'current', inspector: 'Hood Cleaning Vendor', certNumber: 'FE-2025-1115' },
+      { equipment: 'Fire Alarm System', location: 'Building-wide', lastInspection: '2025-06-01', nextDue: '2026-06-01', status: 'current', inspector: 'Fire Suppression Vendor', certNumber: 'FA-2025-0601' },
+      { equipment: 'Ansul System', location: 'Fryer station', lastInspection: '2025-07-20', nextDue: '2026-01-20', status: 'overdue', inspector: 'Fire Suppression Vendor', certNumber: 'AN-2025-0720' },
     ],
   };
   return items[locationUrlId] || items['downtown'];
@@ -460,11 +460,11 @@ function generateCorrectiveActions(locationUrlId: string): CorrectiveAction[] {
   const actions: Record<string, CorrectiveAction[]> = {
     'downtown': [
       { id: 'CA-001', issue: 'Sanitizer concentration slightly elevated', dateIdentified: '2026-02-10', priority: 'low', status: 'in-progress', assignee: 'Marcus Johnson', dueDate: '2026-02-17', action: 'Recalibrate chemical dispenser and retrain staff on proper concentration testing' },
-      { id: 'CA-002', issue: 'Fire suppression inspection due in 15 days', dateIdentified: '2026-02-09', priority: 'medium', status: 'in-progress', assignee: 'Lisa Martinez', dueDate: '2026-02-24', action: 'Scheduled with Valley Fire Systems for Feb 22' },
+      { id: 'CA-002', issue: 'Fire suppression inspection due in 15 days', dateIdentified: '2026-02-09', priority: 'medium', status: 'in-progress', assignee: 'Lisa Martinez', dueDate: '2026-02-24', action: 'Scheduled with Fire Suppression Vendor for Feb 22' },
     ],
     'airport': [
-      { id: 'CA-003', issue: 'Hood cleaning 5 days overdue', dateIdentified: '2026-02-04', priority: 'critical', status: 'open', assignee: 'Tom Wilson', dueDate: '2026-02-11', action: 'Emergency scheduling with ABC Fire Protection' },
-      { id: 'CA-004', issue: 'Walk-in cooler running warm (42°F)', dateIdentified: '2026-02-10', priority: 'high', status: 'open', assignee: 'Tom Wilson', dueDate: '2026-02-12', action: 'Called CleanAir HVAC for emergency service' },
+      { id: 'CA-003', issue: 'Hood cleaning 5 days overdue', dateIdentified: '2026-02-04', priority: 'critical', status: 'open', assignee: 'Tom Wilson', dueDate: '2026-02-11', action: 'Emergency scheduling with Hood Cleaning Vendor' },
+      { id: 'CA-004', issue: 'Walk-in cooler running warm (42°F)', dateIdentified: '2026-02-10', priority: 'high', status: 'open', assignee: 'Tom Wilson', dueDate: '2026-02-12', action: 'Called HVAC Service Vendor for emergency service' },
       { id: 'CA-005', issue: 'Paper towel dispenser empty at handwash station', dateIdentified: '2026-02-10', priority: 'high', status: 'in-progress', assignee: 'Karen Brown', dueDate: '2026-02-10', action: 'Restocked and added to daily opening checklist verification' },
       { id: 'CA-006', issue: 'Food handler cert expiring in 10 days', dateIdentified: '2026-02-10', priority: 'medium', status: 'in-progress', assignee: 'Sarah Johnson', dueDate: '2026-02-18', action: 'Renewal class scheduled for Feb 15' },
     ],
@@ -474,7 +474,7 @@ function generateCorrectiveActions(locationUrlId: string): CorrectiveAction[] {
       { id: 'CA-009', issue: 'Rodent droppings in storage area', dateIdentified: '2026-02-03', priority: 'critical', status: 'in-progress', assignee: 'Robert Davis', dueDate: '2026-02-07', action: 'Emergency pest control called, deep cleaning scheduled' },
       { id: 'CA-010', issue: 'Health permit expired', dateIdentified: '2026-01-06', priority: 'critical', status: 'open', assignee: 'Robert Davis', dueDate: '2026-01-20', action: 'Renewal application submitted, awaiting processing' },
       { id: 'CA-011', issue: '2 food handler certificates expired', dateIdentified: '2026-02-01', priority: 'high', status: 'open', assignee: 'Robert Davis', dueDate: '2026-02-15', action: 'Staff notified, renewal classes booked' },
-      { id: 'CA-012', issue: 'Fire suppression system 4 months overdue', dateIdentified: '2025-10-10', priority: 'critical', status: 'open', assignee: 'Robert Davis', dueDate: '2025-11-10', action: 'Urgent scheduling with Valley Fire Systems' },
+      { id: 'CA-012', issue: 'Fire suppression system 4 months overdue', dateIdentified: '2025-10-10', priority: 'critical', status: 'open', assignee: 'Robert Davis', dueDate: '2025-11-10', action: 'Urgent scheduling with Fire Suppression Vendor' },
     ],
   };
   return actions[locationUrlId] || actions['downtown'];

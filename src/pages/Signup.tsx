@@ -50,6 +50,7 @@ export function Signup() {
   const [orgName, setOrgName] = useState('');
   const [industryType, setIndustryType] = useState('');
   const [industrySubtype, setIndustrySubtype] = useState('');
+  const [sb1383Qualified, setSb1383Qualified] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -129,7 +130,14 @@ export function Signup() {
     setLoading(true);
     trackEvent('signup_start', { method: 'email' });
 
-    const { error } = await signUp(email, password, fullName, phone, orgName, industryType, industrySubtype);
+    const isK12 = industryType === 'K12_EDUCATION';
+    const { error } = await signUp(email, password, fullName, phone, orgName, industryType, industrySubtype, {
+      k12_enrolled: isK12,
+      k12_enrolled_at: isK12 ? new Date().toISOString() : null,
+      sb1383_enrolled: sb1383Qualified || isK12,
+      sb1383_enrolled_at: (sb1383Qualified || isK12) ? new Date().toISOString() : null,
+      org_type: isK12 ? 'k12' : 'standard',
+    });
 
     if (error) {
       setError(error.message);
@@ -276,8 +284,11 @@ export function Signup() {
                 required
                 value={industryType}
                 onChange={(e) => {
-                  setIndustryType(e.target.value);
+                  const code = e.target.value;
+                  setIndustryType(code);
                   setIndustrySubtype('');
+                  // K-12 always qualifies for SB 1383
+                  setSb1383Qualified(code === 'K12_EDUCATION');
                 }}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#d4af37] focus:border-[#d4af37]"
               >
@@ -306,6 +317,47 @@ export function Signup() {
                     <option key={subtype} value={subtype}>{subtype}</option>
                   ))}
                 </select>
+              </div>
+            )}
+
+            {industryType && industryType !== 'K12_EDUCATION' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Does your operation generate organic waste (food scraps, food-soiled paper) for disposal or recovery?
+                </label>
+                <p className="text-xs text-gray-500 mb-3">
+                  California SB 1383 applies to most commercial food generators. Selecting yes enables the SB 1383 compliance module.
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setSb1383Qualified(true)}
+                    className="flex-1 py-2.5 px-3 rounded-lg text-sm font-semibold transition-colors"
+                    style={{
+                      border: '2px solid',
+                      borderColor: sb1383Qualified ? '#40916C' : '#d1d5db',
+                      background: sb1383Qualified ? '#D8F3DC' : 'white',
+                      color: sb1383Qualified ? '#1B4332' : '#6b7280',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Yes — we generate organic waste
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSb1383Qualified(false)}
+                    className="flex-1 py-2.5 px-3 rounded-lg text-sm font-semibold transition-colors"
+                    style={{
+                      border: '2px solid',
+                      borderColor: !sb1383Qualified ? '#1E2D4D' : '#d1d5db',
+                      background: !sb1383Qualified ? '#f3f4f6' : 'white',
+                      color: !sb1383Qualified ? '#1E2D4D' : '#6b7280',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    No — not applicable
+                  </button>
+                </div>
               </div>
             )}
 

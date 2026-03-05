@@ -296,9 +296,9 @@ const scenarioA: InspectorScenarioData = {
     },
     {
       key: 'fire', title: 'Ventilation & Facility Safety', iconKey: 'flame',
-      calCode: 'NFPA 96 (2024)',
+      calCode: 'NFPA 96',
       items: [
-        { citation: 'NFPA 96 (2024) \u00A712.4', title: 'Hood system cleaning current', status: 'pass',
+        { citation: 'NFPA 96 \u00A712.4', title: 'Hood system cleaning current', status: 'pass',
           evidence: ['Last hood cleaning: Jan 15, 2026 by ABC Fire Protection'],
           detail: 'Quarterly schedule. Cleaned to bare metal. Before/after photos on file.' },
         { citation: 'NFPA 96-2024 \u00A711.2.2', title: 'Fire suppression system inspected', status: 'pass',
@@ -466,9 +466,9 @@ const scenarioB: InspectorScenarioData = {
     },
     {
       key: 'fire', title: 'Ventilation & Facility Safety', iconKey: 'flame',
-      calCode: 'NFPA 96 (2024)',
+      calCode: 'NFPA 96',
       items: [
-        { citation: 'NFPA 96 (2024) \u00A712.4', title: 'Hood system cleaning current', status: 'fail',
+        { citation: 'NFPA 96 \u00A712.4', title: 'Hood system cleaning current', status: 'fail',
           evidence: ['Last hood cleaning: Oct 20, 2025 by ABC Fire Protection', 'Quarterly cleaning overdue since Jan 20, 2026'],
           detail: 'Service rescheduled for Feb 15, 2026. Grease buildup observed on filters.' },
         { citation: 'NFPA 96-2024 \u00A711.2.2', title: 'Fire suppression system inspected', status: 'pass',
@@ -612,9 +612,9 @@ const scenarioC: InspectorScenarioData = {
     },
     {
       key: 'fire', title: 'Ventilation & Facility Safety', iconKey: 'flame',
-      calCode: 'NFPA 96 (2024)',
+      calCode: 'NFPA 96',
       items: [
-        { citation: 'NFPA 96 (2024) \u00A712.4', title: 'Hood system cleaning current', status: 'pass',
+        { citation: 'NFPA 96 \u00A712.4', title: 'Hood system cleaning current', status: 'pass',
           evidence: ['New Type I hood installed Jan 20, 2026. First cleaning due Apr 20, 2026.'],
           detail: 'Quarterly schedule established with ABC Fire Protection.' },
         { citation: 'NFPA 96-2024 \u00A711.2.2', title: 'Fire suppression system inspected', status: 'pass',

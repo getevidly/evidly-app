@@ -6,7 +6,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Breadcrumb } from '../../components/Breadcrumb';
+import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { toast } from 'sonner';
 import {
   BarChart3, DollarSign, TrendingUp, Target, Users,
@@ -119,7 +119,7 @@ export default function SalesPipeline() {
 
   return (
     <div style={{ fontFamily: "'DM Sans', 'Inter', sans-serif" }}>
-      <Breadcrumb items={[{ label: 'Admin', href: '/admin' }, { label: 'Sales Pipeline' }]} />
+      <AdminBreadcrumb crumbs={[{ label: 'Sales Pipeline' }]} />
 
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
         <div>

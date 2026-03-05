@@ -15,18 +15,18 @@ const F: React.CSSProperties = { fontFamily: "'Inter', 'DM Sans', sans-serif" };
 
 // ── Demo equipment lookup ─────────────────────────────────────────
 const EQUIPMENT_NAMES: Record<string, { name: string; type: string; location: string; linkedVendor: string }> = {
-  'EQ-001': { name: 'Walk-in Cooler #1', type: 'Walk-in Cooler', location: 'Location 1', linkedVendor: 'CleanAir HVAC' }, // demo
-  'EQ-002': { name: 'Walk-in Freezer', type: 'Walk-in Freezer', location: 'Location 1', linkedVendor: 'CleanAir HVAC' }, // demo
-  'EQ-003': { name: 'Hood Ventilation System', type: 'Hood System', location: 'Location 1', linkedVendor: 'ABC Fire Protection' }, // demo
-  'EQ-004': { name: 'Fire Suppression System', type: 'Fire Suppression System', location: 'Location 1', linkedVendor: 'Valley Fire Systems' }, // demo
-  'EQ-005': { name: 'Commercial Fryer #1', type: 'Commercial Fryer', location: 'Location 1', linkedVendor: 'CleanAir HVAC' }, // demo
-  'EQ-007': { name: 'Commercial Dishwasher', type: 'Commercial Dishwasher', location: 'Location 1', linkedVendor: 'CleanAir HVAC' }, // demo
-  'EQ-008': { name: 'Walk-in Cooler', type: 'Walk-in Cooler', location: 'Location 2', linkedVendor: 'CleanAir HVAC' }, // demo
-  'EQ-009': { name: 'Hood Ventilation System', type: 'Hood System', location: 'Location 2', linkedVendor: 'ABC Fire Protection' }, // demo
-  'EQ-010': { name: 'Ice Machine', type: 'Ice Machine', location: 'Location 2', linkedVendor: 'CleanAir HVAC' }, // demo
-  'EQ-011': { name: 'Walk-in Cooler', type: 'Walk-in Cooler', location: 'Location 3', linkedVendor: 'CleanAir HVAC' }, // demo
-  'EQ-013': { name: 'Hood Ventilation System', type: 'Hood System', location: 'Location 3', linkedVendor: 'ABC Fire Protection' }, // demo
-  'EQ-017': { name: 'Upblast Exhaust Fan — Main Hood', type: 'Exhaust Fan', location: 'Location 1', linkedVendor: 'ABC Fire Protection' }, // demo
+  'EQ-001': { name: 'Walk-in Cooler #1', type: 'Walk-in Cooler', location: 'Location 1', linkedVendor: 'HVAC Service Vendor' }, // demo
+  'EQ-002': { name: 'Walk-in Freezer', type: 'Walk-in Freezer', location: 'Location 1', linkedVendor: 'HVAC Service Vendor' }, // demo
+  'EQ-003': { name: 'Hood Ventilation System', type: 'Hood System', location: 'Location 1', linkedVendor: 'Hood Cleaning Vendor' }, // demo
+  'EQ-004': { name: 'Fire Suppression System', type: 'Fire Suppression System', location: 'Location 1', linkedVendor: 'Fire Suppression Vendor' }, // demo
+  'EQ-005': { name: 'Commercial Fryer #1', type: 'Commercial Fryer', location: 'Location 1', linkedVendor: 'HVAC Service Vendor' }, // demo
+  'EQ-007': { name: 'Commercial Dishwasher', type: 'Commercial Dishwasher', location: 'Location 1', linkedVendor: 'HVAC Service Vendor' }, // demo
+  'EQ-008': { name: 'Walk-in Cooler', type: 'Walk-in Cooler', location: 'Location 2', linkedVendor: 'HVAC Service Vendor' }, // demo
+  'EQ-009': { name: 'Hood Ventilation System', type: 'Hood System', location: 'Location 2', linkedVendor: 'Hood Cleaning Vendor' }, // demo
+  'EQ-010': { name: 'Ice Machine', type: 'Ice Machine', location: 'Location 2', linkedVendor: 'HVAC Service Vendor' }, // demo
+  'EQ-011': { name: 'Walk-in Cooler', type: 'Walk-in Cooler', location: 'Location 3', linkedVendor: 'HVAC Service Vendor' }, // demo
+  'EQ-013': { name: 'Hood Ventilation System', type: 'Hood System', location: 'Location 3', linkedVendor: 'Hood Cleaning Vendor' }, // demo
+  'EQ-017': { name: 'Upblast Exhaust Fan — Main Hood', type: 'Exhaust Fan', location: 'Location 1', linkedVendor: 'Hood Cleaning Vendor' }, // demo
 };
 
 const SERVICE_TYPES = [

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Building2, MapPin, Users, Settings2, ArrowRight, AlertTriangle, Sparkles, CheckCircle2, Clock, Copy, Check } from 'lucide-react';
 import { useDemo } from '../../contexts/DemoContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
+import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { isBlockedDomain, KITCHEN_TYPES, OPERATION_VOLUMES, US_STATES } from '../../data/demoGeneratorData';
 import { generateDemoData, GENERATION_STEPS } from '../../lib/demoDataGenerator';
 import type { GenerationProgress } from '../../lib/demoDataGenerator';
@@ -325,6 +326,7 @@ export function DemoGenerator() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6">
+      <AdminBreadcrumb crumbs={[{ label: 'Demo Generator' }]} />
       <div className="flex items-center gap-3 mb-6">
         <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${NAVY}10` }}>
           <Sparkles className="w-5 h-5" style={{ color: NAVY }} />

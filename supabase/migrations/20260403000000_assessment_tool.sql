@@ -19,6 +19,16 @@ CREATE TABLE IF NOT EXISTS assessment_leads (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- Ensure columns exist (table may have been created by admin_dashboard with different schema)
+ALTER TABLE assessment_leads ADD COLUMN IF NOT EXISTS contact_name TEXT;
+ALTER TABLE assessment_leads ADD COLUMN IF NOT EXISTS email TEXT;
+ALTER TABLE assessment_leads ADD COLUMN IF NOT EXISTS phone TEXT;
+ALTER TABLE assessment_leads ADD COLUMN IF NOT EXISTS zip_code TEXT;
+ALTER TABLE assessment_leads ADD COLUMN IF NOT EXISTS city TEXT;
+ALTER TABLE assessment_leads ADD COLUMN IF NOT EXISTS state TEXT;
+ALTER TABLE assessment_leads ADD COLUMN IF NOT EXISTS referral_source TEXT;
+ALTER TABLE assessment_leads ADD COLUMN IF NOT EXISTS utm_ref TEXT;
+
 ALTER TABLE assessment_leads ENABLE ROW LEVEL SECURITY;
 
 -- Anon can insert (lead capture form is public)

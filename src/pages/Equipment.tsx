@@ -214,17 +214,17 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     warrantyExpiry: '2024-01-15', warrantyProvider: 'True Manufacturing', warrantyTerms: '5-year parts and labor',
     warrantyContact: '1-800-878-3633 / warranty@truemfg.com',
     condition: 'Good', nextMaintenanceDue: '2026-02-28', maintenanceInterval: 'Quarterly',
-    linkedVendor: 'CleanAir HVAC', usefulLifeYears: 15, replacementCost: 11000,
+    linkedVendor: 'HVAC Service Vendor', usefulLifeYears: 15, replacementCost: 11000,
     status: 'operational' as EquipmentStatus,
     pillar: 'food_safety' as const,
     linkedVendors: [
-      { vendor: 'CleanAir HVAC', serviceType: 'Repair & Maintenance', isPrimary: true },
+      { vendor: 'HVAC Service Vendor', serviceType: 'Repair & Maintenance', isPrimary: true },
     ],
     notes: 'Replaced door gaskets Oct 2025. Running well.',
     serviceHistory: [
-      { date: '2025-10-12', vendor: 'CleanAir HVAC', type: 'Door Gasket Replacement', cost: 450, notes: 'Replaced both door gaskets, checked refrigerant levels' },
-      { date: '2025-07-08', vendor: 'CleanAir HVAC', type: 'Quarterly Maintenance', cost: 275, notes: 'Cleaned condenser coils, thermostat calibration' },
-      { date: '2025-04-15', vendor: 'CleanAir HVAC', type: 'Quarterly Maintenance', cost: 275, notes: 'Routine inspection, all systems nominal' },
+      { date: '2025-10-12', vendor: 'HVAC Service Vendor', type: 'Door Gasket Replacement', cost: 450, notes: 'Replaced both door gaskets, checked refrigerant levels' },
+      { date: '2025-07-08', vendor: 'HVAC Service Vendor', type: 'Quarterly Maintenance', cost: 275, notes: 'Cleaned condenser coils, thermostat calibration' },
+      { date: '2025-04-15', vendor: 'HVAC Service Vendor', type: 'Quarterly Maintenance', cost: 275, notes: 'Routine inspection, all systems nominal' },
     ],
     schedule: [
       { task: 'Condenser coil cleaning', interval: 'Quarterly', lastDone: '2025-10-12', nextDue: '2026-01-12' },
@@ -240,15 +240,15 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     warrantyExpiry: '2027-03-10', warrantyProvider: 'Kolpak', warrantyTerms: '6-year compressor, 3-year parts',
     warrantyContact: '1-800-965-5727 / support@kolpak.com',
     condition: 'Excellent', nextMaintenanceDue: '2026-03-15', maintenanceInterval: 'Quarterly',
-    linkedVendor: 'CleanAir HVAC', usefulLifeYears: 15, replacementCost: 14000,
+    linkedVendor: 'HVAC Service Vendor', usefulLifeYears: 15, replacementCost: 14000,
     status: 'operational' as EquipmentStatus,
     linkedVendors: [
-      { vendor: 'CleanAir HVAC', serviceType: 'Maintenance', isPrimary: true },
+      { vendor: 'HVAC Service Vendor', serviceType: 'Maintenance', isPrimary: true },
     ],
     notes: 'Under warranty. No issues.',
     serviceHistory: [
-      { date: '2025-12-15', vendor: 'CleanAir HVAC', type: 'Quarterly Maintenance', cost: 0, notes: 'Covered under warranty. Coils cleaned, defrost cycle tested.' },
-      { date: '2025-09-10', vendor: 'CleanAir HVAC', type: 'Quarterly Maintenance', cost: 0, notes: 'Warranty service. All OK.' },
+      { date: '2025-12-15', vendor: 'HVAC Service Vendor', type: 'Quarterly Maintenance', cost: 0, notes: 'Covered under warranty. Coils cleaned, defrost cycle tested.' },
+      { date: '2025-09-10', vendor: 'HVAC Service Vendor', type: 'Quarterly Maintenance', cost: 0, notes: 'Warranty service. All OK.' },
     ],
     schedule: [
       { task: 'Defrost cycle test', interval: 'Quarterly', lastDone: '2025-12-15', nextDue: '2026-03-15' },
@@ -263,17 +263,17 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     warrantyExpiry: '2023-08-20', warrantyProvider: 'Captive Aire', warrantyTerms: '5-year limited',
     warrantyContact: '1-800-334-9256',
     condition: 'Fair', nextMaintenanceDue: '2026-01-20', maintenanceInterval: 'Quarterly',
-    linkedVendor: 'ABC Fire Protection', usefulLifeYears: 20, replacementCost: 22000,
+    linkedVendor: 'Hood Cleaning Vendor', usefulLifeYears: 20, replacementCost: 22000,
     status: 'operational' as EquipmentStatus,
     linkedVendors: [
-      { vendor: 'ABC Fire Protection', serviceType: 'Hood Cleaning', isPrimary: true },
-      { vendor: 'Valley Fire Systems', serviceType: 'Fire Suppression Inspection', isPrimary: false },
+      { vendor: 'Hood Cleaning Vendor', serviceType: 'Hood Cleaning', isPrimary: true },
+      { vendor: 'Fire Suppression Vendor', serviceType: 'Fire Suppression Inspection', isPrimary: false },
     ],
     notes: 'Fan belt showing wear. Schedule replacement next service.',
     serviceHistory: [
-      { date: '2025-10-20', vendor: 'ABC Fire Protection', type: 'Hood Cleaning', cost: 850, notes: 'Full hood and duct cleaning. Fan belt showing wear.' },
-      { date: '2025-07-20', vendor: 'ABC Fire Protection', type: 'Hood Cleaning', cost: 850, notes: 'Quarterly deep clean. Grease buildup moderate.' },
-      { date: '2025-04-18', vendor: 'ABC Fire Protection', type: 'Hood Cleaning + Filter Replace', cost: 1100, notes: 'Replaced all baffle filters. Hood cleaned.' },
+      { date: '2025-10-20', vendor: 'Hood Cleaning Vendor', type: 'Hood Cleaning', cost: 850, notes: 'Full hood and duct cleaning. Fan belt showing wear.' },
+      { date: '2025-07-20', vendor: 'Hood Cleaning Vendor', type: 'Hood Cleaning', cost: 850, notes: 'Quarterly deep clean. Grease buildup moderate.' },
+      { date: '2025-04-18', vendor: 'Hood Cleaning Vendor', type: 'Hood Cleaning + Filter Replace', cost: 1100, notes: 'Replaced all baffle filters. Hood cleaned.' },
     ],
     schedule: [
       { task: 'Hood & duct cleaning', interval: 'Quarterly', lastDone: '2025-10-20', nextDue: '2026-01-20' },
@@ -288,11 +288,11 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     installDate: '2020-11-05', purchasePrice: 6500,
     warrantyExpiry: '2026-11-05', warrantyProvider: 'Ansul / Tyco', warrantyTerms: '6-year system warranty',
     condition: 'Good', nextMaintenanceDue: '2026-05-05', maintenanceInterval: 'Semi-Annual',
-    linkedVendor: 'Valley Fire Systems', usefulLifeYears: 12, replacementCost: 7500,
-    notes: 'Semi-annual inspection by Valley Fire. Under warranty.',
+    linkedVendor: 'Fire Suppression Vendor', usefulLifeYears: 12, replacementCost: 7500,
+    notes: 'Semi-annual inspection by fire suppression vendor. Under warranty.',
     serviceHistory: [
-      { date: '2025-11-05', vendor: 'Valley Fire Systems', type: 'Semi-Annual Inspection', cost: 0, notes: 'Warranty inspection. All nozzles clear, agent level OK.' },
-      { date: '2025-05-05', vendor: 'Valley Fire Systems', type: 'Semi-Annual Inspection', cost: 0, notes: 'System test passed. Links inspected.' },
+      { date: '2025-11-05', vendor: 'Fire Suppression Vendor', type: 'Semi-Annual Inspection', cost: 0, notes: 'Warranty inspection. All nozzles clear, agent level OK.' },
+      { date: '2025-05-05', vendor: 'Fire Suppression Vendor', type: 'Semi-Annual Inspection', cost: 0, notes: 'System test passed. Links inspected.' },
     ],
     schedule: [
       { task: 'System inspection & test', interval: 'Semi-Annual', lastDone: '2025-11-05', nextDue: '2026-05-05' },
@@ -306,11 +306,11 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     installDate: '2020-06-12', purchasePrice: 4200,
     warrantyExpiry: '2025-06-12', warrantyProvider: 'Frymaster', warrantyTerms: '5-year parts, 1-year labor',
     condition: 'Good', nextMaintenanceDue: '2026-06-12', maintenanceInterval: 'Annual',
-    linkedVendor: 'CleanAir HVAC', usefulLifeYears: 10, replacementCost: 4800,
+    linkedVendor: 'HVAC Service Vendor', usefulLifeYears: 10, replacementCost: 4800,
     notes: 'Oil changed regularly by kitchen staff.',
     serviceHistory: [
-      { date: '2025-06-12', vendor: 'CleanAir HVAC', type: 'Annual Service', cost: 325, notes: 'Cleaned burners, tested thermostat, replaced pilot assembly.' },
-      { date: '2024-06-10', vendor: 'CleanAir HVAC', type: 'Annual Service', cost: 300, notes: 'Standard annual maintenance.' },
+      { date: '2025-06-12', vendor: 'HVAC Service Vendor', type: 'Annual Service', cost: 325, notes: 'Cleaned burners, tested thermostat, replaced pilot assembly.' },
+      { date: '2024-06-10', vendor: 'HVAC Service Vendor', type: 'Annual Service', cost: 300, notes: 'Standard annual maintenance.' },
     ],
     schedule: [
       { task: 'Burner cleaning & thermostat test', interval: 'Annual', lastDone: '2025-06-12', nextDue: '2026-06-12' },
@@ -323,10 +323,10 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     installDate: '2022-01-18', purchasePrice: 4500,
     warrantyExpiry: '2027-01-18', warrantyProvider: 'Frymaster', warrantyTerms: '5-year parts, 1-year labor',
     condition: 'Excellent', nextMaintenanceDue: '2026-07-18', maintenanceInterval: 'Annual',
-    linkedVendor: 'CleanAir HVAC', usefulLifeYears: 10, replacementCost: 4800,
+    linkedVendor: 'HVAC Service Vendor', usefulLifeYears: 10, replacementCost: 4800,
     notes: 'Newer unit. Under warranty.',
     serviceHistory: [
-      { date: '2025-07-18', vendor: 'CleanAir HVAC', type: 'Annual Service', cost: 0, notes: 'Warranty service. All OK.' },
+      { date: '2025-07-18', vendor: 'HVAC Service Vendor', type: 'Annual Service', cost: 0, notes: 'Warranty service. All OK.' },
     ],
     schedule: [
       { task: 'Burner cleaning & thermostat test', interval: 'Annual', lastDone: '2025-07-18', nextDue: '2026-07-18' },
@@ -340,19 +340,19 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     warrantyExpiry: '2022-09-01', warrantyProvider: 'Hobart', warrantyTerms: '5-year parts and labor',
     warrantyContact: '1-888-446-2278 / hobart.service@itw.com',
     condition: 'Poor', nextMaintenanceDue: '2026-01-01', maintenanceInterval: 'Quarterly',
-    linkedVendor: 'CleanAir HVAC', usefulLifeYears: 8, replacementCost: 14500,
+    linkedVendor: 'HVAC Service Vendor', usefulLifeYears: 8, replacementCost: 14500,
     status: 'needs_repair' as EquipmentStatus,
     linkedVendors: [
-      { vendor: 'CleanAir HVAC', serviceType: 'Repair & Maintenance', isPrimary: true },
+      { vendor: 'HVAC Service Vendor', serviceType: 'Repair & Maintenance', isPrimary: true },
     ],
     notes: 'Past useful life. Frequent repairs. Replacement recommended for Q2 2026. Rising maintenance costs — $1,200 emergency repair Dec 2025.',
     serviceHistory: [
-      { date: '2025-12-18', vendor: 'CleanAir HVAC', type: 'Emergency Repair', cost: 1200, notes: 'Replaced wash pump motor. Unit struggling.' },
-      { date: '2025-10-01', vendor: 'CleanAir HVAC', type: 'Quarterly Service', cost: 375, notes: 'Cleaned spray arms, descaled booster heater.' },
-      { date: '2025-07-14', vendor: 'CleanAir HVAC', type: 'Emergency Repair', cost: 850, notes: 'Replaced rinse solenoid valve. Leaking.' },
-      { date: '2025-03-10', vendor: 'CleanAir HVAC', type: 'Quarterly Service', cost: 375, notes: 'Standard quarterly. Booster heater descaled.' },
-      { date: '2024-12-15', vendor: 'CleanAir HVAC', type: 'Quarterly Service', cost: 350, notes: 'Routine maintenance. Spray arm gaskets worn.' },
-      { date: '2024-06-20', vendor: 'CleanAir HVAC', type: 'Annual Inspection', cost: 425, notes: 'Full inspection. Pump showing age.' },
+      { date: '2025-12-18', vendor: 'HVAC Service Vendor', type: 'Emergency Repair', cost: 1200, notes: 'Replaced wash pump motor. Unit struggling.' },
+      { date: '2025-10-01', vendor: 'HVAC Service Vendor', type: 'Quarterly Service', cost: 375, notes: 'Cleaned spray arms, descaled booster heater.' },
+      { date: '2025-07-14', vendor: 'HVAC Service Vendor', type: 'Emergency Repair', cost: 850, notes: 'Replaced rinse solenoid valve. Leaking.' },
+      { date: '2025-03-10', vendor: 'HVAC Service Vendor', type: 'Quarterly Service', cost: 375, notes: 'Standard quarterly. Booster heater descaled.' },
+      { date: '2024-12-15', vendor: 'HVAC Service Vendor', type: 'Quarterly Service', cost: 350, notes: 'Routine maintenance. Spray arm gaskets worn.' },
+      { date: '2024-06-20', vendor: 'HVAC Service Vendor', type: 'Annual Inspection', cost: 425, notes: 'Full inspection. Pump showing age.' },
     ],
     schedule: [
       { task: 'Spray arm cleaning & descale', interval: 'Quarterly', lastDone: '2025-10-01', nextDue: '2026-01-01' },
@@ -367,11 +367,11 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     installDate: '2022-02-14', purchasePrice: 8500,
     warrantyExpiry: '2027-02-14', warrantyProvider: 'True Manufacturing', warrantyTerms: '5-year parts and labor',
     condition: 'Excellent', nextMaintenanceDue: '2026-02-14', maintenanceInterval: 'Quarterly',
-    linkedVendor: 'CleanAir HVAC', usefulLifeYears: 15, replacementCost: 10000,
+    linkedVendor: 'HVAC Service Vendor', usefulLifeYears: 15, replacementCost: 10000,
     notes: 'Under warranty. Excellent condition.',
     serviceHistory: [
-      { date: '2025-11-14', vendor: 'CleanAir HVAC', type: 'Quarterly Maintenance', cost: 0, notes: 'Warranty service. Coils cleaned.' },
-      { date: '2025-08-14', vendor: 'CleanAir HVAC', type: 'Quarterly Maintenance', cost: 0, notes: 'Warranty service. All nominal.' },
+      { date: '2025-11-14', vendor: 'HVAC Service Vendor', type: 'Quarterly Maintenance', cost: 0, notes: 'Warranty service. Coils cleaned.' },
+      { date: '2025-08-14', vendor: 'HVAC Service Vendor', type: 'Quarterly Maintenance', cost: 0, notes: 'Warranty service. All nominal.' },
     ],
     schedule: [
       { task: 'Condenser coil cleaning', interval: 'Quarterly', lastDone: '2025-11-14', nextDue: '2026-02-14' },
@@ -385,15 +385,15 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     installDate: '2020-05-22', purchasePrice: 14000,
     warrantyExpiry: '2025-05-22', warrantyProvider: 'Captive Aire', warrantyTerms: '5-year limited',
     condition: 'Good', nextMaintenanceDue: '2026-02-22', maintenanceInterval: 'Quarterly',
-    linkedVendor: 'ABC Fire Protection', usefulLifeYears: 20, replacementCost: 18000,
+    linkedVendor: 'Hood Cleaning Vendor', usefulLifeYears: 20, replacementCost: 18000,
     linkedVendors: [
-      { vendor: 'ABC Fire Protection', serviceType: 'Hood Cleaning', isPrimary: true },
-      { vendor: 'Valley Fire Systems', serviceType: 'Fire Suppression Inspection', isPrimary: false },
+      { vendor: 'Hood Cleaning Vendor', serviceType: 'Hood Cleaning', isPrimary: true },
+      { vendor: 'Fire Suppression Vendor', serviceType: 'Fire Suppression Inspection', isPrimary: false },
     ],
     notes: 'Warranty recently expired. Good shape.',
     serviceHistory: [
-      { date: '2025-11-22', vendor: 'ABC Fire Protection', type: 'Hood Cleaning', cost: 750, notes: 'Full cleaning. Good condition.' },
-      { date: '2025-08-22', vendor: 'ABC Fire Protection', type: 'Hood Cleaning', cost: 750, notes: 'Quarterly clean. Light grease.' },
+      { date: '2025-11-22', vendor: 'Hood Cleaning Vendor', type: 'Hood Cleaning', cost: 750, notes: 'Full cleaning. Good condition.' },
+      { date: '2025-08-22', vendor: 'Hood Cleaning Vendor', type: 'Hood Cleaning', cost: 750, notes: 'Quarterly clean. Light grease.' },
     ],
     schedule: [
       { task: 'Hood & duct cleaning', interval: 'Quarterly', lastDone: '2025-11-22', nextDue: '2026-02-22' },
@@ -407,12 +407,12 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     installDate: '2021-07-08', purchasePrice: 5200,
     warrantyExpiry: '2024-07-08', warrantyProvider: 'Manitowoc Ice', warrantyTerms: '3-year parts and labor',
     condition: 'Fair', nextMaintenanceDue: '2026-01-08', maintenanceInterval: 'Quarterly',
-    linkedVendor: 'CleanAir HVAC', usefulLifeYears: 8, replacementCost: 6000,
+    linkedVendor: 'HVAC Service Vendor', usefulLifeYears: 8, replacementCost: 6000,
     pillar: 'food_safety' as const,
     notes: 'Maintenance overdue — monthly cleaning cycle and condenser service past due. Scale buildup reported. FDA Food Code §4-602.11 requires food contact surfaces (including ice machines) cleaned at frequency to prevent buildup. Schedule descaling ASAP.',
     serviceHistory: [
-      { date: '2025-10-08', vendor: 'CleanAir HVAC', type: 'Quarterly Maintenance', cost: 325, notes: 'Cleaned condenser, sanitized bin. Noted early scale buildup.' },
-      { date: '2025-07-08', vendor: 'CleanAir HVAC', type: 'Quarterly Maintenance + Descale', cost: 425, notes: 'Full descale treatment. Water filter replaced.' },
+      { date: '2025-10-08', vendor: 'HVAC Service Vendor', type: 'Quarterly Maintenance', cost: 325, notes: 'Cleaned condenser, sanitized bin. Noted early scale buildup.' },
+      { date: '2025-07-08', vendor: 'HVAC Service Vendor', type: 'Quarterly Maintenance + Descale', cost: 425, notes: 'Full descale treatment. Water filter replaced.' },
     ],
     schedule: [
       { task: 'Daily ice quality & scoop storage check', interval: 'Daily', lastDone: '2026-02-08', nextDue: '2026-02-09' },
@@ -431,11 +431,11 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     installDate: '2018-04-10', purchasePrice: 9500,
     warrantyExpiry: '2023-04-10', warrantyProvider: 'True Manufacturing', warrantyTerms: '5-year parts and labor',
     condition: 'Fair', nextMaintenanceDue: '2026-04-10', maintenanceInterval: 'Quarterly',
-    linkedVendor: 'CleanAir HVAC', usefulLifeYears: 15, replacementCost: 11000,
+    linkedVendor: 'HVAC Service Vendor', usefulLifeYears: 15, replacementCost: 11000,
     notes: 'Compressor running louder. Monitor closely.',
     serviceHistory: [
-      { date: '2025-10-10', vendor: 'CleanAir HVAC', type: 'Quarterly Maintenance', cost: 325, notes: 'Coils cleaned. Compressor louder than normal — monitor.' },
-      { date: '2025-07-10', vendor: 'CleanAir HVAC', type: 'Quarterly Maintenance', cost: 275, notes: 'Routine service.' },
+      { date: '2025-10-10', vendor: 'HVAC Service Vendor', type: 'Quarterly Maintenance', cost: 325, notes: 'Coils cleaned. Compressor louder than normal — monitor.' },
+      { date: '2025-07-10', vendor: 'HVAC Service Vendor', type: 'Quarterly Maintenance', cost: 275, notes: 'Routine service.' },
     ],
     schedule: [
       { task: 'Condenser coil cleaning', interval: 'Quarterly', lastDone: '2025-10-10', nextDue: '2026-01-10' },
@@ -449,11 +449,11 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     installDate: '2019-10-01', purchasePrice: 11000,
     warrantyExpiry: '2024-10-01', warrantyProvider: 'Kolpak', warrantyTerms: '5-year compressor, 3-year parts',
     condition: 'Good', nextMaintenanceDue: '2026-04-01', maintenanceInterval: 'Quarterly',
-    linkedVendor: 'CleanAir HVAC', usefulLifeYears: 15, replacementCost: 13000,
+    linkedVendor: 'HVAC Service Vendor', usefulLifeYears: 15, replacementCost: 13000,
     notes: 'Warranty expired. Runs well.',
     serviceHistory: [
-      { date: '2025-10-01', vendor: 'CleanAir HVAC', type: 'Quarterly Maintenance', cost: 300, notes: 'Defrost tested, coils cleaned.' },
-      { date: '2025-07-01', vendor: 'CleanAir HVAC', type: 'Quarterly Maintenance', cost: 300, notes: 'All systems OK.' },
+      { date: '2025-10-01', vendor: 'HVAC Service Vendor', type: 'Quarterly Maintenance', cost: 300, notes: 'Defrost tested, coils cleaned.' },
+      { date: '2025-07-01', vendor: 'HVAC Service Vendor', type: 'Quarterly Maintenance', cost: 300, notes: 'All systems OK.' },
     ],
     schedule: [
       { task: 'Defrost cycle test', interval: 'Quarterly', lastDone: '2025-10-01', nextDue: '2026-01-01' },
@@ -467,11 +467,11 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     installDate: '2017-02-15', purchasePrice: 18000,
     warrantyExpiry: '2022-02-15', warrantyProvider: 'Captive Aire', warrantyTerms: '5-year limited',
     condition: 'Fair', nextMaintenanceDue: '2026-02-15', maintenanceInterval: 'Quarterly',
-    linkedVendor: 'ABC Fire Protection', usefulLifeYears: 20, replacementCost: 24000,
+    linkedVendor: 'Hood Cleaning Vendor', usefulLifeYears: 20, replacementCost: 24000,
     notes: 'Aging system. Filters need more frequent attention.',
     serviceHistory: [
-      { date: '2025-11-15', vendor: 'ABC Fire Protection', type: 'Hood Cleaning', cost: 900, notes: 'Heavy grease buildup. Recommended quarterly instead of semi-annual.' },
-      { date: '2025-05-15', vendor: 'ABC Fire Protection', type: 'Hood Cleaning + Filter Replace', cost: 1200, notes: 'Replaced all filters. Deep cleaned ductwork.' },
+      { date: '2025-11-15', vendor: 'Hood Cleaning Vendor', type: 'Hood Cleaning', cost: 900, notes: 'Heavy grease buildup. Recommended quarterly instead of semi-annual.' },
+      { date: '2025-05-15', vendor: 'Hood Cleaning Vendor', type: 'Hood Cleaning + Filter Replace', cost: 1200, notes: 'Replaced all filters. Deep cleaned ductwork.' },
     ],
     schedule: [
       { task: 'Hood & duct cleaning', interval: 'Quarterly', lastDone: '2025-11-15', nextDue: '2026-02-15' },
@@ -485,10 +485,10 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     installDate: '2020-03-20', purchasePrice: 7800,
     warrantyExpiry: '2025-03-20', warrantyProvider: 'Vulcan', warrantyTerms: '5-year limited parts',
     condition: 'Good', nextMaintenanceDue: '2026-03-20', maintenanceInterval: 'Annual',
-    linkedVendor: 'CleanAir HVAC', usefulLifeYears: 15, replacementCost: 9000,
+    linkedVendor: 'HVAC Service Vendor', usefulLifeYears: 15, replacementCost: 9000,
     notes: 'Reliable unit.',
     serviceHistory: [
-      { date: '2025-03-20', vendor: 'CleanAir HVAC', type: 'Annual Inspection', cost: 350, notes: 'Calibrated thermostat, cleaned burners, inspected gas lines.' },
+      { date: '2025-03-20', vendor: 'HVAC Service Vendor', type: 'Annual Inspection', cost: 350, notes: 'Calibrated thermostat, cleaned burners, inspected gas lines.' },
     ],
     schedule: [
       { task: 'Thermostat calibration & burner cleaning', interval: 'Annual', lastDone: '2025-03-20', nextDue: '2026-03-20' },
@@ -502,12 +502,12 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     warrantyExpiry: '2026-08-10', warrantyProvider: 'Vulcan', warrantyTerms: '5-year limited parts',
     warrantyContact: '1-800-814-2028 / vulcan.service@itw.com',
     condition: 'Poor', nextMaintenanceDue: '2026-02-10', maintenanceInterval: 'Annual',
-    linkedVendor: 'CleanAir HVAC', usefulLifeYears: 15, replacementCost: 9000,
+    linkedVendor: 'HVAC Service Vendor', usefulLifeYears: 15, replacementCost: 9000,
     status: 'out_of_service' as EquipmentStatus,
     notes: 'Gas valve failure Jan 2026. Pulled from service pending warranty repair. Vulcan warranty claim #WC-2026-0142 filed.',
     serviceHistory: [
-      { date: '2026-01-22', vendor: 'CleanAir HVAC', type: 'Emergency Diagnostic', cost: 0, notes: 'Gas valve stuck closed. Unit cannot heat. Warranty claim initiated with Vulcan.' },
-      { date: '2025-08-10', vendor: 'CleanAir HVAC', type: 'Annual Inspection', cost: 0, notes: 'Warranty service. All good.' },
+      { date: '2026-01-22', vendor: 'HVAC Service Vendor', type: 'Emergency Diagnostic', cost: 0, notes: 'Gas valve stuck closed. Unit cannot heat. Warranty claim initiated with Vulcan.' },
+      { date: '2025-08-10', vendor: 'HVAC Service Vendor', type: 'Annual Inspection', cost: 0, notes: 'Warranty service. All good.' },
     ],
     schedule: [
       { task: 'Thermostat calibration & burner cleaning', interval: 'Annual', lastDone: '2025-08-10', nextDue: '2026-08-10' },
@@ -521,12 +521,12 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     installDate: '2022-03-15', purchasePrice: 7800,
     warrantyExpiry: '2025-03-15', warrantyProvider: 'Hoshizaki', warrantyTerms: '3-year parts and labor',
     condition: 'Good', nextMaintenanceDue: '2026-02-28', maintenanceInterval: 'Monthly',
-    linkedVendor: 'CleanAir HVAC', usefulLifeYears: 10, replacementCost: 8500,
+    linkedVendor: 'HVAC Service Vendor', usefulLifeYears: 10, replacementCost: 8500,
     pillar: 'food_safety' as const,
     notes: 'Monthly cleaning on schedule. Last deep clean July 2025. Water filter due March 2026. FDA Food Code §4-602.11 — food contact surface, monthly cleaning minimum.',
     serviceHistory: [
-      { date: '2026-01-28', vendor: 'CleanAir HVAC', type: 'Monthly Cleaning & Sanitize', cost: 150, notes: 'Cleaning cycle run, bin sanitized, ice quality good.' },
-      { date: '2025-12-28', vendor: 'CleanAir HVAC', type: 'Monthly Cleaning & Sanitize', cost: 150, notes: 'Routine monthly service. No issues.' },
+      { date: '2026-01-28', vendor: 'HVAC Service Vendor', type: 'Monthly Cleaning & Sanitize', cost: 150, notes: 'Cleaning cycle run, bin sanitized, ice quality good.' },
+      { date: '2025-12-28', vendor: 'HVAC Service Vendor', type: 'Monthly Cleaning & Sanitize', cost: 150, notes: 'Routine monthly service. No issues.' },
     ],
     schedule: [
       { task: 'Daily ice quality & scoop storage check', interval: 'Daily', lastDone: '2026-02-08', nextDue: '2026-02-09' },
@@ -545,12 +545,12 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     installDate: '2021-03-15', purchasePrice: 3200,
     warrantyExpiry: '2026-03-15', warrantyProvider: 'Captive Aire', warrantyTerms: '5-year limited',
     condition: 'Good', nextMaintenanceDue: '2026-03-10', maintenanceInterval: 'Quarterly',
-    linkedVendor: 'ABC Fire Protection', usefulLifeYears: 15, replacementCost: 3800,
-    notes: 'Cleaned with main hood system by ABC Fire Protection. Hinge kit operational. NFPA 96 Chapter 8 — listed for grease-laden vapor service. Belt replaced Oct 2025.',
+    linkedVendor: 'Hood Cleaning Vendor', usefulLifeYears: 15, replacementCost: 3800,
+    notes: 'Cleaned with main hood system by Hood Cleaning Vendor. Hinge kit operational. NFPA 96 Chapter 8 — listed for grease-laden vapor service. Belt replaced Oct 2025.',
     serviceHistory: [
-      { date: '2025-12-10', vendor: 'ABC Fire Protection', type: 'Quarterly Cleaning (with hood)', cost: 0, notes: 'Fan blades cleaned, hinge kit lubricated, grease drain cleared. Included with hood cleaning.' },
-      { date: '2025-10-20', vendor: 'ABC Fire Protection', type: 'Belt Replacement + Quarterly Clean', cost: 185, notes: 'Replaced drive belt (showing cracks). Fan blades cleaned. Bearings lubricated.' },
-      { date: '2025-07-20', vendor: 'ABC Fire Protection', type: 'Quarterly Cleaning (with hood)', cost: 0, notes: 'Cleaned with hood service. Moderate grease on blades. Hinge kit good.' },
+      { date: '2025-12-10', vendor: 'Hood Cleaning Vendor', type: 'Quarterly Cleaning (with hood)', cost: 0, notes: 'Fan blades cleaned, hinge kit lubricated, grease drain cleared. Included with hood cleaning.' },
+      { date: '2025-10-20', vendor: 'Hood Cleaning Vendor', type: 'Belt Replacement + Quarterly Clean', cost: 185, notes: 'Replaced drive belt (showing cracks). Fan blades cleaned. Bearings lubricated.' },
+      { date: '2025-07-20', vendor: 'Hood Cleaning Vendor', type: 'Quarterly Cleaning (with hood)', cost: 0, notes: 'Cleaned with hood service. Moderate grease on blades. Hinge kit good.' },
     ],
     schedule: [
       { task: 'Visual check — fan running during cooking (NFPA 96 Table 12.4)', interval: 'Daily', lastDone: '2026-02-08', nextDue: '2026-02-09' },
@@ -566,11 +566,11 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     installDate: '2020-05-22', purchasePrice: 2800,
     warrantyExpiry: '2025-05-22', warrantyProvider: 'Greenheck', warrantyTerms: '5-year parts',
     condition: 'Fair', nextMaintenanceDue: '2026-02-22', maintenanceInterval: 'Quarterly',
-    linkedVendor: 'ABC Fire Protection', usefulLifeYears: 15, replacementCost: 3400,
+    linkedVendor: 'Hood Cleaning Vendor', usefulLifeYears: 15, replacementCost: 3400,
     notes: 'Bearing noise noted last service — monitor closely. NFPA 96 Chapter 8 hinge kit installed. Warranty expired.',
     serviceHistory: [
-      { date: '2025-11-22', vendor: 'ABC Fire Protection', type: 'Quarterly Cleaning (with hood)', cost: 0, notes: 'Cleaned with hood. Bearing noise at startup — minor. Monitor next quarter.' },
-      { date: '2025-08-22', vendor: 'ABC Fire Protection', type: 'Quarterly Cleaning (with hood)', cost: 0, notes: 'Fan blades cleaned. Grease containment drain cleared.' },
+      { date: '2025-11-22', vendor: 'Hood Cleaning Vendor', type: 'Quarterly Cleaning (with hood)', cost: 0, notes: 'Cleaned with hood. Bearing noise at startup — minor. Monitor next quarter.' },
+      { date: '2025-08-22', vendor: 'Hood Cleaning Vendor', type: 'Quarterly Cleaning (with hood)', cost: 0, notes: 'Fan blades cleaned. Grease containment drain cleared.' },
     ],
     schedule: [
       { task: 'Visual check — fan running during cooking (NFPA 96 Table 12.4)', interval: 'Daily', lastDone: '2026-02-08', nextDue: '2026-02-09' },
@@ -586,11 +586,11 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     installDate: '2017-02-15', purchasePrice: 3500,
     warrantyExpiry: '2022-02-15', warrantyProvider: 'Captive Aire', warrantyTerms: '5-year limited',
     condition: 'Fair', nextMaintenanceDue: '2026-02-15', maintenanceInterval: 'Quarterly',
-    linkedVendor: 'ABC Fire Protection', usefulLifeYears: 15, replacementCost: 4200,
-    notes: 'Older unit matching hood system age. Heavy grease buildup requires more frequent cleaning. NFPA 96 (2024) Chapter 11 — accessible for cleaning. Verify specific section requirements with your AHJ.',
+    linkedVendor: 'Hood Cleaning Vendor', usefulLifeYears: 15, replacementCost: 4200,
+    notes: 'Older unit matching hood system age. Heavy grease buildup requires more frequent cleaning. NFPA 96 Chapter 11 — accessible for cleaning. Verify specific section requirements with your AHJ.',
     serviceHistory: [
-      { date: '2025-11-15', vendor: 'ABC Fire Protection', type: 'Quarterly Cleaning (with hood)', cost: 0, notes: 'Heavy grease on blades — needed extra cleaning time. Hinge kit working.' },
-      { date: '2025-05-15', vendor: 'ABC Fire Protection', type: 'Quarterly Cleaning + Belt Replace', cost: 165, notes: 'Belt replaced (glazed). Bearings lubricated. Airflow tested — within spec.' },
+      { date: '2025-11-15', vendor: 'Hood Cleaning Vendor', type: 'Quarterly Cleaning (with hood)', cost: 0, notes: 'Heavy grease on blades — needed extra cleaning time. Hinge kit working.' },
+      { date: '2025-05-15', vendor: 'Hood Cleaning Vendor', type: 'Quarterly Cleaning + Belt Replace', cost: 165, notes: 'Belt replaced (glazed). Bearings lubricated. Airflow tested — within spec.' },
     ],
     schedule: [
       { task: 'Visual check — fan running during cooking (NFPA 96 Table 12.4)', interval: 'Daily', lastDone: '2026-02-08', nextDue: '2026-02-09' },
@@ -608,11 +608,11 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     warrantyExpiry: '2029-03-15', condition: 'Excellent',
     nextMaintenanceDue: '2026-09-15', lastServiceDate: '2026-03-10',
     pillar: 'facility_safety' as const,
-    linkedVendor: 'Valley Fire Systems', usefulLifeYears: 12, replacementCost: 450,
-    notes: 'K-Class — near fryers. Annual professional inspection by Valley Fire Systems. Monthly visual by staff.',
+    linkedVendor: 'Fire Suppression Vendor', usefulLifeYears: 12, replacementCost: 450,
+    notes: 'K-Class — near fryers. Annual professional inspection by Fire Suppression Vendor. Monthly visual by staff.',
     serviceHistory: [
-      { date: '2026-03-10', vendor: 'Valley Fire Systems', type: 'Annual Inspection', cost: 65, notes: 'Gauge green, pin intact, tamper seal present, hose clear. Passed NFPA 10 §7.3.' },
-      { date: '2025-03-12', vendor: 'Valley Fire Systems', type: 'Annual Inspection + 6-Year Maintenance', cost: 125, notes: '6-year internal exam. New O-ring installed. Agent weight verified.' },
+      { date: '2026-03-10', vendor: 'Fire Suppression Vendor', type: 'Annual Inspection', cost: 65, notes: 'Gauge green, pin intact, tamper seal present, hose clear. Passed NFPA 10 §7.3.' },
+      { date: '2025-03-12', vendor: 'Fire Suppression Vendor', type: 'Annual Inspection + 6-Year Maintenance', cost: 125, notes: '6-year internal exam. New O-ring installed. Agent weight verified.' },
     ],
     schedule: [
       { task: 'Visual inspection — gauge, pin, tamper seal, accessibility', interval: 'Monthly', lastDone: '2026-02-10', nextDue: '2026-03-10' },
@@ -622,16 +622,16 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
 
   // ─── Fire Extinguisher — Location 2 ───
   {
-    id: 'EQ-021', name: 'ABC Fire Extinguisher (Hallway)', type: 'Fire Extinguisher',
+    id: 'EQ-021', name: 'Fire Extinguisher (Hallway)', type: 'Fire Extinguisher',
     make: 'Kidde', model: 'Pro 10 MP', serial: 'KD-ABC-2023-8812',
     location: 'Location 2', installDate: '2023-06-01',
     warrantyExpiry: '2029-06-01', condition: 'Good',
     nextMaintenanceDue: '2026-06-01', lastServiceDate: '2025-06-05',
     pillar: 'facility_safety' as const,
-    linkedVendor: 'Valley Fire Systems', usefulLifeYears: 12, replacementCost: 320,
+    linkedVendor: 'Fire Suppression Vendor', usefulLifeYears: 12, replacementCost: 320,
     notes: 'ABC dry chemical — hallway near exit. Covers common areas.',
     serviceHistory: [
-      { date: '2025-06-05', vendor: 'Valley Fire Systems', type: 'Annual Inspection', cost: 55, notes: 'Gauge green. Pin and tamper seal OK. Label legible.' },
+      { date: '2025-06-05', vendor: 'Fire Suppression Vendor', type: 'Annual Inspection', cost: 55, notes: 'Gauge green. Pin and tamper seal OK. Label legible.' },
     ],
     schedule: [
       { task: 'Visual inspection — gauge, pin, tamper seal, accessibility', interval: 'Monthly', lastDone: '2026-02-01', nextDue: '2026-03-01' },
@@ -1728,10 +1728,10 @@ export function Equipment() {
                     <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.assignedVendor')}</label>
                     <select name="linked_vendor" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
                       <option value="">{t('pages.equipment.selectVendor')}</option>
-                      <option value="CleanAir HVAC">CleanAir HVAC</option>
-                      <option value="ABC Fire Protection">ABC Fire Protection</option>
-                      <option value="Valley Fire Systems">Valley Fire Systems</option>
-                      <option value="Pacific Pest Control">Pacific Pest Control</option>
+                      <option value="HVAC Service Vendor">HVAC Service Vendor</option>
+                      <option value="Hood Cleaning Vendor">Hood Cleaning Vendor</option>
+                      <option value="Fire Suppression Vendor">Fire Suppression Vendor</option>
+                      <option value="Pest Control Vendor">Pest Control Vendor</option>
                       <option value="Grease Masters">Grease Masters</option>
                     </select>
                   </div>

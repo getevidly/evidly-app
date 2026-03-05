@@ -162,9 +162,9 @@ const DEMO_ALERTS: PredictiveAlert[] = [
     id: 'pa-9',
     alert_type: 'vendor_nonresponsive',
     severity: 'medium',
-    title: 'Vendor Certificate Expired — Valley Fire Protection',
-    description: 'Valley Fire Protection liability insurance certificate expired 3 days ago. They are currently non-compliant as a service provider.',
-    recommended_action: 'Contact Valley Fire Protection to request updated certificate of insurance. Consider suspending services until documentation is current.',
+    title: 'Vendor Certificate Expired — Fire Suppression Vendor',
+    description: 'Fire Suppression Vendor liability insurance certificate expired 3 days ago. They are currently non-compliant as a service provider.',
+    recommended_action: 'Contact Fire Suppression Vendor to request updated certificate of insurance. Consider suspending services until documentation is current.',
     data_points: ['Insurance expired: Feb 6, 2026', 'No response to 2 renewal requests', 'Affects: Location 2 fire suppression'], // demo
     location: 'Location 2', // demo
     status: 'active',

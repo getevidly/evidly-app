@@ -47,7 +47,7 @@ const DEMO_FACILITIES_ATTENTION: FacilitiesAttentionItem[] = [
     id: 'fac-1',
     severity: 'warning',
     title: 'Fire suppression inspection expires in 12 days',
-    detail: 'ABC Fire Protection notified',
+    detail: 'Vendor notified',
     actionLabel: 'Schedule Service',
     actionRoute: '/vendors',
     riskType: 'liability',

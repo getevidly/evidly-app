@@ -20,8 +20,8 @@ CREATE TABLE IF NOT EXISTS insurance_scoring_profiles (
   updated_at    timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_isp_org ON insurance_scoring_profiles(org_id);
-CREATE INDEX idx_isp_default ON insurance_scoring_profiles(org_id, is_default) WHERE is_default = true;
+CREATE INDEX IF NOT EXISTS idx_isp_org ON insurance_scoring_profiles(org_id);
+CREATE INDEX IF NOT EXISTS idx_isp_default ON insurance_scoring_profiles(org_id, is_default) WHERE is_default = true;
 
 -- ── Add profile reference + trend modifier to risk scores ───
 
@@ -34,17 +34,19 @@ ALTER TABLE insurance_risk_scores
 ALTER TABLE insurance_scoring_profiles ENABLE ROW LEVEL SECURITY;
 
 -- Org members can read their org's profiles + all system profiles
+DROP POLICY IF EXISTS "isp_read" ON insurance_scoring_profiles;
 CREATE POLICY "isp_read" ON insurance_scoring_profiles
   FOR SELECT USING (
     is_system = true
-    OR org_id IN (SELECT org_id FROM profiles WHERE id = auth.uid())
+    OR org_id IN (SELECT organization_id FROM user_profiles WHERE id = auth.uid())
   );
 
 -- Org admins can insert/update/delete their org's custom profiles
+DROP POLICY IF EXISTS "isp_write" ON insurance_scoring_profiles;
 CREATE POLICY "isp_write" ON insurance_scoring_profiles
   FOR ALL USING (
     org_id IN (
-      SELECT org_id FROM profiles
+      SELECT organization_id FROM user_profiles
       WHERE id = auth.uid()
         AND role IN ('owner_operator', 'executive', 'platform_admin')
     )

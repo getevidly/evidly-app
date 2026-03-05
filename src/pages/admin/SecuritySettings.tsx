@@ -21,7 +21,7 @@ import {
   Shield, Globe, Lock, Copy, CheckCircle, XCircle,
   AlertTriangle, RefreshCw, Loader2, Save, Info,
 } from 'lucide-react';
-import { Breadcrumb } from '../../components/Breadcrumb';
+import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 
 const BRAND = '#1e4d6b';
 const GOLD = '#A08C5A';
@@ -223,10 +223,7 @@ export function SecuritySettings() {
 
   return (
     <div className="space-y-6">
-      <Breadcrumb items={[
-        { label: 'Admin', path: '/admin' },
-        { label: 'Security Settings' },
-      ]} />
+      <AdminBreadcrumb crumbs={[{ label: 'Security Settings' }]} />
 
       {isDemoMode && (
         <div className="rounded-lg px-4 py-2 text-sm font-medium" style={{ backgroundColor: '#fef3c7', color: '#92400e', border: '1px solid #fde68a' }}>

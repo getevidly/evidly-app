@@ -6,7 +6,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Breadcrumb } from '../../components/Breadcrumb';
+import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { toast } from 'sonner';
 import {
   BarChart3, Plus, TrendingUp, DollarSign, Target,
@@ -71,7 +71,7 @@ export default function MarketingCampaigns() {
 
   return (
     <div style={{ fontFamily: "'DM Sans', 'Inter', sans-serif" }}>
-      <Breadcrumb items={[{ label: 'Admin', href: '/admin' }, { label: 'Marketing Campaigns' }]} />
+      <AdminBreadcrumb crumbs={[{ label: 'Marketing Campaigns' }]} />
 
       <h1 className="text-2xl font-bold text-gray-900 mb-1">Marketing Campaigns</h1>
       <p className="text-sm text-gray-600 mb-6">Track campaigns, channel performance, and tour attribution</p>

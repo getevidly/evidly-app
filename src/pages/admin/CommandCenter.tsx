@@ -118,6 +118,7 @@ export default function CommandCenter() {
   const [eventFilter, setEventFilter] = useState('all');
   const [refreshing, setRefreshing] = useState(false);
   const [runningCrawl, setRunningCrawl] = useState(false);
+  const [crawlFeedback, setCrawlFeedback] = useState<{ type: 'error' | 'success'; msg: string } | null>(null);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -150,12 +151,14 @@ export default function CommandCenter() {
 
   const handleRunCrawl = async () => {
     setRunningCrawl(true);
+    setCrawlFeedback(null);
     try {
       const { error } = await supabase.functions.invoke('crawl-monitor');
       if (error) throw error;
+      setCrawlFeedback({ type: 'success', msg: 'Crawl completed — refreshing data.' });
       await loadData();
     } catch (err: any) {
-      alert(`Crawl failed: ${err.message}`);
+      setCrawlFeedback({ type: 'error', msg: `Crawl failed: ${err.message || 'Edge function error. Check Supabase logs.'}` });
     }
     setRunningCrawl(false);
   };
@@ -182,7 +185,7 @@ export default function CommandCenter() {
       </div>
 
       {/* KPI Strip */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', borderRadius: 12, border: `1px solid ${BORDER}`, background: '#fff', overflow: 'hidden' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', borderRadius: 12, border: `1px solid ${BORDER}`, background: '#fff', overflow: 'hidden', width: '100%' }}>
         <KpiCard label="Active Orgs" value={activeOrgs} icon={Building2} />
         <KpiCard label="Active Locations" value={activeLocs} icon={MapPin} />
         <KpiCard label="Crawl Feeds" value={loading ? null : `${crawlLive}/${crawlTotal}`} icon={Radio}
@@ -212,6 +215,17 @@ export default function CommandCenter() {
           </button>
         ))}
       </div>
+
+      {crawlFeedback && (
+        <div style={{
+          fontSize: 13, borderRadius: 8, padding: '10px 14px',
+          color: crawlFeedback.type === 'error' ? '#DC2626' : '#059669',
+          background: crawlFeedback.type === 'error' ? '#FEF2F2' : '#F0FDF4',
+          border: `1px solid ${crawlFeedback.type === 'error' ? '#FECACA' : '#BBF7D0'}`,
+        }}>
+          {crawlFeedback.msg}
+        </div>
+      )}
 
       {/* 3-Column Layout */}
       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: 16 }}>
