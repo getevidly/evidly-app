@@ -168,6 +168,8 @@ export default function EvidLYIntelligence() {
   const [jurisdictionUpdates, setJurisdictionUpdates] = useState<JurisdictionIntelUpdate[]>([]);
   const [activeTab, setActiveTab] = useState<Tab>('overview');
   const [loading, setLoading] = useState(true);
+  const [crawlRunning, setCrawlRunning] = useState(false);
+  const [crawlFeedback, setCrawlFeedback] = useState<{ type: 'success' | 'error'; msg: string } | null>(null);
 
   // Filters
   const [sigFilter, setSigFilter] = useState({ search: '', urgency: '', type: '', status: '' });
@@ -268,7 +270,18 @@ export default function EvidLYIntelligence() {
   };
 
   const runIntelligence = async () => {
-    alert('[Demo] Intelligence crawl triggered. In production, this invokes the intelligence-collect edge function.');
+    setCrawlRunning(true);
+    setCrawlFeedback(null);
+    try {
+      const { data, error } = await supabase.functions.invoke('intelligence-collect');
+      if (error) throw error;
+      const newCount = data?.new_insights ?? data?.newInsights ?? 0;
+      setCrawlFeedback({ type: 'success', msg: `Crawl completed. ${newCount} new signals discovered.` });
+      await loadAll();
+    } catch (err: any) {
+      setCrawlFeedback({ type: 'error', msg: `Crawl failed: ${err.message || 'Edge function error. Check Supabase logs.'}` });
+    }
+    setCrawlRunning(false);
   };
 
   const updateSignalRisk = async (signalId: string, dimension: string, level: string) => {
@@ -419,10 +432,15 @@ export default function EvidLYIntelligence() {
             {totalSources} sources crawled · Every signal correlated to clients, jurisdictions, and industries
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <button onClick={runIntelligence}
-            style={{ padding: '8px 16px', background: NAVY, border: 'none', borderRadius: 8, color: '#fff', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>
-            ⟳ Run Now
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          {crawlFeedback && (
+            <span style={{ fontSize: 11, fontWeight: 600, color: crawlFeedback.type === 'success' ? '#059669' : '#DC2626' }}>
+              {crawlFeedback.msg}
+            </span>
+          )}
+          <button onClick={runIntelligence} disabled={crawlRunning}
+            style={{ padding: '8px 16px', background: crawlRunning ? '#9CA3AF' : NAVY, border: 'none', borderRadius: 8, color: '#fff', fontSize: 12, fontWeight: 700, cursor: crawlRunning ? 'wait' : 'pointer', opacity: crawlRunning ? 0.7 : 1 }}>
+            {crawlRunning ? '⟳ Crawling...' : '⟳ Run Now'}
           </button>
           <button onClick={() => setActiveTab('sources')}
             style={{ padding: '8px 16px', background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 8, color: NAVY, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>

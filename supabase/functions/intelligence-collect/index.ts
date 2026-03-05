@@ -693,7 +693,7 @@ Deno.serve(async (req: Request) => {
       const chunk = sourceUrls.slice(i, i + CHUNK);
       dedupChunks.push(
         supabase
-          .from("intelligence_insights")
+          .from("intelligence_signals")
           .select("source_url")
           .in("source_url", chunk)
           .then(({ data }: { data: any[] | null }) => {
@@ -753,38 +753,41 @@ Deno.serve(async (req: Request) => {
   // ── Phase 4: Batch insert ──────────────────────────────────
   // Single .insert() call for all rows. Falls back to individual inserts on failure.
   if (analysisResults.length > 0) {
+    const severityToUrgency: Record<string, string> = {
+      critical: "critical", high: "high", medium: "medium", low: "low",
+      informational: "informational",
+    };
+    const severityToScore: Record<string, number> = {
+      critical: 95, high: 75, medium: 50, low: 25, informational: 10,
+    };
+
     const rows = analysisResults.map(({ fi, insight, severity }) => ({
       source_url: fi.item.source_url,
-      status: "pending_review",
-      is_demo_eligible: insight.is_demo_eligible ?? false,
-      source_type: mapSourceType(insight.category || fi.source.category),
+      source_key: fi.source.id,
+      source_name: insight.source_name || fi.source.name,
+      signal_type: mapSourceType(insight.category || fi.source.category),
       category: insight.category || fi.source.category,
-      severity,
-      scope: insight.scope || fi.source.defaultScope,
       title: (insight.title || fi.item.title || "").slice(0, 200),
       summary: insight.summary || "",
-      full_analysis: insight.full_analysis || "",
-      action_items: insight.action_items || [],
-      key_findings: insight.key_findings || [],
-      pillars: insight.pillars || ["food_safety"],
-      affected_counties: insight.affected_counties || [],
-      tags: insight.tags || [],
-      estimated_cost_low: insight.estimated_cost_low ?? 0,
-      estimated_cost_high: insight.estimated_cost_high ?? 0,
-      cost_basis: insight.cost_basis || "",
-      source_name: insight.source_name || fi.source.name,
-      demo_priority: insight.demo_priority ?? 0,
-      published_at: null,
+      full_content: insight.full_analysis || "",
+      ai_summary: insight.summary || "",
+      ai_urgency: severityToUrgency[severity] || "medium",
+      ai_impact_score: severityToScore[severity] || 50,
+      ai_confidence: Math.round((insight.confidence_score ?? 0.5) * 100),
+      ai_analyzed_at: new Date().toISOString(),
+      scope: insight.scope || fi.source.defaultScope || null,
+      counties_affected: insight.affected_counties || [],
+      status: "new",
     }));
 
-    const { error: batchErr } = await supabase.from("intelligence_insights").insert(rows);
+    const { error: batchErr } = await supabase.from("intelligence_signals").insert(rows);
 
     if (batchErr) {
       console.warn(`[intelligence-collect] Batch insert failed (${batchErr.message}), falling back to individual inserts`);
 
       // Fallback: insert one-by-one so partial success is possible
       for (let i = 0; i < rows.length; i++) {
-        const { error: singleErr } = await supabase.from("intelligence_insights").insert(rows[i]);
+        const { error: singleErr } = await supabase.from("intelligence_signals").insert(rows[i]);
         if (singleErr) {
           errors.push(`${analysisResults[i].fi.source.id}: DB insert failed — ${singleErr.message}`);
         } else {
