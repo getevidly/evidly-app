@@ -5,9 +5,11 @@ import { getDemoContext, generateSuggestions, extractActionItems, parseMarkdown 
 import { useDemo } from '../contexts/DemoContext';
 import { locations as demoLocations } from '../data/demoData';
 
-const loc1 = demoLocations[0]?.name ?? 'my primary location';
-const loc2 = demoLocations[1]?.name ?? 'my second location';
-const loc3 = demoLocations[2]?.name ?? 'my third location';
+// Display names for AI context — richer than generic demoData names
+const LOCATION_DISPLAY: Record<string, string> = { downtown: 'Downtown Kitchen', airport: 'Airport Terminal', university: 'University Dining' };
+const loc1 = LOCATION_DISPLAY[demoLocations[0]?.urlId] ?? demoLocations[0]?.name ?? 'my primary location';
+const loc2 = LOCATION_DISPLAY[demoLocations[1]?.urlId] ?? demoLocations[1]?.name ?? 'my second location';
+const loc3 = LOCATION_DISPLAY[demoLocations[2]?.urlId] ?? demoLocations[2]?.name ?? 'my third location';
 
 interface Message {
   id: string;
@@ -45,8 +47,8 @@ function getDemoResponse(question: string): { text: string; suggestions: string[
     suggestions = ['Send renewal reminders', 'Which vendors are critical?', 'View all vendors'];
   } else {
     const ctx = getDemoContext();
-    text = `Your organization **${ctx.orgName}** compliance status:\n\n**Quick Status:**\n• ${loc1}: Food Safety 94% ✅ · Facility Safety 88% ✅\n• ${loc2}: Food Safety 72% ⚠️ · Facility Safety 62% 🔴\n• ${loc3}: Food Safety 62% 🔴 · Facility Safety 55% 🔴\n\n**Top priorities:**\n1. Renew ${loc3} health permit\n2. Complete missed temp checks at ${loc2}\n3. Schedule overdue fire suppression inspection\n\nAsk me about compliance scores, temperatures, vendors, inspections, or corrective actions.`; // demo
-    suggestions = [`Why did ${loc2} score drop?`, 'Am I inspection ready?', 'What actions are overdue?'];
+    text = `Your organization **${ctx.orgName}** compliance status:\n\n**Quick Status:**\n• ${loc1}: Food Safety 94% ✅ · Facility Safety 88% ✅\n• ${loc2}: Food Safety 72% ⚠️ · Facility Safety 62% 🔴\n• ${loc3}: Food Safety 62% 🔴 · Facility Safety 55% 🔴\n\n**Top priorities:**\n1. Renew ${loc3} health permit\n2. Complete missed temp checks at ${loc2}\n3. Schedule overdue fire suppression inspection\n\nAsk me about food safety, facility safety, temperatures, vendors, inspections, or corrective actions.`; // demo
+    suggestions = [`What changed at ${loc2} this week?`, 'Am I inspection ready?', 'What actions are overdue?'];
   }
 
   return { text, suggestions };

@@ -20,9 +20,11 @@ import {
 } from '../lib/aiAdvisorLocationContext';
 import { locations as demoLocations } from '../data/demoData';
 
-const loc1 = demoLocations[0]?.name ?? 'my primary location';
-const loc2 = demoLocations[1]?.name ?? 'my second location';
-const loc3 = demoLocations[2]?.name ?? 'my third location';
+// Display names for AI context — richer than generic demoData names
+const LOCATION_DISPLAY: Record<string, string> = { downtown: 'Downtown Kitchen', airport: 'Airport Terminal', university: 'University Dining' };
+const loc1 = LOCATION_DISPLAY[demoLocations[0]?.urlId] ?? demoLocations[0]?.name ?? 'my primary location';
+const loc2 = LOCATION_DISPLAY[demoLocations[1]?.urlId] ?? demoLocations[1]?.name ?? 'my second location';
+const loc3 = LOCATION_DISPLAY[demoLocations[2]?.urlId] ?? demoLocations[2]?.name ?? 'my third location';
 
 /* ─── Types ─── */
 type Mode = 'chat' | 'inspection' | 'document';
@@ -48,7 +50,7 @@ const getDemoResponse = (question: string, locationId?: string | null): { text: 
   let text = '';
   let suggestions: string[] = [];
 
-  // ── Enriched: "What are the biggest risks at Location 3?" ──
+  // ── Enriched: "What are the biggest risks at University Dining?" ──
   if ((lowerQ.includes('risk') && (lowerQ.includes(loc3.toLowerCase()) || lowerQ.includes('university') || lowerQ.includes('loc 3')))
     || (lowerQ.includes('risk') && locationId === 'university')) {
     const p = buildLocationContextPayload('university');
@@ -59,9 +61,9 @@ const getDemoResponse = (question: string, locationId?: string | null): { text: 
     text = `Here are the **top risks at ${loc3}** (${p?.county || 'Stanislaus County'}) ranked by compliance impact:\n\n**Current scores:** Food Safety ${p?.currentScores.foodSafety ?? 72}% · Facility Safety ${p?.currentScores.facilitySafety ?? 64}%\n**Jurisdiction:** ${juris?.authority ?? 'Stanislaus County DER'} (${juris?.model ?? 'violation_based'} model) — Status: ${juris?.gradeDisplay ?? 'Action Required'}\n\n🔴 **Critical Risks**\n1. **Open corrective actions: ${ca?.count ?? 2}** (${ca?.high ?? 1} high, ${ca?.low ?? 1} low)\n${ca?.items.map(i => `   • [${i.severity.toUpperCase()}] ${i.title} (${i.status})`).join('\n') ?? '   • Missing hood suppression inspection certificate\n   • Employee food handler card expiring'}\n2. **Temperature compliance at ${tempRate}%** — ${p?.temperatureCompliance.trendDirection ?? 'improving'}\n   • Below your ${loc1.toLowerCase()} location's 98% benchmark\n   • Inconsistent weekend logging drives the gap\n\n🟡 **Medium Risks**\n3. **Checklist completion rate at ${clRate}%**\n${p?.checklistCompletion.templates.filter(t => t.rate < 80).map(t => `   • ${t.template}: ${t.rate}% (${t.missed} missed)`).join('\n') || '   • Closing Checklist and Equipment Check need attention'}\n4. **Score trend:** ${p?.scoreTrend.direction ?? 'improving'} — last 4 weeks food safety: ${p?.scoreTrend.recentWeeks.map(w => w.foodSafety + '%').join(' → ') ?? '55% → 55% → 58%'}\n\n${p?.lastInspection === null ? '⚠️ **No prior inspection history** — this is a new location. First health inspection could come any time.\n\n' : ''}Action: Schedule hood suppression re-inspection with certified vendor immediately\nAction: Set up automated temp log reminders for weekend shifts\nAction: Brief the team on checklist completion — target 90%+ on all templates\nAction: Register staff for food handler card renewal before expiration`; // demo
     suggestions = ['Create all action items from this', `How fast can ${loc3} improve?`, `Compare ${loc3} to ${loc1}`];
   }
-  // ── Enriched: "Why did my compliance score drop at Location 2?" ──
+  // ── Enriched: "What changed at Airport Terminal?" ──
   else if ((lowerQ.includes('score') && (lowerQ.includes('drop') || lowerQ.includes('change') || lowerQ.includes('went down') || lowerQ.includes('decrease')) && (lowerQ.includes(loc2.toLowerCase()) || lowerQ.includes('airport') || lowerQ.includes('loc 2')))
-    || (lowerQ.includes('compliance score') && lowerQ.includes('airport'))) {
+    || (lowerQ.includes('what changed') && lowerQ.includes('airport'))) {
     const p = buildLocationContextPayload('airport');
     const delta = p?.scoreDelta;
     const insp = p?.lastInspection;
@@ -106,8 +108,8 @@ const getDemoResponse = (question: string, locationId?: string | null): { text: 
     }).join('\n');
     const avgFood = allPayloads.length > 0 ? Math.round(allPayloads.reduce((s, p) => s + (p?.currentScores.foodSafety ?? 0), 0) / allPayloads.length) : 0;
     const avgFac = allPayloads.length > 0 ? Math.round(allPayloads.reduce((s, p) => s + (p?.currentScores.facilitySafety ?? 0), 0) / allPayloads.length) : 0;
-    text = `Based on your compliance data, here's what I can tell you:\n\nYour organization **Pacific Coast Dining** manages ${allPayloads.length} active locations.\n\n**Org averages:** Food Safety ${avgFood}% · Facility Safety ${avgFac}%\n\n${locLines}\n\n**Top priorities this week:**\n1. Complete Walk-in Cooler #2 compressor repair at ${loc2}\n2. Schedule hood cleaning at ${loc2} (NFPA 96 overdue)\n3. Address open corrective actions at ${loc3}\n\nI can help with compliance scores, temperature trends, vendor documents, inspection readiness, corrective actions, team certifications, and more. What would you like to focus on?`; // demo
-    suggestions = [`What are the biggest risks at ${loc3}?`, `Why did my compliance score drop at ${loc2}?`, 'Am I ready for a health inspection?']; // demo
+    text = `Based on your compliance data, here's what I can tell you:\n\nYour organization **Pacific Coast Dining** manages ${allPayloads.length} active locations.\n\n**Org averages:** Food Safety ${avgFood}% · Facility Safety ${avgFac}%\n\n${locLines}\n\n**Top priorities this week:**\n1. Complete Walk-in Cooler #2 compressor repair at ${loc2}\n2. Schedule hood cleaning at ${loc2} (NFPA 96 overdue)\n3. Address open corrective actions at ${loc3}\n\nI can help with food safety, facility safety, temperature trends, vendor documents, inspection readiness, corrective actions, team certifications, and more. What would you like to focus on?`; // demo
+    suggestions = [`What are the biggest risks at ${loc3}?`, `What changed at ${loc2} this week?`, 'Am I ready for a health inspection?']; // demo
   }
 
   return { text, suggestions };
@@ -132,10 +134,10 @@ const DEMO_INSPECTION_QUESTIONS = [
 
 const DEMO_PAST_CONVERSATIONS: Conversation[] = [ // demo
   {
-    id: 'past-1', title: `${loc2} score drop analysis`, mode: 'chat', createdAt: Date.now() - 86400000 * 2, // demo
+    id: 'past-1', title: `${loc2} status change analysis`, mode: 'chat', createdAt: Date.now() - 86400000 * 2, // demo
     messages: [
-      { id: 'p1-1', role: 'user', content: `Why did my compliance score drop at ${loc2}?`, timestamp: Date.now() - 86400000 * 2 }, // demo
-      { id: 'p1-2', role: 'assistant', content: `Your compliance score at **${loc2}** dropped from **94%** to **87%** over the past 7 days due to 3 missed temperature logs and an expired hood cleaning certificate. The food safety pillar dropped 5 points and facility safety dropped 2 points.`, timestamp: Date.now() - 86400000 * 2 + 5000, suggestions: ['Show me the details', 'How to fix it?'] }, // demo
+      { id: 'p1-1', role: 'user', content: `What changed at ${loc2} this week?`, timestamp: Date.now() - 86400000 * 2 }, // demo
+      { id: 'p1-2', role: 'assistant', content: `**${loc2}** food safety dropped from **84%** to **79%** and facility safety from **68%** to **65%** over the past 7 days due to 3 missed temperature logs and an expired hood cleaning certificate.`, timestamp: Date.now() - 86400000 * 2 + 5000, suggestions: ['Show me the details', 'How to fix it?'] }, // demo
     ],
   },
   {
@@ -157,7 +159,7 @@ const DEMO_PAST_CONVERSATIONS: Conversation[] = [ // demo
 
 const STARTER_CARDS = [ // demo
   `What are the biggest risks at ${loc3}?`, // demo — enriched
-  `Why did my compliance score drop at ${loc2}?`, // demo — enriched
+  `What changed at ${loc2} this week?`, // demo — enriched
   'Which vendor documents expire this month?',
   'Am I ready for a health inspection?',
   'What corrective actions are overdue?',
@@ -1010,9 +1012,7 @@ export function AIAdvisor() {
                           <div>
                             <label style={{ fontSize: '11px', fontWeight: 600, color: '#6b7280', display: 'block', marginBottom: '4px' }}>Location</label>
                             <select style={{ width: '100%', padding: '6px 8px', borderRadius: '6px', border: '1px solid #d1d5db', fontSize: '12px', ...F }}>
-                              <option>Location 1</option>{/* demo */}
-                              <option>Location 2</option>{/* demo */}
-                              <option>Location 3</option>{/* demo */}
+                              {demoLocations.map(l => <option key={l.id}>{LOCATION_DISPLAY[l.urlId] ?? l.name}</option>)}{/* demo */}
                             </select>
                           </div>
                         </div>
