@@ -1,0 +1,226 @@
+/**
+ * VENDOR-SERVICES-BUILD-01 — Owner/Operator dashboard widgets
+ *
+ * Widget 1: Annual Vendor Spend — rollup of all vendor service costs
+ * Widget 2: Services Due Soon — next 5 services within 30 days
+ *
+ * Visible to owner_operator only. Cost figures hidden from all other roles.
+ */
+
+import { useNavigate } from 'react-router-dom';
+import { DollarSign, Calendar, ArrowRight, Wrench } from 'lucide-react';
+import { NAVY, CARD_BORDER, CARD_SHADOW } from './shared/constants';
+import type { VendorServiceDemo } from '../../data/vendorServicesDemoData';
+
+// ── Status pill colors ───────────────────────────────────────
+
+const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
+  red:   { bg: '#fef2f2', text: '#dc2626' },
+  amber: { bg: '#fffbeb', text: '#d97706' },
+  gold:  { bg: '#fefce8', text: '#a16207' },
+  green: { bg: '#f0fdf4', text: '#16a34a' },
+  gray:  { bg: '#f3f4f6', text: '#6b7280' },
+};
+
+function getServiceStatus(nextDate: string): { label: string; color: string } {
+  if (!nextDate) return { label: 'Not scheduled', color: 'gray' };
+  const days = Math.ceil((new Date(nextDate).getTime() - Date.now()) / 86_400_000);
+  if (days < 0) return { label: `${Math.abs(days)}d overdue`, color: 'red' };
+  if (days <= 14) return { label: `Due in ${days}d`, color: 'amber' };
+  if (days <= 30) return { label: `Due in ${days}d`, color: 'gold' };
+  return { label: `${days}d away`, color: 'green' };
+}
+
+// ══════════════════════════════════════════════════════════════
+// WIDGET 1: Annual Vendor Spend
+// ══════════════════════════════════════════════════════════════
+
+interface AnnualSpendProps {
+  totalAnnualSpend: number;
+  serviceCount: number;
+  locationCount: number;
+}
+
+export function AnnualVendorSpendWidget({
+  totalAnnualSpend,
+  serviceCount,
+  locationCount,
+}: AnnualSpendProps) {
+  const navigate = useNavigate();
+
+  return (
+    <div
+      className="bg-white rounded-lg overflow-hidden"
+      style={{ border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}
+    >
+      {/* Header */}
+      <div
+        className="flex items-center justify-between px-4 py-3"
+        style={{ borderBottom: '1px solid #F0F0F0' }}
+      >
+        <div className="flex items-center gap-2">
+          <DollarSign size={16} style={{ color: NAVY }} />
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+            Annual Vendor Spend
+          </h3>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="px-4 py-4">
+        {serviceCount === 0 ? (
+          /* Empty state */
+          <div className="text-center py-2">
+            <p className="text-sm text-gray-500">
+              No vendor services on file — add services to track spend.
+            </p>
+            <button
+              type="button"
+              onClick={() => navigate('/vendors')}
+              className="mt-2 text-xs font-semibold transition-colors hover:opacity-80"
+              style={{ color: NAVY }}
+            >
+              Add Vendor Services <ArrowRight size={12} className="inline ml-0.5" />
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="text-2xl font-bold" style={{ color: NAVY }}>
+              ${totalAnnualSpend.toLocaleString('en-US', { minimumFractionDigits: 0 })}
+            </div>
+            <p className="text-xs text-gray-500 mt-1">
+              {serviceCount} service{serviceCount !== 1 ? 's' : ''} across{' '}
+              {locationCount} location{locationCount !== 1 ? 's' : ''}
+            </p>
+          </>
+        )}
+      </div>
+
+      {/* Footer CTA */}
+      {serviceCount > 0 && (
+        <button
+          type="button"
+          onClick={() => navigate('/vendors')}
+          className="w-full px-4 py-2.5 text-center text-xs font-semibold transition-colors hover:bg-gray-50"
+          style={{ color: NAVY, borderTop: '1px solid #F0F0F0' }}
+        >
+          View All Vendors <ArrowRight size={12} className="inline ml-0.5" />
+        </button>
+      )}
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════
+// WIDGET 2: Services Due Soon
+// ══════════════════════════════════════════════════════════════
+
+interface ServicesDueProps {
+  services: VendorServiceDemo[];
+}
+
+export function ServicesDueSoonWidget({ services }: ServicesDueProps) {
+  const navigate = useNavigate();
+
+  // Filter to services due within 30 days (or overdue), sort by urgency, take 5
+  const servicesDue = services
+    .filter(s => s.next_service_date)
+    .map(s => ({
+      ...s,
+      daysUntil: Math.ceil(
+        (new Date(s.next_service_date).getTime() - Date.now()) / 86_400_000,
+      ),
+    }))
+    .filter(s => s.daysUntil <= 30)
+    .sort((a, b) => a.daysUntil - b.daysUntil)
+    .slice(0, 5);
+
+  return (
+    <div
+      className="bg-white rounded-lg overflow-hidden"
+      style={{ border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}
+    >
+      {/* Header */}
+      <div
+        className="flex items-center justify-between px-4 py-3"
+        style={{ borderBottom: '1px solid #F0F0F0' }}
+      >
+        <div className="flex items-center gap-2">
+          <Calendar size={16} style={{ color: NAVY }} />
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+            Services Due Soon
+          </h3>
+          {servicesDue.length > 0 && (
+            <span className="text-xs font-medium px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-700">
+              {servicesDue.length}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Content */}
+      {servicesDue.length === 0 ? (
+        /* Empty state */
+        <div className="px-4 py-4 text-center">
+          <p className="text-sm text-gray-500">No upcoming services in the next 30 days.</p>
+          <button
+            type="button"
+            onClick={() => navigate('/vendors')}
+            className="mt-2 text-xs font-semibold transition-colors hover:opacity-80"
+            style={{ color: NAVY }}
+          >
+            View Vendor Schedule <ArrowRight size={12} className="inline ml-0.5" />
+          </button>
+        </div>
+      ) : (
+        <div>
+          {servicesDue.map((s, i) => {
+            const status = getServiceStatus(s.next_service_date);
+            const colors = STATUS_COLORS[status.color] || STATUS_COLORS.gray;
+            return (
+              <button
+                key={s.id}
+                type="button"
+                onClick={() => navigate('/vendors')}
+                className="w-full flex items-center justify-between px-4 py-3 text-left transition-colors hover:bg-gray-50"
+                style={{
+                  borderBottom: i < servicesDue.length - 1 ? '1px solid #F0F0F0' : 'none',
+                }}
+              >
+                <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                  <Wrench size={14} className="text-gray-400 flex-shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-[13px] font-medium text-gray-800 truncate">
+                      {s.service_type}
+                    </p>
+                    <p className="text-[11px] text-gray-500 truncate">
+                      {s.vendor_name} · {s.location_name}
+                    </p>
+                  </div>
+                </div>
+                <span
+                  className="text-[11px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0 ml-2"
+                  style={{ background: colors.bg, color: colors.text }}
+                >
+                  {status.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Footer CTA */}
+      {servicesDue.length > 0 && (
+        <button
+          type="button"
+          onClick={() => navigate('/vendors')}
+          className="w-full px-4 py-2.5 text-center text-xs font-semibold transition-colors hover:bg-gray-50"
+          style={{ color: NAVY, borderTop: '1px solid #F0F0F0' }}
+        >
+          View Full Schedule <ArrowRight size={12} className="inline ml-0.5" />
+        </button>
+      )}
+    </div>
+  );
+}

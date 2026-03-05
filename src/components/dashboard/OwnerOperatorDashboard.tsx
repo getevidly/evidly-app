@@ -37,6 +37,13 @@ import {
 } from './shared/insights';
 import { CATEGORY_ORG_TRENDS } from '../../data/trendDemoData';
 import { DEMO_CORRECTIVE_ACTIONS } from '../../data/correctiveActionsDemoData';
+import { IntelligenceFeedWidget } from './IntelligenceFeedWidget';
+import { AnnualVendorSpendWidget, ServicesDueSoonWidget } from './VendorServiceWidgets';
+import {
+  VENDOR_DEMO_SERVICES,
+  getDemoAnnualSpend,
+  getDemoServiceLocationCount,
+} from '../../data/vendorServicesDemoData';
 
 
 // ================================================================
@@ -656,7 +663,32 @@ export default function OwnerOperatorDashboard() {
         <ReScoreAlertsWidget navigate={navigate} />
       </div>
 
-      {/* ─── ELEMENT 8: Location Status Rows (multi-location only) ── */}
+      {/* ─── ELEMENT 8: Intelligence Feed Widget ──────────────── */}
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
+        <IntelligenceFeedWidget />
+      </div>
+
+      {/* ─── ELEMENT 9a: Annual Vendor Spend (OO only) ────────────── */}
+      {userRole === 'owner_operator' && (
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
+          <AnnualVendorSpendWidget
+            totalAnnualSpend={isDemoMode ? getDemoAnnualSpend() : 0}
+            serviceCount={isDemoMode ? VENDOR_DEMO_SERVICES.length : 0}
+            locationCount={isDemoMode ? getDemoServiceLocationCount() : 0}
+          />
+        </div>
+      )}
+
+      {/* ─── ELEMENT 9b: Services Due Soon (OO only) ──────────────── */}
+      {userRole === 'owner_operator' && (
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
+          <ServicesDueSoonWidget
+            services={isDemoMode ? VENDOR_DEMO_SERVICES : []}
+          />
+        </div>
+      )}
+
+      {/* ─── ELEMENT 9: Location Status Rows (multi-location only) ── */}
       {!isSingleLocation && (
         <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
           {allGreen ? (
