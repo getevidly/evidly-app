@@ -10,6 +10,8 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import { useDemo } from '../contexts/DemoContext';
+import { useRole } from '../contexts/RoleContext';
 
 export interface EvidlyPerms {
   staffRole: string | null;
@@ -51,11 +53,39 @@ const DEFAULT_PERMS: EvidlyPerms = {
   loading: true,
 };
 
+const ALL_PERMS: EvidlyPerms = {
+  staffRole: 'super_admin',
+  isStaff: true,
+  isSuperAdmin: true,
+  isAdmin: false,
+  isSupport: false,
+  isSales: false,
+  canSeeSalesMarketing: true,
+  canBilling: true,
+  canSecurity: true,
+  canEmulate: true,
+  canConfigure: true,
+  canSupportTickets: true,
+  canCrawlManage: true,
+  canRemoteConnect: true,
+  canIntelligence: true,
+  canStaffManage: true,
+  loading: false,
+};
+
 export function useEvidlyPermissions(): EvidlyPerms {
   const { user, isEvidlyAdmin } = useAuth();
+  const { isDemoMode } = useDemo();
+  const { userRole } = useRole();
   const [perms, setPerms] = useState<EvidlyPerms>(DEFAULT_PERMS);
 
   useEffect(() => {
+    // Demo mode: platform_admin gets full access, others get none
+    if (isDemoMode) {
+      setPerms(userRole === 'platform_admin' ? ALL_PERMS : { ...DEFAULT_PERMS, loading: false });
+      return;
+    }
+
     if (!user || !isEvidlyAdmin) {
       // Non-admin users get no staff perms
       setPerms({ ...DEFAULT_PERMS, loading: false });
@@ -129,7 +159,7 @@ export function useEvidlyPermissions(): EvidlyPerms {
     load();
 
     return () => { cancelled = true; };
-  }, [user?.id, isEvidlyAdmin]);
+  }, [user?.id, isEvidlyAdmin, isDemoMode, userRole]);
 
   return perms;
 }
