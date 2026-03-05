@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { DEMO_VENDORS, getVendorsForCategory, buildNotificationMessage } from '../../data/vendorData';
+import { useDemo } from '../../contexts/DemoContext';
 
 interface Props {
   result: {
@@ -22,7 +23,10 @@ export const VendorNotification: React.FC<Props> = ({
   result, categoryId, hasVideo, hasPhotos, photoCount,
   locationName = 'Kitchen', orgName = 'Your Organization',
 }) => {
-  const vendors = getVendorsForCategory(categoryId, DEMO_VENDORS);
+  const { isDemoMode } = useDemo();
+  const vendors = isDemoMode
+    ? getVendorsForCategory(categoryId, DEMO_VENDORS)
+    : [];  // live mode: real vendors loaded from Supabase elsewhere
   const [selectedVendorId, setSelectedVendorId] = useState<string>(vendors[0]?.id || '');
   const [contactMethod, setContactMethod] = useState<ContactMethod>('both');
   const [message, setMessage] = useState('');

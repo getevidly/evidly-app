@@ -6,7 +6,7 @@ import { useTranslation } from '../contexts/LanguageContext';
 import { useRole } from '../contexts/RoleContext';
 import type { UserRole } from '../contexts/RoleContext';
 import { useOperatingHours, formatTime24to12, time24ToHour, DAY_LABELS as _DAY_LABELS } from '../contexts/OperatingHoursContext';
-import type { LocationHours } from '../contexts/OperatingHoursContext';
+
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { supabase } from '../lib/supabase';
@@ -186,113 +186,6 @@ interface CalendarEvent {
   recurrenceGroupId?: string;
 }
 
-function generateDemoEvents(locationHoursData: LocationHours[]): CalendarEvent[] {
-  const now = new Date();
-  const y = now.getFullYear();
-  const m = now.getMonth();
-  const todayDate = now.getDate();
-
-  const d = (day: number) => {
-    const date = new Date(y, m, day);
-    return date.toISOString().split('T')[0];
-  };
-
-  const events: CalendarEvent[] = [];
-  let nextId = 1;
-
-  // ── Recurring daily events (Mon-Sat) for the visible month window ──
-  const recurring = [
-    { title: 'Morning Temp Check', type: 'temp-check', time: '6:00 AM', endTime: '6:15 AM' },
-    { title: 'Freezer Temp Check', type: 'temp-check', time: '6:15 AM', endTime: '6:30 AM' },
-    { title: 'Opening Checklist', type: 'checklist', time: '6:30 AM', endTime: '7:00 AM' },
-    { title: 'Hot Hold Temp Check', type: 'temp-check', time: '11:00 AM', endTime: '11:15 AM' },
-    { title: 'Lunch Temp Check', type: 'temp-check', time: '11:30 AM', endTime: '11:45 AM' },
-    { title: 'Closing Checklist', type: 'checklist', time: '10:00 PM', endTime: '10:30 PM' },
-  ];
-
-  // Generate for the visible range: from 7 days before start of month to 7 days after end
-  const firstOfMonth = new Date(y, m, 1);
-  const lastOfMonth = new Date(y, m + 1, 0);
-  const rangeStart = new Date(firstOfMonth);
-  rangeStart.setDate(rangeStart.getDate() - rangeStart.getDay()); // back to Sunday
-  const rangeEnd = new Date(lastOfMonth);
-  rangeEnd.setDate(rangeEnd.getDate() + (6 - rangeEnd.getDay())); // forward to Saturday
-
-  // Cycle locations for recurring events
-  const locationCycle = ['Location 1', 'Location 2', 'Location 3']; // demo
-
-  for (let dt = new Date(rangeStart); dt <= rangeEnd; dt.setDate(dt.getDate() + 1)) {
-    const dayOfWeek = dt.getDay();
-    const dateStr = dt.toISOString().split('T')[0];
-    const locIdx = dt.getDate() % 3;
-    const locName = locationCycle[locIdx];
-
-    // Check if location is open on this day using operating hours
-    const locHours = locationHoursData.find(h => h.locationName === locName);
-    if (!locHours || !locHours.days[dayOfWeek]) continue;
-
-    for (const r of recurring) {
-      events.push({
-        id: String(nextId++),
-        title: r.title,
-        type: r.type,
-        date: dateStr,
-        time: r.time,
-        endTime: r.endTime,
-        location: locName,
-      });
-    }
-  }
-
-  // ── One-off events ──
-  const oneOffs: Omit<CalendarEvent, 'id'>[] = [
-    // Today
-    { title: 'Staff Safety Meeting', type: 'meeting', date: d(todayDate), time: '2:00 PM', endTime: '3:00 PM', location: 'Location 1', description: 'Monthly food safety briefing with all kitchen staff' }, // demo
-    // Yesterday
-    { title: 'Health Department Inspection', type: 'inspection', date: d(todayDate - 1), time: '10:00 AM', endTime: '12:00 PM', location: 'Location 2', description: 'Annual routine health inspection' }, // demo
-    // Tomorrow
-    { title: 'Hood Cleaning Service', type: 'vendor', date: d(todayDate + 1), time: '11:00 PM', endTime: '3:00 AM', location: 'Location 1', description: 'Quarterly hood and duct cleaning', vendorId: '1', vendorName: 'ABC Fire Protection', category: 'Hood Cleaning Inspection', recurrence: 'quarterly' }, // demo
-    // +2 days
-    { title: 'Team Compliance Meeting', type: 'meeting', date: d(todayDate + 2), time: '2:00 PM', endTime: '4:00 PM', location: 'Location 1', description: 'Weekly compliance review and corrective action follow-up' }, // demo
-    { title: 'Grease Trap Service', type: 'vendor', date: d(todayDate + 2), time: '5:00 AM', endTime: '7:00 AM', location: 'Location 2', description: 'Monthly grease trap pumping', vendorId: '8', vendorName: 'Valley Grease Solutions', category: 'Grease Trap Service', recurrence: 'monthly' }, // demo
-    // +3 days
-    { title: 'Fire Suppression Inspection', type: 'vendor', date: d(todayDate + 3), time: '9:00 AM', endTime: '11:00 AM', location: 'Location 1', description: 'Semi-annual fire suppression system inspection', vendorId: '3', vendorName: 'Valley Fire Systems', category: 'Fire Suppression Inspection', recurrence: 'semi-annual' }, // demo
-    { title: 'HACCP Plan Review', type: 'checklist', date: d(todayDate + 3), time: '1:00 PM', endTime: '3:00 PM', location: 'Location 3' }, // demo
-    // +5 days
-    { title: 'ServSafe Certification Renewal', type: 'certification', date: d(todayDate + 5), time: '9:00 AM', endTime: '5:00 PM', location: 'Location 1', description: 'Manager certification renewal exam' }, // demo
-    { title: 'Pest Control Service', type: 'vendor', date: d(todayDate + 5), time: '6:00 AM', endTime: '8:00 AM', location: 'Location 2', vendorId: '6', vendorName: 'Pacific Pest Control', category: 'Pest Control Service', recurrence: 'monthly' }, // demo
-    // +7 days
-    { title: 'Refrigeration Maintenance', type: 'vendor', date: d(todayDate + 7), time: '7:00 AM', endTime: '10:00 AM', location: 'Location 3', description: 'Quarterly refrigeration system maintenance' }, // demo
-    { title: 'Manager Safety Meeting', type: 'meeting', date: d(todayDate + 7), time: '3:00 PM', endTime: '5:00 PM', location: 'Location 1' }, // demo
-    // -3 days
-    { title: 'Fire Extinguisher Service', type: 'vendor', date: d(todayDate - 3), time: '8:00 AM', endTime: '10:00 AM', location: 'Location 1', description: 'Annual fire extinguisher inspection and tagging', vendorId: '17', vendorName: 'ABC Fire Protection', category: 'Fire Extinguisher Inspection', recurrence: 'annual' }, // demo
-    // -5 days — overdue corrective action
-    { title: 'Fix Walk-in Door Seal', type: 'corrective', date: d(todayDate - 5), time: '9:00 AM', endTime: '12:00 PM', location: 'Location 2', description: 'Walk-in cooler door gasket is torn — replace seal to maintain temperature integrity', overdue: true }, // demo
-    { title: 'HVAC Filter Replacement', type: 'vendor', date: d(todayDate - 5), time: '6:00 AM', endTime: '8:00 AM', location: 'Location 2', description: 'Quarterly HVAC filter replacement' }, // demo
-    // -7 days
-    { title: 'Plumbing Inspection', type: 'vendor', date: d(todayDate - 7), time: '8:00 AM', endTime: '9:00 AM', location: 'Location 1' }, // demo
-    // +10 days
-    { title: 'Health Permit Renewal', type: 'certification', date: d(todayDate + 10), time: '9:00 AM', location: 'Location 2', allDay: true }, // demo
-    { title: 'Deep Cleaning Service', type: 'vendor', date: d(todayDate + 10), time: '10:00 PM', endTime: '4:00 AM', location: 'Location 3' }, // demo
-    // +14 days
-    { title: 'Quarterly Compliance Review', type: 'inspection', date: d(todayDate + 14), time: '10:00 AM', endTime: '2:00 PM', location: 'Location 1', description: 'Internal compliance inspection across all pillars' }, // demo
-    // -2 days — another overdue corrective
-    { title: 'Recalibrate Freezer Thermometer', type: 'corrective', date: d(todayDate - 2), time: '8:00 AM', endTime: '9:00 AM', location: 'Location 3', description: 'Walk-in freezer thermometer reading 3°F high — recalibrate or replace', overdue: true }, // demo
-    // -10 days
-    { title: 'Walk-in Cooler Repair', type: 'vendor', date: d(todayDate - 10), time: '7:00 AM', endTime: '11:00 AM', location: 'Location 2' }, // demo
-    // +20 days — Facility Safety seed events
-    { title: 'Backflow Prevention Test', type: 'vendor', date: d(todayDate + 20), time: '7:00 AM', endTime: '9:00 AM', location: 'Location 1', description: 'Annual backflow preventer certification test', vendorId: '5', vendorName: 'Central Cal Backflow', category: 'Backflow Prevention Test', recurrence: 'annual' }, // demo
-    // +25 days
-    { title: 'Elevator Inspection', type: 'vendor', date: d(todayDate + 25), time: '8:00 AM', endTime: '10:00 AM', location: 'Location 3', description: 'Annual elevator safety inspection and certification', vendorId: '16', vendorName: 'Valley Elevator Co.', category: 'Elevator Inspection', recurrence: 'annual' }, // demo
-  ];
-
-  for (const e of oneOffs) {
-    events.push({ ...e, id: String(nextId++) });
-  }
-
-  return events;
-}
-
 // ── Helpers ──────────────────────────────────────────────────
 type ViewMode = 'month' | 'week' | 'day';
 
@@ -378,7 +271,7 @@ export function Calendar() {
   const [categoryFilter, setCategoryFilter] = useState(() =>
     CATEGORY_PARAM_MAP[categoryParam || ''] || 'all'
   );
-  const { locationHours: opHours, getHoursForLocation, getShiftsForLocation } = useOperatingHours();
+  const { getHoursForLocation, getShiftsForLocation } = useOperatingHours();
 
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
@@ -904,7 +797,7 @@ export function Calendar() {
   }, [isDemoMode, profile?.organization_id, viewMonth]);
 
   // Use live events or demo events, merged with custom events
-  const demoEvents = useMemo(() => generateDemoEvents(opHours), [opHours]);
+  const demoEvents: CalendarEvent[] = [];
   const events = useMemo(() => {
     const base = isDemoMode ? demoEvents : liveEvents;
     return [...base, ...customEvents];
@@ -982,17 +875,6 @@ export function Calendar() {
       .sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time))
       .slice(0, 6);
   }, [filteredEvents, todayKey]);
-
-  // Daily temp/checklist completion status for month view indicators
-  const dailyStatus = useMemo(() => {
-    const status: Record<string, { tempDone: boolean; checklistDone: boolean }> = {};
-    for (const e of events) {
-      if (!status[e.date]) status[e.date] = { tempDone: false, checklistDone: false };
-      if (e.type === 'temp-check') status[e.date].tempDone = true;
-      if (e.type === 'checklist') status[e.date].checklistDone = true;
-    }
-    return status;
-  }, [events]);
 
   // ── Render Event Chip (month view) ──
   const renderEventChip = (event: CalendarEvent) => {
@@ -1156,29 +1038,6 @@ export function Calendar() {
                         </div>
                       )}
                     </div>
-                    {/* Daily temp/checklist status indicators */}
-                    {dateKey <= todayKey && (() => {
-                      const ds = dailyStatus[dateKey];
-                      const isPast = dateKey < todayKey;
-                      return (
-                        <div style={{ display: 'flex', gap: '3px', marginTop: 'auto', padding: '1px 2px 0' }}>
-                          <span style={{
-                            fontSize: '9px', fontWeight: 700, padding: '0 3px', borderRadius: '3px', fontFamily: "'DM Sans', sans-serif",
-                            backgroundColor: ds?.tempDone ? '#f0fdf4' : isPast ? '#fef2f2' : '#fffbeb',
-                            color: ds?.tempDone ? '#16a34a' : isPast ? '#dc2626' : '#d97706',
-                          }}>
-                            T{ds?.tempDone ? '✓' : isPast ? '✗' : '…'}
-                          </span>
-                          <span style={{
-                            fontSize: '9px', fontWeight: 700, padding: '0 3px', borderRadius: '3px', fontFamily: "'DM Sans', sans-serif",
-                            backgroundColor: ds?.checklistDone ? '#f0fdf4' : isPast ? '#fef2f2' : '#fffbeb',
-                            color: ds?.checklistDone ? '#16a34a' : isPast ? '#dc2626' : '#d97706',
-                          }}>
-                            C{ds?.checklistDone ? '✓' : isPast ? '✗' : '…'}
-                          </span>
-                        </div>
-                      );
-                    })()}
                   </>
                 )}
               </div>
@@ -2384,7 +2243,7 @@ export function Calendar() {
                               >
                                 <option value="">Select a vendor...</option>
                                 {getVendorsForCategory(eventForm.category, eventForm.location, currentVendorId).map(v => {
-                                  const perf = ENHANCED_VENDOR_PERFORMANCE.find(p => p.vendorId === v.id);
+                                  const perf = isDemoMode ? ENHANCED_VENDOR_PERFORMANCE.find(p => p.vendorId === v.id) : null;
                                   const rating = perf ? ` — ${perf.reliabilityScore}/100` : '';
                                   return <option key={v.id} value={v.id}>{v.companyName}{rating}</option>;
                                 })}

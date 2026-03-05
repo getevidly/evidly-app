@@ -9,6 +9,7 @@
 
 import { UtensilsCrossed, Flame, Shield, Info } from 'lucide-react';
 import { useTranslation } from '../../../contexts/LanguageContext';
+import { useDemo } from '../../../contexts/DemoContext';
 import { useTooltip } from '../../../hooks/useTooltip';
 import { SectionTooltip } from '../../ui/SectionTooltip';
 import { FireStatusBars } from '../../shared/FireStatusBars';
@@ -27,6 +28,24 @@ interface HeroJurisdictionSummaryProps {
 
 export function HeroJurisdictionSummary({ jieScores, jurisdictions, navigate, userRole }: HeroJurisdictionSummaryProps) {
   const { t } = useTranslation();
+  const { isDemoMode } = useDemo();
+
+  // In demo mode, use hardcoded demo locations + grade overrides.
+  // In live mode, derive locations from the jurisdictions record (real Supabase data).
+  const locations = isDemoMode
+    ? LOCATIONS_WITH_SCORES.map(loc => ({ id: JIE_LOC_MAP[loc.id] || loc.id, name: loc.name }))
+    : Object.keys(jurisdictions).map(locId => ({ id: locId, name: jurisdictions[locId]?.county ? `${jurisdictions[locId].county} Location` : locId }));
+
+  const gradeOverrides = isDemoMode ? DEMO_LOCATION_GRADE_OVERRIDES : {};
+
+  if (locations.length === 0) {
+    return (
+      <div className="mt-2 rounded-xl p-4 text-center" style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}>
+        <p className="text-sm text-slate-300">No locations configured.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
       {/* Food Safety */}
@@ -40,11 +59,10 @@ export function HeroJurisdictionSummary({ jieScores, jurisdictions, navigate, us
           </span>
         </div>
         <div className="space-y-3">
-          {LOCATIONS_WITH_SCORES.map(loc => {
-            const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
-            const score = jieScores[jieLocId];
-            const jur = jurisdictions[jieLocId];
-            const override = DEMO_LOCATION_GRADE_OVERRIDES[jieLocId];
+          {locations.map(loc => {
+            const score = jieScores[loc.id];
+            const jur = jurisdictions[loc.id];
+            const override = gradeOverrides[loc.id];
             const status = score?.foodSafety?.status || 'unknown';
             const isPassing = status === 'passing';
             const isFailing = status === 'failing';
@@ -92,18 +110,17 @@ export function HeroJurisdictionSummary({ jieScores, jurisdictions, navigate, us
           <SectionTooltip content={useTooltip('facilitySafety', userRole)} />
           <span className="text-[10px] text-slate-200 ml-auto">
             {(() => {
-              const firstLocId = LOCATIONS_WITH_SCORES[0] ? (JIE_LOC_MAP[LOCATIONS_WITH_SCORES[0].id] || LOCATIONS_WITH_SCORES[0].id) : null;
-              const firstJur = firstLocId ? jurisdictions[firstLocId] : null;
-              return firstJur?.facilitySafety?.fire_jurisdiction_config?.fire_code_edition ?? 'NFPA 96 (2024)';
+              const firstLoc = locations[0];
+              const firstJur = firstLoc ? jurisdictions[firstLoc.id] : null;
+              return firstJur?.facilitySafety?.fire_jurisdiction_config?.fire_code_edition ?? '2022 CFC';
             })()}
           </span>
         </div>
         <div className="space-y-3">
-          {LOCATIONS_WITH_SCORES.map(loc => {
-            const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
-            const score = jieScores[jieLocId];
-            const jur = jurisdictions[jieLocId];
-            const override = DEMO_LOCATION_GRADE_OVERRIDES[jieLocId];
+          {locations.map(loc => {
+            const score = jieScores[loc.id];
+            const jur = jurisdictions[loc.id];
+            const override = gradeOverrides[loc.id];
             const isPassing = score?.facilitySafety?.status === 'passing';
             const fireConfig = jur?.facilitySafety?.fire_jurisdiction_config;
             return (

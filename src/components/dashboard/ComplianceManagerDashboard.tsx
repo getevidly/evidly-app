@@ -146,7 +146,7 @@ const DEMO_SELF_INSPECTIONS = [
 
 const DEMO_REGULATORY = [
   { date: 'Feb 12, 2026', title: 'CalCode Amendment AB-1228 \u2014 Allergen Labeling', summary: 'New allergen labeling requirements for commercial kitchens effective March 1.', impact: 'high' as const },
-  { date: 'Feb 5, 2026', title: 'NFPA 96 (2024) Operational Permit Updates', summary: 'Revised operational fire permit requirements for commercial kitchen hoods.', impact: 'medium' as const },
+  { date: 'Feb 5, 2026', title: 'NFPA 96 Operational Permit Updates', summary: 'Revised operational fire permit requirements for commercial kitchen hoods.', impact: 'medium' as const },
   { date: 'Jan 20, 2026', title: 'HACCP Plan Verification Schedule Change', summary: 'Annual HACCP plan verification now required within 60 days of license renewal.', impact: 'low' as const },
 ];
 
@@ -189,8 +189,8 @@ export default function ComplianceManagerDashboard() {
 
   // JIE: Dual-authority jurisdiction data per location
   const jieLocIds = useMemo(
-    () => LOCATIONS_WITH_SCORES.map(l => JIE_LOC_MAP[l.id] || l.id),
-    [],
+    () => isDemoMode ? LOCATIONS_WITH_SCORES.map(l => JIE_LOC_MAP[l.id] || l.id) : [],
+    [isDemoMode],
   );
   const jurisdictions = useAllLocationJurisdictions(jieLocIds, isDemoMode);
   const jieScores = useAllComplianceScores(jurisdictions, isDemoMode);
@@ -206,7 +206,7 @@ export default function ComplianceManagerDashboard() {
     });
   };
 
-  const locs = LOCATIONS_WITH_SCORES;
+  const locs = isDemoMode ? LOCATIONS_WITH_SCORES : [];
 
   // ================================================================
   // DERIVE HEALTH STATUS FROM jieScores
@@ -545,7 +545,7 @@ export default function ComplianceManagerDashboard() {
             const fireGradeDisplay = score?.facilitySafety?.gradeDisplay ?? 'Not assessed';
             const fireAHJName = jur?.facilitySafety?.agency_name ?? 'Fire AHJ';
             const fireConfig = jur?.facilitySafety?.fire_jurisdiction_config;
-            const nfpaEdition = fireConfig?.fire_code_edition ?? 'NFPA 96 (2024)';
+            const nfpaEdition = fireConfig?.fire_code_edition ?? 'NFPA 96';
             const county = jur?.county ?? '';
 
             return (

@@ -121,22 +121,23 @@ export default function ExecutiveDashboard() {
   const scheduleCalendarTooltip = useTooltip('scheduleCalendar', userRole);
 
   const jieLocIds = useMemo(
-    () => LOCATIONS_WITH_SCORES.map(l => JIE_LOC_MAP[l.id] || l.id),
-    [],
+    () => isDemoMode ? LOCATIONS_WITH_SCORES.map(l => JIE_LOC_MAP[l.id] || l.id) : [],
+    [isDemoMode],
   );
   const jurisdictions = useAllLocationJurisdictions(jieLocIds, isDemoMode);
   const jieScores = useAllComplianceScores(jurisdictions, isDemoMode);
 
   // ── Health Banner derivation ──
+  const locs = isDemoMode ? LOCATIONS_WITH_SCORES : [];
   const healthStatus: HealthStatus = useMemo(() => {
-    const anyFailing = LOCATIONS_WITH_SCORES.some(loc => {
+    const anyFailing = locs.some(loc => {
       const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
       const score = jieScores[jieLocId];
       return score?.foodSafety?.status === 'failing' || score?.facilitySafety?.status === 'failing';
     });
     if (anyFailing) return 'risk';
 
-    const anyAtRisk = LOCATIONS_WITH_SCORES.some(loc => {
+    const anyAtRisk = locs.some(loc => {
       const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
       const score = jieScores[jieLocId];
       return score?.foodSafety?.status === 'at_risk' || score?.facilitySafety?.status === 'at_risk';
@@ -144,7 +145,7 @@ export default function ExecutiveDashboard() {
     if (anyAtRisk) return 'attention';
 
     return 'healthy';
-  }, [jieScores]);
+  }, [jieScores, locs]);
 
   const healthMessage = useMemo(() => {
     if (healthStatus === 'healthy') return 'All locations current across both pillars.';
@@ -198,7 +199,7 @@ export default function ExecutiveDashboard() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-4">
         <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4">Location Health</h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-          {LOCATIONS_WITH_SCORES.map(loc => {
+          {locs.map(loc => {
             const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
             const score = jieScores[jieLocId];
             const jur = jurisdictions[jieLocId];
