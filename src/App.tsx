@@ -14,6 +14,7 @@ import { Toaster } from 'sonner';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { EnvBadge } from './components/ui/EnvBadge';
 import { reportError } from './lib/errorReporting';
+import { SalesGuard } from './components/layout/SalesGuard';
 
 const Login = lazy(() => import('./pages/Login').then(m => ({ default: m.Login })));
 const Signup = lazy(() => import('./pages/Signup').then(m => ({ default: m.Signup })));
@@ -40,6 +41,7 @@ const Leaderboard = lazy(() => import('./pages/Leaderboard').then(m => ({ defaul
 const LeaderboardPreview = lazy(() => import('./pages/LeaderboardPreview').then(m => ({ default: m.LeaderboardPreview })));
 const FoodRecovery = lazy(() => import('./pages/FoodRecovery').then(m => ({ default: m.FoodRecovery })));
 const USDAProductionRecords = lazy(() => import('./pages/USDAProductionRecords').then(m => ({ default: m.USDAProductionRecords })));
+const SB1383Compliance = lazy(() => import('./pages/SB1383Compliance').then(m => ({ default: m.SB1383Compliance })));
 const Analysis = lazy(() => import('./pages/Analysis').then(m => ({ default: m.Analysis })));
 const Team = lazy(() => import('./pages/Team').then(m => ({ default: m.Team })));
 const Settings = lazy(() => import('./pages/Settings').then(m => ({ default: m.Settings })));
@@ -138,6 +140,9 @@ const MarketingCampaigns = lazy(() => import('./pages/admin/MarketingCampaigns')
 const SalesPipeline = lazy(() => import('./pages/admin/SalesPipeline'));
 const UserProvisioning = lazy(() => import('./pages/admin/UserProvisioning'));
 const EvidLYIntelligence = lazy(() => import('./pages/admin/EvidLYIntelligence'));
+const SupportTickets = lazy(() => import('./pages/admin/SupportTickets'));
+const RemoteConnect = lazy(() => import('./pages/admin/RemoteConnect'));
+const StaffRoles = lazy(() => import('./pages/admin/StaffRoles'));
 const AdminReports = lazy(() => import('./pages/admin/AdminReports'));
 const ClientIntelligenceFeed = lazy(() => import('./pages/ClientIntelligenceFeed').then(m => ({ default: m.ClientIntelligenceFeed })));
 const ClientReports = lazy(() => import('./pages/ClientReports').then(m => ({ default: m.ClientReports })));
@@ -535,6 +540,7 @@ function AppRoutes() {
           <Route path="/audit-report" element={<AuditReport />} />
           <Route path="/facility-safety" element={<FacilitySafety />} />
           <Route path="/food-recovery" element={<FoodRecovery />} />
+          <Route path="/sb1383" element={<SB1383Compliance />} />
           <Route path="/usda/production-records" element={<USDAProductionRecords />} />
           <Route path="/equipment" element={<Equipment />} />
           <Route path="/equipment/:equipmentId" element={<EquipmentDetail />} />
@@ -588,16 +594,15 @@ function AppRoutes() {
           <Route path="/checkup" element={<Navigate to="/dashboard" replace />} />
           <Route path="/admin/regulatory-changes" element={<AdminRegulatoryChanges />} />
           <Route path="/admin/intelligence-queue" element={<AdminIntelligenceQueue />} />
-          <Route path="/admin/intelligence" element={<CommandCenter />} />
           <Route path="/admin/rfp-intelligence" element={<RfpIntelligence />} />
-          <Route path="/admin/demo-generator" element={<DemoGenerator />} />
-          <Route path="/admin/demos" element={<DemoPipeline />} />
-          <Route path="/admin/assessments" element={<AssessmentLeads />} />
+          <Route path="/admin/demo-generator" element={<SalesGuard><DemoGenerator /></SalesGuard>} />
+          <Route path="/admin/demos" element={<SalesGuard><DemoPipeline /></SalesGuard>} />
+          <Route path="/admin/assessments" element={<SalesGuard><AssessmentLeads /></SalesGuard>} />
           <Route path="/admin/api-keys" element={<InsuranceApiKeys />} />
           <Route path="/admin/dashboard" element={<Navigate to="/admin" replace />} />
           <Route path="/admin/command-center" element={<CommandCenter />} />
-          <Route path="/admin/guided-tours" element={<GuidedTours />} />
-          <Route path="/admin/leads" element={<AssessmentLeads />} />
+          <Route path="/admin/guided-tours" element={<SalesGuard><GuidedTours /></SalesGuard>} />
+          <Route path="/admin/leads" element={<SalesGuard><AssessmentLeads /></SalesGuard>} />
           <Route path="/admin/configure" element={<Configure />} />
           <Route path="/admin/emulate" element={<UserEmulation />} />
           <Route path="/admin/billing" element={<AdminBilling />} />
@@ -610,9 +615,12 @@ function AppRoutes() {
           <Route path="/admin/security-settings" element={<SecuritySettings />} />
           <Route path="/admin/vault" element={<DocumentVault />} />
           <Route path="/admin/event-log" element={<EventLog />} />
-          <Route path="/admin/campaigns" element={<MarketingCampaigns />} />
-          <Route path="/admin/pipeline" element={<SalesPipeline />} />
+          <Route path="/admin/campaigns" element={<SalesGuard><MarketingCampaigns /></SalesGuard>} />
+          <Route path="/admin/pipeline" element={<SalesGuard><SalesPipeline /></SalesGuard>} />
           <Route path="/admin/users" element={<UserProvisioning />} />
+          <Route path="/admin/support" element={<SupportTickets />} />
+          <Route path="/admin/remote-connect" element={<RemoteConnect />} />
+          <Route path="/admin/staff" element={<StaffRoles />} />
           <Route path="/admin/intelligence" element={<EvidLYIntelligence />} />
           <Route path="/admin/reports" element={<AdminReports />} />
           <Route path="/admin/system/edge-functions" element={<EdgeFunctions />} />

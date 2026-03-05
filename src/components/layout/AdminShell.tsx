@@ -8,6 +8,7 @@
 import { ReactNode } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { useEvidlyPermissions } from '../../hooks/useEvidlyPermissions';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -19,6 +20,7 @@ const SIDEBAR_W = 220;
 interface NavItem {
   label: string;
   path: string;
+  salesOnly?: boolean;
 }
 
 interface NavSection {
@@ -37,25 +39,28 @@ const NAV_SECTIONS: NavSection[] = [
     title: 'Operations',
     items: [
       { label: 'Command Center', path: '/admin/command-center' },
-      { label: 'Guided Tours', path: '/admin/guided-tours' },
+      { label: 'Guided Tours', path: '/admin/guided-tours', salesOnly: true },
       { label: 'User Emulation', path: '/admin/emulate' },
       { label: 'Client Onboarding', path: '/admin/onboard-client' },
+      { label: 'Support Tickets', path: '/admin/support' },
+      { label: 'Remote Connect', path: '/admin/remote-connect' },
     ],
   },
   {
     title: 'Growth',
     items: [
-      { label: 'Assessment Leads', path: '/admin/leads' },
-      { label: 'Sales Pipeline', path: '/admin/pipeline' },
-      { label: 'Marketing Campaigns', path: '/admin/campaigns' },
-      { label: 'Demo Generator', path: '/admin/demo-generator' },
-      { label: 'Demo Pipeline', path: '/admin/demos' },
+      { label: 'Assessment Leads', path: '/admin/leads', salesOnly: true },
+      { label: 'Sales Pipeline', path: '/admin/pipeline', salesOnly: true },
+      { label: 'Marketing Campaigns', path: '/admin/campaigns', salesOnly: true },
+      { label: 'Demo Generator', path: '/admin/demo-generator', salesOnly: true },
+      { label: 'Demo Pipeline', path: '/admin/demos', salesOnly: true },
     ],
   },
   {
     title: 'Users',
     items: [
       { label: 'User Provisioning', path: '/admin/users' },
+      { label: 'Staff & Roles', path: '/admin/staff' },
       { label: 'Configure', path: '/admin/configure' },
     ],
   },
@@ -107,11 +112,20 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
+  const { canSeeSalesMarketing } = useEvidlyPermissions();
 
   const isActive = (path: string) => {
     if (path === '/admin') return location.pathname === '/admin';
     return location.pathname.startsWith(path);
   };
+
+  // Filter out salesOnly items when user lacks sales/marketing access
+  const visibleSections = NAV_SECTIONS
+    .map(section => ({
+      ...section,
+      items: section.items.filter(item => !item.salesOnly || canSeeSalesMarketing),
+    }))
+    .filter(section => section.items.length > 0);
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#F4F2EE' }}>
@@ -152,7 +166,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
         {/* Nav sections */}
         <nav style={{ flex: 1, padding: '8px 0', overflowY: 'auto' }}>
-          {NAV_SECTIONS.map((section, si) => (
+          {visibleSections.map((section, si) => (
             <div key={si}>
               {section.title && (
                 <div
@@ -199,7 +213,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
                   </button>
                 );
               })}
-              {si < NAV_SECTIONS.length - 1 && (
+              {si < visibleSections.length - 1 && (
                 <div style={{ height: 1, background: '#E2D9C8', margin: '6px 16px' }} />
               )}
             </div>
