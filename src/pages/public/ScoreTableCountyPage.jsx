@@ -582,7 +582,6 @@ export default function ScoreTableCountyPage({county: countyProp}){
   </section>
 
   {/* ═══ VIOLATION SIMULATOR ═══ */}
-  {(c.method==="deduction"||c.method==="accumulate"||c.method==="count")&&(
   <section id="simulator" style={{padding:"64px 24px",background:E.cream}}>
     <div style={{maxWidth:800,margin:"0 auto"}}>
       <SL t="Score Simulator"/>
@@ -648,6 +647,7 @@ export default function ScoreTableCountyPage({county: countyProp}){
             {c.method==="deduction"&&<div style={{fontSize:"0.82rem",color:simColor.tx,marginTop:4,opacity:0.8}}>Score: {simResult.val} / 100</div>}
             {c.method==="accumulate"&&<div style={{fontSize:"0.82rem",color:simColor.tx,marginTop:4,opacity:0.8}}>Total: {simResult.val} points</div>}
             {c.method==="count"&&<div style={{fontSize:"0.82rem",color:simColor.tx,marginTop:4,opacity:0.8}}>Major violations: {simResult.val}</div>}
+            {c.method==="reinspect"&&<div style={{fontSize:"0.82rem",color:simColor.tx,marginTop:4,opacity:0.8}}>Uncorrected major/critical: {simResult.val}</div>}
           </div>
           <div style={{textAlign:"right"}}>
             {simViolations.length===0
@@ -660,7 +660,6 @@ export default function ScoreTableCountyPage({county: countyProp}){
       )}
     </div>
   </section>
-  )}
 
   {/* ═══ VENDOR MARKETPLACE ═══ */}
   <section id="vendors" style={{padding:"64px 24px",background:E.w}}>
