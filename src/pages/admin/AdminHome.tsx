@@ -24,6 +24,14 @@ interface AdminCard {
 
 const ADMIN_CARDS: AdminCard[] = [
   {
+    id: 'intelligence',
+    title: 'EvidLY Intelligence',
+    description: 'The moat. 80+ sources crawled. Every signal correlated to clients, jurisdictions, and industries.',
+    icon: '\u26A1',
+    route: '/admin/intelligence',
+    badge: 'MOAT',
+  },
+  {
     id: 'command-center',
     title: 'Command Center',
     description: 'Real-time platform health, crawl status, live alerts, and system metrics.',
@@ -254,7 +262,14 @@ export default function AdminHome() {
             }}
           >
             {/* Badge */}
-            {card.badge && (
+            {card.badge === 'MOAT' ? (
+              <span
+                className="absolute top-4 right-4 px-2 py-0.5 rounded-full text-[8px] font-black tracking-widest"
+                style={{ background: 'linear-gradient(135deg, #A08C5A, #C4AA72)', color: '#fff' }}
+              >
+                ⚡ MOAT
+              </span>
+            ) : card.badge && (
               <span
                 className="absolute top-4 right-4 px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wide border"
                 style={{ color: GOLD, borderColor: GOLD }}

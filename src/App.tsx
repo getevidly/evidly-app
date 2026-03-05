@@ -135,6 +135,7 @@ const EventLog = lazy(() => import('./pages/admin/EventLog'));
 const MarketingCampaigns = lazy(() => import('./pages/admin/MarketingCampaigns'));
 const SalesPipeline = lazy(() => import('./pages/admin/SalesPipeline'));
 const UserProvisioning = lazy(() => import('./pages/admin/UserProvisioning'));
+const EvidLYIntelligence = lazy(() => import('./pages/admin/EvidLYIntelligence'));
 const AuthCallback = lazy(() => import('./pages/AuthCallback').then(m => ({ default: m.AuthCallback })));
 const ReferralDashboard = lazy(() => import('./pages/ReferralDashboard').then(m => ({ default: m.ReferralDashboard })));
 const ReferralRedirect = lazy(() => import('./pages/ReferralRedirect'));
@@ -603,6 +604,7 @@ function AppRoutes() {
           <Route path="/admin/campaigns" element={<MarketingCampaigns />} />
           <Route path="/admin/pipeline" element={<SalesPipeline />} />
           <Route path="/admin/users" element={<UserProvisioning />} />
+          <Route path="/admin/intelligence" element={<EvidLYIntelligence />} />
           <Route path="/admin/system/edge-functions" element={<EdgeFunctions />} />
           {/* Stub routes for upcoming features */}
           <Route path="/corrective-actions" element={<CorrectiveActions />} />

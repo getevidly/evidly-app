@@ -62,6 +62,7 @@ const NAV_SECTIONS: NavSection[] = [
   {
     title: 'Intelligence',
     items: [
+      { label: 'EvidLY Intelligence', path: '/admin/intelligence' },
       { label: 'Crawl Monitor', path: '/admin/crawl-monitor' },
       { label: 'RFP Monitor', path: '/admin/rfp-monitor' },
       { label: 'Regulatory Changes', path: '/admin/regulatory-changes' },
