@@ -159,6 +159,22 @@ const ADMIN_CARDS: AdminCard[] = [
     route: '/admin/event-log',
     badge: null,
   },
+  {
+    id: 'campaigns',
+    title: 'Marketing Campaigns',
+    description: 'Track campaigns, channel performance, and attribution across guided tours.',
+    icon: '\uD83D\uDCE3',
+    route: '/admin/campaigns',
+    badge: 'NEW',
+  },
+  {
+    id: 'pipeline',
+    title: 'Sales Pipeline',
+    description: 'Kanban pipeline \u2014 from prospect to closed, with MRR tracking.',
+    icon: '\uD83C\uDFAF',
+    route: '/admin/pipeline',
+    badge: 'NEW',
+  },
 ];
 
 export default function AdminHome() {

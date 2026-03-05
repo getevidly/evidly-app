@@ -131,6 +131,8 @@ const DatabaseBackup = lazy(() => import('./pages/admin/DatabaseBackup'));
 const MaintenanceMode = lazy(() => import('./pages/admin/MaintenanceMode'));
 const DocumentVault = lazy(() => import('./pages/admin/DocumentVault'));
 const EventLog = lazy(() => import('./pages/admin/EventLog'));
+const MarketingCampaigns = lazy(() => import('./pages/admin/MarketingCampaigns'));
+const SalesPipeline = lazy(() => import('./pages/admin/SalesPipeline'));
 const AuthCallback = lazy(() => import('./pages/AuthCallback').then(m => ({ default: m.AuthCallback })));
 const ReferralDashboard = lazy(() => import('./pages/ReferralDashboard').then(m => ({ default: m.ReferralDashboard })));
 const ReferralRedirect = lazy(() => import('./pages/ReferralRedirect'));
@@ -565,6 +567,8 @@ function AppRoutes() {
           <Route path="/admin/security-settings" element={<SecuritySettings />} />
           <Route path="/admin/vault" element={<DocumentVault />} />
           <Route path="/admin/event-log" element={<EventLog />} />
+          <Route path="/admin/campaigns" element={<MarketingCampaigns />} />
+          <Route path="/admin/pipeline" element={<SalesPipeline />} />
           <Route path="/admin/system/edge-functions" element={<EdgeFunctions />} />
           {/* Stub routes for upcoming features */}
           <Route path="/corrective-actions" element={<CorrectiveActions />} />
