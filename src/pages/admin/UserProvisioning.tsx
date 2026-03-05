@@ -4,6 +4,8 @@
  */
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
+import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
+import OrgCombobox, { type OrgOption } from '../../components/admin/OrgCombobox';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -87,15 +89,16 @@ export default function UserProvisioning() {
   // Invite form
   const [invEmail, setInvEmail] = useState('');
   const [invName, setInvName] = useState('');
+  const [invPhone, setInvPhone] = useState('');
   const [invRole, setInvRole] = useState('kitchen_staff');
-  const [invOrg, setInvOrg] = useState('');
+  const [invOrg, setInvOrg] = useState<OrgOption | null>(null);
   const [sendInvite, setSendInvite] = useState(true);
   const [creating, setCreating] = useState(false);
 
   // Bulk invite
   const [bulkEmails, setBulkEmails] = useState('');
   const [bulkRole, setBulkRole] = useState('kitchen_staff');
-  const [bulkOrg, setBulkOrg] = useState('');
+  const [bulkOrg, setBulkOrg] = useState<OrgOption | null>(null);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -131,17 +134,21 @@ export default function UserProvisioning() {
   const handleCreate = async () => {
     if (!invEmail) return;
     setCreating(true);
-    alert(`[Demo] Would create user: ${invEmail} (${invRole}) in org ${invOrg || 'none'} — invite ${sendInvite ? 'sent' : 'skipped'}`);
+    const orgLabel = invOrg ? (invOrg.isNew ? `NEW "${invOrg.name}"` : invOrg.name) : 'none';
+    alert(`[Demo] Would create user: ${invEmail} (${invRole}) in org ${orgLabel} — invite ${sendInvite ? 'sent' : 'skipped'}`);
     setInvEmail('');
     setInvName('');
+    setInvOrg(null);
     setCreating(false);
   };
 
   const handleBulkInvite = () => {
     const emails = bulkEmails.split(',').map(e => e.trim()).filter(Boolean);
     if (emails.length === 0) return;
-    alert(`[Demo] Would bulk-invite ${emails.length} users as ${bulkRole} to org ${bulkOrg || 'all'}`);
+    const orgLabel = bulkOrg ? (bulkOrg.isNew ? `NEW "${bulkOrg.name}"` : bulkOrg.name) : 'all';
+    alert(`[Demo] Would bulk-invite ${emails.length} users as ${bulkRole} to org ${orgLabel}`);
     setBulkEmails('');
+    setBulkOrg(null);
   };
 
   const tabStyle = (t: Tab): React.CSSProperties => ({
@@ -156,6 +163,7 @@ export default function UserProvisioning() {
 
   return (
     <div className="space-y-6">
+      <AdminBreadcrumb crumbs={[{ label: 'User Provisioning' }]} />
       <div>
         <h1 className="text-2xl font-bold" style={{ color: NAVY }}>User Provisioning</h1>
         <p style={{ fontSize: 13, color: TEXT_SEC, marginTop: 4 }}>
@@ -278,17 +286,24 @@ export default function UserProvisioning() {
                 <input value={invName} onChange={e => setInvName(e.target.value)} style={inputStyle} placeholder="Jane Smith" />
               </div>
               <div>
+                <label style={{ fontSize: 11, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Phone Number</label>
+                <input value={invPhone} onChange={e => setInvPhone(e.target.value)} style={inputStyle} placeholder="(555) 000-0000" type="tel" />
+              </div>
+              <div>
                 <label style={{ fontSize: 11, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Role</label>
                 <select value={invRole} onChange={e => setInvRole(e.target.value)} style={{ ...inputStyle, cursor: 'pointer' }}>
                   {ROLES.map(r => <option key={r} value={r}>{r.replace(/_/g, ' ')}</option>)}
                 </select>
               </div>
               <div>
-                <label style={{ fontSize: 11, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Organization</label>
-                <select value={invOrg} onChange={e => setInvOrg(e.target.value)} style={{ ...inputStyle, cursor: 'pointer' }}>
-                  <option value="">No Organization</option>
-                  {orgs.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
-                </select>
+                <OrgCombobox
+                  label="Organization"
+                  orgs={orgs}
+                  value={invOrg}
+                  onChange={setInvOrg}
+                  placeholder="Search or create organization..."
+                  inputStyle={{ background: '#F9FAFB' }}
+                />
               </div>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 16 }}>
@@ -330,11 +345,14 @@ export default function UserProvisioning() {
                 </select>
               </div>
               <div>
-                <label style={{ fontSize: 11, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Organization</label>
-                <select value={bulkOrg} onChange={e => setBulkOrg(e.target.value)} style={{ ...inputStyle, cursor: 'pointer' }}>
-                  <option value="">No Organization</option>
-                  {orgs.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
-                </select>
+                <OrgCombobox
+                  label="Organization"
+                  orgs={orgs}
+                  value={bulkOrg}
+                  onChange={setBulkOrg}
+                  placeholder="Search or create organization..."
+                  inputStyle={{ background: '#F9FAFB' }}
+                />
               </div>
             </div>
             <button
