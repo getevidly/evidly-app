@@ -153,7 +153,10 @@ const NewLandingPage = lazy(() => import('./pages/public/LandingPage'));
 const CountyWrapper = () => { const { slug } = useParams(); return <CountyLandingPage county={slug?.replace("-county", "")} />; };
 const ScoreTableWrapper = () => { const { slug } = useParams(); return <ScoreTableCountyPage county={slug?.replace("-county", "")} />; };
 const KitchenCheckWrapper = () => { const { slug } = useParams(); return <KitchenCheckPage county={slug?.replace("-county", "")} />; };
+const CityPage = lazy(() => import('./pages/public/CityPage'));
 
+const BlogList = lazy(() => import('./pages/public/BlogList').then(m => ({ default: m.BlogList })));
+const BlogPost = lazy(() => import('./pages/public/BlogPost').then(m => ({ default: m.BlogPost })));
 const VendorServiceUpdate = lazy(() => import('./pages/VendorServiceUpdate').then(m => ({ default: m.VendorServiceUpdate })));
 const AssessmentLeads = lazy(() => import('./pages/admin/AssessmentLeads'));
 const InsuranceApiKeys = lazy(() => import('./pages/admin/InsuranceApiKeys'));
@@ -438,6 +441,13 @@ function AppRoutes() {
         <Route path="/vendor/upload/:token" element={<Suspense fallback={<PageSkeleton />}><VendorSecureUpload /></Suspense>} />
           <Route path="/vendor/invite/:code" element={<Suspense fallback={<PageSkeleton />}><VendorInviteLanding /></Suspense>} />
         <Route path="/vendor-update/:token" element={<Suspense fallback={<PageSkeleton />}><VendorServiceUpdate /></Suspense>} />
+
+        {/* City landing pages */}
+        <Route path="/city/:citySlug" element={<Suspense fallback={<PageSkeleton />}><CityPage /></Suspense>} />
+
+        {/* Blog */}
+        <Route path="/blog" element={<Suspense fallback={<PageSkeleton />}><BlogList /></Suspense>} />
+        <Route path="/blog/:slug" element={<Suspense fallback={<PageSkeleton />}><BlogPost /></Suspense>} />
 
         {/* Catch-all county landing page — must be AFTER all other public routes */}
         <Route path="/:slug" element={<Suspense fallback={<PageSkeleton />}><CountyWrapper /></Suspense>} />

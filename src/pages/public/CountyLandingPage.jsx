@@ -83,10 +83,10 @@ function STLogo({s="1.2rem",light=false}){return <span style={{fontWeight:800,fo
 function SL({t,c}){return <div style={{fontSize:"0.68rem",fontWeight:800,letterSpacing:2,textTransform:"uppercase",color:c||E.gold,marginBottom:10}}>{t}</div>;}
 function TBadge({level}){var m={HIGH:{bg:E.grnBg,bd:E.grn,tx:"#065f46"},MEDIUM:{bg:E.wrnBg,bd:E.wrn,tx:"#92400e"},LOW:{bg:E.redBg,bd:E.red,tx:"#991b1b"}};var co=m[level]||m.MEDIUM;return <span style={{display:"inline-block",padding:"2px 9px",borderRadius:100,fontSize:"0.64rem",fontWeight:700,background:co.bg,border:"1px solid "+co.bd,color:co.tx,marginLeft:8}}>{level} TRANSPARENCY</span>;}
 
-function SchemaMarkup({c}){var schema={"@context":"https://schema.org","@graph":[{"@type":"SoftwareApplication","name":"EvidLY","applicationCategory":"BusinessApplication","operatingSystem":"Web","description":"Commercial kitchen compliance platform for "+c.name+" County, California","url":"https://getevidly.com/"+c.slug,"offers":{"@type":"Offer","price":"99","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":c.faq.map(function(f){return{"@type":"Question","name":f.q,"acceptedAnswer":{"@type":"Answer","text":f.a}};})},{"@type":"LocalBusiness","name":"EvidLY","description":"Commercial kitchen compliance software","url":"https://getevidly.com","telephone":"(855) 384-3591","areaServed":{"@type":"State","name":"California"}}]};return <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema)}}/>;}
+function SchemaMarkup({c,cityName,citySlug}){var areaName=cityName?cityName+", "+c.name+" County, California":c.name+" County, California";var pageUrl=citySlug?"https://getevidly.com/city/"+citySlug:"https://getevidly.com/"+c.slug;var schema={"@context":"https://schema.org","@graph":[{"@type":"SoftwareApplication","name":"EvidLY","applicationCategory":"BusinessApplication","operatingSystem":"Web","description":"Commercial kitchen compliance platform for "+areaName,"url":pageUrl,"offers":{"@type":"Offer","price":"99","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":c.faq.map(function(f){return{"@type":"Question","name":f.q,"acceptedAnswer":{"@type":"Answer","text":f.a}};})},{"@type":"LocalBusiness","name":"EvidLY","description":"Commercial kitchen compliance software","url":"https://getevidly.com","telephone":"(855) 384-3591","areaServed":{"@type":"State","name":"California"}}]};return <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema)}}/>;}
 
 // ═══ MAIN ═══
-export default function CountyLandingPage({county: countyProp}){
+export default function CountyLandingPage({county: countyProp, cityName: _cn, citySlug: _cs}){
   var { slug } = useParams();
   // URL is /merced-county → slug="merced-county" → key="merced"
   var countyKey = countyProp || (slug ? slug.replace(/-county$/, "") : DEFAULT_COUNTY);
@@ -208,7 +208,7 @@ export default function CountyLandingPage({county: countyProp}){
   {/* BREADCRUMB */}
   <div style={{background:E.w,borderBottom:"1px solid "+E.g1,padding:"7px 24px"}}>
     <div style={{maxWidth:1100,margin:"0 auto",fontSize:"0.72rem",color:E.g4}}>
-      <a href="/" style={{color:E.g4,textDecoration:"none"}}>EvidLY</a>{" › "}<a href="/california" style={{color:E.g4,textDecoration:"none"}}>California</a>{" › "}<span style={{color:E.navy,fontWeight:600}}>{c.name} County</span>
+      <a href="/" style={{color:E.g4,textDecoration:"none"}}>EvidLY</a>{" › "}<a href="/california" style={{color:E.g4,textDecoration:"none"}}>California</a>{" › "}{_cn?<><a href={"/"+c.slug} style={{color:E.g4,textDecoration:"none"}}>{c.name} County</a>{" › "}<span style={{color:E.navy,fontWeight:600}}>{_cn}</span></>:<span style={{color:E.navy,fontWeight:600}}>{c.name} County</span>}
     </div>
   </div>
 
@@ -217,16 +217,16 @@ export default function CountyLandingPage({county: countyProp}){
     <div style={goldLine}/>
     <div style={{maxWidth:700,margin:"0 auto"}}>
       <div style={{display:"inline-flex",alignItems:"center",gap:8,background:"rgba(184,160,106,0.12)",border:"1px solid rgba(184,160,106,0.25)",borderRadius:100,padding:"5px 14px",marginBottom:20}}>
-        <span style={{fontSize:"0.7rem",fontWeight:700,color:E.goldL,textTransform:"uppercase",letterSpacing:1}}>California · {c.name} County</span>
+        <span style={{fontSize:"0.7rem",fontWeight:700,color:E.goldL,textTransform:"uppercase",letterSpacing:1}}>California · {c.name} County{_cn?" · "+_cn:""}</span>
       </div>
-      <h1 style={{fontSize:"clamp(1.8rem,5vw,2.8rem)",fontWeight:800,lineHeight:1.1,margin:"0 0 16px",color:E.w}}>Lead with Confidence. <span style={{color:E.gold}}>Know Where You Stand.</span></h1>
-      <p style={{fontSize:"1rem",color:"rgba(255,255,255,0.55)",maxWidth:520,margin:"0 auto 8px",lineHeight:1.7}}>{c.heroSub}</p>
+      <h1 style={{fontSize:"clamp(1.8rem,5vw,2.8rem)",fontWeight:800,lineHeight:1.1,margin:"0 0 16px",color:E.w}}>{_cn?<>{_cn} <span style={{color:E.gold}}>Kitchen Compliance</span></>:<>Lead with Confidence. <span style={{color:E.gold}}>Know Where You Stand.</span></>}</h1>
+      <p style={{fontSize:"1rem",color:"rgba(255,255,255,0.55)",maxWidth:520,margin:"0 auto 8px",lineHeight:1.7}}>{_cn?_cn+" is served by "+c.agencyShort+". "+c.heroSub:c.heroSub}</p>
       <p style={{fontSize:"0.88rem",color:"rgba(255,255,255,0.4)",maxWidth:520,margin:"0 auto 28px",lineHeight:1.7}}>Food safety and facility safety. One clear picture. Updated every day.</p>
       <div style={{display:"flex",gap:10,justifyContent:"center",flexWrap:"wrap"}}>
         <button onClick={openCalendly} style={Object.assign({},bG,{padding:"14px 30px",fontSize:"0.95rem"})}>Book a Demo →</button>
         <button onClick={function(){document.getElementById("kitchen-self-check").scrollIntoView({behavior:"smooth"});}} style={Object.assign({},bO,{padding:"14px 30px",fontSize:"0.95rem"})}>Check My Kitchen Free →</button>
       </div>
-      <p style={{marginTop:16,fontSize:"0.78rem",color:"rgba(255,255,255,0.3)"}}>Launching May 5, 2026 · $99/mo founder pricing · Configured for {c.name} County</p>
+      <p style={{marginTop:16,fontSize:"0.78rem",color:"rgba(255,255,255,0.3)"}}>Launching May 5, 2026 · $99/mo founder pricing · Configured for {_cn?_cn+", ":""}{c.name} County</p>
     </div>
   </section>
 
@@ -538,14 +538,14 @@ export default function CountyLandingPage({county: countyProp}){
   {/* FOOTER */}
   <footer style={{padding:"40px 24px 20px",background:"#2C3E5C"}}>
     <div style={{maxWidth:960,margin:"0 auto",display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr 1fr",gap:24}}>
-      <div><div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}><Logo s="0.95rem" light tagline/></div><div style={{display:"flex",alignItems:"center",gap:6,marginTop:4}}><STIcon sz={18}/><span style={{fontSize:"0.72rem",color:"rgba(255,255,255,0.45)"}}><STLogo s="0.72rem" light/></span></div><p style={{fontSize:"0.7rem",color:"rgba(255,255,255,0.35)",marginTop:8,lineHeight:1.6}}>Serving {c.name} County, California.</p></div>
+      <div><div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}><Logo s="0.95rem" light tagline/></div><div style={{display:"flex",alignItems:"center",gap:6,marginTop:4}}><STIcon sz={18}/><span style={{fontSize:"0.72rem",color:"rgba(255,255,255,0.45)"}}><STLogo s="0.72rem" light/></span></div><p style={{fontSize:"0.7rem",color:"rgba(255,255,255,0.35)",marginTop:8,lineHeight:1.6}}>Serving {_cn?_cn+", ":""}{c.name} County, California.</p></div>
       <div><h4 style={{fontSize:"0.7rem",fontWeight:700,color:"rgba(255,255,255,0.55)",marginBottom:8,textTransform:"uppercase",letterSpacing:1}}>Product</h4>{[{t:"Food Safety",h:"#"},{t:"Facility Safety",h:"#"},{t:"Kitchen Self Check",h:"/kitchen-check/"+c.slug},{t:"ScoreTable",h:"/scoretable/"+c.slug},{t:"Pricing",h:"#"}].map(function(l){return <a key={l.t} href={l.h} style={{display:"block",fontSize:"0.78rem",color:"rgba(255,255,255,0.5)",textDecoration:"none",marginBottom:6}}>{l.t}</a>;})}</div>
       <div><h4 style={{fontSize:"0.7rem",fontWeight:700,color:"rgba(255,255,255,0.55)",marginBottom:8,textTransform:"uppercase",letterSpacing:1}}>Company</h4>{["About Us","Kitchen to Community","Careers","Blog"].map(function(l){return <a key={l} href="#" style={{display:"block",fontSize:"0.78rem",color:"rgba(255,255,255,0.5)",textDecoration:"none",marginBottom:6}}>{l}</a>;})}</div>
       <div><h4 style={{fontSize:"0.7rem",fontWeight:700,color:"rgba(255,255,255,0.55)",marginBottom:8,textTransform:"uppercase",letterSpacing:1}}>Legal</h4>{["Privacy Policy","Terms of Service","Cookie Policy","Security"].map(function(l){return <a key={l} href="#" style={{display:"block",fontSize:"0.78rem",color:"rgba(255,255,255,0.5)",textDecoration:"none",marginBottom:6}}>{l}</a>;})}</div>
       <div><h4 style={{fontSize:"0.7rem",fontWeight:700,color:"rgba(255,255,255,0.55)",marginBottom:8,textTransform:"uppercase",letterSpacing:1}}>Contact</h4><a href="mailto:founders@getevidly.com" style={{display:"block",fontSize:"0.78rem",color:"rgba(255,255,255,0.5)",textDecoration:"none",marginBottom:6}}>founders@getevidly.com</a><a href="mailto:support@getevidly.com" style={{display:"block",fontSize:"0.78rem",color:"rgba(255,255,255,0.5)",textDecoration:"none",marginBottom:6}}>support@getevidly.com</a><a href="tel:8553843591" style={{display:"block",fontSize:"0.78rem",color:"rgba(255,255,255,0.5)",textDecoration:"none",marginBottom:6}}>(855) EVIDLY1</a><a href="tel:2096007675" style={{display:"block",fontSize:"0.78rem",color:"rgba(255,255,255,0.5)",textDecoration:"none"}}>(209) 600-7675</a></div>
     </div>
     <div style={{maxWidth:960,margin:"16px auto 0",paddingTop:14,borderTop:"1px solid rgba(255,255,255,0.1)",display:"flex",justifyContent:"space-between",flexWrap:"wrap",gap:8}}>
-      <span style={{fontSize:"0.7rem",color:"rgba(255,255,255,0.3)"}}>© 2026 <Logo s="0.7rem" light/>, LLC. All rights reserved. Serving {c.name} County, California.</span>
+      <span style={{fontSize:"0.7rem",color:"rgba(255,255,255,0.3)"}}>© 2026 <Logo s="0.7rem" light/>, LLC. All rights reserved. Serving {_cn?_cn+", ":""}{c.name} County, California.</span>
       <div style={{display:"flex",gap:16}}>{["Privacy Policy","Terms of Service","Cookie Policy","Do Not Sell My Info"].map(function(l){return <a key={l} href="#" style={{fontSize:"0.68rem",color:"rgba(255,255,255,0.3)",textDecoration:"none"}}>{l}</a>;})}</div>
     </div>
   </footer>
