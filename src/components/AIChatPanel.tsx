@@ -3,6 +3,11 @@ import { Brain, X, Send, ArrowRight, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getDemoContext, generateSuggestions, extractActionItems, parseMarkdown } from '../lib/aiAdvisor';
 import { useDemo } from '../contexts/DemoContext';
+import { locations as demoLocations } from '../data/demoData';
+
+const loc1 = demoLocations[0]?.name ?? 'my primary location';
+const loc2 = demoLocations[1]?.name ?? 'my second location';
+const loc3 = demoLocations[2]?.name ?? 'my third location';
 
 interface Message {
   id: string;
@@ -27,21 +32,21 @@ function getDemoResponse(question: string): { text: string; suggestions: string[
   let suggestions: string[] = [];
 
   if (lowerQ.includes('inspection') || lowerQ.includes('ready')) {
-    text = `Here's your **inspection readiness** snapshot:\n\n**Location 1 — 96% Ready** ✅\n• All temp logs current, 12/12 certs valid\n\n**Location 2 — 87% Ready** ⚠️\n• 3 missed temp logs, hood cleaning cert expired\n\n**Location 3 — 62% Ready** 🔴\n• Health permit expired, multiple vendor COIs overdue\n\nAction: Renew Location 3 health permit immediately\nAction: Complete Location 2 temp logs`; // demo
+    text = `Here's your **inspection readiness** snapshot:\n\n**${loc1} — 96% Ready** ✅\n• All temp logs current, 12/12 certs valid\n\n**${loc2} — 87% Ready** ⚠️\n• 3 missed temp logs, hood cleaning cert expired\n\n**${loc3} — 62% Ready** 🔴\n• Health permit expired, multiple vendor COIs overdue\n\nAction: Renew ${loc3} health permit immediately\nAction: Complete ${loc2} temp logs`; // demo
     suggestions = ['Start mock inspection', 'What fails inspections?', 'Create action items'];
   } else if (lowerQ.includes('overdue') || lowerQ.includes('corrective') || lowerQ.includes("what's due")) {
-    text = `You have **5 overdue corrective actions**:\n\n🔴 **Critical**\n1. Walk-in Cooler #2 above 41°F — Location 2 (4 days overdue)\n2. Grease trap cleaning — Location 1 (6 days overdue)\n\n🟡 **Medium**\n3. Sanitizer concentration low — Location 3 (2 days)\n4. Damaged door gasket — Location 2 (10 days)\n\n🟢 **Low**\n5. Update allergen signage — Location 1 (8 days)`; // demo
+    text = `You have **5 overdue corrective actions**:\n\n🔴 **Critical**\n1. Walk-in Cooler #2 above 41°F — ${loc2} (4 days overdue)\n2. Grease trap cleaning — ${loc1} (6 days overdue)\n\n🟡 **Medium**\n3. Sanitizer concentration low — ${loc3} (2 days)\n4. Damaged door gasket — ${loc2} (10 days)\n\n🟢 **Low**\n5. Update allergen signage — ${loc1} (8 days)`; // demo
     suggestions = ['Send reminders', 'Which affect score most?', 'Assign these items'];
   } else if (lowerQ.includes('weekly') || lowerQ.includes('summary')) {
-    text = `**Weekly Compliance Summary** (Feb 3–9)\n\n**Overall Score: 76%** (↑1% from last week)\n\n**Highlights:**\n• Location 1 maintained 92% — strong performance\n• Location 2 recovered 2 points after completing temp logs\n• Location 3 still critical at 57%\n\n**This Week's Wins:**\n• 28 temperature logs completed on time\n• 2 vendor certificates renewed\n\n**Needs Attention:**\n• 5 overdue corrective actions remain\n• Location 3 health permit still expired`; // demo
+    text = `**Weekly Compliance Summary** (Feb 3–9)\n\n**Overall Score: 76%** (↑1% from last week)\n\n**Highlights:**\n• ${loc1} maintained 92% — strong performance\n• ${loc2} recovered 2 points after completing temp logs\n• ${loc3} still critical at 57%\n\n**This Week's Wins:**\n• 28 temperature logs completed on time\n• 2 vendor certificates renewed\n\n**Needs Attention:**\n• 5 overdue corrective actions remain\n• ${loc3} health permit still expired`; // demo
     suggestions = ['Show location details', 'What should we prioritize?', 'Compare to last month'];
   } else if (lowerQ.includes('vendor') || lowerQ.includes('expire')) {
-    text = `**4 vendor documents expiring** this month:\n\n1. Valley Fire Systems COI — Location 2 (Feb 10) ⚠️\n2. ABC Fire Protection Agreement — Location 1 (Feb 15)\n3. CleanVent Hood Cert — Location 2 (Feb 18)\n4. Pacific Pest Report — Location 3 (Feb 28)`; // demo
+    text = `**4 vendor documents expiring** this month:\n\n1. Fire Suppression Vendor COI — ${loc2} (Feb 10) ⚠️\n2. Hood Cleaning Vendor Agreement — ${loc1} (Feb 15)\n3. Hood Cleaning Cert — ${loc2} (Feb 18)\n4. Pest Control Report — ${loc3} (Feb 28)`; // demo
     suggestions = ['Send renewal reminders', 'Which vendors are critical?', 'View all vendors'];
   } else {
     const ctx = getDemoContext();
-    text = `Your organization **${ctx.orgName}** compliance status:\n\n**Quick Status:**\n• Location 1: Food Safety 94% ✅ · Facility Safety 88% ✅\n• Location 2: Food Safety 72% ⚠️ · Facility Safety 62% 🔴\n• Location 3: Food Safety 62% 🔴 · Facility Safety 55% 🔴\n\n**Top priorities:**\n1. Renew Location 3 health permit\n2. Complete missed temp checks at Location 2\n3. Schedule overdue fire suppression inspection\n\nAsk me about compliance scores, temperatures, vendors, inspections, or corrective actions.`; // demo
-    suggestions = ['Why did Airport score drop?', 'Am I inspection ready?', 'What actions are overdue?'];
+    text = `Your organization **${ctx.orgName}** compliance status:\n\n**Quick Status:**\n• ${loc1}: Food Safety 94% ✅ · Facility Safety 88% ✅\n• ${loc2}: Food Safety 72% ⚠️ · Facility Safety 62% 🔴\n• ${loc3}: Food Safety 62% 🔴 · Facility Safety 55% 🔴\n\n**Top priorities:**\n1. Renew ${loc3} health permit\n2. Complete missed temp checks at ${loc2}\n3. Schedule overdue fire suppression inspection\n\nAsk me about compliance scores, temperatures, vendors, inspections, or corrective actions.`; // demo
+    suggestions = [`Why did ${loc2} score drop?`, 'Am I inspection ready?', 'What actions are overdue?'];
   }
 
   return { text, suggestions };
