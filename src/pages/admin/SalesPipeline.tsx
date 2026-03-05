@@ -61,6 +61,15 @@ export default function SalesPipeline() {
   const wonMTDmrr = wonMTD.reduce((sum, p) => sum + (p.estimated_mrr_cents || 0), 0);
   const lostMTD = pipeline.filter(p => p.stage === 'lost' && p.lost_date && new Date(p.lost_date).getTime() >= thisMonth).length;
 
+  // Lost reasons breakdown — must be above early return to satisfy Rules of Hooks
+  const lostReasons = useMemo(() => {
+    const reasons: Record<string, number> = {};
+    pipeline.filter(p => p.stage === 'lost' && p.lost_reason).forEach(p => {
+      reasons[p.lost_reason] = (reasons[p.lost_reason] || 0) + 1;
+    });
+    return Object.entries(reasons).sort((a, b) => b[1] - a[1]);
+  }, [pipeline]);
+
   const handleStageChange = async (dealId: string, newStage: string) => {
     const updates: any = { stage: newStage, updated_at: new Date().toISOString() };
     const probMap: Record<string, number> = {
@@ -107,15 +116,6 @@ export default function SalesPipeline() {
       </div>
     );
   }
-
-  // Lost reasons breakdown
-  const lostReasons = useMemo(() => {
-    const reasons: Record<string, number> = {};
-    pipeline.filter(p => p.stage === 'lost' && p.lost_reason).forEach(p => {
-      reasons[p.lost_reason] = (reasons[p.lost_reason] || 0) + 1;
-    });
-    return Object.entries(reasons).sort((a, b) => b[1] - a[1]);
-  }, [pipeline]);
 
   return (
     <div style={{ fontFamily: "'DM Sans', 'Inter', sans-serif" }}>
