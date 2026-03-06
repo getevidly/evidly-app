@@ -248,7 +248,7 @@ export default function FacilitiesDashboardNew() {
     return (
       <div className="space-y-6" style={FONT}>
         <DashboardHero
-          orgName={companyName || DEMO_ORG.name}
+          orgName={companyName || 'Your Organization'}
           locationName={locationName}
         />
         <Card>

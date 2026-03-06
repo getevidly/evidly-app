@@ -282,6 +282,7 @@
 | Route | Component | Description |
 |-------|-----------|-------------|
 | `/admin/api-keys` | `InsuranceApiKeys.tsx` | API key management — create, revoke, view request logs, API docs |
+| `/admin/demo-launcher` | `DemoLauncher.tsx` | Launch personalized demo sessions — jurisdiction + industry filtered (super_admin, sales) |
 
 ### Features (GAP-08)
 - API key CRUD with one-time key reveal on creation

@@ -250,7 +250,7 @@ export default function ChefDashboard() {
       <div className="space-y-6" style={{ fontFamily: 'Inter, sans-serif' }}>
         <DashboardHero
           firstName={DEMO_ROLE_NAMES[userRole]?.firstName || 'Chef'}
-          orgName={companyName || DEMO_ORG.name}
+          orgName={companyName || 'Your Organization'}
           locationName={locationName}
         />
         <Card>

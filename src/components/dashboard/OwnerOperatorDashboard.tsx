@@ -730,7 +730,7 @@ export default function OwnerOperatorDashboard() {
       <K2CInviteModal
         isOpen={showInviteModal}
         onClose={() => setShowInviteModal(false)}
-        referralCode={demoReferral.referralCode}
+        referralCode={isDemoMode ? demoReferral.referralCode : ''}
       />
 
       </>}
@@ -771,7 +771,7 @@ interface PreviewAsStaffCardProps {
 
 function PreviewAsStaffCard({ profile, userRole, isDemoMode, startEmulation, confirmRole, setConfirmRole, navigate }: PreviewAsStaffCardProps) {
   const handleStart = async (role: string) => {
-    const staff = DEMO_STAFF[role];
+    const staff = isDemoMode ? DEMO_STAFF[role] : null;
     if (!staff) return;
     const emUser: EmulatedUser = {
       id: staff.id,
@@ -790,7 +790,7 @@ function PreviewAsStaffCard({ profile, userRole, isDemoMode, startEmulation, con
   };
 
   const selectedRoleDef = EMULABLE_ROLES.find(r => r.role === confirmRole);
-  const selectedStaff = confirmRole ? DEMO_STAFF[confirmRole] : null;
+  const selectedStaff = (confirmRole && isDemoMode) ? DEMO_STAFF[confirmRole] : null;
 
   return (
     <>

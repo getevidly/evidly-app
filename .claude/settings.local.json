@@ -78,7 +78,11 @@
       "Bash(\"C:\\\\Users\\\\newpa\\\\Downloads\\\\evidly-demo-final\\\\evidly-app-main\\\\_gen_sitemap.js\" << 'SCRIPT'\nconst fs = require\\('fs'\\);\nconst content = fs.readFileSync\\('src/pages/public/CityPage.jsx', 'utf8'\\);\nconst match = content.match\\(/var _c=\\\\{\\([\\\\s\\\\S]*?\\)\\\\};/\\);\nif \\(!match\\) { console.error\\('Could not find _c mapping'\\); process.exit\\(1\\); }\nconst lines = match[1].split\\('\\\\n'\\);\nconst cities = [];\nfor \\(const line of lines\\) {\n  const arrayMatch = line.match\\(/\\\\[\\([^\\\\]]+\\)\\\\]/\\);\n  if \\(arrayMatch\\) {\n    const slugs = arrayMatch[1].match\\(/\"\\([^\"]+\\)\"/g\\);\n    if \\(slugs\\) {\n      for \\(const s of slugs\\) {\n        cities.push\\(s.replace\\(/\"/g, ''\\)\\);\n      }\n    }\n  }\n}\ncities.sort\\(\\);\nlet xml = '  <!-- City Pages -->\\\\n';\nfor \\(const city of cities\\) {\n  xml += '  <url><loc>https://getevidly.com/city/' + city + '</loc><lastmod>2026-03-05</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>\\\\n';\n}\nxml += '\\\\nTotal cities: ' + cities.length;\nfs.writeFileSync\\('_sitemap_cities.txt', xml\\);\nconsole.log\\('Done. Total cities: ' + cities.length\\);\nSCRIPT)",
       "Bash(node _gen_sitemap.js:*)",
       "WebFetch(domain:getevidly.com)",
-      "Bash(wc:*)"
+      "Bash(wc:*)",
+      "WebFetch(domain:reactjs.org)",
+      "WebFetch(domain:legacy.reactjs.org)",
+      "Bash(cygpath:*)",
+      "Bash(dir:*)"
     ]
   }
 }

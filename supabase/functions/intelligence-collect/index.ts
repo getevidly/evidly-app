@@ -613,12 +613,23 @@ Deno.serve(async (req: Request) => {
   if (!isCronSecret && !isCronTrigger) {
     const authHeader = req.headers.get("Authorization");
     if (authHeader?.startsWith("Bearer ")) {
-      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-      const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY") || Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-      const authClient = createClient(supabaseUrl, supabaseAnonKey);
-      const { data: { user } } = await authClient.auth.getUser(authHeader.replace("Bearer ", ""));
-      if (user?.email?.endsWith("@getevidly.com")) {
-        isAdminUser = true;
+      const token = authHeader.replace("Bearer ", "");
+      // Decode JWT payload to check role claim (service_role = admin access)
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        if (payload.role === "service_role") {
+          isAdminUser = true;
+        }
+      } catch {}
+      // Fallback: check if user is @getevidly.com
+      if (!isAdminUser) {
+        const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+        const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY") || Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+        const authClient = createClient(supabaseUrl, supabaseAnonKey);
+        const { data: { user } } = await authClient.auth.getUser(token);
+        if (user?.email?.endsWith("@getevidly.com")) {
+          isAdminUser = true;
+        }
       }
     }
     if (!isAdminUser) {
