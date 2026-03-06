@@ -469,7 +469,7 @@ async function analyzeWithClaude(
       "anthropic-version": "2023-06-01",
     },
     body: JSON.stringify({
-      model: "claude-sonnet-4-5-20250929",
+      model: "claude-haiku-4-5-20251001",
       max_tokens: 4000,
       system: SYSTEM_PROMPT,
       messages: [{ role: "user", content: buildUserPrompt(rawItem, source) }],
@@ -543,19 +543,22 @@ function mapScope(scope: string): string {
   return map[scope] || "moderate";
 }
 
-/** Map source.category → DB source_type */
+/** Map source.category → DB signal_type (must match CHECK constraint) */
 function mapSourceType(category: string): string {
+  // CHECK constraint values: recall, regulatory_change, inspection_result,
+  // enforcement_action, weather_alert, rfp_detected, legislative_update,
+  // competitive_intel, fire_safety_update, outbreak
   const map: Record<string, string> = {
-    recall_alert: "fda_recall",
+    recall_alert: "recall",
     outbreak_alert: "outbreak",
-    enforcement_surge: "enforcement",
-    regulatory_change: "regulatory",
-    regulatory_updates: "regulatory",
-    inspection_trend: "inspection",
-    nfpa_update: "facility_safety",
-    seasonal_risk: "weather",
+    enforcement_surge: "enforcement_action",
+    regulatory_change: "regulatory_change",
+    regulatory_updates: "regulatory_change",
+    inspection_trend: "inspection_result",
+    nfpa_update: "fire_safety_update",
+    seasonal_risk: "weather_alert",
   };
-  return map[category] || category;
+  return map[category] || "regulatory_change";
 }
 
 // ── Types for email summary ──────────────────────────────────
@@ -681,7 +684,8 @@ Deno.serve(async (req: Request) => {
   );
 
   // ── Phase 2: Batch dedup — one DB round-trip per chunk ─────
-  // Query all source_urls at once instead of N individual queries.
+  // Query all original_urls at once instead of N individual queries.
+  // DB column is `original_url` (from admin_console_complete schema).
   const existingUrls = new Set<string>();
 
   if (allItems.length > 0) {
@@ -694,10 +698,10 @@ Deno.serve(async (req: Request) => {
       dedupChunks.push(
         supabase
           .from("intelligence_signals")
-          .select("source_url")
-          .in("source_url", chunk)
+          .select("original_url")
+          .in("original_url", chunk)
           .then(({ data }: { data: any[] | null }) => {
-            if (data) for (const row of data) existingUrls.add(row.source_url);
+            if (data) for (const row of data) existingUrls.add(row.original_url);
           }),
       );
     }
@@ -761,23 +765,18 @@ Deno.serve(async (req: Request) => {
       critical: 95, high: 75, medium: 50, low: 25, informational: 10,
     };
 
+    // Map to actual DB columns (admin_console_complete schema):
+    //   source_name, category, signal_type, title, content_summary, original_url, counties_affected
+    // Schema-align batch ADD columns (ai_*, scope, status, etc.) are NOT in the live DB
+    // because the migration failed silently when a duplicate column was encountered.
     const rows = analysisResults.map(({ fi, insight, severity }) => ({
-      source_url: fi.item.source_url,
-      source_key: fi.source.id,
+      original_url: fi.item.source_url,
       source_name: insight.source_name || fi.source.name,
       signal_type: mapSourceType(insight.category || fi.source.category),
       category: insight.category || fi.source.category,
       title: (insight.title || fi.item.title || "").slice(0, 200),
-      summary: insight.summary || "",
-      full_content: insight.full_analysis || "",
-      ai_summary: insight.summary || "",
-      ai_urgency: severityToUrgency[severity] || "medium",
-      ai_impact_score: severityToScore[severity] || 50,
-      ai_confidence: Math.round((insight.confidence_score ?? 0.5) * 100),
-      ai_analyzed_at: new Date().toISOString(),
-      scope: insight.scope || fi.source.defaultScope || null,
+      content_summary: (insight.summary || "").slice(0, 2000),
       counties_affected: insight.affected_counties || [],
-      status: "new",
     }));
 
     const { error: batchErr } = await supabase.from("intelligence_signals").insert(rows);
@@ -794,7 +793,7 @@ Deno.serve(async (req: Request) => {
           sourceResults[analysisResults[i].fi.source.id].new++;
           newInsights.push({
             title: rows[i].title.slice(0, 120),
-            severity: rows[i].severity,
+            severity: analysisResults[i].severity,
             source: analysisResults[i].fi.source.name,
           });
         }
@@ -820,9 +819,11 @@ Deno.serve(async (req: Request) => {
   );
 
   // ── Phase 4b: Auto-routing — assign routing tier to new signals ──
+  // Uses only columns that exist in the live DB: id, signal_type, risk_*
+  // AI columns (ai_urgency, ai_confidence, etc.) are NOT in the DB —
+  // schema_align migration failed silently.
   if (newCount > 0 && !isTimedOut()) {
     try {
-      // Check routing mode
       const { data: modeSetting } = await supabase
         .from("platform_settings")
         .select("value")
@@ -830,33 +831,24 @@ Deno.serve(async (req: Request) => {
         .single();
       const routingMode = (modeSetting?.value as string) || "supervised";
 
-      // Fetch newly inserted signals (last N seconds)
       const recentCutoff = new Date(startTime).toISOString();
       const { data: recentSignals } = await supabase
         .from("intelligence_signals")
-        .select("id, ai_urgency, ai_impact_score, ai_confidence, signal_type, scope, risk_revenue, risk_liability, risk_cost, risk_operational")
-        .gte("created_at", recentCutoff)
-        .eq("status", "new");
+        .select("id, signal_type, risk_revenue, risk_liability, risk_cost, risk_operational")
+        .gte("created_at", recentCutoff);
 
       if (recentSignals && recentSignals.length > 0) {
         const now = Date.now();
         let autoCount = 0, notifyCount = 0, holdCount = 0;
-        const notifySignals: { id: string; title: string; severity: string; tier: string }[] = [];
 
         for (const sig of recentSignals) {
-          // Inline routing logic (same as intelligenceRouter.ts)
-          const confidence = sig.ai_confidence ?? 0;
-          const urgencyScores: Record<string, number> = { critical: 100, high: 75, medium: 50, low: 25, informational: 10 };
           const riskScores: Record<string, number> = { critical: 100, high: 75, moderate: 50, low: 25, none: 0 };
-          const urgencyScore = urgencyScores[sig.ai_urgency || "informational"] ?? 10;
-          const impactScore = sig.ai_impact_score ?? 0;
           const maxRisk = Math.max(
             riskScores[sig.risk_revenue || "none"] ?? 0,
             riskScores[sig.risk_liability || "none"] ?? 0,
             riskScores[sig.risk_cost || "none"] ?? 0,
             riskScores[sig.risk_operational || "none"] ?? 0,
           );
-          const severity = Math.round((urgencyScore * 0.35) + (impactScore * 0.30) + (maxRisk * 0.25) + 7);
 
           const hasCriticalRisk = [sig.risk_revenue, sig.risk_liability, sig.risk_cost, sig.risk_operational].some(r => r === "critical");
           const hasHighRisk = [sig.risk_revenue, sig.risk_liability, sig.risk_cost, sig.risk_operational].some(r => r === "high");
@@ -864,43 +856,32 @@ Deno.serve(async (req: Request) => {
 
           let tier: string;
           let reason: string;
-          let autoPublishAt: string | null = null;
           let reviewDeadline: string | null = null;
 
-          if (confidence < 60) {
-            tier = "hold"; reason = `Low AI confidence (${confidence}%)`;
-            reviewDeadline = new Date(now + 24 * 3600000).toISOString();
-          } else if (sig.signal_type && holdTypes.has(sig.signal_type)) {
+          if (sig.signal_type && holdTypes.has(sig.signal_type)) {
             tier = "hold"; reason = `Signal type "${sig.signal_type}" requires review`;
             reviewDeadline = new Date(now + 24 * 3600000).toISOString();
           } else if (hasCriticalRisk) {
             tier = "hold"; reason = "Critical risk dimension";
             reviewDeadline = new Date(now + 12 * 3600000).toISOString();
-          } else if (severity >= 70) {
-            tier = "hold"; reason = `High severity (${severity})`;
-            reviewDeadline = new Date(now + 24 * 3600000).toISOString();
-          } else if (severity >= 40 || hasHighRisk) {
-            tier = "notify"; reason = `Moderate severity (${severity})`;
+          } else if (maxRisk >= 50 || hasHighRisk) {
+            tier = "notify"; reason = `Elevated risk (maxRisk=${maxRisk})`;
             reviewDeadline = new Date(now + 48 * 3600000).toISOString();
           } else {
             tier = routingMode === "autonomous" ? "auto" : "notify";
-            const delayHours = confidence >= 85 ? 2 : 4;
-            autoPublishAt = tier === "auto" ? new Date(now + delayHours * 3600000).toISOString() : null;
-            reason = `Low severity (${severity}), high confidence (${confidence}%)`;
+            reason = `Low risk (maxRisk=${maxRisk})`;
             if (tier === "notify") reason += " [supervised mode]";
           }
 
           await supabase.from("intelligence_signals").update({
             routing_tier: tier,
-            severity_score: severity,
-            confidence_score: confidence,
-            auto_publish_at: autoPublishAt,
+            severity_score: maxRisk,
             review_deadline: reviewDeadline,
             routing_reason: reason,
           }).eq("id", sig.id);
 
           if (tier === "auto") autoCount++;
-          else if (tier === "notify") { notifyCount++; notifySignals.push({ id: sig.id, title: "", severity: sig.ai_urgency || "medium", tier }); }
+          else if (tier === "notify") notifyCount++;
           else holdCount++;
         }
 
