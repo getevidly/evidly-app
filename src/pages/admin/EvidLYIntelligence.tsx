@@ -16,7 +16,7 @@ const TEXT_SEC = '#6B7F96';
 const TEXT_MUTED = '#9CA3AF';
 const BORDER = '#E5E0D8';
 
-type Tab = 'overview' | 'signals' | 'sources' | 'jie' | 'correlations' | 'scoretable' | 'jurisdiction_updates' | 'regulatory_updates';
+type Tab = 'overview' | 'signals' | 'sources' | 'jie' | 'correlations' | 'scoretable' | 'jurisdiction_updates' | 'regulatory_updates' | 'rfp';
 
 interface Source {
   id: string;
@@ -243,47 +243,56 @@ export default function EvidLYIntelligence() {
   // ScoreTable analytics
   const [scoreTableData, setScoreTableData] = useState<{ county_slug: string; total_views: number; unique_sessions: number; views_7d: number; views_30d: number; last_viewed: string | null }[]>([]);
 
+  // RFP Monitor
+  const [rfpListings, setRfpListings] = useState<{ id: string; title: string; entity_name: string; state: string; relevance_tier: string; deadline: string | null; estimated_value_min: number | null; estimated_value_max: number | null; status: string; created_at: string; ai_relevance_summary: string | null }[]>([]);
+
   const loadAll = useCallback(async () => {
     setLoading(true);
-    const [sourcesRes, signalsRes, jieRes, corrRes, stRes, jiuRes, regRes] = await Promise.all([
-      supabase.from('intelligence_sources').select('*').order('category').order('name'),
-      supabase.from('intelligence_signals').select('*').order('discovered_at', { ascending: false }).limit(200),
-      supabase.from('jie_updates').select('*').order('created_at', { ascending: false }).limit(50),
-      supabase.from('intelligence_correlations').select('*').order('created_at', { ascending: false }).limit(100),
-      supabase.from('scoretable_views').select('county_slug, viewed_at, session_id').order('viewed_at', { ascending: false }).limit(5000),
-      supabase.from('jurisdiction_intel_updates').select('*').order('created_at', { ascending: false }).limit(100),
-      supabase.from('regulatory_changes').select('*').order('created_at', { ascending: false }).limit(100),
-    ]);
-    if (sourcesRes.data) setSources(sourcesRes.data);
-    if (signalsRes.data) setSignals(signalsRes.data);
-    if (jieRes.data) setJieUpdates(jieRes.data);
-    if (corrRes.data) setCorrelations(corrRes.data);
-    if (jiuRes.data) setJurisdictionUpdates(jiuRes.data);
-    if (regRes.data) setRegulatoryChanges(regRes.data);
-    // Aggregate ScoreTable views client-side
-    if (stRes.data && stRes.data.length > 0) {
-      const now = Date.now();
-      const d7 = 7 * 86400000;
-      const d30 = 30 * 86400000;
-      const byCounty: Record<string, { total: number; sessions: Set<string>; v7: number; v30: number; last: string }> = {};
-      for (const row of stRes.data) {
-        const slug = row.county_slug;
-        if (!byCounty[slug]) byCounty[slug] = { total: 0, sessions: new Set(), v7: 0, v30: 0, last: '' };
-        byCounty[slug].total++;
-        if (row.session_id) byCounty[slug].sessions.add(row.session_id);
-        const age = now - new Date(row.viewed_at).getTime();
-        if (age < d7) byCounty[slug].v7++;
-        if (age < d30) byCounty[slug].v30++;
-        if (!byCounty[slug].last || row.viewed_at > byCounty[slug].last) byCounty[slug].last = row.viewed_at;
+    try {
+      const [sourcesRes, signalsRes, jieRes, corrRes, stRes, jiuRes, regRes, rfpRes] = await Promise.all([
+        supabase.from('intelligence_sources').select('*').order('category').order('name'),
+        supabase.from('intelligence_signals').select('*').order('discovered_at', { ascending: false }).limit(200),
+        supabase.from('jie_updates').select('*').order('created_at', { ascending: false }).limit(50),
+        supabase.from('intelligence_correlations').select('*').order('created_at', { ascending: false }).limit(100),
+        supabase.from('scoretable_views').select('county_slug, viewed_at, session_id').order('viewed_at', { ascending: false }).limit(5000),
+        supabase.from('jurisdiction_intel_updates').select('*').order('created_at', { ascending: false }).limit(100),
+        supabase.from('regulatory_changes').select('*').order('created_at', { ascending: false }).limit(100),
+        supabase.from('rfp_listings').select('id, title, entity_name, state, relevance_tier, deadline, estimated_value_min, estimated_value_max, status, created_at, ai_relevance_summary').order('created_at', { ascending: false }).limit(100),
+      ]);
+      if (sourcesRes.data) setSources(sourcesRes.data);
+      if (signalsRes.data) setSignals(signalsRes.data);
+      if (jieRes.data) setJieUpdates(jieRes.data);
+      if (corrRes.data) setCorrelations(corrRes.data);
+      if (jiuRes.data) setJurisdictionUpdates(jiuRes.data);
+      if (regRes.data) setRegulatoryChanges(regRes.data);
+      if (rfpRes.data) setRfpListings(rfpRes.data);
+      // Aggregate ScoreTable views client-side
+      if (stRes.data && stRes.data.length > 0) {
+        const now = Date.now();
+        const d7 = 7 * 86400000;
+        const d30 = 30 * 86400000;
+        const byCounty: Record<string, { total: number; sessions: Set<string>; v7: number; v30: number; last: string }> = {};
+        for (const row of stRes.data) {
+          const slug = row.county_slug;
+          if (!byCounty[slug]) byCounty[slug] = { total: 0, sessions: new Set(), v7: 0, v30: 0, last: '' };
+          byCounty[slug].total++;
+          if (row.session_id) byCounty[slug].sessions.add(row.session_id);
+          const age = now - new Date(row.viewed_at).getTime();
+          if (age < d7) byCounty[slug].v7++;
+          if (age < d30) byCounty[slug].v30++;
+          if (!byCounty[slug].last || row.viewed_at > byCounty[slug].last) byCounty[slug].last = row.viewed_at;
+        }
+        setScoreTableData(Object.entries(byCounty).map(([slug, d]) => ({
+          county_slug: slug,
+          total_views: d.total,
+          unique_sessions: d.sessions.size,
+          views_7d: d.v7,
+          views_30d: d.v30,
+          last_viewed: d.last,
+        })).sort((a, b) => b.total_views - a.total_views));
       }
-      setScoreTableData(Object.entries(byCounty).map(([slug, d]) => ({
-        county_slug: slug,
-        total_views: d.total,
-        unique_sessions: d.sessions.size,
-        views_7d: d.v7,
-        views_30d: d.v30,
-        last_viewed: d.last,
-      })).sort((a, b) => b.total_views - a.total_views));
+    } catch {
+      // Queries may fail in demo mode — empty states will show
     }
     setLoading(false);
   }, []);
@@ -613,10 +622,11 @@ export default function EvidLYIntelligence() {
           { key: 'overview' as Tab, label: 'Overview' },
           { key: 'signals' as Tab, label: `Signals${pendingReview > 0 ? ` (${pendingReview})` : ''}` },
           { key: 'sources' as Tab, label: `Sources (${totalSources})` },
-          { key: 'jie' as Tab, label: 'JIE Updates' },
+          { key: 'jie' as Tab, label: 'Intelligence' },
           { key: 'correlations' as Tab, label: 'Correlations' },
           { key: 'jurisdiction_updates' as Tab, label: `Jurisdiction${jurisdictionUpdates.length > 0 ? ` (${jurisdictionUpdates.length})` : ''}` },
           { key: 'regulatory_updates' as Tab, label: `Regulatory${regulatoryChanges.length > 0 ? ` (${regulatoryChanges.length})` : ''}` },
+          { key: 'rfp' as Tab, label: `RFP Monitor${rfpListings.length > 0 ? ` (${rfpListings.length})` : ''}` },
           { key: 'scoretable' as Tab, label: `ScoreTable${scoreTableData.length > 0 ? ` (${scoreTableData.reduce((s, d) => s + d.total_views, 0)})` : ''}` },
         ]).map(t => (
           <button key={t.key} onClick={() => setActiveTab(t.key)} style={{
@@ -1453,6 +1463,83 @@ export default function EvidLYIntelligence() {
                             Source
                           </a>
                         )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </>
+      )}
+
+      {/* ────────── TAB: RFP MONITOR ────────── */}
+      {activeTab === 'rfp' && (
+        <>
+          <div style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.6, marginBottom: 8 }}>
+            Government procurement opportunities (RFPs, RFQs, RFIs) relevant to food safety compliance technology.
+            AI-classified by relevance tier from crawled procurement portals.
+          </div>
+
+          {loading ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} h={60} />)}
+            </div>
+          ) : rfpListings.length === 0 ? (
+            <EmptyState
+              icon="📋"
+              title="No RFP listings yet"
+              subtitle="Government procurement opportunities will appear here when the AI crawl system detects RFPs, RFQs, or RFIs relevant to food safety compliance technology. Sources include SAM.gov, state procurement portals, and county bid boards."
+            />
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {rfpListings.map(rfp => {
+                const tierColor = rfp.relevance_tier === 'high'
+                  ? { bg: '#ECFDF5', text: '#059669' }
+                  : rfp.relevance_tier === 'medium'
+                    ? { bg: '#FFFBEB', text: '#D97706' }
+                    : { bg: '#F9FAFB', text: '#6B7280' };
+                const isExpired = rfp.deadline && new Date(rfp.deadline) < new Date();
+                return (
+                  <div key={rfp.id} style={{
+                    background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '16px 18px',
+                    borderLeft: `4px solid ${tierColor.text}`,
+                    opacity: isExpired ? 0.6 : 1,
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6, flexWrap: 'wrap' }}>
+                          <span style={{
+                            fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10,
+                            background: tierColor.bg, color: tierColor.text,
+                          }}>
+                            {(rfp.relevance_tier || 'unclassified').toUpperCase()}
+                          </span>
+                          <span style={{
+                            fontSize: 9, fontWeight: 600, padding: '2px 8px', borderRadius: 10,
+                            background: '#F9FAFB', color: TEXT_SEC, border: `1px solid ${BORDER}`,
+                          }}>
+                            {rfp.status?.replace(/_/g, ' ') || 'new'}
+                          </span>
+                          {rfp.state && <span style={{ fontSize: 10, color: GOLD, fontWeight: 500 }}>{rfp.state}</span>}
+                          {isExpired && <span style={{ fontSize: 9, color: '#DC2626', fontWeight: 700 }}>EXPIRED</span>}
+                        </div>
+                        <div style={{ fontSize: 13, fontWeight: 600, color: NAVY, marginBottom: 4 }}>{rfp.title}</div>
+                        <div style={{ fontSize: 12, color: TEXT_SEC, marginBottom: 4 }}>{rfp.entity_name}</div>
+                        {rfp.ai_relevance_summary && (
+                          <div style={{ fontSize: 11, color: '#1D4ED8', background: '#EFF6FF', padding: '6px 10px', borderRadius: 6, marginBottom: 6 }}>
+                            <strong>AI:</strong> {rfp.ai_relevance_summary}
+                          </div>
+                        )}
+                        <div style={{ display: 'flex', gap: 12, fontSize: 10, color: TEXT_MUTED, flexWrap: 'wrap' }}>
+                          {rfp.deadline && (
+                            <span>Deadline: <span style={{ fontFamily: "'DM Mono', monospace", fontWeight: 600 }}>{new Date(rfp.deadline).toLocaleDateString()}</span></span>
+                          )}
+                          {(rfp.estimated_value_min || rfp.estimated_value_max) && (
+                            <span>Value: ${rfp.estimated_value_min?.toLocaleString() || '?'} – ${rfp.estimated_value_max?.toLocaleString() || '?'}</span>
+                          )}
+                          <span>{new Date(rfp.created_at).toLocaleDateString()}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
