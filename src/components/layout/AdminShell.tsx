@@ -63,7 +63,7 @@ const NAV_SECTIONS: NavSection[] = [
     items: [
       { label: 'User Provisioning', path: '/admin/users' },
       { label: 'Staff & Roles', path: '/admin/staff' },
-      { label: 'User Emulation', path: '/admin/emulation' },
+      { label: 'User Emulation', path: '/admin/emulate' },
       { label: 'Configure', path: '/admin/configure' },
     ],
   },
@@ -71,9 +71,9 @@ const NAV_SECTIONS: NavSection[] = [
     title: 'Intelligence',
     items: [
       { label: 'EvidLY Intelligence', path: '/admin/intelligence' },
-      { label: 'Jurisdiction Intel', path: '/admin/jurisdiction-intel' },
-      { label: 'Regulatory Updates', path: '/admin/regulatory' },
-      { label: 'RFP Monitor', path: '/admin/rfp' },
+      { label: 'Jurisdiction Intel', path: '/admin/jurisdiction-intelligence' },
+      { label: 'Regulatory Updates', path: '/admin/regulatory-changes' },
+      { label: 'RFP Monitor', path: '/admin/rfp-monitor' },
     ],
   },
   {

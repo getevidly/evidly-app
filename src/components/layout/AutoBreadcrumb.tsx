@@ -101,6 +101,9 @@ const ROUTE_HIERARCHY: Record<string, { label: string; parent?: string }> = {
   '/admin/demo-generator': { label: 'Demo Launcher', parent: '/admin' },
   '/admin/demos': { label: 'Demo Pipeline', parent: '/admin' },
   '/admin/system/edge-functions': { label: 'Edge Functions', parent: '/admin/intelligence' },
+  '/admin/jurisdiction-intelligence': { label: 'Jurisdiction Intelligence', parent: '/admin' },
+  '/admin/emulate': { label: 'User Emulation', parent: '/admin' },
+  '/admin/rfp-monitor': { label: 'RFP Monitor', parent: '/admin' },
 
   // ── Legal ──
   '/terms': { label: 'Terms of Service', parent: '/dashboard' },

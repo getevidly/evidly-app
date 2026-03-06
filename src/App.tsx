@@ -122,6 +122,7 @@ const AdminRegulatoryChanges = lazy(() => import('./pages/AdminRegulatoryChanges
 const AdminIntelligenceQueue = lazy(() => import('./pages/AdminIntelligenceQueue'));
 const CommandCenter = lazy(() => import('./pages/admin/CommandCenter'));
 const RfpIntelligence = lazy(() => import('./pages/admin/RfpIntelligence'));
+const JurisdictionIntelligence = lazy(() => import('./pages/admin/JurisdictionIntelligence'));
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
 const AdminHome = lazy(() => import('./pages/admin/AdminHome'));
 const SecuritySettings = lazy(() => import('./pages/admin/SecuritySettings').then(m => ({ default: m.SecuritySettings })));
@@ -561,6 +562,12 @@ function AppRoutes() {
           <Route path="/admin/regulatory-changes" element={<AdminRegulatoryChanges />} />
           <Route path="/admin/intelligence-queue" element={<AdminIntelligenceQueue />} />
           <Route path="/admin/rfp-intelligence" element={<RfpIntelligence />} />
+          <Route path="/admin/jurisdiction-intelligence" element={<JurisdictionIntelligence />} />
+          {/* Redirects for old nav paths */}
+          <Route path="/admin/emulation" element={<Navigate to="/admin/emulate" replace />} />
+          <Route path="/admin/regulatory" element={<Navigate to="/admin/regulatory-changes" replace />} />
+          <Route path="/admin/rfp" element={<Navigate to="/admin/rfp-monitor" replace />} />
+          <Route path="/admin/jurisdiction-intel" element={<Navigate to="/admin/jurisdiction-intelligence" replace />} />
           {/* Demo Generator disabled — all demos are run live with a sales rep */}
           <Route path="/admin/demo-generator" element={<Navigate to="/admin/demo-launcher" replace />} />
           <Route path="/admin/demo-launcher" element={<SalesGuard><DemoLauncher /></SalesGuard>} />
