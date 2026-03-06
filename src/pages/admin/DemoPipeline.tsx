@@ -277,7 +277,7 @@ export function DemoPipeline() {
   const handleAction = async (action: string, session: DemoSession) => {
     switch (action) {
       case 'generate':
-        navigate(`/admin/demo-generator`);
+        navigate(`/admin/demo-launcher`);
         break;
       case 'preview':
         alert(`Demo preview would open for ${session.company_name}. In production, the rep shares their screen or grants temporary access.`);
@@ -390,7 +390,7 @@ export function DemoPipeline() {
         </div>
         <div className="flex gap-2">
           <button
-            onClick={() => navigate('/admin/demo-generator')}
+            onClick={() => navigate('/admin/demo-launcher')}
             className="px-4 py-2 rounded-lg text-white text-sm font-medium flex items-center gap-1.5"
             style={{ backgroundColor: NAVY }}
           >

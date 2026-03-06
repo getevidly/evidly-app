@@ -176,7 +176,7 @@ const BlogPost = lazy(() => import('./pages/public/BlogPost').then(m => ({ defau
 const VendorServiceUpdate = lazy(() => import('./pages/VendorServiceUpdate').then(m => ({ default: m.VendorServiceUpdate })));
 const AssessmentLeads = lazy(() => import('./pages/admin/AssessmentLeads'));
 const InsuranceApiKeys = lazy(() => import('./pages/admin/InsuranceApiKeys'));
-const DemoGenerator = lazy(() => import('./pages/admin/DemoGenerator'));
+// DemoGenerator preserved but not lazy-loaded — all demos are run live with a rep
 const DemoLauncher = lazy(() => import('./pages/admin/DemoLauncher'));
 const DemoPipeline = lazy(() => import('./pages/admin/DemoPipeline'));
 const GtmDashboard = lazy(() => import('./pages/admin/GtmDashboard'));
@@ -561,7 +561,8 @@ function AppRoutes() {
           <Route path="/admin/regulatory-changes" element={<AdminRegulatoryChanges />} />
           <Route path="/admin/intelligence-queue" element={<AdminIntelligenceQueue />} />
           <Route path="/admin/rfp-intelligence" element={<RfpIntelligence />} />
-          <Route path="/admin/demo-generator" element={<SalesGuard><DemoGenerator /></SalesGuard>} />
+          {/* Demo Generator disabled — all demos are run live with a sales rep */}
+          <Route path="/admin/demo-generator" element={<Navigate to="/admin/demo-launcher" replace />} />
           <Route path="/admin/demo-launcher" element={<SalesGuard><DemoLauncher /></SalesGuard>} />
           <Route path="/admin/demos" element={<Navigate to="/admin/demo-pipeline" replace />} />
           <Route path="/admin/demo-pipeline" element={<SalesGuard><DemoPipeline /></SalesGuard>} />

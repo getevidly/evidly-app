@@ -39,7 +39,6 @@ const NAV_SECTIONS: NavSection[] = [
     title: 'Growth',
     items: [
       { label: 'Demo Launcher', path: '/admin/demo-launcher', salesOnly: true },
-      { label: 'Demo Generator', path: '/admin/demo-generator', salesOnly: true },
       { label: 'Demo Pipeline', path: '/admin/demo-pipeline', salesOnly: true },
       { label: 'Kitchen Checkup', path: '/admin/kitchen-checkup', salesOnly: true },
       { label: 'Sales Pipeline', path: '/admin/sales', salesOnly: true },
