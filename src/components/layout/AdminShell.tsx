@@ -48,18 +48,13 @@ const NAV_SECTIONS: NavSection[] = [
       { label: 'Client Onboarding', path: '/admin/onboarding', salesOnly: true },
       { label: 'Leads', path: '/admin/leads', salesOnly: true },
       { label: 'GTM Dashboard', path: '/admin/gtm', salesOnly: true },
-      { label: 'EvidLY Intelligence', path: '/admin/intelligence', salesOnly: true },
+      { label: 'K2C', path: '/admin/k2c' },
     ],
   },
   {
     title: 'Operations',
     items: [
       { label: 'Command Center', path: '/admin/command-center' },
-      { label: 'Crawl Monitor', path: '/admin/crawl-monitor' },
-      { label: 'RFP Monitor', path: '/admin/rfp-monitor' },
-      { label: 'Regulatory Changes', path: '/admin/regulatory-changes' },
-      { label: 'Intelligence Queue', path: '/admin/intelligence-queue' },
-      { label: 'User Emulation', path: '/admin/emulate' },
       { label: 'Support Tickets', path: '/admin/support' },
       { label: 'Remote Connect', path: '/admin/remote-connect' },
     ],
@@ -69,7 +64,17 @@ const NAV_SECTIONS: NavSection[] = [
     items: [
       { label: 'User Provisioning', path: '/admin/users' },
       { label: 'Staff & Roles', path: '/admin/staff' },
+      { label: 'User Emulation', path: '/admin/emulation' },
       { label: 'Configure', path: '/admin/configure' },
+    ],
+  },
+  {
+    title: 'Intelligence',
+    items: [
+      { label: 'EvidLY Intelligence', path: '/admin/intelligence' },
+      { label: 'Jurisdiction Intel', path: '/admin/jurisdiction-intel' },
+      { label: 'Regulatory Updates', path: '/admin/regulatory' },
+      { label: 'RFP Monitor', path: '/admin/rfp' },
     ],
   },
   {
@@ -90,7 +95,6 @@ const NAV_SECTIONS: NavSection[] = [
     items: [
       { label: 'System Messages', path: '/admin/messages' },
       { label: 'API Keys', path: '/admin/api-keys' },
-      { label: 'K2C', path: '/admin/k2c' },
     ],
   },
   {
