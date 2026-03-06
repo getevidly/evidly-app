@@ -563,8 +563,10 @@ function AppRoutes() {
           <Route path="/admin/rfp-intelligence" element={<RfpIntelligence />} />
           <Route path="/admin/demo-generator" element={<SalesGuard><DemoGenerator /></SalesGuard>} />
           <Route path="/admin/demo-launcher" element={<SalesGuard><DemoLauncher /></SalesGuard>} />
-          <Route path="/admin/demos" element={<SalesGuard><DemoPipeline /></SalesGuard>} />
-          <Route path="/admin/assessments" element={<SalesGuard><AssessmentLeads /></SalesGuard>} />
+          <Route path="/admin/demos" element={<Navigate to="/admin/demo-pipeline" replace />} />
+          <Route path="/admin/demo-pipeline" element={<SalesGuard><DemoPipeline /></SalesGuard>} />
+          <Route path="/admin/kitchen-checkup" element={<SalesGuard><AssessmentLeads /></SalesGuard>} />
+          <Route path="/admin/assessments" element={<Navigate to="/admin/kitchen-checkup" replace />} />
           <Route path="/admin/api-keys" element={<InsuranceApiKeys />} />
           <Route path="/admin/dashboard" element={<Navigate to="/admin" replace />} />
           <Route path="/admin/command-center" element={<CommandCenter />} />

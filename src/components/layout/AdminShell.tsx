@@ -39,18 +39,26 @@ const NAV_SECTIONS: NavSection[] = [
     title: 'Growth',
     items: [
       { label: 'Demo Launcher', path: '/admin/demo-launcher', salesOnly: true },
+      { label: 'Demo Generator', path: '/admin/demo-generator', salesOnly: true },
+      { label: 'Demo Pipeline', path: '/admin/demo-pipeline', salesOnly: true },
+      { label: 'Kitchen Checkup', path: '/admin/kitchen-checkup', salesOnly: true },
       { label: 'Sales Pipeline', path: '/admin/sales', salesOnly: true },
       { label: 'Campaigns', path: '/admin/campaigns', salesOnly: true },
       { label: 'Guided Tours', path: '/admin/guided-tours', salesOnly: true },
       { label: 'Client Onboarding', path: '/admin/onboarding', salesOnly: true },
       { label: 'Leads', path: '/admin/leads', salesOnly: true },
       { label: 'GTM Dashboard', path: '/admin/gtm', salesOnly: true },
+      { label: 'EvidLY Intelligence', path: '/admin/intelligence', salesOnly: true },
     ],
   },
   {
     title: 'Operations',
     items: [
       { label: 'Command Center', path: '/admin/command-center' },
+      { label: 'Crawl Monitor', path: '/admin/crawl-monitor' },
+      { label: 'RFP Monitor', path: '/admin/rfp-monitor' },
+      { label: 'Regulatory Changes', path: '/admin/regulatory-changes' },
+      { label: 'Intelligence Queue', path: '/admin/intelligence-queue' },
       { label: 'User Emulation', path: '/admin/emulate' },
       { label: 'Support Tickets', path: '/admin/support' },
       { label: 'Remote Connect', path: '/admin/remote-connect' },
@@ -62,16 +70,6 @@ const NAV_SECTIONS: NavSection[] = [
       { label: 'User Provisioning', path: '/admin/users' },
       { label: 'Staff & Roles', path: '/admin/staff' },
       { label: 'Configure', path: '/admin/configure' },
-    ],
-  },
-  {
-    title: 'Intelligence',
-    items: [
-      { label: 'EvidLY Intelligence', path: '/admin/intelligence' },
-      { label: 'Crawl Monitor', path: '/admin/crawl-monitor' },
-      { label: 'RFP Monitor', path: '/admin/rfp-monitor' },
-      { label: 'Regulatory Changes', path: '/admin/regulatory-changes' },
-      { label: 'Intelligence Queue', path: '/admin/intelligence-queue' },
     ],
   },
   {
