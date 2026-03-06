@@ -814,11 +814,104 @@ Deno.serve(async (req: Request) => {
 
   const processed = allItems.length;
   const newCount = newInsights.length;
-  const duration_ms = Date.now() - startTime;
 
   console.log(
-    `[intelligence-collect] Phase 4 done: ${newCount} inserted, ${errors.length} errors, ${duration_ms}ms total`,
+    `[intelligence-collect] Phase 4 done: ${newCount} inserted, ${errors.length} errors, ${Date.now() - startTime}ms`,
   );
+
+  // ── Phase 4b: Auto-routing — assign routing tier to new signals ──
+  if (newCount > 0 && !isTimedOut()) {
+    try {
+      // Check routing mode
+      const { data: modeSetting } = await supabase
+        .from("platform_settings")
+        .select("value")
+        .eq("key", "intelligence_routing_mode")
+        .single();
+      const routingMode = (modeSetting?.value as string) || "supervised";
+
+      // Fetch newly inserted signals (last N seconds)
+      const recentCutoff = new Date(startTime).toISOString();
+      const { data: recentSignals } = await supabase
+        .from("intelligence_signals")
+        .select("id, ai_urgency, ai_impact_score, ai_confidence, signal_type, scope, risk_revenue, risk_liability, risk_cost, risk_operational")
+        .gte("created_at", recentCutoff)
+        .eq("status", "new");
+
+      if (recentSignals && recentSignals.length > 0) {
+        const now = Date.now();
+        let autoCount = 0, notifyCount = 0, holdCount = 0;
+        const notifySignals: { id: string; title: string; severity: string; tier: string }[] = [];
+
+        for (const sig of recentSignals) {
+          // Inline routing logic (same as intelligenceRouter.ts)
+          const confidence = sig.ai_confidence ?? 0;
+          const urgencyScores: Record<string, number> = { critical: 100, high: 75, medium: 50, low: 25, informational: 10 };
+          const riskScores: Record<string, number> = { critical: 100, high: 75, moderate: 50, low: 25, none: 0 };
+          const urgencyScore = urgencyScores[sig.ai_urgency || "informational"] ?? 10;
+          const impactScore = sig.ai_impact_score ?? 0;
+          const maxRisk = Math.max(
+            riskScores[sig.risk_revenue || "none"] ?? 0,
+            riskScores[sig.risk_liability || "none"] ?? 0,
+            riskScores[sig.risk_cost || "none"] ?? 0,
+            riskScores[sig.risk_operational || "none"] ?? 0,
+          );
+          const severity = Math.round((urgencyScore * 0.35) + (impactScore * 0.30) + (maxRisk * 0.25) + 7);
+
+          const hasCriticalRisk = [sig.risk_revenue, sig.risk_liability, sig.risk_cost, sig.risk_operational].some(r => r === "critical");
+          const hasHighRisk = [sig.risk_revenue, sig.risk_liability, sig.risk_cost, sig.risk_operational].some(r => r === "high");
+          const holdTypes = new Set(["enforcement_action", "outbreak", "legislation"]);
+
+          let tier: string;
+          let reason: string;
+          let autoPublishAt: string | null = null;
+          let reviewDeadline: string | null = null;
+
+          if (confidence < 60) {
+            tier = "hold"; reason = `Low AI confidence (${confidence}%)`;
+            reviewDeadline = new Date(now + 24 * 3600000).toISOString();
+          } else if (sig.signal_type && holdTypes.has(sig.signal_type)) {
+            tier = "hold"; reason = `Signal type "${sig.signal_type}" requires review`;
+            reviewDeadline = new Date(now + 24 * 3600000).toISOString();
+          } else if (hasCriticalRisk) {
+            tier = "hold"; reason = "Critical risk dimension";
+            reviewDeadline = new Date(now + 12 * 3600000).toISOString();
+          } else if (severity >= 70) {
+            tier = "hold"; reason = `High severity (${severity})`;
+            reviewDeadline = new Date(now + 24 * 3600000).toISOString();
+          } else if (severity >= 40 || hasHighRisk) {
+            tier = "notify"; reason = `Moderate severity (${severity})`;
+            reviewDeadline = new Date(now + 48 * 3600000).toISOString();
+          } else {
+            tier = routingMode === "autonomous" ? "auto" : "notify";
+            const delayHours = confidence >= 85 ? 2 : 4;
+            autoPublishAt = tier === "auto" ? new Date(now + delayHours * 3600000).toISOString() : null;
+            reason = `Low severity (${severity}), high confidence (${confidence}%)`;
+            if (tier === "notify") reason += " [supervised mode]";
+          }
+
+          await supabase.from("intelligence_signals").update({
+            routing_tier: tier,
+            severity_score: severity,
+            confidence_score: confidence,
+            auto_publish_at: autoPublishAt,
+            review_deadline: reviewDeadline,
+            routing_reason: reason,
+          }).eq("id", sig.id);
+
+          if (tier === "auto") autoCount++;
+          else if (tier === "notify") { notifyCount++; notifySignals.push({ id: sig.id, title: "", severity: sig.ai_urgency || "medium", tier }); }
+          else holdCount++;
+        }
+
+        console.log(`[intelligence-collect] Phase 4b: routed ${recentSignals.length} signals — auto:${autoCount} notify:${notifyCount} hold:${holdCount}`);
+      }
+    } catch (routingErr) {
+      console.warn("[intelligence-collect] Auto-routing error:", (routingErr as Error).message);
+    }
+  }
+
+  const duration_ms = Date.now() - startTime;
 
   // ── Phase 5: Log per-source crawl results to crawl_execution_log ──
   try {

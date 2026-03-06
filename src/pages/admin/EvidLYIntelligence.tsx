@@ -4,9 +4,11 @@
  * Route: /admin/intelligence
  */
 import { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { INDUSTRY_LABELS, SCOPE_LABELS, correlateSignal, type CorrelationPreview } from '../../lib/correlationEngine';
+import { routingTierLabel, routingTierColor, type RoutingTier } from '../../lib/intelligenceRouter';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -14,7 +16,7 @@ const TEXT_SEC = '#6B7F96';
 const TEXT_MUTED = '#9CA3AF';
 const BORDER = '#E5E0D8';
 
-type Tab = 'overview' | 'signals' | 'sources' | 'jie' | 'correlations' | 'scoretable' | 'jurisdiction_updates';
+type Tab = 'overview' | 'signals' | 'sources' | 'jie' | 'correlations' | 'scoretable' | 'jurisdiction_updates' | 'regulatory_updates';
 
 interface Source {
   id: string;
@@ -67,6 +69,13 @@ interface Signal {
   opp_liability_note: string | null;
   opp_cost_note: string | null;
   opp_operational_note: string | null;
+  routing_tier: RoutingTier | null;
+  severity_score: number | null;
+  confidence_score: number | null;
+  auto_published: boolean;
+  auto_publish_at: string | null;
+  review_deadline: string | null;
+  routing_reason: string | null;
 }
 
 interface JIEUpdate {
@@ -94,6 +103,26 @@ interface Correlation {
   impact_description: string | null;
   action_required: boolean;
   action_description: string | null;
+  created_at: string;
+}
+
+interface RegulatoryChange {
+  id: string;
+  source_id: string | null;
+  change_type: string;
+  title: string;
+  summary: string;
+  impact_description: string;
+  impact_level: string;
+  affected_pillars: string[];
+  affected_states: string[] | null;
+  effective_date: string | null;
+  source_url: string | null;
+  ai_generated: boolean;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  published: boolean;
+  published_at: string | null;
   created_at: string;
 }
 
@@ -174,19 +203,23 @@ const EmptyState = ({ icon, title, subtitle }: { icon: string; title: string; su
 
 export default function EvidLYIntelligence() {
   const { user } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [sources, setSources] = useState<Source[]>([]);
   const [signals, setSignals] = useState<Signal[]>([]);
+  const [routingMode, setRoutingMode] = useState<'supervised' | 'autonomous'>('supervised');
+  const [routingModeLoading, setRoutingModeLoading] = useState(false);
   const [jieUpdates, setJieUpdates] = useState<JIEUpdate[]>([]);
   const [correlations, setCorrelations] = useState<Correlation[]>([]);
   const [jurisdictionUpdates, setJurisdictionUpdates] = useState<JurisdictionIntelUpdate[]>([]);
+  const [regulatoryChanges, setRegulatoryChanges] = useState<RegulatoryChange[]>([]);
   const [activeTab, setActiveTab] = useState<Tab>('overview');
   const [loading, setLoading] = useState(true);
   const [crawlRunning, setCrawlRunning] = useState(false);
   const [crawlFeedback, setCrawlFeedback] = useState<{ type: 'success' | 'error'; msg: string } | null>(null);
 
   // Filters
-  const [sigFilter, setSigFilter] = useState({ search: '', urgency: '', type: '', status: '' });
+  const [sigFilter, setSigFilter] = useState({ search: '', urgency: '', type: '', status: '', tier: '' });
   const [srcCatFilter, setSrcCatFilter] = useState('');
   const [srcStatusFilter, setSrcStatusFilter] = useState('');
   const [srcDemoOnly, setSrcDemoOnly] = useState(false);
@@ -212,19 +245,21 @@ export default function EvidLYIntelligence() {
 
   const loadAll = useCallback(async () => {
     setLoading(true);
-    const [sourcesRes, signalsRes, jieRes, corrRes, stRes, jiuRes] = await Promise.all([
+    const [sourcesRes, signalsRes, jieRes, corrRes, stRes, jiuRes, regRes] = await Promise.all([
       supabase.from('intelligence_sources').select('*').order('category').order('name'),
       supabase.from('intelligence_signals').select('*').order('discovered_at', { ascending: false }).limit(200),
       supabase.from('jie_updates').select('*').order('created_at', { ascending: false }).limit(50),
       supabase.from('intelligence_correlations').select('*').order('created_at', { ascending: false }).limit(100),
       supabase.from('scoretable_views').select('county_slug, viewed_at, session_id').order('viewed_at', { ascending: false }).limit(5000),
       supabase.from('jurisdiction_intel_updates').select('*').order('created_at', { ascending: false }).limit(100),
+      supabase.from('regulatory_changes').select('*').order('created_at', { ascending: false }).limit(100),
     ]);
     if (sourcesRes.data) setSources(sourcesRes.data);
     if (signalsRes.data) setSignals(signalsRes.data);
     if (jieRes.data) setJieUpdates(jieRes.data);
     if (corrRes.data) setCorrelations(corrRes.data);
     if (jiuRes.data) setJurisdictionUpdates(jiuRes.data);
+    if (regRes.data) setRegulatoryChanges(regRes.data);
     // Aggregate ScoreTable views client-side
     if (stRes.data && stRes.data.length > 0) {
       const now = Date.now();
@@ -255,6 +290,42 @@ export default function EvidLYIntelligence() {
 
   useEffect(() => { loadAll(); }, [loadAll]);
 
+  // Load routing mode
+  useEffect(() => {
+    supabase.from('platform_settings').select('value').eq('key', 'intelligence_routing_mode').single()
+      .then(({ data }) => {
+        if (data?.value) setRoutingMode((data.value as string) === 'autonomous' ? 'autonomous' : 'supervised');
+      });
+  }, []);
+
+  // One-click approve from URL params (?approve=signalId)
+  useEffect(() => {
+    const approveId = searchParams.get('approve');
+    if (approveId && signals.length > 0) {
+      const signal = signals.find(s => s.id === approveId);
+      if (signal && signal.status !== 'published') {
+        updateSignalStatus(approveId, 'published');
+        searchParams.delete('approve');
+        setSearchParams(searchParams, { replace: true });
+        alert(`Signal "${signal.title}" approved and published.`);
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [signals, searchParams]);
+
+  const toggleRoutingMode = async () => {
+    const newMode = routingMode === 'supervised' ? 'autonomous' : 'supervised';
+    setRoutingModeLoading(true);
+    await supabase.from('platform_settings').upsert({
+      key: 'intelligence_routing_mode',
+      value: JSON.stringify(newMode),
+      updated_by: user?.email,
+      updated_at: new Date().toISOString(),
+    });
+    setRoutingMode(newMode);
+    setRoutingModeLoading(false);
+  };
+
   // Impact preview: refresh when targeting fields change in publish modal
   useEffect(() => {
     if (!publishModal.open) return;
@@ -281,6 +352,9 @@ export default function EvidLYIntelligence() {
   const newSignals = signals.filter(s => s.status === 'new').length;
   const criticalSignals = signals.filter(s => s.ai_urgency === 'critical').length;
   const pendingReview = signals.filter(s => ['new', 'analyzing', 'analyzed'].includes(s.status)).length;
+  const autoRouted = signals.filter(s => s.routing_tier === 'auto').length;
+  const notifyRouted = signals.filter(s => s.routing_tier === 'notify').length;
+  const holdRouted = signals.filter(s => s.routing_tier === 'hold').length;
 
   // Filtered signals
   const filteredSignals = signals.filter(s => {
@@ -288,6 +362,7 @@ export default function EvidLYIntelligence() {
     if (sigFilter.urgency && s.ai_urgency !== sigFilter.urgency) return false;
     if (sigFilter.type && s.signal_type !== sigFilter.type) return false;
     if (sigFilter.status && s.status !== sigFilter.status) return false;
+    if (sigFilter.tier && s.routing_tier !== sigFilter.tier) return false;
     return true;
   });
 
@@ -387,7 +462,7 @@ export default function EvidLYIntelligence() {
     return 'low';
   };
 
-  const deliverToClients = async (type: 'advisory' | 'jurisdiction_update', id: string, title: string) => {
+  const deliverToClients = async (type: 'advisory' | 'jurisdiction_update' | 'regulatory_update', id: string, title: string) => {
     try {
       const { data, error } = await supabase.functions.invoke('intelligence-deliver', {
         body: { type, id },
@@ -541,6 +616,7 @@ export default function EvidLYIntelligence() {
           { key: 'jie' as Tab, label: 'JIE Updates' },
           { key: 'correlations' as Tab, label: 'Correlations' },
           { key: 'jurisdiction_updates' as Tab, label: `Jurisdiction${jurisdictionUpdates.length > 0 ? ` (${jurisdictionUpdates.length})` : ''}` },
+          { key: 'regulatory_updates' as Tab, label: `Regulatory${regulatoryChanges.length > 0 ? ` (${regulatoryChanges.length})` : ''}` },
           { key: 'scoretable' as Tab, label: `ScoreTable${scoreTableData.length > 0 ? ` (${scoreTableData.reduce((s, d) => s + d.total_views, 0)})` : ''}` },
         ]).map(t => (
           <button key={t.key} onClick={() => setActiveTab(t.key)} style={{
@@ -633,6 +709,57 @@ export default function EvidLYIntelligence() {
             })}
           </div>
 
+          {/* Auto-Routing Engine */}
+          <div style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, padding: 20, gridColumn: '1 / -1' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: NAVY }}>Intelligence Routing Engine</div>
+                <div style={{ fontSize: 11, color: TEXT_MUTED, marginTop: 2 }}>
+                  Signals are auto-triaged into routing tiers based on AI confidence, severity, and risk dimensions.
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <span style={{ fontSize: 11, color: TEXT_SEC, fontWeight: 500 }}>
+                  {routingMode === 'supervised' ? 'Supervised' : 'Autonomous'}
+                </span>
+                <button onClick={toggleRoutingMode} disabled={routingModeLoading}
+                  style={{
+                    width: 48, height: 26, borderRadius: 13, border: 'none', cursor: 'pointer', position: 'relative',
+                    background: routingMode === 'autonomous' ? '#059669' : '#D1D5DB', transition: 'background 0.2s',
+                  }}>
+                  <div style={{
+                    width: 20, height: 20, borderRadius: '50%', background: '#fff', position: 'absolute', top: 3,
+                    left: routingMode === 'autonomous' ? 25 : 3, transition: 'left 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                  }} />
+                </button>
+              </div>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+              {[
+                { label: 'Auto-Publish', count: autoRouted, color: '#059669', bg: '#ECFDF5', desc: 'Low-risk, high-confidence' },
+                { label: 'Notify Admin', count: notifyRouted, color: '#D97706', bg: '#FFFBEB', desc: 'Medium — awaiting one-click approve' },
+                { label: 'Manual Review', count: holdRouted, color: '#DC2626', bg: '#FEF2F2', desc: 'High-risk or low confidence' },
+                { label: 'Auto-Published', count: signals.filter(s => s.auto_published).length, color: '#1E2D4D', bg: '#F0F4F8', desc: 'Published without manual review' },
+              ].map(stat => (
+                <div key={stat.label} style={{ padding: 14, borderRadius: 8, background: stat.bg, textAlign: 'center' }}>
+                  <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 24, fontWeight: 800, color: stat.color }}>{loading ? '\u2014' : stat.count}</div>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: stat.color, marginTop: 4 }}>{stat.label}</div>
+                  <div style={{ fontSize: 9, color: TEXT_MUTED, marginTop: 2 }}>{stat.desc}</div>
+                </div>
+              ))}
+            </div>
+            {routingMode === 'supervised' && (
+              <div style={{ marginTop: 12, padding: '10px 14px', background: '#FFFBEB', borderRadius: 8, fontSize: 11, color: '#92400E', lineHeight: 1.6 }}>
+                <strong>Supervised mode:</strong> All signals require manual approval before publishing. Switch to Autonomous to enable auto-publishing of low-risk signals.
+              </div>
+            )}
+            {routingMode === 'autonomous' && (
+              <div style={{ marginTop: 12, padding: '10px 14px', background: '#ECFDF5', borderRadius: 8, fontSize: 11, color: '#065F46', lineHeight: 1.6 }}>
+                <strong>Autonomous mode:</strong> Low-risk, high-confidence signals are auto-published after a delay (2-4 hours). Medium-risk signals send you an email with a one-click approve link.
+              </div>
+            )}
+          </div>
+
           {/* Demo-critical sources */}
           <div style={{ background: '#fff', border: `1.5px solid #E8D9B8`, borderRadius: 10, padding: 20, gridColumn: '1 / -1' }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: NAVY, marginBottom: 4 }}>Demo-Critical Sources</div>
@@ -710,6 +837,13 @@ export default function EvidLYIntelligence() {
               <option value="published">Published</option>
               <option value="dismissed">Dismissed</option>
             </select>
+            <select value={sigFilter.tier} onChange={e => setSigFilter(f => ({ ...f, tier: e.target.value }))}
+              style={{ ...inputStyle, cursor: 'pointer' }}>
+              <option value="">All Tiers</option>
+              <option value="auto">Auto-Publish</option>
+              <option value="notify">Notify Admin</option>
+              <option value="hold">Manual Review</option>
+            </select>
           </div>
 
           {loading ? (
@@ -737,6 +871,16 @@ export default function EvidLYIntelligence() {
                           {sig.ai_urgency.toUpperCase()}
                         </span>
                       )}
+                      {sig.routing_tier && (() => {
+                        const rc = routingTierColor(sig.routing_tier);
+                        return (
+                          <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 10, background: rc.bg, color: rc.text, border: `1px solid ${rc.text}30` }}
+                            title={sig.routing_reason || ''}>
+                            {routingTierLabel(sig.routing_tier)}
+                            {sig.auto_published && ' (auto)'}
+                          </span>
+                        );
+                      })()}
                       <span style={{ fontSize: 10, color: TEXT_SEC, background: '#F9FAFB', border: `1px solid ${BORDER}`, padding: '1px 7px', borderRadius: 10 }}>
                         {sig.signal_type?.replace(/_/g, ' ')}
                       </span>
@@ -837,6 +981,16 @@ export default function EvidLYIntelligence() {
                         Impact: <strong style={{
                           color: sig.ai_impact_score > 75 ? '#DC2626' : sig.ai_impact_score > 50 ? '#D97706' : '#059669'
                         }}>{sig.ai_impact_score}/100</strong>
+                      </div>
+                    )}
+                    {sig.severity_score != null && (
+                      <div style={{ textAlign: 'center', fontSize: 10, color: TEXT_MUTED }}>
+                        Severity: <strong>{sig.severity_score}</strong> · Conf: <strong>{sig.confidence_score ?? 0}%</strong>
+                      </div>
+                    )}
+                    {sig.auto_publish_at && sig.status !== 'published' && (
+                      <div style={{ textAlign: 'center', fontSize: 9, color: '#D97706', marginTop: 2 }}>
+                        Auto-pub: {new Date(sig.auto_publish_at).toLocaleString()}
                       </div>
                     )}
                     {/* Risk dimension quick-tag */}
@@ -1178,6 +1332,126 @@ export default function EvidLYIntelligence() {
                             }}>
                             Publish
                           </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </>
+      )}
+
+      {/* ────────── TAB: REGULATORY UPDATES ────────── */}
+      {activeTab === 'regulatory_updates' && (
+        <>
+          <div style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.6, marginBottom: 8 }}>
+            Regulatory code changes monitored across federal, state, county, and industry standards.
+            Published changes are delivered to all affected client intelligence feeds.
+          </div>
+
+          {loading ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} h={60} />)}
+            </div>
+          ) : regulatoryChanges.length === 0 ? (
+            <EmptyState
+              icon="📜"
+              title="No regulatory changes yet"
+              subtitle="Changes appear here when the AI monitoring system detects updates to FDA Food Code, NFPA standards, CalCode, or other tracked regulatory sources."
+            />
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {regulatoryChanges.map(rc => {
+                const impactColor = rc.impact_level === 'critical'
+                  ? { bg: '#FEF2F2', text: '#DC2626' }
+                  : rc.impact_level === 'moderate'
+                    ? { bg: '#FFFBEB', text: '#D97706' }
+                    : { bg: '#F9FAFB', text: '#6B7280' };
+                return (
+                  <div key={rc.id} style={{
+                    background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '16px 18px',
+                    borderLeft: `4px solid ${impactColor.text}`,
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+                      <div style={{ flex: 1 }}>
+                        {/* Badges */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6, flexWrap: 'wrap' }}>
+                          <span style={{
+                            fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10,
+                            background: impactColor.bg, color: impactColor.text,
+                          }}>
+                            {rc.impact_level.toUpperCase()}
+                          </span>
+                          <span style={{
+                            fontSize: 9, fontWeight: 600, padding: '2px 8px', borderRadius: 10,
+                            background: '#F9FAFB', color: TEXT_SEC, border: `1px solid ${BORDER}`,
+                          }}>
+                            {rc.change_type.replace(/_/g, ' ')}
+                          </span>
+                          {rc.affected_pillars && rc.affected_pillars.length > 0 && rc.affected_pillars.map(p => {
+                            const pc = PILLAR_COLORS[p] || PILLAR_COLORS.both;
+                            return (
+                              <span key={p} style={{
+                                fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10,
+                                background: pc.bg, color: pc.text,
+                              }}>
+                                {p.replace(/_/g, ' ').toUpperCase()}
+                              </span>
+                            );
+                          })}
+                          {rc.ai_generated && (
+                            <span style={{ fontSize: 9, color: TEXT_MUTED }}>AI-generated</span>
+                          )}
+                        </div>
+                        {/* Title + summary */}
+                        <div style={{ fontSize: 13, fontWeight: 600, color: NAVY, marginBottom: 4 }}>{rc.title}</div>
+                        <div style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.6, marginBottom: 6 }}>{rc.summary}</div>
+                        {rc.impact_description && rc.impact_description !== rc.summary && (
+                          <div style={{ fontSize: 11, color: '#1D4ED8', background: '#EFF6FF', padding: '6px 10px', borderRadius: 6, marginBottom: 6 }}>
+                            <strong>Impact:</strong> {rc.impact_description}
+                          </div>
+                        )}
+                        {/* Meta row */}
+                        <div style={{ display: 'flex', gap: 12, fontSize: 10, color: TEXT_MUTED, flexWrap: 'wrap' }}>
+                          {rc.effective_date && (
+                            <span>Effective: <span style={{ fontFamily: "'DM Mono', monospace", fontWeight: 600 }}>{rc.effective_date}</span></span>
+                          )}
+                          {rc.affected_states && rc.affected_states.length > 0 && (
+                            <span>States: {rc.affected_states.join(', ')}</span>
+                          )}
+                          <span>{new Date(rc.created_at).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                      {/* Actions */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6, minWidth: 100 }}>
+                        {rc.reviewed_by ? (
+                          <span style={{ fontSize: 10, color: '#059669', fontWeight: 600 }}>Reviewed</span>
+                        ) : (
+                          <span style={{ fontSize: 10, color: TEXT_MUTED }}>Unreviewed</span>
+                        )}
+                        {rc.published ? (
+                          <span style={{ fontSize: 10, color: GOLD, fontWeight: 600 }}>Published</span>
+                        ) : (
+                          <button onClick={async () => {
+                            await deliverToClients('regulatory_update', rc.id, rc.title);
+                            setRegulatoryChanges(prev => prev.map(r =>
+                              r.id === rc.id ? { ...r, published: true, published_at: new Date().toISOString() } : r
+                            ));
+                          }}
+                            style={{
+                              fontSize: 10, fontWeight: 700, padding: '4px 10px', borderRadius: 6, cursor: 'pointer',
+                              background: GOLD, color: '#fff', border: 'none', width: '100%',
+                            }}>
+                            Publish
+                          </button>
+                        )}
+                        {rc.source_url && (
+                          <a href={rc.source_url} target="_blank" rel="noreferrer"
+                            style={{ fontSize: 10, color: GOLD, textDecoration: 'none', textAlign: 'center' }}>
+                            Source
+                          </a>
                         )}
                       </div>
                     </div>

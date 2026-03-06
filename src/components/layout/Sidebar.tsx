@@ -18,6 +18,7 @@ import {
   type NavItem,
   type SidebarSection,
 } from '../../config/sidebarConfig';
+import { useIntelligenceUnread } from '../../hooks/useIntelligenceUnread';
 
 // ── Item descriptions (EN) ───────────────────────────────
 // Fallback descriptions keyed by item id; config descriptions take precedence.
@@ -346,6 +347,7 @@ export function Sidebar() {
   const { branding } = useBranding();
   const { t, locale } = useTranslation();
   const { orgType } = useOrgType();
+  const intelUnread = useIntelligenceUnread();
 
   const handleLogout = async () => {
     await signOut();
@@ -666,17 +668,23 @@ export function Sidebar() {
                 </div>
 
                 {/* Section items */}
-                {!isCollapsed && section.items.map(item => (
-                  <SidebarNavItem
-                    key={item.id}
-                    item={item}
-                    isActive={location.pathname === item.path}
-                    onClick={() => navigate(item.path)}
-                    displayLabel={getLabel(item)}
-                    displayDescription={getDescription(item)}
-                    testId={isTestMode ? `nav-${item.id}` : undefined}
-                  />
-                ))}
+                {!isCollapsed && section.items.map(item => {
+                  // Inject unread badge on Intelligence Feed
+                  const effectiveItem = item.id === 'client-intelligence' && intelUnread > 0
+                    ? { ...item, badge: String(intelUnread) }
+                    : item;
+                  return (
+                    <SidebarNavItem
+                      key={item.id}
+                      item={effectiveItem}
+                      isActive={location.pathname === item.path}
+                      onClick={() => navigate(item.path)}
+                      displayLabel={getLabel(item)}
+                      displayDescription={getDescription(item)}
+                      testId={isTestMode ? `nav-${item.id}` : undefined}
+                    />
+                  );
+                })}
               </div>
             );
           })}
