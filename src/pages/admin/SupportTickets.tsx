@@ -7,6 +7,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { supabase } from '../../lib/supabase';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import OrgCombobox, { type OrgOption } from '../../components/admin/OrgCombobox';
+import { KpiTile } from '../../components/admin/KpiTile';
 import { useAuth } from '../../contexts/AuthContext';
 
 const NAVY = '#1E2D4D';
@@ -477,12 +478,12 @@ export default function SupportTickets() {
       {(tab === 'all' || tab === 'mine') && (
         <>
           {/* KPI Row */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12 }}>
-            <KpiCard label="Open" value={kpis.openCount.toString()} color="#2563EB" />
-            <KpiCard label="In Progress" value={kpis.inProgressCount.toString()} color="#D97706" />
-            <KpiCard label="SLA Breached" value={kpis.slaBreachedCount.toString()} color={kpis.slaBreachedCount > 0 ? '#DC2626' : '#059669'} />
-            <KpiCard label="Avg Response" value={`${kpis.avgResponseHours}h`} color={NAVY} />
-            <KpiCard label="CSAT Score" value={`${kpis.csatScore}%`} color={kpis.csatScore >= 80 ? '#059669' : '#D97706'} />
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
+            <KpiTile label="Open" value={kpis.openCount.toString()} valueColor="blue" />
+            <KpiTile label="In Progress" value={kpis.inProgressCount.toString()} valueColor="amber" />
+            <KpiTile label="SLA Breached" value={kpis.slaBreachedCount.toString()} valueColor={kpis.slaBreachedCount > 0 ? 'red' : 'green'} />
+            <KpiTile label="Avg Response" value={`${kpis.avgResponseHours}h`} valueColor="default" />
+            <KpiTile label="CSAT Score" value={`${kpis.csatScore}%`} valueColor={kpis.csatScore >= 80 ? 'green' : 'amber'} />
           </div>
 
           {/* Filter bar */}
@@ -599,12 +600,12 @@ export default function SupportTickets() {
       {tab === 'analytics' && (
         <>
           {/* Analytics KPI row */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12 }}>
-            <KpiCard label="Total Tickets" value={analyticsKpis.total.toString()} color={NAVY} />
-            <KpiCard label="Avg First Response" value={`${analyticsKpis.avgFirstResponse}h`} color={NAVY} />
-            <KpiCard label="Avg Resolution" value={`${analyticsKpis.avgResolutionHours}h`} color={NAVY} />
-            <KpiCard label="CSAT" value={`${analyticsKpis.csatPct}%`} color={analyticsKpis.csatPct >= 80 ? '#059669' : '#D97706'} />
-            <KpiCard label="SLA Compliance" value={`${analyticsKpis.slaCompliancePct}%`} color={analyticsKpis.slaCompliancePct >= 90 ? '#059669' : '#DC2626'} />
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
+            <KpiTile label="Total Tickets" value={analyticsKpis.total.toString()} valueColor="default" />
+            <KpiTile label="Avg First Response" value={`${analyticsKpis.avgFirstResponse}h`} valueColor="default" />
+            <KpiTile label="Avg Resolution" value={`${analyticsKpis.avgResolutionHours}h`} valueColor="default" />
+            <KpiTile label="CSAT" value={`${analyticsKpis.csatPct}%`} valueColor={analyticsKpis.csatPct >= 80 ? 'green' : 'amber'} />
+            <KpiTile label="SLA Compliance" value={`${analyticsKpis.slaCompliancePct}%`} valueColor={analyticsKpis.slaCompliancePct >= 90 ? 'green' : 'red'} />
           </div>
 
           {/* Top orgs table */}
@@ -739,23 +740,6 @@ export default function SupportTickets() {
           onClose={() => setShowCreate(false)}
         />
       )}
-    </div>
-  );
-}
-
-// ── KPI Card ───────────────────────────────────────────────
-
-function KpiCard({ label, value, color }: { label: string; value: string; color: string }) {
-  return (
-    <div style={{
-      background: '#FFFFFF', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '14px 18px',
-    }}>
-      <div style={{ fontSize: 11, color: TEXT_SEC, fontWeight: 600, textTransform: 'uppercase', marginBottom: 6 }}>
-        {label}
-      </div>
-      <div style={{ fontSize: 22, fontWeight: 800, color }}>
-        {value}
-      </div>
     </div>
   );
 }

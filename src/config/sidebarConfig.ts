@@ -284,7 +284,7 @@ const I: Record<string, NavItem> = {
 
   // ── Assessment (Admin) ──
   assessmentLeads: {
-    id: 'assessment-leads', label: 'Assessment Leads', path: '/admin/assessments', icon: '📊',
+    id: 'assessment-leads', label: 'Leads', path: '/admin/assessments', icon: '📊',
     roles: [], description: 'View and analyze compliance assessment leads, risk scores, and business impact estimates.',
     badge: 'NEW',
   },

@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
+import { KpiTile } from '../../components/admin/KpiTile';
 import { useDemo } from '../../contexts/DemoContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../../components/DemoUpgradePrompt';
@@ -323,18 +324,9 @@ export default function InsuranceApiKeys() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <div className="bg-white rounded-xl shadow-sm p-4" style={{ borderLeft: '4px solid #16a34a' }}>
-          <div className="text-sm text-gray-500 font-medium mb-1">Active Keys</div>
-          <div className="text-2xl font-bold text-green-600">{activeKeys.length}</div>
-        </div>
-        <div className="bg-white rounded-xl shadow-sm p-4" style={{ borderLeft: `4px solid ${GOLD}` }}>
-          <div className="text-sm text-gray-500 font-medium mb-1">Total Requests (30d)</div>
-          <div className="text-2xl font-bold" style={{ color: GOLD }}>{keys.reduce((s, k) => s + k.request_count, 0).toLocaleString()}</div>
-        </div>
-        <div className="bg-white rounded-xl shadow-sm p-4" style={{ borderLeft: '4px solid #6b7280' }}>
-          <div className="text-sm text-gray-500 font-medium mb-1">Revoked / Expired</div>
-          <div className="text-2xl font-bold text-gray-500">{inactiveKeys.length}</div>
-        </div>
+        <KpiTile label="Active Keys" value={activeKeys.length} valueColor="green" />
+        <KpiTile label="Total Requests (30d)" value={keys.reduce((s, k) => s + k.request_count, 0).toLocaleString()} valueColor="gold" />
+        <KpiTile label="Revoked / Expired" value={inactiveKeys.length} />
       </div>
 
       {/* New key reveal banner */}

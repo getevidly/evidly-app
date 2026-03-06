@@ -5,6 +5,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
+import { KpiTile } from '../../components/admin/KpiTile';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -100,12 +101,6 @@ export default function AdminK2C() {
     URL.revokeObjectURL(url);
   };
 
-  const KpiCard = ({ label, value, color }: { label: string; value: string | number; color?: string }) => (
-    <div style={{ background: '#FFFFFF', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '16px 20px', flex: 1, minWidth: 140 }}>
-      <div style={{ fontSize: 11, color: TEXT_SEC, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>{label}</div>
-      <div style={{ fontSize: 24, fontWeight: 800, color: color || NAVY }}>{value}</div>
-    </div>
-  );
 
   const inputStyle: React.CSSProperties = { padding: '8px 12px', background: '#F9FAFB', border: '1px solid #D1D5DB', borderRadius: 6, color: NAVY, fontSize: 13, flex: 1, minWidth: 120 };
 
@@ -122,15 +117,15 @@ export default function AdminK2C() {
 
       {/* KPIs */}
       {loading ? (
-        <div style={{ display: 'flex', gap: 12 }}>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {Array.from({ length: 4 }).map((_, i) => <div key={i} style={{ flex: 1 }}><Skeleton h={70} /></div>)}
         </div>
       ) : (
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-          <KpiCard label="Total Meals" value={totalMeals.toLocaleString()} color="#059669" />
-          <KpiCard label="Total Donated" value={`$${totalDollars.toLocaleString()}`} color={GOLD} />
-          <KpiCard label="Contributing Accounts" value={contribOrgs} />
-          <KpiCard label="This Month" value={`${thisMonthMeals.toLocaleString()} meals`} />
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <KpiTile label="Total Meals" value={totalMeals.toLocaleString()} valueColor="green" />
+          <KpiTile label="Total Donated" value={`$${totalDollars.toLocaleString()}`} valueColor="gold" />
+          <KpiTile label="Contributing Accounts" value={contribOrgs} />
+          <KpiTile label="This Month" value={`${thisMonthMeals.toLocaleString()} meals`} />
         </div>
       )}
 

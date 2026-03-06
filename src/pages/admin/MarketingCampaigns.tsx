@@ -7,6 +7,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
+import { KpiTile } from '../../components/admin/KpiTile';
 import { toast } from 'sonner';
 import {
   BarChart3, Plus, TrendingUp, DollarSign, Target,
@@ -152,11 +153,11 @@ function DashboardTab({ campaigns, touchpoints, pipeline, sessions }: {
   return (
     <div className="space-y-6">
       {/* KPI row */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <KpiCard label="Active Campaigns" value={campaigns.filter(c => c.status === 'active').length} icon={Target} />
-        <KpiCard label="Touches (30d)" value={recentTouchpoints.length} icon={Users} />
-        <KpiCard label="Total Tours" value={totalTours} icon={Eye} />
-        <KpiCard label="Won Deals" value={totalWon} icon={Award} />
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <KpiTile label="Active Campaigns" value={campaigns.filter(c => c.status === 'active').length} />
+        <KpiTile label="Touches (30d)" value={recentTouchpoints.length} />
+        <KpiTile label="Total Tours" value={totalTours} />
+        <KpiTile label="Won Deals" value={totalWon} valueColor="green" />
       </div>
 
       {/* Channel performance */}
@@ -453,17 +454,7 @@ function AttributionTab({ campaigns, touchpoints, pipeline, sessions }: {
 
 // ── Shared components ──────────────────────────────────────
 
-function KpiCard({ label, value, icon: Icon }: { label: string; value: number | string; icon: any }) {
-  return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4">
-      <div className="flex items-center gap-2 mb-1">
-        <Icon className="h-4 w-4 text-gray-400" />
-        <span className="text-xs text-gray-500 font-medium">{label}</span>
-      </div>
-      <div className="text-xl font-bold" style={{ color: DARK }}>{value}</div>
-    </div>
-  );
-}
+// KpiCard removed — using shared KpiTile
 
 function FormInput({ label, value, onChange, placeholder, type = 'text' }: {
   label: string; value: string; onChange: (v: string) => void; placeholder?: string; type?: string;

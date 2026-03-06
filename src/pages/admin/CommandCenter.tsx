@@ -14,6 +14,7 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { useDemo } from '../../contexts/DemoContext';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
+import { KpiTile } from '../../components/admin/KpiTile';
 import { RefreshCw, Activity, Server, Ticket, MapPin, Building2, Radio, Zap, HeartPulse, Bell } from 'lucide-react';
 
 const NAVY = '#1E2D4D';
@@ -80,19 +81,7 @@ const Skeleton = ({ h = 20 }: { h?: number }) => (
   <div style={{ width: '100%', height: h, background: '#E5E7EB', borderRadius: 6 }} className="animate-pulse" />
 );
 
-function KpiCard({ label, value, icon: Icon, color }: { label: string; value: string | number | null; icon: any; color?: string }) {
-  return (
-    <div style={{ padding: '16px 20px', borderRight: `1px solid ${BORDER}`, flex: 1, minWidth: 120 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-        <Icon size={14} color={TEXT_MUTED} />
-        <span style={{ fontSize: 10, fontWeight: 700, color: TEXT_MUTED, textTransform: 'uppercase', letterSpacing: '0.8px' }}>{label}</span>
-      </div>
-      <div style={{ fontSize: 22, fontWeight: 800, color: color || NAVY, fontFamily: "'DM Mono', monospace" }}>
-        {value === null ? <Skeleton h={24} /> : value}
-      </div>
-    </div>
-  );
-}
+// KpiCard removed — using shared KpiTile
 
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -167,12 +156,13 @@ export default function CommandCenter() {
     ? events
     : events.filter(e => e.level === eventFilter.toUpperCase() || e.category === eventFilter);
 
-  const systemStatus = feeds.length === 0 ? 'Unknown'
-    : crawlLive >= crawlTotal * 0.9 ? 'Healthy'
-    : crawlLive >= crawlTotal * 0.6 ? 'Degraded'
-    : 'Critical';
-
-  const statusColor = systemStatus === 'Healthy' ? '#059669' : systemStatus === 'Degraded' ? '#D97706' : '#DC2626';
+  const systemStatusInfo = (() => {
+    if (feeds.length === 0) return { label: 'Unknown', sub: 'No feeds configured', colorKey: 'default' as const };
+    if (crawlLive === 0) return { label: 'Critical', sub: 'No crawl feeds active', colorKey: 'red' as const };
+    if (crawlLive < crawlTotal * 0.6) return { label: 'Critical', sub: `${crawlLive}/${crawlTotal} feeds active`, colorKey: 'red' as const };
+    if (crawlLive < crawlTotal * 0.9) return { label: 'Degraded', sub: `${crawlLive}/${crawlTotal} feeds active`, colorKey: 'amber' as const };
+    return { label: 'Healthy', sub: `${crawlLive}/${crawlTotal} feeds active`, colorKey: 'green' as const };
+  })();
 
   return (
     <div className="space-y-6">
@@ -185,14 +175,12 @@ export default function CommandCenter() {
       </div>
 
       {/* KPI Strip */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', borderRadius: 12, border: `1px solid ${BORDER}`, background: '#fff', overflow: 'hidden', width: '100%' }}>
-        <KpiCard label="Active Orgs" value={activeOrgs} icon={Building2} />
-        <KpiCard label="Active Locations" value={activeLocs} icon={MapPin} />
-        <KpiCard label="Crawl Feeds" value={loading ? null : `${crawlLive}/${crawlTotal}`} icon={Radio}
-          color={crawlLive < crawlTotal * 0.8 ? '#D97706' : '#059669'} />
-        <KpiCard label="Open Tickets" value={loading ? null : tickets.length} icon={Ticket}
-          color={tickets.length > 5 ? '#D97706' : NAVY} />
-        <KpiCard label="System Status" value={loading ? null : systemStatus} icon={HeartPulse} color={statusColor} />
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
+        <KpiTile label="Active Orgs" value={activeOrgs ?? '—'} />
+        <KpiTile label="Active Locations" value={activeLocs ?? '—'} />
+        <KpiTile label="Crawl Feeds" value={loading ? '—' : `${crawlLive}/${crawlTotal}`} valueColor={crawlLive < crawlTotal * 0.8 ? 'amber' : 'green'} />
+        <KpiTile label="Open Tickets" value={loading ? '—' : tickets.length} valueColor={tickets.length > 5 ? 'amber' : 'default'} />
+        <KpiTile label="System Status" value={loading ? '—' : systemStatusInfo.label} sub={systemStatusInfo.sub} valueColor={systemStatusInfo.colorKey} />
       </div>
 
       {/* Quick Actions */}

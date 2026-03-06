@@ -5,6 +5,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
+import { KpiTile } from '../../components/admin/KpiTile';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -72,12 +73,6 @@ export default function AdminBilling() {
   const totalLocations = subs.reduce((a, s) => a + (s.locations_count || 0), 0);
   const avgPerLoc = totalLocations > 0 ? mrr / totalLocations : 0;
 
-  const KpiCard = ({ label, value, color }: { label: string; value: string | number; color?: string }) => (
-    <div style={{ background: '#FFFFFF', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '16px 20px', flex: 1, minWidth: 130 }}>
-      <div style={{ fontSize: 11, color: TEXT_SEC, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>{label}</div>
-      <div style={{ fontSize: 22, fontWeight: 800, color: color || NAVY }}>{value}</div>
-    </div>
-  );
 
   const statusBadge = (status: string, type: 'sub' | 'inv' = 'sub') => {
     const isGood = type === 'sub' ? status === 'active' : status === 'paid';
@@ -95,17 +90,17 @@ export default function AdminBilling() {
 
       {/* KPIs */}
       {loading ? (
-        <div style={{ display: 'flex', gap: 12 }}>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
           {Array.from({ length: 6 }).map((_, i) => <div key={i} style={{ flex: 1 }}><Skeleton h={70} /></div>)}
         </div>
       ) : (
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-          <KpiCard label="MRR" value={`$${mrr.toLocaleString()}`} color={GOLD} />
-          <KpiCard label="ARR" value={`$${arr.toLocaleString()}`} color={GOLD} />
-          <KpiCard label="Active" value={activeSubs} color="#059669" />
-          <KpiCard label="Avg / Location" value={`$${avgPerLoc.toFixed(0)}`} />
-          <KpiCard label="Trial" value={trialSubs} />
-          <KpiCard label="Locations" value={totalLocations} />
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+          <KpiTile label="MRR" value={`$${mrr.toLocaleString()}`} valueColor="gold" />
+          <KpiTile label="ARR" value={`$${arr.toLocaleString()}`} valueColor="gold" />
+          <KpiTile label="Active" value={activeSubs} valueColor="green" />
+          <KpiTile label="Avg / Location" value={`$${avgPerLoc.toFixed(0)}`} />
+          <KpiTile label="Trial" value={trialSubs} />
+          <KpiTile label="Locations" value={totalLocations} />
         </div>
       )}
 

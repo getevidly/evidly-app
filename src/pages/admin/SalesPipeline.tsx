@@ -7,6 +7,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
+import { KpiTile } from '../../components/admin/KpiTile';
 import { toast } from 'sonner';
 import {
   BarChart3, DollarSign, TrendingUp, Target, Users,
@@ -139,11 +140,11 @@ export default function SalesPipeline() {
       </div>
 
       {/* Summary bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-        <SummaryCard label="Total Pipeline" value={formatCents(totalPipelineMRR) + ' MRR'} icon={DollarSign} />
-        <SummaryCard label="Weighted Pipeline" value={formatCents(Math.round(weightedPipelineMRR)) + ' MRR'} icon={TrendingUp} />
-        <SummaryCard label="Won MTD" value={`${wonMTD.length} deals · ${formatCents(wonMTDmrr)}`} icon={Award} />
-        <SummaryCard label="Lost MTD" value={`${lostMTD} deals`} icon={AlertTriangle} />
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+        <KpiTile label="Total Pipeline" value={formatCents(totalPipelineMRR) + ' MRR'} />
+        <KpiTile label="Weighted Pipeline" value={formatCents(Math.round(weightedPipelineMRR)) + ' MRR'} />
+        <KpiTile label="Won MTD" value={`${wonMTD.length} deals · ${formatCents(wonMTDmrr)}`} valueColor="green" />
+        <KpiTile label="Lost MTD" value={`${lostMTD} deals`} valueColor="red" />
       </div>
 
       {viewMode === 'kanban' ? (
@@ -372,14 +373,4 @@ function Row({ label, value }: { label: string; value: string }) {
   );
 }
 
-function SummaryCard({ label, value, icon: Icon }: { label: string; value: string; icon: any }) {
-  return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4">
-      <div className="flex items-center gap-2 mb-1">
-        <Icon className="h-4 w-4 text-gray-400" />
-        <span className="text-xs text-gray-500 font-medium">{label}</span>
-      </div>
-      <div className="text-sm font-bold" style={{ color: DARK }}>{value}</div>
-    </div>
-  );
-}
+// SummaryCard removed — using shared KpiTile

@@ -271,7 +271,7 @@ export default function GuidedTours() {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Guided Tours</h1>
-          <p className="text-sm text-gray-600 mt-1">Launch tours, track pipeline, manage templates</p>
+          <p className="text-sm text-gray-500 mt-1">In-product onboarding for new customers — guides them through first location setup, jurisdiction configuration, and compliance pillars</p>
         </div>
         <button
           onClick={() => setActiveTab('setup')}

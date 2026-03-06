@@ -10,6 +10,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
+import { KpiTile } from '../../components/admin/KpiTile';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -155,24 +156,15 @@ export default function AdminReports() {
       </div>
 
       {/* KPI strip */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
-        {[
-          { label: 'Total Reports', value: reports.length, color: NAVY },
-          { label: 'Published', value: reports.filter(r => r.status === 'published').length, color: '#2563EB' },
-          { label: 'Shared Links', value: reports.filter(r => r.share_token).length, color: GOLD },
-          { label: 'This Month', value: reports.filter(r => {
-            const d = new Date(r.created_at);
-            const now = new Date();
-            return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-          }).length, color: '#059669' },
-        ].map(k => (
-          <div key={k.label} style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 9, padding: '14px 16px' }}>
-            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 22, fontWeight: 700, color: k.color }}>
-              {loading ? '\u2014' : k.value}
-            </div>
-            <div style={{ fontSize: 11, color: '#4A5568', marginTop: 3 }}>{k.label}</div>
-          </div>
-        ))}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <KpiTile label="Total Reports" value={loading ? '—' : reports.length} />
+        <KpiTile label="Published" value={loading ? '—' : reports.filter(r => r.status === 'published').length} valueColor="blue" />
+        <KpiTile label="Shared Links" value={loading ? '—' : reports.filter(r => r.share_token).length} valueColor="gold" />
+        <KpiTile label="This Month" value={loading ? '—' : reports.filter(r => {
+          const d = new Date(r.created_at);
+          const now = new Date();
+          return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+        }).length} valueColor="green" />
       </div>
 
       {/* Tabs */}

@@ -7,6 +7,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { KpiTile } from '../../components/admin/KpiTile';
 import { supabase } from '../../lib/supabase';
 
 const NAVY = '#1E2D4D';
@@ -22,16 +23,7 @@ const Skeleton = () => (
   <span className="inline-block w-14 h-[18px] rounded animate-pulse" style={{ background: '#E5E0D8' }} />
 );
 
-function TickerCell({ label, border, children }: { label: string; border?: boolean; children: React.ReactNode }) {
-  return (
-    <div className="px-5 py-3" style={{ borderRight: border ? `1px solid ${CARD_BORDER}` : undefined }}>
-      <div className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: TEXT_MUTED }}>{label}</div>
-      <div className="text-lg font-medium mt-0.5" style={{ color: NAVY, fontFamily: "'DM Mono', monospace" }}>
-        {children}
-      </div>
-    </div>
-  );
-}
+// TickerCell removed — using shared KpiTile
 
 interface AdminCard {
   id: string;
@@ -302,38 +294,14 @@ export default function AdminHome() {
         </p>
       </div>
 
-      {/* Ticker bar */}
-      <div
-        className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 rounded-xl border bg-white overflow-hidden"
-        style={{ borderColor: CARD_BORDER }}
-      >
-        <TickerCell label="MRR" border>
-          {mrr === null ? <Skeleton /> : mrr === 0
-            ? <span style={{ color: TEXT_MUTED }}>$0</span>
-            : `$${mrr.toLocaleString('en-US', { maximumFractionDigits: 0 })}`}
-        </TickerCell>
-        <TickerCell label="Organizations" border>
-          {orgCount === null ? <Skeleton /> :
-            <span style={{ color: orgCount === 0 ? TEXT_MUTED : NAVY }}>{orgCount}</span>}
-        </TickerCell>
-        <TickerCell label="Locations" border>
-          {locCount === null ? <Skeleton /> :
-            <span style={{ color: locCount === 0 ? TEXT_MUTED : NAVY }}>{locCount}</span>}
-        </TickerCell>
-        <TickerCell label="Crawl Live" border>
-          {crawlLive === null || crawlTotal === null ? <Skeleton /> : (
-            <span>
-              <span style={{ color: crawlLive < crawlTotal * 0.8 ? '#D97706' : '#059669' }}>{crawlLive}</span>
-              <span style={{ color: TEXT_MUTED, fontSize: 13 }}>/{crawlTotal}</span>
-            </span>
-          )}
-        </TickerCell>
-        <TickerCell label="Launch Date" border>
-          <span style={{ color: GOLD }}>May 5 '26</span>
-        </TickerCell>
-        <TickerCell label="Countdown">
-          {countdown ? <span style={{ color: countdown === 'LAUNCHED' ? '#059669' : NAVY }}>{countdown}</span> : <Skeleton />}
-        </TickerCell>
+      {/* KPI tiles */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+        <KpiTile label="MRR" value={mrr === null ? '—' : mrr === 0 ? '$0' : `$${mrr.toLocaleString('en-US', { maximumFractionDigits: 0 })}`} valueColor="gold" />
+        <KpiTile label="Organizations" value={orgCount ?? '—'} />
+        <KpiTile label="Locations" value={locCount ?? '—'} />
+        <KpiTile label="Crawl Live" value={crawlLive === null || crawlTotal === null ? '—' : `${crawlLive}/${crawlTotal}`} valueColor={crawlLive !== null && crawlTotal !== null && crawlLive < crawlTotal * 0.8 ? 'amber' : 'green'} />
+        <KpiTile label="Launch Date" value="May 5 '26" valueColor="gold" />
+        <KpiTile label="Countdown" value={countdown || '—'} valueColor={countdown === 'LAUNCHED' ? 'green' : 'default'} />
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
