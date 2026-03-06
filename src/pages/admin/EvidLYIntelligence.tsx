@@ -177,17 +177,18 @@ const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
   pending:     { bg: '#FFFBEB', text: '#D97706' },
 };
 
-const CATEGORY_META: { key: string; label: string; icon: string }[] = [
-  { key: 'jurisdiction_food', label: 'County EH Depts (Food)', icon: '🍽' },
-  { key: 'jurisdiction_fire', label: 'AHJs (Fire)',            icon: '🔥' },
-  { key: 'state_agency',      label: 'CA State Agencies',      icon: '🏛' },
-  { key: 'federal_agency',    label: 'Federal Agencies',       icon: '🇺🇸' },
-  { key: 'legislative',       label: 'Legislative',            icon: '📜' },
-  { key: 'industry',          label: 'Industry Standards',     icon: '📋' },
-  { key: 'insurance',         label: 'Insurance',              icon: '🛡' },
-  { key: 'competitive',       label: 'Competitive',            icon: '🔭' },
-  { key: 'news',              label: 'Trade Press',            icon: '📰' },
-];
+const CATEGORY_META: Record<string, { label: string; icon: string }> = {
+  food_safety:   { label: 'Food Safety (EH Depts)', icon: '🍽' },
+  fire_safety:   { label: 'Fire Safety (AHJs)',     icon: '🔥' },
+  fda_recalls:   { label: 'FDA / USDA Recalls',     icon: '🇺🇸' },
+  regulatory:    { label: 'Regulatory Agencies',     icon: '📋' },
+  legislative:   { label: 'Legislative',             icon: '🏛' },
+  labor:         { label: 'Labor & Employment',      icon: '👷' },
+  environmental: { label: 'Environmental',           icon: '🌿' },
+  rfp:           { label: 'RFP / Procurement',       icon: '📄' },
+  weather:       { label: 'Weather & Operational',   icon: '🌤' },
+  competitive:   { label: 'Competitive Intel',       icon: '📊' },
+};
 
 const Skeleton = ({ w = '100%', h = 20 }: { w?: string | number; h?: number }) => (
   <div style={{ width: w, height: h, background: '#E5E7EB', borderRadius: 6, animation: 'pulse 1.5s ease-in-out infinite' }} />
@@ -356,11 +357,11 @@ export default function EvidLYIntelligence() {
   // Derived stats
   const totalSources = sources.length;
   const activeSources = sources.filter(s => s.status === 'live').length;
-  const brokenSources = sources.filter(s => ['broken', 'waf_blocked'].includes(s.status)).length;
+  const brokenSources = sources.filter(s => ['waf_blocked', 'timeout', 'error', 'degraded'].includes(s.status)).length;
   const demoCritical = sources.filter(s => s.is_demo_critical).length;
-  const newSignals = signals.filter(s => s.status === 'new').length;
-  const criticalSignals = signals.filter(s => s.ai_urgency === 'critical').length;
-  const pendingReview = signals.filter(s => ['new', 'analyzing', 'analyzed'].includes(s.status)).length;
+  const newSignals = signals.filter(s => !s.published_at).length;
+  const criticalSignals = signals.filter(s => s.revenue_risk_level === 'critical' || s.liability_risk_level === 'critical').length;
+  const pendingReview = signals.filter(s => s.routing_tier === 'hold').length;
   const autoRouted = signals.filter(s => s.routing_tier === 'auto').length;
   const notifyRouted = signals.filter(s => s.routing_tier === 'notify').length;
   const holdRouted = signals.filter(s => s.routing_tier === 'hold').length;
@@ -603,8 +604,8 @@ export default function EvidLYIntelligence() {
           { label: 'Total Signals', value: signals.length, accent: '#fff' },
           { label: 'Pending Review', value: pendingReview, accent: pendingReview > 0 ? '#FBBF24' : '#94A3B8' },
           { label: 'Critical', value: criticalSignals, accent: criticalSignals > 0 ? '#F87171' : '#94A3B8' },
-          { label: 'Published', value: signals.filter(s => s.status === 'published').length, accent: '#34D399' },
-          { label: 'Sources', value: totalSources, accent: '#94A3B8', note: `${activeSources} active · ${brokenSources} broken` },
+          { label: 'Published', value: signals.filter(s => !!s.published_at).length, accent: '#34D399' },
+          { label: 'Sources', value: totalSources, accent: '#94A3B8', note: `${activeSources} live · ${brokenSources} broken` },
         ].map(k => (
           <div key={k.label}>
             <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 28, fontWeight: 800, color: k.accent, lineHeight: 1 }}>
@@ -650,23 +651,23 @@ export default function EvidLYIntelligence() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} h={28} />)}
               </div>
-            ) : CATEGORY_META.map(cat => {
-              const catSources = sources.filter(s => s.category === cat.key);
-              const active = catSources.filter(s => s.status === 'live').length;
-              const broken = catSources.filter(s => ['broken', 'waf_blocked'].includes(s.status)).length;
+            ) : Object.entries(CATEGORY_META).map(([key, meta]) => {
+              const catSources = sources.filter(s => s.category === key);
+              if (catSources.length === 0) return null;
+              const live = catSources.filter(s => s.status === 'live').length;
+              const broken = catSources.filter(s => ['waf_blocked', 'timeout', 'error', 'degraded'].includes(s.status)).length;
               return (
-                <div key={cat.key} style={{
+                <div key={key} style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                   padding: '8px 0', borderBottom: '1px solid #F0EDE8',
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span style={{ fontSize: 14 }}>{cat.icon}</span>
-                    <span style={{ fontSize: 12, color: '#4A5568' }}>{cat.label}</span>
+                    <span style={{ fontSize: 14 }}>{meta.icon}</span>
+                    <span style={{ fontSize: 12, color: '#4A5568' }}>{meta.label}</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11 }}>
-                    <span style={{ color: '#059669', fontWeight: 600 }}>{active} live</span>
+                    <span style={{ color: live > 0 ? '#059669' : '#94A3B8', fontWeight: 600 }}>{live} live</span>
                     {broken > 0 && <span style={{ color: '#DC2626', fontWeight: 600 }}>⚠ {broken} broken</span>}
-                    {catSources.length === 0 && <span style={{ color: TEXT_MUTED }}>none</span>}
                   </div>
                 </div>
               );
@@ -1033,16 +1034,18 @@ export default function EvidLYIntelligence() {
             <select value={srcCatFilter} onChange={e => setSrcCatFilter(e.target.value)}
               style={{ ...inputStyle, minWidth: 180, cursor: 'pointer' }}>
               <option value="">All Categories</option>
-              {CATEGORY_META.map(c => <option key={c.key} value={c.key}>{c.label}</option>)}
+              {Object.entries(CATEGORY_META).map(([key, meta]) => <option key={key} value={key}>{meta.label}</option>)}
             </select>
             <select value={srcStatusFilter} onChange={e => setSrcStatusFilter(e.target.value)}
               style={{ ...inputStyle, cursor: 'pointer' }}>
               <option value="">All Statuses</option>
-              <option value="active">Active</option>
-              <option value="broken">Broken</option>
+              <option value="live">Live</option>
+              <option value="degraded">Degraded</option>
               <option value="waf_blocked">WAF Blocked</option>
-              <option value="paused">Paused</option>
+              <option value="timeout">Timeout</option>
               <option value="pending">Pending</option>
+              <option value="disabled">Disabled</option>
+              <option value="error">Error</option>
             </select>
             <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#4A5568', cursor: 'pointer' }}>
               <input type="checkbox" checked={srcDemoOnly} onChange={e => setSrcDemoOnly(e.target.checked)} />
