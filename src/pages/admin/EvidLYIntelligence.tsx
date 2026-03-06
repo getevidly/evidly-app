@@ -42,7 +42,7 @@ interface Signal {
   title: string;
   summary: string | null;
   source_url: string | null;
-  discovered_at: string;
+  created_at: string;
   scope: string | null;
   affected_jurisdictions: string[];
   ai_summary: string | null;
@@ -251,12 +251,12 @@ export default function EvidLYIntelligence() {
     try {
       const [sourcesRes, signalsRes, jieRes, corrRes, stRes, jiuRes, regRes, rfpRes] = await Promise.all([
         supabase.from('intelligence_sources').select('*').order('category').order('name'),
-        supabase.from('intelligence_signals').select('*').order('discovered_at', { ascending: false }).limit(200),
-        supabase.from('jie_updates').select('*').order('created_at', { ascending: false }).limit(50),
-        supabase.from('intelligence_correlations').select('*').order('created_at', { ascending: false }).limit(100),
+        supabase.from('intelligence_signals').select('*').order('created_at', { ascending: false }).limit(200),
+        supabase.from('jurisdiction_intel_updates').select('*').order('created_at', { ascending: false }).limit(50),
+        supabase.from('entity_correlations').select('*').order('created_at', { ascending: false }).limit(100),
         supabase.from('scoretable_views').select('county_slug, viewed_at, session_id').order('viewed_at', { ascending: false }).limit(5000),
         supabase.from('jurisdiction_intel_updates').select('*').order('created_at', { ascending: false }).limit(100),
-        supabase.from('regulatory_changes').select('*').order('created_at', { ascending: false }).limit(100),
+        supabase.from('regulatory_updates').select('*').order('created_at', { ascending: false }).limit(100),
         supabase.from('rfp_listings').select('id, title, entity_name, state, relevance_tier, deadline, estimated_value_min, estimated_value_max, status, created_at, ai_relevance_summary').order('created_at', { ascending: false }).limit(100),
       ]);
       if (sourcesRes.data) setSources(sourcesRes.data);
@@ -355,7 +355,7 @@ export default function EvidLYIntelligence() {
 
   // Derived stats
   const totalSources = sources.length;
-  const activeSources = sources.filter(s => s.status === 'active').length;
+  const activeSources = sources.filter(s => s.status === 'live').length;
   const brokenSources = sources.filter(s => ['broken', 'waf_blocked'].includes(s.status)).length;
   const demoCritical = sources.filter(s => s.is_demo_critical).length;
   const newSignals = signals.filter(s => s.status === 'new').length;
@@ -434,7 +434,7 @@ export default function EvidLYIntelligence() {
   };
 
   const publishJIEUpdate = async (updateId: string) => {
-    await supabase.from('jie_updates')
+    await supabase.from('jurisdiction_intel_updates')
       .update({ published_to_clients: true })
       .eq('id', updateId);
     setJieUpdates(prev => prev.map(u => u.id === updateId ? { ...u, published_to_clients: true } : u));
@@ -652,7 +652,7 @@ export default function EvidLYIntelligence() {
               </div>
             ) : CATEGORY_META.map(cat => {
               const catSources = sources.filter(s => s.category === cat.key);
-              const active = catSources.filter(s => s.status === 'active').length;
+              const active = catSources.filter(s => s.status === 'live').length;
               const broken = catSources.filter(s => ['broken', 'waf_blocked'].includes(s.status)).length;
               return (
                 <div key={cat.key} style={{
@@ -711,7 +711,7 @@ export default function EvidLYIntelligence() {
                       {sig.title}
                     </div>
                     <div style={{ fontSize: 10, color: TEXT_MUTED, marginTop: 2 }}>
-                      {sig.signal_type?.replace(/_/g, ' ')} · {sig.source_key} · {new Date(sig.discovered_at).toLocaleDateString()}
+                      {sig.signal_type?.replace(/_/g, ' ')} · {sig.source_key} · {new Date(sig.created_at).toLocaleDateString()}
                     </div>
                   </div>
                 </div>
@@ -785,12 +785,12 @@ export default function EvidLYIntelligence() {
                 {sources.filter(s => s.is_demo_critical).map(s => (
                   <div key={s.id} style={{
                     padding: '10px 12px', borderRadius: 8, border: '1px solid',
-                    borderColor: s.status === 'active' ? '#BBF7D0' : '#FECACA',
-                    background: s.status === 'active' ? '#F0FDF4' : '#FEF2F2',
+                    borderColor: s.status === 'live' ? '#BBF7D0' : '#FECACA',
+                    background: s.status === 'live' ? '#F0FDF4' : '#FEF2F2',
                   }}>
                     <div style={{ fontSize: 11, fontWeight: 600,
-                      color: s.status === 'active' ? '#065F46' : '#991B1B' }}>
-                      {s.status === 'active' ? '● ' : '✗ '}{s.name}
+                      color: s.status === 'live' ? '#065F46' : '#991B1B' }}>
+                      {s.status === 'live' ? '● ' : '✗ '}{s.name}
                     </div>
                     <div style={{ fontSize: 10, color: TEXT_MUTED, marginTop: 2 }}>
                       {s.crawl_method} · {s.crawl_frequency}
