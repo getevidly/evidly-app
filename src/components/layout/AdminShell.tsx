@@ -51,6 +51,16 @@ const NAV_SECTIONS: NavSection[] = [
     ],
   },
   {
+    title: 'Intelligence',
+    items: [
+      { label: 'EvidLY Intelligence', path: '/admin/intelligence' },
+      { label: 'Jurisdiction Intel', path: '/admin/jurisdiction-intelligence' },
+      { label: 'Regulatory Updates', path: '/admin/regulatory-changes' },
+      { label: 'RFP Monitor', path: '/admin/rfp-monitor' },
+      { label: 'Crawl Monitor', path: '/admin/crawl-monitor' },
+    ],
+  },
+  {
     title: 'Operations',
     items: [
       { label: 'Command Center', path: '/admin/command-center' },
@@ -65,15 +75,6 @@ const NAV_SECTIONS: NavSection[] = [
       { label: 'Staff & Roles', path: '/admin/staff' },
       { label: 'User Emulation', path: '/admin/emulate' },
       { label: 'Configure', path: '/admin/configure' },
-    ],
-  },
-  {
-    title: 'Intelligence',
-    items: [
-      { label: 'EvidLY Intelligence', path: '/admin/intelligence' },
-      { label: 'Jurisdiction Intel', path: '/admin/jurisdiction-intelligence' },
-      { label: 'Regulatory Updates', path: '/admin/regulatory-changes' },
-      { label: 'RFP Monitor', path: '/admin/rfp-monitor' },
     ],
   },
   {

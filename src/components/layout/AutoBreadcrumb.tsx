@@ -104,6 +104,7 @@ const ROUTE_HIERARCHY: Record<string, { label: string; parent?: string }> = {
   '/admin/jurisdiction-intelligence': { label: 'Jurisdiction Intelligence', parent: '/admin' },
   '/admin/emulate': { label: 'User Emulation', parent: '/admin' },
   '/admin/rfp-monitor': { label: 'RFP Monitor', parent: '/admin' },
+  '/admin/crawl-monitor': { label: 'Crawl Monitor', parent: '/admin' },
 
   // ── Legal ──
   '/terms': { label: 'Terms of Service', parent: '/dashboard' },
