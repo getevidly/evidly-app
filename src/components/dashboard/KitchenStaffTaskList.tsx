@@ -16,7 +16,7 @@ import { useDemo } from '../../contexts/DemoContext';
 import { useTooltip } from '../../hooks/useTooltip';
 import { SectionTooltip } from '../ui/SectionTooltip';
 import { useTranslation } from '../../contexts/LanguageContext';
-import type { Locale } from '../../lib/i18n';
+import type { Locale } from '../../lib/i18nMeta';
 import { AlertBanner, type AlertBannerItem } from '../shared/AlertBanner';
 import { DashboardHero } from './shared/DashboardHero';
 import { DEMO_ROLE_NAMES } from './shared/constants';

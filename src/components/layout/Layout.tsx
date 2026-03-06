@@ -5,19 +5,6 @@ import { toast } from 'sonner';
 import { Sidebar } from './Sidebar';
 import { TopBar } from './TopBar';
 import { MobileTabBar } from './MobileTabBar';
-import { GuidedTour } from '../GuidedTour';
-import { DemoTour } from '../DemoTour';
-import { AIChatPanel } from '../AIChatPanel';
-import { OfflineBanner } from '../OfflineBanner';
-import { DemoBanner } from '../DemoBanner';
-
-import { QuickSwitcher } from '../QuickSwitcher';
-import { ReferralTouchpoint } from '../ReferralTouchpoint';
-import { BiweeklyReferralBanner } from '../BiweeklyReferralBanner';
-import { DemoCTABar } from '../DemoCTABar';
-import { DemoWatermark } from '../DemoWatermark';
-import { DemoRestrictions } from '../DemoRestrictions';
-import { DemoButtonGuard } from '../DemoButtonGuard';
 import { QuickActionsBar } from './QuickActionsBar';
 import { AutoBreadcrumb } from './AutoBreadcrumb';
 import { useDemo } from '../../contexts/DemoContext';
@@ -27,9 +14,21 @@ import { useNotifications } from '../../contexts/NotificationContext';
 import { useRealtimeNotifications } from '../../hooks/useRealtimeNotifications';
 import { useMobile } from '../../hooks/useMobile';
 import { trackEvent } from '../../utils/analytics';
-import { MobileDailyTasks } from '../mobile/MobileDailyTasks';
 
-// Lazy-load production mobile component — desktop never downloads this JS
+// Lazy-load all overlay components — none are needed for initial render
+const GuidedTour = lazy(() => import('../GuidedTour').then(m => ({ default: m.GuidedTour })));
+const DemoTour = lazy(() => import('../DemoTour').then(m => ({ default: m.DemoTour })));
+const OfflineBanner = lazy(() => import('../OfflineBanner').then(m => ({ default: m.OfflineBanner })));
+const DemoBanner = lazy(() => import('../DemoBanner').then(m => ({ default: m.DemoBanner })));
+const AIChatPanel = lazy(() => import('../AIChatPanel').then(m => ({ default: m.AIChatPanel })));
+const QuickSwitcher = lazy(() => import('../QuickSwitcher').then(m => ({ default: m.QuickSwitcher })));
+const ReferralTouchpoint = lazy(() => import('../ReferralTouchpoint').then(m => ({ default: m.ReferralTouchpoint })));
+const BiweeklyReferralBanner = lazy(() => import('../BiweeklyReferralBanner').then(m => ({ default: m.BiweeklyReferralBanner })));
+const DemoCTABar = lazy(() => import('../DemoCTABar').then(m => ({ default: m.DemoCTABar })));
+const DemoWatermark = lazy(() => import('../DemoWatermark').then(m => ({ default: m.DemoWatermark })));
+const DemoRestrictions = lazy(() => import('../DemoRestrictions').then(m => ({ default: m.DemoRestrictions })));
+const DemoButtonGuard = lazy(() => import('../DemoButtonGuard').then(m => ({ default: m.DemoButtonGuard })));
+const MobileDailyTasks = lazy(() => import('../mobile/MobileDailyTasks').then(m => ({ default: m.MobileDailyTasks })));
 const MobileDailyTasksProduction = lazy(() =>
   import('../mobile/MobileDailyTasksProduction').then(m => ({ default: m.MobileDailyTasksProduction }))
 );
@@ -124,7 +123,7 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
       {presenterMode && (
         <div className="fixed top-0 left-0 right-0 h-0.5 z-[99998]" style={{ backgroundColor: '#d4af37' }} />
       )}
-      <DemoBanner />
+      <Suspense fallback={null}><DemoBanner /></Suspense>
       <Sidebar />
       <div className="lg:pl-60 flex flex-col flex-1 overflow-hidden isolate">
         <TopBar
@@ -134,7 +133,7 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
           onLocationChange={onLocationChange}
           demoMode={demoMode}
         />
-        <OfflineBanner />
+        <Suspense fallback={null}><OfflineBanner /></Suspense>
         {/* BREADCRUMB BAR — fixed above scroll area, never scrolls away */}
         <div
           className="flex-shrink-0 z-40"
@@ -157,26 +156,26 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
       </div>
       <QuickActionsBar />
       <MobileTabBar />
-      {/* MobileStickyBar removed — DemoCTABar handles the demo CTA */}
-      {tourActive ? <DemoTour /> : <GuidedTour onActiveChange={handleGuidedTourActiveChange} />}
-      <AIChatPanel hidden={anyTourActive} />
-      <ReferralTouchpoint />
-      <BiweeklyReferralBanner />
-      <QuickSwitcher />
-      <DemoCTABar />
-      <DemoWatermark />
-      <DemoRestrictions />
-      <DemoButtonGuard />
-      {/* Mobile daily tasks overlay — demo mode, mobile/tablet, dashboard route only */}
-      {isDemoMode && (isMobile || isTablet) && (location.pathname === '/dashboard' || location.pathname === '/') && (
-        <MobileDailyTasks />
-      )}
-      {/* Production mobile daily tasks — authenticated, mobile/tablet, dashboard route only */}
-      {!isDemoMode && !!session?.user && (isMobile || isTablet) && (location.pathname === '/dashboard' || location.pathname === '/') && (
-        <Suspense fallback={null}>
+      {/* Lazy-loaded overlays — none needed for initial paint */}
+      <Suspense fallback={null}>
+        {tourActive ? <DemoTour /> : <GuidedTour onActiveChange={handleGuidedTourActiveChange} />}
+        <AIChatPanel hidden={anyTourActive} />
+        <ReferralTouchpoint />
+        <BiweeklyReferralBanner />
+        <QuickSwitcher />
+        <DemoCTABar />
+        <DemoWatermark />
+        <DemoRestrictions />
+        <DemoButtonGuard />
+        {/* Mobile daily tasks overlay — demo mode, mobile/tablet, dashboard route only */}
+        {isDemoMode && (isMobile || isTablet) && (location.pathname === '/dashboard' || location.pathname === '/') && (
+          <MobileDailyTasks />
+        )}
+        {/* Production mobile daily tasks — authenticated, mobile/tablet, dashboard route only */}
+        {!isDemoMode && !!session?.user && (isMobile || isTablet) && (location.pathname === '/dashboard' || location.pathname === '/') && (
           <MobileDailyTasksProduction />
-        </Suspense>
-      )}
+        )}
+      </Suspense>
     </div>
   );
 }

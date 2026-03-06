@@ -1,25 +1,13 @@
 // ============================================================
-// EvidLY i18n — Multi-language support
+// EvidLY i18n — Translation data (heavy — ~108 KB)
 // ============================================================
-// Per-user language preference (stored in localStorage, TODO: Supabase user profile).
-// Structured to support RTL languages later (dir property per locale).
+// This file is lazy-loaded by LanguageContext. For lightweight
+// metadata (types, LOCALE_META, SUPPORTED_LOCALES), import
+// from './i18nMeta' instead.
 // ============================================================
 
-export type Locale = 'en' | 'es';
-
-export interface LocaleMeta {
-  label: string;      // Display name in that language
-  flag: string;       // Emoji flag
-  dir: 'ltr' | 'rtl'; // Text direction (RTL support ready)
-}
-
-export const LOCALE_META: Record<Locale, LocaleMeta> = {
-  en: { label: 'English', flag: '🇺🇸', dir: 'ltr' },
-  es: { label: 'Español', flag: '🇪🇸', dir: 'ltr' },
-};
-
-export const SUPPORTED_LOCALES = Object.keys(LOCALE_META) as Locale[];
-export const DEFAULT_LOCALE: Locale = 'en';
+import { type Locale } from './i18nMeta';
+export { type Locale, type LocaleMeta, LOCALE_META, SUPPORTED_LOCALES, DEFAULT_LOCALE } from './i18nMeta';
 
 // --------------- Translation Keys ---------------
 
@@ -2874,3 +2862,6 @@ export function getTranslation(locale: Locale, key: string): string {
   }
   return typeof obj === 'string' ? obj : key;
 }
+
+/** Type-only export for LanguageContext — does NOT cause runtime import */
+export type EnTranslations = typeof en;

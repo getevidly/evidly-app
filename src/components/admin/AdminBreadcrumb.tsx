@@ -9,7 +9,7 @@ interface AdminBreadcrumbProps {
   crumbs: Crumb[];
 }
 
-export default function AdminBreadcrumb({ crumbs }: AdminBreadcrumbProps) {
+export default function AdminBreadcrumb({ crumbs = [] }: AdminBreadcrumbProps) {
   const navigate = useNavigate();
   return (
     <nav style={{

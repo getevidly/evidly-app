@@ -1,16 +1,17 @@
-import { useState, useMemo } from 'react';
+import { lazy, Suspense, useState, useMemo } from 'react';
 import { ChevronDown, MapPin, User, Users, Lock, Eye, EyeOff, Globe, Search, Settings, HelpCircle } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { ProfileModal } from '../ProfileModal';
-import { NotificationCenter } from '../NotificationCenter';
 import { useRole } from '../../contexts/RoleContext';
 import { useDemo } from '../../contexts/DemoContext';
 import { DemoModeBadge } from '../DemoModeBadge';
 import { useTranslation } from '../../contexts/LanguageContext';
-import { SUPPORTED_LOCALES, LOCALE_META, type Locale } from '../../lib/i18n';
+import { SUPPORTED_LOCALES, LOCALE_META, type Locale } from '../../lib/i18nMeta';
 import { DEMO_ROLES, checkTestMode } from '../../config/sidebarConfig';
 import { usePermission } from '../../hooks/usePermission';
+
+const NotificationCenter = lazy(() => import('../NotificationCenter').then(m => ({ default: m.NotificationCenter })));
+const ProfileModal = lazy(() => import('../ProfileModal').then(m => ({ default: m.ProfileModal })));
 
 interface LocationOption {
   id: string;
@@ -174,7 +175,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
 
             {/* Notification Center */}
             <div data-tour="tour-alerts">
-              <NotificationCenter />
+              <Suspense fallback={null}><NotificationCenter /></Suspense>
             </div>
 
             {locations && locations.length > 0 && (
@@ -445,7 +446,9 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
         </div>
       </div>
 
-      <ProfileModal isOpen={showProfileModal} onClose={() => setShowProfileModal(false)} />
+      <Suspense fallback={null}>
+        <ProfileModal isOpen={showProfileModal} onClose={() => setShowProfileModal(false)} />
+      </Suspense>
 
       {/* Change Password Modal */}
       {showChangePassword && (

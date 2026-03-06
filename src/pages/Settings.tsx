@@ -16,7 +16,7 @@ import { useRole, UserRole } from '../contexts/RoleContext';
 import { useDemo } from '../contexts/DemoContext';
 import { useOperatingHours, generateOpeningTimes, generateClosingTimes, generateAllTimes, DAY_LABELS, formatTime24to12 } from '../contexts/OperatingHoursContext';
 import { useTranslation } from '../contexts/LanguageContext';
-import { SUPPORTED_LOCALES, LOCALE_META, type Locale } from '../lib/i18n';
+import { SUPPORTED_LOCALES, LOCALE_META, type Locale } from '../lib/i18nMeta';
 import { useOffline } from '../contexts/OfflineContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
