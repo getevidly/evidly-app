@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { BUCKETS } from './storage';
 
 // ── Types ──────────────────────────────────────────────────
 export interface PhotoUploadParams {
@@ -23,7 +24,7 @@ export interface PhotoUploadResult {
   thumbnailUrl?: string;
 }
 
-const BUCKET = 'compliance-photos';
+const BUCKET = BUCKETS.COMPLIANCE_PHOTOS;
 
 // ── Helpers ────────────────────────────────────────────────
 

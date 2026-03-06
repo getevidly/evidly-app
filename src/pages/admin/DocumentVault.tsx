@@ -4,6 +4,7 @@
  */
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
+import { uploadFile, getSignedUrl, deleteFile, BUCKETS } from '../../lib/storage';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 
 const NAVY = '#1E2D4D';
@@ -96,9 +97,10 @@ export default function DocumentVault() {
 
     if (formFile) {
       const safeName = `${Date.now()}-${formFile.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
-      const { error: uploadError } = await supabase.storage.from('vault').upload(safeName, formFile);
-      if (uploadError) {
-        alert(`Upload error: ${uploadError.message}`);
+      try {
+        await uploadFile(BUCKETS.VAULT, safeName, formFile);
+      } catch (e: any) {
+        alert(e.message);
         setUploading(false);
         return;
       }
@@ -135,7 +137,7 @@ export default function DocumentVault() {
   const deleteDoc = async (doc: VaultDoc) => {
     if (!confirm(`Delete "${doc.name}"?`)) return;
     if (doc.storage_path) {
-      await supabase.storage.from('vault').remove([doc.storage_path]);
+      await deleteFile(BUCKETS.VAULT, doc.storage_path);
     }
     await supabase.from('vault_documents').delete().eq('id', doc.id);
     await loadDocs();
@@ -258,8 +260,10 @@ export default function DocumentVault() {
                   <div style={{ display: 'flex', gap: 6 }}>
                     {doc.storage_path && (
                       <button onClick={async () => {
-                        const { data } = await supabase.storage.from('vault').createSignedUrl(doc.storage_path!, 60);
-                        if (data?.signedUrl) window.open(data.signedUrl, '_blank');
+                        try {
+                          const url = await getSignedUrl(BUCKETS.VAULT, doc.storage_path!, 60);
+                          window.open(url, '_blank');
+                        } catch { /* ignore */ }
                       }} style={{ padding: '4px 10px', background: '#F9FAFB', border: `1px solid ${BORDER}`, borderRadius: 4, color: TEXT_SEC, fontSize: 11, cursor: 'pointer' }}>
                         Download
                       </button>

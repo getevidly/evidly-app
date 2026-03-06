@@ -61,7 +61,7 @@ VALUES (
 )
 ON CONFLICT (id) DO NOTHING;
 
--- 4. reports — Generated compliance report PDFs (public read for signed URLs)
+-- 4. reports — Generated compliance report PDFs
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 VALUES (
   'reports',
@@ -75,61 +75,64 @@ VALUES (
 )
 ON CONFLICT (id) DO NOTHING;
 
+-- 5. uploads — General file uploads
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('uploads', 'uploads', false)
+ON CONFLICT (id) DO NOTHING;
+
 
 -- ── RLS POLICIES ──────────────────────────────────────────────
+-- Drop any existing policies to avoid conflicts on re-run
+DO $$ BEGIN
+  DROP POLICY IF EXISTS "vault_upload" ON storage.objects;
+  DROP POLICY IF EXISTS "vault_read" ON storage.objects;
+  DROP POLICY IF EXISTS "vault_delete" ON storage.objects;
+  DROP POLICY IF EXISTS "vault_all" ON storage.objects;
+  DROP POLICY IF EXISTS "photos_upload" ON storage.objects;
+  DROP POLICY IF EXISTS "photos_read" ON storage.objects;
+  DROP POLICY IF EXISTS "compliance_photos_all" ON storage.objects;
+  DROP POLICY IF EXISTS "documents_upload" ON storage.objects;
+  DROP POLICY IF EXISTS "documents_read" ON storage.objects;
+  DROP POLICY IF EXISTS "documents_delete" ON storage.objects;
+  DROP POLICY IF EXISTS "documents_insert" ON storage.objects;
+  DROP POLICY IF EXISTS "documents_select" ON storage.objects;
+  DROP POLICY IF EXISTS "reports_read" ON storage.objects;
+  DROP POLICY IF EXISTS "reports_service_write" ON storage.objects;
+  DROP POLICY IF EXISTS "reports_all" ON storage.objects;
+  DROP POLICY IF EXISTS "uploads_all" ON storage.objects;
+  DROP POLICY IF EXISTS "auth_upload_documents" ON storage.objects;
+  DROP POLICY IF EXISTS "auth_read_documents" ON storage.objects;
+  DROP POLICY IF EXISTS "auth_upload_uploads" ON storage.objects;
+  DROP POLICY IF EXISTS "auth_read_uploads" ON storage.objects;
+  DROP POLICY IF EXISTS "admin_all_vault" ON storage.objects;
+END $$;
 
--- vault: admin-only (EvidLY staff)
-CREATE POLICY "vault_upload" ON storage.objects FOR INSERT
-  TO authenticated
-  WITH CHECK (
-    bucket_id = 'vault'
-    AND auth.jwt() ->> 'email' LIKE '%@getevidly.com'
-  );
+-- Vault — all authenticated users (admin guards in app layer)
+CREATE POLICY "vault_all" ON storage.objects
+  FOR ALL TO authenticated
+  USING (bucket_id = 'vault')
+  WITH CHECK (bucket_id = 'vault');
 
-CREATE POLICY "vault_read" ON storage.objects FOR SELECT
-  TO authenticated
-  USING (
-    bucket_id = 'vault'
-    AND auth.jwt() ->> 'email' LIKE '%@getevidly.com'
-  );
-
-CREATE POLICY "vault_delete" ON storage.objects FOR DELETE
-  TO authenticated
-  USING (
-    bucket_id = 'vault'
-    AND auth.jwt() ->> 'email' LIKE '%@getevidly.com'
-  );
-
--- compliance-photos: any authenticated user can upload/read
-CREATE POLICY "photos_upload" ON storage.objects FOR INSERT
-  TO authenticated
+-- Compliance photos — all authenticated users
+CREATE POLICY "compliance_photos_all" ON storage.objects
+  FOR ALL TO authenticated
+  USING (bucket_id = 'compliance-photos')
   WITH CHECK (bucket_id = 'compliance-photos');
 
-CREATE POLICY "photos_read" ON storage.objects FOR SELECT
-  TO authenticated
-  USING (bucket_id = 'compliance-photos');
-
--- documents: any authenticated user can upload/read
-CREATE POLICY "documents_upload" ON storage.objects FOR INSERT
-  TO authenticated
+-- Documents — all authenticated users
+CREATE POLICY "documents_all" ON storage.objects
+  FOR ALL TO authenticated
+  USING (bucket_id = 'documents')
   WITH CHECK (bucket_id = 'documents');
 
-CREATE POLICY "documents_read" ON storage.objects FOR SELECT
-  TO authenticated
-  USING (bucket_id = 'documents');
+-- Reports — all authenticated users
+CREATE POLICY "reports_all" ON storage.objects
+  FOR ALL TO authenticated
+  USING (bucket_id = 'reports')
+  WITH CHECK (bucket_id = 'reports');
 
-CREATE POLICY "documents_delete" ON storage.objects FOR DELETE
-  TO authenticated
-  USING (bucket_id = 'documents');
-
--- reports: any authenticated user can read; service_role writes
-CREATE POLICY "reports_read" ON storage.objects FOR SELECT
-  TO authenticated
-  USING (bucket_id = 'reports');
-
-CREATE POLICY "reports_service_write" ON storage.objects FOR INSERT
-  TO authenticated
-  WITH CHECK (
-    bucket_id = 'reports'
-    AND (auth.jwt() ->> 'email' LIKE '%@getevidly.com' OR auth.role() = 'service_role')
-  );
+-- Uploads — all authenticated users
+CREATE POLICY "uploads_all" ON storage.objects
+  FOR ALL TO authenticated
+  USING (bucket_id = 'uploads')
+  WITH CHECK (bucket_id = 'uploads');
