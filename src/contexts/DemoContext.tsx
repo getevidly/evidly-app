@@ -155,15 +155,20 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   const [tourStep, setTourStep] = useState(0);
 
   // ── Sync demo mode → Supabase write guard mode ─────────
+  // platform_admin always gets 'live' — they need full write access
+  // even when their org has is_demo = true.
+  const isPlatformAdmin = profile?.role === 'platform_admin';
   useEffect(() => {
-    if (isDemoMode) {
+    if (isPlatformAdmin) {
+      setDemoGuardMode('live');
+    } else if (isDemoMode) {
       setDemoGuardMode('anonymous_demo');
     } else if (isAuthenticatedDemo) {
       setDemoGuardMode('authenticated_demo');
     } else {
       setDemoGuardMode('live');
     }
-  }, [isDemoMode, isAuthenticatedDemo]);
+  }, [isDemoMode, isAuthenticatedDemo, isPlatformAdmin]);
 
   // ── Presenter Mode ──────────────────────────────────────
   const [presenterMode, setPresenterMode] = useState(() => {

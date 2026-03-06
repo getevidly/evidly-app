@@ -28,6 +28,9 @@ export async function uploadFile(
     console.error(`Upload failed — bucket: ${bucket}, path: ${path}`, error);
     throw new Error(`Upload error: ${error.message}`);
   }
+  if (!data) {
+    throw new Error('Upload blocked — storage returned no data. Check demo mode.');
+  }
   return data;
 }
 
