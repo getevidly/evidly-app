@@ -6,6 +6,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
+import { INDUSTRY_LABELS, SCOPE_LABELS, correlateSignal, type CorrelationPreview } from '../../lib/correlationEngine';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -53,6 +54,19 @@ interface Signal {
   risk_liability: string | null;
   risk_cost: string | null;
   risk_operational: string | null;
+  orgs_affected: number;
+  target_industries: string[] | null;
+  target_counties: string[] | null;
+  target_all_industries: boolean;
+  signal_scope: string | null;
+  opp_revenue: string | null;
+  opp_liability: string | null;
+  opp_cost: string | null;
+  opp_operational: string | null;
+  opp_revenue_note: string | null;
+  opp_liability_note: string | null;
+  opp_cost_note: string | null;
+  opp_operational_note: string | null;
 }
 
 interface JIEUpdate {
@@ -184,8 +198,14 @@ export default function EvidLYIntelligence() {
     revenueRisk: 'none' as string, liabilityRisk: 'none' as string,
     costRisk: 'none' as string, operationalRisk: 'none' as string,
     revenueNote: '', liabilityNote: '', costNote: '', operationalNote: '',
+    oppRevenue: 'none' as string, oppLiability: 'none' as string,
+    oppCost: 'none' as string, oppOperational: 'none' as string,
+    oppRevenueNote: '', oppLiabilityNote: '', oppCostNote: '', oppOperationalNote: '',
+    allIndustries: true, targetIndustries: [] as string[], targetCounties: '',
+    signalScope: 'statewide' as string,
     recommendedAction: '', actionDeadline: '',
   });
+  const [impactPreview, setImpactPreview] = useState<CorrelationPreview | null>(null);
 
   // ScoreTable analytics
   const [scoreTableData, setScoreTableData] = useState<{ county_slug: string; total_views: number; unique_sessions: number; views_7d: number; views_30d: number; last_viewed: string | null }[]>([]);
@@ -234,6 +254,24 @@ export default function EvidLYIntelligence() {
   }, []);
 
   useEffect(() => { loadAll(); }, [loadAll]);
+
+  // Impact preview: refresh when targeting fields change in publish modal
+  useEffect(() => {
+    if (!publishModal.open) return;
+    const targetCountiesArr = pubForm.targetCounties.split(',').map(c => c.trim()).filter(Boolean);
+    const targeting = {
+      target_industries: pubForm.targetIndustries,
+      target_all_industries: pubForm.allIndustries,
+      target_counties: targetCountiesArr,
+      signal_scope: pubForm.signalScope,
+    };
+    let cancelled = false;
+    const isDemoMode = !user || user.email === 'demo@getevidly.com';
+    correlateSignal(targeting, supabase, isDemoMode).then(preview => {
+      if (!cancelled) setImpactPreview(preview);
+    });
+    return () => { cancelled = true; };
+  }, [publishModal.open, pubForm.allIndustries, pubForm.targetIndustries, pubForm.targetCounties, pubForm.signalScope, user]);
 
   // Derived stats
   const totalSources = sources.length;
@@ -327,8 +365,17 @@ export default function EvidLYIntelligence() {
       costRisk: signal.risk_cost || 'none',
       operationalRisk: signal.risk_operational || 'none',
       revenueNote: '', liabilityNote: '', costNote: '', operationalNote: '',
+      oppRevenue: signal.opp_revenue || 'none', oppLiability: signal.opp_liability || 'none',
+      oppCost: signal.opp_cost || 'none', oppOperational: signal.opp_operational || 'none',
+      oppRevenueNote: signal.opp_revenue_note || '', oppLiabilityNote: signal.opp_liability_note || '',
+      oppCostNote: signal.opp_cost_note || '', oppOperationalNote: signal.opp_operational_note || '',
+      allIndustries: signal.target_all_industries ?? true,
+      targetIndustries: signal.target_industries || [],
+      targetCounties: (signal.target_counties || []).join(', '),
+      signalScope: signal.signal_scope || 'statewide',
       recommendedAction: '', actionDeadline: '',
     });
+    setImpactPreview(null);
     setPublishModal({ open: true, signal });
   };
 
@@ -355,7 +402,8 @@ export default function EvidLYIntelligence() {
   const submitAdvisory = async () => {
     const sig = publishModal.signal;
     if (!sig) return;
-    // 1. Update signal with risk dimensions + published status
+    const targetCountiesArr = pubForm.targetCounties.split(',').map(c => c.trim()).filter(Boolean);
+    // 1. Update signal with risk + opportunity dimensions + targeting + published status
     await supabase.from('intelligence_signals').update({
       risk_revenue: pubForm.revenueRisk,
       risk_liability: pubForm.liabilityRisk,
@@ -365,6 +413,18 @@ export default function EvidLYIntelligence() {
       liability_risk_note: pubForm.liabilityNote || null,
       cost_risk_note: pubForm.costNote || null,
       operational_risk_note: pubForm.operationalNote || null,
+      opp_revenue: pubForm.oppRevenue,
+      opp_liability: pubForm.oppLiability,
+      opp_cost: pubForm.oppCost,
+      opp_operational: pubForm.oppOperational,
+      opp_revenue_note: pubForm.oppRevenueNote || null,
+      opp_liability_note: pubForm.oppLiabilityNote || null,
+      opp_cost_note: pubForm.oppCostNote || null,
+      opp_operational_note: pubForm.oppOperationalNote || null,
+      target_industries: pubForm.allIndustries ? [] : pubForm.targetIndustries,
+      target_all_industries: pubForm.allIndustries,
+      target_counties: targetCountiesArr,
+      signal_scope: pubForm.signalScope,
       recommended_action: pubForm.recommendedAction || null,
       action_deadline: pubForm.actionDeadline || null,
       is_published: true,
@@ -449,22 +509,25 @@ export default function EvidLYIntelligence() {
         </div>
       </div>
 
-      {/* KPI Strip */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 10 }}>
+      {/* Canonical KPI Bar */}
+      <div style={{
+        background: 'linear-gradient(135deg, #1E2D4D 0%, #253B5E 100%)',
+        borderRadius: 12, padding: '18px 24px',
+        display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 16,
+      }}>
         {[
-          { label: 'Total Sources', value: totalSources, color: NAVY, note: `${activeSources} active` },
-          { label: 'Demo Critical', value: demoCritical, color: GOLD, note: 'must work for demos' },
-          { label: 'Broken / Blocked', value: brokenSources, color: brokenSources > 0 ? '#DC2626' : TEXT_MUTED, note: 'need attention' },
-          { label: 'New Signals', value: newSignals, color: newSignals > 0 ? '#2563EB' : TEXT_MUTED, note: 'pending review' },
-          { label: 'Critical Signals', value: criticalSignals, color: criticalSignals > 0 ? '#DC2626' : TEXT_MUTED, note: 'urgent action' },
-          { label: 'JIE Updates', value: jieUpdates.length, color: '#059669', note: 'scoring changes' },
+          { label: 'Total Signals', value: signals.length, accent: '#fff' },
+          { label: 'Pending Review', value: pendingReview, accent: pendingReview > 0 ? '#FBBF24' : '#94A3B8' },
+          { label: 'Critical', value: criticalSignals, accent: criticalSignals > 0 ? '#F87171' : '#94A3B8' },
+          { label: 'Published', value: signals.filter(s => s.status === 'published').length, accent: '#34D399' },
+          { label: 'Sources', value: totalSources, accent: '#94A3B8', note: `${activeSources} active · ${brokenSources} broken` },
         ].map(k => (
-          <div key={k.label} style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 9, padding: '14px 16px' }}>
-            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 22, fontWeight: 700, color: k.color }}>
+          <div key={k.label}>
+            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 28, fontWeight: 800, color: k.accent, lineHeight: 1 }}>
               {loading ? '\u2014' : k.value}
             </div>
-            <div style={{ fontSize: 11, color: '#4A5568', marginTop: 3 }}>{k.label}</div>
-            <div style={{ fontSize: 10, color: TEXT_MUTED, marginTop: 2 }}>{k.note}</div>
+            <div style={{ fontSize: 11, color: '#94A3B8', marginTop: 4, fontWeight: 500 }}>{k.label}</div>
+            {k.note && <div style={{ fontSize: 9, color: '#64748B', marginTop: 2 }}>{k.note}</div>}
           </div>
         ))}
       </div>
@@ -679,6 +742,21 @@ export default function EvidLYIntelligence() {
                       </span>
                       <span style={{ fontSize: 10, color: GOLD }}>{sig.source_key}</span>
                       {sig.scope && <span style={{ fontSize: 10, color: TEXT_MUTED }}>{sig.scope}</span>}
+                      {sig.signal_scope && (
+                        <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 8, background: NAVY, color: '#fff' }}>
+                          {SCOPE_LABELS[sig.signal_scope] || sig.signal_scope}
+                        </span>
+                      )}
+                      {sig.target_industries && !sig.target_all_industries && sig.target_industries.length > 0 && (
+                        sig.target_industries.slice(0, 2).map(ind => (
+                          <span key={ind} style={{ fontSize: 9, fontWeight: 600, padding: '1px 6px', borderRadius: 8, border: `1px solid ${GOLD}`, color: GOLD }}>
+                            {INDUSTRY_LABELS[ind] || ind}
+                          </span>
+                        ))
+                      )}
+                      {sig.target_counties && sig.target_counties.length > 0 && (
+                        <span style={{ fontSize: 9, color: TEXT_SEC }}>{sig.target_counties.length} {sig.target_counties.length === 1 ? 'county' : 'counties'}</span>
+                      )}
                     </div>
                     <div style={{ fontSize: 13, fontWeight: 600, color: NAVY, marginBottom: 6 }}>{sig.title}</div>
                     {sig.ai_summary && (
@@ -714,6 +792,25 @@ export default function EvidLYIntelligence() {
                             </span>
                           );
                         })}
+                      </div>
+                    ) : null}
+                    {/* Opportunity Dimensions */}
+                    {(sig.opp_revenue && sig.opp_revenue !== 'none') || (sig.opp_liability && sig.opp_liability !== 'none') ||
+                     (sig.opp_cost && sig.opp_cost !== 'none') || (sig.opp_operational && sig.opp_operational !== 'none') ? (
+                      <div style={{ display: 'flex', gap: 6, marginTop: 4, flexWrap: 'wrap' }}>
+                        {[
+                          { key: 'Revenue', val: sig.opp_revenue },
+                          { key: 'Liability', val: sig.opp_liability },
+                          { key: 'Cost', val: sig.opp_cost },
+                          { key: 'Operational', val: sig.opp_operational },
+                        ].filter(d => d.val && d.val !== 'none').map(d => (
+                          <span key={d.key} style={{
+                            fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 8,
+                            background: '#ECFDF5', color: '#065F46', border: '1px solid #A7F3D0',
+                          }}>
+                            {d.key}: {(d.val || '').toUpperCase().slice(0, 4)}
+                          </span>
+                        ))}
                       </div>
                     ) : null}
                   </div>
@@ -1236,6 +1333,97 @@ export default function EvidLYIntelligence() {
                     ))}
                   </div>
                 </div>
+
+                {/* Targeting Section */}
+                <div style={{ borderTop: `1px solid ${BORDER}`, paddingTop: 14 }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: NAVY, marginBottom: 10 }}>Signal Targeting</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                      <div>
+                        <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Scope</label>
+                        <select value={pubForm.signalScope} onChange={e => setPubForm(f => ({ ...f, signalScope: e.target.value }))}
+                          style={{ ...inputStyle, width: '100%', cursor: 'pointer' }}>
+                          {Object.entries(SCOPE_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                        </select>
+                      </div>
+                      <div>
+                        <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Counties (comma-separated)</label>
+                        <input value={pubForm.targetCounties} onChange={e => setPubForm(f => ({ ...f, targetCounties: e.target.value }))}
+                          placeholder="e.g. Fresno, Madera, Merced" style={{ ...inputStyle, width: '100%' }} />
+                      </div>
+                    </div>
+                    <div>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, fontWeight: 600, color: TEXT_SEC, cursor: 'pointer' }}>
+                        <input type="checkbox" checked={pubForm.allIndustries}
+                          onChange={e => setPubForm(f => ({ ...f, allIndustries: e.target.checked }))} />
+                        All Industries
+                      </label>
+                      {!pubForm.allIndustries && (
+                        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 8 }}>
+                          {Object.entries(INDUSTRY_LABELS).map(([k, v]) => (
+                            <label key={k} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: TEXT_SEC, cursor: 'pointer' }}>
+                              <input type="checkbox" checked={pubForm.targetIndustries.includes(k)}
+                                onChange={e => setPubForm(f => ({
+                                  ...f,
+                                  targetIndustries: e.target.checked
+                                    ? [...f.targetIndustries, k]
+                                    : f.targetIndustries.filter(i => i !== k),
+                                }))} />
+                              {v}
+                            </label>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Opportunity Dimensions — 4 rows (green-tinted) */}
+                <div style={{ borderTop: `1px solid ${BORDER}`, paddingTop: 14 }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: '#065F46', marginBottom: 10 }}>Opportunity Dimensions (upside of acting early)</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    {[
+                      { key: 'oppRevenue' as const, noteKey: 'oppRevenueNote' as const, icon: '\u2B06', label: 'Revenue Opp', desc: 'Score improvement, competitive advantage' },
+                      { key: 'oppLiability' as const, noteKey: 'oppLiabilityNote' as const, icon: '\uD83D\uDEE1', label: 'Liability Opp', desc: 'Legal safe harbor, compliance edge' },
+                      { key: 'oppCost' as const, noteKey: 'oppCostNote' as const, icon: '\uD83D\uDCB5', label: 'Cost Opp', desc: 'Insurance discount, grant eligibility' },
+                      { key: 'oppOperational' as const, noteKey: 'oppOperationalNote' as const, icon: '\uD83D\uDE80', label: 'Operational Opp', desc: 'Efficiency gain, digital workflow' },
+                    ].map(dim => (
+                      <div key={dim.key} style={{ display: 'grid', gridTemplateColumns: '140px 100px 1fr', gap: 8, alignItems: 'center' }}>
+                        <div>
+                          <span style={{ fontSize: 12 }}>{dim.icon}</span>
+                          <span style={{ fontSize: 11, fontWeight: 600, color: '#065F46', marginLeft: 4 }}>{dim.label}</span>
+                        </div>
+                        <select value={pubForm[dim.key]} onChange={e => setPubForm(f => ({ ...f, [dim.key]: e.target.value }))}
+                          style={{ ...inputStyle, width: '100%', cursor: 'pointer', fontSize: 11, borderColor: '#A7F3D0' }}>
+                          <option value="none">None</option>
+                          <option value="critical">Critical</option>
+                          <option value="high">High</option>
+                          <option value="moderate">Moderate</option>
+                          <option value="low">Low</option>
+                        </select>
+                        <input value={pubForm[dim.noteKey]} onChange={e => setPubForm(f => ({ ...f, [dim.noteKey]: e.target.value }))}
+                          placeholder={dim.desc} style={{ ...inputStyle, width: '100%', fontSize: 11, borderColor: '#A7F3D0' }} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Impact Preview */}
+                {impactPreview && (
+                  <div style={{ background: '#EFF6FF', border: '1px solid #BFDBFE', borderRadius: 8, padding: '10px 14px' }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: '#1E40AF', marginBottom: 4 }}>
+                      Impact Preview: {impactPreview.total_orgs} org{impactPreview.total_orgs !== 1 ? 's' : ''}, {impactPreview.total_locations} location{impactPreview.total_locations !== 1 ? 's' : ''}
+                    </div>
+                    {impactPreview.orgs.length > 0 && (
+                      <div style={{ fontSize: 10, color: '#3B82F6', lineHeight: 1.6 }}>
+                        {impactPreview.orgs.map(o => o.name).join(' · ')}
+                      </div>
+                    )}
+                    <div style={{ fontSize: 9, color: '#6B7280', marginTop: 4 }}>
+                      Confidence: {impactPreview.confidence}%
+                    </div>
+                  </div>
+                )}
 
                 {/* Recommended Action + Deadline */}
                 <div style={{ borderTop: `1px solid ${BORDER}`, paddingTop: 14 }}>

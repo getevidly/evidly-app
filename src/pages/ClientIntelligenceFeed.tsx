@@ -49,6 +49,16 @@ interface FeedItem {
   // Meta
   published_at: string;
   feed_type: string;
+  // Opportunity dimensions
+  opp_revenue_level?: string | null;
+  opp_liability_level?: string | null;
+  opp_cost_level?: string | null;
+  opp_operational_level?: string | null;
+  opp_revenue_note?: string | null;
+  opp_liability_note?: string | null;
+  opp_cost_note?: string | null;
+  opp_operational_note?: string | null;
+  relevance_reason?: string | null;
   // Legacy single-dimension (for backwards compat)
   dimension?: string;
   risk_level?: string;
@@ -60,6 +70,13 @@ const DIM_META: Record<string, { icon: string; label: string; color: string; bg:
   liability:   { icon: '\u2696\uFE0F', label: 'Liability Risk',   color: '#991B1B', bg: '#FEF2F2' },
   cost:        { icon: '\uD83D\uDCB8', label: 'Cost Risk',        color: '#1E40AF', bg: '#EFF6FF' },
   operational: { icon: '\u2699\uFE0F', label: 'Operational Risk', color: '#166534', bg: '#F0FDF4' },
+};
+
+const OPP_META: Record<string, { icon: string; label: string; color: string; bg: string }> = {
+  revenue:     { icon: '\u2B06', label: 'Revenue Opp',     color: '#065F46', bg: '#ECFDF5' },
+  liability:   { icon: '\uD83D\uDEE1', label: 'Liability Opp',   color: '#065F46', bg: '#ECFDF5' },
+  cost:        { icon: '\uD83D\uDCB5', label: 'Cost Opp',        color: '#065F46', bg: '#ECFDF5' },
+  operational: { icon: '\uD83D\uDE80', label: 'Operational Opp', color: '#065F46', bg: '#ECFDF5' },
 };
 
 const LEVEL_COLORS: Record<string, { bg: string; text: string; label: string }> = {
@@ -91,6 +108,11 @@ const DEMO_FEED: FeedItem[] = [
     operational_risk_level: 'critical', operational_risk_note: 'Immediate cold-holding protocol update required',
     recommended_action: 'Audit all cold-holding units at Airport location immediately. Verify digital probe calibration records.',
     action_deadline: '2026-03-15', action_url: '/temp-logs',
+    opp_revenue_level: 'moderate', opp_revenue_note: 'Proactive compliance differentiates your operation',
+    opp_liability_level: 'none', opp_liability_note: null,
+    opp_cost_level: 'none', opp_cost_note: null,
+    opp_operational_level: 'high', opp_operational_note: 'Digital monitoring qualifies for insurance premium discount',
+    relevance_reason: 'Your Airport location in Merced County is directly affected by this enforcement priority.',
     is_read: false, is_actioned: false, is_dismissed: false, actioned_at: null,
     published_at: new Date(Date.now() - 86400000).toISOString(),
   },
@@ -106,6 +128,11 @@ const DEMO_FEED: FeedItem[] = [
     operational_risk_level: 'high', operational_risk_note: 'Resolve open CAs before next cycle begins',
     recommended_action: 'Resolve all open corrective actions at Downtown location. Schedule pre-inspection internal audit.',
     action_deadline: '2026-04-01', action_url: '/corrective-actions',
+    opp_revenue_level: 'high', opp_revenue_note: 'Clean inspections strengthen grade card and customer trust',
+    opp_liability_level: 'moderate', opp_liability_note: 'Proactive CA resolution shows good-faith compliance',
+    opp_cost_level: 'none', opp_cost_note: null,
+    opp_operational_level: 'moderate', opp_operational_note: 'Internal audits build inspection-ready culture',
+    relevance_reason: 'Your Downtown location in Fresno County is directly affected — semi-annual cycle starts April 2026.',
     is_read: false, is_actioned: false, is_dismissed: false, actioned_at: null,
     published_at: new Date(Date.now() - 172800000).toISOString(),
   },
@@ -121,6 +148,11 @@ const DEMO_FEED: FeedItem[] = [
     operational_risk_level: 'high', operational_risk_note: 'Written allergen protocol + staff training required',
     recommended_action: 'Develop written allergen management protocol for University location. Schedule allergen awareness training for all food handlers.',
     action_deadline: '2026-03-01', action_url: '/training',
+    opp_revenue_level: 'high', opp_revenue_note: 'First-mover advantage — written allergen program differentiates you',
+    opp_liability_level: 'high', opp_liability_note: 'Written protocol creates legal safe harbor',
+    opp_cost_level: 'low', opp_cost_note: 'Training materials available at no cost through EvidLY',
+    opp_operational_level: 'moderate', opp_operational_note: 'Allergen checklist integrates with daily prep workflow',
+    relevance_reason: 'Your University location in Stanislaus County is directly affected — new scoring category effective March 2026.',
     is_read: false, is_actioned: false, is_dismissed: false, actioned_at: null,
     published_at: new Date(Date.now() - 43200000).toISOString(),
   },
@@ -136,6 +168,11 @@ const DEMO_FEED: FeedItem[] = [
     operational_risk_level: 'moderate', operational_risk_note: 'Update maintenance schedule from quarterly to monthly',
     recommended_action: 'Update grease filter inspection schedule to monthly at Airport. Review NFPA 96 2025 changes with hood vendor.',
     action_deadline: '2026-05-01', action_url: '/equipment',
+    opp_revenue_level: 'none', opp_revenue_note: null,
+    opp_liability_level: 'moderate', opp_liability_note: 'Early adoption demonstrates compliance posture to fire marshal',
+    opp_cost_level: 'low', opp_cost_note: 'Monthly cleaning prevents expensive duct remediation',
+    opp_operational_level: 'moderate', opp_operational_note: 'Digital maintenance logs simplify fire inspection prep',
+    relevance_reason: 'Your Airport location in Merced County — NFPA 96 2025 now adopted by county fire marshal.',
     is_read: true, is_actioned: false, is_dismissed: false, actioned_at: null,
     published_at: new Date(Date.now() - 259200000).toISOString(),
   },
@@ -151,6 +188,11 @@ const DEMO_FEED: FeedItem[] = [
     operational_risk_level: 'moderate', operational_risk_note: 'Schedule with certified suppression technician',
     recommended_action: 'Schedule UL-300 suppression test at University location before April 15.',
     action_deadline: '2026-04-15', action_url: '/equipment',
+    opp_revenue_level: 'none', opp_revenue_note: null,
+    opp_liability_level: 'high', opp_liability_note: 'Proactive testing avoids Notice of Violation',
+    opp_cost_level: 'moderate', opp_cost_note: 'Insurance carriers offer discounts for annual testing documentation',
+    opp_operational_level: 'low', opp_operational_note: 'Schedule with certified vendor — EvidLY tracks completion',
+    relevance_reason: 'Your University location in Stanislaus County — annual testing now mandatory (was biennial).',
     is_read: false, is_actioned: false, is_dismissed: false, actioned_at: null,
     published_at: new Date(Date.now() - 21600000).toISOString(),
   },
@@ -166,6 +208,11 @@ const DEMO_FEED: FeedItem[] = [
     operational_risk_level: 'low', operational_risk_note: 'Monitor if expanding to LA County',
     recommended_action: 'Review LA County grading requirements for expansion planning. Ensure all locations maintain scores above 70.',
     action_deadline: null, action_url: null,
+    opp_revenue_level: 'low', opp_revenue_note: 'Early awareness helps expansion planning timeline',
+    opp_liability_level: 'none', opp_liability_note: null,
+    opp_cost_level: 'none', opp_cost_note: null,
+    opp_operational_level: 'low', opp_operational_note: 'Monitor — no immediate action needed',
+    relevance_reason: 'Applies to future LA County expansion — informational for your planning team.',
     is_read: true, is_actioned: true, is_dismissed: false, actioned_at: new Date(Date.now() - 86400000).toISOString(),
     published_at: new Date(Date.now() - 432000000).toISOString(),
   },
@@ -303,6 +350,53 @@ export function ClientIntelligenceFeed() {
             </div>
           );
         })}
+      </div>
+    );
+  };
+
+  const renderOppGrid = (item: FeedItem) => {
+    const dims = [
+      { key: 'revenue', level: item.opp_revenue_level, note: item.opp_revenue_note },
+      { key: 'liability', level: item.opp_liability_level, note: item.opp_liability_note },
+      { key: 'cost', level: item.opp_cost_level, note: item.opp_cost_note },
+      { key: 'operational', level: item.opp_operational_level, note: item.opp_operational_note },
+    ].filter(d => d.level && d.level !== 'none' && d.level !== 'n/a');
+
+    if (dims.length === 0) return null;
+
+    return (
+      <div style={{ marginTop: 10 }}>
+        <div style={{ fontSize: 10, fontWeight: 700, color: '#065F46', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+          Opportunity — acting early
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: dims.length > 2 ? '1fr 1fr' : `repeat(${dims.length}, 1fr)`, gap: 8 }}>
+          {dims.map(d => {
+            const meta = OPP_META[d.key];
+            const lc = LEVEL_COLORS[d.level!] || LEVEL_COLORS.low;
+            return (
+              <div key={d.key} style={{
+                background: meta.bg, borderRadius: 8, padding: '8px 10px',
+                border: '1px solid #A7F3D0',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 3 }}>
+                  <span style={{ fontSize: 12 }}>{meta.icon}</span>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: meta.color }}>{meta.label.replace(' Opp', '')}</span>
+                </div>
+                <div style={{
+                  fontSize: 11, fontWeight: 800, color: lc.text,
+                  textTransform: 'uppercase', letterSpacing: '0.5px',
+                }}>
+                  {lc.label}
+                </div>
+                {d.note && (
+                  <div style={{ fontSize: 10, color: meta.color, marginTop: 3, lineHeight: 1.4, opacity: 0.85 }}>
+                    {d.note}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     );
   };
@@ -445,8 +539,22 @@ export function ClientIntelligenceFeed() {
                     {item.summary}
                   </p>
 
+                  {/* Relevance reason */}
+                  {item.relevance_reason && (
+                    <div style={{
+                      marginTop: 10, padding: '6px 10px', borderRadius: 6,
+                      background: '#FFFBEB', border: '1px solid #E8D9B8',
+                      fontSize: 11, color: '#92400E', lineHeight: 1.5,
+                    }}>
+                      {item.relevance_reason}
+                    </div>
+                  )}
+
                   {/* 2x2 Risk Grid */}
                   {renderRiskGrid(item)}
+
+                  {/* 2x2 Opportunity Grid */}
+                  {renderOppGrid(item)}
 
                   {/* Recommended action */}
                   {item.recommended_action && (

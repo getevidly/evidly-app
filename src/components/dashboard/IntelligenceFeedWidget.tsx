@@ -30,6 +30,11 @@ interface FeedItem {
   liability_risk: RiskDim;
   cost_risk: RiskDim;
   operational_risk: RiskDim;
+  opp_revenue?: RiskDim;
+  opp_liability?: RiskDim;
+  opp_cost?: RiskDim;
+  opp_operational?: RiskDim;
+  relevance_reason?: string;
   recommended_action?: string;
   action_deadline?: string;
   feed_type: string;
@@ -72,6 +77,9 @@ const DEMO_FEED: FeedItem[] = [
     liability_risk:   { level: 'critical', note: 'Direct liability if temp violations found' },
     cost_risk:        { level: 'low',      note: 'No new equipment — process change only' },
     operational_risk: { level: 'critical', note: 'Immediate cold-holding protocol update required' },
+    opp_revenue:     { level: 'moderate', note: 'Proactive compliance differentiates' },
+    opp_operational: { level: 'high', note: 'Digital monitoring qualifies for insurance discount' },
+    relevance_reason: 'Your Airport location in Merced County is directly affected.',
     recommended_action: 'Audit all cold-holding units at Airport location. Verify digital probe calibration records.',
     feed_type: 'jurisdiction',
     created_at: new Date(Date.now() - 86400000).toISOString(),
@@ -87,6 +95,9 @@ const DEMO_FEED: FeedItem[] = [
     liability_risk:   { level: 'moderate', note: 'Repeat violations trigger mandatory re-inspection' },
     cost_risk:        { level: 'low' },
     operational_risk: { level: 'high',     note: 'Resolve open CAs before next cycle' },
+    opp_revenue:     { level: 'high', note: 'Clean inspections strengthen grade card' },
+    opp_operational: { level: 'moderate', note: 'Internal audits build inspection-ready culture' },
+    relevance_reason: 'Your Downtown location in Fresno County — semi-annual cycle starts April 2026.',
     recommended_action: 'Resolve all open corrective actions at Downtown. Schedule pre-inspection internal audit.',
     feed_type: 'jurisdiction',
     created_at: new Date(Date.now() - 172800000).toISOString(),
@@ -102,6 +113,9 @@ const DEMO_FEED: FeedItem[] = [
     liability_risk:   { level: 'critical', note: 'Allergen failure = immediate critical violation' },
     cost_risk:        { level: 'low' },
     operational_risk: { level: 'high',     note: 'Written allergen protocol + staff training required' },
+    opp_revenue:     { level: 'high', note: 'First-mover advantage' },
+    opp_liability:   { level: 'high', note: 'Written protocol creates legal safe harbor' },
+    relevance_reason: 'Your University location in Stanislaus County — new scoring effective March 2026.',
     recommended_action: 'Develop written allergen management protocol. Schedule allergen awareness training.',
     feed_type: 'jurisdiction',
     created_at: new Date(Date.now() - 43200000).toISOString(),
@@ -117,6 +131,9 @@ const DEMO_FEED: FeedItem[] = [
     liability_risk:   { level: 'high',     note: 'Fire code violation = Notice of Violation' },
     cost_risk:        { level: 'high',     note: 'UL-300 test ~$400-800 annually' },
     operational_risk: { level: 'moderate', note: 'Schedule with certified technician' },
+    opp_liability:   { level: 'high', note: 'Proactive testing avoids NOV' },
+    opp_cost:        { level: 'moderate', note: 'Insurance discount for annual testing docs' },
+    relevance_reason: 'Your University location in Stanislaus County — annual testing now mandatory.',
     recommended_action: 'Schedule UL-300 suppression test at University location before April 15.',
     action_deadline: '2026-04-15',
     feed_type: 'jurisdiction',
@@ -187,6 +204,32 @@ export function IntelligenceFeedWidget() {
     );
   };
 
+  const renderOppDims = (item: FeedItem) => {
+    const dims = [
+      { key: 'revenue', ...(item.opp_revenue || { level: 'none' }) },
+      { key: 'liability', ...(item.opp_liability || { level: 'none' }) },
+      { key: 'cost', ...(item.opp_cost || { level: 'none' }) },
+      { key: 'operational', ...(item.opp_operational || { level: 'none' }) },
+    ].filter(d => d.level && d.level !== 'none' && d.level !== 'n/a');
+
+    if (dims.length === 0) return null;
+
+    return (
+      <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginTop: 4 }}>
+        {dims.map(d => (
+          <span key={d.key} title={d.note || `${d.key}: ${d.level}`}
+            style={{
+              fontSize: 9, fontWeight: 700, padding: '2px 6px', borderRadius: 6,
+              background: '#ECFDF5', color: '#065F46', border: '1px solid #A7F3D0',
+              display: 'inline-flex', alignItems: 'center', gap: 2,
+            }}>
+            {d.key.slice(0, 3).toUpperCase()}: {d.level === 'critical' ? 'CRIT' : d.level.toUpperCase().slice(0, 4)}
+          </span>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className="bg-white rounded-lg overflow-hidden" style={{ border: '1px solid #e5e7eb' }}>
       {/* Header */}
@@ -250,6 +293,8 @@ export function IntelligenceFeedWidget() {
                 <p className="text-[11px] mt-0.5" style={{ color: MUTED, lineHeight: 1.5 }}>{item.summary}</p>
                 {/* Risk dimensions */}
                 {!isActioned && renderRiskDims(item)}
+                {/* Opportunity dimensions */}
+                {!isActioned && renderOppDims(item)}
                 {/* Recommended action */}
                 {item.recommended_action && !isActioned && (
                   <div className="mt-1.5 flex items-start gap-1.5">
