@@ -104,7 +104,6 @@ interface Correlation {
   created_at: string;
   jurisdictions?: { county: string } | null;
   organizations?: { name: string } | null;
-  intelligence_signals?: { title: string; signal_type: string; revenue_risk_level: string | null } | null;
 }
 
 interface RegulatoryChange {
@@ -255,7 +254,7 @@ export default function EvidLYIntelligence() {
         supabase.from('intelligence_sources').select('*').order('category').order('name'),
         supabase.from('intelligence_signals').select('*').order('created_at', { ascending: false }).limit(200),
         supabase.from('jurisdiction_intel_updates').select('*').order('created_at', { ascending: false }).limit(50),
-        supabase.from('entity_correlations').select('*, jurisdictions(county), organizations(name), intelligence_signals:source_id(title, signal_type, revenue_risk_level)').order('created_at', { ascending: false }).limit(100),
+        supabase.from('entity_correlations').select('*, jurisdictions(county), organizations(name)').order('created_at', { ascending: false }).limit(100),
         supabase.from('scoretable_views').select('county_slug, viewed_at, session_id').order('viewed_at', { ascending: false }).limit(5000),
         supabase.from('jurisdiction_intel_updates').select('*').order('created_at', { ascending: false }).limit(100),
         supabase.from('regulatory_updates').select('*').order('created_at', { ascending: false }).limit(100),
@@ -1223,15 +1222,16 @@ export default function EvidLYIntelligence() {
                       <tbody>
                         {grouped[gName].map(c => {
                           const strength = Math.round((c.correlation_strength || 0) * 100);
-                          const riskLevel = c.intelligence_signals?.revenue_risk_level || null;
+                          const sig = signals.find(s => s.id === c.source_id);
+                          const riskLevel = sig?.revenue_risk_level || null;
                           const rc = riskLevel ? (URGENCY_COLORS[riskLevel] || URGENCY_COLORS.low) : null;
                           return (
                             <tr key={c.id} style={{ borderBottom: `1px solid ${BORDER}` }}>
                               <td style={{ ...tdStyle, fontSize: 12, maxWidth: 280 }}>
-                                {c.intelligence_signals?.title || c.notes || '\u2014'}
+                                {sig?.title || c.notes || '\u2014'}
                               </td>
                               <td style={{ ...tdStyle, fontSize: 11, color: TEXT_SEC }}>
-                                {c.correlation_type?.replace(/_/g, ' ')}
+                                {(c.correlation_type || '').replace(/_/g, ' ') || '\u2014'}
                               </td>
                               <td style={tdStyle}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
