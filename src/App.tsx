@@ -119,7 +119,7 @@ const AuditTrail = lazy(() => import('./pages/AuditTrail').then(m => ({ default:
 const DocumentChecklist = lazy(() => import('./pages/DocumentChecklist').then(m => ({ default: m.DocumentChecklist })));
 const CopilotInsights = lazy(() => import('./pages/CopilotInsights').then(m => ({ default: m.CopilotInsights })));
 const AdminRegulatoryChanges = lazy(() => import('./pages/AdminRegulatoryChanges').then(m => ({ default: m.AdminRegulatoryChanges })));
-// AdminIntelligenceQueue removed — EvidLYIntelligence.tsx covers approval workflow
+const IntelligenceAdmin = lazy(() => import('./pages/admin/IntelligenceAdmin'));
 const CommandCenter = lazy(() => import('./pages/admin/CommandCenter'));
 const RfpIntelligence = lazy(() => import('./pages/admin/RfpIntelligence'));
 const JurisdictionIntelligence = lazy(() => import('./pages/admin/JurisdictionIntelligence'));
@@ -560,7 +560,8 @@ function AppRoutes() {
           <Route path="/self-diagnosis" element={<SelfDiagnosis />} />
           <Route path="/checkup" element={<Navigate to="/dashboard" replace />} />
           <Route path="/admin/regulatory-changes" element={<AdminRegulatoryChanges />} />
-          <Route path="/admin/intelligence-queue" element={<Navigate to="/admin/intelligence" replace />} />
+          <Route path="/admin/intelligence-admin" element={<IntelligenceAdmin />} />
+          <Route path="/admin/intelligence-queue" element={<Navigate to="/admin/intelligence-admin" replace />} />
           <Route path="/admin/rfp-intelligence" element={<Navigate to="/admin/rfp-monitor" replace />} />
           <Route path="/admin/jurisdiction-intelligence" element={<JurisdictionIntelligence />} />
           {/* Redirects for old nav paths */}
