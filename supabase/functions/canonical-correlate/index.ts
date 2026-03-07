@@ -40,30 +40,55 @@ serve(async (req) => {
         jurisdictionIds = (jurs || []).map((j: any) => j.id);
       }
 
-      let orgIds: string[] = [];
+      // Look up orgs per jurisdiction for richer correlation
+      let orgMap: Record<string, string[]> = {};
       if (jurisdictionIds.length > 0) {
         const { data: locs } = await supabase
           .from('locations')
-          .select('organization_id')
+          .select('organization_id, jurisdiction_id')
           .in('jurisdiction_id', jurisdictionIds);
-        orgIds = [...new Set((locs || []).map((l: any) => l.organization_id).filter(Boolean))];
+        for (const loc of (locs || [])) {
+          if (!loc.organization_id) continue;
+          if (!orgMap[loc.jurisdiction_id]) orgMap[loc.jurisdiction_id] = [];
+          if (!orgMap[loc.jurisdiction_id].includes(loc.organization_id)) {
+            orgMap[loc.jurisdiction_id].push(loc.organization_id);
+          }
+        }
       }
 
-      for (const orgId of (orgIds.length > 0 ? orgIds : [null])) {
-        const jurisdiction_id = jurisdictionIds[0] || null;
+      // One row per jurisdiction (with org if matched)
+      const allOrgIds = new Set<string>();
+      if (jurisdictionIds.length > 0) {
+        for (const jId of jurisdictionIds) {
+          const orgs = orgMap[jId] || [null];
+          for (const orgId of orgs) {
+            if (orgId) allOrgIds.add(orgId);
+            await supabase.from('entity_correlations').upsert({
+              source_type: 'intelligence_signal',
+              source_id: signal.id,
+              organization_id: orgId,
+              jurisdiction_id: jId,
+              correlation_type: orgId ? 'org_signal_match' : 'jurisdiction_only',
+              correlation_strength: orgId ? 0.9 : 0.4,
+              notes: `Type: ${signal.signal_type}`,
+            }, { onConflict: 'source_type,source_id,jurisdiction_id' });
+          }
+        }
+      } else {
+        // No jurisdiction match — insert unassigned row
         await supabase.from('entity_correlations').upsert({
           source_type: 'intelligence_signal',
           source_id: signal.id,
-          organization_id: orgId,
-          jurisdiction_id,
-          correlation_type: orgId ? 'org_signal_match' : 'jurisdiction_only',
-          correlation_strength: orgId ? 0.9 : 0.4,
+          organization_id: null,
+          jurisdiction_id: null,
+          correlation_type: 'unmatched',
+          correlation_strength: 0.1,
           notes: `Type: ${signal.signal_type}`,
-        }, { onConflict: 'source_type,source_id' });
+        }, { onConflict: 'source_type,source_id,jurisdiction_id' });
       }
 
       await supabase.from('intelligence_signals')
-        .update({ is_correlated: true, orgs_affected: orgIds.length })
+        .update({ is_correlated: true, orgs_affected: allOrgIds.size })
         .eq('id', signal.id);
 
       correlated++;

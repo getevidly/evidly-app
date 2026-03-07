@@ -16,7 +16,7 @@ const TEXT_SEC = '#6B7F96';
 const TEXT_MUTED = '#9CA3AF';
 const BORDER = '#E5E0D8';
 
-type Tab = 'overview' | 'signals' | 'sources' | 'jie' | 'correlations' | 'scoretable' | 'jurisdiction_updates' | 'regulatory_updates' | 'rfp';
+type Tab = 'overview' | 'signals' | 'sources' | 'correlations' | 'scoretable' | 'jurisdiction_updates' | 'regulatory_updates' | 'rfp';
 
 interface Source {
   id: string;
@@ -78,19 +78,7 @@ interface Signal {
   routing_reason: string | null;
 }
 
-interface JIEUpdate {
-  id: string;
-  signal_id: string | null;
-  jurisdiction_key: string;
-  jurisdiction_name: string | null;
-  update_type: string;
-  description: string | null;
-  effective_date: string | null;
-  verified: boolean;
-  verified_by: string | null;
-  published_to_clients: boolean;
-  created_at: string;
-}
+// JIEUpdate interface removed — merged into Jurisdiction Updates tab
 
 interface Correlation {
   id: string;
@@ -210,7 +198,7 @@ export default function EvidLYIntelligence() {
   const [signals, setSignals] = useState<Signal[]>([]);
   const [routingMode, setRoutingMode] = useState<'supervised' | 'autonomous'>('supervised');
   const [routingModeLoading, setRoutingModeLoading] = useState(false);
-  const [jieUpdates, setJieUpdates] = useState<JIEUpdate[]>([]);
+  // jieUpdates state removed — merged into jurisdictionUpdates
   const [correlations, setCorrelations] = useState<Correlation[]>([]);
   const [jurisdictionUpdates, setJurisdictionUpdates] = useState<JurisdictionIntelUpdate[]>([]);
   const [regulatoryChanges, setRegulatoryChanges] = useState<RegulatoryChange[]>([]);
@@ -250,10 +238,9 @@ export default function EvidLYIntelligence() {
   const loadAll = useCallback(async () => {
     setLoading(true);
     try {
-      const [sourcesRes, signalsRes, jieRes, corrRes, stRes, jiuRes, regRes, rfpRes] = await Promise.all([
+      const [sourcesRes, signalsRes, corrRes, stRes, jiuRes, regRes, rfpRes] = await Promise.all([
         supabase.from('intelligence_sources').select('*').order('category').order('name'),
         supabase.from('intelligence_signals').select('*').order('created_at', { ascending: false }).limit(200),
-        supabase.from('jurisdiction_intel_updates').select('*').order('created_at', { ascending: false }).limit(50),
         supabase.from('entity_correlations').select('*, jurisdictions(county), organizations(name)').order('created_at', { ascending: false }).limit(100),
         supabase.from('scoretable_views').select('county_slug, viewed_at, session_id').order('viewed_at', { ascending: false }).limit(5000),
         supabase.from('jurisdiction_intel_updates').select('*').order('created_at', { ascending: false }).limit(100),
@@ -262,7 +249,6 @@ export default function EvidLYIntelligence() {
       ]);
       if (sourcesRes.data) setSources(sourcesRes.data);
       if (signalsRes.data) setSignals(signalsRes.data);
-      if (jieRes.data) setJieUpdates(jieRes.data);
       if (corrRes.data) setCorrelations(corrRes.data);
       if (jiuRes.data) setJurisdictionUpdates(jiuRes.data);
       if (regRes.data) setRegulatoryChanges(regRes.data);
@@ -434,12 +420,7 @@ export default function EvidLYIntelligence() {
     setJurisdictionUpdates(prev => prev.map(u => u.id === updateId ? { ...u, verified: true, verified_by: user?.email || null } : u));
   };
 
-  const publishJIEUpdate = async (updateId: string) => {
-    await supabase.from('jurisdiction_intel_updates')
-      .update({ published_to_clients: true })
-      .eq('id', updateId);
-    setJieUpdates(prev => prev.map(u => u.id === updateId ? { ...u, published_to_clients: true } : u));
-  };
+  // publishJIEUpdate removed — JIE tab merged into Jurisdiction Updates
 
   const openPublishModal = (signal: Signal) => {
     setPubForm({
@@ -623,9 +604,8 @@ export default function EvidLYIntelligence() {
           { key: 'overview' as Tab, label: 'Overview' },
           { key: 'signals' as Tab, label: `Signals${pendingReview > 0 ? ` (${pendingReview})` : ''}` },
           { key: 'sources' as Tab, label: `Sources (${totalSources})` },
-          { key: 'jie' as Tab, label: 'Intelligence' },
           { key: 'correlations' as Tab, label: 'Correlations' },
-          { key: 'jurisdiction_updates' as Tab, label: `Jurisdiction${jurisdictionUpdates.length > 0 ? ` (${jurisdictionUpdates.length})` : ''}` },
+          { key: 'jurisdiction_updates' as Tab, label: `Jurisdiction Updates${jurisdictionUpdates.length > 0 ? ` (${jurisdictionUpdates.length})` : ''}` },
           { key: 'regulatory_updates' as Tab, label: `Regulatory${regulatoryChanges.length > 0 ? ` (${regulatoryChanges.length})` : ''}` },
           { key: 'rfp' as Tab, label: `RFP Monitor${rfpListings.length > 0 ? ` (${rfpListings.length})` : ''}` },
           { key: 'scoretable' as Tab, label: `ScoreTable${scoreTableData.length > 0 ? ` (${scoreTableData.reduce((s, d) => s + d.total_views, 0)})` : ''}` },
@@ -1113,63 +1093,7 @@ export default function EvidLYIntelligence() {
         </>
       )}
 
-      {/* ────────── TAB: JIE UPDATES ────────── */}
-      {activeTab === 'jie' && (
-        <>
-          <div style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.6, marginBottom: 8 }}>
-            JIE updates reflect real changes to jurisdiction inspection methodologies, grading scales, or enforcement priorities.
-            These feed directly into ScoreTable profiles and client dashboards.
-          </div>
-
-          {loading ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} h={32} />)}
-            </div>
-          ) : jieUpdates.length === 0 ? (
-            <EmptyState
-              icon="🏛"
-              title="No JIE updates yet"
-              subtitle="Updates appear here when a jurisdiction changes its inspection methodology, grading scale, or enforcement priorities."
-            />
-          ) : (
-            <div style={{ background: '#fff', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-                <thead>
-                  <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
-                    {['Jurisdiction', 'Update Type', 'Description', 'Effective', 'Verified', 'Published', 'Signal'].map(h => (
-                      <th key={h} style={thStyle}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {jieUpdates.map(u => (
-                    <tr key={u.id} style={{ borderBottom: `1px solid ${BORDER}` }}>
-                      <td style={{ ...tdStyle, fontWeight: 500, color: NAVY }}>{u.jurisdiction_name || u.jurisdiction_key}</td>
-                      <td style={{ ...tdStyle, fontSize: 11, color: TEXT_SEC }}>{u.update_type?.replace(/_/g, ' ')}</td>
-                      <td style={{ ...tdStyle, fontSize: 12, maxWidth: 280 }}>{u.description || '\u2014'}</td>
-                      <td style={{ ...tdStyle, fontSize: 11, fontFamily: "'DM Mono', monospace", color: TEXT_SEC }}>{u.effective_date || '\u2014'}</td>
-                      <td style={tdStyle}>
-                        {u.verified
-                          ? <span style={{ color: '#059669', fontSize: 11 }}>✓ {u.verified_by}</span>
-                          : <span style={{ color: '#D97706', fontSize: 11 }}>Pending</span>}
-                      </td>
-                      <td style={tdStyle}>
-                        {u.published_to_clients
-                          ? <span style={{ color: '#059669', fontSize: 11 }}>✓</span>
-                          : <button onClick={() => publishJIEUpdate(u.id)} style={{
-                              fontSize: 10, color: GOLD, background: 'none', border: `1px solid #E8D9B8`,
-                              borderRadius: 5, padding: '2px 8px', cursor: 'pointer',
-                            }}>Publish</button>}
-                      </td>
-                      <td style={{ ...tdStyle, fontSize: 10, color: TEXT_MUTED }}>{u.signal_id ? 'Linked' : '\u2014'}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </>
-      )}
+      {/* JIE tab removed — merged into Jurisdiction Updates tab */}
 
       {/* ────────── TAB: CORRELATIONS ────────── */}
       {activeTab === 'correlations' && (() => {
@@ -1266,7 +1190,7 @@ export default function EvidLYIntelligence() {
       {activeTab === 'jurisdiction_updates' && (
         <>
           <div style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.6, marginBottom: 8 }}>
-            Jurisdiction-specific food safety and facility safety regulatory changes.
+            Jurisdiction-specific food safety and facility safety regulatory changes, inspection methodology updates, and enforcement priorities.
             Each update is tagged with risk dimensions and published to affected clients.
           </div>
 
@@ -1296,8 +1220,8 @@ export default function EvidLYIntelligence() {
           ) : jurisdictionUpdates.length === 0 ? (
             <EmptyState
               icon="🏛"
-              title="No jurisdiction intelligence updates"
-              subtitle="Updates appear here when jurisdiction food safety or facility safety requirements change — scoring changes, new requirements, fire code updates, and more."
+              title="No jurisdiction updates yet"
+              subtitle="Updates appear here when jurisdiction food safety or facility safety requirements change — inspection methodology, grading scales, enforcement priorities, and more."
             />
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
