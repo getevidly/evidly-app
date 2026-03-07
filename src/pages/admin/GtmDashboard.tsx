@@ -1,7 +1,7 @@
 import { BarChart3, TrendingUp, Users, Target, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
-import { KpiTile } from '../../components/admin/KpiTile';
+import { StatCardRow } from '../../components/admin/StatCardRow';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -28,18 +28,19 @@ export default function GtmDashboard() {
     <div className="p-8 max-w-5xl" style={{ fontFamily: "'DM Sans', 'Inter', sans-serif" }}>
       <AdminBreadcrumb crumbs={[{ label: 'GTM Dashboard' }]} />
 
-      <h1 className="text-2xl font-bold mb-1 mt-4" style={{ color: NAVY }}>GTM Dashboard</h1>
-      <p className="text-sm text-gray-500 mb-6">
-        Go-to-market metrics — pipeline velocity, conversion rates, channel performance.
-      </p>
+      <div style={{ marginBottom: 24 }}>
+        <h1 style={{ fontSize: 22, fontWeight: 700, color: '#1E2D4D', margin: 0, fontFamily: 'Outfit, sans-serif' }}>GTM Dashboard</h1>
+        <p style={{ fontSize: 13, color: '#6B7280', margin: '4px 0 0 0', fontFamily: 'Inter, sans-serif' }}>Go-to-market metrics — pipeline velocity, conversion rates, channel performance.</p>
+      </div>
 
       {/* Metric cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {METRIC_CARDS.map(card => (
-          <button key={card.label} type="button" onClick={() => navigate(card.route)} className="text-left">
-            <KpiTile label={card.label} value={card.value} sub={card.sub} />
-          </button>
-        ))}
+      <div style={{ marginBottom: 32 }}>
+        <StatCardRow cards={[
+          { label: 'ACTIVE DEMOS', value: '—', subtext: 'Launch demos from Demo Launcher' },
+          { label: 'PIPELINE VALUE', value: '—', valueColor: 'gold', subtext: 'Track in Sales Pipeline' },
+          { label: 'LEADS THIS MONTH', value: '—', subtext: 'View in Leads' },
+          { label: 'CONVERSION RATE', value: '—', subtext: 'Demos → Paid accounts' },
+        ]} />
       </div>
 
       {/* Channel performance table */}

@@ -7,7 +7,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
-import { KpiTile } from '../../components/admin/KpiTile';
+import { StatCardRow } from '../../components/admin/StatCardRow';
 import { toast } from 'sonner';
 import {
   BarChart3, DollarSign, TrendingUp, Target, Users,
@@ -124,8 +124,8 @@ export default function SalesPipeline() {
 
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Sales Pipeline</h1>
-          <p className="text-sm text-gray-600 mt-1">Track deals from prospect to close</p>
+          <h1 style={{ fontSize: 22, fontWeight: 700, color: '#1E2D4D', margin: 0, fontFamily: 'Outfit, sans-serif' }}>Sales Pipeline</h1>
+          <p style={{ fontSize: 13, color: '#6B7280', margin: '4px 0 0 0', fontFamily: 'Inter, sans-serif' }}>Track deals from prospect to close</p>
         </div>
         <div className="flex items-center gap-2">
           <button onClick={() => setViewMode('kanban')}
@@ -140,11 +140,13 @@ export default function SalesPipeline() {
       </div>
 
       {/* Summary bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-        <KpiTile label="Total Pipeline" value={formatCents(totalPipelineMRR) + ' MRR'} />
-        <KpiTile label="Weighted Pipeline" value={formatCents(Math.round(weightedPipelineMRR)) + ' MRR'} />
-        <KpiTile label="Won MTD" value={`${wonMTD.length} deals · ${formatCents(wonMTDmrr)}`} valueColor="green" />
-        <KpiTile label="Lost MTD" value={`${lostMTD} deals`} valueColor="red" />
+      <div style={{ marginBottom: 24 }}>
+        <StatCardRow cards={[
+          { label: 'TOTAL PIPELINE', value: formatCents(totalPipelineMRR) + ' MRR', valueColor: 'gold' },
+          { label: 'WEIGHTED PIPELINE', value: formatCents(Math.round(weightedPipelineMRR)) + ' MRR', valueColor: 'gold' },
+          { label: 'WON MTD', value: `${wonMTD.length} deals · ${formatCents(wonMTDmrr)}`, valueColor: 'green' },
+          { label: 'LOST MTD', value: `${lostMTD} deals`, valueColor: 'red' },
+        ]} />
       </div>
 
       {viewMode === 'kanban' ? (

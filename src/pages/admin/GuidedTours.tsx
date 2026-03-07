@@ -10,6 +10,7 @@ import { supabase } from '../../lib/supabase';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import OrgCombobox, { type OrgOption } from '../../components/admin/OrgCombobox';
 import { ALL_MODULES } from '../../config/tourModules';
+import { StatCardRow } from '../../components/admin/StatCardRow';
 import { toast } from 'sonner';
 import {
   Play, Plus, Clock, Users, DollarSign, TrendingUp, Target,
@@ -270,8 +271,8 @@ export default function GuidedTours() {
 
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Guided Tours</h1>
-          <p className="text-sm text-gray-500 mt-1">In-product onboarding for new customers — guides them through first location setup, jurisdiction configuration, and compliance pillars</p>
+          <h1 style={{ fontSize: 22, fontWeight: 700, color: '#1E2D4D', margin: 0, fontFamily: 'Outfit, sans-serif' }}>Guided Tours</h1>
+          <p style={{ fontSize: 13, color: '#6B7280', margin: '4px 0 0 0', fontFamily: 'Inter, sans-serif' }}>In-product onboarding for new customers — guides them through first location setup, jurisdiction configuration, and compliance pillars</p>
         </div>
         <button
           onClick={() => setActiveTab('setup')}
@@ -400,17 +401,16 @@ function OverviewTab({ sessions, pipeline, campaigns, touchpoints }: {
       </div>
 
       {/* KPI cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {kpis.map(kpi => (
-          <div key={kpi.label} className="bg-white rounded-xl border border-gray-200 p-4">
-            <div className="flex items-center gap-2 mb-1">
-              <kpi.icon className="h-4 w-4 text-gray-400" />
-              <span className="text-xs text-gray-500 font-medium">{kpi.label}</span>
-            </div>
-            <div className="text-xl font-bold" style={{ color: DARK }}>{kpi.value}</div>
-          </div>
-        ))}
-      </div>
+      <StatCardRow cards={[
+        { label: 'TOTAL TOURS', value: toursTotal },
+        { label: 'TOURS THIS MONTH', value: toursMonth },
+        { label: 'TOURS THIS WEEK', value: toursWeek },
+        { label: 'AVG DURATION', value: `${avgDuration}m` },
+        { label: 'PIPELINE VALUE', value: formatCents(pipelineValue), valueColor: 'gold' },
+        { label: 'WON THIS MONTH', value: wonMonth, valueColor: 'green' },
+        { label: 'WIN RATE', value: `${winRate}%` },
+        { label: 'AVG DAYS TO CLOSE', value: avgDaysToClose || '—' },
+      ]} />
 
       {/* Source breakdown */}
       <div className="bg-white rounded-xl border border-gray-200 p-5">

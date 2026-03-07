@@ -5,7 +5,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
-import { KpiTile } from '../../components/admin/KpiTile';
+import { StatCardRow } from '../../components/admin/StatCardRow';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -108,9 +108,9 @@ export default function AdminK2C() {
     <div className="space-y-6">
       <AdminBreadcrumb crumbs={[{ label: 'K2C' }]} />
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div>
-          <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Kitchen to Community</h1>
-          <p style={{ fontSize: 13, color: TEXT_SEC, marginTop: 4 }}>Donation tracking — meals, amounts, contributing locations</p>
+        <div style={{ marginBottom: 24 }}>
+          <h1 style={{ fontSize: 22, fontWeight: 700, color: '#1E2D4D', margin: 0, fontFamily: 'Outfit, sans-serif' }}>Kitchen to Community</h1>
+          <p style={{ fontSize: 13, color: '#6B7280', margin: '4px 0 0 0', fontFamily: 'Inter, sans-serif' }}>Donation tracking — meals, amounts, contributing locations</p>
         </div>
         <button onClick={exportCsv} style={{ padding: '6px 14px', background: '#FFFFFF', border: `1px solid ${BORDER}`, borderRadius: 6, color: TEXT_SEC, fontSize: 12, cursor: 'pointer' }}>Export CSV</button>
       </div>
@@ -118,15 +118,15 @@ export default function AdminK2C() {
       {/* KPIs */}
       {loading ? (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {Array.from({ length: 4 }).map((_, i) => <div key={i} style={{ flex: 1 }}><Skeleton h={70} /></div>)}
+          {Array.from({ length: 4 }).map((_, i) => <div key={i} style={{ flex: 1 }}><Skeleton h={110} /></div>)}
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <KpiTile label="Total Meals" value={totalMeals.toLocaleString()} valueColor="green" />
-          <KpiTile label="Total Donated" value={`$${totalDollars.toLocaleString()}`} valueColor="gold" />
-          <KpiTile label="Contributing Accounts" value={contribOrgs} />
-          <KpiTile label="This Month" value={`${thisMonthMeals.toLocaleString()} meals`} />
-        </div>
+        <StatCardRow cards={[
+          { label: 'TOTAL MEALS', value: totalMeals.toLocaleString(), valueColor: 'green' },
+          { label: 'TOTAL DONATED', value: `$${totalDollars.toLocaleString()}`, valueColor: 'gold' },
+          { label: 'CONTRIBUTING ACCOUNTS', value: contribOrgs },
+          { label: 'THIS MONTH', value: `${thisMonthMeals.toLocaleString()} meals` },
+        ]} />
       )}
 
       {/* Running total banner */}

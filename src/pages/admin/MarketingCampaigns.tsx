@@ -7,7 +7,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
-import { KpiTile } from '../../components/admin/KpiTile';
+import { StatCardRow } from '../../components/admin/StatCardRow';
 import { toast } from 'sonner';
 import {
   BarChart3, Plus, TrendingUp, DollarSign, Target,
@@ -74,8 +74,10 @@ export default function MarketingCampaigns() {
     <div style={{ fontFamily: "'DM Sans', 'Inter', sans-serif" }}>
       <AdminBreadcrumb crumbs={[{ label: 'Marketing Campaigns' }]} />
 
-      <h1 className="text-2xl font-bold text-gray-900 mb-1">Marketing Campaigns</h1>
-      <p className="text-sm text-gray-600 mb-6">Track campaigns, channel performance, and tour attribution</p>
+      <div style={{ marginBottom: 24 }}>
+        <h1 style={{ fontSize: 22, fontWeight: 700, color: '#1E2D4D', margin: 0, fontFamily: 'Outfit, sans-serif' }}>Marketing Campaigns</h1>
+        <p style={{ fontSize: 13, color: '#6B7280', margin: '4px 0 0 0', fontFamily: 'Inter, sans-serif' }}>Track campaigns, channel performance, and tour attribution</p>
+      </div>
 
       <div className="flex items-center gap-1 mb-6 border-b border-gray-200">
         {tabs.map(tab => (
@@ -153,12 +155,12 @@ function DashboardTab({ campaigns, touchpoints, pipeline, sessions }: {
   return (
     <div className="space-y-6">
       {/* KPI row */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <KpiTile label="Active Campaigns" value={campaigns.filter(c => c.status === 'active').length} />
-        <KpiTile label="Touches (30d)" value={recentTouchpoints.length} />
-        <KpiTile label="Total Tours" value={totalTours} />
-        <KpiTile label="Won Deals" value={totalWon} valueColor="green" />
-      </div>
+      <StatCardRow cards={[
+        { label: 'ACTIVE CAMPAIGNS', value: campaigns.filter(c => c.status === 'active').length },
+        { label: 'TOUCHES (30D)', value: recentTouchpoints.length },
+        { label: 'TOTAL TOURS', value: totalTours },
+        { label: 'WON DEALS', value: totalWon, valueColor: 'green' },
+      ]} />
 
       {/* Channel performance */}
       <div className="bg-white rounded-xl border border-gray-200 p-5">

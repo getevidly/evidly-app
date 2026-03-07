@@ -13,17 +13,11 @@ import { useRole } from '../../contexts/RoleContext';
 import { supabase } from '../../lib/supabase';
 import { gradeColor, formatDollars } from '../../lib/assessmentScoring';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
-import { KpiTile } from '../../components/admin/KpiTile';
+import { StatCardRow } from '../../components/admin/StatCardRow';
 import {
-  ClipboardList,
   Search,
   ChevronDown,
   ChevronUp,
-  TrendingUp,
-  AlertTriangle,
-  Users,
-  DollarSign,
-  BarChart3,
 } from 'lucide-react';
 
 const NAVY = '#0B1628';
@@ -245,16 +239,18 @@ function AssessmentLeadsPage() {
     <div>
       <AdminBreadcrumb crumbs={[{ label: 'Leads' }]} />
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-[#1E2D4D]">Leads</h1>
-        <p className="text-sm text-gray-500 mt-1">Kitchen Checkup submissions and inbound lead pipeline</p>
+      <div style={{ marginBottom: 24 }}>
+        <h1 style={{ fontSize: 22, fontWeight: 700, color: '#1E2D4D', margin: 0, fontFamily: 'Outfit, sans-serif' }}>Leads</h1>
+        <p style={{ fontSize: 13, color: '#6B7280', margin: '4px 0 0 0', fontFamily: 'Inter, sans-serif' }}>Kitchen Checkup submissions and inbound lead pipeline</p>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-        <KpiTile label="Total Leads" value={stats.total} />
-        <KpiTile label="High Risk" value={stats.highRisk} valueColor="red" />
-        <KpiTile label="Avg Grade" value={stats.total > 0 ? (['A', 'B', 'C', 'D', 'F'] as const).sort((a, b) => (stats.gradeCount[b] || 0) - (stats.gradeCount[a] || 0))[0] : '—'} />
-        <KpiTile label="Total Exposure" value={formatDollars(stats.totalExposure)} valueColor="gold" />
+      <div style={{ marginBottom: 24 }}>
+        <StatCardRow cards={[
+          { label: 'TOTAL LEADS', value: stats.total },
+          { label: 'HIGH RISK', value: stats.highRisk, valueColor: 'red' },
+          { label: 'AVG GRADE', value: stats.total > 0 ? (['A', 'B', 'C', 'D', 'F'] as const).sort((a, b) => (stats.gradeCount[b] || 0) - (stats.gradeCount[a] || 0))[0] : '—' },
+          { label: 'TOTAL EXPOSURE', value: formatDollars(stats.totalExposure), valueColor: 'gold' },
+        ]} />
       </div>
 
       {/* Tabs */}
