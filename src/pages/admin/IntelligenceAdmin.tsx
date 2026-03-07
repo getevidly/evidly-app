@@ -129,14 +129,14 @@ export default function IntelligenceAdmin() {
 
   const loadQueue = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('intelligence_signals')
       .select('*')
       .eq('is_published', false)
-      .not('status', 'eq', 'published')
       .order('routing_tier', { ascending: true })
       .order('created_at', { ascending: false })
       .limit(200);
+    if (error) console.error('[SignalQueue] load error:', error.message);
     if (data) {
       setSignals(data);
       // Load verification statuses for all signals
