@@ -70,8 +70,8 @@ export default function IntelligenceAdmin() {
     const { data } = await supabase
       .from('intelligence_signals')
       .select('*')
-      .in('status', ['new', 'analyzed'])
-      .order('severity_score', { ascending: false, nullsFirst: false })
+      .eq('is_published', false)
+      .order('routing_tier', { ascending: true })
       .order('created_at', { ascending: false })
       .limit(100);
     if (data) setSignals(data);
