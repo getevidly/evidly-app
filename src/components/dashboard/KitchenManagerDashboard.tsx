@@ -1,524 +1,145 @@
-import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  CheckCircle2,
-  Hammer,
-  Clock,
-  Radio,
-  AlertTriangle,
-  ArrowRight,
-} from 'lucide-react';
 import { useRole } from '../../contexts/RoleContext';
-import { useTranslation } from '../../contexts/LanguageContext';
-import { useTooltip } from '../../hooks/useTooltip';
-import { SectionTooltip } from '../ui/SectionTooltip';
 import { useDemo } from '../../contexts/DemoContext';
+import { useTooltip } from '../../hooks/useTooltip';
 import { DEMO_ORG } from '../../data/demoData';
-import { DEMO_ROLE_NAMES } from './shared/constants';
+import { FONT, DEMO_ROLE_NAMES } from './shared/constants';
 import { DashboardHero } from './shared/DashboardHero';
-import { WhereDoIStartSection, type PriorityItem } from './shared/WhereDoIStartSection';
-import { TabbedDetailSection, type TabDef } from './shared/TabbedDetailSection';
 import { CalendarCard } from './shared/CalendarCard';
 import { KITCHEN_MANAGER_EVENTS, KITCHEN_MANAGER_CALENDAR } from '../../data/calendarDemoEvents';
 import { ErrorBoundary } from '../ErrorBoundary';
 import { SelfDiagCard } from './shared/SelfDiagCard';
 import { NFPAReminder } from '../ui/NFPAReminder';
 import { OnboardingChecklistCard } from './shared/OnboardingChecklistCard';
-import { HealthBanner, type HealthStatus } from './shared/HealthBanner';
+import { useDashboardStanding } from '../../hooks/useDashboardStanding';
+import { DashboardSkeleton } from './shared/DashboardSkeleton';
+import { ConfidenceBanner } from './shared/ConfidenceBanner';
+import { TodaysOperations } from './shared/TodaysOperations';
+import { AttentionItemList } from './shared/AttentionItemList';
+import { CheckCircle2, AlertCircle } from 'lucide-react';
+import type { ReadinessSignal } from '../../hooks/useDashboardStanding';
+import { BODY_TEXT } from './shared/constants';
 
-// --------------- Demo Data ---------------
 
-interface DemoChecklist {
-  id: string;
-  name: string;
-  status: 'done' | 'in_progress' | 'not_started';
-  assignee: string | null;
-  completedAt?: string;
-  items: number;
-  completed: number;
-}
+// ── Inspection Readiness inline ─────────────────────────────
 
-interface DemoTemperature {
-  id: string;
-  name: string;
-  temp: number | null;
-  unit: string;
-  status: 'normal' | 'alert' | 'needs_log';
-  source: 'iot' | 'manual';
-  lastReading: string;
-}
+function InspectionReadiness({ signals }: { signals: ReadinessSignal[] }) {
+  if (signals.length === 0) return null;
 
-const DEMO_CHECKLISTS: DemoChecklist[] = [
-  { id: 'opening', name: 'Opening Checklist', status: 'done', assignee: 'Maria', completedAt: '6:15 AM', items: 12, completed: 12 },
-  { id: 'midday', name: 'Midday Checklist', status: 'in_progress', assignee: 'Carlos', items: 8, completed: 4 },
-  { id: 'closing', name: 'Closing Checklist', status: 'not_started', assignee: null, items: 10, completed: 0 },
-];
-
-const DEMO_TEMPERATURES: DemoTemperature[] = [
-  { id: 'cooler-1', name: 'Walk-in Cooler #1', temp: 37.8, unit: '\u00B0F', status: 'normal', source: 'iot', lastReading: '2 min ago' },
-  { id: 'cooler-2', name: 'Walk-in Cooler #2', temp: 39.5, unit: '\u00B0F', status: 'normal', source: 'iot', lastReading: '4 min ago' },
-  { id: 'freezer', name: 'Walk-in Freezer', temp: -2, unit: '\u00B0F', status: 'normal', source: 'iot', lastReading: '6 min ago' },
-  { id: 'prep', name: 'Prep Cooler', temp: null, unit: '\u00B0F', status: 'needs_log', source: 'manual', lastReading: '4 hours ago' },
-];
-
-const DEMO_TEAM = [
-  { name: 'Maria', done: 5, total: 6, activities: ['Opening checklist \u2705', '3 temp logs'] },
-  { name: 'Carlos', done: 2, total: 5, activities: ['Midday checklist \uD83D\uDD28', '2 temp logs'] },
-  { name: 'Sofia', done: 1, total: 3, activities: ['1 temp log'] },
-];
-
-const DEMO_PROGRESS = 52;
-
-// --------------- Helpers ---------------
-
-function Card({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
-    <div
-      className={`bg-white rounded-lg p-4 ${className}`}
-      style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.1)', fontFamily: 'Inter, sans-serif' }}
-    >
-      {children}
+    <div className="bg-white rounded-lg" style={{ border: '1px solid #e5e7eb' }}>
+      <div className="px-4 py-3" style={{ borderBottom: '1px solid #F0F0F0' }}>
+        <h3 className="text-sm font-semibold" style={{ color: BODY_TEXT }}>Inspection Readiness</h3>
+      </div>
+      <div>
+        {signals.map((signal, i) => {
+          const isCurrent = signal.status === 'current';
+          return (
+            <div
+              key={i}
+              className="flex items-center gap-3 px-4 py-3"
+              style={{ borderBottom: '1px solid #F0F0F0' }}
+            >
+              {isCurrent
+                ? <CheckCircle2 size={16} className="text-green-500 shrink-0" />
+                : <AlertCircle size={16} className="text-red-500 shrink-0" />
+              }
+              <div className="flex-1 min-w-0">
+                <p className="text-[13px] font-medium" style={{ color: BODY_TEXT }}>{signal.label}</p>
+                <p className="text-[11px] text-gray-500">{signal.detail}</p>
+              </div>
+              <span
+                className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0"
+                style={{
+                  backgroundColor: isCurrent ? '#dcfce7' : signal.status === 'overdue' ? '#fef2f2' : '#f3f4f6',
+                  color: isCurrent ? '#16a34a' : signal.status === 'overdue' ? '#dc2626' : '#6b7280',
+                }}
+              >
+                {signal.status === 'current' ? 'Current' : signal.status === 'overdue' ? 'Overdue' : 'Missing'}
+              </span>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
 
-function SectionHeader({ children }: { children: React.ReactNode }) {
-  return (
-    <h3
-      className="text-xs font-semibold uppercase mb-3 flex items-center"
-      style={{ letterSpacing: '0.1em', color: '#6b7280', fontFamily: 'Inter, sans-serif' }}
-    >
-      {children}
-    </h3>
-  );
-}
 
-function ChecklistIcon({ status, size = 24 }: { status: DemoChecklist['status']; size?: number }) {
-  if (status === 'done') return <CheckCircle2 size={size} className="text-green-500 shrink-0" />;
-  if (status === 'in_progress') return <Hammer size={size} className="shrink-0" style={{ color: '#d4af37' }} />;
-  return <Clock size={size} className="text-gray-400 shrink-0" />;
-}
-
-function TempStatusDot({ status }: { status: DemoTemperature['status'] }) {
-  if (status === 'normal') return <span className="inline-block w-2.5 h-2.5 rounded-full bg-green-500" />;
-  if (status === 'alert') return <span className="inline-block w-2.5 h-2.5 rounded-full bg-red-500" />;
-  return <span className="inline-block w-2.5 h-2.5 rounded-full bg-gray-300" />;
-}
-
-function getProgressColor(pct: number): string {
-  if (pct >= 80) return '#16a34a';
-  if (pct >= 50) return '#d4af37';
-  return '#dc2626';
-}
-
-function getChecklistBorderColor(status: DemoChecklist['status']): string {
-  if (status === 'done') return '#16a34a';
-  if (status === 'in_progress') return '#d4af37';
-  return '#d1d5db';
-}
-
-function getChecklistBgTint(status: DemoChecklist['status']): string {
-  if (status === 'done') return '#f0fdf4';
-  if (status === 'in_progress') return '#fffbeb';
-  return '#fafafa';
-}
-
-// ===============================================
-// HEALTH STATUS TILE
-// ===============================================
-
-function HealthTile({ label, status, detail, navigate, route }: {
-  label: string;
-  status: 'green' | 'yellow' | 'red';
-  detail: string;
-  navigate: (path: string) => void;
-  route: string;
-}) {
-  const bgColor = status === 'green' ? '#f0fdf4' : status === 'yellow' ? '#fffbeb' : '#fef2f2';
-  const borderColor = status === 'green' ? '#bbf7d0' : status === 'yellow' ? '#fde68a' : '#fecaca';
-  const dotColor = status === 'green' ? '#16a34a' : status === 'yellow' ? '#d97706' : '#dc2626';
-
-  return (
-    <button
-      type="button"
-      onClick={() => navigate(route)}
-      className="rounded-xl p-4 text-left transition-all hover:shadow-md"
-      style={{ backgroundColor: bgColor, border: `1px solid ${borderColor}` }}
-    >
-      <div className="flex items-center gap-2 mb-2">
-        <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: dotColor }} />
-        <span className="text-sm font-semibold text-gray-900">{label}</span>
-      </div>
-      <p className="text-xs text-gray-600">{detail}</p>
-    </button>
-  );
-}
-
-// ===============================================
-// RISK TYPE BADGE
-// ===============================================
-
-const RISK_TYPE_COLORS: Record<string, { bg: string; text: string }> = {
-  liability: { bg: '#fef2f2', text: '#991b1b' },
-  revenue: { bg: '#eff6ff', text: '#1e40af' },
-  cost: { bg: '#fffbeb', text: '#92400e' },
-  operational: { bg: '#f0fdf4', text: '#166534' },
-};
-
-function RiskBadge({ type }: { type: string }) {
-  const colors = RISK_TYPE_COLORS[type] || RISK_TYPE_COLORS.operational;
-  return (
-    <span
-      className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full shrink-0"
-      style={{ backgroundColor: colors.bg, color: colors.text, letterSpacing: '0.05em' }}
-    >
-      {type}
-    </span>
-  );
-}
-
-// ===============================================
+// ═══════════════════════════════════════════════════════════════
 // KITCHEN MANAGER DASHBOARD
-// ===============================================
+// ═══════════════════════════════════════════════════════════════
 
 export default function KitchenManagerDashboard() {
   const navigate = useNavigate();
-  const { getAccessibleLocations, userRole } = useRole();
+  const { userRole } = useRole();
   const { companyName, isDemoMode } = useDemo();
-  const { t } = useTranslation();
 
-  // Extract useTooltip calls to top of component (rules-of-hooks)
-  const overallScoreTooltip = useTooltip('overallScore', userRole);
-  const todaysProgressTooltip = useTooltip('todaysProgress', userRole);
-  const checklistCardTooltip = useTooltip('checklistCard', userRole);
-  const urgentItemsTooltip = useTooltip('urgentItems', userRole);
   const scheduleCalendarTooltip = useTooltip('scheduleCalendar', userRole);
 
-  const accessibleLocations = useMemo(() => getAccessibleLocations(), [getAccessibleLocations]);
-  const hasMultipleLocations = accessibleLocations.length > 1;
-  const [selectedLocationUrlId, setSelectedLocationUrlId] = useState(accessibleLocations[0]?.locationUrlId || 'downtown');
+  const {
+    locations, bannerStatus, bannerHeadline,
+    todaysTasks, attentionItems, inspectionReadiness,
+    loading,
+  } = useDashboardStanding('kitchen_manager');
 
-  const KM_LOC_NAMES: Record<string, string> = {
-    downtown: 'Location 1',
-    airport: 'Location 2',
-    university: 'Location 3',
-  };
-  const locationName = KM_LOC_NAMES[selectedLocationUrlId] || 'Location 1';
-
-  // Animated progress bar
-  const [animatedProgress, setAnimatedProgress] = useState(0);
-  useEffect(() => {
-    const timer = setTimeout(() => setAnimatedProgress(DEMO_PROGRESS), 100);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // ---------- Derived health metrics ----------
-
-  const needsLogCount = DEMO_TEMPERATURES.filter(t => t.status === 'needs_log').length;
-  const notStartedChecklists = DEMO_CHECKLISTS.filter(c => c.status === 'not_started');
-  const doneChecklists = DEMO_CHECKLISTS.filter(c => c.status === 'done');
-  const checklistSummary = `${doneChecklists.length}/${DEMO_CHECKLISTS.length} complete`;
-
-  const teamTotalDone = DEMO_TEAM.reduce((s, m) => s + m.done, 0);
-  const teamTotalAll = DEMO_TEAM.reduce((s, m) => s + m.total, 0);
-  const teamPct = Math.round((teamTotalDone / teamTotalAll) * 100);
-
-  // Determine HealthBanner status from demo data
-  const healthStatus: HealthStatus = useMemo(() => {
-    const hasOverdueChecklist = notStartedChecklists.length > 0;
-    const hasMissedTemp = needsLogCount > 0;
-    // risk: checklist overdue AND missed temp logs
-    if (hasOverdueChecklist && hasMissedTemp) return 'risk';
-    // attention: either issue OR team below 70%
-    if (hasOverdueChecklist || hasMissedTemp || teamPct < 70) return 'attention';
-    return 'healthy';
-  }, [notStartedChecklists.length, needsLogCount, teamPct]);
-
-  const healthMessage = useMemo(() => {
-    if (healthStatus === 'risk') {
-      return `${notStartedChecklists.length} checklist not started and ${needsLogCount} temp log overdue -- take action now.`;
-    }
-    if (healthStatus === 'attention') {
-      const parts: string[] = [];
-      if (notStartedChecklists.length > 0) parts.push(`${notStartedChecklists.length} checklist not started`);
-      if (needsLogCount > 0) parts.push(`${needsLogCount} temp log overdue`);
-      if (teamPct < 70) parts.push(`team at ${teamPct}% completion`);
-      return parts.join(', ') + '.';
-    }
-    return 'All checklists done, temps logged, team on track.';
-  }, [healthStatus, notStartedChecklists.length, needsLogCount, teamPct]);
-
-  // Priority items with risk type labels
-  const priorityItems: (PriorityItem & { riskType: string })[] = [
-    { id: 'km-1', severity: 'warning', title: 'Complete midday checklist (4 items remaining)', detail: 'Carlos is working on it', actionLabel: 'View', route: '/checklists', riskType: 'liability' },
-    { id: 'km-2', severity: 'warning', title: 'Log Prep Cooler temp', detail: 'Last logged 4 hours ago', actionLabel: 'Log Temp', route: '/temp-logs', riskType: 'liability' },
-    { id: 'km-3', severity: 'info', title: 'Assign Closing Checklist', detail: 'No assignee yet -- evening shift starts at 4 PM', actionLabel: 'Assign', route: '/checklists', riskType: 'operational' },
-    { id: 'km-4', severity: 'info', title: 'Sofia has 2 tasks remaining', detail: 'Temp log and receiving check', actionLabel: 'View', route: '/team', riskType: 'operational' },
-  ];
-
-  // "Do This Next" -- top 3 actions
-  const doThisNextItems = priorityItems.slice(0, 3);
+  // Single location for kitchen manager
+  const locationName = locations.length > 0 ? locations[0].locationName : '';
 
   // Live mode empty state
-  if (!isDemoMode) {
+  if (!isDemoMode && !loading && locations.length === 0) {
     return (
-      <div className="space-y-6" style={{ fontFamily: 'Inter, sans-serif' }}>
+      <div className="space-y-6" style={FONT}>
         <DashboardHero
-          firstName={DEMO_ROLE_NAMES[userRole]?.firstName || 'Chef'}
+          firstName={DEMO_ROLE_NAMES[userRole]?.firstName || 'Manager'}
           orgName={companyName || 'Your Organization'}
-          locationName={locationName}
         />
-        <Card>
+        <div className="bg-white rounded-lg p-4" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
           <div className="text-center py-8">
             <p className="text-sm font-medium text-gray-500">No data yet. Set up your locations and team to see your kitchen dashboard.</p>
             <button type="button" onClick={() => navigate('/checklists')} className="mt-3 text-sm font-semibold px-4 py-2 rounded-lg text-white" style={{ backgroundColor: '#1e4d6b' }}>
               Set Up Checklists
             </button>
           </div>
-        </Card>
+        </div>
       </div>
     );
   }
 
+  if (loading) return <DashboardSkeleton />;
+
   return (
-    <div className="space-y-6" style={{ fontFamily: 'Inter, sans-serif' }}>
-      {/* 1. Hero Banner */}
+    <div className="space-y-6" style={FONT}>
+      {/* 1. HERO */}
       <DashboardHero
-        firstName={DEMO_ROLE_NAMES[userRole]?.firstName || 'Chef'}
+        firstName={DEMO_ROLE_NAMES[userRole]?.firstName || 'Manager'}
         orgName={companyName || DEMO_ORG.name}
         locationName={locationName}
       />
 
-      {/* 2. Onboarding checklist */}
+      {/* 2. ONBOARDING CHECKLIST */}
       <OnboardingChecklistCard />
 
-      {/* 3. HealthBanner */}
-      <HealthBanner
-        status={healthStatus}
-        scope="Operations Health"
-        message={healthMessage}
+      {/* 3. CONFIDENCE BANNER */}
+      <ConfidenceBanner
+        status={bannerStatus}
+        headline={bannerHeadline}
       />
 
-      {/* ============================================================ */}
-      {/* 4. Kitchen Status -- 2x2 grid (NO Facility Safety)           */}
-      {/* ============================================================ */}
-      <div>
-        <SectionHeader>Kitchen Status<SectionTooltip content={overallScoreTooltip} /></SectionHeader>
-        <div className="grid grid-cols-2 gap-3">
-          <HealthTile
-            label="Food Safety"
-            status="green"
-            detail="Compliant -- no open majors"
-            navigate={navigate}
-            route="/compliance"
-          />
-          <HealthTile
-            label="Temp Logs"
-            status={needsLogCount > 0 ? 'yellow' : 'green'}
-            detail={needsLogCount > 0 ? `${needsLogCount} reading needs logging` : 'All readings current'}
-            navigate={navigate}
-            route="/temp-logs"
-          />
-          <HealthTile
-            label="Checklists"
-            status={notStartedChecklists.length > 0 ? 'yellow' : 'green'}
-            detail={checklistSummary}
-            navigate={navigate}
-            route="/checklists"
-          />
-          <HealthTile
-            label="Team Tasks"
-            status={teamPct < 70 ? 'yellow' : 'green'}
-            detail={`${teamPct}% complete -- ${teamTotalDone}/${teamTotalAll} tasks`}
-            navigate={navigate}
-            route="/team"
-          />
-        </div>
-      </div>
+      {/* 4. TODAY'S TASKS */}
+      <TodaysOperations tasks={todaysTasks} navigate={navigate} />
 
-      {/* ============================================================ */}
-      {/* 5. "What Needs Attention" -- operational gaps ranked by risk  */}
-      {/* ============================================================ */}
-      {priorityItems.length > 0 && (
-        <div>
-          <SectionHeader>What Needs Attention</SectionHeader>
-          <div className="space-y-2">
-            {priorityItems.map((item) => {
-              const iconColor = item.severity === 'critical' ? '#dc2626' : item.severity === 'warning' ? '#d97706' : '#6b7280';
-              return (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => navigate(item.route)}
-                  className="w-full bg-white rounded-lg p-3 text-left hover:shadow-md transition-shadow flex items-center gap-3"
-                  style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}
-                >
-                  <AlertTriangle size={16} className="shrink-0" style={{ color: iconColor }} />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-gray-900">{item.title}</p>
-                    {item.detail && <p className="text-xs text-gray-500 mt-0.5">{item.detail}</p>}
-                  </div>
-                  <RiskBadge type={item.riskType} />
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
+      {/* 5. WHAT NEEDS ATTENTION */}
+      <AttentionItemList items={attentionItems} />
 
-      {/* ============================================================ */}
-      {/* 6. "Do This Next" -- max 3 actions                           */}
-      {/* ============================================================ */}
-      <div>
-        <SectionHeader>Do This Next</SectionHeader>
-        <div className="space-y-2">
-          {doThisNextItems.map((item, idx) => (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => navigate(item.route)}
-              className="w-full bg-white rounded-lg p-3 text-left hover:shadow-md transition-shadow flex items-center gap-3"
-              style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}
-            >
-              <span
-                className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
-                style={{ backgroundColor: '#163a5f' }}
-              >
-                {idx + 1}
-              </span>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-gray-900">{item.title}</p>
-                {item.detail && <p className="text-xs text-gray-500 mt-0.5">{item.detail}</p>}
-              </div>
-              <ArrowRight size={16} className="shrink-0 text-gray-400" />
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* ============================================================ */}
-      {/* 7. Team Progress with progress bars                          */}
-      {/* ============================================================ */}
-      <Card>
-        <SectionHeader>Team Progress</SectionHeader>
-        <div className="space-y-3">
-          {DEMO_TEAM.map(member => {
-            const pct = Math.round((member.done / member.total) * 100);
-            return (
-              <button key={member.name} type="button" onClick={() => navigate('/team')} className="w-full flex items-center gap-3 text-left hover:bg-gray-50 rounded-lg p-1 -m-1 transition-colors">
-                <div
-                  className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-semibold shrink-0"
-                  style={{ backgroundColor: '#1e4d6b' }}
-                >
-                  {member.name.charAt(0)}
-                </div>
-                <span className="text-sm font-medium text-gray-900 w-16">{member.name}</span>
-                <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                  <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: getProgressColor(pct) }} />
-                </div>
-                <span className="text-xs text-gray-500 w-12 text-right">{member.done}/{member.total}</span>
-              </button>
-            );
-          })}
-        </div>
-      </Card>
-
-      {/* ============================================================ */}
-      {/* 8. BELOW THE FOLD                                            */}
-      {/* ============================================================ */}
+      {/* 6. INSPECTION READINESS */}
+      <InspectionReadiness signals={inspectionReadiness} />
 
       {/* NFPA Monthly Reminder */}
       <NFPAReminder />
 
-      {/* Self-Diagnosis -- Kitchen Problem */}
+      {/* Self-Diagnosis */}
       <SelfDiagCard />
-
-      {/* Location tabs (if multiple locations) */}
-      {hasMultipleLocations && (
-        <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
-          {accessibleLocations.map((loc) => (
-            <button
-              key={loc.locationUrlId}
-              onClick={() => setSelectedLocationUrlId(loc.locationUrlId)}
-              className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                selectedLocationUrlId === loc.locationUrlId
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              {loc.locationName}
-            </button>
-          ))}
-        </div>
-      )}
-
-      {/* Today's Progress */}
-      <Card>
-        <SectionHeader>{t('cards.todaysProgress')}<SectionTooltip content={todaysProgressTooltip} /></SectionHeader>
-        <div className="space-y-2">
-          <div className="w-full bg-gray-200 rounded-full" style={{ height: 12 }}>
-            <div
-              className="rounded-full transition-all duration-700 ease-out"
-              style={{
-                width: `${animatedProgress}%`,
-                height: 12,
-                backgroundColor: getProgressColor(animatedProgress),
-              }}
-            />
-          </div>
-          <p className="text-sm font-medium" style={{ color: getProgressColor(DEMO_PROGRESS) }}>
-            {DEMO_PROGRESS}% {t('status.complete').toLowerCase()}
-          </p>
-        </div>
-      </Card>
-
-      {/* Checklists */}
-      <div>
-        <SectionHeader>{t('cards.checklists')}<SectionTooltip content={checklistCardTooltip} /></SectionHeader>
-        <div className="space-y-3">
-          {DEMO_CHECKLISTS.map((cl) => (
-            <button
-              key={cl.id}
-              type="button"
-              onClick={() => navigate('/checklists')}
-              className="w-full rounded-lg p-4 text-left hover:shadow-md transition-shadow"
-              style={{
-                boxShadow: '0 1px 4px rgba(0,0,0,0.12)',
-                borderLeft: `4px solid ${getChecklistBorderColor(cl.status)}`,
-                backgroundColor: getChecklistBgTint(cl.status),
-                fontFamily: 'Inter, sans-serif',
-              }}
-            >
-              <div className="flex items-center gap-4">
-                <ChecklistIcon status={cl.status} size={24} />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-gray-900">{cl.name}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">
-                    {cl.status === 'done' && `${t('status.complete')} \u00B7 ${cl.assignee} \u00B7 ${cl.completedAt}`}
-                    {cl.status === 'in_progress' && `${cl.completed} of ${cl.items} items \u00B7 ${cl.assignee}`}
-                    {cl.status === 'not_started' && t('status.notStartedYet')}
-                  </p>
-                </div>
-                {cl.status === 'in_progress' && (
-                  <div className="w-16 bg-gray-200 rounded-full" style={{ height: 6 }}>
-                    <div
-                      className="rounded-full"
-                      style={{
-                        width: `${(cl.completed / cl.items) * 100}%`,
-                        height: 6,
-                        backgroundColor: '#d4af37',
-                      }}
-                    />
-                  </div>
-                )}
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Where Do I Start */}
-      <WhereDoIStartSection items={priorityItems} tooltipContent={urgentItemsTooltip} />
 
       {/* Schedule Calendar */}
       <ErrorBoundary level="widget">
@@ -530,96 +151,6 @@ export default function KitchenManagerDashboard() {
           tooltipContent={scheduleCalendarTooltip}
         />
       </ErrorBoundary>
-
-      {/* Temperatures & Team Activity */}
-      <Card>
-        <TabbedDetailSection
-          tabs={[
-            {
-              id: 'temperatures',
-              label: t('cards.temperatures'),
-              content: (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="text-xs text-gray-400 uppercase border-b border-gray-100">
-                        <th className="text-left pb-2 font-medium">{t('cards.equipment')}</th>
-                        <th className="text-right pb-2 font-medium">Temp</th>
-                        <th className="text-center pb-2 font-medium">{t('common.status')}</th>
-                        <th className="text-center pb-2 font-medium">Source</th>
-                        <th className="text-right pb-2 font-medium">Last</th>
-                        <th className="pb-2"></th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-50">
-                      {DEMO_TEMPERATURES.map((tmp) => (
-                        <tr key={tmp.id} onClick={() => navigate('/temp-logs')} className="cursor-pointer hover:bg-gray-50 transition-colors">
-                          <td className="py-2.5 text-gray-900 font-medium">{tmp.name}</td>
-                          <td className="py-2.5 text-right tabular-nums">
-                            {tmp.temp !== null ? (
-                              <span style={{ color: tmp.status === 'alert' ? '#dc2626' : '#374151' }}>
-                                {tmp.temp}{tmp.unit}
-                              </span>
-                            ) : (
-                              <span className="text-gray-300">&mdash;</span>
-                            )}
-                          </td>
-                          <td className="py-2.5 text-center">
-                            <TempStatusDot status={tmp.status} />
-                          </td>
-                          <td className="py-2.5 text-center">
-                            {tmp.source === 'iot' ? (
-                              <Radio size={14} className="inline text-blue-500" />
-                            ) : (
-                              <span className="text-xs text-gray-400">{t('status.manual')}</span>
-                            )}
-                          </td>
-                          <td className="py-2.5 text-right text-gray-500 text-xs">{tmp.lastReading}</td>
-                          <td className="py-2.5 text-right">
-                            {tmp.status === 'needs_log' && (
-                              <button
-                                type="button"
-                                onClick={() => navigate('/temp-logs')}
-                                className="text-xs font-medium px-2 py-1 rounded hover:bg-gray-50 transition-colors"
-                                style={{ color: '#1e4d6b' }}
-                              >
-                                {t('actions.logTemp')} &rarr;
-                              </button>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ),
-            },
-            {
-              id: 'team-activity',
-              label: t('cards.teamActivity'),
-              content: (
-                <div className="space-y-3">
-                  {DEMO_TEAM.map((member) => (
-                    <button key={member.name} type="button" onClick={() => navigate('/team')} className="flex items-start gap-3 w-full text-left rounded-lg p-1 -m-1 hover:bg-gray-50 transition-colors">
-                      <div
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-semibold shrink-0"
-                        style={{ backgroundColor: '#1e4d6b' }}
-                      >
-                        {member.name.charAt(0)}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-sm font-medium text-gray-900">{member.name}</p>
-                        <p className="text-xs text-gray-500">{member.activities.join(', ')}</p>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              ),
-            },
-          ] satisfies TabDef[]}
-          defaultTab="temperatures"
-        />
-      </Card>
     </div>
   );
 }

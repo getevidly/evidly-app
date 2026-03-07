@@ -1,4 +1,4 @@
-﻿import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -8,7 +8,6 @@ import {
   Circle,
   ChevronDown,
   ChevronUp,
-  ClipboardCheck,
   Globe,
 } from 'lucide-react';
 import { useRole } from '../../contexts/RoleContext';
@@ -22,6 +21,10 @@ import { DashboardHero } from './shared/DashboardHero';
 import { DEMO_ROLE_NAMES } from './shared/constants';
 import { CalendarCard, type CalendarEvent } from './shared/CalendarCard';
 import { OnboardingChecklistCard } from './shared/OnboardingChecklistCard';
+import { StaffStanding } from './shared/StaffStanding';
+import { ConfidenceBanner } from './shared/ConfidenceBanner';
+import { useDashboardStanding } from '../../hooks/useDashboardStanding';
+import { DashboardSkeleton } from './shared/DashboardSkeleton';
 
 // --------------- Demo Data ---------------
 
@@ -35,19 +38,17 @@ interface StaffTask {
   completedAt?: string;
 }
 
-const DEMO_STAFF_LOCATION = 'Location 1';
-
 // Calendar demo events for kitchen staff
 const STAFF_CALENDAR_EVENTS: CalendarEvent[] = (() => {
   const today = new Date();
   const fmt = (d: Date) => d.toISOString().slice(0, 10);
   return [
-    { date: fmt(today), type: 'checklist', title: 'Opening Checklist', location: 'Location 1', priority: 'high' as const }, // demo
-    { date: fmt(today), type: 'temp_check', title: 'AM Temperature Logs', location: 'Location 1', priority: 'high' as const }, // demo
-    { date: fmt(today), type: 'checklist', title: 'Closing Checklist', location: 'Location 1', priority: 'medium' as const }, // demo
-    { date: fmt(new Date(today.getTime() + 86400000)), type: 'checklist', title: 'Opening Checklist', location: 'Location 1', priority: 'high' as const }, // demo
-    { date: fmt(new Date(today.getTime() + 86400000)), type: 'temp_check', title: 'AM Temperature Logs', location: 'Location 1', priority: 'high' as const }, // demo
-    { date: fmt(new Date(today.getTime() + 2 * 86400000)), type: 'checklist', title: 'Opening Checklist', location: 'Location 1', priority: 'medium' as const }, // demo
+    { date: fmt(today), type: 'checklist', title: 'Opening Checklist', location: 'Location 1', priority: 'high' as const },
+    { date: fmt(today), type: 'temp_check', title: 'AM Temperature Logs', location: 'Location 1', priority: 'high' as const },
+    { date: fmt(today), type: 'checklist', title: 'Closing Checklist', location: 'Location 1', priority: 'medium' as const },
+    { date: fmt(new Date(today.getTime() + 86400000)), type: 'checklist', title: 'Opening Checklist', location: 'Location 1', priority: 'high' as const },
+    { date: fmt(new Date(today.getTime() + 86400000)), type: 'temp_check', title: 'AM Temperature Logs', location: 'Location 1', priority: 'high' as const },
+    { date: fmt(new Date(today.getTime() + 2 * 86400000)), type: 'checklist', title: 'Opening Checklist', location: 'Location 1', priority: 'medium' as const },
   ];
 })();
 
@@ -62,16 +63,14 @@ const STAFF_CALENDAR_LABELS: Record<string, string> = {
 };
 
 const INITIAL_TASKS: StaffTask[] = [
-  // TO DO (6 tasks) — temp tasks first
-  { id: 'task-1', description: 'Check prep cooler temperature', descriptionEs: 'Verificar temperatura del enfriador de preparación', type: 'temp_log', status: 'todo', equipment: 'Prep Cooler' },
+  { id: 'task-1', description: 'Check prep cooler temperature', descriptionEs: 'Verificar temperatura del enfriador de preparaci\u00f3n', type: 'temp_log', status: 'todo', equipment: 'Prep Cooler' },
   { id: 'task-4', description: 'Check walk-in cooler #2 temperature', descriptionEs: 'Verificar temperatura del enfriador #2', type: 'temp_log', status: 'todo', equipment: 'Walk-in Cooler #2' },
-  { id: 'task-5', description: 'Verify hot holding temps', descriptionEs: 'Verificar temperaturas de mantención caliente', type: 'temp_log', status: 'todo', equipment: 'Hot Holding Station' },
-  { id: 'task-2', description: 'Sanitize prep surfaces', descriptionEs: 'Sanitizar superficies de preparación', type: 'checklist', status: 'todo' },
+  { id: 'task-5', description: 'Verify hot holding temps', descriptionEs: 'Verificar temperaturas de mantenci\u00f3n caliente', type: 'temp_log', status: 'todo', equipment: 'Hot Holding Station' },
+  { id: 'task-2', description: 'Sanitize prep surfaces', descriptionEs: 'Sanitizar superficies de preparaci\u00f3n', type: 'checklist', status: 'todo' },
   { id: 'task-3', description: 'Date-label all prepped items', descriptionEs: 'Etiquetar con fecha todos los productos preparados', type: 'checklist', status: 'todo' },
-  { id: 'task-6', description: 'Wipe down station', descriptionEs: 'Limpiar estación de trabajo', type: 'checklist', status: 'todo' },
-  // DONE (4 tasks)
+  { id: 'task-6', description: 'Wipe down station', descriptionEs: 'Limpiar estaci\u00f3n de trabajo', type: 'checklist', status: 'todo' },
   { id: 'task-7', description: 'Check walk-in cooler #1 temperature', descriptionEs: 'Verificar temperatura del enfriador #1', type: 'temp_log', status: 'done', completedAt: '7:15 AM' },
-  { id: 'task-8', description: 'Handwashing station stocked', descriptionEs: 'Estación de lavado de manos abastecida', type: 'checklist', status: 'done', completedAt: '6:45 AM' },
+  { id: 'task-8', description: 'Handwashing station stocked', descriptionEs: 'Estaci\u00f3n de lavado de manos abastecida', type: 'checklist', status: 'done', completedAt: '6:45 AM' },
   { id: 'task-9', description: 'Verify freezer temperature', descriptionEs: 'Verificar temperatura del congelador', type: 'temp_log', status: 'done', completedAt: '6:30 AM' },
   { id: 'task-10', description: 'Clean floor mats', descriptionEs: 'Limpiar tapetes del piso', type: 'checklist', status: 'done', completedAt: '6:20 AM' },
 ];
@@ -103,7 +102,7 @@ const STRINGS = {
     tapToExpand: 'toca para expandir',
     tapToCollapse: 'toca para contraer',
     completedAt: 'Completado a las',
-    allDone: '¡Todo listo por ahora!',
+    allDone: '\u00a1Todo listo por ahora!',
     logTempMega: 'REGISTRAR TEMP',
     reportIssue: 'REPORTAR PROBLEMA',
   },
@@ -134,11 +133,19 @@ export default function KitchenStaffTaskList() {
   const [doneExpanded, setDoneExpanded] = useState(false);
   const [dismissedAlerts, setDismissedAlerts] = useState<Set<string>>(new Set());
 
+  // Standing data for banner
+  const {
+    locations, bannerStatus, bannerHeadline,
+    loading,
+  } = useDashboardStanding('kitchen_staff');
+
+  const locationName = locations.length > 0 ? locations[0].locationName : '';
+
   const todoTasks = useMemo(() => tasks.filter(t => t.status === 'todo'), [tasks]);
   const doneTasks = useMemo(() => tasks.filter(t => t.status === 'done'), [tasks]);
   const totalTasks = tasks.length;
   const doneCount = doneTasks.length;
-  const progressPct = Math.round((doneCount / totalTasks) * 100);
+  const progressPct = totalTasks > 0 ? Math.round((doneCount / totalTasks) * 100) : 0;
 
   const staffAlerts: AlertBannerItem[] = useMemo(() => {
     const overdueTasks = todoTasks.filter(t => t.type === 'temp_log');
@@ -177,6 +184,9 @@ export default function KitchenStaffTaskList() {
   const getTaskDescription = (task: StaffTask) => lang === 'es' ? task.descriptionEs : task.description;
 
   const staffName = DEMO_ROLE_NAMES.kitchen_staff?.firstName || 'Miguel';
+  const overdueTempCount = todoTasks.filter(t => t.type === 'temp_log').length;
+
+  if (loading) return <DashboardSkeleton />;
 
   return (
     <div className="w-full flex justify-center" style={{ fontFamily: 'Inter, sans-serif' }}>
@@ -186,17 +196,26 @@ export default function KitchenStaffTaskList() {
           <DashboardHero
             firstName={staffName}
             orgName={isDemoMode ? companyName : ''}
-            locationName={isDemoMode ? DEMO_STAFF_LOCATION : ''}
+            locationName={isDemoMode ? locationName : ''}
           />
 
           {/* Onboarding checklist */}
           <OnboardingChecklistCard />
 
-          {/* ============================================================ */}
-          {/* ABOVE THE FOLD — Task count + progress bar                   */}
-          {/* ============================================================ */}
+          {/* Confidence Banner */}
+          <ConfidenceBanner
+            status={bannerStatus}
+            headline={bannerHeadline}
+          />
 
-          {/* Task count — large + progress bar */}
+          {/* Staff Standing — progress ring */}
+          <StaffStanding
+            totalTasks={totalTasks}
+            completedTasks={doneCount}
+            overdueTasks={overdueTempCount}
+          />
+
+          {/* Task count + progress bar */}
           <div
             className="rounded-xl p-5 text-center"
             style={{
@@ -233,35 +252,8 @@ export default function KitchenStaffTaskList() {
             </div>
           </div>
 
-          {/* ONE overdue alert or next task due */}
+          {/* Alert banner */}
           <AlertBanner alerts={visibleAlerts} onDismiss={handleDismissAlert} navigate={navigate} />
-
-          {/* ============================================================ */}
-          {/* BELOW THE FOLD                                                */}
-          {/* ============================================================ */}
-
-          {/* My Shift Progress (section header) */}
-          <div>
-            <p
-              className="text-xs font-semibold uppercase mb-2 flex items-center"
-              style={{ letterSpacing: '0.1em', color: '#6b7280' }}
-            >
-              {s.myShift}<SectionTooltip content={useTooltip('todaysProgress', userRole)} />
-            </p>
-            <div className="w-full bg-gray-200 rounded-full" style={{ height: 12 }}>
-              <div
-                className="rounded-full transition-all duration-500 ease-out"
-                style={{
-                  width: `${progressPct}%`,
-                  height: 12,
-                  backgroundColor: getProgressColor(progressPct),
-                }}
-              />
-            </div>
-            <p className="text-sm mt-1.5" style={{ color: getProgressColor(progressPct) }}>
-              {s.tasksDone(doneCount, totalTasks)}
-            </p>
-          </div>
 
           {/* TO DO NOW */}
           <div>
@@ -313,7 +305,7 @@ export default function KitchenStaffTaskList() {
                           }}
                         >
                           <Thermometer size={20} />
-                          {s.logTemp} →
+                          {s.logTemp} \u2192
                         </button>
                       ) : (
                         <button
