@@ -1,11 +1,11 @@
 /**
  * IntelligenceAdmin — Signal Approval Queue
  *
- * Focused admin page for reviewing and publishing intelligence signals.
- * Shows signals in hold/notify tiers that need manual review.
+ * Focused admin page for reviewing, publishing, and managing intelligence signals.
+ * Supports dismiss with reason, undo, restore, and enhanced filtering.
  * Route: /admin/intelligence-admin
  */
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
@@ -42,7 +42,12 @@ interface QueueSignal {
   review_deadline: string | null;
   auto_publish_at: string | null;
   created_at: string;
+  dismissed_reason: string | null;
+  dismissed_at: string | null;
+  dismissed_by: string | null;
 }
+
+type TabFilter = 'all' | 'hold' | 'notify' | 'dismissed';
 
 const URGENCY_COLORS: Record<string, { bg: string; text: string }> = {
   critical:      { bg: '#FEF2F2', text: '#DC2626' },
@@ -70,17 +75,56 @@ const DIM_COLORS: Record<string, string> = {
 const LEVELS = ['critical', 'high', 'moderate', 'low', 'none'] as const;
 const LEVEL_LABELS: Record<string, string> = { critical: 'Crit', high: 'High', moderate: 'Med', low: 'Low', none: 'None' };
 
+const DISMISS_REASONS = [
+  'Not relevant to CA commercial kitchens',
+  'Duplicate signal',
+  'Outdated / superseded',
+  'Insufficient source quality',
+  'Out of scope for current platform',
+  'Other',
+] as const;
+
+const CATEGORY_OPTIONS = [
+  { key: '', label: 'All' },
+  { key: 'recall', label: 'Recall' },
+  { key: 'allergen_alert', label: 'Allergen Alert' },
+  { key: 'regulatory_change', label: 'Regulatory Change' },
+  { key: 'fire_safety', label: 'Fire Safety' },
+  { key: 'health_alert', label: 'Health Alert' },
+] as const;
+
+const DATE_OPTIONS = [
+  { key: '', label: 'All Time' },
+  { key: '7', label: 'Last 7 Days' },
+  { key: '30', label: 'Last 30 Days' },
+  { key: '90', label: 'Last 90 Days' },
+] as const;
+
 export default function IntelligenceAdmin() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [signals, setSignals] = useState<QueueSignal[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<'all' | 'hold' | 'notify'>('all');
+  const [filter, setFilter] = useState<TabFilter>('all');
   const [dimFilter, setDimFilter] = useState<'' | 'revenue' | 'liability' | 'cost' | 'operational'>('');
+  const [categoryFilter, setCategoryFilter] = useState('');
+  const [dateFilter, setDateFilter] = useState('');
   const [publishing, setPublishing] = useState<string | null>(null);
   const [riskEdits, setRiskEdits] = useState<Record<string, { revenue: string; liability: string; cost: string; operational: string }>>({});
   const [expandedVerification, setExpandedVerification] = useState<string | null>(null);
   const [verificationStatuses, setVerificationStatuses] = useState<Record<string, { verification_status: string; publish_blocked: boolean; gates_passed: number; gates_required: number }>>({});
+
+  // Dismiss modal state
+  const [dismissModal, setDismissModal] = useState<{ signalId: string; previousTier: RoutingTier | null } | null>(null);
+  const [dismissReason, setDismissReason] = useState('');
+  const [dismissNote, setDismissNote] = useState('');
+
+  // Undo toast state
+  const [lastDismissed, setLastDismissed] = useState<{ id: string; previousTier: RoutingTier | null; signal: QueueSignal } | null>(null);
+  const undoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Restored flash
+  const [restoredId, setRestoredId] = useState<string | null>(null);
 
   const loadQueue = useCallback(async () => {
     setLoading(true);
@@ -88,12 +132,13 @@ export default function IntelligenceAdmin() {
       .from('intelligence_signals')
       .select('*')
       .eq('is_published', false)
+      .not('status', 'eq', 'published')
       .order('routing_tier', { ascending: true })
       .order('created_at', { ascending: false })
-      .limit(100);
+      .limit(200);
     if (data) {
       setSignals(data);
-      // Load verification statuses for all pending signals
+      // Load verification statuses for all signals
       const ids = data.map((s: QueueSignal) => s.id);
       if (ids.length > 0) {
         const { data: vsData } = await supabase
@@ -114,6 +159,11 @@ export default function IntelligenceAdmin() {
   }, []);
 
   useEffect(() => { loadQueue(); }, [loadQueue]);
+
+  // Cleanup undo timer on unmount
+  useEffect(() => {
+    return () => { if (undoTimerRef.current) clearTimeout(undoTimerRef.current); };
+  }, []);
 
   const getRiskLevel = (sig: QueueSignal, dim: 'revenue' | 'liability' | 'cost' | 'operational'): string => {
     if (riskEdits[sig.id]) return riskEdits[sig.id][dim];
@@ -150,6 +200,7 @@ export default function IntelligenceAdmin() {
       .update({
         ...riskValues,
         status: 'published',
+        is_published: true,
         published_at: new Date().toISOString(),
         published_by: user?.email,
       })
@@ -168,32 +219,148 @@ export default function IntelligenceAdmin() {
     setPublishing(null);
   };
 
-  const dismissSignal = async (sigId: string) => {
-    await supabase
-      .from('intelligence_signals')
-      .update({ status: 'dismissed' })
-      .eq('id', sigId);
-    setSignals(prev => prev.filter(s => s.id !== sigId));
+  // Open dismiss modal
+  const openDismissModal = (sig: QueueSignal) => {
+    setDismissModal({ signalId: sig.id, previousTier: sig.routing_tier });
+    setDismissReason('');
+    setDismissNote('');
   };
 
-  const filtered = signals.filter(s => {
+  // Confirm dismiss with reason
+  const confirmDismiss = async () => {
+    if (!dismissModal || !dismissReason) return;
+    if (dismissReason === 'Other' && dismissNote.length < 1) return;
+
+    const sig = signals.find(s => s.id === dismissModal.signalId);
+    if (!sig) return;
+
+    const fullReason = dismissReason === 'Other' ? `Other: ${dismissNote}` : dismissReason;
+
+    // Optimistic update
+    setSignals(prev => prev.map(s =>
+      s.id === dismissModal.signalId
+        ? { ...s, status: 'dismissed', dismissed_reason: fullReason, dismissed_at: new Date().toISOString(), dismissed_by: user?.email || 'admin' }
+        : s
+    ));
+    setDismissModal(null);
+
+    // Start undo timer
+    if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
+    setLastDismissed({ id: sig.id, previousTier: sig.routing_tier, signal: sig });
+    undoTimerRef.current = setTimeout(() => {
+      setLastDismissed(null);
+    }, 6000);
+
+    // Persist
+    await supabase
+      .from('intelligence_signals')
+      .update({
+        status: 'dismissed',
+        dismissed_reason: fullReason,
+        dismissed_at: new Date().toISOString(),
+        dismissed_by: user?.email || 'admin',
+      })
+      .eq('id', dismissModal.signalId);
+  };
+
+  // Undo dismiss
+  const undoDismiss = async () => {
+    if (!lastDismissed) return;
+    const { id, signal } = lastDismissed;
+    if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
+    setLastDismissed(null);
+
+    // Optimistic: restore to original state
+    setSignals(prev => prev.map(s =>
+      s.id === id
+        ? { ...s, status: signal.status === 'dismissed' ? 'new' : signal.status, dismissed_reason: null, dismissed_at: null, dismissed_by: null }
+        : s
+    ));
+
+    await supabase
+      .from('intelligence_signals')
+      .update({
+        status: 'new',
+        dismissed_reason: null,
+        dismissed_at: null,
+        dismissed_by: null,
+      })
+      .eq('id', id);
+  };
+
+  // Restore from dismissed tab
+  const restoreSignal = async (sig: QueueSignal) => {
+    // Optimistic update
+    setSignals(prev => prev.map(s =>
+      s.id === sig.id
+        ? { ...s, status: 'new', dismissed_reason: null, dismissed_at: null, dismissed_by: null }
+        : s
+    ));
+    setRestoredId(sig.id);
+    setTimeout(() => setRestoredId(null), 1500);
+
+    await supabase
+      .from('intelligence_signals')
+      .update({
+        status: 'new',
+        dismissed_reason: null,
+        dismissed_at: null,
+        dismissed_by: null,
+      })
+      .eq('id', sig.id);
+  };
+
+  // Split signals
+  const activeSignals = signals.filter(s => s.status !== 'dismissed');
+  const dismissedSignals = signals.filter(s => s.status === 'dismissed');
+
+  // Date filter helper
+  const passesDateFilter = (createdAt: string): boolean => {
+    if (!dateFilter) return true;
+    const days = parseInt(dateFilter, 10);
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - days);
+    return new Date(createdAt) >= cutoff;
+  };
+
+  // Apply all filters
+  const filtered = (filter === 'dismissed' ? dismissedSignals : activeSignals).filter(s => {
     if (filter === 'hold' && s.routing_tier !== 'hold') return false;
     if (filter === 'notify' && s.routing_tier !== 'notify') return false;
     if (dimFilter) {
       const riskVal = s[`risk_${dimFilter}` as keyof QueueSignal] as string | null;
       if (!riskVal || riskVal === 'none') return false;
     }
+    if (categoryFilter && s.signal_type !== categoryFilter) return false;
+    if (!passesDateFilter(s.created_at)) return false;
     return true;
   });
 
-  const holdCount = signals.filter(s => s.routing_tier === 'hold').length;
-  const notifyCount = signals.filter(s => s.routing_tier === 'notify').length;
-  const revenueCount = signals.filter(s => s.risk_revenue && s.risk_revenue !== 'none').length;
-  const liabilityCount = signals.filter(s => s.risk_liability && s.risk_liability !== 'none').length;
-  const costOpsCount = signals.filter(s =>
+  const holdCount = activeSignals.filter(s => s.routing_tier === 'hold').length;
+  const notifyCount = activeSignals.filter(s => s.routing_tier === 'notify').length;
+  const dismissedCount = dismissedSignals.length;
+  const revenueCount = activeSignals.filter(s => s.risk_revenue && s.risk_revenue !== 'none').length;
+  const liabilityCount = activeSignals.filter(s => s.risk_liability && s.risk_liability !== 'none').length;
+  const costOpsCount = activeSignals.filter(s =>
     (s.risk_cost && s.risk_cost !== 'none') ||
     (s.risk_operational && s.risk_operational !== 'none')
   ).length;
+
+  const isDismissedTab = filter === 'dismissed';
+
+  const pillStyle = (active: boolean, color: string = NAVY): React.CSSProperties => ({
+    padding: '5px 14px', borderRadius: 20, fontSize: 11, fontWeight: 600, cursor: 'pointer',
+    background: active ? color : '#fff',
+    color: active ? '#fff' : TEXT_SEC,
+    border: `1px solid ${active ? color : BORDER}`,
+  });
+
+  const smallPillStyle = (active: boolean, color: string = GOLD): React.CSSProperties => ({
+    padding: '3px 10px', borderRadius: 14, fontSize: 10, fontWeight: 600, cursor: 'pointer',
+    background: active ? color : '#fff',
+    color: active ? '#fff' : TEXT_MUTED,
+    border: `1px solid ${active ? color : BORDER}`,
+  });
 
   return (
     <div>
@@ -210,7 +377,7 @@ export default function IntelligenceAdmin() {
       {/* Stats row */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 20 }}>
         {[
-          { label: 'Total Pending', value: signals.length, color: NAVY },
+          { label: 'Total Pending', value: activeSignals.length, color: NAVY },
           { label: 'Revenue', value: revenueCount, color: '#DC2626' },
           { label: 'Liability', value: liabilityCount, color: '#7C3AED' },
           { label: 'Cost + Ops', value: costOpsCount, color: '#D97706' },
@@ -224,27 +391,22 @@ export default function IntelligenceAdmin() {
         ))}
       </div>
 
-      {/* Filter pills */}
+      {/* Tab pills */}
       <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
         {([
-          { key: 'all' as const, label: `All (${signals.length})` },
-          { key: 'hold' as const, label: `Hold (${holdCount})` },
-          { key: 'notify' as const, label: `Notify (${notifyCount})` },
+          { key: 'all' as TabFilter, label: `All (${activeSignals.length})` },
+          { key: 'hold' as TabFilter, label: `Hold (${holdCount})` },
+          { key: 'notify' as TabFilter, label: `Notify (${notifyCount})` },
+          { key: 'dismissed' as TabFilter, label: `Dismissed (${dismissedCount})` },
         ]).map(f => (
-          <button key={f.key} onClick={() => setFilter(f.key)}
-            style={{
-              padding: '5px 14px', borderRadius: 20, fontSize: 11, fontWeight: 600, cursor: 'pointer',
-              background: filter === f.key ? NAVY : '#fff',
-              color: filter === f.key ? '#fff' : TEXT_SEC,
-              border: `1px solid ${filter === f.key ? NAVY : BORDER}`,
-            }}>
+          <button key={f.key} onClick={() => setFilter(f.key)} style={pillStyle(filter === f.key)}>
             {f.label}
           </button>
         ))}
       </div>
 
       {/* Risk dimension filters */}
-      <div style={{ display: 'flex', gap: 6, marginBottom: 16, alignItems: 'center' }}>
+      <div style={{ display: 'flex', gap: 6, marginBottom: 8, alignItems: 'center' }}>
         <span style={{ fontSize: 10, color: TEXT_MUTED, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Risk:</span>
         {([
           { key: '' as const, label: 'All' },
@@ -253,13 +415,27 @@ export default function IntelligenceAdmin() {
           { key: 'cost' as const, label: 'Cost' },
           { key: 'operational' as const, label: 'Operational' },
         ]).map(f => (
-          <button key={f.key} onClick={() => setDimFilter(f.key)}
-            style={{
-              padding: '3px 10px', borderRadius: 14, fontSize: 10, fontWeight: 600, cursor: 'pointer',
-              background: dimFilter === f.key ? GOLD : '#fff',
-              color: dimFilter === f.key ? '#fff' : TEXT_MUTED,
-              border: `1px solid ${dimFilter === f.key ? GOLD : BORDER}`,
-            }}>
+          <button key={f.key} onClick={() => setDimFilter(f.key)} style={smallPillStyle(dimFilter === f.key)}>
+            {f.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Category filter */}
+      <div style={{ display: 'flex', gap: 6, marginBottom: 8, alignItems: 'center' }}>
+        <span style={{ fontSize: 10, color: TEXT_MUTED, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Type:</span>
+        {CATEGORY_OPTIONS.map(f => (
+          <button key={f.key} onClick={() => setCategoryFilter(f.key)} style={smallPillStyle(categoryFilter === f.key)}>
+            {f.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Date filter */}
+      <div style={{ display: 'flex', gap: 6, marginBottom: 16, alignItems: 'center' }}>
+        <span style={{ fontSize: 10, color: TEXT_MUTED, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Date:</span>
+        {DATE_OPTIONS.map(f => (
+          <button key={f.key} onClick={() => setDateFilter(f.key)} style={smallPillStyle(dateFilter === f.key)}>
             {f.label}
           </button>
         ))}
@@ -274,10 +450,14 @@ export default function IntelligenceAdmin() {
         </div>
       ) : filtered.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '48px 20px', background: '#FAFAF8', border: '1.5px dashed #E5E0D8', borderRadius: 10 }}>
-          <div style={{ fontSize: 36, marginBottom: 12 }}>{'✅'}</div>
-          <div style={{ fontSize: 14, fontWeight: 700, color: NAVY, marginBottom: 6 }}>Queue is clear</div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: NAVY, marginBottom: 6 }}>
+            {isDismissedTab ? 'No dismissed signals' : 'Queue is clear'}
+          </div>
           <div style={{ fontSize: 12, color: TEXT_SEC, maxWidth: 400, margin: '0 auto', lineHeight: 1.6 }}>
-            No signals pending review. New signals will appear here when the intelligence crawler detects changes.
+            {isDismissedTab
+              ? 'Dismissed signals will appear here. Use the Restore button to return them to the review queue.'
+              : 'No signals pending review. New signals will appear here when the intelligence crawler detects changes.'
+            }
           </div>
         </div>
       ) : (
@@ -285,10 +465,31 @@ export default function IntelligenceAdmin() {
           {filtered.map(sig => {
             const uc = URGENCY_COLORS[sig.ai_urgency || 'low'] || URGENCY_COLORS.low;
             const rc = sig.routing_tier ? routingTierColor(sig.routing_tier) : null;
+            const isDismissed = sig.status === 'dismissed';
+            const isRestored = restoredId === sig.id;
+
+            if (isRestored) {
+              return (
+                <div key={sig.id} style={{
+                  background: '#ECFDF5', border: '1px solid #059669', borderRadius: 10, padding: '16px 18px',
+                  textAlign: 'center', fontSize: 13, fontWeight: 600, color: '#059669',
+                }}>
+                  Restored — signal returned to review queue
+                </div>
+              );
+            }
+
             return (
               <div key={sig.id} style={{
-                background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '16px 18px',
-                borderLeft: sig.routing_tier === 'hold' ? '4px solid #DC2626' : sig.routing_tier === 'notify' ? '4px solid #D97706' : `4px solid ${BORDER}`,
+                background: isDismissed ? '#FAFAF8' : '#fff',
+                border: `1px solid ${BORDER}`,
+                borderRadius: 10,
+                padding: '16px 18px',
+                borderLeft: isDismissed ? `4px solid ${TEXT_MUTED}`
+                  : sig.routing_tier === 'hold' ? '4px solid #DC2626'
+                  : sig.routing_tier === 'notify' ? '4px solid #D97706'
+                  : `4px solid ${BORDER}`,
+                opacity: isDismissed ? 0.85 : 1,
               }}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
                   <div style={{ flex: 1 }}>
@@ -317,6 +518,11 @@ export default function IntelligenceAdmin() {
                           Confidence: {sig.confidence_score}%
                         </span>
                       )}
+                      {isDismissed && (
+                        <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: '#F3F4F6', color: TEXT_MUTED }}>
+                          DISMISSED
+                        </span>
+                      )}
                     </div>
 
                     {/* Title */}
@@ -332,39 +538,55 @@ export default function IntelligenceAdmin() {
                       </div>
                     )}
 
-                    {/* Risk dimension selectors */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 5, marginBottom: 8, marginTop: 4 }}>
-                      {(['revenue', 'liability', 'cost', 'operational'] as const).map(dim => {
-                        const current = getRiskLevel(sig, dim);
-                        return (
-                          <div key={dim} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                            <span style={{ fontSize: 10, fontWeight: 700, color: DIM_COLORS[dim], width: 72, textTransform: 'capitalize' }}>
-                              {dim}
-                            </span>
-                            <div style={{ display: 'flex', gap: 3 }}>
-                              {LEVELS.map(level => {
-                                const isActive = current === level;
-                                const levelColor = level === 'none' ? '#9CA3AF' : (RISK_COLORS[level] || '#6B7280');
-                                return (
-                                  <button key={level} onClick={() => setRiskLevel(sig, dim, level)}
-                                    style={{
-                                      padding: '2px 8px', borderRadius: 10, fontSize: 9, fontWeight: 600, cursor: 'pointer',
-                                      background: isActive ? levelColor : 'transparent',
-                                      color: isActive ? '#fff' : TEXT_MUTED,
-                                      border: `1px solid ${isActive ? levelColor : '#E5E7EB'}`,
-                                    }}>
-                                    {LEVEL_LABELS[level]}
-                                  </button>
-                                );
-                              })}
-                            </div>
+                    {/* Dismissed info — replaces risk dimensions for dismissed signals */}
+                    {isDismissed ? (
+                      <div style={{ marginTop: 4, marginBottom: 8, padding: '8px 12px', background: '#F9FAFB', borderRadius: 6, border: `1px solid #E5E7EB` }}>
+                        <div style={{ fontSize: 12, color: NAVY, fontWeight: 600 }}>
+                          Dismissed: {sig.dismissed_at ? new Date(sig.dismissed_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
+                          {' — '}
+                          <span style={{ fontWeight: 400, color: TEXT_SEC }}>{sig.dismissed_reason || 'No reason provided'}</span>
+                        </div>
+                        {sig.dismissed_by && (
+                          <div style={{ fontSize: 10, color: TEXT_MUTED, marginTop: 2 }}>
+                            Dismissed by: {sig.dismissed_by}
                           </div>
-                        );
-                      })}
-                    </div>
+                        )}
+                      </div>
+                    ) : (
+                      /* Risk dimension selectors — only for active signals */
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 5, marginBottom: 8, marginTop: 4 }}>
+                        {(['revenue', 'liability', 'cost', 'operational'] as const).map(dim => {
+                          const current = getRiskLevel(sig, dim);
+                          return (
+                            <div key={dim} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                              <span style={{ fontSize: 10, fontWeight: 700, color: DIM_COLORS[dim], width: 72, textTransform: 'capitalize' }}>
+                                {dim}
+                              </span>
+                              <div style={{ display: 'flex', gap: 3 }}>
+                                {LEVELS.map(level => {
+                                  const isActive = current === level;
+                                  const levelColor = level === 'none' ? '#9CA3AF' : (RISK_COLORS[level] || '#6B7280');
+                                  return (
+                                    <button key={level} onClick={() => setRiskLevel(sig, dim, level)}
+                                      style={{
+                                        padding: '2px 8px', borderRadius: 10, fontSize: 9, fontWeight: 600, cursor: 'pointer',
+                                        background: isActive ? levelColor : 'transparent',
+                                        color: isActive ? '#fff' : TEXT_MUTED,
+                                        border: `1px solid ${isActive ? levelColor : '#E5E7EB'}`,
+                                      }}>
+                                      {LEVEL_LABELS[level]}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
 
                     {/* All-none warning */}
-                    {isAllNone(sig) && (
+                    {!isDismissed && isAllNone(sig) && (
                       <div style={{ fontSize: 10, color: '#D97706', background: '#FFFBEB', padding: '4px 10px', borderRadius: 6, marginBottom: 6 }}>
                         No risk dimensions assigned — this signal will not appear under any dimension in the Intelligence Center.
                       </div>
@@ -381,58 +603,74 @@ export default function IntelligenceAdmin() {
 
                   {/* Actions */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flexShrink: 0 }}>
-                    {(() => {
-                      const vs = verificationStatuses[sig.id];
-                      const blocked = vs?.publish_blocked ?? true;
-                      const label = vs
-                        ? blocked
-                          ? `${vs.gates_passed}/${vs.gates_required} verified`
-                          : 'Verified — Publish'
-                        : 'Unverified';
-                      return (
+                    {isDismissed ? (
+                      /* Restore button for dismissed signals */
+                      <button
+                        onClick={() => restoreSignal(sig)}
+                        style={{
+                          padding: '6px 16px', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer',
+                          background: '#059669', color: '#fff', border: 'none',
+                        }}
+                      >
+                        Restore
+                      </button>
+                    ) : (
+                      /* Normal action buttons for active signals */
+                      <>
+                        {(() => {
+                          const vs = verificationStatuses[sig.id];
+                          const blocked = vs?.publish_blocked ?? true;
+                          const label = vs
+                            ? blocked
+                              ? `${vs.gates_passed}/${vs.gates_required} verified`
+                              : 'Verified — Publish'
+                            : 'Unverified';
+                          return (
+                            <button
+                              onClick={() => publishSignal(sig)}
+                              disabled={publishing === sig.id || blocked}
+                              style={{
+                                padding: '6px 16px', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: blocked ? 'not-allowed' : 'pointer',
+                                background: blocked ? '#E5E7EB' : '#059669', color: blocked ? TEXT_MUTED : '#fff', border: 'none',
+                                opacity: publishing === sig.id ? 0.5 : 1,
+                              }}
+                            >
+                              {publishing === sig.id ? 'Publishing...' : label}
+                            </button>
+                          );
+                        })()}
                         <button
-                          onClick={() => publishSignal(sig)}
-                          disabled={publishing === sig.id || blocked}
+                          onClick={(e) => { e.stopPropagation(); setExpandedVerification(expandedVerification === sig.id ? null : sig.id); }}
                           style={{
-                            padding: '6px 16px', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: blocked ? 'not-allowed' : 'pointer',
-                            background: blocked ? '#E5E7EB' : '#059669', color: blocked ? TEXT_MUTED : '#fff', border: 'none',
-                            opacity: publishing === sig.id ? 0.5 : 1,
+                            padding: '4px 12px', borderRadius: 6, fontSize: 10, fontWeight: 600, cursor: 'pointer',
+                            background: 'transparent', color: TEXT_SEC, border: `1px solid ${BORDER}`,
                           }}
                         >
-                          {publishing === sig.id ? 'Publishing...' : label}
+                          {expandedVerification === sig.id ? 'Hide Gates' : 'Verify Gates'}
                         </button>
-                      );
-                    })()}
-                    <button
-                      onClick={(e) => { e.stopPropagation(); setExpandedVerification(expandedVerification === sig.id ? null : sig.id); }}
-                      style={{
-                        padding: '4px 12px', borderRadius: 6, fontSize: 10, fontWeight: 600, cursor: 'pointer',
-                        background: 'transparent', color: TEXT_SEC, border: `1px solid ${BORDER}`,
-                      }}
-                    >
-                      {expandedVerification === sig.id ? 'Hide Gates' : 'Verify Gates'}
-                    </button>
-                    <button
-                      onClick={() => navigate(`/admin/verification?signal=${sig.id}`)}
-                      style={{
-                        padding: '4px 12px', borderRadius: 6, fontSize: 10, fontWeight: 600, cursor: 'pointer',
-                        background: NAVY, color: '#fff', border: 'none',
-                      }}
-                    >
-                      Verify{(() => {
-                        const vs = verificationStatuses[sig.id];
-                        return vs ? ` (${vs.gates_passed}/${vs.gates_required})` : '';
-                      })()}
-                    </button>
-                    <button
-                      onClick={() => dismissSignal(sig.id)}
-                      style={{
-                        padding: '6px 16px', borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: 'pointer',
-                        background: 'transparent', color: TEXT_MUTED, border: `1px solid ${BORDER}`,
-                      }}
-                    >
-                      Dismiss
-                    </button>
+                        <button
+                          onClick={() => navigate(`/admin/verification?signal=${sig.id}`)}
+                          style={{
+                            padding: '4px 12px', borderRadius: 6, fontSize: 10, fontWeight: 600, cursor: 'pointer',
+                            background: NAVY, color: '#fff', border: 'none',
+                          }}
+                        >
+                          Verify{(() => {
+                            const vs = verificationStatuses[sig.id];
+                            return vs ? ` (${vs.gates_passed}/${vs.gates_required})` : '';
+                          })()}
+                        </button>
+                        <button
+                          onClick={() => openDismissModal(sig)}
+                          style={{
+                            padding: '6px 16px', borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: 'pointer',
+                            background: 'transparent', color: TEXT_MUTED, border: `1px solid ${BORDER}`,
+                          }}
+                        >
+                          Dismiss
+                        </button>
+                      </>
+                    )}
                     {sig.source_url && (
                       <a href={sig.source_url} target="_blank" rel="noopener noreferrer"
                         style={{ fontSize: 10, color: TEXT_SEC, textAlign: 'center', textDecoration: 'underline' }}>
@@ -443,7 +681,7 @@ export default function IntelligenceAdmin() {
                 </div>
 
                 {/* Verification Panel (expanded) */}
-                {expandedVerification === sig.id && (
+                {!isDismissed && expandedVerification === sig.id && (
                   <div style={{ marginTop: 12 }}>
                     <VerificationPanel
                       contentTable="intelligence_signals"
@@ -457,6 +695,113 @@ export default function IntelligenceAdmin() {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Dismiss reason modal */}
+      {dismissModal && (
+        <div style={{
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', display: 'flex',
+          alignItems: 'center', justifyContent: 'center', zIndex: 1000,
+        }}
+          onClick={() => setDismissModal(null)}
+        >
+          <div
+            style={{
+              background: '#fff', borderRadius: 12, padding: '24px 28px', maxWidth: 420, width: '100%',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: NAVY, margin: '0 0 4px' }}>
+              Dismiss Signal
+            </h3>
+            <p style={{ fontSize: 12, color: TEXT_SEC, margin: '0 0 16px' }}>
+              Select a reason for dismissing this signal. It can be restored later.
+            </p>
+
+            {/* Reason dropdown */}
+            <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>
+              Reason *
+            </label>
+            <select
+              value={dismissReason}
+              onChange={e => setDismissReason(e.target.value)}
+              style={{
+                width: '100%', padding: '8px 12px', fontSize: 13, border: `1px solid ${BORDER}`,
+                borderRadius: 6, background: '#F9FAFB', color: NAVY, cursor: 'pointer', marginBottom: 12,
+              }}
+            >
+              <option value="">Select a reason...</option>
+              {DISMISS_REASONS.map(r => (
+                <option key={r} value={r}>{r}</option>
+              ))}
+            </select>
+
+            {/* Note field */}
+            <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>
+              Note {dismissReason === 'Other' ? '*' : '(optional)'}
+            </label>
+            <textarea
+              value={dismissNote}
+              onChange={e => setDismissNote(e.target.value.slice(0, 280))}
+              placeholder={dismissReason === 'Other' ? 'Required — describe the reason...' : 'Optional note...'}
+              rows={3}
+              style={{
+                width: '100%', padding: '8px 12px', fontSize: 12, border: `1px solid ${BORDER}`,
+                borderRadius: 6, background: '#F9FAFB', color: NAVY, resize: 'vertical',
+              }}
+            />
+            <div style={{ fontSize: 10, color: TEXT_MUTED, textAlign: 'right', marginTop: 2, marginBottom: 16 }}>
+              {dismissNote.length}/280
+            </div>
+
+            {/* Actions */}
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => setDismissModal(null)}
+                style={{
+                  padding: '8px 20px', borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                  background: 'transparent', color: TEXT_SEC, border: `1px solid ${BORDER}`,
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDismiss}
+                disabled={!dismissReason || (dismissReason === 'Other' && dismissNote.length < 1)}
+                style={{
+                  padding: '8px 20px', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer',
+                  background: !dismissReason || (dismissReason === 'Other' && dismissNote.length < 1) ? '#E5E7EB' : '#DC2626',
+                  color: !dismissReason || (dismissReason === 'Other' && dismissNote.length < 1) ? TEXT_MUTED : '#fff',
+                  border: 'none',
+                }}
+              >
+                Dismiss Signal
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Undo toast */}
+      {lastDismissed && (
+        <div style={{
+          position: 'fixed', bottom: 24, left: '50%', transform: 'translateX(-50%)',
+          background: NAVY, color: '#fff', padding: '12px 24px', borderRadius: 10,
+          fontSize: 13, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 16,
+          boxShadow: '0 8px 30px rgba(0,0,0,0.2)', zIndex: 1001,
+        }}>
+          <span>Signal dismissed.</span>
+          <button
+            onClick={undoDismiss}
+            style={{
+              background: 'transparent', border: `1px solid rgba(255,255,255,0.4)`, color: '#fff',
+              padding: '4px 14px', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer',
+            }}
+          >
+            Undo
+          </button>
         </div>
       )}
     </div>
