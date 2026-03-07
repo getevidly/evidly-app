@@ -22,6 +22,7 @@ interface QueueSignal {
   id: string;
   title: string;
   summary: string | null;
+  category: string;
   signal_type: string;
   source_key: string | null;
   source_url: string | null;
@@ -88,9 +89,9 @@ const CATEGORY_OPTIONS = [
   { key: '', label: 'All' },
   { key: 'recall', label: 'Recall' },
   { key: 'allergen_alert', label: 'Allergen Alert' },
-  { key: 'regulatory_change', label: 'Regulatory Change' },
+  { key: 'regulatory_updates', label: 'Regulatory Change' },
   { key: 'fire_safety', label: 'Fire Safety' },
-  { key: 'health_alert', label: 'Health Alert' },
+  { key: 'outbreak_alert', label: 'Health Alert' },
 ] as const;
 
 const DATE_OPTIONS = [
@@ -331,7 +332,7 @@ export default function IntelligenceAdmin() {
       const riskVal = s[`risk_${dimFilter}` as keyof QueueSignal] as string | null;
       if (!riskVal || riskVal === 'none') return false;
     }
-    if (categoryFilter && s.signal_type !== categoryFilter) return false;
+    if (categoryFilter && s.category !== categoryFilter) return false;
     if (!passesDateFilter(s.created_at)) return false;
     return true;
   });
