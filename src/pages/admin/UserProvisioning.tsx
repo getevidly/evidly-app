@@ -3,6 +3,7 @@
  * Route: /admin/users
  */
 import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import OrgCombobox, { type OrgOption } from '../../components/admin/OrgCombobox';
@@ -137,8 +138,10 @@ export default function UserProvisioning() {
   const handleCreate = async () => {
     if (!invEmail) return;
     setCreating(true);
+    alert(`User provisioning for ${invEmail} requires the server-side auth pipeline. Use Supabase Dashboard → Authentication to create accounts.`);
     setInvEmail('');
     setInvName('');
+    setInvPhone('');
     setInvOrg(null);
     setCreating(false);
   };
@@ -146,6 +149,7 @@ export default function UserProvisioning() {
   const handleBulkInvite = () => {
     const emails = bulkEmails.split(',').map(e => e.trim()).filter(Boolean);
     if (emails.length === 0) return;
+    alert(`Bulk invite for ${emails.length} email(s) requires the server-side auth pipeline. Use Supabase Dashboard → Authentication to create accounts.`);
     setBulkEmails('');
     setBulkOrg(null);
   };
@@ -403,6 +407,7 @@ export default function UserProvisioning() {
 // ── User Detail Drawer ──
 
 function UserDetailDrawer({ user, org, onClose }: { user: UserRow; org: OrgRow | null; onClose: () => void }) {
+  const navigate = useNavigate();
   const [drawerTab, setDrawerTab] = useState('Profile');
   const [events, setEvents] = useState<any[]>([]);
   const [eventsLoading, setEventsLoading] = useState(false);
@@ -505,16 +510,16 @@ function UserDetailDrawer({ user, org, onClose }: { user: UserRow; org: OrgRow |
 
         {/* Footer */}
         <div style={{ padding: '14px 24px', borderTop: `1px solid ${BORDER}`, flexShrink: 0, display: 'flex', gap: 10 }}>
-          <button onClick={() => {}} style={{ padding: '8px 16px', borderRadius: 8, border: 'none', background: NAVY, color: '#fff', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>
+          <button onClick={() => alert('Edit User profile requires admin edge function. Use Supabase Dashboard to modify user records.')} style={{ padding: '8px 16px', borderRadius: 8, border: 'none', background: NAVY, color: '#fff', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>
             Edit User
           </button>
-          <button onClick={() => {}} style={{ padding: '8px 16px', borderRadius: 8, border: `1px solid ${BORDER}`, background: '#F9FAFB', color: TEXT_SEC, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+          <button onClick={async () => { if (confirm(`Send password reset email to ${user.email}?`)) { const { error } = await supabase.auth.resetPasswordForEmail(user.email); alert(error ? `Error: ${error.message}` : `Password reset email sent to ${user.email}.`); } }} style={{ padding: '8px 16px', borderRadius: 8, border: `1px solid ${BORDER}`, background: '#F9FAFB', color: TEXT_SEC, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
             Reset Password
           </button>
-          <button onClick={() => {}} style={{ padding: '8px 16px', borderRadius: 8, border: `1px solid ${BORDER}`, background: '#FAF7F2', color: NAVY, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+          <button onClick={() => { onClose(); navigate('/admin/emulate'); }} style={{ padding: '8px 16px', borderRadius: 8, border: `1px solid ${BORDER}`, background: '#FAF7F2', color: NAVY, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
             Emulate
           </button>
-          <button onClick={() => {}} style={{ padding: '8px 16px', borderRadius: 8, border: '1px solid #FECACA', background: '#FEF2F2', color: '#DC2626', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+          <button onClick={() => alert('Suspend user requires admin edge function. Use Supabase Dashboard → Authentication to disable accounts.')} style={{ padding: '8px 16px', borderRadius: 8, border: '1px solid #FECACA', background: '#FEF2F2', color: '#DC2626', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
             Suspend
           </button>
         </div>

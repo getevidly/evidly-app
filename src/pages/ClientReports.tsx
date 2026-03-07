@@ -243,7 +243,11 @@ export function ClientReports() {
                       {report.status === 'published' ? 'Published' : 'Ready'}
                     </span>
                     <button
-                      onClick={() => alert('[Demo] In production, this downloads the PDF report.')}
+                      onClick={() => {
+                        if (report.share_token) {
+                          window.open(`/shared/report/${report.share_token}`, '_blank');
+                        }
+                      }}
                       className="text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors"
                       style={{ background: NAVY, color: '#fff' }}
                     >

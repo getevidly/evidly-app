@@ -875,8 +875,8 @@ function OrgDrawer({ org, onClose, onRefresh }: { org: Org; onClose: () => void;
           )}
         </div>
         <div style={drawerFooter}>
-          <FooterBtn label="Edit Organization" color="#fff" bg={NAVY} onClick={() => {}} />
-          <FooterBtn label="View Billing" color={NAVY} bg="#F9FAFB" border={`1px solid ${BORDER}`} onClick={() => {}} />
+          <FooterBtn label="Edit Organization" color="#fff" bg={NAVY} onClick={() => alert(`Edit "${org.name}" requires direct database access. Use Supabase Dashboard → Table Editor → organizations.`)} />
+          <FooterBtn label="View Billing" color={NAVY} bg="#F9FAFB" border={`1px solid ${BORDER}`} onClick={() => { onClose(); window.location.assign('/admin/billing'); }} />
         </div>
       </div>
     </>
@@ -1062,8 +1062,8 @@ function LocDrawer({ loc, onClose, onRefresh }: { loc: Location; onClose: () => 
           )}
         </div>
         <div style={drawerFooter}>
-          <FooterBtn label="Edit Location" color="#fff" bg={NAVY} onClick={() => {}} />
-          <FooterBtn label="View Organization" color={NAVY} bg="#F9FAFB" border={`1px solid ${BORDER}`} onClick={() => {}} />
+          <FooterBtn label="Edit Location" color="#fff" bg={NAVY} onClick={() => alert(`Edit "${loc.name}" requires direct database access. Use Supabase Dashboard → Table Editor → locations.`)} />
+          <FooterBtn label="View Organization" color={NAVY} bg="#F9FAFB" border={`1px solid ${BORDER}`} onClick={() => alert('Navigate to Configure → Organizations tab to view organization details.')} />
         </div>
       </div>
     </>
@@ -1153,9 +1153,9 @@ function UserDrawer({ user, orgs, onClose, onRefresh }: { user: UserProfile; org
           )}
         </div>
         <div style={drawerFooter}>
-          <FooterBtn label="Edit User" color="#fff" bg={NAVY} onClick={() => {}} />
-          <FooterBtn label="Emulate" color={NAVY} bg="#FAF7F2" border={`1px solid ${BORDER}`} onClick={() => {}} />
-          <FooterBtn label="Reset Password" color={TEXT_SEC} bg="#F9FAFB" border={`1px solid ${BORDER}`} onClick={() => {}} />
+          <FooterBtn label="Edit User" color="#fff" bg={NAVY} onClick={() => alert('Edit User profile requires admin edge function. Use Supabase Dashboard to modify user records.')} />
+          <FooterBtn label="Emulate" color={NAVY} bg="#FAF7F2" border={`1px solid ${BORDER}`} onClick={() => { onClose(); window.location.assign('/admin/emulate'); }} />
+          <FooterBtn label="Reset Password" color={TEXT_SEC} bg="#F9FAFB" border={`1px solid ${BORDER}`} onClick={async () => { if (user.email && confirm(`Send password reset email to ${user.email}?`)) { const { error } = await supabase.auth.resetPasswordForEmail(user.email); alert(error ? `Error: ${error.message}` : `Password reset email sent to ${user.email}.`); } }} />
         </div>
       </div>
     </>
@@ -1261,9 +1261,9 @@ function VendorDrawer({ vendor, onClose, onRefresh }: { vendor: Vendor; onClose:
           )}
         </div>
         <div style={drawerFooter}>
-          <FooterBtn label="Edit Vendor" color="#fff" bg={NAVY} onClick={() => {}} />
-          <FooterBtn label="Send Portal Invite" color={NAVY} bg="#FAF7F2" border={`1px solid ${BORDER}`} onClick={() => {}} />
-          <FooterBtn label="Deactivate" color="#DC2626" bg="#FEF2F2" border="1px solid #FECACA" onClick={() => {}} />
+          <FooterBtn label="Edit Vendor" color="#fff" bg={NAVY} onClick={() => alert(`Edit "${vendor.company_name}" requires direct database access. Use Supabase Dashboard → Table Editor → vendors.`)} />
+          <FooterBtn label="Send Portal Invite" color={NAVY} bg="#FAF7F2" border={`1px solid ${BORDER}`} onClick={() => alert(`Portal invite for ${vendor.company_name} requires the vendor portal invitation edge function.`)} />
+          <FooterBtn label="Deactivate" color="#DC2626" bg="#FEF2F2" border="1px solid #FECACA" onClick={() => alert(`Deactivate "${vendor.company_name}" requires admin edge function. Use Supabase Dashboard to update vendor status.`)} />
         </div>
       </div>
     </>
