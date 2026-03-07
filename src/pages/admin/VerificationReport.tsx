@@ -4,6 +4,7 @@
  * Access: platform_admin only
  */
 import { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import VerificationPanel from '../../components/admin/VerificationPanel';
@@ -74,10 +75,14 @@ const Skeleton = ({ w = '100%', h = 20 }: { w?: string | number; h?: number }) =
 );
 
 export default function VerificationReport() {
+  const [searchParams] = useSearchParams();
+  const signalId = searchParams.get('signal');
+
   const [statuses, setStatuses] = useState<StatusRow[]>([]);
   const [logs, setLogs] = useState<LogRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeSection, setActiveSection] = useState<Section>('coverage');
+  const [tablesExist, setTablesExist] = useState(true);
+  const [activeSection, setActiveSection] = useState<Section>(signalId ? 'content' : 'coverage');
 
   // Filters
   const [tableFilter, setTableFilter] = useState('');
@@ -105,10 +110,23 @@ export default function VerificationReport() {
         .order('created_at', { ascending: false })
         .limit(200),
     ]);
-    if (statusRes.data) setStatuses(statusRes.data);
+    // Detect missing tables (migration not applied)
+    if (statusRes.error?.code === '42P01' || logRes.error?.code === '42P01') {
+      setTablesExist(false);
+      setLoading(false);
+      return;
+    }
+    if (statusRes.data) {
+      setStatuses(statusRes.data);
+      // Auto-expand signal from URL param
+      if (signalId) {
+        const match = statusRes.data.find((s: StatusRow) => s.content_id === signalId);
+        if (match) setExpandedRow(match);
+      }
+    }
     if (logRes.data) setLogs(logRes.data);
     setLoading(false);
-  }, []);
+  }, [signalId]);
 
   useEffect(() => { load(); }, [load]);
 
@@ -216,6 +234,18 @@ export default function VerificationReport() {
         </p>
       </div>
 
+      {/* Tables-not-initialized guard */}
+      {!tablesExist && (
+        <div style={{ textAlign: 'center', padding: '60px 20px', background: '#FAF7F2', border: '2px dashed #E2D9C8', borderRadius: 12 }}>
+          <div style={{ fontSize: 40, marginBottom: 16 }}>{'🔒'}</div>
+          <div style={{ fontSize: 16, fontWeight: 700, color: NAVY, marginBottom: 8 }}>Verification system tables not yet initialized</div>
+          <div style={{ fontSize: 13, color: TEXT_SEC, maxWidth: 480, margin: '0 auto', lineHeight: 1.6 }}>
+            Run the verification schema migration (<code>20260507100000_platform_verification_architecture.sql</code>) to enable this feature.
+          </div>
+        </div>
+      )}
+
+      {tablesExist && <>
       {/* Section tabs */}
       <div style={{ display: 'flex', gap: 6, borderBottom: `1px solid ${BORDER}`, paddingBottom: 0 }}>
         {sectionTabs.map(t => (
@@ -513,6 +543,7 @@ export default function VerificationReport() {
           )}
         </>
       )}
+      </>}
     </div>
   );
 }

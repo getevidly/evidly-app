@@ -6,6 +6,7 @@
  * Route: /admin/intelligence-admin
  */
 import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { routingTierLabel, routingTierColor, type RoutingTier } from '../../lib/intelligenceRouter';
@@ -70,6 +71,7 @@ const LEVELS = ['critical', 'high', 'moderate', 'low', 'none'] as const;
 const LEVEL_LABELS: Record<string, string> = { critical: 'Crit', high: 'High', moderate: 'Med', low: 'Low', none: 'None' };
 
 export default function IntelligenceAdmin() {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [signals, setSignals] = useState<QueueSignal[]>([]);
   const [loading, setLoading] = useState(true);
@@ -409,6 +411,18 @@ export default function IntelligenceAdmin() {
                       }}
                     >
                       {expandedVerification === sig.id ? 'Hide Gates' : 'Verify Gates'}
+                    </button>
+                    <button
+                      onClick={() => navigate(`/admin/verification?signal=${sig.id}`)}
+                      style={{
+                        padding: '4px 12px', borderRadius: 6, fontSize: 10, fontWeight: 600, cursor: 'pointer',
+                        background: NAVY, color: '#fff', border: 'none',
+                      }}
+                    >
+                      Verify{(() => {
+                        const vs = verificationStatuses[sig.id];
+                        return vs ? ` (${vs.gates_passed}/${vs.gates_required})` : '';
+                      })()}
                     </button>
                     <button
                       onClick={() => dismissSignal(sig.id)}
