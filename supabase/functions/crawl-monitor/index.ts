@@ -5,159 +5,247 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Feed definitions — URL + expected content signals + DB metadata
-interface FeedDef {
-  url: string;
-  method: string;
-  keywords: string[];
-  feed_name: string;
-  pillar: "food_safety" | "fire_safety";
+/**
+ * crawl-monitor — Crawl intelligence sources and update status
+ *
+ * Reads crawlable sources from `intelligence_sources` (url IS NOT NULL,
+ * crawl_method != 'manual'). Crawls demo-critical sources first, then
+ * remaining if time allows. Updates intelligence_sources.status and
+ * last_crawled_at. Logs to crawl_runs.
+ *
+ * Always returns 200 with partial results — never fails entirely.
+ */
+
+const CONCURRENCY = 5;
+const TIMEOUT_MS = 12000;
+// Supabase edge functions have ~150s limit. Budget 120s for crawling.
+const MAX_CRAWL_MS = 120_000;
+
+interface SourceRow {
+  id: string;
+  source_key: string;
+  url: string | null;
+  crawl_method: string | null;
+  is_demo_critical: boolean;
+  status: string;
 }
 
-const FEED_URLS: Record<string, FeedDef> = {
-  cdph_la:          { url: "https://ehservices.publichealth.lacounty.gov/servlet/guest",         method: "GET", keywords: ["inspection","violation","food safety"],   feed_name: "CDPH — Los Angeles",    pillar: "food_safety" },
-  cdph_merced:      { url: "https://www.countyofmerced.com/189/Food-Safety",                    method: "GET", keywords: ["inspection","food"],                      feed_name: "CDPH — Merced",         pillar: "food_safety" },
-  cdph_fresno:      { url: "https://www.fresnocountyca.gov/departments/public-health/environmental-health/food-program", method: "GET", keywords: ["food","inspection"], feed_name: "CDPH — Fresno",         pillar: "food_safety" },
-  fda_recalls:      { url: "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",method: "GET", keywords: ["recall","food","alert"],                 feed_name: "FDA Recalls",           pillar: "food_safety" },
-  fda_foodcode:     { url: "https://www.fda.gov/food/fda-food-code/food-code-2022",              method: "GET", keywords: ["food code","2022","adoption"],            feed_name: "FDA Food Code Updates", pillar: "food_safety" },
-  ca_fire_marshal:  { url: "https://osfm.fire.ca.gov/divisions/fire-prevention",                method: "GET", keywords: ["fire","safety","commercial","kitchen"],   feed_name: "CA State Fire Marshal",  pillar: "fire_safety" },
-  nfpa96:           { url: "https://www.nfpa.org/codes-and-standards/96",                        method: "GET", keywords: ["NFPA 96","edition","commercial cooking"], feed_name: "NFPA 96 Updates",       pillar: "fire_safety" },
-  osha_ca_kitchen:  { url: "https://www.dir.ca.gov/dosh/dosh1.html",                            method: "GET", keywords: ["restaurant","kitchen","safety"],          feed_name: "OSHA CA Kitchen",       pillar: "fire_safety" },
-  nps_yosemite:     { url: "https://www.nps.gov/yose/planyourvisit/food.htm",                    method: "GET", keywords: ["food safety","inspection"],               feed_name: "NPS / Yosemite",        pillar: "fire_safety" },
-  usda_fsis:        { url: "https://www.fsis.usda.gov/recalls-alerts",                            method: "GET", keywords: ["recall","food","alert"],                 feed_name: "USDA FSIS Alerts",      pillar: "food_safety" },
-  calcode_updates:  { url: "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?sectionNum=113700.&lawCode=HSC", method: "GET", keywords: ["health","safety","retail food"], feed_name: "CalCode Amendments", pillar: "food_safety" },
-};
+type CrawlStatus = "active" | "broken" | "waf_blocked";
 
 async function hashContent(text: string): Promise<string> {
   const encoder = new TextEncoder();
   const data = encoder.encode(text.slice(0, 5000));
   const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+  return Array.from(new Uint8Array(hashBuffer))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
 }
 
-async function checkFeed(feedId: string, feedDef: FeedDef) {
+async function checkSource(
+  url: string
+): Promise<{ status: CrawlStatus; responseMs: number; error: string | null; hash: string | null }> {
   const startMs = Date.now();
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 15000);
+    const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
-    const res = await fetch(feedDef.url, {
-      method: feedDef.method,
+    const res = await fetch(url, {
+      method: "GET",
       signal: controller.signal,
-      headers: { "User-Agent": "EvidLY-CrawlBot/1.0 (compliance monitoring; contact@getevidly.com)" },
+      headers: {
+        "User-Agent":
+          "EvidLY-CrawlBot/1.0 (compliance monitoring; contact@getevidly.com)",
+      },
     });
     clearTimeout(timeout);
 
     const responseMs = Date.now() - startMs;
 
     if (!res.ok) {
-      return { status: "error", responseMs, error: `HTTP ${res.status}`, hash: null };
+      return { status: "broken", responseMs, error: `HTTP ${res.status}`, hash: null };
     }
 
     const text = await res.text();
     const hash = await hashContent(text);
 
     const lower = text.toLowerCase();
-    const isWafBlock = lower.includes("access denied") || lower.includes("403 forbidden") || (lower.includes("cloudflare") && lower.includes("blocked"));
-    if (isWafBlock) {
-      return { status: "waf_block", responseMs, error: "WAF/CDN block detected", hash };
+    const isWaf =
+      lower.includes("access denied") ||
+      lower.includes("403 forbidden") ||
+      (lower.includes("cloudflare") && lower.includes("blocked"));
+    if (isWaf) {
+      return { status: "waf_blocked", responseMs, error: "WAF/CDN block detected", hash };
     }
 
-    return { status: "live", responseMs, error: null, hash };
+    return { status: "active", responseMs, error: null, hash };
   } catch (err: any) {
     const responseMs = Date.now() - startMs;
     if (err.name === "AbortError") {
-      return { status: "timeout", responseMs: 15000, error: "Request timed out after 15s", hash: null };
+      return { status: "broken", responseMs: TIMEOUT_MS, error: `Timeout after ${TIMEOUT_MS / 1000}s`, hash: null };
     }
-    return { status: "error", responseMs, error: err.message, hash: null };
+    return { status: "broken", responseMs, error: err.message, hash: null };
   }
+}
+
+/** Process sources in batches with concurrency limit */
+async function crawlBatch(
+  sources: SourceRow[],
+  supabase: any,
+  deadline: number
+): Promise<{ live: number; failed: number; changed: number; processed: number }> {
+  let live = 0,
+    failed = 0,
+    changed = 0,
+    processed = 0;
+
+  for (let i = 0; i < sources.length; i += CONCURRENCY) {
+    // Stop if we're past the time budget
+    if (Date.now() > deadline) break;
+
+    const batch = sources.slice(i, i + CONCURRENCY).filter((s) => s.url);
+    const results = await Promise.all(
+      batch.map(async (src) => {
+        const result = await checkSource(src.url!);
+        return { src, result };
+      })
+    );
+
+    for (const { src, result } of results) {
+      processed++;
+
+      // Check for content change via crawl_health (if exists)
+      const { data: prev } = await supabase
+        .from("crawl_health")
+        .select("content_hash")
+        .eq("feed_id", src.source_key)
+        .maybeSingle();
+
+      const isChanged = result.hash && prev?.content_hash && result.hash !== prev.content_hash;
+      if (isChanged) changed++;
+      if (result.status === "active") live++;
+      else failed++;
+
+      // Update intelligence_sources status + last_crawled_at
+      await supabase
+        .from("intelligence_sources")
+        .update({
+          status: result.status,
+          last_crawled_at: new Date().toISOString(),
+        })
+        .eq("id", src.id);
+
+      // Also upsert into crawl_health for operational details
+      const pillar = src.source_key.includes("fire") || src.source_key.includes("nfpa") || src.source_key.includes("osfm") || src.source_key.includes("calfire")
+        ? "fire_safety"
+        : "food_safety";
+      const crawlStatus = result.status === "active" ? "live"
+        : result.status === "waf_blocked" ? "waf_block"
+        : "error";
+      await supabase.from("crawl_health").upsert(
+        {
+          feed_id: src.source_key,
+          feed_name: src.source_key,
+          pillar,
+          status: crawlStatus,
+          last_checked_at: new Date().toISOString(),
+          response_ms: result.responseMs,
+          error_message: result.error,
+          content_hash: result.hash || prev?.content_hash || null,
+          retry_count: result.status === "active" ? 0 : 1,
+          ...(result.status === "active" ? { last_success_at: new Date().toISOString() } : {}),
+        },
+        { onConflict: "feed_id" }
+      );
+
+      // Log to event log
+      await supabase.from("admin_event_log").insert({
+        level: result.status === "active" ? "INFO" : result.status === "waf_blocked" ? "WARN" : "ERROR",
+        category: "crawl",
+        message: `${src.source_key}: ${result.status}${result.error ? ` — ${result.error}` : ""}${isChanged ? " [CONTENT CHANGED]" : ""}`,
+        metadata: { sourceKey: src.source_key, status: result.status, responseMs: result.responseMs, changed: !!isChanged },
+      });
+    }
+  }
+
+  return { live, failed, changed, processed };
 }
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
-  const supabase = createClient(
-    Deno.env.get("SUPABASE_URL")!,
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-  );
+  try {
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
 
-  const runStart = Date.now();
-  let feedsLive = 0, feedsFailed = 0, feedsChanged = 0;
+    const deadline = Date.now() + MAX_CRAWL_MS;
 
-  const { data: run } = await supabase
-    .from("crawl_runs")
-    .insert({ run_type: "scheduled", feeds_total: Object.keys(FEED_URLS).length, triggered_by: "crawl-monitor" })
-    .select()
-    .single();
+    // Fetch all crawlable sources (have URL, not manual)
+    const { data: allSources, error: srcErr } = await supabase
+      .from("intelligence_sources")
+      .select("id, source_key, url, crawl_method, is_demo_critical, status")
+      .not("url", "is", null)
+      .neq("crawl_method", "manual")
+      .order("is_demo_critical", { ascending: false })
+      .order("source_key");
 
-  const results: any[] = [];
+    if (srcErr || !allSources) {
+      return new Response(
+        JSON.stringify({ success: false, error: srcErr?.message || "No sources found" }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
-  for (const [feedId, feedDef] of Object.entries(FEED_URLS)) {
-    const { data: prev } = await supabase
-      .from("crawl_health")
-      .select("content_hash, retry_count")
-      .eq("feed_id", feedId)
+    // Create run log
+    const { data: run } = await supabase
+      .from("crawl_runs")
+      .insert({
+        run_type: "manual",
+        feeds_total: allSources.length,
+        triggered_by: "crawl-monitor",
+      })
+      .select()
       .single();
 
-    const result = await checkFeed(feedId, feedDef);
+    // Crawl: demo-critical first (sorted by query above)
+    const { live, failed, changed, processed } = await crawlBatch(
+      allSources,
+      supabase,
+      deadline
+    );
 
-    const isChanged = result.hash && prev?.content_hash && result.hash !== prev.content_hash;
-    if (isChanged) feedsChanged++;
-    if (result.status === "live") feedsLive++;
-    else feedsFailed++;
-
-    const autoRetryAt = (result.status === "timeout" || result.status === "error")
-      ? new Date(Date.now() + 30 * 60 * 1000).toISOString()
-      : null;
-
-    const upsertRow: Record<string, unknown> = {
-      feed_id: feedId,
-      feed_name: feedDef.feed_name,
-      pillar: feedDef.pillar,
-      status: result.status,
-      last_checked_at: new Date().toISOString(),
-      response_ms: result.responseMs,
-      error_message: result.error,
-      retry_count: result.status === "live" ? 0 : ((prev?.retry_count || 0) + 1),
-      content_hash: result.hash || prev?.content_hash || null,
-      auto_retry_at: autoRetryAt,
-    };
-    if (result.status === "live") {
-      upsertRow.last_success_at = new Date().toISOString();
+    // Update run log
+    if (run?.id) {
+      await supabase
+        .from("crawl_runs")
+        .update({
+          completed_at: new Date().toISOString(),
+          feeds_live: live,
+          feeds_failed: failed,
+          feeds_changed: changed,
+          duration_ms: Date.now() - (deadline - MAX_CRAWL_MS),
+        })
+        .eq("id", run.id);
     }
 
-    await supabase.from("crawl_health").upsert(upsertRow, { onConflict: "feed_id" });
-
-    await supabase.from("admin_event_log").insert({
-      level: result.status === "live" ? "INFO" : result.status === "waf_block" ? "WARN" : "ERROR",
-      category: "crawl",
-      message: `${feedId}: ${result.status}${result.error ? ` — ${result.error}` : ""}${isChanged ? " [CONTENT CHANGED]" : ""}`,
-      metadata: { feedId, status: result.status, responseMs: result.responseMs, changed: isChanged },
-    });
-
-    if (isChanged) {
-      await supabase.from("admin_event_log").insert({
-        level: "WARN",
-        category: "crawl",
-        message: `CONTENT CHANGE DETECTED: ${feedId} — hash changed, may require JIE update`,
-        metadata: { feedId, prevHash: prev?.content_hash, newHash: result.hash },
-      });
-    }
-
-    results.push({ feedId, ...result, changed: isChanged });
+    return new Response(
+      JSON.stringify({
+        success: true,
+        processed,
+        total: allSources.length,
+        feedsLive: live,
+        feedsFailed: failed,
+        feedsChanged: changed,
+        timedOut: processed < allSources.length,
+      }),
+      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  } catch (err: any) {
+    // Always return 200 with error details — never a raw 500
+    return new Response(
+      JSON.stringify({ success: false, error: err.message || "Unknown error" }),
+      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
   }
-
-  await supabase.from("crawl_runs").update({
-    completed_at: new Date().toISOString(),
-    feeds_live: feedsLive,
-    feeds_failed: feedsFailed,
-    feeds_changed: feedsChanged,
-    duration_ms: Date.now() - runStart,
-  }).eq("id", run?.id);
-
-  return new Response(
-    JSON.stringify({ success: true, feedsLive, feedsFailed, feedsChanged, results }),
-    { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-  );
 });
