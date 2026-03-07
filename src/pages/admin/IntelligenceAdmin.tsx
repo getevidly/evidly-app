@@ -92,7 +92,7 @@ export default function IntelligenceAdmin() {
       })
       .eq('id', sig.id);
     if (error) {
-      alert(`Failed to publish: ${error.message}`);
+      console.error(`Failed to publish: ${error.message}`);
     } else {
       setSignals(prev => prev.filter(s => s.id !== sig.id));
       // Fire-and-forget delivery

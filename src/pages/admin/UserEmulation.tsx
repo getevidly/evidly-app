@@ -105,7 +105,6 @@ export default function UserEmulation() {
 
   const handleEmulate = async (user: UserRow) => {
     if (isEmulating) {
-      alert('Already emulating a user. Exit current session first.');
       return;
     }
     await startEmulation(

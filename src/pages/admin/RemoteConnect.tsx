@@ -182,7 +182,7 @@ export default function RemoteConnect() {
     }]);
 
     if (error) {
-      alert(`Error creating session: ${error.message}`);
+      console.error(`Error creating session: ${error.message}`);
     } else {
       setCreatedUrl(connectionUrl);
       setShowModal(true);
@@ -218,7 +218,7 @@ export default function RemoteConnect() {
       .eq('id', session.id);
 
     if (error) {
-      alert(`Error ending session: ${error.message}`);
+      console.error(`Error ending session: ${error.message}`);
     } else {
       await loadSessions();
     }

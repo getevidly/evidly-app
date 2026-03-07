@@ -306,7 +306,7 @@ export default function EvidLYIntelligence() {
         updateSignalStatus(approveId, 'published');
         searchParams.delete('approve');
         setSearchParams(searchParams, { replace: true });
-        alert(`Signal "${signal.title}" approved and published.`);
+        // Signal auto-approved via URL param — UI updates via state
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -462,9 +462,9 @@ export default function EvidLYIntelligence() {
         body: { type, id },
       });
       if (error) throw error;
-      alert(`Delivered "${title}" to ${data?.delivered || 0} organizations. ${data?.emailed || 0} email notifications sent.`);
+      // Delivery succeeded — data.delivered orgs notified
     } catch {
-      alert(`[Demo] Intelligence delivery triggered for "${title}". In production, this sends email notifications to all affected clients.`);
+      // Delivery function unavailable — signal still published
     }
   };
 
@@ -525,7 +525,7 @@ export default function EvidLYIntelligence() {
     if (advisory?.id) {
       await deliverToClients('advisory', advisory.id, pubForm.title);
     } else {
-      alert('Advisory published to client intelligence feed.');
+      // Advisory published — no delivery endpoint matched
     }
   };
 

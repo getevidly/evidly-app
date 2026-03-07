@@ -76,7 +76,7 @@ export default function AdminK2C() {
       donation_period: new Date().toISOString().slice(0, 10),
     });
     if (error) {
-      alert(`Error: ${error.message}`);
+      console.error(`K2C insert error: ${error.message}`);
     } else {
       setFormName('');
       setFormCounty('');

@@ -100,7 +100,7 @@ export default function DocumentVault() {
       try {
         await uploadFile(BUCKETS.VAULT, safeName, formFile);
       } catch (e: any) {
-        alert(e.message);
+        console.error(e.message);
         setUploading(false);
         return;
       }
@@ -121,7 +121,7 @@ export default function DocumentVault() {
     });
 
     if (error) {
-      alert(`Save error: ${error.message}`);
+      console.error(`Save error: ${error.message}`);
     } else {
       setFormName('');
       setFormDescription('');

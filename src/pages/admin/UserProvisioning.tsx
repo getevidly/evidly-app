@@ -137,8 +137,6 @@ export default function UserProvisioning() {
   const handleCreate = async () => {
     if (!invEmail) return;
     setCreating(true);
-    const orgLabel = invOrg ? (invOrg.isNew ? `NEW "${invOrg.name}"` : invOrg.name) : 'none';
-    alert(`[Demo] Would create user: ${invEmail} (${invRole}) in org ${orgLabel} — invite ${sendInvite ? 'sent' : 'skipped'}`);
     setInvEmail('');
     setInvName('');
     setInvOrg(null);
@@ -148,8 +146,6 @@ export default function UserProvisioning() {
   const handleBulkInvite = () => {
     const emails = bulkEmails.split(',').map(e => e.trim()).filter(Boolean);
     if (emails.length === 0) return;
-    const orgLabel = bulkOrg ? (bulkOrg.isNew ? `NEW "${bulkOrg.name}"` : bulkOrg.name) : 'all';
-    alert(`[Demo] Would bulk-invite ${emails.length} users as ${bulkRole} to org ${orgLabel}`);
     setBulkEmails('');
     setBulkOrg(null);
   };
@@ -509,16 +505,16 @@ function UserDetailDrawer({ user, org, onClose }: { user: UserRow; org: OrgRow |
 
         {/* Footer */}
         <div style={{ padding: '14px 24px', borderTop: `1px solid ${BORDER}`, flexShrink: 0, display: 'flex', gap: 10 }}>
-          <button onClick={() => alert('[Demo] Edit user')} style={{ padding: '8px 16px', borderRadius: 8, border: 'none', background: NAVY, color: '#fff', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>
+          <button onClick={() => {}} style={{ padding: '8px 16px', borderRadius: 8, border: 'none', background: NAVY, color: '#fff', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>
             Edit User
           </button>
-          <button onClick={() => alert('[Demo] Reset password')} style={{ padding: '8px 16px', borderRadius: 8, border: `1px solid ${BORDER}`, background: '#F9FAFB', color: TEXT_SEC, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+          <button onClick={() => {}} style={{ padding: '8px 16px', borderRadius: 8, border: `1px solid ${BORDER}`, background: '#F9FAFB', color: TEXT_SEC, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
             Reset Password
           </button>
-          <button onClick={() => alert('[Demo] Emulate user')} style={{ padding: '8px 16px', borderRadius: 8, border: `1px solid ${BORDER}`, background: '#FAF7F2', color: NAVY, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+          <button onClick={() => {}} style={{ padding: '8px 16px', borderRadius: 8, border: `1px solid ${BORDER}`, background: '#FAF7F2', color: NAVY, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
             Emulate
           </button>
-          <button onClick={() => alert('[Demo] Suspend user')} style={{ padding: '8px 16px', borderRadius: 8, border: '1px solid #FECACA', background: '#FEF2F2', color: '#DC2626', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+          <button onClick={() => {}} style={{ padding: '8px 16px', borderRadius: 8, border: '1px solid #FECACA', background: '#FEF2F2', color: '#DC2626', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
             Suspend
           </button>
         </div>

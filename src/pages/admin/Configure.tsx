@@ -343,7 +343,7 @@ function AddOrgModal({ onClose, onSaved }: { onClose: () => void; onSaved: () =>
       primary_contact_name: pcName || null, primary_contact_email: pcEmail || null, primary_contact_phone: pcPhone || null,
       alternate_contact_name: acName || null, alternate_contact_email: acEmail || null, alternate_contact_phone: acPhone || null,
     });
-    if (error) { alert(error.message); setSaving(false); return; }
+    if (error) { console.error(error.message); setSaving(false); return; }
     await supabase.from('admin_event_log').insert({ level: 'INFO', category: 'configure', message: `Org created: "${name.trim()}" (${plan})` });
     onSaved(); onClose();
   };
@@ -433,7 +433,7 @@ function AddLocModal({ orgs, onClose, onSaved }: { orgs: Org[]; onClose: () => v
     let orgId = selectedOrg?.id || null;
     if (selectedOrg?.isNew) {
       const { data: newOrg, error: orgErr } = await supabase.from('organizations').insert({ name: selectedOrg.name, status: 'pending' }).select('id').single();
-      if (orgErr) { alert(orgErr.message); setSaving(false); return; }
+      if (orgErr) { console.error(orgErr.message); setSaving(false); return; }
       orgId = newOrg.id;
     }
     const { error } = await supabase.from('locations').insert({
@@ -442,7 +442,7 @@ function AddLocModal({ orgs, onClose, onSaved }: { orgs: Org[]; onClose: () => v
       site_contact_name: scName || null, site_contact_email: scEmail || null, site_contact_phone: scPhone || null,
       site_phone: sitePhone || null, manager_name: mgrName || null, manager_phone: mgrPhone || null,
     });
-    if (error) { alert(error.message); setSaving(false); return; }
+    if (error) { console.error(error.message); setSaving(false); return; }
     await supabase.from('admin_event_log').insert({ level: 'INFO', category: 'configure', message: `Location created: "${name.trim()}" (${county || 'N/A'})` });
     onSaved(); onClose();
   };
@@ -508,7 +508,6 @@ function AddUserModal({ orgs, onClose, onSaved, userEmail }: { orgs: Org[]; onCl
   const handleInvite = async () => {
     if (!email.trim()) return;
     setSaving(true);
-    alert(`[Demo] Would invite ${email} as ${role} to org ${selectedOrg?.name || 'none'}\nInvited by: ${userEmail}`);
     await supabase.from('admin_event_log').insert({ level: 'INFO', category: 'configure', message: `User invited: ${email} (${role})` });
     setSaving(false); onSaved(); onClose();
   };
@@ -573,7 +572,7 @@ function AddVendorModal({ onClose, onSaved }: { onClose: () => void; onSaved: ()
       certifications: certs.length > 0 ? certs : null,
       is_partner: isPartner, status, notes: notes || null,
     });
-    if (error) { alert(error.message); setSaving(false); return; }
+    if (error) { console.error(error.message); setSaving(false); return; }
     await supabase.from('admin_event_log').insert({ level: 'INFO', category: 'configure', message: `Vendor created: "${companyName.trim()}" (${serviceType})` });
     onSaved(); onClose();
   };
@@ -876,8 +875,8 @@ function OrgDrawer({ org, onClose, onRefresh }: { org: Org; onClose: () => void;
           )}
         </div>
         <div style={drawerFooter}>
-          <FooterBtn label="Edit Organization" color="#fff" bg={NAVY} onClick={() => alert('[Demo] Edit organization')} />
-          <FooterBtn label="View Billing" color={NAVY} bg="#F9FAFB" border={`1px solid ${BORDER}`} onClick={() => alert('[Demo] View billing')} />
+          <FooterBtn label="Edit Organization" color="#fff" bg={NAVY} onClick={() => {}} />
+          <FooterBtn label="View Billing" color={NAVY} bg="#F9FAFB" border={`1px solid ${BORDER}`} onClick={() => {}} />
         </div>
       </div>
     </>
@@ -1063,8 +1062,8 @@ function LocDrawer({ loc, onClose, onRefresh }: { loc: Location; onClose: () => 
           )}
         </div>
         <div style={drawerFooter}>
-          <FooterBtn label="Edit Location" color="#fff" bg={NAVY} onClick={() => alert('[Demo] Edit location')} />
-          <FooterBtn label="View Organization" color={NAVY} bg="#F9FAFB" border={`1px solid ${BORDER}`} onClick={() => alert('[Demo] View organization')} />
+          <FooterBtn label="Edit Location" color="#fff" bg={NAVY} onClick={() => {}} />
+          <FooterBtn label="View Organization" color={NAVY} bg="#F9FAFB" border={`1px solid ${BORDER}`} onClick={() => {}} />
         </div>
       </div>
     </>
@@ -1154,9 +1153,9 @@ function UserDrawer({ user, orgs, onClose, onRefresh }: { user: UserProfile; org
           )}
         </div>
         <div style={drawerFooter}>
-          <FooterBtn label="Edit User" color="#fff" bg={NAVY} onClick={() => alert('[Demo] Edit user')} />
-          <FooterBtn label="Emulate" color={NAVY} bg="#FAF7F2" border={`1px solid ${BORDER}`} onClick={() => alert('[Demo] Start emulation')} />
-          <FooterBtn label="Reset Password" color={TEXT_SEC} bg="#F9FAFB" border={`1px solid ${BORDER}`} onClick={() => alert('[Demo] Reset password')} />
+          <FooterBtn label="Edit User" color="#fff" bg={NAVY} onClick={() => {}} />
+          <FooterBtn label="Emulate" color={NAVY} bg="#FAF7F2" border={`1px solid ${BORDER}`} onClick={() => {}} />
+          <FooterBtn label="Reset Password" color={TEXT_SEC} bg="#F9FAFB" border={`1px solid ${BORDER}`} onClick={() => {}} />
         </div>
       </div>
     </>
@@ -1262,9 +1261,9 @@ function VendorDrawer({ vendor, onClose, onRefresh }: { vendor: Vendor; onClose:
           )}
         </div>
         <div style={drawerFooter}>
-          <FooterBtn label="Edit Vendor" color="#fff" bg={NAVY} onClick={() => alert('[Demo] Edit vendor')} />
-          <FooterBtn label="Send Portal Invite" color={NAVY} bg="#FAF7F2" border={`1px solid ${BORDER}`} onClick={() => alert('[Demo] Send portal invite')} />
-          <FooterBtn label="Deactivate" color="#DC2626" bg="#FEF2F2" border="1px solid #FECACA" onClick={() => alert('[Demo] Deactivate vendor')} />
+          <FooterBtn label="Edit Vendor" color="#fff" bg={NAVY} onClick={() => {}} />
+          <FooterBtn label="Send Portal Invite" color={NAVY} bg="#FAF7F2" border={`1px solid ${BORDER}`} onClick={() => {}} />
+          <FooterBtn label="Deactivate" color="#DC2626" bg="#FEF2F2" border="1px solid #FECACA" onClick={() => {}} />
         </div>
       </div>
     </>

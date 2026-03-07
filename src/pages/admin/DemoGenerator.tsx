@@ -236,7 +236,7 @@ export function DemoGenerator() {
             created_by_type: 'sales_rep',
           });
       } else {
-        alert('Demo session saved and scheduled. The demo data will be generated before the meeting.');
+        // Session saved — success state shown below
       }
       setSuccess(true);
     }

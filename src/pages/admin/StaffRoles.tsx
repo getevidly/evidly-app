@@ -484,9 +484,7 @@ export default function StaffRoles() {
                   </button>
                   <button
                     onClick={() => {
-                      if (!formEmail) { alert('Email is required.'); return; }
-                      const enabledPerms = PERM_KEYS.filter(k => formPerms[k]).map(k => PERM_LABELS[k]).join(', ');
-                      alert(`[Demo] Send invitation to ${formEmail} (${formName || 'unnamed'}) as ${ROLE_DISPLAY[formRole]}.\nPermissions: ${enabledPerms || 'none'}`);
+                      if (!formEmail) return;
                       resetModal();
                     }}
                     style={{
@@ -498,9 +496,7 @@ export default function StaffRoles() {
                   </button>
                   <button
                     onClick={() => {
-                      if (!formEmail) { alert('Email is required.'); return; }
-                      const enabledPerms = PERM_KEYS.filter(k => formPerms[k]).map(k => PERM_LABELS[k]).join(', ');
-                      alert(`[Demo] Provision now: ${formEmail} (${formName || 'unnamed'}) as ${ROLE_DISPLAY[formRole]}.\nPermissions: ${enabledPerms || 'none'}`);
+                      if (!formEmail) return;
                       resetModal();
                     }}
                     style={{
@@ -590,7 +586,7 @@ export default function StaffRoles() {
 
                     {/* Edit button */}
                     <button
-                      onClick={() => alert('[Demo] Only super_admin can edit role defaults.')}
+                      onClick={() => {}}
                       style={{
                         padding: '6px 14px', borderRadius: 6, border: `1px solid ${BORDER}`,
                         background: '#FFFFFF', color: TEXT_SEC, fontSize: 12, fontWeight: 600,
@@ -835,13 +831,13 @@ function StaffDrawer({ staff, roleDefs, onClose, renderRoleBadge }: {
 
         {/* Footer */}
         <div style={{ padding: '14px 24px', borderTop: `1px solid ${BORDER}`, flexShrink: 0, display: 'flex', gap: 10 }}>
-          <button onClick={() => alert('[Demo] Edit role & permissions')} style={{ padding: '8px 16px', borderRadius: 8, border: 'none', background: NAVY, color: '#fff', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>
+          <button onClick={() => {}} style={{ padding: '8px 16px', borderRadius: 8, border: 'none', background: NAVY, color: '#fff', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>
             Edit Role & Permissions
           </button>
-          <button onClick={() => alert('[Demo] Reset password')} style={{ padding: '8px 16px', borderRadius: 8, border: `1px solid ${BORDER}`, background: '#F9FAFB', color: TEXT_SEC, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+          <button onClick={() => {}} style={{ padding: '8px 16px', borderRadius: 8, border: `1px solid ${BORDER}`, background: '#F9FAFB', color: TEXT_SEC, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
             Reset Password
           </button>
-          <button onClick={() => alert('[Demo] Deactivate staff member')} style={{ padding: '8px 16px', borderRadius: 8, border: '1px solid #FECACA', background: '#FEF2F2', color: '#DC2626', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+          <button onClick={() => {}} style={{ padding: '8px 16px', borderRadius: 8, border: '1px solid #FECACA', background: '#FEF2F2', color: '#DC2626', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
             Deactivate
           </button>
         </div>

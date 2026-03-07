@@ -280,17 +280,13 @@ export function DemoPipeline() {
         navigate(`/admin/demo-launcher`);
         break;
       case 'preview':
-        alert(`Demo preview would open for ${session.company_name}. In production, the rep shares their screen or grants temporary access.`);
         break;
       case 'convert':
         setConversionTarget(session);
         break;
       case 'extend': {
         // Extend demo by 7 days
-        if (isDemoMode) {
-          alert(`Demo extended by 7 days for ${session.company_name}.`);
-          return;
-        }
+        if (isDemoMode) return;
         const currentExpiry = session.expires_at ? new Date(session.expires_at) : new Date();
         const newExpiry = new Date(Math.max(currentExpiry.getTime(), Date.now()) + 7 * 86400000).toISOString();
 
@@ -311,13 +307,9 @@ export function DemoPipeline() {
         break;
       }
       case 'reschedule':
-        alert(`Reschedule modal would open for ${session.company_name}.`);
         break;
       case 'cancel': {
-        if (isDemoMode) {
-          alert(`Demo session cancelled for ${session.company_name}.`);
-          return;
-        }
+        if (isDemoMode) return;
         await supabase
           .from('demo_sessions')
           .update({ status: 'deleted', deleted_at: new Date().toISOString(), updated_at: new Date().toISOString() })
@@ -326,13 +318,9 @@ export function DemoPipeline() {
         break;
       }
       case 'reengage':
-        alert(`Re-engagement email would be sent to ${session.prospect_email}. Their profile data is waiting — upgrade CTA included.`);
         break;
       case 'delete': {
-        if (isDemoMode) {
-          alert(`Demo archived for ${session.company_name}.`);
-          return;
-        }
+        if (isDemoMode) return;
         await supabase
           .from('demo_sessions')
           .update({ status: 'deleted', deleted_at: new Date().toISOString(), updated_at: new Date().toISOString() })
@@ -347,7 +335,6 @@ export function DemoPipeline() {
     if (!conversionTarget) return;
 
     if (isDemoMode) {
-      alert(`${conversionTarget.company_name} converted to ${plan} plan. In production, demo data is cleared and account transitions to live.`);
       setConversionTarget(null);
       return;
     }
@@ -359,7 +346,7 @@ export function DemoPipeline() {
         body: { organization_id: orgId, plan },
       });
       if (error) {
-        alert(`Conversion failed: ${error.message}`);
+        console.error(`Conversion failed: ${error.message}`);
         return;
       }
     } else {

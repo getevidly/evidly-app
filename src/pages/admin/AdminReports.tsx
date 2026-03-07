@@ -116,7 +116,7 @@ export default function AdminReports() {
     });
     await loadReports();
     setGenerating(null);
-    alert(`[Demo] ${title} report generated. In production, this triggers the generate-report edge function.`);
+    // Report generated — UI refreshes via loadReports() above
   };
 
   const createShareLink = async (reportId: string) => {
@@ -127,7 +127,7 @@ export default function AdminReports() {
       .eq('id', reportId);
     await loadReports();
     const shareUrl = `${window.location.origin}/report/${token}`;
-    alert(`Share link created (expires in 7 days):\n${shareUrl}`);
+    navigator.clipboard?.writeText(shareUrl).catch(() => {});
   };
 
   const archiveReport = async (reportId: string) => {

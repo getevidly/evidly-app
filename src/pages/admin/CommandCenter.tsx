@@ -6,7 +6,7 @@
  *
  * KPI strip: Active Orgs, Active Locations, Crawl Feeds Live, Open Tickets, System Status
  * 3-column layout: Live Event Feed (50%), Crawl Status (25%), Open Tickets (25%)
- * Quick actions: Run Crawl, Refresh Metrics, Check DB Health, Send Test Alert
+ * Quick actions: Run Crawl, Refresh Metrics
  */
 
 import { useState, useEffect, useCallback } from 'react';
@@ -15,7 +15,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useDemo } from '../../contexts/DemoContext';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { KpiTile } from '../../components/admin/KpiTile';
-import { RefreshCw, Activity, Server, Ticket, MapPin, Building2, Radio, Zap, HeartPulse, Bell } from 'lucide-react';
+import { RefreshCw, Activity, Ticket, MapPin, Building2, Radio, Zap, HeartPulse } from 'lucide-react';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -188,8 +188,6 @@ export default function CommandCenter() {
         {[
           { label: runningCrawl ? 'Running...' : 'Run Crawl', icon: Zap, onClick: handleRunCrawl, disabled: runningCrawl },
           { label: refreshing ? 'Refreshing...' : 'Refresh Metrics', icon: RefreshCw, onClick: handleRefresh, disabled: refreshing },
-          { label: 'Check DB Health', icon: Server, onClick: () => alert('[Demo] DB health check: All tables OK, RLS active, 0 orphaned rows.') },
-          { label: 'Send Test Alert', icon: Bell, onClick: () => alert('[Demo] Test alert sent to arthur@getevidly.com') },
         ].map(btn => (
           <button key={btn.label} onClick={btn.onClick} disabled={btn.disabled}
             style={{

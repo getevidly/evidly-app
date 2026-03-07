@@ -332,7 +332,7 @@ export default function SupportTickets() {
       reply_type: isInternalNote ? 'internal_note' : 'staff',
     });
     if (error) {
-      alert(`Error: ${error.message}`);
+      console.error(`Reply error: ${error.message}`);
     } else {
       setReplyBody('');
       setIsInternalNote(false);
@@ -383,7 +383,7 @@ export default function SupportTickets() {
       });
     } catch {
       // Edge function may not exist — log the survey URL for demo
-      alert(`CSAT survey link (send-email unavailable):\n${surveyUrl}`);
+      console.error(`CSAT send-email unavailable. Survey URL: ${surveyUrl}`);
     }
     await supabase.from('support_tickets').update({
       csat_sent_at: new Date().toISOString(),
@@ -422,7 +422,7 @@ export default function SupportTickets() {
     });
 
     if (error) {
-      alert(`Error: ${error.message}`);
+      console.error(`Ticket create error: ${error.message}`);
     } else {
       setCreateSubject('');
       setCreateDescription('');

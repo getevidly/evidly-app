@@ -67,7 +67,7 @@ export default function DatabaseBackup() {
       completed_at: new Date().toISOString(),
     });
     if (error) {
-      alert(`Backup log failed: ${error.message}`);
+      console.error(`Backup log failed: ${error.message}`);
     } else {
       await loadBackups();
     }

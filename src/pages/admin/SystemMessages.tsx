@@ -89,7 +89,7 @@ export default function SystemMessages() {
       dismissals_count: 0,
     });
     if (error) {
-      alert(`Error: ${error.message}`);
+      console.error(`Message send error: ${error.message}`);
     } else {
       setTitle(''); setBody(''); setMsgType('info'); setDisplayStyle('banner');
       setShowCompose(false);
