@@ -76,6 +76,9 @@ interface Signal {
   auto_publish_at: string | null;
   review_deadline: string | null;
   routing_reason: string | null;
+  published_at: string | null;
+  published_by: string | null;
+  is_published: boolean;
 }
 
 // JIEUpdate interface removed — merged into Jurisdiction Updates tab
@@ -244,7 +247,7 @@ export default function EvidLYIntelligence() {
         supabase.from('entity_correlations').select('*, jurisdictions(county), organizations(name)').order('created_at', { ascending: false }).limit(100),
         supabase.from('scoretable_views').select('county_slug, viewed_at, session_id').order('viewed_at', { ascending: false }).limit(5000),
         supabase.from('jurisdiction_intel_updates').select('*').order('created_at', { ascending: false }).limit(100),
-        supabase.from('regulatory_updates').select('*').order('created_at', { ascending: false }).limit(100),
+        supabase.from('regulatory_changes').select('*').order('created_at', { ascending: false }).limit(100),
         supabase.from('rfp_listings').select('id, title, entity_name, state, relevance_tier, deadline, estimated_value_min, estimated_value_max, status, created_at, ai_relevance_summary').order('created_at', { ascending: false }).limit(100),
       ]);
       if (sourcesRes.data) setSources(sourcesRes.data);
@@ -346,7 +349,7 @@ export default function EvidLYIntelligence() {
   const brokenSources = sources.filter(s => ['waf_blocked', 'timeout', 'error', 'degraded'].includes(s.status)).length;
   const demoCritical = sources.filter(s => s.is_demo_critical).length;
   const newSignals = signals.filter(s => !s.published_at).length;
-  const criticalSignals = signals.filter(s => s.revenue_risk_level === 'critical' || s.liability_risk_level === 'critical').length;
+  const criticalSignals = signals.filter(s => s.risk_revenue === 'critical' || s.risk_liability === 'critical').length;
   const pendingReview = signals.filter(s => s.routing_tier === 'hold').length;
   const autoRouted = signals.filter(s => s.routing_tier === 'auto').length;
   const notifyRouted = signals.filter(s => s.routing_tier === 'notify').length;
@@ -1138,7 +1141,7 @@ export default function EvidLYIntelligence() {
                     <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                       <thead>
                         <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
-                          {['Signal', 'Type', 'Strength', 'Risk', 'Created'].map(h => (
+                          {['Signal', 'Type', 'Strength', 'Rev', 'Liab', 'Cost', 'Ops', 'Created'].map(h => (
                             <th key={h} style={thStyle}>{h}</th>
                           ))}
                         </tr>
@@ -1147,8 +1150,12 @@ export default function EvidLYIntelligence() {
                         {grouped[gName].map(c => {
                           const strength = Math.round((c.correlation_strength || 0) * 100);
                           const sig = signals.find(s => s.id === c.source_id);
-                          const riskLevel = sig?.revenue_risk_level || null;
-                          const rc = riskLevel ? (URGENCY_COLORS[riskLevel] || URGENCY_COLORS.low) : null;
+                          const riskDims = [
+                            { val: sig?.risk_revenue },
+                            { val: sig?.risk_liability },
+                            { val: sig?.risk_cost },
+                            { val: sig?.risk_operational },
+                          ];
                           return (
                             <tr key={c.id} style={{ borderBottom: `1px solid ${BORDER}` }}>
                               <td style={{ ...tdStyle, fontSize: 12, maxWidth: 280 }}>
@@ -1165,13 +1172,19 @@ export default function EvidLYIntelligence() {
                                   <span style={{ fontSize: 10, color: TEXT_MUTED, fontWeight: 600 }}>{strength}%</span>
                                 </div>
                               </td>
-                              <td style={tdStyle}>
-                                {rc ? (
-                                  <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: rc.bg, color: rc.text }}>
-                                    {riskLevel}
-                                  </span>
-                                ) : <span style={{ color: TEXT_MUTED, fontSize: 11 }}>{'\u2014'}</span>}
-                              </td>
+                              {riskDims.map((d, i) => {
+                                const level = d.val || 'none';
+                                const rc = RISK_DIM_COLORS[level] || RISK_DIM_COLORS.none;
+                                return (
+                                  <td key={i} style={tdStyle}>
+                                    {level !== 'none' ? (
+                                      <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 8, background: rc.bg, color: rc.text }}>
+                                        {rc.label}
+                                      </span>
+                                    ) : <span style={{ color: TEXT_MUTED, fontSize: 10 }}>{'\u2014'}</span>}
+                                  </td>
+                                );
+                              })}
                               <td style={{ ...tdStyle, fontSize: 11, color: TEXT_MUTED }}>{new Date(c.created_at).toLocaleDateString()}</td>
                             </tr>
                           );

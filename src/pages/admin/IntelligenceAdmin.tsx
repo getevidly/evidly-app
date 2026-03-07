@@ -63,6 +63,7 @@ export default function IntelligenceAdmin() {
   const [signals, setSignals] = useState<QueueSignal[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'hold' | 'notify'>('all');
+  const [dimFilter, setDimFilter] = useState<'' | 'revenue' | 'liability' | 'cost' | 'operational'>('');
   const [publishing, setPublishing] = useState<string | null>(null);
 
   const loadQueue = useCallback(async () => {
@@ -113,8 +114,12 @@ export default function IntelligenceAdmin() {
   };
 
   const filtered = signals.filter(s => {
-    if (filter === 'hold') return s.routing_tier === 'hold';
-    if (filter === 'notify') return s.routing_tier === 'notify';
+    if (filter === 'hold' && s.routing_tier !== 'hold') return false;
+    if (filter === 'notify' && s.routing_tier !== 'notify') return false;
+    if (dimFilter) {
+      const riskVal = s[`risk_${dimFilter}` as keyof QueueSignal] as string | null;
+      if (!riskVal || riskVal === 'none') return false;
+    }
     return true;
   });
 
@@ -162,7 +167,7 @@ export default function IntelligenceAdmin() {
       </div>
 
       {/* Filter pills */}
-      <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+      <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
         {([
           { key: 'all' as const, label: `All (${signals.length})` },
           { key: 'hold' as const, label: `Hold (${holdCount})` },
@@ -174,6 +179,28 @@ export default function IntelligenceAdmin() {
               background: filter === f.key ? NAVY : '#fff',
               color: filter === f.key ? '#fff' : TEXT_SEC,
               border: `1px solid ${filter === f.key ? NAVY : BORDER}`,
+            }}>
+            {f.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Risk dimension filters */}
+      <div style={{ display: 'flex', gap: 6, marginBottom: 16, alignItems: 'center' }}>
+        <span style={{ fontSize: 10, color: TEXT_MUTED, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Risk:</span>
+        {([
+          { key: '' as const, label: 'All' },
+          { key: 'revenue' as const, label: 'Revenue' },
+          { key: 'liability' as const, label: 'Liability' },
+          { key: 'cost' as const, label: 'Cost' },
+          { key: 'operational' as const, label: 'Operational' },
+        ]).map(f => (
+          <button key={f.key} onClick={() => setDimFilter(f.key)}
+            style={{
+              padding: '3px 10px', borderRadius: 14, fontSize: 10, fontWeight: 600, cursor: 'pointer',
+              background: dimFilter === f.key ? GOLD : '#fff',
+              color: dimFilter === f.key ? '#fff' : TEXT_MUTED,
+              border: `1px solid ${dimFilter === f.key ? GOLD : BORDER}`,
             }}>
             {f.label}
           </button>
