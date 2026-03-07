@@ -5,7 +5,6 @@
  * from demoData.ts and vendorServicesDemoData.ts. This is a visual reference
  * for what the demo mode shows — all hardcoded, no Supabase queries.
  */
-import { AdminShell } from '../../components/layout/AdminShell';
 import {
   DEMO_ORG,
   DEMO_LOCATIONS,
@@ -75,7 +74,6 @@ export default function DemoDashboard() {
     s === 'failing' || s === 'critical' ? 'red' : 'gray';
 
   return (
-    <AdminShell>
       <div style={{ maxWidth: 900 }}>
         {/* Header */}
         <div style={{ marginBottom: 24 }}>
@@ -350,6 +348,5 @@ export default function DemoDashboard() {
           Data sources: <code>src/data/demoData.ts</code>, <code>src/data/vendorServicesDemoData.ts</code>
         </div>
       </div>
-    </AdminShell>
   );
 }

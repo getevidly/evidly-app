@@ -93,7 +93,7 @@ export default function VerificationPanel({
   contentTable, contentId, contentType, contentTitle, onVerificationChange,
 }: VerificationPanelProps) {
   const { user } = useAuth();
-  const { isDemo } = useDemo();
+  const { isDemoMode } = useDemo();
   const [gates, setGates] = useState<GateDefinition[]>([]);
   const [status, setStatus] = useState<VerificationStatus | null>(null);
   const [history, setHistory] = useState<LogEntry[]>([]);
@@ -141,7 +141,7 @@ export default function VerificationPanel({
   useEffect(() => { load(); }, [load]);
 
   const submitGateVerification = async (gateKey: string, gateLabel: string) => {
-    if (isDemo) {
+    if (isDemoMode) {
       console.error('Demo mode: verification log writes blocked');
       return;
     }

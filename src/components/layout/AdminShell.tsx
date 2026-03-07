@@ -59,6 +59,7 @@ const NAV_SECTIONS: NavSection[] = [
       { label: 'Regulatory Updates', path: '/admin/regulatory-changes' },
       { label: 'RFP Monitor', path: '/admin/rfp-monitor' },
       { label: 'Crawl Monitor', path: '/admin/crawl-monitor' },
+      { label: 'Verification', path: '/admin/verification' },
     ],
   },
   {
