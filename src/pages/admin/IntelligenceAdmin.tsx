@@ -58,6 +58,16 @@ const RISK_COLORS: Record<string, string> = {
   none: '#D1D5DB',
 };
 
+const DIM_COLORS: Record<string, string> = {
+  revenue: '#DC2626',
+  liability: '#7C3AED',
+  cost: '#D97706',
+  operational: '#2563EB',
+};
+
+const LEVELS = ['critical', 'high', 'moderate', 'low', 'none'] as const;
+const LEVEL_LABELS: Record<string, string> = { critical: 'Crit', high: 'High', moderate: 'Med', low: 'Low', none: 'None' };
+
 export default function IntelligenceAdmin() {
   const { user } = useAuth();
   const [signals, setSignals] = useState<QueueSignal[]>([]);
@@ -65,6 +75,7 @@ export default function IntelligenceAdmin() {
   const [filter, setFilter] = useState<'all' | 'hold' | 'notify'>('all');
   const [dimFilter, setDimFilter] = useState<'' | 'revenue' | 'liability' | 'cost' | 'operational'>('');
   const [publishing, setPublishing] = useState<string | null>(null);
+  const [riskEdits, setRiskEdits] = useState<Record<string, { revenue: string; liability: string; cost: string; operational: string }>>({});
 
   const loadQueue = useCallback(async () => {
     setLoading(true);
@@ -81,11 +92,40 @@ export default function IntelligenceAdmin() {
 
   useEffect(() => { loadQueue(); }, [loadQueue]);
 
+  const getRiskLevel = (sig: QueueSignal, dim: 'revenue' | 'liability' | 'cost' | 'operational'): string => {
+    if (riskEdits[sig.id]) return riskEdits[sig.id][dim];
+    return (sig[`risk_${dim}` as keyof QueueSignal] as string) || 'none';
+  };
+
+  const setRiskLevel = (sig: QueueSignal, dim: 'revenue' | 'liability' | 'cost' | 'operational', level: string) => {
+    setRiskEdits(prev => ({
+      ...prev,
+      [sig.id]: {
+        revenue: prev[sig.id]?.revenue ?? sig.risk_revenue ?? 'none',
+        liability: prev[sig.id]?.liability ?? sig.risk_liability ?? 'none',
+        cost: prev[sig.id]?.cost ?? sig.risk_cost ?? 'none',
+        operational: prev[sig.id]?.operational ?? sig.risk_operational ?? 'none',
+        [dim]: level,
+      },
+    }));
+  };
+
+  const isAllNone = (sig: QueueSignal): boolean => {
+    return (['revenue', 'liability', 'cost', 'operational'] as const).every(d => getRiskLevel(sig, d) === 'none');
+  };
+
   const publishSignal = async (sig: QueueSignal) => {
     setPublishing(sig.id);
+    const riskValues = {
+      risk_revenue: getRiskLevel(sig, 'revenue'),
+      risk_liability: getRiskLevel(sig, 'liability'),
+      risk_cost: getRiskLevel(sig, 'cost'),
+      risk_operational: getRiskLevel(sig, 'operational'),
+    };
     const { error } = await supabase
       .from('intelligence_signals')
       .update({
+        ...riskValues,
         status: 'published',
         published_at: new Date().toISOString(),
         published_by: user?.email,
@@ -95,7 +135,7 @@ export default function IntelligenceAdmin() {
       console.error(`Failed to publish: ${error.message}`);
     } else {
       setSignals(prev => prev.filter(s => s.id !== sig.id));
-      // Fire-and-forget delivery
+      setRiskEdits(prev => { const next = { ...prev }; delete next[sig.id]; return next; });
       try {
         await supabase.functions.invoke('intelligence-deliver', {
           body: { type: 'signal', id: sig.id },
@@ -125,17 +165,12 @@ export default function IntelligenceAdmin() {
 
   const holdCount = signals.filter(s => s.routing_tier === 'hold').length;
   const notifyCount = signals.filter(s => s.routing_tier === 'notify').length;
-  const autoCount = signals.filter(s => s.routing_tier === 'auto').length;
-
-  const RiskDot = ({ level }: { level: string | null }) => {
-    if (!level || level === 'none') return null;
-    return (
-      <span style={{
-        display: 'inline-block', width: 8, height: 8, borderRadius: '50%',
-        background: RISK_COLORS[level] || RISK_COLORS.low,
-      }} />
-    );
-  };
+  const revenueCount = signals.filter(s => s.risk_revenue && s.risk_revenue !== 'none').length;
+  const liabilityCount = signals.filter(s => s.risk_liability && s.risk_liability !== 'none').length;
+  const costOpsCount = signals.filter(s =>
+    (s.risk_cost && s.risk_cost !== 'none') ||
+    (s.risk_operational && s.risk_operational !== 'none')
+  ).length;
 
   return (
     <div>
@@ -153,9 +188,9 @@ export default function IntelligenceAdmin() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 20 }}>
         {[
           { label: 'Total Pending', value: signals.length, color: NAVY },
-          { label: 'Hold (Review)', value: holdCount, color: '#DC2626' },
-          { label: 'Notify (Approve)', value: notifyCount, color: '#D97706' },
-          { label: 'Auto (Scheduled)', value: autoCount, color: '#059669' },
+          { label: 'Revenue', value: revenueCount, color: '#DC2626' },
+          { label: 'Liability', value: liabilityCount, color: '#7C3AED' },
+          { label: 'Cost + Ops', value: costOpsCount, color: '#D97706' },
         ].map(s => (
           <div key={s.label} style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '14px 16px' }}>
             <div style={{ fontSize: 10, fontWeight: 700, color: TEXT_MUTED, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 4 }}>
@@ -274,19 +309,43 @@ export default function IntelligenceAdmin() {
                       </div>
                     )}
 
-                    {/* Risk dimensions */}
-                    <div style={{ display: 'flex', gap: 12, marginBottom: 4 }}>
-                      {[
-                        { label: 'Rev', level: sig.risk_revenue },
-                        { label: 'Liab', level: sig.risk_liability },
-                        { label: 'Cost', level: sig.risk_cost },
-                        { label: 'Ops', level: sig.risk_operational },
-                      ].map(r => (
-                        <span key={r.label} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 10, color: TEXT_MUTED }}>
-                          <RiskDot level={r.level} /> {r.label}: {r.level || 'none'}
-                        </span>
-                      ))}
+                    {/* Risk dimension selectors */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 5, marginBottom: 8, marginTop: 4 }}>
+                      {(['revenue', 'liability', 'cost', 'operational'] as const).map(dim => {
+                        const current = getRiskLevel(sig, dim);
+                        return (
+                          <div key={dim} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                            <span style={{ fontSize: 10, fontWeight: 700, color: DIM_COLORS[dim], width: 72, textTransform: 'capitalize' }}>
+                              {dim}
+                            </span>
+                            <div style={{ display: 'flex', gap: 3 }}>
+                              {LEVELS.map(level => {
+                                const isActive = current === level;
+                                const levelColor = level === 'none' ? '#9CA3AF' : (RISK_COLORS[level] || '#6B7280');
+                                return (
+                                  <button key={level} onClick={() => setRiskLevel(sig, dim, level)}
+                                    style={{
+                                      padding: '2px 8px', borderRadius: 10, fontSize: 9, fontWeight: 600, cursor: 'pointer',
+                                      background: isActive ? levelColor : 'transparent',
+                                      color: isActive ? '#fff' : TEXT_MUTED,
+                                      border: `1px solid ${isActive ? levelColor : '#E5E7EB'}`,
+                                    }}>
+                                    {LEVEL_LABELS[level]}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
+
+                    {/* All-none warning */}
+                    {isAllNone(sig) && (
+                      <div style={{ fontSize: 10, color: '#D97706', background: '#FFFBEB', padding: '4px 10px', borderRadius: 6, marginBottom: 6 }}>
+                        No risk dimensions assigned — this signal will not appear under any dimension in the Intelligence Center.
+                      </div>
+                    )}
 
                     {/* Meta */}
                     <div style={{ fontSize: 10, color: TEXT_MUTED }}>
