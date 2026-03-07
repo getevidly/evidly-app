@@ -2,7 +2,7 @@
  * IntelligenceAdmin — Signal Approval Queue
  *
  * Focused admin page for reviewing, publishing, and managing intelligence signals.
- * Supports dismiss with reason, undo, restore, and enhanced filtering.
+ * Supports dismiss with reason, undo, restore, AI risk classification, and filtering.
  * Route: /admin/intelligence-admin
  */
 import { useState, useEffect, useCallback, useRef } from 'react';
@@ -21,31 +21,35 @@ const BORDER = '#E5E0D8';
 interface QueueSignal {
   id: string;
   title: string;
-  summary: string | null;
+  content_summary: string | null;
   category: string;
   signal_type: string;
   source_key: string | null;
+  source_name: string | null;
   source_url: string | null;
-  ai_urgency: string | null;
-  ai_summary: string | null;
-  ai_confidence: number | null;
-  status: string;
-  scope: string | null;
-  affected_jurisdictions: string[];
-  risk_revenue: string | null;
-  risk_liability: string | null;
-  risk_cost: string | null;
-  risk_operational: string | null;
+  revenue_risk_level: string | null;
+  liability_risk_level: string | null;
+  cost_risk_level: string | null;
+  operational_risk_level: string | null;
   routing_tier: RoutingTier | null;
   severity_score: number | null;
   confidence_score: number | null;
-  routing_reason: string | null;
-  review_deadline: string | null;
-  auto_publish_at: string | null;
   created_at: string;
-  dismissed_reason: string | null;
-  dismissed_at: string | null;
-  dismissed_by: string | null;
+  is_published: boolean;
+  counties_affected: string[] | null;
+  target_counties: string[] | null;
+  original_url: string | null;
+  recommended_action: string | null;
+  // Fields requiring schema_align migration (optional until applied)
+  status?: string;
+  ai_urgency?: string | null;
+  ai_summary?: string | null;
+  scope?: string | null;
+  affected_jurisdictions?: string[];
+  routing_reason?: string | null;
+  dismissed_reason?: string | null;
+  dismissed_at?: string | null;
+  dismissed_by?: string | null;
 }
 
 type TabFilter = 'all' | 'hold' | 'notify' | 'dismissed';
@@ -61,7 +65,7 @@ const URGENCY_COLORS: Record<string, { bg: string; text: string }> = {
 const RISK_COLORS: Record<string, string> = {
   critical: '#DC2626',
   high: '#D97706',
-  moderate: '#2563EB',
+  medium: '#2563EB',
   low: '#6B7280',
   none: '#D1D5DB',
 };
@@ -73,8 +77,8 @@ const DIM_COLORS: Record<string, string> = {
   operational: '#2563EB',
 };
 
-const LEVELS = ['critical', 'high', 'moderate', 'low', 'none'] as const;
-const LEVEL_LABELS: Record<string, string> = { critical: 'Crit', high: 'High', moderate: 'Med', low: 'Low', none: 'None' };
+const LEVELS = ['critical', 'high', 'medium', 'low', 'none'] as const;
+const LEVEL_LABELS: Record<string, string> = { critical: 'Crit', high: 'High', medium: 'Med', low: 'Low', none: 'None' };
 
 const DISMISS_REASONS = [
   'Not relevant to CA commercial kitchens',
@@ -101,6 +105,12 @@ const DATE_OPTIONS = [
   { key: '90', label: 'Last 90 Days' },
 ] as const;
 
+/** Normalize legacy 'moderate' → 'medium' */
+const normLevel = (v: string | null | undefined): string => {
+  if (v === 'moderate') return 'medium';
+  return v || 'none';
+};
+
 export default function IntelligenceAdmin() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -113,7 +123,19 @@ export default function IntelligenceAdmin() {
   const [publishing, setPublishing] = useState<string | null>(null);
   const [riskEdits, setRiskEdits] = useState<Record<string, { revenue: string; liability: string; cost: string; operational: string }>>({});
   const [expandedVerification, setExpandedVerification] = useState<string | null>(null);
-  const [verificationStatuses, setVerificationStatuses] = useState<Record<string, { verification_status: string; publish_blocked: boolean; gates_passed: number; gates_required: number }>>({});
+  const [verificationStatuses, setVerificationStatuses] = useState<Record<string, {
+    verification_status: string; publish_blocked: boolean;
+    gates_passed: number; gates_required: number;
+    last_verified_at?: string; verified_by?: string;
+  }>>({});
+  const [verificationAvailable, setVerificationAvailable] = useState(true);
+
+  // Saved flash state — key is `${signalId}_${dim}`
+  const [savedDim, setSavedDim] = useState<Record<string, boolean>>({});
+
+  // AI suggestion tracking: { signalId: { dim: true } }
+  const [aiSuggested, setAiSuggested] = useState<Record<string, Record<string, boolean>>>({});
+  const aiClassifiedRef = useRef<Set<string>>(new Set());
 
   // Dismiss modal state
   const [dismissModal, setDismissModal] = useState<{ signalId: string; previousTier: RoutingTier | null } | null>(null);
@@ -126,6 +148,80 @@ export default function IntelligenceAdmin() {
 
   // Restored flash
   const [restoredId, setRestoredId] = useState<string | null>(null);
+
+  // AI auto-classification for a single signal
+  const classifySignal = useCallback(async (sig: QueueSignal) => {
+    const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY;
+    if (!apiKey) return;
+    try {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true',
+        },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 256,
+          messages: [{
+            role: 'user',
+            content: `You are a compliance risk analyst for California commercial kitchens.
+
+Analyze this signal and return ONLY a JSON object — no explanation, no markdown.
+
+Signal title: ${sig.title}
+Signal summary: ${sig.content_summary || ''}
+Category: ${sig.category}
+
+Return exactly:
+{
+  "revenue_risk_level": "critical|high|medium|low|none",
+  "liability_risk_level": "critical|high|medium|low|none",
+  "cost_risk_level": "critical|high|medium|low|none",
+  "operational_risk_level": "critical|high|medium|low|none"
+}
+
+Guidelines:
+- revenue: risk of closure, lost sales, or revenue interruption
+- liability: legal exposure, injury, negligence, allergen, or contamination risk
+- cost: direct cost to remediate, replace product, or achieve compliance
+- operational: disruption to kitchen operations, staff, or supplier chain
+- Use 'critical' only for immediate action required (active recall, closure risk)
+- Use 'none' only if the dimension is genuinely not affected`,
+          }],
+        }),
+      });
+      const data = await response.json();
+      const suggested = JSON.parse(data.content[0].text);
+      const valid = ['critical', 'high', 'medium', 'low', 'none'];
+      const r = valid.includes(suggested.revenue_risk_level) ? suggested.revenue_risk_level : 'none';
+      const l = valid.includes(suggested.liability_risk_level) ? suggested.liability_risk_level : 'none';
+      const c = valid.includes(suggested.cost_risk_level) ? suggested.cost_risk_level : 'none';
+      const o = valid.includes(suggested.operational_risk_level) ? suggested.operational_risk_level : 'none';
+
+      // Optimistic update
+      setRiskEdits(prev => ({
+        ...prev,
+        [sig.id]: { revenue: r, liability: l, cost: c, operational: o },
+      }));
+      setAiSuggested(prev => ({
+        ...prev,
+        [sig.id]: { revenue: true, liability: true, cost: true, operational: true },
+      }));
+
+      // Save to Supabase
+      await supabase.from('intelligence_signals').update({
+        revenue_risk_level: r,
+        liability_risk_level: l,
+        cost_risk_level: c,
+        operational_risk_level: o,
+      }).eq('id', sig.id);
+    } catch {
+      // Silent fail — leave buttons unset
+    }
+  }, []);
 
   const loadQueue = useCallback(async () => {
     setLoading(true);
@@ -142,22 +238,36 @@ export default function IntelligenceAdmin() {
       // Load verification statuses for all signals
       const ids = data.map((s: QueueSignal) => s.id);
       if (ids.length > 0) {
-        const { data: vsData } = await supabase
+        const { data: vsData, error: vsError } = await supabase
           .from('content_verification_status')
-          .select('content_id, verification_status, publish_blocked, gates_passed, gates_required')
+          .select('content_id, verification_status, publish_blocked, gates_passed, gates_required, last_verified_at, verified_by')
           .eq('content_table', 'intelligence_signals')
           .in('content_id', ids);
-        if (vsData) {
+        if (vsError) {
+          setVerificationAvailable(false);
+        } else if (vsData) {
           const map: typeof verificationStatuses = {};
-          vsData.forEach((v: { content_id: string; verification_status: string; publish_blocked: boolean; gates_passed: number; gates_required: number }) => {
+          vsData.forEach((v: { content_id: string; verification_status: string; publish_blocked: boolean; gates_passed: number; gates_required: number; last_verified_at?: string; verified_by?: string }) => {
             map[v.content_id] = v;
           });
           setVerificationStatuses(map);
         }
       }
+
+      // AI classification for signals with all risk dims unset (max 5 per load)
+      const isUnset = (v: string | null | undefined) => !v || v === 'none';
+      const needsAI = data.filter((sig: QueueSignal) => {
+        if (aiClassifiedRef.current.has(sig.id)) return false;
+        return isUnset(sig.revenue_risk_level) && isUnset(sig.liability_risk_level) &&
+               isUnset(sig.cost_risk_level) && isUnset(sig.operational_risk_level);
+      }).slice(0, 5);
+      needsAI.forEach((sig: QueueSignal) => {
+        aiClassifiedRef.current.add(sig.id);
+        classifySignal(sig);
+      });
     }
     setLoading(false);
-  }, []);
+  }, [classifySignal]);
 
   useEffect(() => { loadQueue(); }, [loadQueue]);
 
@@ -168,20 +278,50 @@ export default function IntelligenceAdmin() {
 
   const getRiskLevel = (sig: QueueSignal, dim: 'revenue' | 'liability' | 'cost' | 'operational'): string => {
     if (riskEdits[sig.id]) return riskEdits[sig.id][dim];
-    return (sig[`risk_${dim}` as keyof QueueSignal] as string) || 'none';
+    return normLevel(sig[`${dim}_risk_level` as keyof QueueSignal] as string);
   };
 
-  const setRiskLevel = (sig: QueueSignal, dim: 'revenue' | 'liability' | 'cost' | 'operational', level: string) => {
+  const setRiskLevel = async (sig: QueueSignal, dim: 'revenue' | 'liability' | 'cost' | 'operational', level: string) => {
+    // Optimistic update
     setRiskEdits(prev => ({
       ...prev,
       [sig.id]: {
-        revenue: prev[sig.id]?.revenue ?? sig.risk_revenue ?? 'none',
-        liability: prev[sig.id]?.liability ?? sig.risk_liability ?? 'none',
-        cost: prev[sig.id]?.cost ?? sig.risk_cost ?? 'none',
-        operational: prev[sig.id]?.operational ?? sig.risk_operational ?? 'none',
+        revenue: prev[sig.id]?.revenue ?? normLevel(sig.revenue_risk_level),
+        liability: prev[sig.id]?.liability ?? normLevel(sig.liability_risk_level),
+        cost: prev[sig.id]?.cost ?? normLevel(sig.cost_risk_level),
+        operational: prev[sig.id]?.operational ?? normLevel(sig.operational_risk_level),
         [dim]: level,
       },
     }));
+
+    // Remove AI suggested badge for this dimension
+    setAiSuggested(prev => {
+      if (!prev[sig.id]) return prev;
+      const next = { ...prev[sig.id] };
+      delete next[dim];
+      if (Object.keys(next).length === 0) {
+        const outer = { ...prev };
+        delete outer[sig.id];
+        return outer;
+      }
+      return { ...prev, [sig.id]: next };
+    });
+
+    // Persist to Supabase
+    const { error } = await supabase
+      .from('intelligence_signals')
+      .update({ [`${dim}_risk_level`]: level })
+      .eq('id', sig.id);
+
+    if (error) {
+      console.error('Risk level save failed:', error);
+    } else {
+      const key = `${sig.id}_${dim}`;
+      setSavedDim(prev => ({ ...prev, [key]: true }));
+      setTimeout(() => {
+        setSavedDim(prev => { const next = { ...prev }; delete next[key]; return next; });
+      }, 1500);
+    }
   };
 
   const isAllNone = (sig: QueueSignal): boolean => {
@@ -190,20 +330,15 @@ export default function IntelligenceAdmin() {
 
   const publishSignal = async (sig: QueueSignal) => {
     setPublishing(sig.id);
-    const riskValues = {
-      risk_revenue: getRiskLevel(sig, 'revenue'),
-      risk_liability: getRiskLevel(sig, 'liability'),
-      risk_cost: getRiskLevel(sig, 'cost'),
-      risk_operational: getRiskLevel(sig, 'operational'),
-    };
     const { error } = await supabase
       .from('intelligence_signals')
       .update({
-        ...riskValues,
-        status: 'published',
+        revenue_risk_level: getRiskLevel(sig, 'revenue'),
+        liability_risk_level: getRiskLevel(sig, 'liability'),
+        cost_risk_level: getRiskLevel(sig, 'cost'),
+        operational_risk_level: getRiskLevel(sig, 'operational'),
         is_published: true,
         published_at: new Date().toISOString(),
-        published_by: user?.email,
       })
       .eq('id', sig.id);
     if (error) {
@@ -329,7 +464,7 @@ export default function IntelligenceAdmin() {
     if (filter === 'hold' && s.routing_tier !== 'hold') return false;
     if (filter === 'notify' && s.routing_tier !== 'notify') return false;
     if (dimFilter) {
-      const riskVal = s[`risk_${dimFilter}` as keyof QueueSignal] as string | null;
+      const riskVal = riskEdits[s.id]?.[dimFilter] ?? normLevel(s[`${dimFilter}_risk_level` as keyof QueueSignal] as string);
       if (!riskVal || riskVal === 'none') return false;
     }
     if (categoryFilter && s.category !== categoryFilter) return false;
@@ -340,12 +475,19 @@ export default function IntelligenceAdmin() {
   const holdCount = activeSignals.filter(s => s.routing_tier === 'hold').length;
   const notifyCount = activeSignals.filter(s => s.routing_tier === 'notify').length;
   const dismissedCount = dismissedSignals.length;
-  const revenueCount = activeSignals.filter(s => s.risk_revenue && s.risk_revenue !== 'none').length;
-  const liabilityCount = activeSignals.filter(s => s.risk_liability && s.risk_liability !== 'none').length;
-  const costOpsCount = activeSignals.filter(s =>
-    (s.risk_cost && s.risk_cost !== 'none') ||
-    (s.risk_operational && s.risk_operational !== 'none')
-  ).length;
+  const revenueCount = activeSignals.filter(s => {
+    const v = riskEdits[s.id]?.revenue ?? s.revenue_risk_level;
+    return v && v !== 'none';
+  }).length;
+  const liabilityCount = activeSignals.filter(s => {
+    const v = riskEdits[s.id]?.liability ?? s.liability_risk_level;
+    return v && v !== 'none';
+  }).length;
+  const costOpsCount = activeSignals.filter(s => {
+    const cv = riskEdits[s.id]?.cost ?? s.cost_risk_level;
+    const ov = riskEdits[s.id]?.operational ?? s.operational_risk_level;
+    return (cv && cv !== 'none') || (ov && ov !== 'none');
+  }).length;
 
   const isDismissedTab = filter === 'dismissed';
 
@@ -532,12 +674,44 @@ export default function IntelligenceAdmin() {
                     </div>
 
                     {/* Summary */}
-                    {(sig.ai_summary || sig.summary) && (
+                    {(sig.ai_summary || sig.content_summary) && (
                       <div style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.5, marginBottom: 6 }}>
-                        {(sig.ai_summary || sig.summary || '').slice(0, 200)}
-                        {(sig.ai_summary || sig.summary || '').length > 200 ? '...' : ''}
+                        {(sig.ai_summary || sig.content_summary || '').slice(0, 200)}
+                        {(sig.ai_summary || sig.content_summary || '').length > 200 ? '...' : ''}
                       </div>
                     )}
+
+                    {/* Source & Verification */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 2, marginBottom: 6 }}>
+                      <div style={{ fontSize: 11, color: TEXT_MUTED }}>
+                        <span style={{ fontWeight: 600 }}>Source: </span>
+                        {sig.source_name || sig.source_key || 'Unknown'}
+                        {sig.source_url && (
+                          <>
+                            {' — '}
+                            <a href={sig.source_url} target="_blank" rel="noopener noreferrer"
+                              style={{ color: TEXT_SEC, textDecoration: 'underline' }}>
+                              {(() => { try { return new URL(sig.source_url).hostname.replace(/^www\./, ''); } catch { return sig.source_url; } })()}
+                            </a>
+                          </>
+                        )}
+                      </div>
+                      <div style={{ fontSize: 11, color: TEXT_MUTED }}>
+                        <span style={{ fontWeight: 600 }}>Verified: </span>
+                        {(() => {
+                          if (!verificationAvailable) return <span>Verification unavailable</span>;
+                          const vs = verificationStatuses[sig.id];
+                          if (!vs) return <span>Not yet verified</span>;
+                          return (
+                            <>
+                              {vs.gates_passed} of {vs.gates_required} gates passed
+                              {vs.last_verified_at && ` · Verified ${new Date(vs.last_verified_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`}
+                              {vs.verified_by && ` · ${vs.verified_by}`}
+                            </>
+                          );
+                        })()}
+                      </div>
+                    </div>
 
                     {/* Dismissed info — replaces risk dimensions for dismissed signals */}
                     {isDismissed ? (
@@ -558,11 +732,18 @@ export default function IntelligenceAdmin() {
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 5, marginBottom: 8, marginTop: 4 }}>
                         {(['revenue', 'liability', 'cost', 'operational'] as const).map(dim => {
                           const current = getRiskLevel(sig, dim);
+                          const dimSaved = savedDim[`${sig.id}_${dim}`];
+                          const isAiSuggested = aiSuggested[sig.id]?.[dim];
                           return (
                             <div key={dim} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                               <span style={{ fontSize: 10, fontWeight: 700, color: DIM_COLORS[dim], width: 72, textTransform: 'capitalize' }}>
                                 {dim}
                               </span>
+                              {isAiSuggested && (
+                                <span style={{ fontSize: 8, fontWeight: 700, color: GOLD, background: '#FFF8E1', padding: '1px 5px', borderRadius: 6, flexShrink: 0 }}>
+                                  AI
+                                </span>
+                              )}
                               <div style={{ display: 'flex', gap: 3 }}>
                                 {LEVELS.map(level => {
                                   const isActive = current === level;
@@ -580,6 +761,11 @@ export default function IntelligenceAdmin() {
                                   );
                                 })}
                               </div>
+                              {dimSaved && (
+                                <span style={{ fontSize: 10, color: '#059669', fontWeight: 600, flexShrink: 0, transition: 'opacity 0.3s' }}>
+                                  Saved
+                                </span>
+                              )}
                             </div>
                           );
                         })}
@@ -596,7 +782,8 @@ export default function IntelligenceAdmin() {
                     {/* Meta */}
                     <div style={{ fontSize: 10, color: TEXT_MUTED }}>
                       {sig.source_key && <span>{sig.source_key} · </span>}
-                      {sig.affected_jurisdictions?.length > 0 && <span>{sig.affected_jurisdictions.join(', ')} · </span>}
+                      {sig.counties_affected && sig.counties_affected.length > 0 && <span>{sig.counties_affected.join(', ')} · </span>}
+                      {sig.target_counties && sig.target_counties.length > 0 && !sig.counties_affected?.length && <span>{sig.target_counties.join(', ')} · </span>}
                       {new Date(sig.created_at).toLocaleDateString()}
                       {sig.routing_reason && <span> · {sig.routing_reason}</span>}
                     </div>
