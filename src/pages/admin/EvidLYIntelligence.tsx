@@ -1082,7 +1082,7 @@ export default function EvidLYIntelligence() {
                           {s.url && (
                             <a href={s.url} target="_blank" rel="noreferrer"
                               style={{ fontSize: 10, color: GOLD, textDecoration: 'none' }}>
-                              {s.url.replace('https://', '').substring(0, 40)}{s.url.length > 48 ? '...' : ''}
+                              {s.url?.replace('https://', '').substring(0, 40)}{(s.url?.length || 0) > 48 ? '...' : ''}
                             </a>
                           )}
                         </td>
@@ -1315,10 +1315,10 @@ export default function EvidLYIntelligence() {
                         {/* Badges row */}
                         <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6, flexWrap: 'wrap' }}>
                           <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: pc.bg, color: pc.text }}>
-                            {u.pillar.replace(/_/g, ' ').toUpperCase()}
+                            {(u.pillar || '').replace(/_/g, ' ').toUpperCase()}
                           </span>
                           <span style={{ fontSize: 9, fontWeight: 600, padding: '2px 8px', borderRadius: 10, background: '#F9FAFB', color: TEXT_SEC, border: `1px solid ${BORDER}` }}>
-                            {u.update_type.replace(/_/g, ' ')}
+                            {(u.update_type || '').replace(/_/g, ' ')}
                           </span>
                           <span style={{ fontSize: 10, color: GOLD, fontWeight: 500 }}>{u.jurisdiction_name}</span>
                           {u.county && <span style={{ fontSize: 10, color: TEXT_MUTED }}>{u.county} County</span>}
@@ -1433,7 +1433,7 @@ export default function EvidLYIntelligence() {
                             fontSize: 9, fontWeight: 600, padding: '2px 8px', borderRadius: 10,
                             background: '#F9FAFB', color: TEXT_SEC, border: `1px solid ${BORDER}`,
                           }}>
-                            {rc.change_type.replace(/_/g, ' ')}
+                            {(rc.change_type || '').replace(/_/g, ' ')}
                           </span>
                           {rc.affected_pillars && rc.affected_pillars.length > 0 && rc.affected_pillars.map(p => {
                             const pc = PILLAR_COLORS[p] || PILLAR_COLORS.both;
@@ -1442,7 +1442,7 @@ export default function EvidLYIntelligence() {
                                 fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10,
                                 background: pc.bg, color: pc.text,
                               }}>
-                                {p.replace(/_/g, ' ').toUpperCase()}
+                                {(p || '').replace(/_/g, ' ').toUpperCase()}
                               </span>
                             );
                           })}
@@ -1636,7 +1636,7 @@ export default function EvidLYIntelligence() {
                       onMouseEnter={e => e.currentTarget.style.background = '#F9FAFB'}
                       onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                       <td style={{ ...tdStyle, fontWeight: 500, color: NAVY }}>
-                        {d.county_slug.replace(/-county$/, '').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())} County
+                        {(d.county_slug || '').replace(/-county$/, '').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())} County
                       </td>
                       <td style={{ ...tdStyle, fontFamily: "'DM Mono', monospace", fontWeight: 600, color: NAVY }}>{d.total_views}</td>
                       <td style={{ ...tdStyle, fontFamily: "'DM Mono', monospace", color: TEXT_SEC }}>{d.unique_sessions}</td>
