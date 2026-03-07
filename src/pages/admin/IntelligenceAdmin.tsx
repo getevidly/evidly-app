@@ -9,6 +9,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { routingTierLabel, routingTierColor, type RoutingTier } from '../../lib/intelligenceRouter';
+import VerificationPanel from '../../components/admin/VerificationPanel';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -76,6 +77,8 @@ export default function IntelligenceAdmin() {
   const [dimFilter, setDimFilter] = useState<'' | 'revenue' | 'liability' | 'cost' | 'operational'>('');
   const [publishing, setPublishing] = useState<string | null>(null);
   const [riskEdits, setRiskEdits] = useState<Record<string, { revenue: string; liability: string; cost: string; operational: string }>>({});
+  const [expandedVerification, setExpandedVerification] = useState<string | null>(null);
+  const [verificationStatuses, setVerificationStatuses] = useState<Record<string, { verification_status: string; publish_blocked: boolean; gates_passed: number; gates_required: number }>>({});
 
   const loadQueue = useCallback(async () => {
     setLoading(true);
@@ -86,7 +89,25 @@ export default function IntelligenceAdmin() {
       .order('routing_tier', { ascending: true })
       .order('created_at', { ascending: false })
       .limit(100);
-    if (data) setSignals(data);
+    if (data) {
+      setSignals(data);
+      // Load verification statuses for all pending signals
+      const ids = data.map((s: QueueSignal) => s.id);
+      if (ids.length > 0) {
+        const { data: vsData } = await supabase
+          .from('content_verification_status')
+          .select('content_id, verification_status, publish_blocked, gates_passed, gates_required')
+          .eq('content_table', 'intelligence_signals')
+          .in('content_id', ids);
+        if (vsData) {
+          const map: typeof verificationStatuses = {};
+          vsData.forEach((v: { content_id: string; verification_status: string; publish_blocked: boolean; gates_passed: number; gates_required: number }) => {
+            map[v.content_id] = v;
+          });
+          setVerificationStatuses(map);
+        }
+      }
+    }
     setLoading(false);
   }, []);
 
@@ -358,16 +379,36 @@ export default function IntelligenceAdmin() {
 
                   {/* Actions */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flexShrink: 0 }}>
+                    {(() => {
+                      const vs = verificationStatuses[sig.id];
+                      const blocked = vs?.publish_blocked ?? true;
+                      const label = vs
+                        ? blocked
+                          ? `${vs.gates_passed}/${vs.gates_required} verified`
+                          : 'Verified — Publish'
+                        : 'Unverified';
+                      return (
+                        <button
+                          onClick={() => publishSignal(sig)}
+                          disabled={publishing === sig.id || blocked}
+                          style={{
+                            padding: '6px 16px', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: blocked ? 'not-allowed' : 'pointer',
+                            background: blocked ? '#E5E7EB' : '#059669', color: blocked ? TEXT_MUTED : '#fff', border: 'none',
+                            opacity: publishing === sig.id ? 0.5 : 1,
+                          }}
+                        >
+                          {publishing === sig.id ? 'Publishing...' : label}
+                        </button>
+                      );
+                    })()}
                     <button
-                      onClick={() => publishSignal(sig)}
-                      disabled={publishing === sig.id}
+                      onClick={(e) => { e.stopPropagation(); setExpandedVerification(expandedVerification === sig.id ? null : sig.id); }}
                       style={{
-                        padding: '6px 16px', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer',
-                        background: GOLD, color: '#fff', border: 'none',
-                        opacity: publishing === sig.id ? 0.5 : 1,
+                        padding: '4px 12px', borderRadius: 6, fontSize: 10, fontWeight: 600, cursor: 'pointer',
+                        background: 'transparent', color: TEXT_SEC, border: `1px solid ${BORDER}`,
                       }}
                     >
-                      {publishing === sig.id ? 'Publishing...' : 'Publish'}
+                      {expandedVerification === sig.id ? 'Hide Gates' : 'Verify Gates'}
                     </button>
                     <button
                       onClick={() => dismissSignal(sig.id)}
@@ -386,6 +427,19 @@ export default function IntelligenceAdmin() {
                     )}
                   </div>
                 </div>
+
+                {/* Verification Panel (expanded) */}
+                {expandedVerification === sig.id && (
+                  <div style={{ marginTop: 12 }}>
+                    <VerificationPanel
+                      contentTable="intelligence_signals"
+                      contentId={sig.id}
+                      contentType={sig.signal_type || 'recall'}
+                      contentTitle={sig.title}
+                      onVerificationChange={loadQueue}
+                    />
+                  </div>
+                )}
               </div>
             );
           })}

@@ -147,6 +147,7 @@ const SurveyPage = lazy(() => import('./pages/admin/SurveyPage'));
 const RemoteConnect = lazy(() => import('./pages/admin/RemoteConnect'));
 const StaffRoles = lazy(() => import('./pages/admin/StaffRoles'));
 const AdminReports = lazy(() => import('./pages/admin/AdminReports'));
+const VerificationReport = lazy(() => import('./pages/admin/VerificationReport'));
 const ClientIntelligenceFeed = lazy(() => import('./pages/ClientIntelligenceFeed').then(m => ({ default: m.ClientIntelligenceFeed })));
 const ClientReports = lazy(() => import('./pages/ClientReports').then(m => ({ default: m.ClientReports })));
 const SharedReport = lazy(() => import('./pages/public/SharedReport').then(m => ({ default: m.SharedReport })));
@@ -604,6 +605,7 @@ function AppRoutes() {
           <Route path="/admin/staff" element={<StaffRoles />} />
           <Route path="/admin/intelligence" element={<EvidLYIntelligence />} />
           <Route path="/admin/reports" element={<AdminReports />} />
+          <Route path="/admin/verification" element={<VerificationReport />} />
           <Route path="/admin/system/edge-functions" element={<EdgeFunctions />} />
           <Route path="/admin/gtm" element={<SalesGuard><GtmDashboard /></SalesGuard>} />
           <Route path="/insights/intelligence" element={<ClientIntelligenceFeed />} />

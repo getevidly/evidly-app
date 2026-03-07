@@ -318,6 +318,11 @@ const I: Record<string, NavItem> = {
     badge: 'NEW',
   },
 
+  verification: {
+    id: 'verification', label: 'Verification', path: '/admin/verification', icon: '🛡️',
+    roles: [], description: 'Platform-wide content verification coverage, audit log, and source health monitoring.',
+  },
+
   // ── Help ──
   help: {
     id: 'help', label: 'Help', path: '/help', icon: '❓',
@@ -380,8 +385,8 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         '/admin',
       ),
       section('system', 'System', '🖥️',
-        'System', 'Edge Function health monitoring, crawl status, and infrastructure diagnostics.',
-        [I.adminDashboard, I.edgeFunctions, I.crawlMonitor],
+        'System', 'Edge Function health monitoring, crawl status, verification coverage, and infrastructure diagnostics.',
+        [I.adminDashboard, I.edgeFunctions, I.crawlMonitor, I.verification],
       ),
       section('help', 'Help', '❓',
         'Help', 'Documentation, support, and contact options.',

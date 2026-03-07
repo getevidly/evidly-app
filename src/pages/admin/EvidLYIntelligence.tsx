@@ -9,6 +9,7 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { INDUSTRY_LABELS, SCOPE_LABELS, correlateSignal, type CorrelationPreview } from '../../lib/correlationEngine';
 import { routingTierLabel, routingTierColor, type RoutingTier } from '../../lib/intelligenceRouter';
+import VerificationPanel from '../../components/admin/VerificationPanel';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -219,6 +220,7 @@ export default function EvidLYIntelligence() {
   const [jurSearch, setJurSearch] = useState('');
   const [jurFilter, setJurFilter] = useState<'' | 'active' | 'quiet' | 'methodology'>('');
   const [jurSort, setJurSort] = useState<'signals' | 'name' | 'recent'>('signals');
+  const [expandedRegVerification, setExpandedRegVerification] = useState<string | null>(null);
 
   // Publish Advisory modal
   const [publishModal, setPublishModal] = useState<{ open: boolean; signal: Signal | null }>({ open: false, signal: null });
@@ -1542,8 +1544,28 @@ export default function EvidLYIntelligence() {
                             Source
                           </a>
                         )}
+                        <button
+                          onClick={() => setExpandedRegVerification(expandedRegVerification === rc.id ? null : rc.id)}
+                          style={{
+                            padding: '4px 10px', borderRadius: 6, fontSize: 10, fontWeight: 600, cursor: 'pointer',
+                            background: 'transparent', color: TEXT_SEC, border: `1px solid ${BORDER}`,
+                          }}>
+                          {expandedRegVerification === rc.id ? 'Hide Gates' : 'Verify'}
+                        </button>
                       </div>
                     </div>
+                    {/* Verification Panel */}
+                    {expandedRegVerification === rc.id && (
+                      <div style={{ marginTop: 12 }}>
+                        <VerificationPanel
+                          contentTable="regulatory_changes"
+                          contentId={rc.id}
+                          contentType="legislation"
+                          contentTitle={rc.title}
+                          onVerificationChange={loadAll}
+                        />
+                      </div>
+                    )}
                   </div>
                 );
               })}
