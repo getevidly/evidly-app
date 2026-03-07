@@ -6,7 +6,7 @@
  *
  * KPI strip: Active Orgs, Active Locations, Crawl Feeds Live, Open Tickets, System Status
  * 3-column layout: Live Event Feed (50%), Crawl Status (25%), Open Tickets (25%)
- * Quick actions: Run Crawl, Refresh Metrics
+ * Quick actions: Run Crawl (Firecrawl), Refresh Metrics
  */
 
 import { useState, useEffect, useCallback } from 'react';
@@ -14,8 +14,8 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { useDemo } from '../../contexts/DemoContext';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
-import { KpiTile } from '../../components/admin/KpiTile';
-import { RefreshCw, Activity, Ticket, MapPin, Building2, Radio, Zap, HeartPulse } from 'lucide-react';
+import { StatCardRow } from '../../components/admin/StatCardRow';
+import { RefreshCw, Activity, Ticket, Radio, Zap } from 'lucide-react';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -32,17 +32,15 @@ interface EventRow {
   metadata?: Record<string, any>;
 }
 
-interface CrawlFeed {
+interface SourceRow {
   id: string;
-  feed_id: string;
-  feed_name: string;
-  pillar: string;
+  name: string;
+  source_key: string;
   status: string;
-  last_checked_at: string | null;
-  last_success_at: string | null;
-  response_ms: number | null;
-  error_message: string | null;
-  retry_count: number;
+  last_crawled_at: string | null;
+  last_crawl_status: string | null;
+  last_crawl_error: string | null;
+  category: string;
 }
 
 interface TicketRow {
@@ -69,19 +67,17 @@ const PRIORITY_COLORS: Record<string, { bg: string; color: string }> = {
   low: { bg: '#F9FAFB', color: '#6B7280' },
 };
 
-const CRAWL_STATUS_ICON: Record<string, string> = {
+const SOURCE_STATUS_ICON: Record<string, string> = {
   active: '✅',
-  degraded: '⚠️',
-  blocked: '❌',
-  timeout: '🕐',
-  inactive: '⏸️',
+  broken: '❌',
+  waf_blocked: '🚫',
+  paused: '⏸️',
+  pending: '🕐',
 };
 
 const Skeleton = ({ h = 20 }: { h?: number }) => (
   <div style={{ width: '100%', height: h, background: '#E5E7EB', borderRadius: 6 }} className="animate-pulse" />
 );
-
-// KpiCard removed — using shared KpiTile
 
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -99,28 +95,34 @@ export default function CommandCenter() {
   const { isDemoMode } = useDemo();
 
   const [events, setEvents] = useState<EventRow[]>([]);
-  const [feeds, setFeeds] = useState<CrawlFeed[]>([]);
+  const [sources, setSources] = useState<SourceRow[]>([]);
   const [tickets, setTickets] = useState<TicketRow[]>([]);
   const [activeOrgs, setActiveOrgs] = useState<number | null>(null);
   const [activeLocs, setActiveLocs] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [eventFilter, setEventFilter] = useState('all');
   const [refreshing, setRefreshing] = useState(false);
-  const [runningCrawl, setRunningCrawl] = useState(false);
-  const [crawlFeedback, setCrawlFeedback] = useState<{ type: 'error' | 'success'; msg: string } | null>(null);
+  const [crawling, setCrawling] = useState(false);
+  const [crawlResult, setCrawlResult] = useState<{
+    succeeded: number;
+    failed: number;
+    total: number;
+  } | null>(null);
+  const [crawlError, setCrawlError] = useState<string | null>(null);
 
   const loadData = useCallback(async () => {
     setLoading(true);
-    const [eventRes, feedRes, ticketRes, orgRes, locRes] = await Promise.all([
+    const [eventRes, sourceRes, ticketRes, orgRes, locRes] = await Promise.all([
       supabase.from('admin_event_log').select('*').order('created_at', { ascending: false }).limit(50),
-      supabase.from('crawl_health').select('*').order('feed_name'),
+      supabase.from('intelligence_sources').select('id, name, source_key, status, last_crawled_at, last_crawl_status, last_crawl_error, category')
+        .not('url', 'is', null).order('name'),
       supabase.from('support_tickets').select('id, ticket_number, priority, status, subject, created_at, contact_name')
         .in('status', ['open', 'in_progress', 'escalated']).order('priority'),
       supabase.from('organizations').select('id', { count: 'exact', head: true }).eq('status', 'active'),
       supabase.from('locations').select('id', { count: 'exact', head: true }).eq('status', 'active'),
     ]);
     if (eventRes.data) setEvents(eventRes.data);
-    if (feedRes.data) setFeeds(feedRes.data);
+    if (sourceRes.data) setSources(sourceRes.data);
     if (ticketRes.data) setTickets(ticketRes.data);
     setActiveOrgs(orgRes.count ?? 0);
     setActiveLocs(locRes.count ?? 0);
@@ -129,8 +131,29 @@ export default function CommandCenter() {
 
   useEffect(() => { loadData(); }, [loadData]);
 
-  const crawlLive = feeds.filter(f => f.status === 'active').length;
-  const crawlTotal = feeds.length;
+  // Compute status from intelligence_sources
+  const totalFeeds = sources.length;
+  const liveFeeds = sources.filter(s => s.status === 'active' && s.last_crawl_status === 'success').length;
+  const lastCrawl = sources.reduce<string | null>((latest, s) => {
+    if (!s.last_crawled_at) return latest;
+    if (!latest) return s.last_crawled_at;
+    return new Date(s.last_crawled_at) > new Date(latest) ? s.last_crawled_at : latest;
+  }, null);
+
+  const neverRun = !lastCrawl;
+  const allDown = liveFeeds === 0 && !neverRun;
+  const healthy = liveFeeds === totalFeeds;
+  const degraded = liveFeeds > 0 && liveFeeds < totalFeeds;
+
+  const systemStatus = neverRun  ? { label: 'Not Configured', color: GOLD }
+                     : allDown   ? { label: 'Critical',        color: '#DC2626' }
+                     : degraded  ? { label: 'Degraded',        color: '#D97706' }
+                     :             { label: 'Healthy',         color: '#16A34A' };
+
+  const statusSubtext = neverRun  ? 'Run crawl to activate feeds'
+                      : allDown   ? 'No crawl feeds active'
+                      : degraded  ? `${totalFeeds - liveFeeds} feeds down`
+                      :             `All ${totalFeeds} feeds live`;
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -138,31 +161,25 @@ export default function CommandCenter() {
     setRefreshing(false);
   };
 
-  const handleRunCrawl = async () => {
-    setRunningCrawl(true);
-    setCrawlFeedback(null);
+  const handleRunNow = async () => {
+    setCrawling(true);
+    setCrawlResult(null);
+    setCrawlError(null);
     try {
-      const { error } = await supabase.functions.invoke('crawl-monitor');
+      const { data, error } = await supabase.functions.invoke('trigger-crawl');
       if (error) throw error;
-      setCrawlFeedback({ type: 'success', msg: 'Crawl completed — refreshing data.' });
+      setCrawlResult(data);
       await loadData();
     } catch (err: any) {
-      setCrawlFeedback({ type: 'error', msg: `Crawl failed: ${err.message || 'Edge function error. Check Supabase logs.'}` });
+      setCrawlError(err.message || 'Edge function error. Check Supabase logs.');
+    } finally {
+      setCrawling(false);
     }
-    setRunningCrawl(false);
   };
 
   const filteredEvents = eventFilter === 'all'
     ? events
     : events.filter(e => e.level === eventFilter.toUpperCase() || e.category === eventFilter);
-
-  const systemStatusInfo = (() => {
-    if (feeds.length === 0) return { label: 'Unknown', sub: 'No feeds configured', colorKey: 'default' as const };
-    if (crawlLive === 0) return { label: 'Critical', sub: 'No crawl feeds active', colorKey: 'red' as const };
-    if (crawlLive < crawlTotal * 0.6) return { label: 'Critical', sub: `${crawlLive}/${crawlTotal} feeds active`, colorKey: 'red' as const };
-    if (crawlLive < crawlTotal * 0.9) return { label: 'Degraded', sub: `${crawlLive}/${crawlTotal} feeds active`, colorKey: 'amber' as const };
-    return { label: 'Healthy', sub: `${crawlLive}/${crawlTotal} feeds active`, colorKey: 'green' as const };
-  })();
 
   return (
     <div className="space-y-6">
@@ -175,41 +192,70 @@ export default function CommandCenter() {
       </div>
 
       {/* KPI Strip */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-        <KpiTile label="Active Orgs" value={activeOrgs ?? '—'} />
-        <KpiTile label="Active Locations" value={activeLocs ?? '—'} />
-        <KpiTile label="Crawl Feeds" value={loading ? '—' : `${crawlLive}/${crawlTotal}`} valueColor={crawlLive < crawlTotal * 0.8 ? 'amber' : 'green'} />
-        <KpiTile label="Open Tickets" value={loading ? '—' : tickets.length} valueColor={tickets.length > 5 ? 'amber' : 'default'} />
-        <KpiTile label="System Status" value={loading ? '—' : systemStatusInfo.label} sub={systemStatusInfo.sub} valueColor={systemStatusInfo.colorKey} />
-      </div>
+      <StatCardRow cards={[
+        { label: 'Active Orgs', value: activeOrgs ?? '—' },
+        { label: 'Active Locations', value: activeLocs ?? '—' },
+        { label: 'Crawl Feeds', value: loading ? '—' : `${liveFeeds}/${totalFeeds}`, valueColor: liveFeeds < totalFeeds ? 'red' : 'green', subtext: statusSubtext },
+        { label: 'Open Tickets', value: loading ? '—' : tickets.length, valueColor: tickets.length > 5 ? 'red' : 'default' },
+        { label: 'System Status', value: loading ? '—' : systemStatus.label, subtext: statusSubtext },
+      ]} />
 
       {/* Quick Actions */}
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-        {[
-          { label: runningCrawl ? 'Running...' : 'Run Crawl', icon: Zap, onClick: handleRunCrawl, disabled: runningCrawl },
-          { label: refreshing ? 'Refreshing...' : 'Refresh Metrics', icon: RefreshCw, onClick: handleRefresh, disabled: refreshing },
-        ].map(btn => (
-          <button key={btn.label} onClick={btn.onClick} disabled={btn.disabled}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px',
-              background: btn.disabled ? '#F3F4F6' : '#fff', border: `1px solid ${BORDER}`,
-              borderRadius: 8, fontSize: 12, fontWeight: 600, color: btn.disabled ? TEXT_MUTED : NAVY,
-              cursor: btn.disabled ? 'default' : 'pointer',
-            }}>
-            <btn.icon size={13} />
-            {btn.label}
-          </button>
-        ))}
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+        <button
+          onClick={handleRunNow}
+          disabled={crawling}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 6,
+            background: crawling ? '#9CA3AF' : NAVY,
+            color: '#FFFFFF',
+            border: 'none',
+            borderRadius: 6,
+            padding: '8px 16px',
+            fontSize: 13,
+            fontWeight: 600,
+            cursor: crawling ? 'not-allowed' : 'pointer',
+            fontFamily: 'Inter, sans-serif',
+          }}
+        >
+          <Zap size={13} />
+          {crawling ? 'Crawling...' : '▶ Run Now'}
+        </button>
+        <button
+          onClick={handleRefresh}
+          disabled={refreshing}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px',
+            background: refreshing ? '#F3F4F6' : '#fff', border: `1px solid ${BORDER}`,
+            borderRadius: 8, fontSize: 12, fontWeight: 600, color: refreshing ? TEXT_MUTED : NAVY,
+            cursor: refreshing ? 'default' : 'pointer',
+          }}
+        >
+          <RefreshCw size={13} />
+          {refreshing ? 'Refreshing...' : 'Refresh Metrics'}
+        </button>
       </div>
 
-      {crawlFeedback && (
+      {/* Crawl result inline */}
+      {crawlResult && (
+        <div style={{
+          fontSize: 12,
+          color: crawlResult.failed > 0 ? '#D97706' : '#16A34A',
+          background: crawlResult.failed > 0 ? '#FFFBEB' : '#F0FDF4',
+          border: `1px solid ${crawlResult.failed > 0 ? '#FDE68A' : '#BBF7D0'}`,
+          borderRadius: 8, padding: '10px 14px',
+          fontFamily: 'Inter, sans-serif',
+        }}>
+          Last run: {crawlResult.succeeded}/{crawlResult.total} feeds succeeded
+          {crawlResult.failed > 0 && ` · ${crawlResult.failed} failed`}
+        </div>
+      )}
+      {crawlError && (
         <div style={{
           fontSize: 13, borderRadius: 8, padding: '10px 14px',
-          color: crawlFeedback.type === 'error' ? '#DC2626' : '#059669',
-          background: crawlFeedback.type === 'error' ? '#FEF2F2' : '#F0FDF4',
-          border: `1px solid ${crawlFeedback.type === 'error' ? '#FECACA' : '#BBF7D0'}`,
+          color: '#DC2626', background: '#FEF2F2', border: '1px solid #FECACA',
         }}>
-          {crawlFeedback.msg}
+          Crawl failed: {crawlError}
         </div>
       )}
 
@@ -266,29 +312,36 @@ export default function CommandCenter() {
           </div>
         </div>
 
-        {/* MIDDLE: Crawl Status */}
+        {/* MIDDLE: Crawl Status — reads from intelligence_sources */}
         <div style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 12, overflow: 'hidden' }}>
           <div style={{ padding: '14px 18px', borderBottom: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', gap: 8 }}>
             <Radio size={14} color={GOLD} />
             <span style={{ fontSize: 13, fontWeight: 700, color: NAVY }}>Crawl Status</span>
+            <span style={{ fontSize: 10, color: TEXT_MUTED }}>{liveFeeds}/{totalFeeds}</span>
           </div>
           <div style={{ maxHeight: 480, overflowY: 'auto' }}>
             {loading ? (
               <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} h={24} />)}
               </div>
-            ) : feeds.length === 0 ? (
+            ) : sources.length === 0 ? (
               <div style={{ padding: 40, textAlign: 'center', color: TEXT_MUTED, fontSize: 13 }}>No crawl feeds configured.</div>
-            ) : feeds.map(f => (
-              <div key={f.id} style={{ padding: '7px 18px', borderBottom: '1px solid #F3F4F6', display: 'flex', alignItems: 'center', gap: 8, fontSize: 11 }}>
-                <span style={{ fontSize: 13 }}>{CRAWL_STATUS_ICON[f.status] || '❓'}</span>
+            ) : sources.map(s => (
+              <div key={s.id} style={{ padding: '7px 18px', borderBottom: '1px solid #F3F4F6', display: 'flex', alignItems: 'center', gap: 8, fontSize: 11 }}
+                title={s.last_crawl_error || undefined}>
+                <span style={{ fontSize: 13 }}>{SOURCE_STATUS_ICON[s.status] || '❓'}</span>
                 <span style={{ flex: 1, color: NAVY, fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {f.feed_name}
+                  {s.name}
                 </span>
-                {f.response_ms != null && (
-                  <span style={{ fontSize: 9, color: f.response_ms > 5000 ? '#D97706' : TEXT_MUTED }}>{f.response_ms}ms</span>
+                {s.last_crawl_status && (
+                  <span style={{
+                    fontSize: 9, fontWeight: 600,
+                    color: s.last_crawl_status === 'success' ? '#16A34A' : s.last_crawl_status === 'error' ? '#DC2626' : TEXT_MUTED,
+                  }}>
+                    {s.last_crawl_status}
+                  </span>
                 )}
-                <span style={{ fontSize: 9, color: TEXT_MUTED }}>{f.last_checked_at ? timeAgo(f.last_checked_at) : '—'}</span>
+                <span style={{ fontSize: 9, color: TEXT_MUTED }}>{s.last_crawled_at ? timeAgo(s.last_crawled_at) : '—'}</span>
               </div>
             ))}
           </div>

@@ -265,8 +265,8 @@ const I: Record<string, NavItem> = {
 
   // ── Command Center (Admin) ──
   commandCenter: {
-    id: 'command-center', label: 'Command Center', path: '/admin/intelligence', icon: '🎛️',
-    roles: [], description: 'Signal triage, game plans, platform updates, client notifications, and crawl health monitoring.',
+    id: 'command-center', label: 'Command Center', path: '/admin/command-center', icon: '🎛️',
+    roles: [], description: 'Platform operations health — live events, crawl status, open tickets, and system diagnostics.',
     badge: 'NEW',
   },
 
@@ -385,8 +385,8 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         '/admin',
       ),
       section('system', 'System', '🖥️',
-        'System', 'Edge Function health monitoring, crawl status, verification coverage, and infrastructure diagnostics.',
-        [I.adminDashboard, I.edgeFunctions, I.crawlMonitor, I.verification],
+        'System', 'Command center, edge functions, crawl status, verification coverage, and infrastructure diagnostics.',
+        [I.commandCenter, I.adminDashboard, I.edgeFunctions, I.crawlMonitor, I.verification],
       ),
       section('help', 'Help', '❓',
         'Help', 'Documentation, support, and contact options.',
