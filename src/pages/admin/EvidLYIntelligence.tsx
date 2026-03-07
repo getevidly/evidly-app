@@ -254,7 +254,7 @@ export default function EvidLYIntelligence() {
         supabase.from('intelligence_sources').select('*').order('category').order('name'),
         supabase.from('intelligence_signals').select('*').order('created_at', { ascending: false }).limit(200),
         supabase.from('jurisdiction_intel_updates').select('*').order('created_at', { ascending: false }).limit(50),
-        supabase.from('intelligence_correlations').select('*').order('created_at', { ascending: false }).limit(100),
+        supabase.from('entity_correlations').select('*').order('created_at', { ascending: false }).limit(100),
         supabase.from('scoretable_views').select('county_slug, viewed_at, session_id').order('viewed_at', { ascending: false }).limit(5000),
         supabase.from('jurisdiction_intel_updates').select('*').order('created_at', { ascending: false }).limit(100),
         supabase.from('regulatory_updates').select('*').order('created_at', { ascending: false }).limit(100),
