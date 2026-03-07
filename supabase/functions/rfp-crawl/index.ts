@@ -42,14 +42,19 @@ Deno.serve(async (req: Request) => {
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
   const supabase = createClient(supabaseUrl, serviceKey);
 
-  if (!isCron && authHeader) {
-    const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
-    const userClient = createClient(supabaseUrl, anonKey, {
-      global: { headers: { Authorization: authHeader } },
-    });
-    const { data: { user } } = await userClient.auth.getUser();
-    if (user?.email?.endsWith("@getevidly.com")) {
-      isAdmin = true;
+  if (!isCron && authHeader?.startsWith("Bearer ")) {
+    const token = authHeader.replace("Bearer ", "");
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      if (payload.role === "service_role") isAdmin = true;
+    } catch {}
+    if (!isAdmin) {
+      const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+      const userClient = createClient(supabaseUrl, anonKey, {
+        global: { headers: { Authorization: authHeader } },
+      });
+      const { data: { user } } = await userClient.auth.getUser();
+      if (user?.email?.endsWith("@getevidly.com")) isAdmin = true;
     }
   }
 

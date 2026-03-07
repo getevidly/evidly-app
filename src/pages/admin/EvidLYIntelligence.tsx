@@ -94,16 +94,17 @@ interface JIEUpdate {
 
 interface Correlation {
   id: string;
-  signal_id: string;
+  source_type: string;
+  source_id: string;
+  organization_id: string | null;
+  jurisdiction_id: string | null;
   correlation_type: string;
-  jurisdiction_key: string | null;
-  county: string | null;
-  industry: string | null;
-  impact_level: string;
-  impact_description: string | null;
-  action_required: boolean;
-  action_description: string | null;
+  correlation_strength: number | null;
+  notes: string | null;
   created_at: string;
+  jurisdictions?: { county: string } | null;
+  organizations?: { name: string } | null;
+  intelligence_signals?: { title: string; signal_type: string; revenue_risk_level: string | null } | null;
 }
 
 interface RegulatoryChange {
@@ -254,7 +255,7 @@ export default function EvidLYIntelligence() {
         supabase.from('intelligence_sources').select('*').order('category').order('name'),
         supabase.from('intelligence_signals').select('*').order('created_at', { ascending: false }).limit(200),
         supabase.from('jurisdiction_intel_updates').select('*').order('created_at', { ascending: false }).limit(50),
-        supabase.from('entity_correlations').select('*').order('created_at', { ascending: false }).limit(100),
+        supabase.from('entity_correlations').select('*, jurisdictions(county), organizations(name), intelligence_signals:source_id(title, signal_type, revenue_risk_level)').order('created_at', { ascending: false }).limit(100),
         supabase.from('scoretable_views').select('county_slug, viewed_at, session_id').order('viewed_at', { ascending: false }).limit(5000),
         supabase.from('jurisdiction_intel_updates').select('*').order('created_at', { ascending: false }).limit(100),
         supabase.from('regulatory_updates').select('*').order('created_at', { ascending: false }).limit(100),
@@ -1173,15 +1174,15 @@ export default function EvidLYIntelligence() {
 
       {/* ────────── TAB: CORRELATIONS ────────── */}
       {activeTab === 'correlations' && (() => {
-        // Group correlations by jurisdiction/county
+        // Group correlations by jurisdiction county or org name
         const grouped: Record<string, Correlation[]> = {};
         for (const c of correlations) {
-          const key = c.county || c.jurisdiction_key || c.industry || 'Other';
+          const key = c.jurisdictions?.county || c.organizations?.name || 'Unassigned';
           if (!grouped[key]) grouped[key] = [];
           grouped[key].push(c);
         }
         const groupNames = Object.keys(grouped).sort((a, b) =>
-          a === 'Other' ? 1 : b === 'Other' ? -1 : a.localeCompare(b)
+          a === 'Unassigned' ? 1 : b === 'Unassigned' ? -1 : a.localeCompare(b)
         );
 
         return (
@@ -1214,27 +1215,38 @@ export default function EvidLYIntelligence() {
                     <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                       <thead>
                         <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
-                          {['Type', 'Impact', 'Description', 'Action Required', 'Created'].map(h => (
+                          {['Signal', 'Type', 'Strength', 'Risk', 'Created'].map(h => (
                             <th key={h} style={thStyle}>{h}</th>
                           ))}
                         </tr>
                       </thead>
                       <tbody>
                         {grouped[gName].map(c => {
-                          const ic = URGENCY_COLORS[c.impact_level] || URGENCY_COLORS.low;
+                          const strength = Math.round((c.correlation_strength || 0) * 100);
+                          const riskLevel = c.intelligence_signals?.revenue_risk_level || null;
+                          const rc = riskLevel ? (URGENCY_COLORS[riskLevel] || URGENCY_COLORS.low) : null;
                           return (
                             <tr key={c.id} style={{ borderBottom: `1px solid ${BORDER}` }}>
-                              <td style={{ ...tdStyle, fontSize: 11, color: TEXT_SEC }}>{c.correlation_type}</td>
-                              <td style={tdStyle}>
-                                <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: ic.bg, color: ic.text }}>
-                                  {c.impact_level}
-                                </span>
+                              <td style={{ ...tdStyle, fontSize: 12, maxWidth: 280 }}>
+                                {c.intelligence_signals?.title || c.notes || '\u2014'}
                               </td>
-                              <td style={{ ...tdStyle, fontSize: 12, maxWidth: 280 }}>{c.impact_description || '\u2014'}</td>
-                              <td style={{ ...tdStyle, fontSize: 11 }}>
-                                {c.action_required
-                                  ? <span style={{ color: '#DC2626', fontWeight: 600 }}>Yes</span>
-                                  : <span style={{ color: TEXT_MUTED }}>No</span>}
+                              <td style={{ ...tdStyle, fontSize: 11, color: TEXT_SEC }}>
+                                {c.correlation_type?.replace(/_/g, ' ')}
+                              </td>
+                              <td style={tdStyle}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                  <div style={{ width: 48, height: 6, background: '#E5E7EB', borderRadius: 3, overflow: 'hidden' }}>
+                                    <div style={{ width: `${strength}%`, height: '100%', background: strength >= 80 ? '#059669' : strength >= 50 ? '#FBBF24' : '#94A3B8', borderRadius: 3 }} />
+                                  </div>
+                                  <span style={{ fontSize: 10, color: TEXT_MUTED, fontWeight: 600 }}>{strength}%</span>
+                                </div>
+                              </td>
+                              <td style={tdStyle}>
+                                {rc ? (
+                                  <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: rc.bg, color: rc.text }}>
+                                    {riskLevel}
+                                  </span>
+                                ) : <span style={{ color: TEXT_MUTED, fontSize: 11 }}>{'\u2014'}</span>}
                               </td>
                               <td style={{ ...tdStyle, fontSize: 11, color: TEXT_MUTED }}>{new Date(c.created_at).toLocaleDateString()}</td>
                             </tr>

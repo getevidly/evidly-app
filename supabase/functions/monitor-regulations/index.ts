@@ -33,16 +33,25 @@ Deno.serve(async (req: Request) => {
     const anthropicKey = Deno.env.get("ANTHROPIC_API_KEY");
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Auth check — admin only
+    // Auth check — admin only (service_role JWT, cron, or @getevidly.com user)
     const authHeader = req.headers.get("Authorization");
-    if (authHeader) {
-      const userClient = createClient(supabaseUrl, supabaseKey, {
-        global: { headers: { Authorization: authHeader } },
-      });
-      const { data: { user } } = await userClient.auth.getUser();
-      if (!user?.email?.endsWith("@getevidly.com")) {
-        return jsonResponse({ error: "Admin access required" }, 403);
+    let isAdmin = false;
+    if (authHeader?.startsWith("Bearer ")) {
+      const token = authHeader.replace("Bearer ", "");
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        if (payload.role === "service_role") isAdmin = true;
+      } catch {}
+      if (!isAdmin) {
+        const userClient = createClient(supabaseUrl, supabaseKey, {
+          global: { headers: { Authorization: authHeader } },
+        });
+        const { data: { user } } = await userClient.auth.getUser();
+        if (user?.email?.endsWith("@getevidly.com")) isAdmin = true;
       }
+    }
+    if (authHeader && !isAdmin) {
+      return jsonResponse({ error: "Admin access required" }, 403);
     }
 
     const body = await req.json();

@@ -27,13 +27,16 @@ serve(async (req) => {
   for (const signal of (signals || [])) {
     try {
       const counties = signal.counties_affected || [];
+      const normalizedCounties = counties.map((c: string) =>
+        c.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase())
+      );
       let jurisdictionIds: string[] = [];
 
-      if (counties.length > 0) {
+      if (normalizedCounties.length > 0) {
         const { data: jurs } = await supabase
           .from('jurisdictions')
           .select('id')
-          .in('county', counties);
+          .in('county', normalizedCounties);
         jurisdictionIds = (jurs || []).map((j: any) => j.id);
       }
 
