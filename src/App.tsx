@@ -181,6 +181,7 @@ const InsuranceApiKeys = lazy(() => import('./pages/admin/InsuranceApiKeys'));
 const DemoLauncher = lazy(() => import('./pages/admin/DemoLauncher'));
 const DemoPipeline = lazy(() => import('./pages/admin/DemoPipeline'));
 const GtmDashboard = lazy(() => import('./pages/admin/GtmDashboard'));
+const DemoDashboard = lazy(() => import('./pages/admin/DemoDashboard'));
 const DemoRequest = lazy(() => import('./pages/DemoRequest'));
 const DemoSchedule = lazy(() => import('./pages/DemoSchedule'));
 const DemoExpired = lazy(() => import('./pages/DemoExpired'));
@@ -578,6 +579,7 @@ function AppRoutes() {
           <Route path="/admin/assessments" element={<Navigate to="/admin/kitchen-checkup" replace />} />
           <Route path="/admin/api-keys" element={<InsuranceApiKeys />} />
           <Route path="/admin/dashboard" element={<Navigate to="/admin" replace />} />
+          <Route path="/admin/demo/dashboard" element={<DemoDashboard />} />
           <Route path="/admin/command-center" element={<CommandCenter />} />
           <Route path="/admin/guided-tours" element={<SalesGuard><GuidedTours /></SalesGuard>} />
           <Route path="/admin/leads" element={<SalesGuard><AssessmentLeads /></SalesGuard>} />

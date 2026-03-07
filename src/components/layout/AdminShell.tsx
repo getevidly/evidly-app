@@ -89,6 +89,7 @@ const NAV_SECTIONS: NavSection[] = [
     title: 'Reporting',
     items: [
       { label: 'Reports', path: '/admin/reports' },
+      { label: 'Demo Dashboard', path: '/admin/demo/dashboard' },
     ],
   },
   {
