@@ -94,16 +94,22 @@ interface JIEUpdate {
 
 interface Correlation {
   id: string;
-  signal_id: string;
-  correlation_type: string;
-  jurisdiction_key: string | null;
-  county: string | null;
-  industry: string | null;
-  impact_level: string;
-  impact_description: string | null;
-  action_required: boolean;
-  action_description: string | null;
+  source_id: string;
+  organization_id: string | null;
+  jurisdiction_id: string | null;
+  correlation_strength: number | null;
   created_at: string;
+  intelligence_signals: {
+    title: string;
+    signal_type: string;
+    revenue_risk_level: string | null;
+    liability_risk_level: string | null;
+    cost_risk_level: string | null;
+    operational_risk_level: string | null;
+    routing_tier: string | null;
+  } | null;
+  jurisdictions: { name: string } | null;
+  organizations: { name: string } | null;
 }
 
 interface RegulatoryChange {
@@ -254,7 +260,7 @@ export default function EvidLYIntelligence() {
         supabase.from('intelligence_sources').select('*').order('category').order('name'),
         supabase.from('intelligence_signals').select('*').order('created_at', { ascending: false }).limit(200),
         supabase.from('jurisdiction_intel_updates').select('*').order('created_at', { ascending: false }).limit(50),
-        supabase.from('entity_correlations').select('*').order('created_at', { ascending: false }).limit(100),
+        supabase.from('intelligence_correlations').select('*').order('created_at', { ascending: false }).limit(100),
         supabase.from('scoretable_views').select('county_slug, viewed_at, session_id').order('viewed_at', { ascending: false }).limit(5000),
         supabase.from('jurisdiction_intel_updates').select('*').order('created_at', { ascending: false }).limit(100),
         supabase.from('regulatory_updates').select('*').order('created_at', { ascending: false }).limit(100),
@@ -1172,63 +1178,113 @@ export default function EvidLYIntelligence() {
       )}
 
       {/* ────────── TAB: CORRELATIONS ────────── */}
-      {activeTab === 'correlations' && (
-        <>
-          <div style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.6, marginBottom: 8 }}>
-            Correlations map each intelligence signal to the specific EvidLY clients, locations, and jurisdictions it affects.
-            This drives automated client alerts and compliance advisories.
-          </div>
+      {activeTab === 'correlations' && (() => {
+        // Group correlations by jurisdiction name
+        const grouped: Record<string, Correlation[]> = {};
+        for (const c of correlations) {
+          const jName = c.jurisdictions?.name || 'Unassigned';
+          if (!grouped[jName]) grouped[jName] = [];
+          grouped[jName].push(c);
+        }
+        const jurisdictionNames = Object.keys(grouped).sort((a, b) =>
+          a === 'Unassigned' ? 1 : b === 'Unassigned' ? -1 : a.localeCompare(b)
+        );
 
-          {loading ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} h={32} />)}
+        const riskBadge = (level: string | null | undefined) => {
+          if (!level) return <span style={{ color: TEXT_MUTED }}>{'\u2014'}</span>;
+          const rc = URGENCY_COLORS[level] || URGENCY_COLORS.low;
+          return (
+            <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: rc.bg, color: rc.text }}>
+              {level}
+            </span>
+          );
+        };
+
+        const strengthBar = (s: number | null) => {
+          const val = s ?? 0;
+          const color = val >= 0.8 ? '#059669' : val >= 0.5 ? '#D97706' : '#9CA3AF';
+          return (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <div style={{ width: 48, height: 5, borderRadius: 3, background: '#E5E7EB' }}>
+                <div style={{ width: `${Math.round(val * 100)}%`, height: '100%', borderRadius: 3, background: color }} />
+              </div>
+              <span style={{ fontSize: 10, color: TEXT_MUTED, fontWeight: 600 }}>{Math.round(val * 100)}%</span>
             </div>
-          ) : correlations.length === 0 ? (
-            <EmptyState
-              icon="🔗"
-              title="No correlations yet"
-              subtitle="Correlations are generated automatically when signals are analyzed. Each signal is mapped to affected clients, locations, jurisdictions, and EvidLY modules."
-            />
-          ) : (
-            <div style={{ background: '#fff', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-                <thead>
-                  <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
-                    {['Type', 'Target', 'Impact', 'Description', 'Action Required', 'Created'].map(h => (
-                      <th key={h} style={thStyle}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {correlations.map(c => {
-                    const ic = URGENCY_COLORS[c.impact_level] || URGENCY_COLORS.low;
-                    return (
-                      <tr key={c.id} style={{ borderBottom: `1px solid ${BORDER}` }}>
-                        <td style={{ ...tdStyle, fontSize: 11, color: TEXT_SEC }}>{c.correlation_type}</td>
-                        <td style={{ ...tdStyle, fontSize: 12, color: NAVY, fontWeight: 500 }}>
-                          {c.jurisdiction_key || c.county || c.industry || '\u2014'}
-                        </td>
-                        <td style={tdStyle}>
-                          <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: ic.bg, color: ic.text }}>
-                            {c.impact_level}
-                          </span>
-                        </td>
-                        <td style={{ ...tdStyle, fontSize: 12, maxWidth: 280 }}>{c.impact_description || '\u2014'}</td>
-                        <td style={{ ...tdStyle, fontSize: 11 }}>
-                          {c.action_required
-                            ? <span style={{ color: '#DC2626', fontWeight: 600 }}>Yes</span>
-                            : <span style={{ color: TEXT_MUTED }}>No</span>}
-                        </td>
-                        <td style={{ ...tdStyle, fontSize: 11, color: TEXT_MUTED }}>{new Date(c.created_at).toLocaleDateString()}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+          );
+        };
+
+        return (
+          <>
+            <div style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.6, marginBottom: 8 }}>
+              Correlations map each intelligence signal to the specific EvidLY clients, locations, and jurisdictions it affects.
+              This drives automated client alerts and compliance advisories.
             </div>
-          )}
-        </>
-      )}
+
+            {loading ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} h={32} />)}
+              </div>
+            ) : correlations.length === 0 ? (
+              <EmptyState
+                icon="🔗"
+                title="No correlations yet"
+                subtitle="Correlations are generated automatically when signals are analyzed. Each signal is mapped to affected clients, locations, jurisdictions, and EvidLY modules."
+              />
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                {jurisdictionNames.map(jName => (
+                  <div key={jName} style={{ background: '#fff', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
+                    <div style={{ padding: '10px 14px', borderBottom: `1px solid ${BORDER}`, background: '#FAFAF8' }}>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: NAVY }}>{jName}</span>
+                      <span style={{ fontSize: 11, color: TEXT_MUTED, marginLeft: 8 }}>
+                        {grouped[jName].length} correlation{grouped[jName].length !== 1 ? 's' : ''}
+                      </span>
+                    </div>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                      <thead>
+                        <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
+                          {['Signal', 'Organization', 'Type', 'Strength', 'Revenue', 'Liability', 'Cost', 'Ops', 'Tier', 'Created'].map(h => (
+                            <th key={h} style={thStyle}>{h}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {grouped[jName].map(c => {
+                          const sig = c.intelligence_signals;
+                          return (
+                            <tr key={c.id} style={{ borderBottom: `1px solid ${BORDER}` }}>
+                              <td style={{ ...tdStyle, fontSize: 12, color: NAVY, fontWeight: 500, maxWidth: 220 }}>
+                                {sig?.title || '\u2014'}
+                              </td>
+                              <td style={{ ...tdStyle, fontSize: 12 }}>
+                                {c.organizations?.name || '\u2014'}
+                              </td>
+                              <td style={{ ...tdStyle, fontSize: 11, color: TEXT_SEC }}>
+                                {sig?.signal_type || '\u2014'}
+                              </td>
+                              <td style={tdStyle}>{strengthBar(c.correlation_strength)}</td>
+                              <td style={tdStyle}>{riskBadge(sig?.revenue_risk_level)}</td>
+                              <td style={tdStyle}>{riskBadge(sig?.liability_risk_level)}</td>
+                              <td style={tdStyle}>{riskBadge(sig?.cost_risk_level)}</td>
+                              <td style={tdStyle}>{riskBadge(sig?.operational_risk_level)}</td>
+                              <td style={{ ...tdStyle, fontSize: 10, color: TEXT_SEC, fontWeight: 600 }}>
+                                {sig?.routing_tier || '\u2014'}
+                              </td>
+                              <td style={{ ...tdStyle, fontSize: 11, color: TEXT_MUTED }}>
+                                {new Date(c.created_at).toLocaleDateString()}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
+        );
+      })()}
 
       {/* ────────── TAB: JURISDICTION UPDATES ────────── */}
       {activeTab === 'jurisdiction_updates' && (
