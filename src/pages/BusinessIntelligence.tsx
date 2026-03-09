@@ -16,12 +16,11 @@ import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { AlertTriangle, BarChart3, FileText, Printer, TableProperties } from 'lucide-react';
 import { NAVY, GOLD, CARD_BORDER, TEXT_TERTIARY } from '../components/dashboard/shared/constants';
-import { DEMO_SIGNALS } from '../components/insights/business-intelligence/demoData';
-import { ExecFormat } from '../components/insights/business-intelligence/ExecFormat';
-import { FormalFormat } from '../components/insights/business-intelligence/FormalFormat';
-import { PrintFormat } from '../components/insights/business-intelligence/PrintFormat';
-import { RegisterFormat } from '../components/insights/business-intelligence/RegisterFormat';
-import type { BISignal, RiskPlan, FormatTab } from '../components/insights/business-intelligence/types';
+import {
+  ExecFormat, FormalFormat, PrintFormat, RegisterFormat,
+  DEMO_SIGNALS,
+} from '../components/shared/intelligence-formats';
+import type { BISignal, RiskPlan, FormatTab } from '../components/shared/intelligence-formats';
 
 const TABS: { key: FormatTab; label: string; icon: typeof BarChart3 }[] = [
   { key: 'executive', label: 'Executive Summary', icon: BarChart3 },
