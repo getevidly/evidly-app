@@ -1,4 +1,5 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -11,6 +12,9 @@ const corsHeaders = {
  * Fetches all active sources from `intelligence_sources`, scrapes each
  * via Firecrawl, and updates last_crawled_at / last_crawl_status / last_crawl_error.
  * Returns per-source success/failure summary.
+ *
+ * FIX [CRAWL-EDGE-FN-FIX-01]: Changed import from esm.sh to npm: for
+ * Deno 2 compatibility.
  */
 
 const FIRECRAWL_API_KEY = Deno.env.get("FIRECRAWL_API_KEY");

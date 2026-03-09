@@ -373,6 +373,13 @@ verify_jwt = false
 [functions.intelligence-webhook]
 verify_jwt = false
 
+# Crawl functions — invoked from admin UI with user session token
+[functions.crawl-monitor]
+verify_jwt = false
+
+[functions.trigger-crawl]
+verify_jwt = false
+
 [edge_runtime]
 enabled = true
 # Supported request policies: `oneshot`, `per_worker`.

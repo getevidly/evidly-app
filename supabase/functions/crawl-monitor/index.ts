@@ -1,4 +1,5 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -14,6 +15,9 @@ const corsHeaders = {
  * last_crawled_at. Logs to crawl_runs.
  *
  * Always returns 200 with partial results — never fails entirely.
+ *
+ * FIX [CRAWL-EDGE-FN-FIX-01]: Changed import from esm.sh to npm: for
+ * Deno 2 compatibility. esm.sh import caused startup crash → non-2xx.
  */
 
 const CONCURRENCY = 5;
@@ -174,10 +178,19 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-    );
+    const sbUrl = Deno.env.get("SUPABASE_URL");
+    const sbKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    if (!sbUrl || !sbKey) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "MISSING_ENV",
+          message: `Required environment variable ${!sbUrl ? "SUPABASE_URL" : "SUPABASE_SERVICE_ROLE_KEY"} is not set.`,
+        }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    const supabase = createClient(sbUrl, sbKey);
 
     const deadline = Date.now() + MAX_CRAWL_MS;
 
