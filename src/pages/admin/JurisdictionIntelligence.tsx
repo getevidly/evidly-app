@@ -82,7 +82,7 @@ export default function JurisdictionIntelligence() {
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-[#1E2D4D]">Jurisdiction Intelligence</h1>
         <p className="text-sm text-gray-500 mt-1">
-          Inspection methodology changes, scoring updates, and policy shifts across all 62 CA jurisdictions
+          Inspection methodology changes, scoring updates, and policy shifts across all 62 CA EHDs + Fire AHJs
         </p>
       </div>
 
@@ -108,7 +108,7 @@ export default function JurisdictionIntelligence() {
         <div className="text-center py-16">
           <p className="text-sm font-semibold text-gray-600 mb-2">No jurisdiction updates yet</p>
           <p className="text-xs text-gray-400">
-            Crawler monitors all 62 CA jurisdictions for inspection methodology and scoring changes.
+            Crawler monitors all 62 CA EHDs + Fire AHJs for inspection methodology and scoring changes.
           </p>
         </div>
       ) : (

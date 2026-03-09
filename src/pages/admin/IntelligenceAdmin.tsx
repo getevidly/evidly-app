@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { routingTierLabel, routingTierColor, type RoutingTier } from '../../lib/intelligenceRouter';
+import { CIC_PILLARS, getPillarForSignalType, isPseSignalType } from '../../lib/cicPillars';
 import VerificationPanel from '../../components/admin/VerificationPanel';
 
 const NAVY = '#1E2D4D';
@@ -50,6 +51,7 @@ interface QueueSignal {
   dismissed_reason?: string | null;
   dismissed_at?: string | null;
   dismissed_by?: string | null;
+  cic_pillar?: string | null;
 }
 
 type TabFilter = 'all' | 'hold' | 'notify' | 'dismissed';
@@ -96,6 +98,7 @@ const CATEGORY_OPTIONS = [
   { key: 'regulatory_updates', label: 'Regulatory Change' },
   { key: 'fire_safety', label: 'Fire Safety' },
   { key: 'outbreak_alert', label: 'Health Alert' },
+  { key: 'workforce_risk', label: 'Workforce Risk' },
 ] as const;
 
 const DATE_OPTIONS = [
@@ -118,6 +121,7 @@ export default function IntelligenceAdmin() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<TabFilter>('all');
   const [dimFilter, setDimFilter] = useState<'' | 'revenue' | 'liability' | 'cost' | 'operational'>('');
+  const [pillarFilter, setPillarFilter] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
   const [dateFilter, setDateFilter] = useState('');
   const [publishing, setPublishing] = useState<string | null>(null);
@@ -459,15 +463,29 @@ Guidelines:
     return new Date(createdAt) >= cutoff;
   };
 
+  // Helper: resolve a signal's CIC pillar (from DB column or derived from signal_type)
+  const getSignalPillar = (s: QueueSignal): string | undefined => {
+    if (s.cic_pillar) return s.cic_pillar;
+    const p = getPillarForSignalType(s.signal_type);
+    return p?.id;
+  };
+
   // Apply all filters
   const filtered = (filter === 'dismissed' ? dismissedSignals : activeSignals).filter(s => {
     if (filter === 'hold' && s.routing_tier !== 'hold') return false;
     if (filter === 'notify' && s.routing_tier !== 'notify') return false;
+    if (pillarFilter && getSignalPillar(s) !== pillarFilter) return false;
     if (dimFilter) {
       const riskVal = riskEdits[s.id]?.[dimFilter] ?? normLevel(s[`${dimFilter}_risk_level` as keyof QueueSignal] as string);
       if (!riskVal || riskVal === 'none') return false;
     }
-    if (categoryFilter && s.category !== categoryFilter) return false;
+    if (categoryFilter) {
+      if (categoryFilter === 'workforce_risk') {
+        if (getSignalPillar(s) !== 'workforce_risk') return false;
+      } else if (s.category !== categoryFilter) {
+        return false;
+      }
+    }
     if (!passesDateFilter(s.created_at)) return false;
     return true;
   });
@@ -544,6 +562,25 @@ Guidelines:
         ]).map(f => (
           <button key={f.key} onClick={() => setFilter(f.key)} style={pillStyle(filter === f.key)}>
             {f.label}
+          </button>
+        ))}
+      </div>
+
+      {/* CIC Pillar filters */}
+      <div style={{ display: 'flex', gap: 6, marginBottom: 8, alignItems: 'center' }}>
+        <span style={{ fontSize: 10, color: TEXT_MUTED, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Pillar:</span>
+        <button onClick={() => setPillarFilter('')} style={smallPillStyle(pillarFilter === '')}>
+          All Pillars
+        </button>
+        {CIC_PILLARS.map(p => (
+          <button key={p.id} onClick={() => setPillarFilter(p.id)}
+            style={{
+              padding: '3px 10px', borderRadius: 14, fontSize: 10, fontWeight: 600, cursor: 'pointer',
+              background: pillarFilter === p.id ? p.color : '#fff',
+              color: pillarFilter === p.id ? '#fff' : TEXT_MUTED,
+              border: `1px solid ${pillarFilter === p.id ? p.color : BORDER}`,
+            }}>
+            {p.shortLabel}
           </button>
         ))}
       </div>
@@ -648,6 +685,22 @@ Guidelines:
                           {sig.ai_urgency.toUpperCase()}
                         </span>
                       )}
+                      {/* PSE badge */}
+                      {isPseSignalType(sig.signal_type) && (
+                        <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: '#FFFBEB', color: '#D97706', border: '1px solid #FDE68A' }}>
+                          PSE-Relevant
+                        </span>
+                      )}
+                      {/* CIC Pillar badge */}
+                      {(() => {
+                        const pillar = sig.cic_pillar ? CIC_PILLARS.find(p => p.id === sig.cic_pillar) : getPillarForSignalType(sig.signal_type);
+                        if (!pillar) return null;
+                        return (
+                          <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: pillar.bgColor, color: pillar.color }}>
+                            {pillar.shortLabel}
+                          </span>
+                        );
+                      })()}
                       <span style={{ fontSize: 9, fontWeight: 600, padding: '2px 8px', borderRadius: 10, background: '#F9FAFB', color: TEXT_SEC, border: `1px solid ${BORDER}` }}>
                         {sig.signal_type?.replace(/_/g, ' ')}
                       </span>

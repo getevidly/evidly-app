@@ -142,6 +142,12 @@ End with specific breakeven: when does cost of deferral exceed cost of the servi
     - Quantify the potential premium impact of unresolved compliance issues vs. the cost of resolving them
     - Provide documentation strategy \u2014 what evidence EvidLY can provide to support favorable underwriting
     - Suggest specific talking points for the broker meeting
+    Assess Protective Safeguards Endorsement compliance for this location.
+    Identify which PSE-relevant service records are current, expiring, or missing.
+    Flag gaps as HIGH severity with the note that PSE non-compliance may affect
+    claim coverage. Use advisory language only — do not make coverage determinations.
+    Recommend the operator consult their carrier or broker regarding their specific
+    PSE requirements.
     Carrier: {carrier}. Renewal date: {renewalDate}. Current premium: {currentPremium}. Prior claims: {priorClaims}.`,
   },
   {

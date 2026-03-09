@@ -9,6 +9,7 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { INDUSTRY_LABELS, SCOPE_LABELS, correlateSignal, type CorrelationPreview } from '../../lib/correlationEngine';
 import { routingTierLabel, routingTierColor, type RoutingTier } from '../../lib/intelligenceRouter';
+import { CIC_PILLARS, getPillarForSignalType, isPseSignalType } from '../../lib/cicPillars';
 import VerificationPanel from '../../components/admin/VerificationPanel';
 
 const NAVY = '#1E2D4D';
@@ -70,6 +71,7 @@ interface Signal {
   opp_liability_note: string | null;
   opp_cost_note: string | null;
   opp_operational_note: string | null;
+  cic_pillar: string | null;
   routing_tier: RoutingTier | null;
   severity_score: number | null;
   confidence_score: number | null;
@@ -213,7 +215,7 @@ export default function EvidLYIntelligence() {
   const [crawlFeedback, setCrawlFeedback] = useState<{ type: 'success' | 'error'; msg: string } | null>(null);
 
   // Filters
-  const [sigFilter, setSigFilter] = useState({ search: '', urgency: '', type: '', status: '', tier: '' });
+  const [sigFilter, setSigFilter] = useState({ search: '', urgency: '', type: '', status: '', tier: '', pillar: '' });
   const [srcCatFilter, setSrcCatFilter] = useState('');
   const [srcStatusFilter, setSrcStatusFilter] = useState('');
   const [srcDemoOnly, setSrcDemoOnly] = useState(false);
@@ -370,6 +372,10 @@ export default function EvidLYIntelligence() {
     if (sigFilter.type && s.signal_type !== sigFilter.type) return false;
     if (sigFilter.status && s.status !== sigFilter.status) return false;
     if (sigFilter.tier && s.routing_tier !== sigFilter.tier) return false;
+    if (sigFilter.pillar) {
+      const sp = s.cic_pillar || getPillarForSignalType(s.signal_type)?.id;
+      if (sp !== sigFilter.pillar) return false;
+    }
     return true;
   });
 
@@ -848,6 +854,30 @@ export default function EvidLYIntelligence() {
             </select>
           </div>
 
+          {/* CIC Pillar filter pills */}
+          <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginTop: 8 }}>
+            <span style={{ fontSize: 10, color: TEXT_MUTED, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Pillar:</span>
+            <button onClick={() => setSigFilter(f => ({ ...f, pillar: '' }))}
+              style={{
+                padding: '3px 10px', borderRadius: 14, fontSize: 10, fontWeight: 600, cursor: 'pointer',
+                background: !sigFilter.pillar ? GOLD : '#fff', color: !sigFilter.pillar ? '#fff' : TEXT_MUTED,
+                border: `1px solid ${!sigFilter.pillar ? GOLD : BORDER}`,
+              }}>
+              All Pillars
+            </button>
+            {CIC_PILLARS.map(p => (
+              <button key={p.id} onClick={() => setSigFilter(f => ({ ...f, pillar: p.id }))}
+                style={{
+                  padding: '3px 10px', borderRadius: 14, fontSize: 10, fontWeight: 600, cursor: 'pointer',
+                  background: sigFilter.pillar === p.id ? p.color : '#fff',
+                  color: sigFilter.pillar === p.id ? '#fff' : TEXT_MUTED,
+                  border: `1px solid ${sigFilter.pillar === p.id ? p.color : BORDER}`,
+                }}>
+                {p.shortLabel}
+              </button>
+            ))}
+          </div>
+
           {loading ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} h={80} />)}
@@ -880,6 +910,22 @@ export default function EvidLYIntelligence() {
                             title={sig.routing_reason || ''}>
                             {routingTierLabel(sig.routing_tier)}
                             {sig.auto_published && ' (auto)'}
+                          </span>
+                        );
+                      })()}
+                      {/* PSE badge */}
+                      {isPseSignalType(sig.signal_type) && (
+                        <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: '#FFFBEB', color: '#D97706', border: '1px solid #FDE68A' }}>
+                          PSE-Relevant
+                        </span>
+                      )}
+                      {/* CIC Pillar badge */}
+                      {(() => {
+                        const pillar = sig.cic_pillar ? CIC_PILLARS.find(p => p.id === sig.cic_pillar) : getPillarForSignalType(sig.signal_type);
+                        if (!pillar) return null;
+                        return (
+                          <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: pillar.bgColor, color: pillar.color }}>
+                            {pillar.shortLabel}
                           </span>
                         );
                       })()}

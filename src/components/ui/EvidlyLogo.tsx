@@ -1,7 +1,7 @@
 /**
  * LOGO-FIX-5 — EvidLY Wordmark (styled text)
  *
- * "Evid" in Refined Gold (#A08C5A), "LY" in White (#FFFFFF).
+ * "E" in Gold (#A08C5A), "vid" in White (#FFFFFF), "LY" in Gold (#A08C5A).
  * Font: Syne, weight 800.
  * Tagline "LEAD WITH CONFIDENCE" in gold, 10px, wide tracking.
  */
@@ -12,21 +12,26 @@ interface EvidlyLogoProps {
   width?: number;
   showTagline?: boolean;
   className?: string;
+  /** When true (default), "vid" renders white; when false, "vid" renders navy #1E2D4D */
+  onDark?: boolean;
   /** @deprecated — use width instead. Kept for back-compat. */
   size?: 'sm' | 'md' | 'lg';
-  /** @deprecated — no longer used. */
+  /** @deprecated — use onDark instead. */
   variant?: 'dark' | 'light';
 }
 
 export const EvidlyLogo: React.FC<EvidlyLogoProps> = ({
   showTagline = true,
+  onDark = true,
   className,
 }) => {
+  const vidColor = onDark ? '#FFFFFF' : '#1E2D4D';
   return (
     <div className={className} aria-label="EvidLY — Lead with Confidence">
-      <span style={{ fontFamily: 'Syne, system-ui, sans-serif', fontWeight: 800, fontSize: '24px', lineHeight: 1 }}>
-        <span style={{ color: '#A08C5A' }}>Evid</span>
-        <span style={{ color: '#FFFFFF' }}>LY</span>
+      <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '24px', letterSpacing: '-0.02em', lineHeight: 1 }}>
+        <span style={{ color: '#A08C5A' }}>E</span>
+        <span style={{ color: vidColor }}>vid</span>
+        <span style={{ color: '#A08C5A' }}>LY</span>
       </span>
       {showTagline && (
         <div style={{
