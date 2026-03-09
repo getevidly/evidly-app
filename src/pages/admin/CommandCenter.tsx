@@ -13,6 +13,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { useDemo } from '../../contexts/DemoContext';
+import { useDemoGuard } from '../../hooks/useDemoGuard';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { StatCardRow } from '../../components/admin/StatCardRow';
 import { RefreshCw, Activity, Ticket, Radio, Zap } from 'lucide-react';
@@ -91,6 +92,7 @@ function timeAgo(dateStr: string): string {
 }
 
 export default function CommandCenter() {
+  useDemoGuard();
   const { user } = useAuth();
   const { isDemoMode } = useDemo();
 
@@ -162,6 +164,7 @@ export default function CommandCenter() {
   };
 
   const handleRunNow = async () => {
+    if (isDemoMode) return;
     setCrawling(true);
     setCrawlResult(null);
     setCrawlError(null);

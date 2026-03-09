@@ -5,6 +5,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import { useDemo } from '../../contexts/DemoContext';
+import { useDemoGuard } from '../../hooks/useDemoGuard';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import OrgCombobox, { type OrgOption } from '../../components/admin/OrgCombobox';
 
@@ -76,6 +78,8 @@ const EmptyState = ({ icon, title, subtitle }: { icon: string; title: string; su
 );
 
 export default function UserProvisioning() {
+  useDemoGuard();
+  const { isDemoMode } = useDemo();
   const [tab, setTab] = useState<Tab>('all-users');
   const [users, setUsers] = useState<UserRow[]>([]);
   const [orgs, setOrgs] = useState<OrgRow[]>([]);
@@ -136,6 +140,7 @@ export default function UserProvisioning() {
   });
 
   const handleCreate = async () => {
+    if (isDemoMode) return;
     if (!invEmail) return;
     setCreating(true);
     alert(`User provisioning for ${invEmail} requires the server-side auth pipeline. Use Supabase Dashboard → Authentication to create accounts.`);
@@ -147,6 +152,7 @@ export default function UserProvisioning() {
   };
 
   const handleBulkInvite = () => {
+    if (isDemoMode) return;
     const emails = bulkEmails.split(',').map(e => e.trim()).filter(Boolean);
     if (emails.length === 0) return;
     alert(`Bulk invite for ${emails.length} email(s) requires the server-side auth pipeline. Use Supabase Dashboard → Authentication to create accounts.`);
@@ -407,6 +413,7 @@ export default function UserProvisioning() {
 // ── User Detail Drawer ──
 
 function UserDetailDrawer({ user, org, onClose }: { user: UserRow; org: OrgRow | null; onClose: () => void }) {
+  const { isDemoMode } = useDemo();
   const navigate = useNavigate();
   const [drawerTab, setDrawerTab] = useState('Profile');
   const [events, setEvents] = useState<any[]>([]);
@@ -513,7 +520,7 @@ function UserDetailDrawer({ user, org, onClose }: { user: UserRow; org: OrgRow |
           <button onClick={() => alert('Edit User profile requires admin edge function. Use Supabase Dashboard to modify user records.')} style={{ padding: '8px 16px', borderRadius: 8, border: 'none', background: NAVY, color: '#fff', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>
             Edit User
           </button>
-          <button onClick={async () => { if (confirm(`Send password reset email to ${user.email}?`)) { const { error } = await supabase.auth.resetPasswordForEmail(user.email); alert(error ? `Error: ${error.message}` : `Password reset email sent to ${user.email}.`); } }} style={{ padding: '8px 16px', borderRadius: 8, border: `1px solid ${BORDER}`, background: '#F9FAFB', color: TEXT_SEC, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+          <button onClick={async () => { if (isDemoMode) return; if (confirm(`Send password reset email to ${user.email}?`)) { const { error } = await supabase.auth.resetPasswordForEmail(user.email); alert(error ? `Error: ${error.message}` : `Password reset email sent to ${user.email}.`); } }} style={{ padding: '8px 16px', borderRadius: 8, border: `1px solid ${BORDER}`, background: '#F9FAFB', color: TEXT_SEC, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
             Reset Password
           </button>
           <button onClick={() => { onClose(); navigate('/admin/emulate'); }} style={{ padding: '8px 16px', borderRadius: 8, border: `1px solid ${BORDER}`, background: '#FAF7F2', color: NAVY, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>

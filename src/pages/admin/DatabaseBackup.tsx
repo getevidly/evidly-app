@@ -4,6 +4,8 @@
  */
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
+import { useDemo } from '../../contexts/DemoContext';
+import { useDemoGuard } from '../../hooks/useDemoGuard';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 
 const NAVY = '#1E2D4D';
@@ -37,6 +39,8 @@ const EmptyState = ({ icon, title, subtitle }: { icon: string; title: string; su
 );
 
 export default function DatabaseBackup() {
+  useDemoGuard();
+  const { isDemoMode } = useDemo();
   const [backups, setBackups] = useState<BackupRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [running, setRunning] = useState(false);
@@ -57,6 +61,7 @@ export default function DatabaseBackup() {
   const lastSuccess = backups.find(b => b.status === 'complete');
 
   const runBackup = async () => {
+    if (isDemoMode) return;
     setRunning(true);
     const { error } = await supabase.from('admin_backups').insert({
       backup_type: 'manual',

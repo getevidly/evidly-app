@@ -5,6 +5,8 @@
  */
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
+import { useDemo } from '../../contexts/DemoContext';
+import { useDemoGuard } from '../../hooks/useDemoGuard';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import OrgCombobox, { type OrgOption } from '../../components/admin/OrgCombobox';
 import { useAuth } from '../../contexts/AuthContext';
@@ -77,6 +79,8 @@ function Modal({ title, onClose, children }: { title: string; onClose: () => voi
 }
 
 export default function Configure() {
+  useDemoGuard();
+  const { isDemoMode } = useDemo();
   const { user } = useAuth();
   const [tab, setTab] = useState<Tab>('organizations');
   const [orgs, setOrgs] = useState<Org[]>([]);
@@ -317,6 +321,7 @@ function VendorsTable({ vendors, search, onAdd, onSelect }: { vendors: Vendor[];
 // ══════════════ ADD MODALS ══════════════
 
 function AddOrgModal({ onClose, onSaved }: { onClose: () => void; onSaved: () => void }) {
+  const { isDemoMode } = useDemo();
   const [name, setName] = useState('');
   const [type, setType] = useState('restaurant');
   const [county, setCounty] = useState('');
@@ -334,6 +339,7 @@ function AddOrgModal({ onClose, onSaved }: { onClose: () => void; onSaved: () =>
   const [saving, setSaving] = useState(false);
 
   const handleSave = async () => {
+    if (isDemoMode) return;
     if (!name.trim()) return;
     setSaving(true);
     const { error } = await supabase.from('organizations').insert({
@@ -412,6 +418,7 @@ function AddOrgModal({ onClose, onSaved }: { onClose: () => void; onSaved: () =>
 }
 
 function AddLocModal({ orgs, onClose, onSaved }: { orgs: Org[]; onClose: () => void; onSaved: () => void }) {
+  const { isDemoMode } = useDemo();
   const [name, setName] = useState('');
   const [selectedOrg, setSelectedOrg] = useState<OrgOption | null>(null);
   const [address, setAddress] = useState('');
@@ -428,6 +435,7 @@ function AddLocModal({ orgs, onClose, onSaved }: { orgs: Org[]; onClose: () => v
   const [saving, setSaving] = useState(false);
 
   const handleSave = async () => {
+    if (isDemoMode) return;
     if (!name.trim()) return;
     setSaving(true);
     let orgId = selectedOrg?.id || null;
@@ -498,6 +506,7 @@ function AddLocModal({ orgs, onClose, onSaved }: { orgs: Org[]; onClose: () => v
 }
 
 function AddUserModal({ orgs, onClose, onSaved, userEmail }: { orgs: Org[]; onClose: () => void; onSaved: () => void; userEmail?: string }) {
+  const { isDemoMode } = useDemo();
   const [email, setEmail] = useState('');
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
@@ -506,6 +515,7 @@ function AddUserModal({ orgs, onClose, onSaved, userEmail }: { orgs: Org[]; onCl
   const [saving, setSaving] = useState(false);
 
   const handleInvite = async () => {
+    if (isDemoMode) return;
     if (!email.trim()) return;
     setSaving(true);
     await supabase.from('admin_event_log').insert({ level: 'INFO', category: 'configure', message: `User invited: ${email} (${role})` });
@@ -538,6 +548,7 @@ function AddUserModal({ orgs, onClose, onSaved, userEmail }: { orgs: Org[]; onCl
 }
 
 function AddVendorModal({ onClose, onSaved }: { onClose: () => void; onSaved: () => void }) {
+  const { isDemoMode } = useDemo();
   const [companyName, setCompanyName] = useState('');
   const [serviceType, setServiceType] = useState('Hood Cleaning');
   const [website, setWebsite] = useState('');
@@ -559,6 +570,7 @@ function AddVendorModal({ onClose, onSaved }: { onClose: () => void; onSaved: ()
   const toggleCert = (c: string) => setCerts(p => p.includes(c) ? p.filter(x => x !== c) : [...p, c]);
 
   const handleSave = async () => {
+    if (isDemoMode) return;
     if (!companyName.trim()) return;
     setSaving(true);
     const { error } = await supabase.from('vendors').insert({
@@ -1073,6 +1085,7 @@ function LocDrawer({ loc, onClose, onRefresh }: { loc: Location; onClose: () => 
 // ── User Drawer ──
 
 function UserDrawer({ user, orgs, onClose, onRefresh }: { user: UserProfile; orgs: Org[]; onClose: () => void; onRefresh: () => void }) {
+  const { isDemoMode } = useDemo();
   const [tab, setTab] = useState('Profile');
   const [events, setEvents] = useState<any[]>([]);
   const [tickets, setTickets] = useState<any[]>([]);
@@ -1155,7 +1168,7 @@ function UserDrawer({ user, orgs, onClose, onRefresh }: { user: UserProfile; org
         <div style={drawerFooter}>
           <FooterBtn label="Edit User" color="#fff" bg={NAVY} onClick={() => alert('Edit User profile requires admin edge function. Use Supabase Dashboard to modify user records.')} />
           <FooterBtn label="Emulate" color={NAVY} bg="#FAF7F2" border={`1px solid ${BORDER}`} onClick={() => { onClose(); window.location.assign('/admin/emulate'); }} />
-          <FooterBtn label="Reset Password" color={TEXT_SEC} bg="#F9FAFB" border={`1px solid ${BORDER}`} onClick={async () => { if (user.email && confirm(`Send password reset email to ${user.email}?`)) { const { error } = await supabase.auth.resetPasswordForEmail(user.email); alert(error ? `Error: ${error.message}` : `Password reset email sent to ${user.email}.`); } }} />
+          <FooterBtn label="Reset Password" color={TEXT_SEC} bg="#F9FAFB" border={`1px solid ${BORDER}`} onClick={async () => { if (isDemoMode) return; if (user.email && confirm(`Send password reset email to ${user.email}?`)) { const { error } = await supabase.auth.resetPasswordForEmail(user.email); alert(error ? `Error: ${error.message}` : `Password reset email sent to ${user.email}.`); } }} />
         </div>
       </div>
     </>

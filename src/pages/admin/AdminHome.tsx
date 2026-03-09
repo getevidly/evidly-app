@@ -15,6 +15,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { useDemo } from '../../contexts/DemoContext';
+import { useDemoGuard } from '../../hooks/useDemoGuard';
 import { supabase } from '../../lib/supabase';
 
 const NAVY = '#1E2D4D';
@@ -88,6 +90,8 @@ const TYPE_COLORS: Record<string, string> = {
 /*  Component                                                          */
 /* ------------------------------------------------------------------ */
 export default function AdminHome() {
+  useDemoGuard();
+  const { isDemoMode } = useDemo();
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -117,6 +121,7 @@ export default function AdminHome() {
 
   useEffect(() => {
     const loadStats = async () => {
+      if (isDemoMode) return;
       const [subRes, orgRes, locRes, crawlRes, sigRes] = await Promise.all([
         supabase.from('billing_subscriptions').select('mrr_cents').eq('status', 'active'),
         supabase.from('organizations').select('id', { count: 'exact', head: true }).eq('status', 'active'),
@@ -145,7 +150,7 @@ export default function AdminHome() {
     updateCountdown();
     const interval = setInterval(updateCountdown, 1000);
     return () => clearInterval(interval);
-  }, [updateCountdown]);
+  }, [updateCountdown, isDemoMode]);
 
   const firstName = user?.user_metadata?.full_name?.split(' ')[0]
     || user?.email?.split('@')[0]

@@ -4,6 +4,8 @@
  */
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
+import { useDemo } from '../../contexts/DemoContext';
+import { useDemoGuard } from '../../hooks/useDemoGuard';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 
 const NAVY = '#1E2D4D';
@@ -36,6 +38,8 @@ const DEFAULT_CONFIG: MaintenanceConfig = {
 };
 
 export default function MaintenanceMode() {
+  useDemoGuard();
+  const { isDemoMode } = useDemo();
   const [config, setConfig] = useState<MaintenanceConfig>(DEFAULT_CONFIG);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -58,6 +62,7 @@ export default function MaintenanceMode() {
   useEffect(() => { loadConfig(); }, [loadConfig]);
 
   const saveConfig = async (newConfig: MaintenanceConfig) => {
+    if (isDemoMode) return;
     setSaving(true);
     await supabase.from('admin_security_config').upsert({
       config_key: 'maintenance_mode',

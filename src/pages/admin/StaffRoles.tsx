@@ -10,6 +10,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
+import { useDemo } from '../../contexts/DemoContext';
+import { useDemoGuard } from '../../hooks/useDemoGuard';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 
 const NAVY = '#1E2D4D';
@@ -162,6 +164,8 @@ const EmptyState = ({ icon, title, subtitle }: { icon: string; title: string; su
 /* ─────────────────────────────────────────────────────────── */
 
 export default function StaffRoles() {
+  useDemoGuard();
+  const { isDemoMode } = useDemo();
   const { user } = useAuth();
   const [tab, setTab] = useState<Tab>('staff');
 
@@ -484,6 +488,7 @@ export default function StaffRoles() {
                   </button>
                   <button
                     onClick={() => {
+                      if (isDemoMode) return;
                       if (!formEmail) return;
                       alert(`Invitation for ${formEmail} requires the server-side auth pipeline. Use Supabase Dashboard to send invitations.`);
                       resetModal();
@@ -497,6 +502,7 @@ export default function StaffRoles() {
                   </button>
                   <button
                     onClick={() => {
+                      if (isDemoMode) return;
                       if (!formEmail) return;
                       alert(`Provisioning ${formEmail} requires the server-side auth pipeline. Use Supabase Dashboard to create accounts.`);
                       resetModal();
@@ -705,6 +711,7 @@ function StaffDrawer({ staff, roleDefs, onClose, renderRoleBadge }: {
   onClose: () => void;
   renderRoleBadge: (role: string) => React.ReactNode;
 }) {
+  const { isDemoMode } = useDemo();
   const [drawerTab, setDrawerTab] = useState('Profile');
   const [events, setEvents] = useState<EventRow[]>([]);
   const [eventsLoading, setEventsLoading] = useState(false);
@@ -836,7 +843,7 @@ function StaffDrawer({ staff, roleDefs, onClose, renderRoleBadge }: {
           <button onClick={() => alert(`Edit role/permissions for ${staff.full_name || staff.email} requires write access to user_profiles and evidly_role_permissions tables.`)} style={{ padding: '8px 16px', borderRadius: 8, border: 'none', background: NAVY, color: '#fff', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>
             Edit Role & Permissions
           </button>
-          <button onClick={async () => { if (confirm(`Send password reset email to ${staff.email}?`)) { const { error } = await supabase.auth.resetPasswordForEmail(staff.email); alert(error ? `Error: ${error.message}` : `Password reset email sent to ${staff.email}.`); } }} style={{ padding: '8px 16px', borderRadius: 8, border: `1px solid ${BORDER}`, background: '#F9FAFB', color: TEXT_SEC, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+          <button onClick={async () => { if (isDemoMode) return; if (confirm(`Send password reset email to ${staff.email}?`)) { const { error } = await supabase.auth.resetPasswordForEmail(staff.email); alert(error ? `Error: ${error.message}` : `Password reset email sent to ${staff.email}.`); } }} style={{ padding: '8px 16px', borderRadius: 8, border: `1px solid ${BORDER}`, background: '#F9FAFB', color: TEXT_SEC, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
             Reset Password
           </button>
           <button onClick={() => alert(`Deactivate ${staff.full_name || staff.email} requires admin edge function. Use Supabase Dashboard → Authentication to disable accounts.`)} style={{ padding: '8px 16px', borderRadius: 8, border: '1px solid #FECACA', background: '#FEF2F2', color: '#DC2626', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
