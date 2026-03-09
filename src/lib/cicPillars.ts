@@ -17,6 +17,7 @@ export interface CICPillar {
   insuranceLines: string[];
   color: string;
   bgColor: string;
+  border: string;
 }
 
 export const CIC_PILLARS: CICPillar[] = [
@@ -26,8 +27,9 @@ export const CIC_PILLARS: CICPillar[] = [
     label: 'Revenue Risk',
     shortLabel: 'P1 Revenue',
     insuranceLines: ['BII', 'License/Permit'],
-    color: '#DC2626',
-    bgColor: '#FEF2F2',
+    color: '#C2410C',
+    bgColor: '#FFF7ED',
+    border: '#FDBA74',
   },
   {
     id: 'liability_risk',
@@ -35,8 +37,9 @@ export const CIC_PILLARS: CICPillar[] = [
     label: 'Liability Risk',
     shortLabel: 'P2 Liability',
     insuranceLines: ['GL', 'Product Liability', 'Fire Legal Liability'],
-    color: '#7C3AED',
-    bgColor: '#F5F3FF',
+    color: '#991B1B',
+    bgColor: '#FEF2F2',
+    border: '#FECACA',
   },
   {
     id: 'cost_risk',
@@ -44,8 +47,9 @@ export const CIC_PILLARS: CICPillar[] = [
     label: 'Cost Risk',
     shortLabel: 'P3 Cost',
     insuranceLines: ['Equipment Breakdown', 'Property', 'WC influence'],
-    color: '#D97706',
-    bgColor: '#FFFBEB',
+    color: '#1E40AF',
+    bgColor: '#EFF6FF',
+    border: '#BFDBFE',
   },
   {
     id: 'operational_risk',
@@ -53,8 +57,9 @@ export const CIC_PILLARS: CICPillar[] = [
     label: 'Operational Risk',
     shortLabel: 'P4 Operational',
     insuranceLines: ['BII', 'Claim Defense', 'Renewal Confidence'],
-    color: '#2563EB',
-    bgColor: '#EFF6FF',
+    color: '#166534',
+    bgColor: '#F0FDF4',
+    border: '#BBF7D0',
   },
   {
     id: 'workforce_risk',
@@ -62,8 +67,9 @@ export const CIC_PILLARS: CICPillar[] = [
     label: 'Workforce Risk',
     shortLabel: 'P5 Workforce',
     insuranceLines: ['GL', 'Product Liability', 'WC', 'Training Liability'],
-    color: '#9333EA',
+    color: '#6B21A8',
     bgColor: '#FAF5FF',
+    border: '#E9D5FF',
   },
 ];
 
@@ -159,3 +165,21 @@ export function getPillarForSignalType(signalType: string): CICPillar | undefine
 export function isPseSignalType(signalType: string): boolean {
   return signalType.startsWith('pse_');
 }
+
+/**
+ * BI_DIMENSIONS — dimension config shaped for Business Intelligence format components.
+ * Maps CIC_PILLARS → { key, riskKey, impactKey, label, color, border, bg }.
+ * This is the canonical source — BI types.ts re-exports it as DIMENSIONS.
+ */
+export const BI_DIMENSIONS = CIC_PILLARS.map(p => {
+  const key = p.id.replace('_risk', '');
+  return {
+    key,
+    riskKey: key === 'workforce' ? 'workforce_risk_level' : `risk_${key}`,
+    impactKey: `client_impact_${key}`,
+    label: p.label.replace(' Risk', ''),
+    color: p.color,
+    border: p.border,
+    bg: p.bgColor,
+  };
+}) as readonly { key: string; riskKey: string; impactKey: string; label: string; color: string; border: string; bg: string }[];

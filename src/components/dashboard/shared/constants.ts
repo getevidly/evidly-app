@@ -21,13 +21,15 @@ export const BORDER_SUBTLE = '#E8EDF5';
 export const TEXT_TERTIARY = '#6B7F96';
 export const STEEL_SLATE_GRADIENT = 'linear-gradient(135deg, #1c2a3f 0%, #263d56 50%, #2f4a66 100%)';
 
-// ── CIC Five-Pillar canonical colors ─────────────────────
+// ── CIC Five-Pillar canonical colors (derived from src/lib/cicPillars.ts) ──
+// This is a convenience re-export for dashboard components. The canonical
+// source of truth is CIC_PILLARS in src/lib/cicPillars.ts.
 export const CIC_PILLAR_COLORS = {
   revenue:     { color: '#C2410C', bg: '#FFF7ED', label: 'Revenue Risk' },
   liability:   { color: '#991B1B', bg: '#FEF2F2', label: 'Liability Risk' },
   cost:        { color: '#1E40AF', bg: '#EFF6FF', label: 'Cost Risk' },
   operational: { color: '#166534', bg: '#F0FDF4', label: 'Operational Risk' },
-  workforce:   { color: '#6B21A8', bg: '#F5F3FF', label: 'Workforce Risk' },
+  workforce:   { color: '#6B21A8', bg: '#FAF5FF', label: 'Workforce Risk' },
 } as const;
 
 // ── Typography ────────────────────────────────────────────

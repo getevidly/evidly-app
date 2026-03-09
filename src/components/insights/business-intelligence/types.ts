@@ -1,4 +1,5 @@
 // Types and constants for the Business Intelligence page
+import { BI_DIMENSIONS } from '../../../lib/cicPillars';
 
 export interface BISignal {
   id: string;
@@ -42,14 +43,8 @@ export interface RiskPlan {
 
 export type FormatTab = 'executive' | 'formal' | 'print' | 'register';
 
-// 5-pillar dimension config
-export const DIMENSIONS = [
-  { key: 'revenue',     riskKey: 'risk_revenue',     impactKey: 'client_impact_revenue',     label: 'Revenue',     color: '#C2410C', border: '#FDBA74', bg: '#FFF7ED' },
-  { key: 'liability',   riskKey: 'risk_liability',   impactKey: 'client_impact_liability',   label: 'Liability',   color: '#991B1B', border: '#FECACA', bg: '#FEF2F2' },
-  { key: 'cost',        riskKey: 'risk_cost',        impactKey: 'client_impact_cost',        label: 'Cost',        color: '#1E40AF', border: '#BFDBFE', bg: '#EFF6FF' },
-  { key: 'operational', riskKey: 'risk_operational', impactKey: 'client_impact_operational', label: 'Operational', color: '#166534', border: '#BBF7D0', bg: '#F0FDF4' },
-  { key: 'workforce',   riskKey: 'workforce_risk_level', impactKey: 'client_impact_workforce', label: 'Workforce',   color: '#6B21A8', border: '#E9D5FF', bg: '#FAF5FF' },
-] as const;
+// 5-pillar dimension config — canonical source: src/lib/cicPillars.ts
+export const DIMENSIONS = BI_DIMENSIONS;
 
 export const LEVEL_COLORS: Record<string, { bg: string; text: string; label: string }> = {
   critical: { bg: '#FEF2F2', text: '#DC2626', label: 'CRITICAL' },
