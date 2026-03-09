@@ -18,6 +18,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useDemo } from '../../contexts/DemoContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 import { supabase } from '../../lib/supabase';
+import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -163,6 +164,7 @@ export default function AdminHome() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <AdminBreadcrumb crumbs={[{ label: 'Home' }]} />
 
       {/* ── 1. Welcome Header ────────────────────────────────── */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>

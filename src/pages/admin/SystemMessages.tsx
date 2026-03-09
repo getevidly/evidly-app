@@ -4,6 +4,7 @@
  */
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
+import { toast } from 'sonner';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 
 const NAVY = '#1E2D4D';
@@ -89,7 +90,7 @@ export default function SystemMessages() {
       dismissals_count: 0,
     });
     if (error) {
-      console.error(`Message send error: ${error.message}`);
+      toast.error(`Failed to send message: ${error.message}`);
     } else {
       setTitle(''); setBody(''); setMsgType('info'); setDisplayStyle('banner');
       setShowCompose(false);

@@ -14,6 +14,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useDemo } from '../../contexts/DemoContext';
 import { supabase } from '../../lib/supabase';
 import { toast } from 'sonner';
+import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { format } from 'date-fns';
 import {
   Loader2, RefreshCw, Activity, Key, Users, Bug, Terminal,
@@ -237,6 +238,7 @@ export default function AdminDashboard() {
   // ── Render ───────────────────────────────────────────────
   return (
     <div className="space-y-6">
+      <AdminBreadcrumb crumbs={[{ label: 'Dashboard' }]} />
       {isDemoMode && (
         <div className="rounded-lg px-4 py-2 text-sm font-medium" style={{ backgroundColor: '#fef3c7', color: '#92400e', border: '1px solid #fde68a' }}>
           Demo Mode — displaying sample data

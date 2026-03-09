@@ -7,6 +7,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../contexts/AuthContext';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import OrgCombobox, { type OrgOption } from '../../components/admin/OrgCombobox';
 import { ALL_MODULES } from '../../config/tourModules';
@@ -1255,6 +1256,7 @@ function TemplatesTab({ templates, onRefresh }: { templates: any[]; onRefresh: (
 function TemplateModal({ template, onClose, onSave }: {
   template: any | null; onClose: () => void; onSave: () => void;
 }) {
+  const { user } = useAuth();
   const [form, setForm] = useState({
     name: template?.name || '',
     description: template?.description || '',
@@ -1275,7 +1277,7 @@ function TemplateModal({ template, onClose, onSave }: {
       name: form.name.trim(),
       county: form.county || null,
       industry: form.industry || null,
-      created_by: 'arthur@getevidly.com',
+      created_by: user?.email ?? user?.id,
     };
 
     if (template) {

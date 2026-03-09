@@ -5,6 +5,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { uploadFile, getSignedUrl, deleteFile, BUCKETS } from '../../lib/storage';
+import { toast } from 'sonner';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 
 const NAVY = '#1E2D4D';
@@ -100,7 +101,7 @@ export default function DocumentVault() {
       try {
         await uploadFile(BUCKETS.VAULT, safeName, formFile);
       } catch (e: any) {
-        console.error(e.message);
+        toast.error(`Upload failed: ${e.message}`);
         setUploading(false);
         return;
       }
@@ -121,7 +122,7 @@ export default function DocumentVault() {
     });
 
     if (error) {
-      console.error(`Save error: ${error.message}`);
+      toast.error(`Upload failed: ${error.message}`);
     } else {
       setFormName('');
       setFormDescription('');

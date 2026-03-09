@@ -6,6 +6,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useDemo } from '../../contexts/DemoContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
+import { toast } from 'sonner';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 
 const NAVY = '#1E2D4D';
@@ -72,7 +73,7 @@ export default function DatabaseBackup() {
       completed_at: new Date().toISOString(),
     });
     if (error) {
-      console.error(`Backup log failed: ${error.message}`);
+      toast.error(`Backup failed: ${error.message}`);
     } else {
       await loadBackups();
     }
