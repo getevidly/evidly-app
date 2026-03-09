@@ -1,8 +1,8 @@
 /**
- * AdminShell — Admin-only layout with white sidebar
+ * AdminShell — Admin-only layout with dark navy sidebar (#0B1628)
  *
  * Replaces the tenant Layout for platform_admin users.
- * White sidebar (220px), sectioned nav, logo, sign out.
+ * Dark sidebar (220px), sectioned nav, logo (E gold, vid white, LY gold), sign out.
  * Content area: warm off-white (#F4F2EE).
  */
 import { ReactNode } from 'react';
@@ -10,10 +10,15 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useEvidlyPermissions } from '../../hooks/useEvidlyPermissions';
 
-const NAVY = '#1E2D4D';
+const SIDEBAR_BG = '#0B1628';
+const DIVIDER = '#2d3f5f';
 const GOLD = '#A08C5A';
-const TEXT_SEC = '#6B7F96';
-const TEXT_MUTED = '#9CA3AF';
+const NAV_INACTIVE = '#94A3B8';
+const NAV_ACTIVE_BG = 'rgba(160,140,90,0.15)';
+const SECTION_LABEL = '#4B5563';
+const ADMIN_LABEL = '#475569';
+const EMAIL_COLOR = '#475569';
+const STATUS_GREEN = '#10B981';
 
 const SIDEBAR_W = 220;
 
@@ -139,8 +144,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
         style={{
           width: SIDEBAR_W,
           flexShrink: 0,
-          background: '#FFFFFF',
-          borderRight: '1px solid #E2D9C8',
+          background: SIDEBAR_BG,
+          borderRight: `1px solid ${DIVIDER}`,
           display: 'flex',
           flexDirection: 'column',
           position: 'fixed',
@@ -152,19 +157,20 @@ export function AdminShell({ children }: { children: ReactNode }) {
         }}
       >
         {/* Logo */}
-        <div style={{ padding: '20px 16px 12px', borderBottom: '1px solid #E2D9C8' }}>
+        <div style={{ padding: '20px 16px 12px', borderBottom: `1px solid ${DIVIDER}` }}>
           <div
             style={{
               fontFamily: 'Syne, sans-serif',
               fontSize: 20,
               fontWeight: 800,
-              color: NAVY,
               letterSpacing: '-0.02em',
             }}
           >
-            EvidLY
+            <span style={{ color: GOLD }}>E</span>
+            <span style={{ color: '#FFFFFF' }}>vid</span>
+            <span style={{ color: GOLD }}>LY</span>
           </div>
-          <div style={{ fontSize: 11, color: TEXT_MUTED, fontWeight: 500, marginTop: 2 }}>
+          <div style={{ fontSize: 11, color: ADMIN_LABEL, fontWeight: 500, marginTop: 2 }}>
             Admin Console
           </div>
         </div>
@@ -178,7 +184,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
                   style={{
                     fontSize: 10,
                     fontWeight: 700,
-                    color: TEXT_MUTED,
+                    color: SECTION_LABEL,
                     textTransform: 'uppercase',
                     letterSpacing: '0.06em',
                     padding: '12px 16px 4px',
@@ -200,15 +206,15 @@ export function AdminShell({ children }: { children: ReactNode }) {
                       padding: '7px 16px',
                       fontSize: 13,
                       fontWeight: active ? 600 : 400,
-                      color: active ? NAVY : TEXT_SEC,
-                      background: active ? '#F4F2EE' : 'transparent',
+                      color: active ? '#FFFFFF' : NAV_INACTIVE,
+                      background: active ? NAV_ACTIVE_BG : 'transparent',
                       border: 'none',
                       borderLeft: active ? `3px solid ${GOLD}` : '3px solid transparent',
                       cursor: 'pointer',
                       transition: 'background 0.1s',
                     }}
                     onMouseEnter={e => {
-                      if (!active) e.currentTarget.style.background = '#F9F8F6';
+                      if (!active) e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
                     }}
                     onMouseLeave={e => {
                       if (!active) e.currentTarget.style.background = 'transparent';
@@ -219,24 +225,24 @@ export function AdminShell({ children }: { children: ReactNode }) {
                 );
               })}
               {si < visibleSections.length - 1 && (
-                <div style={{ height: 1, background: '#E2D9C8', margin: '6px 16px' }} />
+                <div style={{ height: 1, background: DIVIDER, margin: '6px 16px' }} />
               )}
             </div>
           ))}
         </nav>
 
         {/* Footer */}
-        <div style={{ borderTop: '1px solid #E2D9C8', padding: '12px 16px' }}>
+        <div style={{ borderTop: `1px solid ${DIVIDER}`, padding: '12px 16px' }}>
           {/* Status indicator */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
-            <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#059669' }} />
-            <span style={{ fontSize: 11, color: TEXT_MUTED }}>Systems Operational</span>
+            <div style={{ width: 6, height: 6, borderRadius: '50%', background: STATUS_GREEN }} />
+            <span style={{ fontSize: 11, color: NAV_INACTIVE }}>Systems Operational</span>
           </div>
           {/* User email */}
           <div
             style={{
               fontSize: 12,
-              color: TEXT_SEC,
+              color: EMAIL_COLOR,
               marginBottom: 8,
               overflow: 'hidden',
               textOverflow: 'ellipsis',
@@ -252,8 +258,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
               width: '100%',
               padding: '6px 0',
               fontSize: 12,
-              fontWeight: 600,
-              color: '#DC2626',
+              fontWeight: 700,
+              color: GOLD,
               background: 'none',
               border: 'none',
               cursor: 'pointer',
