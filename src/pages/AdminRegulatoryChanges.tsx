@@ -43,8 +43,74 @@ export function AdminRegulatoryChanges() {
     loading,
   } = useRegulatoryChanges();
 
-  // Demo mode: local state for mutations (hook returns DEMO_ADMIN_CHANGES)
-  const [demoChanges, setDemoChanges] = useState<AdminRegChange[] | null>(null);
+  // Demo mode: pre-populated sample records with varied pillars
+  const DEMO_SEED: AdminRegChange[] = [
+    {
+      id: 'demo-rc-1',
+      sourceId: '',
+      sourceShort: 'CDPH',
+      sourceName: 'CA Dept of Public Health',
+      changeType: 'amendment',
+      title: 'CDPH — Updated HACCP Plan Requirements for Retail Food',
+      summary: 'California Department of Public Health updated HACCP plan documentation requirements for retail food facilities with specialized processes.',
+      impactDescription: 'Review your HACCP plan and ensure temperature logs, supplier documentation, and corrective action records are current.',
+      impactLevel: 'moderate',
+      affectedPillars: ['food_safety'],
+      affectedStates: ['CA'],
+      effectiveDate: '2026-04-01',
+      sourceUrl: '',
+      rawInputText: null,
+      aiGenerated: true,
+      published: true,
+      publishedAt: '2026-02-20T10:00:00Z',
+      affectedLocationCount: 3,
+      createdAt: '2026-02-18T08:00:00Z',
+    },
+    {
+      id: 'demo-rc-2',
+      sourceId: '',
+      sourceShort: 'NFPA',
+      sourceName: 'NFPA 96 — Ventilation Control',
+      changeType: 'new_edition',
+      title: 'NFPA 96-2026 — Hood Cleaning Frequency Table Update',
+      summary: 'NFPA 96 Table 12.4 updated cleaning frequency requirements for Type I hoods based on cooking volume and grease-laden vapors.',
+      impactDescription: 'Verify your hood cleaning schedule meets the updated frequency table. High-volume operations may require monthly cleaning.',
+      impactLevel: 'critical',
+      affectedPillars: ['facility_safety'],
+      affectedStates: null,
+      effectiveDate: '2026-06-01',
+      sourceUrl: '',
+      rawInputText: null,
+      aiGenerated: true,
+      published: false,
+      publishedAt: null,
+      affectedLocationCount: 0,
+      createdAt: '2026-03-01T14:00:00Z',
+    },
+    {
+      id: 'demo-rc-3',
+      sourceId: '',
+      sourceShort: 'CAL FIRE',
+      sourceName: 'CAL FIRE / OSFM',
+      changeType: 'enforcement_change',
+      title: 'CAL FIRE — Kitchen Fire Suppression & Food Safety Cross-Inspection Pilot',
+      summary: 'CAL FIRE announced a cross-inspection pilot with county EHDs that will evaluate fire suppression system maintenance during routine food safety inspections.',
+      impactDescription: 'Ensure fire suppression service records and food safety documentation are co-located and current. Inspectors may request both during a single visit.',
+      impactLevel: 'moderate',
+      affectedPillars: ['food_safety', 'facility_safety'],
+      affectedStates: ['CA'],
+      effectiveDate: '2026-07-01',
+      sourceUrl: '',
+      rawInputText: null,
+      aiGenerated: true,
+      published: false,
+      publishedAt: null,
+      affectedLocationCount: 0,
+      createdAt: '2026-03-03T09:00:00Z',
+    },
+  ];
+
+  const [demoChanges, setDemoChanges] = useState<AdminRegChange[] | null>(isDemoMode ? DEMO_SEED : null);
 
   // Use demo local state if in demo mode, otherwise hook data
   const changes = isDemoMode

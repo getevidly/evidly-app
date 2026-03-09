@@ -87,10 +87,26 @@ export default function AdminK2C() {
     setSubmitting(false);
   };
 
+  const escapeCSV = (value: string | number | null | undefined): string => {
+    if (value === null || value === undefined) return '';
+    const str = String(value);
+    if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+      return `"${str.replace(/"/g, '""')}"`;
+    }
+    return str;
+  };
+
   const exportCsv = () => {
-    const header = 'Account,County,Amount,Meals,Period,Created\n';
+    const header = ['Account', 'County', 'Amount', 'Meals', 'Period', 'Created'].map(escapeCSV).join(',') + '\n';
     const rows = donations.map(d =>
-      `"${d.account_name}","${d.county || ''}","$${(d.amount_cents / 100).toFixed(2)}",${d.meals_count},"${d.donation_period}","${new Date(d.created_at).toISOString()}"`
+      [
+        d.account_name,
+        d.county || '',
+        `$${(d.amount_cents / 100).toFixed(2)}`,
+        d.meals_count,
+        d.donation_period,
+        new Date(d.created_at).toISOString(),
+      ].map(escapeCSV).join(',')
     ).join('\n');
     const blob = new Blob([header + rows], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);

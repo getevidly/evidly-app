@@ -321,7 +321,7 @@ export function DemoGenerator() {
     );
   }
 
-  const inputClass = 'w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-[#1e4d6b] focus:ring-2 focus:ring-[#1e4d6b]/20 outline-none transition-colors text-sm';
+  const inputClass = 'w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-[#1E2D4D] focus:ring-2 focus:ring-[#1E2D4D]/20 outline-none transition-colors text-sm';
   const labelClass = 'block text-sm font-medium text-gray-700 mb-1';
 
   return (
@@ -483,12 +483,12 @@ export function DemoGenerator() {
           <div className="space-y-3">
             <label className="flex items-center gap-2 text-sm text-gray-700">
               <input type="radio" name="timing" checked={form.generateNow}
-                onChange={() => update('generateNow', true)} className="text-[#1e4d6b]" />
+                onChange={() => update('generateNow', true)} className="text-[#1E2D4D]" />
               Generate demo now (ready immediately)
             </label>
             <label className="flex items-center gap-2 text-sm text-gray-700">
               <input type="radio" name="timing" checked={!form.generateNow}
-                onChange={() => update('generateNow', false)} className="text-[#1e4d6b]" />
+                onChange={() => update('generateNow', false)} className="text-[#1E2D4D]" />
               Schedule meeting first
             </label>
             {!form.generateNow && (

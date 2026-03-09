@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 
 const NAVY = '#0B1628';
-const BRAND = '#1e4d6b';
+const BRAND = '#1E2D4D';
 const GOLD = '#A08C5A';
 const TEXT_SEC = '#3D5068';
 const TEXT_TERT = '#6B7F96';

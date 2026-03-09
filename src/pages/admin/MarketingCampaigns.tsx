@@ -14,9 +14,8 @@ import {
   Users, X, Calendar, Eye, Award, Filter,
 } from 'lucide-react';
 
-const NAVY = '#1e4d6b';
+const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
-const DARK = '#1E2D4D';
 
 type Tab = 'dashboard' | 'campaigns' | 'attribution';
 
@@ -83,7 +82,7 @@ export default function MarketingCampaigns() {
         {tabs.map(tab => (
           <button key={tab.id} onClick={() => setActiveTab(tab.id)}
             className={`px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${
-              activeTab === tab.id ? 'border-[#1e4d6b] text-[#1e4d6b]' : 'border-transparent text-gray-500 hover:text-gray-700'
+              activeTab === tab.id ? 'border-[#1E2D4D] text-[#1E2D4D]' : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}>{tab.label}</button>
         ))}
       </div>
