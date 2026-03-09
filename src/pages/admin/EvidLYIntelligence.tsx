@@ -358,8 +358,13 @@ export default function EvidLYIntelligence() {
   const activeSources = sources.filter(s => s.status === 'live').length;
   const brokenSources = sources.filter(s => ['waf_blocked', 'timeout', 'error', 'degraded'].includes(s.status)).length;
   const demoCritical = sources.filter(s => s.is_demo_critical).length;
-  const newSignals = signals.filter(s => !s.published_at).length;
+  const totalSignals = signals.length;
+  const pendingSignals = signals.filter(s => !s.published_at).length;
+  const publishedSignals = signals.filter(s => !!s.published_at).length;
   const criticalSignals = signals.filter(s => s.risk_revenue === 'critical' || s.risk_liability === 'critical').length;
+  const totalCorrelations = correlations.length;
+  const regulatoryCount = regulatoryChanges.length;
+  const rfpCount = rfpListings.length;
   const pendingReview = signals.filter(s => s.routing_tier === 'hold').length;
   const autoRouted = signals.filter(s => s.routing_tier === 'auto').length;
   const notifyRouted = signals.filter(s => s.routing_tier === 'notify').length;
@@ -657,6 +662,46 @@ export default function EvidLYIntelligence() {
 
       {/* ────────── TAB: OVERVIEW ────────── */}
       {activeTab === 'overview' && (
+        <>
+        {/* KPI Cards */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12, alignItems: 'stretch', marginBottom: 20 }}>
+          {([
+            { label: 'Total Sources', value: totalSources, color: NAVY },
+            { label: 'Active Sources', value: activeSources, color: '#16A34A' },
+            { label: 'Broken Sources', value: brokenSources, color: brokenSources > 0 ? '#DC2626' : NAVY },
+            { label: 'Total Signals', value: totalSignals, color: NAVY },
+            { label: 'Pending Signals', value: pendingSignals, color: '#D97706' },
+            { label: 'Published Signals', value: publishedSignals, color: publishedSignals > 0 ? '#16A34A' : '#DC2626' },
+            { label: 'Critical Signals', value: criticalSignals, color: criticalSignals > 0 ? '#DC2626' : NAVY },
+            { label: 'Correlations', value: totalCorrelations, color: '#16A34A' },
+            { label: 'Regulatory', value: regulatoryCount, color: NAVY },
+            { label: 'RFP Listings', value: rfpCount, color: NAVY },
+          ] as const).map(card => (
+            <div key={card.label} style={{
+              background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10,
+              padding: '16px 20px', display: 'flex', flexDirection: 'column',
+              alignItems: 'center', textAlign: 'center',
+            }}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>
+                {card.label}
+              </div>
+              <div style={{ fontSize: 28, fontWeight: 800, color: card.color, lineHeight: 1 }}>
+                {card.value}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {pendingSignals > 0 && (
+          <div style={{
+            padding: '10px 16px', marginBottom: 20, borderRadius: 8,
+            background: '#FFFBEB', border: '1px solid #F59E0B',
+            fontSize: 13, fontWeight: 500, color: '#92400E',
+          }}>
+            {pendingSignals} signal{pendingSignals !== 1 ? 's' : ''} pending review — users see empty Business Intelligence.
+          </div>
+        )}
+
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
           {/* Source health by category */}
           <div style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, padding: 20 }}>
@@ -821,6 +866,7 @@ export default function EvidLYIntelligence() {
             )}
           </div>
         </div>
+        </>
       )}
 
       {/* ────────── TAB: SIGNALS ────────── */}

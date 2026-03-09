@@ -7,6 +7,7 @@
  */
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
+import { toast } from 'sonner';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { KpiTile } from '../../components/admin/KpiTile';
 
@@ -62,11 +63,17 @@ export default function JurisdictionIntelligence() {
   );
 
   const publishItem = async (id: string) => {
-    await supabase
-      .from('jurisdiction_intel_updates')
-      .update({ published: true, published_at: new Date().toISOString() })
-      .eq('id', id);
-    setUpdates(prev => prev.map(u => u.id === id ? { ...u, published: true } : u));
+    try {
+      const { error } = await supabase
+        .from('jurisdiction_intel_updates')
+        .update({ published: true, published_at: new Date().toISOString() })
+        .eq('id', id);
+      if (error) throw error;
+      setUpdates(prev => prev.map(u => u.id === id ? { ...u, published: true } : u));
+      toast.success('Update published');
+    } catch (err: any) {
+      toast.error(`Publish failed: ${err.message}`);
+    }
   };
 
   if (loading) return (

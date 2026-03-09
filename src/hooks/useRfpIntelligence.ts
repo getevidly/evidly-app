@@ -349,8 +349,7 @@ export function useRfpIntelligence(): UseRfpIntelligenceReturn {
         toast.success('Crawl started — results will appear shortly');
       })
       .catch((err: any) => {
-        console.error('[RFP Intelligence] Crawl error:', err);
-        toast.error('Failed to start crawl');
+        toast.error(`Crawl failed: ${err.message || 'Edge function error'}`);
       });
   }, [isDemoMode]);
 
@@ -366,8 +365,7 @@ export function useRfpIntelligence(): UseRfpIntelligenceReturn {
         toast.success('Classification started — results will appear shortly');
       })
       .catch((err: any) => {
-        console.error('[RFP Intelligence] Classify error:', err);
-        toast.error('Failed to start classification');
+        toast.error(`Classification failed: ${err.message || 'Edge function error'}`);
       });
   }, [isDemoMode]);
 
