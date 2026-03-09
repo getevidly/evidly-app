@@ -95,8 +95,8 @@ const TABS: { id: TabId; label: string; icon: React.ReactNode }[] = [
 const DEMO_CRAWL_HEALTH: CrawlHealthRow[] = [
   { id: '1', feed_id: 'cdph_la', feed_name: 'CDPH — Los Angeles', pillar: 'food_safety', status: 'live', last_checked_at: new Date().toISOString(), last_success_at: new Date().toISOString(), response_ms: 342, error_message: null, retry_count: 0, content_hash: 'a1b2c3', jurisdiction_id: 'la_county', auto_retry_at: null },
   { id: '2', feed_id: 'fda_recalls', feed_name: 'FDA Recalls', pillar: 'food_safety', status: 'live', last_checked_at: new Date().toISOString(), last_success_at: new Date().toISOString(), response_ms: 189, error_message: null, retry_count: 0, content_hash: 'd4e5f6', jurisdiction_id: null, auto_retry_at: null },
-  { id: '3', feed_id: 'ca_fire_marshal', feed_name: 'CA State Fire Marshal', pillar: 'fire_safety', status: 'timeout', last_checked_at: new Date().toISOString(), last_success_at: null, response_ms: 15000, error_message: 'Request timed out after 15s', retry_count: 2, content_hash: null, jurisdiction_id: null, auto_retry_at: new Date(Date.now() + 30 * 60000).toISOString() },
-  { id: '4', feed_id: 'nfpa96', feed_name: 'NFPA 96 Updates', pillar: 'fire_safety', status: 'waf_block', last_checked_at: new Date().toISOString(), last_success_at: null, response_ms: 420, error_message: 'WAF/CDN block detected', retry_count: 5, content_hash: null, jurisdiction_id: null, auto_retry_at: null },
+  { id: '3', feed_id: 'ca_fire_marshal', feed_name: 'CA State Fire Marshal', pillar: 'facility_safety', status: 'timeout', last_checked_at: new Date().toISOString(), last_success_at: null, response_ms: 15000, error_message: 'Request timed out after 15s', retry_count: 2, content_hash: null, jurisdiction_id: null, auto_retry_at: new Date(Date.now() + 30 * 60000).toISOString() },
+  { id: '4', feed_id: 'nfpa96', feed_name: 'NFPA 96 Updates', pillar: 'facility_safety', status: 'waf_block', last_checked_at: new Date().toISOString(), last_success_at: null, response_ms: 420, error_message: 'WAF/CDN block detected', retry_count: 5, content_hash: null, jurisdiction_id: null, auto_retry_at: null },
   { id: '5', feed_id: 'cdph_fresno', feed_name: 'CDPH — Fresno', pillar: 'food_safety', status: 'live', last_checked_at: new Date().toISOString(), last_success_at: new Date().toISOString(), response_ms: 567, error_message: null, retry_count: 0, content_hash: 'g7h8i9', jurisdiction_id: 'fresno', auto_retry_at: null },
 ];
 
@@ -413,7 +413,7 @@ function MiniStat({ label, value, total, color }: { label: string; value: number
 // ── Crawl Monitor ───────────────────────────────────────────
 
 function CrawlMonitorTab({ feeds, runs }: { feeds: CrawlHealthRow[]; runs: CrawlRunRow[] }) {
-  const [pillarFilter, setPillarFilter] = useState<'all' | 'food_safety' | 'fire_safety'>('all');
+  const [pillarFilter, setPillarFilter] = useState<'all' | 'food_safety' | 'facility_safety'>('all');
   const filtered = pillarFilter === 'all' ? feeds : feeds.filter(f => f.pillar === pillarFilter);
 
   return (
@@ -421,7 +421,7 @@ function CrawlMonitorTab({ feeds, runs }: { feeds: CrawlHealthRow[]; runs: Crawl
       <div className="flex items-center justify-between flex-wrap gap-2">
         <h3 className="text-lg font-semibold" style={{ color: BRAND }}>Crawl Health ({feeds.length} feeds)</h3>
         <div className="flex gap-1">
-          {(['all', 'food_safety', 'fire_safety'] as const).map(p => (
+          {(['all', 'food_safety', 'facility_safety'] as const).map(p => (
             <button
               key={p}
               onClick={() => setPillarFilter(p)}
@@ -431,7 +431,7 @@ function CrawlMonitorTab({ feeds, runs }: { feeds: CrawlHealthRow[]; runs: Crawl
                 color: pillarFilter === p ? '#fff' : TEXT_SEC,
               }}
             >
-              {p === 'all' ? 'All' : p === 'food_safety' ? 'Food Safety' : 'Fire Safety'}
+              {p === 'all' ? 'All' : p === 'food_safety' ? 'Food Safety' : 'Facility Safety'}
             </button>
           ))}
         </div>
@@ -457,7 +457,7 @@ function CrawlMonitorTab({ feeds, runs }: { feeds: CrawlHealthRow[]; runs: Crawl
                 <td className="py-2 px-2 font-medium" style={{ color: '#0B1628' }}>{f.feed_name}</td>
                 <td className="py-2 px-2 hidden sm:table-cell">
                   <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: f.pillar === 'food_safety' ? '#dcfce7' : '#fef3c7', color: f.pillar === 'food_safety' ? '#166534' : '#92400e' }}>
-                    {f.pillar === 'food_safety' ? 'Food' : 'Fire'}
+                    {f.pillar === 'food_safety' ? 'Food' : 'Facility'}
                   </span>
                 </td>
                 <td className="py-2 px-2 hidden md:table-cell" style={{ color: TEXT_SEC }}>{f.response_ms ? `${f.response_ms}ms` : '\u2014'}</td>

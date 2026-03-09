@@ -6,6 +6,8 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
+import { useDemo } from '../../contexts/DemoContext';
+import { useDemoGuard } from '../../hooks/useDemoGuard';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { StatCardRow } from '../../components/admin/StatCardRow';
 import { toast } from 'sonner';
@@ -38,6 +40,8 @@ function formatDate(d: string | null): string {
 }
 
 export default function SalesPipeline() {
+  useDemoGuard();
+  const { isDemoMode } = useDemo();
   const [pipeline, setPipeline] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'kanban' | 'table'>('kanban');
@@ -72,6 +76,7 @@ export default function SalesPipeline() {
   }, [pipeline]);
 
   const handleStageChange = async (dealId: string, newStage: string) => {
+    if (isDemoMode) return;
     const updates: any = { stage: newStage, updated_at: new Date().toISOString() };
     const probMap: Record<string, number> = {
       prospect: 10, tour_scheduled: 20, tour_completed: 35, proposal_sent: 50, negotiating: 70, won: 100, lost: 0,
@@ -95,6 +100,7 @@ export default function SalesPipeline() {
   };
 
   const handleUpdateNotes = async (dealId: string) => {
+    if (isDemoMode) return;
     const note = prompt('Add/update notes:');
     if (note === null) return;
     await supabase.from('sales_pipeline').update({ notes: note, updated_at: new Date().toISOString() }).eq('id', dealId);
@@ -103,6 +109,7 @@ export default function SalesPipeline() {
   };
 
   const handleSetCloseDate = async (dealId: string) => {
+    if (isDemoMode) return;
     const date = prompt('Expected close date (YYYY-MM-DD):');
     if (!date) return;
     await supabase.from('sales_pipeline').update({ expected_close_date: date, updated_at: new Date().toISOString() }).eq('id', dealId);
@@ -178,7 +185,7 @@ export default function SalesPipeline() {
       {/* Deal detail panel */}
       {selectedDeal && (
         <DealPanel deal={selectedDeal} onClose={() => setSelectedDeal(null)}
-          onStageChange={handleStageChange} onNotes={handleUpdateNotes} onCloseDate={handleSetCloseDate} onRefresh={loadData} />
+          onStageChange={handleStageChange} onNotes={handleUpdateNotes} onCloseDate={handleSetCloseDate} onRefresh={loadData} isDemoMode={isDemoMode} />
       )}
     </div>
   );
@@ -305,13 +312,14 @@ function TableView({ pipeline, onStageChange, onNotes, onCloseDate }: {
 
 // ── Deal detail panel ──────────────────────────────────────
 
-function DealPanel({ deal, onClose, onStageChange, onNotes, onCloseDate, onRefresh }: {
+function DealPanel({ deal, onClose, onStageChange, onNotes, onCloseDate, onRefresh, isDemoMode }: {
   deal: any; onClose: () => void;
   onStageChange: (id: string, stage: string) => void;
   onNotes: (id: string) => void; onCloseDate: (id: string) => void;
-  onRefresh: () => void;
+  onRefresh: () => void; isDemoMode: boolean;
 }) {
   const handleLostReason = async () => {
+    if (isDemoMode) return;
     const reason = prompt('Lost reason:');
     if (!reason) return;
     await supabase.from('sales_pipeline').update({
