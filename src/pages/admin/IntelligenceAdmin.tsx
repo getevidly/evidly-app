@@ -33,6 +33,7 @@ interface QueueSignal {
   liability_risk_level: string | null;
   cost_risk_level: string | null;
   operational_risk_level: string | null;
+  workforce_risk_level: string | null;
   routing_tier: RoutingTier | null;
   severity_score: number | null;
   confidence_score: number | null;
@@ -78,6 +79,7 @@ const DIM_COLORS: Record<string, string> = {
   liability: '#7C3AED',
   cost: '#D97706',
   operational: '#2563EB',
+  workforce: '#6B21A8',
 };
 
 const LEVELS = ['critical', 'high', 'medium', 'low', 'none'] as const;
@@ -121,12 +123,12 @@ export default function IntelligenceAdmin() {
   const [signals, setSignals] = useState<QueueSignal[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<TabFilter>('all');
-  const [dimFilter, setDimFilter] = useState<'' | 'revenue' | 'liability' | 'cost' | 'operational'>('');
+  const [dimFilter, setDimFilter] = useState<'' | 'revenue' | 'liability' | 'cost' | 'operational' | 'workforce'>('');
   const [pillarFilter, setPillarFilter] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
   const [dateFilter, setDateFilter] = useState('');
   const [publishing, setPublishing] = useState<string | null>(null);
-  const [riskEdits, setRiskEdits] = useState<Record<string, { revenue: string; liability: string; cost: string; operational: string }>>({});
+  const [riskEdits, setRiskEdits] = useState<Record<string, { revenue: string; liability: string; cost: string; operational: string; workforce: string }>>({});
   const [expandedVerification, setExpandedVerification] = useState<string | null>(null);
   const [verificationStatuses, setVerificationStatuses] = useState<Record<string, {
     verification_status: string; publish_blocked: boolean;
@@ -169,20 +171,21 @@ export default function IntelligenceAdmin() {
       });
       if (error || !data?.results) return;
 
-      for (const result of data.results as Array<{ id: string; revenue_risk_level: string; liability_risk_level: string; cost_risk_level: string; operational_risk_level: string }>) {
+      for (const result of data.results as Array<{ id: string; revenue_risk_level: string; liability_risk_level: string; cost_risk_level: string; operational_risk_level: string; workforce_risk_level?: string }>) {
         const r = result.revenue_risk_level;
         const l = result.liability_risk_level;
         const c = result.cost_risk_level;
         const o = result.operational_risk_level;
+        const w = result.workforce_risk_level || 'none';
 
         // Optimistic update
         setRiskEdits(prev => ({
           ...prev,
-          [result.id]: { revenue: r, liability: l, cost: c, operational: o },
+          [result.id]: { revenue: r, liability: l, cost: c, operational: o, workforce: w },
         }));
         setAiSuggested(prev => ({
           ...prev,
-          [result.id]: { revenue: true, liability: true, cost: true, operational: true },
+          [result.id]: { revenue: true, liability: true, cost: true, operational: true, workforce: true },
         }));
 
         // Save to Supabase
@@ -191,6 +194,7 @@ export default function IntelligenceAdmin() {
           liability_risk_level: l,
           cost_risk_level: c,
           operational_risk_level: o,
+          workforce_risk_level: w,
         }).eq('id', result.id);
       }
     } catch {
@@ -234,7 +238,8 @@ export default function IntelligenceAdmin() {
       const needsAI = data.filter((sig: QueueSignal) => {
         if (aiClassifiedRef.current.has(sig.id)) return false;
         return isUnset(sig.revenue_risk_level) && isUnset(sig.liability_risk_level) &&
-               isUnset(sig.cost_risk_level) && isUnset(sig.operational_risk_level);
+               isUnset(sig.cost_risk_level) && isUnset(sig.operational_risk_level) &&
+               isUnset(sig.workforce_risk_level);
       }).slice(0, 5);
       if (needsAI.length > 0) {
         needsAI.forEach((sig: QueueSignal) => aiClassifiedRef.current.add(sig.id));
@@ -251,12 +256,12 @@ export default function IntelligenceAdmin() {
     return () => { if (undoTimerRef.current) clearTimeout(undoTimerRef.current); };
   }, []);
 
-  const getRiskLevel = (sig: QueueSignal, dim: 'revenue' | 'liability' | 'cost' | 'operational'): string => {
+  const getRiskLevel = (sig: QueueSignal, dim: 'revenue' | 'liability' | 'cost' | 'operational' | 'workforce'): string => {
     if (riskEdits[sig.id]) return riskEdits[sig.id][dim];
     return normLevel(sig[`${dim}_risk_level` as keyof QueueSignal] as string);
   };
 
-  const setRiskLevel = async (sig: QueueSignal, dim: 'revenue' | 'liability' | 'cost' | 'operational', level: string) => {
+  const setRiskLevel = async (sig: QueueSignal, dim: 'revenue' | 'liability' | 'cost' | 'operational' | 'workforce', level: string) => {
     // Optimistic update
     setRiskEdits(prev => ({
       ...prev,
@@ -265,6 +270,7 @@ export default function IntelligenceAdmin() {
         liability: prev[sig.id]?.liability ?? normLevel(sig.liability_risk_level),
         cost: prev[sig.id]?.cost ?? normLevel(sig.cost_risk_level),
         operational: prev[sig.id]?.operational ?? normLevel(sig.operational_risk_level),
+        workforce: prev[sig.id]?.workforce ?? normLevel(sig.workforce_risk_level),
         [dim]: level,
       },
     }));
@@ -300,7 +306,7 @@ export default function IntelligenceAdmin() {
   };
 
   const isAllNone = (sig: QueueSignal): boolean => {
-    return (['revenue', 'liability', 'cost', 'operational'] as const).every(d => getRiskLevel(sig, d) === 'none');
+    return (['revenue', 'liability', 'cost', 'operational', 'workforce'] as const).every(d => getRiskLevel(sig, d) === 'none');
   };
 
   const publishSignal = async (sig: QueueSignal) => {
@@ -312,6 +318,7 @@ export default function IntelligenceAdmin() {
         liability_risk_level: getRiskLevel(sig, 'liability'),
         cost_risk_level: getRiskLevel(sig, 'cost'),
         operational_risk_level: getRiskLevel(sig, 'operational'),
+        workforce_risk_level: getRiskLevel(sig, 'workforce'),
         is_published: true,
         published_at: new Date().toISOString(),
       })
@@ -565,6 +572,7 @@ export default function IntelligenceAdmin() {
           { key: 'liability' as const, label: 'Liability' },
           { key: 'cost' as const, label: 'Cost' },
           { key: 'operational' as const, label: 'Operational' },
+          { key: 'workforce' as const, label: 'Workforce' },
         ]).map(f => (
           <button key={f.key} onClick={() => setDimFilter(f.key)} style={smallPillStyle(dimFilter === f.key)}>
             {f.label}
@@ -754,7 +762,7 @@ export default function IntelligenceAdmin() {
                     ) : (
                       /* Risk dimension selectors — only for active signals */
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 5, marginBottom: 8, marginTop: 4 }}>
-                        {(['revenue', 'liability', 'cost', 'operational'] as const).map(dim => {
+                        {(['revenue', 'liability', 'cost', 'operational', 'workforce'] as const).map(dim => {
                           const current = getRiskLevel(sig, dim);
                           const dimSaved = savedDim[`${sig.id}_${dim}`];
                           const isAiSuggested = aiSuggested[sig.id]?.[dim];
