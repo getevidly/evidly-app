@@ -1,13 +1,10 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useDemo } from '../../contexts/DemoContext';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { StatCardRow } from '../../components/admin/StatCardRow';
 
 const NAVY = '#1E2D4D';
-const BORDER = '#E2D9C8';
-const TEXT_SEC = '#6B7F96';
 
 interface ChannelRow {
   channel: string;
@@ -16,115 +13,116 @@ interface ChannelRow {
   conversions: number;
 }
 
+const EMPTY_CHANNELS: ChannelRow[] = [
+  { channel: 'Kitchen Checkup', leads: 0, demos: 0, conversions: 0 },
+  { channel: 'Inbound (Website)', leads: 0, demos: 0, conversions: 0 },
+  { channel: 'Outbound (Sales)', leads: 0, demos: 0, conversions: 0 },
+  { channel: 'Referral (K2C)', leads: 0, demos: 0, conversions: 0 },
+  { channel: 'RFP Intelligence', leads: 0, demos: 0, conversions: 0 },
+];
+
+const SOURCE_CHANNEL: Record<string, string> = {
+  checkup: 'Kitchen Checkup',
+  kitchen_checkup: 'Kitchen Checkup',
+  website: 'Inbound (Website)',
+  inbound: 'Inbound (Website)',
+  outbound: 'Outbound (Sales)',
+  sales: 'Outbound (Sales)',
+  referral: 'Referral (K2C)',
+  k2c: 'Referral (K2C)',
+  rfp: 'RFP Intelligence',
+  rfp_intelligence: 'RFP Intelligence',
+};
+
 export default function GtmDashboard() {
-  const navigate = useNavigate();
   const { isDemoMode } = useDemo();
 
-  const [activeDemos, setActiveDemos] = useState<number | null>(null);
-  const [pipelineValue, setPipelineValue] = useState<number | null>(null);
-  const [leadsThisMonth, setLeadsThisMonth] = useState<number | null>(null);
-  const [conversionRate, setConversionRate] = useState<number | null>(null);
-  const [channels, setChannels] = useState<ChannelRow[]>([]);
+  const [activeDemos, setActiveDemos] = useState<number>(0);
+  const [pipelineValue, setPipelineValue] = useState<number>(0);
+  const [leadsThisMonth, setLeadsThisMonth] = useState<number>(0);
+  const [conversionRate, setConversionRate] = useState<number>(0);
+  const [channels, setChannels] = useState<ChannelRow[]>(EMPTY_CHANNELS);
   const [loading, setLoading] = useState(true);
 
-  const loadMetrics = useCallback(async () => {
-    setLoading(true);
+  useEffect(() => {
+    let cancelled = false;
 
-    if (isDemoMode) {
-      setActiveDemos(0);
-      setPipelineValue(0);
-      setLeadsThisMonth(0);
-      setConversionRate(0);
-      setChannels([
-        { channel: 'Kitchen Checkup', leads: 0, demos: 0, conversions: 0 },
-        { channel: 'Inbound (Website)', leads: 0, demos: 0, conversions: 0 },
-        { channel: 'Outbound (Sales)', leads: 0, demos: 0, conversions: 0 },
-        { channel: 'Referral (K2C)', leads: 0, demos: 0, conversions: 0 },
-        { channel: 'RFP Intelligence', leads: 0, demos: 0, conversions: 0 },
-      ]);
-      setLoading(false);
-      return;
-    }
-
-    try {
-      // Active demos
-      const { count: demoCount } = await supabase
-        .from('demo_sessions')
-        .select('*', { count: 'exact', head: true })
-        .eq('status', 'active');
-      setActiveDemos(demoCount ?? 0);
-
-      // Pipeline value
-      const { data: deals } = await supabase
-        .from('sales_pipeline_deals')
-        .select('amount')
-        .in('stage', ['discovery', 'proposal', 'negotiation', 'demo']);
-      const totalPipeline = (deals || []).reduce((sum, d) => sum + (d.amount || 0), 0);
-      setPipelineValue(totalPipeline);
-
-      // Leads this month
-      const monthStart = new Date();
-      monthStart.setDate(1);
-      monthStart.setHours(0, 0, 0, 0);
-      const { count: leadCount } = await supabase
-        .from('assessment_leads')
-        .select('*', { count: 'exact', head: true })
-        .gte('created_at', monthStart.toISOString());
-      setLeadsThisMonth(leadCount ?? 0);
-
-      // Conversion rate: won deals / total demos completed
-      const { count: completedDemos } = await supabase
-        .from('demo_sessions')
-        .select('*', { count: 'exact', head: true })
-        .eq('status', 'completed');
-      const { count: wonDeals } = await supabase
-        .from('sales_pipeline_deals')
-        .select('*', { count: 'exact', head: true })
-        .eq('stage', 'won');
-      const demoTotal = completedDemos ?? 0;
-      const wonTotal = wonDeals ?? 0;
-      setConversionRate(demoTotal > 0 ? Math.round((wonTotal / demoTotal) * 100) : 0);
-
-      // Channel performance from assessment_leads source
-      const { data: leadRows } = await supabase
-        .from('assessment_leads')
-        .select('source');
-      const channelMap: Record<string, { leads: number; demos: number; conversions: number }> = {
-        'Kitchen Checkup': { leads: 0, demos: 0, conversions: 0 },
-        'Inbound (Website)': { leads: 0, demos: 0, conversions: 0 },
-        'Outbound (Sales)': { leads: 0, demos: 0, conversions: 0 },
-        'Referral (K2C)': { leads: 0, demos: 0, conversions: 0 },
-        'RFP Intelligence': { leads: 0, demos: 0, conversions: 0 },
-      };
-      const SOURCE_CHANNEL: Record<string, string> = {
-        checkup: 'Kitchen Checkup',
-        kitchen_checkup: 'Kitchen Checkup',
-        website: 'Inbound (Website)',
-        inbound: 'Inbound (Website)',
-        outbound: 'Outbound (Sales)',
-        sales: 'Outbound (Sales)',
-        referral: 'Referral (K2C)',
-        k2c: 'Referral (K2C)',
-        rfp: 'RFP Intelligence',
-        rfp_intelligence: 'RFP Intelligence',
-      };
-      for (const row of leadRows || []) {
-        const ch = SOURCE_CHANNEL[(row.source || '').toLowerCase()] || 'Inbound (Website)';
-        if (channelMap[ch]) channelMap[ch].leads++;
+    async function load() {
+      if (isDemoMode) {
+        if (!cancelled) {
+          setActiveDemos(0);
+          setPipelineValue(0);
+          setLeadsThisMonth(0);
+          setConversionRate(0);
+          setChannels(EMPTY_CHANNELS);
+          setLoading(false);
+        }
+        return;
       }
-      setChannels(Object.entries(channelMap).map(([channel, data]) => ({ channel, ...data })));
-    } catch {
-      // Queries may fail if tables don't exist yet — show zeros
-      setActiveDemos(0);
-      setPipelineValue(0);
-      setLeadsThisMonth(0);
-      setConversionRate(0);
+
+      try {
+        const { count: demoCount } = await supabase
+          .from('demo_sessions')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'active');
+
+        const { data: deals } = await supabase
+          .from('sales_pipeline_deals')
+          .select('amount')
+          .in('stage', ['discovery', 'proposal', 'negotiation', 'demo']);
+        const totalPipeline = (deals || []).reduce((sum, d) => sum + (d.amount || 0), 0);
+
+        const monthStart = new Date();
+        monthStart.setDate(1);
+        monthStart.setHours(0, 0, 0, 0);
+        const { count: leadCount } = await supabase
+          .from('assessment_leads')
+          .select('*', { count: 'exact', head: true })
+          .gte('created_at', monthStart.toISOString());
+
+        const { count: completedDemos } = await supabase
+          .from('demo_sessions')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'completed');
+        const { count: wonDeals } = await supabase
+          .from('sales_pipeline_deals')
+          .select('*', { count: 'exact', head: true })
+          .eq('stage', 'won');
+        const demoTotal = completedDemos ?? 0;
+        const wonTotal = wonDeals ?? 0;
+
+        const { data: leadRows } = await supabase
+          .from('assessment_leads')
+          .select('source');
+        const channelMap: Record<string, { leads: number; demos: number; conversions: number }> = {
+          'Kitchen Checkup': { leads: 0, demos: 0, conversions: 0 },
+          'Inbound (Website)': { leads: 0, demos: 0, conversions: 0 },
+          'Outbound (Sales)': { leads: 0, demos: 0, conversions: 0 },
+          'Referral (K2C)': { leads: 0, demos: 0, conversions: 0 },
+          'RFP Intelligence': { leads: 0, demos: 0, conversions: 0 },
+        };
+        for (const row of leadRows || []) {
+          const ch = SOURCE_CHANNEL[(row.source || '').toLowerCase()] || 'Inbound (Website)';
+          if (channelMap[ch]) channelMap[ch].leads++;
+        }
+
+        if (!cancelled) {
+          setActiveDemos(demoCount ?? 0);
+          setPipelineValue(totalPipeline);
+          setLeadsThisMonth(leadCount ?? 0);
+          setConversionRate(demoTotal > 0 ? Math.round((wonTotal / demoTotal) * 100) : 0);
+          setChannels(Object.entries(channelMap).map(([channel, data]) => ({ channel, ...data })));
+        }
+      } catch {
+        // Tables may not exist yet — keep zeros
+      }
+
+      if (!cancelled) setLoading(false);
     }
 
-    setLoading(false);
+    load();
+    return () => { cancelled = true; };
   }, [isDemoMode]);
-
-  useEffect(() => { loadMetrics(); }, [loadMetrics]);
 
   const fmt = (n: number | null) => n === null ? '—' : String(n);
   const fmtDollar = (n: number | null) => {
