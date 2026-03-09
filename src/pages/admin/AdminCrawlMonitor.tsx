@@ -211,7 +211,7 @@ export default function AdminCrawlMonitor() {
               Intelligence crawl is offline — {sources.length} sources are not being monitored
             </div>
             <div style={{ fontSize: 12, color: '#B91C1C', marginTop: 2 }}>
-              Supabase Edge Function error · Last attempted: {lastCrawled ? new Date(lastCrawled).toLocaleString() : 'Never'}
+              Edge Function error at crawl-monitor · Last attempted: {lastCrawled ? new Date(lastCrawled).toLocaleString() : 'Never'}
             </div>
             <div style={{ fontSize: 11, color: '#991B1B', marginTop: 4, fontFamily: "'DM Mono', monospace" }}>
               {crawlError}
