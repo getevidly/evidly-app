@@ -20,7 +20,7 @@ const DARK = '#1E2D4D';
 
 type Tab = 'dashboard' | 'campaigns' | 'attribution';
 
-const CHANNELS = ['email', 'linkedin', 'cold_call', 'event', 'referral', 'seo', 'paid_ads', 'partner', 'direct', 'other'];
+const CHANNELS = ['google', 'google_ads', 'email', 'social', 'direct', 'sms'];
 const STATUS_OPTS = ['active', 'paused', 'completed'];
 
 function formatCents(cents: number): string {
@@ -103,21 +103,24 @@ function DashboardTab({ campaigns, touchpoints, pipeline, sessions }: {
   const thirtyDaysAgo = Date.now() - 30 * 86400000;
   const recentTouchpoints = touchpoints.filter(t => new Date(t.created_at).getTime() >= thirtyDaysAgo);
 
-  // Channel performance
+  // Channel performance — seed all known channels, auto-create for legacy data
   const channelPerf = useMemo(() => {
     const perf: Record<string, { touches: number; tours: number; won: number; pipelineMRR: number; budget: number }> = {};
-    CHANNELS.forEach(ch => { perf[ch] = { touches: 0, tours: 0, won: 0, pipelineMRR: 0, budget: 0 }; });
+    const ensureCh = (ch: string) => { if (!perf[ch]) perf[ch] = { touches: 0, tours: 0, won: 0, pipelineMRR: 0, budget: 0 }; };
+    CHANNELS.forEach(ensureCh);
 
     recentTouchpoints.forEach(t => {
       const ch = t.channel || 'other';
-      if (perf[ch]) perf[ch].touches++;
+      ensureCh(ch);
+      perf[ch].touches++;
     });
 
     // Map sessions to channels
     sessions.forEach(s => {
       const ch = s.source || 'other';
       const mapped = ch === 'cold_outreach' ? 'cold_call' : ch === 'inbound' ? 'seo' : ch;
-      if (perf[mapped]) perf[mapped].tours++;
+      ensureCh(mapped);
+      perf[mapped].tours++;
     });
 
     // Map won deals to channels
@@ -125,14 +128,14 @@ function DashboardTab({ campaigns, touchpoints, pipeline, sessions }: {
       const session = sessions.find(s => s.id === p.session_id);
       const ch = session?.source || 'other';
       const mapped = ch === 'cold_outreach' ? 'cold_call' : ch === 'inbound' ? 'seo' : ch;
-      if (perf[mapped]) {
-        perf[mapped].won++;
-        perf[mapped].pipelineMRR += p.estimated_mrr_cents || 0;
-      }
+      ensureCh(mapped);
+      perf[mapped].won++;
+      perf[mapped].pipelineMRR += p.estimated_mrr_cents || 0;
     });
 
     campaigns.forEach(c => {
-      if (perf[c.channel]) perf[c.channel].budget += c.budget_cents || 0;
+      ensureCh(c.channel);
+      perf[c.channel].budget += c.budget_cents || 0;
     });
 
     return Object.entries(perf).filter(([, v]) => v.touches > 0 || v.tours > 0 || v.budget > 0)
@@ -288,23 +291,45 @@ function CampaignsTab({ campaigns, touchpoints, pipeline, onRefresh }: {
 
 function CampaignModal({ onClose, onSave }: { onClose: () => void; onSave: () => void }) {
   const [form, setForm] = useState({
-    name: '', channel: 'email', target_segment: '', budget_cents: 0,
+    name: '', channel: 'google', target_segment: '', budget_cents: 0,
     utm_source: '', utm_medium: '', utm_campaign: '',
     start_date: '', end_date: '',
   });
   const [saving, setSaving] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+
+  const isGoogleChannel = form.channel === 'google' || form.channel === 'google_ads';
+
+  const handleChannelChange = (v: string) => {
+    setForm(p => {
+      const updated = { ...p, channel: v };
+      if (v !== 'google' && v !== 'google_ads') {
+        updated.utm_source = '';
+        updated.utm_medium = '';
+        updated.utm_campaign = '';
+      }
+      return updated;
+    });
+  };
 
   const handleSave = async () => {
-    if (!form.name.trim()) { toast.error('Name is required'); return; }
+    const errs: Record<string, string> = {};
+    if (!form.name.trim()) errs.name = 'Campaign name is required';
+    if (Object.keys(errs).length > 0) { setFieldErrors(errs); return; }
+    setFieldErrors({});
     setSaving(true);
-    await supabase.from('marketing_campaigns').insert({
+    const { error } = await supabase.from('marketing_campaigns').insert({
       ...form, name: form.name.trim(),
       start_date: form.start_date || null, end_date: form.end_date || null,
       target_segment: form.target_segment || null,
       utm_source: form.utm_source || null, utm_medium: form.utm_medium || null, utm_campaign: form.utm_campaign || null,
     });
-    toast.success('Campaign created');
     setSaving(false);
+    if (error) {
+      toast.error(`Save failed: ${error.message}`, { duration: 4000 });
+      return;
+    }
+    toast.success('Campaign created', { duration: 4000 });
     onSave();
   };
 
@@ -313,8 +338,8 @@ function CampaignModal({ onClose, onSave }: { onClose: () => void; onSave: () =>
       <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] max-w-lg max-h-[90vh] overflow-y-auto">
         <h3 className="text-lg font-bold text-gray-900 mb-4">New Campaign</h3>
         <div className="space-y-4">
-          <FormInput label="Campaign Name *" value={form.name} onChange={v => setForm(p => ({ ...p, name: v }))} />
-          <FormSelect label="Channel" value={form.channel} onChange={v => setForm(p => ({ ...p, channel: v }))}
+          <FormInput label="Campaign Name *" value={form.name} onChange={v => { setFieldErrors(p => ({ ...p, name: '' })); setForm(p => ({ ...p, name: v })); }} error={fieldErrors.name} />
+          <FormSelect label="Channel" value={form.channel} onChange={handleChannelChange}
             options={CHANNELS.map(c => ({ value: c, label: c.replace(/_/g, ' ') }))} />
           <FormInput label="Target Segment" value={form.target_segment} onChange={v => setForm(p => ({ ...p, target_segment: v }))} placeholder="e.g., restaurant_single" />
           <div>
@@ -334,9 +359,13 @@ function CampaignModal({ onClose, onSave }: { onClose: () => void; onSave: () =>
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
             </div>
           </div>
-          <FormInput label="UTM Source" value={form.utm_source} onChange={v => setForm(p => ({ ...p, utm_source: v }))} placeholder="google" />
-          <FormInput label="UTM Medium" value={form.utm_medium} onChange={v => setForm(p => ({ ...p, utm_medium: v }))} placeholder="cpc" />
-          <FormInput label="UTM Campaign" value={form.utm_campaign} onChange={v => setForm(p => ({ ...p, utm_campaign: v }))} placeholder="spring_2026" />
+          {isGoogleChannel && (
+            <>
+              <FormInput label="UTM Source" value={form.utm_source} onChange={v => setForm(p => ({ ...p, utm_source: v }))} placeholder="google" />
+              <FormInput label="UTM Medium" value={form.utm_medium} onChange={v => setForm(p => ({ ...p, utm_medium: v }))} placeholder="cpc" />
+              <FormInput label="UTM Campaign" value={form.utm_campaign} onChange={v => setForm(p => ({ ...p, utm_campaign: v }))} placeholder="spring_2026" />
+            </>
+          )}
         </div>
         <div className="flex gap-3 mt-6">
           <button onClick={onClose} className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</button>
@@ -458,14 +487,15 @@ function AttributionTab({ campaigns, touchpoints, pipeline, sessions }: {
 
 // KpiCard removed — using shared KpiTile
 
-function FormInput({ label, value, onChange, placeholder, type = 'text' }: {
-  label: string; value: string; onChange: (v: string) => void; placeholder?: string; type?: string;
+function FormInput({ label, value, onChange, placeholder, type = 'text', error }: {
+  label: string; value: string; onChange: (v: string) => void; placeholder?: string; type?: string; error?: string;
 }) {
   return (
     <div>
       <label className="block text-xs font-medium text-gray-700 mb-1">{label}</label>
       <input type={type} value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder}
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+        className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] ${error ? 'border-red-500' : 'border-gray-300'}`} />
+      {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
     </div>
   );
 }
