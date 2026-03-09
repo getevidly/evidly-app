@@ -120,7 +120,12 @@ export default function AdminCrawlMonitor() {
       setCrawlSuccess(`Crawl completed: ${live} live, ${failed} failed, ${changed} changed.`);
       await loadData();
     } catch (err: any) {
-      setCrawlError(`Crawl failed: ${err.message || 'Edge function error. Check Supabase logs.'}`);
+      const msg = err.message || 'Unknown error';
+      const hint = msg.includes('non-2xx')
+        ? 'The crawl-monitor edge function may not be deployed. Run: supabase functions deploy crawl-monitor'
+        : '';
+      setCrawlError(`Crawl failed: ${msg}${hint ? ` — ${hint}` : ''}`);
+      console.error('[CrawlMonitor] Edge function error:', err);
     } finally {
       setRunning(false);
     }
@@ -183,6 +188,21 @@ export default function AdminCrawlMonitor() {
         </button>
       </div>
 
+      {/* Proactive offline notice — shows on load when crawl has never run */}
+      {!loading && !crawlError && !crawlSuccess && sources.length > 0 && activeCount === 0 && !lastCrawled && (
+        <div style={{ background: '#FFFBEB', border: '1px solid #FDE68A', borderRadius: 6, padding: '10px 16px', display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+          <span style={{ color: '#D97706', fontSize: 16, lineHeight: 1, flexShrink: 0 }}>⚠</span>
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 600, color: '#92400E' }}>
+              Intelligence crawl has never run — {sources.length} sources are not being monitored
+            </div>
+            <div style={{ fontSize: 12, color: '#B45309', marginTop: 2 }}>
+              Click "Run Crawl Now" to start the first crawl, or deploy the edge function: <code style={{ fontSize: 11, background: '#FEF3C7', padding: '1px 4px', borderRadius: 3 }}>supabase functions deploy crawl-monitor</code>
+            </div>
+          </div>
+        </div>
+      )}
+
       {crawlError && (
         <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: 6, padding: '10px 16px', display: 'flex', gap: 10, alignItems: 'flex-start' }}>
           <span style={{ color: '#DC2626', fontSize: 16, lineHeight: 1, flexShrink: 0 }}>⚠</span>
@@ -191,7 +211,10 @@ export default function AdminCrawlMonitor() {
               Intelligence crawl is offline — {sources.length} sources are not being monitored
             </div>
             <div style={{ fontSize: 12, color: '#B91C1C', marginTop: 2 }}>
-              Vercel Edge Function error at /admin/crawl-activate · Last attempted: {lastCrawled ? new Date(lastCrawled).toLocaleString() : 'Never'}
+              Supabase Edge Function error · Last attempted: {lastCrawled ? new Date(lastCrawled).toLocaleString() : 'Never'}
+            </div>
+            <div style={{ fontSize: 11, color: '#991B1B', marginTop: 4, fontFamily: "'DM Mono', monospace" }}>
+              {crawlError}
             </div>
           </div>
         </div>
