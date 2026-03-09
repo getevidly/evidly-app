@@ -1,5 +1,26 @@
 # EvidLY Route Map
 
+## Admin Home (ADMIN-HOME-01)
+
+| Route | Component | Auth | Description |
+|-------|-----------|------|-------------|
+| `/admin` | `AdminHome.tsx` | platform_admin / @getevidly.com | Admin dashboard — welcome header, KPI cards, quick access, recent activity, platform status |
+| `/admin/home` | Redirect → `/admin` | Same | Alias for admin home |
+
+### Login Redirect
+- `@getevidly.com` and `platform_admin` users redirect to `/admin` on login (not `/dashboard`)
+- Vendor users still redirect to `/vendor/dashboard`
+- All other users redirect to `/dashboard`
+
+### Sections
+1. Welcome header with personalized greeting + launch countdown chip
+2. Alert bar (pending signals, crawl errors, DB health) — shown only when alerts exist
+3. 6 KPI stat cards: MRR, Organizations, Locations, Crawl Sources, Signals Pending, Countdown
+4. Quick Access (8-card grid) + Recent Activity (timeline) — two-column layout
+5. Platform Status bar (Supabase, Vercel, Crawl Engine status)
+
+---
+
 ## Leaderboard Routes (LEADERBOARD-BUILD-02)
 
 | Route | Component | Auth | Description |

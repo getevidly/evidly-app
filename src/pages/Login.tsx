@@ -28,6 +28,8 @@ export function Login() {
       const userType = user.user_metadata?.user_type;
       if (userType === 'vendor') {
         navigate('/vendor/dashboard', { replace: true });
+      } else if (user.email?.endsWith('@getevidly.com') || userType === 'platform_admin') {
+        navigate('/admin', { replace: true });
       } else {
         navigate('/dashboard', { replace: true });
       }
@@ -62,6 +64,8 @@ export function Login() {
 
       if (userType === 'vendor') {
         navigate('/vendor/dashboard');
+      } else if (user?.email?.endsWith('@getevidly.com') || userType === 'platform_admin') {
+        navigate('/admin');
       } else {
         navigate('/dashboard');
       }

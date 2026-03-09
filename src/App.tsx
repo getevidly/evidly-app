@@ -583,6 +583,7 @@ function AppRoutes() {
           <Route path="/admin/kitchen-checkup" element={<SalesGuard><AssessmentLeads /></SalesGuard>} />
           <Route path="/admin/assessments" element={<Navigate to="/admin/kitchen-checkup" replace />} />
           <Route path="/admin/api-keys" element={<InsuranceApiKeys />} />
+          <Route path="/admin/home" element={<Navigate to="/admin" replace />} />
           <Route path="/admin/dashboard" element={<Navigate to="/admin" replace />} />
           <Route path="/admin/demo/dashboard" element={<DemoDashboard />} />
           <Route path="/admin/command-center" element={<CommandCenter />} />
