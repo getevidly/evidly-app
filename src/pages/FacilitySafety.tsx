@@ -15,7 +15,7 @@ import { PhotoButton, type PhotoRecord } from '../components/PhotoEvidence';
 import { useTranslation } from '../contexts/LanguageContext';
 import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
-import { SAMPLE_PSE_SAFEGUARDS, type PSESafeguard } from '../data/workforceRiskDemoData';
+import { PSESafeguardsSection } from '../components/facility-safety/PSESafeguardsSection';
 import { useJurisdiction } from '../hooks/useJurisdiction';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { InfoTooltip } from '../components/ui/InfoTooltip';
@@ -671,77 +671,11 @@ export function FacilitySafety() {
       </div>
 
       {/* Protective Safeguards (PSE) */}
-      <div style={{ marginTop: 32 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-          <span style={{ fontSize: 16, fontWeight: 700, color: NAVY }}>Protective Safeguards</span>
-          <span style={{
-            fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10,
-            background: '#fdf8e8', color: '#d4af37', border: '1px solid #d4af37',
-          }}>PSE-Relevant</span>
-        </div>
-        <p style={{ fontSize: 12, color: '#6B7F96', marginBottom: 16, lineHeight: 1.6 }}>
-          Protective Safeguards Endorsement — most commercial property policies require continuous maintenance
-          of fire suppression, hood cleaning, alarm, and sprinkler systems. Consult your carrier or broker
-          to confirm your specific PSE requirements.
-        </p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 12 }}>
-          {SAMPLE_PSE_SAFEGUARDS.map((sg) => {
-            const statusConfig = {
-              current:    { label: 'CURRENT',    color: '#059669', bg: '#ECFDF5' },
-              expiring:   { label: 'DUE SOON',   color: '#D97706', bg: '#FFFBEB' },
-              overdue:    { label: 'OVERDUE',    color: '#DC2626', bg: '#FEF2F2' },
-              unverified: { label: 'NO RECORD',  color: '#9CA3AF', bg: '#F3F4F6' },
-            }[sg.status];
-            return (
-              <div key={sg.label} style={{
-                background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 12,
-                padding: '16px 20px', textAlign: 'center',
-                borderLeft: sg.status === 'overdue' ? '4px solid #DC2626'
-                  : sg.status === 'expiring' ? '4px solid #D97706'
-                  : `4px solid ${BORDER}`,
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginBottom: 8 }}>
-                  <span style={{
-                    fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10,
-                    background: statusConfig.bg, color: statusConfig.color,
-                  }}>{statusConfig.label}</span>
-                  <span style={{
-                    fontSize: 9, fontWeight: 600, padding: '2px 8px', borderRadius: 10,
-                    background: '#fdf8e8', color: '#d4af37', border: '1px solid #e8dfc0',
-                  }}>PSE-Relevant</span>
-                </div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: '#1e4d6b', marginBottom: 4 }}>
-                  {sg.label}
-                </div>
-                <div style={{ fontSize: 11, color: '#6B7F96', marginBottom: 8 }}>
-                  {sg.standard}
-                </div>
-                <div style={{ fontSize: 11, color: '#9CA3AF' }}>
-                  {sg.vendor ? (
-                    <>Vendor: {sg.vendor} · {sg.cert || '—'}</>
-                  ) : (
-                    <>Vendor: Not on file</>
-                  )}
-                </div>
-                <div style={{ fontSize: 11, color: '#9CA3AF', marginTop: 4 }}>
-                  Last Service: {sg.lastService || '—'} · Next Due: {sg.nextDue || '—'}
-                </div>
-                {!sg.vendor && (
-                  <button
-                    onClick={() => alert('Demo mode — Add Vendor & Record would open a form in production.')}
-                    style={{
-                      marginTop: 10, padding: '6px 16px', borderRadius: 6, fontSize: 11,
-                      fontWeight: 600, cursor: 'pointer', background: '#1e4d6b', color: '#fff', border: 'none',
-                    }}
-                  >
-                    Add Vendor & Record
-                  </button>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </div>
+      <PSESafeguardsSection
+        organizationId="demo-org"
+        locationId={jieLocKey}
+        isGuidedTour={isDemoMode}
+      />
 
       {/* Bottom padding for Quick Actions bar */}
       <div className="h-24" />
