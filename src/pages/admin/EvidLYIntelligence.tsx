@@ -592,50 +592,67 @@ export default function EvidLYIntelligence() {
         </div>
       </div>
 
-      {/* Canonical KPI Bar */}
+      {/* KPI Bar */}
       <div style={{
-        background: 'linear-gradient(135deg, #1E2D4D 0%, #253B5E 100%)',
-        borderRadius: 12, padding: '18px 24px',
-        display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 16,
+        background: '#ffffff',
+        borderBottom: '1px solid #E5E7EB',
+        borderRadius: 10, padding: '12px 28px',
+        display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 16,
       }}>
         {[
-          { label: 'Total Signals', value: signals.length, accent: '#fff' },
-          { label: 'Pending Review', value: pendingReview, accent: pendingReview > 0 ? '#FBBF24' : '#94A3B8' },
-          { label: 'Critical', value: criticalSignals, accent: criticalSignals > 0 ? '#F87171' : '#94A3B8' },
-          { label: 'Published', value: signals.filter(s => !!s.published_at).length, accent: '#34D399' },
-          { label: 'Sources', value: totalSources, accent: '#94A3B8', note: `${activeSources} live · ${brokenSources} broken` },
+          { label: 'Total Signals', value: signals.length, color: NAVY },
+          { label: 'Pending Review', value: pendingReview, color: '#D97706' },
+          { label: 'Critical', value: criticalSignals, color: NAVY },
+          { label: 'Published', value: signals.filter(s => !!s.published_at).length, color: signals.filter(s => !!s.published_at).length > 0 ? '#16A34A' : '#DC2626' },
+          { label: 'Sources', value: totalSources, color: NAVY, note: `${activeSources} live · ${brokenSources} broken` },
+          { label: 'Correlations', value: correlations.length, color: '#16A34A' },
         ].map(k => (
           <div key={k.label}>
-            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 28, fontWeight: 800, color: k.accent, lineHeight: 1 }}>
+            <div style={{ fontSize: 22, fontWeight: 800, color: k.color, lineHeight: 1 }}>
               {loading ? '\u2014' : k.value}
             </div>
-            <div style={{ fontSize: 11, color: '#94A3B8', marginTop: 4, fontWeight: 500 }}>{k.label}</div>
-            {k.note && <div style={{ fontSize: 9, color: '#64748B', marginTop: 2 }}>{k.note}</div>}
+            <div style={{ fontSize: 11, color: '#6B7280', marginTop: 4 }}>{k.label}</div>
+            {k.note && <div style={{ fontSize: 9, color: '#6B7280', marginTop: 2 }}>{k.note}</div>}
           </div>
         ))}
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', borderBottom: `2px solid ${BORDER}` }}>
+      <div style={{ display: 'flex', borderBottom: `2px solid ${BORDER}`, flexWrap: 'wrap' }}>
         {([
-          { key: 'overview' as Tab, label: 'Overview' },
-          { key: 'signals' as Tab, label: `Signals${pendingReview > 0 ? ` (${pendingReview})` : ''}` },
-          { key: 'sources' as Tab, label: `Sources (${totalSources})` },
-          { key: 'correlations' as Tab, label: 'Correlations' },
-          { key: 'jurisdiction_updates' as Tab, label: `Jurisdiction Updates${jurisdictionUpdates.length > 0 ? ` (${jurisdictionUpdates.length})` : ''}` },
-          { key: 'regulatory_updates' as Tab, label: `Regulatory${regulatoryChanges.length > 0 ? ` (${regulatoryChanges.length})` : ''}` },
-          { key: 'rfp' as Tab, label: `RFP Monitor${rfpListings.length > 0 ? ` (${rfpListings.length})` : ''}` },
-          { key: 'scoretable' as Tab, label: `ScoreTable${scoreTableData.length > 0 ? ` (${scoreTableData.reduce((s, d) => s + d.total_views, 0)})` : ''}` },
-        ]).map(t => (
-          <button key={t.key} onClick={() => setActiveTab(t.key)} style={{
-            padding: '10px 20px', fontSize: 13, cursor: 'pointer', background: 'none', border: 'none',
-            color: activeTab === t.key ? GOLD : TEXT_MUTED,
-            borderBottom: `2px solid ${activeTab === t.key ? GOLD : 'transparent'}`,
-            marginBottom: -2, fontWeight: activeTab === t.key ? 600 : 400, transition: 'all 0.12s',
-          }}>
-            {t.label}
-          </button>
-        ))}
+          { key: 'overview' as Tab, label: 'Overview', count: null },
+          { key: 'signals' as Tab, label: 'Signals', count: signals.length },
+          { key: 'sources' as Tab, label: 'Sources', count: totalSources },
+          { key: 'correlations' as Tab, label: 'Correlations', count: correlations.length },
+          { key: 'jurisdiction_updates' as Tab, label: 'Jurisdiction Updates', count: null },
+          { key: 'regulatory_updates' as Tab, label: 'Regulatory', count: regulatoryChanges.length },
+          { key: 'rfp' as Tab, label: 'RFP Monitor', count: null },
+          { key: 'scoretable' as Tab, label: 'ScoreTable', count: null },
+        ]).map(t => {
+          const isActive = activeTab === t.key;
+          return (
+            <button key={t.key} onClick={() => setActiveTab(t.key)} style={{
+              padding: '10px 16px', fontSize: 13, cursor: 'pointer', background: 'none', border: 'none',
+              color: isActive ? GOLD : TEXT_MUTED,
+              borderBottom: `2px solid ${isActive ? GOLD : 'transparent'}`,
+              marginBottom: -2, fontWeight: isActive ? 600 : 400, transition: 'all 0.12s',
+              display: 'flex', alignItems: 'center', gap: 6,
+            }}>
+              {t.label}
+              {t.count != null && t.count > 0 && (
+                <span style={{
+                  fontSize: 10, fontWeight: 700,
+                  background: isActive ? '#F5F0E8' : '#F3F4F6',
+                  color: isActive ? NAVY : '#6B7280',
+                  padding: '1px 6px', borderRadius: 10,
+                  fontFamily: 'monospace',
+                }}>
+                  {t.count}
+                </span>
+              )}
+            </button>
+          );
+        })}
       </div>
 
       {/* ────────── TAB: OVERVIEW ────────── */}
