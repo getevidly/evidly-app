@@ -11,6 +11,7 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { routingTierLabel, routingTierColor, type RoutingTier } from '../../lib/intelligenceRouter';
 import { CIC_PILLARS, getPillarForSignalType, isPseSignalType } from '../../lib/cicPillars';
+import { RiskLevelTooltip } from '../../components/RiskLevelTooltip';
 import VerificationPanel from '../../components/admin/VerificationPanel';
 
 const NAVY = '#1E2D4D';
@@ -771,8 +772,8 @@ export default function IntelligenceAdmin() {
                                 {LEVELS.map(level => {
                                   const isActive = current === level;
                                   const levelColor = level === 'none' ? '#9CA3AF' : (RISK_COLORS[level] || '#6B7280');
-                                  return (
-                                    <button key={level} onClick={() => setRiskLevel(sig, dim, level)}
+                                  const btn = (
+                                    <button onClick={() => setRiskLevel(sig, dim, level)}
                                       style={{
                                         padding: '2px 8px', borderRadius: 10, fontSize: 9, fontWeight: 600, cursor: 'pointer',
                                         background: isActive ? levelColor : 'transparent',
@@ -782,6 +783,9 @@ export default function IntelligenceAdmin() {
                                       {LEVEL_LABELS[level]}
                                     </button>
                                   );
+                                  return isActive ? (
+                                    <RiskLevelTooltip key={level} dimension={dim} level={level}>{btn}</RiskLevelTooltip>
+                                  ) : <span key={level}>{btn}</span>;
                                 })}
                               </div>
                               {dimSaved && (

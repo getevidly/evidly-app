@@ -1,5 +1,6 @@
 import { DIMENSIONS, LEVEL_COLORS, SEV_ORDER, type BISignal } from './types';
 import { SevBadge } from './SevBadge';
+import { RiskLevelTooltip } from '../../RiskLevelTooltip';
 
 interface Props {
   signals: BISignal[];
@@ -41,7 +42,9 @@ export function RiskCards({ signals, showNewBadge }: Props) {
               )}
             </div>
             <div style={{ marginBottom: 6 }}>
-              <SevBadge level={d.highest === 'none' ? null : d.highest} />
+              <RiskLevelTooltip dimension={d.key as any} level={d.highest}>
+                <SevBadge level={d.highest === 'none' ? null : d.highest} />
+              </RiskLevelTooltip>
             </div>
             <div style={{ fontSize: 10, color: '#6B7F96' }}>
               {d.count} signal{d.count !== 1 ? 's' : ''}

@@ -10,6 +10,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { INDUSTRY_LABELS, SCOPE_LABELS, correlateSignal, type CorrelationPreview } from '../../lib/correlationEngine';
 import { routingTierLabel, routingTierColor, type RoutingTier } from '../../lib/intelligenceRouter';
 import { CIC_PILLARS, getPillarForSignalType, isPseSignalType } from '../../lib/cicPillars';
+import { RiskLevelTooltip } from '../../components/RiskLevelTooltip';
 import VerificationPanel from '../../components/admin/VerificationPanel';
 
 const NAVY = '#1E2D4D';
@@ -1031,20 +1032,22 @@ export default function EvidLYIntelligence() {
                     {(sig.risk_revenue && sig.risk_revenue !== 'none') || (sig.risk_liability && sig.risk_liability !== 'none') ||
                      (sig.risk_cost && sig.risk_cost !== 'none') || (sig.risk_operational && sig.risk_operational !== 'none') ? (
                       <div style={{ display: 'flex', gap: 6, marginTop: 8, flexWrap: 'wrap' }}>
-                        {[
-                          { key: 'Revenue', val: sig.risk_revenue },
-                          { key: 'Liability', val: sig.risk_liability },
-                          { key: 'Cost', val: sig.risk_cost },
-                          { key: 'Operational', val: sig.risk_operational },
-                        ].filter(d => d.val && d.val !== 'none').map(d => {
+                        {([
+                          { key: 'Revenue', dim: 'revenue' as const, val: sig.risk_revenue },
+                          { key: 'Liability', dim: 'liability' as const, val: sig.risk_liability },
+                          { key: 'Cost', dim: 'cost' as const, val: sig.risk_cost },
+                          { key: 'Operational', dim: 'operational' as const, val: sig.risk_operational },
+                        ] as const).filter(d => d.val && d.val !== 'none').map(d => {
                           const rc = RISK_DIM_COLORS[d.val!] || RISK_DIM_COLORS.low;
                           return (
-                            <span key={d.key} style={{
-                              fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 8,
-                              background: rc.bg, color: rc.text, border: `1px solid ${rc.text}20`,
-                            }}>
-                              {d.key}: {rc.label}
-                            </span>
+                            <RiskLevelTooltip key={d.key} dimension={d.dim} level={d.val}>
+                              <span style={{
+                                fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 8,
+                                background: rc.bg, color: rc.text, border: `1px solid ${rc.text}20`,
+                              }}>
+                                {d.key}: {rc.label}
+                              </span>
+                            </RiskLevelTooltip>
                           );
                         })}
                       </div>
@@ -1312,11 +1315,11 @@ export default function EvidLYIntelligence() {
                         <tbody>
                           {sec.rows.map((row, ri) => {
                             const allDims = [
-                              { label: 'Rev', val: row.signal.risk_revenue },
-                              { label: 'Liab', val: row.signal.risk_liability },
-                              { label: 'Cost', val: row.signal.risk_cost },
-                              { label: 'Ops', val: row.signal.risk_operational },
-                              { label: 'Wkf', val: isWorkforceSignal(row.signal) ? (row.severity || 'high') : 'none' },
+                              { label: 'Rev', dim: 'revenue' as const, val: row.signal.risk_revenue },
+                              { label: 'Liab', dim: 'liability' as const, val: row.signal.risk_liability },
+                              { label: 'Cost', dim: 'cost' as const, val: row.signal.risk_cost },
+                              { label: 'Ops', dim: 'operational' as const, val: row.signal.risk_operational },
+                              { label: 'Wkf', dim: 'workforce' as const, val: isWorkforceSignal(row.signal) ? (row.severity || 'high') : 'none' },
                             ];
                             const sevColor = RISK_DIM_COLORS[row.severity] || RISK_DIM_COLORS.low;
                             return (
@@ -1332,9 +1335,11 @@ export default function EvidLYIntelligence() {
                                       const level = d.val || 'none';
                                       const rc = RISK_DIM_COLORS[level] || RISK_DIM_COLORS.none;
                                       return level !== 'none' ? (
-                                        <span key={d.label} style={{ fontSize: 8, fontWeight: 700, padding: '1px 5px', borderRadius: 6, background: rc.bg, color: rc.text }}>
-                                          {d.label}
-                                        </span>
+                                        <RiskLevelTooltip key={d.label} dimension={d.dim} level={level}>
+                                          <span style={{ fontSize: 8, fontWeight: 700, padding: '1px 5px', borderRadius: 6, background: rc.bg, color: rc.text }}>
+                                            {d.label}
+                                          </span>
+                                        </RiskLevelTooltip>
                                       ) : (
                                         <span key={d.label} style={{ fontSize: 8, padding: '1px 5px', borderRadius: 6, color: '#D1D5DB' }}>
                                           {d.label}

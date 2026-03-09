@@ -2,6 +2,7 @@
 import { AlertTriangle } from 'lucide-react';
 import { type BISignal, DIMENSIONS, SEV_ORDER, getHighestSeverity } from './types';
 import { SevBadge } from './SevBadge';
+import { RiskLevelTooltip } from '../../RiskLevelTooltip';
 import { ReportHeader } from './ReportHeader';
 import { ReportFooter } from './ReportFooter';
 import { NAVY, GOLD, CARD_BORDER, TEXT_TERTIARY } from '../../dashboard/shared/constants';
@@ -124,7 +125,9 @@ export function FormalFormat({ signals, orgName, jurisdiction }: Props) {
                               {dim.label}
                             </td>
                             <td style={{ padding: '5px 8px', borderBottom: `1px solid #F0F2F5`, textAlign: 'center' }}>
-                              <SevBadge level={riskLevel} compact />
+                              <RiskLevelTooltip dimension={dim.key as any} level={riskLevel}>
+                                <SevBadge level={riskLevel} compact />
+                              </RiskLevelTooltip>
                             </td>
                             <td style={{ padding: '5px 8px', borderBottom: `1px solid #F0F2F5`, color: '#3D5068', fontSize: 11 }}>
                               {impact || <span style={{ color: '#9CA3AF', fontStyle: 'italic' }}>N/A</span>}
@@ -205,7 +208,9 @@ export function FormalFormat({ signals, orgName, jurisdiction }: Props) {
                     {dim.label}
                   </td>
                   <td style={{ padding: '7px 10px', borderBottom: `1px solid #F0F2F5`, textAlign: 'center' }}>
-                    <SevBadge level={highest === 'none' ? null : highest} />
+                    <RiskLevelTooltip dimension={dim.key as any} level={highest}>
+                      <SevBadge level={highest === 'none' ? null : highest} />
+                    </RiskLevelTooltip>
                   </td>
                   <td style={{ padding: '7px 10px', borderBottom: `1px solid #F0F2F5`, textAlign: 'center', color: TEXT_TERTIARY }}>
                     {count}

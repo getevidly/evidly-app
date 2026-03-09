@@ -4,6 +4,7 @@ import { AlertTriangle, Sparkles } from 'lucide-react';
 import { type BISignal, type RiskPlan, DIMENSIONS, SEV_ORDER, getHighestSeverity } from './types';
 import { SevBadge } from './SevBadge';
 import { RiskCards } from './RiskCards';
+import { RiskLevelTooltip } from '../../RiskLevelTooltip';
 import { NAVY, GOLD, CARD_BORDER, TEXT_TERTIARY } from '../../dashboard/shared/constants';
 
 interface Props {
@@ -278,11 +279,11 @@ export function RegisterFormat({ signals, riskPlans, onSaveRiskPlan, isDemoMode 
                     {formatCategory(signal.category)}
                   </span>
                 </div>
-                <div style={{ textAlign: 'center' }}><SevBadge level={signal.risk_revenue} compact /></div>
-                <div style={{ textAlign: 'center' }}><SevBadge level={signal.risk_liability} compact /></div>
-                <div style={{ textAlign: 'center' }}><SevBadge level={signal.risk_cost} compact /></div>
-                <div style={{ textAlign: 'center' }}><SevBadge level={signal.risk_operational} compact /></div>
-                <div style={{ textAlign: 'center' }}><SevBadge level={signal.workforce_risk_level} compact /></div>
+                <div style={{ textAlign: 'center' }}><RiskLevelTooltip dimension="revenue" level={signal.risk_revenue}><SevBadge level={signal.risk_revenue} compact /></RiskLevelTooltip></div>
+                <div style={{ textAlign: 'center' }}><RiskLevelTooltip dimension="liability" level={signal.risk_liability}><SevBadge level={signal.risk_liability} compact /></RiskLevelTooltip></div>
+                <div style={{ textAlign: 'center' }}><RiskLevelTooltip dimension="cost" level={signal.risk_cost}><SevBadge level={signal.risk_cost} compact /></RiskLevelTooltip></div>
+                <div style={{ textAlign: 'center' }}><RiskLevelTooltip dimension="operational" level={signal.risk_operational}><SevBadge level={signal.risk_operational} compact /></RiskLevelTooltip></div>
+                <div style={{ textAlign: 'center' }}><RiskLevelTooltip dimension="workforce" level={signal.workforce_risk_level}><SevBadge level={signal.workforce_risk_level} compact /></RiskLevelTooltip></div>
                 <div style={{ textAlign: 'center' }}>
                   {plan ? <StatusPill status={plan.status} /> : <span style={{ color: '#9CA3AF', fontSize: 11 }}>&mdash;</span>}
                 </div>
