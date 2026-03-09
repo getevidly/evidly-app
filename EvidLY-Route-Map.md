@@ -351,3 +351,28 @@
 | T8 | Documents page filters by role | kitchen_staff sees operational docs only; exec sees all | P1 |
 | T9 | Vendor document with location_id = specific facility | Correctly scoped in UI; org-wide docs show for all locations | P2 |
 | T10 | Service role access to vendor_documents | Full access (edge functions work correctly) | P0 |
+
+---
+
+## Business Intelligence (BUSINESS-INTELLIGENCE-01)
+
+| Route | Component | Auth | Description |
+|-------|-----------|------|-------------|
+| `/insights/intelligence` | `BusinessIntelligence.tsx` | Protected (owner_operator, executive, compliance_manager) | 4-format intelligence view: Executive Summary, Formal Document, PDF/Print Ready, Risk Register. Replaces ClientIntelligenceFeed. |
+
+### Format Tabs
+- **Executive Summary** — narrative + RiskCards + action list
+- **Formal Document** — CONFIDENTIAL report with numbered sections + attestation
+- **PDF / Print Ready** — compact, print-optimized, `@media print` styles
+- **Risk Register** — table with expandable rows + inline Risk Plan drawer
+
+### Risk Plans
+- `risk_plans` table: upsert on `(org_id, signal_id)`
+- Statuses: not_started, in_progress, completed, accepted
+- Risk Accepted requires justification (logged + timestamped)
+- AI suggestions pre-populate fields from signal content
+
+### Data Flow
+- **Demo mode**: static `DEMO_SIGNALS` array (6 signals), local-state risk plans
+- **Production**: `intelligence_signals WHERE is_published=true AND org_id=current_org`
+- **Empty state**: "No active intelligence signals" — zero sample data in production

@@ -136,7 +136,7 @@ const I: Record<string, NavItem> = {
     roles: [], description: 'Real-time sensor data — temperature sensors, refrigeration monitoring, and automated compliance readings.',
   },
   clientIntelligence: {
-    id: 'client-intelligence', label: 'Intelligence Feed', path: '/insights/intelligence', icon: '📡',
+    id: 'client-intelligence', label: 'Business Intelligence', path: '/insights/intelligence', icon: '📡',
     roles: [], description: 'Actionable intelligence from 80+ regulatory, legislative, and industry sources — filtered to your jurisdictions.',
     badge: 'NEW',
   },

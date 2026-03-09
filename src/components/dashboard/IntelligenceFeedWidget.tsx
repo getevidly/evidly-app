@@ -242,7 +242,7 @@ export function IntelligenceFeedWidget() {
       >
         <div className="flex items-center gap-2">
           <Zap size={14} style={{ color: GOLD }} />
-          <span className="text-sm font-semibold" style={{ color: NAVY }}>Intelligence Feed</span>
+          <span className="text-sm font-semibold" style={{ color: NAVY }}>Business Intelligence</span>
           {criticalCount > 0 && (
             <span className="text-[10px] font-bold px-1.5 py-0.5 rounded" style={{ background: '#FEF2F2', color: '#DC2626' }}>
               {criticalCount} critical

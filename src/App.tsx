@@ -150,7 +150,7 @@ const RemoteConnect = lazy(() => import('./pages/admin/RemoteConnect'));
 const StaffRoles = lazy(() => import('./pages/admin/StaffRoles'));
 const AdminReports = lazy(() => import('./pages/admin/AdminReports'));
 const VerificationReport = lazy(() => import('./pages/admin/VerificationReport'));
-const ClientIntelligenceFeed = lazy(() => import('./pages/ClientIntelligenceFeed').then(m => ({ default: m.ClientIntelligenceFeed })));
+const BusinessIntelligence = lazy(() => import('./pages/BusinessIntelligence').then(m => ({ default: m.BusinessIntelligence })));
 const ClientReports = lazy(() => import('./pages/ClientReports').then(m => ({ default: m.ClientReports })));
 const SharedReport = lazy(() => import('./pages/public/SharedReport').then(m => ({ default: m.SharedReport })));
 const AuthCallback = lazy(() => import('./pages/AuthCallback').then(m => ({ default: m.AuthCallback })));
@@ -463,7 +463,7 @@ function AppRoutes() {
         <Route path="/enterprise/admin" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><EnterpriseDashboard /></Suspense></ErrorBoundary></ProtectedRoute>} />
         <Route path="/enterprise/dashboard" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><EnterpriseExecutive /></Suspense></ErrorBoundary></ProtectedRoute>} />
         <Route path="/enterprise/intelligence" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><ComplianceIntelligence /></Suspense></ErrorBoundary></ProtectedRoute>} />
-        <Route path="/business-intelligence" element={<Navigate to="/intelligence" replace />} />
+        {/* /business-intelligence now handled by /insights/intelligence */}
         <Route path="/iot/hub" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><IoTSensorHub /></Suspense></ErrorBoundary></ProtectedRoute>} />
         <Route path="/onboarding" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><Onboarding /></Suspense></ErrorBoundary></ProtectedRoute>} />
 
@@ -612,7 +612,7 @@ function AppRoutes() {
           <Route path="/admin/verification" element={<VerificationReport />} />
           <Route path="/admin/system/edge-functions" element={<EdgeFunctions />} />
           <Route path="/admin/gtm" element={<SalesGuard><GtmDashboard /></SalesGuard>} />
-          <Route path="/insights/intelligence" element={<ClientIntelligenceFeed />} />
+          <Route path="/insights/intelligence" element={<BusinessIntelligence />} />
           <Route path="/insights/reports" element={<ClientReports />} />
           {/* Stub routes for upcoming features */}
           <Route path="/corrective-actions" element={<CorrectiveActions />} />
