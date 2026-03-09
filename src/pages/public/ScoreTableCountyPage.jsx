@@ -314,7 +314,7 @@ function SL({t,c}){return <div style={{fontSize:"0.68rem",fontWeight:800,letterS
 function TBadge({level}){var m={HIGH:{bg:E.grnBg,bd:E.grn,tx:"#065f46"},MEDIUM:{bg:E.wrnBg,bd:E.wrn,tx:"#92400e"},LOW:{bg:E.redBg,bd:E.red,tx:"#991b1b"}};var co=m[level]||m.MEDIUM;return <span style={{display:"inline-block",padding:"2px 9px",borderRadius:100,fontSize:"0.64rem",fontWeight:700,background:co.bg,border:"1px solid "+co.bd,color:co.tx,marginLeft:8}}>{level} TRANSPARENCY</span>;}
 function SevBadge({sev}){var m={critical:{bg:E.redBg,bd:E.red,tx:E.red},major:{bg:E.wrnBg,bd:E.wrn,tx:"#92400e"},minor:{bg:E.bluePale,bd:E.g3,tx:E.g5}};var co=m[sev]||m.minor;return <span style={{display:"inline-block",padding:"1px 7px",borderRadius:100,fontSize:"0.62rem",fontWeight:700,textTransform:"uppercase",letterSpacing:0.5,background:co.bg,border:"1px solid "+co.bd,color:co.tx}}>{sev}</span>;}
 
-function SchemaMarkup({c}){var schema={"@context":"https://schema.org","@graph":[{"@type":"FAQPage","mainEntity":c.faq.map(function(f){return{"@type":"Question","name":f.q,"acceptedAnswer":{"@type":"Answer","text":f.a}};})},{"@type":"LocalBusiness","name":"ScoreTable by EvidLY","description":"California restaurant inspection methodology reference for "+c.name+" County","url":"https://getevidly.com/scoretable/"+c.slug},{"@type":"WebPage","name":c.metaTitle,"description":c.metaDesc,"url":"https://getevidly.com/scoretable/"+c.slug}]};return <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema)}}/>;}
+function SchemaMarkup({c,cityName,citySlug}){var areaName=cityName?cityName+", "+c.name+" County, California":c.name+" County, California";var pageUrl=citySlug?"https://getevidly.com/scoretable/city/"+citySlug:"https://getevidly.com/scoretable/"+c.slug;var pageTitle=cityName?cityName+" Restaurant Inspection Scoring | ScoreTable by EvidLY":c.metaTitle;var pageDesc=cityName?"How does "+cityName+" ("+c.name+" County) score restaurant inspections? "+c.methodName+". Full methodology and what inspectors look for.":c.metaDesc;var schema={"@context":"https://schema.org","@graph":[{"@type":"FAQPage","mainEntity":c.faq.map(function(f){return{"@type":"Question","name":f.q,"acceptedAnswer":{"@type":"Answer","text":f.a}};})},{"@type":"LocalBusiness","name":"ScoreTable by EvidLY","description":"California restaurant inspection methodology reference for "+areaName,"url":pageUrl},{"@type":"WebPage","name":pageTitle,"description":pageDesc,"url":pageUrl}]};return <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema)}}/>;}
 
 // Violation simulator
 function calcScore(c,violations){
@@ -334,7 +334,7 @@ function getGradeColor(c,result){
   return result.val===0?{bg:E.grnBg,bd:E.grn,tx:"#065f46"}:{bg:E.redBg,bd:E.red,tx:"#991b1b"};}
 
 // ═══ MAIN ═══
-export default function ScoreTableCountyPage({county: countyProp}){
+export default function ScoreTableCountyPage({county: countyProp, cityName: _cn, citySlug: _cs}){
   var { slug } = useParams();
   var countyKey = countyProp || (slug ? slug.replace(/-county$/, "") : DEFAULT_COUNTY);
   var c=COUNTY_DATA[countyKey]||COUNTY_DATA[DEFAULT_COUNTY];
@@ -369,6 +369,7 @@ export default function ScoreTableCountyPage({county: countyProp}){
         },
         body: JSON.stringify({
           county_slug: countyKey + "-county",
+          city_slug: _cs || null,
           referrer: document.referrer || null,
           session_id: sid,
           utm_source: params.get("utm_source") || null,
@@ -377,7 +378,7 @@ export default function ScoreTableCountyPage({county: countyProp}){
         })
       }).catch(function(){});
     } catch(e){}
-  }, [countyKey]);
+  }, [countyKey, _cs]);
 
   // Vendor quote state
   var [vqVendor,setVqVendor]=useState(null);
@@ -415,6 +416,7 @@ export default function ScoreTableCountyPage({county: countyProp}){
   return(
   <div style={{fontFamily:ff,color:E.g8,lineHeight:1.6,background:E.cream,minHeight:"100vh"}}>
   <style>{`button{all:unset;box-sizing:border-box;cursor:pointer;} button:disabled{cursor:not-allowed;} a.btn{all:unset;box-sizing:border-box;cursor:pointer;display:inline-block;}`}</style>
+  <SchemaMarkup c={c} cityName={_cn} citySlug={_cs}/>
   {/* NOTE: In Next.js add to <Head>:
     <title>{c.metaTitle}</title>
     <meta name="description" content={c.metaDesc}/>
@@ -470,7 +472,7 @@ export default function ScoreTableCountyPage({county: countyProp}){
         {[["Methodology","#methodology"],["Violations","#violations"],["Simulator","#simulator"],["Vendors","#vendors"],["FAQ","#faq"]].map(function(x){return <a key={x[0]} href={x[1]} style={{textDecoration:"none",color:E.g5,fontWeight:500,fontSize:"0.8rem"}}>{x[0]}</a>;})}
       </nav>
       <div style={{display:"flex",gap:8}}>
-        <a className="btn" href={"/"+c.landingSlug} style={{padding:"7px 14px",fontSize:"0.78rem",fontWeight:700,textDecoration:"none",display:"inline-block",background:E.navy,color:E.w,borderRadius:8,fontFamily:ff,cursor:"pointer"}}>Get EvidLY →</a>
+        <a className="btn" href={_cs?"/city/"+_cs:"/"+c.landingSlug} style={{padding:"7px 14px",fontSize:"0.78rem",fontWeight:700,textDecoration:"none",display:"inline-block",background:E.navy,color:E.w,borderRadius:8,fontFamily:ff,cursor:"pointer"}}>Get EvidLY →</a>
       </div>
     </div>
   </header>
@@ -481,7 +483,7 @@ export default function ScoreTableCountyPage({county: countyProp}){
       <a href="/" style={{color:E.g4,textDecoration:"none"}}>EvidLY</a>{" › "}
       <a href="/scoretable" style={{color:E.g4,textDecoration:"none"}}>ScoreTable</a>{" › "}
       <a href="/scoretable/california" style={{color:E.g4,textDecoration:"none"}}>California</a>{" › "}
-      <span style={{color:E.navy,fontWeight:600}}>{c.name} County</span>
+      {_cn?<><a href={"/scoretable/"+c.slug} style={{color:E.g4,textDecoration:"none"}}>{c.name} County</a>{" › "}<span style={{color:E.navy,fontWeight:600}}>{_cn}</span></>:<span style={{color:E.navy,fontWeight:600}}>{c.name} County</span>}
     </div>
   </div>
 
@@ -493,14 +495,14 @@ export default function ScoreTableCountyPage({county: countyProp}){
         <span style={{fontSize:"0.7rem",color:E.g4,marginLeft:4}}>The Score Behind Every Table</span>
       </div>
       <div style={{display:"inline-flex",alignItems:"center",gap:8,background:E.w,border:"1px solid "+E.g2,borderRadius:100,padding:"4px 14px",marginBottom:20}}>
-        <span style={{fontSize:"0.7rem",fontWeight:700,color:S.grn,textTransform:"uppercase",letterSpacing:1}}>California · {c.name} County</span>
+        <span style={{fontSize:"0.7rem",fontWeight:700,color:S.grn,textTransform:"uppercase",letterSpacing:1}}>California · {c.name} County{_cn?" · "+_cn:""}</span>
         <TBadge level={c.transparency}/>
       </div>
-      <h1 style={{fontSize:"clamp(1.8rem,5vw,2.6rem)",fontWeight:800,lineHeight:1.1,margin:"0 0 14px",color:E.navy}}>{c.h1}</h1>
-      <p style={{fontSize:"0.96rem",color:E.g5,maxWidth:540,margin:"0 auto 28px",lineHeight:1.7}}>{c.heroSub}</p>
+      <h1 style={{fontSize:"clamp(1.8rem,5vw,2.6rem)",fontWeight:800,lineHeight:1.1,margin:"0 0 14px",color:E.navy}}>{_cn?"How "+_cn+" Restaurant Inspections Are Scored":c.h1}</h1>
+      <p style={{fontSize:"0.96rem",color:E.g5,maxWidth:540,margin:"0 auto 28px",lineHeight:1.7}}>{_cn?_cn+" is served by "+c.agencyShort+". "+c.heroSub:c.heroSub}</p>
       <div style={{display:"flex",gap:10,justifyContent:"center",flexWrap:"wrap"}}>
         <a className="btn" href={"#methodology"} style={{padding:"11px 22px",fontSize:"0.85rem",fontWeight:700,textDecoration:"none",display:"inline-block",background:S.grn,color:E.w,borderRadius:8,border:"none",fontFamily:ff,cursor:"pointer"}}>Read the Methodology →</a>
-        <a className="btn" href={"/"+c.landingSlug} style={{padding:"11px 22px",fontSize:"0.85rem",fontWeight:700,textDecoration:"none",display:"inline-block",background:E.navy,color:E.w,borderRadius:8,border:"none",fontFamily:ff,cursor:"pointer"}}>Track Your Score with EvidLY →</a>
+        <a className="btn" href={_cs?"/city/"+_cs:"/"+c.landingSlug} style={{padding:"11px 22px",fontSize:"0.85rem",fontWeight:700,textDecoration:"none",display:"inline-block",background:E.navy,color:E.w,borderRadius:8,border:"none",fontFamily:ff,cursor:"pointer"}}>Track Your Score with EvidLY →</a>
       </div>
       <p style={{marginTop:14,fontSize:"0.76rem",color:E.g4}}>From <STLogo s="0.76rem"/> · Data sourced from {c.agencyShort} and NFPA 96 · Free to use</p>
     </div>
@@ -585,7 +587,7 @@ export default function ScoreTableCountyPage({county: countyProp}){
   <section id="violations" style={{padding:"64px 24px",background:E.w}}>
     <div style={{maxWidth:800,margin:"0 auto"}}>
       <SL t="Top Violations"/>
-      <h2 style={{fontSize:"clamp(1.2rem,3.5vw,1.8rem)",fontWeight:800,color:E.navy,margin:"0 0 6px"}}>Most common violations in {c.name} County kitchens</h2>
+      <h2 style={{fontSize:"clamp(1.2rem,3.5vw,1.8rem)",fontWeight:800,color:E.navy,margin:"0 0 6px"}}>Most common violations in {_cn?_cn+" ("+c.name+" County)":c.name+" County"} kitchens</h2>
       <p style={{fontSize:"0.86rem",color:E.g5,marginBottom:24}}>With CalCode references and {c.method!=="reinspect"&&c.method!=="count"?"point values":"enforcement impact"}.</p>
       <div style={{display:"flex",flexDirection:"column",gap:10}}>
         {c.topViolations.map(function(v,i){return(
@@ -611,7 +613,7 @@ export default function ScoreTableCountyPage({county: countyProp}){
   <section id="simulator" style={{padding:"64px 24px",background:E.cream}}>
     <div style={{maxWidth:800,margin:"0 auto"}}>
       <SL t="Score Simulator"/>
-      <h2 style={{fontSize:"clamp(1.2rem,3.5vw,1.8rem)",fontWeight:800,color:E.navy,margin:"0 0 6px"}}>See how violations affect your {c.name} County score</h2>
+      <h2 style={{fontSize:"clamp(1.2rem,3.5vw,1.8rem)",fontWeight:800,color:E.navy,margin:"0 0 6px"}}>See how violations affect your {_cn?_cn:c.name+" County"} score</h2>
       <p style={{fontSize:"0.86rem",color:E.g5,marginBottom:24}}>Check the violations that apply. The score updates in real time using {c.agencyShort}'s actual methodology.</p>
 
       {/* GATE */}
@@ -678,7 +680,7 @@ export default function ScoreTableCountyPage({county: countyProp}){
           <div style={{textAlign:"right"}}>
             {simViolations.length===0
               ?<p style={{fontSize:"0.82rem",color:simColor.tx,opacity:0.65,margin:0}}>Check violations above to see the impact.</p>
-              :<div><p style={{fontSize:"0.82rem",color:simColor.tx,margin:"0 0 10px",opacity:0.75}}>{simViolations.length} violation{simViolations.length>1?"s":""} selected</p><a className="btn" href={"/"+c.landingSlug} style={{padding:"9px 18px",fontSize:"0.8rem",fontWeight:700,textDecoration:"none",display:"inline-block",background:E.navy,color:E.w,borderRadius:8,fontFamily:ff}}>Track this with EvidLY →</a></div>}
+              :<div><p style={{fontSize:"0.82rem",color:simColor.tx,margin:"0 0 10px",opacity:0.75}}>{simViolations.length} violation{simViolations.length>1?"s":""} selected</p><a className="btn" href={_cs?"/city/"+_cs:"/"+c.landingSlug} style={{padding:"9px 18px",fontSize:"0.8rem",fontWeight:700,textDecoration:"none",display:"inline-block",background:E.navy,color:E.w,borderRadius:8,fontFamily:ff}}>Track this with EvidLY →</a></div>}
           </div>
         </div>
         <p style={{textAlign:"center",fontSize:"0.74rem",color:E.g4,marginTop:12}}>Simulator uses {c.agencyShort}'s documented scoring weights. Actual inspection results may vary based on inspector judgment.</p>
@@ -691,7 +693,7 @@ export default function ScoreTableCountyPage({county: countyProp}){
   <section id="vendors" style={{padding:"64px 24px",background:E.w}}>
     <div style={{maxWidth:900,margin:"0 auto"}}>
       <SL t="EvidLY Verified Vendors"/>
-      <h2 style={{fontSize:"clamp(1.2rem,3.5vw,1.8rem)",fontWeight:800,color:E.navy,margin:"0 0 6px"}}>Verified service providers in {c.name} County</h2>
+      <h2 style={{fontSize:"clamp(1.2rem,3.5vw,1.8rem)",fontWeight:800,color:E.navy,margin:"0 0 6px"}}>Verified service providers in {_cn?_cn+" ("+c.name+" County)":c.name+" County"}</h2>
       <p style={{fontSize:"0.86rem",color:E.g5,marginBottom:24}}>EvidLY Verified vendors meet licensing, insurance, and certification requirements. Request a quote — vendors respond within 1 business day.</p>
 
       {/* CPP — always shown */}
@@ -759,7 +761,7 @@ export default function ScoreTableCountyPage({county: countyProp}){
   {/* ═══ FAQ ═══ */}
   <section id="faq" style={{padding:"64px 24px",background:E.cream}}>
     <div style={{maxWidth:720,margin:"0 auto"}}>
-      <div style={{textAlign:"center",marginBottom:32}}><SL t={c.name+" County FAQ"}/><h2 style={{fontSize:"clamp(1.2rem,3.5vw,1.8rem)",fontWeight:800,color:E.navy,margin:0}}>Common questions about {c.name} County inspections</h2></div>
+      <div style={{textAlign:"center",marginBottom:32}}><SL t={c.name+" County FAQ"}/><h2 style={{fontSize:"clamp(1.2rem,3.5vw,1.8rem)",fontWeight:800,color:E.navy,margin:0}}>Common questions about {_cn?_cn+" ("+c.name+" County)":c.name+" County"} inspections</h2></div>
       {c.faq.map(function(item,i){return(
         <div key={i} style={{borderBottom:"1px solid "+E.g2}}>
           <button onClick={function(){setFaqOpen(faqOpen===i?null:i);}} style={{width:"100%",textAlign:"left",background:"none",border:"none",padding:"18px 0",cursor:"pointer",display:"flex",justifyContent:"space-between",alignItems:"center",gap:12}}>
@@ -777,8 +779,8 @@ export default function ScoreTableCountyPage({county: countyProp}){
     <div style={{maxWidth:700,margin:"0 auto"}}>
       <div style={{background:"linear-gradient(135deg,"+E.navyD+","+E.navy+")",borderRadius:18,padding:"36px 32px",textAlign:"center"}}>
         <div style={{marginBottom:16}}><Logo s="1.4rem" light tagline/></div>
-        <h2 style={{fontSize:"clamp(1.2rem,3.5vw,1.7rem)",fontWeight:800,color:E.w,margin:"0 0 10px",lineHeight:1.2}}>Know your {c.name} County score before an inspector does.</h2>
-        <p style={{fontSize:"0.88rem",color:"rgba(255,255,255,0.55)",maxWidth:460,margin:"0 auto 24px",lineHeight:1.7}}>EvidLY applies {c.agencyShort}'s exact methodology to your daily data — so you see your score in real time, not after the fact.</p>
+        <h2 style={{fontSize:"clamp(1.2rem,3.5vw,1.7rem)",fontWeight:800,color:E.w,margin:"0 0 10px",lineHeight:1.2}}>Know your {_cn?_cn:c.name+" County"} score before an inspector does.</h2>
+        <p style={{fontSize:"0.88rem",color:"rgba(255,255,255,0.55)",maxWidth:460,margin:"0 auto 24px",lineHeight:1.7}}>EvidLY applies {c.agencyShort}'s exact methodology to your daily data{_cn?" in "+_cn:""} — so you see your score in real time, not after the fact.</p>
         {!ltDone?(
         <div style={{background:"rgba(255,255,255,0.07)",borderRadius:12,padding:"20px",border:"1px solid rgba(255,255,255,0.1)",maxWidth:480,margin:"0 auto"}}>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:10}}>
@@ -803,7 +805,7 @@ export default function ScoreTableCountyPage({county: countyProp}){
     <div style={{maxWidth:780,margin:"0 auto"}}>
       <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))",gap:14}}>
         {[
-          {href:"/"+c.landingSlug,label:"EvidLY for "+c.name+" County",desc:"Track your "+c.name+" County compliance score daily. Food safety + facility safety. Configured for "+c.agencyShort+".",cta:"Learn More →",color:E.navy},
+          {href:_cs?"/city/"+_cs:"/"+c.landingSlug,label:"EvidLY for "+(_cn||c.name+" County"),desc:"Track your "+(_cn?_cn+" ("+c.name+" County)":c.name+" County")+" compliance score daily. Food safety + facility safety. Configured for "+c.agencyShort+".",cta:"Learn More →",color:E.navy},
           {href:"/kitchen-check/"+c.kcSlug,label:"Kitchen Self Check",desc:"8 questions. Free. Know your "+c.name+" County gaps right now — no account needed.",cta:"Check My Kitchen →",color:S.grn},
           {href:"/kitchen-to-community",label:"Kitchen to Community",desc:"Every EvidLY subscription funds ~100 meals per location per month through No Kid Hungry.",cta:"Learn More →",color:E.gold},
         ].map(function(link){return(
@@ -824,7 +826,7 @@ export default function ScoreTableCountyPage({county: countyProp}){
         <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:8}}><STIcon sz={22}/><STLogo s="0.95rem" light/></div>
         <p style={{fontSize:"0.72rem",color:"rgba(255,255,255,0.4)",lineHeight:1.6,marginBottom:6}}>The Score Behind Every Table.</p>
         <div style={{display:"flex",alignItems:"center",gap:6,marginTop:8}}><Logo s="0.8rem" light tagline/></div>
-        <p style={{fontSize:"0.7rem",color:"rgba(255,255,255,0.3)",marginTop:6,lineHeight:1.5}}>Serving {c.name} County, California.</p>
+        <p style={{fontSize:"0.7rem",color:"rgba(255,255,255,0.3)",marginTop:6,lineHeight:1.5}}>Serving {_cn?_cn+", ":""}{c.name} County, California.</p>
       </div>
       <div><h4 style={{fontSize:"0.7rem",fontWeight:700,color:"rgba(255,255,255,0.55)",marginBottom:8,textTransform:"uppercase",letterSpacing:1}}>ScoreTable</h4>{["All Counties","Methodology","About"].map(function(l){return <a key={l} href="#" style={{display:"block",fontSize:"0.76rem",color:"rgba(255,255,255,0.5)",textDecoration:"none",marginBottom:5}}>{l}</a>;})}</div>
       <div><h4 style={{fontSize:"0.7rem",fontWeight:700,color:"rgba(255,255,255,0.55)",marginBottom:8,textTransform:"uppercase",letterSpacing:1}}>EvidLY</h4>{["Product","Pricing","Kitchen to Community","Book a Demo"].map(function(l){return <a key={l} href="#" style={{display:"block",fontSize:"0.76rem",color:"rgba(255,255,255,0.5)",textDecoration:"none",marginBottom:5}}>{l}</a>;})}</div>
