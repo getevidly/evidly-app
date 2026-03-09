@@ -153,10 +153,10 @@ export default function AdminCrawlMonitor() {
   const latestRun = runs[0] || null;
 
   const KpiCard = ({ label, value, color, sub }: { label: string; value: string | number; color?: string; sub?: string }) => (
-    <div style={{ background: '#FFFFFF', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '16px 20px', flex: 1, minWidth: 120 }}>
-      <div style={{ fontSize: 11, color: TEXT_SEC, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>{label}</div>
-      <div style={{ fontSize: 24, fontWeight: 800, color: color || NAVY }}>{value}</div>
-      {sub && <div style={{ fontSize: 10, color: TEXT_MUTED, marginTop: 2 }}>{sub}</div>}
+    <div style={{ background: '#FFFFFF', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '16px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
+      <div style={{ fontSize: 10, fontWeight: 700, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>{label}</div>
+      <div style={{ fontSize: 28, fontWeight: 800, color: color || NAVY, lineHeight: 1 }}>{value}</div>
+      {sub && <div style={{ fontSize: 11, color: TEXT_MUTED, marginTop: 6 }}>{sub}</div>}
     </div>
   );
 
@@ -184,8 +184,16 @@ export default function AdminCrawlMonitor() {
       </div>
 
       {crawlError && (
-        <div style={{ fontSize: 13, color: '#DC2626', background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: 8, padding: '10px 14px' }}>
-          {crawlError}
+        <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: 6, padding: '10px 16px', display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+          <span style={{ color: '#DC2626', fontSize: 16, lineHeight: 1, flexShrink: 0 }}>⚠</span>
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 600, color: '#991B1B' }}>
+              Intelligence crawl is offline — {sources.length} sources are not being monitored
+            </div>
+            <div style={{ fontSize: 12, color: '#B91C1C', marginTop: 2 }}>
+              Vercel Edge Function error at /admin/crawl-activate · Last attempted: {lastCrawled ? new Date(lastCrawled).toLocaleString() : 'Never'}
+            </div>
+          </div>
         </div>
       )}
       {crawlSuccess && (
@@ -200,16 +208,16 @@ export default function AdminCrawlMonitor() {
           {Array.from({ length: 6 }).map((_, i) => <div key={i} style={{ flex: 1 }}><Skeleton h={70} /></div>)}
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 12, width: '100%' }}>
-          <KpiCard label="Live" value={activeCount} color="#059669" />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12, alignItems: 'stretch' }}>
+          <KpiCard label="Live" value={activeCount} color="#16A34A" />
           <KpiCard label="Errors" value={brokenCount} color="#DC2626" />
           <KpiCard label="WAF Blocked" value={wafCount} color="#7C3AED" />
           <KpiCard label="Pending" value={pendingCount} color="#D97706" />
-          {pausedCount > 0 && <KpiCard label="Paused" value={pausedCount} />}
           <KpiCard
             label="Last Crawl"
             value={lastCrawled ? new Date(lastCrawled).toLocaleDateString() : 'Never'}
-            sub={latestRun ? `Run: ${new Date(latestRun.started_at).toLocaleString()}` : undefined}
+            color={NAVY}
+            sub={lastCrawled ? new Date(lastCrawled).toLocaleTimeString() : undefined}
           />
         </div>
       )}

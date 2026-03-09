@@ -271,22 +271,25 @@ export default function VerificationReport() {
           {activeSection === 'coverage' && (
             <div className="space-y-6">
               {/* Top KPIs */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: 10 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: 10, alignItems: 'stretch' }}>
                 {[
                   { label: 'Total Records', value: total, color: NAVY },
-                  { label: 'Verified', value: verified, color: '#059669' },
+                  { label: 'Verified', value: verified, color: '#16A34A' },
                   { label: 'In Review', value: inReview, color: '#2563EB' },
-                  { label: 'Unverified', value: unverified, color: '#9CA3AF' },
+                  { label: 'Unverified', value: unverified, color: NAVY },
                   { label: 'Rejected', value: rejected, color: '#DC2626' },
                   { label: 'Overdue', value: overdue, color: '#DC2626' },
                   { label: 'Needs Update', value: needsUpdate, color: '#D97706' },
-                  { label: 'Coverage %', value: `${coveragePct}%`, color: coveragePct >= 80 ? '#059669' : coveragePct >= 50 ? '#D97706' : '#DC2626' },
+                  { label: 'Coverage %', value: `${coveragePct}%`, color: coveragePct === 0 ? '#DC2626' : coveragePct === 100 ? '#16A34A' : '#D97706' },
                 ].map(k => (
-                  <div key={k.label} style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '14px 16px' }}>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: TEXT_MUTED, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 4 }}>
+                  <div key={k.label} style={{
+                    background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '16px 20px',
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center',
+                  }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>
                       {k.label}
                     </div>
-                    <div style={{ fontSize: 22, fontWeight: 800, color: k.color }}>{k.value}</div>
+                    <div style={{ fontSize: 22, fontWeight: 800, color: k.color, lineHeight: 1 }}>{k.value}</div>
                   </div>
                 ))}
               </div>
