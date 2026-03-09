@@ -153,75 +153,45 @@ export default function IntelligenceAdmin() {
   // Restored flash
   const [restoredId, setRestoredId] = useState<string | null>(null);
 
-  // AI auto-classification for a single signal
-  const classifySignal = useCallback(async (sig: QueueSignal) => {
-    const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY;
-    if (!apiKey) return;
+  // AI auto-classification via server-side edge function [P0-API-KEY-01]
+  const classifySignals = useCallback(async (sigs: QueueSignal[]) => {
     try {
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true',
+      const { data, error } = await supabase.functions.invoke('classify-signals', {
+        body: {
+          signals: sigs.map(s => ({
+            id: s.id,
+            title: s.title,
+            content_summary: s.content_summary,
+            category: s.category,
+          })),
         },
-        body: JSON.stringify({
-          model: 'claude-haiku-4-5-20251001',
-          max_tokens: 256,
-          messages: [{
-            role: 'user',
-            content: `You are a compliance risk analyst for California commercial kitchens.
-
-Analyze this signal and return ONLY a JSON object — no explanation, no markdown.
-
-Signal title: ${sig.title}
-Signal summary: ${sig.content_summary || ''}
-Category: ${sig.category}
-
-Return exactly:
-{
-  "revenue_risk_level": "critical|high|medium|low|none",
-  "liability_risk_level": "critical|high|medium|low|none",
-  "cost_risk_level": "critical|high|medium|low|none",
-  "operational_risk_level": "critical|high|medium|low|none"
-}
-
-Guidelines:
-- revenue: risk of closure, lost sales, or revenue interruption
-- liability: legal exposure, injury, negligence, allergen, or contamination risk
-- cost: direct cost to remediate, replace product, or achieve compliance
-- operational: disruption to kitchen operations, staff, or supplier chain
-- Use 'critical' only for immediate action required (active recall, closure risk)
-- Use 'none' only if the dimension is genuinely not affected`,
-          }],
-        }),
       });
-      const data = await response.json();
-      const suggested = JSON.parse(data.content[0].text);
-      const valid = ['critical', 'high', 'medium', 'low', 'none'];
-      const r = valid.includes(suggested.revenue_risk_level) ? suggested.revenue_risk_level : 'none';
-      const l = valid.includes(suggested.liability_risk_level) ? suggested.liability_risk_level : 'none';
-      const c = valid.includes(suggested.cost_risk_level) ? suggested.cost_risk_level : 'none';
-      const o = valid.includes(suggested.operational_risk_level) ? suggested.operational_risk_level : 'none';
+      if (error || !data?.results) return;
 
-      // Optimistic update
-      setRiskEdits(prev => ({
-        ...prev,
-        [sig.id]: { revenue: r, liability: l, cost: c, operational: o },
-      }));
-      setAiSuggested(prev => ({
-        ...prev,
-        [sig.id]: { revenue: true, liability: true, cost: true, operational: true },
-      }));
+      for (const result of data.results as Array<{ id: string; revenue_risk_level: string; liability_risk_level: string; cost_risk_level: string; operational_risk_level: string }>) {
+        const r = result.revenue_risk_level;
+        const l = result.liability_risk_level;
+        const c = result.cost_risk_level;
+        const o = result.operational_risk_level;
 
-      // Save to Supabase
-      await supabase.from('intelligence_signals').update({
-        revenue_risk_level: r,
-        liability_risk_level: l,
-        cost_risk_level: c,
-        operational_risk_level: o,
-      }).eq('id', sig.id);
+        // Optimistic update
+        setRiskEdits(prev => ({
+          ...prev,
+          [result.id]: { revenue: r, liability: l, cost: c, operational: o },
+        }));
+        setAiSuggested(prev => ({
+          ...prev,
+          [result.id]: { revenue: true, liability: true, cost: true, operational: true },
+        }));
+
+        // Save to Supabase
+        await supabase.from('intelligence_signals').update({
+          revenue_risk_level: r,
+          liability_risk_level: l,
+          cost_risk_level: c,
+          operational_risk_level: o,
+        }).eq('id', result.id);
+      }
     } catch {
       // Silent fail — leave buttons unset
     }
@@ -265,13 +235,13 @@ Guidelines:
         return isUnset(sig.revenue_risk_level) && isUnset(sig.liability_risk_level) &&
                isUnset(sig.cost_risk_level) && isUnset(sig.operational_risk_level);
       }).slice(0, 5);
-      needsAI.forEach((sig: QueueSignal) => {
-        aiClassifiedRef.current.add(sig.id);
-        classifySignal(sig);
-      });
+      if (needsAI.length > 0) {
+        needsAI.forEach((sig: QueueSignal) => aiClassifiedRef.current.add(sig.id));
+        classifySignals(needsAI);
+      }
     }
     setLoading(false);
-  }, [classifySignal]);
+  }, [classifySignals]);
 
   useEffect(() => { loadQueue(); }, [loadQueue]);
 
