@@ -122,10 +122,10 @@ const complianceManager: MobileRoleData = {
     { id: 'audit', label: 'Audit', icon: '🔍', path: '/self-diagnosis' },
     { id: 'upload', label: 'Upload Doc', icon: '📄', path: '/documents' },
     { id: 'violations', label: 'Violations', icon: '⚠️', path: '/action-items' },
-    { id: 'inspection', label: 'Inspection', icon: '📋', path: '/inspection-readiness' },
+    { id: 'inspection', label: 'Inspection', icon: '📋', path: '/reports/inspection-readiness' },
   ],
   alerts: [
-    { id: 'a1', text: 'Health dept inspection scheduled — Airport Cafe, March 8', type: 'critical', path: '/inspection-readiness' },
+    { id: 'a1', text: 'Health dept inspection scheduled — Airport Cafe, March 8', type: 'critical', path: '/reports/inspection-readiness' },
     { id: 'a2', text: '4 documents expiring within 30 days', type: 'warning', path: '/documents' },
     { id: 'a3', text: 'CalCode §113948 deadline: 2 staff need food handler certs', type: 'warning', path: '/dashboard/training' },
   ],
@@ -141,7 +141,7 @@ const complianceManager: MobileRoleData = {
   bottomNav: [
     { id: 'tasks', label: 'Tasks', icon: '✓', path: '/dashboard' },
     { id: 'docs', label: 'Docs', icon: '📄', path: '/documents' },
-    { id: 'inspect', label: 'Inspect', icon: '🔍', path: '/inspection-readiness' },
+    { id: 'inspect', label: 'Inspect', icon: '🔍', path: '/reports/inspection-readiness' },
     { id: 'more', label: 'More', icon: '☰', path: '#more' },
   ],
 };

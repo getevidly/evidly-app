@@ -25,7 +25,7 @@ export function getMobileQuickActions(role: UserRole): MobileQuickAction[] {
         { id: 'audit', label: 'Audit', icon: '🔍', path: '/self-diagnosis' },
         { id: 'upload', label: 'Upload Doc', icon: '📄', path: '/documents' },
         { id: 'violations', label: 'Violations', icon: '⚠️', path: '/action-items' },
-        { id: 'inspection', label: 'Inspection', icon: '📋', path: '/inspection-readiness' },
+        { id: 'inspection', label: 'Inspection', icon: '📋', path: '/reports/inspection-readiness' },
       ];
     case 'facilities_manager':
       return [
@@ -81,7 +81,7 @@ export function getMobileBottomNav(role: UserRole): MobileNavTab[] {
       return [
         { id: 'tasks', label: 'Tasks', icon: '✓', path: '/dashboard' },
         { id: 'docs', label: 'Docs', icon: '📄', path: '/documents' },
-        { id: 'inspect', label: 'Inspect', icon: '🔍', path: '/inspection-readiness' },
+        { id: 'inspect', label: 'Inspect', icon: '🔍', path: '/reports/inspection-readiness' },
         { id: 'more', label: 'More', icon: '☰', path: '#more' },
       ];
     case 'facilities_manager':
