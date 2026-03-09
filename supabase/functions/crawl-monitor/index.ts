@@ -29,7 +29,7 @@ interface SourceRow {
   id: string;
   source_key: string;
   url: string | null;
-  crawl_method: string | null;
+  fetch_method: string | null;
   is_demo_critical: boolean;
   status: string;
 }
@@ -194,12 +194,12 @@ Deno.serve(async (req) => {
 
     const deadline = Date.now() + MAX_CRAWL_MS;
 
-    // Fetch all crawlable sources (have URL, not manual)
+    // Fetch direct-fetch sources only (not firecrawl — those need Firecrawl API)
     const { data: allSources, error: srcErr } = await supabase
       .from("intelligence_sources")
-      .select("id, source_key, url, crawl_method, is_demo_critical, status")
+      .select("id, source_key, url, fetch_method, is_demo_critical, status")
       .not("url", "is", null)
-      .neq("crawl_method", "manual")
+      .eq("fetch_method", "fetch")
       .order("is_demo_critical", { ascending: false })
       .order("source_key");
 

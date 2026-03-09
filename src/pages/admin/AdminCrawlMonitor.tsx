@@ -141,21 +141,13 @@ export default function AdminCrawlMonitor() {
     })
     .sort((a, b) => (STATUS_SORT[a.status] ?? 9) - (STATUS_SORT[b.status] ?? 9));
 
-  // KPI counts
-  const activeCount     = sources.filter(s => s.status === 'active').length;
-  const brokenCount     = sources.filter(s => s.status === 'broken').length;
-  const wafCount        = sources.filter(s => s.status === 'waf_blocked').length;
-  const pendingCount    = sources.filter(s => s.status === 'pending').length;
-  const pausedCount     = sources.filter(s => s.status === 'paused').length;
-
-  // Last crawl = most recent last_crawled_at across all sources
-  const lastCrawled = sources.reduce<string | null>((latest, s) => {
-    if (!s.last_crawled_at) return latest;
-    if (!latest) return s.last_crawled_at;
-    return s.last_crawled_at > latest ? s.last_crawled_at : latest;
-  }, null);
-
+  // KPI counts from most recent crawl run (not stale intelligence_sources.status)
   const latestRun = runs[0] || null;
+  const liveCount    = latestRun?.feeds_live ?? 0;
+  const errorCount   = latestRun?.feeds_failed ?? 0;
+  const changedCount = latestRun?.feeds_changed ?? 0;
+  const totalCount   = latestRun?.feeds_total ?? 0;
+  const lastCrawled  = latestRun?.completed_at || latestRun?.started_at || null;
 
   const KpiCard = ({ label, value, color, sub }: { label: string; value: string | number; color?: string; sub?: string }) => (
     <div style={{ background: '#FFFFFF', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '16px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
@@ -189,7 +181,7 @@ export default function AdminCrawlMonitor() {
       </div>
 
       {/* Proactive offline notice — shows on load when crawl has never run */}
-      {!loading && !crawlError && !crawlSuccess && sources.length > 0 && activeCount === 0 && !lastCrawled && (
+      {!loading && !crawlError && !crawlSuccess && sources.length > 0 && !latestRun && (
         <div style={{ background: '#FFFBEB', border: '1px solid #FDE68A', borderRadius: 6, padding: '10px 16px', display: 'flex', gap: 10, alignItems: 'flex-start' }}>
           <span style={{ color: '#D97706', fontSize: 16, lineHeight: 1, flexShrink: 0 }}>⚠</span>
           <div>
@@ -232,10 +224,10 @@ export default function AdminCrawlMonitor() {
         </div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12, alignItems: 'stretch' }}>
-          <KpiCard label="Live" value={activeCount} color="#16A34A" />
-          <KpiCard label="Errors" value={brokenCount} color="#DC2626" />
-          <KpiCard label="WAF Blocked" value={wafCount} color="#7C3AED" />
-          <KpiCard label="Pending" value={pendingCount} color="#D97706" />
+          <KpiCard label="Live" value={liveCount} color="#16A34A" />
+          <KpiCard label="Errors" value={errorCount} color="#DC2626" />
+          <KpiCard label="Changed" value={changedCount} color="#D97706" />
+          <KpiCard label="Total" value={totalCount} color={NAVY} />
           <KpiCard
             label="Last Crawl"
             value={lastCrawled ? new Date(lastCrawled).toLocaleDateString() : 'Never'}
