@@ -795,6 +795,13 @@ export function InsuranceRisk() {
           <p className="text-xs text-gray-700 leading-relaxed">
             Most commercial kitchen policies include a Protective Safeguard Endorsement. This means: if you declared you have fire suppression, hood cleaning compliance, or other safety systems, and you fail to maintain them, the carrier <strong>can deny your claim</strong>. EvidLY's continuous documentation is designed to protect operators from this scenario by providing timestamped, verifiable records of system maintenance and compliance.
           </p>
+          <button
+            onClick={() => navigate('/cic-pse')}
+            className="mt-3 px-4 py-2 text-xs font-semibold rounded-lg transition-colors"
+            style={{ background: '#1e4d6b', color: '#fff' }}
+          >
+            View PSE Records →
+          </button>
         </div>
 
         {/* Disclaimer */}

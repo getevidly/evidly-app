@@ -57,6 +57,8 @@ const WeeklyDigest = lazy(() => import('./pages/WeeklyDigest').then(m => ({ defa
 const IncidentLog = lazy(() => import('./pages/IncidentLog').then(m => ({ default: m.IncidentLog })));
 const AuditReport = lazy(() => import('./pages/AuditReport').then(m => ({ default: m.AuditReport })));
 const FacilitySafety = lazy(() => import('./pages/FacilitySafety').then(m => ({ default: m.FacilitySafety })));
+const WorkforceRisk = lazy(() => import('./pages/WorkforceRisk').then(m => ({ default: m.WorkforceRisk })));
+const CicPseView = lazy(() => import('./pages/CicPseView').then(m => ({ default: m.CicPseView })));
 const Equipment = lazy(() => import('./pages/Equipment').then(m => ({ default: m.Equipment })));
 const EquipmentDetail = lazy(() => import('./pages/EquipmentDetail').then(m => ({ default: m.EquipmentDetail })));
 const ServiceRecordEntry = lazy(() => import('./pages/ServiceRecordEntry').then(m => ({ default: m.ServiceRecordEntry })));
@@ -506,6 +508,8 @@ function AppRoutes() {
           <Route path="/weekly-digest" element={<WeeklyDigest />} />
           <Route path="/audit-report" element={<AuditReport />} />
           <Route path="/facility-safety" element={<FacilitySafety />} />
+          <Route path="/workforce-risk" element={<WorkforceRisk />} />
+          <Route path="/cic-pse" element={<CicPseView />} />
           <Route path="/food-recovery" element={<FoodRecovery />} />
           <Route path="/sb1383" element={<SB1383Compliance />} />
           <Route path="/k12" element={<K12Compliance />} />

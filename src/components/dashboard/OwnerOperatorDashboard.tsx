@@ -14,6 +14,7 @@ import { TodaysOperations } from './shared/TodaysOperations';
 import { AttentionItemList } from './shared/AttentionItemList';
 import { OnboardingChecklistCard } from './shared/OnboardingChecklistCard';
 import { ReScoreAlertsWidget } from './ReScoreAlertsWidget';
+import { PSECoverageRiskWidget } from './PSECoverageRiskWidget';
 import { K2CWidget } from '../referral/K2CWidget';
 import { K2CInviteModal } from '../referral/K2CInviteModal';
 import { demoReferral } from '../../data/demoData';
@@ -237,6 +238,11 @@ export default function OwnerOperatorDashboard() {
       {/* Re-Score Alerts Widget */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
         <ReScoreAlertsWidget navigate={navigate} />
+      </div>
+
+      {/* PSE Coverage Risk Alert */}
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
+        <PSECoverageRiskWidget />
       </div>
 
       {/* Intelligence Feed Widget */}

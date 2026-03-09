@@ -66,10 +66,11 @@ interface FeedItem {
 }
 
 const DIM_META: Record<string, { icon: string; label: string; color: string; bg: string }> = {
-  revenue:     { icon: '\uD83D\uDCB0', label: 'Revenue Risk',     color: '#92400E', bg: '#FFFBEB' },
+  revenue:     { icon: '\uD83D\uDCB0', label: 'Revenue Risk',     color: '#C2410C', bg: '#FFF7ED' },
   liability:   { icon: '\u2696\uFE0F', label: 'Liability Risk',   color: '#991B1B', bg: '#FEF2F2' },
   cost:        { icon: '\uD83D\uDCB8', label: 'Cost Risk',        color: '#1E40AF', bg: '#EFF6FF' },
   operational: { icon: '\u2699\uFE0F', label: 'Operational Risk', color: '#166534', bg: '#F0FDF4' },
+  workforce:   { icon: '\uD83D\uDC77', label: 'Workforce Risk',  color: '#6B21A8', bg: '#F5F3FF' },
 };
 
 const OPP_META: Record<string, { icon: string; label: string; color: string; bg: string }> = {
@@ -77,6 +78,7 @@ const OPP_META: Record<string, { icon: string; label: string; color: string; bg:
   liability:   { icon: '\uD83D\uDEE1', label: 'Liability Opp',   color: '#065F46', bg: '#ECFDF5' },
   cost:        { icon: '\uD83D\uDCB5', label: 'Cost Opp',        color: '#065F46', bg: '#ECFDF5' },
   operational: { icon: '\uD83D\uDE80', label: 'Operational Opp', color: '#065F46', bg: '#ECFDF5' },
+  workforce:   { icon: '\uD83D\uDC77', label: 'Workforce Opp',  color: '#065F46', bg: '#ECFDF5' },
 };
 
 const LEVEL_COLORS: Record<string, { bg: string; text: string; label: string }> = {

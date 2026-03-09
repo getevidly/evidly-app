@@ -426,6 +426,11 @@ export const DOCUMENT_TYPE_OPTIONS = [
   { value: 'fog_compliance_report', label: 'FOG Compliance Report', pillar: 'facility_safety' },
   { value: 'backflow_preventer_certification', label: 'Backflow Preventer Certification', pillar: 'facility_safety' },
   { value: 'backflow_compliance_letter', label: 'Backflow Compliance Letter', pillar: 'facility_safety' },
+  // PSE-Relevant Documents
+  { value: 'suppression_inspection_report', label: 'Suppression System Inspection Report', pillar: 'facility_safety' },
+  { value: 'fire_alarm_inspection_cert', label: 'Fire Alarm Inspection Certificate', pillar: 'facility_safety' },
+  { value: 'sprinkler_inspection_report', label: 'Sprinkler Inspection Report', pillar: 'facility_safety' },
+  { value: 'hood_cleaning_service_record', label: 'Hood Cleaning Service Record (NFPA 96)', pillar: 'facility_safety' },
   // Food Safety
   { value: 'health_permit', label: 'Health Department Permit', pillar: 'food_safety' },
   { value: 'food_handler_cert', label: 'Food Handler Certification', pillar: 'food_safety' },

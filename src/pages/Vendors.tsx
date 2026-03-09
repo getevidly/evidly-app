@@ -1255,6 +1255,9 @@ export function Vendors() {
                   <Building2 className="h-4 w-4 text-[#1e4d6b]" />
                   <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">{group.category.name}</h3>
                   <span className="text-xs text-gray-400">({group.vendors.length})</span>
+                  {(group.category.id === 'kitchen_exhaust' || group.category.id === 'fire_suppression') && (
+                    <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: '#fdf8e8', color: '#d4af37', border: '1px solid #e8dfc0' }}>PSE-Relevant</span>
+                  )}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {group.vendors.map((vendor) => {

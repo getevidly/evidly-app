@@ -23,6 +23,12 @@ const ROUTE_ROLE_MAP: [string, UserRole[]][] = [
   ['/vendor-certifications', ['owner_operator', 'compliance_manager']],
   ['/export-center',         ['compliance_manager']],
 
+  // Workforce Risk (P5)
+  ['/workforce-risk',        ['owner_operator', 'executive', 'compliance_manager', 'facilities_manager']],
+
+  // CIC/PSE Operator View
+  ['/cic-pse',               ['owner_operator', 'executive', 'compliance_manager']],
+
   // Equipment / Facilities
   ['/equipment',             ['facilities_manager', 'owner_operator', 'executive', 'compliance_manager', 'kitchen_manager']],
   ['/incidents',             ['owner_operator', 'executive', 'compliance_manager', 'kitchen_manager', 'chef', 'facilities_manager', 'kitchen_staff']],
