@@ -1172,10 +1172,11 @@ export default function EvidLYIntelligence() {
       {/* ────────── TAB: CORRELATIONS ────────── */}
       {activeTab === 'correlations' && (() => {
         const CORR_DIMS = [
-          { key: 'risk_revenue' as const, label: 'Revenue', color: '#DC2626' },
-          { key: 'risk_liability' as const, label: 'Liability', color: '#7C3AED' },
-          { key: 'risk_cost' as const, label: 'Cost', color: '#D97706' },
-          { key: 'risk_operational' as const, label: 'Operational', color: '#2563EB' },
+          { key: 'risk_revenue' as const, label: 'Revenue', color: '#C2410C' },
+          { key: 'risk_liability' as const, label: 'Liability', color: '#991B1B' },
+          { key: 'risk_cost' as const, label: 'Cost', color: '#1E40AF' },
+          { key: 'risk_operational' as const, label: 'Operational', color: '#166534' },
+          { key: 'risk_workforce' as const, label: 'Workforce', color: '#6B21A8' },
         ];
         const SEV_ORDER = ['critical', 'high', 'moderate', 'low'];
 
@@ -1189,11 +1190,30 @@ export default function EvidLYIntelligence() {
           }
         }
 
+        // Helper: check if signal belongs to workforce pillar (P5)
+        const isWorkforceSignal = (sig: Signal): boolean => {
+          if (sig.cic_pillar === 'workforce_risk') return true;
+          const p = getPillarForSignalType(sig.signal_type);
+          return p?.id === 'workforce_risk';
+        };
+
         // Build rows per dimension
         const dimSections = CORR_DIMS.map(dim => {
           const rows: { signal: Signal; county: string; strength: number; severity: string }[] = [];
           for (const sig of signals) {
-            const severity = sig[dim.key] as string | null;
+            let severity: string | null = null;
+            if (dim.key === 'risk_workforce') {
+              // P5 Workforce — derived from cic_pillar or signal_type, not a DB column
+              if (isWorkforceSignal(sig)) {
+                // Use the highest non-none risk level from the signal as the severity
+                const levels = [sig.risk_revenue, sig.risk_liability, sig.risk_cost, sig.risk_operational].filter(l => l && l !== 'none');
+                severity = levels.length > 0
+                  ? levels.sort((a, b) => SEV_ORDER.indexOf(a!) - SEV_ORDER.indexOf(b!))[0]!
+                  : 'high'; // workforce signals default to high if no risk dims set
+              }
+            } else {
+              severity = sig[dim.key as keyof Signal] as string | null;
+            }
             if (!severity || severity === 'none') continue;
             const counties = sigCounties[sig.id];
             if (counties && counties.length > 0) {
@@ -1250,6 +1270,7 @@ export default function EvidLYIntelligence() {
                               { label: 'Liab', val: row.signal.risk_liability },
                               { label: 'Cost', val: row.signal.risk_cost },
                               { label: 'Ops', val: row.signal.risk_operational },
+                              { label: 'Wkf', val: isWorkforceSignal(row.signal) ? (row.severity || 'high') : 'none' },
                             ];
                             const sevColor = RISK_DIM_COLORS[row.severity] || RISK_DIM_COLORS.low;
                             return (
@@ -1322,10 +1343,17 @@ export default function EvidLYIntelligence() {
         };
 
         // Build per-jurisdiction signal data from correlations
-        const jurSignalMap: Record<string, { signalIds: Set<string>; lastDate: string; dims: { rev: boolean; liab: boolean; cost: boolean; ops: boolean } }> = {};
+        // Helper: check if signal belongs to workforce pillar (P5)
+        const isWfSignal = (sig: Signal): boolean => {
+          if (sig.cic_pillar === 'workforce_risk') return true;
+          const p = getPillarForSignalType(sig.signal_type);
+          return p?.id === 'workforce_risk';
+        };
+
+        const jurSignalMap: Record<string, { signalIds: Set<string>; lastDate: string; dims: { rev: boolean; liab: boolean; cost: boolean; ops: boolean; wkf: boolean } }> = {};
         for (const c of correlations) {
           if (!c.jurisdiction_id) continue;
-          if (!jurSignalMap[c.jurisdiction_id]) jurSignalMap[c.jurisdiction_id] = { signalIds: new Set(), lastDate: '', dims: { rev: false, liab: false, cost: false, ops: false } };
+          if (!jurSignalMap[c.jurisdiction_id]) jurSignalMap[c.jurisdiction_id] = { signalIds: new Set(), lastDate: '', dims: { rev: false, liab: false, cost: false, ops: false, wkf: false } };
           const entry = jurSignalMap[c.jurisdiction_id];
           entry.signalIds.add(c.source_id);
           const sig = signals.find(s => s.id === c.source_id);
@@ -1335,6 +1363,7 @@ export default function EvidLYIntelligence() {
             if (sig.risk_liability && sig.risk_liability !== 'none') entry.dims.liab = true;
             if (sig.risk_cost && sig.risk_cost !== 'none') entry.dims.cost = true;
             if (sig.risk_operational && sig.risk_operational !== 'none') entry.dims.ops = true;
+            if (isWfSignal(sig)) entry.dims.wkf = true;
           }
         }
 
@@ -1358,7 +1387,7 @@ export default function EvidLYIntelligence() {
             signalCount,
             isActive,
             lastSignal: data?.lastDate || '',
-            dims: data?.dims || { rev: false, liab: false, cost: false, ops: false },
+            dims: data?.dims || { rev: false, liab: false, cost: false, ops: false, wkf: false },
             methodology,
             signalIds: data ? Array.from(data.signalIds) : [],
           };
@@ -1459,11 +1488,12 @@ export default function EvidLYIntelligence() {
                         </td>
                         <td style={tdStyle}>
                           <div style={{ display: 'flex', gap: 4 }}>
-                            {j.dims.rev && <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#DC2626', display: 'inline-block' }} title="Revenue" />}
-                            {j.dims.liab && <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#7C3AED', display: 'inline-block' }} title="Liability" />}
-                            {j.dims.cost && <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#D97706', display: 'inline-block' }} title="Cost" />}
-                            {j.dims.ops && <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#2563EB', display: 'inline-block' }} title="Operational" />}
-                            {!j.dims.rev && !j.dims.liab && !j.dims.cost && !j.dims.ops && (
+                            {j.dims.rev && <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#C2410C', display: 'inline-block' }} title="Revenue" />}
+                            {j.dims.liab && <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#991B1B', display: 'inline-block' }} title="Liability" />}
+                            {j.dims.cost && <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#1E40AF', display: 'inline-block' }} title="Cost" />}
+                            {j.dims.ops && <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#166534', display: 'inline-block' }} title="Operational" />}
+                            {j.dims.wkf && <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#6B21A8', display: 'inline-block' }} title="Workforce" />}
+                            {!j.dims.rev && !j.dims.liab && !j.dims.cost && !j.dims.ops && !j.dims.wkf && (
                               <span style={{ fontSize: 10, color: TEXT_MUTED }}>{'\u2014'}</span>
                             )}
                           </div>

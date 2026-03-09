@@ -6,7 +6,7 @@
  *
  * Shows risk-framed intelligence items correlated to the client's
  * specific locations, jurisdictions, and operations.
- * 4 risk dimensions per item: Revenue, Liability, Cost, Operational
+ * 5 risk dimensions per item: Revenue, Liability, Cost, Operational, Workforce
  */
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
@@ -28,15 +28,17 @@ interface FeedItem {
   signal_type: string;
   source_name: string | null;
   priority: string;
-  // 4 risk dimensions
+  // 5 risk dimensions
   revenue_risk_level: string | null;
   liability_risk_level: string | null;
   cost_risk_level: string | null;
   operational_risk_level: string | null;
+  workforce_risk_level?: string | null;
   revenue_risk_note: string | null;
   liability_risk_note: string | null;
   cost_risk_note: string | null;
   operational_risk_note: string | null;
+  workforce_risk_note?: string | null;
   // Action
   recommended_action: string | null;
   action_deadline: string | null;
@@ -54,10 +56,12 @@ interface FeedItem {
   opp_liability_level?: string | null;
   opp_cost_level?: string | null;
   opp_operational_level?: string | null;
+  opp_workforce_level?: string | null;
   opp_revenue_note?: string | null;
   opp_liability_note?: string | null;
   opp_cost_note?: string | null;
   opp_operational_note?: string | null;
+  opp_workforce_note?: string | null;
   relevance_reason?: string | null;
   // Legacy single-dimension (for backwards compat)
   dimension?: string;
@@ -96,7 +100,7 @@ const PRIORITY_COLORS: Record<string, { dot: string; bg: string; label: string }
   low:      { dot: '#6B7280', bg: '#F9FAFB', label: 'LOW' },
 };
 
-// Demo feed items with all 4 risk dimensions
+// Demo feed items with all 5 risk dimensions
 const DEMO_FEED: FeedItem[] = [
   {
     id: 'demo-cif-1',
@@ -320,6 +324,7 @@ export function ClientIntelligenceFeed() {
       { key: 'liability', level: item.liability_risk_level, note: item.liability_risk_note },
       { key: 'cost', level: item.cost_risk_level, note: item.cost_risk_note },
       { key: 'operational', level: item.operational_risk_level, note: item.operational_risk_note },
+      { key: 'workforce', level: item.workforce_risk_level, note: item.workforce_risk_note },
     ].filter(d => d.level && d.level !== 'none' && d.level !== 'n/a');
 
     if (dims.length === 0) return null;
@@ -362,6 +367,7 @@ export function ClientIntelligenceFeed() {
       { key: 'liability', level: item.opp_liability_level, note: item.opp_liability_note },
       { key: 'cost', level: item.opp_cost_level, note: item.opp_cost_note },
       { key: 'operational', level: item.opp_operational_level, note: item.opp_operational_note },
+      { key: 'workforce', level: item.opp_workforce_level, note: item.opp_workforce_note },
     ].filter(d => d.level && d.level !== 'none' && d.level !== 'n/a');
 
     if (dims.length === 0) return null;
