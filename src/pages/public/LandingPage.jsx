@@ -93,11 +93,11 @@ function TourModal({ onClose }) {
   return (
     <div style={{ position:"fixed", inset:0, zIndex:300, background:"rgba(0,0,0,0.6)", backdropFilter:"blur(6px)", display:"flex", alignItems:"center", justifyContent:"center", padding:24 }} onClick={onClose}>
       <div style={{ background:C.white, borderRadius:16, maxWidth:460, width:"100%", position:"relative", maxHeight:"92vh", overflowY:"auto", boxShadow:"0 24px 64px rgba(0,0,0,0.18)" }} onClick={e => e.stopPropagation()}>
-        <button onClick={onClose} style={{ position:"absolute", top:14, right:14, background:"none", border:"none", fontSize:20, cursor:"pointer", color:C.g4, lineHeight:1, zIndex:1 }}>{"\u00D7"}</button>
+        <button onClick={onClose} style={{ position:"absolute", top:14, right:14, background:"none", border:"none", fontSize:20, cursor:"pointer", color:C.g4, lineHeight:1, zIndex:1 }}>×</button>
         <div style={{ display:"flex", borderBottom:`1px solid ${C.g2}` }}>
           {["1  Your details","2  Pick your time"].map((lbl,i) => {
             const active = step===i+1, done = step>i+1;
-            return <div key={i} style={{ flex:1, padding:"12px 16px", textAlign:"center", fontSize:"0.72rem", fontWeight:700, fontFamily:FF, color:active?C.navy:done?C.green:C.g4, borderBottom:`2px solid ${active?C.navy:done?C.green:"transparent"}` }}>{done?"\u2713 "+lbl.slice(2):lbl}</div>;
+            return <div key={i} style={{ flex:1, padding:"12px 16px", textAlign:"center", fontSize:"0.72rem", fontWeight:700, fontFamily:FF, color:active?C.navy:done?C.green:C.g4, borderBottom:`2px solid ${active?C.navy:done?C.green:"transparent"}` }}>{done?"✓ "+lbl.slice(2):lbl}</div>;
           })}
         </div>
         {step===1 && (
@@ -111,17 +111,17 @@ function TourModal({ onClose }) {
             <Fld label="Email *" mb={10}><input value={form.email} onChange={set("email")} style={inp} placeholder="jane@restaurant.com" type="email" /></Fld>
             <Fld label="Business Name *" mb={10}><input value={form.company} onChange={set("company")} style={inp} placeholder="Pacific Kitchen Group" /></Fld>
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:10 }}>
-              <Fld label="County *"><select value={form.county} onChange={set("county")} style={inp}><option value="">Select...</option>{CA_COUNTIES.map(c => <option key={c}>{c}</option>)}</select></Fld>
-              <Fld label="Locations"><select value={form.locations} onChange={set("locations")} style={inp}><option>1</option><option>2-5</option><option>6-10</option><option>11+</option></select></Fld>
+              <Fld label="County *"><select value={form.county} onChange={set("county")} style={inp}><option value="">Select…</option>{CA_COUNTIES.map(c => <option key={c}>{c}</option>)}</select></Fld>
+              <Fld label="Locations"><select value={form.locations} onChange={set("locations")} style={inp}><option>1</option><option>2–5</option><option>6–10</option><option>11+</option></select></Fld>
             </div>
-            <Fld label="Biggest compliance challenge?" mb={18}><textarea value={form.challenge} onChange={set("challenge")} style={{...inp,minHeight:64,resize:"vertical"}} placeholder="e.g. Inspection prep, temp tracking..." /></Fld>
-            <button disabled={!ready||sub} onClick={submit} style={{...b.navy,width:"100%",fontSize:"0.9rem",padding:"13px",opacity:ready&&!sub?1:0.4}}>{sub?"Sending...":"Submit & Pick a Time \u2192"}</button>
+            <Fld label="Biggest compliance challenge?" mb={18}><textarea value={form.challenge} onChange={set("challenge")} style={{...inp,minHeight:64,resize:"vertical"}} placeholder="e.g. Inspection prep, temp tracking…" /></Fld>
+            <button disabled={!ready||sub} onClick={submit} style={{...b.navy,width:"100%",fontSize:"0.9rem",padding:"13px",opacity:ready&&!sub?1:0.4}}>{sub?"Sending…":"Submit & Pick a Time →"}</button>
             <p style={{ fontSize:"0.7rem", color:C.g4, textAlign:"center", marginTop:8, fontFamily:FF }}>Goes directly to the EvidLY team. No auto-responders.</p>
           </div>
         )}
         {step===2 && (
           <div style={{ padding:"40px 28px", textAlign:"center" }}>
-            <div style={{ fontSize:"2.2rem", marginBottom:12 }}>{"\uD83D\uDCEC"}</div>
+            <div style={{ fontSize:"2.2rem", marginBottom:12 }}>📬</div>
             <h3 style={{ fontWeight:800, color:C.navy, fontSize:"1.05rem", margin:"0 0 8px", fontFamily:FF }}>Check your email to confirm.</h3>
             <p style={{ fontSize:"0.84rem", color:C.g5, lineHeight:1.7, fontFamily:FF }}>We sent a confirmation to <strong>{form.email}</strong>.</p>
           </div>
@@ -153,9 +153,9 @@ function NavBar({ onTour, onIRR }) {
       </div>
       {open && (
         <div style={{ background:C.white, borderTop:`1px solid ${C.g2}`, padding:"10px 24px 18px" }}>
-          <button onClick={() => { setOpen(false); onIRR(); }} style={{ display:"block", width:"100%", textAlign:"left", background:"none", border:"none", cursor:"pointer", padding:"11px 0", fontSize:"0.9rem", color:C.gold, borderBottom:`1px solid ${C.g1}`, fontWeight:700, fontFamily:FF }}>{"\u2713"} Free Operations Check</button>
+          <button onClick={() => { setOpen(false); onIRR(); }} style={{ display:"block", width:"100%", textAlign:"left", background:"none", border:"none", cursor:"pointer", padding:"11px 0", fontSize:"0.9rem", color:C.gold, borderBottom:`1px solid ${C.g1}`, fontWeight:700, fontFamily:FF }}>✓ Free Operations Check</button>
           {NAV.map(([lbl,id]) => <button key={lbl} onClick={() => { setOpen(false); scrollTo(id); }} style={{ display:"block", width:"100%", textAlign:"left", background:"none", border:"none", cursor:"pointer", padding:"11px 0", fontSize:"0.9rem", color:C.g6, borderBottom:`1px solid ${C.g1}`, fontWeight:500, fontFamily:FF }}>{lbl}</button>)}
-          <button onClick={() => { setOpen(false); onTour(); }} style={{...b.gold,width:"100%",marginTop:14,padding:"13px",fontSize:"0.9rem"}}>Book a Guided Tour \u2192</button>
+          <button onClick={() => { setOpen(false); onTour(); }} style={{...b.gold,width:"100%",marginTop:14,padding:"13px",fontSize:"0.9rem"}}>Book a Guided Tour →</button>
         </div>
       )}
     </header>
@@ -168,12 +168,12 @@ function HeroSection({ onTour }) {
       <div style={{ position:"absolute", inset:0, backgroundImage:"linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px)", backgroundSize:"48px 48px", pointerEvents:"none" }} />
       <div style={{ position:"absolute", bottom:0, left:0, right:0, height:1, background:`linear-gradient(90deg,transparent,${C.gold},transparent)` }} />
       <div style={{ maxWidth:660, margin:"0 auto", position:"relative" }}>
-        <div style={{ display:"inline-block", padding:"4px 14px", background:"rgba(160,140,90,0.15)", border:"1px solid rgba(160,140,90,0.3)", borderRadius:100, fontSize:"0.68rem", fontWeight:700, letterSpacing:"0.14em", textTransform:"uppercase", color:C.gold, marginBottom:20, fontFamily:FF }}>Launching May 5, 2026 {"\u00B7"} Founder Pricing Open</div>
+        <div style={{ display:"inline-block", padding:"4px 14px", background:"rgba(160,140,90,0.15)", border:"1px solid rgba(160,140,90,0.3)", borderRadius:100, fontSize:"0.68rem", fontWeight:700, letterSpacing:"0.14em", textTransform:"uppercase", color:C.gold, marginBottom:20, fontFamily:FF }}>Launching May 5, 2026 · Founder Pricing Open</div>
         <h1 style={{ fontSize:"clamp(1.9rem,5.5vw,3.1rem)", fontWeight:700, lineHeight:1.1, margin:"0 0 20px", color:C.white, fontFamily:FF, letterSpacing:"-0.02em" }}>Operations intelligence for <span style={{ color:C.gold }}>California commercial kitchens.</span></h1>
         <p style={{ fontSize:"1rem", color:"rgba(255,255,255,0.55)", maxWidth:520, margin:"0 auto 32px", lineHeight:1.75, fontFamily:FF }}>Food safety and facility safety — scored against your county's actual grading method. Every operational signal translated into revenue, liability, cost, and workforce risk. One dashboard. Real answers.</p>
         <div style={{ display:"flex", gap:14, justifyContent:"center", flexWrap:"wrap", alignItems:"center" }}>
-          <button onClick={onTour} style={{...b.gold,padding:"15px 34px",fontSize:"0.97rem"}}>Book a Guided Tour \u2192</button>
-          <button onClick={() => scrollTo("pricing")} style={{ background:"none", border:"none", cursor:"pointer", fontSize:"0.85rem", color:"rgba(255,255,255,0.4)", borderBottom:"1px solid rgba(255,255,255,0.18)", paddingBottom:1, fontFamily:FF }}>See Pricing {"\u2193"}</button>
+          <button onClick={onTour} style={{...b.gold,padding:"15px 34px",fontSize:"0.97rem"}}>Book a Guided Tour →</button>
+          <button onClick={() => scrollTo("pricing")} style={{ background:"none", border:"none", cursor:"pointer", fontSize:"0.85rem", color:"rgba(255,255,255,0.4)", borderBottom:"1px solid rgba(255,255,255,0.18)", paddingBottom:1, fontFamily:FF }}>See Pricing ↓</button>
         </div>
         <p style={{ marginTop:18, fontSize:"0.76rem", color:"rgba(255,255,255,0.22)", fontFamily:FF }}>$99/mo founder pricing — locked for life through July 4, 2026</p>
       </div>
@@ -188,12 +188,12 @@ function IRRAboveFold({ onIRR }) {
       <div style={{ position:"absolute", top:0, left:0, right:0, height:1, background:`linear-gradient(90deg,transparent,${C.gold},transparent)` }} />
       <div style={{ maxWidth:660, margin:"0 auto", position:"relative", display:"flex", alignItems:"center", gap:32, flexWrap:"wrap", justifyContent:"center" }}>
         <div style={{ flex:"1 1 300px", textAlign:"left" }}>
-          <div style={{ display:"inline-block", padding:"3px 12px", background:"rgba(160,140,90,0.15)", border:"1px solid rgba(160,140,90,0.3)", borderRadius:100, fontSize:"0.62rem", fontWeight:700, letterSpacing:"0.14em", textTransform:"uppercase", color:C.gold, marginBottom:12, fontFamily:FF }}>Free {"\u00B7"} 2 Minutes</div>
+          <div style={{ display:"inline-block", padding:"3px 12px", background:"rgba(160,140,90,0.15)", border:"1px solid rgba(160,140,90,0.3)", borderRadius:100, fontSize:"0.62rem", fontWeight:700, letterSpacing:"0.14em", textTransform:"uppercase", color:C.gold, marginBottom:12, fontFamily:FF }}>Free · 2 Minutes</div>
           <h2 style={{ fontSize:"clamp(1.15rem,3vw,1.45rem)", fontWeight:700, color:C.white, margin:"0 0 8px", lineHeight:1.2, letterSpacing:"-0.02em", fontFamily:FF }}>See how your operation is running <span style={{ color:C.gold }}>— right now.</span></h2>
           <p style={{ fontSize:"0.82rem", color:"rgba(255,255,255,0.45)", margin:0, lineHeight:1.7, fontFamily:FF }}>Daily activity, scored. Every risk in dollars. Takes 2 minutes — no account needed.</p>
         </div>
         <div style={{ flexShrink:0, textAlign:"center" }}>
-          <button onClick={onIRR} style={{...b.gold,padding:"13px 28px",fontSize:"0.9rem",display:"block",marginBottom:8}}>Get My Free Operations Check \u2192</button>
+          <button onClick={onIRR} style={{...b.gold,padding:"13px 28px",fontSize:"0.9rem",display:"block",marginBottom:8}}>Get My Free Operations Check →</button>
           <p style={{ fontSize:"0.68rem", color:"rgba(255,255,255,0.22)", margin:0, fontFamily:FF }}>Used by 100+ California commercial kitchens</p>
         </div>
       </div>
@@ -205,7 +205,7 @@ function TrustBar() {
   return (
     <section style={{ background:C.navy, borderBottom:"1px solid rgba(255,255,255,0.05)", padding:"20px 24px" }}>
       <div style={{ maxWidth:900, margin:"0 auto", display:"flex", alignItems:"center", justifyContent:"center", gap:28, flexWrap:"wrap" }}>
-        {[{s:"300+",l:"Commercial kitchens served per year"},{s:"62",l:"California jurisdictions covered"},{s:null,l:"Aramark \u00B7 Cintas \u00B7 Yosemite NPS"},{s:null,l:"IKECA Certified \u00B7 Veteran-Owned"}].map((item,i) => (
+        {[{s:"300+",l:"Commercial kitchens served per year"},{s:"62",l:"California jurisdictions covered"},{s:null,l:"Aramark · Cintas · Yosemite NPS"},{s:null,l:"IKECA Certified · Veteran-Owned"}].map((item,i) => (
           <div key={i} style={{ display:"flex", alignItems:"center", gap:28 }}>
             {i>0 && <div style={{ width:1, height:30, background:"rgba(255,255,255,0.08)" }} />}
             <div style={{ textAlign:"center" }}>
@@ -242,7 +242,7 @@ function HowItWorks({ onTour }) {
             </div>
           ))}
         </div>
-        <div style={{ textAlign:"center", marginTop:36 }}><button onClick={onTour} style={{...b.navy,padding:"13px 30px",fontSize:"0.9rem"}}>See It Live on Your County \u2192</button></div>
+        <div style={{ textAlign:"center", marginTop:36 }}><button onClick={onTour} style={{...b.navy,padding:"13px 30px",fontSize:"0.9rem"}}>See It Live on Your County →</button></div>
       </div>
     </section>
   );
@@ -250,8 +250,8 @@ function HowItWorks({ onTour }) {
 
 function Coverage() {
   const pillars = [
-    {label:"Food Safety",icon:"\uD83C\uDF21\uFE0F",color:C.navy,items:["Temperature monitoring — receiving, holding, cooling, all tracked","HACCP documentation built automatically from daily logs","Food handler cards and ServSafe certs — always current","Morning and closing checklists mapped to CalCode conditions","Receiving logs with vendor history and rejection tracking"]},
-    {label:"Facility Safety",icon:"\uD83D\uDD25",color:C.gold,items:["Hood cleaning schedules per NFPA 96-2024 Table 12.4 frequencies","Fire suppression inspection records and due-date alerts","Extinguisher documentation and service history","Vendor compliance — certs, insurance, service records","Equipment calibration logs and maintenance tracking"]},
+    {label:"Food Safety",icon:"🌡️",color:C.navy,items:["Temperature monitoring — receiving, holding, cooling, all tracked","HACCP documentation built automatically from daily logs","Food handler cards and ServSafe certs — always current","Morning and closing checklists mapped to CalCode conditions","Receiving logs with vendor history and rejection tracking"]},
+    {label:"Facility Safety",icon:"🔥",color:C.gold,items:["Hood cleaning schedules per NFPA 96-2024 Table 12.4 frequencies","Fire suppression inspection records and due-date alerts","Extinguisher documentation and service history","Vendor compliance — certs, insurance, service records","Equipment calibration logs and maintenance tracking"]},
   ];
   return (
     <section id="coverage" style={{ padding:"80px 24px", background:C.cream }}>
@@ -264,7 +264,7 @@ function Coverage() {
           {pillars.map(p => (
             <div key={p.label} style={{ background:C.white, borderRadius:16, padding:"30px 26px", border:`1px solid ${C.g2}`, borderTop:`4px solid ${p.color}` }}>
               <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:20 }}><span style={{ fontSize:"1.4rem" }}>{p.icon}</span><h3 style={{ fontSize:"1.05rem", fontWeight:700, color:p.color, margin:0, fontFamily:FF }}>{p.label}</h3></div>
-              {p.items.map(item => <div key={item} style={{ display:"flex", gap:10, marginBottom:10, fontSize:"0.84rem", color:C.g6, lineHeight:1.55, fontFamily:FF }}><span style={{ color:p.color, flexShrink:0, fontWeight:700 }}>{"\u2713"}</span>{item}</div>)}
+              {p.items.map(item => <div key={item} style={{ display:"flex", gap:10, marginBottom:10, fontSize:"0.84rem", color:C.g6, lineHeight:1.55, fontFamily:FF }}><span style={{ color:p.color, flexShrink:0, fontWeight:700 }}>✓</span>{item}</div>)}
             </div>
           ))}
         </div>
@@ -275,11 +275,11 @@ function Coverage() {
 
 function Intelligence({ onTour }) {
   const pillars = [
-    {icon:"\uD83D\uDCC8",label:"Revenue Protected",start:"Revenue at Risk",color:C.orange,bg:C.orangeBg,bd:"#fdba74",tx:"#7c2d12",h:"Without visibility, revenue loss happens before you can respond.",pts:["Temporary closure averages $12,000\u2013$18,000 in lost revenue per event","Inspection results are posted publicly before you can respond","Repeat violations trigger more frequent inspections"]},
-    {icon:"\uD83D\uDEE1\uFE0F",label:"Liability Covered",start:"Liability Uncovered",color:"#991B1B",bg:C.redBg,bd:"#fca5a5",tx:"#7f1d1d",h:"Documentation gaps are your biggest legal exposure — and the easiest to close.",pts:["Foodborne illness without documentation logs = presumed negligence","Fire suppression gaps create premises liability beyond CalCode","PSE non-compliance may affect your coverage"]},
-    {icon:"\uD83D\uDCA1",label:"Costs Controlled",start:"Costs Unpredictable",color:C.blue,bg:C.blueBg,bd:"#93c5fd",tx:"#1e3a8a",h:"Reactive maintenance costs 2\u20133\u00D7 what scheduled maintenance costs.",pts:["Emergency hood cleaning runs 2\u20133\u00D7 the cost of a scheduled visit","Reinspection fees: $200\u2013$500 per visit depending on jurisdiction","Expired certifications mean rushed replacements at premium pricing"]},
-    {icon:"\u2705",label:"Always Ready",start:"Operations Challenged",color:"#166634",bg:"#f0fdf4",bd:"#86efac",tx:"#14532d",h:"Documentation gaps always surface at the worst possible moment.",pts:["Missing vendor records block your ability to prove due diligence","Unscheduled equipment downtime from missed calibration logs","Reinspection window shrinks when corrective actions aren't documented"]},
-    {icon:"\uD83D\uDC65",label:"Team Current",start:"Workforce Uncertified",color:"#6B21A8",bg:"#faf5ff",bd:"#d8b4fe",tx:"#581c87",h:"Expired certifications are among the most cited violations in California.",pts:["Missing CFPM coverage = immediate critical violation in any CA jurisdiction","Food handler card gaps expose you to per-employee fines","Staff turnover without onboarding tracking leaves invisible certification holes"]},
+    {icon:"📈",label:"Revenue Protected",start:"Revenue at Risk",color:C.orange,bg:C.orangeBg,bd:"#fdba74",tx:"#7c2d12",h:"Without visibility, revenue loss happens before you can respond.",pts:["Temporary closure averages $12,000–$18,000 in lost revenue per event","Inspection results are posted publicly before you can respond","Repeat violations trigger more frequent inspections"]},
+    {icon:"🛡️",label:"Liability Covered",start:"Liability Uncovered",color:"#991B1B",bg:C.redBg,bd:"#fca5a5",tx:"#7f1d1d",h:"Documentation gaps are your biggest legal exposure — and the easiest to close.",pts:["Foodborne illness without documentation logs = presumed negligence","Fire suppression gaps create premises liability beyond CalCode","PSE non-compliance may affect your coverage"]},
+    {icon:"💡",label:"Costs Controlled",start:"Costs Unpredictable",color:C.blue,bg:C.blueBg,bd:"#93c5fd",tx:"#1e3a8a",h:"Reactive maintenance costs 2–3× what scheduled maintenance costs.",pts:["Emergency hood cleaning runs 2–3× the cost of a scheduled visit","Reinspection fees: $200–$500 per visit depending on jurisdiction","Expired certifications mean rushed replacements at premium pricing"]},
+    {icon:"✅",label:"Always Ready",start:"Operations Challenged",color:"#166634",bg:"#f0fdf4",bd:"#86efac",tx:"#14532d",h:"Documentation gaps always surface at the worst possible moment.",pts:["Missing vendor records block your ability to prove due diligence","Unscheduled equipment downtime from missed calibration logs","Reinspection window shrinks when corrective actions aren't documented"]},
+    {icon:"👥",label:"Team Current",start:"Workforce Uncertified",color:"#6B21A8",bg:"#faf5ff",bd:"#d8b4fe",tx:"#581c87",h:"Expired certifications are among the most cited violations in California.",pts:["Missing CFPM coverage = immediate critical violation in any CA jurisdiction","Food handler card gaps expose you to per-employee fines","Staff turnover without onboarding tracking leaves invisible certification holes"]},
   ];
   function Card({ p }) {
     return (
@@ -290,7 +290,7 @@ function Intelligence({ onTour }) {
         </div>
         <div style={{ padding:"16px 18px", flex:1 }}>
           <p style={{ fontSize:"0.84rem", fontWeight:700, color:p.tx, margin:"0 0 12px", lineHeight:1.5, fontFamily:FF }}>{p.h}</p>
-          {p.pts.map(pt => <div key={pt} style={{ display:"flex", gap:8, marginBottom:8, fontSize:"0.78rem", color:p.tx, lineHeight:1.5, fontFamily:FF }}><span style={{ color:p.color, flexShrink:0, fontWeight:700 }}>{"\u2192"}</span>{pt}</div>)}
+          {p.pts.map(pt => <div key={pt} style={{ display:"flex", gap:8, marginBottom:8, fontSize:"0.78rem", color:p.tx, lineHeight:1.5, fontFamily:FF }}><span style={{ color:p.color, flexShrink:0, fontWeight:700 }}>→</span>{pt}</div>)}
         </div>
       </div>
     );
@@ -306,7 +306,7 @@ function Intelligence({ onTour }) {
         <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:14, marginBottom:14 }}>{pillars.slice(0,3).map(p => <Card key={p.label} p={p}/>)}</div>
         <div style={{ display:"grid", gridTemplateColumns:"repeat(2,1fr)", gap:14, maxWidth:660, margin:"0 auto" }}>{pillars.slice(3).map(p => <Card key={p.label} p={p}/>)}</div>
         <div style={{ marginTop:28, background:C.cream, borderRadius:12, border:`1px solid ${C.g2}`, padding:"16px 20px" }}><p style={{ fontSize:"0.75rem", color:C.g5, margin:0, textAlign:"center", lineHeight:1.6, fontStyle:"italic", fontFamily:FF }}>Revenue and liability figures are general estimates based on publicly available industry data. PSE/insurance impacts vary by carrier, policy, and jurisdiction.</p></div>
-        <div style={{ textAlign:"center", marginTop:32 }}><button onClick={onTour} style={{...b.gold,padding:"13px 30px",fontSize:"0.9rem"}}>See Your Operation's Full Picture \u2192</button></div>
+        <div style={{ textAlign:"center", marginTop:32 }}><button onClick={onTour} style={{...b.gold,padding:"13px 30px",fontSize:"0.9rem"}}>See Your Operation's Full Picture →</button></div>
       </div>
     </section>
   );
@@ -338,7 +338,7 @@ function Founders() {
 }
 
 function Pricing({ onTour, onIRR }) {
-  const ff = ["1\u201310 locations, all on one dashboard","Each location scored against its own county — not a generic checklist","Food safety and facility safety in one place","Your whole team included, no per-seat cost","Know how your operation stands — every single day","This price is yours forever — never increases","If it's not right in 45 days, you pay nothing"];
+  const ff = ["1–10 locations, all on one dashboard","Each location scored against its own county — not a generic checklist","Food safety and facility safety in one place","Your whole team included, no per-seat cost","Know how your operation stands — every single day","This price is yours forever — never increases","If it's not right in 45 days, you pay nothing"];
   const ef = ["Every location visible in one place","Each location scored against its own jurisdiction","Custom branding and API access available","No per-seat limits — scales with you","Dedicated account support","Pricing built around your operation"];
   return (
     <section id="pricing" style={{ padding:"80px 24px", background:C.white }}>
@@ -350,7 +350,7 @@ function Pricing({ onTour, onIRR }) {
         <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:24, marginTop:28 }}>
           <div style={{ background:C.white, borderRadius:16, padding:"36px 28px", border:`2px solid ${C.gold}`, position:"relative" }}>
             <div style={{ position:"absolute", top:-13, left:"50%", transform:"translateX(-50%)", background:C.gold, color:C.white, fontWeight:700, fontSize:"0.68rem", padding:"4px 16px", borderRadius:100, textTransform:"uppercase", whiteSpace:"nowrap", fontFamily:FF }}>Founder Pricing</div>
-            <div style={{ fontSize:"0.72rem", fontWeight:700, textTransform:"uppercase", color:C.gold, marginBottom:10, marginTop:6, fontFamily:FF }}>1\u201310 Locations {"\u00B7"} Through July 4 or 50 Founders</div>
+            <div style={{ fontSize:"0.72rem", fontWeight:700, textTransform:"uppercase", color:C.gold, marginBottom:10, marginTop:6, fontFamily:FF }}>1–10 Locations · Through July 4 or 50 Founders</div>
             <div style={{ background:C.cream, borderRadius:12, padding:"18px 16px", marginBottom:16 }}>
               <div style={{ display:"flex", alignItems:"baseline", justifyContent:"center", gap:4, marginBottom:4 }}><span style={{ fontSize:"2.8rem", fontWeight:900, color:C.navy, fontFamily:FF }}>$99</span><span style={{ fontSize:"1rem", color:C.g4, fontFamily:FF }}>/mo</span></div>
               <p style={{ fontSize:"0.8rem", color:C.g5, margin:"0 0 2px", fontFamily:FF }}>for your first location</p>
@@ -359,18 +359,18 @@ function Pricing({ onTour, onIRR }) {
               <p style={{ fontSize:"0.78rem", color:C.g5, margin:0, fontFamily:FF }}>up to 10 locations total</p>
             </div>
             <div style={{ display:"inline-block", background:C.greenBg, color:C.green, fontWeight:700, fontSize:"0.74rem", padding:"5px 14px", borderRadius:8, marginBottom:20, fontFamily:FF }}>This price is yours forever — never increases</div>
-            <div style={{ display:"flex", flexDirection:"column", gap:8, textAlign:"left", marginBottom:20 }}>{ff.map(f => <div key={f} style={{ display:"flex", gap:8, fontSize:"0.82rem", color:C.g6, fontFamily:FF, lineHeight:1.5 }}><span style={{ color:C.gold, fontWeight:700, flexShrink:0 }}>{"\u2713"}</span>{f}</div>)}</div>
-            <button onClick={onTour} style={{...b.navy,width:"100%",padding:"14px",fontSize:"0.92rem"}}>Reserve My Founder Spot \u2192</button>
+            <div style={{ display:"flex", flexDirection:"column", gap:8, textAlign:"left", marginBottom:20 }}>{ff.map(f => <div key={f} style={{ display:"flex", gap:8, fontSize:"0.82rem", color:C.g6, fontFamily:FF, lineHeight:1.5 }}><span style={{ color:C.gold, fontWeight:700, flexShrink:0 }}>✓</span>{f}</div>)}</div>
+            <button onClick={onTour} style={{...b.navy,width:"100%",padding:"14px",fontSize:"0.92rem"}}>Reserve My Founder Spot →</button>
             <p style={{ marginTop:10, fontSize:"0.74rem", color:C.g4, fontFamily:FF }}>After July 4 or 50 founders — $199/mo + $99/mo per location</p>
           </div>
           <div style={{ background:C.cream, borderRadius:16, padding:"36px 28px", border:`1px solid ${C.g2}`, display:"flex", flexDirection:"column" }}>
-            <div style={{ fontSize:"0.72rem", fontWeight:700, textTransform:"uppercase", color:C.g5, marginBottom:10, marginTop:6, fontFamily:FF }}>Enterprise {"\u00B7"} 11+ Locations</div>
+            <div style={{ fontSize:"0.72rem", fontWeight:700, textTransform:"uppercase", color:C.g5, marginBottom:10, marginTop:6, fontFamily:FF }}>Enterprise · 11+ Locations</div>
             <div style={{ display:"flex", alignItems:"baseline", justifyContent:"center", gap:4, marginBottom:8 }}><span style={{ fontSize:"2.4rem", fontWeight:900, color:C.navy, fontFamily:FF }}>Custom</span></div>
             <p style={{ fontSize:"0.84rem", color:C.g6, marginBottom:20, fontFamily:FF, lineHeight:1.7 }}>For operators and groups running 11 or more locations who need a single operational intelligence picture across their entire portfolio.</p>
-            <div style={{ display:"flex", flexDirection:"column", gap:8, textAlign:"left", marginBottom:20 }}>{ef.map(f => <div key={f} style={{ display:"flex", gap:8, fontSize:"0.82rem", color:C.g6, fontFamily:FF, lineHeight:1.5 }}><span style={{ color:C.g5, fontWeight:700, flexShrink:0 }}>{"\u2713"}</span>{f}</div>)}</div>
+            <div style={{ display:"flex", flexDirection:"column", gap:8, textAlign:"left", marginBottom:20 }}>{ef.map(f => <div key={f} style={{ display:"flex", gap:8, fontSize:"0.82rem", color:C.g6, fontFamily:FF, lineHeight:1.5 }}><span style={{ color:C.g5, fontWeight:700, flexShrink:0 }}>✓</span>{f}</div>)}</div>
             <div style={{ flex:1 }} />
-            <button onClick={onTour} style={{...b.ghost,width:"100%",padding:"14px",fontSize:"0.92rem"}}>Let's Talk \u2192</button>
-            <p style={{ marginTop:10, fontSize:"0.74rem", color:C.g4, fontFamily:FF }}>founders@getevidly.com {"\u00B7"} (855) EVIDLY1</p>
+            <button onClick={onTour} style={{...b.ghost,width:"100%",padding:"14px",fontSize:"0.92rem"}}>Let's Talk →</button>
+            <p style={{ marginTop:10, fontSize:"0.74rem", color:C.g4, fontFamily:FF }}>founders@getevidly.com · (855) EVIDLY1</p>
           </div>
         </div>
         <div style={{ marginTop:36, padding:"28px 32px", background:C.cream, borderRadius:14, border:`1px solid ${C.g2}`, display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:20 }}>
@@ -379,7 +379,7 @@ function Pricing({ onTour, onIRR }) {
             <p style={{ fontSize:"0.9rem", fontWeight:700, color:C.navy, margin:"0 0 4px", fontFamily:FF }}>Start with a free Operations Check.</p>
             <p style={{ fontSize:"0.82rem", color:C.g5, margin:0, fontFamily:FF }}>2 minutes. No account required.</p>
           </div>
-          <button onClick={onIRR} style={{...b.gold,padding:"12px 24px",fontSize:"0.88rem",flexShrink:0}}>Get My Free Operations Check \u2192</button>
+          <button onClick={onIRR} style={{...b.gold,padding:"12px 24px",fontSize:"0.88rem",flexShrink:0}}>Get My Free Operations Check →</button>
         </div>
       </div>
     </section>
@@ -398,7 +398,7 @@ function K2CSection({ onK2C }) {
             <div style={{ position:"absolute", top:0, left:0, right:0, height:2, background:`linear-gradient(90deg,transparent,${C.gold},transparent)` }} />
             <div style={{ position:"relative", display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:24 }}>
               <div style={{ flex:"1 1 280px" }}>
-                <div style={{ fontSize:"0.6rem", fontWeight:800, letterSpacing:"0.18em", textTransform:"uppercase", color:C.gold, marginBottom:8, fontFamily:FF }}>Kitchen to Community {"\u00B7"} K2C</div>
+                <div style={{ fontSize:"0.6rem", fontWeight:800, letterSpacing:"0.18em", textTransform:"uppercase", color:C.gold, marginBottom:8, fontFamily:FF }}>Kitchen to Community · K2C</div>
                 <h2 style={{ fontSize:"clamp(1.3rem,3.5vw,1.8rem)", fontWeight:800, color:C.white, margin:"0 0 10px", lineHeight:1.2, letterSpacing:"-0.02em", fontFamily:FF }}>Every kitchen.<br/>Every meal matters.</h2>
                 <p style={{ fontSize:"0.84rem", color:"rgba(255,255,255,0.55)", margin:0, lineHeight:1.7, fontFamily:FF }}>$10 per location per month. ~100 meals donated. Tracked individually per location, per month.</p>
               </div>
@@ -415,7 +415,7 @@ function K2CSection({ onK2C }) {
           </div>
           <div style={{ padding:"28px 36px" }}>
             <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:16, marginBottom:24 }}>
-              {[{icon:"\uD83C\uDF7D\uFE0F",title:"$10 / location / month",body:"~100 meals donated per location. Automatically calculated and applied to every active subscription."},{icon:"\uD83D\uDCCA",title:"Tracked individually",body:"Every donation recorded per location, per month. Full history visible in your Admin Console."},{icon:"\uD83E\uDD1D",title:"Partner: No Kid Hungry",body:"Transparent reporting on where every dollar goes. Verified impact, not a marketing line."}].map(item => (
+              {[{icon:"🍽️",title:"$10 / location / month",body:"~100 meals donated per location. Automatically calculated and applied to every active subscription."},{icon:"📊",title:"Tracked individually",body:"Every donation recorded per location, per month. Full history visible in your Admin Console."},{icon:"🤝",title:"Partner: No Kid Hungry",body:"Transparent reporting on where every dollar goes. Verified impact, not a marketing line."}].map(item => (
                 <div key={item.title} style={{ background:C.cream, borderRadius:12, padding:"18px 16px", border:`1px solid ${C.g2}` }}>
                   <div style={{ fontSize:"1.4rem", marginBottom:8 }}>{item.icon}</div>
                   <div style={{ fontWeight:700, fontSize:"0.84rem", color:C.navy, marginBottom:6, fontFamily:FF }}>{item.title}</div>
@@ -424,7 +424,7 @@ function K2CSection({ onK2C }) {
               ))}
             </div>
             <div style={{ background:"linear-gradient(135deg,#14532d,#166534)", borderRadius:12, padding:"16px 22px", marginBottom:24, display:"flex", alignItems:"center", gap:16, flexWrap:"wrap" }}>
-              <span style={{ fontSize:"1.4rem" }}>{"\uD83C\uDF31"}</span>
+              <span style={{ fontSize:"1.4rem" }}>🌱</span>
               <div style={{ flex:1 }}>
                 <div style={{ fontWeight:800, fontSize:"0.88rem", color:C.white, fontFamily:FF, marginBottom:2 }}>At 2,000 locations — 2.4 million meals a year.</div>
                 <div style={{ fontSize:"0.76rem", color:"rgba(255,255,255,0.5)", fontFamily:FF }}>Every EvidLY subscription is a direct contribution. No separate donation. No opt-in required.</div>
@@ -436,7 +436,7 @@ function K2CSection({ onK2C }) {
             </div>
             <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:16 }}>
               <p style={{ fontSize:"0.8rem", color:C.g5, margin:0, lineHeight:1.6, fontFamily:FF, maxWidth:440 }}>California commercial kitchens feed their communities every day. K2C makes sure that impact extends beyond the table — one meal per subscription, tracked and reported for every location you run.</p>
-              <button onClick={onK2C} style={{...b.navy,padding:"12px 24px",fontSize:"0.88rem",flexShrink:0}}>Learn About K2C \u2192</button>
+              <button onClick={onK2C} style={{...b.navy,padding:"12px 24px",fontSize:"0.88rem",flexShrink:0}}>Learn About K2C →</button>
             </div>
           </div>
         </div>
@@ -451,10 +451,10 @@ function IRRSection({ onIRR }) {
       <div style={{ position:"absolute", inset:0, backgroundImage:"linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px)", backgroundSize:"48px 48px", pointerEvents:"none" }} />
       <div style={{ position:"absolute", top:0, left:0, right:0, height:2, background:`linear-gradient(90deg,transparent,${C.gold},transparent)` }} />
       <div style={{ maxWidth:580, margin:"0 auto", position:"relative" }}>
-        <div style={{ display:"inline-block", padding:"4px 14px", background:"rgba(160,140,90,0.15)", border:"1px solid rgba(160,140,90,0.3)", borderRadius:100, fontSize:"0.65rem", fontWeight:700, letterSpacing:"0.14em", textTransform:"uppercase", color:C.gold, marginBottom:18, fontFamily:FF }}>Free {"\u00B7"} Creates Your EvidLY Account</div>
+        <div style={{ display:"inline-block", padding:"4px 14px", background:"rgba(160,140,90,0.15)", border:"1px solid rgba(160,140,90,0.3)", borderRadius:100, fontSize:"0.65rem", fontWeight:700, letterSpacing:"0.14em", textTransform:"uppercase", color:C.gold, marginBottom:18, fontFamily:FF }}>Free · Creates Your EvidLY Account</div>
         <h2 style={{ fontSize:"clamp(1.4rem,4vw,2rem)", fontWeight:700, color:C.white, margin:"0 0 14px", lineHeight:1.15, letterSpacing:"-0.02em", fontFamily:FF }}>Your operation, scored.<br/><span style={{ color:C.gold }}>Every risk, in dollars.</span></h2>
         <p style={{ fontSize:"0.9rem", color:"rgba(255,255,255,0.5)", maxWidth:420, margin:"0 auto 28px", lineHeight:1.75, fontFamily:FF }}>See how your operation is running in 2 minutes. Get your baseline report and your EvidLY account — instantly.</p>
-        <button onClick={onIRR} style={{...b.gold,padding:"14px 34px",fontSize:"0.95rem"}}>Get My Free Operations Check \u2192</button>
+        <button onClick={onIRR} style={{...b.gold,padding:"14px 34px",fontSize:"0.95rem"}}>Get My Free Operations Check →</button>
         <p style={{ fontSize:"0.7rem", color:"rgba(255,255,255,0.2)", marginTop:12, fontFamily:FF }}>Used by 100+ California commercial kitchens</p>
       </div>
     </section>
@@ -469,8 +469,8 @@ function FinalCTA({ onTour }) {
         <h2 style={{ fontSize:"clamp(1.4rem,4vw,2rem)", fontWeight:700, color:C.white, margin:"0 0 12px", fontFamily:FF, letterSpacing:"-0.02em" }}>Ready to see it for your operation?</h2>
         <p style={{ fontSize:"0.92rem", color:"rgba(255,255,255,0.4)", marginBottom:28, lineHeight:1.7, fontFamily:FF }}>45 minutes. Your county, your numbers, your dashboard — live.</p>
         <div style={{ display:"flex", gap:12, justifyContent:"center", flexWrap:"wrap", alignItems:"center" }}>
-          <button onClick={onTour} style={{...b.gold,padding:"15px 34px",fontSize:"0.97rem"}}>Book a Guided Tour \u2192</button>
-          <button onClick={() => scrollTo("pricing")} style={{...b.outline,padding:"15px 24px",fontSize:"0.9rem"}}>See Pricing {"\u2193"}</button>
+          <button onClick={onTour} style={{...b.gold,padding:"15px 34px",fontSize:"0.97rem"}}>Book a Guided Tour →</button>
+          <button onClick={() => scrollTo("pricing")} style={{...b.outline,padding:"15px 24px",fontSize:"0.9rem"}}>See Pricing ↓</button>
         </div>
       </div>
     </section>
@@ -498,7 +498,7 @@ function Footer({ onK2C }) {
             <button onClick={() => scrollTo("coverage")} style={{...col,background:"none",border:"none",cursor:"pointer",padding:0}}>What's Covered</button>
             <button onClick={() => scrollTo("pricing")} style={{...col,background:"none",border:"none",cursor:"pointer",padding:0}}>Pricing</button>
             <span style={col}>Inspection Readiness</span>
-            <span style={col}>ScoreTable {"\u2197"}</span>
+            <span style={col}>ScoreTable ↗</span>
           </div>
           <div>
             <div style={head}>Company</div>
@@ -515,7 +515,7 @@ function Footer({ onK2C }) {
           </div>
         </div>
         <div style={{ borderTop:"1px solid rgba(255,255,255,0.06)", paddingTop:14 }}>
-          <span style={{ fontSize:"0.68rem", color:"rgba(255,255,255,0.15)", fontFamily:FF }}>{"\u00A9"} 2026 EvidLY LLC. All rights reserved. {"\u00B7"} IKECA Member #76716495 {"\u00B7"} Veteran-Owned</span>
+          <span style={{ fontSize:"0.68rem", color:"rgba(255,255,255,0.15)", fontFamily:FF }}>© 2026 EvidLY LLC. All rights reserved. · IKECA Member #76716495 · Veteran-Owned</span>
         </div>
       </div>
     </footer>
