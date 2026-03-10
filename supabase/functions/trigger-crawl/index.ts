@@ -97,7 +97,7 @@ Deno.serve(async (req) => {
       const success = response.ok && data.success;
 
       // Update last_crawled_at and crawl status
-      await supabase
+      const { error: updateError } = await supabase
         .from("intelligence_sources")
         .update({
           last_crawled_at: new Date().toISOString(),
@@ -106,6 +106,10 @@ Deno.serve(async (req) => {
           status: success ? "live" : "error",
         })
         .eq("id", source.id);
+
+      if (updateError) {
+        console.error(`Failed to update status for source ${source.id} (${source.name}):`, updateError.message);
+      }
 
       // Log to event log
       await supabase.from("admin_event_log").insert({
@@ -117,7 +121,7 @@ Deno.serve(async (req) => {
 
       return { id: source.id, name: source.name, success };
     } catch (err) {
-      await supabase
+      const { error: updateError2 } = await supabase
         .from("intelligence_sources")
         .update({
           last_crawled_at: new Date().toISOString(),
@@ -126,6 +130,10 @@ Deno.serve(async (req) => {
           status: "error",
         })
         .eq("id", source.id);
+
+      if (updateError2) {
+        console.error(`Failed to update error status for source ${source.id}:`, updateError2.message);
+      }
 
       await supabase.from("admin_event_log").insert({
         level: "ERROR",

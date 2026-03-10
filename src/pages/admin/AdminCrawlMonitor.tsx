@@ -104,22 +104,28 @@ export default function AdminCrawlMonitor() {
 
   const loadData = useCallback(async () => {
     setLoading(true);
-    const [srcRes, runRes] = await Promise.all([
+    const [srcRes, runRes, totalRes, liveRes, errorRes] = await Promise.all([
       supabase.from('intelligence_sources').select('*').order('category').order('name'),
       supabase.from('crawl_runs').select('*').order('started_at', { ascending: false }).limit(20),
+      supabase.from('intelligence_sources').select('*', { count: 'exact', head: true }),
+      supabase.from('intelligence_sources').select('*', { count: 'exact', head: true }).eq('status', 'live'),
+      supabase.from('intelligence_sources').select('*', { count: 'exact', head: true }).in('status', ['error', 'waf_blocked', 'timeout']),
     ]);
     if (srcRes.error) console.error('[CrawlMonitor] intelligence_sources query failed:', srcRes.error);
     if (runRes.error) console.error('[CrawlMonitor] crawl_runs query failed:', runRes.error);
     if (srcRes.data) setSources(srcRes.data);
+
+    // Stat cards: TOTAL/LIVE/ERRORS from intelligence_sources directly (not crawl_runs)
+    setTotalCount(totalRes.count ?? 0);
+    setLiveCount(liveRes.count ?? 0);
+    setErrorCount(errorRes.count ?? 0);
+
     if (runRes.data) {
-      console.log('[CrawlMonitor] crawl_runs rows:', runRes.data.length, 'latest:', runRes.data[0]);
       setRuns(runRes.data);
       const latest = runRes.data[0] || null;
       setLatestRun(latest);
-      setLiveCount(latest?.feeds_live ?? 0);
-      setErrorCount(latest?.feeds_failed ?? 0);
+      // CHANGED comes from crawl_runs (content hash comparison)
       setChangedCount(latest?.feeds_changed ?? 0);
-      setTotalCount(latest?.feeds_total ?? 0);
       setLastCrawled(latest?.completed_at || latest?.started_at || null);
     }
     setLoading(false);
