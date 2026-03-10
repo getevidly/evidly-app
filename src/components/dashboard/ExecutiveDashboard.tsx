@@ -15,6 +15,7 @@ import { ConfidenceBanner } from './shared/ConfidenceBanner';
 import { LocationStandingList } from './shared/LocationStandingList';
 import { AttentionItemList } from './shared/AttentionItemList';
 import { AnnualVendorSpendWidget } from './VendorServiceWidgets';
+import { PortfolioRiskCard } from './PortfolioRiskCard';
 import {
   getDemoAnnualSpend,
   getDemoServiceLocationCount,
@@ -96,6 +97,11 @@ export default function ExecutiveDashboard() {
       {/* 5. WHAT NEEDS ATTENTION */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-4">
         <AttentionItemList items={attentionItems} />
+      </div>
+
+      {/* 5b. PORTFOLIO RISK FORECAST */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-4">
+        <PortfolioRiskCard />
       </div>
 
       {/* 6. ANNUAL VENDOR SPEND */}

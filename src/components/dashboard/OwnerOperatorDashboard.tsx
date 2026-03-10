@@ -20,6 +20,7 @@ import { K2CInviteModal } from '../referral/K2CInviteModal';
 import { demoReferral } from '../../data/demoData';
 import { IntelligenceFeedWidget } from './IntelligenceFeedWidget';
 import { AnnualVendorSpendWidget, ServicesDueSoonWidget } from './VendorServiceWidgets';
+import { PortfolioRiskCard } from './PortfolioRiskCard';
 import {
   VENDOR_DEMO_SERVICES,
   getDemoAnnualSpend,
@@ -248,6 +249,11 @@ export default function OwnerOperatorDashboard() {
       {/* Intelligence Feed Widget */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
         <IntelligenceFeedWidget />
+      </div>
+
+      {/* Portfolio Risk Forecast */}
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
+        <PortfolioRiskCard />
       </div>
 
       {/* Annual Vendor Spend (OO only) */}
