@@ -67,7 +67,6 @@ const NAV_SECTIONS: NavSection[] = [
   {
     title: 'Operations',
     items: [
-      { label: 'Command Center', path: '/admin/command-center' },
       { label: 'Support Tickets', path: '/admin/support' },
       { label: 'Remote Connect', path: '/admin/remote-connect' },
     ],

@@ -5,11 +5,10 @@
  * Access: @getevidly.com or platform_admin role
  *
  * Sections:
- *  1. Welcome header + launch countdown
- *  2. Alert bar (pending signals, crawl health, DB status)
- *  3. 6 KPI stat cards (Supabase queries)
- *  4. Quick Access (top nav cards) + Recent Activity (timeline)
- *  5. Platform Status bar
+ *  A. Alert banner (crawl errors only)
+ *  B. Welcome header + subtitle
+ *  C. 6 KPI stat cards (Supabase queries)
+ *  D. Three-column grid: Quick Access, Platform Health, Open Tickets
  */
 
 import { useState, useEffect, useCallback } from 'react';
@@ -40,51 +39,39 @@ interface QuickCard {
 }
 
 const QUICK_ACCESS: QuickCard[] = [
-  { label: 'Intelligence', path: '/admin/intelligence', icon: '⚡', color: '#7C3AED', bg: '#F5F3FF' },
-  { label: 'Crawl Monitor', path: '/admin/crawl-monitor', icon: '⟳', color: '#2563EB', bg: '#EFF6FF' },
-  { label: 'Signal Queue', path: '/admin/intelligence-admin', icon: '◎', color: '#D97706', bg: '#FFFBEB' },
-  { label: 'Command Center', path: '/admin/command-center', icon: '⬡', color: '#059669', bg: '#ECFDF5' },
-  { label: 'User Emulation', path: '/admin/emulate', icon: '👤', color: '#1E2D4D', bg: '#F4F1EB' },
-  { label: 'Configure', path: '/admin/configure', icon: '⚙️', color: '#6B7280', bg: '#F3F4F6' },
+  { label: 'EvidLY Intelligence', path: '/admin/intelligence', icon: '⚡', color: '#7C3AED', bg: '#F5F3FF' },
   { label: 'Sales Pipeline', path: '/admin/sales', icon: '🎯', color: '#DC2626', bg: '#FEF2F2' },
+  { label: 'Signal Queue', path: '/admin/intelligence-admin', icon: '◎', color: '#D97706', bg: '#FFFBEB' },
+  { label: 'Configure', path: '/admin/configure', icon: '⚙️', color: '#6B7280', bg: '#F3F4F6' },
+  { label: 'User Provisioning', path: '/admin/users', icon: '👤', color: '#1E2D4D', bg: '#F4F1EB' },
   { label: 'Billing', path: '/admin/billing', icon: '💳', color: '#A08C5A', bg: '#FDF8EE' },
 ];
 
 /* ------------------------------------------------------------------ */
-/*  Recent Activity (static demo entries)                              */
+/*  Ticket interface                                                    */
 /* ------------------------------------------------------------------ */
-interface ActivityEntry {
+interface Ticket {
   id: string;
-  time: string;
-  text: string;
-  type: 'crawl' | 'signal' | 'user' | 'system' | 'deploy';
+  title: string;
+  severity: string;
+  created_at: string;
 }
 
-function getRecentActivity(): ActivityEntry[] {
-  const now = new Date();
-  const fmt = (mins: number) => {
-    if (mins < 60) return `${mins}m ago`;
-    const h = Math.floor(mins / 60);
-    return h < 24 ? `${h}h ago` : `${Math.floor(h / 24)}d ago`;
-  };
-  return [
-    { id: '1', time: fmt(3), text: 'Crawl cycle completed — 37 sources scanned', type: 'crawl' },
-    { id: '2', time: fmt(12), text: '2 new intelligence signals classified', type: 'signal' },
-    { id: '3', time: fmt(45), text: 'Vercel deployment succeeded (main)', type: 'deploy' },
-    { id: '4', time: fmt(120), text: 'New organization onboarded: Coastal Kitchen Group', type: 'user' },
-    { id: '5', time: fmt(180), text: 'DB backup completed — 42 MB snapshot', type: 'system' },
-    { id: '6', time: fmt(360), text: 'RFP match found: LAUSD food services contract', type: 'signal' },
-    { id: '7', time: fmt(720), text: 'Jurisdiction config updated: San Diego County', type: 'system' },
-    { id: '8', time: fmt(1440), text: 'Monthly crawl health report generated', type: 'crawl' },
-  ];
+function relativeTime(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  return `${days}d ago`;
 }
 
-const TYPE_COLORS: Record<string, string> = {
-  crawl: '#2563EB',
-  signal: '#7C3AED',
-  user: '#059669',
-  system: '#6B7280',
-  deploy: '#16A34A',
+const SEVERITY_COLORS: Record<string, { bg: string; color: string }> = {
+  critical: { bg: '#FEE2E2', color: '#DC2626' },
+  high: { bg: '#FEF3C7', color: '#D97706' },
+  medium: { bg: '#DBEAFE', color: '#2563EB' },
+  low: { bg: '#F3F4F6', color: '#6B7280' },
 };
 
 /* ------------------------------------------------------------------ */
@@ -96,18 +83,21 @@ export default function AdminHome() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  // Stats — null until query returns
+  // Stats
   const [mrr, setMrr] = useState<number | null>(null);
   const [orgCount, setOrgCount] = useState<number | null>(null);
   const [locCount, setLocCount] = useState<number | null>(null);
   const [crawlLive, setCrawlLive] = useState<number | null>(null);
   const [crawlTotal, setCrawlTotal] = useState<number | null>(null);
+  const [crawlErrors, setCrawlErrors] = useState(0);
   const [pendingSignals, setPendingSignals] = useState<number | null>(null);
   const [countdown, setCountdown] = useState('');
 
-  // Alert bar state
-  const [crawlErrors, setCrawlErrors] = useState(0);
-  const [dbHealthy, setDbHealthy] = useState(true);
+  // Platform Health
+  const [healthErrorCount, setHealthErrorCount] = useState<number | null>(null);
+
+  // Open Tickets
+  const [tickets, setTickets] = useState<Ticket[]>([]);
 
   const updateCountdown = useCallback(() => {
     const now = new Date();
@@ -115,41 +105,43 @@ export default function AdminHome() {
     if (diff <= 0) { setCountdown('LAUNCHED'); return; }
     const d = Math.floor(diff / 86400000);
     const h = Math.floor((diff % 86400000) / 3600000);
-    const m = Math.floor((diff % 3600000) / 60000);
-    const s = Math.floor((diff % 60000) / 1000);
-    setCountdown(d > 0 ? `${d}d ${h}h ${m}m` : `${h}h ${m}m ${s}s`);
+    setCountdown(`${d}d ${h}h`);
   }, []);
 
   useEffect(() => {
     const loadStats = async () => {
       if (isDemoMode) return;
-      const [subRes, orgRes, locRes, crawlRes, sigRes] = await Promise.all([
+
+      const [subRes, orgRes, locRes, totalRes, liveRes, errorRes, sigRes, ticketRes] = await Promise.all([
         supabase.from('billing_subscriptions').select('mrr_cents').eq('status', 'active'),
         supabase.from('organizations').select('id', { count: 'exact', head: true }).eq('status', 'active'),
         supabase.from('locations').select('id', { count: 'exact', head: true }).eq('status', 'active'),
-        supabase.from('crawl_health').select('status'),
-        supabase.from('intelligence_signals').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+        supabase.from('intelligence_sources').select('*', { count: 'exact', head: true }),
+        supabase.from('intelligence_sources').select('*', { count: 'exact', head: true }).eq('status', 'live'),
+        supabase.from('intelligence_sources').select('*', { count: 'exact', head: true }).in('status', ['error', 'waf_blocked', 'timeout']),
+        supabase.from('intelligence_signals').select('id', { count: 'exact', head: true }).eq('is_published', false),
+        supabase.from('support_tickets').select('id, title, severity, created_at').eq('status', 'open').order('created_at', { ascending: false }).limit(10),
       ]);
 
       setMrr((subRes.data || []).reduce((sum, s) => sum + (s.mrr_cents || 0), 0) / 100);
       setOrgCount(orgRes.count ?? 0);
       setLocCount(locRes.count ?? 0);
 
-      const sources = crawlRes.data || [];
-      const live = sources.filter(s => s.status === 'active').length;
+      const total = totalRes.count ?? 0;
+      const live = liveRes.count ?? 0;
+      const errors = errorRes.count ?? 0;
+      setCrawlTotal(total);
       setCrawlLive(live);
-      setCrawlTotal(sources.length);
-      setCrawlErrors(sources.filter(s => s.status === 'error').length);
+      setCrawlErrors(errors);
+      setHealthErrorCount(errors);
 
       setPendingSignals(sigRes.count ?? 0);
-
-      // Simple DB health check — if we got here, Supabase is responding
-      setDbHealthy(true);
+      setTickets(ticketRes.data || []);
     };
 
     loadStats();
     updateCountdown();
-    const interval = setInterval(updateCountdown, 1000);
+    const interval = setInterval(updateCountdown, 60000);
     return () => clearInterval(interval);
   }, [updateCountdown, isDemoMode]);
 
@@ -157,147 +149,102 @@ export default function AdminHome() {
     || user?.email?.split('@')[0]
     || 'Admin';
 
-  const activity = getRecentActivity();
-
-  // Alert bar conditions
-  const hasAlerts = (pendingSignals !== null && pendingSignals > 0) || crawlErrors > 0 || !dbHealthy;
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       <AdminBreadcrumb crumbs={[{ label: 'Home' }]} />
 
-      {/* ── 1. Welcome Header ────────────────────────────────── */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <div>
-          <h1
-            style={{
-              fontSize: 26,
-              fontWeight: 800,
-              color: NAVY,
-              fontFamily: 'Syne, DM Sans, sans-serif',
-              margin: 0,
-              letterSpacing: '-0.02em',
-            }}
-          >
-            Welcome back, {firstName}
-          </h1>
-          <p style={{ fontSize: 14, color: TEXT_SEC, marginTop: 4 }}>
-            EvidLY Admin Console — platform operations, intelligence, and growth.
-          </p>
-        </div>
-
-        {/* Countdown chip */}
+      {/* ── A. Alert Banner ──────────────────────────────────── */}
+      {crawlErrors > 0 && (
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: 8,
-            background: '#FFFFFF',
-            border: `1px solid ${CARD_BORDER}`,
-            borderRadius: 10,
-            padding: '10px 16px',
-            flexShrink: 0,
-          }}
-        >
-          <div style={{ fontSize: 10, fontWeight: 700, color: TEXT_MUTED, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-            Launch
-          </div>
-          <div
-            style={{
-              fontSize: 18,
-              fontWeight: 800,
-              color: countdown === 'LAUNCHED' ? '#059669' : GOLD,
-              fontFamily: 'DM Sans, monospace',
-              letterSpacing: '-0.02em',
-            }}
-          >
-            {countdown || '—'}
-          </div>
-        </div>
-      </div>
-
-      {/* ── 2. Alert Bar ─────────────────────────────────────── */}
-      {hasAlerts && (
-        <div
-          style={{
-            display: 'flex',
-            gap: 16,
+            justifyContent: 'space-between',
             padding: '12px 18px',
-            background: '#FFFBEB',
+            background: '#FEF3C7',
             border: '1px solid #F59E0B',
             borderRadius: 10,
             fontSize: 13,
             fontWeight: 500,
             color: '#92400E',
-            alignItems: 'center',
-            flexWrap: 'wrap',
           }}
         >
-          {pendingSignals !== null && pendingSignals > 0 && (
-            <span
-              onClick={() => navigate('/admin/intelligence-admin')}
-              style={{ cursor: 'pointer', textDecoration: 'underline', textDecorationColor: '#D97706' }}
-            >
-              {pendingSignals} signal{pendingSignals !== 1 ? 's' : ''} pending review
-            </span>
-          )}
-          {crawlErrors > 0 && (
-            <span
-              onClick={() => navigate('/admin/crawl-monitor')}
-              style={{ cursor: 'pointer', textDecoration: 'underline', textDecorationColor: '#D97706' }}
-            >
-              {crawlErrors} crawl source{crawlErrors !== 1 ? 's' : ''} in error state
-            </span>
-          )}
-          {!dbHealthy && (
-            <span style={{ color: '#DC2626', fontWeight: 600 }}>
-              Database health check failed
-            </span>
-          )}
+          <span>{crawlErrors} crawl source{crawlErrors !== 1 ? 's' : ''} in error state</span>
+          <span
+            onClick={() => navigate('/admin/intelligence')}
+            style={{ cursor: 'pointer', fontWeight: 600, textDecoration: 'underline', textDecorationColor: '#D97706' }}
+          >
+            View in EvidLY Intelligence &rarr; Sources
+          </span>
         </div>
       )}
 
-      {/* ── 3. KPI Stat Cards ────────────────────────────────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 14 }}>
-        {[
+      {/* ── B. Page Header ───────────────────────────────────── */}
+      <div>
+        <h1
+          style={{
+            fontSize: 26,
+            fontWeight: 800,
+            color: NAVY,
+            fontFamily: 'Syne, DM Sans, sans-serif',
+            margin: 0,
+            letterSpacing: '-0.02em',
+          }}
+        >
+          Welcome back, {firstName}
+        </h1>
+        <p style={{ fontSize: 14, color: TEXT_SEC, marginTop: 4 }}>
+          EvidLY Admin Console — platform operations, intelligence, and growth.
+        </p>
+      </div>
+
+      {/* ── C. Stat Cards Row ────────────────────────────────── */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 14, alignItems: 'stretch' }}>
+        {([
           {
             label: 'MRR',
             value: mrr === null ? '—' : mrr === 0 ? '$0' : `$${mrr.toLocaleString('en-US', { maximumFractionDigits: 0 })}`,
             color: GOLD,
+            sub: 'Pre-launch',
           },
           {
             label: 'Organizations',
             value: orgCount ?? '—',
             color: NAVY,
+            sub: 'Active',
           },
           {
             label: 'Locations',
             value: locCount ?? '—',
             color: NAVY,
+            sub: 'Active',
           },
           {
             label: 'Crawl Sources',
             value: crawlLive === null || crawlTotal === null ? '—' : `${crawlLive}/${crawlTotal}`,
-            color: crawlLive !== null && crawlTotal !== null && crawlLive < crawlTotal * 0.8 ? '#D97706' : '#059669',
+            color: crawlLive !== null && crawlLive > 0 ? '#166534' : '#C2410C',
+            sub: 'Live feeds',
           },
           {
             label: 'Signals Pending',
             value: pendingSignals ?? '—',
-            color: pendingSignals !== null && pendingSignals > 5 ? '#DC2626' : pendingSignals !== null && pendingSignals > 0 ? '#D97706' : '#059669',
+            color: '#C2410C',
+            sub: 'Awaiting review',
           },
           {
-            label: 'Countdown',
+            label: 'Launch Countdown',
             value: countdown || '—',
-            color: countdown === 'LAUNCHED' ? '#059669' : GOLD,
+            color: GOLD,
+            sub: 'May 5, 2026',
           },
-        ].map((card, i) => (
+        ] as const).map((card, i) => (
           <div
             key={i}
             style={{
               background: '#FFFFFF',
               border: `1px solid ${CARD_BORDER}`,
               borderRadius: 10,
-              padding: '18px 16px',
+              padding: '16px 20px',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -309,7 +256,7 @@ export default function AdminHome() {
               style={{
                 fontSize: 10,
                 fontWeight: 700,
-                color: TEXT_MUTED,
+                color: '#6B7280',
                 textTransform: 'uppercase',
                 letterSpacing: '0.08em',
                 marginBottom: 8,
@@ -328,14 +275,17 @@ export default function AdminHome() {
             >
               {card.value}
             </div>
+            <div style={{ fontSize: 11, color: TEXT_MUTED, marginTop: 6 }}>
+              {card.sub}
+            </div>
           </div>
         ))}
       </div>
 
-      {/* ── 4. Quick Access + Recent Activity ────────────────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+      {/* ── D. Three-column grid ─────────────────────────────── */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20 }}>
 
-        {/* Quick Access */}
+        {/* Column 1 — Quick Access */}
         <div
           style={{
             background: '#FFFFFF',
@@ -373,11 +323,9 @@ export default function AdminHome() {
                   textAlign: 'left',
                 }}
                 onMouseEnter={e => {
-                  e.currentTarget.style.background = card.bg;
-                  e.currentTarget.style.borderColor = card.color + '40';
+                  e.currentTarget.style.borderColor = GOLD;
                 }}
                 onMouseLeave={e => {
-                  e.currentTarget.style.background = '#FFFFFF';
                   e.currentTarget.style.borderColor = CARD_BORDER;
                 }}
               >
@@ -396,7 +344,7 @@ export default function AdminHome() {
                 >
                   {card.icon}
                 </div>
-                <span style={{ fontSize: 13, fontWeight: 600, color: NAVY }}>
+                <span style={{ fontSize: 12, fontWeight: 600, color: NAVY }}>
                   {card.label}
                 </span>
               </button>
@@ -404,13 +352,15 @@ export default function AdminHome() {
           </div>
         </div>
 
-        {/* Recent Activity */}
+        {/* Column 2 — Platform Health */}
         <div
           style={{
             background: '#FFFFFF',
             border: `1px solid ${CARD_BORDER}`,
             borderRadius: 12,
             padding: '20px 22px',
+            display: 'flex',
+            flexDirection: 'column',
           }}
         >
           <h2
@@ -422,87 +372,177 @@ export default function AdminHome() {
               fontFamily: 'DM Sans, sans-serif',
             }}
           >
-            Recent Activity
+            Platform Health
           </h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-            {activity.map((entry, i) => (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12, flex: 1 }}>
+            {([
+              {
+                label: 'Intelligence Sources Live',
+                value: crawlLive !== null && crawlTotal !== null ? `${crawlLive} / ${crawlTotal}` : '—',
+                color: crawlLive !== null && crawlLive > 0 ? '#166534' : TEXT_MUTED,
+              },
+              {
+                label: 'Sources with Errors',
+                value: healthErrorCount ?? '—',
+                color: healthErrorCount !== null && healthErrorCount > 0 ? '#DC2626' : '#059669',
+              },
+              {
+                label: 'Signals Pending Review',
+                value: pendingSignals ?? '—',
+                color: pendingSignals !== null && pendingSignals > 0 ? '#C2410C' : '#059669',
+              },
+              {
+                label: 'Edge Functions Active',
+                value: '107 / 107',
+                color: '#059669',
+              },
+            ] as const).map((row, i) => (
               <div
-                key={entry.id}
+                key={i}
                 style={{
                   display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: 10,
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
                   padding: '8px 0',
-                  borderBottom: i < activity.length - 1 ? `1px solid #F3F0EA` : 'none',
+                  borderBottom: i < 3 ? `1px solid #F3F0EA` : 'none',
                 }}
               >
-                <div
-                  style={{
-                    width: 7,
-                    height: 7,
-                    borderRadius: '50%',
-                    background: TYPE_COLORS[entry.type] || '#6B7280',
-                    marginTop: 5,
-                    flexShrink: 0,
-                  }}
-                />
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontSize: 12, color: NAVY, margin: 0, lineHeight: 1.5 }}>
-                    {entry.text}
-                  </p>
-                </div>
-                <span
-                  style={{
-                    fontSize: 11,
-                    color: TEXT_MUTED,
-                    flexShrink: 0,
-                    fontVariantNumeric: 'tabular-nums',
-                  }}
-                >
-                  {entry.time}
-                </span>
+                <span style={{ fontSize: 12, color: TEXT_SEC }}>{row.label}</span>
+                <span style={{ fontSize: 13, fontWeight: 700, color: row.color }}>{row.value}</span>
               </div>
             ))}
           </div>
-        </div>
-      </div>
 
-      {/* ── 5. Platform Status Bar ───────────────────────────── */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '12px 18px',
-          background: '#FFFFFF',
-          border: `1px solid ${CARD_BORDER}`,
-          borderRadius: 10,
-          fontSize: 12,
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#059669' }} />
-            <span style={{ fontWeight: 600, color: NAVY }}>All Systems Operational</span>
-          </div>
-          <span style={{ color: TEXT_MUTED }}>|</span>
-          <span style={{ color: TEXT_SEC }}>
-            Supabase: <span style={{ color: '#059669', fontWeight: 600 }}>OK</span>
-          </span>
-          <span style={{ color: TEXT_MUTED }}>|</span>
-          <span style={{ color: TEXT_SEC }}>
-            Vercel: <span style={{ color: '#059669', fontWeight: 600 }}>OK</span>
-          </span>
-          <span style={{ color: TEXT_MUTED }}>|</span>
-          <span style={{ color: TEXT_SEC }}>
-            Crawl Engine: <span style={{ color: crawlErrors > 0 ? '#D97706' : '#059669', fontWeight: 600 }}>
-              {crawlErrors > 0 ? `${crawlErrors} error${crawlErrors !== 1 ? 's' : ''}` : 'OK'}
+          {/* System status footer */}
+          <div
+            style={{
+              marginTop: 16,
+              paddingTop: 12,
+              borderTop: `1px solid ${CARD_BORDER}`,
+              display: 'flex',
+              gap: 16,
+              fontSize: 11,
+            }}
+          >
+            <span style={{ color: TEXT_SEC }}>
+              Supabase: <span style={{ color: '#059669', fontWeight: 600 }}>OK</span>
             </span>
-          </span>
+            <span style={{ color: TEXT_SEC }}>
+              Vercel: <span style={{ color: '#059669', fontWeight: 600 }}>OK</span>
+            </span>
+            <span style={{ color: TEXT_SEC }}>
+              Crawl Engine:{' '}
+              <span style={{ color: crawlErrors > 0 ? '#DC2626' : '#059669', fontWeight: 600 }}>
+                {crawlErrors > 0 ? `${crawlErrors} errors` : 'OK'}
+              </span>
+            </span>
+          </div>
         </div>
-        <span style={{ color: TEXT_MUTED, fontVariantNumeric: 'tabular-nums' }}>
-          v0.9.0-beta &middot; {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-        </span>
+
+        {/* Column 3 — Open Tickets */}
+        <div
+          style={{
+            background: '#FFFFFF',
+            border: `1px solid ${CARD_BORDER}`,
+            borderRadius: 12,
+            padding: '20px 22px',
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+            <h2
+              style={{
+                fontSize: 14,
+                fontWeight: 700,
+                color: NAVY,
+                margin: 0,
+                fontFamily: 'DM Sans, sans-serif',
+              }}
+            >
+              Open Tickets
+            </h2>
+            {tickets.length > 0 && (
+              <span
+                style={{
+                  background: '#DC2626',
+                  color: '#FFFFFF',
+                  fontSize: 10,
+                  fontWeight: 700,
+                  padding: '2px 7px',
+                  borderRadius: 10,
+                }}
+              >
+                {tickets.length}
+              </span>
+            )}
+          </div>
+
+          {tickets.length === 0 ? (
+            <div
+              style={{
+                flex: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: TEXT_MUTED,
+                fontSize: 13,
+                fontStyle: 'italic',
+              }}
+            >
+              No open tickets
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+              {tickets.map((ticket, i) => {
+                const sev = SEVERITY_COLORS[ticket.severity] || SEVERITY_COLORS.low;
+                return (
+                  <div
+                    key={ticket.id}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 10,
+                      padding: '8px 6px',
+                      borderBottom: i < tickets.length - 1 ? '1px solid #F3F0EA' : 'none',
+                      borderRadius: 6,
+                      border: '1px solid transparent',
+                      cursor: 'pointer',
+                      transition: 'border-color 0.15s',
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = GOLD; }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor = 'transparent'; }}
+                    onClick={() => navigate('/admin/support')}
+                  >
+                    <span style={{ fontSize: 11, color: TEXT_MUTED, fontVariantNumeric: 'tabular-nums', flexShrink: 0 }}>
+                      #{ticket.id.slice(0, 6)}
+                    </span>
+                    <span style={{ fontSize: 12, color: NAVY, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {ticket.title}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: 10,
+                        fontWeight: 600,
+                        padding: '2px 6px',
+                        borderRadius: 4,
+                        background: sev.bg,
+                        color: sev.color,
+                        textTransform: 'uppercase',
+                        flexShrink: 0,
+                      }}
+                    >
+                      {ticket.severity}
+                    </span>
+                    <span style={{ fontSize: 11, color: TEXT_MUTED, flexShrink: 0, fontVariantNumeric: 'tabular-nums' }}>
+                      {relativeTime(ticket.created_at)}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
