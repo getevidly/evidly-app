@@ -94,6 +94,14 @@ export default function AdminCrawlMonitor() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [demoOnly, setDemoOnly] = useState(false);
 
+  // Stat card values — set directly from latest crawl_runs row in loadData()
+  const [liveCount, setLiveCount] = useState(0);
+  const [errorCount, setErrorCount] = useState(0);
+  const [changedCount, setChangedCount] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
+  const [lastCrawled, setLastCrawled] = useState<string | null>(null);
+  const [latestRun, setLatestRun] = useState<RunRow | null>(null);
+
   const loadData = useCallback(async () => {
     setLoading(true);
     const [srcRes, runRes] = await Promise.all([
@@ -103,7 +111,16 @@ export default function AdminCrawlMonitor() {
     if (srcRes.error) console.error('[CrawlMonitor] intelligence_sources query failed:', srcRes.error);
     if (runRes.error) console.error('[CrawlMonitor] crawl_runs query failed:', runRes.error);
     if (srcRes.data) setSources(srcRes.data);
-    if (runRes.data) setRuns(runRes.data);
+    if (runRes.data) {
+      setRuns(runRes.data);
+      const latest = runRes.data[0] || null;
+      setLatestRun(latest);
+      setLiveCount(latest?.feeds_live ?? 0);
+      setErrorCount(latest?.feeds_failed ?? 0);
+      setChangedCount(latest?.feeds_changed ?? 0);
+      setTotalCount(latest?.feeds_total ?? 0);
+      setLastCrawled(latest?.completed_at || latest?.started_at || null);
+    }
     setLoading(false);
   }, []);
 
@@ -143,13 +160,6 @@ export default function AdminCrawlMonitor() {
     })
     .sort((a, b) => (STATUS_SORT[a.status] ?? 9) - (STATUS_SORT[b.status] ?? 9));
 
-  // KPI counts from most recent crawl run (not stale intelligence_sources.status)
-  const latestRun = runs[0] || null;
-  const liveCount    = latestRun?.feeds_live ?? 0;
-  const errorCount   = latestRun?.feeds_failed ?? 0;
-  const changedCount = latestRun?.feeds_changed ?? 0;
-  const totalCount   = latestRun?.feeds_total ?? 0;
-  const lastCrawled  = latestRun?.completed_at || latestRun?.started_at || null;
 
   const KpiCard = ({ label, value, color, sub }: { label: string; value: string | number; color?: string; sub?: string }) => (
     <div style={{ background: '#FFFFFF', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '16px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
