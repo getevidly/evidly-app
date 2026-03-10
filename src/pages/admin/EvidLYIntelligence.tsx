@@ -262,7 +262,6 @@ export default function EvidLYIntelligence() {
   const [sigFilter, setSigFilter] = useState({ search: '', urgency: '', type: '', status: '', tier: '', pillar: '' });
   const [srcCatFilter, setSrcCatFilter] = useState('');
   const [srcStatusFilter, setSrcStatusFilter] = useState('');
-  const [srcDemoOnly, setSrcDemoOnly] = useState(false);
   const [jurSearch, setJurSearch] = useState('');
   const [jurFilter, setJurFilter] = useState<'' | 'active' | 'quiet' | 'methodology'>('');
   const [jurSort, setJurSort] = useState<'signals' | 'name' | 'recent'>('signals');
@@ -424,7 +423,6 @@ export default function EvidLYIntelligence() {
   const totalSources = sources.length;
   const activeSources = sources.filter(s => s.status === 'live').length;
   const brokenSources = sources.filter(s => ['waf_blocked', 'timeout', 'error', 'degraded'].includes(s.status)).length;
-  const demoCritical = sources.filter(s => s.is_demo_critical).length;
   const totalSignals = signals.length;
   const pendingSignals = signals.filter(s => !s.published_at).length;
   const publishedSignals = signals.filter(s => !!s.published_at).length;
@@ -455,7 +453,6 @@ export default function EvidLYIntelligence() {
   const filteredSources = sources.filter(s => {
     if (srcCatFilter && s.category !== srcCatFilter) return false;
     if (srcStatusFilter && s.status !== srcStatusFilter) return false;
-    if (srcDemoOnly && !s.is_demo_critical) return false;
     return true;
   });
 
@@ -696,7 +693,7 @@ export default function EvidLYIntelligence() {
           { key: 'signals' as Tab, label: 'Signals', count: signals.length },
           { key: 'sources' as Tab, label: 'Sources', count: totalSources },
           { key: 'correlations' as Tab, label: 'Correlations', count: correlations.length },
-          { key: 'jurisdiction_updates' as Tab, label: 'Jurisdictions', count: null },
+          { key: 'jurisdiction_updates' as Tab, label: 'Jurisdictions', count: allJurisdictions.length || 62 },
           { key: 'regulatory_updates' as Tab, label: 'Regulatory', count: regulatoryChanges.length },
           { key: 'predictions' as Tab, label: 'Predictions', count: null },
         ]).map(t => {
@@ -846,92 +843,6 @@ export default function EvidLYIntelligence() {
             })}
           </div>
 
-          {/* Auto-Routing Engine */}
-          <div style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, padding: 20, gridColumn: '1 / -1' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-              <div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: NAVY }}>Intelligence Routing Engine</div>
-                <div style={{ fontSize: 11, color: TEXT_MUTED, marginTop: 2 }}>
-                  Signals are auto-triaged into routing tiers based on AI confidence, severity, and risk dimensions.
-                </div>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <span style={{ fontSize: 11, color: TEXT_SEC, fontWeight: 500 }}>
-                  {routingMode === 'supervised' ? 'Supervised' : 'Autonomous'}
-                </span>
-                <button onClick={toggleRoutingMode} disabled={routingModeLoading}
-                  style={{
-                    width: 48, height: 26, borderRadius: 13, border: 'none', cursor: 'pointer', position: 'relative',
-                    background: routingMode === 'autonomous' ? '#059669' : '#D1D5DB', transition: 'background 0.2s',
-                  }}>
-                  <div style={{
-                    width: 20, height: 20, borderRadius: '50%', background: '#fff', position: 'absolute', top: 3,
-                    left: routingMode === 'autonomous' ? 25 : 3, transition: 'left 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
-                  }} />
-                </button>
-              </div>
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
-              {[
-                { label: 'Auto-Publish', count: autoRouted, color: '#059669', bg: '#ECFDF5', desc: 'Low-risk, high-confidence' },
-                { label: 'Notify Admin', count: notifyRouted, color: '#D97706', bg: '#FFFBEB', desc: 'Medium — awaiting one-click approve' },
-                { label: 'Manual Review', count: holdRouted, color: '#DC2626', bg: '#FEF2F2', desc: 'High-risk or low confidence' },
-                { label: 'Auto-Published', count: signals.filter(s => s.auto_published).length, color: '#1E2D4D', bg: '#F0F4F8', desc: 'Published without manual review' },
-              ].map(stat => (
-                <div key={stat.label} style={{ padding: 14, borderRadius: 8, background: stat.bg, textAlign: 'center' }}>
-                  <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 24, fontWeight: 800, color: stat.color }}>{loading ? '—' : stat.count}</div>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: stat.color, marginTop: 4 }}>{stat.label}</div>
-                  <div style={{ fontSize: 9, color: TEXT_MUTED, marginTop: 2 }}>{stat.desc}</div>
-                </div>
-              ))}
-            </div>
-            {routingMode === 'supervised' && (
-              <div style={{ marginTop: 12, padding: '10px 14px', background: '#FFFBEB', borderRadius: 8, fontSize: 11, color: '#92400E', lineHeight: 1.6 }}>
-                <strong>Supervised mode:</strong> All signals require manual approval before publishing. Switch to Autonomous to enable auto-publishing of low-risk signals.
-              </div>
-            )}
-            {routingMode === 'autonomous' && (
-              <div style={{ marginTop: 12, padding: '10px 14px', background: '#ECFDF5', borderRadius: 8, fontSize: 11, color: '#065F46', lineHeight: 1.6 }}>
-                <strong>Autonomous mode:</strong> Low-risk, high-confidence signals are auto-published after a delay (2-4 hours). Medium-risk signals send you an email with a one-click approve link.
-              </div>
-            )}
-          </div>
-
-          {/* Demo-critical sources */}
-          <div style={{ background: '#fff', border: `1.5px solid #E8D9B8`, borderRadius: 10, padding: 20, gridColumn: '1 / -1' }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: NAVY, marginBottom: 4 }}>Demo-Critical Sources</div>
-            <div style={{ fontSize: 11, color: TEXT_MUTED, marginBottom: 14 }}>
-              These sources must be operational for the Aramark Yosemite demo and all client-facing demos.
-            </div>
-            {loading ? (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
-                {Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} h={60} />)}
-              </div>
-            ) : (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
-                {sources.filter(s => s.is_demo_critical).map(s => (
-                  <div key={s.id} style={{
-                    padding: '10px 12px', borderRadius: 8, border: '1px solid',
-                    borderColor: s.status === 'live' ? '#BBF7D0' : '#FECACA',
-                    background: s.status === 'live' ? '#F0FDF4' : '#FEF2F2',
-                  }}>
-                    <div style={{ fontSize: 11, fontWeight: 600,
-                      color: s.status === 'live' ? '#065F46' : '#991B1B' }}>
-                      {s.status === 'live' ? '● ' : '✗ '}{s.name}
-                    </div>
-                    <div style={{ fontSize: 10, color: TEXT_MUTED, marginTop: 2 }}>
-                      {s.crawl_method} · {s.crawl_frequency}
-                    </div>
-                    {s.last_crawled_at && (
-                      <div style={{ fontSize: 9, color: TEXT_MUTED, marginTop: 2 }}>
-                        Last: {new Date(s.last_crawled_at).toLocaleString()}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
         </div>
         </>
       )}
@@ -1216,10 +1127,6 @@ export default function EvidLYIntelligence() {
               <option value="disabled">Disabled</option>
               <option value="error">Error</option>
             </select>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#4A5568', cursor: 'pointer' }}>
-              <input type="checkbox" checked={srcDemoOnly} onChange={e => setSrcDemoOnly(e.target.checked)} />
-              Demo critical only
-            </label>
             <span style={{ fontSize: 11, color: TEXT_MUTED, marginLeft: 'auto' }}>
               Showing {filteredSources.length} of {totalSources} sources
             </span>
@@ -1234,7 +1141,7 @@ export default function EvidLYIntelligence() {
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                 <thead>
                   <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
-                    {['Source', 'Category', 'Method', 'Frequency', 'Status', 'Last Crawled', 'Signals (30d)', '⭐'].map(h => (
+                    {['Source', 'Category', 'Method', 'Frequency', 'Status', 'Last Crawled', 'Signals (30d)'].map(h => (
                       <th key={h} style={thStyle}>{h}</th>
                     ))}
                   </tr>
@@ -1268,9 +1175,6 @@ export default function EvidLYIntelligence() {
                         </td>
                         <td style={{ ...tdStyle, fontSize: 12, fontFamily: "'DM Mono', monospace", color: s.signal_count_30d > 0 ? NAVY : TEXT_MUTED }}>
                           {s.signal_count_30d || 0}
-                        </td>
-                        <td style={{ ...tdStyle, textAlign: 'center' }}>
-                          {s.is_demo_critical ? '⭐' : ''}
                         </td>
                       </tr>
                     );
