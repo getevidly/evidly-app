@@ -290,6 +290,15 @@ export default function EvidLYIntelligence() {
   // RFP Monitor
   const [rfpListings, setRfpListings] = useState<{ id: string; title: string; entity_name: string; state: string; relevance_tier: string; deadline: string | null; estimated_value_min: number | null; estimated_value_max: number | null; status: string; created_at: string; ai_relevance_summary: string | null }[]>([]);
 
+  // Prediction Monitor state
+  const [predictions, setPredictions] = useState<PredictionRow[]>([]);
+  const [accuracyLog, setAccuracyLog] = useState<AccuracyRow[]>([]);
+  const [predLastRun, setPredLastRun] = useState<{ predicted_at: string; model_version: string } | null>(null);
+  const [predTotalCount, setPredTotalCount] = useState(0);
+  const [predLoading, setPredLoading] = useState(false);
+  const [predSortCol, setPredSortCol] = useState<'failure_probability' | 'risk_level' | 'predicted_at'>('failure_probability');
+  const [predSortAsc, setPredSortAsc] = useState(false);
+
   const loadAll = useCallback(async () => {
     setLoading(true);
     try {
@@ -342,6 +351,49 @@ export default function EvidLYIntelligence() {
   }, []);
 
   useEffect(() => { loadAll(); }, [loadAll]);
+
+  // Load prediction data when tab is selected
+  useEffect(() => {
+    if (activeTab !== 'predictions') return;
+    let cancelled = false;
+    async function loadPredictions() {
+      setPredLoading(true);
+      try {
+        const [predRes, accRes, lastRes, countRes] = await Promise.all([
+          supabase
+            .from('location_risk_predictions')
+            .select('*, locations(name, address), organizations(name)')
+            .order('failure_probability', { ascending: false })
+            .limit(100),
+          supabase
+            .from('prediction_accuracy_log')
+            .select('*, locations(name)')
+            .order('logged_at', { ascending: false })
+            .limit(50),
+          supabase
+            .from('location_risk_predictions')
+            .select('predicted_at, model_version')
+            .order('predicted_at', { ascending: false })
+            .limit(1)
+            .single(),
+          supabase
+            .from('location_risk_predictions')
+            .select('*', { count: 'exact', head: true }),
+        ]);
+        if (!cancelled) {
+          if (predRes.data) setPredictions(predRes.data);
+          if (accRes.data) setAccuracyLog(accRes.data);
+          if (lastRes.data) setPredLastRun(lastRes.data);
+          setPredTotalCount(countRes.count || 0);
+        }
+      } catch {
+        // Queries may fail — empty states show
+      }
+      if (!cancelled) setPredLoading(false);
+    }
+    loadPredictions();
+    return () => { cancelled = true; };
+  }, [activeTab]);
 
   // Load routing mode
   useEffect(() => {
@@ -677,6 +729,7 @@ export default function EvidLYIntelligence() {
           { key: 'regulatory_updates' as Tab, label: 'Regulatory', count: regulatoryChanges.length },
           { key: 'rfp' as Tab, label: 'RFP Monitor', count: null },
           { key: 'scoretable' as Tab, label: 'ScoreTable', count: null },
+          { key: 'predictions' as Tab, label: 'Prediction Monitor', count: null },
         ]).map(t => {
           const isActive = activeTab === t.key;
           return (
@@ -1906,6 +1959,362 @@ export default function EvidLYIntelligence() {
           )}
         </>
       )}
+
+      {/* ────────── TAB: PREDICTION MONITOR ────────── */}
+      {activeTab === 'predictions' && (() => {
+        const RISK_BADGE: Record<string, { bg: string; text: string }> = {
+          critical: { bg: '#FEF2F2', text: '#DC2626' },
+          high:     { bg: '#FFF7ED', text: '#C2410C' },
+          moderate: { bg: '#FFFBEB', text: '#D97706' },
+          low:      { bg: '#F0FDF4', text: '#16A34A' },
+          unknown:  { bg: '#F3F4F6', text: '#6B7280' },
+        };
+        const URGENCY_TEXT: Record<string, string> = {
+          immediate: '#DC2626', soon: '#D97706', scheduled: '#6B7280', none: '#9CA3AF',
+        };
+        const PILLAR_BADGE: Record<string, { bg: string; text: string; label: string }> = {};
+        for (const p of CIC_PILLARS) {
+          PILLAR_BADGE[`P${p.number}`] = { bg: p.bgColor, text: p.color, label: p.shortLabel };
+        }
+
+        function relativeTime(iso: string): string {
+          const diff = Date.now() - new Date(iso).getTime();
+          const mins = Math.floor(diff / 60000);
+          if (mins < 1) return 'just now';
+          if (mins < 60) return `${mins}m ago`;
+          const hrs = Math.floor(mins / 60);
+          if (hrs < 24) return `${hrs}h ago`;
+          const days = Math.floor(hrs / 24);
+          return `${days}d ago`;
+        }
+
+        // Sorted predictions
+        const sortedPredictions = [...predictions].sort((a, b) => {
+          if (predSortCol === 'failure_probability') {
+            return predSortAsc
+              ? a.failure_probability - b.failure_probability
+              : b.failure_probability - a.failure_probability;
+          }
+          if (predSortCol === 'risk_level') {
+            const order = ['critical', 'high', 'moderate', 'low', 'unknown'];
+            const ai = order.indexOf(a.risk_level);
+            const bi = order.indexOf(b.risk_level);
+            return predSortAsc ? ai - bi : bi - ai;
+          }
+          // predicted_at
+          return predSortAsc
+            ? new Date(a.predicted_at).getTime() - new Date(b.predicted_at).getTime()
+            : new Date(b.predicted_at).getTime() - new Date(a.predicted_at).getTime();
+        });
+
+        const handleSort = (col: typeof predSortCol) => {
+          if (predSortCol === col) {
+            setPredSortAsc(!predSortAsc);
+          } else {
+            setPredSortCol(col);
+            setPredSortAsc(false);
+          }
+        };
+
+        const sortArrow = (col: typeof predSortCol) =>
+          predSortCol === col ? (predSortAsc ? ' \u2191' : ' \u2193') : '';
+
+        return (
+          <>
+            {/* Section 1: Model Status Bar */}
+            <div style={{
+              background: NAVY, borderRadius: 12, padding: '18px 24px',
+              display: 'flex', alignItems: 'center', gap: 28, flexWrap: 'wrap',
+              color: '#fff',
+            }}>
+              <div>
+                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>Model Version</div>
+                <div style={{ fontSize: 15, fontWeight: 800, color: GOLD }}>{predLastRun?.model_version || 'rules-v1'}</div>
+              </div>
+              <div style={{ width: 1, height: 32, background: 'rgba(255,255,255,0.15)' }} />
+              <div>
+                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>Method</div>
+                <div style={{ fontSize: 13, fontWeight: 600 }}>Rules-based</div>
+              </div>
+              <div style={{ width: 1, height: 32, background: 'rgba(255,255,255,0.15)' }} />
+              <div>
+                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>Phase</div>
+                <div style={{ fontSize: 13, fontWeight: 600 }}>Phase 1 of 3</div>
+              </div>
+              <div style={{ width: 1, height: 32, background: 'rgba(255,255,255,0.15)' }} />
+              <div>
+                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>Next Phase</div>
+                <div style={{ fontSize: 13, fontWeight: 600 }}>MindsDB (10{'\u2013'}25 customers)</div>
+              </div>
+              <div style={{ width: 1, height: 32, background: 'rgba(255,255,255,0.15)' }} />
+              <div>
+                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>Last Run</div>
+                <div style={{ fontSize: 13, fontWeight: 600 }}>{predLastRun ? relativeTime(predLastRun.predicted_at) : '\u2014'}</div>
+              </div>
+              <div style={{ width: 1, height: 32, background: 'rgba(255,255,255,0.15)' }} />
+              <div>
+                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>Total Predictions</div>
+                <div style={{ fontSize: 15, fontWeight: 800, fontFamily: "'DM Mono', monospace" }}>{predTotalCount}</div>
+              </div>
+            </div>
+
+            {/* Section 2: Location Risk Score Table */}
+            <div style={{ marginTop: 20 }}>
+              <h3 style={{ fontSize: 15, fontWeight: 700, color: NAVY, marginBottom: 12 }}>Location Risk Scores</h3>
+              {predLoading ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} h={36} />)}
+                </div>
+              ) : sortedPredictions.length === 0 ? (
+                <EmptyState
+                  icon={'\uD83D\uDD2E'}
+                  title="No predictions generated yet"
+                  subtitle="Trigger the generate-alerts edge function to run the first prediction. Predictions will appear here with risk scores per location."
+                />
+              ) : (
+                <div style={{ background: '#fff', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12, minWidth: 900 }}>
+                    <thead>
+                      <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
+                        <th style={thStyle}>Location</th>
+                        <th style={thStyle}>Organization</th>
+                        <th style={{ ...thStyle, cursor: 'pointer' }} onClick={() => handleSort('risk_level')}>
+                          Risk Level{sortArrow('risk_level')}
+                        </th>
+                        <th style={{ ...thStyle, cursor: 'pointer' }} onClick={() => handleSort('failure_probability')}>
+                          Failure Prob.{sortArrow('failure_probability')}
+                        </th>
+                        <th style={thStyle}>Trajectory</th>
+                        <th style={thStyle}>Top Risk Pillars</th>
+                        <th style={thStyle}>Service Urgency</th>
+                        <th style={{ ...thStyle, cursor: 'pointer' }} onClick={() => handleSort('predicted_at')}>
+                          Predicted At{sortArrow('predicted_at')}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {sortedPredictions.map(p => {
+                        const badge = RISK_BADGE[p.risk_level] || RISK_BADGE.unknown;
+                        const pct = Math.round(p.failure_probability * 100);
+                        return (
+                          <tr key={p.id} style={{ borderBottom: `1px solid ${BORDER}` }}
+                            onMouseEnter={e => e.currentTarget.style.background = '#F9FAFB'}
+                            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                            <td style={{ ...tdStyle, fontWeight: 600, color: NAVY }}>
+                              {p.locations?.name || p.location_id.slice(0, 8)}
+                            </td>
+                            <td style={{ ...tdStyle, color: TEXT_SEC }}>
+                              {p.organizations?.name || '\u2014'}
+                            </td>
+                            <td style={tdStyle}>
+                              <span style={{
+                                display: 'inline-block', padding: '2px 8px', borderRadius: 6,
+                                background: badge.bg, color: badge.text, fontSize: 11, fontWeight: 700,
+                                textTransform: 'uppercase',
+                              }}>
+                                {p.risk_level}
+                              </span>
+                            </td>
+                            <td style={tdStyle}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                <div style={{ position: 'relative', width: 60, height: 6, background: '#E5E7EB', borderRadius: 3, overflow: 'hidden' }}>
+                                  <div style={{
+                                    position: 'absolute', left: 0, top: 0, height: '100%', borderRadius: 3,
+                                    width: `${pct}%`,
+                                    background: pct >= 70 ? '#DC2626' : pct >= 50 ? '#C2410C' : pct >= 25 ? '#D97706' : '#16A34A',
+                                  }} />
+                                </div>
+                                <span style={{ fontFamily: "'DM Mono', monospace", fontWeight: 600, color: NAVY, fontSize: 12 }}>
+                                  {pct}%
+                                </span>
+                              </div>
+                            </td>
+                            <td style={tdStyle}>
+                              <span style={{
+                                color: p.score_trajectory === 'improving' ? '#16A34A'
+                                  : p.score_trajectory === 'declining' ? '#DC2626' : '#6B7280',
+                                fontWeight: 600,
+                              }}>
+                                {p.score_trajectory === 'improving' ? '\u2191' : p.score_trajectory === 'declining' ? '\u2193' : '\u2192'}{' '}
+                                {p.score_trajectory}
+                              </span>
+                            </td>
+                            <td style={tdStyle}>
+                              <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                                {(p.top_risk_pillars || []).map((code, i) => {
+                                  const pb = PILLAR_BADGE[code];
+                                  return pb ? (
+                                    <span key={i} style={{
+                                      display: 'inline-block', padding: '1px 6px', borderRadius: 4,
+                                      background: pb.bg, color: pb.text, fontSize: 10, fontWeight: 700,
+                                    }}>
+                                      {pb.label}
+                                    </span>
+                                  ) : (
+                                    <span key={i} style={{ fontSize: 10, color: TEXT_MUTED }}>{code}</span>
+                                  );
+                                })}
+                                {(!p.top_risk_pillars || p.top_risk_pillars.length === 0) && (
+                                  <span style={{ fontSize: 11, color: TEXT_MUTED }}>{'\u2014'}</span>
+                                )}
+                              </div>
+                            </td>
+                            <td style={tdStyle}>
+                              <span style={{ color: URGENCY_TEXT[p.service_urgency || 'none'] || '#9CA3AF', fontWeight: 600, fontSize: 12 }}>
+                                {p.service_urgency || 'none'}
+                              </span>
+                            </td>
+                            <td style={{ ...tdStyle, fontSize: 11, color: TEXT_MUTED, fontFamily: "'DM Mono', monospace" }}>
+                              {relativeTime(p.predicted_at)}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+
+            {/* Section 3: Prediction Accuracy Log */}
+            <div style={{ marginTop: 28 }}>
+              <h3 style={{ fontSize: 15, fontWeight: 700, color: NAVY, marginBottom: 4 }}>Prediction Accuracy Log</h3>
+              <p style={{ fontSize: 11, color: TEXT_SEC, marginBottom: 12, lineHeight: 1.6 }}>
+                Accuracy tracking begins when actual inspection results are received. Rows with no outcome represent predictions awaiting validation.
+              </p>
+              {predLoading ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} h={32} />)}
+                </div>
+              ) : accuracyLog.length === 0 ? (
+                <EmptyState
+                  icon={'\uD83C\uDFAF'}
+                  title="No accuracy data yet"
+                  subtitle="Records appear here after actual inspection outcomes are recorded against prior predictions."
+                />
+              ) : (
+                <div style={{ background: '#fff', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12, minWidth: 800 }}>
+                    <thead>
+                      <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
+                        {['Location', 'Predicted Risk', 'Actual Outcome', 'Correct', 'Prob. Error', 'Model', 'Logged At'].map(h => (
+                          <th key={h} style={thStyle}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {accuracyLog.map(row => {
+                        const rBadge = RISK_BADGE[row.predicted_risk_level || 'unknown'] || RISK_BADGE.unknown;
+                        return (
+                          <tr key={row.id} style={{ borderBottom: `1px solid ${BORDER}` }}
+                            onMouseEnter={e => e.currentTarget.style.background = '#F9FAFB'}
+                            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                            <td style={{ ...tdStyle, fontWeight: 500, color: NAVY }}>
+                              {row.locations?.name || row.location_id.slice(0, 8)}
+                            </td>
+                            <td style={tdStyle}>
+                              {row.predicted_risk_level ? (
+                                <span style={{
+                                  display: 'inline-block', padding: '2px 8px', borderRadius: 6,
+                                  background: rBadge.bg, color: rBadge.text, fontSize: 11, fontWeight: 700,
+                                  textTransform: 'uppercase',
+                                }}>
+                                  {row.predicted_risk_level}
+                                </span>
+                              ) : <span style={{ color: TEXT_MUTED }}>{'\u2014'}</span>}
+                            </td>
+                            <td style={tdStyle}>
+                              {row.actual_outcome ? (
+                                <span style={{
+                                  fontWeight: 600,
+                                  color: row.actual_outcome === 'pass' ? '#16A34A' : row.actual_outcome === 'fail' ? '#DC2626' : '#D97706',
+                                }}>
+                                  {row.actual_outcome}
+                                </span>
+                              ) : <span style={{ color: TEXT_MUTED }}>{'\u2014'}</span>}
+                            </td>
+                            <td style={tdStyle}>
+                              {row.prediction_correct === true ? (
+                                <span style={{ color: '#16A34A', fontWeight: 700 }}>{'\u2713'}</span>
+                              ) : row.prediction_correct === false ? (
+                                <span style={{ color: '#DC2626', fontWeight: 700 }}>{'\u2717'}</span>
+                              ) : (
+                                <span style={{ color: TEXT_MUTED }}>{'\u2014'}</span>
+                              )}
+                            </td>
+                            <td style={{ ...tdStyle, fontFamily: "'DM Mono', monospace", color: TEXT_SEC }}>
+                              {row.probability_error != null ? `${Math.round(row.probability_error * 100)}%` : '\u2014'}
+                            </td>
+                            <td style={{ ...tdStyle, fontSize: 11, color: TEXT_MUTED }}>{row.model_version}</td>
+                            <td style={{ ...tdStyle, fontSize: 11, color: TEXT_MUTED, fontFamily: "'DM Mono', monospace" }}>
+                              {relativeTime(row.logged_at)}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+
+            {/* Section 4: Model Upgrade Roadmap */}
+            <div style={{ marginTop: 28 }}>
+              <h3 style={{ fontSize: 15, fontWeight: 700, color: NAVY, marginBottom: 12 }}>Model Upgrade Roadmap</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
+                {/* Phase 1 — Active */}
+                <div style={{
+                  background: '#fff', borderRadius: 12, padding: '20px 22px',
+                  border: '2px solid #16A34A',
+                }}>
+                  <div style={{
+                    fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em',
+                    color: '#16A34A', marginBottom: 8,
+                  }}>
+                    Phase 1 {'\u00B7'} Active
+                  </div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: NAVY, marginBottom: 8 }}>Rules-Based Scoring</div>
+                  <div style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.6 }}>
+                    Deterministic rules using checklist rate, temp log compliance, hood cleaning recency, and open corrective actions. Model version: rules-v1.
+                  </div>
+                </div>
+                {/* Phase 2 — Upcoming */}
+                <div style={{
+                  background: '#fff', borderRadius: 12, padding: '20px 22px',
+                  border: `1px solid ${BORDER}`,
+                }}>
+                  <div style={{
+                    fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em',
+                    color: TEXT_MUTED, marginBottom: 8,
+                  }}>
+                    Phase 2 {'\u00B7'} 10{'\u2013'}25 Customers
+                  </div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: NAVY, marginBottom: 8 }}>MindsDB ML Forecasting</div>
+                  <div style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.6 }}>
+                    LightGBM model trained on customer compliance data via MindsDB connected to Supabase Postgres. Replaces rules with probability forecasting.
+                  </div>
+                </div>
+                {/* Phase 3 — Future */}
+                <div style={{
+                  background: '#fff', borderRadius: 12, padding: '20px 22px',
+                  border: `1px solid ${BORDER}`,
+                }}>
+                  <div style={{
+                    fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em',
+                    color: TEXT_MUTED, marginBottom: 8,
+                  }}>
+                    Phase 3 {'\u00B7'} 50+ Customers
+                  </div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: NAVY, marginBottom: 8 }}>Custom Python Microservice</div>
+                  <div style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.6 }}>
+                    XGBoost classifier + Facebook Prophet time-series deployed as Edge Function. Full model training on real California compliance + inspection data.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
+        );
+      })()}
 
       {/* ────────── PUBLISH ADVISORY MODAL (4-Dimension Risk Form) ────────── */}
       {publishModal.open && (() => {
