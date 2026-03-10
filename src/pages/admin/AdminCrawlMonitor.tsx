@@ -37,6 +37,7 @@ interface SourceRow {
   subcategory: string | null;
   url: string | null;
   crawl_method: string | null;
+  fetch_method: string | null;
   crawl_frequency: string;
   status: string;
   last_crawled_at: string | null;
@@ -321,7 +322,7 @@ export default function AdminCrawlMonitor() {
                       {CATEGORY_LABELS[s.category] || s.category}
                     </td>
                     <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 11, fontFamily: "'DM Mono', monospace" }}>
-                      {s.crawl_method || '—'}
+                      {s.fetch_method || s.crawl_method || '—'}
                     </td>
                     <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 11 }}>
                       {s.crawl_frequency}
