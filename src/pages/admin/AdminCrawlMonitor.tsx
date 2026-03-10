@@ -100,6 +100,8 @@ export default function AdminCrawlMonitor() {
       supabase.from('intelligence_sources').select('*').order('category').order('name'),
       supabase.from('crawl_runs').select('*').order('started_at', { ascending: false }).limit(20),
     ]);
+    if (srcRes.error) console.error('[CrawlMonitor] intelligence_sources query failed:', srcRes.error);
+    if (runRes.error) console.error('[CrawlMonitor] crawl_runs query failed:', runRes.error);
     if (srcRes.data) setSources(srcRes.data);
     if (runRes.data) setRuns(runRes.data);
     setLoading(false);
