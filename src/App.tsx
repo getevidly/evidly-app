@@ -134,6 +134,7 @@ const Configure = lazy(() => import('./pages/admin/Configure'));
 const UserEmulation = lazy(() => import('./pages/admin/UserEmulation'));
 const AdminBilling = lazy(() => import('./pages/admin/AdminBilling'));
 const AdminCrawlMonitor = lazy(() => import('./pages/admin/AdminCrawlMonitor'));
+const AdminScoreTable = lazy(() => import('./pages/admin/AdminScoreTable'));
 const SystemMessages = lazy(() => import('./pages/admin/SystemMessages'));
 const AdminK2C = lazy(() => import('./pages/admin/AdminK2C'));
 const DatabaseBackup = lazy(() => import('./pages/admin/DatabaseBackup'));
@@ -583,6 +584,7 @@ function AppRoutes() {
           <Route path="/admin/demos" element={<Navigate to="/admin/demo-pipeline" replace />} />
           <Route path="/admin/demo-pipeline" element={<SalesGuard><DemoPipeline /></SalesGuard>} />
           <Route path="/admin/kitchen-checkup" element={<SalesGuard><AssessmentLeads /></SalesGuard>} />
+          <Route path="/admin/scoretable" element={<SalesGuard><AdminScoreTable /></SalesGuard>} />
           <Route path="/admin/assessments" element={<Navigate to="/admin/kitchen-checkup" replace />} />
           <Route path="/admin/api-keys" element={<InsuranceApiKeys />} />
           <Route path="/admin/home" element={<Navigate to="/admin" replace />} />

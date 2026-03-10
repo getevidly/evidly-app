@@ -52,6 +52,7 @@ const NAV_SECTIONS: NavSection[] = [
       { label: 'Kitchen Checkup', path: '/admin/kitchen-checkup', salesOnly: true },
       { label: 'Guided Tours', path: '/admin/guided-tours', salesOnly: true },
       { label: 'Client Onboarding', path: '/admin/onboarding', salesOnly: true },
+      { label: 'ScoreTable', path: '/admin/scoretable', salesOnly: true },
       { label: 'K2C', path: '/admin/k2c' },
     ],
   },
