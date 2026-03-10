@@ -112,6 +112,7 @@ export default function AdminCrawlMonitor() {
     if (runRes.error) console.error('[CrawlMonitor] crawl_runs query failed:', runRes.error);
     if (srcRes.data) setSources(srcRes.data);
     if (runRes.data) {
+      console.log('[CrawlMonitor] crawl_runs rows:', runRes.data.length, 'latest:', runRes.data[0]);
       setRuns(runRes.data);
       const latest = runRes.data[0] || null;
       setLatestRun(latest);
