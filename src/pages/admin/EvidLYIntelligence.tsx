@@ -719,7 +719,7 @@ export default function EvidLYIntelligence() {
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', borderBottom: `2px solid ${BORDER}`, flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', borderBottom: `2px solid ${BORDER}`, overflowX: 'auto', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         {([
           { key: 'overview' as Tab, label: 'Overview', count: null },
           { key: 'signals' as Tab, label: 'Signals', count: signals.length },
@@ -739,6 +739,7 @@ export default function EvidLYIntelligence() {
               borderBottom: `2px solid ${isActive ? GOLD : 'transparent'}`,
               marginBottom: -2, fontWeight: isActive ? 600 : 400, transition: 'all 0.12s',
               display: 'flex', alignItems: 'center', gap: 6,
+              flexShrink: 0, whiteSpace: 'nowrap',
             }}>
               {t.label}
               {t.count != null && t.count > 0 && (
