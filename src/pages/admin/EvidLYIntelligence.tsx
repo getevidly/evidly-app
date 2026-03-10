@@ -19,7 +19,7 @@ const TEXT_SEC = '#6B7F96';
 const TEXT_MUTED = '#9CA3AF';
 const BORDER = '#E5E0D8';
 
-type Tab = 'overview' | 'signals' | 'sources' | 'correlations' | 'jurisdiction_updates' | 'regulatory_updates' | 'rfp' | 'predictions';
+type Tab = 'overview' | 'signals' | 'sources' | 'correlations' | 'jurisdiction_updates' | 'regulatory_updates' | 'predictions';
 
 interface Source {
   id: string;
@@ -1776,83 +1776,6 @@ export default function EvidLYIntelligence() {
                         />
                       </div>
                     )}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </>
-      )}
-
-      {/* ────────── TAB: RFP MONITOR ────────── */}
-      {activeTab === 'rfp' && (
-        <>
-          <div style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.6, marginBottom: 8 }}>
-            Government procurement opportunities (RFPs, RFQs, RFIs) relevant to food safety compliance technology.
-            AI-classified by relevance tier from crawled procurement portals.
-          </div>
-
-          {loading ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} h={60} />)}
-            </div>
-          ) : rfpListings.length === 0 ? (
-            <EmptyState
-              icon="📋"
-              title="No RFP listings yet"
-              subtitle="Government procurement opportunities will appear here when the AI crawl system detects RFPs, RFQs, or RFIs relevant to food safety compliance technology. Sources include SAM.gov, state procurement portals, and county bid boards."
-            />
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {rfpListings.map(rfp => {
-                const tierColor = rfp.relevance_tier === 'high'
-                  ? { bg: '#ECFDF5', text: '#059669' }
-                  : rfp.relevance_tier === 'medium'
-                    ? { bg: '#FFFBEB', text: '#D97706' }
-                    : { bg: '#F9FAFB', text: '#6B7280' };
-                const isExpired = rfp.deadline && new Date(rfp.deadline) < new Date();
-                return (
-                  <div key={rfp.id} style={{
-                    background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '16px 18px',
-                    borderLeft: `4px solid ${tierColor.text}`,
-                    opacity: isExpired ? 0.6 : 1,
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6, flexWrap: 'wrap' }}>
-                          <span style={{
-                            fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10,
-                            background: tierColor.bg, color: tierColor.text,
-                          }}>
-                            {(rfp.relevance_tier || 'unclassified').toUpperCase()}
-                          </span>
-                          <span style={{
-                            fontSize: 9, fontWeight: 600, padding: '2px 8px', borderRadius: 10,
-                            background: '#F9FAFB', color: TEXT_SEC, border: `1px solid ${BORDER}`,
-                          }}>
-                            {rfp.status?.replace(/_/g, ' ') || 'new'}
-                          </span>
-                          {rfp.state && <span style={{ fontSize: 10, color: GOLD, fontWeight: 500 }}>{rfp.state}</span>}
-                          {isExpired && <span style={{ fontSize: 9, color: '#DC2626', fontWeight: 700 }}>EXPIRED</span>}
-                        </div>
-                        <div style={{ fontSize: 13, fontWeight: 600, color: NAVY, marginBottom: 4 }}>{rfp.title}</div>
-                        <div style={{ fontSize: 12, color: TEXT_SEC, marginBottom: 4 }}>{rfp.entity_name}</div>
-                        {rfp.ai_relevance_summary && (
-                          <div style={{ fontSize: 11, color: '#1D4ED8', background: '#EFF6FF', padding: '6px 10px', borderRadius: 6, marginBottom: 6 }}>
-                            <strong>AI:</strong> {rfp.ai_relevance_summary}
-                          </div>
-                        )}
-                        <div style={{ display: 'flex', gap: 12, fontSize: 10, color: TEXT_MUTED, flexWrap: 'wrap' }}>
-                          {rfp.deadline && (
-                            <span>Deadline: <span style={{ fontFamily: "'DM Mono', monospace", fontWeight: 600 }}>{new Date(rfp.deadline).toLocaleDateString()}</span></span>
-                          )}
-                          {(rfp.estimated_value_min || rfp.estimated_value_max) && (
-                            <span>Value: ${rfp.estimated_value_min?.toLocaleString() || '?'} – ${rfp.estimated_value_max?.toLocaleString() || '?'}</span>
-                          )}
-                          <span>{new Date(rfp.created_at).toLocaleDateString()}</span>
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 );
               })}
