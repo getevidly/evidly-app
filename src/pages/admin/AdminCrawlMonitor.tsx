@@ -20,6 +20,7 @@ const STATUS_COLORS: Record<string, { bg: string; text: string; label: string }>
   live:        { bg: '#ECFDF5', text: '#059669', label: 'Live' },
   error:       { bg: '#FEF2F2', text: '#DC2626', label: 'Error' },
   waf_blocked: { bg: '#F5F3FF', text: '#7C3AED', label: 'WAF Blocked' },
+  timeout:     { bg: '#FFFBEB', text: '#D97706', label: 'Timeout' },
   pending:     { bg: '#FFFBEB', text: '#D97706', label: 'Pending' },
   disabled:    { bg: '#F3F4F6', text: '#6B7280', label: 'Disabled' },
 };
@@ -115,7 +116,14 @@ export default function AdminCrawlMonitor() {
     ]);
     if (srcRes.error) console.error('[CrawlMonitor] intelligence_sources query failed:', srcRes.error);
     if (runRes.error) console.error('[CrawlMonitor] crawl_runs query failed:', runRes.error);
-    if (srcRes.data) setSources(srcRes.data);
+    console.log('[CrawlMonitor] v2 sources:', srcRes.data?.length, 'total:', totalRes.count, 'live:', liveRes.count, 'errors:', errorRes.count, 'srcErr:', srcRes.error, 'totalErr:', totalRes.error, 'liveErr:', liveRes.error, 'errorErr:', errorRes.error);
+    if (srcRes.data) {
+      setSources(srcRes.data);
+      // Log status distribution for debugging
+      const statusDist: Record<string, number> = {};
+      for (const s of srcRes.data) { statusDist[s.status] = (statusDist[s.status] || 0) + 1; }
+      console.log('[CrawlMonitor] status distribution:', statusDist);
+    }
 
     // Stat cards: TOTAL/LIVE/ERRORS from intelligence_sources directly
     setTotalCount(totalRes.count ?? 0);
