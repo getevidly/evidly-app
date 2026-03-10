@@ -19,7 +19,7 @@ const TEXT_SEC = '#6B7F96';
 const TEXT_MUTED = '#9CA3AF';
 const BORDER = '#E5E0D8';
 
-type Tab = 'overview' | 'signals' | 'sources' | 'correlations' | 'scoretable' | 'jurisdiction_updates' | 'regulatory_updates' | 'rfp';
+type Tab = 'overview' | 'signals' | 'sources' | 'correlations' | 'scoretable' | 'jurisdiction_updates' | 'regulatory_updates' | 'rfp' | 'predictions';
 
 interface Source {
   id: string;
@@ -140,6 +140,49 @@ interface JurisdictionIntelUpdate {
   published: boolean;
   published_by: string | null;
   created_at: string;
+}
+
+interface PredictionRow {
+  id: string;
+  organization_id: string;
+  location_id: string;
+  failure_probability: number;
+  risk_level: string;
+  score_trajectory: string;
+  trajectory_confidence: number | null;
+  recommended_service_date: string | null;
+  service_urgency: string | null;
+  top_risk_pillars: string[];
+  top_risk_reasons: string[];
+  input_checklist_rate_30d: number | null;
+  input_temp_pass_rate_30d: number | null;
+  input_days_since_service: number | null;
+  input_open_corrective_actions: number;
+  input_days_to_next_inspection: number | null;
+  model_version: string;
+  prediction_method: string;
+  predicted_at: string;
+  expires_at: string;
+  locations?: { name: string; address: string | null } | null;
+  organizations?: { name: string } | null;
+}
+
+interface AccuracyRow {
+  id: string;
+  location_id: string;
+  organization_id: string;
+  predicted_risk_level: string | null;
+  predicted_probability: number | null;
+  predicted_at: string | null;
+  actual_inspection_date: string | null;
+  actual_outcome: string | null;
+  actual_score: string | null;
+  actual_violations: number;
+  prediction_correct: boolean | null;
+  probability_error: number | null;
+  model_version: string;
+  logged_at: string;
+  locations?: { name: string } | null;
 }
 
 const RISK_DIM_COLORS: Record<string, { bg: string; text: string; label: string }> = {
