@@ -24,46 +24,46 @@ import { useIntelligenceUnread } from '../../hooks/useIntelligenceUnread';
 // Fallback descriptions keyed by item id; config descriptions take precedence.
 
 const SIDEBAR_ITEM_DESCRIPTIONS_ES: Record<string, string> = {
-  'dashboard':              "Su resumen de cumplimiento \u2014 puntuaciones, alertas y prioridades de hoy.",
+  'dashboard':              "Su resumen de cumplimiento — puntuaciones, alertas y prioridades de hoy.",
   'checklists':             "Listas de tareas diarias para seguridad alimentaria, registros de temperatura y procedimientos de apertura/cierre.",
-  'temperatures':           "Registro de temperatura manual, por QR o IoT para recepci\u00F3n, almacenamiento y cocci\u00F3n.",
-  'incidents':              "Registre y d\u00E9 seguimiento a incidentes de seguridad o cumplimiento con registros con marca de tiempo.",
-  'documents':              "Certificados de cumplimiento, informes de inspecci\u00F3n y documentaci\u00F3n de permisos.",
-  'self-inspection':        "Realice una auto-inspecci\u00F3n usando los mismos criterios que aplica su departamento de salud.",
-  'regulatory':             "Seguimiento de pr\u00F3ximas ventanas de inspecci\u00F3n, renovaciones de permisos y fechas l\u00EDmite regulatorias.",
-  'reporting':              "Exporte res\u00FAmenes de cumplimiento, historial de inspecciones y paquetes de documentaci\u00F3n.",
-  'analytics':              "Datos de tendencias para puntuaciones de cumplimiento, frecuencia de incidentes y finalizaci\u00F3n de listas de verificaci\u00F3n.",
-  'benchmarks':             "Compare el rendimiento de cumplimiento entre ubicaciones, regiones o per\u00EDodos de tiempo.",
-  'self-diagnosis':         "Diagnostique problemas de equipo, obtenga pasos de resoluci\u00F3n, adjunte video y notifique a su proveedor.",
-  'all-equipment':          "Registro completo de equipos \u2014 todos los activos de cocina, historial de servicio y calendarios de mantenimiento.",
+  'temperatures':           "Registro de temperatura manual, por QR o IoT para recepción, almacenamiento y cocción.",
+  'incidents':              "Registre y dé seguimiento a incidentes de seguridad o cumplimiento con registros con marca de tiempo.",
+  'documents':              "Certificados de cumplimiento, informes de inspección y documentación de permisos.",
+  'self-inspection':        "Realice una auto-inspección usando los mismos criterios que aplica su departamento de salud.",
+  'regulatory':             "Seguimiento de próximas ventanas de inspección, renovaciones de permisos y fechas límite regulatorias.",
+  'reporting':              "Exporte resúmenes de cumplimiento, historial de inspecciones y paquetes de documentación.",
+  'analytics':              "Datos de tendencias para puntuaciones de cumplimiento, frecuencia de incidentes y finalización de listas de verificación.",
+  'benchmarks':             "Compare el rendimiento de cumplimiento entre ubicaciones, regiones o períodos de tiempo.",
+  'self-diagnosis':         "Diagnostique problemas de equipo, obtenga pasos de resolución, adjunte video y notifique a su proveedor.",
+  'all-equipment':          "Registro completo de equipos — todos los activos de cocina, historial de servicio y calendarios de mantenimiento.",
   'equipment':              "Registro de activos para todo el equipo de cocina con historial de servicio y fechas de mantenimiento.",
-  'vendors':                "Proveedores de servicio asignados a sus ubicaciones \u2014 limpieza de campanas, gesti\u00F3n de grasa y m\u00E1s.",
-  'locations':              "Agregue, edite o configure ubicaciones incluyendo mapeo de jurisdicci\u00F3n y requisitos de cumplimiento.",
-  'team':                   "Gestione roles del personal, niveles de acceso y asignaciones de ubicaci\u00F3n.",
-  'audit-log':              "Registro inmutable con marca de tiempo de cada acci\u00F3n realizada en EvidLY.",
-  'integrations':           "Conecte EvidLY a sus sistemas existentes \u2014 POS, RRHH o plataformas de gesti\u00F3n de instalaciones.",
-  'billing':                "Administre su suscripci\u00F3n, m\u00E9todo de pago e historial de facturas de EvidLY.",
-  'settings':               "Preferencias de cuenta, configuraci\u00F3n de notificaciones y configuraci\u00F3n de la plataforma.",
-  'help':                   "Documentaci\u00F3n, soporte y opciones de contacto.",
+  'vendors':                "Proveedores de servicio asignados a sus ubicaciones — limpieza de campanas, gestión de grasa y más.",
+  'locations':              "Agregue, edite o configure ubicaciones incluyendo mapeo de jurisdicción y requisitos de cumplimiento.",
+  'team':                   "Gestione roles del personal, niveles de acceso y asignaciones de ubicación.",
+  'audit-log':              "Registro inmutable con marca de tiempo de cada acción realizada en EvidLY.",
+  'integrations':           "Conecte EvidLY a sus sistemas existentes — POS, RRHH o plataformas de gestión de instalaciones.",
+  'billing':                "Administre su suscripción, método de pago e historial de facturas de EvidLY.",
+  'settings':               "Preferencias de cuenta, configuración de notificaciones y configuración de la plataforma.",
+  'help':                   "Documentación, soporte y opciones de contacto.",
   // New items
-  'corrective-actions':     "Seguimiento y resoluci\u00F3n de violaciones de cumplimiento con planes de acci\u00F3n correctiva documentados.",
+  'corrective-actions':     "Seguimiento y resolución de violaciones de cumplimiento con planes de acción correctiva documentados.",
   'vendor-certifications':  "Verificar y dar seguimiento a las certificaciones de cumplimiento de proveedores.",
-  'violation-trends':       "Analizar patrones de violaciones a lo largo del tiempo para identificar problemas sist\u00E9micos.",
-  'export-center':          "Exportar informes de cumplimiento y paquetes de documentaci\u00F3n.",
-  'iot-dashboard':          "Datos de sensores en tiempo real \u2014 monitoreo de temperatura y refrigeraci\u00F3n.",
-  'jurisdiction-intelligence': "Puntuaci\u00F3n de cumplimiento espec\u00EDfica por jurisdicci\u00F3n y requisitos regulatorios.",
-  'score-table':            "Desglose detallado de puntuaci\u00F3n de cumplimiento por pilar.",
+  'violation-trends':       "Analizar patrones de violaciones a lo largo del tiempo para identificar problemas sistémicos.",
+  'export-center':          "Exportar informes de cumplimiento y paquetes de documentación.",
+  'iot-dashboard':          "Datos de sensores en tiempo real — monitoreo de temperatura y refrigeración.",
+  'jurisdiction-intelligence': "Puntuación de cumplimiento específica por jurisdicción y requisitos regulatorios.",
+  'score-table':            "Desglose detallado de puntuación de cumplimiento por pilar.",
   'report-issue':           "Reportar un incidente de personas, procesos o seguridad.",
-  'allergen-tracking':      "Seguimiento de al\u00E9rgenos en el men\u00FA y riesgos de contaminaci\u00F3n cruzada.",
+  'allergen-tracking':      "Seguimiento de alérgenos en el menú y riesgos de contaminación cruzada.",
   'cooling-logs':           "Registrar tiempos y temperaturas de enfriamiento para alimentos cocidos.",
-  'haccp':                  "Monitorear puntos cr\u00EDticos de control y cumplimiento del plan HACCP.",
+  'haccp':                  "Monitorear puntos críticos de control y cumplimiento del plan HACCP.",
   'receiving-log':          "Registrar entregas entrantes con verificaciones de temperatura y calidad.",
   'hood-exhaust':           "Mantenimiento de sistemas de campana y escape, calendarios de limpieza.",
-  'hvac':                   "Mantenimiento de sistemas de calefacci\u00F3n, ventilaci\u00F3n y aire acondicionado.",
-  'ice-machines':           "Mantenimiento de m\u00E1quinas de hielo y monitoreo de calidad del agua.",
-  'refrigeration':          "C\u00E1maras fr\u00EDas, congeladores y unidades de refrigeraci\u00F3n.",
-  'suppression-systems':    "Inspecciones y certificaciones de sistemas de supresi\u00F3n de incendios.",
-  'certs-docs':             "Certificaciones de equipos y documentaci\u00F3n de servicio.",
+  'hvac':                   "Mantenimiento de sistemas de calefacción, ventilación y aire acondicionado.",
+  'ice-machines':           "Mantenimiento de máquinas de hielo y monitoreo de calidad del agua.",
+  'refrigeration':          "Cámaras frías, congeladores y unidades de refrigeración.",
+  'suppression-systems':    "Inspecciones y certificaciones de sistemas de supresión de incendios.",
+  'certs-docs':             "Certificaciones de equipos y documentación de servicio.",
   'service-calendar':       "Mantenimiento programado y citas de servicio de proveedores.",
   'service-reporting':      "Informes de historial de servicio y cumplimiento de mantenimiento.",
   'intelligence':           "EvidLY Intelligence — detección de patrones entre ubicaciones, puntuación predictiva de riesgos y recomendaciones proactivas.",
@@ -79,26 +79,26 @@ const SIDEBAR_ITEM_DESCRIPTIONS_ES: Record<string, string> = {
 // ── Section tooltip descriptions (ES) ────────────────────
 
 const SECTION_DESCRIPTIONS_ES: Record<string, { title: string; description: string }> = {
-  'daily':           { title: 'Operaciones Diarias', description: 'Todo lo que su equipo hace cada d\u00EDa para mantener el cumplimiento \u2014 listas de verificaci\u00F3n, registros de temperatura y reporte de incidentes.' },
-  'compliance':      { title: 'Cumplimiento', description: 'Documentaci\u00F3n, registros de inspecci\u00F3n, certificados de permisos, herramientas de auto-inspecci\u00F3n e informes.' },
-  'insights':        { title: 'Perspectivas', description: 'An\u00E1lisis impulsado por IA \u2014 inteligencia de negocio, puntuaciones jurisdiccionales y tendencias de cumplimiento.' },
-  'intelligence':    { title: 'Perspectivas', description: 'An\u00E1lisis impulsado por IA de su portafolio de cumplimiento \u2014 perspectivas, modelado de escenarios y pron\u00F3stico de riesgos.' },
-  'tools':           { title: 'Herramientas', description: 'Utilidades pr\u00E1cticas \u2014 diagn\u00F3stico de equipos y notificaci\u00F3n a proveedores.' },
-  'administration':  { title: 'Administraci\u00F3n', description: 'Configuraci\u00F3n de ubicaciones, gesti\u00F3n de equipos, integraciones y configuraci\u00F3n de cuenta.' },
-  'help':            { title: 'Ayuda', description: 'Documentaci\u00F3n de ayuda, recursos de capacitaci\u00F3n y soporte directo.' },
-  'tasks':           { title: 'Tareas', description: 'Listas de verificaci\u00F3n y registros de temperatura asignados para hoy.' },
-  'food-safety':     { title: 'Seguridad Alimentaria', description: 'Registros de temperatura, puntos cr\u00EDticos HACCP, seguimiento de al\u00E9rgenos y recepci\u00F3n de alimentos.' },
-  'team':            { title: 'Equipo', description: 'Listas de verificaci\u00F3n y seguimiento de incidentes para su equipo de cocina.' },
-  'equipment':       { title: 'Equipos', description: 'Categor\u00EDas de equipos \u2014 campanas, HVAC, m\u00E1quinas de hielo, refrigeraci\u00F3n y sistemas de supresi\u00F3n.' },
-  'service':         { title: 'Servicio', description: 'Certificaciones, diagn\u00F3stico, programaci\u00F3n de servicio, reportes y gesti\u00F3n de proveedores.' },
-  'support':         { title: 'Soporte', description: 'Documentaci\u00F3n de ayuda, recursos de capacitaci\u00F3n y soporte directo.' },
-  'calendar-section': { title: 'Calendario', description: 'Inspecciones, renovaciones de permisos, citas de servicio y fechas l\u00EDmite de cumplimiento.' },
-  'food-recovery':   { title: 'Recuperaci\u00F3n de Alimentos', description: 'Seguimiento de desviaci\u00F3n de residuos org\u00E1nicos, acuerdos de recuperaci\u00F3n de alimentos y cumplimiento CalRecycle SB 1383.' },
-  'usda-k12':        { title: 'USDA K-12', description: 'Registros de producci\u00F3n de comidas del Programa de Nutrici\u00F3n Infantil del USDA y cumplimiento de patrones de comida.' },
+  'daily':           { title: 'Operaciones Diarias', description: 'Todo lo que su equipo hace cada día para mantener el cumplimiento — listas de verificación, registros de temperatura y reporte de incidentes.' },
+  'compliance':      { title: 'Cumplimiento', description: 'Documentación, registros de inspección, certificados de permisos, herramientas de auto-inspección e informes.' },
+  'insights':        { title: 'Perspectivas', description: 'Análisis impulsado por IA — inteligencia de negocio, puntuaciones jurisdiccionales y tendencias de cumplimiento.' },
+  'intelligence':    { title: 'Perspectivas', description: 'Análisis impulsado por IA de su portafolio de cumplimiento — perspectivas, modelado de escenarios y pronóstico de riesgos.' },
+  'tools':           { title: 'Herramientas', description: 'Utilidades prácticas — diagnóstico de equipos y notificación a proveedores.' },
+  'administration':  { title: 'Administración', description: 'Configuración de ubicaciones, gestión de equipos, integraciones y configuración de cuenta.' },
+  'help':            { title: 'Ayuda', description: 'Documentación de ayuda, recursos de capacitación y soporte directo.' },
+  'tasks':           { title: 'Tareas', description: 'Listas de verificación y registros de temperatura asignados para hoy.' },
+  'food-safety':     { title: 'Seguridad Alimentaria', description: 'Registros de temperatura, puntos críticos HACCP, seguimiento de alérgenos y recepción de alimentos.' },
+  'team':            { title: 'Equipo', description: 'Listas de verificación y seguimiento de incidentes para su equipo de cocina.' },
+  'equipment':       { title: 'Equipos', description: 'Categorías de equipos — campanas, HVAC, máquinas de hielo, refrigeración y sistemas de supresión.' },
+  'service':         { title: 'Servicio', description: 'Certificaciones, diagnóstico, programación de servicio, reportes y gestión de proveedores.' },
+  'support':         { title: 'Soporte', description: 'Documentación de ayuda, recursos de capacitación y soporte directo.' },
+  'calendar-section': { title: 'Calendario', description: 'Inspecciones, renovaciones de permisos, citas de servicio y fechas límite de cumplimiento.' },
+  'food-recovery':   { title: 'Recuperación de Alimentos', description: 'Seguimiento de desviación de residuos orgánicos, acuerdos de recuperación de alimentos y cumplimiento CalRecycle SB 1383.' },
+  'usda-k12':        { title: 'USDA K-12', description: 'Registros de producción de comidas del Programa de Nutrición Infantil del USDA y cumplimiento de patrones de comida.' },
   'system':          { title: 'Sistema', description: 'Monitoreo de funciones Edge, estado de rastreo y diagnósticos de infraestructura.' },
 };
 
-// ── Nav item id \u2192 i18n key mapping ──
+// ── Nav item id → i18n key mapping ──
 
 const NAV_I18N: Record<string, string> = {
   'dashboard': 'nav.dashboard',
@@ -621,7 +621,7 @@ export function Sidebar() {
                           transform: isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)',
                         }}
                       >
-                        {'\u25B6'}
+                        {'▶'}
                       </button>
                     </div>
                   ) : (
@@ -646,7 +646,7 @@ export function Sidebar() {
                         transition: 'transform 0.15s ease',
                         transform: isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)',
                       }}>
-                        {'\u25B6'}
+                        {'▶'}
                       </span>
                     </button>
                   )}

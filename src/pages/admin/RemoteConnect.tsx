@@ -59,7 +59,7 @@ const STATUS_STYLES: Record<SessionStatus, { bg: string; color: string }> = {
 };
 
 function formatDuration(seconds: number | null): string {
-  if (seconds === null || seconds === undefined) return '\u2014';
+  if (seconds === null || seconds === undefined) return '—';
   if (seconds < 60) return `${seconds}s`;
   const mins = Math.floor(seconds / 60);
   const secs = seconds % 60;
@@ -373,7 +373,7 @@ export default function RemoteConnect() {
                       onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                     >
                       <td style={{ ...tdStyle, color: NAVY, fontWeight: 600 }}>
-                        {s.organizations?.name || '\u2014'}
+                        {s.organizations?.name || '—'}
                       </td>
                       <td style={{ ...tdStyle, color: TEXT_SEC }}>{s.customer_email}</td>
                       <td style={{ ...tdStyle, color: NAVY }}>
@@ -449,7 +449,7 @@ export default function RemoteConnect() {
                       onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                     >
                       <td style={{ ...tdStyle, color: NAVY, fontWeight: 600 }}>
-                        {s.organizations?.name || '\u2014'}
+                        {s.organizations?.name || '—'}
                       </td>
                       <td style={{ ...tdStyle, color: NAVY }}>
                         {SESSION_TYPE_LABELS[s.session_type] || s.session_type}
@@ -463,13 +463,13 @@ export default function RemoteConnect() {
                         </span>
                       </td>
                       <td style={{ ...tdStyle, color: TEXT_SEC }}>
-                        {s.staff_user_id ? s.staff_user_id.slice(0, 8) + '...' : '\u2014'}
+                        {s.staff_user_id ? s.staff_user_id.slice(0, 8) + '...' : '—'}
                       </td>
                       <td style={{ ...tdStyle, color: NAVY, fontWeight: 600 }}>
                         {formatDuration(s.duration_seconds)}
                       </td>
                       <td style={{ ...tdStyle, color: TEXT_SEC }}>
-                        {s.ticket_number ? `#${s.ticket_number}` : '\u2014'}
+                        {s.ticket_number ? `#${s.ticket_number}` : '—'}
                       </td>
                       <td style={{ ...tdStyle, color: TEXT_SEC }}>
                         {new Date(s.created_at).toLocaleString()}

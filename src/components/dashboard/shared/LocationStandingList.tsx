@@ -18,7 +18,7 @@ const STANDING_CONFIG: Record<StandingLevel, { dot: string; label: string; textC
   ok:      { dot: '#16a34a', label: 'Covered',   textColor: '#166534' },
   action:  { dot: '#dc2626', label: 'Action',    textColor: '#991b1b' },
   pending: { dot: '#94a3b8', label: 'Pending',   textColor: '#64748b' },
-  unknown: { dot: '#94a3b8', label: '\u2014',     textColor: '#94a3b8' },
+  unknown: { dot: '#94a3b8', label: '—',     textColor: '#94a3b8' },
 };
 
 function StandingPill({ pillar, level, reason }: { pillar: string; level: StandingLevel; reason: string | null }) {

@@ -136,7 +136,7 @@ export function UserExceptionsTable({
           <p className="text-xs mt-1" style={{ color: '#6B7F96' }}>
             {search
               ? 'Try a different search term'
-              : 'All users follow their role\u2019s default permissions. Use the Add Exception button to grant or restrict specific permissions for individual team members.'}
+              : 'All users follow their role’s default permissions. Use the Add Exception button to grant or restrict specific permissions for individual team members.'}
           </p>
         </div>
       ) : (

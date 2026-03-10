@@ -40,14 +40,14 @@ interface QuickCard {
 }
 
 const QUICK_ACCESS: QuickCard[] = [
-  { label: 'Intelligence', path: '/admin/intelligence', icon: '\u26A1', color: '#7C3AED', bg: '#F5F3FF' },
-  { label: 'Crawl Monitor', path: '/admin/crawl-monitor', icon: '\u27F3', color: '#2563EB', bg: '#EFF6FF' },
-  { label: 'Signal Queue', path: '/admin/intelligence-admin', icon: '\u25CE', color: '#D97706', bg: '#FFFBEB' },
-  { label: 'Command Center', path: '/admin/command-center', icon: '\u2B21', color: '#059669', bg: '#ECFDF5' },
-  { label: 'User Emulation', path: '/admin/emulate', icon: '\uD83D\uDC64', color: '#1E2D4D', bg: '#F4F1EB' },
-  { label: 'Configure', path: '/admin/configure', icon: '\u2699\uFE0F', color: '#6B7280', bg: '#F3F4F6' },
-  { label: 'Sales Pipeline', path: '/admin/sales', icon: '\uD83C\uDFAF', color: '#DC2626', bg: '#FEF2F2' },
-  { label: 'Billing', path: '/admin/billing', icon: '\uD83D\uDCB3', color: '#A08C5A', bg: '#FDF8EE' },
+  { label: 'Intelligence', path: '/admin/intelligence', icon: '⚡', color: '#7C3AED', bg: '#F5F3FF' },
+  { label: 'Crawl Monitor', path: '/admin/crawl-monitor', icon: '⟳', color: '#2563EB', bg: '#EFF6FF' },
+  { label: 'Signal Queue', path: '/admin/intelligence-admin', icon: '◎', color: '#D97706', bg: '#FFFBEB' },
+  { label: 'Command Center', path: '/admin/command-center', icon: '⬡', color: '#059669', bg: '#ECFDF5' },
+  { label: 'User Emulation', path: '/admin/emulate', icon: '👤', color: '#1E2D4D', bg: '#F4F1EB' },
+  { label: 'Configure', path: '/admin/configure', icon: '⚙️', color: '#6B7280', bg: '#F3F4F6' },
+  { label: 'Sales Pipeline', path: '/admin/sales', icon: '🎯', color: '#DC2626', bg: '#FEF2F2' },
+  { label: 'Billing', path: '/admin/billing', icon: '💳', color: '#A08C5A', bg: '#FDF8EE' },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -211,7 +211,7 @@ export default function AdminHome() {
               letterSpacing: '-0.02em',
             }}
           >
-            {countdown || '\u2014'}
+            {countdown || '—'}
           </div>
         </div>
       </div>
@@ -262,32 +262,32 @@ export default function AdminHome() {
         {[
           {
             label: 'MRR',
-            value: mrr === null ? '\u2014' : mrr === 0 ? '$0' : `$${mrr.toLocaleString('en-US', { maximumFractionDigits: 0 })}`,
+            value: mrr === null ? '—' : mrr === 0 ? '$0' : `$${mrr.toLocaleString('en-US', { maximumFractionDigits: 0 })}`,
             color: GOLD,
           },
           {
             label: 'Organizations',
-            value: orgCount ?? '\u2014',
+            value: orgCount ?? '—',
             color: NAVY,
           },
           {
             label: 'Locations',
-            value: locCount ?? '\u2014',
+            value: locCount ?? '—',
             color: NAVY,
           },
           {
             label: 'Crawl Sources',
-            value: crawlLive === null || crawlTotal === null ? '\u2014' : `${crawlLive}/${crawlTotal}`,
+            value: crawlLive === null || crawlTotal === null ? '—' : `${crawlLive}/${crawlTotal}`,
             color: crawlLive !== null && crawlTotal !== null && crawlLive < crawlTotal * 0.8 ? '#D97706' : '#059669',
           },
           {
             label: 'Signals Pending',
-            value: pendingSignals ?? '\u2014',
+            value: pendingSignals ?? '—',
             color: pendingSignals !== null && pendingSignals > 5 ? '#DC2626' : pendingSignals !== null && pendingSignals > 0 ? '#D97706' : '#059669',
           },
           {
             label: 'Countdown',
-            value: countdown || '\u2014',
+            value: countdown || '—',
             color: countdown === 'LAUNCHED' ? '#059669' : GOLD,
           },
         ].map((card, i) => (

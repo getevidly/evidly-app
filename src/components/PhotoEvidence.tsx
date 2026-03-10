@@ -47,7 +47,7 @@ function formatTimestamp(date: Date): string {
 function formatCoords(lat: number, lng: number): string {
   const latDir = lat >= 0 ? 'N' : 'S';
   const lngDir = lng >= 0 ? 'E' : 'W';
-  return `${Math.abs(lat).toFixed(4)}\u00B0${latDir}, ${Math.abs(lng).toFixed(4)}\u00B0${lngDir}`;
+  return `${Math.abs(lat).toFixed(4)}°${latDir}, ${Math.abs(lng).toFixed(4)}°${lngDir}`;
 }
 
 // ── EXIF Extraction ────────────────────────────────────────────────
@@ -234,7 +234,7 @@ function compressImage(
         // Build overlay text: "Feb 10, 2026 2:34 PM · 36.7378°N, 119.7871°W"
         const timeText = formatTimestamp(overlay.timestamp);
         const gpsText = overlay.lat != null && overlay.lng != null
-          ? ` \u00B7 ${formatCoords(overlay.lat, overlay.lng)}`
+          ? ` · ${formatCoords(overlay.lat, overlay.lng)}`
           : '';
         const overlayText = timeText + gpsText;
 
@@ -376,7 +376,7 @@ export function PhotoEvidence({
                 {photo.lat && (
                   <div style={{ fontSize: '7px', color: '#d1d5db', lineHeight: '1.2', ...F }}>
                     <MapPin className="inline h-2 w-2 mr-0.5" style={{ verticalAlign: 'middle' }} />
-                    {photo.address.length > 28 ? photo.address.slice(0, 26) + '\u2026' : photo.address}
+                    {photo.address.length > 28 ? photo.address.slice(0, 26) + '…' : photo.address}
                   </div>
                 )}
               </div>

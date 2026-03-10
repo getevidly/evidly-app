@@ -998,7 +998,7 @@ export function JurisdictionSettings() {
                   {location.address}, {location.city}, {location.state} {location.zip}
                 </p>
                 <p className="text-xs text-[#1e4d6b] mt-1 ml-7">
-                  {profile.jurisdictionChainNames.join(' \u2192 ')}
+                  {profile.jurisdictionChainNames.join(' → ')}
                 </p>
                 <div className="flex items-center gap-2 mt-2 ml-7">
                   <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-700">
@@ -1454,7 +1454,7 @@ export function JurisdictionSettings() {
                               <td className="py-2 pr-4 font-medium text-gray-700">{svc.service}</td>
                               <td className="py-2 pr-4 text-gray-600">{svc.frequencyLabel}</td>
                               <td className="py-2 pr-4 text-gray-500 text-xs">
-                                {svc.condition || '\u2014'}
+                                {svc.condition || '—'}
                               </td>
                               <td className="py-2 text-gray-400 text-xs">{svc.source}</td>
                             </tr>

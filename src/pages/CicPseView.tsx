@@ -25,11 +25,11 @@ const STATUS_COLORS: Record<PSESafeguard['status'], { label: string; color: stri
 const PILLAR_INFO = [
   { id: 'revenue', label: 'Revenue Risk', color: '#C2410C', bg: '#FFF7ED', icon: '\u{1F4B0}',
     description: 'Risk of revenue loss from closures, downgrades, or operational disruptions caused by compliance failures.' },
-  { id: 'liability', label: 'Liability Risk', color: '#991B1B', bg: '#FEF2F2', icon: '\u2696\uFE0F',
+  { id: 'liability', label: 'Liability Risk', color: '#991B1B', bg: '#FEF2F2', icon: '⚖️',
     description: 'Legal exposure from violations, injuries, contamination events, or negligence claims. Includes PSE coverage gaps.' },
   { id: 'cost', label: 'Cost Risk', color: '#1E40AF', bg: '#EFF6FF', icon: '\u{1F4B8}',
-    description: 'Direct remediation costs \u2014 equipment replacement, emergency repairs, regulatory penalties, and compliance upgrades.' },
-  { id: 'operational', label: 'Operational Risk', color: '#166534', bg: '#F0FDF4', icon: '\u2699\uFE0F',
+    description: 'Direct remediation costs — equipment replacement, emergency repairs, regulatory penalties, and compliance upgrades.' },
+  { id: 'operational', label: 'Operational Risk', color: '#166534', bg: '#F0FDF4', icon: '⚙️',
     description: 'Disruption to daily kitchen operations from staffing gaps, supply chain issues, or equipment failures.' },
   { id: 'workforce', label: 'Workforce Risk', color: '#6B21A8', bg: '#F5F3FF', icon: '\u{1F477}',
     description: 'Employee certification gaps, training deficiencies, turnover impact, and staffing-related compliance exposure.' },
@@ -176,15 +176,15 @@ export function CicPseView() {
                   <div style={{ fontSize: 12, color: '#374151', lineHeight: 1.6 }}>
                     <div><strong>Vendor:</strong> {sg.vendor || 'Not on file'}</div>
                     <div><strong>Cert:</strong> {sg.cert || 'Not on file'}</div>
-                    <div><strong>Last Service:</strong> {sg.lastService || '\u2014'}</div>
-                    <div><strong>Next Due:</strong> {sg.nextDue || '\u2014'}</div>
+                    <div><strong>Last Service:</strong> {sg.lastService || '—'}</div>
+                    <div><strong>Next Due:</strong> {sg.nextDue || '—'}</div>
                     <div><strong>Interval:</strong> {sg.interval}</div>
                   </div>
 
                   {/* Add Vendor button for unverified */}
                   {!sg.vendor && (
                     <button
-                      onClick={() => alert('Demo mode \u2014 vendor & record management coming soon.')}
+                      onClick={() => alert('Demo mode — vendor & record management coming soon.')}
                       style={{
                         marginTop: 12, padding: '8px 18px', borderRadius: 8,
                         background: NAVY, color: '#fff', fontSize: 12, fontWeight: 600,
@@ -285,7 +285,7 @@ export function CicPseView() {
           {/* EIP CTA */}
           <div style={{ textAlign: 'center' }}>
             <button
-              onClick={() => alert('Demo mode \u2014 EIP enrollment flow coming soon.')}
+              onClick={() => alert('Demo mode — EIP enrollment flow coming soon.')}
               style={{
                 padding: '12px 32px', borderRadius: 10,
                 background: GOLD, color: '#fff', fontSize: 14, fontWeight: 700,

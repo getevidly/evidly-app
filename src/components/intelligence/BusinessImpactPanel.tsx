@@ -11,7 +11,7 @@ export const BusinessImpactPanel: React.FC<{ data: any }> = ({ data }) => {
       boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)',
     }}>
       <h2 style={{ color: '#0B1628', fontSize: '14px', fontWeight: 700, margin: '0 0 20px', display: 'flex', alignItems: 'center', gap: '8px', fontFamily: 'system-ui' }}>
-        {'\uD83D\uDCB0'} Financial Impact Analysis
+        {'💰'} Financial Impact Analysis
       </h2>
 
       {/* Top row — org totals */}
@@ -73,7 +73,7 @@ export const BusinessImpactPanel: React.FC<{ data: any }> = ({ data }) => {
         borderRadius: '8px', padding: '12px 16px', marginTop: '16px',
       }}>
         <p style={{ color: '#A08C5A', fontSize: '12px', fontWeight: 700, margin: '0 0 4px', fontFamily: 'system-ui' }}>
-          {'\uD83D\uDCA1'} Insurance Optimization Opportunity
+          {'💡'} Insurance Optimization Opportunity
         </p>
         <p style={{ color: '#3D5068', fontSize: '12px', margin: 0, lineHeight: 1.5, fontFamily: 'system-ui' }}>
           Documented compliance through EvidLY can support insurance premium renegotiation.

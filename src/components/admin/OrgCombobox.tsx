@@ -167,7 +167,7 @@ export default function OrgCombobox({
               color: '#9CA3AF', fontSize: 16, lineHeight: 1, padding: 0,
             }}
           >
-            {'\u00D7'}
+            {'×'}
           </button>
         )}
       </div>

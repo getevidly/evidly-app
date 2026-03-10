@@ -258,7 +258,7 @@ export function SB1383Compliance() {
       <>
         <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'SB 1383 Compliance' }]} />
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 20px', textAlign: 'center' }}>
-          <div style={{ fontSize: 64, marginBottom: 16 }}>{'\u267b\ufe0f'}</div>
+          <div style={{ fontSize: 64, marginBottom: 16 }}>{'♻️'}</div>
           <h3 style={{ fontSize: 24, fontWeight: 800, color: '#1E2D4D', marginBottom: 8 }}>No SB 1383 records yet</h3>
           <p style={{ color: '#6b7280', fontSize: 15, maxWidth: 480, lineHeight: 1.7, marginBottom: 28 }}>
             Start tracking organic waste diversion and food recovery for your California locations.

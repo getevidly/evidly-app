@@ -7,10 +7,10 @@ export const StaffingCorrelation: React.FC<{ data: any }> = ({ data }) => (
     boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)',
   }}>
     <h2 style={{ color: '#0B1628', fontSize: '14px', fontWeight: 700, margin: '0 0 6px', fontFamily: 'system-ui' }}>
-      {'\uD83D\uDC65'} Staffing \u00D7 Compliance Correlation
+      {'👥'} Staffing × Compliance Correlation
     </h2>
     <p style={{ color: '#3D5068', fontSize: '12px', margin: '0 0 20px', fontFamily: 'system-ui' }}>
-      High staff turnover is the #1 leading indicator of compliance failure. Locations with turnover above 30% show an average 2.3\u00D7 higher rate of open compliance items.
+      High staff turnover is the #1 leading indicator of compliance failure. Locations with turnover above 30% show an average 2.3× higher rate of open compliance items.
     </p>
 
     {data.complianceMatrix.map((loc: any) => {
@@ -30,7 +30,7 @@ export const StaffingCorrelation: React.FC<{ data: any }> = ({ data }) => (
                 borderRadius: '4px', padding: '2px 8px',
                 fontSize: '10px', color: '#fca5a5', fontWeight: 700, fontFamily: 'system-ui',
               }}>
-                {'\u26A0\uFE0F'} CORRELATION DETECTED
+                {'⚠️'} CORRELATION DETECTED
               </span>
             )}
           </div>
@@ -53,7 +53,7 @@ export const StaffingCorrelation: React.FC<{ data: any }> = ({ data }) => (
             }}>
               <p style={{ color: '#fdba74', fontSize: '11px', margin: 0, lineHeight: 1.5, fontFamily: 'system-ui' }}>
                 <strong>Insight:</strong> {loc.locationName} shows a direct correlation between high turnover ({turnoverPct}%) and reduced checklist completion ({checkPct}%).
-                Each new hire requires ~3 weeks to reach compliance proficiency. Reducing turnover by 10% at this location is estimated to improve checklist completion by 8\u201312%.
+                Each new hire requires ~3 weeks to reach compliance proficiency. Reducing turnover by 10% at this location is estimated to improve checklist completion by 8–12%.
               </p>
             </div>
           )}
@@ -67,7 +67,7 @@ export const StaffingCorrelation: React.FC<{ data: any }> = ({ data }) => (
       borderRadius: '8px', padding: '12px 16px',
     }}>
       <p style={{ color: '#A08C5A', fontSize: '12px', fontWeight: 700, margin: '0 0 4px', fontFamily: 'system-ui' }}>
-        {'\uD83D\uDCCA'} vs. Industry Average
+        {'📊'} vs. Industry Average
       </p>
       <p style={{ color: '#3D5068', fontSize: '12px', margin: 0, lineHeight: 1.5, fontFamily: 'system-ui' }}>
         Your organization's avg turnover: <strong style={{ color: '#0B1628' }}>{Math.round(data.orgMetrics.staffTurnoverOrgAvg * 100)}%</strong> vs. industry average of {Math.round(data.industryBenchmarks.avgStaffTurnover * 100)}%.

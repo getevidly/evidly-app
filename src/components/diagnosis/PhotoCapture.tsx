@@ -104,7 +104,7 @@ export const PhotoCapture: React.FC<Props> = ({ photos, onPhotosChange, maxPhoto
       borderRadius: '8px', padding: '14px', marginBottom: '12px',
     }}>
       <p style={{ color: '#A08C5A', fontSize: '11px', fontWeight: 700, margin: '0 0 10px', fontFamily: 'system-ui', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-        {'\uD83D\uDCF7'} Attach Photos (Optional {'\u2014'} Up to {maxPhotos})
+        {'📷'} Attach Photos (Optional {'—'} Up to {maxPhotos})
       </p>
 
       {error && (
@@ -128,7 +128,7 @@ export const PhotoCapture: React.FC<Props> = ({ photos, onPhotosChange, maxPhoto
               cursor: isFull ? 'not-allowed' : 'pointer', fontFamily: 'system-ui',
               opacity: isFull ? 0.5 : 1,
             }}>
-              {'\uD83D\uDCF7'} Capture
+              {'📷'} Capture
             </button>
             <button onClick={stopCamera} style={{
               background: 'transparent', border: '1px solid #D1D9E6',
@@ -152,7 +152,7 @@ export const PhotoCapture: React.FC<Props> = ({ photos, onPhotosChange, maxPhoto
             cursor: 'pointer', fontFamily: 'system-ui',
             display: 'flex', alignItems: 'center', gap: '6px',
           }}>
-            {'\uD83D\uDCF7'} Take Photo
+            {'📷'} Take Photo
           </button>
           <button onClick={() => fileInputRef.current?.click()} style={{
             background: '#1e4d6b', border: '1px solid #1e4d6b',
@@ -161,7 +161,7 @@ export const PhotoCapture: React.FC<Props> = ({ photos, onPhotosChange, maxPhoto
             cursor: 'pointer', fontFamily: 'system-ui',
             display: 'flex', alignItems: 'center', gap: '6px',
           }}>
-            {'\uD83D\uDCC1'} Upload Photos
+            {'📁'} Upload Photos
           </button>
           <input
             ref={fileInputRef}
@@ -201,7 +201,7 @@ export const PhotoCapture: React.FC<Props> = ({ photos, onPhotosChange, maxPhoto
                   }}
                   title="Remove photo"
                 >
-                  {'\u00D7'}
+                  {'×'}
                 </button>
               </div>
             ))}
@@ -220,7 +220,7 @@ export const PhotoCapture: React.FC<Props> = ({ photos, onPhotosChange, maxPhoto
           color: '#4ade80', fontSize: '12px',
           margin: '8px 0 0', fontFamily: 'system-ui',
         }}>
-          {'\u2713'} Maximum photos reached
+          {'✓'} Maximum photos reached
         </p>
       )}
 

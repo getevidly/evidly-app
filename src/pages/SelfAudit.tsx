@@ -138,7 +138,7 @@ function buildDemoSections(useFdaOverlay = false): AuditSection[] {
   const sections = buildSections(useFdaOverlay);
   // Sections 0-5 completed with mostly passes and 3 failures
   const demoFails: Record<string, { severity: Severity; notes: string }> = {
-    's0-i2': { severity: 'major', notes: 'Walk-in cooler cooling log showed 135\u00B0F to 80\u00B0F in 2 hours. Needs recalibration.' },
+    's0-i2': { severity: 'major', notes: 'Walk-in cooler cooling log showed 135°F to 80°F in 2 hours. Needs recalibration.' },
     's2-i4': { severity: 'minor', notes: 'Allergen labels missing on two prep containers in dry storage.' },
     's4-i3': { severity: 'major', notes: 'Ansul system service tag shows last inspection was 7 months ago.' },
   };
@@ -167,7 +167,7 @@ const DEMO_HISTORY: HistoryAudit[] = [
     minor: 2,
     auditor: 'Maria Gonzalez',
     fails: [
-      { section: 'Food Temperature Control', item: 'Cold holding below 41\u00B0F', severity: 'critical', notes: 'Walk-in cooler temp at 47\u00B0F.' },
+      { section: 'Food Temperature Control', item: 'Cold holding below 41°F', severity: 'critical', notes: 'Walk-in cooler temp at 47°F.' },
       { section: 'Food Temperature Control', item: 'Thermometer calibration verified', severity: 'major', notes: 'Two thermometers not calibrated.' },
       { section: 'Employee Hygiene & Health', item: 'Proper handwashing observed', severity: 'critical', notes: 'Line cook skipped handwashing between tasks.' },
       { section: 'Food Storage & Labeling', item: 'FIFO rotation followed', severity: 'major', notes: 'Old stock found behind new deliveries.' },
@@ -186,7 +186,7 @@ const DEMO_HISTORY: HistoryAudit[] = [
     minor: 2,
     auditor: 'Maria Gonzalez',
     fails: [
-      { section: 'Food Temperature Control', item: 'Cooling from 135\u00B0F to 70\u00B0F within 2 hours', severity: 'critical', notes: 'Soup cooling took 2.5 hours.' },
+      { section: 'Food Temperature Control', item: 'Cooling from 135°F to 70°F within 2 hours', severity: 'critical', notes: 'Soup cooling took 2.5 hours.' },
       { section: 'Food Storage & Labeling', item: 'Date marking on opened TCS foods', severity: 'major', notes: 'Three containers missing date labels.' },
       { section: 'Equipment & Utensils', item: 'Sanitizer concentration verified', severity: 'minor', notes: 'Quat sanitizer slightly below range.' },
       { section: 'Facility Safety & Suppression', item: 'Grease filter cleaning schedule current', severity: 'major', notes: 'Filters overdue by one week.' },
@@ -203,7 +203,7 @@ const DEMO_HISTORY: HistoryAudit[] = [
     minor: 1,
     auditor: 'Maria Gonzalez',
     fails: [
-      { section: 'Food Temperature Control', item: 'Cooling from 135\u00B0F to 70\u00B0F within 2 hours', severity: 'major', notes: 'Walk-in cooler cooling log showed 135\u00B0F to 80\u00B0F in 2 hours.' },
+      { section: 'Food Temperature Control', item: 'Cooling from 135°F to 70°F within 2 hours', severity: 'major', notes: 'Walk-in cooler cooling log showed 135°F to 80°F in 2 hours.' },
       { section: 'Food Storage & Labeling', item: 'Allergen labeling present', severity: 'minor', notes: 'Allergen labels missing on two prep containers.' },
     ],
   },
@@ -329,12 +329,12 @@ export function SelfAudit() {
       ...scoringConfig,
       key: 'NPS',
       county: 'Mariposa',
-      agencyName: 'NPS \u2014 Yosemite Environmental Health',
+      agencyName: 'NPS — Yosemite Environmental Health',
       codeBasis: 'fda_food_code_2022',
       configLastUpdated: 'Not verified',
       isVerified: false,
       dataSourceTier: 4,
-      varianceNotes: ['Federal overlay \u2014 FDA Food Code 2022 + NPS Reference Manual 83'],
+      varianceNotes: ['Federal overlay — FDA Food Code 2022 + NPS Reference Manual 83'],
     };
   }, [isDualJurisdiction, scoringConfig]);
 
@@ -558,7 +558,7 @@ export function SelfAudit() {
                 <Play className="h-4 w-4 inline mr-1.5 -mt-0.5" />
                 Start CalCode Track
                 <span className="block text-xs font-normal mt-0.5 opacity-80">
-                  Mariposa County \u2014 CalCode
+                  Mariposa County — CalCode
                 </span>
               </button>
               <button
@@ -568,7 +568,7 @@ export function SelfAudit() {
                 <Play className="h-4 w-4 inline mr-1.5 -mt-0.5" />
                 Start FDA Food Code Track
                 <span className="block text-xs font-normal mt-0.5 opacity-80">
-                  NPS \u2014 FDA Food Code 2022
+                  NPS — FDA Food Code 2022
                 </span>
               </button>
             </div>
@@ -675,8 +675,8 @@ export function SelfAudit() {
         {isDualJurisdiction && (
           <div className="flex items-center gap-2 rounded-md bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700 border border-blue-200">
             {activeTrack === 'primary'
-              ? 'Track: Mariposa County \u2014 CalCode'
-              : 'Track: NPS \u2014 FDA Food Code 2022'}
+              ? 'Track: Mariposa County — CalCode'
+              : 'Track: NPS — FDA Food Code 2022'}
           </div>
         )}
 

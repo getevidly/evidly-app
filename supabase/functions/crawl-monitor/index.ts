@@ -34,7 +34,7 @@ interface SourceRow {
   status: string;
 }
 
-type CrawlStatus = "active" | "broken" | "waf_blocked";
+type CrawlStatus = "live" | "error" | "waf_blocked";
 
 async function hashContent(text: string): Promise<string> {
   const encoder = new TextEncoder();
@@ -66,7 +66,7 @@ async function checkSource(
     const responseMs = Date.now() - startMs;
 
     if (!res.ok) {
-      return { status: "broken", responseMs, error: `HTTP ${res.status}`, hash: null };
+      return { status: "error", responseMs, error: `HTTP ${res.status}`, hash: null };
     }
 
     const text = await res.text();
@@ -81,13 +81,13 @@ async function checkSource(
       return { status: "waf_blocked", responseMs, error: "WAF/CDN block detected", hash };
     }
 
-    return { status: "active", responseMs, error: null, hash };
+    return { status: "live", responseMs, error: null, hash };
   } catch (err: any) {
     const responseMs = Date.now() - startMs;
     if (err.name === "AbortError") {
-      return { status: "broken", responseMs: TIMEOUT_MS, error: `Timeout after ${TIMEOUT_MS / 1000}s`, hash: null };
+      return { status: "error", responseMs: TIMEOUT_MS, error: `Timeout after ${TIMEOUT_MS / 1000}s`, hash: null };
     }
-    return { status: "broken", responseMs, error: err.message, hash: null };
+    return { status: "error", responseMs, error: err.message, hash: null };
   }
 }
 
@@ -126,11 +126,11 @@ async function crawlBatch(
 
       const isChanged = result.hash && prev?.content_hash && result.hash !== prev.content_hash;
       if (isChanged) changed++;
-      if (result.status === "active") live++;
+      if (result.status === "live") live++;
       else failed++;
 
       // Update intelligence_sources status + last_crawled_at
-      await supabase
+      const { error: updateError } = await supabase
         .from("intelligence_sources")
         .update({
           status: result.status,
@@ -138,11 +138,15 @@ async function crawlBatch(
         })
         .eq("id", src.id);
 
+      if (updateError) {
+        console.error(`[crawl-monitor] Failed to update source ${src.id}: ${updateError.message}`);
+      }
+
       // Also upsert into crawl_health for operational details
       const pillar = src.source_key.includes("fire") || src.source_key.includes("nfpa") || src.source_key.includes("osfm") || src.source_key.includes("calfire")
         ? "fire_safety"
         : "food_safety";
-      const crawlStatus = result.status === "active" ? "live"
+      const crawlStatus = result.status === "live" ? "live"
         : result.status === "waf_blocked" ? "waf_block"
         : "error";
       await supabase.from("crawl_health").upsert(
@@ -155,15 +159,15 @@ async function crawlBatch(
           response_ms: result.responseMs,
           error_message: result.error,
           content_hash: result.hash || prev?.content_hash || null,
-          retry_count: result.status === "active" ? 0 : 1,
-          ...(result.status === "active" ? { last_success_at: new Date().toISOString() } : {}),
+          retry_count: result.status === "live" ? 0 : 1,
+          ...(result.status === "live" ? { last_success_at: new Date().toISOString() } : {}),
         },
         { onConflict: "feed_id" }
       );
 
       // Log to event log
       await supabase.from("admin_event_log").insert({
-        level: result.status === "active" ? "INFO" : result.status === "waf_blocked" ? "WARN" : "ERROR",
+        level: result.status === "live" ? "INFO" : result.status === "waf_blocked" ? "WARN" : "ERROR",
         category: "crawl",
         message: `${src.source_key}: ${result.status}${result.error ? ` — ${result.error}` : ""}${isChanged ? " [CONTENT CHANGED]" : ""}`,
         metadata: { sourceKey: src.source_key, status: result.status, responseMs: result.responseMs, changed: !!isChanged },

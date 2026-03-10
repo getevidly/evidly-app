@@ -41,11 +41,11 @@ function getBadges(entry: LeaderboardEntry): string[] {
   const checklist = entry.checklist_completion_pct ?? 0;
   const streak = entry.streak_days;
 
-  if (temp >= 98 && checklist >= 98) badges.push('\ud83c\udfc6');
-  if (streak >= 30) badges.push('\ud83d\udd25');
-  if (temp >= 95) badges.push('\u26a1');
-  if (checklist >= 95) badges.push('\ud83c\udfaf');
-  if (streak >= 14) badges.push('\ud83d\udcaa');
+  if (temp >= 98 && checklist >= 98) badges.push('🏆');
+  if (streak >= 30) badges.push('🔥');
+  if (temp >= 95) badges.push('⚡');
+  if (checklist >= 95) badges.push('🎯');
+  if (streak >= 14) badges.push('💪');
   return badges;
 }
 
@@ -119,7 +119,7 @@ export function Leaderboard() {
       <>
         <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Leaderboard' }]} />
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 20px', textAlign: 'center' }}>
-          <div style={{ fontSize: 64, marginBottom: 16 }}>{'\ud83c\udfc6'}</div>
+          <div style={{ fontSize: 64, marginBottom: 16 }}>{'🏆'}</div>
           <h3 style={{ fontSize: 24, fontWeight: 800, color: '#1E2D4D', marginBottom: 8 }}>The Leaderboard is warming up.</h3>
           <p style={{ color: '#6b7280', fontSize: 15, maxWidth: 440, lineHeight: 1.7, marginBottom: 28 }}>
             Be the first kitchen to compete. Opt in from your Settings page
@@ -132,7 +132,7 @@ export function Leaderboard() {
               fontWeight: 700, fontSize: 14, border: 'none', cursor: 'pointer', marginBottom: 12,
             }}
           >
-            Join the Leaderboard {'\u2192'}
+            Join the Leaderboard {'→'}
           </button>
           <a
             href="/leaderboard-preview"
@@ -140,7 +140,7 @@ export function Leaderboard() {
             rel="noopener noreferrer"
             style={{ color: '#A08C5A', fontSize: 13, fontWeight: 600, textDecoration: 'none' }}
           >
-            Preview what it looks like {'\u2192'}
+            Preview what it looks like {'→'}
           </a>
         </div>
       </>
@@ -176,10 +176,10 @@ export function Leaderboard() {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12 }}>
             {[
-              { icon: '\ud83e\udd47', title: '1st Place', desc: '1 free month + Champion plaque' },
-              { icon: '\ud83e\udd48', title: '2nd Place', desc: '50% off + K2C 2x multiplier' },
-              { icon: '\ud83e\udd49', title: '3rd Place', desc: '25% off + K2C 1.5x multiplier' },
-              { icon: '\ud83c\udf1f', title: 'Top 10', desc: 'Featured Passport badge' },
+              { icon: '🥇', title: '1st Place', desc: '1 free month + Champion plaque' },
+              { icon: '🥈', title: '2nd Place', desc: '50% off + K2C 2x multiplier' },
+              { icon: '🥉', title: '3rd Place', desc: '25% off + K2C 1.5x multiplier' },
+              { icon: '🌟', title: 'Top 10', desc: 'Featured Passport badge' },
             ].map(r => (
               <div key={r.title} style={{ backgroundColor: '#f9fafb', borderRadius: 12, padding: 14, textAlign: 'center' }}>
                 <div style={{ fontSize: 24 }}>{r.icon}</div>
@@ -213,7 +213,7 @@ export function Leaderboard() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, alignItems: 'end' }}>
             {[top3[1], top3[0], top3[2]].map((loc, idx) => {
               const isFirst = idx === 1;
-              const medalEmoji = idx === 0 ? '\ud83e\udd48' : idx === 1 ? '\ud83e\udd47' : '\ud83e\udd49';
+              const medalEmoji = idx === 0 ? '🥈' : idx === 1 ? '🥇' : '🥉';
               const height = isFirst ? 200 : idx === 0 ? 170 : 150;
               return (
                 <div key={loc.id} style={{
@@ -285,7 +285,7 @@ export function Leaderboard() {
                     </div>
                     <div style={{ minWidth: 0 }}>
                       <div style={{ fontWeight: 600, color: '#111827', fontSize: 14, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{loc.name}</div>
-                      <div style={{ fontSize: 11, color: '#6b7280' }}>{loc.organization_name} {'\u00b7'} {loc.city}</div>
+                      <div style={{ fontSize: 11, color: '#6b7280' }}>{loc.organization_name} {'·'} {loc.city}</div>
                       <XPBar xp={loc.xp} level={level} />
                     </div>
                   </div>

@@ -30,7 +30,7 @@ export function ServiceCostSection() {
             color: 'var(--text-primary)', fontSize: '14px', fontWeight: 800,
             margin: 0, fontFamily: 'system-ui',
           }}>
-            {'\u26A1'} Service Cost & Risk Calculator
+            {'⚡'} Service Cost & Risk Calculator
           </p>
           <p style={{
             color: 'var(--text-secondary)', fontSize: '11px', margin: '3px 0 0',

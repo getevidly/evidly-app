@@ -352,8 +352,8 @@ function StatusDot({ status }: { status: string }) {
 }
 
 function fmtDate(d: string | null): string {
-  if (!d) return '\u2014';
-  try { return format(new Date(d), 'MMM d, HH:mm'); } catch { return '\u2014'; }
+  if (!d) return '—';
+  try { return format(new Date(d), 'MMM d, HH:mm'); } catch { return '—'; }
 }
 
 // ── Command Center ──────────────────────────────────────────
@@ -462,10 +462,10 @@ function CrawlMonitorTab({ feeds, runs }: { feeds: CrawlHealthRow[]; runs: Crawl
                     {f.pillar === 'food_safety' ? 'Food' : 'Facility'}
                   </span>
                 </td>
-                <td className="py-2 px-2 hidden md:table-cell" style={{ color: TEXT_SEC }}>{f.response_ms ? `${f.response_ms}ms` : '\u2014'}</td>
+                <td className="py-2 px-2 hidden md:table-cell" style={{ color: TEXT_SEC }}>{f.response_ms ? `${f.response_ms}ms` : '—'}</td>
                 <td className="py-2 px-2 hidden md:table-cell" style={{ color: TEXT_TERT }}>{fmtDate(f.last_checked_at)}</td>
                 <td className="py-2 px-2 hidden lg:table-cell" style={{ color: f.retry_count > 0 ? '#dc2626' : TEXT_TERT }}>{f.retry_count}</td>
-                <td className="py-2 px-2 hidden lg:table-cell text-xs truncate max-w-48" style={{ color: '#dc2626' }}>{f.error_message || '\u2014'}</td>
+                <td className="py-2 px-2 hidden lg:table-cell text-xs truncate max-w-48" style={{ color: '#dc2626' }}>{f.error_message || '—'}</td>
               </tr>
             ))}
           </tbody>
@@ -619,14 +619,14 @@ function LeadsTab({ leads }: { leads: LeadRow[] }) {
               return (
                 <tr key={l.id} className="border-b hover:bg-gray-50" style={{ borderColor: '#f1f5f9' }}>
                   <td className="py-2 px-2 font-medium">{l.business_name}</td>
-                  <td className="py-2 px-2 hidden sm:table-cell" style={{ color: TEXT_SEC }}>{l.county || '\u2014'}</td>
+                  <td className="py-2 px-2 hidden sm:table-cell" style={{ color: TEXT_SEC }}>{l.county || '—'}</td>
                   <td className="py-2 px-2">
                     <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ backgroundColor: sc.bg, color: sc.text }}>
                       {l.status.replace('_', ' ')}
                     </span>
                   </td>
-                  <td className="py-2 px-2 hidden md:table-cell" style={{ color: TEXT_SEC }}>{l.account_type || '\u2014'}</td>
-                  <td className="py-2 px-2 hidden md:table-cell" style={{ color: TEXT_TERT }}>{l.source || '\u2014'}</td>
+                  <td className="py-2 px-2 hidden md:table-cell" style={{ color: TEXT_SEC }}>{l.account_type || '—'}</td>
+                  <td className="py-2 px-2 hidden md:table-cell" style={{ color: TEXT_TERT }}>{l.source || '—'}</td>
                   <td className="py-2 px-2 hidden lg:table-cell" style={{ color: TEXT_TERT }}>{fmtDate(l.created_at)}</td>
                 </tr>
               );

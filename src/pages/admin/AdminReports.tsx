@@ -225,7 +225,7 @@ export default function AdminReports() {
           </div>
         ) : tabReports.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '40px 20px', background: '#FAFAF8', border: '1.5px dashed #E5E0D8', borderRadius: 10 }}>
-            <div style={{ fontSize: 32, marginBottom: 10 }}>{'\uD83D\uDCCB'}</div>
+            <div style={{ fontSize: 32, marginBottom: 10 }}>{'📋'}</div>
             <div style={{ fontSize: 13, fontWeight: 600, color: NAVY }}>No reports generated yet</div>
             <div style={{ fontSize: 12, color: TEXT_SEC, marginTop: 4 }}>Use the cards above to generate your first report.</div>
           </div>
@@ -249,10 +249,10 @@ export default function AdminReports() {
                       <td style={{ ...tdStyle, fontWeight: 500, color: NAVY }}>{r.title}</td>
                       <td style={{ ...tdStyle, fontSize: 11, fontFamily: "'DM Mono', monospace", color: TEXT_SEC }}>
                         {r.period_start && r.period_end
-                          ? `${new Date(r.period_start).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} \u2013 ${new Date(r.period_end).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`
-                          : '\u2014'}
+                          ? `${new Date(r.period_start).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – ${new Date(r.period_end).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`
+                          : '—'}
                       </td>
-                      <td style={{ ...tdStyle, fontSize: 11, color: TEXT_SEC }}>{r.generated_by || '\u2014'}</td>
+                      <td style={{ ...tdStyle, fontSize: 11, color: TEXT_SEC }}>{r.generated_by || '—'}</td>
                       <td style={tdStyle}>
                         <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: sc.bg, color: sc.text }}>
                           {r.status}
@@ -260,8 +260,8 @@ export default function AdminReports() {
                       </td>
                       <td style={{ ...tdStyle, fontSize: 11 }}>
                         {r.share_token
-                          ? <span style={{ color: '#059669' }}>{'\u2713'} Shared</span>
-                          : <span style={{ color: TEXT_MUTED }}>\u2014</span>}
+                          ? <span style={{ color: '#059669' }}>{'✓'} Shared</span>
+                          : <span style={{ color: TEXT_MUTED }}>—</span>}
                       </td>
                       <td style={tdStyle}>
                         <div style={{ display: 'flex', gap: 6 }}>

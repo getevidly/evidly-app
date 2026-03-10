@@ -89,12 +89,12 @@ const SLA_HOURS: Record<string, number> = {
 };
 
 function formatDate(d: string | null): string {
-  if (!d) return '\u2014';
+  if (!d) return '—';
   return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 function formatDateTime(d: string | null): string {
-  if (!d) return '\u2014';
+  if (!d) return '—';
   return new Date(d).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
 }
 
@@ -564,7 +564,7 @@ export default function SupportTickets() {
                             {ticket.subject}
                           </td>
                           <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>
-                            {ticket.organizations?.name || '\u2014'}
+                            {ticket.organizations?.name || '—'}
                           </td>
                           <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12, textTransform: 'capitalize' }}>
                             {(ticket.category || '').replace(/_/g, ' ')}
@@ -576,10 +576,10 @@ export default function SupportTickets() {
                             <Badge label={ticket.status} colors={STATUS_COLORS[ticket.status] || STATUS_COLORS.open} />
                           </td>
                           <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>
-                            {ticket.assigned_to || '\u2014'}
+                            {ticket.assigned_to || '—'}
                           </td>
                           <td style={{ padding: '10px 14px', fontSize: 12, fontWeight: breached ? 700 : 400, color: breached ? '#DC2626' : TEXT_SEC }}>
-                            {ticket.sla_due_at ? formatDateTime(ticket.sla_due_at) : '\u2014'}
+                            {ticket.sla_due_at ? formatDateTime(ticket.sla_due_at) : '—'}
                             {breached && <span style={{ marginLeft: 4, fontSize: 10, color: '#DC2626' }}>BREACHED</span>}
                           </td>
                           <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12, whiteSpace: 'nowrap' }}>
@@ -796,7 +796,7 @@ function TicketDrawer({
             <button onClick={onClose} style={{
               background: 'none', border: 'none', cursor: 'pointer', fontSize: 20, color: TEXT_MUTED, lineHeight: 1,
             }}>
-              {'\u00D7'}
+              {'×'}
             </button>
           </div>
           <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
@@ -813,11 +813,11 @@ function TicketDrawer({
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, fontSize: 12 }}>
             <div>
               <div style={{ color: TEXT_MUTED, fontSize: 10, fontWeight: 600, textTransform: 'uppercase', marginBottom: 2 }}>Organization</div>
-              <div style={{ color: NAVY, fontWeight: 600 }}>{ticket.organizations?.name || '\u2014'}</div>
+              <div style={{ color: NAVY, fontWeight: 600 }}>{ticket.organizations?.name || '—'}</div>
             </div>
             <div>
               <div style={{ color: TEXT_MUTED, fontSize: 10, fontWeight: 600, textTransform: 'uppercase', marginBottom: 2 }}>Submitted By</div>
-              <div style={{ color: NAVY, fontWeight: 500 }}>{ticket.contact_name || '\u2014'}</div>
+              <div style={{ color: NAVY, fontWeight: 500 }}>{ticket.contact_name || '—'}</div>
               <div style={{ color: TEXT_SEC, fontSize: 11 }}>{ticket.contact_email || ''}</div>
             </div>
             <div>
@@ -826,7 +826,7 @@ function TicketDrawer({
                 color: isSlaBreached(ticket) ? '#DC2626' : '#059669',
                 fontWeight: 600,
               }}>
-                {ticket.sla_due_at ? formatDateTime(ticket.sla_due_at) : '\u2014'}
+                {ticket.sla_due_at ? formatDateTime(ticket.sla_due_at) : '—'}
                 {isSlaBreached(ticket) && <span style={{ marginLeft: 4, fontSize: 10 }}>BREACHED</span>}
               </div>
             </div>
@@ -1061,7 +1061,7 @@ function CreateTicketModal({
           <button onClick={onClose} style={{
             background: 'none', border: 'none', cursor: 'pointer', fontSize: 22, color: TEXT_MUTED, lineHeight: 1,
           }}>
-            {'\u00D7'}
+            {'×'}
           </button>
         </div>
 

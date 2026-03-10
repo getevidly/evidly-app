@@ -63,14 +63,14 @@ const STAFF_CALENDAR_LABELS: Record<string, string> = {
 };
 
 const INITIAL_TASKS: StaffTask[] = [
-  { id: 'task-1', description: 'Check prep cooler temperature', descriptionEs: 'Verificar temperatura del enfriador de preparaci\u00f3n', type: 'temp_log', status: 'todo', equipment: 'Prep Cooler' },
+  { id: 'task-1', description: 'Check prep cooler temperature', descriptionEs: 'Verificar temperatura del enfriador de preparación', type: 'temp_log', status: 'todo', equipment: 'Prep Cooler' },
   { id: 'task-4', description: 'Check walk-in cooler #2 temperature', descriptionEs: 'Verificar temperatura del enfriador #2', type: 'temp_log', status: 'todo', equipment: 'Walk-in Cooler #2' },
-  { id: 'task-5', description: 'Verify hot holding temps', descriptionEs: 'Verificar temperaturas de mantenci\u00f3n caliente', type: 'temp_log', status: 'todo', equipment: 'Hot Holding Station' },
-  { id: 'task-2', description: 'Sanitize prep surfaces', descriptionEs: 'Sanitizar superficies de preparaci\u00f3n', type: 'checklist', status: 'todo' },
+  { id: 'task-5', description: 'Verify hot holding temps', descriptionEs: 'Verificar temperaturas de mantención caliente', type: 'temp_log', status: 'todo', equipment: 'Hot Holding Station' },
+  { id: 'task-2', description: 'Sanitize prep surfaces', descriptionEs: 'Sanitizar superficies de preparación', type: 'checklist', status: 'todo' },
   { id: 'task-3', description: 'Date-label all prepped items', descriptionEs: 'Etiquetar con fecha todos los productos preparados', type: 'checklist', status: 'todo' },
-  { id: 'task-6', description: 'Wipe down station', descriptionEs: 'Limpiar estaci\u00f3n de trabajo', type: 'checklist', status: 'todo' },
+  { id: 'task-6', description: 'Wipe down station', descriptionEs: 'Limpiar estación de trabajo', type: 'checklist', status: 'todo' },
   { id: 'task-7', description: 'Check walk-in cooler #1 temperature', descriptionEs: 'Verificar temperatura del enfriador #1', type: 'temp_log', status: 'done', completedAt: '7:15 AM' },
-  { id: 'task-8', description: 'Handwashing station stocked', descriptionEs: 'Estaci\u00f3n de lavado de manos abastecida', type: 'checklist', status: 'done', completedAt: '6:45 AM' },
+  { id: 'task-8', description: 'Handwashing station stocked', descriptionEs: 'Estación de lavado de manos abastecida', type: 'checklist', status: 'done', completedAt: '6:45 AM' },
   { id: 'task-9', description: 'Verify freezer temperature', descriptionEs: 'Verificar temperatura del congelador', type: 'temp_log', status: 'done', completedAt: '6:30 AM' },
   { id: 'task-10', description: 'Clean floor mats', descriptionEs: 'Limpiar tapetes del piso', type: 'checklist', status: 'done', completedAt: '6:20 AM' },
 ];
@@ -102,7 +102,7 @@ const STRINGS = {
     tapToExpand: 'toca para expandir',
     tapToCollapse: 'toca para contraer',
     completedAt: 'Completado a las',
-    allDone: '\u00a1Todo listo por ahora!',
+    allDone: '¡Todo listo por ahora!',
     logTempMega: 'REGISTRAR TEMP',
     reportIssue: 'REPORTAR PROBLEMA',
   },
@@ -228,7 +228,7 @@ export default function KitchenStaffTaskList() {
               <>
                 <CheckCircle2 size={32} className="text-green-500 mx-auto mb-2" />
                 <p className="text-xl font-bold text-green-800">
-                  {lang === 'es' ? '\u00a1Gran turno!' : 'All done \u2014 great shift!'}
+                  {lang === 'es' ? '¡Gran turno!' : 'All done — great shift!'}
                 </p>
                 <p className="text-sm text-green-600 mt-1">{s.tasksDone(doneCount, totalTasks)}</p>
               </>
@@ -305,7 +305,7 @@ export default function KitchenStaffTaskList() {
                           }}
                         >
                           <Thermometer size={20} />
-                          {s.logTemp} \u2192
+                          {s.logTemp} →
                         </button>
                       ) : (
                         <button

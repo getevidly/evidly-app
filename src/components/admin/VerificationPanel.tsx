@@ -260,7 +260,7 @@ export default function VerificationPanel({
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   flexShrink: 0,
                 }}>
-                  {state === 'passed' ? '\u2713' : state === 'failed' ? '\u2717' : gate.gate_number}
+                  {state === 'passed' ? '✓' : state === 'failed' ? '✗' : gate.gate_number}
                 </div>
 
                 {/* Gate label + status */}

@@ -90,7 +90,7 @@ export const VideoCapture: React.FC<Props> = ({ onVideoReady }) => {
       borderRadius: '8px', padding: '14px', marginBottom: '12px',
     }}>
       <p style={{ color: '#A08C5A', fontSize: '11px', fontWeight: 700, margin: '0 0 10px', fontFamily: 'system-ui', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-        {'\uD83D\uDCF9'} Attach Video (Optional {'\u2014'} Max 30 seconds)
+        {'📹'} Attach Video (Optional {'—'} Max 30 seconds)
       </p>
 
       {error && (
@@ -106,7 +106,7 @@ export const VideoCapture: React.FC<Props> = ({ onVideoReady }) => {
             cursor: 'pointer', fontFamily: 'system-ui',
             display: 'flex', alignItems: 'center', gap: '6px',
           }}>
-            {'\uD83D\uDCF7'} Record Video
+            {'📷'} Record Video
           </button>
           <button onClick={() => fileInputRef.current?.click()} style={{
             background: '#1e4d6b', border: '1px solid #1e4d6b',
@@ -115,7 +115,7 @@ export const VideoCapture: React.FC<Props> = ({ onVideoReady }) => {
             cursor: 'pointer', fontFamily: 'system-ui',
             display: 'flex', alignItems: 'center', gap: '6px',
           }}>
-            {'\uD83D\uDCC1'} Upload Video
+            {'📁'} Upload Video
           </button>
           <input
             ref={fileInputRef}
@@ -137,7 +137,7 @@ export const VideoCapture: React.FC<Props> = ({ onVideoReady }) => {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span style={{ color: '#f87171', fontSize: '12px', fontWeight: 700, fontFamily: 'system-ui' }}>
-                {'\u25CF'} REC
+                {'●'} REC
               </span>
               <span style={{ color: 'var(--text-primary, #0B1628)', fontSize: '12px', fontFamily: 'system-ui' }}>
                 {secondsLeft}s remaining
@@ -163,7 +163,7 @@ export const VideoCapture: React.FC<Props> = ({ onVideoReady }) => {
             style={{ width: '100%', maxHeight: '200px', borderRadius: '6px', marginBottom: '8px' }}
           />
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span style={{ color: '#4ade80', fontSize: '12px', fontFamily: 'system-ui' }}>{'\u2713'} Video attached</span>
+            <span style={{ color: '#4ade80', fontSize: '12px', fontFamily: 'system-ui' }}>{'✓'} Video attached</span>
             <button onClick={reset} style={{
               background: 'transparent', border: '1px solid #D1D9E6',
               borderRadius: '4px', padding: '4px 10px',

@@ -1,0 +1,487 @@
+{
+  "meta": {
+    "captureDate": "2026-03-04",
+    "captureVersion": "1.0",
+    "projectName": "EvidLY",
+    "projectDescription": "AI-powered food safety and facility compliance management platform",
+    "purpose": "IP Disclosure Package v3 — Architecture Audit"
+  },
+
+  "phase1_codebase_structure": {
+    "framework": "React 18.3.1 + React Router v7.13.0 + Vite + TypeScript + Tailwind CSS",
+    "backend": "Supabase (PostgreSQL + Auth + Edge Functions + Storage + Realtime)",
+    "deployment": "Vercel (frontend) + Supabase Cloud (backend)",
+    "fileCounts": {
+      "pages": 175,
+      "components": 260,
+      "libModules": 73,
+      "dataFiles": 46,
+      "configFiles": 10,
+      "hooks": 31,
+      "edgeFunctions": 126,
+      "migrations": 201,
+      "contexts": 10,
+      "typeFiles": 6,
+      "utilFiles": 6
+    },
+    "srcDirectories": [
+      "src/api",
+      "src/components",
+      "src/config",
+      "src/contexts",
+      "src/data",
+      "src/hooks",
+      "src/lib",
+      "src/pages",
+      "src/types",
+      "src/utils"
+    ],
+    "componentDirectories": {
+      "admin": 7,
+      "benchmarks": 6,
+      "compliance": 5,
+      "dashboard": 38,
+      "demo": 3,
+      "diagnosis": 4,
+      "documents": 2,
+      "facility-safety": 1,
+      "hub": 1,
+      "intelligence": 17,
+      "landing": 6,
+      "layout": 8,
+      "locations": 1,
+      "mobile": 10,
+      "permissions": 4,
+      "referral": 4,
+      "reports": 16,
+      "self-inspection": 2,
+      "shared": 3,
+      "temp-logs": 6,
+      "training": 2,
+      "trends": 6,
+      "ui": 14,
+      "vendor": 8
+    }
+  },
+
+  "phase2_database_schema": {
+    "totalMigrations": 201,
+    "totalTablesCreated": 300,
+    "totalRLSPolicies": 769,
+    "coreTables": {
+      "organizations": "Multi-tenant org container — id, name, slug, industry_type, plan_tier",
+      "locations": "Physical locations under orgs — address, jurisdiction, location_type",
+      "user_location_access": "RBAC junction — user_id, location_id, role",
+      "user_profiles": "Extended user info — phone, title, preferences",
+      "checklist_items": "Daily compliance task items",
+      "temp_logs": "Temperature readings — equipment_id, value, input_method",
+      "compliance_score_snapshots": "Point-in-time compliance scores with model versioning",
+      "score_model_versions": "Version registry for scoring algorithms",
+      "risk_assessments": "4-dimension risk scores (revenue, cost, liability, operational)",
+      "intelligence_insights": "Unified intelligence store (all source_types)",
+      "intelligence_sources": "Crawl feed registry — URLs, crawl status, frequency",
+      "intelligence_signals": "Signal approval queue — pending/approved/dismissed",
+      "jurisdiction_configs": "Per-jurisdiction scoring rules, weights, grading schemes",
+      "vendor_documents": "Vendor certification and document tracking",
+      "equipment": "Physical equipment inventory with lifecycle tracking",
+      "incidents": "Incident log with severity, type, resolution",
+      "corrective_actions": "Corrective action tracking with due dates and assignment",
+      "training_assignments": "Employee training record tracking",
+      "certification_reminders": "Cert expiration alert scheduling"
+    },
+    "threePhaseCanonicalEngine": {
+      "phase1_canonical_scoring": {
+        "migration": "20260318000000_canonical_scoring_phase1.sql",
+        "purpose": "Add model versioning to compliance_score_snapshots, create score_model_versions registry",
+        "keyColumns": ["model_version", "scoring_engine", "inputs_hash"],
+        "seedVersion": "1.0 — CalCode deduction model, 2-pillar (Food Safety + Fire Safety)"
+      },
+      "phase2_risk_translation": {
+        "migration": "20260319000000_risk_translation_phase2.sql",
+        "purpose": "Create risk_assessments table — intelligence→risk correlation store",
+        "riskDimensions": ["revenue_risk", "cost_risk", "liability_risk", "operational_risk"],
+        "insuranceTranslation": ["insurance_overall", "insurance_tier"],
+        "explainability": "drivers_json JSONB, intelligence_refs UUID[]"
+      },
+      "phase3_intelligence_normalization": {
+        "migration": "20260320000000_intelligence_normalization_phase3.sql",
+        "purpose": "Unify 5 intelligence stores into 1 (intelligence_insights) with source_type discriminator",
+        "backwardCompatViews": ["ai_insights_v", "regulatory_changes_v"],
+        "sourceTypes": ["ai_pattern", "ai_prediction", "ai_digest", "ai_corrective", "webhook_inbound", "regulatory_monitor"]
+      }
+    },
+    "jurisdictionMigrations": {
+      "totalCount": 57,
+      "counties": [
+        "la_county", "san_bernardino_county", "san_diego_county", "orange_county",
+        "stanislaus_county", "fresno_county", "santa_clara_county", "merced_county",
+        "monterey_county", "riverside_county", "el_dorado_county", "kern_county",
+        "san_joaquin_county", "colusa_county", "madera_county", "san_benito_county",
+        "tulare_county", "kings_county", "placer_county", "santa_cruz_county",
+        "santa_barbara_county", "butte_county", "sutter_county", "nevada_county",
+        "lake_county", "amador_county", "glenn_county", "solano_county",
+        "tehama_county", "yolo_county", "mendocino_county", "tuolumne_county",
+        "del_norte_county", "trinity_county", "siskiyou_county", "modoc_county",
+        "lassen_county", "humboldt_county", "alpine_county", "sierra_county",
+        "mono_county", "inyo_county", "imperial_county", "plumas_county",
+        "calaveras_county", "shasta_county", "ventura_county", "slo_county",
+        "napa_county", "yuba_county", "san_francisco"
+      ],
+      "cities": [
+        "long_beach_city", "pasadena_city", "vernon_city", "berkeley_city"
+      ]
+    }
+  },
+
+  "phase3_edge_functions": {
+    "totalCount": 126,
+    "sharedUtilities": ["email.ts", "invocation-logger.ts", "logger.ts", "posUtils.ts", "sms.ts"],
+    "categories": {
+      "ai": {
+        "count": 7,
+        "functions": ["ai-chat", "ai-corrective-action-draft", "ai-document-analysis", "ai-pattern-analysis", "ai-predictive-alerts", "ai-text-assist", "ai-weekly-digest"],
+        "externalApi": "Anthropic Claude API (ANTHROPIC_API_KEY)"
+      },
+      "intelligence": {
+        "count": 6,
+        "functions": ["intelligence-approve", "intelligence-auto-publish", "intelligence-collect", "intelligence-deliver", "intelligence-feed", "intelligence-webhook"],
+        "notes": "Full pipeline: collect → auto-publish → feed → deliver; collect uses Anthropic for classification"
+      },
+      "training": {
+        "count": 11,
+        "functions": ["training-ai-companion", "training-ai-quiz-gen", "training-analytics-aggregate", "training-auto-enroll", "training-certificate-gen", "training-completion-handler", "training-content-translate", "training-enroll", "training-progress-reminder", "training-quiz-score", "training-sb476-report"]
+      },
+      "vendor": {
+        "count": 9,
+        "functions": ["vendor-analytics-snapshot", "vendor-certification-evaluate", "vendor-contact", "vendor-credential-check", "vendor-document-notify", "vendor-lead-notify", "vendor-recommendation-engine", "vendor-secure-upload", "vendor-service-token"]
+      },
+      "enterprise": {
+        "count": 7,
+        "functions": ["enterprise-alert-rollup", "enterprise-audit-export", "enterprise-report-generate", "enterprise-rollup-calculate", "enterprise-scim-users", "enterprise-sso-callback", "enterprise-tenant-provision"]
+      },
+      "iot_sensor": {
+        "count": 9,
+        "functions": ["iot-process-reading", "iot-sensor-alerts", "iot-sensor-pull", "iot-sensor-webhook", "sensor-alert-escalate", "sensor-compliance-aggregate", "sensor-defrost-detect", "sensor-device-health", "sensor-threshold-evaluate"]
+      },
+      "insurance": {
+        "count": 6,
+        "functions": ["insurance-export", "insurance-risk-calculate", "insurance-risk-fire-safety", "insurance-risk-history", "insurance-risk-incidents", "insurance-risk-verify"]
+      },
+      "playbook": {
+        "count": 6,
+        "functions": ["playbook-ai-assistant", "playbook-auto-trigger", "playbook-completion-handler", "playbook-escalation-monitor", "playbook-food-loss-calculator", "playbook-report-generator"]
+      },
+      "api_platform": {
+        "count": 8,
+        "functions": ["api-marketplace-publish", "api-oauth-authorize", "api-oauth-token", "api-rate-limiter", "api-token-validate", "api-usage-aggregate", "api-webhook-dispatch", "api-webhook-retry"]
+      },
+      "offline": {
+        "count": 5,
+        "functions": ["offline-conflict-resolver", "offline-device-manager", "offline-photo-batch-upload", "offline-sync-handler", "offline-sync-pull"]
+      },
+      "benchmark": {
+        "count": 4,
+        "functions": ["benchmark-aggregate", "benchmark-badge-check", "benchmark-quarterly-report", "benchmark-snapshot"]
+      },
+      "stripe": {
+        "count": 3,
+        "functions": ["stripe-create-checkout", "stripe-customer-portal", "stripe-webhook"],
+        "externalApi": "Stripe (STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET)"
+      },
+      "crawl": {
+        "count": 2,
+        "functions": ["crawl-monitor", "trigger-crawl"],
+        "externalApi": "Firecrawl (FIRECRAWL_API_KEY)"
+      },
+      "rfp": {
+        "count": 2,
+        "functions": ["rfp-crawl", "rfp-classify"],
+        "externalApi": "Anthropic Claude (ANTHROPIC_API_KEY)"
+      },
+      "demo": {
+        "count": 2,
+        "functions": ["demo-account-create", "demo-account-convert"]
+      },
+      "k2c": {
+        "count": 2,
+        "functions": ["k2c-processor", "k2c-referral-invite"]
+      },
+      "pos": {
+        "count": 4,
+        "functions": ["pos-connect", "pos-sync-all", "pos-sync-employees", "pos-sync-locations"]
+      },
+      "other": {
+        "functions": [
+          "assessment-notify", "auto-request-documents", "calculate-compliance-score",
+          "canonical-correlate", "check-equipment-alerts", "check-onboarding-progress",
+          "checkup-notify", "classify-document", "client-invite-send", "cloud-file-import",
+          "copilot-analyze", "correlation-engine", "document-scan",
+          "generate-alerts", "generate-api-key", "generate-compliance-package",
+          "generate-haccp-from-checklists", "integration-conflict-resolver",
+          "integration-data-mapper", "integration-health-check", "integration-oauth-callback",
+          "integration-sync-engine", "landing-chat", "monitor-regulations",
+          "platform-metrics-refresh", "process-service-reminders", "risk-score-api",
+          "security-headers-check", "send-document-alerts", "send-missing-doc-reminders",
+          "send-reminders", "send-sms-invite", "send-team-invite"
+        ]
+      }
+    },
+    "externalApiIntegrations": {
+      "anthropic": "Claude API — ai-chat, ai-corrective-action-draft, ai-document-analysis, ai-text-assist, ai-weekly-digest, benchmark-quarterly-report, classify-document, copilot-analyze, intelligence-collect, landing-chat, monitor-regulations, rfp-classify, training-ai-companion",
+      "stripe": "Payments — stripe-create-checkout, stripe-customer-portal, stripe-webhook",
+      "firecrawl": "Web scraping — trigger-crawl",
+      "resend": "Email delivery — ai-weekly-digest, auto-request-documents, check-onboarding-progress",
+      "twilio": "SMS — auto-request-documents"
+    }
+  },
+
+  "phase4_component_architecture": {
+    "layoutSystem": {
+      "shell": "src/components/layout/Layout.tsx — Sidebar + TopBar + MobileTabBar wrapper",
+      "sidebar": "src/components/layout/Sidebar.tsx — role-driven nav via sidebarConfig.ts",
+      "topBar": "src/components/layout/TopBar.tsx — breadcrumb, notifications, user menu",
+      "mobileTabBar": "src/components/layout/MobileTabBar.tsx — 5-tab bottom nav from navConfig.ts",
+      "adminShell": "src/components/layout/AdminShell.tsx — admin page wrapper with breadcrumb",
+      "routeGuard": "ProtectedLayout in App.tsx wraps all authenticated routes with <Outlet>"
+    },
+    "dashboardComponents": {
+      "total": 38,
+      "keyComponents": [
+        "OwnerOperatorDashboard", "ComplianceManagerDashboard", "KitchenManagerDashboard",
+        "ChefDashboard", "FacilitiesDashboard", "ExecutiveDashboard",
+        "DashboardHero", "ComplianceScoreCard", "IncidentSummaryWidget",
+        "TrainingComplianceWidget", "OnboardingChecklistCard"
+      ]
+    },
+    "sharedComponents": {
+      "StatCard": "src/components/admin/StatCard.tsx — unified KPI card for admin pages",
+      "StatCardRow": "src/components/admin/StatCardRow.tsx — responsive grid wrapper",
+      "ReportCard": "src/components/reports/ReportCard.tsx — report grid card",
+      "AdminBreadcrumb": "src/components/admin/AdminBreadcrumb.tsx — admin page breadcrumb"
+    },
+    "intelligenceComponents": {
+      "total": 17,
+      "directory": "src/components/intelligence/"
+    }
+  },
+
+  "phase5_scoring_engines": {
+    "complianceScoring": {
+      "file": "src/lib/complianceScoring.ts",
+      "purpose": "Two-pillar compliance score (Food Safety + Facility Safety)",
+      "exports": [
+        "getScoreColor", "getScoreStatus", "getScoreBadgeColor", "getScoreInfo",
+        "getScoreTier", "getGraduatedPenalty", "isSolidFuelEquipment",
+        "getHoodCleaningFrequencyDays", "calculateFacilitySafetyScore",
+        "buildFacilitySafetyItems", "buildFacilitySafetyItemsFromDemoData"
+      ],
+      "types": ["FoodSafetyStatus", "FacilitySafetyVerdict", "LocationCompliance", "IndustryVertical", "ScoreStatus", "FacilitySafetyItem", "FacilitySafetyInputs"],
+      "testFile": "src/lib/__tests__/complianceScoring.test.ts (18 tests)"
+    },
+    "jurisdictionScoring": {
+      "file": "src/lib/jurisdictionScoring.ts",
+      "purpose": "CRS normalization — maps diverse inspection systems to unified 0-100 scale",
+      "inspectionSystems": ["calcode_deduction", "percentage", "violation_count", "pass_fail", "weighted_deduction", "letter_grade", "numerical_score"],
+      "exports": [
+        "getCountyProfile", "extractCountySlug", "calculateJurisdictionScore", "getAvailableCounties"
+      ],
+      "types": ["InspectionSystemType", "DeductionRule", "CountyGrade", "CountyScoringProfile", "ViolationDetail", "JurisdictionScoreResult"],
+      "patentRelevance": "CRS (Compliance Risk Score) normalization algorithm — converts incompatible jurisdiction scoring systems to a single comparable scale"
+    },
+    "checkupScoring": {
+      "file": "src/lib/checkupScoring.ts",
+      "purpose": "Kitchen Checkup self-assessment scoring with dollar-impact estimates",
+      "gradeScale": "A(<25), B(25-45), C(46-65), D(66-80), F(>80)",
+      "impactAreas": 4,
+      "exports": [
+        "getVisibleQuestions", "computeCheckupScores", "formatDollars",
+        "gradeColor", "scoreBarColor"
+      ],
+      "types": ["CheckupQuestion", "CheckupFinding", "RiskDriver", "DollarEstimates", "CheckupScores"]
+    },
+    "insuranceRiskScoring": {
+      "files": ["src/lib/insuranceRiskScore.ts", "src/lib/insuranceRiskScoreV2.ts"],
+      "purpose": "4-category insurance risk assessment with trend adjustment",
+      "categories": ["Fire Risk", "Food Safety", "Document Compliance", "Operational Risk"],
+      "tiers": ["Preferred Risk", "Standard Risk", "Needs Attention", "High Risk"],
+      "v2Enhancements": "Trend adjustment, configurable inputs, separated calculation from data access"
+    },
+    "benchmarkEngine": {
+      "files": ["src/lib/benchmarkEngine.ts", "src/lib/benchmarkNormalization.ts"],
+      "purpose": "Peer group comparison and percentile ranking across jurisdictions",
+      "normalizationExports": [
+        "computePercentileRank", "computePeerGroupComparison", "computeNormalizedBenchmark",
+        "computePillarBenchmarks", "computeSubcategoryBenchmarks", "computeLeadLag",
+        "computeJurisdictionDifficulty"
+      ],
+      "patentRelevance": "Jurisdiction difficulty normalization — accounts for varying inspection rigor when comparing scores"
+    },
+    "correlationEngine": {
+      "file": "src/lib/correlationEngine.ts",
+      "purpose": "Signal-to-organization relevance scoring for intelligence targeting",
+      "exports": ["correlateSignal", "calculateConfidence", "buildRelevanceReason"],
+      "patentRelevance": "Multi-factor signal correlation — industry type, jurisdiction, scope, cuisine type"
+    }
+  },
+
+  "phase6_intelligence_pipeline": {
+    "dataFlow": "crawl (trigger-crawl/Firecrawl) → classify (intelligence-collect/Claude AI) → queue (intelligence_signals) → approve (intelligence-approve) → publish (intelligence-auto-publish) → deliver (intelligence-deliver) → display (ClientIntelligenceFeed)",
+    "adminPages": {
+      "IntelligenceAdmin": "src/pages/admin/IntelligenceAdmin.tsx — Signal approval queue with dismiss/restore, category/date filters, AI risk classification",
+      "CommandCenter": "src/pages/admin/CommandCenter.tsx — Crawl feed health monitoring, Run Now trigger",
+      "EvidLYIntelligence": "src/pages/admin/EvidLYIntelligence.tsx — Intelligence overview dashboard",
+      "CrawlMonitor": "src/pages/admin/AdminCrawlMonitor.tsx — Detailed crawl status monitoring"
+    },
+    "libModules": {
+      "intelligenceBridge": "src/lib/intelligenceBridge.ts — One-way push from live app to Intelligence project (fire-and-forget, 5s timeout)",
+      "intelligencePersonalizer": "src/lib/intelligencePersonalizer.ts — Adjusts financial impact and personalizes insights per org",
+      "intelligenceRouter": "src/lib/intelligenceRouter.ts — Severity scoring and auto/notify/hold routing tiers"
+    },
+    "aiClassification": {
+      "riskDimensions": ["Revenue Impact", "Cost Exposure", "Liability Risk", "Operational Disruption"],
+      "sourceVerification": "Source URL and verification status displayed on signals",
+      "confidenceScoring": "Multi-factor targeting confidence calculation"
+    }
+  },
+
+  "phase7_jurisdiction_intelligence_engine": {
+    "totalJurisdictions": 57,
+    "verifiedConfigs": "LA County (confidence 100/100) is reference implementation",
+    "configStructure": {
+      "scoringMethod": "weighted_deduction | percentage | violation_count | pass_fail | letter_grade | numerical_score",
+      "gradingScheme": "letter_grade | numerical_score | pass_fail",
+      "weightColumns": "ALL set to NULL — no verified weights exist yet",
+      "countySpecificFields": "fire_ahj, hood_cleaning_frequency, suppression_system_requirements, exceptions"
+    },
+    "demoJurisdictions": "src/data/demoJurisdictions.ts — static configs for demo mode",
+    "jurisdictionEngine": "src/lib/jurisdictionEngine.ts — lookup and matching logic",
+    "jurisdictionScoring": "src/lib/jurisdictionScoring.ts — CRS normalization across systems",
+    "seoPages": {
+      "californiaCompliance": "/compliance/california — state-level SEO landing",
+      "countyCompliance": "/compliance/california/:countySlug — per-county SEO pages",
+      "scoreTable": "/scoretable/:slug — public jurisdiction profile",
+      "cityPage": "/city/:citySlug — city-level compliance info"
+    },
+    "patentRelevance": "JIE maps 57+ heterogeneous county inspection frameworks onto a single canonical scoring model, enabling cross-jurisdiction compliance comparison — a novel capability in food safety software"
+  },
+
+  "phase8_role_permission_system": {
+    "roles": [
+      "platform_admin",
+      "owner_operator",
+      "executive",
+      "compliance_manager",
+      "chef",
+      "facilities_manager",
+      "kitchen_manager",
+      "kitchen_staff"
+    ],
+    "roleCount": 8,
+    "permissionSystem": {
+      "twoLayerModel": "Role defaults + per-user exception overrides",
+      "protectedPermissions": ["permission.manage_roles", "billing.manage", "org.delete", "org.transfer_ownership", "team.manage_roles"],
+      "routeGuards": "src/lib/routeGuards.ts — pathname-to-role mapping for restricted routes",
+      "permissionHook": "src/hooks/usePermission.ts + src/hooks/useRolePermissions.ts + src/hooks/useEvidlyPermissions.ts"
+    },
+    "featureGating": {
+      "file": "src/lib/featureGating.ts",
+      "tiers": ["trial", "founder", "professional", "enterprise"],
+      "orgTypeGating": "requiredOrgTypes on FeatureDefinition — gates by industry_type",
+      "specialFlags": ["isSB1383Enabled", "isK12Enabled"]
+    },
+    "sidebarConfiguration": {
+      "file": "src/config/sidebarConfig.ts",
+      "navItemRegistry": "I object — contains all possible nav items with path, label, icon",
+      "perRoleConfigs": "getRoleConfig() returns section array per UserRole",
+      "kitchenStaffSpecial": "Dedicated 5-tab layout (Today, Checklists, Temps, Diagnosis, Report)"
+    }
+  },
+
+  "phase9_guided_tour": {
+    "tourConfig": "src/config/tourModules.ts — ALL_MODULES constant with 7 groups, 40+ modules",
+    "tourGroups": [
+      {"name": "Daily Tasks", "modules": 5},
+      {"name": "Food Safety", "modules": 7},
+      {"name": "Facility Safety", "modules": 8},
+      {"name": "Compliance", "modules": 7},
+      {"name": "Insights & Benchmarking", "modules": 8},
+      {"name": "Reporting", "modules": 4},
+      {"name": "Vendors & Operations", "modules": 5},
+      {"name": "Administration", "modules": 6}
+    ],
+    "totalModules": 50,
+    "components": {
+      "GuidedTour": "src/components/GuidedTour.tsx — interactive walkthrough component",
+      "DemoTour": "src/components/DemoTour.tsx — demo-specific tour flow",
+      "AdminGuidedTours": "src/pages/admin/GuidedTours.tsx — admin tour management"
+    }
+  },
+
+  "phase10_anti_aggregation_and_security": {
+    "demoGuard": {
+      "file": "src/lib/supabaseGuard.ts",
+      "exports": ["setDemoGuardMode", "setDemoWriteGuard", "getDemoGuardMode", "isDemoWriteGuardActive", "createDemoGuardProxy"],
+      "modes": ["live", "anonymous_demo", "authenticated_demo"],
+      "mechanism": "Proxy wrapper around SupabaseClient that intercepts all write operations in demo mode",
+      "pagesGuarded": 150
+    },
+    "rowLevelSecurity": {
+      "totalPolicies": 769,
+      "pattern": "Organization-scoped — users can only access data within their organization",
+      "keyPolicies": "Users can view/insert/update/delete within their org (user_location_access junction)"
+    },
+    "dataIsolation": {
+      "multiTenancy": "Organization-scoped RLS on all tenant tables",
+      "demoIsolation": "Demo mode uses static data from src/data/ — never touches real DB",
+      "vendorIsolation": "Vendor-scoped RLS for vendor document access"
+    },
+    "securityFeatures": {
+      "securityHeadersCheck": "supabase/functions/security-headers-check/ — automated security scan",
+      "securitySettings": "src/pages/admin/SecuritySettings.tsx — admin security configuration",
+      "securityEvents": "Migration 20260304020010_security_events_and_scan.sql"
+    }
+  },
+
+  "phase11_contexts": {
+    "reactContexts": [
+      {"name": "AuthContext", "purpose": "Supabase auth state, session, user management"},
+      {"name": "BrandingContext", "purpose": "White-label branding customization per org"},
+      {"name": "DemoContext", "purpose": "Demo mode state, demo session tracking"},
+      {"name": "EmulationContext", "purpose": "Admin user emulation for support debugging"},
+      {"name": "InactivityContext", "purpose": "Idle timeout detection and session expiry"},
+      {"name": "LanguageContext", "purpose": "i18n language selection and translation"},
+      {"name": "NotificationContext", "purpose": "In-app notification state and display"},
+      {"name": "OfflineContext", "purpose": "Offline detection, sync queue, conflict resolution"},
+      {"name": "OperatingHoursContext", "purpose": "Business hours for time-sensitive compliance checks"},
+      {"name": "RoleContext", "purpose": "User role state with location-based role assignments"}
+    ]
+  },
+
+  "patent_relevant_innovations": {
+    "crs_normalization": {
+      "description": "Compliance Risk Score normalization — converts 7+ incompatible jurisdiction inspection scoring systems (calcode_deduction, percentage, violation_count, pass_fail, weighted_deduction, letter_grade, numerical_score) to a single 0-100 scale, enabling cross-jurisdiction comparison",
+      "files": ["src/lib/jurisdictionScoring.ts"],
+      "novelty": "No existing food safety platform normalizes across heterogeneous scoring systems"
+    },
+    "three_phase_canonical_engine": {
+      "description": "Three-phase architecture: (1) Canonical Scoring with model versioning and inputs_hash for reproducibility, (2) Risk Translation Layer mapping compliance scores to 4 risk dimensions with insurance tier calculation, (3) Intelligence Normalization unifying 5+ data sources into single store with source_type discriminator",
+      "files": ["supabase/migrations/20260318000000_canonical_scoring_phase1.sql", "supabase/migrations/20260319000000_risk_translation_phase2.sql", "supabase/migrations/20260320000000_intelligence_normalization_phase3.sql"],
+      "novelty": "Reproducible, versioned compliance scoring with automated risk translation"
+    },
+    "intelligence_correlation": {
+      "description": "Multi-factor signal correlation engine — scores relevance of regulatory signals to specific organizations based on industry type, jurisdiction, operational scope, and cuisine type, with auto/notify/hold routing tiers based on severity",
+      "files": ["src/lib/correlationEngine.ts", "src/lib/intelligenceRouter.ts", "src/lib/intelligencePersonalizer.ts"],
+      "novelty": "Automated regulatory intelligence targeting and personalization for food service operators"
+    },
+    "jurisdiction_difficulty_normalization": {
+      "description": "Benchmark normalization that accounts for jurisdiction inspection rigor — a 90 in a strict jurisdiction is weighted differently than a 90 in a lenient one when computing peer group rankings",
+      "files": ["src/lib/benchmarkNormalization.ts"],
+      "novelty": "Fairness-adjusted compliance benchmarking across jurisdictions"
+    },
+    "anti_aggregation_architecture": {
+      "description": "Multi-layer data isolation: RLS org-scoping (769 policies), demo write proxy (Supabase client wrapper), route guards, feature gating by plan tier and org type — prevents any cross-tenant data leakage",
+      "files": ["src/lib/supabaseGuard.ts", "src/lib/routeGuards.ts", "src/lib/featureGating.ts"],
+      "novelty": "Defense-in-depth data isolation with demo-mode write interception"
+    }
+  }
+}

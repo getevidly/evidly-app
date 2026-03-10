@@ -72,7 +72,7 @@ export const ServiceCostPanel: React.FC<Props> = ({ onStateChange }) => {
               {inactiveCount} Not Active
             </span>
           )}
-          <span style={{ color: '#3D5068' }}>{expanded ? '\u25B2' : '\u25BC'}</span>
+          <span style={{ color: '#3D5068' }}>{expanded ? '▲' : '▼'}</span>
         </div>
       </button>
 
@@ -114,7 +114,7 @@ export const ServiceCostPanel: React.FC<Props> = ({ onStateChange }) => {
                         cursor: 'pointer', fontFamily: 'system-ui', whiteSpace: 'nowrap',
                       }}
                     >
-                      {state.isActive ? '\u2713 Active' : '\u2717 Not Active'}
+                      {state.isActive ? '✓ Active' : '✗ Not Active'}
                     </button>
                     <button
                       onClick={() => setOpenService(isOpen ? null : service.id)}

@@ -239,14 +239,14 @@ export default function UserProvisioning() {
                       <tr key={u.id} onClick={() => setSelectedUser(u)} style={{ borderBottom: `1px solid ${BORDER}`, cursor: 'pointer' }}
                         onMouseEnter={e => e.currentTarget.style.background = '#F9FAFB'}
                         onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                        <td style={{ padding: '10px 14px', color: NAVY, fontWeight: 600 }}>{u.full_name || '\u2014'}</td>
+                        <td style={{ padding: '10px 14px', color: NAVY, fontWeight: 600 }}>{u.full_name || '—'}</td>
                         <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>{u.email}</td>
                         <td style={{ padding: '10px 14px' }}>
                           <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 700, background: `${roleColor}15`, color: roleColor }}>
                             {u.role.replace(/_/g, ' ')}
                           </span>
                         </td>
-                        <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>{org?.name || '\u2014'}</td>
+                        <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>{org?.name || '—'}</td>
                         <td style={{ padding: '10px 14px' }}>
                           <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 700, background: '#F0FFF4', color: '#059669' }}>
                             active
@@ -389,7 +389,7 @@ export default function UserProvisioning() {
                     <td style={{ padding: '10px 14px', color: NAVY, fontSize: 12, fontWeight: 600 }}>{a.admin_id.slice(0, 8)}...</td>
                     <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>{a.target_user_id.slice(0, 8)}...</td>
                     <td style={{ padding: '10px 14px', color: TEXT_SEC, fontSize: 12 }}>{a.ended_at ? new Date(a.ended_at).toLocaleString() : 'Active'}</td>
-                    <td style={{ padding: '10px 14px', color: NAVY, fontSize: 12 }}>{a.actions_summary || '\u2014'}</td>
+                    <td style={{ padding: '10px 14px', color: NAVY, fontSize: 12 }}>{a.actions_summary || '—'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -462,7 +462,7 @@ function UserDetailDrawer({ user, org, onClose }: { user: UserRow; org: OrgRow |
                 {org && <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 600, background: '#F3F4F6', color: TEXT_SEC }}>{org.name}</span>}
               </div>
             </div>
-            <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 22, color: TEXT_MUTED, cursor: 'pointer' }}>{'\u00D7'}</button>
+            <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 22, color: TEXT_MUTED, cursor: 'pointer' }}>{'×'}</button>
           </div>
         </div>
 
@@ -488,7 +488,7 @@ function UserDetailDrawer({ user, org, onClose }: { user: UserRow; org: OrgRow |
               ] as [string, string | null | undefined][]).map(([label, value]) => (
                 <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #F3F4F6' }}>
                   <span style={{ fontSize: 12, color: TEXT_SEC, fontWeight: 600 }}>{label}</span>
-                  <span style={{ fontSize: 13, color: NAVY, fontWeight: 500 }}>{value || '\u2014'}</span>
+                  <span style={{ fontSize: 13, color: NAVY, fontWeight: 500 }}>{value || '—'}</span>
                 </div>
               ))}
             </div>

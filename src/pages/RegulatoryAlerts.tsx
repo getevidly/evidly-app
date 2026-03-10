@@ -265,7 +265,7 @@ export function RegulatoryAlerts() {
                 <Filter className="w-8 h-8 text-gray-300 mx-auto mb-3" />
                 <p className="text-sm text-gray-500">
                   {sourceAlerts.length === 0
-                    ? 'No regulatory alerts at this time. We\u2019ll notify you when updates affect your jurisdictions.'
+                    ? 'No regulatory alerts at this time. We’ll notify you when updates affect your jurisdictions.'
                     : 'No alerts match your current filters.'}
                 </p>
               </div>

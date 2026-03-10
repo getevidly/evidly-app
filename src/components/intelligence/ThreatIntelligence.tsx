@@ -73,7 +73,7 @@ export const ThreatIntelligence: React.FC<{ data: any }> = ({ data }) => {
       boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)',
     }}>
       <h2 style={{ color: '#0B1628', fontSize: '14px', fontWeight: 700, margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: '8px', fontFamily: 'system-ui' }}>
-        {'\u26A0\uFE0F'} Threat Intelligence
+        {'⚠️'} Threat Intelligence
         <span style={{
           backgroundColor: '#ef444420', border: '1px solid #ef4444',
           borderRadius: '10px', padding: '1px 6px',

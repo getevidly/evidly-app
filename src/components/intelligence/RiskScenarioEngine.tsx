@@ -28,7 +28,7 @@ const SCENARIOS: Scenario[] = [
   {
     id: 'failed_inspection_recovery',
     category: 'Risk Scenarios',
-    icon: '\u26A0\uFE0F',
+    icon: '⚠️',
     label: 'Failed Inspection — Cost of Inaction',
     description: 'What happens if violations from a failed inspection are not resolved before reinspection.',
     contextFields: [
@@ -53,7 +53,7 @@ For each pathway: dollar range, probability, timeline, and single action that pr
   {
     id: 'permit_expiration_cascade',
     category: 'Risk Scenarios',
-    icon: '\uD83D\uDCC5',
+    icon: '📅',
     label: 'Permit Expiration Cascade',
     description: 'What happens when multiple permits expire in the same 30-day window.',
     contextFields: [
@@ -79,7 +79,7 @@ For each level: probability, timeline, single action that breaks the cascade.`,
   {
     id: 'deferred_maintenance',
     category: 'Risk Scenarios',
-    icon: '\uD83D\uDD27',
+    icon: '🔧',
     label: 'Deferred Maintenance Compounding',
     description: 'The real cost of delaying hood cleaning, fan service, or roof containment by 6–12 months.',
     contextFields: [
@@ -134,7 +134,7 @@ export const RiskScenarioEngine: React.FC = () => {
       boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)',
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-        <span style={{ fontSize: '18px' }}>{'\u26A1'}</span>
+        <span style={{ fontSize: '18px' }}>{'⚡'}</span>
         <div>
           <p style={{ color: '#0B1628', fontSize: '14px', fontWeight: 700, margin: 0, fontFamily: 'system-ui' }}>
             Risk Scenario Engine

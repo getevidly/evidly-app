@@ -32,9 +32,9 @@ const ALL_DATA: EquipmentSummary = {
   ytdSpend: 14250,
   nextServiceDue: 'Feb 15',
   alerts: [
-    { text: 'Commercial Dishwasher \u2014 past 8-yr useful life, replacement recommended', severity: 'red' },
-    { text: 'Hood Ventilation \u2014 warranty expired, fire suppression inspection overdue at Airport', severity: 'amber' },
-    { text: 'Exhaust Fan \u2014 bearing noise reported at Location 2', severity: 'amber' }, // demo
+    { text: 'Commercial Dishwasher — past 8-yr useful life, replacement recommended', severity: 'red' },
+    { text: 'Hood Ventilation — warranty expired, fire suppression inspection overdue at Airport', severity: 'amber' },
+    { text: 'Exhaust Fan — bearing noise reported at Location 2', severity: 'amber' }, // demo
   ],
 };
 
@@ -50,8 +50,8 @@ const LOCATION_DATA: Record<string, EquipmentSummary> = {
     ytdSpend: 7650,
     nextServiceDue: 'Feb 15',
     alerts: [
-      { text: 'Commercial Dishwasher \u2014 past 8-yr useful life, replacement recommended', severity: 'red' },
-      { text: 'Hood Ventilation \u2014 fan belt showing wear, schedule replacement', severity: 'amber' },
+      { text: 'Commercial Dishwasher — past 8-yr useful life, replacement recommended', severity: 'red' },
+      { text: 'Hood Ventilation — fan belt showing wear, schedule replacement', severity: 'amber' },
     ],
   },
   '2': {
@@ -65,8 +65,8 @@ const LOCATION_DATA: Record<string, EquipmentSummary> = {
     ytdSpend: 3100,
     nextServiceDue: 'Feb 14',
     alerts: [
-      { text: 'Hood Ventilation \u2014 warranty expired, fire suppression inspection overdue', severity: 'amber' },
-      { text: 'Exhaust Fan \u2014 bearing noise reported', severity: 'amber' },
+      { text: 'Hood Ventilation — warranty expired, fire suppression inspection overdue', severity: 'amber' },
+      { text: 'Exhaust Fan — bearing noise reported', severity: 'amber' },
     ],
   },
   '3': {
@@ -80,7 +80,7 @@ const LOCATION_DATA: Record<string, EquipmentSummary> = {
     ytdSpend: 3500,
     nextServiceDue: 'Feb 15',
     alerts: [
-      { text: 'Hood System \u2014 heavy grease buildup, more frequent cleaning needed', severity: 'amber' },
+      { text: 'Hood System — heavy grease buildup, more frequent cleaning needed', severity: 'amber' },
     ],
   },
 };

@@ -50,7 +50,7 @@ const TOUR_STEPS: TourStep[] = [
   {
     target: 'tour-dashboard',
     title: 'Dashboard',
-    content: 'Your compliance overview \u2014 see scores, alerts, and key metrics at a glance.',
+    content: 'Your compliance overview — see scores, alerts, and key metrics at a glance.',
     placement: 'right',
   },
   {

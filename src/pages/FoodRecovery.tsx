@@ -22,9 +22,9 @@ interface FoodRecoveryLocation {
 }
 
 const SB1383_DEMO_DATA: FoodRecoveryLocation[] = [
-  { id: 'demo-1', name: 'Main Kitchen', city: 'Fresno', tier: 1, recovery: 310, organic: 2100, partner: 'Fresno Food Bank', partnerContact: 'Maria Lopez \u00b7 (559) 221-1611', plan: true, lastInspection: 'Feb 1, 2026', result: 'Compliant' },
+  { id: 'demo-1', name: 'Main Kitchen', city: 'Fresno', tier: 1, recovery: 310, organic: 2100, partner: 'Fresno Food Bank', partnerContact: 'Maria Lopez · (559) 221-1611', plan: true, lastInspection: 'Feb 1, 2026', result: 'Compliant' },
   { id: 'demo-2', name: 'Catering Hub', city: 'Modesto', tier: 2, recovery: 120, organic: 940, partner: null, partnerContact: null, plan: false, lastInspection: null, result: null },
-  { id: 'demo-3', name: 'Central Kitchen', city: 'Merced', tier: 1, recovery: 240, organic: 1800, partner: 'Merced County Food Bank', partnerContact: 'James Ortega \u00b7 (209) 385-7460', plan: true, lastInspection: 'Jan 15, 2026', result: 'Compliant' },
+  { id: 'demo-3', name: 'Central Kitchen', city: 'Merced', tier: 1, recovery: 240, organic: 1800, partner: 'Merced County Food Bank', partnerContact: 'James Ortega · (209) 385-7460', plan: true, lastInspection: 'Jan 15, 2026', result: 'Compliant' },
 ];
 
 export function FoodRecovery() {
@@ -84,7 +84,7 @@ export function FoodRecovery() {
       <>
         <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Food Recovery (SB 1383)' }]} />
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 20px', textAlign: 'center' }}>
-          <div style={{ fontSize: 64, marginBottom: 16 }}>{'\u267b\ufe0f'}</div>
+          <div style={{ fontSize: 64, marginBottom: 16 }}>{'♻️'}</div>
           <h3 style={{ fontSize: 24, fontWeight: 800, color: '#1E2D4D', marginBottom: 8 }}>No compliance entries yet</h3>
           <p style={{ color: '#6b7280', fontSize: 15, maxWidth: 440, lineHeight: 1.7, marginBottom: 28 }}>
             Log your first SB 1383 compliance entry to start tracking organic waste diversion.

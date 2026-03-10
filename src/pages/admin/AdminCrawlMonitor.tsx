@@ -17,16 +17,16 @@ const TEXT_MUTED = '#9CA3AF';
 const BORDER = '#E2D9C8';
 
 const STATUS_COLORS: Record<string, { bg: string; text: string; label: string }> = {
-  active:      { bg: '#ECFDF5', text: '#059669', label: 'Live' },
-  broken:      { bg: '#FEF2F2', text: '#DC2626', label: 'Error' },
+  live:        { bg: '#ECFDF5', text: '#059669', label: 'Live' },
+  error:       { bg: '#FEF2F2', text: '#DC2626', label: 'Error' },
   waf_blocked: { bg: '#F5F3FF', text: '#7C3AED', label: 'WAF Blocked' },
   pending:     { bg: '#FFFBEB', text: '#D97706', label: 'Pending' },
-  paused:      { bg: '#F3F4F6', text: '#6B7280', label: 'Paused' },
+  disabled:    { bg: '#F3F4F6', text: '#6B7280', label: 'Disabled' },
 };
 
-// Sort priority: errors first, WAF second, pending, paused, active last
+// Sort priority: errors first, WAF second, pending, disabled, live last
 const STATUS_SORT: Record<string, number> = {
-  broken: 0, waf_blocked: 1, pending: 2, paused: 3, active: 4,
+  error: 0, waf_blocked: 1, pending: 2, disabled: 3, live: 4,
 };
 
 interface SourceRow {
@@ -132,17 +132,26 @@ export default function AdminCrawlMonitor() {
     setCrawlError(null);
     setCrawlSuccess(null);
     try {
-      const { data, error } = await supabase.functions.invoke('crawl-monitor');
-      if (error) throw error;
-      const live = data?.feedsLive ?? 0;
-      const failed = data?.feedsFailed ?? 0;
-      const changed = data?.feedsChanged ?? 0;
-      setCrawlSuccess(`Crawl completed: ${live} live, ${failed} failed, ${changed} changed.`);
+      const [crawlResult, firecrawlResult] = await Promise.all([
+        supabase.functions.invoke('crawl-monitor'),
+        supabase.functions.invoke('trigger-crawl'),
+      ]);
+
+      // Surface errors from either function
+      const errors: string[] = [];
+      if (crawlResult.error) errors.push(`crawl-monitor: ${crawlResult.error.message}`);
+      if (firecrawlResult.error) errors.push(`trigger-crawl: ${firecrawlResult.error.message}`);
+      if (errors.length > 0) throw new Error(errors.join(' | '));
+
+      const totalLive = (crawlResult.data?.feedsLive ?? 0) + (firecrawlResult.data?.succeeded ?? 0);
+      const totalFailed = (crawlResult.data?.feedsFailed ?? 0) + (firecrawlResult.data?.failed ?? 0);
+      const totalChanged = crawlResult.data?.feedsChanged ?? 0;
+      setCrawlSuccess(`Crawl completed: ${totalLive} live, ${totalFailed} failed, ${totalChanged} changed.`);
       await loadData();
     } catch (err: any) {
       const msg = err.message || 'Unknown error';
       const hint = msg.includes('non-2xx')
-        ? 'The crawl-monitor edge function may not be deployed. Run: supabase functions deploy crawl-monitor'
+        ? 'An edge function may not be deployed. Run: supabase functions deploy crawl-monitor && supabase functions deploy trigger-crawl'
         : '';
       setCrawlError(`Crawl failed: ${msg}${hint ? ` — ${hint}` : ''}`);
       console.error('[CrawlMonitor] Edge function error:', err);

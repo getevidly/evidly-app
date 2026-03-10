@@ -82,7 +82,7 @@ export const ExecutiveSummaryCard: React.FC<Props> = ({ data, viewMode, loading,
         scenarioContext = scenarioContext.replace(new RegExp(`\\{${key}\\}`, 'g'), value || 'Not specified');
       });
 
-      prompt = `ACTIVE SCENARIO CONTEXT \u2014 This overrides generic analysis. Read carefully:\n\n${scenarioContext}\n\nNow apply the following analytical lens to this scenario:\n\n${viewPrompts[viewMode] || viewPrompts.operations}\n\nIMPORTANT: Your briefing must be scenario-first. Every insight, risk, and recommendation must be filtered through the lens of the active scenario above. Generic compliance observations that don't connect to the scenario should be omitted.`;
+      prompt = `ACTIVE SCENARIO CONTEXT — This overrides generic analysis. Read carefully:\n\n${scenarioContext}\n\nNow apply the following analytical lens to this scenario:\n\n${viewPrompts[viewMode] || viewPrompts.operations}\n\nIMPORTANT: Your briefing must be scenario-first. Every insight, risk, and recommendation must be filtered through the lens of the active scenario above. Generic compliance observations that don't connect to the scenario should be omitted.`;
     }
     const dataContext = JSON.stringify({
       orgName: data.orgName,
@@ -153,10 +153,10 @@ export const ExecutiveSummaryCard: React.FC<Props> = ({ data, viewMode, loading,
   }, [activeScenario]);
 
   const viewLabels: Record<string, { icon: string; title: string; color: string }> = {
-    operations: { icon: '\u2699\uFE0F', title: 'Operations Intelligence Brief', color: '#3b82f6' },
-    risk:       { icon: '\u2696\uFE0F', title: 'Risk & Legal Intelligence Brief', color: '#ef4444' },
-    financial:  { icon: '\uD83D\uDCB0', title: 'Financial Intelligence Brief', color: '#A08C5A' },
-    people:     { icon: '\uD83D\uDC65', title: 'People Intelligence Brief', color: '#8b5cf6' },
+    operations: { icon: '⚙️', title: 'Operations Intelligence Brief', color: '#3b82f6' },
+    risk:       { icon: '⚖️', title: 'Risk & Legal Intelligence Brief', color: '#ef4444' },
+    financial:  { icon: '💰', title: 'Financial Intelligence Brief', color: '#A08C5A' },
+    people:     { icon: '👥', title: 'People Intelligence Brief', color: '#8b5cf6' },
   };
 
   const v = viewLabels[viewMode] || viewLabels.operations;
@@ -203,7 +203,7 @@ export const ExecutiveSummaryCard: React.FC<Props> = ({ data, viewMode, loading,
               color: '#A08C5A',
               fontWeight: 700,
             }}>
-              {'\uD83C\uDFAF'} {activeScenario.label}
+              {'🎯'} {activeScenario.label}
             </span>
           )}
         </div>
@@ -221,7 +221,7 @@ export const ExecutiveSummaryCard: React.FC<Props> = ({ data, viewMode, loading,
             fontFamily: 'system-ui',
           }}
         >
-          {loading ? 'Analyzing...' : '\u21BB Refresh'}
+          {loading ? 'Analyzing...' : '↻ Refresh'}
         </button>
       </div>
 

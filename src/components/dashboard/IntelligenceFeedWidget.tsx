@@ -44,11 +44,11 @@ interface FeedItem {
 }
 
 const DIM_META: Record<string, { icon: string; label: string; color: string }> = {
-  revenue:     { icon: '\uD83D\uDCB0', label: 'Revenue',     color: '#C2410C' },
-  liability:   { icon: '\u2696\uFE0F', label: 'Liability',   color: '#991B1B' },
-  cost:        { icon: '\uD83D\uDCB8', label: 'Cost',        color: '#1E40AF' },
-  operational: { icon: '\u2699\uFE0F', label: 'Operational', color: '#166534' },
-  workforce:   { icon: '\uD83D\uDC77', label: 'Workforce',  color: '#6B21A8' },
+  revenue:     { icon: '💰', label: 'Revenue',     color: '#C2410C' },
+  liability:   { icon: '⚖️', label: 'Liability',   color: '#991B1B' },
+  cost:        { icon: '💸', label: 'Cost',        color: '#1E40AF' },
+  operational: { icon: '⚙️', label: 'Operational', color: '#166534' },
+  workforce:   { icon: '👷', label: 'Workforce',  color: '#6B21A8' },
 };
 
 const LEVEL_COLORS: Record<string, { bg: string; text: string }> = {

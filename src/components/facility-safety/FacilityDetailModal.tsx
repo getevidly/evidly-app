@@ -122,7 +122,7 @@ export function FacilityDetailModal({ open, onClose, data, onAction }: FacilityD
                       </div>
                       <p className="text-xs text-gray-700 mt-0.5">{entry.description}</p>
                       <p className="text-[10px] text-gray-400 mt-0.5">
-                        {entry.vendor}{entry.technician ? ` \u2014 ${entry.technician}` : ''}
+                        {entry.vendor}{entry.technician ? ` — ${entry.technician}` : ''}
                       </p>
                     </div>
                   </div>
@@ -197,7 +197,7 @@ export function FacilityDetailModal({ open, onClose, data, onAction }: FacilityD
                       <p className="font-medium text-gray-700 truncate">{doc.name}</p>
                       <p className="text-[10px] text-gray-400">
                         Uploaded {new Date(doc.uploadedDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                        {doc.expiryDate ? ` \u00b7 Expires ${new Date(doc.expiryDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}` : ''}
+                        {doc.expiryDate ? ` · Expires ${new Date(doc.expiryDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}` : ''}
                       </p>
                     </div>
                     <DocStatusBadge status={doc.status} />

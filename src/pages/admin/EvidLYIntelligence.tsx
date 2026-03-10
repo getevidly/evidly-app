@@ -615,7 +615,7 @@ export default function EvidLYIntelligence() {
         ].map(k => (
           <div key={k.label}>
             <div style={{ fontSize: 22, fontWeight: 800, color: k.color, lineHeight: 1 }}>
-              {loading ? '\u2014' : k.value}
+              {loading ? '—' : k.value}
             </div>
             <div style={{ fontSize: 11, color: '#6B7280', marginTop: 4 }}>{k.label}</div>
             {k.note && <div style={{ fontSize: 9, color: '#6B7280', marginTop: 2 }}>{k.note}</div>}
@@ -813,7 +813,7 @@ export default function EvidLYIntelligence() {
                 { label: 'Auto-Published', count: signals.filter(s => s.auto_published).length, color: '#1E2D4D', bg: '#F0F4F8', desc: 'Published without manual review' },
               ].map(stat => (
                 <div key={stat.label} style={{ padding: 14, borderRadius: 8, background: stat.bg, textAlign: 'center' }}>
-                  <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 24, fontWeight: 800, color: stat.color }}>{loading ? '\u2014' : stat.count}</div>
+                  <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 24, fontWeight: 800, color: stat.color }}>{loading ? '—' : stat.count}</div>
                   <div style={{ fontSize: 11, fontWeight: 600, color: stat.color, marginTop: 4 }}>{stat.label}</div>
                   <div style={{ fontSize: 9, color: TEXT_MUTED, marginTop: 2 }}>{stat.desc}</div>
                 </div>
@@ -1198,7 +1198,7 @@ export default function EvidLYIntelligence() {
                           </span>
                         </td>
                         <td style={{ ...tdStyle, fontSize: 11, color: TEXT_MUTED, fontFamily: "'DM Mono', monospace" }}>
-                          {s.last_crawled_at ? new Date(s.last_crawled_at).toLocaleString() : '\u2014'}
+                          {s.last_crawled_at ? new Date(s.last_crawled_at).toLocaleString() : '—'}
                         </td>
                         <td style={{ ...tdStyle, fontSize: 12, fontFamily: "'DM Mono', monospace", color: s.signal_count_30d > 0 ? NAVY : TEXT_MUTED }}>
                           {s.signal_count_30d || 0}
@@ -1268,7 +1268,7 @@ export default function EvidLYIntelligence() {
             if (counties && counties.length > 0) {
               for (const c of counties) rows.push({ signal: sig, county: c.county, strength: c.strength, severity });
             } else {
-              rows.push({ signal: sig, county: '\u2014', strength: 0, severity });
+              rows.push({ signal: sig, county: '—', strength: 0, severity });
             }
           }
           rows.sort((a, b) => SEV_ORDER.indexOf(a.severity) - SEV_ORDER.indexOf(b.severity));
@@ -1481,7 +1481,7 @@ export default function EvidLYIntelligence() {
               ].map(k => (
                 <div key={k.label} style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 9, padding: '14px 16px' }}>
                   <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 22, fontWeight: 700, color: k.color }}>
-                    {loading ? '\u2014' : k.value}
+                    {loading ? '—' : k.value}
                   </div>
                   <div style={{ fontSize: 11, color: '#4A5568', marginTop: 3 }}>{k.label}</div>
                 </div>
@@ -1545,7 +1545,7 @@ export default function EvidLYIntelligence() {
                             {j.dims.ops && <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#166534', display: 'inline-block' }} title="Operational" />}
                             {j.dims.wkf && <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#6B21A8', display: 'inline-block' }} title="Workforce" />}
                             {!j.dims.rev && !j.dims.liab && !j.dims.cost && !j.dims.ops && !j.dims.wkf && (
-                              <span style={{ fontSize: 10, color: TEXT_MUTED }}>{'\u2014'}</span>
+                              <span style={{ fontSize: 10, color: TEXT_MUTED }}>{'—'}</span>
                             )}
                           </div>
                         </td>
@@ -1557,7 +1557,7 @@ export default function EvidLYIntelligence() {
                             <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 8, background: '#F5F3FF', color: '#5B21B6' }}>
                               {j.methodology.length} change{j.methodology.length !== 1 ? 's' : ''}
                             </span>
-                          ) : <span style={{ fontSize: 10, color: TEXT_MUTED }}>{'\u2014'}</span>}
+                          ) : <span style={{ fontSize: 10, color: TEXT_MUTED }}>{'—'}</span>}
                         </td>
                         <td style={tdStyle}>
                           <span style={{
@@ -1813,7 +1813,7 @@ export default function EvidLYIntelligence() {
             ].map(k => (
               <div key={k.label} style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 9, padding: '14px 16px' }}>
                 <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 22, fontWeight: 700, color: k.color }}>
-                  {loading ? '\u2014' : k.value}
+                  {loading ? '—' : k.value}
                 </div>
                 <div style={{ fontSize: 11, color: '#4A5568', marginTop: 3 }}>{k.label}</div>
               </div>
@@ -1826,7 +1826,7 @@ export default function EvidLYIntelligence() {
             </div>
           ) : scoreTableData.length === 0 ? (
             <EmptyState
-              icon={'\uD83D\uDCCA'}
+              icon={'📊'}
               title="No ScoreTable views yet"
               subtitle="ScoreTable page views will appear here once users visit /scoretable/[county]-county pages. All 62 counties are tracked automatically."
             />
@@ -1853,7 +1853,7 @@ export default function EvidLYIntelligence() {
                       <td style={{ ...tdStyle, fontFamily: "'DM Mono', monospace", color: d.views_7d > 0 ? '#2563EB' : TEXT_MUTED }}>{d.views_7d}</td>
                       <td style={{ ...tdStyle, fontFamily: "'DM Mono', monospace", color: d.views_30d > 0 ? '#059669' : TEXT_MUTED }}>{d.views_30d}</td>
                       <td style={{ ...tdStyle, fontSize: 11, fontFamily: "'DM Mono', monospace", color: TEXT_MUTED }}>
-                        {d.last_viewed ? new Date(d.last_viewed).toLocaleDateString() : '\u2014'}
+                        {d.last_viewed ? new Date(d.last_viewed).toLocaleDateString() : '—'}
                       </td>
                     </tr>
                   ))}
@@ -1869,10 +1869,10 @@ export default function EvidLYIntelligence() {
         const riskSelectStyle: React.CSSProperties = { ...inputStyle, width: '100%', cursor: 'pointer', fontSize: 11 };
         const noteInputStyle: React.CSSProperties = { ...inputStyle, width: '100%', fontSize: 11 };
         const DIMS = [
-          { key: 'revenueRisk' as const, noteKey: 'revenueNote' as const, icon: '\uD83D\uDCB0', label: 'Revenue Risk', desc: 'Threat to score, grade, permit, revenue' },
-          { key: 'liabilityRisk' as const, noteKey: 'liabilityNote' as const, icon: '\u2696\uFE0F', label: 'Liability Risk', desc: 'Legal/regulatory exposure, fines' },
-          { key: 'costRisk' as const, noteKey: 'costNote' as const, icon: '\uD83D\uDCB8', label: 'Cost Risk', desc: 'Equipment, training, remediation spend' },
-          { key: 'operationalRisk' as const, noteKey: 'operationalNote' as const, icon: '\u2699\uFE0F', label: 'Operational Risk', desc: 'Process/procedure changes required' },
+          { key: 'revenueRisk' as const, noteKey: 'revenueNote' as const, icon: '💰', label: 'Revenue Risk', desc: 'Threat to score, grade, permit, revenue' },
+          { key: 'liabilityRisk' as const, noteKey: 'liabilityNote' as const, icon: '⚖️', label: 'Liability Risk', desc: 'Legal/regulatory exposure, fines' },
+          { key: 'costRisk' as const, noteKey: 'costNote' as const, icon: '💸', label: 'Cost Risk', desc: 'Equipment, training, remediation spend' },
+          { key: 'operationalRisk' as const, noteKey: 'operationalNote' as const, icon: '⚙️', label: 'Operational Risk', desc: 'Process/procedure changes required' },
         ];
         return (
           <div style={{
@@ -1989,10 +1989,10 @@ export default function EvidLYIntelligence() {
                   <div style={{ fontSize: 12, fontWeight: 700, color: '#065F46', marginBottom: 10 }}>Opportunity Dimensions (upside of acting early)</div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                     {[
-                      { key: 'oppRevenue' as const, noteKey: 'oppRevenueNote' as const, icon: '\u2B06', label: 'Revenue Opp', desc: 'Score improvement, competitive advantage' },
-                      { key: 'oppLiability' as const, noteKey: 'oppLiabilityNote' as const, icon: '\uD83D\uDEE1', label: 'Liability Opp', desc: 'Legal safe harbor, compliance edge' },
-                      { key: 'oppCost' as const, noteKey: 'oppCostNote' as const, icon: '\uD83D\uDCB5', label: 'Cost Opp', desc: 'Insurance discount, grant eligibility' },
-                      { key: 'oppOperational' as const, noteKey: 'oppOperationalNote' as const, icon: '\uD83D\uDE80', label: 'Operational Opp', desc: 'Efficiency gain, digital workflow' },
+                      { key: 'oppRevenue' as const, noteKey: 'oppRevenueNote' as const, icon: '⬆', label: 'Revenue Opp', desc: 'Score improvement, competitive advantage' },
+                      { key: 'oppLiability' as const, noteKey: 'oppLiabilityNote' as const, icon: '🛡', label: 'Liability Opp', desc: 'Legal safe harbor, compliance edge' },
+                      { key: 'oppCost' as const, noteKey: 'oppCostNote' as const, icon: '💵', label: 'Cost Opp', desc: 'Insurance discount, grant eligibility' },
+                      { key: 'oppOperational' as const, noteKey: 'oppOperationalNote' as const, icon: '🚀', label: 'Operational Opp', desc: 'Efficiency gain, digital workflow' },
                     ].map(dim => (
                       <div key={dim.key} style={{ display: 'grid', gridTemplateColumns: '140px 100px 1fr', gap: 8, alignItems: 'center' }}>
                         <div>

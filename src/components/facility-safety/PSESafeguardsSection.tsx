@@ -21,28 +21,28 @@ const PSE_SAFEGUARDS = [
   {
     key: 'hood_cleaning',
     label: 'Hood & Exhaust Cleaning',
-    standard: 'NFPA 96-2024 \u00B7 Table 12.4',
+    standard: 'NFPA 96-2024 · Table 12.4',
     authority: 'AHJ (Fire)',
     defaultInterval: 'Semi-annual (verify cooking type)',
   },
   {
     key: 'fire_suppression',
     label: 'Fire Suppression System',
-    standard: 'NFPA 96 \u00B7 Semi-annual + Annual',
+    standard: 'NFPA 96 · Semi-annual + Annual',
     authority: 'AHJ (Fire)',
     defaultInterval: 'Semi-annual',
   },
   {
     key: 'fire_alarm',
     label: 'Fire Alarm & Detection',
-    standard: 'NFPA 72 \u00B7 Annual',
+    standard: 'NFPA 72 · Annual',
     authority: 'AHJ (Fire)',
     defaultInterval: 'Annual',
   },
   {
     key: 'sprinklers',
     label: 'Sprinkler System',
-    standard: 'NFPA 25 \u00B7 Annual',
+    standard: 'NFPA 25 · Annual',
     authority: 'AHJ (Fire)',
     defaultInterval: 'Annual',
   },
@@ -79,7 +79,7 @@ function getPSEStatus(record: ServiceRecord | null): PSEStatus {
 }
 
 function formatDate(iso: string | null): string {
-  if (!iso) return '\u2014';
+  if (!iso) return '—';
   return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
@@ -308,11 +308,11 @@ export function PSESafeguardsSection({ organizationId, locationId, isGuidedTour 
                 <div style={{ fontSize: 11, color: '#9CA3AF', textAlign: 'center', flex: 1 }}>
                   <div>
                     Vendor: {sg.record?.vendor_name || 'Not on file'}
-                    {sg.record?.cert_number ? ` \u00B7 ${sg.record.cert_number}` : ''}
+                    {sg.record?.cert_number ? ` · ${sg.record.cert_number}` : ''}
                   </div>
                   <div style={{ marginTop: 4 }}>
                     Last Service: {formatDate(sg.record?.service_date || null)}
-                    {' \u00B7 '}
+                    {' · '}
                     Next Due: {formatDate(sg.record?.next_due_date || null)}
                   </div>
                   {sg.record?.interval_label && (
@@ -325,7 +325,7 @@ export function PSESafeguardsSection({ organizationId, locationId, isGuidedTour 
                 {/* CTA */}
                 {(sg.status === 'no_record' || sg.status === 'overdue') && (
                   <button
-                    onClick={() => alert('Demo mode \u2014 Add / Update Record would open a form in production.')}
+                    onClick={() => alert('Demo mode — Add / Update Record would open a form in production.')}
                     style={{
                       marginTop: 12, padding: '6px 16px', borderRadius: 6, fontSize: 11,
                       fontWeight: 600, cursor: 'pointer', background: NAVY, color: '#fff', border: 'none',
@@ -337,7 +337,7 @@ export function PSESafeguardsSection({ organizationId, locationId, isGuidedTour 
                 )}
                 {sg.status === 'due_soon' && (
                   <button
-                    onClick={() => alert('Demo mode \u2014 Schedule Service would open a scheduling form in production.')}
+                    onClick={() => alert('Demo mode — Schedule Service would open a scheduling form in production.')}
                     style={{
                       marginTop: 12, padding: '6px 16px', borderRadius: 6, fontSize: 11,
                       fontWeight: 600, cursor: 'pointer', background: '#92400E', color: '#fff', border: 'none',

@@ -563,7 +563,7 @@ function FileClassificationCard({
           </p>
           <p className="text-xs text-gray-600 truncate mt-0.5">
             {entry.overrides.documentLabel || c?.documentLabel || 'Unknown'}
-            {c?.vendorName && ` \u00B7 ${c.vendorName}`}
+            {c?.vendorName && ` · ${c.vendorName}`}
           </p>
         </div>
 

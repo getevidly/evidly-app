@@ -163,13 +163,13 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
               onClick={() => window.dispatchEvent(new Event('open-quick-switcher'))}
               className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-colors text-sm cursor-pointer"
               style={{ backgroundColor: '#ffffff', borderColor: '#d4c9a8', color: '#1E2D4D' }}
-              title={`${t('topBar.quickSearch')} (${navigator.platform?.includes('Mac') ? '\u2318K' : 'Ctrl+K'})`}
+              title={`${t('topBar.quickSearch')} (${navigator.platform?.includes('Mac') ? '⌘K' : 'Ctrl+K'})`}
               data-tour="tour-search"
             >
               <Search className="h-3.5 w-3.5" />
               <span className="text-xs">{t('topBar.search')}</span>
               <kbd className="ml-1 px-1.5 py-0.5 text-[10px] font-medium bg-gray-100 border border-gray-300 rounded text-gray-500">
-                {navigator.platform?.includes('Mac') ? '\u2318K' : 'Ctrl+K'}
+                {navigator.platform?.includes('Mac') ? '⌘K' : 'Ctrl+K'}
               </kbd>
             </button>
 

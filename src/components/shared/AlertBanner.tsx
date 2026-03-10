@@ -65,7 +65,7 @@ export function AlertBanner({ alerts, onDismiss, navigate }: {
               </p>
               {(alert.location || alert.pillar) && (
                 <p className="text-[11px] text-gray-500">
-                  {[alert.location, alert.pillar].filter(Boolean).join(' \u00B7 ')}
+                  {[alert.location, alert.pillar].filter(Boolean).join(' · ')}
                 </p>
               )}
             </div>

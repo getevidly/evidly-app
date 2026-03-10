@@ -3,14 +3,14 @@ import { Trophy, Flame, Star, TrendingUp, TrendingDown, Minus, Shield, ChevronDo
 
 // Hardcoded demo data — zero Supabase calls on this page
 const PREVIEW_LOCATIONS = [
-  { rank: 1, change: 2,  name: "Main Kitchen",       org: "Pacific Catering Co.",  city: "Fresno",      industry: "Catering",    avatar: "\ud83c\udf7d\ufe0f", level: 24, xp: 820, xpMax: 1000, streak: 42, badges: ["\ud83c\udfc6","\ud83d\udd25","\u26a1","\ud83c\udfaf","\ud83d\udc8e"], fire: "Current",  temp: 98.4, checklist: 97.2, achievements: 12 },
-  { rank: 2, change: 0,  name: "Downtown Location",   org: "Aria Hotel",            city: "Los Angeles", industry: "Hospitality", avatar: "\ud83c\udfe8", level: 21, xp: 640, xpMax: 900,  streak: 31, badges: ["\ud83e\udd48","\u26a1","\ud83c\udfaf","\ud83d\udcaa"],     fire: "Current",  temp: 96.1, checklist: 94.8, achievements: 9  },
-  { rank: 3, change: -1, name: "Central Campus",      org: "Valley USD",            city: "Merced",      industry: "Education",   avatar: "\ud83c\udf93", level: 19, xp: 510, xpMax: 800,  streak: 28, badges: ["\ud83c\udfaf","\ud83d\udcda","\ud83d\udcaa"],           fire: "Current",  temp: 94.3, checklist: 91.5, achievements: 8  },
-  { rank: 4, change: 1,  name: "Patient Services",    org: "Summit Hospital",       city: "Stockton",    industry: "Healthcare",  avatar: "\ud83c\udfe5", level: 17, xp: 380, xpMax: 700,  streak: 19, badges: ["\ud83d\udc89","\ud83d\udcaa"],                fire: "Current",  temp: 92.7, checklist: 88.4, achievements: 6  },
-  { rank: 5, change: -1, name: "Lodge Kitchen",       org: "Yosemite Lodge",        city: "Mariposa",    industry: "Hospitality", avatar: "\ud83c\udf32", level: 15, xp: 290, xpMax: 600,  streak: 14, badges: ["\ud83c\udf32"],                     fire: "Due Soon", temp: 88.2, checklist: 85.1, achievements: 5  },
-  { rank: 6, change: 3,  name: "Civic Center Caf\u00e9",   org: "Fresno Civic Center",   city: "Fresno",      industry: "Institutional",       avatar: "\ud83c\udfdb\ufe0f", level: 12, xp: 210, xpMax: 500,  streak: 9,  badges: ["\ud83d\udcc8"],                     fire: "Current",  temp: 85.9, checklist: 82.7, achievements: 3  },
-  { rank: 7, change: 0,  name: "Senior Dining",       org: "Merced Senior Living",  city: "Merced",      industry: "Institutional",       avatar: "\ud83e\udd0d", level: 11, xp: 170, xpMax: 500,  streak: 7,  badges: ["\u2764\ufe0f"],                     fire: "Current",  temp: 84.1, checklist: 80.3, achievements: 3  },
-  { rank: 8, change: -2, name: "Stockton Kitchen",    org: "Stockton Marriott",     city: "Stockton",    industry: "Hospitality", avatar: "\ud83c\udf74", level: 9,  xp: 110, xpMax: 400,  streak: 4,  badges: [],                         fire: "Due Soon", temp: 81.4, checklist: 78.9, achievements: 1  },
+  { rank: 1, change: 2,  name: "Main Kitchen",       org: "Pacific Catering Co.",  city: "Fresno",      industry: "Catering",    avatar: "🍽️", level: 24, xp: 820, xpMax: 1000, streak: 42, badges: ["🏆","🔥","⚡","🎯","💎"], fire: "Current",  temp: 98.4, checklist: 97.2, achievements: 12 },
+  { rank: 2, change: 0,  name: "Downtown Location",   org: "Aria Hotel",            city: "Los Angeles", industry: "Hospitality", avatar: "🏨", level: 21, xp: 640, xpMax: 900,  streak: 31, badges: ["🥈","⚡","🎯","💪"],     fire: "Current",  temp: 96.1, checklist: 94.8, achievements: 9  },
+  { rank: 3, change: -1, name: "Central Campus",      org: "Valley USD",            city: "Merced",      industry: "Education",   avatar: "🎓", level: 19, xp: 510, xpMax: 800,  streak: 28, badges: ["🎯","📚","💪"],           fire: "Current",  temp: 94.3, checklist: 91.5, achievements: 8  },
+  { rank: 4, change: 1,  name: "Patient Services",    org: "Summit Hospital",       city: "Stockton",    industry: "Healthcare",  avatar: "🏥", level: 17, xp: 380, xpMax: 700,  streak: 19, badges: ["💉","💪"],                fire: "Current",  temp: 92.7, checklist: 88.4, achievements: 6  },
+  { rank: 5, change: -1, name: "Lodge Kitchen",       org: "Yosemite Lodge",        city: "Mariposa",    industry: "Hospitality", avatar: "🌲", level: 15, xp: 290, xpMax: 600,  streak: 14, badges: ["🌲"],                     fire: "Due Soon", temp: 88.2, checklist: 85.1, achievements: 5  },
+  { rank: 6, change: 3,  name: "Civic Center Café",   org: "Fresno Civic Center",   city: "Fresno",      industry: "Institutional",       avatar: "🏛️", level: 12, xp: 210, xpMax: 500,  streak: 9,  badges: ["📈"],                     fire: "Current",  temp: 85.9, checklist: 82.7, achievements: 3  },
+  { rank: 7, change: 0,  name: "Senior Dining",       org: "Merced Senior Living",  city: "Merced",      industry: "Institutional",       avatar: "🤍", level: 11, xp: 170, xpMax: 500,  streak: 7,  badges: ["❤️"],                     fire: "Current",  temp: 84.1, checklist: 80.3, achievements: 3  },
+  { rank: 8, change: -2, name: "Stockton Kitchen",    org: "Stockton Marriott",     city: "Stockton",    industry: "Hospitality", avatar: "🍴", level: 9,  xp: 110, xpMax: 400,  streak: 4,  badges: [],                         fire: "Due Soon", temp: 81.4, checklist: 78.9, achievements: 1  },
 ];
 
 const INDUSTRIES = ['All', 'Catering', 'Hospitality', 'Education', 'Healthcare', 'Institutional'];
@@ -59,12 +59,12 @@ export function LeaderboardPreview() {
         flexWrap: 'wrap', gap: 12,
       }}>
         <div>
-          <span style={{ fontWeight: 700, fontSize: 13 }}>{'\ud83d\udc46'} This is a live preview of the EvidLY Compliance Leaderboard</span>
+          <span style={{ fontWeight: 700, fontSize: 13 }}>{'👆'} This is a live preview of the EvidLY Compliance Leaderboard</span>
           <span style={{ fontSize: 12, opacity: 0.6, marginLeft: 12 }}>Your kitchen could be ranked here. Opt in from your Settings page.</span>
         </div>
         <div style={{ display: 'flex', gap: 12 }}>
           <a href="/signup" style={{ background: '#A08C5A', color: 'white', padding: '8px 20px', borderRadius: 8, fontWeight: 700, fontSize: 12, textDecoration: 'none' }}>
-            Start Free Trial {'\u2192'}
+            Start Free Trial {'→'}
           </a>
           <a href="/login" style={{ background: 'transparent', color: 'white', padding: '8px 20px', borderRadius: 8, fontWeight: 600, fontSize: 12, border: '1px solid rgba(255,255,255,0.3)', textDecoration: 'none' }}>
             Log In
@@ -75,7 +75,7 @@ export function LeaderboardPreview() {
       <div style={{ maxWidth: 960, margin: '0 auto', padding: '32px 20px' }}>
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <div style={{ fontSize: 48 }}>{'\ud83c\udfc6'}</div>
+          <div style={{ fontSize: 48 }}>{'🏆'}</div>
           <h1 style={{ fontSize: 32, fontWeight: 900, color: '#1E2D4D', margin: '12px 0 8px' }}>
             EvidLY Compliance Leaderboard
           </h1>
@@ -96,10 +96,10 @@ export function LeaderboardPreview() {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16 }}>
             {[
-              { icon: '\ud83e\udd47', title: '1st Place', desc: '1 free month of EvidLY + Compliance Champion plaque' },
-              { icon: '\ud83e\udd48', title: '2nd Place', desc: '50% off next month + K2C 2x meal multiplier' },
-              { icon: '\ud83e\udd49', title: '3rd Place', desc: '25% off next month + K2C 1.5x meal multiplier' },
-              { icon: '\ud83c\udf1f', title: 'Top 10', desc: 'Featured badge on your Compliance Passport' },
+              { icon: '🥇', title: '1st Place', desc: '1 free month of EvidLY + Compliance Champion plaque' },
+              { icon: '🥈', title: '2nd Place', desc: '50% off next month + K2C 2x meal multiplier' },
+              { icon: '🥉', title: '3rd Place', desc: '25% off next month + K2C 1.5x meal multiplier' },
+              { icon: '🌟', title: 'Top 10', desc: 'Featured badge on your Compliance Passport' },
             ].map(r => (
               <div key={r.title} style={{ backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 12, padding: '16px', textAlign: 'center' }}>
                 <div style={{ fontSize: 28 }}>{r.icon}</div>
@@ -133,7 +133,7 @@ export function LeaderboardPreview() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginBottom: 28, alignItems: 'end' }}>
             {[top3[1], top3[0], top3[2]].map((loc, idx) => {
               const isFirst = idx === 1;
-              const medalEmoji = idx === 0 ? '\ud83e\udd48' : idx === 1 ? '\ud83e\udd47' : '\ud83e\udd49';
+              const medalEmoji = idx === 0 ? '🥈' : idx === 1 ? '🥇' : '🥉';
               const height = isFirst ? 200 : idx === 0 ? 170 : 150;
               return (
                 <div key={loc.rank} style={{
@@ -173,7 +173,7 @@ export function LeaderboardPreview() {
           {/* Table header */}
           <div style={{ display: 'grid', gridTemplateColumns: '50px 50px 1fr 100px 100px 80px 80px 100px', padding: '10px 24px', borderBottom: '1px solid #f3f4f6', fontSize: 11, fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' as const, letterSpacing: '0.05em' }}>
             <span>Rank</span>
-            <span>{'\u0394'}</span>
+            <span>{'Δ'}</span>
             <span>Location</span>
             <span>Temp %</span>
             <span>Checklist %</span>
@@ -204,7 +204,7 @@ export function LeaderboardPreview() {
                 </div>
                 <div style={{ minWidth: 0 }}>
                   <div style={{ fontWeight: 600, color: '#111827', fontSize: 14, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{loc.name}</div>
-                  <div style={{ fontSize: 11, color: '#6b7280' }}>{loc.org} {'\u00b7'} {loc.city}</div>
+                  <div style={{ fontSize: 11, color: '#6b7280' }}>{loc.org} {'·'} {loc.city}</div>
                   <XPBar xp={loc.xp} xpMax={loc.xpMax} level={loc.level} />
                 </div>
               </div>
@@ -248,7 +248,7 @@ export function LeaderboardPreview() {
             ))}
           </div>
           <p style={{ fontSize: 11, color: '#9ca3af', marginTop: 16, fontStyle: 'italic' }}>
-            XP = (Temp% {'\u00d7'} 0.4) + (Checklist% {'\u00d7'} 0.4) + (Streak {'\u00d7'} 0.2). XP is an engagement metric only and does not represent official compliance standing.
+            XP = (Temp% {'×'} 0.4) + (Checklist% {'×'} 0.4) + (Streak {'×'} 0.2). XP is an engagement metric only and does not represent official compliance standing.
           </p>
         </div>
 
@@ -268,7 +268,7 @@ export function LeaderboardPreview() {
 
       {/* Bottom CTA */}
       <div style={{ background: '#1E2D4D', padding: '60px 40px', textAlign: 'center' }}>
-        <div style={{ fontSize: 36 }}>{'\ud83c\udfc6'}</div>
+        <div style={{ fontSize: 36 }}>{'🏆'}</div>
         <h2 style={{ color: 'white', fontSize: 28, fontWeight: 900, margin: '16px 0 8px' }}>
           Is your kitchen ready to compete?
         </h2>
@@ -279,14 +279,14 @@ export function LeaderboardPreview() {
         </p>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
           <a href="/signup" style={{ background: '#A08C5A', color: 'white', padding: '14px 32px', borderRadius: 10, fontWeight: 800, fontSize: 14, textDecoration: 'none' }}>
-            Start Free {'\u2014'} Founder Pricing {'\u2192'}
+            Start Free {'—'} Founder Pricing {'→'}
           </a>
           <a href="https://getevidly.com" style={{ background: 'transparent', color: 'white', padding: '14px 32px', borderRadius: 10, fontWeight: 600, fontSize: 14, border: '1px solid rgba(255,255,255,0.3)', textDecoration: 'none' }}>
             Learn More
           </a>
         </div>
         <p style={{ color: 'rgba(255,255,255,0.25)', fontSize: 11, marginTop: 20 }}>
-          No credit card required {'\u00b7'} Founder pricing available through May 5, 2026
+          No credit card required {'·'} Founder pricing available through May 5, 2026
         </p>
       </div>
 

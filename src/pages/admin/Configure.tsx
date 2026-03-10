@@ -70,7 +70,7 @@ function Modal({ title, onClose, children }: { title: string; onClose: () => voi
       <div style={{ background: '#fff', borderRadius: 14, padding: 28, width: '95vw', maxWidth: 560, maxHeight: '90vh', overflowY: 'auto' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
           <h3 style={{ fontSize: 16, fontWeight: 700, color: NAVY }}>{title}</h3>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 20, color: TEXT_MUTED, cursor: 'pointer' }}>{'\u00D7'}</button>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 20, color: TEXT_MUTED, cursor: 'pointer' }}>{'×'}</button>
         </div>
         {children}
       </div>
@@ -241,11 +241,11 @@ function OrgsTable({ orgs, search, onAdd, onSelect }: { orgs: Org[]; search: str
         <tr key={o.id} onClick={() => onSelect(o)} style={{ borderBottom: `1px solid ${BORDER}`, cursor: 'pointer' }} onMouseEnter={e => e.currentTarget.style.background = '#F9FAFB'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
           <TD fw>{o.name}</TD>
           <td style={{ padding: '10px 14px' }}>
-            <div style={{ fontSize: 13, color: NAVY }}>{o.primary_contact_name || '\u2014'}</div>
+            <div style={{ fontSize: 13, color: NAVY }}>{o.primary_contact_name || '—'}</div>
             {o.primary_contact_email && <div style={{ fontSize: 11, color: TEXT_SEC }}>{o.primary_contact_email}</div>}
           </td>
-          <TD fs={12}>{o.primary_contact_phone || o.main_phone || '\u2014'}</TD>
-          <TD>{o.plan || '\u2014'}</TD><TD>{o.locations?.[0]?.count ?? 0}</TD>
+          <TD fs={12}>{o.primary_contact_phone || o.main_phone || '—'}</TD>
+          <TD>{o.plan || '—'}</TD><TD>{o.locations?.[0]?.count ?? 0}</TD>
           <td style={{ padding: '10px 14px' }}><span style={statusBadge(o.status)}>{o.status}</span></td>
         </tr>
       ))}</tbody>
@@ -262,10 +262,10 @@ function LocsTable({ locs, search, onAdd, onSelect }: { locs: Location[]; search
       <thead><tr style={{ borderBottom: `1px solid ${BORDER}` }}><TH>Name</TH><TH>Organization</TH><TH>Site Contact</TH><TH>Phone</TH><TH>County</TH><TH>Status</TH></tr></thead>
       <tbody>{filtered.map(l => (
         <tr key={l.id} onClick={() => onSelect(l)} style={{ borderBottom: `1px solid ${BORDER}`, cursor: 'pointer' }} onMouseEnter={e => e.currentTarget.style.background = '#F9FAFB'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-          <TD fw>{l.name}</TD><TD>{l.organizations?.name || '\u2014'}</TD>
-          <TD fs={12}>{l.site_contact_name || l.manager_name || '\u2014'}</TD>
-          <TD fs={12}>{l.site_contact_phone || l.site_phone || l.manager_phone || '\u2014'}</TD>
-          <TD>{l.county || '\u2014'}</TD>
+          <TD fw>{l.name}</TD><TD>{l.organizations?.name || '—'}</TD>
+          <TD fs={12}>{l.site_contact_name || l.manager_name || '—'}</TD>
+          <TD fs={12}>{l.site_contact_phone || l.site_phone || l.manager_phone || '—'}</TD>
+          <TD>{l.county || '—'}</TD>
           <td style={{ padding: '10px 14px' }}><span style={statusBadge(l.status)}>{l.status}</span></td>
         </tr>
       ))}</tbody>
@@ -284,8 +284,8 @@ function UsersTable({ users, orgs, search, onAdd, onSelect }: { users: UserProfi
         const org = orgs.find(o => o.id === u.organization_id);
         return (
           <tr key={u.user_id} onClick={() => onSelect(u)} style={{ borderBottom: `1px solid ${BORDER}`, cursor: 'pointer' }} onMouseEnter={e => e.currentTarget.style.background = '#F9FAFB'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-            <TD fw>{u.full_name || '\u2014'}</TD><TD fs={12}>{u.email || '\u2014'}</TD><TD>{u.role}</TD>
-            <TD fs={12}>{org?.name || '\u2014'}</TD>
+            <TD fw>{u.full_name || '—'}</TD><TD fs={12}>{u.email || '—'}</TD><TD>{u.role}</TD>
+            <TD fs={12}>{org?.name || '—'}</TD>
             <TD fs={12}>{u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleString() : 'Never'}</TD>
             <TD fs={12}>{new Date(u.created_at).toLocaleDateString()}</TD>
           </tr>
@@ -304,13 +304,13 @@ function VendorsTable({ vendors, search, onAdd, onSelect }: { vendors: Vendor[];
       <thead><tr style={{ borderBottom: `1px solid ${BORDER}` }}><TH>Company</TH><TH>Service</TH><TH>Primary Contact</TH><TH>Phone</TH><TH>Partner</TH><TH>Status</TH></tr></thead>
       <tbody>{filtered.map(v => (
         <tr key={v.id} onClick={() => onSelect(v)} style={{ borderBottom: `1px solid ${BORDER}`, cursor: 'pointer' }} onMouseEnter={e => e.currentTarget.style.background = '#F9FAFB'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-          <TD fw>{v.company_name}</TD><TD>{v.service_type || '\u2014'}</TD>
+          <TD fw>{v.company_name}</TD><TD>{v.service_type || '—'}</TD>
           <td style={{ padding: '10px 14px' }}>
-            <div style={{ fontSize: 13, color: NAVY }}>{v.primary_contact_name || v.contact_name || '\u2014'}</div>
+            <div style={{ fontSize: 13, color: NAVY }}>{v.primary_contact_name || v.contact_name || '—'}</div>
             {(v.primary_contact_email || v.email) && <div style={{ fontSize: 11, color: TEXT_SEC }}>{v.primary_contact_email || v.email}</div>}
           </td>
-          <TD fs={12}>{v.primary_contact_phone || v.phone || v.main_phone || '\u2014'}</TD>
-          <td style={{ padding: '10px 14px' }}>{v.is_partner ? <span style={{ fontSize: 10, fontWeight: 700, color: '#059669', background: '#F0FFF4', padding: '2px 8px', borderRadius: 4 }}>Partner</span> : '\u2014'}</td>
+          <TD fs={12}>{v.primary_contact_phone || v.phone || v.main_phone || '—'}</TD>
+          <td style={{ padding: '10px 14px' }}>{v.is_partner ? <span style={{ fontSize: 10, fontWeight: 700, color: '#059669', background: '#F0FFF4', padding: '2px 8px', borderRadius: 4 }}>Partner</span> : '—'}</td>
           <td style={{ padding: '10px 14px' }}><span style={statusBadge(v.status)}>{v.status}</span></td>
         </tr>
       ))}</tbody>
@@ -700,7 +700,7 @@ function DetailRow({ label, value }: { label: string; value: React.ReactNode }) 
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #F3F4F6' }}>
       <span style={{ fontSize: 12, color: TEXT_SEC, fontWeight: 600 }}>{label}</span>
-      <span style={{ fontSize: 13, color: NAVY, fontWeight: 500, textAlign: 'right', maxWidth: '60%' }}>{value || '\u2014'}</span>
+      <span style={{ fontSize: 13, color: NAVY, fontWeight: 500, textAlign: 'right', maxWidth: '60%' }}>{value || '—'}</span>
     </div>
   );
 }
@@ -758,7 +758,7 @@ function OrgDrawer({ org, onClose, onRefresh }: { org: Org; onClose: () => void;
                 {org.industry_type && <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 600, background: '#F3F4F6', color: TEXT_SEC }}>{org.industry_type.replace(/_/g, ' ')}</span>}
               </div>
             </div>
-            <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 22, color: TEXT_MUTED, cursor: 'pointer' }}>{'\u00D7'}</button>
+            <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 22, color: TEXT_MUTED, cursor: 'pointer' }}>{'×'}</button>
           </div>
         </div>
         <DrawerTabBar tabs={['Overview', 'Locations', 'Users', 'Vendors', 'Tickets', 'Activity']} active={tab} onChange={setTab} />
@@ -952,7 +952,7 @@ function LocDrawer({ loc, onClose, onRefresh }: { loc: Location; onClose: () => 
                 {loc.county && <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 600, background: '#F3F4F6', color: TEXT_SEC }}>{loc.county} County</span>}
               </div>
             </div>
-            <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 22, color: TEXT_MUTED, cursor: 'pointer' }}>{'\u00D7'}</button>
+            <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 22, color: TEXT_MUTED, cursor: 'pointer' }}>{'×'}</button>
           </div>
         </div>
         <DrawerTabBar tabs={['Overview', 'Compliance', 'Users', 'Tickets', 'Activity']} active={tab} onChange={setTab} />
@@ -1117,7 +1117,7 @@ function UserDrawer({ user, orgs, onClose, onRefresh }: { user: UserProfile; org
                 {org && <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 600, background: '#F3F4F6', color: TEXT_SEC }}>{org.name}</span>}
               </div>
             </div>
-            <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 22, color: TEXT_MUTED, cursor: 'pointer' }}>{'\u00D7'}</button>
+            <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 22, color: TEXT_MUTED, cursor: 'pointer' }}>{'×'}</button>
           </div>
         </div>
         <DrawerTabBar tabs={['Profile', 'Tickets', 'Activity']} active={tab} onChange={setTab} />
@@ -1211,7 +1211,7 @@ function VendorDrawer({ vendor, onClose, onRefresh }: { vendor: Vendor; onClose:
                 {vendor.is_partner && <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 700, background: '#F0FFF4', color: '#059669' }}>Partner</span>}
               </div>
             </div>
-            <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 22, color: TEXT_MUTED, cursor: 'pointer' }}>{'\u00D7'}</button>
+            <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 22, color: TEXT_MUTED, cursor: 'pointer' }}>{'×'}</button>
           </div>
         </div>
         <DrawerTabBar tabs={['Profile', 'Locations Served', 'Activity']} active={tab} onChange={setTab} />

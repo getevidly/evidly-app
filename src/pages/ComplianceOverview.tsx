@@ -155,10 +155,10 @@ function statusLabel(status: string): string {
   }
 }
 
-// ── Score display: "\u2014" when unavailable ───────────────────────
+// ── Score display: "—" when unavailable ───────────────────────
 
 function scoreDisplay(score: number | null | undefined): string {
-  if (score === null || score === undefined || score === 0) return '\u2014';
+  if (score === null || score === undefined || score === 0) return '—';
   return String(score);
 }
 
@@ -229,7 +229,7 @@ function AhjCard({ label, grade, summary, authority, status, lastInspectionDate,
             </span>
           </div>
           <div className={`text-base font-bold ${statusColors.text}`}>
-            {grade || '\u2014'}
+            {grade || '—'}
           </div>
           <div className="text-sm text-gray-600 mt-1">{summary}</div>
           <div className="text-xs text-gray-400 mt-2">
@@ -576,7 +576,7 @@ export function ComplianceOverview() {
     const details = gradeData.foodSafety.details;
     return {
       grade: details?.federalStatus === 'passing' ? 'In Compliance' : 'Priority Violation',
-      summary: `${overlay.code_basis} \u2014 federal inspection program`,
+      summary: `${overlay.code_basis} — federal inspection program`,
       authority: overlay.agency_name,
       status: (details?.federalStatus as JurisdictionStatus) || 'passing',
     };
@@ -608,7 +608,7 @@ export function ComplianceOverview() {
     const overlay = jurisdictionData.federalFireOverlay;
     return {
       grade: 'Compliant',
-      summary: `${overlay.code_basis} \u2014 federal fire management`,
+      summary: `${overlay.code_basis} — federal fire management`,
       authority: overlay.agency_name,
       status: 'passing' as JurisdictionStatus,
     };

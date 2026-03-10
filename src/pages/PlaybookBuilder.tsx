@@ -198,7 +198,7 @@ export function PlaybookBuilder() {
                 background: isDone ? '#1e4d6b' : isCurrent ? '#1e4d6b' : '#e5e7eb',
                 color: isDone || isCurrent ? '#fff' : '#9ca3af', fontSize: 12, fontWeight: 700, flexShrink: 0,
               }}>
-                {isDone ? '\u2713' : s.number}
+                {isDone ? '✓' : s.number}
               </span>
               <span>{s.label}</span>
             </button>
@@ -476,9 +476,9 @@ export function PlaybookBuilder() {
                         <div style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>{s.title || `Step ${idx + 1} (untitled)`}</div>
                         <div style={{ fontSize: 12, color: '#6b7280', marginTop: 2 }}>
                           {s.checklistItems.length} checklist items
-                          {reqCount > 0 && ` \u00B7 ${reqCount} requirement${reqCount > 1 ? 's' : ''}`}
-                          {s.timeLimitMinutes && ` \u00B7 ${s.timeLimitMinutes}min limit`}
-                          {s.escalationContact && ` \u00B7 Escalate: ${s.escalationContact}`}
+                          {reqCount > 0 && ` · ${reqCount} requirement${reqCount > 1 ? 's' : ''}`}
+                          {s.timeLimitMinutes && ` · ${s.timeLimitMinutes}min limit`}
+                          {s.escalationContact && ` · Escalate: ${s.escalationContact}`}
                         </div>
                       </div>
                       <CheckCircle2 size={16} color="#16a34a" />

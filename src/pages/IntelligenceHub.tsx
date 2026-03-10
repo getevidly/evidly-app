@@ -62,14 +62,14 @@ type FilterKey = 'all' | 'critical' | 'regulatory' | 'health_dept' | 'recalls' |
 
 const FILTERS: { key: FilterKey; label: string; emoji: string }[] = [
   { key: 'all', label: 'All', emoji: '' },
-  { key: 'critical', label: 'Critical', emoji: '\ud83d\udea8' },
-  { key: 'regulatory', label: 'Regulatory', emoji: '\ud83d\udccb' },
-  { key: 'health_dept', label: 'Health Dept', emoji: '\ud83c\udfdb' },
-  { key: 'recalls', label: 'Recalls', emoji: '\u26a0\ufe0f' },
-  { key: 'outbreaks', label: 'Outbreaks', emoji: '\ud83e\udda0' },
-  { key: 'weather', label: 'Weather', emoji: '\u26c5' },
-  { key: 'legislative', label: 'Legislative', emoji: '\ud83c\udfdb' },
-  { key: 'competitor', label: 'Competitor', emoji: '\ud83c\udfe2' },
+  { key: 'critical', label: 'Critical', emoji: '🚨' },
+  { key: 'regulatory', label: 'Regulatory', emoji: '📋' },
+  { key: 'health_dept', label: 'Health Dept', emoji: '🏛' },
+  { key: 'recalls', label: 'Recalls', emoji: '⚠️' },
+  { key: 'outbreaks', label: 'Outbreaks', emoji: '🦠' },
+  { key: 'weather', label: 'Weather', emoji: '⛅' },
+  { key: 'legislative', label: 'Legislative', emoji: '🏛' },
+  { key: 'competitor', label: 'Competitor', emoji: '🏢' },
 ];
 
 function timeAgo(dateStr: string): string {

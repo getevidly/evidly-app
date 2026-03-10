@@ -26,7 +26,7 @@ export default function AdminBreadcrumb({ crumbs = [] }: AdminBreadcrumbProps) {
       </span>
       {crumbs.map((crumb, i) => (
         <span key={i} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <span style={{ color: '#D1D5DB' }}>{'\u203A'}</span>
+          <span style={{ color: '#D1D5DB' }}>{'›'}</span>
           {crumb.path && i < crumbs.length - 1 ? (
             <span
               onClick={() => navigate(crumb.path!)}

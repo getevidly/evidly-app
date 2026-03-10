@@ -2396,14 +2396,14 @@ export function TempLogs() {
                       <LineChart data={chartData}>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="time" angle={-45} textAnchor="end" height={60} tick={{ fontSize: 11 }} interval="preserveStartEnd" />
-                        <YAxis label={{ value: 'Temperature (\u00B0F)', angle: -90, position: 'insideLeft' }} />
-                        <Tooltip formatter={(value: number, name: string) => [`${value}\u00B0F`, name]} />
+                        <YAxis label={{ value: 'Temperature (°F)', angle: -90, position: 'insideLeft' }} />
+                        <Tooltip formatter={(value: number, name: string) => [`${value}°F`, name]} />
                         <Legend />
                         {selectedEq && (
-                          <ReferenceLine y={selectedEq.max_temp} stroke="#22c55e" strokeDasharray="3 3" label={{ value: `Max (${selectedEq.max_temp}\u00B0F)`, position: 'right', fontSize: 11 }} />
+                          <ReferenceLine y={selectedEq.max_temp} stroke="#22c55e" strokeDasharray="3 3" label={{ value: `Max (${selectedEq.max_temp}°F)`, position: 'right', fontSize: 11 }} />
                         )}
                         {selectedEq && (
-                          <ReferenceLine y={selectedEq.min_temp} stroke="#ef4444" strokeDasharray="3 3" label={{ value: `Min (${selectedEq.min_temp}\u00B0F)`, position: 'right', fontSize: 11 }} />
+                          <ReferenceLine y={selectedEq.min_temp} stroke="#ef4444" strokeDasharray="3 3" label={{ value: `Min (${selectedEq.min_temp}°F)`, position: 'right', fontSize: 11 }} />
                         )}
                         {chartNames.map((name) => (
                           <Line

@@ -163,7 +163,7 @@ export function WorkforceRisk() {
 
   // ── Header ────────────────────────────────────────────────────
   const isFireView = userRole === 'facilities_manager';
-  const headerTitle = isFireView ? 'Workforce Risk \u2014 Fire Safety Training' : 'Workforce Risk';
+  const headerTitle = isFireView ? 'Workforce Risk — Fire Safety Training' : 'Workforce Risk';
   const headerSubtitle = isFireView
     ? 'Fire safety and extinguisher training compliance signals'
     : 'Employee certification and training compliance signals';
@@ -259,7 +259,7 @@ export function WorkforceRisk() {
             <div style={{ padding: '16px 24px', borderBottom: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ fontSize: 15, fontWeight: 700, color: NAVY }}>Employee Certifications</div>
               <button
-                onClick={() => alert('Demo mode \u2014 Add cert record would open a form in production.')}
+                onClick={() => alert('Demo mode — Add cert record would open a form in production.')}
                 style={{
                   display: 'flex', alignItems: 'center', gap: 4,
                   fontSize: 12, fontWeight: 600, color: '#fff', background: NAVY,
@@ -291,9 +291,9 @@ export function WorkforceRisk() {
                           <td style={{ padding: '10px 14px', fontWeight: 600, color: '#111827' }}>{cert.employeeName}</td>
                           <td style={{ padding: '10px 14px', color: TEXT_SEC }}>{cert.locationName}</td>
                           <td style={{ padding: '10px 14px', color: '#111827' }}>{cert.certTypeLabel}</td>
-                          <td style={{ padding: '10px 14px', color: TEXT_SEC }}>{cert.certNumber || '\u2014'}</td>
+                          <td style={{ padding: '10px 14px', color: TEXT_SEC }}>{cert.certNumber || '—'}</td>
                           <td style={{ padding: '10px 14px', color: TEXT_SEC }}>{formatDate(cert.issuedDate)}</td>
-                          <td style={{ padding: '10px 14px', color: TEXT_SEC }}>{cert.expirationDate ? formatDate(cert.expirationDate) : '\u2014'}</td>
+                          <td style={{ padding: '10px 14px', color: TEXT_SEC }}>{cert.expirationDate ? formatDate(cert.expirationDate) : '—'}</td>
                           <td style={{ padding: '10px 14px' }}>
                             <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: st.bg, color: st.color }}>
                               {st.label}
@@ -334,7 +334,7 @@ export function WorkforceRisk() {
                 <div key={box.label} style={{ ...CARD_STYLE }}>
                   <Icon size={22} color={empty ? '#D1D5DB' : box.iconColor} style={{ margin: '0 auto 8px' }} />
                   <div style={{ fontSize: 24, fontWeight: 700, color: empty ? '#D1D5DB' : NAVY, marginBottom: 4 }}>
-                    {empty ? '\u2014' : box.value}
+                    {empty ? '—' : box.value}
                   </div>
                   <div style={{ fontSize: 11, fontWeight: 600, color: empty ? '#D1D5DB' : TEXT_SEC }}>
                     {box.label}
@@ -401,7 +401,7 @@ export function WorkforceRisk() {
           </div>
 
           <div style={{ textAlign: 'center', fontSize: 11, color: '#9CA3AF', marginTop: 8 }}>
-            Food handler and CFPM records are managed by Compliance Officer \u2014 not shown here.
+            Food handler and CFPM records are managed by Compliance Officer — not shown here.
           </div>
         </>
       )}

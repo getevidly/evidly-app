@@ -31,7 +31,7 @@ export function SelfDiagCard() {
       onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(160,140,90,.35)')}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-        <span style={{ fontSize: '28px' }}>{'\uD83D\uDD27'}</span>
+        <span style={{ fontSize: '28px' }}>{'🔧'}</span>
         <div>
           <p style={{
             color: 'var(--text-primary)', fontSize: '15px', fontWeight: 800,
@@ -43,7 +43,7 @@ export function SelfDiagCard() {
             color: 'var(--text-secondary)', fontSize: '12px', margin: '3px 0 0',
             fontFamily: 'system-ui',
           }}>
-            Troubleshoot equipment {'\u00b7'} Notify your vendor {'\u00b7'} Attach photos & video {'\u2014'} in under 2 minutes
+            Troubleshoot equipment {'·'} Notify your vendor {'·'} Attach photos & video {'—'} in under 2 minutes
           </p>
         </div>
       </div>
@@ -58,7 +58,7 @@ export function SelfDiagCard() {
           color: '#ffffff', fontSize: '12px',
           fontWeight: 700, fontFamily: 'system-ui',
         }}>
-          Start Diagnosis {'\u2192'}
+          Start Diagnosis {'→'}
         </span>
       </div>
     </div>

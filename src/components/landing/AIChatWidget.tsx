@@ -27,11 +27,11 @@ const DEMO_RESPONSES: Record<string, { reply: string; cta: 'try_demo' | 'book_ca
     cta: 'try_demo',
   },
   'food handler': {
-    reply: "Yes! California requires all food handlers to have a California Food Handler Card within 30 days of employment (CalCode \u00A7113948). The card is valid for 3 years. EvidLY tracks every team member's certification and alerts you 60 days before expiration.",
+    reply: "Yes! California requires all food handlers to have a California Food Handler Card within 30 days of employment (CalCode §113948). The card is valid for 3 years. EvidLY tracks every team member's certification and alerts you 60 days before expiration.",
     cta: 'try_demo',
   },
   temperature: {
-    reply: "Walk-in coolers should maintain 35-38\u00B0F (1.7-3.3\u00B0C). The FDA Food Code sets 41\u00B0F (5\u00B0C) as the maximum safe temperature. Walk-in freezers should be at 0\u00B0F (-18\u00B0C) or below. EvidLY's temperature monitoring sends instant alerts if readings go out of range.",
+    reply: "Walk-in coolers should maintain 35-38°F (1.7-3.3°C). The FDA Food Code sets 41°F (5°C) as the maximum safe temperature. Walk-in freezers should be at 0°F (-18°C) or below. EvidLY's temperature monitoring sends instant alerts if readings go out of range.",
     cta: 'try_demo',
   },
   default: {
@@ -55,7 +55,7 @@ export default function AIChatWidget() {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: 'assistant',
-      content: "Hi! I'm EvidLY's compliance assistant. Ask me anything about commercial kitchen compliance \u2014 food safety, fire codes, HACCP, health inspections, and more.",
+      content: "Hi! I'm EvidLY's compliance assistant. Ask me anything about commercial kitchen compliance — food safety, fire codes, HACCP, health inspections, and more.",
     },
   ]);
   const [input, setInput] = useState('');

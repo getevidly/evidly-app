@@ -681,9 +681,9 @@ function SetupTourTab({ templates, campaigns, orgs, onLaunch }: {
                   </div>
                 )}
                 <div style={{ fontSize: 10, color: '#9CA3AF', marginTop: 3, fontWeight: 400 }}>
-                  {p === 'pilot' && '$49 \u00B7 +$49/loc'}
-                  {p === 'founder' && '$99 \u00B7 +$49/loc'}
-                  {p === 'standard' && '$199 \u00B7 +$99/loc'}
+                  {p === 'pilot' && '$49 · +$49/loc'}
+                  {p === 'founder' && '$99 · +$49/loc'}
+                  {p === 'standard' && '$199 · +$99/loc'}
                   {p === 'enterprise' && 'Custom'}
                 </div>
               </button>
@@ -733,7 +733,7 @@ function SetupTourTab({ templates, campaigns, orgs, onLaunch }: {
             }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
                 <div style={{ fontSize: 12, fontWeight: 700, color: '#1E2D4D' }}>
-                  Location {locIdx + 1}{loc.name ? ` \u2014 ${loc.name}` : ''}
+                  Location {locIdx + 1}{loc.name ? ` — ${loc.name}` : ''}
                 </div>
                 {locations.length > 1 && (
                   <button type="button" onClick={() => removeLocation(loc.id)}
@@ -785,7 +785,7 @@ function SetupTourTab({ templates, campaigns, orgs, onLaunch }: {
                     <button type="button" onClick={() => removeContact(loc.id, ci)}
                       style={{ background: 'none', border: 'none', color: '#DC2626',
                         cursor: 'pointer', fontSize: 18, lineHeight: 1, padding: 0 }}>
-                      {'\u00D7'}
+                      {'×'}
                     </button>
                   </div>
                 ))}
@@ -813,7 +813,7 @@ function SetupTourTab({ templates, campaigns, orgs, onLaunch }: {
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
                   <div style={{ fontSize: 12, fontWeight: 600, color: '#1E2D4D' }}>
-                    {selectedTemplate.name} {'\u00B7'} {selectedTemplate.duration_minutes} min
+                    {selectedTemplate.name} {'·'} {selectedTemplate.duration_minutes} min
                   </div>
                   <span style={{ fontSize: 10, color: '#9CA3AF' }}>
                     {selectedTemplate.modules_enabled?.length || 0} modules
@@ -852,7 +852,7 @@ function SetupTourTab({ templates, campaigns, orgs, onLaunch }: {
                 <button type="button" onClick={() => setShowCustomModules(!showCustomModules)}
                   style={{ marginTop: 8, fontSize: 11, color: '#A08C5A', background: 'none',
                     border: 'none', cursor: 'pointer', padding: 0, fontWeight: 600 }}>
-                  {showCustomModules ? '\u25B2 Hide custom modules' : '\u25BC Customize modules for this tour'}
+                  {showCustomModules ? '▲ Hide custom modules' : '▼ Customize modules for this tour'}
                 </button>
               </div>
 
@@ -905,8 +905,8 @@ function SetupTourTab({ templates, campaigns, orgs, onLaunch }: {
             {plan !== 'enterprise' && (
               <div style={{ fontSize: 10, color: '#9CA3AF', marginTop: 2 }}>
                 {locations.length === 1
-                  ? `${PLANS[plan].label} \u00B7 1 location (included in base)`
-                  : `${PLANS[plan].label} \u00B7 1 base + ${locations.length - 1} additional location${locations.length > 2 ? 's' : ''}`
+                  ? `${PLANS[plan].label} · 1 location (included in base)`
+                  : `${PLANS[plan].label} · 1 base + ${locations.length - 1} additional location${locations.length > 2 ? 's' : ''}`
                 }
               </div>
             )}

@@ -379,7 +379,7 @@ export default function StaffRoles() {
                         onMouseEnter={e => (e.currentTarget.style.background = '#F9FAFB')}
                         onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                       >
-                        <td style={{ ...tdStyle, color: NAVY, fontWeight: 600 }}>{s.full_name || '\u2014'}</td>
+                        <td style={{ ...tdStyle, color: NAVY, fontWeight: 600 }}>{s.full_name || '—'}</td>
                         <td style={{ ...tdStyle, color: TEXT_SEC, fontSize: 12 }}>{s.email}</td>
                         <td style={tdStyle}>{renderRoleBadge(s.evidly_staff_role)}</td>
                         <td style={tdStyle}>{renderPermDots(s)}</td>
@@ -582,7 +582,7 @@ export default function StaffRoles() {
                               color: enabled ? '#059669' : '#DC2626',
                               fontSize: 10, fontWeight: 700,
                             }}>
-                              {enabled ? '\u2713' : '\u2717'}
+                              {enabled ? '✓' : '✗'}
                             </span>
                             <span style={{ color: enabled ? NAVY : TEXT_MUTED }}>
                               {PERM_SHORT_LABELS[k]}
@@ -661,7 +661,7 @@ export default function StaffRoles() {
                                 </span>
                               )}
                               {!ev.category && (
-                                <span style={{ color: TEXT_MUTED, fontSize: 12 }}>{'\u2014'}</span>
+                                <span style={{ color: TEXT_MUTED, fontSize: 12 }}>{'—'}</span>
                               )}
                             </div>
                           </td>
@@ -677,7 +677,7 @@ export default function StaffRoles() {
                             </span>
                           </td>
                           <td style={{ ...tdStyle, color: TEXT_SEC, fontSize: 12, whiteSpace: 'nowrap' }}>
-                            {ts ? new Date(ts).toLocaleString() : '\u2014'}
+                            {ts ? new Date(ts).toLocaleString() : '—'}
                           </td>
                         </tr>
                       );
@@ -754,7 +754,7 @@ function StaffDrawer({ staff, roleDefs, onClose, renderRoleBadge }: {
               <div style={{ fontSize: 13, color: TEXT_SEC, marginTop: 2 }}>{staff.email}</div>
               <div style={{ marginTop: 6 }}>{renderRoleBadge(staff.evidly_staff_role)}</div>
             </div>
-            <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 22, color: TEXT_MUTED, cursor: 'pointer' }}>{'\u00D7'}</button>
+            <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 22, color: TEXT_MUTED, cursor: 'pointer' }}>{'×'}</button>
           </div>
         </div>
 
@@ -778,7 +778,7 @@ function StaffDrawer({ staff, roleDefs, onClose, renderRoleBadge }: {
               ].map(([label, value]) => (
                 <div key={label as string} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #F3F4F6' }}>
                   <span style={{ fontSize: 12, color: TEXT_SEC, fontWeight: 600 }}>{label}</span>
-                  <span style={{ fontSize: 13, color: NAVY, fontWeight: 500 }}>{value || '\u2014'}</span>
+                  <span style={{ fontSize: 13, color: NAVY, fontWeight: 500 }}>{value || '—'}</span>
                 </div>
               ))}
             </div>
@@ -802,7 +802,7 @@ function StaffDrawer({ staff, roleDefs, onClose, renderRoleBadge }: {
                         color: enabled ? '#059669' : '#DC2626',
                         fontSize: 11, fontWeight: 700,
                       }}>
-                        {enabled ? '\u2713' : '\u2717'}
+                        {enabled ? '✓' : '✗'}
                       </span>
                       <span style={{ color: enabled ? NAVY : TEXT_MUTED, fontWeight: enabled ? 600 : 400 }}>
                         {PERM_LABELS[k]}
@@ -827,7 +827,7 @@ function StaffDrawer({ staff, roleDefs, onClose, renderRoleBadge }: {
                   const lc = LEVEL_COLORS[ev.level] || LEVEL_COLORS.INFO;
                   return (
                     <div key={ev.id} style={{ padding: '6px 0', borderBottom: '1px solid #F3F4F6', fontSize: 12 }}>
-                      <span style={{ color: TEXT_SEC }}>{ev.event_time ? new Date(ev.event_time).toLocaleString() : '\u2014'}</span>
+                      <span style={{ color: TEXT_SEC }}>{ev.event_time ? new Date(ev.event_time).toLocaleString() : '—'}</span>
                       <span style={{ marginLeft: 6, padding: '1px 5px', borderRadius: 3, fontSize: 9, fontWeight: 700, background: lc.bg, color: lc.text }}>{ev.level}</span>
                       <span style={{ marginLeft: 8, color: NAVY }}>{ev.message}</span>
                     </div>

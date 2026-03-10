@@ -108,7 +108,7 @@ export const DiagnosisWizard: React.FC = () => {
           {selectedCategory && (
             <span style={{ color: '#9ca3af', fontSize: 12, fontFamily: 'system-ui' }}>
               {selectedCategory.icon} {selectedCategory.label}
-              {result && ` \u2192 ${result.title}`}
+              {result && ` → ${result.title}`}
             </span>
           )}
           <button
@@ -192,7 +192,7 @@ export const DiagnosisWizard: React.FC = () => {
                 }}
               >
                 <span>{opt.label}</span>
-                <span style={{ color: '#9ca3af', fontSize: 18 }}>{'\u203A'}</span>
+                <span style={{ color: '#9ca3af', fontSize: 18 }}>{'›'}</span>
               </button>
             ))}
           </div>
@@ -326,7 +326,7 @@ export const DiagnosisWizard: React.FC = () => {
               display: 'flex', alignItems: 'center', gap: 12,
             }}>
               <span style={{ fontSize: 11, fontWeight: 700, color: '#A08C5A', fontFamily: 'system-ui' }}>
-                {'\u2605'} EvidLY Partner Service:
+                {'★'} EvidLY Partner Service:
               </span>
               <span style={{ fontSize: 13, color: 'var(--text-primary, #0B1628)', fontFamily: 'system-ui' }}>{result.cppService}</span>
               <button
@@ -338,7 +338,7 @@ export const DiagnosisWizard: React.FC = () => {
                   cursor: 'pointer', fontFamily: 'system-ui',
                 }}
               >
-                View Vendor {'\u2192'}
+                View Vendor {'→'}
               </button>
             </div>
           )}

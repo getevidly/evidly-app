@@ -267,12 +267,12 @@ function AlertRow({ alert }: { alert: ExpirationAlert }) {
 }
 
 function formatSafeDate(dateStr: string): string {
-  if (!dateStr) return '\u2014';
+  if (!dateStr) return '—';
   try {
     const d = new Date(dateStr.includes('T') ? dateStr : dateStr + 'T00:00:00');
-    if (isNaN(d.getTime())) return '\u2014';
+    if (isNaN(d.getTime())) return '—';
     return format(d, 'MMM d, yyyy');
   } catch {
-    return '\u2014';
+    return '—';
   }
 }

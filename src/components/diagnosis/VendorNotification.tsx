@@ -48,7 +48,7 @@ export const VendorNotification: React.FC<Props> = ({
     }
 
     if (contactMethod === 'email' || contactMethod === 'both') {
-      const subject = encodeURIComponent(`URGENT \u2014 Kitchen Issue: ${result.title}`);
+      const subject = encodeURIComponent(`URGENT — Kitchen Issue: ${result.title}`);
       const body = encodeURIComponent(message);
       window.open(`mailto:${selectedVendor.email}?subject=${subject}&body=${body}`, '_blank');
     }
@@ -63,7 +63,7 @@ export const VendorNotification: React.FC<Props> = ({
         borderRadius: '8px', padding: '14px', marginBottom: '12px',
       }}>
         <p style={{ color: 'var(--text-secondary, #3D5068)', fontSize: '12px', fontFamily: 'system-ui', margin: 0 }}>
-          No vendors on file for this issue type. Add vendors in Settings {'\u2192'} Vendors.
+          No vendors on file for this issue type. Add vendors in Settings {'→'} Vendors.
         </p>
       </div>
     );
@@ -75,7 +75,7 @@ export const VendorNotification: React.FC<Props> = ({
       borderRadius: '10px', padding: '16px', marginBottom: '12px',
     }}>
       <p style={{ color: '#A08C5A', fontSize: '11px', fontWeight: 700, margin: '0 0 12px', fontFamily: 'system-ui', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-        {'\uD83D\uDCE4'} Notify Your Vendor
+        {'📤'} Notify Your Vendor
       </p>
 
       <div style={{ marginBottom: '10px' }}>
@@ -93,7 +93,7 @@ export const VendorNotification: React.FC<Props> = ({
         >
           {vendors.map(v => (
             <option key={v.id} value={v.id}>
-              {v.name} {v.evidlyPartner ? '\u2605 EvidLY Partner' : ''} {'\u2014'} {v.contactName || v.category}
+              {v.name} {v.evidlyPartner ? '★ EvidLY Partner' : ''} {'—'} {v.contactName || v.category}
             </option>
           ))}
         </select>
@@ -116,7 +116,7 @@ export const VendorNotification: React.FC<Props> = ({
                 cursor: 'pointer', fontFamily: 'system-ui',
               }}
             >
-              {method === 'text' ? '\uD83D\uDCF1 Text' : method === 'email' ? '\uD83D\uDCE7 Email' : '\u26A1 Both'}
+              {method === 'text' ? '📱 Text' : method === 'email' ? '📧 Email' : '⚡ Both'}
             </button>
           ))}
         </div>
@@ -159,7 +159,7 @@ export const VendorNotification: React.FC<Props> = ({
           borderRadius: '6px', padding: '10px 14px',
           display: 'flex', alignItems: 'center', gap: '8px',
         }}>
-          <span style={{ color: '#4ade80', fontSize: '14px' }}>{'\u2713'}</span>
+          <span style={{ color: '#4ade80', fontSize: '14px' }}>{'✓'}</span>
           <p style={{ color: '#4ade80', fontSize: '12px', fontWeight: 700, margin: 0, fontFamily: 'system-ui' }}>
             Notification sent to {selectedVendor?.name}
           </p>
@@ -174,7 +174,7 @@ export const VendorNotification: React.FC<Props> = ({
               color: 'var(--text-secondary, #3D5068)', fontSize: '12px', cursor: 'pointer', fontFamily: 'system-ui',
             }}
           >
-            {editing ? 'Done Editing' : '\u270F\uFE0F Edit Message'}
+            {editing ? 'Done Editing' : '✏️ Edit Message'}
           </button>
           <button
             onClick={sendNotification}
@@ -185,7 +185,7 @@ export const VendorNotification: React.FC<Props> = ({
               cursor: 'pointer', fontFamily: 'system-ui', flex: 1,
             }}
           >
-            Send Now {'\u2192'}
+            Send Now {'→'}
           </button>
         </div>
       )}

@@ -87,7 +87,7 @@ export function USDAProductionRecords() {
       <>
         <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'USDA K-12 Records' }]} />
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 20px', textAlign: 'center' }}>
-          <div style={{ fontSize: 64, marginBottom: 16 }}>{'\ud83c\udfeb'}</div>
+          <div style={{ fontSize: 64, marginBottom: 16 }}>{'🏫'}</div>
           <h3 style={{ fontSize: 24, fontWeight: 800, color: '#1E2D4D', marginBottom: 8 }}>No K-12 records yet</h3>
           <p style={{ color: '#6b7280', fontSize: 15, maxWidth: 440, lineHeight: 1.7, marginBottom: 28 }}>
             Add your school details to start tracking food safety compliance and USDA meal program records.
@@ -187,9 +187,9 @@ export function USDAProductionRecords() {
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#6b7280' }}>
                     <span>{loc.district}</span>
-                    <span>{'\u00b7'}</span>
+                    <span>{'·'}</span>
                     <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Users size={12} /> {loc.haccpStaff} HACCP staff</span>
-                    <span>{'\u00b7'}</span>
+                    <span>{'·'}</span>
                     <span>{loc.meals} meals/day</span>
                   </div>
                 </div>

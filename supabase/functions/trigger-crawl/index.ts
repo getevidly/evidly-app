@@ -9,12 +9,17 @@ const corsHeaders = {
 /**
  * trigger-crawl — Crawl intelligence sources via Firecrawl API
  *
- * Fetches all active sources from `intelligence_sources`, scrapes each
+ * Fetches all firecrawl sources from `intelligence_sources`, scrapes each
  * via Firecrawl, and updates last_crawled_at / last_crawl_status / last_crawl_error.
- * Returns per-source success/failure summary.
+ * Logs to crawl_runs. Returns per-source success/failure summary.
  *
  * FIX [CRAWL-EDGE-FN-FIX-01]: Changed import from esm.sh to npm: for
  * Deno 2 compatibility.
+ *
+ * FIX [TRIGGER-CRAWL-FIX-01]:
+ *   - Status values: "active"→"live", "broken"→"error" (match CHECK constraint)
+ *   - Source filter: fetch all firecrawl sources regardless of current status
+ *   - Added crawl_runs logging for Crawl Monitor stat cards
  */
 
 const FIRECRAWL_API_KEY = Deno.env.get("FIRECRAWL_API_KEY");
@@ -26,6 +31,7 @@ interface SourceRow {
   name: string;
   url: string;
   category: string;
+  fetch_method: string;
 }
 
 Deno.serve(async (req) => {
@@ -48,13 +54,14 @@ Deno.serve(async (req) => {
   }
 
   const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_KEY!);
+  const startedAt = new Date();
 
-  // Fetch all active sources with URLs
+  // Fetch all firecrawl sources regardless of current status
   const { data: sources, error } = await supabase
     .from("intelligence_sources")
-    .select("id, name, url, category")
+    .select("id, name, url, category, fetch_method")
     .not("url", "is", null)
-    .in("status", ["active", "pending"]);
+    .eq("fetch_method", "firecrawl");
 
   if (error) {
     return new Response(JSON.stringify({ error: error.message }), {
@@ -93,7 +100,7 @@ Deno.serve(async (req) => {
           last_crawl_status: success ? "success" : "error",
           last_crawl_error: success ? null : (data.error ?? `HTTP ${response.status}`),
           // Also update main status column
-          status: success ? "active" : "broken",
+          status: success ? "live" : "error",
         })
         .eq("id", source.id);
 
@@ -113,7 +120,7 @@ Deno.serve(async (req) => {
           last_crawled_at: new Date().toISOString(),
           last_crawl_status: "error",
           last_crawl_error: String(err),
-          status: "broken",
+          status: "error",
         })
         .eq("id", source.id);
 
@@ -130,6 +137,19 @@ Deno.serve(async (req) => {
 
   const succeeded = results.filter((r) => r.success).length;
   const failed = results.filter((r) => !r.success).length;
+
+  // Log to crawl_runs for Crawl Monitor stat cards
+  await supabase.from("crawl_runs").insert({
+    run_type: "firecrawl",
+    started_at: startedAt.toISOString(),
+    completed_at: new Date().toISOString(),
+    feeds_total: results.length,
+    feeds_live: succeeded,
+    feeds_failed: failed,
+    feeds_changed: 0,
+    duration_ms: Date.now() - startedAt.getTime(),
+    triggered_by: "trigger-crawl",
+  });
 
   return new Response(
     JSON.stringify({
