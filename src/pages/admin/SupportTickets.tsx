@@ -478,12 +478,12 @@ export default function SupportTickets() {
       {(tab === 'all' || tab === 'mine') && (
         <>
           {/* KPI Row */}
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-            <KpiTile label="Open" value={kpis.openCount.toString()} valueColor="blue" />
-            <KpiTile label="In Progress" value={kpis.inProgressCount.toString()} valueColor="amber" />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12, alignItems: 'stretch' }}>
+            <KpiTile label="Open" value={kpis.openCount.toString()} valueColor="navy" />
+            <KpiTile label="In Progress" value={kpis.inProgressCount.toString()} valueColor="warning" />
             <KpiTile label="SLA Breached" value={kpis.slaBreachedCount.toString()} valueColor={kpis.slaBreachedCount > 0 ? 'red' : 'green'} />
-            <KpiTile label="Avg Response" value={`${kpis.avgResponseHours}h`} valueColor="default" />
-            <KpiTile label="CSAT Score" value={`${kpis.csatScore}%`} valueColor={kpis.csatScore >= 80 ? 'green' : 'amber'} />
+            <KpiTile label="Avg Response" value={`${kpis.avgResponseHours}h`} valueColor="navy" />
+            <KpiTile label="CSAT Score" value={`${kpis.csatScore}%`} valueColor="navy" />
           </div>
 
           {/* Filter bar */}
@@ -600,11 +600,11 @@ export default function SupportTickets() {
       {tab === 'analytics' && (
         <>
           {/* Analytics KPI row */}
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-            <KpiTile label="Total Tickets" value={analyticsKpis.total.toString()} valueColor="default" />
-            <KpiTile label="Avg First Response" value={`${analyticsKpis.avgFirstResponse}h`} valueColor="default" />
-            <KpiTile label="Avg Resolution" value={`${analyticsKpis.avgResolutionHours}h`} valueColor="default" />
-            <KpiTile label="CSAT" value={`${analyticsKpis.csatPct}%`} valueColor={analyticsKpis.csatPct >= 80 ? 'green' : 'amber'} />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12, alignItems: 'stretch' }}>
+            <KpiTile label="Total Tickets" value={analyticsKpis.total.toString()} valueColor="navy" />
+            <KpiTile label="Avg First Response" value={`${analyticsKpis.avgFirstResponse}h`} valueColor="navy" />
+            <KpiTile label="Avg Resolution" value={`${analyticsKpis.avgResolutionHours}h`} valueColor="navy" />
+            <KpiTile label="CSAT" value={`${analyticsKpis.csatPct}%`} valueColor="navy" />
             <KpiTile label="SLA Compliance" value={`${analyticsKpis.slaCompliancePct}%`} valueColor={analyticsKpis.slaCompliancePct >= 90 ? 'green' : 'red'} />
           </div>
 

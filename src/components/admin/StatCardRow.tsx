@@ -9,9 +9,9 @@ export function StatCardRow({ cards }: StatCardRowProps) {
   return (
     <div style={{
       display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-      gap: 16,
-      width: '100%',
+      gridTemplateColumns: `repeat(${cards.length}, 1fr)`,
+      gap: 12,
+      alignItems: 'stretch',
     }}>
       {cards.map((card, i) => (
         <StatCard key={card.label + i} {...card} />

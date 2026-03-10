@@ -1,29 +1,52 @@
 interface KpiTileProps {
   label: string;
   value: string | number;
-  sub?: string;
-  valueColor?: 'default' | 'green' | 'gold' | 'red' | 'amber' | 'blue';
+  valueColor?: string;
 }
 
-const colorMap: Record<string, string> = {
-  default: 'text-[#1E2D4D]',
-  green: 'text-green-600',
-  gold: 'text-[#A08C5A]',
-  red: 'text-red-600',
-  amber: 'text-amber-600',
-  blue: 'text-blue-600',
+const VALUE_COLORS: Record<string, string> = {
+  default: '#1E2D4D',
+  navy: '#1E2D4D',
+  gold: '#A08C5A',
+  green: '#166534',
+  warning: '#C2410C',
+  red: '#991B1B',
 };
 
-export function KpiTile({ label, value, sub, valueColor = 'default' }: KpiTileProps) {
+export function KpiTile({ label, value, valueColor = 'default' }: KpiTileProps) {
+  const color = VALUE_COLORS[valueColor] || valueColor;
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-5">
-      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+    <div style={{
+      background: '#fff',
+      border: '1px solid #E5E7EB',
+      borderRadius: 8,
+      padding: '16px 20px',
+      textAlign: 'center',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+    }}>
+      <p style={{
+        fontSize: 10,
+        fontWeight: 700,
+        textTransform: 'uppercase',
+        letterSpacing: '0.08em',
+        color: '#6B7280',
+        marginBottom: 8,
+        marginTop: 0,
+      }}>
         {label}
       </p>
-      <p className={`text-2xl font-bold ${colorMap[valueColor] || colorMap.default}`}>
+      <p style={{
+        fontSize: 28,
+        fontWeight: 800,
+        lineHeight: 1,
+        color,
+        margin: 0,
+      }}>
         {value}
       </p>
-      {sub && <p className="text-xs text-gray-400 mt-1">{sub}</p>}
     </div>
   );
 }

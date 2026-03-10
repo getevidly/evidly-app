@@ -133,15 +133,15 @@ export default function AdminK2C() {
 
       {/* KPIs */}
       {loading ? (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {Array.from({ length: 4 }).map((_, i) => <div key={i} style={{ flex: 1 }}><Skeleton h={110} /></div>)}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, alignItems: 'stretch' }}>
+          {Array.from({ length: 4 }).map((_, i) => <div key={i}><Skeleton h={80} /></div>)}
         </div>
       ) : (
         <StatCardRow cards={[
-          { label: 'TOTAL MEALS', value: totalMeals.toLocaleString(), valueColor: 'green' },
-          { label: 'TOTAL DONATED', value: `$${totalDollars.toLocaleString()}`, valueColor: 'gold' },
-          { label: 'CONTRIBUTING ACCOUNTS', value: contribOrgs },
-          { label: 'THIS MONTH', value: `${thisMonthMeals.toLocaleString()} meals` },
+          { label: 'Total Meals', value: totalMeals.toLocaleString(), valueColor: 'green' },
+          { label: 'Total Donated', value: `$${totalDollars.toLocaleString()}`, valueColor: 'gold' },
+          { label: 'Contributing Accounts', value: contribOrgs, valueColor: 'navy' },
+          { label: 'This Month', value: `${thisMonthMeals.toLocaleString()} meals`, valueColor: 'navy' },
         ]} />
       )}
 

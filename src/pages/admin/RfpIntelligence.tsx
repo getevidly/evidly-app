@@ -55,6 +55,7 @@ import {
   Cpu,
   Coins,
 } from 'lucide-react';
+import { StatCardRow } from '../../components/admin/StatCardRow';
 import { AIAssistButton, AIGeneratedIndicator } from '../../components/ui/AIAssistButton';
 import {
   PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip,
@@ -136,32 +137,7 @@ function truncate(text: string, max: number): string {
   return text.slice(0, max).trimEnd() + '…';
 }
 
-// ── Stat Card ────────────────────────────────────────────────
-
-function StatCard({ label, value, icon: Icon, color }: {
-  label: string;
-  value: string | number;
-  icon: React.ElementType;
-  color: string;
-}) {
-  return (
-    <div
-      className="rounded-xl px-4 py-3 border text-center"
-      style={{ background: CARD_BG, borderColor: CARD_BORDER }}
-    >
-      <div className="flex items-center justify-center mb-2">
-        <div
-          className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
-          style={{ background: `${color}18` }}
-        >
-          <Icon size={20} style={{ color }} />
-        </div>
-      </div>
-      <div className="text-2xl font-bold" style={{ color: TEXT_PRIMARY }}>{value}</div>
-      <div className="text-xs" style={{ color: TEXT_TERTIARY }}>{label}</div>
-    </div>
-  );
-}
+// ── Stat Card (uses shared StatCardRow) ──────────────────────
 
 // ── Filter Bar ───────────────────────────────────────────────
 
@@ -1213,12 +1189,12 @@ function CostTab({ stats }: { stats: RfpDashboardStats }) {
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <StatCard label="Classifications This Month" value={stats.classifications_this_month} icon={Cpu} color={BRAND_BLUE} />
-        <StatCard label="Tokens Used" value={stats.tokens_this_month.toLocaleString()} icon={TrendingUp} color="#22c55e" />
-        <StatCard label="Estimated Cost" value={`$${stats.estimated_cost_this_month.toFixed(2)}`} icon={Coins} color="#d97706" />
-        <StatCard label="Budget Remaining" value={`$${stats.budget_remaining.toFixed(2)}`} icon={DollarSign} color="#16a34a" />
-      </div>
+      <StatCardRow cards={[
+        { label: 'CLASSIFICATIONS THIS MONTH', value: stats.classifications_this_month },
+        { label: 'TOKENS USED', value: stats.tokens_this_month.toLocaleString() },
+        { label: 'ESTIMATED COST', value: `$${stats.estimated_cost_this_month.toFixed(2)}`, valueColor: 'gold' },
+        { label: 'BUDGET REMAINING', value: `$${stats.budget_remaining.toFixed(2)}`, valueColor: 'green' },
+      ]} />
 
       {/* Budget bar */}
       <div className="rounded-xl border p-4" style={{ background: CARD_BG, borderColor: CARD_BORDER }}>
@@ -1353,14 +1329,14 @@ export default function RfpIntelligence() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-4">
         {/* Summary tiles */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-          <StatCard label="Total Active" value={stats.total_active} icon={FileSearch} color={BRAND_BLUE} />
-          <StatCard label="High Relevance" value={stats.high_relevance} icon={Target} color="#22c55e" />
-          <StatCard label="Pursuing" value={stats.pursuing} icon={CheckCircle2} color="#2563eb" />
-          <StatCard label="Due This Week" value={stats.due_this_week} icon={AlertTriangle} color="#d97706" />
-          <StatCard label="Won / Lost" value={`${stats.won_count} / ${stats.lost_count}`} icon={Trophy} color="#16a34a" />
-          <StatCard label="Veteran Set-Asides" value={stats.veteran_set_asides} icon={Shield} color={BRAND_GOLD} />
-        </div>
+        <StatCardRow cards={[
+          { label: 'TOTAL ACTIVE', value: stats.total_active },
+          { label: 'HIGH RELEVANCE', value: stats.high_relevance, valueColor: 'green' },
+          { label: 'PURSUING', value: stats.pursuing },
+          { label: 'DUE THIS WEEK', value: stats.due_this_week, valueColor: 'warning' },
+          { label: 'WON / LOST', value: `${stats.won_count} / ${stats.lost_count}`, valueColor: 'green' },
+          { label: 'VETERAN SET-ASIDES', value: stats.veteran_set_asides, valueColor: 'gold' },
+        ]} />
 
         {/* Tab bar */}
         <div className="flex items-center gap-1 border-b" style={{ borderColor: CARD_BORDER }}>

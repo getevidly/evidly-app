@@ -90,17 +90,17 @@ export default function AdminBilling() {
 
       {/* KPIs */}
       {loading ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-          {Array.from({ length: 6 }).map((_, i) => <div key={i} style={{ flex: 1 }}><Skeleton h={70} /></div>)}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 12, alignItems: 'stretch' }}>
+          {Array.from({ length: 6 }).map((_, i) => <div key={i}><Skeleton h={80} /></div>)}
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 12, alignItems: 'stretch' }}>
           <KpiTile label="MRR" value={`$${mrr.toLocaleString()}`} valueColor="gold" />
           <KpiTile label="ARR" value={`$${arr.toLocaleString()}`} valueColor="gold" />
-          <KpiTile label="Active" value={activeSubs} valueColor="green" />
-          <KpiTile label="Avg / Location" value={`$${avgPerLoc.toFixed(0)}`} />
-          <KpiTile label="Trial" value={trialSubs} />
-          <KpiTile label="Locations" value={totalLocations} />
+          <KpiTile label="Active" value={activeSubs} valueColor="navy" />
+          <KpiTile label="Avg / Location" value={`$${avgPerLoc.toFixed(0)}`} valueColor="gold" />
+          <KpiTile label="Trial" value={trialSubs} valueColor="navy" />
+          <KpiTile label="Locations" value={totalLocations} valueColor="navy" />
         </div>
       )}
 

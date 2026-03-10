@@ -85,18 +85,20 @@ export default function AdminScoreTable() {
       </div>
 
       {/* KPIs */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginBottom: 16 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, alignItems: 'stretch', marginBottom: 16 }}>
         {[
-          { label: 'Total Pages', value: data.length || 62, color: NAVY },
-          { label: 'Total Views', value: data.reduce((s, d) => s + d.total_views, 0), color: GOLD },
-          { label: 'Views (7d)', value: data.reduce((s, d) => s + d.views_7d, 0), color: '#2563EB' },
-          { label: 'Views (30d)', value: data.reduce((s, d) => s + d.views_30d, 0), color: '#059669' },
+          { label: 'Total Pages', value: data.length || 62 },
+          { label: 'Total Views', value: data.reduce((s, d) => s + d.total_views, 0) },
+          { label: 'Views (7d)', value: data.reduce((s, d) => s + d.views_7d, 0) },
+          { label: 'Views (30d)', value: data.reduce((s, d) => s + d.views_30d, 0) },
         ].map(k => (
-          <div key={k.label} style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 9, padding: '14px 16px' }}>
-            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 22, fontWeight: 700, color: k.color }}>
+          <div key={k.label} style={{ background: '#fff', border: '1px solid #E5E7EB', borderRadius: 8, padding: '16px 20px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#6B7280', marginBottom: 8 }}>
+              {k.label}
+            </div>
+            <div style={{ fontSize: 28, fontWeight: 800, lineHeight: 1, color: '#1E2D4D' }}>
               {loading ? '—' : k.value}
             </div>
-            <div style={{ fontSize: 11, color: '#4A5568', marginTop: 3 }}>{k.label}</div>
           </div>
         ))}
       </div>

@@ -271,25 +271,25 @@ export default function VerificationReport() {
           {activeSection === 'coverage' && (
             <div className="space-y-6">
               {/* Top KPIs */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: 10, alignItems: 'stretch' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: 12, alignItems: 'stretch' }}>
                 {[
                   { label: 'Total Records', value: total, color: NAVY },
-                  { label: 'Verified', value: verified, color: '#16A34A' },
-                  { label: 'In Review', value: inReview, color: '#2563EB' },
+                  { label: 'Verified', value: verified, color: '#166534' },
+                  { label: 'In Review', value: inReview, color: '#C2410C' },
                   { label: 'Unverified', value: unverified, color: NAVY },
-                  { label: 'Rejected', value: rejected, color: '#DC2626' },
-                  { label: 'Overdue', value: overdue, color: '#DC2626' },
-                  { label: 'Needs Update', value: needsUpdate, color: '#D97706' },
-                  { label: 'Coverage %', value: `${coveragePct}%`, color: coveragePct === 0 ? '#DC2626' : coveragePct === 100 ? '#16A34A' : '#D97706' },
+                  { label: 'Rejected', value: rejected, color: '#991B1B' },
+                  { label: 'Overdue', value: overdue, color: '#991B1B' },
+                  { label: 'Needs Update', value: needsUpdate, color: '#C2410C' },
+                  { label: 'Coverage %', value: `${coveragePct}%`, color: coveragePct === 0 ? '#991B1B' : coveragePct === 100 ? '#166534' : '#C2410C' },
                 ].map(k => (
                   <div key={k.label} style={{
-                    background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '16px 20px',
-                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center',
+                    background: '#fff', border: '1px solid #E5E7EB', borderRadius: 8, padding: '16px 20px',
+                    textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                   }}>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#6B7280', marginBottom: 8 }}>
                       {k.label}
                     </div>
-                    <div style={{ fontSize: 22, fontWeight: 800, color: k.color, lineHeight: 1 }}>{k.value}</div>
+                    <div style={{ fontSize: 28, fontWeight: 800, color: k.color, lineHeight: 1 }}>{k.value}</div>
                   </div>
                 ))}
               </div>

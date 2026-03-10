@@ -663,25 +663,26 @@ export default function EvidLYIntelligence() {
 
       {/* KPI Bar */}
       <div style={{
-        background: '#ffffff',
-        borderBottom: '1px solid #E5E7EB',
-        borderRadius: 10, padding: '12px 28px',
-        display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 16,
+        display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 12, alignItems: 'stretch',
       }}>
         {[
           { label: 'Total Signals', value: signals.length, color: NAVY },
-          { label: 'Pending Review', value: pendingReview, color: '#D97706' },
-          { label: 'Critical', value: criticalSignals, color: NAVY },
-          { label: 'Published', value: signals.filter(s => !!s.published_at).length, color: signals.filter(s => !!s.published_at).length > 0 ? '#16A34A' : '#DC2626' },
-          { label: 'Sources', value: totalSources, color: NAVY, note: `${activeSources} live · ${brokenSources} broken` },
-          { label: 'Correlations', value: correlations.length, color: '#16A34A' },
+          { label: 'Pending Review', value: pendingReview, color: '#C2410C' },
+          { label: 'Critical', value: criticalSignals, color: '#991B1B' },
+          { label: 'Published', value: signals.filter(s => !!s.published_at).length, color: signals.filter(s => !!s.published_at).length > 0 ? '#166534' : '#991B1B' },
+          { label: 'Sources', value: totalSources, color: NAVY },
+          { label: 'Correlations', value: correlations.length, color: '#166534' },
         ].map(k => (
-          <div key={k.label}>
-            <div style={{ fontSize: 22, fontWeight: 800, color: k.color, lineHeight: 1 }}>
+          <div key={k.label} style={{
+            background: '#fff', border: '1px solid #E5E7EB', borderRadius: 8, padding: '16px 20px',
+            textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#6B7280', marginBottom: 8 }}>
+              {k.label}
+            </div>
+            <div style={{ fontSize: 28, fontWeight: 800, color: k.color, lineHeight: 1 }}>
               {loading ? '—' : k.value}
             </div>
-            <div style={{ fontSize: 11, color: '#6B7280', marginTop: 4 }}>{k.label}</div>
-            {k.note && <div style={{ fontSize: 9, color: '#6B7280', marginTop: 2 }}>{k.note}</div>}
           </div>
         ))}
       </div>
@@ -731,20 +732,20 @@ export default function EvidLYIntelligence() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12, alignItems: 'stretch', marginBottom: 20 }}>
           {([
             { label: 'Total Sources', value: totalSources, color: NAVY },
-            { label: 'Active Sources', value: activeSources, color: '#16A34A' },
-            { label: 'Broken Sources', value: brokenSources, color: brokenSources > 0 ? '#DC2626' : NAVY },
+            { label: 'Active Sources', value: activeSources, color: '#166534' },
+            { label: 'Broken Sources', value: brokenSources, color: brokenSources > 0 ? '#991B1B' : NAVY },
             { label: 'Total Signals', value: totalSignals, color: NAVY },
-            { label: 'Pending Signals', value: pendingSignals, color: '#D97706' },
-            { label: 'Published Signals', value: publishedSignals, color: publishedSignals > 0 ? '#16A34A' : '#DC2626' },
-            { label: 'Critical Signals', value: criticalSignals, color: criticalSignals > 0 ? '#DC2626' : NAVY },
-            { label: 'Correlations', value: totalCorrelations, color: '#16A34A' },
+            { label: 'Pending Signals', value: pendingSignals, color: '#C2410C' },
+            { label: 'Published Signals', value: publishedSignals, color: publishedSignals > 0 ? '#166534' : '#991B1B' },
+            { label: 'Critical Signals', value: criticalSignals, color: criticalSignals > 0 ? '#991B1B' : NAVY },
+            { label: 'Correlations', value: totalCorrelations, color: '#166534' },
             { label: 'Regulatory', value: regulatoryCount, color: NAVY },
             { label: 'RFP Listings', value: rfpCount, color: NAVY },
           ] as const).map(card => (
             <div key={card.label} style={{
-              background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10,
-              padding: '16px 20px', display: 'flex', flexDirection: 'column',
-              alignItems: 'center', textAlign: 'center',
+              background: '#fff', border: '1px solid #E5E7EB', borderRadius: 8,
+              padding: '16px 20px', textAlign: 'center', display: 'flex', flexDirection: 'column',
+              alignItems: 'center', justifyContent: 'center',
             }}>
               <div style={{ fontSize: 10, fontWeight: 700, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>
                 {card.label}
@@ -1442,18 +1443,23 @@ export default function EvidLYIntelligence() {
             </div>
 
             {/* KPI bar */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginBottom: 16 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, alignItems: 'stretch', marginBottom: 16 }}>
               {[
                 { label: 'Total Jurisdictions', value: allJurisdictions.length || 62, color: NAVY },
-                { label: 'Active', value: activeCount, color: '#059669' },
-                { label: 'Quiet', value: quietCount, color: TEXT_MUTED },
+                { label: 'Active', value: activeCount, color: '#166534' },
+                { label: 'Quiet', value: quietCount, color: NAVY },
                 { label: 'Methodology Changes', value: methCount, color: GOLD },
               ].map(k => (
-                <div key={k.label} style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 9, padding: '14px 16px' }}>
-                  <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 22, fontWeight: 700, color: k.color }}>
+                <div key={k.label} style={{
+                  background: '#fff', border: '1px solid #E5E7EB', borderRadius: 8, padding: '16px 20px',
+                  textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#6B7280', marginBottom: 8 }}>
+                    {k.label}
+                  </div>
+                  <div style={{ fontSize: 28, fontWeight: 800, color: k.color, lineHeight: 1 }}>
                     {loading ? '—' : k.value}
                   </div>
-                  <div style={{ fontSize: 11, color: '#4A5568', marginTop: 3 }}>{k.label}</div>
                 </div>
               ))}
             </div>

@@ -323,10 +323,10 @@ export default function InsuranceApiKeys() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, alignItems: 'stretch', marginBottom: 24 }}>
         <KpiTile label="Active Keys" value={activeKeys.length} valueColor="green" />
-        <KpiTile label="Total Requests (30d)" value={keys.reduce((s, k) => s + k.request_count, 0).toLocaleString()} valueColor="gold" />
-        <KpiTile label="Revoked / Expired" value={inactiveKeys.length} />
+        <KpiTile label="Total Requests (30d)" value={keys.reduce((s, k) => s + k.request_count, 0).toLocaleString()} valueColor="navy" />
+        <KpiTile label="Revoked / Expired" value={inactiveKeys.length} valueColor="navy" />
       </div>
 
       {/* New key reveal banner */}

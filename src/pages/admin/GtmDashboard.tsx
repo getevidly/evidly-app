@@ -143,10 +143,10 @@ export default function GtmDashboard() {
       {/* Metric cards */}
       <div style={{ marginBottom: 32 }}>
         <StatCardRow cards={[
-          { label: 'ACTIVE DEMOS', value: loading ? '…' : fmt(activeDemos), subtext: 'Launch demos from Demo Launcher' },
-          { label: 'PIPELINE VALUE', value: loading ? '…' : fmtDollar(pipelineValue), valueColor: 'gold', subtext: 'Track in Sales Pipeline' },
-          { label: 'LEADS THIS MONTH', value: loading ? '…' : fmt(leadsThisMonth), subtext: 'View in Leads' },
-          { label: 'CONVERSION RATE', value: loading ? '…' : `${fmt(conversionRate)}%`, subtext: 'Demos → Paid accounts' },
+          { label: 'ACTIVE DEMOS', value: loading ? '…' : fmt(activeDemos) },
+          { label: 'PIPELINE VALUE', value: loading ? '…' : fmtDollar(pipelineValue), valueColor: 'gold' },
+          { label: 'LEADS THIS MONTH', value: loading ? '…' : fmt(leadsThisMonth) },
+          { label: 'CONVERSION RATE', value: loading ? '…' : `${fmt(conversionRate)}%` },
         ]} />
       </div>
 
