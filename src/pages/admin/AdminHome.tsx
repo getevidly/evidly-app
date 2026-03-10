@@ -40,9 +40,9 @@ interface QuickCard {
 
 const QUICK_ACCESS: QuickCard[] = [
   { label: 'EvidLY Intelligence', path: '/admin/intelligence', icon: '⚡', color: '#7C3AED', bg: '#F5F3FF' },
-  { label: 'Sales Pipeline', path: '/admin/sales', icon: '🎯', color: '#DC2626', bg: '#FEF2F2' },
-  { label: 'Signal Queue', path: '/admin/intelligence-admin', icon: '◎', color: '#D97706', bg: '#FFFBEB' },
+  { label: 'Sales Pipeline', path: '/admin/sales', icon: '📊', color: '#DC2626', bg: '#FEF2F2' },
   { label: 'Configure', path: '/admin/configure', icon: '⚙️', color: '#6B7280', bg: '#F3F4F6' },
+  { label: 'Signal Queue', path: '/admin/intelligence-admin', icon: '🔔', color: '#D97706', bg: '#FFFBEB' },
   { label: 'User Provisioning', path: '/admin/users', icon: '👤', color: '#1E2D4D', bg: '#F4F1EB' },
   { label: 'Billing', path: '/admin/billing', icon: '💳', color: '#A08C5A', bg: '#FDF8EE' },
 ];

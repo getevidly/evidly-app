@@ -35,9 +35,16 @@ interface NavSection {
 
 const NAV_SECTIONS: NavSection[] = [
   {
-    title: '',
+    title: 'Overview',
     items: [
       { label: 'Admin Home', path: '/admin' },
+    ],
+  },
+  {
+    title: 'Intelligence',
+    items: [
+      { label: 'EvidLY Intelligence', path: '/admin/intelligence' },
+      { label: 'Verification', path: '/admin/verification' },
     ],
   },
   {
@@ -55,13 +62,6 @@ const NAV_SECTIONS: NavSection[] = [
       { label: 'RFP Monitor', path: '/admin/rfp-monitor' },
       { label: 'K2C', path: '/admin/k2c' },
       { label: 'ScoreTable', path: '/admin/scoretable', salesOnly: true },
-    ],
-  },
-  {
-    title: 'Intelligence',
-    items: [
-      { label: 'EvidLY Intelligence', path: '/admin/intelligence' },
-      { label: 'Verification', path: '/admin/verification' },
     ],
   },
   {
@@ -85,31 +85,19 @@ const NAV_SECTIONS: NavSection[] = [
     items: [
       { label: 'Billing', path: '/admin/billing' },
       { label: 'Usage Analytics', path: '/admin/usage-analytics' },
-    ],
-  },
-  {
-    title: 'Reporting',
-    items: [
       { label: 'Reports', path: '/admin/reports' },
-      { label: 'Demo Dashboard', path: '/admin/demo/dashboard' },
-    ],
-  },
-  {
-    title: 'Platform',
-    items: [
-      { label: 'System Messages', path: '/admin/messages' },
-      { label: 'API Keys', path: '/admin/api-keys' },
     ],
   },
   {
     title: 'System',
     items: [
+      { label: 'Document Vault', path: '/admin/vault' },
       { label: 'Security Settings', path: '/admin/security-settings' },
+      { label: 'API Keys', path: '/admin/api-keys' },
+      { label: 'Edge Functions', path: '/admin/system/edge-functions' },
       { label: 'Database Backup', path: '/admin/backup' },
       { label: 'Maintenance Mode', path: '/admin/maintenance' },
-      { label: 'Edge Functions', path: '/admin/system/edge-functions' },
       { label: 'Event Log', path: '/admin/event-log' },
-      { label: 'Document Vault', path: '/admin/vault' },
     ],
   },
 ];
