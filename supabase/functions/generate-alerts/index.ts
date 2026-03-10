@@ -1,6 +1,28 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 
+// ── PREDICTIVE INTELLIGENCE — Phase Roadmap ──────────────────────────────────
+//
+//  Phase 1 (current): rules-v1
+//    — Heuristic scoring from 4 feature inputs (checklist rate, temp pass rate,
+//      days since service, open corrective actions).
+//    — Baseline 10% failure probability + additive risk signals, capped at 95%.
+//    — Runs after alert generation, non-blocking (try/catch).
+//
+//  Phase 2: mindsdb
+//    — Replace rules engine with MindsDB predictor trained on historical
+//      inspection outcomes. Model name: `inspection_risk_predictor`.
+//    — Input: same 4 features + days_to_next_inspection.
+//    — Output: failure_probability, risk_level confidence interval.
+//    — Switch prediction_method to 'mindsdb', bump model_version to 'mindsdb-v1'.
+//
+//  Phase 3: ml-python
+//    — Full Python ML pipeline (XGBoost / LightGBM) running on Supabase Edge
+//      or external endpoint. Feature store expansion (weather, staffing, etc.).
+//    — Switch prediction_method to 'ml-python', bump model_version accordingly.
+//
+// ─────────────────────────────────────────────────────────────────────────────
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
@@ -469,6 +491,212 @@ async function checkUpcomingInspections(
   return alerts;
 }
 
+// ── Predictive Scoring (rules-v1) ─────────────────────────────────────────────
+// Gathers feature inputs per location, applies heuristic rules, upserts into
+// location_risk_predictions. Non-blocking — called after alert generation.
+
+async function generatePredictiveScores(
+  orgId: string
+): Promise<{ scored: number; errors: number }> {
+  const supabase = getSupabase();
+  let scored = 0;
+  let errors = 0;
+
+  // 1. Fetch active locations for this org
+  const { data: locations } = await supabase
+    .from("locations")
+    .select("id")
+    .eq("organization_id", orgId)
+    .eq("is_active", true);
+
+  if (!locations || locations.length === 0) {
+    return { scored: 0, errors: 0 };
+  }
+
+  const now = new Date();
+  const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
+
+  for (const loc of locations) {
+    try {
+      // ── Feature 1: Checklist completion rate (30d) ──────────────
+      const { data: checklists } = await supabase
+        .from("checklist_completions")
+        .select("completed, total_items")
+        .eq("organization_id", orgId)
+        .eq("location_id", loc.id)
+        .gte("completed_at", thirtyDaysAgo);
+
+      let checklistRate: number | null = null;
+      if (checklists && checklists.length > 0) {
+        const totalItems = checklists.reduce((s, c) => s + (c.total_items || 0), 0);
+        const completedItems = checklists.reduce((s, c) => s + (c.completed || 0), 0);
+        checklistRate = totalItems > 0 ? completedItems / totalItems : 1.0;
+      }
+
+      // ── Feature 2: Temperature pass rate (30d) ──────────────────
+      const { data: tempLogs } = await supabase
+        .from("temp_logs")
+        .select("status")
+        .eq("organization_id", orgId)
+        .eq("location_id", loc.id)
+        .gte("recorded_at", thirtyDaysAgo);
+
+      let tempPassRate: number | null = null;
+      if (tempLogs && tempLogs.length > 0) {
+        const passing = tempLogs.filter((t) => t.status === "pass" || t.status === "ok").length;
+        tempPassRate = passing / tempLogs.length;
+      }
+
+      // ── Feature 3: Days since last hood cleaning ────────────────
+      const { data: lastService } = await supabase
+        .from("vendor_services")
+        .select("last_service_date")
+        .eq("organization_id", orgId)
+        .eq("location_id", loc.id)
+        .eq("service_type", "hood_cleaning")
+        .order("last_service_date", { ascending: false })
+        .limit(1);
+
+      let daysSinceService: number | null = null;
+      if (lastService && lastService.length > 0 && lastService[0].last_service_date) {
+        daysSinceService = Math.floor(
+          (now.getTime() - new Date(lastService[0].last_service_date).getTime()) /
+            (24 * 60 * 60 * 1000)
+        );
+      }
+
+      // ── Feature 4: Open corrective actions ──────────────────────
+      const { count: openCAs } = await supabase
+        .from("corrective_actions")
+        .select("id", { count: "exact", head: true })
+        .eq("organization_id", orgId)
+        .eq("location_id", loc.id)
+        .in("status", ["open", "in_progress"]);
+
+      const openCorrectiveActions = openCAs || 0;
+
+      // ── Rules-v1 scoring ────────────────────────────────────────
+      // Baseline failure probability: 10%
+      let failureProbability = 0.1;
+
+      // Checklist rate factor: low completion → higher risk
+      if (checklistRate !== null) {
+        if (checklistRate < 0.5) failureProbability += 0.35;
+        else if (checklistRate < 0.7) failureProbability += 0.2;
+        else if (checklistRate < 0.85) failureProbability += 0.1;
+        else if (checklistRate >= 0.95) failureProbability -= 0.05;
+      }
+
+      // Temp pass rate factor
+      if (tempPassRate !== null) {
+        if (tempPassRate < 0.7) failureProbability += 0.25;
+        else if (tempPassRate < 0.85) failureProbability += 0.15;
+        else if (tempPassRate < 0.95) failureProbability += 0.05;
+      }
+
+      // Days since service factor (hood cleaning overdue)
+      if (daysSinceService !== null) {
+        if (daysSinceService > 180) failureProbability += 0.15;
+        else if (daysSinceService > 120) failureProbability += 0.1;
+        else if (daysSinceService > 90) failureProbability += 0.05;
+      }
+
+      // Open corrective actions factor
+      if (openCorrectiveActions >= 5) failureProbability += 0.2;
+      else if (openCorrectiveActions >= 3) failureProbability += 0.1;
+      else if (openCorrectiveActions >= 1) failureProbability += 0.05;
+
+      // Cap at [0.01, 0.95]
+      failureProbability = Math.max(0.01, Math.min(0.95, failureProbability));
+
+      // ── Derive risk level ──────────────────────────────────────
+      const riskLevel =
+        failureProbability >= 0.7 ? "critical" :
+        failureProbability >= 0.5 ? "high" :
+        failureProbability >= 0.25 ? "moderate" : "low";
+
+      // ── Derive service urgency ─────────────────────────────────
+      const serviceUrgency =
+        riskLevel === "critical" ? "immediate" :
+        riskLevel === "high" ? "soon" :
+        riskLevel === "moderate" ? "scheduled" : "none";
+
+      // ── Derive top risk pillars (CIC) ──────────────────────────
+      const topRiskPillars: string[] = [];
+      const topRiskReasons: string[] = [];
+
+      if (checklistRate !== null && checklistRate < 0.7) {
+        topRiskPillars.push("P4");
+        topRiskReasons.push("Low checklist completion rate indicates operational gaps");
+      }
+      if (tempPassRate !== null && tempPassRate < 0.85) {
+        topRiskPillars.push("P1");
+        topRiskReasons.push("Temperature violations risk food safety incidents and revenue loss");
+      }
+      if (daysSinceService !== null && daysSinceService > 120) {
+        topRiskPillars.push("P3");
+        topRiskReasons.push("Overdue hood cleaning increases fire risk and service costs");
+      }
+      if (openCorrectiveActions >= 3) {
+        topRiskPillars.push("P2");
+        topRiskReasons.push("Unresolved corrective actions increase liability exposure");
+      }
+
+      // ── Recommended service date ───────────────────────────────
+      let recommendedServiceDate: string | null = null;
+      if (serviceUrgency === "immediate") {
+        recommendedServiceDate = now.toISOString().split("T")[0];
+      } else if (serviceUrgency === "soon") {
+        const d = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+        recommendedServiceDate = d.toISOString().split("T")[0];
+      } else if (serviceUrgency === "scheduled") {
+        const d = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+        recommendedServiceDate = d.toISOString().split("T")[0];
+      }
+
+      // ── Upsert into location_risk_predictions ──────────────────
+      const { error: upsertErr } = await supabase
+        .from("location_risk_predictions")
+        .upsert(
+          {
+            organization_id: orgId,
+            location_id: loc.id,
+            failure_probability: parseFloat(failureProbability.toFixed(4)),
+            risk_level: riskLevel,
+            score_trajectory: "stable",
+            trajectory_confidence: null,
+            recommended_service_date: recommendedServiceDate,
+            service_urgency: serviceUrgency,
+            top_risk_pillars: topRiskPillars,
+            top_risk_reasons: topRiskReasons,
+            input_checklist_rate_30d: checklistRate !== null ? parseFloat(checklistRate.toFixed(4)) : null,
+            input_temp_pass_rate_30d: tempPassRate !== null ? parseFloat(tempPassRate.toFixed(4)) : null,
+            input_days_since_service: daysSinceService,
+            input_open_corrective_actions: openCorrectiveActions,
+            input_days_to_next_inspection: null,
+            model_version: "rules-v1",
+            prediction_method: "rules",
+            predicted_at: now.toISOString(),
+            expires_at: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+          },
+          { onConflict: "location_id,model_version" }
+        );
+
+      if (upsertErr) {
+        console.error(`[predictive] Upsert error for location ${loc.id}:`, upsertErr);
+        errors++;
+      } else {
+        scored++;
+      }
+    } catch (locErr) {
+      console.error(`[predictive] Error scoring location ${loc.id}:`, locErr);
+      errors++;
+    }
+  }
+
+  return { scored, errors };
+}
+
 // ── Main: Generate all alerts, deduplicate, insert ────────────────────────────
 
 async function generateAlerts(
@@ -546,7 +774,15 @@ Deno.serve(async (req: Request) => {
 
     const result = await generateAlerts(organization_id);
 
-    return new Response(JSON.stringify(result), {
+    // ── Predictive scoring (non-blocking) ──────────────────────
+    let predictive = { scored: 0, errors: 0 };
+    try {
+      predictive = await generatePredictiveScores(organization_id);
+    } catch (predErr) {
+      console.error("[generate-alerts] Predictive scoring failed (non-blocking):", predErr);
+    }
+
+    return new Response(JSON.stringify({ ...result, predictive }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

@@ -79,6 +79,7 @@ const PROFILE_TABLES = new Set([
   'notification_settings',
   'demo_sessions',
   'demo_generated_data',
+  'location_risk_predictions',
 ]);
 
 // ── Write methods on PostgrestQueryBuilder we need to block ──
