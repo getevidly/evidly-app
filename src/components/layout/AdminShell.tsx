@@ -52,6 +52,7 @@ const NAV_SECTIONS: NavSection[] = [
       { label: 'Kitchen Checkup', path: '/admin/kitchen-checkup', salesOnly: true },
       { label: 'Guided Tours', path: '/admin/guided-tours', salesOnly: true },
       { label: 'Client Onboarding', path: '/admin/onboarding', salesOnly: true },
+      { label: 'RFP Monitor', path: '/admin/rfp-monitor' },
       { label: 'K2C', path: '/admin/k2c' },
       { label: 'ScoreTable', path: '/admin/scoretable', salesOnly: true },
     ],
@@ -59,12 +60,7 @@ const NAV_SECTIONS: NavSection[] = [
   {
     title: 'Intelligence',
     items: [
-      { label: 'Crawl Monitor', path: '/admin/crawl-monitor' },
-      { label: 'Signal Approval Queue', path: '/admin/intelligence-admin' },
       { label: 'EvidLY Intelligence', path: '/admin/intelligence' },
-      { label: 'Jurisdiction Intel', path: '/admin/jurisdiction-intelligence' },
-      { label: 'Regulatory Updates', path: '/admin/regulatory-changes' },
-      { label: 'RFP Monitor', path: '/admin/rfp-monitor' },
       { label: 'Verification', path: '/admin/verification' },
     ],
   },

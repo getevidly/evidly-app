@@ -698,7 +698,6 @@ export default function EvidLYIntelligence() {
           { key: 'correlations' as Tab, label: 'Correlations', count: correlations.length },
           { key: 'jurisdiction_updates' as Tab, label: 'Jurisdictions', count: null },
           { key: 'regulatory_updates' as Tab, label: 'Regulatory', count: regulatoryChanges.length },
-          { key: 'rfp' as Tab, label: 'RFPs', count: null },
           { key: 'predictions' as Tab, label: 'Predictions', count: null },
         ]).map(t => {
           const isActive = activeTab === t.key;
