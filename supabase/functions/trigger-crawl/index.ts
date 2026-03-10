@@ -22,6 +22,9 @@ const corsHeaders = {
  *   - Added crawl_runs logging for Crawl Monitor stat cards
  */
 
+const CONCURRENCY = 5;          // process 5 Firecrawl sources in parallel
+const MAX_CRAWL_MS = 120_000;   // 120s hard deadline — return partial results if exceeded
+
 const FIRECRAWL_API_KEY = Deno.env.get("FIRECRAWL_API_KEY");
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
 const SUPABASE_SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
@@ -72,9 +75,10 @@ Deno.serve(async (req) => {
 
   const results: { id: string; name: string; success: boolean; error?: string }[] = [];
 
-  for (const source of (sources as SourceRow[]) ?? []) {
-    if (!source.url) continue;
-
+  /** Process a single source via Firecrawl API */
+  async function processSingleSource(
+    source: SourceRow
+  ): Promise<{ id: string; name: string; success: boolean; error?: string }> {
     try {
       const response = await fetch("https://api.firecrawl.dev/v1/scrape", {
         method: "POST",
@@ -99,7 +103,6 @@ Deno.serve(async (req) => {
           last_crawled_at: new Date().toISOString(),
           last_crawl_status: success ? "success" : "error",
           last_crawl_error: success ? null : (data.error ?? `HTTP ${response.status}`),
-          // Also update main status column
           status: success ? "live" : "error",
         })
         .eq("id", source.id);
@@ -112,7 +115,7 @@ Deno.serve(async (req) => {
         metadata: { sourceId: source.id, sourceName: source.name, success, via: "firecrawl" },
       });
 
-      results.push({ id: source.id, name: source.name, success });
+      return { id: source.id, name: source.name, success };
     } catch (err) {
       await supabase
         .from("intelligence_sources")
@@ -131,7 +134,33 @@ Deno.serve(async (req) => {
         metadata: { sourceId: source.id, sourceName: source.name, success: false, via: "firecrawl" },
       });
 
-      results.push({ id: source.id, name: source.name, success: false, error: String(err) });
+      return { id: source.id, name: source.name, success: false, error: String(err) };
+    }
+  }
+
+  const allSources = ((sources as SourceRow[]) ?? []).filter((s) => s.url);
+  const startTime = Date.now();
+
+  // Process in batches of CONCURRENCY with deadline
+  for (let i = 0; i < allSources.length; i += CONCURRENCY) {
+    if (Date.now() - startTime > MAX_CRAWL_MS) {
+      console.log(`Deadline reached after ${results.length}/${allSources.length} sources — returning partial results`);
+      break;
+    }
+
+    const batch = allSources.slice(i, i + CONCURRENCY);
+    console.log(`Batch ${Math.floor(i / CONCURRENCY) + 1}: processing ${batch.length} sources (${results.length}/${allSources.length} done)`);
+
+    const batchResults = await Promise.allSettled(
+      batch.map((source) => processSingleSource(source))
+    );
+
+    for (const result of batchResults) {
+      if (result.status === "fulfilled") {
+        results.push(result.value);
+      } else {
+        console.error("Source failed:", result.reason);
+      }
     }
   }
 
@@ -151,11 +180,18 @@ Deno.serve(async (req) => {
     triggered_by: "trigger-crawl",
   });
 
+  const timedOut = results.length < allSources.length;
+  if (timedOut) {
+    console.log(`Completed ${results.length}/${allSources.length} sources before deadline (${succeeded} ok, ${failed} failed)`);
+  }
+
   return new Response(
     JSON.stringify({
-      total: results.length,
+      total: allSources.length,
+      processed: results.length,
       succeeded,
       failed,
+      timedOut,
       results,
     }),
     { headers: { ...corsHeaders, "Content-Type": "application/json" } }
