@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+
 
 // ─────────────────────────────────────────────
 // BRAND TOKENS
@@ -818,12 +818,11 @@ function InspectionReadinessForm({ onClose }) {
 // ROOT — render order locked
 // ─────────────────────────────────────────────
 export default function LandingPage() {
-  const navigate = useNavigate();
   const [tourOpen, setTourOpen] = useState(false);
   const [cookie,   setCookie]   = useState(true);
   const openTour  = useCallback(() => setTourOpen(true),  []);
   const closeTour = useCallback(() => setTourOpen(false), []);
-  const openIRR   = useCallback(() => navigate("/operations-check"), [navigate]);
+  const openIRR   = useCallback(() => window.open("/operations-check", "_blank"), []);
 
   return (
     <div style={{ fontFamily: FF_SANS, color: C.g8, lineHeight: 1.6, background: C.cream, minHeight: "100vh" }}>
