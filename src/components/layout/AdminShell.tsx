@@ -77,6 +77,7 @@ const NAV_SECTIONS: NavSection[] = [
       { label: 'User Provisioning', path: '/admin/users' },
       { label: 'Staff & Roles', path: '/admin/staff' },
       { label: 'User Emulation', path: '/admin/emulate' },
+      { label: 'Role Preview', path: '/admin/role-preview' },
       { label: 'Configure', path: '/admin/configure' },
     ],
   },

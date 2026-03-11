@@ -31,6 +31,7 @@ const SECTION_MAP: Record<string, string> = {
   '/admin/users': 'Users',
   '/admin/staff': 'Users',
   '/admin/emulate': 'Users',
+  '/admin/role-preview': 'Users',
   '/admin/configure': 'Users',
   '/admin/billing': 'Finance',
   '/admin/usage-analytics': 'Finance',
