@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, useRef, ReactNode } from 'react';
 import { toast } from 'sonner';
 import { useAuth } from './AuthContext';
 import { useDemo } from './DemoContext';
@@ -59,6 +59,7 @@ const INITIAL_TEMP_COVERAGE: TempCoverageAssignment[] = [
 interface RoleContextType {
   userRole: UserRole;
   setUserRole: (role: UserRole) => void;
+  isPreviewMode: boolean;
   roleLocationAssignments: Record<UserRole, LocationAssignment[]>;
   tempCoverageAssignments: TempCoverageAssignment[];
   addTempCoverage: (assignment: Omit<TempCoverageAssignment, 'id' | 'createdAt'>) => void;
@@ -99,15 +100,17 @@ export function RoleProvider({ children }: { children: ReactNode }) {
   const { isDemoMode } = useDemo();
 
   // ─── ROLE PREVIEW OVERRIDE (admin QA tool) ───────────────────────────────
-  // If __rolePreview param exists in URL, lock to that role for the session.
-  // This lets the admin Role Preview iframe render the app as any role.
-  const _previewRole = (() => {
+  // If __rolePreview param exists in URL on initial load, lock to that role
+  // for the entire page lifecycle. Uses a ref so it persists after React
+  // Router navigation changes window.location.search.
+  const _previewRoleRef = useRef<UserRole | null>(null);
+  if (_previewRoleRef.current === null) {
     try {
       const p = new URLSearchParams(window.location.search).get('__rolePreview');
-      if (p && VALID_ROLES.includes(p as UserRole)) return p as UserRole;
+      if (p && VALID_ROLES.includes(p as UserRole)) _previewRoleRef.current = p as UserRole;
     } catch {}
-    return null;
-  })();
+  }
+  const _previewRole = _previewRoleRef.current;
   // ─────────────────────────────────────────────────────────────────────────
 
   const [userRole, setUserRoleRaw] = useState<UserRole>(() => {
@@ -138,9 +141,9 @@ export function RoleProvider({ children }: { children: ReactNode }) {
   }, [isDemoMode, session, profile?.role, _previewRole]);
 
   const getAccessibleLocations = useCallback((): LocationAssignment[] => {
-    if (!isDemoMode) return []; // Production: locations come from DB via user_location_access
+    if (!isDemoMode && !_previewRole) return []; // Production: locations come from DB via user_location_access
     return ROLE_LOCATION_ASSIGNMENTS[userRole] || [];
-  }, [userRole, isDemoMode]);
+  }, [userRole, isDemoMode, _previewRole]);
 
   const getAccessibleLocationUrlIds = useCallback((): string[] => {
     return getAccessibleLocations().map(l => l.locationUrlId);
@@ -200,6 +203,7 @@ export function RoleProvider({ children }: { children: ReactNode }) {
     <RoleContext.Provider value={{
       userRole,
       setUserRole,
+      isPreviewMode: !!_previewRole,
       roleLocationAssignments: ROLE_LOCATION_ASSIGNMENTS,
       tempCoverageAssignments,
       addTempCoverage,

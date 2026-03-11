@@ -316,14 +316,16 @@ function AdminRoute() {
 function ProtectedLayout() {
   const { user, profile, loading, isEvidlyAdmin, isAdmin } = useAuth();
   const { isDemoMode, isDemoExpired, isAuthenticatedDemo } = useDemo();
-  const { userRole } = useRole();
+  const { userRole, isPreviewMode } = useRole();
   const { isEmulating } = useEmulation();
   const location = useLocation();
 
   // Synchronous fallback: if DemoContext state hasn't propagated yet but
   // sessionStorage already has the demo flag, treat as demo mode to prevent
   // a race-condition redirect to /login during demo entry.
-  const effectiveDemoMode = isDemoMode || (() => {
+  // Role Preview mode (__rolePreview param) also acts like demo mode —
+  // forces tenant Layout, uses demo data, bypasses admin shell.
+  const effectiveDemoMode = isDemoMode || isPreviewMode || (() => {
     try { return sessionStorage.getItem('evidly_demo_mode') === 'true'; } catch { return false; }
   })();
 
