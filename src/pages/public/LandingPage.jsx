@@ -31,7 +31,7 @@ const C = {
 };
 
 const FF_SANS = "system-ui,-apple-system,sans-serif";
-const CALENDLY = "https://calendly.com/founders-getevidly/60min";
+const CALENDLY = "https://calendly.com/founders-getevidly/30min";
 const FORMSPREE = "https://formspree.io/f/meeredlg";
 
 const CA_COUNTIES = [
@@ -261,17 +261,15 @@ function TourModal({ onClose }) {
         )}
         {step === 2 && (
           <div style={{ padding: "40px 28px", textAlign: "center" }}>
-            <div style={{ fontSize: "2.2rem", marginBottom: 12 }}>📬</div>
-            <h3 style={{ fontWeight: 800, color: C.navy, fontSize: "1.05rem", margin: "0 0 8px", fontFamily: FF_SANS }}>Check your email to confirm.</h3>
-            <p style={{ fontSize: "0.84rem", color: C.g5, marginBottom: 22, lineHeight: 1.7, fontFamily: FF_SANS }}>We sent a confirmation link to <strong>{form.email}</strong>. Click it to verify and book your time.</p>
+            <div style={{ fontSize: "2.2rem", marginBottom: 12 }}>✅</div>
+            <h3 style={{ fontWeight: 800, color: C.navy, fontSize: "1.05rem", margin: "0 0 8px", fontFamily: FF_SANS }}>You're all set — pick your time.</h3>
+            <p style={{ fontSize: "0.84rem", color: C.g5, marginBottom: 22, lineHeight: 1.7, fontFamily: FF_SANS }}>We received your details. Choose a time that works for you.</p>
             <div style={{ background: C.cream, borderRadius: 10, border: `1px solid ${C.g2}`, padding: "14px 16px", marginBottom: 16 }}>
               <p style={{ fontSize: "0.82rem", color: C.navy, fontWeight: 700, margin: "0 0 4px", fontFamily: FF_SANS }}>Your jurisdictions are being aligned.</p>
               <p style={{ fontSize: "0.78rem", color: C.g5, margin: 0, fontFamily: FF_SANS, lineHeight: 1.6 }}>When you join the tour, <strong>{form.county ? form.county + " County" : "your county"}</strong> will already be loaded — your grading method, your thresholds, your risk picture, live.</p>
             </div>
-            <div style={{ background: C.cream, borderRadius: 10, border: `1px solid ${C.g2}`, padding: "14px 16px", marginBottom: 16 }}>
-              <p style={{ fontSize: "0.78rem", color: C.g5, margin: 0, fontFamily: FF_SANS, lineHeight: 1.6 }}>Didn't get the email? Check spam, or <a href="mailto:founders@getevidly.com" style={{ color: C.navy, fontWeight: 600 }}>email us directly</a>.</p>
-            </div>
-            <p style={{ fontSize: "0.72rem", color: C.g4, fontFamily: FF_SANS }}>Already confirmed? <a href={CALENDLY} target="_blank" rel="noreferrer" style={{ color: C.gold, fontWeight: 600 }}>Book on Calendly directly →</a></p>
+            <a href={CALENDLY} target="_blank" rel="noreferrer" style={{ display: "block", width: "100%", padding: "14px", background: C.gold, color: C.white, borderRadius: 8, fontWeight: 700, fontSize: "0.92rem", textAlign: "center", textDecoration: "none", fontFamily: FF_SANS, boxSizing: "border-box", marginBottom: 12 }}>Pick a Time on Calendly →</a>
+            <p style={{ fontSize: "0.72rem", color: C.g4, fontFamily: FF_SANS }}>Questions? <a href="mailto:founders@getevidly.com" style={{ color: C.navy, fontWeight: 600 }}>founders@getevidly.com</a></p>
           </div>
         )}
       </div>
@@ -332,7 +330,7 @@ function NavBar({ onTour, onIRR }) {
 // ─────────────────────────────────────────────
 // HERO
 // ─────────────────────────────────────────────
-function HeroSection({ onTour }) {
+function HeroSection({ onTour, onIRR }) {
   return (
     <section style={{ padding: "88px 24px 72px", background: `linear-gradient(155deg, #253356, ${C.navy})`, textAlign: "center", position: "relative", overflow: "hidden" }}>
       <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px)", backgroundSize: "48px 48px", pointerEvents: "none" }} />
@@ -349,8 +347,8 @@ function HeroSection({ onTour }) {
           Food safety and facility safety — scored against your county's actual grading method. Every operational signal translated into revenue, liability, cost, and workforce risk. One dashboard. Real answers.
         </p>
         <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", alignItems: "center" }}>
-          <button onClick={onTour} style={{ ...btn.gold, padding: "15px 34px", fontSize: "0.97rem" }}>Book a Guided Tour →</button>
-          <button onClick={() => scrollTo("pricing")} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "0.85rem", color: "rgba(255,255,255,0.4)", borderBottom: "1px solid rgba(255,255,255,0.18)", paddingBottom: 1, fontFamily: FF_SANS }}>See Pricing ↓</button>
+          <button onClick={onIRR} style={{ ...btn.gold, padding: "15px 34px", fontSize: "0.97rem" }}>Free Operations Check →</button>
+          <button onClick={onTour} style={{ ...btn.outline, padding: "15px 28px", fontSize: "0.9rem" }}>Book a Guided Tour →</button>
         </div>
         <p style={{ marginTop: 18, fontSize: "0.76rem", color: "rgba(255,255,255,0.22)", fontFamily: FF_SANS }}>$99/mo founder pricing — locked for life through July 4, 2026</p>
       </div>
@@ -372,7 +370,7 @@ function IRRAboveFold({ onIRR }) {
           <h2 style={{ fontSize: "clamp(1.15rem, 3vw, 1.45rem)", fontWeight: 700, color: C.white, margin: "0 0 8px", lineHeight: 1.2, letterSpacing: "-0.02em", fontFamily: FF_SANS }}>
             See how your operation is running{" "}<span style={{ color: C.gold }}>— right now.</span>
           </h2>
-          <p style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.45)", margin: 0, lineHeight: 1.7, fontFamily: FF_SANS }}>Daily activity, scored. Every risk in dollars. Takes 2 minutes — no account needed, or let it create one for you.</p>
+          <p style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.45)", margin: 0, lineHeight: 1.7, fontFamily: FF_SANS }}>11 questions. Every risk in dollars. Takes 2 minutes — no account needed.</p>
         </div>
         <div style={{ flexShrink: 0, textAlign: "center" }}>
           <button onClick={onIRR} style={{ ...btn.gold, padding: "13px 28px", fontSize: "0.9rem", display: "block", marginBottom: 8 }}>Get My Free Operations Check →</button>
@@ -700,11 +698,11 @@ function IRRSection({ onIRR }) {
       <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px)", backgroundSize: "48px 48px", pointerEvents: "none" }} />
       <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg,transparent,${C.gold},transparent)` }} />
       <div style={{ maxWidth: 580, margin: "0 auto", position: "relative" }}>
-        <div style={{ display: "inline-block", padding: "4px 14px", background: "rgba(160,140,90,0.15)", border: "1px solid rgba(160,140,90,0.3)", borderRadius: 100, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: C.gold, marginBottom: 18, fontFamily: FF_SANS }}>Free · Creates Your EvidLY Account</div>
+        <div style={{ display: "inline-block", padding: "4px 14px", background: "rgba(160,140,90,0.15)", border: "1px solid rgba(160,140,90,0.3)", borderRadius: 100, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: C.gold, marginBottom: 18, fontFamily: FF_SANS }}>Free · 2 Minutes · No Account Required</div>
         <h2 style={{ fontSize: "clamp(1.4rem, 4vw, 2rem)", fontWeight: 700, color: C.white, margin: "0 0 14px", lineHeight: 1.15, letterSpacing: "-0.02em", fontFamily: FF_SANS }}>
           Your operation, scored.<br /><span style={{ color: C.gold }}>Every risk, in dollars.</span>
         </h2>
-        <p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.5)", maxWidth: 420, margin: "0 auto 28px", lineHeight: 1.75, fontFamily: FF_SANS }}>See how your operation is running in 2 minutes. Get your baseline report and your EvidLY account — instantly.</p>
+        <p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.5)", maxWidth: 420, margin: "0 auto 28px", lineHeight: 1.75, fontFamily: FF_SANS }}>11 questions across food safety and facility safety. See where your operation stands — and what it's costing you — in 2 minutes.</p>
         <button onClick={onIRR} style={{ ...btn.gold, padding: "14px 34px", fontSize: "0.95rem" }}>Get My Free Operations Check →</button>
         <p style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.2)", marginTop: 12, fontFamily: FF_SANS }}>Our team services 300+ commercial kitchens per year</p>
       </div>
@@ -721,7 +719,7 @@ function FinalCTA({ onTour, onIRR }) {
       <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: `linear-gradient(90deg,transparent,${C.gold},transparent)` }} />
       <div style={{ maxWidth: 560, margin: "0 auto" }}>
         <h2 style={{ fontSize: "clamp(1.4rem, 4vw, 2rem)", fontWeight: 700, color: C.white, margin: "0 0 12px", fontFamily: FF_SANS, letterSpacing: "-0.02em" }}>Ready to see it for your operation?</h2>
-        <p style={{ fontSize: "0.92rem", color: "rgba(255,255,255,0.4)", marginBottom: 28, lineHeight: 1.7, fontFamily: FF_SANS }}>45 minutes. Your county, your numbers, your dashboard — live.</p>
+        <p style={{ fontSize: "0.92rem", color: "rgba(255,255,255,0.4)", marginBottom: 28, lineHeight: 1.7, fontFamily: FF_SANS }}>30 minutes. Your county, your numbers, your dashboard — live.</p>
         <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", alignItems: "center" }}>
           <button onClick={onTour} style={{ ...btn.gold, padding: "15px 34px", fontSize: "0.97rem" }}>Book a Guided Tour →</button>
           <button onClick={onIRR} style={{ ...btn.outline, padding: "15px 24px", fontSize: "0.9rem" }}>Free Operations Check →</button>
@@ -775,8 +773,8 @@ function Footer() {
         <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 14, display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 8, alignItems: "center" }}>
           <span style={{ fontSize: "0.68rem", color: "rgba(255,255,255,0.15)", fontFamily: FF_SANS }}>© 2026 EvidLY LLC. All rights reserved. · IKECA Member #76716495 · Veteran-Owned</span>
           <div style={{ display: "flex", gap: 16 }}>
-            {["Privacy Policy", "Terms of Service", "Cookie Policy"].map((l) => (
-              <a key={l} href="#" style={{ fontSize: "0.66rem", color: "rgba(255,255,255,0.15)", textDecoration: "none", fontFamily: FF_SANS }}>{l}</a>
+            {[["Privacy Policy", "/privacy"], ["Terms of Service", "/terms"], ["Cookie Policy", "/cookies"]].map(([l, href]) => (
+              <a key={l} href={href} style={{ fontSize: "0.66rem", color: "rgba(255,255,255,0.15)", textDecoration: "none", fontFamily: FF_SANS }}>{l}</a>
             ))}
           </div>
         </div>
@@ -792,7 +790,7 @@ function CookieBanner({ onAccept, onClose }) {
   return (
     <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 200, background: C.white, borderTop: `1px solid ${C.g2}`, padding: "14px 24px", display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap", boxShadow: "0 -2px 12px rgba(0,0,0,0.07)" }}>
       <p style={{ flex: 1, fontSize: "0.8rem", color: C.g6, margin: 0, fontFamily: FF_SANS, minWidth: 200, lineHeight: 1.6 }}>We use cookies to improve your experience. <a href="/cookies" style={{ color: C.navy }}>Cookie Policy</a></p>
-      <button onClick={onClose} style={{ padding: "7px 14px", borderRadius: 6, border: `1px solid ${C.g2}`, background: C.white, fontSize: "0.78rem", fontWeight: 600, cursor: "pointer", color: C.g6, fontFamily: FF_SANS }}>Manage</button>
+      <button onClick={onClose} style={{ padding: "7px 14px", borderRadius: 6, border: `1px solid ${C.g2}`, background: C.white, fontSize: "0.78rem", fontWeight: 600, cursor: "pointer", color: C.g6, fontFamily: FF_SANS }}>Decline</button>
       <button onClick={onAccept} style={{ padding: "7px 16px", borderRadius: 6, border: "none", background: C.navy, color: C.white, fontSize: "0.78rem", fontWeight: 600, cursor: "pointer", fontFamily: FF_SANS }}>Accept All</button>
     </div>
   );
@@ -814,6 +812,8 @@ export default function LandingPage() {
     <div style={{ fontFamily: FF_SANS, color: C.g8, lineHeight: 1.6, background: C.cream, minHeight: "100vh" }}>
       <style>{`
         *, *::before, *::after { box-sizing: border-box; }
+        :focus-visible { outline: 2px solid #A08C5A; outline-offset: 2px; }
+        input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid #A08C5A; outline-offset: 0; }
         @media (max-width: 860px) {
           .intel-row1 { grid-template-columns: 1fr !important; }
           .intel-row2 { grid-template-columns: 1fr !important; max-width: 100% !important; }
@@ -830,7 +830,7 @@ export default function LandingPage() {
 
       {/* RENDER ORDER — do not change */}
       <NavBar         onTour={openTour} onIRR={openIRR} />
-      <HeroSection    onTour={openTour} />
+      <HeroSection    onTour={openTour} onIRR={openIRR} />
       <IRRAboveFold   onIRR={openIRR} />
       <TrustBar />
       <HowItWorksSection onTour={openTour} />

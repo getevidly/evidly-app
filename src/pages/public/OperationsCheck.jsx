@@ -310,6 +310,13 @@ function Assessment({ form, onComplete, onRestartQuestions }) {
     }
   }
 
+  function handleBack() {
+    if (currentQ > 0) {
+      setCurrentQ(i => i - 1);
+      setAnswers(a => a.slice(0, -1));
+    }
+  }
+
   const aColor = { yes: C.green, partial: C.amber, no: C.red };
   const aLabel = { yes: "\u2713 On track", partial: "~ Gaps present", no: "\u2717 Needs attention" };
 
@@ -319,7 +326,7 @@ function Assessment({ form, onComplete, onRestartQuestions }) {
       <div style={{ padding: "14px 20px", borderBottom: `1px solid ${C.g2}`, display: "flex", alignItems: "center", gap: 12 }}>
         <div style={{ flex: 1 }}>
           <Logo size="0.9rem" />
-          <div style={{ fontSize: "0.58rem", color: C.g4, marginTop: 1, fontFamily: FF }}>{form.businessName}</div>
+          <div style={{ fontSize: "0.58rem", color: C.g4, marginTop: 1, fontFamily: FF }}>{form.businessName || form.firstName + " · " + form.county + " County"}</div>
         </div>
         {/* Progress dots */}
         <div style={{ display: "flex", gap: 3, alignItems: "center" }}>
@@ -336,6 +343,7 @@ function Assessment({ form, onComplete, onRestartQuestions }) {
             );
           })}
         </div>
+        {currentQ > 0 && <button onClick={handleBack} style={{ fontSize: "0.65rem", color: C.g5, background: "none", border: `1px solid ${C.g2}`, cursor: "pointer", fontFamily: FF, whiteSpace: "nowrap", padding: "3px 8px", borderRadius: 4 }}>{"\u2190"} Back</button>}
         <button onClick={onRestartQuestions} style={{ fontSize: "0.65rem", color: C.g4, background: "none", border: "none", cursor: "pointer", fontFamily: FF, whiteSpace: "nowrap", marginLeft: 4 }}>Restart \u21BA</button>
       </div>
 
@@ -434,7 +442,7 @@ function Report({ form, answers, onBookTour }) {
           <div>
             <div style={{ fontWeight: 700, fontSize: "0.86rem", color: C.darkgreen, fontFamily: FF }}>Your Operations Check is ready.</div>
             <div style={{ fontSize: "0.73rem", color: C.darkgreen, opacity: 0.75, fontFamily: FF, marginTop: 2 }}>
-              A copy has been sent to <strong>{form.email}</strong>. Book a guided tour to see your full dashboard live.
+              Review your results below. Book a guided tour to see your full dashboard live with your county's data.
             </div>
           </div>
         </div>
@@ -530,11 +538,11 @@ function Report({ form, answers, onBookTour }) {
         </div>
 
         {/* CTAs */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+        <div className="report-ctas" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
           <button onClick={onBookTour} style={{ background: C.navy, borderRadius: 12, padding: "18px 15px", textAlign: "center", position: "relative", overflow: "hidden", border: "none", cursor: "pointer", width: "100%" }}>
             <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg,transparent,${C.gold},transparent)` }} />
             <div style={{ fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", color: C.gold, marginBottom: 5, fontFamily: FF }}>Book a Guided Tour</div>
-            <p style={{ fontSize: "0.74rem", color: "rgba(255,255,255,0.45)", margin: "0 0 13px", lineHeight: 1.6, fontFamily: FF }}>60 minutes. Your county, your data, your dashboard — live.</p>
+            <p style={{ fontSize: "0.74rem", color: "rgba(255,255,255,0.45)", margin: "0 0 13px", lineHeight: 1.6, fontFamily: FF }}>30 minutes. Your county, your data, your dashboard — live.</p>
             <div style={{ width: "100%", padding: "10px", background: C.gold, color: C.white, borderRadius: 7, fontWeight: 700, fontSize: "0.8rem", fontFamily: FF }}>
               Schedule Now →
             </div>
@@ -572,7 +580,14 @@ export default function OperationsCheck() {
 
   return (
     <div style={{ fontFamily: FF, background: C.cream, minHeight: "100vh" }}>
-      <style>{`*, *::before, *::after { box-sizing: border-box; } button, a { font-family: inherit; cursor: pointer; } select option { color: #1c1917; }`}</style>
+      <style>{`
+        *, *::before, *::after { box-sizing: border-box; }
+        button, a { font-family: inherit; cursor: pointer; }
+        select option { color: #1c1917; }
+        :focus-visible { outline: 2px solid #A08C5A; outline-offset: 2px; }
+        input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid #A08C5A; outline-offset: 0; }
+        @media (max-width: 480px) { .report-ctas { grid-template-columns: 1fr !important; } }
+      `}</style>
 
       {/* Tour modal */}
       {showTourModal && (
@@ -581,7 +596,7 @@ export default function OperationsCheck() {
             <div style={{ background: `linear-gradient(135deg, #253356, ${C.navy})`, padding: "22px 24px 18px", position: "relative" }}>
               <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg,transparent,${C.gold},transparent)` }} />
               <Logo size="0.95rem" light />
-              <div style={{ fontWeight: 900, fontSize: "1.05rem", color: C.white, fontFamily: FF, marginTop: 10, letterSpacing: "-0.02em" }}>Book Your 60-Minute Guided Tour</div>
+              <div style={{ fontWeight: 900, fontSize: "1.05rem", color: C.white, fontFamily: FF, marginTop: 10, letterSpacing: "-0.02em" }}>Book Your 30-Minute Guided Tour</div>
               <div style={{ fontSize: "0.74rem", color: "rgba(255,255,255,0.4)", marginTop: 4, fontFamily: FF }}>Your county, your data, your dashboard — live.</div>
             </div>
             <div style={{ padding: "20px 24px 24px" }}>
@@ -610,7 +625,10 @@ export default function OperationsCheck() {
               </div>
             ))}
           </div>
-          <button onClick={handleFullReset} style={{ marginLeft: "auto", fontSize: "0.7rem", color: C.g4, background: "none", border: "none", cursor: "pointer", fontFamily: FF }}>Start Over {"\u21BA"}</button>
+          <div style={{ marginLeft: "auto", display: "flex", gap: 12, alignItems: "center" }}>
+            <button onClick={handleFullReset} style={{ fontSize: "0.7rem", color: C.g4, background: "none", border: "none", cursor: "pointer", fontFamily: FF }}>Start Over {"\u21BA"}</button>
+            <a href="/" style={{ fontSize: "0.7rem", color: C.g4, textDecoration: "none", fontFamily: FF }}>{"\u2190"} EvidLY</a>
+          </div>
         </div>
       </div>
 
