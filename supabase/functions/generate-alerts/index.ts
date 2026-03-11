@@ -170,11 +170,11 @@ async function checkTempTrends(orgId: string): Promise<GeneratedAlert[]> {
   ).toISOString();
 
   const { data: logs } = await supabase
-    .from("temp_logs")
-    .select("id, equipment_name, temperature, recorded_at, location_id")
-    .eq("organization_id", orgId)
-    .gte("recorded_at", fourteenDaysAgo)
-    .order("recorded_at", { ascending: true });
+    .from("temperature_logs")
+    .select("id, equipment_id, temperature, reading_time, location_id")
+    .eq("facility_id", orgId)
+    .gte("reading_time", fourteenDaysAgo)
+    .order("reading_time", { ascending: true });
 
   if (!logs || logs.length === 0) return alerts;
 
@@ -184,10 +184,10 @@ async function checkTempTrends(orgId: string): Promise<GeneratedAlert[]> {
     { recent: number[]; previous: number[]; location_id: string }
   > = {};
   for (const log of logs) {
-    const key = `${log.location_id}:${log.equipment_name}`;
+    const key = `${log.location_id}:${log.equipment_id}`;
     if (!groups[key])
       groups[key] = { recent: [], previous: [], location_id: log.location_id };
-    if (log.recorded_at >= sevenDaysAgo) {
+    if (log.reading_time >= sevenDaysAgo) {
       groups[key].recent.push(log.temperature);
     } else {
       groups[key].previous.push(log.temperature);
@@ -535,15 +535,15 @@ async function generatePredictiveScores(
 
       // ── Feature 2: Temperature pass rate (30d) ──────────────────
       const { data: tempLogs } = await supabase
-        .from("temp_logs")
-        .select("status")
-        .eq("organization_id", orgId)
+        .from("temperature_logs")
+        .select("temp_pass")
+        .eq("facility_id", orgId)
         .eq("location_id", loc.id)
-        .gte("recorded_at", thirtyDaysAgo);
+        .gte("reading_time", thirtyDaysAgo);
 
       let tempPassRate: number | null = null;
       if (tempLogs && tempLogs.length > 0) {
-        const passing = tempLogs.filter((t) => t.status === "pass" || t.status === "ok").length;
+        const passing = tempLogs.filter((t) => t.temp_pass === true).length;
         tempPassRate = passing / tempLogs.length;
       }
 

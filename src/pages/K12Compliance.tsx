@@ -198,7 +198,7 @@ export function K12Compliance() {
 
       for (const loc of k12Locs) {
         const [tempRes, checkRes, docRes, certRes, inspRes] = await Promise.all([
-          supabase.from('temp_logs').select('id, status').eq('location_id', loc.id).gte('created_at', thirtyDaysAgo),
+          supabase.from('temperature_logs').select('id, temp_pass').eq('location_id', loc.id).gte('reading_time', thirtyDaysAgo),
           supabase.from('checklist_completions').select('id, status').eq('location_id', loc.id).gte('created_at', thirtyDaysAgo),
           supabase.from('documents').select('id, name, category, created_at').eq('location_id', loc.id).in('category', ['food_safety_plan', 'allergen_policy', 'haccp_plan']),
           supabase.from('employee_certifications').select('id, expiry_date').eq('location_id', loc.id),
@@ -211,7 +211,7 @@ export function K12Compliance() {
         const certs = certRes.data || [];
         const lastInsp = (inspRes.data || [])[0];
 
-        const tempRate = temps.length ? (temps.filter((t: any) => t.status === 'compliant' || t.status === 'in_range').length / temps.length) * 100 : null;
+        const tempRate = temps.length ? (temps.filter((t: any) => t.temp_pass === true).length / temps.length) * 100 : null;
         const checkRate = checks.length ? (checks.filter((c: any) => c.status === 'completed' || c.status === 'complete').length / checks.length) * 100 : null;
         const foodSafetyPlan = docs.find((d: any) => d.category === 'food_safety_plan');
         const allergenPolicy = docs.find((d: any) => d.category === 'allergen_policy');

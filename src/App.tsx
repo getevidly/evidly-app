@@ -15,6 +15,7 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { EnvBadge } from './components/ui/EnvBadge';
 import { reportError } from './lib/errorReporting';
 import { SalesGuard } from './components/layout/SalesGuard';
+import QRAuthGuard from './components/auth/QRAuthGuard';
 
 const Login = lazy(() => import('./pages/Login').then(m => ({ default: m.Login })));
 const Signup = lazy(() => import('./pages/Signup').then(m => ({ default: m.Signup })));
@@ -433,8 +434,8 @@ function AppRoutes() {
         <Route path="/kitchen-check/:slug" element={<Suspense fallback={<PageSkeleton />}><KitchenCheckWrapper /></Suspense>} />
         <Route path="/kitchen-to-community" element={<Suspense fallback={<PageSkeleton />}><KitchenToCommunity /></Suspense>} />
         <Route path="/leaderboard-preview" element={<Suspense fallback={<PageSkeleton />}><LeaderboardPreview /></Suspense>} />
-        <Route path="/temp/log" element={<Suspense fallback={<PageSkeleton />}><TempLogQuick /></Suspense>} />
-        <Route path="/temp-logs/scan" element={<Suspense fallback={<PageSkeleton />}><TempLogScan /></Suspense>} />
+        <Route path="/temp/log" element={<QRAuthGuard><Suspense fallback={<PageSkeleton />}><TempLogQuick /></Suspense></QRAuthGuard>} />
+        <Route path="/temp-logs/scan" element={<QRAuthGuard><Suspense fallback={<PageSkeleton />}><TempLogScan /></Suspense></QRAuthGuard>} />
         <Route path="/login" element={<PublicRoute><Suspense fallback={<PageSkeleton />}><Login /></Suspense></PublicRoute>} />
         <Route path="/signup" element={<PublicRoute><Suspense fallback={<PageSkeleton />}><Signup /></Suspense></PublicRoute>} />
         <Route path="/signup/locations" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><SignupLocations /></Suspense></ProtectedRoute>} />

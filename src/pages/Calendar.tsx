@@ -652,11 +652,11 @@ export function Calendar() {
       // Query 6 tables in parallel
       const [tempRes, checklistRes, equipRes, docsRes, correctiveRes, customCalRes] = await Promise.all([
         supabase
-          .from('temp_check_completions')
+          .from('temperature_logs')
           .select('*, temperature_equipment(name)')
-          .eq('organization_id', orgId)
-          .gte('created_at', startStr)
-          .lte('created_at', endStr),
+          .eq('facility_id', orgId)
+          .gte('reading_time', startStr)
+          .lte('reading_time', endStr),
         supabase
           .from('checklist_template_completions')
           .select('*, checklist_templates(name)')
@@ -690,16 +690,16 @@ export function Calendar() {
 
       // 1. Temperature checks → temp-check events
       for (const t of (tempRes.data || [])) {
-        const createdAt = new Date(t.created_at);
+        const readingAt = new Date(t.reading_time || t.created_at);
         const eqName = t.temperature_equipment?.name || 'Equipment';
         allEvents.push({
           id: String(nextId++),
           title: `Temp Reading: ${eqName}`,
           type: 'temp-check',
-          date: formatDateKey(createdAt),
-          time: createdAt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
+          date: formatDateKey(readingAt),
+          time: readingAt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
           location: locMap[t.location_id] || 'Unknown',
-          description: `${t.temperature_value}° — ${t.is_within_range ? 'Within range' : 'OUT OF RANGE'}`,
+          description: `${t.temperature ?? t.temperature_value}° — ${(t.temp_pass ?? t.is_within_range) ? 'Within range' : 'OUT OF RANGE'}`,
         });
       }
 

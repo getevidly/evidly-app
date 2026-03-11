@@ -55,6 +55,9 @@ export function TempLogScan() {
   const navigate = useNavigate();
   const { isDemoMode } = useDemo();
 
+  // Desktop restriction: QR scanning is mobile-only (unless demo mode)
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+
   const [state, setState] = useState<ScanState>('scanning');
   const [matched, setMatched] = useState<MatchedEquipment | null>(null);
   const [temperature, setTemperature] = useState('');
@@ -285,6 +288,28 @@ export function TempLogScan() {
               </button>
             </div>
           </form>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Desktop restriction (non-demo) ──
+  if (!isMobile && !isDemoMode) {
+    return (
+      <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center p-4">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-full max-w-sm p-8 text-center">
+          <QrCode className="h-16 w-16 mx-auto mb-4" style={{ color: '#1e4d6b' }} />
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Mobile Device Required</h2>
+          <p className="text-sm text-gray-600 mb-6">
+            QR code scanning requires a mobile device with a camera. Open this page on your phone or tablet to scan equipment QR codes.
+          </p>
+          <button
+            onClick={() => navigate('/temp-logs')}
+            className="w-full px-4 py-3 text-white font-semibold rounded-lg hover:opacity-90 transition-opacity"
+            style={{ backgroundColor: '#1e4d6b' }}
+          >
+            Back to Temperature Logs
+          </button>
         </div>
       </div>
     );

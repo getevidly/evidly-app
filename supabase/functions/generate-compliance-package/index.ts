@@ -116,15 +116,15 @@ Deno.serve(async (req: Request) => {
     if (payload.include_temp_summary) {
       const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
       const { data: tempLogs } = await supabase
-        .from("temp_logs")
+        .from("temperature_logs")
         .select("*")
-        .eq("organization_id", orgId)
-        .gte("recorded_at", thirtyDaysAgo.toISOString())
-        .order("recorded_at", { ascending: false });
+        .eq("facility_id", orgId)
+        .gte("reading_time", thirtyDaysAgo.toISOString())
+        .order("reading_time", { ascending: false });
 
       if (tempLogs) {
         const total = tempLogs.length;
-        const outOfRange = tempLogs.filter((l) => l.status === "out_of_range").length;
+        const outOfRange = tempLogs.filter((l) => l.temp_pass === false).length;
         tempSummary = {
           period: "Last 30 days",
           total_readings: total,

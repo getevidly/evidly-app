@@ -101,16 +101,21 @@ Deno.serve(async (req: Request) => {
 
     // 3. Create temperature log entry
     const { data: tempLog, error: logErr } = await supabase
-      .from("temp_check_completions")
+      .from("temperature_logs")
       .insert({
-        organization_id: sensor.organization_id,
+        facility_id: sensor.organization_id,
         location_id: sensor.location_id,
         equipment_id: sensor.equipment_link_id,
-        temperature_value: tempF,
-        is_within_range: isWithinRange,
-        recorded_by: null, // IoT auto-logged
+        temperature: tempF,
+        required_min: minTemp,
+        required_max: maxTemp,
+        temp_pass: isWithinRange,
+        logged_by: null, // IoT auto-logged
         input_method: "iot_sensor",
-        created_at: body.reading_at || new Date().toISOString(),
+        sensor_id: body.sensor_id || null,
+        reading_time: body.reading_at || new Date().toISOString(),
+        shift: (() => { const h = new Date().getHours(); return h < 12 ? 'morning' : h < 17 ? 'afternoon' : 'evening'; })(),
+        log_type: equipmentType?.includes('holding') ? (equipmentType === 'holding_hot' ? 'hot_holding' : 'cold_holding') : 'equipment_check',
       })
       .select("id")
       .single();

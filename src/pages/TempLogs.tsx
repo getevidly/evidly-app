@@ -24,6 +24,11 @@ import { AddHoldingReadingModal, type HoldingReadingSaveData } from '../componen
 import { AddCooldownReadingModal, type CooldownSaveData } from '../components/temp-logs/AddCooldownReadingModal';
 import { VendorCombobox } from '../components/temp-logs/VendorCombobox';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
+import { getShift, getLogType, TEMP_CHECK_INTERVALS } from '../config/tempConfig';
+import { dispatchTempViolationSignal } from '../lib/tempSignalDispatch';
+import { TempIntelligenceCard } from '../components/temp-logs/TempIntelligenceCard';
+import { TempPatternInsights } from '../components/temp-logs/TempPatternInsights';
+import { HACCPDeviationReport } from '../components/temp-logs/HACCPDeviationReport';
 
 interface TemperatureEquipment {
   id: string;
@@ -204,6 +209,10 @@ export function TempLogs() {
   const [showAddReceivingModal, setShowAddReceivingModal] = useState(false);
   const [showAddHoldingModal, setShowAddHoldingModal] = useState(false);
   const [showAddCooldownModal, setShowAddCooldownModal] = useState(false);
+
+  // HACCP Deviation Report
+  const [showHACCPReport, setShowHACCPReport] = useState(false);
+  const [haccpViolation, setHaccpViolation] = useState<any>(null);
 
   useEffect(() => {
     if (isDemoMode) {
@@ -532,16 +541,20 @@ export function TempLogs() {
       const equipmentWithLastCheck = await Promise.all(
         equipmentData.map(async (eq) => {
           const { data: lastCheck } = await supabase
-            .from('temp_check_completions')
-            .select('temperature_value, created_at, is_within_range')
+            .from('temperature_logs')
+            .select('temperature, reading_time, temp_pass')
             .eq('equipment_id', eq.id)
-            .order('created_at', { ascending: false })
+            .order('reading_time', { ascending: false })
             .limit(1)
             .maybeSingle();
 
           return {
             ...eq,
-            last_check: lastCheck || undefined,
+            last_check: lastCheck ? {
+              temperature_value: lastCheck.temperature,
+              created_at: lastCheck.reading_time,
+              is_within_range: lastCheck.temp_pass,
+            } : undefined,
           };
         })
       );
@@ -560,35 +573,44 @@ export function TempLogs() {
   };
 
   const fetchHistory = async () => {
+    // Query unified temperature_logs table
     const { data } = await supabase
-      .from('temp_check_completions')
+      .from('temperature_logs')
       .select(`
         id,
         equipment_id,
-        temperature_value,
-        is_within_range,
+        temperature,
+        temp_pass,
         corrective_action,
-        created_at,
-        recorded_by,
-        temperature_equipment!inner(name, equipment_type),
-        user_profiles!temp_check_completions_recorded_by_fkey(full_name)
+        reading_time,
+        logged_by,
+        input_method,
+        shift,
+        log_type
       `)
-      .eq('organization_id', profile?.organization_id)
-      .order('created_at', { ascending: false })
+      .order('reading_time', { ascending: false })
       .limit(200);
 
     if (data) {
-      const formattedHistory = data.map((item: any) => ({
-        id: item.id,
-        equipment_id: item.equipment_id,
-        equipment_name: item.temperature_equipment.name,
-        equipment_type: item.temperature_equipment.equipment_type,
-        temperature_value: item.temperature_value,
-        is_within_range: item.is_within_range,
-        recorded_by_name: item.user_profiles?.full_name || 'Unknown',
-        corrective_action: item.corrective_action,
-        created_at: item.created_at,
-      }));
+      // Look up equipment names from local state
+      const eqMap = new Map(equipment.map(e => [e.id, e]));
+      const formattedHistory = data.map((item: any) => {
+        const eq = eqMap.get(item.equipment_id);
+        return {
+          id: item.id,
+          equipment_id: item.equipment_id,
+          equipment_name: eq?.name || 'Unknown',
+          equipment_type: eq?.equipment_type || '',
+          temperature_value: item.temperature,
+          is_within_range: item.temp_pass,
+          recorded_by_name: item.logged_by ? 'Staff' : 'IoT Sensor',
+          corrective_action: item.corrective_action,
+          created_at: item.reading_time,
+          input_method: item.input_method,
+          shift: item.shift,
+          ccp_number: item.log_type === 'hot_holding' || item.log_type === 'cold_holding' ? 'CCP-02' : 'CCP-01',
+        };
+      });
       setHistory(formattedHistory);
     }
   };
@@ -667,13 +689,20 @@ export function TempLogs() {
 
     setLoading(true);
 
-    const { error } = await supabase.from('temp_check_completions').insert({
-      organization_id: profile?.organization_id,
-      location_id: (selectedEquipment as any).location_id,
+    const facilityId = (selectedEquipment as any).location_id;
+    const logType = getLogType(selectedEquipment.equipment_type);
+    const { error } = await supabase.from('temperature_logs').insert({
+      facility_id: facilityId,
       equipment_id: selectedEquipment.id,
-      temperature_value: tempValue,
-      is_within_range: isWithinRange,
-      recorded_by: selectedUser,
+      input_method: 'manual',
+      temperature: tempValue,
+      required_min: selectedEquipment.min_temp === -Infinity ? null : selectedEquipment.min_temp,
+      required_max: selectedEquipment.max_temp,
+      temp_pass: isWithinRange,
+      reading_time: new Date().toISOString(),
+      shift: getShift(),
+      log_type: logType,
+      logged_by: selectedUser || null,
       corrective_action: !isWithinRange ? correctiveAction : null,
     });
 
@@ -685,6 +714,19 @@ export function TempLogs() {
       showSuccessToast(`${tempValue}°F logged for ${selectedEquipment.name}`);
       fetchEquipment();
       fetchHistory();
+
+      // Dispatch intelligence signal for violations
+      if (!isWithinRange) {
+        dispatchTempViolationSignal(supabase, {
+          facility_id: facilityId,
+          equipment_name: selectedEquipment.name,
+          temperature: tempValue,
+          required_min: selectedEquipment.min_temp === -Infinity ? null : selectedEquipment.min_temp,
+          required_max: selectedEquipment.max_temp,
+          log_type: logType,
+          corrective_action: !isWithinRange ? correctiveAction : null,
+        });
+      }
     }
   };
 
@@ -764,22 +806,46 @@ export function TempLogs() {
     const insertData = validEntries.map(entry => {
       const tempValue = parseFloat(entry.temperature);
       const isWithinRange = tempValue >= entry.min_temp && tempValue <= entry.max_temp;
+      const eq = equipment.find(e => e.id === entry.equipment_id);
 
       return {
-        organization_id: profile?.organization_id,
-        location_id: (equipment.find(e => e.id === entry.equipment_id) as any)?.location_id,
+        facility_id: profile?.organization_id,
+        location_id: (eq as any)?.location_id,
         equipment_id: entry.equipment_id,
-        temperature_value: tempValue,
-        is_within_range: isWithinRange,
-        recorded_by: selectedUser || profile?.id,
+        input_method: 'manual',
+        temperature: tempValue,
+        required_min: entry.min_temp,
+        required_max: entry.max_temp,
+        temp_pass: isWithinRange,
+        reading_time: new Date().toISOString(),
+        shift: getShift(),
+        log_type: getLogType(eq?.equipment_type || 'cooler'),
+        logged_by: selectedUser || profile?.id,
       };
     });
 
-    const { error } = await supabase.from('temp_check_completions').insert(insertData);
+    const { error } = await supabase.from('temperature_logs').insert(insertData);
 
     setLoading(false);
 
     if (!error) {
+      // Dispatch intelligence signals for violations
+      const violations = validEntries.filter(entry => {
+        const tv = parseFloat(entry.temperature);
+        return tv < entry.min_temp || tv > entry.max_temp;
+      });
+      for (const v of violations) {
+        const eq = equipment.find(e => e.id === v.equipment_id);
+        dispatchTempViolationSignal(supabase, {
+          equipment_name: eq?.name || v.equipment_name,
+          equipment_type: eq?.equipment_type || 'cooler',
+          temperature: parseFloat(v.temperature),
+          required_min: v.min_temp,
+          required_max: v.max_temp,
+          organization_id: profile?.organization_id || '',
+          location_id: (eq as any)?.location_id,
+        }).catch(() => {});
+      }
       setShowBatchModal(false);
       showSuccessToast(`${validEntries.length} temperatures logged successfully`);
       fetchEquipment();
@@ -906,10 +972,12 @@ export function TempLogs() {
       location_id: locationData?.id,
       vendor_name: vendorName,
       item_description: item.itemDescription,
+      food_category: item.category || null,
       temperature_value: item.temperature,
       is_pass: item.isPass,
       received_by: receivedBy,
       notes: receivingNotes || null,
+      corrective_action: item.ccpDeviation?.actionTaken || null,
     }));
 
     const { error } = await supabase.from('receiving_temp_logs').insert(insertData);
@@ -1483,6 +1551,24 @@ export function TempLogs() {
     saveCooldownsToStorage(remaining);
     setCompletedCooldowns([completedCooldown, ...completedCooldowns]);
     showSuccessToast(`Cooldown completed for ${cooldown.itemName}`);
+
+    // FIX-02: Persist completed cooldown to cooling_logs (live mode only)
+    if (!isDemoMode && profile?.organization_id) {
+      supabase.from('cooling_logs').insert({
+        organization_id: profile.organization_id,
+        food_item: cooldown.itemName,
+        start_temp: cooldown.startTemp,
+        start_time: cooldown.startTime.toISOString(),
+        end_temp: currentTemp,
+        end_time: new Date().toISOString(),
+        status: completedCooldown.status,
+        location: cooldown.location || null,
+        started_by: cooldown.startedBy || null,
+        checks: cooldown.checks.map(c => ({ temperature: c.temperature, time: c.time.toISOString() })),
+      }).then(({ error: coolErr }) => {
+        if (coolErr) console.warn('[CooldownPersist]', coolErr.message);
+      });
+    }
   };
 
   const getTotalCooldownTime = (cooldown: Cooldown) => {
@@ -1525,6 +1611,9 @@ export function TempLogs() {
             Scan QR Code
           </button>
         </div>
+
+        {/* AI Intelligence Card (live mode only) */}
+        {!isDemoMode && <TempIntelligenceCard />}
 
         {/* Tabs */}
         <div className="flex overflow-x-auto -mx-1 border-b border-gray-200">
@@ -2353,14 +2442,21 @@ export function TempLogs() {
                                 <span className="text-gray-600">{log.corrective_action}</span>
                               </div>
                               {!log.is_within_range && (
-                                <div className="mt-2">
-                                  <div className="flex items-center gap-1 text-xs text-gray-500 mb-1">
-                                    <Camera className="h-3 w-3" />
-                                    <span className="font-medium">Photo evidence attached</span>
+                                <div className="mt-2 flex flex-wrap items-start gap-4">
+                                  <div>
+                                    <div className="flex items-center gap-1 text-xs text-gray-500 mb-1">
+                                      <Camera className="h-3 w-3" />
+                                      <span className="font-medium">Photo evidence attached</span>
+                                    </div>
+                                    <PhotoGallery photos={tempPhotos} title="Temperature Evidence" />
                                   </div>
-                                  {/* TODO: In production, fetch photos from Supabase Storage for this log entry */}
-                                  {/* PhotoGallery will render once photos are loaded from the compliance-photos bucket */}
-                                  <PhotoGallery photos={tempPhotos} title="Temperature Evidence" />
+                                  <button
+                                    onClick={() => { setHaccpViolation(log); setShowHACCPReport(true); }}
+                                    className="px-3 py-1.5 text-xs font-semibold rounded-lg text-white hover:opacity-90 transition-opacity"
+                                    style={{ backgroundColor: '#1e4d6b' }}
+                                  >
+                                    Generate HACCP Report
+                                  </button>
                                 </div>
                               )}
                             </td>
@@ -3018,8 +3114,8 @@ export function TempLogs() {
                     {coldHolding.map(eq => {
                       const inRange = eq.last_check?.is_within_range ?? true;
                       const lastCheckAge = eq.last_check ? (Date.now() - new Date(eq.last_check.created_at).getTime()) / (1000 * 60) : Infinity;
-                      const isOverdue = lastCheckAge > 240; // 4 hours
-                      const isDueSoon = lastCheckAge > 210 && lastCheckAge <= 240; // 3.5-4 hours
+                      const isOverdue = lastCheckAge > TEMP_CHECK_INTERVALS.HOT_HOLDING_OVERDUE_MINUTES;
+                      const isDueSoon = lastCheckAge > (TEMP_CHECK_INTERVALS.HOT_HOLDING_OVERDUE_MINUTES - 30) && lastCheckAge <= TEMP_CHECK_INTERVALS.HOT_HOLDING_OVERDUE_MINUTES;
                       return (
                         <div key={eq.id} className={`py-2 px-3 bg-white rounded-lg border ${isOverdue ? 'border-red-300 bg-red-50/30' : isDueSoon ? 'border-amber-300 bg-amber-50/30' : !inRange ? 'border-red-300' : 'border-gray-100'}`}>
                           <div className="flex items-center justify-between">
@@ -3079,8 +3175,8 @@ export function TempLogs() {
                     {hotHolding.map(eq => {
                       const inRange = eq.last_check?.is_within_range ?? true;
                       const lastCheckAge = eq.last_check ? (Date.now() - new Date(eq.last_check.created_at).getTime()) / (1000 * 60) : Infinity;
-                      const isOverdue = lastCheckAge > 240; // 4 hours
-                      const isDueSoon = lastCheckAge > 210 && lastCheckAge <= 240; // 3.5-4 hours
+                      const isOverdue = lastCheckAge > TEMP_CHECK_INTERVALS.HOT_HOLDING_OVERDUE_MINUTES;
+                      const isDueSoon = lastCheckAge > (TEMP_CHECK_INTERVALS.HOT_HOLDING_OVERDUE_MINUTES - 30) && lastCheckAge <= TEMP_CHECK_INTERVALS.HOT_HOLDING_OVERDUE_MINUTES;
                       return (
                         <div key={eq.id} className={`py-2 px-3 bg-white rounded-lg border ${isOverdue ? 'border-red-300 bg-red-50/30' : isDueSoon ? 'border-amber-300 bg-amber-50/30' : !inRange ? 'border-red-300' : 'border-gray-100'}`}>
                           <div className="flex items-center justify-between">
@@ -3298,10 +3394,21 @@ export function TempLogs() {
                   </div>
                 </div>
               </div>
+
+              {/* AI Pattern Insights (live mode only) */}
+              {!isDemoMode && <TempPatternInsights />}
             </div>
           );
         })()}
       </div>
+
+      {/* HACCP Deviation Report Modal */}
+      {showHACCPReport && haccpViolation && (
+        <HACCPDeviationReport
+          violation={haccpViolation}
+          onClose={() => { setShowHACCPReport(false); setHaccpViolation(null); }}
+        />
+      )}
 
       {/* Log Temperature Modal */}
       {showLogModal && selectedEquipment && (

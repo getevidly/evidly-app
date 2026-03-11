@@ -19,7 +19,7 @@ Deno.serve(async (req) => {
     // Count all-time totals (snapshots)
     const [tempResult, checklistResult, docsResult, correctiveResult, incidentResult, equipResult, orgResult, locResult] =
       await Promise.all([
-        supabase.from("temp_logs").select("*", { count: "exact", head: true }),
+        supabase.from("temperature_logs").select("*", { count: "exact", head: true }),
         supabase.from("checklist_completions").select("*", { count: "exact", head: true }),
         supabase.from("documents").select("*", { count: "exact", head: true }),
         supabase.from("corrective_actions").select("*", { count: "exact", head: true }),

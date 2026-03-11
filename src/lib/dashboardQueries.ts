@@ -73,9 +73,9 @@ export async function fetchComplianceScores(organizationId?: string): Promise<Co
   try {
     // Check if there is any real temp_log data for this org
     const { count: tempCount } = await supabase
-      .from('temp_logs')
+      .from('temperature_logs')
       .select('id', { count: 'exact', head: true })
-      .eq('organization_id', organizationId);
+      .eq('facility_id', organizationId);
 
     // If no real data exists, return empty scores
     if (!tempCount || tempCount === 0) {
@@ -186,10 +186,10 @@ export async function fetchTodaysProgress(organizationId?: string): Promise<Prog
     todayStart.setHours(0, 0, 0, 0);
 
     const { count: tempCount } = await supabase
-      .from('temp_logs')
+      .from('temperature_logs')
       .select('id', { count: 'exact', head: true })
-      .eq('organization_id', organizationId)
-      .gte('recorded_at', todayStart.toISOString());
+      .eq('facility_id', organizationId)
+      .gte('reading_time', todayStart.toISOString());
 
     const { count: checkCount } = await supabase
       .from('checklist_completions')
@@ -232,23 +232,23 @@ export async function fetchRecentActivity(organizationId?: string): Promise<Acti
 
   try {
     const { data: tempLogs } = await supabase
-      .from('temp_logs')
-      .select('id, equipment_name, temperature, unit, status, recorded_at, recorded_by')
-      .eq('organization_id', organizationId)
-      .order('recorded_at', { ascending: false })
+      .from('temperature_logs')
+      .select('id, equipment_id, temperature, temp_pass, reading_time, logged_by')
+      .eq('facility_id', organizationId)
+      .order('reading_time', { ascending: false })
       .limit(5);
 
     if (!tempLogs || tempLogs.length === 0) return [];
 
     // Convert real temp logs into activity items
     return tempLogs.map((log) => {
-      const isOk = log.status === 'normal';
+      const isOk = log.temp_pass === true;
       const initials = 'U'; // Could look up profile — kept simple for now
-      const timeAgo = getRelativeTime(new Date(log.recorded_at));
+      const timeAgo = getRelativeTime(new Date(log.reading_time));
       return {
         initials,
         name: 'Staff',
-        action: `logged ${log.equipment_name}: ${log.temperature}\u00b0${log.unit || 'F'} ${isOk ? '\u2713' : '\u2717'}`,
+        action: `logged temperature: ${log.temperature}\u00b0F ${isOk ? '\u2713' : '\u2717'}`,
         time: timeAgo,
         url: '/temp-logs',
         borderColor: isOk ? '#22c55e' : '#ef4444',

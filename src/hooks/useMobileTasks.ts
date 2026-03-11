@@ -96,11 +96,11 @@ export function useMobileTasks(orgId: string | undefined, role: UserRole): UseMo
                 .eq('is_active', true)
                 .limit(20),
               supabase
-                .from('temp_check_completions')
+                .from('temperature_logs')
                 .select('equipment_id')
-                .eq('organization_id', orgId)
-                .gte('created_at', today + 'T00:00:00')
-                .lte('created_at', today + 'T23:59:59'),
+                .eq('facility_id', orgId)
+                .gte('reading_time', today + 'T00:00:00')
+                .lte('reading_time', today + 'T23:59:59'),
             ]);
 
             if (equipment) {

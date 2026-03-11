@@ -155,11 +155,11 @@ export function NotificationDropdown({ isOpen, onClose, demoMode = false }: Noti
     }
 
     const { data: todayLogs } = await supabase
-      .from('temp_check_completions')
+      .from('temperature_logs')
       .select('*')
-      .eq('organization_id', orgId)
-      .gte('created_at', new Date(new Date().setHours(0, 0, 0, 0)).toISOString())
-      .order('created_at', { ascending: false })
+      .eq('facility_id', orgId)
+      .gte('reading_time', new Date(new Date().setHours(0, 0, 0, 0)).toISOString())
+      .order('reading_time', { ascending: false })
       .limit(3);
 
     if (todayLogs && todayLogs.length < 4) {
@@ -174,10 +174,10 @@ export function NotificationDropdown({ isOpen, onClose, demoMode = false }: Noti
     }
 
     const { data: recentCompletions } = await supabase
-      .from('temp_check_completions')
+      .from('temperature_logs')
       .select('*, user_profiles(full_name)')
-      .eq('organization_id', orgId)
-      .order('created_at', { ascending: false })
+      .eq('facility_id', orgId)
+      .order('reading_time', { ascending: false })
       .limit(2);
 
     if (recentCompletions) {
@@ -186,7 +186,7 @@ export function NotificationDropdown({ isOpen, onClose, demoMode = false }: Noti
           id: `completion-${completion.id}`,
           icon: 'success',
           message: `${(completion as any).user_profiles?.full_name || 'Team member'} completed temperature check`,
-          time: new Date(completion.created_at),
+          time: new Date(completion.reading_time || completion.created_at),
           read: false,
         });
       });
