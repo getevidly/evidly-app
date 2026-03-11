@@ -1,5 +1,21 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
+// ─────────────────────────────────────────────
+// SCROLL REVEAL HOOK
+// ─────────────────────────────────────────────
+function useScrollReveal() {
+  useEffect(() => {
+    const els = document.querySelectorAll('.reveal');
+    if (!els.length) return;
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    els.forEach(el => obs.observe(el));
+    return () => obs.disconnect();
+  }, []);
+}
 
 // ─────────────────────────────────────────────
 // BRAND TOKENS
@@ -30,7 +46,9 @@ const C = {
   orangeBg: "#fff7ed",
 };
 
-const FF_SANS = "system-ui,-apple-system,sans-serif";
+const FF_SANS = "system-ui,-apple-system,'Segoe UI',Roboto,sans-serif";
+const FF_HEAD = "'Syne',system-ui,sans-serif";
+const FF_MONO = "'DM Mono','SF Mono','Fira Code',monospace";
 const CALENDLY = "https://calendly.com/founders-getevidly/30min";
 const FORMSPREE = "https://formspree.io/f/meeredlg";
 
@@ -88,16 +106,16 @@ const goldRule = {
 // ─────────────────────────────────────────────
 function Logo({ size = "1.15rem", light = false, tagline = false }) {
   const vidColor = light ? C.white : C.navy;
-  const tagColor = light ? "rgba(255,255,255,0.45)" : "rgba(30,45,77,0.5)";
+  const tagColor = light ? "rgba(255,255,255,0.4)" : "rgba(30,45,77,0.45)";
   return (
-    <span role="img" aria-label="EvidLY" style={{ display: "inline-flex", flexDirection: "column", alignItems: "flex-start", gap: 1, lineHeight: 1 }}>
-      <span style={{ fontWeight: 800, fontSize: size, letterSpacing: "-0.03em", fontFamily: FF_SANS, lineHeight: 1 }}>
+    <span role="img" aria-label="EvidLY" style={{ display: "inline-flex", flexDirection: "column", alignItems: "flex-start", gap: 2, lineHeight: 1 }}>
+      <span style={{ fontWeight: 800, fontSize: size, letterSpacing: "-0.03em", fontFamily: FF_HEAD, lineHeight: 1 }}>
         <span style={{ color: C.gold }}>E</span>
         <span style={{ color: vidColor }}>vid</span>
         <span style={{ color: C.gold }}>LY</span>
       </span>
       {tagline && (
-        <span style={{ fontSize: `calc(${size} * 0.28)`, fontWeight: 700, letterSpacing: "0.18em", color: tagColor, textTransform: "uppercase", lineHeight: 1, fontFamily: FF_SANS, whiteSpace: "nowrap" }}>
+        <span style={{ fontSize: `calc(${size} * 0.26)`, fontWeight: 500, letterSpacing: "0.2em", color: tagColor, textTransform: "uppercase", lineHeight: 1, fontFamily: FF_MONO, whiteSpace: "nowrap" }}>
           Lead with Confidence
         </span>
       )}
@@ -107,7 +125,7 @@ function Logo({ size = "1.15rem", light = false, tagline = false }) {
 
 function Eyebrow({ children, light = false }) {
   return (
-    <div style={{ fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", color: light ? "rgba(255,255,255,0.4)" : C.gold, marginBottom: 10, fontFamily: FF_SANS }}>
+    <div style={{ fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: light ? "rgba(255,255,255,0.4)" : C.gold, marginBottom: 12, fontFamily: FF_MONO }}>
       {children}
     </div>
   );
@@ -227,7 +245,7 @@ function TourModal({ onClose }) {
         {step === 1 && (
           <div style={{ padding: "28px 28px 24px" }}>
             <div style={{ marginBottom: 22 }}>
-              <h3 style={{ fontWeight: 800, color: C.navy, fontSize: "1.05rem", margin: "0 0 5px", fontFamily: FF_SANS }}>Book a Guided Tour</h3>
+              <h3 style={{ fontWeight: 800, color: C.navy, fontSize: "1.1rem", margin: "0 0 5px", fontFamily: FF_HEAD, letterSpacing: "-0.02em" }}>Book a Guided Tour</h3>
               <p style={{ fontSize: "0.82rem", color: C.g5, margin: 0, fontFamily: FF_SANS, lineHeight: 1.6 }}>Tell us about your operation and we'll align your jurisdictions before we meet. When you join the tour, your county's grading method, thresholds, and risk picture are already configured for you.</p>
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
@@ -252,7 +270,7 @@ function TourModal({ onClose }) {
             <Field label="Biggest compliance challenge right now?" mb={18}>
               <textarea value={form.challenge} onChange={set("challenge")} style={{ ...inp, minHeight: 64, resize: "vertical", fontFamily: FF_SANS }} placeholder="e.g. Inspection prep, temp tracking, knowing where we stand…" />
             </Field>
-            <button disabled={!ready || submitting} onClick={submit} style={{ ...btn.navy, width: "100%", fontSize: "0.9rem", padding: "13px", opacity: ready && !submitting ? 1 : 0.4 }}>
+            <button className="btn-lift" disabled={!ready || submitting} onClick={submit} style={{ ...btn.navy, width: "100%", fontSize: "0.9rem", padding: "14px", opacity: ready && !submitting ? 1 : 0.4, borderRadius: 10 }}>
               {submitting ? "Sending…" : "Submit & Pick a Time →"}
             </button>
             {err && <p style={{ fontSize: "0.75rem", color: C.red, textAlign: "center", marginTop: 8, fontFamily: FF_SANS }}>Something went wrong — email us at <a href="mailto:founders@getevidly.com" style={{ color: C.red }}>founders@getevidly.com</a></p>}
@@ -262,7 +280,7 @@ function TourModal({ onClose }) {
         {step === 2 && (
           <div style={{ padding: "40px 28px", textAlign: "center" }}>
             <div style={{ fontSize: "2.2rem", marginBottom: 12 }}>✅</div>
-            <h3 style={{ fontWeight: 800, color: C.navy, fontSize: "1.05rem", margin: "0 0 8px", fontFamily: FF_SANS }}>You're all set — pick your time.</h3>
+            <h3 style={{ fontWeight: 800, color: C.navy, fontSize: "1.1rem", margin: "0 0 8px", fontFamily: FF_HEAD, letterSpacing: "-0.02em" }}>You're all set — pick your time.</h3>
             <p style={{ fontSize: "0.84rem", color: C.g5, marginBottom: 22, lineHeight: 1.7, fontFamily: FF_SANS }}>We received your details. Choose a time that works for you.</p>
             <div style={{ background: C.cream, borderRadius: 10, border: `1px solid ${C.g2}`, padding: "14px 16px", marginBottom: 16 }}>
               <p style={{ fontSize: "0.82rem", color: C.navy, fontWeight: 700, margin: "0 0 4px", fontFamily: FF_SANS }}>Your jurisdictions are being aligned.</p>
@@ -296,22 +314,28 @@ function scrollTo(id) {
 // ─────────────────────────────────────────────
 function NavBar({ onTour, onIRR }) {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const h = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", h, { passive: true });
+    return () => window.removeEventListener("scroll", h);
+  }, []);
   const NAV = [["How It Works", "how-it-works"], ["Coverage", "coverage"], ["Pricing", "pricing"]];
   return (
-    <header style={{ background: C.white, borderBottom: `1px solid ${C.g2}`, padding: "0 24px", position: "sticky", top: 0, zIndex: 100 }}>
+    <header style={{ background: scrolled ? "rgba(255,255,255,0.95)" : C.white, backdropFilter: scrolled ? "blur(12px)" : "none", borderBottom: `1px solid ${scrolled ? "rgba(231,229,228,0.6)" : C.g2}`, padding: "0 24px", position: "sticky", top: 0, zIndex: 100, transition: "all 0.3s ease" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", alignItems: "center", height: 68, gap: 12 }}>
         <a href="/" style={{ textDecoration: "none", marginRight: 20, flexShrink: 0 }}><Logo size="1.45rem" tagline /></a>
-        <nav className="nav-desktop" style={{ display: "flex", gap: 24, flex: 1, alignItems: "center" }}>
+        <nav className="nav-desktop" style={{ display: "flex", gap: 28, flex: 1, alignItems: "center" }}>
           {NAV.map(([label, id]) => (
-            <button key={label} onClick={() => scrollTo(id)} style={{ background: "none", border: "none", cursor: "pointer", color: C.g5, fontWeight: 500, fontSize: "0.84rem", fontFamily: FF_SANS, whiteSpace: "nowrap", padding: 0 }}>{label}</button>
+            <button key={label} className="nav-link gold-line" onClick={() => scrollTo(id)} style={{ background: "none", border: "none", cursor: "pointer", color: C.g5, fontWeight: 600, fontSize: "0.84rem", fontFamily: FF_SANS, whiteSpace: "nowrap", padding: "4px 0", letterSpacing: "-0.01em" }}>{label}</button>
           ))}
         </nav>
         <div style={{ flexShrink: 0, display: "flex", gap: 8, alignItems: "center" }}>
-          <button onClick={onIRR} style={{ background: C.gold, border: "none", color: C.white, borderRadius: 6, padding: "9px 20px", fontSize: "0.82rem", fontWeight: 700, cursor: "pointer", fontFamily: FF_SANS, whiteSpace: "nowrap" }}>Free Operations Check</button>
-          <button className="hamburger" onClick={() => setOpen(!open)} aria-label="Open menu" style={{ background: "none", border: "none", cursor: "pointer", padding: "8px 4px", display: "flex", flexDirection: "column", gap: 4, marginLeft: 4 }}>
-            <span style={{ width: 20, height: 2, background: open ? C.gold : C.g4, borderRadius: 1, display: "block" }} />
-            <span style={{ width: 20, height: 2, background: open ? C.gold : C.g4, borderRadius: 1, display: "block" }} />
-            <span style={{ width: 20, height: 2, background: open ? C.gold : C.g4, borderRadius: 1, display: "block" }} />
+          <button className="btn-lift" onClick={onIRR} style={{ background: C.gold, border: "none", color: C.white, borderRadius: 8, padding: "10px 22px", fontSize: "0.82rem", fontWeight: 700, cursor: "pointer", fontFamily: FF_SANS, whiteSpace: "nowrap" }}>Free Operations Check</button>
+          <button className="hamburger" onClick={() => setOpen(!open)} aria-label="Open menu" style={{ background: "none", border: "none", cursor: "pointer", padding: "8px 4px", display: "flex", flexDirection: "column", gap: 5, marginLeft: 4 }}>
+            <span style={{ width: 20, height: 2, background: open ? C.gold : C.g4, borderRadius: 1, display: "block", transition: "all 0.2s" }} />
+            <span style={{ width: 20, height: 2, background: open ? C.gold : C.g4, borderRadius: 1, display: "block", transition: "all 0.2s" }} />
+            <span style={{ width: 20, height: 2, background: open ? C.gold : C.g4, borderRadius: 1, display: "block", transition: "all 0.2s" }} />
           </button>
         </div>
       </div>
@@ -320,7 +344,7 @@ function NavBar({ onTour, onIRR }) {
           {NAV.map(([label, id]) => (
             <button key={label} onClick={() => { setOpen(false); scrollTo(id); }} style={{ display: "block", width: "100%", textAlign: "left", background: "none", border: "none", cursor: "pointer", padding: "11px 0", fontSize: "0.9rem", color: C.g6, borderBottom: `1px solid ${C.g1}`, fontWeight: 500, fontFamily: FF_SANS }}>{label}</button>
           ))}
-          <button onClick={() => { setOpen(false); onIRR(); }} style={{ ...btn.gold, width: "100%", marginTop: 14, padding: "13px", fontSize: "0.9rem" }}>Free Operations Check →</button>
+          <button className="btn-lift" onClick={() => { setOpen(false); onIRR(); }} style={{ ...btn.gold, width: "100%", marginTop: 14, padding: "13px", fontSize: "0.9rem" }}>Free Operations Check →</button>
         </div>
       )}
     </header>
@@ -332,25 +356,26 @@ function NavBar({ onTour, onIRR }) {
 // ─────────────────────────────────────────────
 function HeroSection({ onTour, onIRR }) {
   return (
-    <section style={{ padding: "88px 24px 72px", background: `linear-gradient(155deg, #253356, ${C.navy})`, textAlign: "center", position: "relative", overflow: "hidden" }}>
-      <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px)", backgroundSize: "48px 48px", pointerEvents: "none" }} />
+    <section className="hero-gradient" style={{ padding: "100px 24px 88px", textAlign: "center", position: "relative", overflow: "hidden" }}>
+      <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle at 20% 50%, rgba(160,140,90,0.06) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(160,140,90,0.04) 0%, transparent 40%)", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px)", backgroundSize: "56px 56px", pointerEvents: "none" }} />
       <div style={goldRule} />
-      <div style={{ maxWidth: 660, margin: "0 auto", position: "relative" }}>
-        <div style={{ display: "inline-block", padding: "4px 14px", background: "rgba(160,140,90,0.15)", border: "1px solid rgba(160,140,90,0.3)", borderRadius: 100, fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: C.gold, marginBottom: 20, fontFamily: FF_SANS }}>
-          Launching May 5, 2026 · Founder Pricing Open
+      <div style={{ maxWidth: 720, margin: "0 auto", position: "relative" }}>
+        <div className="hero-animate" style={{ display: "inline-block", padding: "5px 18px", background: "rgba(160,140,90,0.12)", border: "1px solid rgba(160,140,90,0.25)", borderRadius: 100, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: C.gold, marginBottom: 24, fontFamily: FF_MONO }}>
+          California's Operations Intelligence Platform
         </div>
-        <h1 style={{ fontSize: "clamp(1.9rem, 5.5vw, 3.1rem)", fontWeight: 700, lineHeight: 1.1, margin: "0 0 20px", color: C.white, fontFamily: FF_SANS, letterSpacing: "-0.02em" }}>
-          Operations intelligence for{" "}
-          <span style={{ color: C.gold }}>California commercial kitchens.</span>
+        <h1 className="hero-animate hero-animate-d1" style={{ fontSize: "clamp(2.1rem, 6vw, 3.6rem)", fontWeight: 800, lineHeight: 1.05, margin: "0 0 24px", color: C.white, fontFamily: FF_HEAD, letterSpacing: "-0.03em" }}>
+          Know where your operation stands.{" "}
+          <span style={{ color: C.gold }}>Before anyone else does.</span>
         </h1>
-        <p style={{ fontSize: "1rem", color: "rgba(255,255,255,0.55)", maxWidth: 520, margin: "0 auto 32px", lineHeight: 1.75, fontFamily: FF_SANS }}>
-          Food safety and facility safety — scored against your county's actual grading method. Every operational signal translated into revenue, liability, cost, and workforce risk. One dashboard. Real answers.
+        <p className="hero-animate hero-animate-d2" style={{ fontSize: "1.05rem", color: "rgba(255,255,255,0.52)", maxWidth: 540, margin: "0 auto 40px", lineHeight: 1.8, fontFamily: FF_SANS, letterSpacing: "-0.01em" }}>
+          Food safety and facility safety — scored against your county's actual grading method. Every operational signal translated into revenue, liability, cost, and workforce risk.
         </p>
-        <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", alignItems: "center" }}>
-          <button onClick={onIRR} style={{ ...btn.gold, padding: "15px 34px", fontSize: "0.97rem" }}>Free Operations Check →</button>
-          <button onClick={onTour} style={{ ...btn.outline, padding: "15px 28px", fontSize: "0.9rem" }}>Book a Guided Tour →</button>
+        <div className="hero-animate hero-animate-d3" style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap", alignItems: "center" }}>
+          <button className="btn-lift" onClick={onIRR} style={{ ...btn.gold, padding: "16px 36px", fontSize: "1rem", borderRadius: 10 }}>Free Operations Check →</button>
+          <button className="btn-lift" onClick={onTour} style={{ ...btn.outline, padding: "16px 30px", fontSize: "0.92rem", borderRadius: 10 }}>Book a Guided Tour →</button>
         </div>
-        <p style={{ marginTop: 18, fontSize: "0.76rem", color: "rgba(255,255,255,0.22)", fontFamily: FF_SANS }}>$99/mo founder pricing — locked for life through July 4, 2026</p>
+        <p className="hero-animate hero-animate-d3" style={{ marginTop: 24, fontSize: "0.76rem", color: "rgba(255,255,255,0.2)", fontFamily: FF_SANS }}>Serving 300+ commercial kitchens per year across California</p>
       </div>
     </section>
   );
@@ -361,20 +386,20 @@ function HeroSection({ onTour, onIRR }) {
 // ─────────────────────────────────────────────
 function IRRAboveFold({ onIRR }) {
   return (
-    <section style={{ background: C.navy, padding: "48px 24px", position: "relative", overflow: "hidden", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-      <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px)", backgroundSize: "48px 48px", pointerEvents: "none" }} />
+    <section style={{ background: C.navy, padding: "52px 24px", position: "relative", overflow: "hidden", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+      <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle at 70% 50%, rgba(160,140,90,0.05) 0%, transparent 50%)", pointerEvents: "none" }} />
       <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: `linear-gradient(90deg,transparent,${C.gold},transparent)` }} />
-      <div style={{ maxWidth: 660, margin: "0 auto", position: "relative", display: "flex", alignItems: "center", gap: 32, flexWrap: "wrap", justifyContent: "center" }}>
+      <div style={{ maxWidth: 700, margin: "0 auto", position: "relative", display: "flex", alignItems: "center", gap: 36, flexWrap: "wrap", justifyContent: "center" }}>
         <div style={{ flex: "1 1 300px", textAlign: "left" }}>
-          <div style={{ display: "inline-block", padding: "3px 12px", background: "rgba(160,140,90,0.15)", border: "1px solid rgba(160,140,90,0.3)", borderRadius: 100, fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: C.gold, marginBottom: 12, fontFamily: FF_SANS }}>Free · 2 Minutes</div>
-          <h2 style={{ fontSize: "clamp(1.15rem, 3vw, 1.45rem)", fontWeight: 700, color: C.white, margin: "0 0 8px", lineHeight: 1.2, letterSpacing: "-0.02em", fontFamily: FF_SANS }}>
+          <div style={{ display: "inline-block", padding: "3px 14px", background: "rgba(160,140,90,0.12)", border: "1px solid rgba(160,140,90,0.25)", borderRadius: 100, fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: C.gold, marginBottom: 14, fontFamily: FF_MONO }}>Free · 2 Minutes</div>
+          <h2 style={{ fontSize: "clamp(1.2rem, 3vw, 1.5rem)", fontWeight: 800, color: C.white, margin: "0 0 10px", lineHeight: 1.2, letterSpacing: "-0.02em", fontFamily: FF_HEAD }}>
             See how your operation is running{" "}<span style={{ color: C.gold }}>— right now.</span>
           </h2>
-          <p style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.45)", margin: 0, lineHeight: 1.7, fontFamily: FF_SANS }}>11 questions. Every risk in dollars. Takes 2 minutes — no account needed.</p>
+          <p style={{ fontSize: "0.84rem", color: "rgba(255,255,255,0.42)", margin: 0, lineHeight: 1.7, fontFamily: FF_SANS }}>11 questions. Every risk in dollars. Takes 2 minutes — no account needed.</p>
         </div>
         <div style={{ flexShrink: 0, textAlign: "center" }}>
-          <button onClick={onIRR} style={{ ...btn.gold, padding: "13px 28px", fontSize: "0.9rem", display: "block", marginBottom: 8 }}>Get My Free Operations Check →</button>
-          <p style={{ fontSize: "0.68rem", color: "rgba(255,255,255,0.22)", margin: 0, fontFamily: FF_SANS }}>Our team services 300+ commercial kitchens per year</p>
+          <button className="btn-lift" onClick={onIRR} style={{ ...btn.gold, padding: "14px 30px", fontSize: "0.92rem", display: "block", marginBottom: 10, borderRadius: 10 }}>Get My Free Operations Check →</button>
+          <p style={{ fontSize: "0.68rem", color: "rgba(255,255,255,0.2)", margin: 0, fontFamily: FF_SANS }}>Serving 300+ commercial kitchens per year</p>
         </div>
       </div>
     </section>
@@ -386,20 +411,20 @@ function IRRAboveFold({ onIRR }) {
 // ─────────────────────────────────────────────
 function TrustBar() {
   const items = [
-    { stat: "300+", label: "Commercial kitchens served per year" },
-    { stat: "62",   label: "California jurisdictions covered" },
+    { stat: "300+", label: "Commercial kitchens per year" },
+    { stat: "62",   label: "California jurisdictions" },
     { stat: null,   label: "Aramark · Cintas · Yosemite NPS" },
     { stat: null,   label: "IKECA Certified · Veteran-Owned" },
   ];
   return (
-    <section style={{ background: C.navy, borderBottom: "1px solid rgba(255,255,255,0.05)", padding: "20px 24px" }}>
-      <div style={{ maxWidth: 900, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center", gap: 28, flexWrap: "wrap" }}>
+    <section style={{ background: "#1a2744", borderBottom: "1px solid rgba(255,255,255,0.06)", padding: "24px 24px" }}>
+      <div style={{ maxWidth: 940, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center", gap: 32, flexWrap: "wrap" }}>
         {items.map((item, i) => (
-          <div key={i} style={{ display: "flex", alignItems: "center", gap: 28 }}>
-            {i > 0 && <div style={{ width: 1, height: 30, background: "rgba(255,255,255,0.08)" }} />}
+          <div key={i} style={{ display: "flex", alignItems: "center", gap: 32 }}>
+            {i > 0 && <div style={{ width: 1, height: 34, background: "rgba(255,255,255,0.08)" }} />}
             <div style={{ textAlign: "center" }}>
-              {item.stat && <div style={{ fontSize: "1.25rem", fontWeight: 900, color: C.gold, lineHeight: 1, fontFamily: FF_SANS }}>{item.stat}</div>}
-              <div style={{ fontSize: item.stat ? "0.66rem" : "0.78rem", color: "rgba(255,255,255,0.35)", marginTop: item.stat ? 2 : 0, fontFamily: FF_SANS }}>{item.label}</div>
+              {item.stat && <div style={{ fontSize: "1.5rem", fontWeight: 500, color: C.gold, lineHeight: 1, fontFamily: FF_MONO, letterSpacing: "-0.02em" }}>{item.stat}</div>}
+              <div style={{ fontSize: item.stat ? "0.66rem" : "0.78rem", color: "rgba(255,255,255,0.35)", marginTop: item.stat ? 4 : 0, fontFamily: FF_SANS, letterSpacing: "0.02em" }}>{item.label}</div>
             </div>
           </div>
         ))}
@@ -415,27 +440,27 @@ function HowItWorksSection({ onTour }) {
   const steps = [
     { num: "01", title: "Connect your county", body: "We load your jurisdiction's actual grading method — weights, thresholds, and passing criteria — so your data is scored the way your inspector scores it." },
     { num: "02", title: "Log your operations", body: "Temperatures, checklists, certifications, vendor documents, hood cleaning records. Everything in one place, updated in real time by your team." },
-    { num: "03", title: "Know how your operation stands", body: "See your operational picture before anyone else does. Every signal becomes a dollar figure — what's at risk, what's exposed, and what it's costing you right now." },
+    { num: "03", title: "Know where you stand", body: "See your operational picture before anyone else does. Every signal becomes a dollar figure — what's at risk, what's exposed, and what it's costing you right now." },
   ];
   return (
-    <section id="how-it-works" style={{ padding: "80px 24px", background: C.white }}>
-      <div style={{ maxWidth: 920, margin: "0 auto" }}>
-        <div style={{ textAlign: "center", marginBottom: 48 }}>
+    <section id="how-it-works" style={{ padding: "96px 24px", background: C.white }}>
+      <div className="reveal" style={{ maxWidth: 940, margin: "0 auto" }}>
+        <div style={{ textAlign: "center", marginBottom: 56 }}>
           <Eyebrow>How It Works</Eyebrow>
-          <h2 style={{ fontSize: "clamp(1.4rem, 4vw, 2rem)", fontWeight: 700, color: C.navy, margin: "0 0 10px", fontFamily: FF_SANS, letterSpacing: "-0.02em" }}>From your county to your dashboard in minutes.</h2>
-          <p style={{ fontSize: "0.9rem", color: C.g5, maxWidth: 480, margin: "0 auto", fontFamily: FF_SANS, lineHeight: 1.7 }}>No manual setup. No generic checklists. EvidLY uses your jurisdiction's real scoring logic from day one.</p>
+          <h2 style={{ fontSize: "clamp(1.5rem, 4vw, 2.2rem)", fontWeight: 800, color: C.navy, margin: "0 0 12px", fontFamily: FF_HEAD, letterSpacing: "-0.03em" }}>From your county to your dashboard in minutes.</h2>
+          <p style={{ fontSize: "0.92rem", color: C.g5, maxWidth: 480, margin: "0 auto", fontFamily: FF_SANS, lineHeight: 1.75 }}>No manual setup. No generic checklists. EvidLY uses your jurisdiction's real scoring logic from day one.</p>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 2 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 4 }}>
           {steps.map((s, i) => (
-            <div key={i} style={{ padding: "32px 28px", background: i % 2 === 0 ? C.cream : C.white, borderRadius: 14, border: `1px solid ${C.g2}` }}>
-              <div style={{ fontSize: "2.2rem", fontWeight: 900, color: C.g2, lineHeight: 1, marginBottom: 14, fontFamily: FF_SANS }}>{s.num}</div>
-              <h3 style={{ fontSize: "1rem", fontWeight: 700, color: C.navy, margin: "0 0 10px", fontFamily: FF_SANS }}>{s.title}</h3>
-              <p style={{ fontSize: "0.85rem", color: C.g5, margin: 0, lineHeight: 1.7, fontFamily: FF_SANS }}>{s.body}</p>
+            <div key={i} className={`card-lift reveal reveal-d${i+1}`} style={{ padding: "36px 30px", background: i % 2 === 0 ? C.cream : C.white, borderRadius: 16, border: `1px solid ${C.g2}` }}>
+              <div style={{ fontSize: "2.4rem", fontWeight: 500, color: C.g2, lineHeight: 1, marginBottom: 16, fontFamily: FF_MONO }}>{s.num}</div>
+              <h3 style={{ fontSize: "1.05rem", fontWeight: 800, color: C.navy, margin: "0 0 10px", fontFamily: FF_HEAD, letterSpacing: "-0.02em" }}>{s.title}</h3>
+              <p style={{ fontSize: "0.86rem", color: C.g5, margin: 0, lineHeight: 1.75, fontFamily: FF_SANS }}>{s.body}</p>
             </div>
           ))}
         </div>
-        <div style={{ textAlign: "center", marginTop: 36 }}>
-          <button onClick={onTour} style={{ ...btn.navy, padding: "13px 30px" }}>See It Live on Your County →</button>
+        <div style={{ textAlign: "center", marginTop: 44 }}>
+          <button className="btn-lift" onClick={onTour} style={{ ...btn.navy, padding: "14px 32px", borderRadius: 10 }}>See It Live on Your County →</button>
         </div>
       </div>
     </section>
@@ -451,22 +476,22 @@ function CoverageSection() {
     { label: "Facility Safety", icon: "🔥", color: C.gold, items: ["Hood cleaning schedules per NFPA 96-2024 Table 12.4 frequencies", "Fire suppression inspection records and due-date alerts", "Extinguisher documentation and service history", "Vendor compliance — certs, insurance, service records", "Equipment calibration logs and maintenance tracking"] },
   ];
   return (
-    <section id="coverage" style={{ padding: "80px 24px", background: C.cream }}>
-      <div style={{ maxWidth: 900, margin: "0 auto" }}>
-        <div style={{ textAlign: "center", marginBottom: 44 }}>
+    <section id="coverage" style={{ padding: "96px 24px", background: C.cream }}>
+      <div className="reveal" style={{ maxWidth: 920, margin: "0 auto" }}>
+        <div style={{ textAlign: "center", marginBottom: 52 }}>
           <Eyebrow>What's Covered</Eyebrow>
-          <h2 style={{ fontSize: "clamp(1.4rem, 4vw, 2rem)", fontWeight: 700, color: C.navy, margin: "0 0 10px", fontFamily: FF_SANS, letterSpacing: "-0.02em" }}>Food safety and facility safety.<br />One place.</h2>
-          <p style={{ fontSize: "0.9rem", color: C.g5, maxWidth: 460, margin: "0 auto", fontFamily: FF_SANS, lineHeight: 1.7 }}>Most platforms cover one or the other. EvidLY covers both — scored against your county, not a generic national checklist.</p>
+          <h2 style={{ fontSize: "clamp(1.5rem, 4vw, 2.2rem)", fontWeight: 800, color: C.navy, margin: "0 0 12px", fontFamily: FF_HEAD, letterSpacing: "-0.03em" }}>Food safety and facility safety.<br />One platform.</h2>
+          <p style={{ fontSize: "0.92rem", color: C.g5, maxWidth: 460, margin: "0 auto", fontFamily: FF_SANS, lineHeight: 1.75 }}>Most platforms cover one or the other. EvidLY covers both — scored against your county, not a generic national checklist.</p>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 20 }}>
-          {pillars.map((p) => (
-            <div key={p.label} style={{ background: C.white, borderRadius: 16, padding: "30px 26px", border: `1px solid ${C.g2}`, borderTop: `4px solid ${p.color}` }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
+          {pillars.map((p, i) => (
+            <div key={p.label} className={`card-lift reveal reveal-d${i+1}`} style={{ background: C.white, borderRadius: 18, padding: "34px 28px", border: `1px solid ${C.g2}`, borderTop: `4px solid ${p.color}` }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 22 }}>
                 <span style={{ fontSize: "1.4rem" }}>{p.icon}</span>
-                <h3 style={{ fontSize: "1.05rem", fontWeight: 700, color: p.color, margin: 0, fontFamily: FF_SANS }}>{p.label}</h3>
+                <h3 style={{ fontSize: "1.1rem", fontWeight: 800, color: p.color, margin: 0, fontFamily: FF_HEAD, letterSpacing: "-0.02em" }}>{p.label}</h3>
               </div>
               {p.items.map((item) => (
-                <div key={item} style={{ display: "flex", gap: 10, marginBottom: 10, fontSize: "0.84rem", color: C.g6, lineHeight: 1.55, fontFamily: FF_SANS }}>
+                <div key={item} style={{ display: "flex", gap: 10, marginBottom: 12, fontSize: "0.85rem", color: C.g6, lineHeight: 1.6, fontFamily: FF_SANS }}>
                   <span style={{ color: p.color, flexShrink: 0, fontWeight: 700 }}>✓</span>{item}
                 </div>
               ))}
@@ -517,7 +542,7 @@ function IntelligenceSection({ onTour }) {
 
   function PillarCard({ p }) {
     return (
-      <div style={{ background: p.bg, borderRadius: 14, border: `1px solid ${p.bd}`, borderLeft: `4px solid ${p.color}`, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+      <div className="card-lift" style={{ background: p.bg, borderRadius: 16, border: `1px solid ${p.bd}`, borderLeft: `4px solid ${p.color}`, overflow: "hidden", display: "flex", flexDirection: "column" }}>
         <div style={{ padding: "14px 18px", borderBottom: `1px solid ${p.bd}`, display: "flex", alignItems: "center", gap: 10 }}>
           <span style={{ fontSize: "1.1rem" }}>{p.icon}</span>
           <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
@@ -538,30 +563,30 @@ function IntelligenceSection({ onTour }) {
   }
 
   return (
-    <section style={{ padding: "80px 24px", background: C.white }}>
-      <div style={{ maxWidth: 980, margin: "0 auto" }}>
-        <div style={{ textAlign: "center", marginBottom: 44 }}>
-          <div style={{ display: "inline-block", padding: "4px 14px", background: "rgba(160,140,90,0.1)", border: "1px solid rgba(160,140,90,0.25)", borderRadius: 100, fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: C.goldD, marginBottom: 14, fontFamily: FF_SANS }}>Operations Intelligence Engine</div>
-          <h2 style={{ fontSize: "clamp(1.4rem, 4vw, 2rem)", fontWeight: 800, color: C.navy, margin: "0 0 12px", fontFamily: FF_SANS, letterSpacing: "-0.02em", lineHeight: 1.2 }}>
+    <section style={{ padding: "96px 24px", background: C.white }}>
+      <div className="reveal" style={{ maxWidth: 1000, margin: "0 auto" }}>
+        <div style={{ textAlign: "center", marginBottom: 52 }}>
+          <div style={{ display: "inline-block", padding: "5px 18px", background: "rgba(160,140,90,0.08)", border: "1px solid rgba(160,140,90,0.2)", borderRadius: 100, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: C.goldD, marginBottom: 16, fontFamily: FF_MONO }}>Operations Intelligence Engine</div>
+          <h2 style={{ fontSize: "clamp(1.5rem, 4vw, 2.2rem)", fontWeight: 800, color: C.navy, margin: "0 0 14px", fontFamily: FF_HEAD, letterSpacing: "-0.03em", lineHeight: 1.15 }}>
             Every signal, from where you are<br /><span style={{ color: C.gold }}>to where you need to be.</span>
           </h2>
-          <p style={{ fontSize: "0.9rem", color: C.g5, maxWidth: 500, margin: "0 auto", fontFamily: FF_SANS, lineHeight: 1.7 }}>
+          <p style={{ fontSize: "0.92rem", color: C.g5, maxWidth: 520, margin: "0 auto", fontFamily: FF_SANS, lineHeight: 1.75 }}>
             Most operators don't know where they stand until someone tells them. EvidLY gives you that picture first — every operational signal translated into what it means financially, before it becomes a problem.
           </p>
         </div>
-        <div className="intel-row1" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14, marginBottom: 14 }}>
+        <div className="intel-row1" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, marginBottom: 16 }}>
           {pillars.slice(0, 3).map((p) => <PillarCard key={p.label} p={p} />)}
         </div>
-        <div className="intel-row2" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 14, maxWidth: 660, margin: "0 auto" }}>
+        <div className="intel-row2" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 16, maxWidth: 670, margin: "0 auto" }}>
           {pillars.slice(3).map((p) => <PillarCard key={p.label} p={p} />)}
         </div>
-        <div style={{ marginTop: 28, background: C.cream, borderRadius: 12, border: `1px solid ${C.g2}`, padding: "16px 20px" }}>
+        <div style={{ marginTop: 32, background: C.cream, borderRadius: 12, border: `1px solid ${C.g2}`, padding: "16px 20px" }}>
           <p style={{ fontSize: "0.75rem", color: C.g5, margin: 0, textAlign: "center", lineHeight: 1.6, fontStyle: "italic", fontFamily: FF_SANS }}>
             Revenue and liability figures are general estimates based on publicly available industry data. PSE/insurance impacts vary by carrier, policy, and jurisdiction — consult your carrier and legal counsel regarding your specific coverage.
           </p>
         </div>
-        <div style={{ textAlign: "center", marginTop: 32 }}>
-          <button onClick={onTour} style={{ ...btn.gold, padding: "13px 30px" }}>See Your Operation's Full Picture →</button>
+        <div style={{ textAlign: "center", marginTop: 36 }}>
+          <button className="btn-lift" onClick={onTour} style={{ ...btn.gold, padding: "14px 32px", borderRadius: 10 }}>See Your Operation's Full Picture →</button>
         </div>
       </div>
     </section>
@@ -574,25 +599,25 @@ function IntelligenceSection({ onTour }) {
 function FoundersSection() {
   const stats = [{ n: "300+", l: "Commercial kitchens per year" }, { n: "20+", l: "Years in enterprise compliance" }, { n: "62", l: "CA jurisdictions mapped" }];
   return (
-    <section style={{ padding: "80px 24px", background: C.cream, borderTop: `1px solid ${C.g2}` }}>
-      <div style={{ maxWidth: 860, margin: "0 auto" }}>
-        <div style={{ textAlign: "center", marginBottom: 36 }}>
+    <section style={{ padding: "96px 24px", background: C.cream, borderTop: `1px solid ${C.g2}` }}>
+      <div className="reveal" style={{ maxWidth: 880, margin: "0 auto" }}>
+        <div style={{ textAlign: "center", marginBottom: 44 }}>
           <Eyebrow>Who Built This</Eyebrow>
-          <h2 style={{ fontSize: "clamp(1.3rem, 4vw, 1.9rem)", fontWeight: 700, color: C.navy, margin: "0 0 16px", fontFamily: FF_SANS, letterSpacing: "-0.02em" }}>Built from 300 kitchens a year. Not a whitepaper.</h2>
+          <h2 style={{ fontSize: "clamp(1.4rem, 4vw, 2rem)", fontWeight: 800, color: C.navy, margin: "0 0 16px", fontFamily: FF_HEAD, letterSpacing: "-0.03em" }}>Built from 300 kitchens a year. Not a whitepaper.</h2>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20, marginBottom: 28 }}>
-          <div style={{ background: C.white, borderRadius: 14, padding: "26px 22px", border: `1px solid ${C.g2}`, borderTop: `4px solid ${C.navy}` }}>
-            <p style={{ fontSize: "0.86rem", color: C.g6, lineHeight: 1.75, margin: 0, fontFamily: FF_SANS }}>We're in over <strong>300 commercial kitchens every year</strong> — including Aramark's seven locations at Yosemite National Park, Cintas, and the largest operators across California's Central Valley. EvidLY was built from what we see on the ground every day.</p>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24, marginBottom: 32 }}>
+          <div className="card-lift reveal reveal-d1" style={{ background: C.white, borderRadius: 18, padding: "30px 26px", border: `1px solid ${C.g2}`, borderTop: `4px solid ${C.navy}` }}>
+            <p style={{ fontSize: "0.88rem", color: C.g6, lineHeight: 1.8, margin: 0, fontFamily: FF_SANS }}>We're in over <strong>300 commercial kitchens every year</strong> — including Aramark's seven locations at Yosemite National Park, Cintas, and the largest operators across California's Central Valley. EvidLY was built from what we see on the ground every day.</p>
           </div>
-          <div style={{ background: C.white, borderRadius: 14, padding: "26px 22px", border: `1px solid ${C.g2}`, borderTop: `4px solid ${C.gold}` }}>
-            <p style={{ fontSize: "0.86rem", color: C.g6, lineHeight: 1.75, margin: 0, fontFamily: FF_SANS }}>The compliance frameworks behind EvidLY come from two decades of enterprise security and regulatory consulting — for Blue Cross, Kaiser, the NFL, the State of Tennessee, and organizations that cannot afford to get it wrong. That's the standard we hold ourselves to.</p>
+          <div className="card-lift reveal reveal-d2" style={{ background: C.white, borderRadius: 18, padding: "30px 26px", border: `1px solid ${C.g2}`, borderTop: `4px solid ${C.gold}` }}>
+            <p style={{ fontSize: "0.88rem", color: C.g6, lineHeight: 1.8, margin: 0, fontFamily: FF_SANS }}>The compliance frameworks behind EvidLY come from two decades of enterprise security and regulatory consulting — for Blue Cross, Kaiser, the NFL, the State of Tennessee, and organizations that cannot afford to get it wrong. That's the standard we hold ourselves to.</p>
           </div>
         </div>
-        <div style={{ display: "flex", gap: 0, justifyContent: "center", flexWrap: "wrap", borderRadius: 14, overflow: "hidden", border: `1px solid ${C.g2}` }}>
+        <div className="reveal reveal-d3" style={{ display: "flex", gap: 0, justifyContent: "center", flexWrap: "wrap", borderRadius: 16, overflow: "hidden", border: `1px solid ${C.g2}` }}>
           {stats.map((s, i) => (
-            <div key={i} style={{ flex: "1 1 160px", padding: "22px 20px", textAlign: "center", background: C.white, borderLeft: i > 0 ? `1px solid ${C.g2}` : "none" }}>
-              <div style={{ fontSize: "1.6rem", fontWeight: 900, color: C.navy, lineHeight: 1, fontFamily: FF_SANS }}>{s.n}</div>
-              <div style={{ fontSize: "0.72rem", color: C.g4, marginTop: 4, textTransform: "uppercase", letterSpacing: "0.06em", fontFamily: FF_SANS }}>{s.l}</div>
+            <div key={i} style={{ flex: "1 1 180px", padding: "26px 22px", textAlign: "center", background: C.white, borderLeft: i > 0 ? `1px solid ${C.g2}` : "none" }}>
+              <div style={{ fontSize: "1.8rem", fontWeight: 500, color: C.navy, lineHeight: 1, fontFamily: FF_MONO, letterSpacing: "-0.02em" }}>{s.n}</div>
+              <div style={{ fontSize: "0.72rem", color: C.g4, marginTop: 6, textTransform: "uppercase", letterSpacing: "0.08em", fontFamily: FF_SANS }}>{s.l}</div>
             </div>
           ))}
         </div>
@@ -622,69 +647,66 @@ function FeatureList({ items, check = C.gold }) {
 function PricingSection({ onTour, onIRR }) {
   const founderFeatures = [
     "1–10 locations, all on one dashboard",
-    "Each location scored against its own county — not a generic checklist",
+    "Each location scored against its own county",
     "Food safety and facility safety in one place",
     "Your whole team included, no per-seat cost",
-    "Know how your operation stands — every single day",
+    "Know how your operation stands — every day",
     "This price is yours forever — never increases",
-    "If it's not right in 45 days, you pay nothing",
+    "45-day satisfaction guarantee",
   ];
   const enterpriseFeatures = ["Every location visible in one place", "Each location scored against its own jurisdiction", "Custom branding and API access available", "No per-seat limits — scales with you", "Dedicated account support", "Pricing built around your operation"];
   return (
-    <section id="pricing" style={{ padding: "80px 24px", background: C.white }}>
-      <div style={{ maxWidth: 820, margin: "0 auto", textAlign: "center" }}>
+    <section id="pricing" style={{ padding: "96px 24px", background: C.white }}>
+      <div className="reveal" style={{ maxWidth: 840, margin: "0 auto", textAlign: "center" }}>
         <Eyebrow>Pricing</Eyebrow>
-        <h2 style={{ fontSize: "clamp(1.4rem, 4vw, 2rem)", fontWeight: 700, color: C.navy, margin: "0 0 8px", fontFamily: FF_SANS, letterSpacing: "-0.02em" }}>Simple. Fair. Locked.</h2>
-        <p style={{ fontSize: "0.9rem", color: C.g5, maxWidth: 460, margin: "0 auto 28px", fontFamily: FF_SANS, lineHeight: 1.7 }}>Founder pricing is available through July 4, 2026 — or the first 50 founders. Lock it in now and it never changes.</p>
-        <FounderUrgency spotsLeft={47} totalSpots={50} deadline="2026-07-04" showSpots={true} showDate={true} />
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24, marginTop: 28, textAlign: "center" }}>
+        <h2 style={{ fontSize: "clamp(1.5rem, 4vw, 2.2rem)", fontWeight: 800, color: C.navy, margin: "0 0 12px", fontFamily: FF_HEAD, letterSpacing: "-0.03em" }}>Simple. Fair. Locked.</h2>
+        <p style={{ fontSize: "0.92rem", color: C.g5, maxWidth: 460, margin: "0 auto 36px", fontFamily: FF_SANS, lineHeight: 1.75 }}>Transparent pricing that scales with your operation. Lock in founder pricing and it never changes.</p>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 28, textAlign: "center" }}>
 
           {/* FOUNDER — 1–10 locations */}
-          <div style={{ background: C.white, borderRadius: 16, padding: "36px 28px", border: `2px solid ${C.gold}`, position: "relative" }}>
-            <div style={{ position: "absolute", top: -13, left: "50%", transform: "translateX(-50%)", background: C.gold, color: C.white, fontWeight: 700, fontSize: "0.68rem", padding: "4px 16px", borderRadius: 100, textTransform: "uppercase", letterSpacing: "0.08em", whiteSpace: "nowrap", fontFamily: FF_SANS }}>Founder Pricing</div>
-            <div style={{ fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase", color: C.gold, marginBottom: 10, marginTop: 6, fontFamily: FF_SANS, letterSpacing: "0.06em" }}>1–10 Locations · Through July 4 or 50 Founders</div>
-            <div style={{ background: C.cream, borderRadius: 12, padding: "18px 16px", marginBottom: 16 }}>
-              <div style={{ display: "flex", alignItems: "baseline", justifyContent: "center", gap: 4, marginBottom: 4 }}>
-                <span style={{ fontSize: "2.8rem", fontWeight: 900, color: C.navy, fontFamily: FF_SANS }}>$99</span>
+          <div className="card-lift reveal reveal-d1" style={{ background: C.white, borderRadius: 20, padding: "40px 30px", border: `2px solid ${C.gold}`, position: "relative" }}>
+            <div style={{ position: "absolute", top: -13, left: "50%", transform: "translateX(-50%)", background: C.gold, color: C.white, fontWeight: 700, fontSize: "0.65rem", padding: "5px 18px", borderRadius: 100, textTransform: "uppercase", letterSpacing: "0.12em", whiteSpace: "nowrap", fontFamily: FF_MONO }}>Founder Pricing</div>
+            <div style={{ fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", color: C.gold, marginBottom: 12, marginTop: 8, fontFamily: FF_SANS, letterSpacing: "0.08em" }}>1–10 Locations</div>
+            <div style={{ background: C.cream, borderRadius: 14, padding: "22px 18px", marginBottom: 20 }}>
+              <div style={{ display: "flex", alignItems: "baseline", justifyContent: "center", gap: 4, marginBottom: 6 }}>
+                <span style={{ fontSize: "3rem", fontWeight: 500, color: C.navy, fontFamily: FF_MONO, letterSpacing: "-0.03em" }}>$99</span>
                 <span style={{ fontSize: "1rem", color: C.g4, fontFamily: FF_SANS }}>/mo</span>
               </div>
-              <p style={{ fontSize: "0.8rem", color: C.g5, margin: "0 0 2px", fontFamily: FF_SANS }}>for your first location</p>
-              <div style={{ width: "100%", height: 1, background: C.g2, margin: "10px 0" }} />
+              <p style={{ fontSize: "0.82rem", color: C.g5, margin: "0 0 2px", fontFamily: FF_SANS }}>for your first location</p>
+              <div style={{ width: "100%", height: 1, background: C.g2, margin: "12px 0" }} />
               <div style={{ display: "flex", alignItems: "baseline", justifyContent: "center", gap: 4, marginBottom: 2 }}>
-                <span style={{ fontSize: "1.8rem", fontWeight: 900, color: C.navy, fontFamily: FF_SANS }}>+$49</span>
-                <span style={{ fontSize: "0.9rem", color: C.g4, fontFamily: FF_SANS }}>/mo per additional location</span>
+                <span style={{ fontSize: "1.8rem", fontWeight: 500, color: C.navy, fontFamily: FF_MONO, letterSpacing: "-0.02em" }}>+$49</span>
+                <span style={{ fontSize: "0.88rem", color: C.g4, fontFamily: FF_SANS }}>/mo per additional</span>
               </div>
-              <p style={{ fontSize: "0.78rem", color: C.g5, margin: 0, fontFamily: FF_SANS }}>up to 10 locations total</p>
             </div>
-            <div style={{ display: "inline-block", background: C.greenBg, color: C.green, fontWeight: 700, fontSize: "0.74rem", padding: "5px 14px", borderRadius: 8, marginBottom: 20, fontFamily: FF_SANS }}>This price is yours forever — never increases</div>
+            <div style={{ display: "inline-block", background: C.greenBg, color: C.green, fontWeight: 700, fontSize: "0.74rem", padding: "6px 16px", borderRadius: 8, marginBottom: 22, fontFamily: FF_SANS }}>Locked for life — never increases</div>
             <FeatureList items={founderFeatures} check={C.gold} />
-            <button onClick={onTour} style={{ ...btn.navy, width: "100%", padding: "14px", fontSize: "0.92rem" }}>Reserve My Founder Spot →</button>
-            <p style={{ marginTop: 10, fontSize: "0.74rem", color: C.g4, fontFamily: FF_SANS }}>After July 4 or 50 founders — $199/mo + $99/mo per location</p>
+            <button className="btn-lift" onClick={onTour} style={{ ...btn.navy, width: "100%", padding: "15px", fontSize: "0.94rem", borderRadius: 10 }}>Get Started →</button>
           </div>
 
           {/* ENTERPRISE */}
-          <div style={{ background: C.cream, borderRadius: 16, padding: "36px 28px", border: `1px solid ${C.g2}`, display: "flex", flexDirection: "column" }}>
-            <div style={{ fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase", color: C.g5, marginBottom: 10, marginTop: 6, fontFamily: FF_SANS, letterSpacing: "0.06em" }}>Enterprise · 11+ Locations</div>
-            <div style={{ display: "flex", alignItems: "baseline", justifyContent: "center", gap: 4, marginBottom: 8 }}>
-              <span style={{ fontSize: "2.4rem", fontWeight: 900, color: C.navy, fontFamily: FF_SANS }}>Custom</span>
+          <div className="card-lift reveal reveal-d2" style={{ background: C.cream, borderRadius: 20, padding: "40px 30px", border: `1px solid ${C.g2}`, display: "flex", flexDirection: "column" }}>
+            <div style={{ fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", color: C.g5, marginBottom: 12, marginTop: 8, fontFamily: FF_SANS, letterSpacing: "0.08em" }}>Enterprise · 11+ Locations</div>
+            <div style={{ display: "flex", alignItems: "baseline", justifyContent: "center", gap: 4, marginBottom: 10 }}>
+              <span style={{ fontSize: "2.6rem", fontWeight: 800, color: C.navy, fontFamily: FF_HEAD, letterSpacing: "-0.03em" }}>Custom</span>
             </div>
-            <p style={{ fontSize: "0.84rem", color: C.g6, marginBottom: 20, fontFamily: FF_SANS, lineHeight: 1.7 }}>For operators and groups running 11 or more locations who need a single operational intelligence picture across their entire portfolio.</p>
+            <p style={{ fontSize: "0.86rem", color: C.g6, marginBottom: 22, fontFamily: FF_SANS, lineHeight: 1.75 }}>For operators and groups running 11 or more locations who need a single operational intelligence picture across their entire portfolio.</p>
             <FeatureList items={enterpriseFeatures} check={C.g5} />
             <div style={{ flex: 1 }} />
-            <button onClick={onTour} style={{ ...btn.ghost, width: "100%", padding: "14px", fontSize: "0.92rem" }}>Let's Talk →</button>
-            <p style={{ marginTop: 10, fontSize: "0.74rem", color: C.g4, fontFamily: FF_SANS }}>founders@getevidly.com · (855) EVIDLY1</p>
+            <button className="btn-lift" onClick={onTour} style={{ ...btn.ghost, width: "100%", padding: "15px", fontSize: "0.94rem", borderRadius: 10 }}>Let's Talk →</button>
+            <p style={{ marginTop: 12, fontSize: "0.74rem", color: C.g4, fontFamily: FF_SANS }}>founders@getevidly.com · (855) EVIDLY1</p>
           </div>
 
         </div>
 
         {/* IRR CTA */}
-        <div style={{ marginTop: 36, padding: "28px 32px", background: C.cream, borderRadius: 14, border: `1px solid ${C.g2}`, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 20 }}>
+        <div className="reveal" style={{ marginTop: 40, padding: "30px 34px", background: C.cream, borderRadius: 16, border: `1px solid ${C.g2}`, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 22 }}>
           <div style={{ textAlign: "left" }}>
-            <div style={{ fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", color: C.gold, marginBottom: 6, fontFamily: FF_SANS }}>Not ready to commit?</div>
-            <p style={{ fontSize: "0.9rem", fontWeight: 700, color: C.navy, margin: "0 0 4px", fontFamily: FF_SANS }}>Start with a free Operations Check.</p>
-            <p style={{ fontSize: "0.82rem", color: C.g5, margin: 0, fontFamily: FF_SANS }}>2 minutes. No account required. See exactly where your operation stands before you decide anything.</p>
+            <div style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: C.gold, marginBottom: 8, fontFamily: FF_MONO }}>Not ready to commit?</div>
+            <p style={{ fontSize: "0.92rem", fontWeight: 700, color: C.navy, margin: "0 0 4px", fontFamily: FF_HEAD, letterSpacing: "-0.02em" }}>Start with a free Operations Check.</p>
+            <p style={{ fontSize: "0.84rem", color: C.g5, margin: 0, fontFamily: FF_SANS }}>2 minutes. No account required. See exactly where your operation stands.</p>
           </div>
-          <button onClick={onIRR} style={{ ...btn.gold, padding: "12px 24px", fontSize: "0.88rem", flexShrink: 0 }}>Get My Free Operations Check →</button>
+          <button className="btn-lift" onClick={onIRR} style={{ ...btn.gold, padding: "13px 26px", fontSize: "0.9rem", flexShrink: 0, borderRadius: 10 }}>Get My Free Operations Check →</button>
         </div>
 
       </div>
@@ -694,17 +716,18 @@ function PricingSection({ onTour, onIRR }) {
 // ─────────────────────────────────────────────
 function IRRSection({ onIRR }) {
   return (
-    <section id="irr" style={{ padding: "72px 24px", background: `linear-gradient(155deg, #253356, ${C.navy})`, textAlign: "center", position: "relative", overflow: "hidden" }}>
-      <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px)", backgroundSize: "48px 48px", pointerEvents: "none" }} />
+    <section id="irr" style={{ padding: "88px 24px", background: `linear-gradient(155deg, #1a2744, ${C.navy})`, textAlign: "center", position: "relative", overflow: "hidden" }}>
+      <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle at 50% 50%, rgba(160,140,90,0.05) 0%, transparent 60%)", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px)", backgroundSize: "56px 56px", pointerEvents: "none" }} />
       <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg,transparent,${C.gold},transparent)` }} />
-      <div style={{ maxWidth: 580, margin: "0 auto", position: "relative" }}>
-        <div style={{ display: "inline-block", padding: "4px 14px", background: "rgba(160,140,90,0.15)", border: "1px solid rgba(160,140,90,0.3)", borderRadius: 100, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: C.gold, marginBottom: 18, fontFamily: FF_SANS }}>Free · 2 Minutes · No Account Required</div>
-        <h2 style={{ fontSize: "clamp(1.4rem, 4vw, 2rem)", fontWeight: 700, color: C.white, margin: "0 0 14px", lineHeight: 1.15, letterSpacing: "-0.02em", fontFamily: FF_SANS }}>
+      <div className="reveal" style={{ maxWidth: 600, margin: "0 auto", position: "relative" }}>
+        <div style={{ display: "inline-block", padding: "5px 18px", background: "rgba(160,140,90,0.12)", border: "1px solid rgba(160,140,90,0.25)", borderRadius: 100, fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: C.gold, marginBottom: 20, fontFamily: FF_MONO }}>Free · 2 Minutes · No Account Required</div>
+        <h2 style={{ fontSize: "clamp(1.5rem, 4vw, 2.2rem)", fontWeight: 800, color: C.white, margin: "0 0 16px", lineHeight: 1.12, letterSpacing: "-0.03em", fontFamily: FF_HEAD }}>
           Your operation, scored.<br /><span style={{ color: C.gold }}>Every risk, in dollars.</span>
         </h2>
-        <p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.5)", maxWidth: 420, margin: "0 auto 28px", lineHeight: 1.75, fontFamily: FF_SANS }}>11 questions across food safety and facility safety. See where your operation stands — and what it's costing you — in 2 minutes.</p>
-        <button onClick={onIRR} style={{ ...btn.gold, padding: "14px 34px", fontSize: "0.95rem" }}>Get My Free Operations Check →</button>
-        <p style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.2)", marginTop: 12, fontFamily: FF_SANS }}>Our team services 300+ commercial kitchens per year</p>
+        <p style={{ fontSize: "0.92rem", color: "rgba(255,255,255,0.48)", maxWidth: 440, margin: "0 auto 32px", lineHeight: 1.8, fontFamily: FF_SANS }}>11 questions across food safety and facility safety. See where your operation stands — and what it's costing you — in 2 minutes.</p>
+        <button className="btn-lift" onClick={onIRR} style={{ ...btn.gold, padding: "15px 36px", fontSize: "0.97rem", borderRadius: 10 }}>Get My Free Operations Check →</button>
+        <p style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.18)", marginTop: 16, fontFamily: FF_SANS }}>Serving 300+ commercial kitchens per year</p>
       </div>
     </section>
   );
@@ -715,14 +738,15 @@ function IRRSection({ onIRR }) {
 // ─────────────────────────────────────────────
 function FinalCTA({ onTour, onIRR }) {
   return (
-    <section style={{ padding: "72px 24px", background: `linear-gradient(155deg, #253356, ${C.navy})`, textAlign: "center", position: "relative" }}>
+    <section style={{ padding: "88px 24px", background: `linear-gradient(155deg, #1a2744, ${C.navy})`, textAlign: "center", position: "relative", overflow: "hidden" }}>
+      <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle at 30% 70%, rgba(160,140,90,0.04) 0%, transparent 50%)", pointerEvents: "none" }} />
       <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: `linear-gradient(90deg,transparent,${C.gold},transparent)` }} />
-      <div style={{ maxWidth: 560, margin: "0 auto" }}>
-        <h2 style={{ fontSize: "clamp(1.4rem, 4vw, 2rem)", fontWeight: 700, color: C.white, margin: "0 0 12px", fontFamily: FF_SANS, letterSpacing: "-0.02em" }}>Ready to see it for your operation?</h2>
-        <p style={{ fontSize: "0.92rem", color: "rgba(255,255,255,0.4)", marginBottom: 28, lineHeight: 1.7, fontFamily: FF_SANS }}>30 minutes. Your county, your numbers, your dashboard — live.</p>
-        <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", alignItems: "center" }}>
-          <button onClick={onTour} style={{ ...btn.gold, padding: "15px 34px", fontSize: "0.97rem" }}>Book a Guided Tour →</button>
-          <button onClick={onIRR} style={{ ...btn.outline, padding: "15px 24px", fontSize: "0.9rem" }}>Free Operations Check →</button>
+      <div className="reveal" style={{ maxWidth: 580, margin: "0 auto", position: "relative" }}>
+        <h2 style={{ fontSize: "clamp(1.5rem, 4vw, 2.2rem)", fontWeight: 800, color: C.white, margin: "0 0 14px", fontFamily: FF_HEAD, letterSpacing: "-0.03em" }}>Ready to see it for your operation?</h2>
+        <p style={{ fontSize: "0.94rem", color: "rgba(255,255,255,0.38)", marginBottom: 36, lineHeight: 1.75, fontFamily: FF_SANS }}>30 minutes. Your county, your numbers, your dashboard — live.</p>
+        <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap", alignItems: "center" }}>
+          <button className="btn-lift" onClick={onTour} style={{ ...btn.gold, padding: "16px 36px", fontSize: "1rem", borderRadius: 10 }}>Book a Guided Tour →</button>
+          <button className="btn-lift" onClick={onIRR} style={{ ...btn.outline, padding: "16px 28px", fontSize: "0.92rem", borderRadius: 10 }}>Free Operations Check →</button>
         </div>
       </div>
     </section>
@@ -733,18 +757,18 @@ function FinalCTA({ onTour, onIRR }) {
 // FOOTER
 // ─────────────────────────────────────────────
 function Footer() {
-  const col = { fontSize: "0.78rem", color: "rgba(255,255,255,0.35)", textDecoration: "none", display: "block", marginBottom: 8, fontFamily: FF_SANS };
-  const head = { fontSize: "0.65rem", fontWeight: 800, color: "rgba(255,255,255,0.3)", marginBottom: 12, textTransform: "uppercase", letterSpacing: "0.12em", fontFamily: FF_SANS };
+  const col = { fontSize: "0.78rem", color: "rgba(255,255,255,0.35)", textDecoration: "none", display: "block", marginBottom: 10, fontFamily: FF_SANS, transition: "color 0.2s" };
+  const head = { fontSize: "0.62rem", fontWeight: 700, color: "rgba(255,255,255,0.28)", marginBottom: 14, textTransform: "uppercase", letterSpacing: "0.16em", fontFamily: FF_MONO };
   return (
-    <footer style={{ background: "#283f6a", padding: "48px 24px 20px" }}>
-      <div style={{ maxWidth: 1040, margin: "0 auto" }}>
-        <div className="footer-grid" style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 28, marginBottom: 32 }}>
+    <footer style={{ background: "#1a2744", padding: "56px 24px 24px" }}>
+      <div style={{ maxWidth: 1060, margin: "0 auto" }}>
+        <div className="footer-grid" style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 32, marginBottom: 40 }}>
           <div>
-            <Logo size="1rem" light tagline />
-            <p style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.28)", marginTop: 12, lineHeight: 1.7, fontFamily: FF_SANS, maxWidth: 260 }}>The operations intelligence platform for California commercial kitchens. Launching May 5, 2026.</p>
-            <div style={{ marginTop: 14 }}>
-              <a href="mailto:founders@getevidly.com" style={{ ...col, color: "rgba(255,255,255,0.4)" }}>founders@getevidly.com</a>
-              <a href="tel:8553843591" style={{ ...col, color: "rgba(255,255,255,0.4)" }}>(855) EVIDLY1</a>
+            <Logo size="1.1rem" light tagline />
+            <p style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.25)", marginTop: 14, lineHeight: 1.75, fontFamily: FF_SANS, maxWidth: 260 }}>Operations intelligence for California commercial kitchens. Food safety and facility safety in one platform.</p>
+            <div style={{ marginTop: 16 }}>
+              <a href="mailto:founders@getevidly.com" style={{ ...col, color: "rgba(255,255,255,0.38)" }}>founders@getevidly.com</a>
+              <a href="tel:8553843591" style={{ ...col, color: "rgba(255,255,255,0.38)" }}>(855) EVIDLY1</a>
             </div>
           </div>
           <div>
@@ -752,9 +776,7 @@ function Footer() {
             <button onClick={() => scrollTo("how-it-works")} style={{ ...col, background: "none", border: "none", cursor: "pointer", padding: 0 }}>How It Works</button>
             <button onClick={() => scrollTo("coverage")} style={{ ...col, background: "none", border: "none", cursor: "pointer", padding: 0 }}>What's Covered</button>
             <button onClick={() => scrollTo("pricing")} style={{ ...col, background: "none", border: "none", cursor: "pointer", padding: 0 }}>Pricing</button>
-            <a href="/merced-county" style={col}>Your County</a>
-            <a href="/inspection-readiness/merced-county" style={col}>Inspection Readiness</a>
-            <a href="/scoretable/merced-county" style={{ ...col, fontSize: "0.72rem", color: "rgba(255,255,255,0.2)" }}>ScoreTable ↗</a>
+            <a href="/operations-check" style={col}>Operations Check</a>
           </div>
           <div>
             <div style={head}>Company</div>
@@ -770,11 +792,11 @@ function Footer() {
             <a href="/security" style={col}>Security</a>
           </div>
         </div>
-        <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 14, display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 8, alignItems: "center" }}>
-          <span style={{ fontSize: "0.68rem", color: "rgba(255,255,255,0.15)", fontFamily: FF_SANS }}>© 2026 EvidLY LLC. All rights reserved. · IKECA Member #76716495 · Veteran-Owned</span>
-          <div style={{ display: "flex", gap: 16 }}>
-            {[["Privacy Policy", "/privacy"], ["Terms of Service", "/terms"], ["Cookie Policy", "/cookies"]].map(([l, href]) => (
-              <a key={l} href={href} style={{ fontSize: "0.66rem", color: "rgba(255,255,255,0.15)", textDecoration: "none", fontFamily: FF_SANS }}>{l}</a>
+        <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 18, display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 10, alignItems: "center" }}>
+          <span style={{ fontSize: "0.68rem", color: "rgba(255,255,255,0.14)", fontFamily: FF_SANS }}>© 2026 EvidLY LLC. All rights reserved. · IKECA Member · Veteran-Owned</span>
+          <div style={{ display: "flex", gap: 18 }}>
+            {[["Privacy", "/privacy"], ["Terms", "/terms"], ["Cookies", "/cookies"]].map(([l, href]) => (
+              <a key={l} href={href} style={{ fontSize: "0.66rem", color: "rgba(255,255,255,0.14)", textDecoration: "none", fontFamily: FF_SANS }}>{l}</a>
             ))}
           </div>
         </div>
@@ -800,6 +822,7 @@ function CookieBanner({ onAccept, onClose }) {
 // ROOT — render order locked
 // ─────────────────────────────────────────────
 export default function LandingPage() {
+  useScrollReveal();
   const [tourOpen, setTourOpen] = useState(false);
   const [cookie,   setCookie]   = useState(() => !localStorage.getItem("evidly-cookie-consent"));
   const openTour  = useCallback(() => setTourOpen(true),  []);
@@ -814,6 +837,82 @@ export default function LandingPage() {
         *, *::before, *::after { box-sizing: border-box; }
         :focus-visible { outline: 2px solid #A08C5A; outline-offset: 2px; }
         input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid #A08C5A; outline-offset: 0; }
+
+        /* Scroll reveal */
+        .reveal {
+          opacity: 0; transform: translateY(32px);
+          transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1);
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .reveal-d1 { transition-delay: 0.1s; }
+        .reveal-d2 { transition-delay: 0.2s; }
+        .reveal-d3 { transition-delay: 0.3s; }
+
+        /* Hero entrance */
+        @keyframes heroFadeIn {
+          from { opacity: 0; transform: translateY(24px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .hero-animate { animation: heroFadeIn 0.9s cubic-bezier(0.16,1,0.3,1) forwards; }
+        .hero-animate-d1 { animation-delay: 0.15s; opacity: 0; }
+        .hero-animate-d2 { animation-delay: 0.3s; opacity: 0; }
+        .hero-animate-d3 { animation-delay: 0.45s; opacity: 0; }
+
+        /* Animated hero gradient */
+        @keyframes gradientShift {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        .hero-gradient {
+          background: linear-gradient(135deg, #1a2744, #1E2D4D, #253356, #1E2D4D, #192540);
+          background-size: 300% 300%;
+          animation: gradientShift 12s ease infinite;
+        }
+
+        /* Button hover effects */
+        .btn-lift {
+          transition: transform 0.22s cubic-bezier(0.16,1,0.3,1), box-shadow 0.22s ease, filter 0.22s ease;
+        }
+        .btn-lift:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+          filter: brightness(1.06);
+        }
+        .btn-lift:active { transform: translateY(0); box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+
+        /* Card hover effects */
+        .card-lift {
+          transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s ease;
+        }
+        .card-lift:hover {
+          transform: translateY(-6px);
+          box-shadow: 0 16px 48px rgba(0,0,0,0.1);
+        }
+
+        /* Nav link hover */
+        .nav-link { transition: color 0.2s ease; }
+        .nav-link:hover { color: #1E2D4D !important; }
+
+        /* Gold underline animation */
+        .gold-line {
+          position: relative;
+          display: inline-block;
+        }
+        .gold-line::after {
+          content: '';
+          position: absolute; bottom: -4px; left: 0; width: 0; height: 2px;
+          background: #A08C5A;
+          transition: width 0.4s cubic-bezier(0.16,1,0.3,1);
+        }
+        .gold-line:hover::after { width: 100%; }
+
+        /* Stat counter animation */
+        @keyframes countUp {
+          from { opacity: 0; transform: translateY(12px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
         @media (max-width: 860px) {
           .intel-row1 { grid-template-columns: 1fr !important; }
           .intel-row2 { grid-template-columns: 1fr !important; max-width: 100% !important; }

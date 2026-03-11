@@ -12,7 +12,9 @@ const C = {
   purple: "#6B21A8", purpleBg: "#faf5ff", purpleBd: "#d8b4fe",
   darkred: "#991B1B", darkgreen: "#166534",
 };
-const FF = "system-ui,-apple-system,sans-serif";
+const FF = "system-ui,-apple-system,'Segoe UI',Roboto,sans-serif";
+const FF_HEAD = "'Syne',system-ui,sans-serif";
+const FF_MONO = "'DM Mono','SF Mono','Fira Code',monospace";
 const CALENDLY = "https://calendly.com/founders-getevidly/30min";
 const FORMSPREE = "https://formspree.io/f/meeredlg";
 const inp = (extra = {}) => ({ width: "100%", padding: "10px 12px", border: `1px solid ${C.g3}`, borderRadius: 8, fontSize: "0.875rem", boxSizing: "border-box", outline: "none", background: C.white, color: C.g8, fontFamily: FF, ...extra });
@@ -178,7 +180,7 @@ const TOTAL = ALL_Q.length;
 // ── UTILS ────────────────────────────────────────────────
 function Logo({ size = "1.1rem", light = false }) {
   return (
-    <span style={{ fontWeight: 800, fontSize: size, letterSpacing: "-0.03em", fontFamily: FF, lineHeight: 1 }}>
+    <span style={{ fontWeight: 800, fontSize: size, letterSpacing: "-0.03em", fontFamily: FF_HEAD, lineHeight: 1 }}>
       <span style={{ color: C.gold }}>E</span>
       <span style={{ color: light ? C.white : C.navy }}>vid</span>
       <span style={{ color: C.gold }}>LY</span>
@@ -249,8 +251,8 @@ function IntakeForm({ onSubmit }) {
         <div style={{ position: "relative" }}>
           <Logo size="1rem" light />
           <div style={{ marginTop: 14 }}>
-            <div style={{ fontSize: "0.6rem", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", color: C.gold, marginBottom: 4, fontFamily: FF }}>Free Operations Check</div>
-            <div style={{ fontWeight: 900, fontSize: "1.1rem", color: C.white, fontFamily: FF, letterSpacing: "-0.02em", lineHeight: 1.3 }}>Know where your operation stands — before it costs you.</div>
+            <div style={{ fontSize: "0.58rem", fontWeight: 500, letterSpacing: "0.2em", textTransform: "uppercase", color: C.gold, marginBottom: 6, fontFamily: FF_MONO }}>Free Operations Check</div>
+            <div style={{ fontWeight: 800, fontSize: "1.15rem", color: C.white, fontFamily: FF_HEAD, letterSpacing: "-0.03em", lineHeight: 1.25 }}>Know where your operation stands — before it costs you.</div>
             <div style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.45)", marginTop: 6, fontFamily: FF, lineHeight: 1.5 }}>11 questions across Food Safety and Fire &amp; Facility Safety. Your full risk report generated instantly.</div>
           </div>
         </div>
@@ -281,7 +283,7 @@ function IntakeForm({ onSubmit }) {
           )}
         </div>
 
-        <button onClick={handleSubmit} style={{ width: "100%", padding: "14px", background: C.gold, color: C.white, border: "none", borderRadius: 9, fontWeight: 800, fontSize: "0.96rem", cursor: "pointer", fontFamily: FF, marginTop: 4 }}>
+        <button className="btn-lift" onClick={handleSubmit} style={{ width: "100%", padding: "15px", background: C.gold, color: C.white, border: "none", borderRadius: 10, fontWeight: 800, fontSize: "0.96rem", cursor: "pointer", fontFamily: FF, marginTop: 4 }}>
           Start My Operations Check →
         </button>
         <p style={{ textAlign: "center", fontSize: "0.7rem", color: C.g4, margin: "10px 0 0", fontFamily: FF, lineHeight: 1.5 }}>
@@ -358,17 +360,17 @@ function Assessment({ form, onComplete, onRestartQuestions }) {
 
       {/* Question card */}
       <div style={{ padding: "16px 20px 24px" }}>
-        <div style={{ borderRadius: 13, border: `2px solid ${q.color}`, borderLeft: `5px solid ${q.color}`, background: q.bg, padding: "20px 18px" }}>
+        <div key={currentQ} className="slide-in" style={{ borderRadius: 14, border: `2px solid ${q.color}`, borderLeft: `5px solid ${q.color}`, background: q.bg, padding: "22px 20px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
             <span style={{ fontSize: "1.4rem" }}>{q.icon}</span>
-            <div style={{ fontWeight: 800, fontSize: "1rem", color: q.tx, fontFamily: FF, lineHeight: 1.25 }}>{q.cardLabel}</div>
+            <div style={{ fontWeight: 800, fontSize: "1.05rem", color: q.tx, fontFamily: FF_HEAD, lineHeight: 1.25, letterSpacing: "-0.02em" }}>{q.cardLabel}</div>
           </div>
           <p style={{ fontSize: "0.93rem", fontWeight: 700, color: q.tx, margin: "0 0 8px", lineHeight: 1.6, fontFamily: FF }}>{q.question}</p>
           <p style={{ fontSize: "0.73rem", color: q.tx, opacity: 0.55, margin: "0 0 20px", lineHeight: 1.55, fontFamily: FF, fontStyle: "italic" }}>{q.hint}</p>
-          <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
-            <button onClick={() => handleAnswer("yes")}     style={{ padding: "13px 16px", borderRadius: 9, fontSize: "0.9rem", fontWeight: 700, textAlign: "left", background: C.greenBg, color: "#14532d", border: `1.5px solid ${C.greenBd}`, fontFamily: FF, cursor: "pointer" }}>{"\u2713"}&nbsp;&nbsp;Yes — documented and current</button>
-            <button onClick={() => handleAnswer("partial")} style={{ padding: "13px 16px", borderRadius: 9, fontSize: "0.9rem", fontWeight: 700, textAlign: "left", background: C.amberBg, color: "#78350f", border: `1.5px solid ${C.amberBd}`, fontFamily: FF, cursor: "pointer" }}>~&nbsp;&nbsp;Partially — some gaps I'm aware of</button>
-            <button onClick={() => handleAnswer("no")}      style={{ padding: "13px 16px", borderRadius: 9, fontSize: "0.9rem", fontWeight: 700, textAlign: "left", background: C.redBg,   color: "#7f1d1d", border: `1.5px solid ${C.redBd}`,   fontFamily: FF, cursor: "pointer" }}>{"\u2717"}&nbsp;&nbsp;No — not current or not sure</button>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <button className="answer-btn" onClick={() => handleAnswer("yes")}     style={{ padding: "14px 18px", borderRadius: 10, fontSize: "0.9rem", fontWeight: 700, textAlign: "left", background: C.greenBg, color: "#14532d", border: `1.5px solid ${C.greenBd}`, fontFamily: FF, cursor: "pointer" }}>{"\u2713"}&nbsp;&nbsp;Yes — documented and current</button>
+            <button className="answer-btn" onClick={() => handleAnswer("partial")} style={{ padding: "14px 18px", borderRadius: 10, fontSize: "0.9rem", fontWeight: 700, textAlign: "left", background: C.amberBg, color: "#78350f", border: `1.5px solid ${C.amberBd}`, fontFamily: FF, cursor: "pointer" }}>~&nbsp;&nbsp;Partially — some gaps I'm aware of</button>
+            <button className="answer-btn" onClick={() => handleAnswer("no")}      style={{ padding: "14px 18px", borderRadius: 10, fontSize: "0.9rem", fontWeight: 700, textAlign: "left", background: C.redBg,   color: "#7f1d1d", border: `1.5px solid ${C.redBd}`,   fontFamily: FF, cursor: "pointer" }}>{"\u2717"}&nbsp;&nbsp;No — not current or not sure</button>
           </div>
         </div>
 
@@ -431,7 +433,7 @@ function Report({ form, answers, onBookTour }) {
                 <div style={{ fontSize: "0.67rem", color: "rgba(255,255,255,0.28)", fontFamily: FF }}>{form.county} County, CA</div>
               </div>
             </div>
-            <div style={{ fontWeight: 900, fontSize: "1.15rem", color: C.white, fontFamily: FF, marginBottom: 2, letterSpacing: "-0.02em" }}>{form.businessName || form.firstName + "'s Operation"}</div>
+            <div style={{ fontWeight: 800, fontSize: "1.2rem", color: C.white, fontFamily: FF_HEAD, marginBottom: 2, letterSpacing: "-0.03em" }}>{form.businessName || form.firstName + "'s Operation"}</div>
             <div style={{ fontSize: "0.74rem", color: "rgba(255,255,255,0.38)", fontFamily: FF }}>{[form.opType, form.locations !== "1" && form.locations ? form.locations + " Locations" : "1 Location"].filter(Boolean).join(" · ")}</div>
           </div>
         </div>
@@ -451,7 +453,7 @@ function Report({ form, answers, onBookTour }) {
         <div style={{ background: P.bg, border: `1px solid ${P.bd}`, borderLeft: `4px solid ${P.dot}`, borderRadius: 10, padding: "13px 16px", marginBottom: 14, display: "flex", alignItems: "center", gap: 13 }}>
           <div style={{ width: 10, height: 10, borderRadius: "50%", background: P.dot, flexShrink: 0, boxShadow: `0 0 0 3px ${P.bd}` }} />
           <div style={{ flex: 1 }}>
-            <div style={{ fontWeight: 900, fontSize: "0.94rem", color: P.color, fontFamily: FF }}>{P.label}</div>
+            <div style={{ fontWeight: 800, fontSize: "0.96rem", color: P.color, fontFamily: FF_HEAD, letterSpacing: "-0.02em" }}>{P.label}</div>
             <div style={{ fontSize: "0.73rem", color: P.color, opacity: 0.65, fontFamily: FF, marginTop: 2 }}>
               {yesCount} on track · {partialCount} partial · {noCount} {noCount === 1 ? "area needs" : "areas need"} attention — across {TOTAL} questions
             </div>
@@ -466,7 +468,7 @@ function Report({ form, answers, onBookTour }) {
         {/* RISK SUMMARY */}
         {gapCount > 0 && (
           <div style={{ background: C.navy, borderRadius: 12, padding: "16px 18px", marginBottom: 14 }}>
-            <div style={{ fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", color: C.gold, marginBottom: 10, fontFamily: FF }}>What These Gaps Mean for Your Business</div>
+            <div style={{ fontSize: "0.58rem", fontWeight: 500, letterSpacing: "0.2em", textTransform: "uppercase", color: C.gold, marginBottom: 10, fontFamily: FF_MONO }}>What These Gaps Mean for Your Business</div>
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
               {answers.map((a, i) => {
                 if (a === "yes") return null;
@@ -475,7 +477,7 @@ function Report({ form, answers, onBookTour }) {
                   <div key={i} style={{ background: "rgba(255,255,255,0.07)", borderRadius: 8, padding: "10px 12px", border: "1px solid rgba(255,255,255,0.1)", flex: "1 1 110px" }}>
                     <div style={{ fontSize: "0.95rem", marginBottom: 4 }}>{q.icon}</div>
                     <div style={{ fontSize: "0.66rem", fontWeight: 600, color: "rgba(255,255,255,0.4)", fontFamily: FF, marginBottom: 3, lineHeight: 1.3 }}>{q.cardLabel}</div>
-                    <div style={{ fontWeight: 900, fontSize: "1rem", color: C.gold, fontFamily: FF, lineHeight: 1 }}>{q.riskIfNo}</div>
+                    <div style={{ fontWeight: 500, fontSize: "1rem", color: C.gold, fontFamily: FF_MONO, lineHeight: 1, letterSpacing: "-0.02em" }}>{q.riskIfNo}</div>
                     <div style={{ fontSize: "0.62rem", color: "rgba(255,255,255,0.28)", fontFamily: FF, marginTop: 3, lineHeight: 1.4 }}>{q.riskLabel}</div>
                   </div>
                 );
@@ -539,7 +541,7 @@ function Report({ form, answers, onBookTour }) {
 
         {/* CTAs */}
         <div className="report-ctas" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-          <button onClick={onBookTour} style={{ background: C.navy, borderRadius: 12, padding: "18px 15px", textAlign: "center", position: "relative", overflow: "hidden", border: "none", cursor: "pointer", width: "100%" }}>
+          <button className="btn-lift" onClick={onBookTour} style={{ background: C.navy, borderRadius: 14, padding: "18px 15px", textAlign: "center", position: "relative", overflow: "hidden", border: "none", cursor: "pointer", width: "100%" }}>
             <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg,transparent,${C.gold},transparent)` }} />
             <div style={{ fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", color: C.gold, marginBottom: 5, fontFamily: FF }}>Book a Guided Tour</div>
             <p style={{ fontSize: "0.74rem", color: "rgba(255,255,255,0.45)", margin: "0 0 13px", lineHeight: 1.6, fontFamily: FF }}>30 minutes. Your county, your data, your dashboard — live.</p>
@@ -586,6 +588,27 @@ export default function OperationsCheck() {
         select option { color: #1c1917; }
         :focus-visible { outline: 2px solid #A08C5A; outline-offset: 2px; }
         input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid #A08C5A; outline-offset: 0; }
+        .answer-btn {
+          transition: transform 0.2s cubic-bezier(0.16,1,0.3,1), box-shadow 0.2s ease, filter 0.15s ease;
+        }
+        .answer-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+          filter: brightness(0.97);
+        }
+        .answer-btn:active { transform: translateY(0); }
+        .btn-lift {
+          transition: transform 0.22s cubic-bezier(0.16,1,0.3,1), box-shadow 0.22s ease;
+        }
+        .btn-lift:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+        @keyframes slideIn {
+          from { opacity: 0; transform: translateX(24px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        .slide-in { animation: slideIn 0.4s cubic-bezier(0.16,1,0.3,1) forwards; }
         @media (max-width: 480px) { .report-ctas { grid-template-columns: 1fr !important; } }
       `}</style>
 
@@ -596,7 +619,7 @@ export default function OperationsCheck() {
             <div style={{ background: `linear-gradient(135deg, #253356, ${C.navy})`, padding: "22px 24px 18px", position: "relative" }}>
               <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg,transparent,${C.gold},transparent)` }} />
               <Logo size="0.95rem" light />
-              <div style={{ fontWeight: 900, fontSize: "1.05rem", color: C.white, fontFamily: FF, marginTop: 10, letterSpacing: "-0.02em" }}>Book Your 30-Minute Guided Tour</div>
+              <div style={{ fontWeight: 800, fontSize: "1.1rem", color: C.white, fontFamily: FF_HEAD, marginTop: 10, letterSpacing: "-0.03em" }}>Book Your 30-Minute Guided Tour</div>
               <div style={{ fontSize: "0.74rem", color: "rgba(255,255,255,0.4)", marginTop: 4, fontFamily: FF }}>Your county, your data, your dashboard — live.</div>
             </div>
             <div style={{ padding: "20px 24px 24px" }}>
