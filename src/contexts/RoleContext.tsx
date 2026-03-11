@@ -98,7 +98,20 @@ export function RoleProvider({ children }: { children: ReactNode }) {
   const { profile, session } = useAuth();
   const { isDemoMode } = useDemo();
 
+  // ─── ROLE PREVIEW OVERRIDE (admin QA tool) ───────────────────────────────
+  // If __rolePreview param exists in URL, lock to that role for the session.
+  // This lets the admin Role Preview iframe render the app as any role.
+  const _previewRole = (() => {
+    try {
+      const p = new URLSearchParams(window.location.search).get('__rolePreview');
+      if (p && VALID_ROLES.includes(p as UserRole)) return p as UserRole;
+    } catch {}
+    return null;
+  })();
+  // ─────────────────────────────────────────────────────────────────────────
+
   const [userRole, setUserRoleRaw] = useState<UserRole>(() => {
+    if (_previewRole) return _previewRole;
     try {
       const saved = localStorage.getItem('evidly-demo-role');
       if (saved && VALID_ROLES.includes(saved as UserRole)) return saved as UserRole;
@@ -106,20 +119,23 @@ export function RoleProvider({ children }: { children: ReactNode }) {
     return 'owner_operator';
   });
   const setUserRole = useCallback((role: UserRole) => {
+    if (_previewRole) return; // Don't allow role changes in preview mode
     setUserRoleRaw(role);
     try { localStorage.setItem('evidly-demo-role', role); } catch {}
-  }, []);
+  }, [_previewRole]);
   const [tempCoverageAssignments, setTempCoverageAssignments] = useState<TempCoverageAssignment[]>(isDemoMode ? INITIAL_TEMP_COVERAGE : []);
 
   // ── Sync role from database when a real session exists ──
   // When an authenticated user has a profile, use the database role.
   // Demo mode uses the localStorage-based demo role switcher instead.
+  // Skip sync when in role preview mode — admin override takes precedence.
   useEffect(() => {
+    if (_previewRole) return;
     if (!isDemoMode && session && profile?.role) {
       const dbRole = dbRoleToUserRole(profile.role);
       setUserRoleRaw(dbRole);
     }
-  }, [isDemoMode, session, profile?.role]);
+  }, [isDemoMode, session, profile?.role, _previewRole]);
 
   const getAccessibleLocations = useCallback((): LocationAssignment[] => {
     if (!isDemoMode) return []; // Production: locations come from DB via user_location_access
