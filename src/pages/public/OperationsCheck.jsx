@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const C = {
   navy: "#1E2D4D", gold: "#A08C5A",
@@ -14,6 +14,7 @@ const C = {
 };
 const FF = "system-ui,-apple-system,sans-serif";
 const CALENDLY = "https://calendly.com/founders-getevidly/30min";
+const FORMSPREE = "https://formspree.io/f/meeredlg";
 const inp = (extra = {}) => ({ width: "100%", padding: "10px 12px", border: `1px solid ${C.g3}`, borderRadius: 8, fontSize: "0.875rem", boxSizing: "border-box", outline: "none", background: C.white, color: C.g8, fontFamily: FF, ...extra });
 
 const CA_COUNTIES = [
@@ -206,18 +207,28 @@ function IntakeForm({ onSubmit }) {
   function validate() {
     const e = {};
     if (!f.firstName.trim()) e.firstName = "Required";
-    if (!f.lastName.trim())  e.lastName  = "Required";
     if (!f.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email)) e.email = "Valid email required";
-    if (!f.businessName.trim()) e.businessName = "Required";
     if (!f.county)     e.county = "Required";
-    if (!f.locations)  e.locations = "Required";
-    if (!f.opType)     e.opType = "Required";
     return e;
   }
 
   function handleSubmit() {
     const e = validate();
     if (Object.keys(e).length) { setErrors(e); return; }
+    // Fire-and-forget lead capture — never blocks the user
+    fetch(FORMSPREE, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        name: (f.firstName + " " + f.lastName).trim(),
+        email: f.email,
+        company: f.businessName || "(not provided)",
+        county: f.county,
+        locations: f.locations || "1",
+        opType: f.opType || "(not provided)",
+        _subject: "[EvidLY] Operations Check — " + (f.businessName || f.firstName),
+      }),
+    }).catch(() => {});
     onSubmit(f);
   }
 
@@ -249,13 +260,13 @@ function IntakeForm({ onSubmit }) {
         <div style={{ fontSize: "0.6rem", fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", color: C.g4, marginBottom: 16, fontFamily: FF }}>Tell us about your operation</div>
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 14px" }}>
-          {fld("firstName", "First Name", <input style={inp({ borderColor: errors.firstName ? C.red : C.g3 })} value={f.firstName} onChange={e => set("firstName", e.target.value)} placeholder="First name" />)}
+          {fld("firstName", "First Name *", <input style={inp({ borderColor: errors.firstName ? C.red : C.g3 })} value={f.firstName} onChange={e => set("firstName", e.target.value)} placeholder="First name" />)}
           {fld("lastName",  "Last Name",  <input style={inp({ borderColor: errors.lastName  ? C.red : C.g3 })} value={f.lastName}  onChange={e => set("lastName",  e.target.value)} placeholder="Last name"  />)}
         </div>
 
-        {fld("email", "Work Email", <input type="email" style={inp({ borderColor: errors.email ? C.red : C.g3 })} value={f.email} onChange={e => set("email", e.target.value)} placeholder="you@yourbusiness.com" />)}
+        {fld("email", "Work Email *", <input type="email" style={inp({ borderColor: errors.email ? C.red : C.g3 })} value={f.email} onChange={e => set("email", e.target.value)} placeholder="you@yourbusiness.com" />)}
         {fld("businessName", "Business Name", <input style={inp({ borderColor: errors.businessName ? C.red : C.g3 })} value={f.businessName} onChange={e => set("businessName", e.target.value)} placeholder="Your business or DBA name" />)}
-        {fld("county", "County", <Select value={f.county} onChange={v => set("county", v)} placeholder="Select county">{CA_COUNTIES.map(c => <option key={c} value={c}>{c}</option>)}</Select>)}
+        {fld("county", "County *", <Select value={f.county} onChange={v => set("county", v)} placeholder="Select county">{CA_COUNTIES.map(c => <option key={c} value={c}>{c}</option>)}</Select>)}
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 14px" }}>
           {fld("locations", "Number of Locations",
@@ -412,18 +423,18 @@ function Report({ form, answers, onBookTour }) {
                 <div style={{ fontSize: "0.67rem", color: "rgba(255,255,255,0.28)", fontFamily: FF }}>{form.county} County, CA</div>
               </div>
             </div>
-            <div style={{ fontWeight: 900, fontSize: "1.15rem", color: C.white, fontFamily: FF, marginBottom: 2, letterSpacing: "-0.02em" }}>{form.businessName}</div>
-            <div style={{ fontSize: "0.74rem", color: "rgba(255,255,255,0.38)", fontFamily: FF }}>{form.opType} · {form.locations !== "1" ? form.locations + " Locations" : "1 Location"}</div>
+            <div style={{ fontWeight: 900, fontSize: "1.15rem", color: C.white, fontFamily: FF, marginBottom: 2, letterSpacing: "-0.02em" }}>{form.businessName || form.firstName + "'s Operation"}</div>
+            <div style={{ fontSize: "0.74rem", color: "rgba(255,255,255,0.38)", fontFamily: FF }}>{[form.opType, form.locations !== "1" && form.locations ? form.locations + " Locations" : "1 Location"].filter(Boolean).join(" · ")}</div>
           </div>
         </div>
 
-        {/* ACCOUNT CONFIRMED BANNER */}
+        {/* REPORT READY BANNER */}
         <div style={{ background: C.greenBg, border: `1px solid ${C.greenBd}`, borderLeft: `4px solid ${C.green}`, borderRadius: 10, padding: "12px 16px", marginBottom: 14, display: "flex", alignItems: "center", gap: 12 }}>
           <span style={{ fontSize: "1.1rem", flexShrink: 0 }}>{"\u2705"}</span>
           <div>
-            <div style={{ fontWeight: 700, fontSize: "0.86rem", color: C.darkgreen, fontFamily: FF }}>Your account has been created.</div>
+            <div style={{ fontWeight: 700, fontSize: "0.86rem", color: C.darkgreen, fontFamily: FF }}>Your Operations Check is ready.</div>
             <div style={{ fontSize: "0.73rem", color: C.darkgreen, opacity: 0.75, fontFamily: FF, marginTop: 2 }}>
-              This report is saved to <strong>{form.email}</strong>. Check your inbox to set your password and access your dashboard.
+              A copy has been sent to <strong>{form.email}</strong>. Book a guided tour to see your full dashboard live.
             </div>
           </div>
         </div>
@@ -529,11 +540,11 @@ function Report({ form, answers, onBookTour }) {
             </div>
           </button>
           <div style={{ background: C.cream, border: `1px solid ${C.g2}`, borderRadius: 12, padding: "18px 15px", textAlign: "center" }}>
-            <div style={{ fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", color: C.navy, marginBottom: 5, fontFamily: FF }}>Access Your Dashboard</div>
-            <p style={{ fontSize: "0.74rem", color: C.g5, margin: "0 0 13px", lineHeight: 1.6, fontFamily: FF }}>Your account is ready. Check your inbox to set your password.</p>
-            <div style={{ width: "100%", padding: "10px", background: C.navy, color: C.white, borderRadius: 7, fontWeight: 700, fontSize: "0.8rem", fontFamily: FF, boxSizing: "border-box" }}>
-              Check Your Email
-            </div>
+            <div style={{ fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", color: C.navy, marginBottom: 5, fontFamily: FF }}>Start Your Free Trial</div>
+            <p style={{ fontSize: "0.74rem", color: C.g5, margin: "0 0 13px", lineHeight: 1.6, fontFamily: FF }}>45 days free. No credit card required. Your county is pre-loaded.</p>
+            <a href="/signup" style={{ display: "block", width: "100%", padding: "10px", background: C.navy, color: C.white, borderRadius: 7, fontWeight: 700, fontSize: "0.8rem", fontFamily: FF, boxSizing: "border-box", textDecoration: "none", textAlign: "center" }}>
+              Get Started Free →
+            </a>
           </div>
         </div>
 
@@ -551,6 +562,8 @@ export default function OperationsCheck() {
   const [form, setForm]       = useState(null);
   const [answers, setAnswers] = useState([]);
   const [showTourModal, setShowTourModal] = useState(false);
+
+  useEffect(() => { document.title = "Free Operations Check — EvidLY"; }, []);
 
   function handleFormSubmit(f) { setForm(f); setStep("assessment"); window.scrollTo(0, 0); }
   function handleAssessmentComplete(a) { setAnswers(a); setStep("report"); window.scrollTo(0, 0); }
@@ -602,6 +615,7 @@ export default function OperationsCheck() {
       </div>
 
       <div style={{ maxWidth: 600, margin: "0 auto", padding: "28px 20px 60px" }}>
+        <h1 style={{ position: "absolute", width: 1, height: 1, overflow: "hidden", clip: "rect(0,0,0,0)", whiteSpace: "nowrap", border: 0 }}>Free Operations Check for California Commercial Kitchens</h1>
         {step === "form"       && <IntakeForm onSubmit={handleFormSubmit} />}
         {step === "assessment" && <Assessment form={form} onComplete={handleAssessmentComplete} onRestartQuestions={handleRestartQuestions} />}
         {step === "report"     && <Report form={form} answers={answers} onBookTour={() => setShowTourModal(true)} />}

@@ -30,7 +30,6 @@ const C = {
   orangeBg: "#fff7ed",
 };
 
-const FF = "system-ui,-apple-system,sans-serif";
 const FF_SANS = "system-ui,-apple-system,sans-serif";
 const CALENDLY = "https://calendly.com/founders-getevidly/60min";
 const FORMSPREE = "https://formspree.io/f/meeredlg";
@@ -91,7 +90,7 @@ function Logo({ size = "1.15rem", light = false, tagline = false }) {
   const vidColor = light ? C.white : C.navy;
   const tagColor = light ? "rgba(255,255,255,0.45)" : "rgba(30,45,77,0.5)";
   return (
-    <span style={{ display: "inline-flex", flexDirection: "column", alignItems: "flex-start", gap: 1, lineHeight: 1 }}>
+    <span role="img" aria-label="EvidLY" style={{ display: "inline-flex", flexDirection: "column", alignItems: "flex-start", gap: 1, lineHeight: 1 }}>
       <span style={{ fontWeight: 800, fontSize: size, letterSpacing: "-0.03em", fontFamily: FF_SANS, lineHeight: 1 }}>
         <span style={{ color: C.gold }}>E</span>
         <span style={{ color: vidColor }}>vid</span>
@@ -304,14 +303,14 @@ function NavBar({ onTour, onIRR }) {
     <header style={{ background: C.white, borderBottom: `1px solid ${C.g2}`, padding: "0 24px", position: "sticky", top: 0, zIndex: 100 }}>
       <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", alignItems: "center", height: 68, gap: 12 }}>
         <a href="/" style={{ textDecoration: "none", marginRight: 20, flexShrink: 0 }}><Logo size="1.45rem" tagline /></a>
-        <nav style={{ display: "flex", gap: 24, flex: 1, alignItems: "center" }}>
+        <nav className="nav-desktop" style={{ display: "flex", gap: 24, flex: 1, alignItems: "center" }}>
           {NAV.map(([label, id]) => (
             <button key={label} onClick={() => scrollTo(id)} style={{ background: "none", border: "none", cursor: "pointer", color: C.g5, fontWeight: 500, fontSize: "0.84rem", fontFamily: FF_SANS, whiteSpace: "nowrap", padding: 0 }}>{label}</button>
           ))}
         </nav>
         <div style={{ flexShrink: 0, display: "flex", gap: 8, alignItems: "center" }}>
           <button onClick={onIRR} style={{ background: C.gold, border: "none", color: C.white, borderRadius: 6, padding: "9px 20px", fontSize: "0.82rem", fontWeight: 700, cursor: "pointer", fontFamily: FF_SANS, whiteSpace: "nowrap" }}>Free Operations Check</button>
-          <button onClick={() => setOpen(!open)} aria-label="Open menu" style={{ background: "none", border: "none", cursor: "pointer", padding: "8px 4px", display: "flex", flexDirection: "column", gap: 4, marginLeft: 4 }}>
+          <button className="hamburger" onClick={() => setOpen(!open)} aria-label="Open menu" style={{ background: "none", border: "none", cursor: "pointer", padding: "8px 4px", display: "flex", flexDirection: "column", gap: 4, marginLeft: 4 }}>
             <span style={{ width: 20, height: 2, background: open ? C.gold : C.g4, borderRadius: 1, display: "block" }} />
             <span style={{ width: 20, height: 2, background: open ? C.gold : C.g4, borderRadius: 1, display: "block" }} />
             <span style={{ width: 20, height: 2, background: open ? C.gold : C.g4, borderRadius: 1, display: "block" }} />
@@ -377,7 +376,7 @@ function IRRAboveFold({ onIRR }) {
         </div>
         <div style={{ flexShrink: 0, textAlign: "center" }}>
           <button onClick={onIRR} style={{ ...btn.gold, padding: "13px 28px", fontSize: "0.9rem", display: "block", marginBottom: 8 }}>Get My Free Operations Check →</button>
-          <p style={{ fontSize: "0.68rem", color: "rgba(255,255,255,0.22)", margin: 0, fontFamily: FF_SANS }}>Used by 100+ California commercial kitchens</p>
+          <p style={{ fontSize: "0.68rem", color: "rgba(255,255,255,0.22)", margin: 0, fontFamily: FF_SANS }}>Our team services 300+ commercial kitchens per year</p>
         </div>
       </div>
     </section>
@@ -496,7 +495,7 @@ function IntelligenceSection({ onTour }) {
       icon: "🛡️", label: "Liability Covered", startingState: "Liability Uncovered",
       color: "#991B1B", bg: C.redBg, bd: "#fca5a5", tx: "#7f1d1d",
       headline: "Documentation gaps are your biggest legal exposure — and the easiest to close.",
-      points: ["Foodborne illness without documentation logs = presumed negligence", "Fire suppression gaps create premises liability beyond CalCode", "PSE non-compliance may affect your coverage — consult your carrier"],
+      points: ["Foodborne illness without documentation logs = presumed negligence", "Fire suppression gaps create premises liability beyond CalCode", "Protective Safeguards Endorsement (PSE) gaps may affect your coverage — consult your carrier"],
     },
     {
       icon: "💡", label: "Costs Controlled", startingState: "Costs Unpredictable",
@@ -707,7 +706,7 @@ function IRRSection({ onIRR }) {
         </h2>
         <p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.5)", maxWidth: 420, margin: "0 auto 28px", lineHeight: 1.75, fontFamily: FF_SANS }}>See how your operation is running in 2 minutes. Get your baseline report and your EvidLY account — instantly.</p>
         <button onClick={onIRR} style={{ ...btn.gold, padding: "14px 34px", fontSize: "0.95rem" }}>Get My Free Operations Check →</button>
-        <p style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.2)", marginTop: 12, fontFamily: FF_SANS }}>Used by 100+ California commercial kitchens</p>
+        <p style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.2)", marginTop: 12, fontFamily: FF_SANS }}>Our team services 300+ commercial kitchens per year</p>
       </div>
     </section>
   );
@@ -725,7 +724,7 @@ function FinalCTA({ onTour, onIRR }) {
         <p style={{ fontSize: "0.92rem", color: "rgba(255,255,255,0.4)", marginBottom: 28, lineHeight: 1.7, fontFamily: FF_SANS }}>45 minutes. Your county, your numbers, your dashboard — live.</p>
         <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", alignItems: "center" }}>
           <button onClick={onTour} style={{ ...btn.gold, padding: "15px 34px", fontSize: "0.97rem" }}>Book a Guided Tour →</button>
-          <button onClick={() => scrollTo("pricing")} style={{ ...btn.outline, padding: "15px 24px", fontSize: "0.9rem" }}>See Pricing ↓</button>
+          <button onClick={onIRR} style={{ ...btn.outline, padding: "15px 24px", fontSize: "0.9rem" }}>Free Operations Check →</button>
         </div>
       </div>
     </section>
@@ -741,7 +740,7 @@ function Footer() {
   return (
     <footer style={{ background: "#283f6a", padding: "48px 24px 20px" }}>
       <div style={{ maxWidth: 1040, margin: "0 auto" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 28, marginBottom: 32 }}>
+        <div className="footer-grid" style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 28, marginBottom: 32 }}>
           <div>
             <Logo size="1rem" light tagline />
             <p style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.28)", marginTop: 12, lineHeight: 1.7, fontFamily: FF_SANS, maxWidth: 260 }}>The operations intelligence platform for California commercial kitchens. Launching May 5, 2026.</p>
@@ -800,46 +799,34 @@ function CookieBanner({ onAccept, onClose }) {
 }
 
 // ─────────────────────────────────────────────
-// IRR STUB
-// ─────────────────────────────────────────────
-function InspectionReadinessForm({ onClose }) {
-  return (
-    <div style={{ position: "fixed", bottom: 80, right: 24, zIndex: 300, background: C.navy, borderRadius: 12, padding: "14px 18px", boxShadow: "0 8px 32px rgba(0,0,0,0.22)", border: "1px solid rgba(160,140,90,0.3)", maxWidth: 300, display: "flex", alignItems: "flex-start", gap: 12 }}>
-      <div style={{ flex: 1 }}>
-        <div style={{ fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.12em", textTransform: "uppercase", color: C.gold, marginBottom: 4, fontFamily: FF_SANS }}>Mockup — IRR Stub</div>
-        <p style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.6)", margin: 0, fontFamily: FF_SANS, lineHeight: 1.5 }}>Real InspectionReadinessForm component is wired in the codebase.</p>
-      </div>
-      <button onClick={onClose} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.35)", fontSize: 18, cursor: "pointer", lineHeight: 1, flexShrink: 0, padding: 0 }}>x</button>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────
 // ROOT — render order locked
 // ─────────────────────────────────────────────
 export default function LandingPage() {
   const [tourOpen, setTourOpen] = useState(false);
-  const [cookie,   setCookie]   = useState(true);
+  const [cookie,   setCookie]   = useState(() => !localStorage.getItem("evidly-cookie-consent"));
   const openTour  = useCallback(() => setTourOpen(true),  []);
   const closeTour = useCallback(() => setTourOpen(false), []);
   const openIRR   = useCallback(() => window.open("/operations-check", "_blank"), []);
+  const acceptCookies = useCallback(() => { localStorage.setItem("evidly-cookie-consent", "accepted"); setCookie(false); }, []);
+  const declineCookies = useCallback(() => { localStorage.setItem("evidly-cookie-consent", "declined"); setCookie(false); }, []);
 
   return (
     <div style={{ fontFamily: FF_SANS, color: C.g8, lineHeight: 1.6, background: C.cream, minHeight: "100vh" }}>
       <style>{`
         *, *::before, *::after { box-sizing: border-box; }
-        button { all: unset; cursor: pointer; }
-        button:disabled { cursor: not-allowed; }
         @media (max-width: 860px) {
           .intel-row1 { grid-template-columns: 1fr !important; }
           .intel-row2 { grid-template-columns: 1fr !important; max-width: 100% !important; }
         }
-        @media (max-width: 640px) { .hide-mobile { display: none !important; } }
+        @media (max-width: 640px) {
+          .nav-desktop { display: none !important; }
+          .footer-grid { grid-template-columns: 1fr !important; }
+        }
         @media (min-width: 641px) { .hamburger { display: none !important; } }
       `}</style>
 
       {tourOpen && <TourModal onClose={closeTour} />}
-      {cookie   && <CookieBanner onAccept={() => setCookie(false)} onClose={() => setCookie(false)} />}
+      {cookie   && <CookieBanner onAccept={acceptCookies} onClose={declineCookies} />}
 
       {/* RENDER ORDER — do not change */}
       <NavBar         onTour={openTour} onIRR={openIRR} />
