@@ -352,30 +352,117 @@ function NavBar({ onTour, onIRR }) {
 }
 
 // ─────────────────────────────────────────────
+// DASHBOARD MOCKUP (product visual)
+// ─────────────────────────────────────────────
+function DashboardMockup() {
+  const W = "rgba(255,255,255,";
+  const pill = (label, val, color, bg, delay) => (
+    <div className={`dash-item dash-item-d${delay}`} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 12px", borderRadius: 8, background: bg, border: `1px solid ${W}0.06)` }}>
+      <span style={{ fontSize: "0.62rem", color: W + "0.5)", fontFamily: FF_SANS, fontWeight: 500 }}>{label}</span>
+      <span style={{ fontSize: "0.62rem", fontWeight: 700, color, fontFamily: FF_MONO }}>{val}</span>
+    </div>
+  );
+  return (
+    <div className="dash-float dash-mockup" style={{ width: "100%", maxWidth: 340, borderRadius: 14, overflow: "hidden", background: "rgba(15,24,42,0.85)", border: `1px solid ${W}0.08)`, boxShadow: "0 32px 80px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05)", backdropFilter: "blur(20px)" }}>
+      {/* Title bar */}
+      <div style={{ display: "flex", alignItems: "center", padding: "10px 14px", borderBottom: `1px solid ${W}0.06)`, gap: 6 }}>
+        <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#ff5f57" }} />
+        <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#febc2e" }} />
+        <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#28c840" }} />
+        <span style={{ flex: 1, textAlign: "center", fontSize: "0.55rem", color: W + "0.25)", fontFamily: FF_SANS }}>EvidLY — Downtown Kitchen</span>
+      </div>
+
+      <div style={{ padding: "16px 16px 14px" }}>
+        {/* Score + grade row */}
+        <div className="dash-item dash-item-d1" style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 14 }}>
+          {/* SVG ring gauge */}
+          <svg viewBox="0 0 80 80" width={72} height={72} style={{ flexShrink: 0 }}>
+            <circle cx="40" cy="40" r="33" fill="none" stroke={W + "0.06)"} strokeWidth="5" />
+            <circle className="score-ring" cx="40" cy="40" r="33" fill="none" stroke={C.gold} strokeWidth="5" strokeLinecap="round" transform="rotate(-90 40 40)" style={{ filter: "drop-shadow(0 0 6px rgba(160,140,90,0.3))" }} />
+            <text x="40" y="36" textAnchor="middle" dominantBaseline="central" fill="white" fontSize="20" fontWeight="800" fontFamily="'Syne',system-ui">{91}</text>
+            <text x="40" y="52" textAnchor="middle" fill={W + "0.35)"} fontSize="5.5" fontFamily="system-ui">Compliance</text>
+          </svg>
+          <div style={{ flex: 1 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
+              <div className="pulse-dot" style={{ width: 7, height: 7, borderRadius: "50%", background: C.green, flexShrink: 0 }} />
+              <span style={{ fontSize: "0.6rem", color: C.green, fontWeight: 700, fontFamily: FF_SANS }}>All Systems Normal</span>
+            </div>
+            <div style={{ fontSize: "0.56rem", color: W + "0.3)", fontFamily: FF_SANS, lineHeight: 1.5 }}>
+              Los Angeles County · Grade A
+            </div>
+            <div style={{ marginTop: 6, display: "flex", gap: 4 }}>
+              <span style={{ fontSize: "0.5rem", padding: "2px 7px", borderRadius: 4, background: "rgba(22,163,74,0.15)", color: "#4ade80", fontFamily: FF_MONO, fontWeight: 600 }}>Food 94</span>
+              <span style={{ fontSize: "0.5rem", padding: "2px 7px", borderRadius: 4, background: "rgba(160,140,90,0.15)", color: C.gold, fontFamily: FF_MONO, fontWeight: 600 }}>Facility 87</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Temperature readings */}
+        <div className="dash-item dash-item-d2" style={{ fontSize: "0.55rem", fontWeight: 700, color: W + "0.22)", letterSpacing: "0.14em", textTransform: "uppercase", fontFamily: FF_MONO, marginBottom: 6 }}>Current Readings</div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 5, marginBottom: 12 }}>
+          {pill("Walk-in #1", "38°F", "#4ade80", "rgba(22,163,74,0.08)", 3)}
+          {pill("Walk-in #2", "36°F", "#4ade80", "rgba(22,163,74,0.08)", 3)}
+          {pill("Prep Line", "40°F", "#4ade80", "rgba(22,163,74,0.08)", 4)}
+          {pill("Freezer", "-2°F", "#4ade80", "rgba(22,163,74,0.08)", 4)}
+        </div>
+
+        {/* Mini trend chart */}
+        <div className="dash-item dash-item-d5" style={{ background: W + "0.03)", borderRadius: 8, padding: "10px 12px", border: `1px solid ${W}0.05)` }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+            <span style={{ fontSize: "0.55rem", fontWeight: 700, color: W + "0.22)", letterSpacing: "0.14em", textTransform: "uppercase", fontFamily: FF_MONO }}>7-Day Trend</span>
+            <span style={{ fontSize: "0.5rem", color: C.green, fontFamily: FF_MONO, fontWeight: 600 }}>+3 pts</span>
+          </div>
+          <svg viewBox="0 0 200 40" width="100%" height={36} style={{ display: "block" }}>
+            <defs>
+              <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor={C.gold} stopOpacity="0.2" />
+                <stop offset="100%" stopColor={C.gold} stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            <path d="M0,32 L33,26 L66,28 L100,18 L133,20 L166,12 L200,14 L200,40 L0,40 Z" fill="url(#cg)" />
+            <polyline className="chart-draw" points="0,32 33,26 66,28 100,18 133,20 166,12 200,14" fill="none" stroke={C.gold} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ filter: "drop-shadow(0 0 4px rgba(160,140,90,0.4))" }} />
+            {[[0,32],[33,26],[66,28],[100,18],[133,20],[166,12],[200,14]].map(([x,y],i) => (
+              <circle key={i} cx={x} cy={y} r="2.5" fill={C.gold} stroke="rgba(15,24,42,0.8)" strokeWidth="1" />
+            ))}
+          </svg>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────
 // HERO
 // ─────────────────────────────────────────────
 function HeroSection({ onTour, onIRR }) {
   return (
-    <section className="hero-gradient" style={{ padding: "100px 24px 88px", textAlign: "center", position: "relative", overflow: "hidden" }}>
+    <section className="hero-gradient" style={{ padding: "80px 24px 72px", position: "relative", overflow: "hidden" }}>
       <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle at 20% 50%, rgba(160,140,90,0.06) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(160,140,90,0.04) 0%, transparent 40%)", pointerEvents: "none" }} />
       <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px)", backgroundSize: "56px 56px", pointerEvents: "none" }} />
       <div style={goldRule} />
-      <div style={{ maxWidth: 720, margin: "0 auto", position: "relative" }}>
-        <div className="hero-animate" style={{ display: "inline-block", padding: "5px 18px", background: "rgba(160,140,90,0.12)", border: "1px solid rgba(160,140,90,0.25)", borderRadius: 100, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: C.gold, marginBottom: 24, fontFamily: FF_MONO }}>
-          California's Operations Intelligence Platform
+      <div className="hero-split" style={{ maxWidth: 1080, margin: "0 auto", position: "relative", display: "flex", alignItems: "center", gap: 48 }}>
+        {/* Left: text */}
+        <div className="hero-text" style={{ flex: "1 1 0%", textAlign: "left", minWidth: 0 }}>
+          <div className="hero-animate" style={{ display: "inline-block", padding: "5px 18px", background: "rgba(160,140,90,0.12)", border: "1px solid rgba(160,140,90,0.25)", borderRadius: 100, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: C.gold, marginBottom: 24, fontFamily: FF_MONO }}>
+            California's Operations Intelligence Platform
+          </div>
+          <h1 className="hero-animate hero-animate-d1" style={{ fontSize: "clamp(2rem, 5vw, 3.2rem)", fontWeight: 800, lineHeight: 1.05, margin: "0 0 22px", color: C.white, fontFamily: FF_HEAD, letterSpacing: "-0.03em" }}>
+            Know where your operation stands.{" "}
+            <span style={{ color: C.gold }}>Before anyone else does.</span>
+          </h1>
+          <p className="hero-animate hero-animate-d2" style={{ fontSize: "1.02rem", color: "rgba(255,255,255,0.5)", maxWidth: 480, margin: "0 0 36px", lineHeight: 1.8, fontFamily: FF_SANS, letterSpacing: "-0.01em" }}>
+            Food safety and facility safety — scored against your county's actual grading method. Every operational signal translated into revenue, liability, cost, and workforce risk.
+          </p>
+          <div className="hero-animate hero-animate-d3 hero-ctas" style={{ display: "flex", gap: 14, flexWrap: "wrap", alignItems: "center" }}>
+            <button className="btn-lift" onClick={onIRR} style={{ ...btn.gold, padding: "15px 32px", fontSize: "0.97rem", borderRadius: 10 }}>Free Operations Check →</button>
+            <button className="btn-lift" onClick={onTour} style={{ ...btn.outline, padding: "15px 28px", fontSize: "0.9rem", borderRadius: 10 }}>Book a Guided Tour →</button>
+          </div>
+          <p className="hero-animate hero-animate-d3" style={{ marginTop: 20, fontSize: "0.74rem", color: "rgba(255,255,255,0.18)", fontFamily: FF_SANS }}>Serving 300+ commercial kitchens per year across California</p>
         </div>
-        <h1 className="hero-animate hero-animate-d1" style={{ fontSize: "clamp(2.1rem, 6vw, 3.6rem)", fontWeight: 800, lineHeight: 1.05, margin: "0 0 24px", color: C.white, fontFamily: FF_HEAD, letterSpacing: "-0.03em" }}>
-          Know where your operation stands.{" "}
-          <span style={{ color: C.gold }}>Before anyone else does.</span>
-        </h1>
-        <p className="hero-animate hero-animate-d2" style={{ fontSize: "1.05rem", color: "rgba(255,255,255,0.52)", maxWidth: 540, margin: "0 auto 40px", lineHeight: 1.8, fontFamily: FF_SANS, letterSpacing: "-0.01em" }}>
-          Food safety and facility safety — scored against your county's actual grading method. Every operational signal translated into revenue, liability, cost, and workforce risk.
-        </p>
-        <div className="hero-animate hero-animate-d3" style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap", alignItems: "center" }}>
-          <button className="btn-lift" onClick={onIRR} style={{ ...btn.gold, padding: "16px 36px", fontSize: "1rem", borderRadius: 10 }}>Free Operations Check →</button>
-          <button className="btn-lift" onClick={onTour} style={{ ...btn.outline, padding: "16px 30px", fontSize: "0.92rem", borderRadius: 10 }}>Book a Guided Tour →</button>
+        {/* Right: product visual */}
+        <div className="hero-animate hero-animate-d2" style={{ flexShrink: 0, width: 340 }}>
+          <DashboardMockup />
         </div>
-        <p className="hero-animate hero-animate-d3" style={{ marginTop: 24, fontSize: "0.76rem", color: "rgba(255,255,255,0.2)", fontFamily: FF_SANS }}>Serving 300+ commercial kitchens per year across California</p>
       </div>
     </section>
   );
@@ -407,27 +494,62 @@ function IRRAboveFold({ onIRR }) {
 }
 
 // ─────────────────────────────────────────────
+// ANIMATED COUNTER
+// ─────────────────────────────────────────────
+function AnimatedCounter({ end, suffix = "", duration = 1800 }) {
+  const [count, setCount] = useState(0);
+  const [started, setStarted] = useState(false);
+  const ref = useRef(null);
+  useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting && !started) {
+        setStarted(true);
+        const start = performance.now();
+        const tick = (now) => {
+          const p = Math.min((now - start) / duration, 1);
+          const ease = 1 - Math.pow(1 - p, 3);
+          setCount(Math.floor(ease * end));
+          if (p < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+        obs.disconnect();
+      }
+    }, { threshold: 0.5 });
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, [end, duration, started]);
+  return <span ref={ref}>{count}{suffix}</span>;
+}
+
+// ─────────────────────────────────────────────
 // TRUST BAR
 // ─────────────────────────────────────────────
 function TrustBar() {
-  const items = [
-    { stat: "300+", label: "Commercial kitchens per year" },
-    { stat: "62",   label: "California jurisdictions" },
-    { stat: null,   label: "Aramark · Cintas · Yosemite NPS" },
-    { stat: null,   label: "IKECA Certified · Veteran-Owned" },
-  ];
   return (
-    <section style={{ background: "#1a2744", borderBottom: "1px solid rgba(255,255,255,0.06)", padding: "24px 24px" }}>
-      <div style={{ maxWidth: 940, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center", gap: 32, flexWrap: "wrap" }}>
-        {items.map((item, i) => (
-          <div key={i} style={{ display: "flex", alignItems: "center", gap: 32 }}>
-            {i > 0 && <div style={{ width: 1, height: 34, background: "rgba(255,255,255,0.08)" }} />}
-            <div style={{ textAlign: "center" }}>
-              {item.stat && <div style={{ fontSize: "1.5rem", fontWeight: 500, color: C.gold, lineHeight: 1, fontFamily: FF_MONO, letterSpacing: "-0.02em" }}>{item.stat}</div>}
-              <div style={{ fontSize: item.stat ? "0.66rem" : "0.78rem", color: "rgba(255,255,255,0.35)", marginTop: item.stat ? 4 : 0, fontFamily: FF_SANS, letterSpacing: "0.02em" }}>{item.label}</div>
-            </div>
+    <section style={{ background: "#1a2744", borderBottom: "1px solid rgba(255,255,255,0.06)", padding: "26px 24px" }}>
+      <div style={{ maxWidth: 960, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center", gap: 36, flexWrap: "wrap" }}>
+        {/* Animated stat counters */}
+        <div style={{ textAlign: "center" }}>
+          <div style={{ fontSize: "1.6rem", fontWeight: 500, color: C.gold, lineHeight: 1, fontFamily: FF_MONO, letterSpacing: "-0.02em" }}>
+            <AnimatedCounter end={300} suffix="+" />
           </div>
-        ))}
+          <div style={{ fontSize: "0.66rem", color: "rgba(255,255,255,0.35)", marginTop: 4, fontFamily: FF_SANS, letterSpacing: "0.02em" }}>Commercial kitchens per year</div>
+        </div>
+        <div style={{ width: 1, height: 36, background: "rgba(255,255,255,0.08)" }} />
+        <div style={{ textAlign: "center" }}>
+          <div style={{ fontSize: "1.6rem", fontWeight: 500, color: C.gold, lineHeight: 1, fontFamily: FF_MONO, letterSpacing: "-0.02em" }}>
+            <AnimatedCounter end={62} />
+          </div>
+          <div style={{ fontSize: "0.66rem", color: "rgba(255,255,255,0.35)", marginTop: 4, fontFamily: FF_SANS, letterSpacing: "0.02em" }}>California jurisdictions</div>
+        </div>
+        <div style={{ width: 1, height: 36, background: "rgba(255,255,255,0.08)" }} />
+        <div style={{ textAlign: "center" }}>
+          <div style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.38)", fontFamily: FF_SANS, letterSpacing: "0.02em" }}>Aramark · Cintas · Yosemite NPS</div>
+        </div>
+        <div style={{ width: 1, height: 36, background: "rgba(255,255,255,0.08)" }} />
+        <div style={{ textAlign: "center" }}>
+          <div style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.38)", fontFamily: FF_SANS, letterSpacing: "0.02em" }}>IKECA Certified · Veteran-Owned</div>
+        </div>
       </div>
     </section>
   );
@@ -436,6 +558,36 @@ function TrustBar() {
 // ─────────────────────────────────────────────
 // HOW IT WORKS
 // ─────────────────────────────────────────────
+function StepIcon({ step }) {
+  const s = { width: 56, height: 56, display: "block" };
+  if (step === 0) return (
+    <svg viewBox="0 0 56 56" style={s}>
+      <rect x="8" y="12" width="40" height="32" rx="4" fill="none" stroke={C.navy} strokeWidth="1.5" opacity="0.15" />
+      <circle cx="28" cy="24" r="6" fill="none" stroke={C.gold} strokeWidth="1.5" />
+      <path d="M22 36 L28 30 L34 36" fill="none" stroke={C.gold} strokeWidth="1.5" strokeLinecap="round" />
+      <circle cx="28" cy="24" r="2" fill={C.gold} />
+    </svg>
+  );
+  if (step === 1) return (
+    <svg viewBox="0 0 56 56" style={s}>
+      <rect x="12" y="10" width="32" height="36" rx="3" fill="none" stroke={C.navy} strokeWidth="1.5" opacity="0.15" />
+      <line x1="18" y1="20" x2="26" y2="20" stroke={C.gold} strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="18" y1="26" x2="32" y2="26" stroke={C.gold} strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
+      <line x1="18" y1="32" x2="30" y2="32" stroke={C.gold} strokeWidth="1.5" strokeLinecap="round" opacity="0.4" />
+      <polyline points="34,19 36,21 40,17" fill="none" stroke={C.green} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="37" cy="28" r="4" fill="none" stroke={C.green} strokeWidth="1" opacity="0.3" />
+    </svg>
+  );
+  return (
+    <svg viewBox="0 0 56 56" style={s}>
+      <circle cx="28" cy="28" r="16" fill="none" stroke={C.navy} strokeWidth="1.5" opacity="0.15" />
+      <path d="M16 34 L22 28 L28 32 L34 20 L40 24" fill="none" stroke={C.gold} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="40" cy="24" r="3" fill={C.gold} opacity="0.3" />
+      <circle cx="40" cy="24" r="1.5" fill={C.gold} />
+    </svg>
+  );
+}
+
 function HowItWorksSection({ onTour }) {
   const steps = [
     { num: "01", title: "Connect your county", body: "We load your jurisdiction's actual grading method — weights, thresholds, and passing criteria — so your data is scored the way your inspector scores it." },
@@ -450,10 +602,13 @@ function HowItWorksSection({ onTour }) {
           <h2 style={{ fontSize: "clamp(1.5rem, 4vw, 2.2rem)", fontWeight: 800, color: C.navy, margin: "0 0 12px", fontFamily: FF_HEAD, letterSpacing: "-0.03em" }}>From your county to your dashboard in minutes.</h2>
           <p style={{ fontSize: "0.92rem", color: C.g5, maxWidth: 480, margin: "0 auto", fontFamily: FF_SANS, lineHeight: 1.75 }}>No manual setup. No generic checklists. EvidLY uses your jurisdiction's real scoring logic from day one.</p>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 4 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 6 }}>
           {steps.map((s, i) => (
             <div key={i} className={`card-lift reveal reveal-d${i+1}`} style={{ padding: "36px 30px", background: i % 2 === 0 ? C.cream : C.white, borderRadius: 16, border: `1px solid ${C.g2}` }}>
-              <div style={{ fontSize: "2.4rem", fontWeight: 500, color: C.g2, lineHeight: 1, marginBottom: 16, fontFamily: FF_MONO }}>{s.num}</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+                <StepIcon step={i} />
+                <div style={{ fontSize: "2.2rem", fontWeight: 500, color: C.g2, lineHeight: 1, fontFamily: FF_MONO }}>{s.num}</div>
+              </div>
               <h3 style={{ fontSize: "1.05rem", fontWeight: 800, color: C.navy, margin: "0 0 10px", fontFamily: FF_HEAD, letterSpacing: "-0.02em" }}>{s.title}</h3>
               <p style={{ fontSize: "0.86rem", color: C.g5, margin: 0, lineHeight: 1.75, fontFamily: FF_SANS }}>{s.body}</p>
             </div>
@@ -616,7 +771,9 @@ function FoundersSection() {
         <div className="reveal reveal-d3" style={{ display: "flex", gap: 0, justifyContent: "center", flexWrap: "wrap", borderRadius: 16, overflow: "hidden", border: `1px solid ${C.g2}` }}>
           {stats.map((s, i) => (
             <div key={i} style={{ flex: "1 1 180px", padding: "26px 22px", textAlign: "center", background: C.white, borderLeft: i > 0 ? `1px solid ${C.g2}` : "none" }}>
-              <div style={{ fontSize: "1.8rem", fontWeight: 500, color: C.navy, lineHeight: 1, fontFamily: FF_MONO, letterSpacing: "-0.02em" }}>{s.n}</div>
+              <div style={{ fontSize: "1.8rem", fontWeight: 500, color: C.navy, lineHeight: 1, fontFamily: FF_MONO, letterSpacing: "-0.02em" }}>
+                <AnimatedCounter end={parseInt(s.n)} suffix={s.n.replace(/\d/g, "")} duration={2000} />
+              </div>
               <div style={{ fontSize: "0.72rem", color: C.g4, marginTop: 6, textTransform: "uppercase", letterSpacing: "0.08em", fontFamily: FF_SANS }}>{s.l}</div>
             </div>
           ))}
@@ -907,10 +1064,63 @@ export default function LandingPage() {
         }
         .gold-line:hover::after { width: 100%; }
 
-        /* Stat counter animation */
-        @keyframes countUp {
-          from { opacity: 0; transform: translateY(12px); }
+        /* Dashboard mockup float */
+        @keyframes dashFloat {
+          0%, 100% { transform: translateY(0) rotate(0deg); }
+          50% { transform: translateY(-10px) rotate(0.5deg); }
+        }
+        .dash-float {
+          animation: dashFloat 6s ease-in-out infinite;
+        }
+
+        /* Score ring draw */
+        @keyframes ringDraw {
+          from { stroke-dashoffset: 264; }
+          to { stroke-dashoffset: 24; }
+        }
+        .score-ring {
+          stroke-dasharray: 264;
+          stroke-dashoffset: 264;
+          animation: ringDraw 2s cubic-bezier(0.16,1,0.3,1) 0.8s forwards;
+        }
+
+        /* Chart line draw */
+        @keyframes lineDraw {
+          from { stroke-dashoffset: 200; }
+          to { stroke-dashoffset: 0; }
+        }
+        .chart-draw {
+          stroke-dasharray: 200;
+          stroke-dashoffset: 200;
+          animation: lineDraw 2.5s cubic-bezier(0.16,1,0.3,1) 1.2s forwards;
+        }
+
+        /* Stagger fade for dashboard items */
+        @keyframes itemFade {
+          from { opacity: 0; transform: translateY(8px); }
           to { opacity: 1; transform: translateY(0); }
+        }
+        .dash-item { opacity: 0; animation: itemFade 0.6s cubic-bezier(0.16,1,0.3,1) forwards; }
+        .dash-item-d1 { animation-delay: 0.4s; }
+        .dash-item-d2 { animation-delay: 0.6s; }
+        .dash-item-d3 { animation-delay: 0.8s; }
+        .dash-item-d4 { animation-delay: 1.0s; }
+        .dash-item-d5 { animation-delay: 1.2s; }
+
+        /* Pulse dot */
+        @keyframes pulse {
+          0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(22,163,74,0.4); }
+          50% { opacity: 0.8; box-shadow: 0 0 0 6px rgba(22,163,74,0); }
+        }
+        .pulse-dot { animation: pulse 2s ease-in-out infinite; }
+
+        /* Hero split layout */
+        @media (max-width: 900px) {
+          .hero-split { flex-direction: column !important; text-align: center !important; }
+          .hero-text { text-align: center !important; }
+          .hero-text p { margin-left: auto !important; margin-right: auto !important; }
+          .hero-ctas { justify-content: center !important; }
+          .dash-mockup { max-width: 380px !important; margin: 0 auto !important; }
         }
 
         @media (max-width: 860px) {
