@@ -132,6 +132,7 @@ const EdgeFunctions = lazy(() => import('./pages/admin/system/EdgeFunctions'));
 const GuidedTours = lazy(() => import('./pages/admin/GuidedTours'));
 const Configure = lazy(() => import('./pages/admin/Configure'));
 const UserEmulation = lazy(() => import('./pages/admin/UserEmulation'));
+const RolePreview = lazy(() => import('./pages/admin/RolePreview'));
 const AdminBilling = lazy(() => import('./pages/admin/AdminBilling'));
 const AdminCrawlMonitor = lazy(() => import('./pages/admin/AdminCrawlMonitor'));
 const AdminScoreTable = lazy(() => import('./pages/admin/AdminScoreTable'));
@@ -171,6 +172,7 @@ const CountyLandingPage = lazy(() => import('./pages/public/CountyLandingPage'))
 const ScoreTableCountyPage = lazy(() => import('./pages/public/ScoreTableCountyPage'));
 const KitchenCheckPage = lazy(() => import('./pages/public/KitchenCheckPage'));
 const NewLandingPage = lazy(() => import('./pages/public/LandingPage'));
+const OperationsCheck = lazy(() => import('./pages/public/OperationsCheck'));
 const CountyWrapper = () => { const { slug } = useParams(); return <CountyLandingPage county={slug?.replace("-county", "")} />; };
 const ScoreTableWrapper = () => { const { slug } = useParams(); return <ScoreTableCountyPage county={slug?.replace("-county", "")} />; };
 const KitchenCheckWrapper = () => { const { slug } = useParams(); return <KitchenCheckPage county={slug?.replace("-county", "")} />; };
@@ -408,6 +410,7 @@ function AppRoutes() {
     <>
       <Routes>
         <Route path="/" element={<Suspense fallback={<PageSkeleton />}><NewLandingPage /></Suspense>} />
+        <Route path="/operations-check" element={<Suspense fallback={<PageSkeleton />}><OperationsCheck /></Suspense>} />
 
         {/* Public routes */}
         <Route path="/verify/:code" element={<Suspense fallback={<PageSkeleton />}><PublicVerification /></Suspense>} />
@@ -595,6 +598,7 @@ function AppRoutes() {
           <Route path="/admin/leads" element={<SalesGuard><AssessmentLeads /></SalesGuard>} />
           <Route path="/admin/configure" element={<Configure />} />
           <Route path="/admin/emulate" element={<UserEmulation />} />
+          <Route path="/admin/role-preview" element={<RolePreview />} />
           <Route path="/admin/billing" element={<AdminBilling />} />
           <Route path="/admin/crawl-monitor" element={<AdminCrawlMonitor />} />
           <Route path="/admin/rfp-monitor" element={<RfpIntelligence />} />

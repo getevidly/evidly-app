@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 
 // ─────────────────────────────────────────────
 // BRAND TOKENS
@@ -309,8 +310,7 @@ function NavBar({ onTour, onIRR }) {
           ))}
         </nav>
         <div style={{ flexShrink: 0, display: "flex", gap: 8, alignItems: "center" }}>
-          <button onClick={onIRR} style={{ background: "transparent", border: `1.5px solid ${C.gold}`, color: C.gold, borderRadius: 6, padding: "7px 14px", fontSize: "0.78rem", fontWeight: 700, cursor: "pointer", fontFamily: FF_SANS, whiteSpace: "nowrap" }}>Free Operations Check</button>
-          <button onClick={onTour} style={{ ...btn.gold, padding: "9px 20px", fontSize: "0.82rem" }}>Book a Tour</button>
+          <button onClick={onIRR} style={{ background: C.gold, border: "none", color: C.white, borderRadius: 6, padding: "9px 20px", fontSize: "0.82rem", fontWeight: 700, cursor: "pointer", fontFamily: FF_SANS, whiteSpace: "nowrap" }}>Free Operations Check</button>
           <button onClick={() => setOpen(!open)} aria-label="Open menu" style={{ background: "none", border: "none", cursor: "pointer", padding: "8px 4px", display: "flex", flexDirection: "column", gap: 4, marginLeft: 4 }}>
             <span style={{ width: 20, height: 2, background: open ? C.gold : C.g4, borderRadius: 1, display: "block" }} />
             <span style={{ width: 20, height: 2, background: open ? C.gold : C.g4, borderRadius: 1, display: "block" }} />
@@ -320,11 +320,10 @@ function NavBar({ onTour, onIRR }) {
       </div>
       {open && (
         <div style={{ background: C.white, borderTop: `1px solid ${C.g2}`, padding: "10px 24px 18px" }}>
-          <button onClick={() => { setOpen(false); onIRR(); }} style={{ display: "block", width: "100%", textAlign: "left", background: "none", border: "none", cursor: "pointer", padding: "11px 0", fontSize: "0.9rem", color: C.gold, borderBottom: `1px solid ${C.g1}`, fontWeight: 700, fontFamily: FF_SANS }}>✓ Free Operations Check</button>
           {NAV.map(([label, id]) => (
             <button key={label} onClick={() => { setOpen(false); scrollTo(id); }} style={{ display: "block", width: "100%", textAlign: "left", background: "none", border: "none", cursor: "pointer", padding: "11px 0", fontSize: "0.9rem", color: C.g6, borderBottom: `1px solid ${C.g1}`, fontWeight: 500, fontFamily: FF_SANS }}>{label}</button>
           ))}
-          <button onClick={() => { setOpen(false); onTour(); }} style={{ ...btn.gold, width: "100%", marginTop: 14, padding: "13px", fontSize: "0.9rem" }}>Book a Guided Tour →</button>
+          <button onClick={() => { setOpen(false); onIRR(); }} style={{ ...btn.gold, width: "100%", marginTop: 14, padding: "13px", fontSize: "0.9rem" }}>Free Operations Check →</button>
         </div>
       )}
     </header>
@@ -819,13 +818,12 @@ function InspectionReadinessForm({ onClose }) {
 // ROOT — render order locked
 // ─────────────────────────────────────────────
 export default function LandingPage() {
+  const navigate = useNavigate();
   const [tourOpen, setTourOpen] = useState(false);
-  const [irrOpen,  setIrrOpen]  = useState(false);
   const [cookie,   setCookie]   = useState(true);
   const openTour  = useCallback(() => setTourOpen(true),  []);
   const closeTour = useCallback(() => setTourOpen(false), []);
-  const openIRR   = useCallback(() => setIrrOpen(true),   []);
-  const closeIRR  = useCallback(() => setIrrOpen(false),  []);
+  const openIRR   = useCallback(() => navigate("/operations-check"), [navigate]);
 
   return (
     <div style={{ fontFamily: FF_SANS, color: C.g8, lineHeight: 1.6, background: C.cream, minHeight: "100vh" }}>
@@ -842,7 +840,6 @@ export default function LandingPage() {
       `}</style>
 
       {tourOpen && <TourModal onClose={closeTour} />}
-      {irrOpen  && <InspectionReadinessForm sourcePage="landing" onClose={closeIRR} />}
       {cookie   && <CookieBanner onAccept={() => setCookie(false)} onClose={() => setCookie(false)} />}
 
       {/* RENDER ORDER — do not change */}
