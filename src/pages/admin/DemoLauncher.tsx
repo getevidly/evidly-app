@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useDemo } from '../../contexts/DemoContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
@@ -35,6 +36,7 @@ interface DemoSession {
 
 export default function DemoLauncher() {
   useDemoGuard();
+  const navigate = useNavigate();
   const { isDemoMode } = useDemo();
 
   const [form, setForm] = useState({
@@ -96,7 +98,7 @@ export default function DemoLauncher() {
     loadSessions();
 
     setTimeout(() => {
-      window.open('/demo', '_blank');
+      navigate('/demo');
     }, 500);
   };
 
