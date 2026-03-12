@@ -1,5 +1,6 @@
 import { useSearchParams } from 'react-router-dom';
 import { useRole } from '../contexts/RoleContext';
+import { SignalAlertBanner } from '../components/SignalAlertBanner';
 import OwnerOperatorDashboard from '../components/dashboard/OwnerOperatorDashboard';
 import ExecutiveDashboard from '../components/dashboard/ExecutiveDashboard';
 import ComplianceManagerDashboard from '../components/dashboard/ComplianceManagerDashboard';
@@ -46,6 +47,7 @@ export function Dashboard() {
 
   return (
     <div>
+      <SignalAlertBanner />
       {tab === 'today' ? (
         <DashboardToday />
       ) : (
