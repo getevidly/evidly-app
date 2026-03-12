@@ -23,8 +23,8 @@ const gp=(cta,{primary:nm="",secondary:inf=""})=>{
   if(/View|Manage/.test(cta)) return{t:n||"Detail",i:inf||"",rows:[["d","📋","View Full History",null,"in","Records"],["d","✏️","Add Note / Comment",null,null,null,"Add"],["d","📊","Generate Report",null,null,null,"Export"]],p:"Close"};
   if(/Contact/.test(cta)) return{t:`Contact — ${n}`,rows:[["d","📞","Call Vendor",null,null,null,"Call"],["d","📧","Send Email",null,null,null,"Email"],["d","📄","View COI",null,"ok","Current"]],p:"Close"};
   if(/Edit/.test(cta)) return{t:`Edit — ${n}`,f:{l:"Name",ph:n||""},p:"Save Changes"};
-  if(/Start/.test(cta)) return{t:`Start — ${n}`,i:"Complete each item and submit when done.",f:{l:"Assign to Location",type:"select",opts:["Main Kitchen","Catering Hub","Central Kitchen"]},p:"Begin"};
-  if(/Use/.test(cta)) return{t:`Use Template — ${n}`,f:{l:"Location",type:"select",opts:["Main Kitchen","Catering Hub","Central Kitchen"]},p:"Create Checklist"};
+  if(/Start/.test(cta)) return{t:`Start — ${n}`,i:"Complete each item and submit when done.",f:{l:"Assign to Location",type:"select",opts:["Main Kitchen"]},p:"Begin"};
+  if(/Use/.test(cta)) return{t:`Use Template — ${n}`,f:{l:"Location",type:"select",opts:["Main Kitchen"]},p:"Create Checklist"};
   if(/Invite/.test(cta)) return{t:"Invite Team Member",f:{l:"Email Address",type:"email",ph:"email@yourorganization.com"},p:"Send Invite"};
   if(/Upload/.test(cta)) return{t:"Upload Document",f:{l:"Document Type",type:"select",opts:["HACCP Plan","Certificate","COI","Permit","Contract","Other"]},p:"Upload"};
   if(/Download|Export|Generate/.test(cta)) return{t:"Export Report",f:{l:"Format",type:"select",opts:["PDF","CSV","Excel"]},p:"Download"};
@@ -114,13 +114,12 @@ function renderCard(card,i,oa){
 // ── PAGE DATA ─────────────────────────────────────────────────────────────────
 const PD={
   checklists:[
-    {type:"n",h:"Checklists",s:"Your Organization · March 11, 2026"},
-    [["Completed","3","#16a34a"],["In Progress","2",GOLD],["Not Started","2",MUTED],["Overdue","0","#16a34a"]],
+    {type:"n",h:"Checklists",s:"Main Kitchen · March 11, 2026"},
+    [["Completed","1","#16a34a"],["In Progress","1",GOLD],["Not Started","1",MUTED],["Overdue","0","#16a34a"]],
     ["Today's Checklists","New Checklist",
-      ["d","✅","Opening — Main Kitchen","12/12 items · 6:15 AM","ok","Done"],
-      ["d","🔄","Midday — Main Kitchen","4/8 items · 12:02 PM","wn","In Progress"],
-      ["d","⭕","Closing — Main Kitchen","0/10 items · Due 10 PM","gy","Pending"],
-      ["d","✅","Opening — Catering Hub","12/12 items · 7:03 AM","ok","Done"],
+      ["d","✅","Opening Checklist","12/12 items · 6:15 AM","ok","Done"],
+      ["d","🔄","Midday Checklist","4/8 items · 12:02 PM","wn","In Progress"],
+      ["d","⭕","Closing Checklist","0/10 items · Due 10 PM","gy","Pending"],
     ],
     ["Templates",null,
       ["d","📋","Opening Checklist",null,null,null,"Use"],
@@ -129,8 +128,8 @@ const PD={
     ],
   ],
   temperatures:[
-    {type:"n",h:"Temperature Readings",s:"Your Organization · March 11, 2026"},
-    [["Units","6"],["In Range","5","#16a34a"],["Needs Log","1","#92400e"],["Alerts","0","#16a34a"]],
+    {type:"n",h:"Temperature Readings",s:"Main Kitchen · March 11, 2026"},
+    [["Units","5"],["In Range","4","#16a34a"],["Needs Log","1","#92400e"],["Alerts","0","#16a34a"]],
     ["Current Readings","Log Manual",
       ["d","🟢","Walk-in Cooler #1","IoT · 35–41°F · 2 min ago","ok","37.8°F"],
       ["d","🟢","Walk-in Cooler #2","IoT · 35–41°F · 2 min ago","ok","39.5°F"],
@@ -153,7 +152,7 @@ const PD={
     ],
   ],
   haccp:[
-    {type:"n",h:"HACCP",s:"Your Organization · Main Kitchen"},
+    {type:"n",h:"HACCP",s:"Main Kitchen · Fresno, CA"},
     [["CCPs","5"],["Monitored","5","#16a34a"],["Deviations","0","#16a34a"],["Plan","Active","#166534"]],
     ["Critical Control Points",null,
       ["d","CCP-1","Receiving — Pathogen growth","Limit: ≤41°F on delivery","ok","✓ Met"],
@@ -164,42 +163,36 @@ const PD={
     ],
   ],
   corrective:[
-    {type:"n",h:"Corrective Actions",s:"Your Organization"},
-    [["Open","2","#dc2626"],["In Progress","1",GOLD],["Resolved/Mo","4","#16a34a"],["Avg Resolution","1.8d"]],
+    {type:"n",h:"Corrective Actions",s:"Main Kitchen · Fresno, CA"},
+    [["Open","1","#dc2626"],["In Progress","1",GOLD],["Resolved/Mo","4","#16a34a"],["Avg Resolution","1.8d"]],
     ["Corrective Actions","Add New",
-      ["!","c","HACCP plan missing — Central Kitchen","CA-012 · Due Mar 18"],
       ["!","w","Prep cooler temp log gaps this week","CA-013 · Due Mar 15"],
     ],
   ],
   incidents:[
-    {type:"n",h:"Incidents",s:"Your Organization"},
-    [["Open","2","#dc2626"],["Resolved/Mo","5","#16a34a"],["Avg Resolution","1.4d"],["Critical","0","#16a34a"]],
+    {type:"n",h:"Incidents",s:"Main Kitchen · Fresno, CA"},
+    [["Open","1","#dc2626"],["Resolved/Mo","3","#16a34a"],["Avg Resolution","1.4d"],["Critical","0","#16a34a"]],
     ["Active Incidents","Report New",
-      ["!","c","Pest activity observed near dry storage","INC-025 · Catering Hub · Mar 11"],
       ["!","w","Walk-in cooler door seal damaged","INC-024 · Main Kitchen · Mar 10"],
     ],
     ["Recently Resolved",null,
-      ["d","✅","Grease trap overflow — Catering Hub",null,"ok","Resolved"],
       ["d","✅","Walk-in temp spike (recovered)",null,"ok","Resolved"],
+      ["d","✅","Drain clog near prep area",null,"ok","Resolved"],
     ],
   ],
   "facility-safety":[
-    {type:"n",h:"Facility Safety",s:"Your Organization · 3 locations"},
-    [["Hood Systems","3"],["Current","2","#16a34a"],["Action Req.","1","#dc2626"],["Next Service","5d","#92400e"]],
+    {type:"n",h:"Facility Safety",s:"Main Kitchen · Fresno, CA"},
+    [["Hood System","1"],["Status","Current","#16a34a"],["Last Service","Feb 8"],["Next Service","Mar 16","#92400e"]],
     ["Hood Cleaning","Schedule",
       ["d","🟢","Main Kitchen","Cleaning Pros Plus · Last: Feb 8 · Next: Mar 16","ok","Current"],
-      ["d","🔴","Catering Hub","Cleaning Pros Plus · Last: Jan 3 · Next: Mar 10","er","Overdue"],
-      ["d","🟢","Central Kitchen","Cleaning Pros Plus · Last: Feb 20 · Next: May 20","ok","Current"],
     ],
     ["Ansul / Fire Suppression",null,
       ["d","🟡","Main Kitchen","Last: Sep 15, 2025 · Next: Mar 15, 2026","wn","Due Soon"],
-      ["d","🔴","Catering Hub","Last: Aug 1, 2025 · Next: Feb 1, 2026","er","Expired"],
-      ["d","🟢","Central Kitchen","Last: Oct 10, 2025 · Next: Apr 10, 2026","ok","Current"],
     ],
   ],
   services:[
-    {type:"n",h:"Vendor Services",s:"Your Organization · 3 locations"},
-    [["Active Vendors","7"],["Services/Mo","4"],["Annual Spend","$6.7k"],["COIs Current","7/7","#16a34a"]],
+    {type:"n",h:"Vendor Services",s:"Main Kitchen · Fresno, CA"},
+    [["Active Vendors","3"],["Services/Mo","2"],["Annual Spend","$2.2k"],["COIs Current","3/3","#16a34a"]],
     ["Active Vendors","Add Vendor",
       ["d","🏢","Cleaning Pros Plus — Hood Cleaning","(209) 636-6116 · Next: Mar 16","ok","COI ✓","View"],
       ["d","🏢","Central Valley Pest — Pest Control","(559) 201-4400 · Next: Mar 21","ok","COI ✓","View"],
@@ -207,17 +200,17 @@ const PD={
     ],
   ],
   documents:[
-    {type:"n",h:"Documents",s:"Your Organization · 24 documents"},
-    [["Total","24"],["Expiring 30d","2","#92400e"],["Expired","0","#16a34a"],["Missing","1","#dc2626"]],
+    {type:"n",h:"Documents",s:"Main Kitchen · 12 documents"},
+    [["Total","12"],["Expiring 30d","1","#92400e"],["Expired","0","#16a34a"],["Missing","0","#16a34a"]],
     ["Document Library","Upload",
       ["d","📄","HACCP Plan — Main Kitchen","Food Safety · Expires Dec 31, 2026","ok","Current"],
       ["d","📄","Food Manager Cert — Maria R.","Certification · Expires Jun 15, 2026","ok","Current"],
       ["d","📄","Hood Cleaning COI — Cleaning Pros Plus","COI · Expires Apr 1, 2026","wn","Due Soon"],
-      ["d","📄","HACCP Plan — Central Kitchen","Food Safety · Missing","er","Missing"],
+      ["d","📄","Business License — Fresno County","Permit · Expires Jan 31, 2027","ok","Current"],
     ],
   ],
   "self-inspection":[
-    {type:"n",h:"Self-Inspection",s:"Your Organization · Main Kitchen"},
+    {type:"n",h:"Self-Inspection",s:"Main Kitchen · Fresno, CA"},
     [["Last Inspection","Mar 5"],["Score","94/100","#166534"],["Issues Found","2","#92400e"],["Next Due","Apr 5"]],
     ["Inspection Checklist","Start New",
       ["d","✅","Temperature Control","6/6 items passed","ok","✓ Passed"],
@@ -227,20 +220,21 @@ const PD={
     ],
   ],
   training:[
-    {type:"n",h:"Training Records",s:"Your Organization · 8 staff members"},
-    [["Staff Members","8"],["Certs Current","7","#16a34a"],["Expiring 30d","1","#92400e"],["Expired","0","#16a34a"]],
+    {type:"n",h:"Training Records",s:"Main Kitchen · 4 staff members"},
+    [["Staff Members","4"],["Certs Current","4","#16a34a"],["Expiring 30d","1","#92400e"],["Expired","0","#16a34a"]],
     ["Staff Certification Status","Add Record",
       ["d","👤","Maria Rodriguez — Food Manager (CFPM)","Expires Jun 15, 2026","ok","Current"],
       ["d","👤","Carlos Mendez — Food Handler Card","Expires Apr 30, 2026","wn","Due Soon"],
       ["d","👤","Sofia Kim — Food Handler Card","Expires Dec 1, 2026","ok","Current"],
+      ["d","👤","David Lee — Food Handler Card","Expires Nov 15, 2026","ok","Current"],
     ],
   ],
   "ai-insights":[
-    {type:"n",h:"AI Insights",s:"Your Organization · EvidLY Intelligence"},
+    {type:"n",h:"AI Insights",s:"Main Kitchen · EvidLY Intelligence"},
     ["Top Insights This Week",null,
-      ["!","c","Catering Hub fire suppression overdue — liability exposure increasing","Risk Alert"],
+      ["!","w","Ansul fire suppression service due Mar 15 — schedule now to avoid gap","Risk Alert"],
       ["!","w","Prep cooler temp logs missed 3× this week — reinforce with staff","Pattern Detected"],
-      ["d","🟢","Main Kitchen checklist completion up 18% vs last month","Positive Trend","ok","↑ Good"],
+      ["d","🟢","Checklist completion up 18% vs last month","Positive Trend","ok","↑ Good"],
     ],
     ["Compliance Drivers",null,
       ["~","Temp log compliance",87,"#16a34a"],
@@ -250,46 +244,43 @@ const PD={
     ],
   ],
   alerts:[
-    {type:"n",h:"Alerts",s:"Your Organization · 4 active"},
-    [["Active","4","#dc2626"],["Critical","1","#dc2626"],["Warnings","3","#92400e"],["Resolved Today","2","#16a34a"]],
+    {type:"n",h:"Alerts",s:"Main Kitchen · 2 active"},
+    [["Active","2","#92400e"],["Critical","0","#16a34a"],["Warnings","2","#92400e"],["Resolved Today","1","#16a34a"]],
     ["Active Alerts","Mark All Read",
-      ["!","c","Fire suppression service expired","Catering Hub · 2 days overdue"],
       ["!","w","Prep cooler temp log overdue","Main Kitchen · 2 hours"],
       ["!","w","Fire suppression due in 5 days","Main Kitchen · Mar 16"],
-      ["!","w","Hood cleaning COI expiring in 21 days","Catering Hub · Apr 1"],
     ],
   ],
   analytics:[
-    {type:"n",h:"Analytics",s:"Your Organization · 30-day view"},
-    [["Checklist Completion","94%","#166534"],["Temp Logs","87%","#16a34a"],["Open Items","4","#92400e"],["Trend","↑ 12%","#166534"]],
-    ["Performance by Location",null,
-      ["d","🟢","Main Kitchen · Fresno","Checklists: 97% · Temp logs: 95%","ok","Strong"],
-      ["d","🟡","Catering Hub · Modesto","Checklists: 88% · Temp logs: 79%","wn","3 open"],
-      ["d","🟡","Central Kitchen · Merced","Checklists: 92% · Temp logs: 90%","wn","1 open"],
+    {type:"n",h:"Analytics",s:"Main Kitchen · 30-day view"},
+    [["Checklist Completion","97%","#166534"],["Temp Logs","95%","#16a34a"],["Open Items","2","#92400e"],["Trend","↑ 12%","#166534"]],
+    ["Performance — Main Kitchen",null,
+      ["d","🟢","Checklists","97% completion this month","ok","Strong"],
+      ["d","🟢","Temperature Logs","95% logged on time","ok","Strong"],
+      ["d","🟡","Fire Safety","Ansul service due Mar 15","wn","Due Soon"],
+      ["d","🟢","Vendor COIs","All current","ok","Current"],
     ],
     ["30-Day Trend",null,
       ["~","Week 1",89,"#92400e"],
       ["~","Week 2",91,"#d97706"],
       ["~","Week 3",93,"#166534"],
-      ["~","Week 4",94,"#166534"],
+      ["~","Week 4",97,"#166534"],
     ],
   ],
   intelligence:[
-    {type:"n",h:"Operations Intelligence",s:"Your Organization · EvidLY Intelligence Engine"},
-    [["Revenue Risk","$12k","#92400e"],["Liability Risk","High","#dc2626"],["Cost Risk","$6.7k"],["Op. Risk","Medium","#d97706"]],
+    {type:"n",h:"Operations Intelligence",s:"Main Kitchen · EvidLY Intelligence Engine"},
+    [["Revenue Risk","$4k","#92400e"],["Liability Risk","Medium","#d97706"],["Cost Risk","$2.2k"],["Op. Risk","Low","#16a34a"]],
     ["Risk Dimensions",null,
-      ["d","🟠","Revenue Risk","Temp log gaps + overdue checklists risk inspection failure","wn","$12k exposure"],
-      ["d","🔴","Liability Risk","Fire suppression expiry at Catering Hub = active PSE gap","er","High"],
-      ["d","🔵","Cost Risk","$6,750 annual vendor spend across 7 services · 3 locations","in","$6.7k/yr"],
-      ["d","🟡","Operational Risk","1 overdue temp log, 1 overdue hood clean — manageable today","wn","Medium"],
+      ["d","🟠","Revenue Risk","Ansul service due Mar 15 — failure before then risks inspection closure","wn","$4k exposure"],
+      ["d","🟡","Liability Risk","Fire suppression approaching expiry — schedule before Mar 15","wn","Medium"],
+      ["d","🔵","Cost Risk","$2,220 annual vendor spend across 3 services","in","$2.2k/yr"],
+      ["d","🟢","Operational Risk","Checklists and temp logs on track — well managed","ok","Low"],
     ],
   ],
   "jurisdiction-intel":[
-    {type:"n",h:"Jurisdiction Intelligence",s:"California · 3 active jurisdictions"},
+    {type:"n",h:"Jurisdiction Intelligence",s:"Main Kitchen · Fresno County"},
     ["Your Jurisdiction Coverage",null,
       ["d","⚖️","Fresno County EHD — Main Kitchen","A–F letter grade · Last insp: Jan 15, 2026","ok","Active"],
-      ["d","⚖️","Stanislaus County EHD — Catering Hub","Numeric score / 100 · Last insp: Oct 3, 2025","ok","Active"],
-      ["d","⚖️","Merced County EHD — Central Kitchen","Pass/Conditional/Fail · Last insp: Aug 22, 2025","ok","Active"],
     ],
   ],
   regulatory:[
@@ -301,25 +292,23 @@ const PD={
     ],
   ],
   "insurance-risk":[
-    {type:"n",h:"Insurance Risk",s:"Carrier-facing data · Not displayed to operators"},
-    [["P1 Revenue","82","#16a34a"],["P2 Liability","58","#dc2626"],["P3 Cost","79"],["P4 Operational","80"]],
+    {type:"n",h:"Insurance Risk",s:"Carrier-facing data · Main Kitchen"},
+    [["P1 Revenue","89","#16a34a"],["P2 Liability","74","#d97706"],["P3 Cost","85","#16a34a"],["P4 Operational","91","#16a34a"]],
     ["Risk Pillars",null,
-      ["d","82","P1 Revenue Risk","Temp log compliance strong; checklist gap reducing score"],
-      ["d","58","P2 Liability Risk","Fire suppression expiry = active PSE gap; major liability driver"],
-      ["d","79","P3 Cost Risk","Vendor spend normal; no anomalies detected"],
-      ["d","80","P4 Operational Risk","One overdue hood clean; otherwise solid"],
+      ["d","89","P1 Revenue Risk","Temp log compliance strong; checklists at 97%"],
+      ["d","74","P2 Liability Risk","Fire suppression approaching expiry — schedule before Mar 15"],
+      ["d","85","P3 Cost Risk","Vendor spend normal; no anomalies detected"],
+      ["d","91","P4 Operational Risk","Well managed — all key metrics trending up"],
     ],
   ],
   leaderboard:[
-    {type:"n",h:"Leaderboard",s:"Your Organization · March 2026"},
-    ["Location Rankings",null,
-      ["d","🥇","Main Kitchen — Fresno","Trend: ↑ improving","ok","97 / 100"],
-      ["d","🥈","Central Kitchen — Merced","Trend: → stable","gy","92 / 100"],
-      ["d","🥉","Catering Hub — Modesto","Trend: ↓ declining","wn","83 / 100"],
+    {type:"n",h:"Leaderboard",s:"Main Kitchen · March 2026"},
+    ["Your Standing",null,
+      ["d","🥇","Main Kitchen — Fresno","You're the top performer in your peer group","ok","97 / 100"],
     ],
   ],
   reporting:[
-    {type:"n",h:"Reporting",s:"Your Organization · Export & Share"},
+    {type:"n",h:"Reporting",s:"Main Kitchen · Export & Share"},
     ["Available Reports","Generate",
       ["d","📊","Monthly Compliance Summary","Food Safety · PDF · Last: Mar 1",null,null,"Download"],
       ["d","📊","Temperature Log Export","Food Safety · CSV · Last: Mar 10",null,null,"Download"],
@@ -328,7 +317,7 @@ const PD={
     ],
   ],
   "iot-monitoring":[
-    {type:"n",h:"IoT Monitoring",s:"Your Organization · 5 of 6 sensors online"},
+    {type:"n",h:"IoT Monitoring",s:"Main Kitchen · 5 of 6 sensors online"},
     [["Online","5/6","#16a34a"],["Alerts","0","#16a34a"],["Avg Uptime","99.2%"],["Last Sync","2 min ago"]],
     ["Sensor Status",null,
       ["d","📡","Walk-in Cooler #1 Sensor","Battery: 84% · 37.8°F","ok","Online"],
@@ -339,7 +328,7 @@ const PD={
     ],
   ],
   benchmarks:[
-    {type:"n",h:"Benchmarks",s:"Your Organization vs. California average"},
+    {type:"n",h:"Benchmarks",s:"Main Kitchen vs. California average"},
     ["Performance Benchmarks",null,
       ["~","Checklist Completion (CA avg: 81%)",94,"#166534"],
       ["~","Temp Log Compliance (CA avg: 76%)",87,"#16a34a"],
@@ -348,7 +337,7 @@ const PD={
     ],
   ],
   "inspector-view":[
-    {type:"n",h:"Inspector View",s:"Main Kitchen · Fresno · As an inspector would see it"},
+    {type:"n",h:"Inspector View",s:"Main Kitchen · Fresno, CA · As an inspector would see it"},
     ["Food Safety Standing",null,
       ["d","✅","Temperature Control",null,"ok","Compliant"],
       ["d","✅","Food Handling Practices",null,"ok","Compliant"],
@@ -357,13 +346,13 @@ const PD={
     ],
     ["Fire Safety Standing",null,
       ["d","✅","Hood System",null,"ok","Current"],
-      ["d","🔴","Ansul / Suppression",null,"er","Expired"],
+      ["d","🟡","Ansul / Suppression",null,"wn","Due Soon"],
       ["d","✅","Fire Extinguishers",null,"ok","Current"],
     ],
   ],
   "photo-evidence":[
-    {type:"n",h:"Photo Evidence",s:"Your Organization · Compliance documentation"},
-    [["Total","47"],["This Month","12"],["Flagged","2","#92400e"],["Locations","3"]],
+    {type:"n",h:"Photo Evidence",s:"Main Kitchen · Compliance documentation"},
+    [["Total","18"],["This Month","5"],["Flagged","0","#16a34a"],["Location","1"]],
     ["Recent Photos","Upload",
       ["d","📷","Hood cleaning completion — Main Kitchen","Hood Cleaning · Mar 8, 2026","in","Hood Cleaning"],
       ["d","📷","Walk-in cooler thermometer reading","Temperature · Mar 10, 2026","in","Temperature"],
@@ -374,8 +363,8 @@ const PD={
     {type:"n",h:"Vendor Marketplace",s:"Find certified vendors in your area"},
     ["Recommended Vendors",null,
       ["d","🏢","Cleaning Pros Plus — Hood Cleaning","Central Valley · (209) 636-6116","ok","IKECA","Contact"],
-      ["d","🏢","Central Valley Pest — Pest Control","Fresno / Modesto · (559) 201-4400",null,null,"Contact"],
-      ["d","🏢","Valley Fire Systems — Fire Suppression","San Joaquin Valley · (209) 555-0122",null,null,"Contact"],
+      ["d","🏢","Central Valley Pest — Pest Control","Fresno · (559) 201-4400",null,null,"Contact"],
+      ["d","🏢","Valley Fire Systems — Fire Suppression","Fresno · (209) 555-0122",null,null,"Contact"],
     ],
   ],
   "self-diagnosis":[
@@ -394,26 +383,24 @@ const PD={
     ],
   ],
   locations:[
-    {type:"n",h:"Locations",s:"Your Organization · 3 locations"},
-    [["Total","3"],["Active","3","#16a34a"],["Open Items","4","#92400e"],["Annual Spend","$6.7k"]],
-    ["Your Locations","Add Location",
+    {type:"n",h:"Locations",s:"Main Kitchen · Fresno, CA"},
+    [["Total","1"],["Active","1","#16a34a"],["Open Items","2","#92400e"],["Annual Spend","$2.2k"]],
+    ["Your Location","Add Location",
       ["d","📍","Main Kitchen — Fresno","1234 Blackstone Ave · Fresno County EHD","ok","0 open","Manage"],
-      ["d","📍","Catering Hub — Modesto","567 McHenry Ave · Stanislaus County EHD","er","3 open","Manage"],
-      ["d","📍","Central Kitchen — Merced","890 Main St · Merced County EHD","wn","1 open","Manage"],
     ],
   ],
   team:[
-    {type:"n",h:"Team",s:"Your Organization · 8 members"},
-    [["Members","8"],["Active Shifts","3","#16a34a"],["Certs Current","7/8","#16a34a"],["Roles","4"]],
+    {type:"n",h:"Team",s:"Main Kitchen · 4 members"},
+    [["Members","4"],["Active Shifts","2","#16a34a"],["Certs Current","4/4","#16a34a"],["Roles","3"]],
     ["Team Members","Invite",
       ["d","👤","Maria Rodriguez — Chef","Main Kitchen · On shift","ok","On Shift"],
       ["d","👤","Carlos Mendez — Kitchen Manager","Main Kitchen · On shift","ok","On Shift"],
-      ["d","👤","David Lee — Facilities Manager","All locations · Active","in","Active"],
-      ["d","👤","Rachel Torres — Compliance Manager","All locations · Active","in","Active"],
+      ["d","👤","Sofia Kim — Kitchen Staff","Main Kitchen · Active","in","Active"],
+      ["d","👤","David Lee — Kitchen Staff","Main Kitchen · Active","in","Active"],
     ],
   ],
   equipment:[
-    {type:"n",h:"Equipment",s:"Your Organization · 12 items tracked"},
+    {type:"n",h:"Equipment",s:"Main Kitchen · 12 items tracked"},
     [["Total Items","12"],["Current","10","#16a34a"],["Due Soon","2","#92400e"],["Out of Service","0","#16a34a"]],
     ["Equipment Inventory","Add Item",
       ["d","⚙️","Walk-in Cooler #1 — Main Kitchen","Refrigeration · Last service: Jan 2026","ok","Current"],
@@ -423,16 +410,16 @@ const PD={
     ],
   ],
   vendors:[
-    {type:"n",h:"Vendors",s:"Your Organization · 7 active vendors"},
-    [["Active","7"],["COIs Current","7/7","#16a34a"],["Expiring 30d","1","#92400e"],["Annual Spend","$6.7k"]],
+    {type:"n",h:"Vendors",s:"Main Kitchen · 3 active vendors"},
+    [["Active","3"],["COIs Current","3/3","#16a34a"],["Expiring 30d","0","#16a34a"],["Annual Spend","$2.2k"]],
     ["Vendor Directory","Add Vendor",
-      ["d","🏢","Cleaning Pros Plus — Hood Cleaning","(209) 636-6116 · $3,120/yr","ok","COI ✓","View"],
-      ["d","🏢","Central Valley Pest — Pest Control","(559) 201-4400 · $1,140/yr","ok","COI ✓","View"],
-      ["d","🏢","Valley Fire Systems — Fire Suppression","(209) 555-0122 · $900/yr","ok","COI ✓","View"],
+      ["d","🏢","Cleaning Pros Plus — Hood Cleaning","(209) 636-6116 · $1,040/yr","ok","COI ✓","View"],
+      ["d","🏢","Central Valley Pest — Pest Control","(559) 201-4400 · $380/yr","ok","COI ✓","View"],
+      ["d","🏢","Valley Fire Systems — Fire Suppression","(209) 555-0122 · $780/yr","ok","COI ✓","View"],
     ],
   ],
   roles:[
-    {type:"n",h:"Roles & Permissions",s:"Your Organization · 7 roles configured"},
+    {type:"n",h:"Roles & Permissions",s:"Main Kitchen · 7 roles configured"},
     ["Role Configuration",null,
       ["d","🔑","Owner / Operator","1 user · Full access — all locations, all reports, billing",null,null,"Edit"],
       ["d","🔑","Executive","1 user · Read-only portfolio view, no configuration",null,null,"Edit"],
@@ -444,10 +431,10 @@ const PD={
     ],
   ],
   settings:[
-    {type:"n",h:"Settings",s:"Your Organization"},
+    {type:"n",h:"Settings",s:"Main Kitchen · Fresno, CA"},
     ["Organization",null,
-      ["d","🏢","Organization Name","Your Organization",null,null,"Edit"],
-      ["d","💳","Subscription","Founder Plan · $99/mo base + $49/mo/location","ok","Active"],
+      ["d","🏢","Organization Name","Main Kitchen",null,null,"Edit"],
+      ["d","💳","Subscription","Founder Plan · $99/mo","ok","Active"],
       ["d","📧","Billing Email","owner@yourorganization.com",null,null,"Edit"],
     ],
     ["Notifications",null,
@@ -458,13 +445,12 @@ const PD={
     ],
   ],
   calendar:[
-    {type:"n",h:"Calendar",s:"Your Organization · March 2026"},
+    {type:"n",h:"Calendar",s:"Main Kitchen · March 2026"},
     ["Upcoming Events",null,
-      ["d","📅","Afternoon temp logs","Today · All locations","wn","In Progress"],
-      ["d","📅","Hood cleaning overdue","Today · Catering Hub","er","Overdue"],
-      ["d","📅","Stanislaus County inspection","Tomorrow · Catering Hub","in","Upcoming"],
-      ["d","📅","Fire suppression service","Mar 16 · Main Kitchen","in","Upcoming"],
-      ["d","📅","Hood cleaning COI renewal due","Apr 1 · Catering Hub","wn","Due Soon"],
+      ["d","📅","Afternoon temp logs","Today · Main Kitchen","wn","In Progress"],
+      ["d","📅","Fire suppression service","Mar 15 · Main Kitchen","in","Upcoming"],
+      ["d","📅","Hood cleaning scheduled","Mar 16 · Main Kitchen","in","Upcoming"],
+      ["d","📅","Fresno County EHD inspection window","Apr 1–15 · Main Kitchen","in","Upcoming"],
     ],
   ],
 };
@@ -505,21 +491,18 @@ function Dashboard({role,sample,oa}){
   </div>;
 
   const cfg={
-    owner_operator:{st:"a",h:"Mostly covered — fire safety needs attention at one location.",s:"Your Organization · 3 locations · California"},
-    executive:{st:"a",h:"Portfolio standing — one location requires executive attention.",s:"Your Organization · 3 locations"},
-    compliance_manager:{st:"r",h:"Active compliance risk — immediate action required.",s:"Your Organization · 3 locations"},
-    facilities:{st:"r",h:"Fire safety action required at Catering Hub.",s:"Your Organization · 3 locations"},
-    chef:{st:"a",h:"Kitchen running — prep cooler log overdue.",s:"Your Organization · Main Kitchen"},
-    kitchen_manager:{st:"a",h:"Kitchen is on track — one temp log overdue.",s:"Your Organization · Main Kitchen"},
+    owner_operator:{st:"a",h:"Mostly covered — fire suppression service due in 5 days.",s:"Main Kitchen · Fresno, CA"},
+    executive:{st:"a",h:"Main Kitchen standing — fire suppression service due soon.",s:"Main Kitchen · Fresno, CA"},
+    compliance_manager:{st:"a",h:"Compliance on track — one item needs attention before Mar 15.",s:"Main Kitchen · Fresno, CA"},
+    facilities:{st:"a",h:"Fire suppression service due Mar 15 — schedule now.",s:"Main Kitchen · Fresno, CA"},
+    chef:{st:"a",h:"Kitchen running — prep cooler log overdue.",s:"Main Kitchen · Fresno, CA"},
+    kitchen_manager:{st:"a",h:"Kitchen is on track — one temp log overdue.",s:"Main Kitchen · Fresno, CA"},
   };
   const bc=cfg[role]||cfg.owner_operator;
-  const showAll=role==="owner_operator"||role==="executive"||role==="compliance_manager";
   return <div>
     <Banner type="c" {...bc}/>
-    <Card t="Location Standing" a="All Locations" onA={cta=>oa?.(cta,{})}>
-      {renderRow(["d","🟢","Main Kitchen — Fresno","Food ✓ OK · Fire ✓ OK","ok","0 open"],0,oa)}
-      {renderRow(["d","🔴","Catering Hub — Modesto","Food ✓ OK · Fire ! Action","er","3 open"],1,oa)}
-      {showAll&&renderRow(["d","🟡","Central Kitchen — Merced","Food ✓ OK · Fire Pending","wn","1 open"],2,oa)}
+    <Card t="Location Standing">
+      {renderRow(["d","🟢","Main Kitchen — Fresno","Food ✓ OK · Fire ✓ OK · Ansul due Mar 15","ok","0 open"],0,oa)}
     </Card>
     {(role==="owner_operator"||role==="kitchen_manager")&&<Card t="Today's Tasks" a="View All" onA={cta=>oa?.(cta,{})}>
       {renderRow(["t","Morning checklist","done","6:15 AM"],0,oa)}
@@ -528,20 +511,19 @@ function Dashboard({role,sample,oa}){
       {renderRow(["t","Evening checklist","pend","Due 10:00 PM"],3,oa)}
     </Card>}
     {role==="compliance_manager"&&<Card t="Open Alerts" onA={cta=>oa?.(cta,{})}>
-      {renderRow(["!","c","3 open violations — reinspection within 30 days","Catering Hub · Food Safety"],0,oa)}
-      {renderRow(["!","w","HACCP plan not on file","Central Kitchen · Food Safety"],1,oa)}
+      {renderRow(["!","w","Fire suppression service due in 5 days","Main Kitchen · Facility Safety"],0,oa)}
+      {renderRow(["!","w","Prep cooler temp log overdue","Main Kitchen · Food Safety"],1,oa)}
     </Card>}
     {role==="facilities"&&<Card t="Services Due Soon" onA={cta=>oa?.(cta,{})}>
-      {renderRow(["d","🛠️","Hood Cleaning — Catering Hub","Cleaning Pros Plus · OVERDUE","er","Overdue","Schedule"],0,oa)}
-      {renderRow(["d","🛠️","Fire Suppression — Catering Hub","Valley Fire Systems · EXPIRED","er","Expired","Schedule"],1,oa)}
-      {renderRow(["d","🛠️","Fire Suppression — Main Kitchen","Valley Fire Systems · Due Mar 15","wn","Due in 5d","Schedule"],2,oa)}
+      {renderRow(["d","🛠️","Fire Suppression — Main Kitchen","Valley Fire Systems · Due Mar 15","wn","Due in 5d","Schedule"],0,oa)}
+      {renderRow(["d","🛠️","Hood Cleaning — Main Kitchen","Cleaning Pros Plus · Next: Mar 16","ok","Scheduled","View"],1,oa)}
     </Card>}
     {role==="chef"&&<Card t="Temperature Readings" a="Log Now" onA={cta=>oa?.(cta,{primary:"Temperature Reading"})}>
       {renderRow(["d","🟢","Walk-in Cooler #1","IoT · 37.8°F","ok","In Range"],0,oa)}
       {renderRow(["d","🟢","Walk-in Cooler #2","IoT · 39.5°F","ok","In Range"],1,oa)}
       {renderRow(["d","🟡","Prep Cooler","Manual · Log needed","wn","—","Log Now"],2,oa)}
     </Card>}
-    {role==="executive"&&<SBar s={[["Locations OK","2/3","#92400e"],["Open Items","4","#991b1b"],["Annual Spend","$6.7k"]]}/>}
+    {role==="executive"&&<SBar s={[["Location","OK","#16a34a"],["Open Items","2","#92400e"],["Annual Spend","$2.2k"]]}/>}
   </div>;
 }
 
