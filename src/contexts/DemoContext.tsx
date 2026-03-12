@@ -64,10 +64,23 @@ function hasStoredAuthToken(): boolean {
   return false;
 }
 
+// ─── Role Preview detection (module-level, runs once) ────────────────────
+// When __rolePreview is in the URL, the entire app must behave as demo mode
+// so tenant layout renders, demo data is used, and write guards activate.
+// This must be module-level because DemoContext wraps RoleContext.
+const _isRolePreview = (() => {
+  try {
+    return !!new URLSearchParams(window.location.search).get('__rolePreview');
+  } catch { return false; }
+})();
+// ─────────────────────────────────────────────────────────────────────────
+
 export function DemoProvider({ children }: { children: ReactNode }) {
   const { session, signOut, profile } = useAuth();
 
   const [rawDemoMode, setRawDemoMode] = useState(() => {
+    // Role preview forces demo mode regardless of auth state
+    if (_isRolePreview) return true;
     // If a Supabase token exists in localStorage, never start in demo mode
     if (hasStoredAuthToken()) return false;
     try {
@@ -78,8 +91,9 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   });
 
   // ── Core invariant: authenticated sessions are NEVER in anonymous demo mode ──
+  // Exception: __rolePreview overrides this — admin iframe must act as demo.
   const isAuthenticated = !!session?.user;
-  const isDemoMode = rawDemoMode && !isAuthenticated;
+  const isDemoMode = _isRolePreview ? true : (rawDemoMode && !isAuthenticated);
 
   // ── Authenticated demo: user has session + org.is_demo = true ──
   const [orgIsDemo, setOrgIsDemo] = useState(false);
@@ -140,7 +154,9 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   }, [isAuthenticatedDemo, orgDemoExpiresAt]);
 
   // When user authenticates, clean up any stale anonymous demo state
+  // Skip cleanup in role preview mode — admin needs demo mode to stay active
   useEffect(() => {
+    if (_isRolePreview) return;
     if (isAuthenticated && rawDemoMode) {
       setRawDemoMode(false);
       try {
@@ -285,6 +301,24 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       startTour, completeTour,
       companyName, userName, firstName,
       presenterMode, togglePresenterMode,
+    }}>
+      {children}
+    </DemoContext.Provider>
+  );
+}
+
+/**
+ * Override provider for Role Preview — forces demo mode on
+ * so preview content uses demo data instead of Supabase queries.
+ */
+export function DemoOverrideProvider({ children }: { children: ReactNode }) {
+  const parent = useDemo();
+
+  return (
+    <DemoContext.Provider value={{
+      ...parent,
+      isDemoMode: true,
+      isAnyDemoMode: true,
     }}>
       {children}
     </DemoContext.Provider>

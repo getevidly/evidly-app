@@ -222,6 +222,35 @@ export function RoleProvider({ children }: { children: ReactNode }) {
   );
 }
 
+/**
+ * Override provider for Role Preview — lets admin preview any role
+ * without affecting the parent context. Used by RolePreview page.
+ */
+export function RoleOverrideProvider({ role, children }: { role: UserRole; children: ReactNode }) {
+  const parent = useRole();
+  const locations = ROLE_LOCATION_ASSIGNMENTS[role] || [];
+
+  const value: RoleContextType = {
+    userRole: role,
+    setUserRole: () => {},
+    isPreviewMode: true,
+    roleLocationAssignments: ROLE_LOCATION_ASSIGNMENTS,
+    tempCoverageAssignments: parent.tempCoverageAssignments,
+    addTempCoverage: () => {},
+    removeTempCoverage: () => {},
+    getAccessibleLocations: () => locations,
+    getAccessibleLocationUrlIds: () => locations.map(l => l.locationUrlId),
+    canAccessLocation: (id: string) => id === 'all' ? locations.length > 1 : locations.some(l => l.locationUrlId === id),
+    canManageTeam: () => ['platform_admin', 'executive', 'owner_operator'].includes(role),
+    canAccessBilling: () => ['platform_admin', 'executive'].includes(role),
+    canAssignTempCoverage: () => ['platform_admin', 'executive', 'owner_operator'].includes(role),
+    hasMultipleLocations: () => locations.length > 1,
+    showAllLocationsOption: () => locations.length > 1,
+  };
+
+  return <RoleContext.Provider value={value}>{children}</RoleContext.Provider>;
+}
+
 export function useRole() {
   const context = useContext(RoleContext);
   if (context === undefined) {

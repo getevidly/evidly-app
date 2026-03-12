@@ -1,5 +1,9 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, Suspense, lazy } from 'react';
 import { Monitor, Tablet, Smartphone, RefreshCw, ExternalLink, ChevronRight, Copy, Check } from 'lucide-react';
+import { RoleOverrideProvider } from '../../contexts/RoleContext';
+import { DemoOverrideProvider } from '../../contexts/DemoContext';
+
+const PreviewDashboard = lazy(() => import('../../pages/Dashboard').then(m => ({ default: m.Dashboard })));
 
 const ROLES = [
   { value: 'owner_operator', label: 'Owner / Operator', description: 'Full access — all locations, all reports, billing' },
@@ -17,49 +21,44 @@ const DEVICES = [
   { id: 'mobile', icon: Smartphone, label: 'Mobile', width: '390px' },
 ];
 
-const START_ROUTE = '/dashboard';
+function PreviewContent({ role, renderKey }) {
+  return (
+    <DemoOverrideProvider>
+      <RoleOverrideProvider role={role}>
+        <Suspense fallback={
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 48 }}>
+            <div style={{ textAlign: 'center' }}>
+              <div className="animate-spin" style={{ width: 32, height: 32, border: '3px solid #E5E7EB', borderTopColor: '#A08C5A', borderRadius: '50%', margin: '0 auto' }} />
+              <p style={{ marginTop: 12, fontSize: 13, color: '#6B7280' }}>Loading preview…</p>
+            </div>
+          </div>
+        }>
+          <PreviewDashboard key={`${role}-${renderKey}`} />
+        </Suspense>
+      </RoleOverrideProvider>
+    </DemoOverrideProvider>
+  );
+}
 
 export default function RolePreview() {
   const [selectedRole, setSelectedRole] = useState('owner_operator');
   const [device, setDevice] = useState('desktop');
-  const [iframeUrl, setIframeUrl] = useState('');
-  const [currentPath, setCurrentPath] = useState(START_ROUTE);
-  const [isLoading, setIsLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [sideByMode, setSideByMode] = useState(false);
   const [sideByRole, setSideByRole] = useState('kitchen_staff');
-  const iframeRef = useRef(null);
-  const iframeRef2 = useRef(null);
+  const [renderKey, setRenderKey] = useState(0);
 
-  const buildUrl = (role, path = START_ROUTE) => {
-    const base = window.location.origin;
-    return `${base}${path}?__rolePreview=${role}`;
+  const buildUrl = (role) => {
+    return `${window.location.origin}/dashboard?__rolePreview=${role}`;
   };
-
-  useEffect(() => {
-    setIframeUrl(buildUrl(selectedRole));
-    setCurrentPath(START_ROUTE);
-  }, [selectedRole]);
-
-  const handleRoleChange = (role) => {
-    setSelectedRole(role);
-    setIsLoading(true);
-  };
-
-  const handleRefresh = () => {
-    if (iframeRef.current) {
-      setIsLoading(true);
-      iframeRef.current.src = buildUrl(selectedRole, currentPath);
-    }
-  };
-
-  const handleLoad = () => setIsLoading(false);
 
   const handleCopyUrl = async () => {
-    await navigator.clipboard.writeText(buildUrl(selectedRole, currentPath));
+    await navigator.clipboard.writeText(buildUrl(selectedRole));
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  const handleRefresh = () => setRenderKey(k => k + 1);
 
   const currentDevice = DEVICES.find(d => d.id === device);
   const currentRoleInfo = ROLES.find(r => r.value === selectedRole);
@@ -86,7 +85,7 @@ export default function RolePreview() {
           </span>
           <select
             value={selectedRole}
-            onChange={e => handleRoleChange(e.target.value)}
+            onChange={e => setSelectedRole(e.target.value)}
             style={{
               background: '#0F1F35',
               color: '#fff',
@@ -183,13 +182,13 @@ export default function RolePreview() {
           })}
         </div>
 
-        {/* Refresh + Copy URL */}
+        {/* Refresh + Copy URL + Open Tab */}
         <button
           onClick={handleRefresh}
           title="Refresh preview"
           style={{ background: 'transparent', border: '1px solid #374151', borderRadius: 6, padding: '5px 8px', cursor: 'pointer', color: '#9CA3AF', display: 'flex', alignItems: 'center' }}
         >
-          <RefreshCw size={14} className={isLoading ? 'animate-spin' : ''} />
+          <RefreshCw size={14} />
         </button>
 
         <button
@@ -226,7 +225,7 @@ export default function RolePreview() {
       }}>
         <span style={{ fontWeight: 700 }}>ROLE PREVIEW MODE</span>
         <ChevronRight size={12} />
-        <span>Previewing as <strong>{currentRoleInfo?.label}</strong> — {currentRoleInfo?.description}. Navigation is fully live. No real user account required.</span>
+        <span>Previewing as <strong>{currentRoleInfo?.label}</strong> — {currentRoleInfo?.description}. Dashboard renders directly with role-specific data.</span>
         {sideByMode && (
           <>
             <span style={{ marginLeft: 16, color: '#4B5563' }}>|</span>
@@ -246,7 +245,7 @@ export default function RolePreview() {
         gap: sideByMode ? 8 : 0,
         padding: sideByMode ? '8px' : 0,
       }}>
-        {/* Primary iframe */}
+        {/* Primary preview */}
         <div style={{
           width: sideByMode ? '50%' : currentDevice?.width,
           height: '100%',
@@ -257,31 +256,18 @@ export default function RolePreview() {
           display: 'flex',
           flexDirection: 'column',
           transition: 'width 0.3s',
-          position: 'relative',
         }}>
           {sideByMode && (
-            <div style={{ background: '#1E2D4D', color: '#A08C5A', fontSize: 11, fontWeight: 700, textAlign: 'center', padding: '6px', letterSpacing: '0.06em' }}>
+            <div style={{ background: '#1E2D4D', color: '#A08C5A', fontSize: 11, fontWeight: 700, textAlign: 'center', padding: '6px', letterSpacing: '0.06em', flexShrink: 0 }}>
               {currentRoleInfo?.label.toUpperCase()}
             </div>
           )}
-          {isLoading && (
-            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: 'linear-gradient(90deg, #A08C5A, #1E2D4D)', zIndex: 10 }} />
-          )}
-          <iframe
-            ref={iframeRef}
-            src={iframeUrl}
-            onLoad={handleLoad}
-            style={{
-              width: '100%',
-              flex: 1,
-              border: 'none',
-              display: 'block',
-            }}
-            title={`Role Preview: ${currentRoleInfo?.label}`}
-          />
+          <div style={{ flex: 1, overflow: 'auto' }}>
+            <PreviewContent role={selectedRole} renderKey={renderKey} />
+          </div>
         </div>
 
-        {/* Side-by-side secondary iframe */}
+        {/* Side-by-side secondary preview */}
         {sideByMode && (
           <div style={{
             width: '50%',
@@ -293,20 +279,12 @@ export default function RolePreview() {
             display: 'flex',
             flexDirection: 'column',
           }}>
-            <div style={{ background: '#1E2D4D', color: '#A08C5A', fontSize: 11, fontWeight: 700, textAlign: 'center', padding: '6px', letterSpacing: '0.06em' }}>
+            <div style={{ background: '#1E2D4D', color: '#A08C5A', fontSize: 11, fontWeight: 700, textAlign: 'center', padding: '6px', letterSpacing: '0.06em', flexShrink: 0 }}>
               {ROLES.find(r => r.value === sideByRole)?.label.toUpperCase()}
             </div>
-            <iframe
-              ref={iframeRef2}
-              src={buildUrl(sideByRole)}
-              style={{
-                width: '100%',
-                flex: 1,
-                border: 'none',
-                display: 'block',
-              }}
-              title={`Role Preview: ${ROLES.find(r => r.value === sideByRole)?.label}`}
-            />
+            <div style={{ flex: 1, overflow: 'auto' }}>
+              <PreviewContent role={sideByRole} renderKey={renderKey} />
+            </div>
           </div>
         )}
       </div>
