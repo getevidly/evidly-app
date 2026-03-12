@@ -24,7 +24,7 @@ import {
 import { EmulationPanel } from '../../components/admin/EmulationPanel';
 
 // ── Colors ──────────────────────────────────────────────────
-const BRAND = '#1e4d6b';
+const BRAND = '#1E2D4D';
 const GOLD = '#A08C5A';
 const TEXT_SEC = '#3D5068';
 const TEXT_TERT = '#6B7F96';
@@ -550,7 +550,7 @@ function EventLogTab({ events }: { events: EventRow[] }) {
 
 function LevelBadge({ level }: { level: string }) {
   const styles: Record<string, { bg: string; text: string }> = {
-    INFO: { bg: '#dbeafe', text: '#1e40af' },
+    INFO: { bg: '#dbeafe', text: '#1E2D4D' },
     WARN: { bg: '#fef3c7', text: '#92400e' },
     ERROR: { bg: '#fee2e2', text: '#991b1b' },
     DEBUG: { bg: '#f3f4f6', text: '#6b7280' },
@@ -576,7 +576,7 @@ function ApiKeysTab({ keys }: { keys: ApiKeyRow[] }) {
                 <p className="text-sm font-medium">{k.name}</p>
                 <p className="text-xs font-mono" style={{ color: TEXT_TERT }}>{k.key_preview}</p>
               </div>
-              <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: k.scope === 'full' ? '#dbeafe' : '#f1f5f9', color: k.scope === 'full' ? '#1e40af' : TEXT_SEC }}>{k.scope}</span>
+              <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: k.scope === 'full' ? '#dbeafe' : '#f1f5f9', color: k.scope === 'full' ? '#1E2D4D' : TEXT_SEC }}>{k.scope}</span>
               <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: k.status === 'active' ? '#dcfce7' : '#fee2e2', color: k.status === 'active' ? '#166534' : '#991b1b' }}>{k.status}</span>
               <span className="text-xs hidden sm:inline" style={{ color: TEXT_TERT }}>{k.last_used_at ? `Used ${fmtDate(k.last_used_at)}` : 'Never used'}</span>
             </div>
@@ -591,7 +591,7 @@ function ApiKeysTab({ keys }: { keys: ApiKeyRow[] }) {
 
 function LeadsTab({ leads }: { leads: LeadRow[] }) {
   const statusColors: Record<string, { bg: string; text: string }> = {
-    new: { bg: '#dbeafe', text: '#1e40af' },
+    new: { bg: '#dbeafe', text: '#1E2D4D' },
     contacted: { bg: '#fef3c7', text: '#92400e' },
     demo_scheduled: { bg: '#e0e7ff', text: '#3730a3' },
     converted: { bg: '#dcfce7', text: '#166534' },
