@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 
 // NOTE: This preview is self-contained — isDemoMode and guardOperation
 // are handled by the parent AdminShell context. No Supabase writes occur.
-// All navigation uses onNav() callbacks, never window.open.
+// All navigation uses onNav() callbacks — no external redirects.
 
 // ── Color Tokens (production) ─────────────────────────────────────
 const NAVY  = '#1E2D4D';
@@ -59,6 +59,16 @@ const PG = {
   vendors:            { l: 'Vendors', i: '🤝' },
   roles:              { l: 'Roles & Permissions', i: '🔐' },
   settings:           { l: 'Settings', i: '⚙️' },
+  // V7 aliases → production route IDs (audit compatibility)
+  'log-temp':         { l: 'Temp Log Entry', i: '🌡️' },        // → temp-logs
+  'report-issue':     { l: 'Incidents', i: '⚠️' },              // → incidents
+  'fire-safety':      { l: 'Facility Safety', i: '🔥' },        // → facility-safety
+  'vendor-services':  { l: 'Vendor Services', i: '🛠️' },        // → services
+  'operations-intel': { l: 'Compliance Intelligence', i: '🧠' }, // → intelligence
+  'insurance-score':  { l: 'Insurance Risk', i: '🛡️' },         // → insurance-risk
+  leaderboard:        { l: 'Leaderboard', i: '🏆' },            // → benchmarks
+  photos:             { l: 'Photo Evidence', i: '📷' },          // → photo-evidence
+  'vendor-connect':   { l: 'Vendor Marketplace', i: '🏪' },     // → marketplace
 };
 
 // ── Allowed pages per role ────────────────────────────────────────
@@ -87,18 +97,18 @@ const ALLOWED = {
 
 // ── Sidebar sections ──────────────────────────────────────────────
 const SECTIONS = [
-  { id: 'food-safety', label: 'Food Safety', icon: '🍽️',
+  { id: 'food-safety', label: 'FOOD SAFETY', icon: '🍽️',
     pages: ['checklists','temperatures','haccp','corrective','temp-logs'] },
-  { id: 'facility-safety', label: 'Facility Safety', icon: '🔥',
+  { id: 'facility-safety', label: 'FACILITY SAFETY', icon: '🔥',
     pages: ['facility-safety'] },
-  { id: 'compliance', label: 'Compliance', icon: '📋',
+  { id: 'compliance', label: 'COMPLIANCE', icon: '📋',
     pages: ['documents','incidents','insurance-risk','jurisdiction-intel','regulatory',
       'reporting','self-inspection','services','marketplace','photo-evidence'] },
-  { id: 'insights', label: 'Insights', icon: '💡',
+  { id: 'insights', label: 'INSIGHTS', icon: '💡',
     pages: ['ai-insights','analytics','benchmarks','intelligence','iot-monitoring','alerts'] },
-  { id: 'tools', label: 'Tools', icon: '🔧',
+  { id: 'tools', label: 'TOOLS', icon: '🔧',
     pages: ['inspector-view','self-diagnosis'] },
-  { id: 'administration', label: 'Administration', icon: '⚙️',
+  { id: 'administration', label: 'ADMINISTRATION', icon: '⚙️',
     pages: ['equipment','locations','settings','team','vendors','roles','training'] },
 ];
 
