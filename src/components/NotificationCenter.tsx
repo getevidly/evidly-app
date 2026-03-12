@@ -121,25 +121,6 @@ const DEMO_NOTIFICATIONS: Notification[] = [
     status: 'read',
     created_at: new Date(Date.now() - 96 * 3600000).toISOString(),
   },
-  // Intelligence signal notifications (SIGNAL-NOTIFY-01)
-  {
-    id: 'n-sig-1',
-    severity: 'urgent',
-    title: 'CalCode Amendment — Hood Cleaning Documentation',
-    body: 'California is proposing stricter documentation requirements for hood cleaning and exhaust system maintenance under NFPA 96.', // demo
-    link: '/insights/intelligence',
-    status: 'unread',
-    created_at: new Date(Date.now() - 8 * 3600000).toISOString(),
-  },
-  {
-    id: 'n-sig-2',
-    severity: 'advisory',
-    title: 'FDA Cold Holding Clarification — Cut Leafy Greens',
-    body: 'FDA has issued a clarification on cold holding requirements. Review procedures to ensure TCS items are maintained at 41°F or below.', // demo
-    link: '/insights/intelligence',
-    status: 'unread',
-    created_at: new Date(Date.now() - 2 * 3600000).toISOString(),
-  },
 ];
 
 // Map vendor doc notifications to the Notification shape
