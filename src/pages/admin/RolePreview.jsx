@@ -5,7 +5,7 @@ const NAVY="#1E2D4D",GOLD="#A08C5A",BODY="#1E2D4D",MUTED="#6B7F96",SB="#07111F",
 const STEEL="linear-gradient(135deg,#1E2D4D 0%,#152340 60%,#243560 100%)";
 const RBKG="linear-gradient(135deg,#2D0A00,#6B1A0A,#3D1208)";
 const FF={fontFamily:"system-ui,-apple-system,sans-serif"};
-const BG={ok:{bg:"#f0fdf4",c:"#166534"},wn:{bg:"#fffbeb",c:"#92400e"},er:{bg:"#fef2f2",c:"#991b1b"},in:{bg:"#f0f4ff",c:"#3730a3"},gy:{bg:"#f1f5f9",c:"#475569"}};
+const BG={ok:{background:"#f0fdf4",color:"#166534"},wn:{background:"#fffbeb",color:"#92400e"},er:{background:"#fef2f2",color:"#991b1b"},in:{background:"#f0f4ff",color:"#3730a3"},gy:{background:"#f1f5f9",color:"#475569"}};
 
 // ── PRIMITIVES ────────────────────────────────────────────────────────────────
 const Dot=({c})=><span style={{width:8,height:8,borderRadius:"50%",background:c,display:"inline-block",flexShrink:0}}/>;
@@ -704,7 +704,7 @@ export default function RolePreview(){
         {sample?<span style={{marginLeft:8,color:"#166534",fontWeight:700}}>● Sample data ON — every page is fully populated.</span>:<span style={{marginLeft:8}}>Toggle Sample Data ON to see the system fully populated.</span>}
       </div>
     </div>
-    <div style={{display:"flex",gap:12,padding:12,alignItems:"flex-start"}}>
+    <div style={{display:"flex",gap:12,padding:12,alignItems:"flex-start",overflowX:"auto"}}>
       <div style={{flex:1,minWidth:0}}>
         <div style={{fontSize:10,fontWeight:700,color:"#64748B",textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:7,...FF}}>🖥 Desktop</div>
         <Panel role={role} page={dPage} onNav={setDPage} sample={sample} collapsed={col} mobile={false}/>
