@@ -185,7 +185,7 @@ const BlogPost = lazy(() => import('./pages/public/BlogPost').then(m => ({ defau
 const VendorServiceUpdate = lazy(() => import('./pages/VendorServiceUpdate').then(m => ({ default: m.VendorServiceUpdate })));
 const AssessmentLeads = lazy(() => import('./pages/admin/AssessmentLeads'));
 const InsuranceApiKeys = lazy(() => import('./pages/admin/InsuranceApiKeys'));
-// DemoGenerator preserved but not lazy-loaded — all demos are run live with a rep
+const DemoGenerator = lazy(() => import('./pages/admin/DemoGenerator'));
 const DemoLauncher = lazy(() => import('./pages/admin/DemoLauncher'));
 const DemoPipeline = lazy(() => import('./pages/admin/DemoPipeline'));
 const GtmDashboard = lazy(() => import('./pages/admin/GtmDashboard'));
@@ -479,6 +479,9 @@ function AppRoutes() {
         {/* Demo expired — full-screen upgrade prompt, no layout chrome */}
         <Route path="/demo-expired" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><DemoExpired /></Suspense></ErrorBoundary></ProtectedRoute>} />
 
+        {/* RolePreview — standalone full-viewport route (no Layout/AdminShell wrapper) */}
+        <Route path="/admin/role-preview" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><RolePreview /></Suspense></ErrorBoundary></ProtectedRoute>} />
+
         {/* Protected routes with shared layout — sidebar/topbar stay mounted */}
         <Route element={<ProtectedLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
@@ -585,7 +588,7 @@ function AppRoutes() {
           <Route path="/admin/rfp" element={<Navigate to="/admin/rfp-monitor" replace />} />
           <Route path="/admin/jurisdiction-intel" element={<Navigate to="/admin/jurisdiction-intelligence" replace />} />
           {/* Demo Generator disabled — all demos are run live with a sales rep */}
-          <Route path="/admin/demo-generator" element={<Navigate to="/admin/demo-launcher" replace />} />
+          <Route path="/admin/demo-generator" element={<SalesGuard><DemoGenerator /></SalesGuard>} />
           <Route path="/admin/demo-launcher" element={<SalesGuard><DemoLauncher /></SalesGuard>} />
           <Route path="/admin/demos" element={<Navigate to="/admin/demo-pipeline" replace />} />
           <Route path="/admin/demo-pipeline" element={<SalesGuard><DemoPipeline /></SalesGuard>} />
@@ -601,7 +604,7 @@ function AppRoutes() {
           <Route path="/admin/leads" element={<SalesGuard><AssessmentLeads /></SalesGuard>} />
           <Route path="/admin/configure" element={<Configure />} />
           <Route path="/admin/emulate" element={<UserEmulation />} />
-          <Route path="/admin/role-preview" element={<RolePreview />} />
+          {/* RolePreview moved to standalone route (no Layout/AdminShell wrapper) */}
           <Route path="/admin/billing" element={<AdminBilling />} />
           <Route path="/admin/crawl-monitor" element={<AdminCrawlMonitor />} />
           <Route path="/admin/rfp-monitor" element={<RfpIntelligence />} />
