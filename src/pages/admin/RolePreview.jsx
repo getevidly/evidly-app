@@ -617,14 +617,14 @@ function BottomBar({role,active,onNav}){
 }
 
 // ── PANEL ─────────────────────────────────────────────────────────────────────
-function Panel({role,page,onNav,sample,collapsed,mobile}){
+function Panel({role,page,onNav,sample,collapsed,mobile,width}){
   const isStaff=role==="kitchen_staff";
   const[mMenu,setMMenu]=useState(false);
   const[pan,setPan]=useState(null);
   const oa=(cta,data)=>setPan(gp(cta,data||{}));
   const label=page.replace(/-/g," ").replace(/\b\w/g,c=>c.toUpperCase());
 
-  if(mobile) return <div style={{background:"white",borderRadius:10,overflow:"hidden",boxShadow:"0 2px 18px rgba(0,0,0,0.14)",display:"flex",flexDirection:"column",height:700,width:360,position:"relative"}}>
+  if(mobile) return <div style={{background:"white",borderRadius:10,overflow:"hidden",boxShadow:"0 2px 18px rgba(0,0,0,0.14)",display:"flex",flexDirection:"column",height:700,width:width||360,position:"relative"}}>
     <div style={{background:SB,padding:"8px 12px",display:"flex",alignItems:"center",gap:8,flexShrink:0}}>
       {!isStaff&&<button onClick={()=>setMMenu(s=>!s)} style={{background:"none",border:"none",color:"white",fontSize:17,cursor:"pointer",padding:"2px 4px"}}>☰</button>}
       <span style={{fontSize:13,fontWeight:900,...FF}}><span style={{color:GOLD}}>E</span><span style={{color:"white"}}>vid</span><span style={{color:GOLD}}>LY</span></span>
@@ -684,12 +684,19 @@ export default function RolePreview(){
   const[dPage,setDPage]=useState("dashboard");
   const[mPage,setMPage]=useState("dashboard");
   const[col,setCol]=useState(false);
+  const[dWidth,setDWidth]=useState(900);
+  const[mWidth,setMWidth]=useState(360);
   const cr=ROLES.find(r=>r.id===role);
   const isStaff=role==="kitchen_staff";
   const changeRole=r=>{setRole(r);setDPage("dashboard");setMPage("dashboard");};
 
   return <div style={{background:"#E2E8F0",minHeight:"100vh",...FF}}>
     <div style={{background:NAVY,padding:"9px 15px"}}>
+      <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:8}}>
+        <a href="/admin" style={{fontSize:11,color:"rgba(255,255,255,0.45)",textDecoration:"none",fontWeight:500,...FF}}>Admin Console</a>
+        <span style={{fontSize:11,color:"rgba(255,255,255,0.25)"}}>›</span>
+        <span style={{fontSize:11,color:"rgba(255,255,255,0.7)",...FF}}>Role Preview</span>
+      </div>
       <div style={{display:"flex",alignItems:"center",gap:5,flexWrap:"wrap",marginBottom:8}}>
         <span style={{fontSize:9,fontWeight:800,color:GOLD,textTransform:"uppercase",letterSpacing:"0.12em",marginRight:4,...FF}}>ROLE</span>
         {ROLES.map(r=><button key={r.id} onClick={()=>changeRole(r.id)} style={{padding:"5px 11px",borderRadius:999,border:"1px solid",borderColor:role===r.id?GOLD:"rgba(255,255,255,0.15)",background:role===r.id?GOLD:"transparent",color:role===r.id?"#1E2D4D":"#94A3B8",fontSize:11,fontWeight:role===r.id?700:400,cursor:"pointer",whiteSpace:"nowrap",...FF}}>{r.lbl}</button>)}
@@ -698,6 +705,16 @@ export default function RolePreview(){
           <span>{sample?"●":"○"}</span>{sample?"Sample Data ON":"Sample Data OFF"}
         </button>
         {!isStaff&&<button onClick={()=>setCol(s=>!s)} style={{padding:"5px 10px",borderRadius:999,border:"1px solid rgba(255,255,255,0.12)",background:"transparent",color:"#94A3B8",fontSize:11,cursor:"pointer",...FF}}>{col?"Expand ↔":"Collapse ↔"}</button>}
+        <div style={{display:"flex",alignItems:"center",gap:12,marginLeft:8}}>
+          <div style={{display:"flex",alignItems:"center",gap:6}}>
+            <span style={{fontSize:9,color:"rgba(255,255,255,0.45)",fontWeight:700,textTransform:"uppercase",...FF}}>🖥 {dWidth}px</span>
+            <input type="range" min={600} max={1400} step={20} value={dWidth} onChange={e=>setDWidth(Number(e.target.value))} style={{width:80,accentColor:GOLD,cursor:"pointer"}}/>
+          </div>
+          <div style={{display:"flex",alignItems:"center",gap:6}}>
+            <span style={{fontSize:9,color:"rgba(255,255,255,0.45)",fontWeight:700,textTransform:"uppercase",...FF}}>📱 {mWidth}px</span>
+            <input type="range" min={320} max={480} step={10} value={mWidth} onChange={e=>setMWidth(Number(e.target.value))} style={{width:60,accentColor:GOLD,cursor:"pointer"}}/>
+          </div>
+        </div>
       </div>
       <div style={{background:"#FEF3C7",border:"1px solid #FDE68A",borderRadius:6,padding:"5px 11px",fontSize:11,color:"#92400E",...FF}}>
         <strong>ROLE PREVIEW MODE</strong> ▸ Viewing as <strong>{cr?.lbl}</strong> — {cr?.desc}.
@@ -705,13 +722,13 @@ export default function RolePreview(){
       </div>
     </div>
     <div style={{display:"flex",gap:12,padding:12,alignItems:"flex-start",overflowX:"auto"}}>
-      <div style={{flex:1,minWidth:0}}>
+      <div style={{width:dWidth,flexShrink:0}}>
         <div style={{fontSize:10,fontWeight:700,color:"#64748B",textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:7,...FF}}>🖥 Desktop</div>
         <Panel role={role} page={dPage} onNav={setDPage} sample={sample} collapsed={col} mobile={false}/>
       </div>
-      <div style={{flexShrink:0}}>
+      <div style={{flexShrink:0,width:mWidth}}>
         <div style={{fontSize:10,fontWeight:700,color:"#64748B",textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:7,...FF}}>📱 Mobile</div>
-        <Panel role={role} page={mPage} onNav={setMPage} sample={sample} collapsed={col} mobile={true}/>
+        <Panel role={role} page={mPage} onNav={setMPage} sample={sample} collapsed={col} mobile={true} width={mWidth}/>
       </div>
     </div>
   </div>;
