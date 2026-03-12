@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { AlertTriangle, CheckCircle, Clock, Thermometer, Activity, ChevronRight, XCircle, MapPin, Loader2, ChevronDown, FileText, Plus, Trash2, Save, Download, Wifi, Pencil, Shield } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Clock, Thermometer, Activity, ChevronRight, XCircle, MapPin, Loader2, ChevronDown, FileText, Plus, Trash2, Save, Download, Wifi, Pencil, Shield, Sparkles } from 'lucide-react';
+import { HACCPAICreate } from '../components/haccp/HACCPAICreate';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { InfoTooltip } from '../components/ui/InfoTooltip';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
@@ -361,8 +362,8 @@ const CORRECTIVE_ACTIONS: CorrectiveActionRecord[] = [
 
 export function HACCP() {
   const [searchParams] = useSearchParams();
-  const initialTab = (searchParams.get('tab') as 'plans' | 'monitoring' | 'corrective' | 'template') || 'plans';
-  const [activeTab, setActiveTab] = useState<'plans' | 'monitoring' | 'corrective' | 'template'>(initialTab);
+  const initialTab = (searchParams.get('tab') as 'plans' | 'monitoring' | 'corrective' | 'template' | 'ai-create') || 'plans';
+  const [activeTab, setActiveTab] = useState<'plans' | 'monitoring' | 'corrective' | 'template' | 'ai-create'>(initialTab);
   const [selectedPlan, setSelectedPlan] = useState<HACCPPlan | null>(null);
   const urlLocation = searchParams.get('location') || '';
   const [selectedLocation, setSelectedLocation] = useState(urlLocation || 'all');
@@ -1256,6 +1257,17 @@ export function HACCP() {
           >
             <FileText className="h-4 w-4" />
             <span>Template</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('ai-create')}
+            className={`px-6 py-3 font-medium flex items-center space-x-2 whitespace-nowrap ${
+              activeTab === 'ai-create'
+                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            <Sparkles className="h-4 w-4" />
+            <span>AI Create</span>
           </button>
         </div>
 
@@ -2294,6 +2306,11 @@ export function HACCP() {
           </div>
           );
         })()}
+
+        {/* ── AI Create Tab ───────────────────────────────────── */}
+        {!loading && activeTab === 'ai-create' && (
+          <HACCPAICreate />
+        )}
       </div>
 
     </>
