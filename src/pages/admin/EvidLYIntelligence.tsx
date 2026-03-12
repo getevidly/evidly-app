@@ -240,6 +240,140 @@ const EmptyState = ({ icon, title, subtitle }: { icon: string; title: string; su
   </div>
 );
 
+// Admin reference architecture — displays when no live correlations. Real data takes precedence in future state.
+const SAMPLE_CORRELATIONS = [
+  {
+    id: 'corr-001',
+    pillar: 'Revenue',
+    pillarColor: '#C2410C',
+    title: 'Repeat Violation → Revenue Loss',
+    description: 'Locations with 2+ repeat critical violations in 12 months show an average 18% revenue decline within 6 months of public posting.',
+    signalCount: 14,
+    impactRange: '$45,000 – $180,000',
+    confidence: 87,
+    sources: ['Health Dept Public Records', 'Yelp Signal Feed', 'CDPH Violation Index'],
+    status: 'active' as const,
+  },
+  {
+    id: 'corr-002',
+    pillar: 'Revenue',
+    pillarColor: '#C2410C',
+    title: 'Grade Downgrade → Foot Traffic Drop',
+    description: 'Letter grade downgrades (A→B or B→C) correlate with a 12–22% foot traffic reduction within 30 days based on mobile location data.',
+    signalCount: 9,
+    impactRange: '$28,000 – $95,000',
+    confidence: 79,
+    sources: ['LA County Grade Data', 'Mobile Analytics Signal'],
+    status: 'active' as const,
+  },
+  {
+    id: 'corr-003',
+    pillar: 'Liability',
+    pillarColor: '#991B1B',
+    title: 'Open Violation at Reinspection → Closure Risk',
+    description: 'Locations entering reinspection with 3+ open critical violations have a 43% probability of temporary closure order.',
+    signalCount: 22,
+    impactRange: '$85,000 – $400,000',
+    confidence: 91,
+    sources: ['CDPH Reinspection Records', 'Mariposa County EHD', 'Stanislaus County EHD'],
+    status: 'active' as const,
+  },
+  {
+    id: 'corr-004',
+    pillar: 'Liability',
+    pillarColor: '#991B1B',
+    title: 'Hood Cleaning Overdue → Insurance Claim Trigger',
+    description: 'NFPA 96-2024 Table 12.4 overdue intervals (>30 days past schedule) correlate with 2.8× higher fire suppression claim frequency.',
+    signalCount: 17,
+    impactRange: '$120,000 – $650,000',
+    confidence: 84,
+    sources: ['IKECA Service Records', 'OSFM Fire Reports', 'Insurance Carrier Claims Data'],
+    status: 'active' as const,
+  },
+  {
+    id: 'corr-005',
+    pillar: 'Cost',
+    pillarColor: '#1E40AF',
+    title: 'Vendor COI Lapse → Emergency Service Premium',
+    description: 'Locations using vendors with expired COI are 3.1× more likely to incur emergency service charges averaging $4,200 per incident.',
+    signalCount: 11,
+    impactRange: '$12,000 – $68,000',
+    confidence: 76,
+    sources: ['Vendor Document Records', 'Service Invoice Data'],
+    status: 'active' as const,
+  },
+  {
+    id: 'corr-006',
+    pillar: 'Cost',
+    pillarColor: '#1E40AF',
+    title: 'Temperature Log Gap → Food Loss Exposure',
+    description: 'Missing temperature logs for 3+ consecutive days correlate with $1,800 avg food inventory loss and $3,200 corrective action costs.',
+    signalCount: 8,
+    impactRange: '$5,000 – $42,000',
+    confidence: 72,
+    sources: ['Temperature Sensor Data', 'EvidLY Checklist Records'],
+    status: 'active' as const,
+  },
+  {
+    id: 'corr-007',
+    pillar: 'Operational',
+    pillarColor: '#166534',
+    title: 'CFPM Cert Expiry → Inspection Score Decline',
+    description: 'Locations where the CFPM certification lapses show a 14-point average inspection score decline within 90 days.',
+    signalCount: 19,
+    impactRange: '$22,000 – $110,000',
+    confidence: 88,
+    sources: ['CA Environmental Health Data', 'Training Records Module'],
+    status: 'active' as const,
+  },
+  {
+    id: 'corr-008',
+    pillar: 'Operational',
+    pillarColor: '#166534',
+    title: 'Self-Inspection Gap → Failed Surprise Inspection',
+    description: 'Locations missing self-inspection checklists for 2+ weeks are 2.4× more likely to fail unannounced health inspections.',
+    signalCount: 13,
+    impactRange: '$18,000 – $75,000',
+    confidence: 81,
+    sources: ['EvidLY Self-Inspection Logs', 'County Inspection Records'],
+    status: 'active' as const,
+  },
+  {
+    id: 'corr-009',
+    pillar: 'Workforce',
+    pillarColor: '#6B21A8',
+    title: 'High Turnover → Training Gap → Violation Cluster',
+    description: 'Locations with >60% annual staff turnover show a 3.7× violation cluster rate within 120 days of turnover spike.',
+    signalCount: 16,
+    impactRange: '$35,000 – $160,000',
+    confidence: 83,
+    sources: ['HR Turnover Signal', 'Training Completion Records', 'County Inspection Data'],
+    status: 'active' as const,
+  },
+  {
+    id: 'corr-010',
+    pillar: 'Workforce',
+    pillarColor: '#6B21A8',
+    title: 'Food Handler Cert Gap → Critical Violation',
+    description: 'Locations where >25% of food handlers have lapsed certifications show a 2.1× rate of critical food safety violations on next inspection.',
+    signalCount: 12,
+    impactRange: '$14,000 – $85,000',
+    confidence: 78,
+    sources: ['Training Records Module', 'CDPH Inspection Index'],
+    status: 'active' as const,
+  },
+];
+
+const CORR_PILLARS = ['Revenue', 'Liability', 'Cost', 'Operational', 'Workforce'];
+const CORR_PILLAR_COLORS: Record<string, string> = {
+  Revenue: '#C2410C',
+  Liability: '#991B1B',
+  Cost: '#1E40AF',
+  Operational: '#166534',
+  Workforce: '#6B21A8',
+};
+const REPORT_FORMATS = ['Executive Summary', 'Formal Document', 'PDF/Print Ready', 'Risk Register'];
+
 export default function EvidLYIntelligence() {
   const { user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -266,6 +400,9 @@ export default function EvidLYIntelligence() {
   const [jurFilter, setJurFilter] = useState<'' | 'active' | 'quiet' | 'methodology'>('');
   const [jurSort, setJurSort] = useState<'signals' | 'name' | 'recent'>('signals');
   const [expandedRegVerification, setExpandedRegVerification] = useState<string | null>(null);
+  const [corrPillarFilter, setCorrPillarFilter] = useState<string>('All');
+  const [corrReportFormat, setCorrReportFormat] = useState<string>('Executive Summary');
+  const [corrExpanded, setCorrExpanded] = useState<string | null>(null);
 
   // Publish Advisory modal
   const [publishModal, setPublishModal] = useState<{ open: boolean; signal: Signal | null }>({ open: false, signal: null });
@@ -1190,162 +1327,202 @@ export default function EvidLYIntelligence() {
       {/* JIE tab removed — merged into Jurisdiction Updates tab */}
 
       {/* ────────── TAB: CORRELATIONS ────────── */}
-      {activeTab === 'correlations' && (() => {
-        const CORR_DIMS = [
-          { key: 'risk_revenue' as const, label: 'Revenue', color: '#C2410C' },
-          { key: 'risk_liability' as const, label: 'Liability', color: '#991B1B' },
-          { key: 'risk_cost' as const, label: 'Cost', color: '#1E40AF' },
-          { key: 'risk_operational' as const, label: 'Operational', color: '#166534' },
-          { key: 'risk_workforce' as const, label: 'Workforce', color: '#6B21A8' },
-        ];
-        const SEV_ORDER = ['critical', 'high', 'moderate', 'low'];
+      {activeTab === 'correlations' && (
+        <div style={{ padding: '24px 0' }}>
 
-        // Build signal → counties lookup from correlations
-        const sigCounties: Record<string, { county: string; strength: number }[]> = {};
-        for (const c of correlations) {
-          const county = c.jurisdictions?.county || c.organizations?.name || null;
-          if (county && c.source_id) {
-            if (!sigCounties[c.source_id]) sigCounties[c.source_id] = [];
-            sigCounties[c.source_id].push({ county, strength: Math.round((c.correlation_strength || 0) * 100) });
-          }
-        }
-
-        // Helper: check if signal belongs to workforce pillar (P5)
-        const isWorkforceSignal = (sig: Signal): boolean => {
-          if (sig.cic_pillar === 'workforce_risk') return true;
-          const p = getPillarForSignalType(sig.signal_type);
-          return p?.id === 'workforce_risk';
-        };
-
-        // Build rows per dimension
-        const dimSections = CORR_DIMS.map(dim => {
-          const rows: { signal: Signal; county: string; strength: number; severity: string }[] = [];
-          for (const sig of signals) {
-            let severity: string | null = null;
-            if (dim.key === 'risk_workforce') {
-              // P5 Workforce — derived from cic_pillar or signal_type, not a DB column
-              if (isWorkforceSignal(sig)) {
-                // Use the highest non-none risk level from the signal as the severity
-                const levels = [sig.risk_revenue, sig.risk_liability, sig.risk_cost, sig.risk_operational].filter(l => l && l !== 'none');
-                severity = levels.length > 0
-                  ? levels.sort((a, b) => SEV_ORDER.indexOf(a!) - SEV_ORDER.indexOf(b!))[0]!
-                  : 'high'; // workforce signals default to high if no risk dims set
-              }
-            } else {
-              severity = sig[dim.key as keyof Signal] as string | null;
-            }
-            if (!severity || severity === 'none') continue;
-            const counties = sigCounties[sig.id];
-            if (counties && counties.length > 0) {
-              for (const c of counties) rows.push({ signal: sig, county: c.county, strength: c.strength, severity });
-            } else {
-              rows.push({ signal: sig, county: '—', strength: 0, severity });
-            }
-          }
-          rows.sort((a, b) => SEV_ORDER.indexOf(a.severity) - SEV_ORDER.indexOf(b.severity));
-          return { ...dim, rows };
-        });
-
-        return (
-          <>
-            <div style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.6, marginBottom: 12 }}>
-              Signals grouped by risk dimension. A signal appears in every dimension where it has an assigned risk level.
+          {/* Header row */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+            <div>
+              <div style={{ fontSize: 13, color: '#6B7280' }}>
+                Signals grouped by risk dimension. A signal appears in every dimension where it has an assigned risk level.
+              </div>
+              {correlations.length === 0 && (
+                <div style={{
+                  marginTop: 8,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  background: '#FEF3C7',
+                  border: '1px solid #FDE68A',
+                  borderRadius: 6,
+                  padding: '4px 10px',
+                  fontSize: 11,
+                  color: '#92400E',
+                  fontWeight: 600,
+                }}>
+                  ⚠ Showing reference architecture — no live correlations yet. Assign risk levels in Signal Approval Queue to populate with real data.
+                </div>
+              )}
             </div>
+            <div style={{ fontSize: 12, color: '#9CA3AF', flexShrink: 0 }}>
+              {SAMPLE_CORRELATIONS.length} correlations · {CORR_PILLARS.length} pillars
+            </div>
+          </div>
 
-            {loading ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} h={60} />)}
-              </div>
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                {dimSections.map(sec => (
-                  <details key={sec.key} open style={{ background: '#fff', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
-                    <summary style={{
-                      padding: '12px 16px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10,
-                      borderBottom: `1px solid ${BORDER}`, background: '#FAFAF8', listStyle: 'none',
-                    }}>
-                      <span style={{ width: 10, height: 10, borderRadius: '50%', background: sec.color, flexShrink: 0 }} />
-                      <span style={{ fontSize: 14, fontWeight: 700, color: NAVY }}>{sec.label}</span>
-                      <span style={{ fontSize: 11, color: TEXT_MUTED }}>
-                        {sec.rows.length} signal{sec.rows.length !== 1 ? 's' : ''}
-                      </span>
-                    </summary>
-                    {sec.rows.length === 0 ? (
-                      <div style={{ padding: '24px 16px', textAlign: 'center', fontSize: 12, color: TEXT_MUTED }}>
-                        No signals assigned to this dimension yet. Assign risk levels in the Signal Approval Queue.
+          {/* Pillar filter pills */}
+          <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
+            {['All', ...CORR_PILLARS].map(p => (
+              <button
+                key={p}
+                onClick={() => setCorrPillarFilter(p)}
+                style={{
+                  padding: '5px 14px',
+                  borderRadius: 999,
+                  border: '1px solid',
+                  borderColor: corrPillarFilter === p
+                    ? (p === 'All' ? GOLD : CORR_PILLAR_COLORS[p])
+                    : '#E5E7EB',
+                  background: corrPillarFilter === p
+                    ? (p === 'All' ? GOLD : CORR_PILLAR_COLORS[p])
+                    : '#fff',
+                  color: corrPillarFilter === p ? '#fff' : '#374151',
+                  fontSize: 12,
+                  fontWeight: corrPillarFilter === p ? 700 : 400,
+                  cursor: 'pointer',
+                }}
+              >
+                {p}
+              </button>
+            ))}
+          </div>
+
+          {/* Report Format selector */}
+          <div style={{
+            background: '#fff',
+            border: `1px solid ${BORDER}`,
+            borderRadius: 8,
+            padding: '16px 20px',
+            marginBottom: 24,
+          }}>
+            <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#6B7280', marginBottom: 12 }}>
+              Export Report Format
+            </div>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              {REPORT_FORMATS.map(fmt => (
+                <button
+                  key={fmt}
+                  onClick={() => setCorrReportFormat(fmt)}
+                  style={{
+                    padding: '8px 16px',
+                    borderRadius: 6,
+                    border: '1px solid',
+                    borderColor: corrReportFormat === fmt ? NAVY : '#E5E7EB',
+                    background: corrReportFormat === fmt ? NAVY : '#F9FAFB',
+                    color: corrReportFormat === fmt ? '#fff' : '#374151',
+                    fontSize: 12,
+                    fontWeight: corrReportFormat === fmt ? 700 : 400,
+                    cursor: 'pointer',
+                  }}
+                >
+                  {fmt}
+                </button>
+              ))}
+            </div>
+            <div style={{ marginTop: 10, fontSize: 11, color: '#9CA3AF' }}>
+              {corrReportFormat === 'Executive Summary' && 'One-page narrative summary for C-suite. Key risks, dollar exposure, and 3 priority recommendations.'}
+              {corrReportFormat === 'Formal Document' && 'Full structured report with methodology, pillar analysis, and regulatory citations. Suitable for board or legal review.'}
+              {corrReportFormat === 'PDF/Print Ready' && 'Print-optimized layout with EvidLY letterhead, table of contents, and signature block. Exports as PDF.'}
+              {corrReportFormat === 'Risk Register' && 'Tabular format: Risk ID, Pillar, Description, Dollar Impact, Owner, Due Date, Status. Imports into risk management tools.'}
+            </div>
+            <button
+              style={{
+                marginTop: 12,
+                padding: '8px 20px',
+                background: GOLD,
+                color: '#fff',
+                border: 'none',
+                borderRadius: 6,
+                fontSize: 12,
+                fontWeight: 700,
+                cursor: 'pointer',
+              }}
+              onClick={() => alert(`Export as ${corrReportFormat} — wire to export function when ready`)}
+            >
+              Export {corrReportFormat}
+            </button>
+          </div>
+
+          {/* Correlations grouped by pillar */}
+          {CORR_PILLARS.filter(p => corrPillarFilter === 'All' || corrPillarFilter === p).map(pillar => {
+            const items = SAMPLE_CORRELATIONS.filter(c => c.pillar === pillar);
+            if (items.length === 0) return null;
+            const color = CORR_PILLAR_COLORS[pillar];
+            return (
+              <div key={pillar} style={{ marginBottom: 28 }}>
+                {/* Pillar header */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 10,
+                  marginBottom: 12,
+                  paddingBottom: 8,
+                  borderBottom: `2px solid ${color}22`,
+                }}>
+                  <div style={{ width: 10, height: 10, borderRadius: '50%', background: color, flexShrink: 0 }} />
+                  <span style={{ fontSize: 15, fontWeight: 800, color: NAVY }}>{pillar}</span>
+                  <span style={{ fontSize: 12, color: '#9CA3AF' }}>{items.length} signal{items.length !== 1 ? 's' : ''}</span>
+                </div>
+
+                {/* Correlation cards */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {items.map(corr => (
+                    <div
+                      key={corr.id}
+                      style={{
+                        background: '#fff',
+                        border: `1px solid ${BORDER}`,
+                        borderLeft: `3px solid ${color}`,
+                        borderRadius: 8,
+                        padding: '14px 16px',
+                        cursor: 'pointer',
+                      }}
+                      onClick={() => setCorrExpanded(corrExpanded === corr.id ? null : corr.id)}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontSize: 13, fontWeight: 700, color: NAVY, marginBottom: 4 }}>
+                            {corr.title}
+                          </div>
+                          <div style={{ fontSize: 12, color: '#6B7280', lineHeight: 1.5 }}>
+                            {corr.description}
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                          <div style={{ fontSize: 13, fontWeight: 800, color: GOLD }}>{corr.impactRange}</div>
+                          <div style={{ fontSize: 10, color: '#9CA3AF', marginTop: 2 }}>impact range</div>
+                        </div>
                       </div>
-                    ) : (
-                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-                        <thead>
-                          <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
-                            {['Signal', 'Dimensions', 'Severity', 'County', 'Strength'].map(h => (
-                              <th key={h} style={thStyle}>{h}</th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {sec.rows.map((row, ri) => {
-                            const allDims = [
-                              { label: 'Rev', dim: 'revenue' as const, val: row.signal.risk_revenue },
-                              { label: 'Liab', dim: 'liability' as const, val: row.signal.risk_liability },
-                              { label: 'Cost', dim: 'cost' as const, val: row.signal.risk_cost },
-                              { label: 'Ops', dim: 'operational' as const, val: row.signal.risk_operational },
-                              { label: 'Wkf', dim: 'workforce' as const, val: isWorkforceSignal(row.signal) ? (row.severity || 'high') : 'none' },
-                            ];
-                            const sevColor = RISK_DIM_COLORS[row.severity] || RISK_DIM_COLORS.low;
-                            return (
-                              <tr key={`${row.signal.id}-${row.county}-${ri}`} style={{ borderBottom: `1px solid ${BORDER}` }}>
-                                <td style={{ ...tdStyle, fontSize: 12, maxWidth: 260 }}>
-                                  <div style={{ fontWeight: 500, color: NAVY, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                    {row.signal.title}
-                                  </div>
-                                </td>
-                                <td style={tdStyle}>
-                                  <div style={{ display: 'flex', gap: 4 }}>
-                                    {allDims.map(d => {
-                                      const level = d.val || 'none';
-                                      const rc = RISK_DIM_COLORS[level] || RISK_DIM_COLORS.none;
-                                      return level !== 'none' ? (
-                                        <RiskLevelTooltip key={d.label} dimension={d.dim} level={level}>
-                                          <span style={{ fontSize: 8, fontWeight: 700, padding: '1px 5px', borderRadius: 6, background: rc.bg, color: rc.text }}>
-                                            {d.label}
-                                          </span>
-                                        </RiskLevelTooltip>
-                                      ) : (
-                                        <span key={d.label} style={{ fontSize: 8, padding: '1px 5px', borderRadius: 6, color: '#D1D5DB' }}>
-                                          {d.label}
-                                        </span>
-                                      );
-                                    })}
-                                  </div>
-                                </td>
-                                <td style={tdStyle}>
-                                  <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 8, background: sevColor.bg, color: sevColor.text }}>
-                                    {sevColor.label}
-                                  </span>
-                                </td>
-                                <td style={{ ...tdStyle, fontSize: 12, color: TEXT_SEC }}>{row.county}</td>
-                                <td style={tdStyle}>
-                                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                                    <div style={{ width: 48, height: 6, background: '#E5E7EB', borderRadius: 3, overflow: 'hidden' }}>
-                                      <div style={{ width: `${row.strength}%`, height: '100%', background: row.strength >= 80 ? '#059669' : row.strength >= 50 ? '#FBBF24' : '#94A3B8', borderRadius: 3 }} />
-                                    </div>
-                                    <span style={{ fontSize: 10, color: TEXT_MUTED, fontWeight: 600 }}>{row.strength}%</span>
-                                  </div>
-                                </td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
-                    )}
-                  </details>
-                ))}
+
+                      {corrExpanded === corr.id && (
+                        <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid #F3F4F6' }}>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 12 }}>
+                            <div style={{ textAlign: 'center', padding: '10px 12px', background: '#F9FAFB', borderRadius: 6 }}>
+                              <div style={{ fontSize: 20, fontWeight: 800, color: NAVY }}>{corr.signalCount}</div>
+                              <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#9CA3AF', marginTop: 2 }}>Signals</div>
+                            </div>
+                            <div style={{ textAlign: 'center', padding: '10px 12px', background: '#F9FAFB', borderRadius: 6 }}>
+                              <div style={{ fontSize: 20, fontWeight: 800, color }}>{corr.confidence}%</div>
+                              <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#9CA3AF', marginTop: 2 }}>Confidence</div>
+                            </div>
+                            <div style={{ textAlign: 'center', padding: '10px 12px', background: '#F9FAFB', borderRadius: 6 }}>
+                              <div style={{ fontSize: 11, fontWeight: 700, color: '#166534' }}>ACTIVE</div>
+                              <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#9CA3AF', marginTop: 2 }}>Status</div>
+                            </div>
+                          </div>
+                          <div style={{ fontSize: 11, color: '#6B7280' }}>
+                            <span style={{ fontWeight: 700, color: '#374151' }}>Sources: </span>
+                            {corr.sources.join(' · ')}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
-            )}
-          </>
-        );
-      })()}
+            );
+          })}
+        </div>
+      )}
 
       {/* ────────── TAB: JURISDICTION UPDATES ────────── */}
       {activeTab === 'jurisdiction_updates' && (() => {
