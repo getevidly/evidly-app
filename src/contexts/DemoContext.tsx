@@ -317,8 +317,8 @@ export function DemoOverrideProvider({ children }: { children: ReactNode }) {
   return (
     <DemoContext.Provider value={{
       ...parent,
-      isDemoMode: true,
-      isAnyDemoMode: true,
+      isDemoMode: false,
+      isAnyDemoMode: parent.isAuthenticatedDemo,
     }}>
       {children}
     </DemoContext.Provider>

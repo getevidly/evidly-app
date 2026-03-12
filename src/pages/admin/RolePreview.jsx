@@ -2,6 +2,7 @@ import { useState, Suspense, lazy } from 'react';
 import { Monitor, Tablet, Smartphone, RefreshCw, ExternalLink, ChevronRight, Copy, Check } from 'lucide-react';
 import { RoleOverrideProvider } from '../../contexts/RoleContext';
 import { DemoOverrideProvider } from '../../contexts/DemoContext';
+import { Layout } from '../../components/layout/Layout';
 
 const PreviewDashboard = lazy(() => import('../../pages/Dashboard').then(m => ({ default: m.Dashboard })));
 
@@ -25,16 +26,22 @@ function PreviewContent({ role, renderKey }) {
   return (
     <DemoOverrideProvider>
       <RoleOverrideProvider role={role}>
-        <Suspense fallback={
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 48 }}>
-            <div style={{ textAlign: 'center' }}>
-              <div className="animate-spin" style={{ width: 32, height: 32, border: '3px solid #E5E7EB', borderTopColor: '#A08C5A', borderRadius: '50%', margin: '0 auto' }} />
-              <p style={{ marginTop: 12, fontSize: 13, color: '#6B7280' }}>Loading preview…</p>
-            </div>
-          </div>
-        }>
-          <PreviewDashboard key={`${role}-${renderKey}`} />
-        </Suspense>
+        {/* transform: scale(1) creates a containing block for position:fixed children
+            so the Sidebar stays within the preview area instead of overlaying the viewport */}
+        <div style={{ position: 'relative', width: '100%', height: '100%', transform: 'scale(1)', overflow: 'hidden' }}>
+          <Layout>
+            <Suspense fallback={
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 48 }}>
+                <div style={{ textAlign: 'center' }}>
+                  <div className="animate-spin" style={{ width: 32, height: 32, border: '3px solid #E5E7EB', borderTopColor: '#A08C5A', borderRadius: '50%', margin: '0 auto' }} />
+                  <p style={{ marginTop: 12, fontSize: 13, color: '#6B7280' }}>Loading preview…</p>
+                </div>
+              </div>
+            }>
+              <PreviewDashboard key={`${role}-${renderKey}`} />
+            </Suspense>
+          </Layout>
+        </div>
       </RoleOverrideProvider>
     </DemoOverrideProvider>
   );
@@ -262,7 +269,7 @@ export default function RolePreview() {
               {currentRoleInfo?.label.toUpperCase()}
             </div>
           )}
-          <div style={{ flex: 1, overflow: 'auto' }}>
+          <div style={{ flex: 1, overflow: 'hidden' }}>
             <PreviewContent role={selectedRole} renderKey={renderKey} />
           </div>
         </div>
@@ -282,7 +289,7 @@ export default function RolePreview() {
             <div style={{ background: '#1E2D4D', color: '#A08C5A', fontSize: 11, fontWeight: 700, textAlign: 'center', padding: '6px', letterSpacing: '0.06em', flexShrink: 0 }}>
               {ROLES.find(r => r.value === sideByRole)?.label.toUpperCase()}
             </div>
-            <div style={{ flex: 1, overflow: 'auto' }}>
+            <div style={{ flex: 1, overflow: 'hidden' }}>
               <PreviewContent role={sideByRole} renderKey={renderKey} />
             </div>
           </div>
