@@ -540,7 +540,7 @@ function PageContent({pageId,role,sample,oa}){
 // ── NAV CONFIG ────────────────────────────────────────────────────────────────
 const NAV=[
   {id:"top",lbl:null,items:[["dashboard","Dashboard","⊞"],["calendar","Calendar","📅"]]},
-  {id:"food",lbl:"FOOD SAFETY",items:[["checklists","Checklists","✅"],["temperatures","Temperature Readings","🌡️"],["temp-logs","Log Temp","🌡️"],["haccp","HACCP","🔬"],["corrective","Corrective Actions","🔧"],["incidents","Incidents","⚠️"]]},
+  {id:"food",lbl:"FOOD SAFETY",items:[["checklists","Checklists","✅"],["temperatures","Temperature Readings","🌡️"],["haccp","HACCP","🔬"],["corrective","Corrective Actions","🔧"],["incidents","Incidents","⚠️"]]},
   {id:"fire",lbl:"FACILITY SAFETY",items:[["facility-safety","Facility Safety","🔥"],["services","Vendor Services","🛠️"]]},
   {id:"comp",lbl:"COMPLIANCE",items:[["documents","Documents","📄"],["self-inspection","Self-Inspection","🔍"],["training","Training Records","🎓"]]},
   {id:"ins",lbl:"INSIGHTS",items:[["ai-insights","AI Insights","🤖"],["alerts","Alerts","🔔"],["analytics","Analytics","📊"],["intelligence","Operations Intelligence","🧠"],["jurisdiction-intel","Jurisdiction Intelligence","⚖️"],["regulatory","Regulatory Updates","📰"],["insurance-risk","Insurance Risk","🛡️"],["leaderboard","Leaderboard","🏆"],["reporting","Reporting","📈"],["iot-monitoring","IoT Monitoring","📡"],["benchmarks","Benchmarks","📐"]]},
@@ -549,7 +549,7 @@ const NAV=[
 ];
 
 const ALLOWED={
-  owner_operator:["dashboard","calendar","checklists","temperatures","temp-logs","haccp","corrective","incidents","facility-safety","services","documents","self-inspection","training","ai-insights","alerts","analytics","intelligence","jurisdiction-intel","regulatory","insurance-risk","leaderboard","reporting","iot-monitoring","benchmarks","inspector-view","photo-evidence","marketplace","self-diagnosis","locations","team","equipment","vendors","roles","settings"],
+  owner_operator:["dashboard","calendar","checklists","temperatures","haccp","corrective","incidents","facility-safety","services","documents","self-inspection","training","ai-insights","alerts","analytics","intelligence","jurisdiction-intel","regulatory","insurance-risk","leaderboard","reporting","iot-monitoring","benchmarks","inspector-view","photo-evidence","marketplace","self-diagnosis","locations","team","equipment","vendors","roles","settings"],
   executive:["dashboard","calendar","documents","training","analytics","intelligence","reporting","benchmarks","inspector-view","locations","settings"],
   compliance_manager:["dashboard","calendar","checklists","temperatures","haccp","corrective","incidents","facility-safety","services","documents","self-inspection","training","ai-insights","alerts","analytics","jurisdiction-intel","regulatory","reporting","inspector-view","self-diagnosis","locations","settings"],
   facilities:["dashboard","calendar","incidents","facility-safety","services","documents","alerts","regulatory","iot-monitoring","marketplace","inspector-view","self-diagnosis","locations","equipment","vendors","settings"],
