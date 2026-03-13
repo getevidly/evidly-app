@@ -11,6 +11,7 @@ import { EquipmentList } from '../../components/equipment/EquipmentList';
 import { EquipmentFormModal } from '../../components/equipment/EquipmentFormModal';
 import { BulkQRPrintModal } from '../../components/equipment/BulkQRPrintModal';
 import { NAVY, CARD_BG, CARD_BORDER, CARD_SHADOW, TEXT_TERTIARY, MUTED } from '../../components/dashboard/shared/constants';
+import { ErrorState } from '../../components/shared/PageStates';
 
 const CONDITION_OPTIONS: { value: EquipmentCondition | ''; label: string }[] = [
   { value: '', label: 'All Conditions' },
@@ -41,12 +42,16 @@ export function EquipmentPage() {
   const [showBulkQR, setShowBulkQR] = useState(false);
   const [localSearch, setLocalSearch] = useState(searchQuery);
 
-  const { data: equipment, isLoading } = useEquipment({
+  const { data: equipment, isLoading, error: equipmentError, refetch } = useEquipment({
     equipmentType: typeFilter || undefined,
     condition: (conditionFilter as EquipmentCondition) || undefined,
     status: (statusFilter as EquipmentStatus) || undefined,
     search: searchQuery || undefined,
   });
+
+  if (equipmentError) {
+    return <ErrorState error={equipmentError} onRetry={refetch} />;
+  }
 
   const items = equipment || [];
 

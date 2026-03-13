@@ -11,6 +11,7 @@ import {
 } from '../data/employeesDemoData';
 import { EmployeesList } from '../components/employees/EmployeesList';
 import { InviteEmployeeModal } from '../components/employees/InviteEmployeeModal';
+import { ErrorState } from '../components/shared/PageStates';
 
 const NAVY = '#1e4d6b';
 const F: React.CSSProperties = { fontFamily: "'DM Sans', 'Inter', sans-serif" };
@@ -36,7 +37,15 @@ export function Employees() {
   const { userRole } = useRole();
   const isAdmin = ['owner_operator', 'platform_admin', 'executive'].includes(userRole);
 
-  const [employees, setEmployees] = useState<Employee[]>(() => [...DEMO_EMPLOYEES]);
+  const [pageError, setPageError] = useState<string | null>(null);
+  const [employees, setEmployees] = useState<Employee[]>(() => {
+    try {
+      return [...DEMO_EMPLOYEES];
+    } catch (err) {
+      setPageError(err instanceof Error ? err.message : 'Failed to load employees data');
+      return [];
+    }
+  });
   const [roleFilter, setRoleFilter] = useState<EmployeeRole | 'all'>('all');
   const [statusFilter, setStatusFilter] = useState<EmployeeStatus | 'all'>('all');
   const [search, setSearch] = useState('');
@@ -93,6 +102,10 @@ export function Employees() {
     setShowInvite(false);
     alert(`Invite sent to ${data.email}`);
   }, []);
+
+  if (pageError) {
+    return <ErrorState error={pageError} onRetry={() => { setPageError(null); setEmployees([...DEMO_EMPLOYEES]); }} />;
+  }
 
   return (
     <div className="p-4 lg:p-6 max-w-[1200px] mx-auto" style={F}>

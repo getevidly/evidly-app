@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { FeatureGate } from '../components/feature-flags/FeatureGate';
+import { ErrorState } from '../components/shared/PageStates';
 
 interface LeaderboardEntry {
   id: string;
@@ -78,6 +79,7 @@ export function Leaderboard() {
   const navigate = useNavigate();
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [pageError, setPageError] = useState<string | null>(null);
   const [industryFilter, setIndustryFilter] = useState('All');
 
   useEffect(() => {
@@ -86,17 +88,25 @@ export function Leaderboard() {
 
   const fetchLeaderboard = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from('v_location_leaderboard')
-      .select('*')
-      .order('temp_compliance_pct', { ascending: false, nullsFirst: false });
+    setPageError(null);
+    try {
+      const { data, error } = await supabase
+        .from('v_location_leaderboard')
+        .select('*')
+        .order('temp_compliance_pct', { ascending: false, nullsFirst: false });
 
-    if (data && data.length > 0) {
-      setEntries(data);
-    } else {
-      setEntries([]);
+      if (error) throw error;
+
+      if (data && data.length > 0) {
+        setEntries(data);
+      } else {
+        setEntries([]);
+      }
+    } catch (err: any) {
+      setPageError(err?.message || 'Failed to load leaderboard');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const filtered = industryFilter === 'All'
@@ -113,6 +123,16 @@ export function Leaderboard() {
 
   const top3 = ranked.slice(0, 3);
   const rest = ranked.slice(3);
+
+  // Error state
+  if (pageError) {
+    return (
+      <FeatureGate flagKey="leaderboard">
+        <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Leaderboard' }]} />
+        <ErrorState error={pageError} onRetry={() => { setPageError(null); fetchLeaderboard(); }} />
+      </FeatureGate>
+    );
+  }
 
   // Empty state
   if (!loading && entries.length === 0) {

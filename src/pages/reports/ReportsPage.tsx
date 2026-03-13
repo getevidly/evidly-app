@@ -8,6 +8,7 @@ import { Search, FileText, Clock, Star, CalendarClock } from 'lucide-react';
 import { REPORT_DEFINITIONS, CATEGORY_META, type ReportCategory } from '../../constants/reportDefinitions';
 import { useReportHistory, useScheduledReports, useFavoriteReports } from '../../hooks/api/useReports';
 import { NAVY, CARD_BG, CARD_BORDER, CARD_SHADOW, TEXT_TERTIARY, MUTED } from '../../components/dashboard/shared/constants';
+import { LoadingSkeleton, ErrorState } from '../../components/shared/PageStates';
 
 const TABS: { key: 'all' | ReportCategory; label: string }[] = [
   { key: 'all', label: 'All Reports' },
@@ -23,9 +24,15 @@ export function ReportsPage() {
   const [activeTab, setActiveTab] = useState<'all' | ReportCategory>('all');
   const [myTab, setMyTab] = useState<'recent' | 'scheduled' | 'favorites'>('recent');
 
-  const { data: history } = useReportHistory();
-  const { data: scheduled } = useScheduledReports();
-  const { data: favorites } = useFavoriteReports();
+  const { data: history, isLoading: loadingHistory, error: errorHistory, refetch: retryHistory } = useReportHistory();
+  const { data: scheduled, isLoading: loadingScheduled, error: errorScheduled } = useScheduledReports();
+  const { data: favorites, isLoading: loadingFavorites, error: errorFavorites } = useFavoriteReports();
+
+  const isLoading = loadingHistory || loadingScheduled || loadingFavorites;
+  const error = errorHistory || errorScheduled || errorFavorites;
+
+  if (isLoading) return <LoadingSkeleton rows={6} />;
+  if (error) return <ErrorState error={error} onRetry={retryHistory} />;
 
   const filteredReports = useMemo(() => {
     let list = REPORT_DEFINITIONS;

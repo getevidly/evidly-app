@@ -6,6 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { useTranslation } from '../contexts/LanguageContext';
 import { supabase } from '../lib/supabase';
+import { ErrorState } from '../components/shared/PageStates';
 import { format, subDays, startOfDay, endOfDay, formatDistanceToNow } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, Area, AreaChart, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
@@ -214,20 +215,27 @@ export function TempLogs() {
   const [showHACCPReport, setShowHACCPReport] = useState(false);
   const [haccpViolation, setHaccpViolation] = useState<any>(null);
 
+  // Page-level error state
+  const [pageError, setPageError] = useState<string | null>(null);
+
   useEffect(() => {
-    if (isDemoMode) {
-      loadDemoData();
-    } else if (profile?.organization_id) {
-      fetchEquipment();
-      fetchUsers();
-      fetchHistory();
-    } else {
-      // Live mode but no org — show empty state
-      setEquipment([]);
-      setUsers([]);
-      setHistory([]);
-      setCooldowns([]);
-      setCompletedCooldowns([]);
+    try {
+      if (isDemoMode) {
+        loadDemoData();
+      } else if (profile?.organization_id) {
+        fetchEquipment();
+        fetchUsers();
+        fetchHistory();
+      } else {
+        // Live mode but no org — show empty state
+        setEquipment([]);
+        setUsers([]);
+        setHistory([]);
+        setCooldowns([]);
+        setCompletedCooldowns([]);
+      }
+    } catch (err) {
+      setPageError(err instanceof Error ? err.message : 'Failed to load temperature data');
     }
   }, [profile, isDemoMode]);
 
@@ -530,88 +538,105 @@ export function TempLogs() {
   };
 
   const fetchEquipment = async () => {
-    const { data: equipmentData } = await supabase
-      .from('temperature_equipment')
-      .select('*')
-      .eq('organization_id', profile?.organization_id)
-      .eq('is_active', true)
-      .order('name');
+    try {
+      const { data: equipmentData, error } = await supabase
+        .from('temperature_equipment')
+        .select('*')
+        .eq('organization_id', profile?.organization_id)
+        .eq('is_active', true)
+        .order('name');
 
-    if (equipmentData) {
-      const equipmentWithLastCheck = await Promise.all(
-        equipmentData.map(async (eq) => {
-          const { data: lastCheck } = await supabase
-            .from('temperature_logs')
-            .select('temperature, reading_time, temp_pass')
-            .eq('equipment_id', eq.id)
-            .order('reading_time', { ascending: false })
-            .limit(1)
-            .maybeSingle();
+      if (error) throw error;
 
-          return {
-            ...eq,
-            last_check: lastCheck ? {
-              temperature_value: lastCheck.temperature,
-              created_at: lastCheck.reading_time,
-              is_within_range: lastCheck.temp_pass,
-            } : undefined,
-          };
-        })
-      );
+      if (equipmentData) {
+        const equipmentWithLastCheck = await Promise.all(
+          equipmentData.map(async (eq) => {
+            const { data: lastCheck } = await supabase
+              .from('temperature_logs')
+              .select('temperature, reading_time, temp_pass')
+              .eq('equipment_id', eq.id)
+              .order('reading_time', { ascending: false })
+              .limit(1)
+              .maybeSingle();
 
-      setEquipment(equipmentWithLastCheck);
+            return {
+              ...eq,
+              last_check: lastCheck ? {
+                temperature_value: lastCheck.temperature,
+                created_at: lastCheck.reading_time,
+                is_within_range: lastCheck.temp_pass,
+              } : undefined,
+            };
+          })
+        );
+
+        setEquipment(equipmentWithLastCheck);
+      }
+    } catch (err) {
+      setPageError(err instanceof Error ? err.message : 'Failed to load equipment data');
     }
   };
 
   const fetchUsers = async () => {
-    const { data } = await supabase
-      .from('user_profiles')
-      .select('id, full_name')
-      .eq('organization_id', profile?.organization_id);
+    try {
+      const { data, error } = await supabase
+        .from('user_profiles')
+        .select('id, full_name')
+        .eq('organization_id', profile?.organization_id);
 
-    if (data) setUsers(data);
+      if (error) throw error;
+      if (data) setUsers(data);
+    } catch (err) {
+      setPageError(err instanceof Error ? err.message : 'Failed to load user data');
+    }
   };
 
   const fetchHistory = async () => {
-    // Query unified temperature_logs table
-    const { data } = await supabase
-      .from('temperature_logs')
-      .select(`
-        id,
-        equipment_id,
-        temperature,
-        temp_pass,
-        corrective_action,
-        reading_time,
-        logged_by,
-        input_method,
-        shift,
-        log_type
-      `)
-      .order('reading_time', { ascending: false })
-      .limit(200);
+    try {
+      // Query unified temperature_logs table
+      const { data, error } = await supabase
+        .from('temperature_logs')
+        .select(`
+          id,
+          equipment_id,
+          temperature,
+          temp_pass,
+          corrective_action,
+          reading_time,
+          logged_by,
+          input_method,
+          shift,
+          log_type
+        `)
+        .order('reading_time', { ascending: false })
+        .limit(200);
 
-    if (data) {
-      // Look up equipment names from local state
-      const eqMap = new Map(equipment.map(e => [e.id, e]));
-      const formattedHistory = data.map((item: any) => {
-        const eq = eqMap.get(item.equipment_id);
-        return {
-          id: item.id,
-          equipment_id: item.equipment_id,
-          equipment_name: eq?.name || 'Unknown',
-          equipment_type: eq?.equipment_type || '',
-          temperature_value: item.temperature,
-          is_within_range: item.temp_pass,
-          recorded_by_name: item.logged_by ? 'Staff' : 'IoT Sensor',
-          corrective_action: item.corrective_action,
-          created_at: item.reading_time,
-          input_method: item.input_method,
-          shift: item.shift,
-          ccp_number: item.log_type === 'hot_holding' || item.log_type === 'cold_holding' ? 'CCP-02' : 'CCP-01',
-        };
-      });
-      setHistory(formattedHistory);
+      if (error) throw error;
+
+      if (data) {
+        // Look up equipment names from local state
+        const eqMap = new Map(equipment.map(e => [e.id, e]));
+        const formattedHistory = data.map((item: any) => {
+          const eq = eqMap.get(item.equipment_id);
+          return {
+            id: item.id,
+            equipment_id: item.equipment_id,
+            equipment_name: eq?.name || 'Unknown',
+            equipment_type: eq?.equipment_type || '',
+            temperature_value: item.temperature,
+            is_within_range: item.temp_pass,
+            recorded_by_name: item.logged_by ? 'Staff' : 'IoT Sensor',
+            corrective_action: item.corrective_action,
+            created_at: item.reading_time,
+            input_method: item.input_method,
+            shift: item.shift,
+            ccp_number: item.log_type === 'hot_holding' || item.log_type === 'cold_holding' ? 'CCP-02' : 'CCP-01',
+          };
+        });
+        setHistory(formattedHistory);
+      }
+    } catch (err) {
+      setPageError(err instanceof Error ? err.message : 'Failed to load temperature history');
     }
   };
 
@@ -1583,6 +1608,27 @@ export function TempLogs() {
   const isWithinRange = selectedEquipment && tempValue >= selectedEquipment.min_temp && tempValue <= selectedEquipment.max_temp;
 
   const locations = isDemoMode ? ['Location 1', 'Location 2', 'Location 3'] : [];
+
+  // Error state — early return before main render
+  if (pageError) {
+    return (
+      <>
+        <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: t('tempLogs.title') }]} />
+        <div className="space-y-6 mt-4">
+          <ErrorState error={pageError} onRetry={() => {
+            setPageError(null);
+            if (isDemoMode) {
+              loadDemoData();
+            } else if (profile?.organization_id) {
+              fetchEquipment();
+              fetchUsers();
+              fetchHistory();
+            }
+          }} />
+        </div>
+      </>
+    );
+  }
 
   return (
     <>

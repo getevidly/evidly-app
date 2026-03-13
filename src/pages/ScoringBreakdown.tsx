@@ -11,6 +11,7 @@ import { DEMO_LOCATION_GRADE_OVERRIDES } from '../data/demoJurisdictions';
 import { locations } from '../data/demoData';
 import { JURISDICTION_DATABASE } from '../data/jurisdictionData';
 import { useDemo } from '../contexts/DemoContext';
+import { ErrorState } from '../components/shared/PageStates';
 
 // ── Location-to-override-key mapping ─────────────────────────
 
@@ -113,8 +114,18 @@ function StatusIcon({ status }: { status: string }) {
 export function ScoringBreakdown() {
   const navigate = useNavigate();
   const { isDemoMode } = useDemo();
+  const [pageError, setPageError] = useState<string | null>(null);
   const params = new URLSearchParams(window.location.search);
   const locationParam = params.get('location') || 'downtown';
+
+  // Error state
+  if (pageError) {
+    return (
+      <div className="space-y-6">
+        <ErrorState error={pageError} onRetry={() => setPageError(null)} />
+      </div>
+    );
+  }
 
   // Live mode: show empty state (no Supabase query yet)
   if (!isDemoMode) {
@@ -136,14 +147,22 @@ export function ScoringBreakdown() {
     );
   }
 
-  const selectedLocation = locations.find(l => l.urlId === locationParam) || locations[0];
-  const overrideKey = LOCATION_OVERRIDE_KEY[locationParam] || 'demo-loc-downtown';
-  const gradeData = DEMO_LOCATION_GRADE_OVERRIDES[overrideKey];
-  const county = (LOCATION_COUNTY[locationParam] || 'California') + ' County';
-  const jurisdictionInfo = getJurisdictionInfo(locationParam);
-
-  const foodStatus = STATUS_COLORS[gradeData.foodSafety.status];
-  const fireStatus = STATUS_COLORS[gradeData.facilitySafety.status];
+  let selectedLocation, overrideKey, gradeData, county, jurisdictionInfo, foodStatus, fireStatus;
+  try {
+    selectedLocation = locations.find(l => l.urlId === locationParam) || locations[0];
+    overrideKey = LOCATION_OVERRIDE_KEY[locationParam] || 'demo-loc-downtown';
+    gradeData = DEMO_LOCATION_GRADE_OVERRIDES[overrideKey];
+    county = (LOCATION_COUNTY[locationParam] || 'California') + ' County';
+    jurisdictionInfo = getJurisdictionInfo(locationParam);
+    foodStatus = STATUS_COLORS[gradeData.foodSafety.status];
+    fireStatus = STATUS_COLORS[gradeData.facilitySafety.status];
+  } catch (err) {
+    return (
+      <div className="space-y-6">
+        <ErrorState error={err instanceof Error ? err.message : 'Failed to load scoring data'} onRetry={() => setPageError(null)} />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

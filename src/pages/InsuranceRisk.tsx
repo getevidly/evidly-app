@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import {
@@ -42,6 +42,7 @@ import {
 } from '../lib/insuranceRiskScore';
 import { useInsuranceRisk } from '../hooks/useInsuranceRisk';
 import { useDemoGuard } from '../hooks/useDemoGuard';
+import { ErrorState } from '../components/shared/PageStates';
 
 const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
 
@@ -413,6 +414,7 @@ export function InsuranceRisk() {
   const params = new URLSearchParams(window.location.search);
   const locationParam = params.get('location') || 'all';
 
+  const [pageError, setPageError] = useState<string | null>(null);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [pdfLoading, setPdfLoading] = useState(false);
@@ -438,6 +440,17 @@ export function InsuranceRisk() {
 
   const tierInfo = getInsuranceRiskTier(riskResult.overall);
 
+  // Catch unexpected scoring failures
+  useEffect(() => {
+    try {
+      if (isDemoMode && riskResult.categories.length === 0 && riskResult.factorsEvaluated === 0) {
+        // Hook returned empty — could indicate a data issue
+      }
+    } catch (err: any) {
+      setPageError(err?.message || 'Failed to calculate risk scores');
+    }
+  }, [riskResult, isDemoMode]);
+
   // Demo 12-month score trend
   const SCORE_TREND = isDemoMode ? [
     { month: 'Mar', score: Math.round(riskResult.overall - 10) },
@@ -461,6 +474,15 @@ export function InsuranceRisk() {
     window.dispatchEvent(new PopStateEvent('popstate'));
     navigate(`/insurance-risk?location=${locId}`, { replace: true });
   };
+
+  if (pageError) {
+    return (
+      <FeatureGate flagKey="insurance_risk">
+        <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Insurance Risk Score' }]} />
+        <ErrorState error={pageError} onRetry={() => setPageError(null)} />
+      </FeatureGate>
+    );
+  }
 
   return (
     <FeatureGate flagKey="insurance_risk">

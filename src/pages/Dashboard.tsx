@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useRole } from '../contexts/RoleContext';
 import { SignalAlertBanner } from '../components/SignalAlertBanner';
@@ -12,6 +13,7 @@ import KitchenStaffTaskList from '../components/dashboard/KitchenStaffTaskList';
 import FacilitiesDashboardNew from '../components/dashboard/FacilitiesDashboardNew';
 import { DashboardToday } from '../components/dashboard/DashboardToday';
 import { CopilotBriefingCard } from '../components/copilot/CopilotBriefingCard';
+import { ErrorState } from '../components/shared/PageStates';
 
 // ── Dashboard ────────────────────────────────────────────
 // Role visibility for above-fold items is now handled inside each
@@ -77,6 +79,11 @@ export function Dashboard() {
   const { userRole } = useRole();
   const [searchParams] = useSearchParams();
   const tab = searchParams.get('tab') || 'overview';
+  const [pageError, setPageError] = useState<string | null>(null);
+
+  if (pageError) {
+    return <ErrorState error={pageError} onRetry={() => { setPageError(null); }} />;
+  }
 
   // Kitchen staff always sees their task list — no tabs
   if (userRole === 'kitchen_staff') {

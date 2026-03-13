@@ -16,6 +16,7 @@ import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { useNotifications } from '../contexts/NotificationContext';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
+import { ErrorState, PageEmptyState } from '../components/shared/PageStates';
 
 interface ChecklistTemplate {
   id: string;
@@ -668,6 +669,7 @@ export function Checklists() {
   const { isDemoMode } = useDemo();
   const { t } = useTranslation();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  const [pageError, setPageError] = useState<string | null>(null);
   const [activeView, setActiveView] = useState<'templates' | 'today' | 'history'>('today');
   const [demoItemsMap, setDemoItemsMap] = useState<Record<string, ChecklistTemplateItem[]>>({});
   const [todayChecklists, setTodayChecklists] = useState(isDemoMode ? DEMO_TODAY_CHECKLISTS : []);
@@ -764,48 +766,60 @@ export function Checklists() {
   }, [itemResponses, templateItems]);
 
   const fetchTemplates = async () => {
-    const { data } = await supabase
-      .from('checklist_templates')
-      .select('*, checklist_template_items(count)')
-      .eq('organization_id', profile?.organization_id)
-      .order('created_at', { ascending: false });
+    try {
+      const { data, error } = await supabase
+        .from('checklist_templates')
+        .select('*, checklist_template_items(count)')
+        .eq('organization_id', profile?.organization_id)
+        .order('created_at', { ascending: false });
 
-    if (data) {
-      const formattedTemplates = data.map((template: any) => ({
-        id: template.id,
-        name: template.name,
-        checklist_type: template.checklist_type,
-        frequency: template.frequency,
-        is_active: template.is_active,
-        items_count: template.checklist_template_items?.[0]?.count || 0,
-      }));
-      setTemplates(formattedTemplates);
+      if (error) throw error;
+
+      if (data) {
+        const formattedTemplates = data.map((template: any) => ({
+          id: template.id,
+          name: template.name,
+          checklist_type: template.checklist_type,
+          frequency: template.frequency,
+          is_active: template.is_active,
+          items_count: template.checklist_template_items?.[0]?.count || 0,
+        }));
+        setTemplates(formattedTemplates);
+      }
+    } catch (err) {
+      setPageError(err instanceof Error ? err.message : 'Failed to load checklist templates');
     }
   };
 
   const fetchCompletions = async () => {
-    const { data } = await supabase
-      .from('checklist_template_completions')
-      .select(`
-        id,
-        completed_at,
-        score_percentage,
-        checklist_templates!inner(name),
-        user_profiles!checklist_template_completions_completed_by_fkey(full_name)
-      `)
-      .eq('organization_id', profile?.organization_id)
-      .order('completed_at', { ascending: false })
-      .limit(20);
+    try {
+      const { data, error } = await supabase
+        .from('checklist_template_completions')
+        .select(`
+          id,
+          completed_at,
+          score_percentage,
+          checklist_templates!inner(name),
+          user_profiles!checklist_template_completions_completed_by_fkey(full_name)
+        `)
+        .eq('organization_id', profile?.organization_id)
+        .order('completed_at', { ascending: false })
+        .limit(20);
 
-    if (data) {
-      const formattedCompletions = data.map((completion: any) => ({
-        id: completion.id,
-        template_name: completion.checklist_templates.name,
-        completed_by_name: completion.user_profiles?.full_name || 'Unknown',
-        score_percentage: completion.score_percentage || 0,
-        completed_at: completion.completed_at,
-      }));
-      setCompletions(formattedCompletions);
+      if (error) throw error;
+
+      if (data) {
+        const formattedCompletions = data.map((completion: any) => ({
+          id: completion.id,
+          template_name: completion.checklist_templates.name,
+          completed_by_name: completion.user_profiles?.full_name || 'Unknown',
+          score_percentage: completion.score_percentage || 0,
+          completed_at: completion.completed_at,
+        }));
+        setCompletions(formattedCompletions);
+      }
+    } catch (err) {
+      setPageError(err instanceof Error ? err.message : 'Failed to load checklist completions');
     }
   };
 
@@ -1567,6 +1581,18 @@ export function Checklists() {
     }
   };
 
+  const reloadData = () => {
+    setPageError(null);
+    if (profile?.organization_id) {
+      fetchTemplates();
+      fetchCompletions();
+    }
+  };
+
+  if (pageError) {
+    return <ErrorState error={pageError} onRetry={reloadData} />;
+  }
+
   return (
     <>
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: t('checklists.title') }]} />
@@ -1643,6 +1669,14 @@ export function Checklists() {
               <h2 className="text-xl font-bold text-gray-900">{t('checklists.todaysChecklists')}</h2>
               <span className="text-sm text-gray-500">{format(new Date(), 'EEEE, MMMM d, yyyy')}</span>
             </div>
+
+            {todayChecklists.length === 0 && (
+              <PageEmptyState
+                title="No checklists for today"
+                description="Add a template from the Templates tab to get started."
+                action={{ label: 'View Templates', onClick: () => setActiveView('templates') }}
+              />
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {todayChecklists.map((cl) => {
@@ -2036,8 +2070,11 @@ export function Checklists() {
                   })}
                   {filteredEntries.length === 0 && (
                     <tr>
-                      <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
-                        {t('checklists.noEntries')}
+                      <td colSpan={5}>
+                        <PageEmptyState
+                          title={t('checklists.noEntries')}
+                          description="Try adjusting the date range filter."
+                        />
                       </td>
                     </tr>
                   )}

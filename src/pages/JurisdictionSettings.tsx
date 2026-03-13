@@ -5,6 +5,7 @@ import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { toast } from 'sonner';
+import { ErrorState } from '../components/shared/PageStates';
 import {
   ChevronDown, ChevronUp, MapPin, Phone, ExternalLink,
   CheckCircle2, XCircle, AlertTriangle, Thermometer, FileText,
@@ -694,34 +695,47 @@ export function JurisdictionSettings() {
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [addedLocations, setAddedLocations] = useState<LocationJurisdictionConfig[]>([]);
   const [regulationOverrides, setRegulationOverrides] = useState<Record<string, Record<string, boolean>>>({});
+  const [pageError, setPageError] = useState<string | null>(null);
 
   // Precompute profiles and gaps for demo locations (only in demo mode)
-  const locationProfiles = isDemoMode
-    ? DEMO_LOCATION_JURISDICTIONS.map(loc => ({
-        location: loc,
-        profile: autoConfigureLocation(loc),
-      }))
-    : [];
-  const complianceGaps = isDemoMode ? getDemoComplianceGaps() : [];
+  let locationProfiles: { location: (typeof DEMO_LOCATION_JURISDICTIONS)[number]; profile: ReturnType<typeof autoConfigureLocation> }[] = [];
+  let complianceGaps: ReturnType<typeof getDemoComplianceGaps> = [];
+  let demoConfigs: ReturnType<typeof getDemoLocationConfigs> = [];
+  let keyRegulations: ReturnType<typeof getKeyCaliforniaRegulations> = [];
+  let caProfile: ReturnType<typeof getJurisdiction> = undefined;
+  let minimumWage: typeof caProfile extends { minimumWage?: infer M } ? M : undefined;
+  let upcomingLaws: typeof CALIFORNIA_STATE_LAWS = [];
 
-  // Demo location configs (with regulation status)
-  const demoConfigs = isDemoMode ? getDemoLocationConfigs() : [];
+  try {
+    locationProfiles = isDemoMode
+      ? DEMO_LOCATION_JURISDICTIONS.map(loc => ({
+          location: loc,
+          profile: autoConfigureLocation(loc),
+        }))
+      : [];
+    complianceGaps = isDemoMode ? getDemoComplianceGaps() : [];
 
-  // Key California regulations (the 11 from user requirements)
-  const keyRegulations = getKeyCaliforniaRegulations();
+    // Demo location configs (with regulation status)
+    demoConfigs = isDemoMode ? getDemoLocationConfigs() : [];
 
-  // Minimum wage from the California state level
-  const caProfile = getJurisdiction('state-ca');
-  const minimumWage = caProfile?.minimumWage;
+    // Key California regulations (the 11 from user requirements)
+    keyRegulations = getKeyCaliforniaRegulations();
 
-  // Upcoming regulatory changes
-  const upcomingLaws = CALIFORNIA_STATE_LAWS
-    .filter(law => {
-      if (law.status === 'upcoming') return true;
-      const daysLeft = getDaysRemaining(law.effectiveDate);
-      return daysLeft > 0;
-    })
-    .sort((a, b) => new Date(a.effectiveDate).getTime() - new Date(b.effectiveDate).getTime());
+    // Minimum wage from the California state level
+    caProfile = getJurisdiction('state-ca');
+    minimumWage = caProfile?.minimumWage;
+
+    // Upcoming regulatory changes
+    upcomingLaws = CALIFORNIA_STATE_LAWS
+      .filter(law => {
+        if (law.status === 'upcoming') return true;
+        const daysLeft = getDaysRemaining(law.effectiveDate);
+        return daysLeft > 0;
+      })
+      .sort((a, b) => new Date(a.effectiveDate).getTime() - new Date(b.effectiveDate).getTime());
+  } catch (err) {
+    if (!pageError) setPageError(err instanceof Error ? err.message : 'Failed to load jurisdiction data');
+  }
 
   // Handle adding a new location from the dialog
   const handleAddLocation = (config: LocationJurisdictionConfig) => {
@@ -748,6 +762,15 @@ export function JurisdictionSettings() {
     if (!locOverrides || locOverrides[lawId] === undefined) return true;
     return locOverrides[lawId];
   };
+
+  // Error state
+  if (pageError) {
+    return (
+      <div className="px-3 sm:px-6 py-6 max-w-5xl mx-auto">
+        <ErrorState error={pageError} onRetry={() => setPageError(null)} />
+      </div>
+    );
+  }
 
   return (
     <div className="px-3 sm:px-6 py-6 max-w-5xl mx-auto">

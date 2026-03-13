@@ -17,6 +17,7 @@ import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { AddDeficiencyModal } from '../components/deficiencies/AddDeficiencyModal';
+import { ErrorState, PageEmptyState } from '../components/shared/PageStates';
 import {
   DEMO_DEFICIENCIES,
   SEVERITY_CONFIG,
@@ -55,7 +56,15 @@ export function Deficiencies() {
   const sortBy = (searchParams.get('sort') || 'severity') as SortKey;
 
   const [showAddModal, setShowAddModal] = useState(false);
-  const [localRecords, setLocalRecords] = useState<DeficiencyItem[]>(DEMO_DEFICIENCIES);
+  const [pageError, setPageError] = useState<string | null>(null);
+  const [localRecords, setLocalRecords] = useState<DeficiencyItem[]>(() => {
+    try {
+      return DEMO_DEFICIENCIES;
+    } catch (err) {
+      setPageError(err instanceof Error ? err.message : 'Failed to load deficiencies data');
+      return [];
+    }
+  });
 
   const setFilter = (key: string, value: string) => {
     const next = new URLSearchParams(searchParams);
@@ -145,6 +154,10 @@ export function Deficiencies() {
       toast.success('Deficiency added');
     });
   };
+
+  if (pageError) {
+    return <ErrorState error={pageError} onRetry={() => { setPageError(null); setLocalRecords(DEMO_DEFICIENCIES); }} />;
+  }
 
   // ── Stats Card ────────────────────────────────────────────
   const StatCard = ({ label, value, sub, accent }: { label: string; value: number; sub?: string; accent?: string }) => (
@@ -304,8 +317,11 @@ export function Deficiencies() {
             })}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={8} className="text-center py-12 text-sm" style={{ color: '#6B7F96' }}>
-                  No deficiencies match your filters.
+                <td colSpan={8}>
+                  <PageEmptyState
+                    title="No deficiencies match your filters"
+                    description="Try adjusting your status, severity, or search filters."
+                  />
                 </td>
               </tr>
             )}
@@ -352,9 +368,10 @@ export function Deficiencies() {
           );
         })}
         {filtered.length === 0 && (
-          <div className="text-center py-12 text-sm" style={{ color: '#6B7F96' }}>
-            No deficiencies match your filters.
-          </div>
+          <PageEmptyState
+            title="No deficiencies match your filters"
+            description="Try adjusting your status, severity, or search filters."
+          />
         )}
       </div>
 

@@ -19,6 +19,7 @@ import { useDemo } from '../contexts/DemoContext';
 import { supabase } from '../lib/supabase';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { EmptyState } from '../components/EmptyState';
+import { ErrorState } from '../components/shared/PageStates';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import {
   VENDOR_CATEGORIES,
@@ -234,6 +235,7 @@ export function Vendors() {
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [pageError, setPageError] = useState<string | null>(null);
   const [liveVendors, setLiveVendors] = useState<ConsolidatedVendor[]>([]);
   const [vendorSignals, setVendorSignals] = useState<{ id: string; title: string; summary: string; created_at: string }[]>([]);
 
@@ -250,35 +252,38 @@ export function Vendors() {
 
     async function fetchVendors() {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('vendors')
-        .select('*, vendor_client_relationships!inner(organization_id, status)')
-        .eq('vendor_client_relationships.organization_id', profile!.organization_id);
+      setPageError(null);
+      try {
+        const { data, error } = await supabase
+          .from('vendors')
+          .select('*, vendor_client_relationships!inner(organization_id, status)')
+          .eq('vendor_client_relationships.organization_id', profile!.organization_id);
 
-      if (error) {
-        console.error('Error fetching vendors:', error);
+        if (error) throw error;
+
+        const mapped: ConsolidatedVendor[] = (data || []).map((v: any) => ({
+          id: v.id,
+          companyName: v.company_name,
+          contactName: v.contact_name || '',
+          email: v.email || '',
+          phone: v.phone || '',
+          serviceType: v.service_type || '',
+          locations: [],
+          overallStatus: v.status === 'overdue' ? 'overdue' : v.status === 'upcoming' ? 'upcoming' : 'current',
+          pendingDocuments: 0,
+          totalDocuments: 0,
+          autoRequestEnabled: false,
+          coiExpiration: '',
+          coiStatus: 'current' as const,
+        }));
+
+        setLiveVendors(mapped);
+      } catch (err: any) {
+        console.error('Error fetching vendors:', err);
+        setPageError(err?.message || 'Failed to load vendors');
+      } finally {
         setLoading(false);
-        return;
       }
-
-      const mapped: ConsolidatedVendor[] = (data || []).map((v: any) => ({
-        id: v.id,
-        companyName: v.company_name,
-        contactName: v.contact_name || '',
-        email: v.email || '',
-        phone: v.phone || '',
-        serviceType: v.service_type || '',
-        locations: [],
-        overallStatus: v.status === 'overdue' ? 'overdue' : v.status === 'upcoming' ? 'upcoming' : 'current',
-        pendingDocuments: 0,
-        totalDocuments: 0,
-        autoRequestEnabled: false,
-        coiExpiration: '',
-        coiStatus: 'current' as const,
-      }));
-
-      setLiveVendors(mapped);
-      setLoading(false);
     }
 
     fetchVendors();
@@ -1140,6 +1145,15 @@ export function Vendors() {
   }
 
   // ── List View ──────────────────────────────────────────────────
+
+  if (pageError) {
+    return (
+      <>
+        <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Vendors' }]} />
+        <ErrorState error={pageError} onRetry={() => { setPageError(null); }} />
+      </>
+    );
+  }
 
   const SERVICE_TYPES = [...new Set(consolidatedVendors.map((v) => v.serviceType))];
 

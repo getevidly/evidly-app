@@ -10,6 +10,7 @@ import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
+import { ErrorState, PageEmptyState } from '../components/shared/PageStates';
 
 interface Alert {
   id: string;
@@ -256,11 +257,19 @@ export function Alerts() {
   const { isDemoMode } = useDemo();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const alertAccessibleLocNames = getAccessibleLocations().map(l => l.locationName);
+  const [pageError, setPageError] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'urgent' | 'upcoming' | 'resolved' | 'snoozed'>('all');
   const [severityFilter, setSeverityFilter] = useState<'all' | 'high' | 'medium' | 'low'>('all');
   const [locationFilter, setLocationFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
-  const [alerts, setAlerts] = useState<Alert[]>(isDemoMode ? DEMO_ALERTS : []);
+  const [alerts, setAlerts] = useState<Alert[]>(() => {
+    try {
+      return isDemoMode ? DEMO_ALERTS : [];
+    } catch (err) {
+      setPageError(err instanceof Error ? err.message : 'Failed to load alerts data');
+      return [];
+    }
+  });
 
   const [showResolveModal, setShowResolveModal] = useState(false);
   const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
@@ -437,6 +446,10 @@ export function Alerts() {
   const urgentCount = alerts.filter(a => a.status === 'active' && a.severity === 'high').length;
   const activeCount = alerts.filter(a => a.status === 'active').length;
 
+  if (pageError) {
+    return <ErrorState error={pageError} onRetry={() => { setPageError(null); setAlerts(isDemoMode ? DEMO_ALERTS : []); }} />;
+  }
+
   return (
     <>
       <Breadcrumb items={[{ label: t('nav.dashboard'), href: '/dashboard' }, { label: t('pages.alerts.title') }]} />
@@ -552,11 +565,12 @@ export function Alerts() {
 
         <div className="space-y-4">
           {filteredAlerts.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-xl shadow-sm border border-gray-200">
-              <CheckCircle2 className="h-12 w-12 text-green-500 mx-auto mb-4" />
-              <p className="text-gray-500">
-                {filter === 'resolved' ? t('pages.alerts.noResolvedAlerts') : t('pages.alerts.noMatchingAlerts')}
-              </p>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+              <PageEmptyState
+                icon={<CheckCircle2 className="h-12 w-12 text-green-500 mx-auto" />}
+                title={filter === 'resolved' ? t('pages.alerts.noResolvedAlerts') : t('pages.alerts.noMatchingAlerts')}
+                description="Try adjusting your filters to see more alerts."
+              />
             </div>
           ) : (
             filteredAlerts.map((alertItem) => (

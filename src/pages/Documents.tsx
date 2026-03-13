@@ -8,6 +8,7 @@ import { supabase } from '../lib/supabase';
 import { format, differenceInDays } from 'date-fns';
 import { DemoModeBanner } from '../components/DemoModeBanner';
 import { EmptyState } from '../components/EmptyState';
+import { ErrorState } from '../components/shared/PageStates';
 import { SmartUploadModal, type ClassifiedFile } from '../components/SmartUploadModal';
 import { DOCUMENT_TYPE_OPTIONS, PILLAR_OPTIONS } from '../lib/documentClassifier';
 import { Breadcrumb } from '../components/Breadcrumb';
@@ -209,6 +210,7 @@ export function Documents() {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [sharedItems, setSharedItems] = useState<SharedItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [pageError, setPageError] = useState<string | null>(null);
   const [showSmartUpload, setShowSmartUpload] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [selectedDocForShare, setSelectedDocForShare] = useState<string | null>(null);
@@ -321,14 +323,21 @@ export function Documents() {
 
   const fetchDocuments = async () => {
     setLoading(true);
-    const { data } = await supabase
-      .from('documents')
-      .select('*')
-      .eq('organization_id', profile?.organization_id)
-      .order('created_at', { ascending: false });
+    setPageError(null);
+    try {
+      const { data, error } = await supabase
+        .from('documents')
+        .select('*')
+        .eq('organization_id', profile?.organization_id)
+        .order('created_at', { ascending: false });
 
-    if (data) setDocuments(data);
-    setLoading(false);
+      if (error) throw error;
+      if (data) setDocuments(data);
+    } catch (err: any) {
+      setPageError(err?.message || 'Failed to load documents');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleShareDocument = (docTitle: string) => {
@@ -394,6 +403,15 @@ export function Documents() {
         return null;
     }
   };
+
+  if (pageError) {
+    return (
+      <>
+        <Breadcrumb items={[{ label: t('nav.dashboard'), href: '/dashboard' }, { label: t('pages.documents.title') }]} />
+        <ErrorState error={pageError} onRetry={() => { setPageError(null); fetchDocuments(); }} />
+      </>
+    );
+  }
 
   return (
     <>

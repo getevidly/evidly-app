@@ -21,6 +21,7 @@ import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { getCleaningFrequency, getFrequencyLabel, COOKING_TYPE_OPTIONS, type CookingType } from '../lib/nfpa96FrequencyMap';
 import { InfoTooltip } from '../components/ui/InfoTooltip';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
+import { ErrorState } from '../components/shared/PageStates';
 
 // ── Brand ─────────────────────────────────────────────────────────
 const NAVY = '#1e4d6b';
@@ -145,6 +146,11 @@ export function FacilitySafety() {
   const { t } = useTranslation();
   const { isDemoMode } = useDemo();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  const [pageError, setPageError] = useState<string | null>(null);
+
+  if (pageError) {
+    return <ErrorState error={pageError} onRetry={() => { setPageError(null); }} />;
+  }
 
   const locations = isDemoMode ? DEMO_LOCATIONS : [];
   const locationParam = searchParams.get('location') || 'downtown';

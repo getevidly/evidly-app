@@ -16,6 +16,7 @@ import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { AlertTriangle, BarChart3, FileText, Printer, TableProperties } from 'lucide-react';
 import { NAVY, GOLD, CARD_BORDER, TEXT_TERTIARY } from '../components/dashboard/shared/constants';
+import { ErrorState } from '../components/shared/PageStates';
 import {
   SIGNAL_TYPE_LABELS,
   SIGNAL_TYPE_COLORS,
@@ -53,6 +54,7 @@ export function BusinessIntelligence() {
   const [signals, setSignals] = useState<BISignal[]>([]);
   const [riskPlans, setRiskPlans] = useState<Map<string, RiskPlan>>(new Map());
   const [loading, setLoading] = useState(true);
+  const [pageError, setPageError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<FormatTab>('executive');
   const [signalTypeFilter, setSignalTypeFilter] = useState<string>('all');
 
@@ -62,6 +64,7 @@ export function BusinessIntelligence() {
   // Load signals
   const loadSignals = useCallback(async () => {
     setLoading(true);
+    setPageError(null);
     if (isDemoMode) {
       setSignals(DEMO_SIGNALS);
       setLoading(false);
@@ -71,41 +74,47 @@ export function BusinessIntelligence() {
     const orgId = profile?.organization_id;
     if (!orgId) { setLoading(false); return; }
 
-    const { data } = await supabase
-      .from('intelligence_signals')
-      .select('*')
-      .eq('org_id', orgId)
-      .eq('is_published', true)
-      .eq('is_sample', false)
-      .order('published_at', { ascending: false })
-      .limit(50);
+    try {
+      const { data, error } = await supabase
+        .from('intelligence_signals')
+        .select('*')
+        .eq('org_id', orgId)
+        .eq('is_published', true)
+        .eq('is_sample', false)
+        .order('published_at', { ascending: false })
+        .limit(50);
 
-    if (data) {
-      setSignals(data.map((row: any) => ({
-        id: row.id,
-        title: row.title || '',
-        summary: row.summary || row.ai_summary || '',
-        category: row.category || 'regulatory',
-        signal_type: row.signal_type || '',
-        source_name: row.source_name || null,
-        priority: row.ai_urgency || 'low',
-        county: row.county || 'Statewide',
-        published_at: row.published_at || row.discovered_at || row.created_at,
-        risk_revenue: row.risk_revenue === 'none' ? null : row.risk_revenue,
-        risk_liability: row.risk_liability === 'none' ? null : row.risk_liability,
-        risk_cost: row.risk_cost === 'none' ? null : row.risk_cost,
-        risk_operational: row.risk_operational === 'none' ? null : row.risk_operational,
-        workforce_risk_level: row.workforce_risk_level || null,
-        client_impact_revenue: row.client_impact_revenue || null,
-        client_impact_liability: row.client_impact_liability || null,
-        client_impact_cost: row.client_impact_cost || null,
-        client_impact_operational: row.client_impact_operational || null,
-        client_impact_workforce: row.client_impact_workforce || null,
-        recommended_action: row.recommended_action || null,
-        action_deadline: row.action_deadline || null,
-        relevance_reason: row.relevance_reason || null,
-        feed_type: row.feed_type || 'jurisdiction',
-      })));
+      if (error) throw error;
+
+      if (data) {
+        setSignals(data.map((row: any) => ({
+          id: row.id,
+          title: row.title || '',
+          summary: row.summary || row.ai_summary || '',
+          category: row.category || 'regulatory',
+          signal_type: row.signal_type || '',
+          source_name: row.source_name || null,
+          priority: row.ai_urgency || 'low',
+          county: row.county || 'Statewide',
+          published_at: row.published_at || row.discovered_at || row.created_at,
+          risk_revenue: row.risk_revenue === 'none' ? null : row.risk_revenue,
+          risk_liability: row.risk_liability === 'none' ? null : row.risk_liability,
+          risk_cost: row.risk_cost === 'none' ? null : row.risk_cost,
+          risk_operational: row.risk_operational === 'none' ? null : row.risk_operational,
+          workforce_risk_level: row.workforce_risk_level || null,
+          client_impact_revenue: row.client_impact_revenue || null,
+          client_impact_liability: row.client_impact_liability || null,
+          client_impact_cost: row.client_impact_cost || null,
+          client_impact_operational: row.client_impact_operational || null,
+          client_impact_workforce: row.client_impact_workforce || null,
+          recommended_action: row.recommended_action || null,
+          action_deadline: row.action_deadline || null,
+          relevance_reason: row.relevance_reason || null,
+          feed_type: row.feed_type || 'jurisdiction',
+        })));
+      }
+    } catch (err) {
+      setPageError(err instanceof Error ? err.message : 'Failed to load intelligence signals');
     }
     setLoading(false);
   }, [isDemoMode, profile?.organization_id]);
@@ -190,6 +199,11 @@ export function BusinessIntelligence() {
     else params.set('location', loc);
     setSearchParams(params, { replace: true });
   };
+
+  // Error state
+  if (pageError) {
+    return <ErrorState error={pageError} onRetry={() => { setPageError(null); loadSignals(); }} />;
+  }
 
   // Empty state — production, no signals
   if (!loading && signals.length === 0 && !isDemoMode) {

@@ -11,6 +11,7 @@ import { useRole } from '../contexts/RoleContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { AssignTrainingModal } from '../components/training/AssignTrainingModal';
+import { ErrorState, PageEmptyState } from '../components/shared/PageStates';
 import {
   TRAINING_EMPLOYEES, LOCATION_OPTIONS,
   getTrainingStatus, getStatusLabel, getStatusColors,
@@ -44,8 +45,14 @@ export function TrainingRecords() {
   const [sortBy, setSortBy] = useState<SortKey>('name');
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [assignTargetId, setAssignTargetId] = useState<string | null>(null);
+  const [pageError, setPageError] = useState<string | null>(null);
 
-  const employees: TrainingEmployee[] = isDemoMode ? TRAINING_EMPLOYEES : [];
+  let employees: TrainingEmployee[] = [];
+  try {
+    employees = isDemoMode ? TRAINING_EMPLOYEES : [];
+  } catch (err) {
+    if (!pageError) setPageError(err instanceof Error ? err.message : 'Failed to load training records');
+  }
 
   // Role-based filtering
   const roleFilteredEmployees = useMemo(() => {
@@ -112,6 +119,15 @@ export function TrainingRecords() {
       setShowAssignModal(true);
     });
   };
+
+  // Error state
+  if (pageError) {
+    return (
+      <div style={F}>
+        <ErrorState error={pageError} onRetry={() => setPageError(null)} />
+      </div>
+    );
+  }
 
   // Empty state — no employees
   if (employees.length === 0 && !isDemoMode) {
@@ -220,9 +236,13 @@ export function TrainingRecords() {
 
       {/* Employee Grid */}
       {sorted.length === 0 ? (
-        <div style={{ background: PANEL_BG, borderRadius: 10, border: `1px solid ${CARD_BORDER}`, padding: 48, textAlign: 'center' }}>
-          <Filter size={32} color="#d1d5db" />
-          <p style={{ color: MUTED, fontSize: 14, marginTop: 12 }}>No employees match your filters</p>
+        <div style={{ background: PANEL_BG, borderRadius: 10, border: `1px solid ${CARD_BORDER}`, padding: 48 }}>
+          <PageEmptyState
+            icon={<Filter size={32} color="#d1d5db" />}
+            title="No employees match your filters"
+            description="Try adjusting your search or filter criteria."
+            action={{ label: 'Clear Filters', onClick: () => { setSearch(''); setLocationFilter('all'); setRoleFilter('all'); setStatusFilter('all'); } }}
+          />
         </div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 14 }}>
