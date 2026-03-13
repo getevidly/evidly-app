@@ -18,6 +18,7 @@ import { SalesGuard } from './components/layout/SalesGuard';
 import QRAuthGuard from './components/auth/QRAuthGuard';
 
 const Login = lazy(() => import('./pages/Login').then(m => ({ default: m.Login })));
+const AdminLogin = lazy(() => import('./pages/AdminLogin').then(m => ({ default: m.AdminLogin })));
 const Signup = lazy(() => import('./pages/Signup').then(m => ({ default: m.Signup })));
 const SignupLocations = lazy(() => import('./pages/SignupLocations').then(m => ({ default: m.SignupLocations })));
 const VendorLogin = lazy(() => import('./pages/VendorLogin').then(m => ({ default: m.VendorLogin })));
@@ -46,9 +47,20 @@ const SB1383Compliance = lazy(() => import('./pages/SB1383Compliance').then(m =>
 const K12Compliance = lazy(() => import('./pages/K12Compliance').then(m => ({ default: m.K12Compliance })));
 const Analysis = lazy(() => import('./pages/Analysis').then(m => ({ default: m.Analysis })));
 const Team = lazy(() => import('./pages/Team').then(m => ({ default: m.Team })));
-const Settings = lazy(() => import('./pages/Settings').then(m => ({ default: m.Settings })));
+const SettingsPage = lazy(() => import('./pages/settings/SettingsPage').then(m => ({ default: m.SettingsPage })));
+const CompanyProfilePage = lazy(() => import('./pages/settings/CompanyProfilePage').then(m => ({ default: m.CompanyProfilePage })));
+const TeamRolesPage = lazy(() => import('./pages/settings/TeamRolesPage').then(m => ({ default: m.TeamRolesPage })));
+const ServiceTypesPage = lazy(() => import('./pages/settings/ServiceTypesPage').then(m => ({ default: m.ServiceTypesPage })));
+const SettingsIntegrationsPage = lazy(() => import('./pages/settings/IntegrationsPage').then(m => ({ default: m.IntegrationsPage })));
+const NotificationsPage = lazy(() => import('./pages/settings/NotificationsPage').then(m => ({ default: m.NotificationsPage })));
+const BillingPage = lazy(() => import('./pages/settings/BillingPage').then(m => ({ default: m.BillingPage })));
 const ReportCenter = lazy(() => import('./pages/ReportCenter').then(m => ({ default: m.ReportCenter })));
 const ReportDetail = lazy(() => import('./pages/ReportDetail').then(m => ({ default: m.ReportDetail })));
+const ReportsPage = lazy(() => import('./pages/reports/ReportsPage').then(m => ({ default: m.ReportsPage })));
+const ReportGeneratorPage = lazy(() => import('./pages/reports/ReportGeneratorPage').then(m => ({ default: m.ReportGeneratorPage })));
+const EquipmentPage = lazy(() => import('./pages/equipment/EquipmentPage').then(m => ({ default: m.EquipmentPage })));
+const EquipmentDetailPage = lazy(() => import('./pages/equipment/EquipmentDetailPage').then(m => ({ default: m.EquipmentDetailPage })));
+const QRScanLandingPage = lazy(() => import('./pages/equipment/QRScanLandingPage').then(m => ({ default: m.QRScanLandingPage })));
 const InviteAccept = lazy(() => import('./pages/InviteAccept').then(m => ({ default: m.InviteAccept })));
 const AdminClientOnboarding = lazy(() => import('./pages/AdminClientOnboarding').then(m => ({ default: m.AdminClientOnboarding })));
 const Help = lazy(() => import('./pages/HelpSupport').then(m => ({ default: m.HelpSupport })));
@@ -444,9 +456,11 @@ function AppRoutes() {
         <Route path="/kitchen-check/:slug" element={<Suspense fallback={<PageSkeleton />}><KitchenCheckWrapper /></Suspense>} />
         <Route path="/kitchen-to-community" element={<Suspense fallback={<PageSkeleton />}><KitchenToCommunity /></Suspense>} />
         <Route path="/leaderboard-preview" element={<Suspense fallback={<PageSkeleton />}><LeaderboardPreview /></Suspense>} />
+        <Route path="/equipment/scan/:equipmentId" element={<Suspense fallback={<PageSkeleton />}><QRScanLandingPage /></Suspense>} />
         <Route path="/temp/log" element={<QRAuthGuard><Suspense fallback={<PageSkeleton />}><TempLogQuick /></Suspense></QRAuthGuard>} />
         <Route path="/temp-logs/scan" element={<QRAuthGuard><Suspense fallback={<PageSkeleton />}><TempLogScan /></Suspense></QRAuthGuard>} />
         <Route path="/login" element={<PublicRoute><Suspense fallback={<PageSkeleton />}><Login /></Suspense></PublicRoute>} />
+        <Route path="/admin-login" element={<PublicRoute><Suspense fallback={<PageSkeleton />}><AdminLogin /></Suspense></PublicRoute>} />
         <Route path="/signup" element={<PublicRoute><Suspense fallback={<PageSkeleton />}><Signup /></Suspense></PublicRoute>} />
         <Route path="/signup/locations" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><SignupLocations /></Suspense></ProtectedRoute>} />
         <Route path="/invite/:token" element={<Suspense fallback={<PageSkeleton />}><InviteAccept /></Suspense>} />
@@ -516,9 +530,16 @@ function AppRoutes() {
           <Route path="/referrals" element={<ReferralDashboard />} />
           <Route path="/analysis" element={<Analysis />} />
           <Route path="/team" element={<Team />} />
-          <Route path="/reports" element={<ReportCenter />} />
-          <Route path="/reports/:reportType" element={<ReportDetail />} />
-          <Route path="/settings" element={<Settings />} />
+          <Route path="/reports" element={<ReportsPage />} />
+          <Route path="/reports/:slug" element={<ReportGeneratorPage />} />
+          <Route path="/settings" element={<SettingsPage />}>
+            <Route index element={<Navigate to="/settings/company" replace />} />
+            <Route path="company" element={<CompanyProfilePage />} />
+            <Route path="team-roles" element={<TeamRolesPage />} />
+            <Route path="service-types" element={<ServiceTypesPage />} />
+            <Route path="notifications" element={<NotificationsPage />} />
+            <Route path="billing" element={<BillingPage />} />
+          </Route>
           <Route path="/settings/branding" element={<BrandingSettings />} />
           <Route path="/settings/sensors" element={<IoTSensorHub />} />
           <Route path="/settings/roles-permissions" element={<RolesPermissions />} />
@@ -534,8 +555,8 @@ function AppRoutes() {
           <Route path="/sb1383" element={<SB1383Compliance />} />
           <Route path="/k12" element={<K12Compliance />} />
           <Route path="/usda/production-records" element={<USDAProductionRecords />} />
-          <Route path="/equipment" element={<Equipment />} />
-          <Route path="/equipment/:equipmentId" element={<EquipmentDetail />} />
+          <Route path="/equipment" element={<EquipmentPage />} />
+          <Route path="/equipment/:id" element={<EquipmentDetailPage />} />
           <Route path="/equipment/:equipmentId/service/new" element={<ServiceRecordEntry />} />
           <Route path="/regulatory-alerts" element={<RegulatoryAlerts />} />
           <Route path="/jurisdiction" element={<JurisdictionSettings />} />
@@ -557,7 +578,7 @@ function AppRoutes() {
           <Route path="/sensors/add" element={<SensorSetupWizard />} />
           <Route path="/sensors/:id" element={<SensorDetail />} />
           <Route path="/integrations" element={<IntegrationHub />} />
-          <Route path="/settings/integrations" element={<IntegrationHub />} />
+          <Route path="/settings/integrations" element={<SettingsIntegrationsPage />} />
           <Route path="/settings/api-keys" element={<IntegrationHub />} />
           <Route path="/settings/webhooks" element={<IntegrationHub />} />
           <Route path="/developers" element={<DeveloperPortal />} />

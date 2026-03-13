@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Eye, EyeOff, Play } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { supabase } from '../lib/supabase';
 import ReCAPTCHA from 'react-google-recaptcha';
@@ -229,25 +229,6 @@ export function Login() {
               <Link to="/signup" className="font-medium" style={{ color: branding.colors.primary }}>
                 Sign up
               </Link>
-            </p>
-            <p className="text-sm text-gray-600 mt-2">
-              Are you a vendor?{' '}
-              <Link to="/vendor/login" className="font-medium" style={{ color: branding.colors.primary }}>
-                Sign in here →
-              </Link>
-            </p>
-          </div>
-
-          <div className="mt-6 pt-6 border-t border-gray-200">
-            <button
-              onClick={() => { trackEvent('cta_click', { cta: 'login_try_demo', page: 'login' }); navigate('/demo'); }}
-              className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-md text-sm font-semibold text-[#1e4d6b] bg-[#d4af37]/10 border-2 border-[#d4af37]/30 hover:bg-[#d4af37]/20 hover:border-[#d4af37]/50 transition-all"
-            >
-              <Play className="h-4 w-4" />
-              Try Interactive Demo
-            </button>
-            <p className="text-xs text-center text-gray-400 mt-3">
-              No account needed — explore the full platform
             </p>
           </div>
         </div>
