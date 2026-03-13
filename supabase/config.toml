@@ -363,7 +363,29 @@ authorization_url_path = "/oauth/consent"
 # Allow dynamic client registration
 allow_dynamic_registration = false
 
-# Intelligence functions handle their own auth (x-cron-secret / Bearer token)
+# ── ADMIN-SECURITY-01: Edge Function JWT Verification Audit ──────────────
+#
+# SECURITY CLASSIFICATION (reviewed 2026-03-13):
+#
+# verify_jwt = false (JUSTIFIED):
+#   intelligence-collect   — cron-invoked, validates x-cron-secret internally
+#   intelligence-approve   — admin-invoked, validates Bearer token + email domain
+#   intelligence-webhook   — inbound webhook, validates shared secret
+#   crawl-monitor          — cron-invoked, validates x-cron-secret internally
+#   trigger-crawl          — admin-invoked, validates Bearer token + email domain
+#   classify-signals       — admin-invoked, validates Bearer token + @getevidly.com
+#   violation-crawl        — cron job, no user context
+#
+# verify_jwt = true (DEFAULT — all other functions):
+#   ai-flag-suggest, ai-text-assist, ai-chat, generate-outreach,
+#   intelligence-deliver, all stripe-*, all training-*, all vendor-*,
+#   all enterprise-*, all api-*, all sensor/iot-*, etc.
+#
+# RULE: Any function that accepts user data or modifies DB state MUST
+# either have verify_jwt=true OR validate auth internally (Bearer + role check).
+# ─────────────────────────────────────────────────────────────────────────
+
+# Intelligence functions — validate x-cron-secret or Bearer token internally
 [functions.intelligence-collect]
 verify_jwt = false
 
@@ -373,15 +395,19 @@ verify_jwt = false
 [functions.intelligence-webhook]
 verify_jwt = false
 
-# Crawl functions — invoked from admin UI with user session token
+# Crawl functions — cron or admin-invoked, validate auth internally
 [functions.crawl-monitor]
 verify_jwt = false
 
 [functions.trigger-crawl]
 verify_jwt = false
 
-# Signal classification — proxies Anthropic API server-side [P0-API-KEY-01]
+# Signal classification — validates Bearer token + @getevidly.com domain [P0-API-KEY-01]
 [functions.classify-signals]
+verify_jwt = false
+
+# Violation crawl — cron job, no user context needed
+[functions.violation-crawl]
 verify_jwt = false
 
 [edge_runtime]
