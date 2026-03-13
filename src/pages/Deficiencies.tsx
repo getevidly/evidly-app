@@ -148,7 +148,7 @@ export function Deficiencies() {
 
   // ── Stats Card ────────────────────────────────────────────
   const StatCard = ({ label, value, sub, accent }: { label: string; value: number; sub?: string; accent?: string }) => (
-    <div className="rounded-xl border p-4" style={{ backgroundColor: '#FFFFFF', borderColor: '#D1D9E6', boxShadow: '0 1px 3px rgba(11,22,40,.06)' }}>
+    <div className="rounded-xl border p-4 text-center" style={{ backgroundColor: '#FFFFFF', borderColor: '#D1D9E6', boxShadow: '0 1px 3px rgba(11,22,40,.06)' }}>
       <p className="text-sm font-medium" style={{ color: '#6B7F96' }}>{label}</p>
       <p className="text-2xl font-bold mt-1" style={{ color: accent || '#0B1628' }}>{value}</p>
       {sub && <p className="text-xs mt-0.5" style={{ color: '#dc2626' }}>{sub}</p>}

@@ -246,14 +246,12 @@ export function EquipmentPage() {
 
 function StatCard({ icon: Icon, label, value, color }: { icon: typeof Wrench; label: string; value: number; color: string }) {
   return (
-    <div className="rounded-lg p-4 flex items-center gap-3" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
-      <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: `${color}12` }}>
+    <div className="rounded-lg p-4 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
+      <div className="w-9 h-9 rounded-lg flex items-center justify-center mx-auto mb-2" style={{ background: `${color}12` }}>
         <Icon className="w-4.5 h-4.5" style={{ color }} />
       </div>
-      <div>
-        <p className="text-xs" style={{ color: TEXT_TERTIARY }}>{label}</p>
-        <p className="text-xl font-bold" style={{ color: NAVY }}>{value}</p>
-      </div>
+      <p className="text-xs" style={{ color: TEXT_TERTIARY }}>{label}</p>
+      <p className="text-xl font-bold mt-1" style={{ color: NAVY }}>{value}</p>
     </div>
   );
 }

@@ -120,7 +120,7 @@ export function Employees() {
           { label: 'Technicians', value: stats.technicians, color: NAVY },
           { label: 'Clocked In', value: stats.clockedIn, color: '#2563eb' },
         ].map(s => (
-          <div key={s.label} className="rounded-xl border p-4" style={{ backgroundColor: '#FFFFFF', borderColor: '#D1D9E6', boxShadow: '0 1px 3px rgba(11,22,40,.06)' }}>
+          <div key={s.label} className="rounded-xl border p-4 text-center" style={{ backgroundColor: '#FFFFFF', borderColor: '#D1D9E6', boxShadow: '0 1px 3px rgba(11,22,40,.06)' }}>
             <p className="text-xs" style={{ color: '#6B7F96' }}>{s.label}</p>
             <p className="text-2xl font-bold mt-1" style={{ color: s.color }}>{s.value}</p>
           </div>
