@@ -1047,8 +1047,7 @@ export function SelfAudit() {
           <button
             onClick={() => {
               const pdfParams: SelfInspectionPdfParams = {
-                sections, score,
-                gradeDisplay: jurisdictionGrade?.display || null,
+                sections,
                 jurisdictionConfig: activeScoringConfig,
                 failedItems: failedItems.map(f => ({ ...f, status: 'fail' as const })),
                 locationName: locationParam.charAt(0).toUpperCase() + locationParam.slice(1),
@@ -1064,8 +1063,7 @@ export function SelfAudit() {
           <button
             onClick={() => {
               const pdfParams: SelfInspectionPdfParams = {
-                sections, score,
-                gradeDisplay: jurisdictionGrade?.display || null,
+                sections,
                 jurisdictionConfig: activeScoringConfig,
                 failedItems: failedItems.map(f => ({ ...f, status: 'fail' as const })),
                 locationName: locationParam.charAt(0).toUpperCase() + locationParam.slice(1),

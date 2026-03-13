@@ -4,13 +4,16 @@
  * AI-simulated inspection using the operator's actual jurisdiction
  * inspector criteria. Feature-gated to founder+ plan tier.
  * Three phases: Setup → Walkthrough → Results.
+ *
+ * NOTE: EvidLY NEVER generates a compliance score, grade, or rating.
+ * Only the jurisdiction (EHD / AHJ) has that authority.
  */
 import { useState, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import {
   Target, Shield, AlertTriangle, CheckCircle2, XCircle,
-  ChevronRight, ChevronLeft, Play, RotateCcw, Download,
+  ChevronRight, ChevronLeft, Play, RotateCcw,
   ListChecks, MessageSquare, User, Clock,
 } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
@@ -21,12 +24,6 @@ import { useDemo } from '../contexts/DemoContext';
 import { DEMO_JURISDICTIONS } from '../data/demoJurisdictions';
 import { getJurisdictionScoringConfig, type JurisdictionScoringConfig } from '../data/selfInspectionJurisdictionMap';
 import { JurisdictionProfileHeader } from '../components/self-inspection/JurisdictionProfileHeader';
-import {
-  computeJurisdictionScore,
-  gradeInspection,
-  getScoringMethodLabel,
-  type CompletedItem,
-} from '../lib/selfInspectionScoring';
 import {
   selectInspectionQuestions,
   getInspectorIntro,
@@ -56,16 +53,11 @@ interface QuestionAnswer {
 const NAVY = '#1e4d6b';
 const GOLD = '#d4af37';
 
-function getScoreColor(s: number) {
-  if (s >= 90) return '#16a34a';
-  if (s >= 75) return '#d97706';
-  return '#dc2626';
-}
-
-function getScoreBg(s: number) {
-  if (s >= 90) return 'bg-green-500';
-  if (s >= 75) return 'bg-yellow-500';
-  return 'bg-red-500';
+/** Estimate likely outcome based on severity counts (NOT a score). */
+function estimateOutcome(critical: number, major: number): { label: string; color: string; bg: string } {
+  if (critical >= 2) return { label: 'Closure risk', color: '#991b1b', bg: 'bg-red-100' };
+  if (critical >= 1 || major >= 2) return { label: 'Re-inspection likely', color: '#92400e', bg: 'bg-yellow-100' };
+  return { label: 'Pass', color: '#166534', bg: 'bg-green-100' };
 }
 
 // ---------------------------------------------------------------------------
@@ -110,7 +102,10 @@ export default function MockInspection() {
   // ---------------------------------------------------------------------------
 
   const startInspection = () => {
-    const selected = selectInspectionQuestions(difficulty);
+    // Demo mode: static question bank; Production: placeholder for AI-generated questions
+    const selected = isDemoMode
+      ? selectInspectionQuestions(difficulty)
+      : selectInspectionQuestions(difficulty); // TODO: replace with AI-generated questions in production
     setQuestions(selected.map(q => ({ question: q, answer: null, notes: '' })));
     setCurrentIdx(0);
     setStartedAt(new Date().toISOString());
@@ -149,20 +144,17 @@ export default function MockInspection() {
   const violations = questions.filter(q => q.answer === 'fail');
   const passes = questions.filter(q => q.answer === 'pass');
 
-  const score = useMemo(() => {
-    if (questions.length === 0) return 0;
-    const items: CompletedItem[] = questions.map(qa => ({
-      id: qa.question.id,
-      status: qa.answer,
-      severity: qa.question.severity,
-    }));
-    return computeJurisdictionScore(items, scoringConfig).rawScore;
-  }, [questions, scoringConfig]);
+  const severityCounts = useMemo(() => {
+    const critical = violations.filter(v => v.question.severity === 'critical').length;
+    const major = violations.filter(v => v.question.severity === 'major').length;
+    const minor = violations.filter(v => v.question.severity === 'minor').length;
+    return { critical, major, minor };
+  }, [violations]);
 
-  const jurisdictionGrade = useMemo(() => {
-    if (!demoJurisdiction || questions.length === 0) return null;
-    return gradeInspection(score, demoJurisdiction);
-  }, [score, demoJurisdiction, questions.length]);
+  const outcome = useMemo(
+    () => estimateOutcome(severityCounts.critical, severityCounts.major),
+    [severityCounts],
+  );
 
   const intro = getInspectorIntro(difficulty);
   const current = questions[currentIdx];
@@ -209,11 +201,8 @@ export default function MockInspection() {
           <Target className="h-6 w-6" style={{ color: NAVY }} />
           <h2 className="text-xl font-bold" style={{ color: NAVY }}>Mock Inspection</h2>
         </div>
-        <p className="text-sm text-gray-600 mb-1">
+        <p className="text-sm text-gray-600 mb-4">
           Practice answering questions from a simulated <span className="font-medium">{scoringConfig.agencyName}</span> inspector.
-        </p>
-        <p className="text-xs text-gray-500 mb-4">
-          Scoring: {getScoringMethodLabel(scoringConfig.scoringType)}
         </p>
 
         <h3 className="text-sm font-semibold text-gray-700 mb-3">Select Difficulty</h3>
@@ -441,59 +430,51 @@ export default function MockInspection() {
   // ---------------------------------------------------------------------------
 
   const renderResults = () => {
-    const circleSize = 140;
-    const strokeWidth = 10;
-    const radius = (circleSize - strokeWidth) / 2;
-    const circumference = 2 * Math.PI * radius;
-    const offset = circumference - (score / 100) * circumference;
-    const scoreColor = getScoreColor(score);
-
     return (
       <div className="space-y-6">
         <JurisdictionProfileHeader config={scoringConfig} />
 
-        {/* Score */}
-        <div className="bg-white rounded-xl border border-[#b8d4e8] p-4 sm:p-5 text-center">
-          <h2 className="text-lg font-bold mb-4" style={{ color: NAVY }}>Mock Inspection Results</h2>
+        {/* Mandatory disclaimer banner — non-dismissable */}
+        <div className="bg-amber-50 border border-amber-300 rounded-xl p-4 flex items-start gap-3">
+          <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+          <p className="text-sm text-amber-800 font-medium">
+            Simulated report &mdash; not an official inspection result. For internal use only.
+            Consult your EHD or AHJ for official compliance guidance.
+          </p>
+        </div>
 
-          {jurisdictionGrade && jurisdictionGrade.passFail !== 'no_grade' && (
-            <div className="mb-3">
-              <span className={`inline-block text-2xl font-extrabold px-4 py-1 rounded-lg ${
-                jurisdictionGrade.passFail === 'pass' ? 'bg-green-100 text-green-700' :
-                jurisdictionGrade.passFail === 'warning' ? 'bg-yellow-100 text-yellow-700' :
-                'bg-red-100 text-red-700'
-              }`}>
-                {jurisdictionGrade.display}
-              </span>
+        {/* Findings Summary */}
+        <div className="bg-white rounded-xl border border-[#b8d4e8] p-4 sm:p-5">
+          <h2 className="text-lg font-bold mb-4" style={{ color: NAVY }}>Simulated Findings Summary</h2>
+
+          {/* Severity counts */}
+          <div className="grid grid-cols-3 gap-3 mb-5">
+            <div className="text-center p-3 rounded-lg bg-red-50 border border-red-200">
+              <p className="text-2xl font-bold text-red-700">{severityCounts.critical}</p>
+              <p className="text-xs font-medium text-red-600">Critical</p>
             </div>
-          )}
-
-          <div className="flex justify-center mb-4">
-            <svg width={circleSize} height={circleSize} className="-rotate-90">
-              <circle
-                cx={circleSize / 2} cy={circleSize / 2} r={radius}
-                fill="none" stroke="#e5e7eb" strokeWidth={strokeWidth}
-              />
-              <circle
-                cx={circleSize / 2} cy={circleSize / 2} r={radius}
-                fill="none" stroke={scoreColor} strokeWidth={strokeWidth}
-                strokeDasharray={circumference} strokeDashoffset={offset}
-                strokeLinecap="round"
-                style={{ transition: 'stroke-dashoffset 0.8s ease' }}
-              />
-            </svg>
-            <div className="absolute flex items-center justify-center" style={{ width: circleSize, height: circleSize }}>
-              <span className="text-3xl font-bold" style={{ color: scoreColor }}>{score}</span>
+            <div className="text-center p-3 rounded-lg bg-orange-50 border border-orange-200">
+              <p className="text-2xl font-bold text-orange-700">{severityCounts.major}</p>
+              <p className="text-xs font-medium text-orange-600">Major</p>
+            </div>
+            <div className="text-center p-3 rounded-lg bg-yellow-50 border border-yellow-200">
+              <p className="text-2xl font-bold text-yellow-700">{severityCounts.minor}</p>
+              <p className="text-xs font-medium text-yellow-600">Minor</p>
             </div>
           </div>
 
-          <p className="text-xs text-gray-500 mb-1">
-            {getScoringMethodLabel(scoringConfig.scoringType)} — {scoringConfig.agencyName}
-          </p>
-          <p className="text-sm text-gray-600">
-            {violations.length} violation{violations.length !== 1 ? 's' : ''} found out of {questions.length} questions
-          </p>
-          <div className="flex items-center justify-center gap-4 mt-3 text-xs text-gray-500">
+          {/* Estimated outcome */}
+          <div className="flex items-center gap-3 p-3 rounded-lg border border-gray-200">
+            <Shield className="h-5 w-5" style={{ color: outcome.color }} />
+            <div>
+              <p className="text-xs font-medium text-gray-500">Estimated outcome</p>
+              <p className="text-sm font-bold" style={{ color: outcome.color }}>{outcome.label}</p>
+            </div>
+          </div>
+
+          {/* Stats row */}
+          <div className="flex items-center justify-center gap-4 mt-4 text-xs text-gray-500">
+            <span>{passes.length} passed &middot; {violations.length} failed &middot; {questions.length} total questions</span>
             <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {DIFFICULTY_INFO[difficulty].label} inspection</span>
           </div>
         </div>
@@ -548,7 +529,7 @@ export default function MockInspection() {
               {passes.map(p => (
                 <div key={p.question.id} className="flex items-center gap-2 text-sm">
                   <CheckCircle2 className="h-3.5 w-3.5 text-green-500 shrink-0" />
-                  <span className="text-gray-700">{p.question.text.length > 80 ? p.question.text.slice(0, 80) + '…' : p.question.text}</span>
+                  <span className="text-gray-700">{p.question.text.length > 80 ? p.question.text.slice(0, 80) + '\u2026' : p.question.text}</span>
                 </div>
               ))}
             </div>
