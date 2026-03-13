@@ -97,6 +97,7 @@ const NAV_SECTIONS: NavSection[] = [
     items: [
       { label: 'Document Vault', path: '/admin/vault' },
       { label: 'Security Settings', path: '/admin/security-settings' },
+      { label: 'Feature Control', path: '/admin/feature-flags' },
       { label: 'API Keys', path: '/admin/api-keys' },
       { label: 'Edge Functions', path: '/admin/system/edge-functions' },
       { label: 'Database Backup', path: '/admin/backup' },

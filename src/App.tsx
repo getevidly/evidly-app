@@ -156,6 +156,7 @@ const RemoteConnect = lazy(() => import('./pages/admin/RemoteConnect'));
 const StaffRoles = lazy(() => import('./pages/admin/StaffRoles'));
 const AdminReports = lazy(() => import('./pages/admin/AdminReports'));
 const ViolationOutreach = lazy(() => import('./pages/admin/ViolationOutreach'));
+const FeatureFlags = lazy(() => import('./pages/admin/FeatureFlags'));
 const VerificationReport = lazy(() => import('./pages/admin/VerificationReport'));
 const BusinessIntelligence = lazy(() => import('./pages/BusinessIntelligence').then(m => ({ default: m.BusinessIntelligence })));
 const ClientReports = lazy(() => import('./pages/ClientReports').then(m => ({ default: m.ClientReports })));
@@ -205,6 +206,8 @@ const AdminHub = lazy(() => import('./pages/AdminHub').then(m => ({ default: m.A
 const VendorSetup = lazy(() => import('./pages/VendorSetup').then(m => ({ default: m.VendorSetup })));
 const VendorInviteLanding = lazy(() => import('./pages/VendorInviteLanding').then(m => ({ default: m.VendorInviteLanding })));
 const Timecards = lazy(() => import('./pages/Timecards').then(m => ({ default: m.Timecards })));
+const EmployeesPage = lazy(() => import('./pages/Employees').then(m => ({ default: m.Employees })));
+const EmployeeDetailPage = lazy(() => import('./pages/EmployeeDetail').then(m => ({ default: m.EmployeeDetail })));
 
 import { CookieConsent } from './components/CookieConsent';
 import { usePageTracking } from './hooks/usePageTracking';
@@ -575,6 +578,8 @@ function AppRoutes() {
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/services/:recordId" element={<ServiceRecordDetail />} />
           <Route path="/timecards" element={<Timecards />} />
+          <Route path="/employees" element={<EmployeesPage />} />
+          <Route path="/employees/:id" element={<EmployeeDetailPage />} />
           <Route path="/self-audit" element={<SelfAudit />} />
           <Route path="/self-inspection" element={<SelfAudit />} />
           <Route path="/photo-evidence" element={<PhotoEvidencePage />} />
@@ -634,6 +639,7 @@ function AppRoutes() {
           <Route path="/admin/violation-outreach" element={<SalesGuard><ViolationOutreach /></SalesGuard>} />
           <Route path="/admin/verification" element={<VerificationReport />} />
           <Route path="/admin/system/edge-functions" element={<EdgeFunctions />} />
+          <Route path="/admin/feature-flags" element={<FeatureFlags />} />
           <Route path="/admin/gtm" element={<SalesGuard><GtmDashboard /></SalesGuard>} />
           <Route path="/insights/intelligence" element={<BusinessIntelligence />} />
           <Route path="/insights/reports" element={<ClientReports />} />

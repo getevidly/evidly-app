@@ -43,6 +43,7 @@ const SECTION_MAP: Record<string, string> = {
   '/admin/backup': 'System',
   '/admin/maintenance': 'System',
   '/admin/event-log': 'System',
+  '/admin/feature-flags': 'System',
   // Pages not in current nav but still accessible
   '/admin/crawl-monitor': 'Intelligence',
   '/admin/intelligence-admin': 'Intelligence',
