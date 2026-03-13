@@ -7,6 +7,7 @@ import { supabase } from '../../lib/supabase';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import OrgCombobox, { type OrgOption } from '../../components/admin/OrgCombobox';
 import { useAuth } from '../../contexts/AuthContext';
+import { useDemoGuard } from '../../hooks/useDemoGuard';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -82,6 +83,7 @@ const EmptyState = ({ icon, title, subtitle }: { icon: string; title: string; su
 );
 
 export default function RemoteConnect() {
+  useDemoGuard();
   const { user } = useAuth();
 
   // Org & ticket data

@@ -5,6 +5,7 @@ import { useRole } from '../contexts/RoleContext';
 import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { RoleGuard } from '../components/auth/RoleGuard';
 import {
   DEMO_WORKFORCE_SIGNALS,
   DEMO_EMPLOYEE_CERTS,

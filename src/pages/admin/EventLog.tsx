@@ -5,6 +5,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
+import { useDemoGuard } from '../../hooks/useDemoGuard';
 
 const PAGE_SIZE = 50;
 const NAVY = '#1E2D4D';
@@ -44,6 +45,7 @@ const EmptyState = ({ icon, title, subtitle }: { icon: string; title: string; su
 );
 
 export default function EventLog() {
+  useDemoGuard();
   const [events, setEvents] = useState<EventRow[]>([]);
   const [totalCount, setTotalCount] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);

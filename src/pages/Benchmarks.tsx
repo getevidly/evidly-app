@@ -387,7 +387,7 @@ export function Benchmarks() {
         </div>
 
         {/* ── Section 3: Subcategory Deep Dive ── */}
-        <FeatureGate featureId="industry-benchmarks">
+        <FeatureGate flagKey="industry-benchmarks">
           <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             <div className="px-4 sm:px-6 py-4 border-b border-gray-100">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">

@@ -50,6 +50,9 @@ const RENDER_TYPE_MAP: Record<string, SignalType> = {
   fda_recall:          'outbreak',
   recall:              'outbreak',
 
+  // OUTBREAK rendering — temperature / equipment violations
+  temperature_violation: 'outbreak',
+
   // REGULATORY_CHANGE rendering — regulatory / compliance / code changes
   legislation:         'regulatory_change',
   legislative:         'regulatory_change',

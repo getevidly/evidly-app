@@ -13,6 +13,7 @@ import {
   BarChart3, Plus, TrendingUp, DollarSign, Target,
   Users, X, Calendar, Eye, Award, Filter,
 } from 'lucide-react';
+import { useDemoGuard } from '../../hooks/useDemoGuard';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -31,6 +32,7 @@ function formatDate(d: string | null): string {
 }
 
 export default function MarketingCampaigns() {
+  useDemoGuard();
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
   const [campaigns, setCampaigns] = useState<any[]>([]);
   const [touchpoints, setTouchpoints] = useState<any[]>([]);

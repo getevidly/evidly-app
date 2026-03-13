@@ -35,10 +35,9 @@ import {
 import { AddVendorModal, type AddVendorResult } from '../components/vendor/AddVendorModal';
 import { InviteVendorModal } from '../components/vendor/InviteVendorModal';
 import {
-  VENDOR_DEMO_SERVICES,
   getServiceStatus,
-  type VendorServiceDemo,
-} from '../data/vendorServicesDemoData';
+  STATUS_LABELS,
+} from '../constants/serviceTypes';
 import { ServiceComplianceList } from '../components/services/ServiceComplianceList';
 import { ServiceExpenseTracker } from '../components/services/ServiceExpenseTracker';
 import { LogServiceModal } from '../components/services/LogServiceModal';
@@ -556,20 +555,12 @@ export function Vendors() {
                 <h2 className="text-lg font-semibold mb-4">Service Schedule by Location</h2>
                 <div className="space-y-3">
                   {selectedVendor.locations.map((loc) => {
-                    // Match demo service data for this vendor + location
-                    const demoService: VendorServiceDemo | undefined = isDemoMode
-                      ? VENDOR_DEMO_SERVICES.find(
-                          s => s.vendor_name === selectedVendor.companyName && s.location_id === loc.locationId,
-                        )
-                      : undefined;
-                    const canViewCosts = ['owner_operator', 'compliance_manager'].includes(userRole);
-                    const status = getServiceStatus(loc.nextDue);
-                    const statusColors: Record<string, string> = {
-                      red: 'bg-red-100 text-red-800',
-                      amber: 'bg-amber-100 text-amber-800',
-                      gold: 'bg-yellow-100 text-yellow-800',
-                      green: 'bg-green-100 text-green-800',
-                      gray: 'bg-gray-100 text-gray-600',
+                    const svcStatus = getServiceStatus(loc.nextDue);
+                    const statusTwClass: Record<string, string> = {
+                      current: 'bg-green-100 text-green-800',
+                      due_soon: 'bg-amber-100 text-amber-800',
+                      overdue: 'bg-red-100 text-red-800',
+                      not_tracked: 'bg-gray-100 text-gray-600',
                     };
 
                     return (
@@ -579,27 +570,13 @@ export function Vendors() {
                             <MapPin className="h-4 w-4 text-gray-400" />
                             <span className="font-medium text-gray-900 text-sm">{loc.locationName}</span>
                           </div>
-                          <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${statusColors[status.color] || statusColors.gray}`}>
-                            {status.label}
+                          <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${statusTwClass[svcStatus] || statusTwClass.not_tracked}`}>
+                            {STATUS_LABELS[svcStatus] ?? svcStatus}
                           </span>
                         </div>
                         <div className="mt-2 ml-6 grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-500">
                           <span>Last: {format(new Date(loc.lastService), 'MMM d, yyyy')}</span>
                           <span>Next: {format(new Date(loc.nextDue), 'MMM d, yyyy')}</span>
-                          {demoService && (
-                            <>
-                              <span>Frequency: {demoService.service_frequency}</span>
-                              {canViewCosts && demoService.cost_per_visit > 0 && (
-                                <span>Per Visit: ${demoService.cost_per_visit.toLocaleString()}</span>
-                              )}
-                              {canViewCosts && demoService.cost_annual > 0 && (
-                                <span>Annual: ${demoService.cost_annual.toLocaleString()}</span>
-                              )}
-                              {demoService.contract_end_date && (
-                                <span>Contract thru: {format(new Date(demoService.contract_end_date), 'MMM d, yyyy')}</span>
-                              )}
-                            </>
-                          )}
                         </div>
                       </div>
                     );

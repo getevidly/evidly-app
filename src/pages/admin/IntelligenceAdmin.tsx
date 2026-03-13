@@ -13,6 +13,7 @@ import { routingTierLabel, routingTierColor, type RoutingTier } from '../../lib/
 import { CIC_PILLARS, getPillarForSignalType, isPseSignalType } from '../../lib/cicPillars';
 import { RiskLevelTooltip } from '../../components/RiskLevelTooltip';
 import VerificationPanel from '../../components/admin/VerificationPanel';
+import { useDemoGuard } from '../../hooks/useDemoGuard';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -118,6 +119,7 @@ const normLevel = (v: string | null | undefined): string => {
 };
 
 export default function IntelligenceAdmin() {
+  useDemoGuard();
   const navigate = useNavigate();
   const { user } = useAuth();
   const [signals, setSignals] = useState<QueueSignal[]>([]);

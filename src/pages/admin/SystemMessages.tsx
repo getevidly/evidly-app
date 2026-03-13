@@ -6,6 +6,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { toast } from 'sonner';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
+import { useDemoGuard } from '../../hooks/useDemoGuard';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -49,6 +50,7 @@ const TYPE_COLORS: Record<string, { bg: string; text: string }> = {
 };
 
 export default function SystemMessages() {
+  useDemoGuard();
   const [messages, setMessages] = useState<SystemMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCompose, setShowCompose] = useState(false);

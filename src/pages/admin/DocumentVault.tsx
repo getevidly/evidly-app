@@ -7,6 +7,7 @@ import { supabase } from '../../lib/supabase';
 import { uploadFile, getSignedUrl, deleteFile, BUCKETS } from '../../lib/storage';
 import { toast } from 'sonner';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
+import { useDemoGuard } from '../../hooks/useDemoGuard';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -50,6 +51,7 @@ const FILE_ICONS: Record<string, string> = {
 };
 
 export default function DocumentVault() {
+  useDemoGuard();
   const [docs, setDocs] = useState<VaultDoc[]>([]);
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState('all');

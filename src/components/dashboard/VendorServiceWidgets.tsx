@@ -10,8 +10,20 @@
 import { useNavigate } from 'react-router-dom';
 import { DollarSign, Calendar, ArrowRight, Wrench, Flame, Fan, Filter, Shield, ShieldAlert } from 'lucide-react';
 import { NAVY, CARD_BORDER, CARD_SHADOW } from './shared/constants';
-import type { VendorServiceDemo } from '../../data/vendorServicesDemoData';
 import { SERVICE_TYPES, type ServiceTypeCode } from '../../constants/serviceTypes';
+
+/** Vendor service record shape for the widget — matches Supabase location_service_schedules */
+interface VendorServiceRecord {
+  id: string;
+  service_type: string;
+  service_type_code: ServiceTypeCode | null;
+  vendor_name: string;
+  location_name: string;
+  next_service_date: string;
+  cost_per_visit?: number;
+  cost_annual?: number;
+  service_frequency?: string;
+}
 
 const SVC_ICON_MAP: Record<string, any> = { Flame, Fan, Filter, Shield, ShieldAlert, Wrench };
 
@@ -119,7 +131,7 @@ export function AnnualVendorSpendWidget({
 // ══════════════════════════════════════════════════════════════
 
 interface ServicesDueProps {
-  services: VendorServiceDemo[];
+  services: VendorServiceRecord[];
 }
 
 export function ServicesDueSoonWidget({ services }: ServicesDueProps) {

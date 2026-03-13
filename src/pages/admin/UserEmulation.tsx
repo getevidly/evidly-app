@@ -9,6 +9,7 @@ import { useEmulation } from '../../contexts/EmulationContext';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { useRole } from '../../contexts/RoleContext';
 import type { UserRole } from '../../contexts/RoleContext';
+import { useDemoGuard } from '../../hooks/useDemoGuard';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -62,6 +63,7 @@ const ROLE_COLORS: Record<string, string> = {
 };
 
 export default function UserEmulation() {
+  useDemoGuard();
   const navigate = useNavigate();
   const { startEmulation, isEmulating, emulatedUser, stopEmulation } = useEmulation();
   const { userRole, userName, userId } = useRole();

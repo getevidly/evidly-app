@@ -8,6 +8,7 @@ import { useSearchParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import VerificationPanel from '../../components/admin/VerificationPanel';
+import { useDemoGuard } from '../../hooks/useDemoGuard';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -75,6 +76,7 @@ const Skeleton = ({ w = '100%', h = 20 }: { w?: string | number; h?: number }) =
 );
 
 export default function VerificationReport() {
+  useDemoGuard();
   const [searchParams] = useSearchParams();
   const signalId = searchParams.get('signal');
 

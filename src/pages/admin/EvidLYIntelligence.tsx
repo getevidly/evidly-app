@@ -12,6 +12,7 @@ import { routingTierLabel, routingTierColor, type RoutingTier } from '../../lib/
 import { CIC_PILLARS, getPillarForSignalType, isPseSignalType } from '../../lib/cicPillars';
 import { RiskLevelTooltip } from '../../components/RiskLevelTooltip';
 import VerificationPanel from '../../components/admin/VerificationPanel';
+import { useDemoGuard } from '../../hooks/useDemoGuard';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -375,6 +376,7 @@ const CORR_PILLAR_COLORS: Record<string, string> = {
 const REPORT_FORMATS = ['Executive Summary', 'Formal Document', 'PDF/Print Ready', 'Risk Register'];
 
 export default function EvidLYIntelligence() {
+  useDemoGuard();
   const { user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
 

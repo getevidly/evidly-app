@@ -116,7 +116,13 @@
       "Bash(git clone:*)",
       "Bash(cat:*)",
       "Bash(if not exist \"C:\\\\Users\\\\newpa\\\\Downloads\\\\evidly-demo-final\\\\evidly-app-main\\\\src\\\\components\\\\copilot\" mkdir \"C:\\\\Users\\\\newpa\\\\Downloads\\\\evidly-demo-final\\\\evidly-app-main\\\\src\\\\components\\\\copilot\")",
-      "Bash(test:*)"
+      "Bash(test:*)",
+      "Bash(git fetch:*)",
+      "Bash(for f in src/pages/admin/*.tsx src/pages/admin/*.jsx)",
+      "Bash(do if [ -f \"$f\" ])",
+      "Bash(! grep -q \"useDemoGuard\" \"$f\")",
+      "Bash(then echo \"MISSING: $f\")",
+      "Bash(fi)"
     ]
   }
 }

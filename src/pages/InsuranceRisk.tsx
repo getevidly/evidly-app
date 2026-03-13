@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FeatureGate } from '../components/feature-flags/FeatureGate';
 import { toast } from 'sonner';
 import {
   Flame,
@@ -868,7 +867,7 @@ export function InsuranceRisk() {
           </div>
         </div>
 
-        <FeatureGate featureId="ai-predictive-insights">
+        <FeatureGate flagKey="ai-predictive-insights">
           <div className="space-y-4">
             <div className="p-4 rounded-lg bg-gray-50 font-mono text-xs">
               <div className="text-gray-500 mb-2">// API Endpoint</div>

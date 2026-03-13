@@ -19,6 +19,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from 'lucide-react';
+import { useDemoGuard } from '../../hooks/useDemoGuard';
 
 const NAVY = '#0B1628';
 const BRAND = '#1E2D4D';
@@ -136,6 +137,7 @@ const DEMO_LEADS: AssessmentLeadRow[] = [
 // ── Component ─────────────────────────────────────────────────────────────────
 
 function AssessmentLeadsPage() {
+  useDemoGuard();
   const { isEvidlyAdmin } = useAuth();
   const { isDemoMode } = useDemo();
   const { userRole } = useRole();

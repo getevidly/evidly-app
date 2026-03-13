@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useDemoGuard } from '../../hooks/useDemoGuard';
 
 // ── PRODUCTION COLOR TOKENS ───────────────────────────────────────────────────
 const NAVY="#1E2D4D",GOLD="#A08C5A",BODY="#1E2D4D",MUTED="#6B7F96",SB="#07111F",SBT="#94a3b8",PBG="#F4F6FA";
@@ -679,6 +680,7 @@ const ROLES=[
 ];
 
 export default function RolePreview(){
+  useDemoGuard();
   const[role,setRole]=useState("owner_operator");
   const[sample,setSample]=useState(true);
   const[dPage,setDPage]=useState("dashboard");

@@ -9,6 +9,7 @@ import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import OrgCombobox, { type OrgOption } from '../../components/admin/OrgCombobox';
 import { KpiTile } from '../../components/admin/KpiTile';
 import { useAuth } from '../../contexts/AuthContext';
+import { useDemoGuard } from '../../hooks/useDemoGuard';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -132,6 +133,7 @@ function Badge({ label, colors }: { label: string; colors: { bg: string; text: s
 }
 
 export default function SupportTickets() {
+  useDemoGuard();
   const { user } = useAuth();
   const [tab, setTab] = useState<Tab>('all');
   const [tickets, setTickets] = useState<Ticket[]>([]);

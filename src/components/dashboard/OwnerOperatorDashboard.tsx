@@ -23,11 +23,6 @@ import { AnnualVendorSpendWidget, ServicesDueSoonWidget } from './VendorServiceW
 import { PortfolioExpenseSummary } from '../services/PortfolioExpenseSummary';
 import { PortfolioRiskCard } from './PortfolioRiskCard';
 import {
-  VENDOR_DEMO_SERVICES,
-  getDemoAnnualSpend,
-  getDemoServiceLocationCount,
-} from '../../data/vendorServicesDemoData';
-import {
   ComplianceTrendWidget,
   TopRiskItemsWidget,
   InspectionProbabilityWidget,
@@ -261,9 +256,9 @@ export default function OwnerOperatorDashboard() {
       {userRole === 'owner_operator' && (
         <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
           <AnnualVendorSpendWidget
-            totalAnnualSpend={isDemoMode ? getDemoAnnualSpend() : (vendorSummary?.totalAnnualSpend ?? 0)}
-            serviceCount={isDemoMode ? VENDOR_DEMO_SERVICES.length : (vendorSummary?.totalVendors ?? 0)}
-            locationCount={isDemoMode ? getDemoServiceLocationCount() : locations.length}
+            totalAnnualSpend={vendorSummary?.totalAnnualSpend ?? 0}
+            serviceCount={vendorSummary?.totalVendors ?? 0}
+            locationCount={locations.length}
           />
         </div>
       )}
@@ -272,7 +267,7 @@ export default function OwnerOperatorDashboard() {
       {userRole === 'owner_operator' && (
         <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
           <ServicesDueSoonWidget
-            services={isDemoMode ? VENDOR_DEMO_SERVICES : []}
+            services={[]}
           />
         </div>
       )}

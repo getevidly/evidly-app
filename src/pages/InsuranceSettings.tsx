@@ -225,7 +225,7 @@ export function InsuranceSettings() {
           </div>
         </div>
 
-        <FeatureGate featureId="ai-predictive-insights">
+        <FeatureGate flagKey="ai-predictive-insights">
           <div className="space-y-4">
             <div className="p-4 rounded-lg bg-gray-50 border border-gray-200">
               <div className="flex items-center justify-between mb-2">

@@ -17,8 +17,6 @@ import {
   getServiceStatus,
   STATUS_COLORS,
 } from '../../constants/serviceTypes';
-import { DEMO_SERVICE_SCHEDULES } from '../../data/vendorServicesDemoData';
-
 const ICON_MAP = { Flame, Fan, Filter, Shield, ShieldAlert };
 
 const PERIODS = [
@@ -35,16 +33,11 @@ export function ServiceExpenseTracker() {
   const [periodIdx, setPeriodIdx] = useState(1); // default Quarterly
   const period = PERIODS[periodIdx];
 
+  // Production: query location_service_schedules from Supabase.
+  // No seeded demo data — always empty until real records exist.
   const schedules = useMemo(() => {
-    if (!isDemoMode) return [];
-    let data = DEMO_SERVICE_SCHEDULES;
-    if (locationFilter) {
-      const locMap = { downtown: 'demo-loc-downtown', airport: 'demo-loc-airport', university: 'demo-loc-university' };
-      const locId = locMap[locationFilter];
-      if (locId) data = data.filter(s => s.location_id === locId);
-    }
-    return data;
-  }, [isDemoMode, locationFilter]);
+    return [];
+  }, []);
 
   const metrics = useMemo(() => {
     let periodTotal = 0;

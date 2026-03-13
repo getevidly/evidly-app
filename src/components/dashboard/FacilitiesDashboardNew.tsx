@@ -12,11 +12,6 @@ import { SelfDiagCard } from './shared/SelfDiagCard';
 import { NFPAReminder } from '../ui/NFPAReminder';
 import { OnboardingChecklistCard } from './shared/OnboardingChecklistCard';
 import { ServicesDueSoonWidget, AnnualVendorSpendWidget } from './VendorServiceWidgets';
-import {
-  VENDOR_DEMO_SERVICES,
-  getDemoAnnualSpend,
-  getDemoServiceLocationCount,
-} from '../../data/vendorServicesDemoData';
 import { useDashboardStanding } from '../../hooks/useDashboardStanding';
 import { DashboardSkeleton } from './shared/DashboardSkeleton';
 import { ConfidenceBanner } from './shared/ConfidenceBanner';
@@ -88,14 +83,14 @@ export default function FacilitiesDashboardNew() {
 
       {/* 6. VENDOR SPEND */}
       <AnnualVendorSpendWidget
-        totalAnnualSpend={isDemoMode ? getDemoAnnualSpend() : (vendorSummary?.totalAnnualSpend ?? 0)}
-        serviceCount={isDemoMode ? VENDOR_DEMO_SERVICES.length : (vendorSummary?.totalVendors ?? 0)}
-        locationCount={isDemoMode ? getDemoServiceLocationCount() : locations.length}
+        totalAnnualSpend={vendorSummary?.totalAnnualSpend ?? 0}
+        serviceCount={vendorSummary?.totalVendors ?? 0}
+        locationCount={locations.length}
       />
 
       {/* 7. SERVICES DUE SOON */}
       <ServicesDueSoonWidget
-        services={isDemoMode ? VENDOR_DEMO_SERVICES : []}
+        services={[]}
       />
 
       {/* NFPA Monthly Reminder */}

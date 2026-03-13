@@ -5,6 +5,7 @@ import { useRole } from '../contexts/RoleContext';
 import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { RoleGuard } from '../components/auth/RoleGuard';
 import { SAMPLE_PSE_SAFEGUARDS, type PSESafeguard } from '../data/workforceRiskDemoData';
 
 const NAVY = '#1e4d6b';
@@ -75,6 +76,10 @@ export function CicPseView() {
   const unverifiedCount = SAMPLE_PSE_SAFEGUARDS.filter(s => s.status === 'unverified').length;
 
   return (
+    <RoleGuard
+      allowedRoles={['platform_admin', 'owner_operator', 'executive', 'compliance_manager']}
+      fallback={<div style={{ maxWidth: 560, margin: '60px auto', padding: '0 20px', textAlign: 'center' }}><Shield style={{ width: 48, height: 48, color: '#9CA3AF', margin: '0 auto 16px' }} /><h2 style={{ fontSize: 20, fontWeight: 700, color: '#1E2D4D', marginBottom: 8 }}>Access Restricted</h2><p style={{ fontSize: 14, color: '#6B7F96' }}>CIC & PSE analysis is available to owners, executives, and compliance managers.</p></div>}
+    >
     <div style={{ maxWidth: 960, margin: '0 auto', padding: '24px 16px' }}>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
@@ -307,5 +312,6 @@ export function CicPseView() {
         />
       )}
     </div>
+    </RoleGuard>
   );
 }

@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet, useLocation, useParams } from 'react-router-dom';
-import { lazy, Suspense, useEffect } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { RoleProvider } from './contexts/RoleContext';
 import { OperatingHoursProvider } from './contexts/OperatingHoursContext';
@@ -16,6 +16,8 @@ import { EnvBadge } from './components/ui/EnvBadge';
 import { reportError } from './lib/errorReporting';
 import { SalesGuard } from './components/layout/SalesGuard';
 import QRAuthGuard from './components/auth/QRAuthGuard';
+import { RequireAdmin } from './components/auth/RequireAdmin';
+import { supabase } from './lib/supabase';
 
 const Login = lazy(() => import('./pages/Login').then(m => ({ default: m.Login })));
 const AdminLogin = lazy(() => import('./pages/AdminLogin').then(m => ({ default: m.AdminLogin })));
@@ -213,6 +215,7 @@ const DemoDashboard = lazy(() => import('./pages/admin/DemoDashboard'));
 const DemoRequest = lazy(() => import('./pages/DemoRequest'));
 const DemoSchedule = lazy(() => import('./pages/DemoSchedule'));
 const DemoExpired = lazy(() => import('./pages/DemoExpired'));
+const SetupMFA = lazy(() => import('./pages/SetupMFA').then(m => ({ default: m.SetupMFA })));
 const FoodSafetyHub = lazy(() => import('./pages/FoodSafetyHub').then(m => ({ default: m.FoodSafetyHub })));
 const ComplianceHub = lazy(() => import('./pages/ComplianceHub').then(m => ({ default: m.ComplianceHub })));
 const InsightsHub = lazy(() => import('./pages/InsightsHub').then(m => ({ default: m.InsightsHub })));
@@ -374,6 +377,38 @@ function ProtectedLayout() {
     return <Navigate to="/demo-expired" replace />;
   }
 
+  // MFA enforcement — check if user's role requires MFA but user hasn't enrolled
+  const [mfaChecked, setMfaChecked] = useState(false);
+  const [mfaRequired, setMfaRequired] = useState(false);
+  useEffect(() => {
+    if (effectiveDemoMode || !user?.id || !profile?.role) { setMfaChecked(true); return; }
+    (async () => {
+      const { data: policy } = await supabase
+        .from('mfa_policy')
+        .select('mfa_required, grace_period_days')
+        .eq('role', profile.role)
+        .maybeSingle();
+      if (!policy?.mfa_required) { setMfaChecked(true); return; }
+      const { data: config } = await supabase
+        .from('user_mfa_config')
+        .select('mfa_enabled')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      if (config?.mfa_enabled) { setMfaChecked(true); return; }
+      // Check grace period
+      const graceDays = policy.grace_period_days || 0;
+      const createdAt = profile.created_at ? new Date(profile.created_at) : new Date();
+      const accountAgeDays = Math.floor((Date.now() - createdAt.getTime()) / 86400000);
+      if (accountAgeDays < graceDays) { setMfaChecked(true); return; }
+      setMfaRequired(true);
+      setMfaChecked(true);
+    })();
+  }, [effectiveDemoMode, user?.id, profile?.role]);
+
+  if (!effectiveDemoMode && mfaRequired && location.pathname !== '/setup-mfa') {
+    return <Navigate to="/setup-mfa" replace />;
+  }
+
   // Role-based route guard — redirect to dashboard if role not allowed
   // Authenticated users: EvidlyAdmin bypasses guards; others use DB profile role
   if (effectiveDemoMode) {
@@ -475,6 +510,7 @@ function AppRoutes() {
         <Route path="/demo/request" element={<Suspense fallback={<PageSkeleton />}><DemoRequest /></Suspense>} />
         <Route path="/demo/schedule/:sessionId" element={<Suspense fallback={<PageSkeleton />}><DemoSchedule /></Suspense>} />
         <Route path="/auth/callback" element={<Suspense fallback={<PageSkeleton />}><AuthCallback /></Suspense>} />
+        <Route path="/setup-mfa" element={<Suspense fallback={<PageSkeleton />}><SetupMFA /></Suspense>} />
         <Route path="/vendor/login" element={<Suspense fallback={<PageSkeleton />}><VendorLogin /></Suspense>} />
         <Route path="/vendor/register" element={<Suspense fallback={<PageSkeleton />}><VendorRegister /></Suspense>} />
         <Route path="/vendor/upload/:token" element={<Suspense fallback={<PageSkeleton />}><VendorSecureUpload /></Suspense>} />
@@ -575,6 +611,8 @@ function AppRoutes() {
           <Route path="/insurance-risk" element={<InsuranceRisk />} />
           <Route path="/improve-score" element={<ImproveScore />} />
           <Route path="/insurance-settings" element={<InsuranceSettings />} />
+          {/* Admin routes — RequireAdmin enforces platform_admin access */}
+          <Route element={<RequireAdmin />}>
           <Route path="/admin/onboarding" element={<AdminClientOnboarding />} />
           <Route path="/admin/onboard-client" element={<Navigate to="/admin/onboarding" replace />} />
           <Route path="/admin/usage-analytics" element={<UsageAnalytics />} />
@@ -670,6 +708,7 @@ function AppRoutes() {
           <Route path="/admin/system/edge-functions" element={<EdgeFunctions />} />
           <Route path="/admin/feature-flags" element={<FeatureFlags />} />
           <Route path="/admin/gtm" element={<SalesGuard><GtmDashboard /></SalesGuard>} />
+          </Route>
           <Route path="/insights/intelligence" element={<BusinessIntelligence />} />
           <Route path="/insights/reports" element={<ClientReports />} />
           {/* Stub routes for upcoming features */}

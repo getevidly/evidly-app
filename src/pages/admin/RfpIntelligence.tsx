@@ -25,6 +25,7 @@ import type {
   RfpActionType,
 } from '../../types/rfp';
 import { EMPTY_FILTERS, US_STATES, MODULE_LABELS, EVIDLY_NAICS_CODES } from '../../types/rfp';
+import { useDemoGuard } from '../../hooks/useDemoGuard';
 import {
   FileSearch,
   Target,
@@ -1246,6 +1247,7 @@ function CostTab({ stats }: { stats: RfpDashboardStats }) {
 // ── Main Component ───────────────────────────────────────────
 
 export default function RfpIntelligence() {
+  useDemoGuard();
   const { isEvidlyAdmin } = useAuth();
   const { isDemoMode } = useDemo();
 

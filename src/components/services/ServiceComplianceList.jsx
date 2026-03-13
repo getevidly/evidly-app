@@ -19,8 +19,6 @@ import {
   STATUS_COLORS,
   projectAnnualCost,
 } from '../../constants/serviceTypes';
-import { DEMO_SERVICE_SCHEDULES } from '../../data/vendorServicesDemoData';
-
 const ICON_MAP = { Flame, Fan, Filter, Shield, ShieldAlert };
 const CAN_LOG = ['owner_operator', 'compliance_manager', 'facilities_manager'];
 
@@ -31,16 +29,11 @@ export function ServiceComplianceList({ onLogService }) {
   const locationFilter = searchParams.get('location');
   const [kecExpanded, setKecExpanded] = useState(true);
 
+  // Production: query location_service_schedules from Supabase.
+  // No seeded demo data — always empty until real records exist.
   const schedules = useMemo(() => {
-    if (!isDemoMode) return []; // production: would query location_service_schedules
-    let data = DEMO_SERVICE_SCHEDULES;
-    if (locationFilter) {
-      const locMap = { downtown: 'demo-loc-downtown', airport: 'demo-loc-airport', university: 'demo-loc-university' };
-      const locId = locMap[locationFilter];
-      if (locId) data = data.filter(s => s.location_id === locId);
-    }
-    return data;
-  }, [isDemoMode, locationFilter]);
+    return [];
+  }, []);
 
   // Group by service type
   const byType = useMemo(() => {

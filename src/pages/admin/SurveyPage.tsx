@@ -6,6 +6,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import { useDemoGuard } from '../../hooks/useDemoGuard';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -22,6 +23,7 @@ interface TicketInfo {
 }
 
 export default function SurveyPage() {
+  useDemoGuard();
   const { token } = useParams<{ token: string }>();
   const [ticket, setTicket] = useState<TicketInfo | null>(null);
   const [loading, setLoading] = useState(true);

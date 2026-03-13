@@ -1,9 +1,9 @@
 /**
  * DemoDashboard — Admin-only visual showcase of all demo data constants
  *
- * Standalone page at /admin/demo/dashboard. Uses ALL existing demo constants
- * from demoData.ts and vendorServicesDemoData.ts. This is a visual reference
- * for what the demo mode shows — all hardcoded, no Supabase queries.
+ * Standalone page at /admin/demo/dashboard. Uses demo constants
+ * from demoData.ts. This is a visual reference for what the demo
+ * mode shows — all hardcoded, no Supabase queries.
  */
 import {
   DEMO_ORG,
@@ -18,10 +18,7 @@ import {
   needsAttentionItems,
   demoUsers,
 } from '../../data/demoData';
-import {
-  VENDOR_DEMO_SERVICES,
-  getDemoAnnualSpend,
-} from '../../data/vendorServicesDemoData';
+import { useDemoGuard } from '../../hooks/useDemoGuard';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -68,6 +65,7 @@ function Badge({ color, label }: { color: string; label: string }) {
 }
 
 export default function DemoDashboard() {
+  useDemoGuard();
   const statusColor = (s: string) =>
     s === 'passing' || s === 'good' ? 'green' :
     s === 'at_risk' || s === 'attention' ? 'amber' :
@@ -274,31 +272,11 @@ export default function DemoDashboard() {
           </div>
         </Card>
 
-        {/* ── Vendor Services (cost/frequency) ── */}
-        <SectionTitle title="Vendor Services (Cost & Frequency)" />
-        <Card title={`VENDOR_DEMO_SERVICES (${VENDOR_DEMO_SERVICES.length}) — Annual Spend: $${getDemoAnnualSpend().toLocaleString()}`}>
-          <div style={{ maxHeight: 300, overflowY: 'auto' }}>
-            <table style={{ width: '100%', fontSize: 12, borderCollapse: 'collapse' }}>
-              <thead>
-                <tr style={{ borderBottom: `1px solid ${BORDER}`, position: 'sticky', top: 0, background: '#fff' }}>
-                  {['Location', 'Service', 'Vendor', 'Freq', '$/Visit', '$/Year'].map(h => (
-                    <th key={h} style={{ textAlign: 'left', padding: '4px 6px', color: TEXT_SEC, fontSize: 10 }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {VENDOR_DEMO_SERVICES.map(s => (
-                  <tr key={s.id} style={{ borderBottom: `1px solid ${BORDER}` }}>
-                    <td style={{ padding: '4px 6px' }}>{s.location_name}</td>
-                    <td style={{ padding: '4px 6px' }}>{s.service_type}</td>
-                    <td style={{ padding: '4px 6px' }}>{s.vendor_name}</td>
-                    <td style={{ padding: '4px 6px' }}>{s.service_frequency}</td>
-                    <td style={{ padding: '4px 6px', fontFamily: 'monospace' }}>${s.cost_per_visit}</td>
-                    <td style={{ padding: '4px 6px', fontFamily: 'monospace' }}>${s.cost_annual.toLocaleString()}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        {/* ── Vendor Services — REMOVED (HOODOPS-SERVICES-FIX-01) ── */}
+        <SectionTitle title="Vendor Services" />
+        <Card title="VENDOR_DEMO_SERVICES — REMOVED">
+          <div style={{ padding: 16, textAlign: 'center', fontSize: 12, color: TEXT_SEC }}>
+            Demo vendor service data removed. Service records come from Supabase only.
           </div>
         </Card>
 
@@ -345,7 +323,7 @@ export default function DemoDashboard() {
 
         {/* Footer */}
         <div style={{ marginTop: 40, paddingTop: 16, borderTop: `1px solid ${BORDER}`, fontSize: 12, color: TEXT_SEC }}>
-          Data sources: <code>src/data/demoData.ts</code>, <code>src/data/vendorServicesDemoData.ts</code>
+          Data sources: <code>src/data/demoData.ts</code>
         </div>
       </div>
   );

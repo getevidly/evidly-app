@@ -22,6 +22,7 @@ import {
   AlertTriangle, RefreshCw, Loader2, Save, Info,
 } from 'lucide-react';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
+import { useDemoGuard } from '../../hooks/useDemoGuard';
 
 const BRAND = '#1e4d6b';
 const GOLD = '#A08C5A';
@@ -127,6 +128,7 @@ function StatusIcon({ ok }: { ok: boolean }) {
 
 // ── Main Component ───────────────────────────────────────────
 export function SecuritySettings() {
+  useDemoGuard();
   const { isEvidlyAdmin } = useAuth();
   const { isDemoMode } = useDemo();
 

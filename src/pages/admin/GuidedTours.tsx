@@ -19,6 +19,7 @@ import {
   BarChart3, ArrowRight, RefreshCw, MessageSquare, Eye,
   Layers, Zap, Award, Filter,
 } from 'lucide-react';
+import { useDemoGuard } from '../../hooks/useDemoGuard';
 
 const NAVY = '#1e4d6b';
 const GOLD = '#A08C5A';
@@ -215,6 +216,7 @@ function ModuleGroupToggles({
 // ════════════════════════════════════════════════════════════
 
 export default function GuidedTours() {
+  useDemoGuard();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<Tab>('overview');
 

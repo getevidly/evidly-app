@@ -22,6 +22,7 @@ import {
   CheckCircle, XCircle, Clock, Zap, ChevronDown, UserCog,
 } from 'lucide-react';
 import { EmulationPanel } from '../../components/admin/EmulationPanel';
+import { useDemoGuard } from '../../hooks/useDemoGuard';
 
 // ── Colors ──────────────────────────────────────────────────
 const BRAND = '#1E2D4D';
@@ -130,6 +131,7 @@ const DEMO_K2C: K2CRow[] = [
 // ── Component ───────────────────────────────────────────────
 
 export default function AdminDashboard() {
+  useDemoGuard();
   const { user, isEvidlyAdmin } = useAuth();
   const { isDemoMode } = useDemo();
 

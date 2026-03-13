@@ -155,6 +155,45 @@ export function useFeatureFlag(key: string): FeatureFlagResult {
         }
       }
 
+      // rolling_window — stub: enabled until activity tracking is built
+      if (flag.trigger_type === 'rolling_window') {
+        if (!flag.is_enabled) {
+          setResult({ enabled: false, reason: 'pending', message: msg, messageTitle: msgTitle, loading: false, flagData: fd });
+          return;
+        }
+      }
+
+      // event_delay — check feature_flag_unlocks for this user
+      if (flag.trigger_type === 'event_delay') {
+        const userId = profile?.id;
+        if (userId) {
+          const { data: unlock } = await supabase
+            .from('feature_flag_unlocks')
+            .select('unlocked_at')
+            .eq('flag_key', key)
+            .eq('user_id', userId)
+            .maybeSingle();
+          if (!unlock) {
+            setResult({ enabled: false, reason: 'pending', message: msg, messageTitle: msgTitle, loading: false, flagData: fd });
+            return;
+          }
+          const delayDays = flag.date_config?.delay_days || 0;
+          const unlockAt = new Date(new Date(unlock.unlocked_at).getTime() + delayDays * 86400000);
+          if (Date.now() < unlockAt.getTime()) {
+            setResult({ enabled: false, reason: 'pending', message: msg, messageTitle: msgTitle, loading: false, flagData: fd });
+            return;
+          }
+        }
+      }
+
+      // fiscal_renewal — check plan/subscription cycle
+      if (flag.trigger_type === 'fiscal_renewal') {
+        if (!flag.is_enabled) {
+          setResult({ enabled: false, reason: 'plan_restricted', message: msg, messageTitle: msgTitle, loading: false, flagData: fd });
+          return;
+        }
+      }
+
       if (flag.trigger_type === 'criteria' && !flag.is_enabled) {
         setResult({ enabled: false, reason: 'criteria_not_met', message: msg, messageTitle: msgTitle, loading: false, flagData: fd });
         return;

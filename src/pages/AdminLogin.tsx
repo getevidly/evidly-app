@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import { EvidlyLogo } from '../components/ui/EvidlyLogo';
 
 export function AdminLogin() {
   const [email, setEmail] = useState('');
@@ -52,7 +51,25 @@ export function AdminLogin() {
       <div className="max-w-md w-full">
         <div className="bg-white rounded-xl shadow-lg p-8">
           <div className="flex flex-col items-center mb-6">
-            <EvidlyLogo showTagline={false} onDark={false} />
+            <div className="flex items-center">
+              <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" width="56" height="56">
+                <rect width="48" height="48" rx="10.5" fill="#1E2D4D"/>
+                <circle cx="24" cy="24" r="3" fill="white"/>
+                <circle cx="24" cy="13" r="3" fill="#A08C5A"/>
+                <circle cx="34.5" cy="19" r="3" fill="#A08C5A"/>
+                <circle cx="30.5" cy="31" r="3" fill="#A08C5A"/>
+                <circle cx="17.5" cy="31" r="3" fill="#A08C5A"/>
+                <circle cx="13.5" cy="19" r="3" fill="#A08C5A"/>
+              </svg>
+              <span className="ml-3 text-3xl font-bold">
+                <span style={{ color: '#A08C5A' }}>E</span>
+                <span style={{ color: '#1E2D4D' }}>vid</span>
+                <span style={{ color: '#A08C5A' }}>LY</span>
+              </span>
+            </div>
+            <div style={{ fontSize: '10px', letterSpacing: '0.15em', color: '#A08C5A', fontWeight: 600, marginTop: '4px' }}>
+              LEAD WITH CONFIDENCE
+            </div>
             <span className="mt-3 inline-block px-3 py-1 text-xs font-semibold rounded-full" style={{ backgroundColor: '#d4af37', color: '#1E2D4D' }}>
               Admin Access
             </span>

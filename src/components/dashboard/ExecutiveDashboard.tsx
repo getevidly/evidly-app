@@ -17,11 +17,6 @@ import { AttentionItemList } from './shared/AttentionItemList';
 import { AnnualVendorSpendWidget } from './VendorServiceWidgets';
 import { PortfolioExpenseSummary } from '../services/PortfolioExpenseSummary';
 import { PortfolioRiskCard } from './PortfolioRiskCard';
-import {
-  getDemoAnnualSpend,
-  getDemoServiceLocationCount,
-  VENDOR_DEMO_SERVICES,
-} from '../../data/vendorServicesDemoData';
 
 
 export default function ExecutiveDashboard() {
@@ -108,9 +103,9 @@ export default function ExecutiveDashboard() {
       {/* 6. ANNUAL VENDOR SPEND */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-4">
         <AnnualVendorSpendWidget
-          totalAnnualSpend={isDemoMode ? getDemoAnnualSpend() : (vendorSummary?.totalAnnualSpend ?? 0)}
-          serviceCount={isDemoMode ? VENDOR_DEMO_SERVICES.length : (vendorSummary?.totalVendors ?? 0)}
-          locationCount={isDemoMode ? getDemoServiceLocationCount() : locations.length}
+          totalAnnualSpend={vendorSummary?.totalAnnualSpend ?? 0}
+          serviceCount={vendorSummary?.totalVendors ?? 0}
+          locationCount={locations.length}
         />
       </div>
 

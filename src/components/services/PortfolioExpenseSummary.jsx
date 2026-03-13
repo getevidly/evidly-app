@@ -13,8 +13,6 @@ import {
   calculatePeriodCost,
   projectAnnualCost,
 } from '../../constants/serviceTypes';
-import { DEMO_SERVICE_SCHEDULES } from '../../data/vendorServicesDemoData';
-
 const ICON_MAP = { Flame, Fan, Filter, Shield, ShieldAlert };
 
 const PERIODS = [
@@ -28,7 +26,9 @@ export function PortfolioExpenseSummary() {
   const { isDemoMode } = useDemo();
   const [periodIdx, setPeriodIdx] = useState(3); // default Annual
 
-  const schedules = isDemoMode ? DEMO_SERVICE_SCHEDULES : [];
+  // Production: query location_service_schedules from Supabase.
+  // No seeded demo data — always empty until real records exist.
+  const schedules = [];
   const period = PERIODS[periodIdx];
 
   const { rows, totals } = useMemo(() => {
