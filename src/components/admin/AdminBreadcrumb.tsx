@@ -55,6 +55,7 @@ const SECTION_MAP: Record<string, string> = {
   '/admin/dashboard': 'System',
   '/admin/messages': 'System',
   '/admin/demo/dashboard': 'Growth',
+  '/admin/violation-outreach': 'Growth',
 };
 
 const SEP_COLOR = '#D1D5DB';

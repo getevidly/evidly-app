@@ -155,6 +155,7 @@ const SurveyPage = lazy(() => import('./pages/admin/SurveyPage'));
 const RemoteConnect = lazy(() => import('./pages/admin/RemoteConnect'));
 const StaffRoles = lazy(() => import('./pages/admin/StaffRoles'));
 const AdminReports = lazy(() => import('./pages/admin/AdminReports'));
+const ViolationOutreach = lazy(() => import('./pages/admin/ViolationOutreach'));
 const VerificationReport = lazy(() => import('./pages/admin/VerificationReport'));
 const BusinessIntelligence = lazy(() => import('./pages/BusinessIntelligence').then(m => ({ default: m.BusinessIntelligence })));
 const ClientReports = lazy(() => import('./pages/ClientReports').then(m => ({ default: m.ClientReports })));
@@ -203,6 +204,7 @@ const ToolsHub = lazy(() => import('./pages/ToolsHub').then(m => ({ default: m.T
 const AdminHub = lazy(() => import('./pages/AdminHub').then(m => ({ default: m.AdminHub })));
 const VendorSetup = lazy(() => import('./pages/VendorSetup').then(m => ({ default: m.VendorSetup })));
 const VendorInviteLanding = lazy(() => import('./pages/VendorInviteLanding').then(m => ({ default: m.VendorInviteLanding })));
+const Timecards = lazy(() => import('./pages/Timecards').then(m => ({ default: m.Timecards })));
 
 import { CookieConsent } from './components/CookieConsent';
 import { usePageTracking } from './hooks/usePageTracking';
@@ -572,6 +574,7 @@ function AppRoutes() {
           <Route path="/inspector-view" element={<InspectorView />} />
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/services/:recordId" element={<ServiceRecordDetail />} />
+          <Route path="/timecards" element={<Timecards />} />
           <Route path="/self-audit" element={<SelfAudit />} />
           <Route path="/self-inspection" element={<SelfAudit />} />
           <Route path="/photo-evidence" element={<PhotoEvidencePage />} />
@@ -628,6 +631,7 @@ function AppRoutes() {
           <Route path="/admin/staff" element={<StaffRoles />} />
           <Route path="/admin/intelligence" element={<EvidLYIntelligence />} />
           <Route path="/admin/reports" element={<AdminReports />} />
+          <Route path="/admin/violation-outreach" element={<SalesGuard><ViolationOutreach /></SalesGuard>} />
           <Route path="/admin/verification" element={<VerificationReport />} />
           <Route path="/admin/system/edge-functions" element={<EdgeFunctions />} />
           <Route path="/admin/gtm" element={<SalesGuard><GtmDashboard /></SalesGuard>} />

@@ -64,6 +64,7 @@ const NAV_SECTIONS: NavSection[] = [
       { label: 'RFP Monitor', path: '/admin/rfp-monitor' },
       { label: 'K2C', path: '/admin/k2c' },
       { label: 'ScoreTable', path: '/admin/scoretable', salesOnly: true },
+      { label: 'Violation Outreach', path: '/admin/violation-outreach', salesOnly: true },
     ],
   },
   {
