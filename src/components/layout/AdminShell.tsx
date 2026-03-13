@@ -44,6 +44,7 @@ const NAV_SECTIONS: NavSection[] = [
     title: 'Intelligence',
     items: [
       { label: 'EvidLY Intelligence', path: '/admin/intelligence' },
+      { label: 'Jurisdiction Intel', path: '/admin/jurisdiction-intelligence' },
       { label: 'Verification', path: '/admin/verification' },
     ],
   },
@@ -54,6 +55,7 @@ const NAV_SECTIONS: NavSection[] = [
       { label: 'GTM Dashboard', path: '/admin/gtm', salesOnly: true },
       { label: 'Leads', path: '/admin/leads', salesOnly: true },
       { label: 'Campaigns', path: '/admin/campaigns', salesOnly: true },
+      { label: 'Demo Generator', path: '/admin/demo-generator', salesOnly: true },
       { label: 'Demo Launcher', path: '/admin/demo-launcher', salesOnly: true },
       { label: 'Demo Pipeline', path: '/admin/demo-pipeline', salesOnly: true },
       { label: 'Kitchen Checkup', path: '/admin/kitchen-checkup', salesOnly: true },
