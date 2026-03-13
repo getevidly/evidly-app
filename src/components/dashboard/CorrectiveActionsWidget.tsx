@@ -10,14 +10,14 @@ interface Props {
 export function CorrectiveActionsWidget({ navigate }: Props) {
   const stats = useMemo(() => {
     const open = DEMO_CORRECTIVE_ACTIONS.filter(
-      i => i.status === 'created' || i.status === 'in_progress',
+      i => i.status === 'reported' || i.status === 'assigned' || i.status === 'in_progress',
     );
     const overdueCount = DEMO_CORRECTIVE_ACTIONS.filter(i => isOverdue(i)).length;
     const now = new Date();
     const weekFromNow = new Date(now);
     weekFromNow.setDate(weekFromNow.getDate() + 7);
     const dueThisWeek = DEMO_CORRECTIVE_ACTIONS.filter(i => {
-      if (['completed', 'verified', 'closed', 'archived'].includes(i.status)) return false;
+      if (['resolved', 'verified'].includes(i.status)) return false;
       const due = new Date(i.dueDate);
       return due >= now && due <= weekFromNow;
     }).length;

@@ -9,12 +9,12 @@ import {
   User,
   MapPin,
   FileText,
-  Archive,
   X,
   BookOpen,
   PenLine,
   Shield,
   ArrowDown,
+  Download,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useDemo } from '../contexts/DemoContext';
@@ -23,6 +23,15 @@ import { useRole } from '../contexts/RoleContext';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 import {
+  CA_STATUS_MAP,
+  CA_STATUS_ORDER,
+  SEVERITY_CONFIG,
+  SEVERITY_ORDER,
+  DEMO_TEAM_MEMBERS,
+  type CAStatus,
+  type CASeverity,
+} from '../constants/correctiveActionStatus';
+import {
   DEMO_CORRECTIVE_ACTIONS,
   CA_SYSTEM_TEMPLATES,
   getTemplatesByCategory,
@@ -30,33 +39,22 @@ import {
   SEVERITY_LABELS,
   isOverdue,
   type CACategory,
-  type CASeverity,
-  type CAStatus,
   type CATemplate,
   type CorrectiveActionItem,
 } from '../data/correctiveActionsDemoData';
+import { exportCorrectiveActionsPdf } from '../lib/correctiveActionPdf';
 
 // ── Constants ────────────────────────────────────────────────
 
 const NAVY = '#1e4d6b';
 
-const SEVERITY_CONFIG: Record<CASeverity, { label: string; color: string; bg: string; border: string }> = {
-  critical: { label: 'Critical', color: '#991b1b', bg: '#fef2f2', border: '#fecaca' },
-  high:     { label: 'High', color: '#92400e', bg: '#fffbeb', border: '#fde68a' },
-  medium:   { label: 'Medium', color: NAVY, bg: '#eef4f8', border: '#b8d4e8' },
-  low:      { label: 'Low', color: '#166534', bg: '#f0fdf4', border: '#bbf7d0' },
+const STATUS_ICON_MAP: Record<CAStatus, typeof Clock> = {
+  reported: FileText,
+  assigned: User,
+  in_progress: Clock,
+  resolved: CheckCircle2,
+  verified: CheckCircle2,
 };
-
-const STATUS_CONFIG: Record<CAStatus, { label: string; color: string; bg: string; icon: typeof Clock }> = {
-  created:     { label: 'Created', color: '#6366f1', bg: '#eef2ff', icon: FileText },
-  in_progress: { label: 'In Progress', color: '#d97706', bg: '#fffbeb', icon: Clock },
-  completed:   { label: 'Completed', color: '#16a34a', bg: '#f0fdf4', icon: CheckCircle2 },
-  verified:    { label: 'Verified', color: NAVY, bg: '#eef4f8', icon: CheckCircle2 },
-  closed:      { label: 'Closed', color: '#6b7280', bg: '#f3f4f6', icon: Archive },
-  archived:    { label: 'Archived', color: '#9ca3af', bg: '#f9fafb', icon: Archive },
-};
-
-const SEVERITY_ORDER: Record<CASeverity, number> = { critical: 0, high: 1, medium: 2, low: 3 };
 
 const DEMO_LOCATIONS = [
   { id: 'downtown', name: 'Location 1' },
@@ -230,10 +228,8 @@ export function CorrectiveActions() {
           return SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity];
         case 'created':
           return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-        case 'status': {
-          const statusOrder: Record<string, number> = { created: 0, in_progress: 1, completed: 2, verified: 3, closed: 4, archived: 5 };
-          return (statusOrder[a.status] ?? 5) - (statusOrder[b.status] ?? 5);
-        }
+        case 'status':
+          return (CA_STATUS_ORDER[a.status] ?? 5) - (CA_STATUS_ORDER[b.status] ?? 5);
         case 'due_date':
         default:
           return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
@@ -243,13 +239,25 @@ export function CorrectiveActions() {
     return items;
   }, [filterStatus, filterLocation, filterSeverity, sortBy, actions]);
 
-  const counts = useMemo(() => ({
-    open: actions.filter(i => i.status === 'created' || i.status === 'in_progress').length,
-    in_progress: actions.filter(i => i.status === 'in_progress').length,
-    completed: actions.filter(i => i.status === 'completed').length,
-    verified: actions.filter(i => i.status === 'verified').length,
-    overdue: actions.filter(i => isOverdue(i)).length,
-  }), [actions]);
+  const counts = useMemo(() => {
+    const resolvedItems = actions.filter(i => i.resolvedAt);
+    const avgResolveDays = resolvedItems.length > 0
+      ? Math.round(
+          resolvedItems.reduce((sum, i) => {
+            const created = new Date(i.createdAt).getTime();
+            const resolved = new Date(i.resolvedAt!).getTime();
+            return sum + (resolved - created) / (1000 * 60 * 60 * 24);
+          }, 0) / resolvedItems.length,
+        )
+      : 0;
+
+    return {
+      open: actions.filter(i => ['reported', 'assigned', 'in_progress'].includes(i.status)).length,
+      overdue: actions.filter(i => isOverdue(i)).length,
+      avgResolve: avgResolveDays,
+      verified: actions.filter(i => i.status === 'verified').length,
+    };
+  }, [actions]);
 
   const locations = useMemo(() => {
     const set = new Set(actions.map(i => i.locationId));
@@ -291,15 +299,77 @@ export function CorrectiveActions() {
 
   const handleCreateCA = useCallback(() => {
     guardAction('create', 'Corrective Actions', () => {
+      // Build new CA with reported status + initial history
+      const now = new Date();
+      const newCA: CorrectiveActionItem = {
+        id: `ca-new-${Date.now()}`,
+        title: createForm.title,
+        description: createForm.description,
+        location: DEMO_LOCATIONS.find(l => l.id === createForm.locationId)?.name || 'Location 1',
+        locationId: createForm.locationId || 'downtown',
+        category: createForm.category,
+        severity: createForm.severity,
+        status: 'reported',
+        source: createForm.source || 'Manual',
+        source_type: 'manual',
+        source_id: null,
+        assignee: createForm.assignee,
+        assigned_by: '',
+        assignedAt: createForm.assignee ? now.toISOString().slice(0, 10) : null,
+        createdAt: now.toISOString().slice(0, 10),
+        dueDate: createForm.dueDate || now.toISOString().slice(0, 10),
+        resolvedAt: null,
+        resolved_by: null,
+        resolution_note: null,
+        verifiedAt: null,
+        verified_by: null,
+        verification_note: null,
+        rootCause: createForm.rootCause,
+        correctiveSteps: '',
+        preventiveMeasures: '',
+        regulationReference: createForm.regulationReference,
+        templateId: createForm.templateId,
+        ai_draft: aiFields.has('description') ? createForm.description : null,
+        notes: [],
+        attachments: [],
+        history: [
+          { action: 'status_changed', to: 'reported', by: 'You', timestamp: now.toISOString() },
+        ],
+      };
+
+      // If assignee was set, also mark as assigned
+      if (createForm.assignee) {
+        newCA.status = 'assigned';
+        newCA.assigned_by = 'You';
+        newCA.history.push({
+          action: 'status_changed',
+          from: 'reported',
+          to: 'assigned',
+          by: 'You',
+          timestamp: now.toISOString(),
+          detail: `Assigned to ${createForm.assignee}`,
+        });
+      }
+
+      setLocalActions(prev => [newCA, ...prev]);
       setShowCreateModal(false);
       setCreateForm(EMPTY_FORM);
+      setAiFields(new Set());
       toast.success('Corrective action created');
       // If processing items from self-inspection, advance to next
       if (inspectionItems.length > 0) {
         setTimeout(() => advanceInspectionItem(), 300);
       }
     });
-  }, [guardAction, inspectionItems.length, advanceInspectionItem]);
+  }, [guardAction, createForm, aiFields, inspectionItems.length, advanceInspectionItem]);
+
+  const handleExportPdf = useCallback(() => {
+    const locationName = filterLocation !== 'all'
+      ? DEMO_LOCATIONS.find(l => l.id === filterLocation)?.name || 'All Locations'
+      : 'All Locations';
+    exportCorrectiveActionsPdf(filtered, locationName);
+    toast.success('PDF exported');
+  }, [filtered, filterLocation]);
 
   // ── Templates for modal ─────────────────────────────────
 
@@ -338,25 +408,33 @@ export function CorrectiveActions() {
           <h1 className="text-xl font-bold" style={{ color: NAVY }}>Corrective Actions</h1>
           <p className="text-sm text-gray-500 mt-1">Track and resolve compliance violations with documented action plans.</p>
         </div>
-        {canCreate && (
+        <div className="flex items-center gap-2">
           <button
-            onClick={handleOpenCreate}
-            className="px-4 py-2 rounded-lg text-sm font-semibold text-white shrink-0"
-            style={{ backgroundColor: NAVY }}
+            onClick={handleExportPdf}
+            className="px-3 py-2 rounded-lg text-sm font-medium border border-gray-200 text-gray-600 hover:bg-gray-50 flex items-center gap-1.5"
           >
-            + New Action
+            <Download size={14} />
+            Export PDF
           </button>
-        )}
+          {canCreate && (
+            <button
+              onClick={handleOpenCreate}
+              className="px-4 py-2 rounded-lg text-sm font-semibold text-white shrink-0"
+              style={{ backgroundColor: NAVY }}
+            >
+              + New Action
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Summary cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
           { label: 'Open', value: counts.open, color: '#dc2626' },
-          { label: 'In Progress', value: counts.in_progress, color: '#d97706' },
-          { label: 'Completed', value: counts.completed, color: '#16a34a' },
-          { label: 'Verified', value: counts.verified, color: NAVY },
           { label: 'Overdue', value: counts.overdue, color: '#991b1b' },
+          { label: 'Avg Resolve', value: `${counts.avgResolve}d`, color: '#d97706' },
+          { label: 'Verified', value: counts.verified, color: NAVY },
         ].map(card => (
           <div key={card.label} className="bg-white rounded-lg border border-gray-200 p-4 text-center">
             <p className="text-2xl font-bold" style={{ color: card.color }}>{card.value}</p>
@@ -374,12 +452,11 @@ export function CorrectiveActions() {
           className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 text-gray-700"
         >
           <option value="all">All Statuses</option>
-          <option value="created">Created</option>
+          <option value="reported">Reported</option>
+          <option value="assigned">Assigned</option>
           <option value="in_progress">In Progress</option>
-          <option value="completed">Completed</option>
+          <option value="resolved">Resolved</option>
           <option value="verified">Verified</option>
-          <option value="closed">Closed</option>
-          <option value="archived">Archived</option>
         </select>
         <select
           value={filterLocation}
@@ -447,9 +524,9 @@ export function CorrectiveActions() {
 
         {filtered.map(item => {
           const sev = SEVERITY_CONFIG[item.severity];
-          const stat = STATUS_CONFIG[item.status];
+          const stat = CA_STATUS_MAP[item.status];
           const overdue = isOverdue(item);
-          const StatusIcon = stat.icon;
+          const StatusIcon = STATUS_ICON_MAP[item.status];
 
           return (
             <div
@@ -488,10 +565,10 @@ export function CorrectiveActions() {
                     <p className="text-xs text-gray-500 mb-2 line-clamp-2">{item.description}</p>
                     <div className="flex flex-wrap items-center gap-4 text-xs text-gray-400">
                       <span className="flex items-center gap-1"><MapPin size={12} />{item.location}</span>
-                      <span className="flex items-center gap-1"><User size={12} />{item.assignee}</span>
+                      {item.assignee && <span className="flex items-center gap-1"><User size={12} />{item.assignee}</span>}
                       <span>Source: {item.source}</span>
                       <span>Due: {formatDate(item.dueDate)}</span>
-                      {item.completedAt && <span>Completed: {formatDate(item.completedAt)}</span>}
+                      {item.resolvedAt && <span>Resolved: {formatDate(item.resolvedAt)}</span>}
                     </div>
                   </div>
                   <ChevronRight size={16} className="text-gray-300 shrink-0 mt-1" />
@@ -683,13 +760,16 @@ export function CorrectiveActions() {
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-medium text-gray-700 mb-1">Assignee</label>
-                      <input
-                        type="text"
+                      <select
                         value={createForm.assignee}
                         onChange={e => setCreateForm(f => ({ ...f, assignee: e.target.value }))}
-                        placeholder="e.g. David Kim"
-                        className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1e4d6b]"
-                      />
+                        className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2"
+                      >
+                        <option value="">Unassigned</option>
+                        {DEMO_TEAM_MEMBERS.map(m => (
+                          <option key={m.id} value={m.name}>{m.name}</option>
+                        ))}
+                      </select>
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-gray-700 mb-1">Due Date</label>

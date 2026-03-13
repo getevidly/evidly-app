@@ -125,7 +125,7 @@ export function buildLocationContextPayload(locationId: string): LocationContext
     (ca: CorrectiveActionItem) => ca.locationId === locationId
   );
   const openCAs = locationCAs.filter(
-    (ca: CorrectiveActionItem) => ca.status === 'created' || ca.status === 'in_progress'
+    (ca: CorrectiveActionItem) => ca.status === 'reported' || ca.status === 'assigned' || ca.status === 'in_progress'
   );
 
   const openCorrectiveActions = {

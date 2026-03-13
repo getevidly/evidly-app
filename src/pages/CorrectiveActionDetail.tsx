@@ -6,7 +6,6 @@ import {
   CheckCircle2,
   Clock,
   FileText,
-  Archive,
   ArrowRight,
   User,
   MapPin,
@@ -15,6 +14,8 @@ import {
   Paperclip,
   MessageSquare,
   Send,
+  History,
+  Sparkles,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Breadcrumb } from '../components/Breadcrumb';
@@ -23,13 +24,18 @@ import { useDemoGuard } from '../hooks/useDemoGuard';
 import { useRole } from '../contexts/RoleContext';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import {
+  CA_STATUS_MAP,
+  CA_STATUS_ORDER,
+  SEVERITY_CONFIG,
+  DEMO_TEAM_MEMBERS,
+  type CAStatus,
+} from '../constants/correctiveActionStatus';
+import {
   DEMO_CORRECTIVE_ACTIONS,
   CATEGORY_LABELS,
   SEVERITY_LABELS,
   SOURCE_TYPE_LABELS,
   isOverdue,
-  type CAStatus,
-  type CASeverity,
   type CANote,
   type CorrectiveActionItem,
 } from '../data/correctiveActionsDemoData';
@@ -38,40 +44,13 @@ import {
 
 const NAVY = '#1e4d6b';
 
-const SEVERITY_CONFIG: Record<CASeverity, { color: string; bg: string; border: string }> = {
-  critical: { color: '#991b1b', bg: '#fef2f2', border: '#fecaca' },
-  high:     { color: '#92400e', bg: '#fffbeb', border: '#fde68a' },
-  medium:   { color: NAVY, bg: '#eef4f8', border: '#b8d4e8' },
-  low:      { color: '#166534', bg: '#f0fdf4', border: '#bbf7d0' },
-};
-
-const STATUS_CONFIG: Record<CAStatus, { label: string; color: string; bg: string }> = {
-  created:     { label: 'Created', color: '#6366f1', bg: '#eef2ff' },
-  in_progress: { label: 'In Progress', color: '#d97706', bg: '#fffbeb' },
-  completed:   { label: 'Completed', color: '#16a34a', bg: '#f0fdf4' },
-  verified:    { label: 'Verified', color: NAVY, bg: '#eef4f8' },
-  closed:      { label: 'Closed', color: '#6b7280', bg: '#f3f4f6' },
-  archived:    { label: 'Archived', color: '#9ca3af', bg: '#f9fafb' },
-};
-
-const LIFECYCLE_NEXT: Partial<Record<CAStatus, { label: string; next: CAStatus }>> = {
-  created:     { label: 'Start Work', next: 'in_progress' },
-  in_progress: { label: 'Mark Completed', next: 'completed' },
-  completed:   { label: 'Verify', next: 'verified' },
-  verified:    { label: 'Close', next: 'closed' },
-};
-
 const TIMELINE_STEPS: { key: CAStatus; label: string }[] = [
-  { key: 'created', label: 'Created' },
+  { key: 'reported', label: 'Reported' },
+  { key: 'assigned', label: 'Assigned' },
   { key: 'in_progress', label: 'In Progress' },
-  { key: 'completed', label: 'Completed' },
+  { key: 'resolved', label: 'Resolved' },
   { key: 'verified', label: 'Verified' },
-  { key: 'closed', label: 'Closed' },
 ];
-
-const STATUS_ORDER: Record<string, number> = {
-  created: 0, in_progress: 1, completed: 2, verified: 3, closed: 4, archived: 4,
-};
 
 function formatDate(iso: string): string {
   return new Date(iso + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -80,10 +59,6 @@ function formatDate(iso: string): string {
 function formatTimestamp(iso: string): string {
   return new Date(iso).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
 }
-
-// ── Verify permission by role ────────────────────────────────
-
-const VERIFY_ROLES = ['owner_operator', 'executive', 'compliance_manager', 'platform_admin'];
 
 // ── Component ────────────────────────────────────────────────
 
@@ -98,13 +73,14 @@ export function CorrectiveActionDetail() {
   const [localAction, setLocalAction] = useState<CorrectiveActionItem | null>(() => {
     if (!isDemoMode || !actionId) return null;
     const found = DEMO_CORRECTIVE_ACTIONS.find(a => a.id === actionId);
-    return found ? { ...found } : null;
+    return found ? { ...found, notes: [...found.notes], history: [...found.history] } : null;
   });
 
   const [newNote, setNewNote] = useState('');
+  const [resolutionNote, setResolutionNote] = useState('');
+  const [verificationNote, setVerificationNote] = useState('');
 
   const item = localAction;
-  const canVerify = VERIFY_ROLES.includes(userRole);
 
   // ── Handlers ─────────────────────────────────────────────
 
@@ -112,24 +88,65 @@ export function CorrectiveActionDetail() {
     guardAction('update', 'Corrective Actions', () => {
       setLocalAction(prev => {
         if (!prev) return prev;
-        const now = new Date().toISOString().slice(0, 10);
+        const now = new Date();
         const updates: Partial<CorrectiveActionItem> = { status: nextStatus };
-        if (nextStatus === 'completed') updates.completedAt = now;
-        if (nextStatus === 'verified') { updates.verifiedAt = now; updates.verified_by = 'You'; }
-        if (nextStatus === 'closed') updates.closedAt = now;
-        if (nextStatus === 'archived') updates.archivedAt = now;
-        return { ...prev, ...updates };
-      });
-      toast.success(`Status updated to ${STATUS_CONFIG[nextStatus].label}`);
-    });
-  }, [guardAction]);
+        const historyEntry = {
+          action: 'status_changed' as const,
+          from: prev.status,
+          to: nextStatus,
+          by: 'You',
+          timestamp: now.toISOString(),
+          detail: '',
+        };
 
-  const handleArchive = useCallback(() => {
+        if (nextStatus === 'assigned' && !prev.assignee) {
+          // Can't assign without an assignee — handled by UI disabling
+          return prev;
+        }
+        if (nextStatus === 'resolved') {
+          updates.resolvedAt = now.toISOString().slice(0, 10);
+          updates.resolved_by = 'You';
+          updates.resolution_note = resolutionNote;
+          historyEntry.detail = resolutionNote;
+        }
+        if (nextStatus === 'verified') {
+          updates.verifiedAt = now.toISOString().slice(0, 10);
+          updates.verified_by = 'You';
+          updates.verification_note = verificationNote;
+          historyEntry.detail = verificationNote;
+        }
+
+        return {
+          ...prev,
+          ...updates,
+          history: [...prev.history, historyEntry],
+        };
+      });
+      toast.success(`Status updated to ${CA_STATUS_MAP[nextStatus].label}`);
+    });
+  }, [guardAction, resolutionNote, verificationNote]);
+
+  const handleReassign = useCallback((newAssignee: string) => {
     guardAction('update', 'Corrective Actions', () => {
-      setLocalAction(prev =>
-        prev ? { ...prev, status: 'archived' as CAStatus, archivedAt: new Date().toISOString().slice(0, 10) } : prev
-      );
-      toast.success('Corrective action archived');
+      setLocalAction(prev => {
+        if (!prev) return prev;
+        const now = new Date();
+        return {
+          ...prev,
+          assignee: newAssignee,
+          assigned_by: 'You',
+          assignedAt: now.toISOString().slice(0, 10),
+          history: [...prev.history, {
+            action: 'reassigned',
+            from: prev.assignee || 'Unassigned',
+            to: newAssignee,
+            by: 'You',
+            timestamp: now.toISOString(),
+            detail: `Reassigned to ${newAssignee}`,
+          }],
+        };
+      });
+      toast.success(`Reassigned to ${newAssignee}`);
     });
   }, [guardAction]);
 
@@ -142,12 +159,27 @@ export function CorrectiveActionDetail() {
         timestamp: new Date().toISOString(),
       };
       setLocalAction(prev =>
-        prev ? { ...prev, notes: [...prev.notes, note] } : prev
+        prev ? {
+          ...prev,
+          notes: [...prev.notes, note],
+          history: [...prev.history, {
+            action: 'note_added',
+            by: 'You',
+            timestamp: new Date().toISOString(),
+            detail: newNote.trim().length > 60 ? newNote.trim().substring(0, 60) + '\u2026' : newNote.trim(),
+          }],
+        } : prev
       );
       setNewNote('');
       toast.success('Note added');
     });
   }, [newNote, guardAction]);
+
+  const handleApplyAiDraft = useCallback(() => {
+    if (!item?.ai_draft) return;
+    setResolutionNote(item.ai_draft);
+    toast.success('AI draft applied to resolution note');
+  }, [item?.ai_draft]);
 
   // ── Not found ────────────────────────────────────────────
 
@@ -167,10 +199,24 @@ export function CorrectiveActionDetail() {
   }
 
   const sev = SEVERITY_CONFIG[item.severity];
-  const stat = STATUS_CONFIG[item.status];
+  const stat = CA_STATUS_MAP[item.status];
   const overdue = isOverdue(item);
-  const lifecycle = LIFECYCLE_NEXT[item.status];
-  const currentStepIdx = STATUS_ORDER[item.status] ?? 0;
+  const currentStepIdx = CA_STATUS_ORDER[item.status] ?? 0;
+  const lifecycle = stat.nextStatus ? { next: stat.nextStatus, label: stat.nextLabel! } : null;
+  const canAdvance = stat.allowedRoles.includes(userRole);
+
+  // Resolution time
+  const resolveDays = item.resolvedAt
+    ? Math.ceil((new Date(item.resolvedAt).getTime() - new Date(item.createdAt).getTime()) / (1000 * 60 * 60 * 24))
+    : null;
+
+  // Gate: resolved requires resolution note, verified requires verification note
+  const advanceBlocked = (() => {
+    if (!lifecycle) return true;
+    if (lifecycle.next === 'resolved' && !resolutionNote.trim()) return true;
+    if (lifecycle.next === 'verified' && !verificationNote.trim()) return true;
+    return false;
+  })();
 
   return (
     <div className="p-4 sm:p-6 max-w-4xl mx-auto space-y-6 pb-8">
@@ -206,12 +252,17 @@ export function CorrectiveActionDetail() {
               OVERDUE
             </span>
           )}
+          {resolveDays !== null && (
+            <span className="text-[10px] font-medium px-2 py-0.5 rounded-full text-green-700 bg-green-50 border border-green-200">
+              Resolved in {resolveDays}d
+            </span>
+          )}
         </div>
         <p className="text-sm text-gray-600">{item.description}</p>
         <div className="flex flex-wrap items-center gap-4 mt-3 text-xs text-gray-400">
           <span className="flex items-center gap-1"><MapPin size={12} />{item.location}</span>
-          <span className="flex items-center gap-1"><User size={12} />Assigned to: {item.assignee}</span>
-          <span className="flex items-center gap-1"><User size={12} />Assigned by: {item.assigned_by}</span>
+          {item.assignee && <span className="flex items-center gap-1"><User size={12} />Assigned to: {item.assignee}</span>}
+          {item.assigned_by && <span className="flex items-center gap-1"><User size={12} />Assigned by: {item.assigned_by}</span>}
           <span className="flex items-center gap-1"><Calendar size={12} />Due: {formatDate(item.dueDate)}</span>
         </div>
       </div>
@@ -224,12 +275,13 @@ export function CorrectiveActionDetail() {
             const isCompleted = idx < currentStepIdx;
             const isCurrent = idx === currentStepIdx;
             const isFuture = idx > currentStepIdx;
+            // Find relevant date from history or timestamp fields
             const dateForStep =
               idx === 0 ? item.createdAt :
-              idx === 1 && STATUS_ORDER[item.status] >= 1 ? item.createdAt : // approximate
-              idx === 2 ? item.completedAt :
-              idx === 3 ? item.verifiedAt :
-              idx === 4 ? item.closedAt : null;
+              idx === 1 ? item.assignedAt :
+              idx === 2 ? (item.history.find(h => h.to === 'in_progress')?.timestamp?.slice(0, 10) || null) :
+              idx === 3 ? item.resolvedAt :
+              idx === 4 ? item.verifiedAt : null;
 
             return (
               <div key={step.key} className="flex flex-col items-center relative z-10 flex-1">
@@ -271,6 +323,44 @@ export function CorrectiveActionDetail() {
         </div>
       </div>
 
+      {/* Assignment Section */}
+      <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="flex items-center gap-2 mb-3">
+          <User size={16} style={{ color: NAVY }} />
+          <h3 className="text-sm font-semibold text-gray-700">Assignment</h3>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wide mb-0.5">Assignee</p>
+            <p className="text-sm text-gray-700">{item.assignee || 'Unassigned'}</p>
+          </div>
+          <div>
+            <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wide mb-0.5">Assigned By</p>
+            <p className="text-sm text-gray-700">{item.assigned_by || '\u2014'}</p>
+          </div>
+          <div>
+            <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wide mb-0.5">Assigned Date</p>
+            <p className="text-sm text-gray-700">{item.assignedAt ? formatDate(item.assignedAt) : '\u2014'}</p>
+          </div>
+        </div>
+        {/* Reassign dropdown — only for management roles and non-terminal statuses */}
+        {item.status !== 'verified' && canAdvance && (
+          <div className="mt-3 pt-3 border-t border-gray-100">
+            <label className="block text-xs font-medium text-gray-500 mb-1">Reassign to</label>
+            <select
+              value=""
+              onChange={e => { if (e.target.value) handleReassign(e.target.value); }}
+              className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 text-gray-700 w-full sm:w-auto"
+            >
+              <option value="">Select team member...</option>
+              {DEMO_TEAM_MEMBERS.filter(m => m.name !== item.assignee).map(m => (
+                <option key={m.id} value={m.name}>{m.name}</option>
+              ))}
+            </select>
+          </div>
+        )}
+      </div>
+
       {/* Detail Grid */}
       <div className="bg-white rounded-xl border border-gray-200 p-5">
         <h3 className="text-sm font-semibold text-gray-700 mb-3">Details</h3>
@@ -288,6 +378,92 @@ export function CorrectiveActionDetail() {
           )}
         </div>
       </div>
+
+      {/* AI Draft Card */}
+      {item.ai_draft && item.status !== 'verified' && (
+        <div className="bg-white rounded-xl border-2 border-amber-300 p-5">
+          <div className="flex items-center gap-2 mb-2">
+            <Sparkles size={16} className="text-amber-600" />
+            <h3 className="text-sm font-semibold text-amber-800">AI-Suggested Resolution Plan</h3>
+          </div>
+          <p className="text-[10px] text-amber-600 mb-3">AI-generated \u2014 review before saving</p>
+          <p className="text-sm text-gray-700 bg-amber-50 rounded-lg p-3">{item.ai_draft}</p>
+          {item.status === 'in_progress' && (
+            <button
+              onClick={handleApplyAiDraft}
+              className="mt-3 px-3 py-1.5 rounded-lg text-xs font-semibold text-amber-800 bg-amber-100 hover:bg-amber-200 transition-colors"
+            >
+              Apply to Resolution Note
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Resolution Note Section */}
+      {['in_progress', 'resolved', 'verified'].includes(item.status) && (
+        <div className="bg-white rounded-xl border border-gray-200 p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <FileText size={16} style={{ color: NAVY }} />
+            <h3 className="text-sm font-semibold text-gray-700">Resolution Note</h3>
+          </div>
+          {item.resolution_note ? (
+            <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+              <p className="text-sm text-green-800">{item.resolution_note}</p>
+              {item.resolved_by && item.resolvedAt && (
+                <p className="text-xs text-green-600 mt-2">Resolved by {item.resolved_by} on {formatDate(item.resolvedAt)}</p>
+              )}
+            </div>
+          ) : item.status === 'in_progress' ? (
+            <div>
+              <p className="text-xs text-gray-500 mb-2">Describe what was done to resolve this issue. Required to mark as resolved.</p>
+              <textarea
+                value={resolutionNote}
+                onChange={e => setResolutionNote(e.target.value)}
+                rows={3}
+                placeholder="Describe resolution actions taken..."
+                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1e4d6b] resize-none"
+              />
+            </div>
+          ) : (
+            <p className="text-xs text-gray-400">No resolution note recorded.</p>
+          )}
+        </div>
+      )}
+
+      {/* Verification Note Section */}
+      {['resolved', 'verified'].includes(item.status) && (
+        <div className="bg-white rounded-xl border border-gray-200 p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <Shield size={16} style={{ color: NAVY }} />
+            <h3 className="text-sm font-semibold text-gray-700">Verification</h3>
+          </div>
+          {item.verification_note ? (
+            <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 size={14} className="text-green-600" />
+                <span className="text-sm font-medium text-green-800">Verified by {item.verified_by}</span>
+              </div>
+              <p className="text-sm text-green-700 mt-2">{item.verification_note}</p>
+              {item.verifiedAt && (
+                <p className="text-xs text-green-600 mt-1">on {formatDate(item.verifiedAt)}</p>
+              )}
+            </div>
+          ) : item.status === 'resolved' && canAdvance ? (
+            <div>
+              <p className="text-xs text-gray-500 mb-2">Confirm this corrective action has been properly implemented. Required to verify.</p>
+              <textarea
+                value={verificationNote}
+                onChange={e => setVerificationNote(e.target.value)}
+                rows={3}
+                placeholder="Describe verification findings..."
+                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1e4d6b] resize-none"
+              />
+            </div>
+          ) : item.status === 'resolved' ? (
+            <p className="text-xs text-gray-500">Awaiting verification from a manager or compliance officer.</p>
+          ) : null}
+        </div>
+      )}
 
       {/* Notes / Comments Section */}
       <div className="bg-white rounded-xl border border-gray-200 p-5">
@@ -361,64 +537,75 @@ export function CorrectiveActionDetail() {
         )}
       </div>
 
-      {/* Verification Section */}
-      {(item.status === 'completed' || item.status === 'verified' || item.status === 'closed') && (
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <div className="flex items-center gap-2 mb-3">
-            <Shield size={16} style={{ color: NAVY }} />
-            <h3 className="text-sm font-semibold text-gray-700">Verification</h3>
-          </div>
-
-          {item.verified_by ? (
-            <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 size={14} className="text-green-600" />
-                <span className="text-sm font-medium text-green-800">Verified by {item.verified_by}</span>
-              </div>
-              {item.verifiedAt && (
-                <p className="text-xs text-green-600 mt-1">on {formatDate(item.verifiedAt)}</p>
-              )}
-            </div>
-          ) : item.status === 'completed' && canVerify ? (
-            <div>
-              <p className="text-xs text-gray-500 mb-2">This corrective action is awaiting verification.</p>
-              <button
-                onClick={() => handleAdvanceStatus('verified')}
-                className="px-4 py-2 rounded-lg text-sm font-semibold text-white flex items-center gap-1.5"
-                style={{ backgroundColor: NAVY }}
-              >
-                <CheckCircle2 size={14} />
-                Verify Completion
-              </button>
-            </div>
-          ) : item.status === 'completed' ? (
-            <p className="text-xs text-gray-500">Awaiting verification from a manager or compliance officer.</p>
-          ) : null}
+      {/* Audit Trail */}
+      <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="flex items-center gap-2 mb-3">
+          <History size={16} style={{ color: NAVY }} />
+          <h3 className="text-sm font-semibold text-gray-700">Audit Trail</h3>
+          <span className="text-xs text-gray-400">({item.history.length})</span>
         </div>
-      )}
+
+        {item.history.length === 0 ? (
+          <p className="text-xs text-gray-400">No history recorded.</p>
+        ) : (
+          <div className="space-y-2">
+            {[...item.history].reverse().map((entry, idx) => {
+              const actionText = entry.action === 'status_changed'
+                ? entry.from
+                  ? `Status changed from ${CA_STATUS_MAP[entry.from as CAStatus]?.label || entry.from} to ${CA_STATUS_MAP[entry.to as CAStatus]?.label || entry.to}`
+                  : `Status set to ${CA_STATUS_MAP[entry.to as CAStatus]?.label || entry.to}`
+                : entry.action === 'reassigned'
+                  ? `Reassigned from ${entry.from} to ${entry.to}`
+                  : entry.action === 'note_added'
+                    ? 'Note added'
+                    : entry.action;
+
+              return (
+                <div key={idx} className="flex items-start gap-3 py-2 border-b border-gray-50 last:border-0">
+                  <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center shrink-0 mt-0.5">
+                    {entry.action === 'status_changed' && <ArrowRight size={10} className="text-gray-500" />}
+                    {entry.action === 'reassigned' && <User size={10} className="text-gray-500" />}
+                    {entry.action === 'note_added' && <MessageSquare size={10} className="text-gray-500" />}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-gray-700">{actionText}</p>
+                    {entry.detail && (
+                      <p className="text-[11px] text-gray-500 mt-0.5">{entry.detail}</p>
+                    )}
+                    <p className="text-[10px] text-gray-400 mt-0.5">{entry.by} &middot; {formatTimestamp(entry.timestamp)}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
 
       {/* Lifecycle Action Buttons */}
-      <div className="flex flex-wrap items-center gap-3">
-        {lifecycle && item.status !== 'archived' && !(item.status === 'completed' && !canVerify) && (
+      {lifecycle && canAdvance && (
+        <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={() => handleAdvanceStatus(lifecycle.next)}
-            className="px-4 py-2 rounded-lg text-sm font-semibold text-white flex items-center gap-1.5"
+            disabled={advanceBlocked}
+            className="px-4 py-2 rounded-lg text-sm font-semibold text-white flex items-center gap-1.5 disabled:opacity-50"
             style={{ backgroundColor: NAVY }}
           >
             <ArrowRight size={14} />
             {lifecycle.label}
           </button>
-        )}
-        {item.status !== 'archived' && item.status !== 'closed' && (
-          <button
-            onClick={handleArchive}
-            className="px-4 py-2 rounded-lg text-sm font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 flex items-center gap-1.5"
-          >
-            <Archive size={14} />
-            Archive
-          </button>
-        )}
-      </div>
+          {advanceBlocked && lifecycle.next === 'resolved' && (
+            <span className="text-xs text-gray-400">Resolution note required</span>
+          )}
+          {advanceBlocked && lifecycle.next === 'verified' && (
+            <span className="text-xs text-gray-400">Verification note required</span>
+          )}
+        </div>
+      )}
+      {lifecycle && !canAdvance && (
+        <div className="text-xs text-gray-400">
+          Only authorized roles can advance this status.
+        </div>
+      )}
 
       {/* Demo upgrade prompt */}
       {showUpgrade && (

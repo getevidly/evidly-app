@@ -1,15 +1,19 @@
 /**
- * CORRECTIVE-ACTIONS-1 — Corrective Action Templates + Demo Data
+ * CORRECTIVE-ACTION-01 — Corrective Action Templates + Demo Data
  *
  * 25 system templates with regulatory references.
- * 8 demo corrective actions (migrated from inline CorrectiveActions.tsx).
+ * 8 demo corrective actions with full lifecycle history.
+ *
+ * Status pipeline: reported → assigned → in_progress → resolved → verified
  */
+
+import type { CAStatus, CASeverity } from '../constants/correctiveActionStatus';
+
+export type { CAStatus, CASeverity };
 
 // ── Types ─────────────────────────────────────────────────────
 
 export type CACategory = 'food_safety' | 'facility_safety' | 'operational';
-export type CASeverity = 'critical' | 'high' | 'medium' | 'low';
-export type CAStatus = 'created' | 'in_progress' | 'completed' | 'verified' | 'closed' | 'archived';
 export type CASourceType = 'inspection' | 'checklist' | 'temperature' | 'self_inspection' | 'manual' | 'incident';
 
 export interface CANote {
@@ -22,6 +26,15 @@ export interface CAAttachment {
   name: string;
   url: string;
   type: string;
+}
+
+export interface CAHistoryEntry {
+  action: string; // 'status_changed' | 'reassigned' | 'note_added' | 'attachment_added'
+  from?: string;
+  to?: string;
+  by: string;
+  timestamp: string;
+  detail?: string;
 }
 
 export interface CATemplate {
@@ -51,20 +64,24 @@ export interface CorrectiveActionItem {
   source_id: string | null;
   assignee: string;
   assigned_by: string;
+  assignedAt: string | null;
   createdAt: string;
   dueDate: string;
-  completedAt: string | null;
+  resolvedAt: string | null;
+  resolved_by: string | null;
+  resolution_note: string | null;
   verifiedAt: string | null;
   verified_by: string | null;
-  closedAt: string | null;
-  archivedAt: string | null;
+  verification_note: string | null;
   rootCause: string;
   correctiveSteps: string;
   preventiveMeasures: string;
   regulationReference: string;
   templateId: string | null;
+  ai_draft: string | null;
   notes: CANote[];
   attachments: CAAttachment[];
+  history: CAHistoryEntry[];
 }
 
 // ── Date helpers ──────────────────────────────────────────────
@@ -296,12 +313,14 @@ export const DEMO_CORRECTIVE_ACTIONS: CorrectiveActionItem[] = [
     description: 'Walk-in cooler recorded 44.8\u00B0F \u2014 exceeds 41\u00B0F limit. Door was found ajar. Recheck required within 30 minutes.',
     location: 'Location 2', locationId: 'airport', category: 'food_safety', severity: 'critical', status: 'in_progress',
     source: 'Temperature Log', source_type: 'temperature', source_id: null,
-    assignee: 'David Kim', assigned_by: 'Sofia Chen', createdAt: daysAgo(1), dueDate: daysFromNow(0),
-    completedAt: null, verifiedAt: null, verified_by: null, closedAt: null, archivedAt: null,
+    assignee: 'David Kim', assigned_by: 'Sofia Chen', assignedAt: daysAgo(1),
+    createdAt: daysAgo(1), dueDate: daysFromNow(0),
+    resolvedAt: null, resolved_by: null, resolution_note: null,
+    verifiedAt: null, verified_by: null, verification_note: null,
     rootCause: 'Walk-in cooler door found ajar after delivery. Door gasket worn.',
     correctiveSteps: 'Door closed immediately. All TCS items checked \u2014 product temps verified under 41\u00B0F. Gasket replacement ordered.',
     preventiveMeasures: 'Install door alarm sensor. Add gasket inspection to monthly PM checklist.',
-    regulationReference: 'FDA 21 CFR 117.150', templateId: 'tpl-fs-01',
+    regulationReference: 'FDA 21 CFR 117.150', templateId: 'tpl-fs-01', ai_draft: null,
     notes: [
       { text: 'Door gasket ordered from supplier. ETA 2 days.', author: 'David Kim', timestamp: daysAgo(0) + 'T14:30:00Z' },
       { text: 'Confirmed all TCS product temps still within range after door was closed.', author: 'Ana Torres', timestamp: daysAgo(1) + 'T09:15:00Z' },
@@ -309,106 +328,163 @@ export const DEMO_CORRECTIVE_ACTIONS: CorrectiveActionItem[] = [
     attachments: [
       { name: 'temp-log-walk-in-feb28.pdf', url: '#', type: 'application/pdf' },
     ],
+    history: [
+      { action: 'status_changed', to: 'reported', by: 'Sofia Chen', timestamp: daysAgo(1) + 'T08:00:00Z' },
+      { action: 'status_changed', from: 'reported', to: 'assigned', by: 'Sofia Chen', timestamp: daysAgo(1) + 'T08:05:00Z', detail: 'Assigned to David Kim' },
+      { action: 'status_changed', from: 'assigned', to: 'in_progress', by: 'David Kim', timestamp: daysAgo(1) + 'T08:30:00Z' },
+    ],
   },
   {
     id: 'ca-2', title: 'Missing hood suppression inspection certificate',
     description: 'Annual hood suppression system inspection certificate expired. Schedule re-inspection with certified vendor.',
-    location: 'Location 3', locationId: 'university', category: 'facility_safety', severity: 'high', status: 'created',
+    location: 'Location 3', locationId: 'university', category: 'facility_safety', severity: 'high', status: 'reported',
     source: 'Facility Safety Audit', source_type: 'inspection', source_id: null,
-    assignee: 'Michael Torres', assigned_by: 'Sofia Chen', createdAt: daysAgo(5), dueDate: daysFromNow(2),
-    completedAt: null, verifiedAt: null, verified_by: null, closedAt: null, archivedAt: null,
+    assignee: '', assigned_by: '', assignedAt: null,
+    createdAt: daysAgo(5), dueDate: daysFromNow(2),
+    resolvedAt: null, resolved_by: null, resolution_note: null,
+    verifiedAt: null, verified_by: null, verification_note: null,
     rootCause: 'Vendor contract lapsed \u2014 annual inspection not scheduled.',
     correctiveSteps: '', preventiveMeasures: '',
-    regulationReference: 'NFPA 96', templateId: 'tpl-fac-01',
+    regulationReference: 'NFPA 96', templateId: 'tpl-fac-01', ai_draft: null,
     notes: [], attachments: [],
+    history: [
+      { action: 'status_changed', to: 'reported', by: 'Sofia Chen', timestamp: daysAgo(5) + 'T10:00:00Z' },
+    ],
   },
   {
     id: 'ca-3', title: 'Handwashing station soap dispenser empty',
     description: 'Prep area handwashing station found without soap during morning inspection. Restocked and verified.',
-    location: 'Location 1', locationId: 'downtown', category: 'food_safety', severity: 'medium', status: 'completed',
+    location: 'Location 1', locationId: 'downtown', category: 'food_safety', severity: 'medium', status: 'resolved',
     source: 'Self-Inspection', source_type: 'self_inspection', source_id: null,
-    assignee: 'Lisa Nguyen', assigned_by: 'David Kim', createdAt: daysAgo(3), dueDate: daysAgo(1), completedAt: daysAgo(2),
-    verifiedAt: null, verified_by: null, closedAt: null, archivedAt: null,
+    assignee: 'Lisa Nguyen', assigned_by: 'David Kim', assignedAt: daysAgo(3),
+    createdAt: daysAgo(3), dueDate: daysAgo(1),
+    resolvedAt: daysAgo(2), resolved_by: 'Lisa Nguyen', resolution_note: 'All 4 handwashing stations restocked with soap and paper towels. Verified operational.',
+    verifiedAt: null, verified_by: null, verification_note: null,
     rootCause: 'Closing crew did not restock soap dispensers.',
     correctiveSteps: 'Soap restocked. All 4 handwashing stations checked and verified.',
     preventiveMeasures: 'Added soap dispenser check to closing checklist.',
-    regulationReference: 'FDA Food Code 2-301.14', templateId: 'tpl-fs-03',
+    regulationReference: 'FDA Food Code 2-301.14', templateId: 'tpl-fs-03', ai_draft: null,
     notes: [
       { text: 'All 4 stations restocked and operational.', author: 'Lisa Nguyen', timestamp: daysAgo(2) + 'T10:00:00Z' },
     ],
     attachments: [],
+    history: [
+      { action: 'status_changed', to: 'reported', by: 'David Kim', timestamp: daysAgo(3) + 'T07:30:00Z' },
+      { action: 'status_changed', from: 'reported', to: 'assigned', by: 'David Kim', timestamp: daysAgo(3) + 'T07:35:00Z', detail: 'Assigned to Lisa Nguyen' },
+      { action: 'status_changed', from: 'assigned', to: 'in_progress', by: 'Lisa Nguyen', timestamp: daysAgo(3) + 'T08:00:00Z' },
+      { action: 'status_changed', from: 'in_progress', to: 'resolved', by: 'Lisa Nguyen', timestamp: daysAgo(2) + 'T10:00:00Z', detail: 'All 4 handwashing stations restocked with soap and paper towels.' },
+    ],
   },
   {
     id: 'ca-4', title: 'Hot holding unit below minimum temperature',
     description: 'Hot holding unit recorded 131\u00B0F \u2014 below 135\u00B0F minimum. Food reheated to 165\u00B0F and returned to holding.',
     location: 'Location 1', locationId: 'downtown', category: 'food_safety', severity: 'high', status: 'verified',
     source: 'Temperature Log', source_type: 'temperature', source_id: null,
-    assignee: 'Ana Torres', assigned_by: 'Sofia Chen', createdAt: daysAgo(4), dueDate: daysAgo(2), completedAt: daysAgo(3),
-    verifiedAt: daysAgo(2), verified_by: 'Sofia Chen', closedAt: null, archivedAt: null,
+    assignee: 'Ana Torres', assigned_by: 'Sofia Chen', assignedAt: daysAgo(4),
+    createdAt: daysAgo(4), dueDate: daysAgo(2),
+    resolvedAt: daysAgo(3), resolved_by: 'Ana Torres', resolution_note: 'Thermostat recalibrated. Unit now holding steady at 138\u00B0F. Monitored for 4 hours.',
+    verifiedAt: daysAgo(2), verified_by: 'Sofia Chen', verification_note: 'Verified unit performing within spec. Calibration documented.',
     rootCause: 'Holding unit thermostat drifting low. Calibration overdue.',
     correctiveSteps: 'Food reheated to 165\u00B0F. Thermostat recalibrated. Unit monitored every 30 min for 4 hours.',
     preventiveMeasures: 'Added thermostat calibration to monthly PM schedule.',
-    regulationReference: 'FDA Food Code 3-501.16', templateId: 'tpl-fs-02',
+    regulationReference: 'FDA Food Code 3-501.16', templateId: 'tpl-fs-02', ai_draft: null,
     notes: [
       { text: 'Thermostat recalibrated successfully. Holding steady at 138\u00B0F.', author: 'Ana Torres', timestamp: daysAgo(3) + 'T16:00:00Z' },
       { text: 'Verified corrective action complete. Unit performing within spec.', author: 'Sofia Chen', timestamp: daysAgo(2) + 'T09:30:00Z' },
     ],
     attachments: [],
+    history: [
+      { action: 'status_changed', to: 'reported', by: 'Sofia Chen', timestamp: daysAgo(4) + 'T11:00:00Z' },
+      { action: 'status_changed', from: 'reported', to: 'assigned', by: 'Sofia Chen', timestamp: daysAgo(4) + 'T11:05:00Z', detail: 'Assigned to Ana Torres' },
+      { action: 'status_changed', from: 'assigned', to: 'in_progress', by: 'Ana Torres', timestamp: daysAgo(4) + 'T12:00:00Z' },
+      { action: 'status_changed', from: 'in_progress', to: 'resolved', by: 'Ana Torres', timestamp: daysAgo(3) + 'T16:00:00Z', detail: 'Thermostat recalibrated. Unit holding at 138\u00B0F.' },
+      { action: 'status_changed', from: 'resolved', to: 'verified', by: 'Sofia Chen', timestamp: daysAgo(2) + 'T09:30:00Z', detail: 'Verified unit performing within spec.' },
+    ],
   },
   {
     id: 'ca-5', title: 'Pest control service overdue',
     description: 'Monthly pest control service is 10 days overdue. Contact vendor to reschedule immediately.',
-    location: 'Location 2', locationId: 'airport', category: 'operational', severity: 'medium', status: 'created',
+    location: 'Location 2', locationId: 'airport', category: 'operational', severity: 'medium', status: 'assigned',
     source: 'Vendor Tracking', source_type: 'manual', source_id: null,
-    assignee: 'Michael Torres', assigned_by: 'Sofia Chen', createdAt: daysAgo(10), dueDate: daysAgo(3),
-    completedAt: null, verifiedAt: null, verified_by: null, closedAt: null, archivedAt: null,
+    assignee: 'Michael Torres', assigned_by: 'Sofia Chen', assignedAt: daysAgo(8),
+    createdAt: daysAgo(10), dueDate: daysAgo(3),
+    resolvedAt: null, resolved_by: null, resolution_note: null,
+    verifiedAt: null, verified_by: null, verification_note: null,
     rootCause: 'Vendor had scheduling conflict. Rescheduling not followed up.',
     correctiveSteps: '', preventiveMeasures: '',
-    regulationReference: 'Vendor SLA / FDA Food Code', templateId: 'tpl-op-01',
+    regulationReference: 'Vendor SLA / FDA Food Code', templateId: 'tpl-op-01', ai_draft: null,
     notes: [], attachments: [],
+    history: [
+      { action: 'status_changed', to: 'reported', by: 'Sofia Chen', timestamp: daysAgo(10) + 'T09:00:00Z' },
+      { action: 'status_changed', from: 'reported', to: 'assigned', by: 'Sofia Chen', timestamp: daysAgo(8) + 'T10:00:00Z', detail: 'Assigned to Michael Torres' },
+    ],
   },
   {
     id: 'ca-6', title: 'Employee food handler card expiring',
     description: 'Food handler certification for two staff members expires within 14 days. Schedule renewal.',
     location: 'Location 3', locationId: 'university', category: 'food_safety', severity: 'low', status: 'in_progress',
     source: 'Regulatory Tracking', source_type: 'manual', source_id: null,
-    assignee: 'Sofia Chen', assigned_by: 'David Kim', createdAt: daysAgo(7), dueDate: daysFromNow(7),
-    completedAt: null, verifiedAt: null, verified_by: null, closedAt: null, archivedAt: null,
+    assignee: 'Sofia Chen', assigned_by: 'David Kim', assignedAt: daysAgo(6),
+    createdAt: daysAgo(7), dueDate: daysFromNow(7),
+    resolvedAt: null, resolved_by: null, resolution_note: null,
+    verifiedAt: null, verified_by: null, verification_note: null,
     rootCause: 'Certification renewal not flagged until 14-day warning.',
     correctiveSteps: 'Both staff members registered for online renewal course.',
     preventiveMeasures: 'Set 90-day advance reminder for all certifications.',
-    regulationReference: 'State Health Code', templateId: 'tpl-fs-06',
+    regulationReference: 'State Health Code', templateId: 'tpl-fs-06', ai_draft: null,
     notes: [], attachments: [],
+    history: [
+      { action: 'status_changed', to: 'reported', by: 'David Kim', timestamp: daysAgo(7) + 'T08:00:00Z' },
+      { action: 'status_changed', from: 'reported', to: 'assigned', by: 'David Kim', timestamp: daysAgo(6) + 'T09:00:00Z', detail: 'Assigned to Sofia Chen' },
+      { action: 'status_changed', from: 'assigned', to: 'in_progress', by: 'Sofia Chen', timestamp: daysAgo(5) + 'T10:00:00Z' },
+    ],
   },
   {
     id: 'ca-7', title: 'Cutting board cross-contamination risk',
     description: 'Color-coded cutting boards not separated by protein type during prep. Staff retrained on SOP.',
-    location: 'Location 1', locationId: 'downtown', category: 'food_safety', severity: 'high', status: 'completed',
+    location: 'Location 1', locationId: 'downtown', category: 'food_safety', severity: 'high', status: 'resolved',
     source: 'HACCP Monitoring', source_type: 'checklist', source_id: null,
-    assignee: 'David Kim', assigned_by: 'Ana Torres', createdAt: daysAgo(6), dueDate: daysAgo(4), completedAt: daysAgo(5),
-    verifiedAt: null, verified_by: null, closedAt: null, archivedAt: null,
+    assignee: 'David Kim', assigned_by: 'Ana Torres', assignedAt: daysAgo(6),
+    createdAt: daysAgo(6), dueDate: daysAgo(4),
+    resolvedAt: daysAgo(5), resolved_by: 'David Kim', resolution_note: 'All cutting boards sanitized. Staff retrained on color-coded board system. Chart posted at prep station.',
+    verifiedAt: null, verified_by: null, verification_note: null,
     rootCause: 'New prep cook not trained on color-coded board system.',
     correctiveSteps: 'All cutting boards sanitized. Staff retrained on SOP. Color chart posted at prep station.',
     preventiveMeasures: 'Added color-coded board training to new hire orientation checklist.',
-    regulationReference: 'FDA Food Code 3-302.11', templateId: 'tpl-fs-04',
+    regulationReference: 'FDA Food Code 3-302.11', templateId: 'tpl-fs-04', ai_draft: null,
     notes: [], attachments: [],
+    history: [
+      { action: 'status_changed', to: 'reported', by: 'Ana Torres', timestamp: daysAgo(6) + 'T14:00:00Z' },
+      { action: 'status_changed', from: 'reported', to: 'assigned', by: 'Ana Torres', timestamp: daysAgo(6) + 'T14:05:00Z', detail: 'Assigned to David Kim' },
+      { action: 'status_changed', from: 'assigned', to: 'in_progress', by: 'David Kim', timestamp: daysAgo(6) + 'T15:00:00Z' },
+      { action: 'status_changed', from: 'in_progress', to: 'resolved', by: 'David Kim', timestamp: daysAgo(5) + 'T11:00:00Z', detail: 'Staff retrained on SOP. Color chart posted.' },
+    ],
   },
   {
     id: 'ca-8', title: 'Receiving log missing for Thursday delivery',
     description: 'Produce delivery on Thursday was not logged in the receiving log. Vendor invoice used to backfill record.',
     location: 'Location 2', locationId: 'airport', category: 'food_safety', severity: 'medium', status: 'verified',
     source: 'Audit Trail Review', source_type: 'inspection', source_id: null,
-    assignee: 'Lisa Nguyen', assigned_by: 'Sofia Chen', createdAt: daysAgo(8), dueDate: daysAgo(5), completedAt: daysAgo(6),
-    verifiedAt: daysAgo(5), verified_by: 'Sofia Chen', closedAt: null, archivedAt: null,
+    assignee: 'Lisa Nguyen', assigned_by: 'Sofia Chen', assignedAt: daysAgo(7),
+    createdAt: daysAgo(8), dueDate: daysAgo(5),
+    resolvedAt: daysAgo(6), resolved_by: 'Lisa Nguyen', resolution_note: 'Record backfilled from vendor invoice #4821. All product temperatures verified acceptable.',
+    verifiedAt: daysAgo(5), verified_by: 'Sofia Chen', verification_note: 'Backfilled record verified against vendor invoice. Process gap addressed.',
     rootCause: 'Delivery arrived during lunch rush. Receiving staff pulled to front-of-house.',
     correctiveSteps: 'Record backfilled from vendor invoice. All product temps verified acceptable.',
     preventiveMeasures: 'Assigned backup receiver for high-volume periods.',
-    regulationReference: 'FDA Food Code 3-202.11', templateId: 'tpl-fs-05',
+    regulationReference: 'FDA Food Code 3-202.11', templateId: 'tpl-fs-05', ai_draft: null,
     notes: [
       { text: 'Backfilled record from vendor invoice #4821.', author: 'Lisa Nguyen', timestamp: daysAgo(6) + 'T11:00:00Z' },
     ],
     attachments: [
       { name: 'vendor-invoice-4821.pdf', url: '#', type: 'application/pdf' },
+    ],
+    history: [
+      { action: 'status_changed', to: 'reported', by: 'Sofia Chen', timestamp: daysAgo(8) + 'T09:00:00Z' },
+      { action: 'status_changed', from: 'reported', to: 'assigned', by: 'Sofia Chen', timestamp: daysAgo(7) + 'T10:00:00Z', detail: 'Assigned to Lisa Nguyen' },
+      { action: 'status_changed', from: 'assigned', to: 'in_progress', by: 'Lisa Nguyen', timestamp: daysAgo(7) + 'T11:00:00Z' },
+      { action: 'status_changed', from: 'in_progress', to: 'resolved', by: 'Lisa Nguyen', timestamp: daysAgo(6) + 'T11:00:00Z', detail: 'Record backfilled from vendor invoice.' },
+      { action: 'status_changed', from: 'resolved', to: 'verified', by: 'Sofia Chen', timestamp: daysAgo(5) + 'T09:00:00Z', detail: 'Verified against vendor invoice. Gap addressed.' },
     ],
   },
 ];
@@ -443,6 +519,7 @@ export const SOURCE_TYPE_LABELS: Record<CASourceType, string> = {
   temperature: 'Temperature Log',
   self_inspection: 'Self-Inspection',
   manual: 'Manual',
+  incident: 'Incident Report',
 };
 
 export function getCAById(id: string): CorrectiveActionItem | undefined {
@@ -450,6 +527,6 @@ export function getCAById(id: string): CorrectiveActionItem | undefined {
 }
 
 export function isOverdue(item: CorrectiveActionItem): boolean {
-  if (['completed', 'verified', 'closed', 'archived'].includes(item.status)) return false;
+  if (['resolved', 'verified'].includes(item.status)) return false;
   return new Date(item.dueDate) < new Date(new Date().toISOString().slice(0, 10));
 }
