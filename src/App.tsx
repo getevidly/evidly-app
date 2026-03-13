@@ -170,6 +170,9 @@ const AdminReports = lazy(() => import('./pages/admin/AdminReports'));
 const ViolationOutreach = lazy(() => import('./pages/admin/ViolationOutreach'));
 const FeatureFlags = lazy(() => import('./pages/admin/FeatureFlags'));
 const VerificationReport = lazy(() => import('./pages/admin/VerificationReport'));
+const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'));
+const AdminSecurity = lazy(() => import('./pages/admin/AdminSecurity'));
+const AdminAuditLog = lazy(() => import('./pages/admin/AdminAuditLog'));
 const BusinessIntelligence = lazy(() => import('./pages/BusinessIntelligence').then(m => ({ default: m.BusinessIntelligence })));
 const ClientReports = lazy(() => import('./pages/ClientReports').then(m => ({ default: m.ClientReports })));
 const SharedReport = lazy(() => import('./pages/public/SharedReport').then(m => ({ default: m.SharedReport })));
@@ -220,6 +223,7 @@ const VendorInviteLanding = lazy(() => import('./pages/VendorInviteLanding').the
 const Timecards = lazy(() => import('./pages/Timecards').then(m => ({ default: m.Timecards })));
 const EmployeesPage = lazy(() => import('./pages/Employees').then(m => ({ default: m.Employees })));
 const EmployeeDetailPage = lazy(() => import('./pages/EmployeeDetail').then(m => ({ default: m.EmployeeDetail })));
+const SchedulePage = lazy(() => import('./pages/schedule/SchedulePage').then(m => ({ default: m.SchedulePage })));
 
 import { CookieConsent } from './components/CookieConsent';
 import { usePageTracking } from './hooks/usePageTracking';
@@ -545,6 +549,7 @@ function AppRoutes() {
           <Route path="/settings/roles-permissions" element={<RolesPermissions />} />
           <Route path="/import" element={<ImportData />} />
           <Route path="/calendar" element={<Calendar />} />
+          <Route path="/schedule" element={<SchedulePage />} />
           <Route path="/help" element={<Help />} />
           <Route path="/weekly-digest" element={<WeeklyDigest />} />
           <Route path="/audit-report" element={<AuditReport />} />
@@ -651,7 +656,10 @@ function AppRoutes() {
           <Route path="/admin/campaigns" element={<SalesGuard><MarketingCampaigns /></SalesGuard>} />
           <Route path="/admin/sales" element={<SalesGuard><SalesPipeline /></SalesGuard>} />
           <Route path="/admin/pipeline" element={<Navigate to="/admin/sales" replace />} />
-          <Route path="/admin/users" element={<UserProvisioning />} />
+          <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/security" element={<AdminSecurity />} />
+          <Route path="/admin/audit-log" element={<AdminAuditLog />} />
+          <Route path="/admin/user-provisioning" element={<UserProvisioning />} />
           <Route path="/admin/support" element={<SupportTickets />} />
           <Route path="/admin/remote-connect" element={<RemoteConnect />} />
           <Route path="/admin/staff" element={<StaffRoles />} />

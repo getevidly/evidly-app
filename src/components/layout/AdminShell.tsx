@@ -77,7 +77,7 @@ const NAV_SECTIONS: NavSection[] = [
   {
     title: 'Users',
     items: [
-      { label: 'User Provisioning', path: '/admin/users' },
+      { label: 'User Management', path: '/admin/users' },
       { label: 'Staff & Roles', path: '/admin/staff' },
       { label: 'User Emulation', path: '/admin/emulate' },
       { label: 'Role Preview', path: '/admin/role-preview' },
@@ -96,6 +96,8 @@ const NAV_SECTIONS: NavSection[] = [
     title: 'System',
     items: [
       { label: 'Document Vault', path: '/admin/vault' },
+      { label: 'Security', path: '/admin/security' },
+      { label: 'Audit Log', path: '/admin/audit-log' },
       { label: 'Security Settings', path: '/admin/security-settings' },
       { label: 'Feature Control', path: '/admin/feature-flags' },
       { label: 'API Keys', path: '/admin/api-keys' },
