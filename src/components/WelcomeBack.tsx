@@ -1,7 +1,5 @@
-import { useMemo } from 'react';
 import { CheckCircle2 } from 'lucide-react';
 import { useTranslation } from '../contexts/LanguageContext';
-import { needsAttentionItems } from '../data/demoData';
 
 interface Priority {
   icon: string;
@@ -38,39 +36,12 @@ function formatLastLogin(lastLoginAt: string | null, isDemoMode: boolean): strin
   return `Last login: ${last.toLocaleDateString()}`;
 }
 
-function getDemoPriorities(): Priority[] {
-  // Curate a set of realistic priorities from demo data
-  const topItems = needsAttentionItems
-    .filter(item => item.color === 'red')
-    .slice(0, 3);
-
-  const priorities: Priority[] = topItems.map(item => ({
-    icon: item.title.toLowerCase().includes('temperature') || item.title.toLowerCase().includes('temp') ? '🌡️' :
-      item.title.toLowerCase().includes('checklist') ? '📋' :
-      item.title.toLowerCase().includes('overdue') || item.title.toLowerCase().includes('expired') ? '⚠️' :
-      item.title.toLowerCase().includes('fire') || item.title.toLowerCase().includes('suppression') ? '🔧' : '📄',
-    text: item.title,
-  }));
-
-  // Add a couple more common ones if we have room
-  if (priorities.length < 5) {
-    priorities.push({ icon: '🌡️', text: '3 temperature readings due today' });
-  }
-  if (priorities.length < 5) {
-    priorities.push({ icon: '🔧', text: 'Walk-in Cooler #2 service due in 5 days' });
-  }
-
-  return priorities.slice(0, 5);
-}
-
 export function WelcomeBack({ userName, lastLoginAt, isDemoMode }: WelcomeBackProps) {
   const { t } = useTranslation();
   const firstName = userName?.split(' ')[0] || 'there';
 
-  const priorities = useMemo(() => {
-    // Always use demo priorities for now (real data integration would query Supabase)
-    return getDemoPriorities();
-  }, []);
+  // No fake priorities — real data will come from Supabase
+  const priorities: Priority[] = [];
 
   const lastLoginText = formatLastLogin(lastLoginAt, isDemoMode);
 

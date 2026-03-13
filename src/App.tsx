@@ -338,12 +338,14 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-/** Show AdminHome (17-card grid) for platform_admin, AdminHub (tenant cards) for everyone else */
+/** Show AdminHome for authenticated platform_admin, AdminHub for everyone else.
+ *  In demo mode, always show AdminHub — AdminHome has admin-internal tools
+ *  (Sales Pipeline, etc.) that should never appear in the operator context. */
 function AdminRoute() {
   const { isEvidlyAdmin } = useAuth();
   const { isDemoMode } = useDemo();
   const { userRole } = useRole();
-  if (isEvidlyAdmin || userRole === 'platform_admin') {
+  if (!isDemoMode && (isEvidlyAdmin || userRole === 'platform_admin')) {
     return <AdminHome />;
   }
   return <AdminHub />;

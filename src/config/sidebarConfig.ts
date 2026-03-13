@@ -444,10 +444,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         [I.equipment, I.fleet, I.insurance, I.myAvailability, I.teamAvailability, I.availabilityApprovals, I.integrations, I.iotSensors, I.locations, I.settings, I.rolesPermissions, I.team, I.timecards, I.employees, I.trainingRecords, I.trainingCatalog, I.vendors, I.emergencyInfo],
         '/admin',
       ),
-      section('system', 'System', '🖥️',
-        'System', 'Command center, edge functions, crawl status, verification coverage, and infrastructure diagnostics.',
-        [I.commandCenter, I.adminDashboard, I.edgeFunctions, I.crawlMonitor, I.verification],
-      ),
+      // System section removed — admin tools accessed via AdminShell (/admin) outside demo mode.
       section('help', 'Help', '❓',
         'Help', 'Documentation, support, and contact options.',
         [], '/help',
