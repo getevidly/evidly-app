@@ -272,11 +272,11 @@ export default function DemoDashboard() {
           </div>
         </Card>
 
-        {/* ── Vendor Services — REMOVED (HOODOPS-SERVICES-FIX-01) ── */}
+        {/* ── Vendor Services ── */}
         <SectionTitle title="Vendor Services" />
-        <Card title="VENDOR_DEMO_SERVICES — REMOVED">
-          <div style={{ padding: 16, textAlign: 'center', fontSize: 12, color: TEXT_SEC }}>
-            Demo vendor service data removed. Service records come from Supabase only.
+        <Card title="Vendor Service Records">
+          <div style={{ padding: 20, textAlign: 'center', fontSize: 13, color: TEXT_SEC }}>
+            Service records will appear here once HoodOps completes work at this location.
           </div>
         </Card>
 
