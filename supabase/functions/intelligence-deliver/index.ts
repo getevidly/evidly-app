@@ -6,7 +6,10 @@
  * 1. Finds all organizations with locations in the affected jurisdictions
  * 2. Creates client_intelligence_feed entries for each org with full
  *    8-dimensional risk/opportunity data
- * 3. Logs email notification intents
+ * 3. Sends email notifications for critical/high priority signals
+ *
+ * INTELLIGENCE-PIPELINE-ALIGN-01: Now sends actual email via Resend API
+ * for critical/high priority signals. Medium/low = in-app feed only.
  *
  * Trigger: Called by admin after publishing an advisory, jurisdiction update,
  *          or regulatory update
@@ -14,6 +17,7 @@
  */
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { sendEmail, buildEmailHtml } from '../_shared/email.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -131,6 +135,8 @@ serve(async (req) => {
         signal?.risk_operational || 'none',
       ];
 
+      const priority = computePriority(riskLevels);
+
       const feedEntries = Array.from(orgCountyMap.entries()).map(([orgId, county]) => ({
         organization_id: orgId,
         advisory_id: advisory.id,
@@ -140,7 +146,7 @@ serve(async (req) => {
         category: signal?.category || 'food_safety',
         signal_type: signal?.signal_type || signal?.type || 'intelligence_signal',
         source_name: signal?.source_name || signal?.source || null,
-        priority: computePriority(riskLevels),
+        priority,
         feed_type: 'advisory',
         // 4 risk dimensions
         revenue_risk_level: signal?.risk_revenue || 'none',
@@ -184,7 +190,10 @@ serve(async (req) => {
         if (!insertError) delivered = feedEntries.length;
       }
 
-      emailed = await logEmailIntents(supabase, orgCountyMap, advisory.id, 'client_intelligence_feed', advisory.title);
+      emailed = await sendEmailNotifications(
+        supabase, orgCountyMap, advisory.id, 'client_intelligence_feed',
+        advisory.title, advisory.summary, priority, signal?.recommended_action || null,
+      );
 
     // ── JURISDICTION UPDATE DELIVERY ─────────────────────────────
     } else if (type === 'jurisdiction_update') {
@@ -230,6 +239,8 @@ serve(async (req) => {
         update.risk_operational || 'none',
       ];
 
+      const priority = computePriority(riskLevels);
+
       const feedEntries = Array.from(orgCountyMap.entries()).map(([orgId, county]) => ({
         organization_id: orgId,
         title: update.title,
@@ -237,7 +248,7 @@ serve(async (req) => {
         category: update.pillar || 'food_safety',
         signal_type: 'jurisdiction_change',
         source_name: update.jurisdiction_name || update.county || null,
-        priority: computePriority(riskLevels),
+        priority,
         feed_type: 'jurisdiction',
         // 4 risk dimensions
         revenue_risk_level: update.risk_revenue || 'none',
@@ -288,7 +299,10 @@ serve(async (req) => {
         if (!insertError) delivered = feedEntries.length;
       }
 
-      emailed = await logEmailIntents(supabase, orgCountyMap, update.id, 'jurisdiction_intel_updates', update.title);
+      emailed = await sendEmailNotifications(
+        supabase, orgCountyMap, update.id, 'jurisdiction_intel_updates',
+        update.title, update.description || update.title, priority, update.recommended_action || null,
+      );
 
     // ── REGULATORY UPDATE DELIVERY ───────────────────────────────
     } else if (type === 'regulatory_update') {
@@ -327,6 +341,7 @@ serve(async (req) => {
       }
 
       const impactLevel = update.impact_level || 'moderate';
+      const priority = impactLevel === 'critical' ? 'critical' : impactLevel === 'high' ? 'high' : 'normal';
 
       const feedEntries = Array.from(orgCountyMap.entries()).map(([orgId, county]) => ({
         organization_id: orgId,
@@ -335,7 +350,7 @@ serve(async (req) => {
         category: 'regulatory',
         signal_type: 'regulatory_change',
         source_name: update.source || update.agency || null,
-        priority: impactLevel === 'critical' ? 'critical' : impactLevel === 'high' ? 'high' : 'normal',
+        priority,
         feed_type: 'regulatory',
         // 4 risk dimensions from regulatory analysis
         revenue_risk_level: update.risk_revenue || (impactLevel === 'critical' ? 'high' : 'moderate'),
@@ -384,7 +399,11 @@ serve(async (req) => {
         .update({ published: true, published_at: new Date().toISOString() })
         .eq('id', id);
 
-      emailed = await logEmailIntents(supabase, orgCountyMap, update.id, 'regulatory_changes', update.title);
+      emailed = await sendEmailNotifications(
+        supabase, orgCountyMap, update.id, 'regulatory_changes',
+        update.title, update.summary || update.title, priority,
+        update.recommended_action || `Review ${update.title} and update procedures before ${update.effective_date || 'deadline'}.`,
+      );
     }
 
     return new Response(
@@ -401,33 +420,112 @@ serve(async (req) => {
   }
 });
 
-/** Log email notification intents for all affected orgs */
-async function logEmailIntents(
+/**
+ * Send email notifications for critical/high priority signals.
+ * Medium/low priority = in-app feed entry only, no email.
+ * Never throws — logs errors and continues.
+ */
+async function sendEmailNotifications(
   supabase: any,
   orgCountyMap: Map<string, string | null>,
   entityId: string,
   entityType: string,
   title: string,
+  summary: string,
+  priority: string,
+  recommendedAction: string | null,
 ): Promise<number> {
-  let emailed = 0;
-  for (const orgId of orgCountyMap.keys()) {
-    const { data: owners } = await supabase
-      .from('profiles')
-      .select('email, full_name')
-      .eq('organization_id', orgId)
-      .in('role', ['owner_operator', 'executive', 'compliance_manager']);
+  // Only send email for critical or high priority
+  if (priority !== 'critical' && priority !== 'high') {
+    return 0;
+  }
 
-    for (const owner of (owners || [])) {
-      if (!owner.email) continue;
-      await supabase.from('admin_event_log').insert({
-        event_type: 'intelligence_email_sent',
-        entity_type: entityType,
-        entity_id: entityId,
-        description: `"${title}" emailed to ${owner.email}`,
-        metadata: { recipient: owner.email, recipient_name: owner.full_name, org_id: orgId },
-      });
-      emailed++;
+  let emailed = 0;
+
+  for (const orgId of orgCountyMap.keys()) {
+    try {
+      // Get org users with notification-eligible roles
+      const { data: users } = await supabase
+        .from('user_profiles')
+        .select('id, full_name, role')
+        .eq('organization_id', orgId)
+        .in('role', ['owner_operator', 'executive', 'compliance_manager']);
+
+      for (const user of (users || [])) {
+        try {
+          // Get email from auth.users (user_profiles has no email column)
+          const { data: authUser } = await supabase.auth.admin.getUserById(user.id);
+          const email = authUser?.user?.email;
+          if (!email) continue;
+
+          // Build branded email
+          const urgencyBanner = priority === 'critical'
+            ? { text: 'CRITICAL INTELLIGENCE ALERT', color: '#DC2626' }
+            : { text: 'HIGH PRIORITY INTELLIGENCE', color: '#D97706' };
+
+          const actionBlock = recommendedAction
+            ? `<div style="background: #FEF3C7; border-left: 4px solid #D97706; padding: 12px 16px; margin: 16px 0; border-radius: 4px;">
+                <p style="margin: 0; font-weight: 600; font-size: 13px; color: #92400E;">Recommended Action</p>
+                <p style="margin: 4px 0 0 0; font-size: 14px; color: #78350F;">${recommendedAction}</p>
+              </div>`
+            : '';
+
+          const html = buildEmailHtml({
+            recipientName: user.full_name || 'there',
+            bodyHtml: `
+              <h2 style="color: #1E2D4D; margin: 0 0 12px 0; font-size: 20px;">${title}</h2>
+              <p style="color: #3D5068; font-size: 14px; line-height: 1.6;">${summary}</p>
+              ${actionBlock}
+            `,
+            ctaText: 'View in EvidLY',
+            ctaUrl: 'https://www.getevidly.com/insights/intelligence',
+            urgencyBanner,
+          });
+
+          const result = await sendEmail({
+            to: email,
+            subject: `New Intelligence Alert: ${title}`,
+            html,
+          });
+
+          // Log to admin_event_log (audit trail)
+          await supabase.from('admin_event_log').insert({
+            event_type: 'intelligence_email_sent',
+            entity_type: entityType,
+            entity_id: entityId,
+            description: result
+              ? `"${title}" emailed to ${email}`
+              : `"${title}" email FAILED to ${email}`,
+            metadata: {
+              recipient: email,
+              recipient_name: user.full_name,
+              org_id: orgId,
+              resend_id: result?.id || null,
+              priority,
+            },
+          });
+
+          if (result) emailed++;
+        } catch (userErr) {
+          console.error(`[intelligence-deliver] Email error for user ${user.id}:`, userErr);
+        }
+      }
+
+      // Update feed entries with notification status
+      await supabase
+        .from('client_intelligence_feed')
+        .update({
+          notification_sent: true,
+          notification_sent_at: new Date().toISOString(),
+          notification_channel: 'email',
+        })
+        .eq('organization_id', orgId)
+        .eq(entityType === 'client_intelligence_feed' ? 'advisory_id' : 'title', entityType === 'client_intelligence_feed' ? entityId : title);
+
+    } catch (orgErr) {
+      console.error(`[intelligence-deliver] Email error for org ${orgId}:`, orgErr);
     }
   }
+
   return emailed;
 }

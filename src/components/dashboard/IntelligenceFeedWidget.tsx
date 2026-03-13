@@ -4,11 +4,16 @@
  * Shows latest intelligence items with 4 risk dimension cards.
  * Supports mark-as-actioned and dismiss actions.
  * Used on OwnerOperatorDashboard.
+ *
+ * INTELLIGENCE-PIPELINE-ALIGN-01: Wired to production Supabase query.
+ * Demo mode uses static DEMO_FEED; production queries client_intelligence_feed.
  */
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDemo } from '../../contexts/DemoContext';
-import { AlertTriangle, CheckCircle2, X, ChevronRight, Zap } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '../../lib/supabase';
+import { AlertTriangle, CheckCircle2, X, ChevronRight, Zap, RefreshCw } from 'lucide-react';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -44,11 +49,11 @@ interface FeedItem {
 }
 
 const DIM_META: Record<string, { icon: string; label: string; color: string }> = {
-  revenue:     { icon: '💰', label: 'Revenue',     color: '#C2410C' },
-  liability:   { icon: '⚖️', label: 'Liability',   color: '#991B1B' },
-  cost:        { icon: '💸', label: 'Cost',        color: '#1E40AF' },
-  operational: { icon: '⚙️', label: 'Operational', color: '#166534' },
-  workforce:   { icon: '👷', label: 'Workforce',  color: '#6B21A8' },
+  revenue:     { icon: '\u{1F4B0}', label: 'Revenue',     color: '#C2410C' },
+  liability:   { icon: '\u{2696}\u{FE0F}', label: 'Liability',   color: '#991B1B' },
+  cost:        { icon: '\u{1F4B8}', label: 'Cost',        color: '#1E40AF' },
+  operational: { icon: '\u{2699}\u{FE0F}', label: 'Operational', color: '#166534' },
+  workforce:   { icon: '\u{1F477}', label: 'Workforce',  color: '#6B21A8' },
 };
 
 const LEVEL_COLORS: Record<string, { bg: string; text: string }> = {
@@ -142,28 +147,126 @@ const DEMO_FEED: FeedItem[] = [
   },
 ];
 
+/** Map a client_intelligence_feed DB row to a FeedItem */
+function mapRow(row: any): FeedItem {
+  return {
+    id: row.id,
+    title: row.title,
+    summary: row.summary,
+    category: row.category || undefined,
+    signal_type: row.signal_type || undefined,
+    priority: row.priority || 'normal',
+    revenue_risk:     { level: row.revenue_risk_level || 'none', note: row.revenue_risk_note || undefined },
+    liability_risk:   { level: row.liability_risk_level || 'none', note: row.liability_risk_note || undefined },
+    cost_risk:        { level: row.cost_risk_level || 'none', note: row.cost_risk_note || undefined },
+    operational_risk: { level: row.operational_risk_level || 'none', note: row.operational_risk_note || undefined },
+    opp_revenue:     row.opp_revenue_level ? { level: row.opp_revenue_level, note: row.opp_revenue_note || undefined } : undefined,
+    opp_liability:   row.opp_liability_level ? { level: row.opp_liability_level, note: row.opp_liability_note || undefined } : undefined,
+    opp_cost:        row.opp_cost_level ? { level: row.opp_cost_level, note: row.opp_cost_note || undefined } : undefined,
+    opp_operational: row.opp_operational_level ? { level: row.opp_operational_level, note: row.opp_operational_note || undefined } : undefined,
+    relevance_reason: row.relevance_reason || undefined,
+    recommended_action: row.recommended_action || undefined,
+    action_deadline: row.action_deadline || undefined,
+    feed_type: row.feed_type || 'advisory',
+    created_at: row.delivered_at || row.created_at,
+    is_actioned: row.is_actioned || false,
+    is_dismissed: row.is_dismissed || false,
+  };
+}
+
 export function IntelligenceFeedWidget() {
   const navigate = useNavigate();
   const { isDemoMode } = useDemo();
+  const { profile } = useAuth();
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
   const [actioned, setActioned] = useState<Set<string>>(new Set());
 
-  const items = useMemo(() => {
-    if (!isDemoMode) return [];
-    return DEMO_FEED.filter(item => !dismissed.has(item.id));
-  }, [isDemoMode, dismissed]);
+  // Production state
+  const [liveItems, setLiveItems] = useState<FeedItem[]>([]);
+  const [loading, setLoading] = useState(!isDemoMode);
+  const [error, setError] = useState<string | null>(null);
 
-  const unactioned = items.filter(i => !actioned.has(i.id));
+  const orgId = profile?.organization_id;
+
+  // Fetch live feed items
+  const fetchFeed = useCallback(async () => {
+    if (isDemoMode || !orgId) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const { data, error: queryError } = await supabase
+        .from('client_intelligence_feed')
+        .select('*')
+        .eq('organization_id', orgId)
+        .eq('is_dismissed', false)
+        .order('delivered_at', { ascending: false })
+        .limit(5);
+
+      if (queryError) {
+        console.error('[IntelligenceFeedWidget] Query error:', queryError);
+        setError('Unable to load updates');
+      } else {
+        setLiveItems((data || []).map(mapRow));
+      }
+    } catch (err) {
+      console.error('[IntelligenceFeedWidget] Fetch error:', err);
+      setError('Unable to load updates');
+    } finally {
+      setLoading(false);
+    }
+  }, [isDemoMode, orgId]);
+
+  useEffect(() => { fetchFeed(); }, [fetchFeed]);
+
+  // Realtime subscription for new feed items
+  useEffect(() => {
+    if (isDemoMode || !orgId) return;
+    const channel = supabase
+      .channel('intelligence-feed')
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'client_intelligence_feed',
+        filter: `organization_id=eq.${orgId}`,
+      }, (payload) => {
+        setLiveItems(prev => [mapRow(payload.new), ...prev].slice(0, 5));
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [isDemoMode, orgId]);
+
+  const items = useMemo(() => {
+    if (isDemoMode) return DEMO_FEED.filter(item => !dismissed.has(item.id));
+    return liveItems;
+  }, [isDemoMode, dismissed, liveItems]);
+
+  const unactioned = items.filter(i => !actioned.has(i.id) && !i.is_actioned);
   const criticalCount = unactioned.filter(i => i.priority === 'critical').length;
 
-  if (items.length === 0) return null;
-
-  const handleAction = (id: string) => {
+  const handleAction = async (id: string) => {
+    if (isDemoMode) {
+      setActioned(prev => new Set(prev).add(id));
+      return;
+    }
+    // Production: update DB
     setActioned(prev => new Set(prev).add(id));
+    await supabase
+      .from('client_intelligence_feed')
+      .update({ is_actioned: true, actioned_at: new Date().toISOString() })
+      .eq('id', id);
   };
 
-  const handleDismiss = (id: string) => {
-    setDismissed(prev => new Set(prev).add(id));
+  const handleDismiss = async (id: string) => {
+    if (isDemoMode) {
+      setDismissed(prev => new Set(prev).add(id));
+      return;
+    }
+    // Production: update DB + remove from local state
+    setLiveItems(prev => prev.filter(item => item.id !== id));
+    await supabase
+      .from('client_intelligence_feed')
+      .update({ is_dismissed: true, dismissed_at: new Date().toISOString() })
+      .eq('id', id);
   };
 
   const timeAgo = (dateStr: string) => {
@@ -231,6 +334,78 @@ export function IntelligenceFeedWidget() {
     );
   };
 
+  // Loading state (production only)
+  if (!isDemoMode && loading) {
+    return (
+      <div className="bg-white rounded-lg overflow-hidden" style={{ border: '1px solid #e5e7eb' }}>
+        <div className="flex items-center gap-2 px-4 py-3" style={{ borderBottom: '1px solid #F0F0F0' }}>
+          <Zap size={14} style={{ color: GOLD }} />
+          <span className="text-sm font-semibold" style={{ color: NAVY }}>Business Intelligence</span>
+        </div>
+        {[1, 2].map(i => (
+          <div key={i} className="px-4 py-3 animate-pulse" style={{ borderBottom: '1px solid #F0F0F0' }}>
+            <div className="flex items-center gap-2 mb-2">
+              <div className="h-3 w-12 bg-gray-200 rounded" />
+              <div className="h-3 w-16 bg-gray-200 rounded" />
+            </div>
+            <div className="h-4 w-3/4 bg-gray-200 rounded mb-1" />
+            <div className="h-3 w-full bg-gray-100 rounded" />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  // Error state (production only)
+  if (!isDemoMode && error) {
+    return (
+      <div className="bg-white rounded-lg overflow-hidden" style={{ border: '1px solid #e5e7eb' }}>
+        <div className="flex items-center gap-2 px-4 py-3" style={{ borderBottom: '1px solid #F0F0F0' }}>
+          <Zap size={14} style={{ color: GOLD }} />
+          <span className="text-sm font-semibold" style={{ color: NAVY }}>Business Intelligence</span>
+        </div>
+        <div className="px-4 py-6 text-center">
+          <p className="text-xs" style={{ color: MUTED }}>{error}</p>
+          <button
+            type="button"
+            onClick={fetchFeed}
+            className="mt-2 text-xs font-medium inline-flex items-center gap-1 transition-colors hover:opacity-80"
+            style={{ color: GOLD }}
+          >
+            <RefreshCw size={12} /> Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Empty state — always show widget, never return null
+  if (items.length === 0) {
+    return (
+      <div className="bg-white rounded-lg overflow-hidden" style={{ border: '1px solid #e5e7eb' }}>
+        <button
+          type="button"
+          onClick={() => navigate('/insights/intelligence')}
+          className="w-full flex items-center justify-between px-4 py-3 text-left transition-colors hover:bg-gray-50"
+          style={{ borderBottom: '1px solid #F0F0F0' }}
+        >
+          <div className="flex items-center gap-2">
+            <Zap size={14} style={{ color: GOLD }} />
+            <span className="text-sm font-semibold" style={{ color: NAVY }}>Business Intelligence</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="text-[11px] font-medium" style={{ color: GOLD }}>View all</span>
+            <ChevronRight size={14} style={{ color: GOLD }} />
+          </div>
+        </button>
+        <div className="px-4 py-6 text-center">
+          <Zap size={20} className="mx-auto mb-2" style={{ color: '#D1D5DB' }} />
+          <p className="text-xs" style={{ color: MUTED }}>No new intelligence updates</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white rounded-lg overflow-hidden" style={{ border: '1px solid #e5e7eb' }}>
       {/* Header */}
@@ -257,7 +432,7 @@ export function IntelligenceFeedWidget() {
 
       {/* Feed items (show max 3) */}
       {items.slice(0, 3).map(item => {
-        const isActioned = actioned.has(item.id);
+        const isActioned = actioned.has(item.id) || item.is_actioned;
         const dotColor = PRIORITY_DOT[item.priority] || PRIORITY_DOT.normal;
 
         return (
