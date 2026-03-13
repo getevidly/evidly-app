@@ -231,3 +231,80 @@ export type {
   CreateVehicleInsuranceInput,
   CreateRoadsideInput,
 } from './useInsurance';
+
+// Bonuses & Performance
+export {
+  useBonusConfiguration,
+  useQuarterlyMetrics,
+  useCalculateBonus,
+  useBonusSummary,
+  useCallbacks,
+  useCreateCallback,
+  useUpdateBonusConfiguration,
+  getCurrentQuarter,
+  getQuarterDateRange,
+  BONUS_MULTIPLIER_METRICS,
+  BONUS_KILLERS,
+} from './useBonuses';
+
+export type {
+  BonusConfiguration,
+  PerformanceMetrics,
+  BonusSummary,
+  JobCallback,
+  CreateCallbackInput,
+} from './useBonuses';
+
+// Inventory
+export {
+  useInventoryItems,
+  useInventoryItem,
+  useInventoryTransactions,
+  useInventoryRequests,
+  useLogUsage,
+  useCreateInventoryRequest,
+  useApproveInventoryRequest,
+  useDenyInventoryRequest,
+  useCreateInventoryItem,
+  useUpdateInventoryItem,
+} from './useInventory';
+
+export type {
+  InventoryItem,
+  InventoryCategory,
+  InventoryTransaction,
+  TransactionType,
+  InventoryRequest,
+  InventoryRequestItem,
+  RequestStatus,
+  RequestPriority,
+  InventoryFilters,
+  LogUsageInput,
+  CreateRequestInput,
+} from './useInventory';
+
+// Incidents (Equipment + Safety)
+export {
+  useEquipmentIncidents,
+  useCreateEquipmentIncident,
+  useResolveEquipmentIncident,
+  useIncidentReports,
+  useIncidentReport,
+  useCreateIncidentReport,
+  useUpdateIncidentReport,
+  useInvestigateIncident,
+} from './useIncidents';
+
+export type {
+  EquipmentIncident,
+  EquipmentIncidentType,
+  IncidentReport as SafetyIncidentReport,
+  SafetyIncidentType,
+  IncidentSeverity,
+  IncidentReportStatus,
+  EquipmentIncidentFilters,
+  SafetyIncidentFilters,
+  CreateEquipmentIncidentInput,
+  CreateIncidentReportInput,
+  InvestigateInput,
+} from './useIncidents';

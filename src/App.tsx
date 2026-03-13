@@ -236,6 +236,17 @@ const EmergencyInfoPage = lazy(() => import('./pages/EmergencyInfoPage').then(m 
 const AvailabilitySubmissionPage = lazy(() => import('./pages/availability/AvailabilitySubmissionPage').then(m => ({ default: m.AvailabilitySubmissionPage })));
 const TeamAvailabilityPage = lazy(() => import('./pages/availability/TeamAvailabilityPage').then(m => ({ default: m.TeamAvailabilityPage })));
 const AvailabilityApprovalsPage = lazy(() => import('./pages/availability/AvailabilityApprovalsPage').then(m => ({ default: m.AvailabilityApprovalsPage })));
+const BonusDashboardPage = lazy(() => import('./pages/bonuses/BonusDashboardPage').then(m => ({ default: m.BonusDashboardPage })));
+const PerformanceMetricsPage = lazy(() => import('./pages/performance/PerformanceMetricsPage').then(m => ({ default: m.PerformanceMetricsPage })));
+const MyPerformancePage = lazy(() => import('./pages/performance/MyPerformancePage').then(m => ({ default: m.MyPerformancePage })));
+const CallbacksPage = lazy(() => import('./pages/quality/CallbacksPage').then(m => ({ default: m.CallbacksPage })));
+const InventoryPage = lazy(() => import('./pages/inventory/InventoryPage').then(m => ({ default: m.InventoryPage })));
+const InventoryItemPage = lazy(() => import('./pages/inventory/InventoryItemPage').then(m => ({ default: m.InventoryItemPage })));
+const InventoryRequestsPage = lazy(() => import('./pages/inventory/InventoryRequestsPage').then(m => ({ default: m.InventoryRequestsPage })));
+const EquipmentIncidentsPage = lazy(() => import('./pages/equipment/EquipmentIncidentsPage').then(m => ({ default: m.EquipmentIncidentsPage })));
+const IncidentReportsPage = lazy(() => import('./pages/safety/IncidentReportsPage').then(m => ({ default: m.IncidentReportsPage })));
+const ReportIncidentPage = lazy(() => import('./pages/safety/ReportIncidentPage').then(m => ({ default: m.ReportIncidentPage })));
+const IncidentDetailPage = lazy(() => import('./pages/safety/IncidentDetailPage').then(m => ({ default: m.IncidentDetailPage })));
 
 import { CookieConsent } from './components/CookieConsent';
 import { usePageTracking } from './hooks/usePageTracking';
@@ -605,6 +616,17 @@ function AppRoutes() {
           <Route path="/availability" element={<AvailabilitySubmissionPage />} />
           <Route path="/availability/team" element={<TeamAvailabilityPage />} />
           <Route path="/availability/approvals" element={<AvailabilityApprovalsPage />} />
+          <Route path="/bonuses" element={<BonusDashboardPage />} />
+          <Route path="/performance" element={<PerformanceMetricsPage />} />
+          <Route path="/performance/me" element={<MyPerformancePage />} />
+          <Route path="/quality/callbacks" element={<CallbacksPage />} />
+          <Route path="/inventory" element={<InventoryPage />} />
+          <Route path="/inventory/requests" element={<InventoryRequestsPage />} />
+          <Route path="/inventory/:id" element={<InventoryItemPage />} />
+          <Route path="/equipment/incidents" element={<EquipmentIncidentsPage />} />
+          <Route path="/safety/incidents" element={<IncidentReportsPage />} />
+          <Route path="/safety/incidents/new" element={<ReportIncidentPage />} />
+          <Route path="/safety/incidents/:id" element={<IncidentDetailPage />} />
           <Route path="/help" element={<Help />} />
           <Route path="/weekly-digest" element={<WeeklyDigest />} />
           <Route path="/audit-report" element={<AuditReport />} />
