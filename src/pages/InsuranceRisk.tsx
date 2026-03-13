@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FeatureGate } from '../components/feature-flags/FeatureGate';
 import { toast } from 'sonner';
 import {
   Flame,
@@ -464,6 +465,7 @@ export function InsuranceRisk() {
   };
 
   return (
+    <FeatureGate flagKey="insurance_risk">
     <div className="max-w-6xl mx-auto" style={F}>
       {/* Breadcrumb */}
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Insurance Risk Score' }]} />
@@ -1229,5 +1231,6 @@ export function InsuranceRisk() {
         />
       )}
     </div>
+    </FeatureGate>
   );
 }

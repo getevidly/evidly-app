@@ -11,6 +11,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
+import { FeatureGate } from '../../components/feature-flags/FeatureGate';
 import { KpiTile } from '../../components/admin/KpiTile';
 
 const NAVY = '#1E2D4D';
@@ -229,6 +230,7 @@ export default function ViolationOutreach() {
   }
 
   return (
+    <FeatureGate flagKey="violation_outreach">
     <div className="space-y-6">
       <AdminBreadcrumb crumbs={[{ label: 'Violation Outreach' }]} />
       <div>
@@ -585,5 +587,6 @@ export default function ViolationOutreach() {
         </div>
       )}
     </div>
+    </FeatureGate>
   );
 }

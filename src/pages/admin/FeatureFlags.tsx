@@ -13,6 +13,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { KpiTile } from '../../components/admin/KpiTile';
+import { AIAssistButton } from '../../components/ui/AIAssistButton';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -699,12 +700,20 @@ export default function FeatureFlags() {
                         </button>
                       </div>
                       <div style={{ marginTop: 6, display: 'flex', flexDirection: 'column', gap: 6 }}>
-                        <input
-                          style={inputStyle}
-                          placeholder="Title (shown as heading)"
-                          value={f.disabled_message_title ?? ''}
-                          onChange={e => updateEdit(f.key, { disabled_message_title: e.target.value })}
-                        />
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                          <input
+                            style={{ ...inputStyle, flex: 1 }}
+                            placeholder="Title (shown as heading)"
+                            value={f.disabled_message_title ?? ''}
+                            onChange={e => updateEdit(f.key, { disabled_message_title: e.target.value })}
+                          />
+                          <AIAssistButton
+                            fieldLabel="Disabled Feature Title"
+                            context={{ featureName: f.name, triggerType: f.trigger_type, section: f.section }}
+                            currentValue={f.disabled_message_title ?? ''}
+                            onGenerated={(text) => updateEdit(f.key, { disabled_message_title: text })}
+                          />
+                        </div>
                         <textarea
                           style={{ ...inputStyle, minHeight: 60, resize: 'vertical', fontFamily: 'inherit' }}
                           placeholder="Message body (shown to operators when feature is unavailable)"

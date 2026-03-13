@@ -3,6 +3,7 @@ import { Trophy, Flame, Star, TrendingUp, TrendingDown, Minus, Shield, Target, Z
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Breadcrumb } from '../components/Breadcrumb';
+import { FeatureGate } from '../components/feature-flags/FeatureGate';
 
 interface LeaderboardEntry {
   id: string;
@@ -116,7 +117,7 @@ export function Leaderboard() {
   // Empty state
   if (!loading && entries.length === 0) {
     return (
-      <>
+      <FeatureGate flagKey="leaderboard">
         <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Leaderboard' }]} />
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 20px', textAlign: 'center' }}>
           <div style={{ fontSize: 64, marginBottom: 16 }}>{'🏆'}</div>
@@ -143,12 +144,12 @@ export function Leaderboard() {
             Preview what it looks like {'→'}
           </a>
         </div>
-      </>
+      </FeatureGate>
     );
   }
 
   return (
-    <>
+    <FeatureGate flagKey="leaderboard">
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Leaderboard' }]} />
       <div className="space-y-6">
         {/* Header */}
@@ -392,6 +393,6 @@ export function Leaderboard() {
           to { opacity: 1; transform: translateY(0); }
         }
       `}</style>
-    </>
+    </FeatureGate>
   );
 }
