@@ -12,6 +12,7 @@ import {
   LOCATION_JURISDICTION_STATUS,
   locations as demoLocations,
 } from '../data/demoData';
+import type { JurisdictionScoringType } from '../data/demoData';
 
 // ── Types ──────────────────────────────────────────────────
 
@@ -26,6 +27,15 @@ export interface LocationStanding {
   facilitySafetyReason: string | null;
   openItemCount: number;
   criticalItemCount: number;
+  // Jurisdiction-specific display data (populated when jurisdiction config is available)
+  foodGradeDisplay?: string;
+  foodScoringType?: JurisdictionScoringType;
+  foodAuthority?: string;
+  foodDetail?: string;
+  foodStatus?: 'passing' | 'at_risk' | 'failing' | 'unknown';
+  facilityGradeDisplay?: string;
+  facilityAuthority?: string;
+  facilityStatus?: 'passing' | 'failing';
 }
 
 export interface AttentionItem {
@@ -114,6 +124,15 @@ function buildDemoStandings(): LocationStanding[] {
       facilitySafetyReason: facilityReason,
       openItemCount: openItems,
       criticalItemCount: criticalItems,
+      // Jurisdiction-specific display data
+      foodGradeDisplay: jurisdictionStatus?.foodSafety.gradeDisplay,
+      foodScoringType: jurisdictionStatus?.foodSafety.scoring_type,
+      foodAuthority: jurisdictionStatus?.foodSafety.authority,
+      foodDetail: jurisdictionStatus?.foodSafety.detail,
+      foodStatus: jurisdictionStatus?.foodSafety.status,
+      facilityGradeDisplay: jurisdictionStatus?.facilitySafety.gradeDisplay,
+      facilityAuthority: jurisdictionStatus?.facilitySafety.authority,
+      facilityStatus: jurisdictionStatus?.facilitySafety.status,
     };
   });
 }

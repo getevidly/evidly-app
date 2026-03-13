@@ -27,7 +27,7 @@ export interface LocationContextPayload {
   priorScores: { foodSafety: number; facilitySafety: number };
   scoreDelta: { foodSafety: number; facilitySafety: number };
   jurisdictionStatus: {
-    foodSafety: { status: string; gradeDisplay: string; authority: string; model: string };
+    foodSafety: { status: string; gradeDisplay: string; authority: string; scoring_type: string };
     facilitySafety: { status: string; gradeDisplay: string; authority: string };
   };
   lastInspection: {
@@ -186,7 +186,7 @@ export function buildLocationContextPayload(locationId: string): LocationContext
         status: jStatus.foodSafety.status,
         gradeDisplay: jStatus.foodSafety.gradeDisplay,
         authority: jStatus.foodSafety.authority,
-        model: jStatus.foodSafety.model,
+        scoring_type: jStatus.foodSafety.scoring_type,
       },
       facilitySafety: {
         status: jStatus.facilitySafety.status,
@@ -254,7 +254,7 @@ export function formatPayloadForPrompt(payload: LocationContextPayload): string 
 
   // Jurisdiction
   lines.push('JURISDICTION STATUS:');
-  lines.push(`  Food Safety: ${payload.jurisdictionStatus.foodSafety.gradeDisplay} (${payload.jurisdictionStatus.foodSafety.status}) — ${payload.jurisdictionStatus.foodSafety.authority}, ${payload.jurisdictionStatus.foodSafety.model} model`);
+  lines.push(`  Food Safety: ${payload.jurisdictionStatus.foodSafety.gradeDisplay} (${payload.jurisdictionStatus.foodSafety.status}) — ${payload.jurisdictionStatus.foodSafety.authority}, ${payload.jurisdictionStatus.foodSafety.scoring_type}`);
   lines.push(`  Facility Safety: ${payload.jurisdictionStatus.facilitySafety.gradeDisplay} (${payload.jurisdictionStatus.facilitySafety.status}) — ${payload.jurisdictionStatus.facilitySafety.authority}`);
   lines.push('');
 

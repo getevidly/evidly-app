@@ -1,13 +1,15 @@
 /**
- * LocationStandingList — Renders locations with two-pillar standing pills
+ * LocationStandingList — Renders locations with jurisdiction-native grade displays
  *
- * Each location shows Food Safety + Facility Safety standing as colored pills.
- * Clicking a location navigates to its detail view.
+ * When jurisdiction data is available (scoring_type + gradeDisplay), shows
+ * the result EXACTLY as the jurisdiction produces it via JurisdictionResult.
+ * Falls back to generic status dots when jurisdiction config is not loaded.
  */
 
 import type { NavigateFunction } from 'react-router-dom';
 import { BODY_TEXT, NAVY } from './constants';
 import type { LocationStanding, StandingLevel } from '../../../hooks/useDashboardStanding';
+import { JurisdictionResult } from '../../jurisdiction/JurisdictionResult';
 
 interface LocationStandingListProps {
   standings: LocationStanding[];
@@ -21,7 +23,12 @@ const STANDING_CONFIG: Record<StandingLevel, { dot: string; label: string; textC
   unknown: { dot: '#94a3b8', label: '—',     textColor: '#94a3b8' },
 };
 
-function StandingPill({ pillar, level, reason }: { pillar: string; level: StandingLevel; reason: string | null }) {
+const FACILITY_STATUS_STYLE = {
+  passing: { bg: '#DCFCE7', text: '#166534' },
+  failing: { bg: '#FEE2E2', text: '#991B1B' },
+} as const;
+
+function FallbackPill({ pillar, level, reason }: { pillar: string; level: StandingLevel; reason: string | null }) {
   const config = STANDING_CONFIG[level];
   const displayText = level === 'action' && reason ? reason : config.label;
 
@@ -59,11 +66,50 @@ export function LocationStandingList({ standings, navigate }: LocationStandingLi
             style={{ borderBottom: '1px solid #F0F0F0' }}
           >
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold mb-1" style={{ color: BODY_TEXT }}>{s.locationName}</p>
-              <div className="flex flex-wrap gap-x-4 gap-y-1">
-                <StandingPill pillar="Food" level={s.foodSafety} reason={s.foodSafetyReason} />
-                <StandingPill pillar="Facility" level={s.facilitySafety} reason={s.facilitySafetyReason} />
+              <p className="text-sm font-semibold mb-1.5" style={{ color: BODY_TEXT }}>{s.locationName}</p>
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                {/* Food Safety — jurisdiction-native result or fallback */}
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[10px] font-medium uppercase tracking-wide" style={{ color: '#6B7F96' }}>
+                    Food
+                  </span>
+                  {s.foodScoringType && s.foodGradeDisplay ? (
+                    <JurisdictionResult
+                      scoringType={s.foodScoringType}
+                      gradeDisplay={s.foodGradeDisplay}
+                      status={s.foodStatus ?? 'unknown'}
+                      compact
+                    />
+                  ) : (
+                    <FallbackPill pillar="" level={s.foodSafety} reason={s.foodSafetyReason} />
+                  )}
+                </div>
+                {/* Facility Safety — pass/fail badge */}
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[10px] font-medium uppercase tracking-wide" style={{ color: '#6B7F96' }}>
+                    Facility
+                  </span>
+                  {s.facilityGradeDisplay && s.facilityStatus ? (
+                    <span
+                      className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold"
+                      style={{
+                        backgroundColor: FACILITY_STATUS_STYLE[s.facilityStatus].bg,
+                        color: FACILITY_STATUS_STYLE[s.facilityStatus].text,
+                      }}
+                    >
+                      {s.facilityGradeDisplay}
+                    </span>
+                  ) : (
+                    <FallbackPill pillar="" level={s.facilitySafety} reason={s.facilitySafetyReason} />
+                  )}
+                </div>
               </div>
+              {/* Authority attribution line */}
+              {s.foodAuthority && (
+                <div className="mt-1 text-[10px] text-gray-400 truncate">
+                  {s.foodAuthority}{s.facilityAuthority ? ` · ${s.facilityAuthority}` : ''}
+                </div>
+              )}
             </div>
             {s.openItemCount > 0 && (
               <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-red-50 text-red-700">

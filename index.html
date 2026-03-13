@@ -4,35 +4,30 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#1e4d6b" />
+    <meta name="theme-color" content="#1E2D4D" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <link rel="manifest" href="/manifest.json" />
     <link rel="apple-touch-icon" href="/icon-192.png" />
-    <title>EvidLY — Lead with Confidence | Food Safety & Facility Safety</title>
-    <meta name="description" content="EvidLY automates commercial kitchen compliance — temperature monitoring, daily checklists, facility safety documentation, vendor management, and AI-powered insights. Trusted by Aramark at Yosemite National Park. Start your free trial." />
-    <link rel="canonical" href="https://evidly.com" />
+    <title>EvidLY — Operations Intelligence for California Commercial Kitchens</title>
+    <meta name="description" content="Food safety and facility safety — scored against your county's actual grading method. Temperature monitoring, daily checklists, vendor compliance, and AI-powered risk intelligence. Built from 300+ kitchens a year. Founder pricing: $99/mo." />
+    <link rel="canonical" href="https://getevidly.com" />
 
-    <!-- Per-page robot directives via react-helmet-async (public pages: index,follow; app pages: noindex) -->
-    <!-- Prevent caching by intermediaries -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
     <!-- Prevent content from being used in AI training -->
     <meta name="ai-content-policy" content="disallow-training" />
 
     <!-- Open Graph -->
-    <meta property="og:title" content="EvidLY — Lead with Confidence — Know Where You Stand" />
-    <meta property="og:description" content="Automate food safety, facility safety, and vendor compliance. AI-powered insights, real-time monitoring, and inspection-ready documentation." />
-    <meta property="og:image" content="https://evidly.com/dashboard-hero.png" />
-    <meta property="og:url" content="https://evidly.com" />
+    <meta property="og:title" content="EvidLY — Operations Intelligence for California Commercial Kitchens" />
+    <meta property="og:description" content="Food safety and facility safety in one dashboard. Scored against your county's actual grading method. Free Operations Check — see where your kitchen stands in 2 minutes." />
+    <meta property="og:image" content="https://getevidly.com/dashboard-hero.png" />
+    <meta property="og:url" content="https://getevidly.com" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="EvidLY" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="EvidLY — Lead with Confidence — Know Where You Stand" />
-    <meta name="twitter:description" content="Automate food safety, facility safety, and vendor compliance for commercial kitchens." />
-    <meta name="twitter:image" content="https://evidly.com/dashboard-hero.png" />
+    <meta name="twitter:title" content="EvidLY — Operations Intelligence for California Commercial Kitchens" />
+    <meta name="twitter:description" content="Food safety and facility safety — scored against your county. Free Operations Check in 2 minutes." />
+    <meta name="twitter:image" content="https://getevidly.com/dashboard-hero.png" />
 
     <!-- Structured Data -->
     <script type="application/ld+json">
@@ -41,45 +36,49 @@
       "@type": "SoftwareApplication",
       "name": "EvidLY",
       "applicationCategory": "BusinessApplication",
-      "operatingSystem": "Web, iOS, Android",
-      "description": "Commercial kitchen food safety and facility safety management — vendor management, AI-powered insights.",
-      "url": "https://evidly.com",
+      "operatingSystem": "Web",
+      "description": "Operations intelligence platform for California commercial kitchens — food safety, facility safety, vendor compliance, and AI-powered risk intelligence.",
+      "url": "https://getevidly.com",
       "offers": {
         "@type": "Offer",
         "price": "99",
         "priceCurrency": "USD",
-        "priceValidUntil": "2026-12-31",
-        "description": "Founder Tier — limited to 100 customers"
+        "priceValidUntil": "2026-07-04",
+        "description": "Founder Pricing — limited to 50 operators, locked for life"
       }
     }
     </script>
 
+    <!-- Fonts: loaded async to avoid render-blocking -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@800&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <!-- Leaflet: loaded only when needed by map components -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" media="print" onload="this.media='all'" />
 
-    <!-- Google Analytics 4 -->
-    <!-- TODO: Replace G-XXXXXXXXXX with actual GA4 Measurement ID from https://analytics.google.com -->
+    <!-- Google Analytics 4 — disabled until real measurement ID is configured -->
+    <!-- To enable: replace YOUR_GA4_ID with your actual GA4 Measurement ID -->
+    <!--
     <script>
-      // Only load GA4 if user has accepted cookies
       (function() {
         if (localStorage.getItem('evidly-cookie-consent') === 'declined') return;
         var s = document.createElement('script');
         s.async = true;
-        s.src = 'https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX';
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=YOUR_GA4_ID';
         document.head.appendChild(s);
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         window.gtag = gtag;
         gtag('js', new Date());
-        gtag('config', 'G-XXXXXXXXXX', { send_page_view: false });
+        gtag('config', 'YOUR_GA4_ID', { send_page_view: false });
       })();
     </script>
+    -->
 
-    <!-- ZoomInfo WebSights — public pages only, respects cookie consent -->
-    <!-- TODO: Replace ZOOMINFO_PIXEL_ID with actual ZoomInfo pixel ID from https://www.zoominfo.com -->
+    <!-- ZoomInfo WebSights — disabled until real pixel ID is configured -->
+    <!-- To enable: replace YOUR_ZOOMINFO_ID with your actual ZoomInfo pixel ID -->
+    <!--
     <script>
       (function() {
         if (localStorage.getItem('evidly-cookie-consent') === 'declined') return;
@@ -90,22 +89,17 @@
         var zi = document.createElement('script');
         zi.type = 'text/javascript';
         zi.async = true;
-        zi.referrerPolicy = 'unsafe-url';
-        zi.src = 'https://ws.zoominfo.com/pixel/ZOOMINFO_PIXEL_ID';
+        zi.referrerPolicy = 'strict-origin-when-cross-origin';
+        zi.src = 'https://ws.zoominfo.com/pixel/YOUR_ZOOMINFO_ID';
         var s = document.getElementsByTagName('script')[0];
         s.parentNode.insertBefore(zi, s);
       })();
     </script>
-    <!-- Calendly widget -->
-    <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet" />
-    <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
+    -->
   </head>
   <body>
-    <noscript>
-      <img src="https://ws.zoominfo.com/pixel/ZOOMINFO_PIXEL_ID" width="1" height="1" style="display:none;" alt="" />
-    </noscript>
     <div id="root"></div>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" defer></script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -49,12 +49,22 @@ export const demoReferral = {
 // NO numeric overall scores. NO Vendor Compliance pillar.
 // ============================================================
 
+// Canonical scoring types — matches grading_config.scoring_type in jurisdictions table
+export type JurisdictionScoringType =
+  | 'letter_grade'        // A/B/C (LA, San Diego, San Bernardino)
+  | 'letter_grade_strict' // Only A passes (Riverside)
+  | 'numeric'             // 87/100 (Fresno, Alameda)
+  | 'color_placard'       // Green/Yellow/Red (Sacramento, Santa Clara)
+  | 'three_tier_rating'   // Good/Satisfactory/Unsatisfactory (Merced)
+  | 'violation_report';   // Count only, no grade (Stanislaus)
+
 export interface LocationJurisdictionStatus {
   foodSafety: {
     status: 'passing' | 'at_risk' | 'failing';
-    gradeDisplay: string;
-    authority: string;
-    model: 'violation_based' | 'three_tier_points';
+    gradeDisplay: string;       // The actual grade/result as the jurisdiction produces it
+    authority: string;          // Agency name
+    scoring_type: JurisdictionScoringType;
+    detail?: string;            // Extra context (e.g. "0 major / 2 minor")
   };
   facilitySafety: {
     status: 'passing' | 'failing';
@@ -65,16 +75,34 @@ export interface LocationJurisdictionStatus {
 
 export const LOCATION_JURISDICTION_STATUS: Record<string, LocationJurisdictionStatus> = {
   downtown: {
-    foodSafety: { status: 'passing', gradeDisplay: 'Compliant', authority: 'Fresno County DPH', model: 'violation_based' },
-    facilitySafety: { status: 'passing', gradeDisplay: 'Pass', authority: 'NFPA 96' },
+    foodSafety: {
+      status: 'passing',
+      gradeDisplay: 'No Open Majors',
+      authority: 'Fresno County DPH',
+      scoring_type: 'violation_report',
+      detail: '0 major / 2 minor',
+    },
+    facilitySafety: { status: 'passing', gradeDisplay: 'Pass', authority: 'Fresno County Fire' },
   },
   airport: {
-    foodSafety: { status: 'at_risk', gradeDisplay: 'Satisfactory', authority: 'Merced County DPH', model: 'three_tier_points' },
-    facilitySafety: { status: 'failing', gradeDisplay: 'Fail', authority: 'NFPA 96' },
+    foodSafety: {
+      status: 'at_risk',
+      gradeDisplay: 'Satisfactory',
+      authority: 'Merced County DPH',
+      scoring_type: 'three_tier_rating',
+      detail: '9 points (7-13 = Satisfactory)',
+    },
+    facilitySafety: { status: 'failing', gradeDisplay: 'Fail', authority: 'Merced County Fire' },
   },
   university: {
-    foodSafety: { status: 'failing', gradeDisplay: 'Action Required', authority: 'Stanislaus County DER', model: 'violation_based' },
-    facilitySafety: { status: 'failing', gradeDisplay: 'Fail', authority: 'NFPA 96' },
+    foodSafety: {
+      status: 'failing',
+      gradeDisplay: '2 Open Majors',
+      authority: 'Stanislaus County DER',
+      scoring_type: 'violation_report',
+      detail: '2 major / 4 minor — reinspection required',
+    },
+    facilitySafety: { status: 'failing', gradeDisplay: 'Fail', authority: 'Modesto Fire Dept' },
   },
 };
 

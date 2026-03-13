@@ -88,7 +88,28 @@
       "Bash(ping:*)",
       "Bash(nslookup:*)",
       "Bash(v3)",
-      "Bash(fresh \")"
+      "Bash(fresh \")",
+      "Bash(where:*)",
+      "Bash(dir /s /b \"%APPDATA%\\\\supabase\\\\*\")",
+      "Bash(printenv:*)",
+      "Bash(del \"C:\\\\Users\\\\newpa\\\\Downloads\\\\evidly-demo-final\\\\evidly-app-main\\\\src\\\\pages\\\\admin\\\\RolePreview.tsx\")",
+      "Bash(pnpm install:*)",
+      "Bash(npx turbo build:*)",
+      "Bash(git init:*)",
+      "Bash(supabase:*)",
+      "Bash(pnpm add:*)",
+      "Bash(npx:*)",
+      "Bash(cmdkey /list)",
+      "Bash(pnpm build:*)",
+      "Bash(env:*)",
+      "Bash(pnpm list:*)",
+      "Bash(npm i:*)",
+      "Bash(cmd /c \"cd C:\\\\Users\\\\newpa\\\\Downloads\\\\hoodops-pro && pnpm build\")",
+      "Bash(cmd /c \"cd /d C:\\\\Users\\\\newpa\\\\Downloads\\\\hoodops-pro && dir /b\")",
+      "Bash(cmd /c \"mkdir C:\\\\Users\\\\newpa\\\\Downloads\\\\hoodops-pro\\\\apps\\\\web-vendor\\\\src\\\\pages\\\\jobs 2>nul & mkdir C:\\\\Users\\\\newpa\\\\Downloads\\\\hoodops-pro\\\\apps\\\\web-vendor\\\\src\\\\components\\\\jobs 2>nul & echo done\")",
+      "Bash(cmd /c \"if not exist C:\\\\Users\\\\newpa\\\\Downloads\\\\hoodops-pro\\\\apps\\\\web-vendor\\\\src\\\\pages\\\\jobs mkdir C:\\\\Users\\\\newpa\\\\Downloads\\\\hoodops-pro\\\\apps\\\\web-vendor\\\\src\\\\pages\\\\jobs && if not exist C:\\\\Users\\\\newpa\\\\Downloads\\\\hoodops-pro\\\\apps\\\\web-vendor\\\\src\\\\components\\\\jobs mkdir C:\\\\Users\\\\newpa\\\\Downloads\\\\hoodops-pro\\\\apps\\\\web-vendor\\\\src\\\\components\\\\jobs && echo done\")",
+      "Bash(del \"C:\\\\Users\\\\newpa\\\\Downloads\\\\hoodops-pro\\\\apps\\\\web-vendor\\\\src\\\\pages\\\\JobsPage.tsx\")",
+      "Bash(del \"C:\\\\Users\\\\newpa\\\\Downloads\\\\hoodops-pro\\\\apps\\\\web-vendor\\\\src\\\\pages\\\\JobDetailPage.tsx\")"
     ]
   }
 }

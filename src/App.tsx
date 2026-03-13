@@ -63,6 +63,7 @@ const CicPseView = lazy(() => import('./pages/CicPseView').then(m => ({ default:
 const Equipment = lazy(() => import('./pages/Equipment').then(m => ({ default: m.Equipment })));
 const EquipmentDetail = lazy(() => import('./pages/EquipmentDetail').then(m => ({ default: m.EquipmentDetail })));
 const ServiceRecordEntry = lazy(() => import('./pages/ServiceRecordEntry').then(m => ({ default: m.ServiceRecordEntry })));
+const ServiceRecordDetail = lazy(() => import('./pages/ServiceRecordDetail').then(m => ({ default: m.ServiceRecordDetail })));
 const RegulatoryAlerts = lazy(() => import('./pages/RegulatoryAlerts').then(m => ({ default: m.RegulatoryAlerts })));
 const JurisdictionSettings = lazy(() => import('./pages/JurisdictionSettings').then(m => ({ default: m.JurisdictionSettings })));
 const HealthDeptReport = lazy(() => import('./pages/HealthDeptReport').then(m => ({ default: m.HealthDeptReport })));
@@ -412,7 +413,7 @@ function AppRoutes() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<Suspense fallback={<PageSkeleton />}><NewLandingPage /></Suspense>} />
+        <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/operations-check" element={<Suspense fallback={<PageSkeleton />}><OperationsCheck /></Suspense>} />
 
         {/* Public routes */}
@@ -568,6 +569,7 @@ function AppRoutes() {
           <Route path="/playbooks/history/:id" element={<PlaybookTimeline />} />
           <Route path="/inspector-view" element={<InspectorView />} />
           <Route path="/services" element={<ServicesPage />} />
+          <Route path="/services/:recordId" element={<ServiceRecordDetail />} />
           <Route path="/self-audit" element={<SelfAudit />} />
           <Route path="/self-inspection" element={<SelfAudit />} />
           <Route path="/photo-evidence" element={<PhotoEvidencePage />} />

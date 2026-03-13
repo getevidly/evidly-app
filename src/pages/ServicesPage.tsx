@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Plus, CheckCircle, AlertTriangle, Clock, XCircle, Filter,
-  Building2, MapPin, Calendar, FileText,
+  Building2, MapPin, Calendar, FileText, ChevronRight,
 } from 'lucide-react';
 import { format, differenceInDays } from 'date-fns';
 import { useRole } from '../contexts/RoleContext';
@@ -208,6 +208,13 @@ export default function ServicesPage() {
       cost: null,
       notes: logForm.notes,
       certificateNumber: null,
+      qaStatus: 'pending_review',
+      qaReviewedBy: null,
+      qaReviewedAt: null,
+      qaFlagReason: null,
+      qaFlagCategory: null,
+      photosBefore: [],
+      photosAfter: [],
     };
 
     setLocalRecords((prev) => [...prev, newRecord]);
@@ -350,14 +357,16 @@ export default function ServicesPage() {
                       <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Location</th>
                       <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Technician</th>
                       <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Result</th>
+                      <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">QA Status</th>
                       <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Next Due</th>
+                      <th className="w-8"></th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
                     {filteredRecords.map((record) => {
                       const required = isRequiredService(record.categoryId, record.serviceId);
                       return (
-                        <tr key={record.id} className="hover:bg-gray-50 transition-colors">
+                        <tr key={record.id} className="hover:bg-gray-50 transition-colors cursor-pointer" onClick={() => navigate(`/services/${record.id}`)}>
                           <td className="px-4 py-3 whitespace-nowrap text-gray-900">
                             {format(new Date(record.serviceDate), 'MMM d, yyyy')}
                           </td>
@@ -384,8 +393,25 @@ export default function ServicesPage() {
                               {record.result === 'pass' ? 'Pass' : record.result === 'fail' ? 'Fail' : 'N/A'}
                             </span>
                           </td>
+                          <td className="px-4 py-3">
+                            {record.qaStatus ? (
+                              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${
+                                record.qaStatus === 'approved' ? 'bg-green-100 text-green-800' :
+                                record.qaStatus === 'flagged' ? 'bg-red-100 text-red-800' :
+                                'bg-blue-100 text-blue-800'
+                              }`}>
+                                {record.qaStatus === 'approved' ? 'Approved' :
+                                 record.qaStatus === 'flagged' ? 'Flagged' : 'Pending'}
+                              </span>
+                            ) : (
+                              <span className="text-xs text-gray-400">—</span>
+                            )}
+                          </td>
                           <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
                             {record.nextDueDate ? format(new Date(record.nextDueDate), 'MMM d, yyyy') : '—'}
+                          </td>
+                          <td className="px-2 py-3 text-gray-400">
+                            <ChevronRight className="h-4 w-4" />
                           </td>
                         </tr>
                       );
@@ -399,7 +425,7 @@ export default function ServicesPage() {
                 {filteredRecords.map((record) => {
                   const required = isRequiredService(record.categoryId, record.serviceId);
                   return (
-                    <div key={record.id} className="p-4 space-y-2">
+                    <div key={record.id} className="p-4 space-y-2 cursor-pointer hover:bg-gray-50 transition-colors" onClick={() => navigate(`/services/${record.id}`)}>
                       <div className="flex items-start justify-between">
                         <div>
                           <p className="text-sm font-semibold text-gray-900">
@@ -410,13 +436,26 @@ export default function ServicesPage() {
                           </p>
                           <p className="text-xs text-gray-500">{record.vendorName}</p>
                         </div>
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${
-                          record.result === 'pass' ? 'bg-green-100 text-green-800' :
-                          record.result === 'fail' ? 'bg-red-100 text-red-800' :
-                          'bg-gray-100 text-gray-600'
-                        }`}>
-                          {record.result === 'pass' ? 'Pass' : record.result === 'fail' ? 'Fail' : 'N/A'}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${
+                            record.result === 'pass' ? 'bg-green-100 text-green-800' :
+                            record.result === 'fail' ? 'bg-red-100 text-red-800' :
+                            'bg-gray-100 text-gray-600'
+                          }`}>
+                            {record.result === 'pass' ? 'Pass' : record.result === 'fail' ? 'Fail' : 'N/A'}
+                          </span>
+                          {record.qaStatus && (
+                            <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${
+                              record.qaStatus === 'approved' ? 'bg-green-100 text-green-800' :
+                              record.qaStatus === 'flagged' ? 'bg-red-100 text-red-800' :
+                              'bg-blue-100 text-blue-800'
+                            }`}>
+                              {record.qaStatus === 'approved' ? 'Approved' :
+                               record.qaStatus === 'flagged' ? 'Flagged' : 'Pending'}
+                            </span>
+                          )}
+                          <ChevronRight className="h-4 w-4 text-gray-400" />
+                        </div>
                       </div>
                       <div className="flex items-center gap-4 text-xs text-gray-500">
                         <span className="flex items-center gap-1">

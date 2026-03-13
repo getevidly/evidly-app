@@ -1,5 +1,13 @@
 // ── Demo Service Records — derived from demoData.ts vendor entries ──
 
+export interface DemoServicePhoto {
+  id: string;
+  url: string;
+  caption: string;
+  timestamp: string;
+  type: 'before' | 'after';
+}
+
 export interface DemoServiceRecord {
   id: string;
   vendorName: string;
@@ -16,6 +24,15 @@ export interface DemoServiceRecord {
   cost: number | null;
   notes: string;
   certificateNumber: string | null;
+  // QA Review
+  qaStatus: 'pending_review' | 'approved' | 'flagged' | null;
+  qaReviewedBy: string | null;
+  qaReviewedAt: string | null;
+  qaFlagReason: string | null;
+  qaFlagCategory: 'incomplete_work' | 'wrong_service' | 'safety_concern' | 'documentation_issue' | 'other' | null;
+  // Photos
+  photosBefore: DemoServicePhoto[];
+  photosAfter: DemoServicePhoto[];
 }
 
 export const DEMO_SERVICE_RECORDS: DemoServiceRecord[] = [
@@ -36,6 +53,13 @@ export const DEMO_SERVICE_RECORDS: DemoServiceRecord[] = [
     cost: 475,
     notes: 'Full hood and duct cleaning. Bare metal verified. Before/after photos on file.',
     certificateNumber: 'IKECA-2026-01-0142',
+    qaStatus: 'approved',
+    qaReviewedBy: 'Maria Rodriguez',
+    qaReviewedAt: '2026-01-16T09:30:00Z',
+    qaFlagReason: null,
+    qaFlagCategory: null,
+    photosBefore: [],
+    photosAfter: [],
   },
   {
     id: 'sr-2',
@@ -53,6 +77,13 @@ export const DEMO_SERVICE_RECORDS: DemoServiceRecord[] = [
     cost: 185,
     notes: 'Monthly service. No activity found. Traps refreshed, perimeter spray applied.',
     certificateNumber: null,
+    qaStatus: 'approved',
+    qaReviewedBy: 'Maria Rodriguez',
+    qaReviewedAt: '2026-01-29T11:00:00Z',
+    qaFlagReason: null,
+    qaFlagCategory: null,
+    photosBefore: [],
+    photosAfter: [],
   },
   {
     id: 'sr-3',
@@ -70,6 +101,13 @@ export const DEMO_SERVICE_RECORDS: DemoServiceRecord[] = [
     cost: 320,
     notes: 'Semi-annual inspection. Nozzle alignment OK. Chemical agent full. Tag updated.',
     certificateNumber: 'VFS-2025-12-0088',
+    qaStatus: 'approved',
+    qaReviewedBy: 'Maria Rodriguez',
+    qaReviewedAt: '2025-12-11T14:15:00Z',
+    qaFlagReason: null,
+    qaFlagCategory: null,
+    photosBefore: [],
+    photosAfter: [],
   },
   {
     id: 'sr-4',
@@ -87,6 +125,13 @@ export const DEMO_SERVICE_RECORDS: DemoServiceRecord[] = [
     cost: 250,
     notes: 'Quarterly maintenance. Filters replaced, coils cleaned, refrigerant levels checked.',
     certificateNumber: null,
+    qaStatus: 'approved',
+    qaReviewedBy: 'Maria Rodriguez',
+    qaReviewedAt: '2025-11-16T10:00:00Z',
+    qaFlagReason: null,
+    qaFlagCategory: null,
+    photosBefore: [],
+    photosAfter: [],
   },
   {
     id: 'sr-5',
@@ -104,6 +149,13 @@ export const DEMO_SERVICE_RECORDS: DemoServiceRecord[] = [
     cost: 225,
     notes: 'Quarterly pumping. Trap at 60% capacity. Baffle intact. Manifest filed.',
     certificateNumber: 'GM-2026-01-0031',
+    qaStatus: 'pending_review',
+    qaReviewedBy: null,
+    qaReviewedAt: null,
+    qaFlagReason: null,
+    qaFlagCategory: null,
+    photosBefore: [],
+    photosAfter: [],
   },
 
   // ── Location 2 (locationId: '2') ──────────────────────────────
@@ -123,6 +175,13 @@ export const DEMO_SERVICE_RECORDS: DemoServiceRecord[] = [
     cost: 425,
     notes: 'Full hood cleaning. Minor grease buildup in horizontal duct noted — addressed.',
     certificateNumber: 'IKECA-2025-10-0098',
+    qaStatus: 'approved',
+    qaReviewedBy: 'Maria Rodriguez',
+    qaReviewedAt: '2025-10-05T08:45:00Z',
+    qaFlagReason: null,
+    qaFlagCategory: null,
+    photosBefore: [],
+    photosAfter: [],
   },
   {
     id: 'sr-7',
@@ -140,6 +199,13 @@ export const DEMO_SERVICE_RECORDS: DemoServiceRecord[] = [
     cost: 185,
     notes: 'Monthly service. Minor rodent activity at loading dock. Bait stations reinforced.',
     certificateNumber: null,
+    qaStatus: 'approved',
+    qaReviewedBy: 'Maria Rodriguez',
+    qaReviewedAt: '2026-02-02T10:30:00Z',
+    qaFlagReason: null,
+    qaFlagCategory: null,
+    photosBefore: [],
+    photosAfter: [],
   },
   {
     id: 'sr-8',
@@ -157,6 +223,13 @@ export const DEMO_SERVICE_RECORDS: DemoServiceRecord[] = [
     cost: 320,
     notes: 'Semi-annual inspection complete. All systems operational.',
     certificateNumber: 'VFS-2026-01-0102',
+    qaStatus: 'approved',
+    qaReviewedBy: 'Maria Rodriguez',
+    qaReviewedAt: '2026-01-21T13:00:00Z',
+    qaFlagReason: null,
+    qaFlagCategory: null,
+    photosBefore: [],
+    photosAfter: [],
   },
   {
     id: 'sr-9',
@@ -174,6 +247,13 @@ export const DEMO_SERVICE_RECORDS: DemoServiceRecord[] = [
     cost: 250,
     notes: 'Filters replaced. Compressor running hot — recommend follow-up in 90 days.',
     certificateNumber: null,
+    qaStatus: 'pending_review',
+    qaReviewedBy: null,
+    qaReviewedAt: null,
+    qaFlagReason: null,
+    qaFlagCategory: null,
+    photosBefore: [],
+    photosAfter: [],
   },
   {
     id: 'sr-10',
@@ -191,6 +271,13 @@ export const DEMO_SERVICE_RECORDS: DemoServiceRecord[] = [
     cost: 225,
     notes: 'Trap at 75% capacity — recommend increasing service frequency.',
     certificateNumber: 'GM-2025-09-0019',
+    qaStatus: 'approved',
+    qaReviewedBy: 'Maria Rodriguez',
+    qaReviewedAt: '2025-09-21T09:00:00Z',
+    qaFlagReason: null,
+    qaFlagCategory: null,
+    photosBefore: [],
+    photosAfter: [],
   },
 
   // ── Location 3 (locationId: '3') ─────────────────────────
@@ -210,6 +297,13 @@ export const DEMO_SERVICE_RECORDS: DemoServiceRecord[] = [
     cost: 550,
     notes: 'Full hood and duct cleaning for 3-hood system. Bare metal verified on all.',
     certificateNumber: 'IKECA-2025-11-0121',
+    qaStatus: 'approved',
+    qaReviewedBy: 'Maria Rodriguez',
+    qaReviewedAt: '2025-11-16T11:30:00Z',
+    qaFlagReason: null,
+    qaFlagCategory: null,
+    photosBefore: [],
+    photosAfter: [],
   },
   {
     id: 'sr-12',
@@ -227,6 +321,13 @@ export const DEMO_SERVICE_RECORDS: DemoServiceRecord[] = [
     cost: 185,
     notes: 'Evidence of cockroach activity in dry storage. Follow-up treatment scheduled.',
     certificateNumber: null,
+    qaStatus: 'flagged',
+    qaReviewedBy: 'Maria Rodriguez',
+    qaReviewedAt: '2025-12-02T08:00:00Z',
+    qaFlagReason: 'Service result was a fail — cockroach activity found in dry storage. Follow-up treatment and deep clean required before next scheduled service.',
+    qaFlagCategory: 'safety_concern',
+    photosBefore: [],
+    photosAfter: [],
   },
   {
     id: 'sr-13',
@@ -244,6 +345,13 @@ export const DEMO_SERVICE_RECORDS: DemoServiceRecord[] = [
     cost: 320,
     notes: 'Nozzle misalignment on fryer line. Corrective action required. Reinspection needed.',
     certificateNumber: null,
+    qaStatus: 'approved',
+    qaReviewedBy: 'Maria Rodriguez',
+    qaReviewedAt: '2025-04-11T15:00:00Z',
+    qaFlagReason: null,
+    qaFlagCategory: null,
+    photosBefore: [],
+    photosAfter: [],
   },
   {
     id: 'sr-14',
@@ -261,6 +369,13 @@ export const DEMO_SERVICE_RECORDS: DemoServiceRecord[] = [
     cost: 280,
     notes: 'Quarterly maintenance. Walk-in cooler compressor replaced (warranty claim).',
     certificateNumber: null,
+    qaStatus: 'pending_review',
+    qaReviewedBy: null,
+    qaReviewedAt: null,
+    qaFlagReason: null,
+    qaFlagCategory: null,
+    photosBefore: [],
+    photosAfter: [],
   },
   {
     id: 'sr-15',
@@ -278,6 +393,13 @@ export const DEMO_SERVICE_RECORDS: DemoServiceRecord[] = [
     cost: 275,
     notes: 'Trap at 85% — severely overdue. Manifest filed. Recommend quarterly minimum.',
     certificateNumber: 'GM-2025-07-0011',
+    qaStatus: 'approved',
+    qaReviewedBy: 'Maria Rodriguez',
+    qaReviewedAt: '2025-07-21T10:00:00Z',
+    qaFlagReason: null,
+    qaFlagCategory: null,
+    photosBefore: [],
+    photosAfter: [],
   },
 
   // ── Historical records (older completions for depth) ─────────────
@@ -297,6 +419,13 @@ export const DEMO_SERVICE_RECORDS: DemoServiceRecord[] = [
     cost: 475,
     notes: 'Quarterly hood cleaning. All ductwork cleaned to bare metal.',
     certificateNumber: 'IKECA-2025-10-0089',
+    qaStatus: null,
+    qaReviewedBy: null,
+    qaReviewedAt: null,
+    qaFlagReason: null,
+    qaFlagCategory: null,
+    photosBefore: [],
+    photosAfter: [],
   },
   {
     id: 'sr-17',
@@ -314,6 +443,13 @@ export const DEMO_SERVICE_RECORDS: DemoServiceRecord[] = [
     cost: 320,
     notes: 'Semi-annual inspection. All nozzles aligned, chemical agent replaced.',
     certificateNumber: 'VFS-2025-06-0055',
+    qaStatus: 'approved',
+    qaReviewedBy: 'Maria Rodriguez',
+    qaReviewedAt: '2025-06-11T09:30:00Z',
+    qaFlagReason: null,
+    qaFlagCategory: null,
+    photosBefore: [],
+    photosAfter: [],
   },
   {
     id: 'sr-18',
@@ -331,5 +467,17 @@ export const DEMO_SERVICE_RECORDS: DemoServiceRecord[] = [
     cost: 185,
     notes: 'Monthly service. No activity. All traps clear.',
     certificateNumber: null,
+    qaStatus: 'approved',
+    qaReviewedBy: 'Maria Rodriguez',
+    qaReviewedAt: '2025-12-29T10:00:00Z',
+    qaFlagReason: null,
+    qaFlagCategory: null,
+    photosBefore: [],
+    photosAfter: [],
   },
 ];
+
+/** Look up a single service record by ID */
+export function getServiceRecordById(id: string): DemoServiceRecord | undefined {
+  return DEMO_SERVICE_RECORDS.find(r => r.id === id);
+}

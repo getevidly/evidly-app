@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Building2, MapPin, Users, Settings2, ArrowRight, AlertTriangle, Sparkles, CheckCircle2, Clock, Copy, Check } from 'lucide-react';
+import { Building2, MapPin, Users, Settings2, ArrowRight, AlertTriangle, Sparkles, CheckCircle2, Clock, Copy, Check, ExternalLink, Mail, Link2 } from 'lucide-react';
 import { useDemo } from '../../contexts/DemoContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
@@ -71,6 +71,9 @@ export function DemoGenerator() {
   const [credentials, setCredentials] = useState<GeneratedCredentials | null>(null);
   const [demoExpiresAt, setDemoExpiresAt] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
+
+  const LOGIN_URL = `${window.location.origin}/login`;
 
   const update = (field: keyof FormData, value: string | number | boolean) => {
     setForm(prev => ({ ...prev, [field]: value }));
@@ -85,6 +88,30 @@ export function DemoGenerator() {
       setTimeout(() => setCopied(false), 2000);
     });
   }, [credentials]);
+
+  const copyLoginLink = useCallback(() => {
+    navigator.clipboard.writeText(LOGIN_URL).then(() => {
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2000);
+    });
+  }, [LOGIN_URL]);
+
+  const sendViaEmail = useCallback(() => {
+    if (!credentials) return;
+    const subject = encodeURIComponent(`Your EvidLY Demo Is Ready — ${form.companyName}`);
+    const body = encodeURIComponent(
+      `Hi ${form.prospectName},\n\n` +
+      `Your personalized EvidLY demo is ready! Here are your login details:\n\n` +
+      `Login URL: ${LOGIN_URL}\n` +
+      `Email: ${credentials.email}\n` +
+      `Password: ${credentials.temp_password}\n\n` +
+      (demoExpiresAt ? `Your demo expires on ${new Date(demoExpiresAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}.\n\n` : '') +
+      `Log in and explore your jurisdiction-specific compliance dashboard, temperature monitoring, inspection readiness scoring, and more.\n\n` +
+      `Questions? Reply to this email or book a walkthrough: https://calendly.com/getevidly/30min\n\n` +
+      `— The EvidLY Team`
+    );
+    window.open(`mailto:${credentials.email}?subject=${subject}&body=${body}`, '_self');
+  }, [credentials, form.prospectName, form.companyName, demoExpiresAt, LOGIN_URL]);
 
   const handleGenerate = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
@@ -175,6 +202,10 @@ export function DemoGenerator() {
             setCredentials(accountData.credentials);
             setDemoExpiresAt(accountData.demo_expires_at);
           }
+        } else {
+          // Demo mode — show simulated credentials so the UI is fully demonstrable
+          setCredentials({ email: form.prospectEmail, temp_password: 'demo-xxxxxxxx' });
+          setDemoExpiresAt(new Date(Date.now() + form.demoDuration * 86400000).toISOString());
         }
 
         // ── Step 2: Generate mock operational data (local state) ──
@@ -272,9 +303,26 @@ export function DemoGenerator() {
             {form.city}, {form.state} | {KITCHEN_TYPES.find(t => t.value === form.companyType)?.label} | {OPERATION_VOLUMES.find(v => v.value === form.operationVolume)?.label} Volume
           </p>
 
+          {/* Login URL */}
+          {credentials && (
+            <div className="bg-blue-50 rounded-lg border border-blue-200 p-4 mb-4 text-left">
+              <h3 className="text-sm font-semibold mb-2" style={{ color: NAVY }}>Login URL</h3>
+              <div className="flex items-center gap-2">
+                <code className="flex-1 font-mono text-sm text-blue-800 bg-white px-3 py-1.5 rounded border border-blue-200 truncate">{LOGIN_URL}</code>
+                <button
+                  onClick={copyLoginLink}
+                  className="flex-shrink-0 px-3 py-1.5 rounded-md text-sm font-medium border border-blue-300 hover:bg-blue-100 transition-colors flex items-center gap-1.5"
+                  style={{ color: NAVY }}
+                >
+                  {linkCopied ? <><Check className="w-3.5 h-3.5 text-green-600" /> Copied</> : <><Link2 className="w-3.5 h-3.5" /> Copy Link</>}
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Credentials display */}
           {credentials && (
-            <div className="bg-gray-50 rounded-lg border border-gray-200 p-4 mb-6 text-left">
+            <div className="bg-gray-50 rounded-lg border border-gray-200 p-4 mb-4 text-left">
               <h3 className="text-sm font-semibold mb-3" style={{ color: NAVY }}>Login Credentials</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex items-center justify-between">
@@ -301,6 +349,19 @@ export function DemoGenerator() {
             </div>
           )}
 
+          {/* Send via Email */}
+          {credentials && (
+            <button
+              onClick={sendViaEmail}
+              className="w-full mb-6 px-4 py-2.5 rounded-lg font-medium text-sm text-white transition-colors flex items-center justify-center gap-2"
+              style={{ backgroundColor: '#d4af37' }}
+              onMouseEnter={e => (e.target as HTMLButtonElement).style.backgroundColor = '#b8982e'}
+              onMouseLeave={e => (e.target as HTMLButtonElement).style.backgroundColor = '#d4af37'}
+            >
+              <Mail className="w-4 h-4" /> Send Credentials via Email
+            </button>
+          )}
+
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button
               onClick={() => navigate('/admin/demos')}
@@ -310,7 +371,7 @@ export function DemoGenerator() {
               View Demo Pipeline
             </button>
             <button
-              onClick={() => { setSuccess(false); setCredentials(null); setDemoExpiresAt(null); setForm(f => ({ ...f, prospectName: '', prospectEmail: '', prospectPhone: '', companyName: '', address: '', city: '', zipCode: '' })); }}
+              onClick={() => { setSuccess(false); setCredentials(null); setDemoExpiresAt(null); setLinkCopied(false); setForm(f => ({ ...f, prospectName: '', prospectEmail: '', prospectPhone: '', companyName: '', address: '', city: '', zipCode: '' })); }}
               className="px-6 py-2.5 rounded-lg font-medium text-sm border border-gray-300 text-gray-700 hover:bg-gray-50"
             >
               Generate Another

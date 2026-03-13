@@ -69,10 +69,9 @@ CREATE INDEX IF NOT EXISTS idx_lrp_predicted_at
 CREATE INDEX IF NOT EXISTS idx_lrp_risk_level
   ON location_risk_predictions(risk_level);
 
--- Most recent prediction per location (used by dashboard upsert)
+-- One prediction per location per model version (enables upsert on conflict)
 CREATE UNIQUE INDEX IF NOT EXISTS idx_lrp_latest_per_location
-  ON location_risk_predictions(location_id, model_version)
-  WHERE expires_at > NOW();
+  ON location_risk_predictions(location_id, model_version);
 
 -- Auto-update updated_at
 CREATE TRIGGER trg_lrp_updated_at

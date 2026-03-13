@@ -107,8 +107,11 @@ Disallow: /enterprise/intelligence
 Disallow: /api/
 Disallow: /auth/callback
 
-# Allow indexing of public pages only
+# Allow indexing of public pages
 Allow: /
+Allow: /operations-check
+Allow: /kitchen-to-community
+Allow: /assessment
 Allow: /login
 Allow: /signup
 Allow: /demo
@@ -121,9 +124,13 @@ Allow: /privacy
 Allow: /verify/
 Allow: /passport/
 Allow: /compliance/
+Allow: /scoretable/
+Allow: /kitchen-check/
+Allow: /blog
+Allow: /blog/
 
 # Crawl delay for any allowed crawlers
 Crawl-delay: 10
 
 # Sitemap
-Sitemap: https://evidly.com/sitemap.xml
+Sitemap: https://getevidly.com/sitemap.xml
