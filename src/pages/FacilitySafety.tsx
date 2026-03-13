@@ -18,6 +18,7 @@ import { useDemoGuard } from '../hooks/useDemoGuard';
 import { PSESafeguardsSection } from '../components/facility-safety/PSESafeguardsSection';
 import { useJurisdiction } from '../hooks/useJurisdiction';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { getCleaningFrequency, getFrequencyLabel, COOKING_TYPE_OPTIONS, type CookingType } from '../lib/nfpa96FrequencyMap';
 import { InfoTooltip } from '../components/ui/InfoTooltip';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 
@@ -641,12 +642,18 @@ export function FacilitySafety() {
         {expandedItem === 'vendor-ref' && (
           <div className="border-t border-gray-100 p-4">
             <div className="space-y-3">
-              {[
-                { service: 'Kitchen Exhaust Cleaning', freq: fireConfig ? `Type I: ${fireConfig.nfpa_96_cleaning_frequencies.type_i_hood} / Type II: ${fireConfig.nfpa_96_cleaning_frequencies.type_ii_hood}` : 'Semi-annual / Quarterly', authority: 'NFPA 96 Table 12.4', vendor: 'IKECA-certified vendor' },
-                { service: 'Ansul System Service', freq: fireConfig?.ansul_system?.inspection_interval ?? 'Semi-annual', authority: `${fireConfig?.ansul_system?.standard ?? 'NFPA 17A'} / UL 300`, vendor: 'Licensed fire protection vendor' },
-                { service: 'Fire Extinguisher Annual', freq: fireConfig?.fire_extinguisher?.inspection_interval ?? 'Annual', authority: 'NFPA 10 §7.3', vendor: 'Professional fire equipment company' },
-                { service: 'Grease Trap Cleaning', freq: fireConfig?.grease_trap?.cleaning_interval ? `Every ${fireConfig.grease_trap.cleaning_interval}` : 'Per schedule', authority: 'Local plumbing code', vendor: 'Licensed hauler' },
-              ].map(svc => (
+              {(() => {
+                const locCookingType = (fireConfig as any)?.cooking_type as string | undefined;
+                const kecFreq = locCookingType
+                  ? getFrequencyLabel(getCleaningFrequency(locCookingType))
+                  : 'Semi-Annually (set cooking type for exact frequency)';
+                return [
+                  { service: 'Kitchen Exhaust Cleaning', freq: kecFreq, authority: 'NFPA 96-2024 Table 12.4', vendor: 'IKECA-certified vendor' },
+                  { service: 'Ansul System Service', freq: fireConfig?.ansul_system?.inspection_interval ?? 'Semi-annual', authority: `${fireConfig?.ansul_system?.standard ?? 'NFPA 17A'} / UL 300`, vendor: 'Licensed fire protection vendor' },
+                  { service: 'Fire Extinguisher Annual', freq: fireConfig?.fire_extinguisher?.inspection_interval ?? 'Annual', authority: 'NFPA 10 §7.3', vendor: 'Professional fire equipment company' },
+                  { service: 'Grease Trap Cleaning', freq: fireConfig?.grease_trap?.cleaning_interval ? `Every ${fireConfig.grease_trap.cleaning_interval}` : 'Per schedule', authority: 'Local plumbing code', vendor: 'Licensed hauler' },
+                ];
+              })().map(svc => (
                 <div key={svc.service} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
                   <div>
                     <div className="text-sm font-medium text-gray-800">{svc.service}</div>

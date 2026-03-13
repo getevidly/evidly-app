@@ -198,6 +198,17 @@ export const FEATURES: Record<string, FeatureDefinition> = {
     upgradeLabel: 'Founder',
     requiredOrgTypes: ['K12_EDUCATION'],
   },
+  'mock-inspection': {
+    id: 'mock-inspection',
+    name: 'Mock Inspection',
+    description: 'AI-simulated inspection by your jurisdiction\'s health inspector. Practice before the real thing.',
+    requiredTier: 'founder',
+    enabled: true,
+    previewType: 'sample',
+    upgradeTier: 'founder',
+    upgradePrice: '$99/mo',
+    upgradeLabel: 'Founder',
+  },
 };
 
 export function getFeatureDefinition(id: string): FeatureDefinition | undefined {

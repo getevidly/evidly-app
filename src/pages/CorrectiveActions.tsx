@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   AlertTriangle,
@@ -136,6 +136,73 @@ export function CorrectiveActions() {
     if (isDemoMode) setLocalActions([...DEMO_CORRECTIVE_ACTIONS]);
   });
 
+  // ── Self-Inspection Handoff ──────────────────────────────────
+  const isFromInspection = searchParams.get('from') === 'self-inspection';
+  const [inspectionItems, setInspectionItems] = useState<{ title: string; description: string; severity: string; section: string; citation: string; notes: string }[]>([]);
+  const [inspectionIdx, setInspectionIdx] = useState(0);
+
+  useEffect(() => {
+    if (!isFromInspection) return;
+    try {
+      const raw = sessionStorage.getItem('inspection_ca_items');
+      if (!raw) return;
+      const items = JSON.parse(raw);
+      if (Array.isArray(items) && items.length > 0) {
+        setInspectionItems(items);
+        setInspectionIdx(0);
+        // Pre-populate the create form with first item
+        const first = items[0];
+        const sevMap: Record<string, CASeverity> = { critical: 'critical', major: 'high', minor: 'medium' };
+        setCreateForm({
+          ...EMPTY_FORM,
+          title: first.title,
+          description: first.description,
+          severity: sevMap[first.severity] || 'medium',
+          regulationReference: first.citation || '',
+          source: 'Self-Inspection',
+          category: first.section?.toLowerCase().includes('facility') || first.section?.toLowerCase().includes('fire') || first.section?.toLowerCase().includes('suppression') ? 'facility_safety' : 'food_safety',
+          dueDate: (() => {
+            const d = new Date();
+            d.setDate(d.getDate() + (first.severity === 'critical' ? 1 : first.severity === 'major' ? 2 : 7));
+            return d.toISOString().slice(0, 10);
+          })(),
+        });
+        setCreateTab('scratch');
+        setShowCreateModal(true);
+      }
+    } catch { /* ignore */ }
+  }, [isFromInspection]);
+
+  const advanceInspectionItem = useCallback(() => {
+    const nextIdx = inspectionIdx + 1;
+    if (nextIdx >= inspectionItems.length) {
+      // All items processed
+      setInspectionItems([]);
+      sessionStorage.removeItem('inspection_ca_items');
+      toast.success('All inspection items processed');
+      return;
+    }
+    setInspectionIdx(nextIdx);
+    const next = inspectionItems[nextIdx];
+    const sevMap: Record<string, CASeverity> = { critical: 'critical', major: 'high', minor: 'medium' };
+    setCreateForm({
+      ...EMPTY_FORM,
+      title: next.title,
+      description: next.description,
+      severity: sevMap[next.severity] || 'medium',
+      regulationReference: next.citation || '',
+      source: 'Self-Inspection',
+      category: next.section?.toLowerCase().includes('facility') || next.section?.toLowerCase().includes('fire') || next.section?.toLowerCase().includes('suppression') ? 'facility_safety' : 'food_safety',
+      dueDate: (() => {
+        const d = new Date();
+        d.setDate(d.getDate() + (next.severity === 'critical' ? 1 : next.severity === 'major' ? 2 : 7));
+        return d.toISOString().slice(0, 10);
+      })(),
+    });
+    setCreateTab('scratch');
+    setShowCreateModal(true);
+  }, [inspectionIdx, inspectionItems]);
+
   // Role-based visibility filtering
   const actions = useMemo(() => {
     if (userRole === 'kitchen_staff') {
@@ -227,8 +294,12 @@ export function CorrectiveActions() {
       setShowCreateModal(false);
       setCreateForm(EMPTY_FORM);
       toast.success('Corrective action created');
+      // If processing items from self-inspection, advance to next
+      if (inspectionItems.length > 0) {
+        setTimeout(() => advanceInspectionItem(), 300);
+      }
     });
-  }, [guardAction]);
+  }, [guardAction, inspectionItems.length, advanceInspectionItem]);
 
   // ── Templates for modal ─────────────────────────────────
 
@@ -238,6 +309,29 @@ export function CorrectiveActions() {
 
   return (
     <div className="p-4 sm:p-6 max-w-5xl mx-auto space-y-6" style={{ fontFamily: 'system-ui' }}>
+      {/* Inspection handoff banner */}
+      {inspectionItems.length > 0 && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 flex items-center justify-between">
+          <div className="text-sm">
+            <span className="font-semibold text-blue-800">Creating from Self-Inspection</span>
+            <span className="text-blue-600 ml-2">
+              Item {inspectionIdx + 1} of {inspectionItems.length}
+            </span>
+          </div>
+          <button
+            onClick={() => {
+              setInspectionItems([]);
+              sessionStorage.removeItem('inspection_ca_items');
+              setShowCreateModal(false);
+              toast.info('Inspection import dismissed');
+            }}
+            className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>

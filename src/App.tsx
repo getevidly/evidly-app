@@ -134,6 +134,7 @@ const ImportData = lazy(() => import('./pages/ImportData').then(m => ({ default:
 const InspectorView = lazy(() => import('./pages/InspectorView').then(m => ({ default: m.InspectorView })));
 const ServicesPage = lazy(() => import('./pages/ServicesPage'));
 const SelfAudit = lazy(() => import('./pages/SelfAudit').then(m => ({ default: m.SelfAudit })));
+const MockInspection = lazy(() => import('./pages/MockInspection'));
 const PhotoEvidencePage = lazy(() => import('./pages/PhotoEvidencePage').then(m => ({ default: m.PhotoEvidencePage })));
 const AuditTrail = lazy(() => import('./pages/AuditTrail').then(m => ({ default: m.AuditTrail })));
 const DocumentChecklist = lazy(() => import('./pages/DocumentChecklist').then(m => ({ default: m.DocumentChecklist })));
@@ -656,6 +657,7 @@ function AppRoutes() {
           <Route path="/employees/:id" element={<EmployeeDetailPage />} />
           <Route path="/self-audit" element={<SelfAudit />} />
           <Route path="/self-inspection" element={<SelfAudit />} />
+          <Route path="/mock-inspection" element={<MockInspection />} />
           <Route path="/photo-evidence" element={<PhotoEvidencePage />} />
           <Route path="/audit-trail" element={<AuditTrail />} />
           <Route path="/copilot" element={<CopilotInsights />} />

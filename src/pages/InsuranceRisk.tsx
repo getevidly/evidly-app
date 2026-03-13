@@ -366,9 +366,8 @@ async function generateInsuranceReportPDF(result: InsuranceRiskResult, locationL
   const pseItems = [
     { label: 'ANSUL/UL 300 Wet Chemical System', ref: 'NFPA 17A-2025', factor: fireCat?.factors.find(f => f.name.includes('Fire suppression')) },
     { label: 'Hood & Duct Cleaning Schedule', ref: 'NFPA 96-2024', factor: fireCat?.factors.find(f => f.name.includes('Hood cleaning')) },
-    { label: 'Fire Extinguisher Inspection', ref: 'NFPA 10-2025', factor: fireCat?.factors.find(f => f.name.includes('Fire extinguisher')) },
     { label: 'Fire Alarm System', ref: 'NFPA 72-2025', factor: fireCat?.factors.find(f => f.name.includes('Fire alarm')) },
-    { label: 'Automatic Shutoff Systems', ref: 'NFPA 96 Chapter 10', factor: fireCat?.factors.find(f => f.name.includes('shutoff')) },
+    { label: 'Sprinkler System', ref: 'NFPA 25-2023', factor: fireCat?.factors.find(f => f.name.includes('Sprinkler') || f.name.includes('sprinkler')) },
   ];
 
   for (const pse of pseItems) {
@@ -768,7 +767,8 @@ export function InsuranceRisk() {
               <li className="flex items-start gap-1.5"><CheckCircle className="h-3 w-3 text-red-400 mt-0.5 flex-shrink-0" /> ANSUL/UL 300 wet chemical systems installed and inspected</li>
               <li className="flex items-start gap-1.5"><CheckCircle className="h-3 w-3 text-red-400 mt-0.5 flex-shrink-0" /> Hood and duct cleaning per NFPA 96 schedule</li>
               <li className="flex items-start gap-1.5"><CheckCircle className="h-3 w-3 text-red-400 mt-0.5 flex-shrink-0" /> Fire suppression semi-annual inspection (NFPA 17A, 2025 Edition)</li>
-              <li className="flex items-start gap-1.5"><CheckCircle className="h-3 w-3 text-red-400 mt-0.5 flex-shrink-0" /> Fire extinguisher annual inspection (NFPA 10, 2025 Edition)</li>
+              <li className="flex items-start gap-1.5"><CheckCircle className="h-3 w-3 text-red-400 mt-0.5 flex-shrink-0" /> Fire alarm system annual inspection (NFPA 72, 2025 Edition)</li>
+              <li className="flex items-start gap-1.5"><CheckCircle className="h-3 w-3 text-red-400 mt-0.5 flex-shrink-0" /> Sprinkler system inspection and testing (NFPA 25, 2023 Edition)</li>
             </ul>
           </div>
 

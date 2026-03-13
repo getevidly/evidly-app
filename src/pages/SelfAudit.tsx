@@ -1,13 +1,18 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import {
   Thermometer, Users, Package, Wrench, Flame, Building2, FileText,
   CheckCircle2, XCircle, MinusCircle, ChevronLeft, ChevronRight,
   Play, RotateCcw, Printer, Share2, Trash2, TrendingUp, AlertTriangle,
-  ClipboardList, ArrowLeft, History,
+  ClipboardList, ArrowLeft, History, Download, ListChecks,
 } from 'lucide-react';
+import {
+  generateSelfInspectionPdf,
+  printSelfInspectionPdf,
+  type SelfInspectionPdfParams,
+} from '../lib/selfInspectionPdf';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
@@ -296,6 +301,7 @@ function correctiveAction(item: AuditItem, sectionName: string): string {
 
 export function SelfAudit() {
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  const navigate = useNavigate();
 
   // Jurisdiction awareness
   const [searchParams] = useSearchParams();
@@ -1039,9 +1045,16 @@ export function SelfAudit() {
         {/* Actions */}
         <div className="flex flex-wrap gap-3">
           <button
-            onClick={() =>
-              guardAction('print', 'Self-Inspection Report', () => toast.success('Printing report...'))
-            }
+            onClick={() => {
+              const pdfParams: SelfInspectionPdfParams = {
+                sections, score,
+                gradeDisplay: jurisdictionGrade?.display || null,
+                jurisdictionConfig: activeScoringConfig,
+                failedItems: failedItems.map(f => ({ ...f, status: 'fail' as const })),
+                locationName: locationParam.charAt(0).toUpperCase() + locationParam.slice(1),
+              };
+              printSelfInspectionPdf(pdfParams);
+            }}
             className="flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-semibold text-[#1e4d6b] bg-[#eef4f8] border border-[#b8d4e8] hover:bg-[#d9e8f0] transition-colors"
             style={{ minHeight: 44 }}
           >
@@ -1049,15 +1062,44 @@ export function SelfAudit() {
             Print Report
           </button>
           <button
-            onClick={() =>
-              guardAction('export', 'Self-Inspection Results', () => toast.success('Sharing results...'))
-            }
+            onClick={() => {
+              const pdfParams: SelfInspectionPdfParams = {
+                sections, score,
+                gradeDisplay: jurisdictionGrade?.display || null,
+                jurisdictionConfig: activeScoringConfig,
+                failedItems: failedItems.map(f => ({ ...f, status: 'fail' as const })),
+                locationName: locationParam.charAt(0).toUpperCase() + locationParam.slice(1),
+              };
+              generateSelfInspectionPdf(pdfParams);
+              toast.success('PDF downloaded');
+            }}
             className="flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-semibold text-[#1e4d6b] bg-[#eef4f8] border border-[#b8d4e8] hover:bg-[#d9e8f0] transition-colors"
             style={{ minHeight: 44 }}
           >
-            <Share2 className="h-4 w-4" />
-            Share Results
+            <Download className="h-4 w-4" />
+            Download PDF
           </button>
+          {failedItems.length > 0 && (
+            <button
+              onClick={() => {
+                const caItems = failedItems.map(f => ({
+                  title: f.text,
+                  description: correctiveAction(f, f.sectionName),
+                  severity: f.severity,
+                  section: f.sectionName,
+                  citation: f.citation || '',
+                  notes: f.notes,
+                }));
+                sessionStorage.setItem('inspection_ca_items', JSON.stringify(caItems));
+                navigate('/corrective-actions?from=self-inspection');
+              }}
+              className="flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-semibold text-white bg-[#1e4d6b] hover:bg-[#2a6a8f] transition-colors"
+              style={{ minHeight: 44 }}
+            >
+              <ListChecks className="h-4 w-4" />
+              Create Corrective Actions ({failedItems.length})
+            </button>
+          )}
           <button
             onClick={resetAudit}
             className="flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-bold text-[#1e4d6b] bg-[#d4af37] hover:bg-[#c49a2b] transition-colors"

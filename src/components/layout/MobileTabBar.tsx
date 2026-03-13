@@ -48,6 +48,7 @@ const PATH_ICON: Record<string, any> = {
   '/regulatory-alerts': AlertCircle,
   '/reports': BarChart3,
   '/self-inspection': ClipboardCheck,
+  '/mock-inspection': Target,
   '/services': Wrench,
   '/vendor-certifications': FileText,
   '/ai-advisor': Brain,
