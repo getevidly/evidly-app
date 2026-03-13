@@ -9,6 +9,7 @@ export function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [resetMsg, setResetMsg] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -46,6 +47,14 @@ export function AdminLogin() {
     navigate('/admin');
   };
 
+  const handleResetPassword = async () => {
+    if (!email) { setError('Enter your email address first'); return; }
+    setError('');
+    setResetMsg('');
+    const { error: resetError } = await supabase.auth.resetPasswordForEmail(email);
+    if (resetError) { setError(resetError.message); } else { setResetMsg('Password reset email sent'); }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#0B1628' }}>
       <div className="max-w-md w-full">
@@ -78,6 +87,12 @@ export function AdminLogin() {
           {error && (
             <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded text-sm">
               {error}
+            </div>
+          )}
+
+          {resetMsg && (
+            <div className="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded text-sm">
+              {resetMsg}
             </div>
           )}
 
@@ -125,6 +140,12 @@ export function AdminLogin() {
                   )}
                 </button>
               </div>
+            </div>
+
+            <div className="text-right">
+              <button type="button" onClick={handleResetPassword} className="text-sm font-medium" style={{ color: '#1E2D4D' }}>
+                Forgot password?
+              </button>
             </div>
 
             <button
