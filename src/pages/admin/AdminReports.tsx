@@ -10,6 +10,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
+import { useDemoGuard } from '../../hooks/useDemoGuard';
 import { KpiTile } from '../../components/admin/KpiTile';
 
 const NAVY = '#1E2D4D';
@@ -74,20 +75,27 @@ const inputStyle: React.CSSProperties = {
 };
 
 export default function AdminReports() {
+  useDemoGuard();
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<Tab>('internal');
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [generating, setGenerating] = useState<string | null>(null);
 
   const loadReports = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase
+    setError(null);
+    const { data, error: fetchError } = await supabase
       .from('internal_reports')
       .select('*')
       .order('created_at', { ascending: false })
       .limit(100);
-    if (data) setReports(data);
+    if (fetchError) {
+      setError(fetchError.message || 'Failed to load data');
+    } else if (data) {
+      setReports(data);
+    }
     setLoading(false);
   }, []);
 
@@ -142,6 +150,15 @@ export default function AdminReports() {
     fontWeight: 600, fontSize: 11, textTransform: 'uppercase',
   };
   const tdStyle: React.CSSProperties = { padding: '10px 14px', fontSize: 12 };
+
+  if (error) {
+    return (
+      <div className="p-8 text-center">
+        <p className="text-red-600 font-medium">Failed to load data</p>
+        <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2 bg-[#1E2D4D] text-white rounded text-sm">Retry</button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

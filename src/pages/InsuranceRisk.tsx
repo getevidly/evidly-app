@@ -373,8 +373,8 @@ async function generateInsuranceReportPDF(result: InsuranceRiskResult, locationL
 
   for (const pse of pseItems) {
     const score = pse.factor?.score || 0;
-    const status = score >= 90 ? 'COMPLIANT' : score >= 60 ? 'NEEDS ATTENTION' : 'NON-COMPLIANT';
-    bodyText(`${status === 'COMPLIANT' ? '✓' : status === 'NEEDS ATTENTION' ? '⚠' : '✗'} ${pse.label} (${pse.ref}) — ${status} (${score}/100)`, { size: 7, indent: 3 });
+    const status = score >= 90 ? 'ON TRACK' : score >= 60 ? 'NEEDS ATTENTION' : 'POTENTIAL GAP';
+    bodyText(`${status === 'ON TRACK' ? '✓' : status === 'NEEDS ATTENTION' ? '⚠' : '✗'} ${pse.label} (${pse.ref}) — ${status} (${score}/100)`, { size: 7, indent: 3 });
   }
 
   // ============================================

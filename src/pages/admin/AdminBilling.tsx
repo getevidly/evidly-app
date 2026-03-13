@@ -4,6 +4,7 @@
  */
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
+import { useDemoGuard } from '../../hooks/useDemoGuard';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { KpiTile } from '../../components/admin/KpiTile';
 
@@ -48,17 +49,23 @@ const EmptyState = ({ icon, title, subtitle }: { icon: string; title: string; su
 );
 
 export default function AdminBilling() {
+  useDemoGuard();
   const [subs, setSubs] = useState<SubscriptionRow[]>([]);
   const [invoices, setInvoices] = useState<InvoiceRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [tab, setTab] = useState<'subscriptions' | 'invoices' | 'projections'>('subscriptions');
 
   const loadData = useCallback(async () => {
     setLoading(true);
+    setError(null);
     const [subRes, invRes] = await Promise.all([
       supabase.from('billing_subscriptions').select('*, organizations(name, created_at)').order('mrr_cents', { ascending: false }),
       supabase.from('billing_invoices').select('*, organizations(name)').order('invoice_date', { ascending: false }).limit(50),
     ]);
+    if (subRes.error || invRes.error) {
+      setError(subRes.error?.message || invRes.error?.message || 'Failed to load data');
+    }
     if (subRes.data) setSubs(subRes.data);
     if (invRes.data) setInvoices(invRes.data);
     setLoading(false);
@@ -82,6 +89,15 @@ export default function AdminBilling() {
       color: isGood ? '#059669' : '#DC2626',
     };
   };
+
+  if (error) {
+    return (
+      <div className="p-8 text-center">
+        <p className="text-red-600 font-medium">Failed to load data</p>
+        <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2 bg-[#1E2D4D] text-white rounded text-sm">Retry</button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

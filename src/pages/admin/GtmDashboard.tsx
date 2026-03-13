@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useDemo } from '../../contexts/DemoContext';
+import { useDemoGuard } from '../../hooks/useDemoGuard';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { StatCardRow } from '../../components/admin/StatCardRow';
 
@@ -35,6 +36,7 @@ const SOURCE_CHANNEL: Record<string, string> = {
 };
 
 export default function GtmDashboard() {
+  useDemoGuard();
   const { isDemoMode } = useDemo();
 
   const [activeDemos, setActiveDemos] = useState<number>(0);
@@ -43,11 +45,13 @@ export default function GtmDashboard() {
   const [conversionRate, setConversionRate] = useState<number>(0);
   const [channels, setChannels] = useState<ChannelRow[]>(EMPTY_CHANNELS);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
 
     async function load() {
+      setError(null);
       if (isDemoMode) {
         if (!cancelled) {
           setActiveDemos(0);
@@ -113,8 +117,8 @@ export default function GtmDashboard() {
           setConversionRate(demoTotal > 0 ? Math.round((wonTotal / demoTotal) * 100) : 0);
           setChannels(Object.entries(channelMap).map(([channel, data]) => ({ channel, ...data })));
         }
-      } catch {
-        // Tables may not exist yet — keep zeros
+      } catch (err: any) {
+        if (!cancelled) setError(err?.message || 'Failed to load data');
       }
 
       if (!cancelled) setLoading(false);
@@ -130,6 +134,15 @@ export default function GtmDashboard() {
     if (n >= 1000) return `$${(n / 1000).toFixed(n >= 10000 ? 0 : 1)}k`;
     return `$${n.toLocaleString()}`;
   };
+
+  if (error) {
+    return (
+      <div className="p-8 text-center">
+        <p className="text-red-600 font-medium">Failed to load data</p>
+        <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2 bg-[#1E2D4D] text-white rounded text-sm">Retry</button>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8 max-w-5xl" style={{ fontFamily: "'DM Sans', 'Inter', sans-serif" }}>

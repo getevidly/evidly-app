@@ -98,6 +98,8 @@ const IoTSensorPlatform = lazy(() => import('./pages/IoTSensorPlatform').then(m 
 
 const CorrectiveActions = lazy(() => import('./pages/CorrectiveActions').then(m => ({ default: m.CorrectiveActions })));
 const CorrectiveActionDetail = lazy(() => import('./pages/CorrectiveActionDetail').then(m => ({ default: m.CorrectiveActionDetail })));
+const Deficiencies = lazy(() => import('./pages/Deficiencies').then(m => ({ default: m.Deficiencies })));
+const DeficiencyDetail = lazy(() => import('./pages/DeficiencyDetail').then(m => ({ default: m.DeficiencyDetail })));
 const IntegrationHub = lazy(() => import('./pages/IntegrationHub').then(m => ({ default: m.IntegrationHub })));
 const BrandingSettings = lazy(() => import('./pages/BrandingSettings').then(m => ({ default: m.BrandingSettings })));
 const DeveloperPortal = lazy(() => import('./pages/DeveloperPortal').then(m => ({ default: m.DeveloperPortal })));
@@ -634,6 +636,8 @@ function AppRoutes() {
           {/* Stub routes for upcoming features */}
           <Route path="/corrective-actions" element={<CorrectiveActions />} />
           <Route path="/corrective-actions/:actionId" element={<CorrectiveActionDetail />} />
+          <Route path="/deficiencies" element={<Deficiencies />} />
+          <Route path="/deficiencies/:deficiencyId" element={<DeficiencyDetail />} />
           {/* Blueprint route aliases — FIX-03 */}
           <Route path="/incident-playbook" element={<Navigate to="/playbooks" replace />} />
           <Route path="/regulatory-tracking" element={<Navigate to="/regulatory-alerts" replace />} />

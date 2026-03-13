@@ -5,6 +5,7 @@
  */
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
+import { useDemoGuard } from '../../hooks/useDemoGuard';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -32,11 +33,14 @@ const thStyle: React.CSSProperties = {
 const tdStyle: React.CSSProperties = { padding: '10px 14px', fontSize: 12 };
 
 export default function AdminScoreTable() {
+  useDemoGuard();
   const [data, setData] = useState<CountyRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const { data: rows } = await supabase
         .from('scoretable_views')
@@ -68,13 +72,22 @@ export default function AdminScoreTable() {
           last_viewed: d.last,
         })).sort((a, b) => b.total_views - a.total_views));
       }
-    } catch {
-      // Queries may fail in demo mode
+    } catch (err: any) {
+      setError(err?.message || 'Failed to load data');
     }
     setLoading(false);
   }, []);
 
   useEffect(() => { load(); }, [load]);
+
+  if (error) {
+    return (
+      <div className="p-8 text-center">
+        <p className="text-red-600 font-medium">Failed to load data</p>
+        <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2 bg-[#1E2D4D] text-white rounded text-sm">Retry</button>
+      </div>
+    );
+  }
 
   return (
     <div>

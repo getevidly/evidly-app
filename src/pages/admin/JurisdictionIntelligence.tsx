@@ -8,6 +8,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { toast } from 'sonner';
+import { useDemoGuard } from '../../hooks/useDemoGuard';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { KpiTile } from '../../components/admin/KpiTile';
 
@@ -39,6 +40,7 @@ const PILLAR_BADGE: Record<string, { bg: string; text: string }> = {
 };
 
 export default function JurisdictionIntelligence() {
+  useDemoGuard();
   const [updates, setUpdates] = useState<JurisdictionUpdate[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterCounty, setFilterCounty] = useState('');
