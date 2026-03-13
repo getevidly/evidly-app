@@ -11,6 +11,7 @@ import KitchenManagerDashboard from '../components/dashboard/KitchenManagerDashb
 import KitchenStaffTaskList from '../components/dashboard/KitchenStaffTaskList';
 import FacilitiesDashboardNew from '../components/dashboard/FacilitiesDashboardNew';
 import { DashboardToday } from '../components/dashboard/DashboardToday';
+import { CopilotBriefingCard } from '../components/copilot/CopilotBriefingCard';
 
 // ── Dashboard ────────────────────────────────────────────
 // Role visibility for above-fold items is now handled inside each
@@ -86,6 +87,7 @@ export function Dashboard() {
     <div>
       <SignalAlertBanner />
       <OutbreakBanner />
+      <CopilotBriefingCard />
       {tab === 'today' ? (
         <DashboardToday />
       ) : (

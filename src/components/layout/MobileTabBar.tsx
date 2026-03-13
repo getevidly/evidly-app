@@ -90,6 +90,7 @@ const PATH_ICON: Record<string, any> = {
   '/sb1383': Recycle,
   '/k12': School,
   '/usda/production-records': School,
+  '/copilot': Brain,
 };
 
 function getIconForPath(path: string): any {

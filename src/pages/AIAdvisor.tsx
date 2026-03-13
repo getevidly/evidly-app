@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { Brain, Send, Sparkles, Plus, Upload, X, ClipboardList, MessageSquare, FileSearch, ChevronRight, ChevronLeft, CheckCircle2 } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useDemo } from '../contexts/DemoContext';
+import { useRole } from '../contexts/RoleContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import {
@@ -174,9 +175,55 @@ const F = { fontFamily: "'DM Sans', 'Inter', system-ui, sans-serif" };
 
 function uid(): string { return Math.random().toString(36).slice(2, 10); }
 
+/* ─── Role-Aware Quick Prompts ─── */
+const QUICK_PROMPTS: Record<string, string[]> = {
+  owner_operator: [
+    'Show my biggest risks right now',
+    'Compare all locations',
+    'Am I ready for inspection?',
+    'Which vendor documents expire soon?',
+  ],
+  executive: [
+    'Give me an executive summary',
+    'Show compliance trends',
+    'What are the top risks across all locations?',
+    'Compare location performance',
+  ],
+  compliance_manager: [
+    'What corrective actions are overdue?',
+    'Show inspection readiness',
+    'Which documents need renewal?',
+    'Regulatory changes affecting us',
+  ],
+  kitchen_manager: [
+    'What needs attention today?',
+    'Show temperature trends',
+    'Checklist completion this week',
+    'Team certifications expiring',
+  ],
+  chef: [
+    'Show HACCP status',
+    'Temperature trends for my kitchen',
+    'What needs attention today?',
+    'Checklist completion this week',
+  ],
+  facilities_manager: [
+    'Equipment maintenance overdue',
+    'Vendor documents expiring',
+    'Facility safety status',
+    'Hood cleaning schedule',
+  ],
+  kitchen_staff: [
+    'What are my tasks today?',
+    'Show my checklist',
+    'Temperature log help',
+  ],
+};
+
 /* ─── Component ─── */
 export function AIAdvisor() {
   const { isDemoMode, companyName } = useDemo();
+  const { userRole } = useRole();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
 
   // State
@@ -773,6 +820,31 @@ export function AIAdvisor() {
                       }}
                     >
                       {loc.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Quick prompts — role-aware, chat mode only */}
+              {mode === 'chat' && messages.length === 0 && (
+                <div style={{ display: 'flex', gap: '6px', marginBottom: '8px', flexWrap: 'wrap' }}>
+                  {(QUICK_PROMPTS[userRole] || QUICK_PROMPTS.owner_operator).map((prompt) => (
+                    <button
+                      key={prompt}
+                      type="button"
+                      onClick={() => sendMessage(prompt)}
+                      style={{
+                        padding: '5px 12px', borderRadius: '16px', fontSize: '11px', fontWeight: 500,
+                        cursor: 'pointer', ...F,
+                        border: '1px solid #d4af37',
+                        background: '#fffbeb',
+                        color: '#92400e',
+                      }}
+                      onMouseOver={(e) => { e.currentTarget.style.background = '#fef3c7'; e.currentTarget.style.borderColor = '#b8941e'; }}
+                      onMouseOut={(e) => { e.currentTarget.style.background = '#fffbeb'; e.currentTarget.style.borderColor = '#d4af37'; }}
+                    >
+                      <span style={{ marginRight: '4px' }}>&#10022;</span>
+                      {prompt}
                     </button>
                   ))}
                 </div>
