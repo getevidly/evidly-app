@@ -31,7 +31,7 @@ export interface LocationRow {
   district: string;
   state: string;
   vertical: string;
-  overall: number;
+  compositeScore: number;
   fire: number;
   food: number;
   docs: number;
@@ -64,7 +64,7 @@ export interface CohortData {
 
 export interface SeasonalPoint {
   month: string;
-  overall: number;
+  compositeScore: number;
   fire: number;
   food: number;
   docs: number;
@@ -195,16 +195,16 @@ function generateLocations(): LocationRow[] {
   const locations: LocationRow[] = [];
   // First add named locations with specific scores
   const topLocations: Partial<LocationRow>[] = [
-    { name: 'Oceanview Lodge', region: 'West', district: 'CA/NV', state: 'CA', vertical: 'Destinations', overall: 97.3, fire: 99, food: 96, docs: 97, trend: 1.2, actionItems: 0 },
-    { name: 'The Bayshore', region: 'West', district: 'CA/NV', state: 'CA', vertical: 'Destinations', overall: 96.8, fire: 98, food: 95, docs: 97, trend: 0.5, actionItems: 0 },
-    { name: 'Stanford Dining Hall', region: 'West', district: 'CA/NV', state: 'CA', vertical: 'Higher Education', overall: 96.1, fire: 97, food: 95, docs: 96, trend: 0.8, actionItems: 0 },
-    { name: 'Harvard Square Café', region: 'Northeast', district: 'New England', state: 'MA', vertical: 'Higher Education', overall: 95.4, fire: 96, food: 94, docs: 96, trend: 1.0, actionItems: 0 },
-    { name: 'Cleveland Clinic East', region: 'Midwest', district: 'OH/IN', state: 'OH', vertical: 'Healthcare', overall: 95.0, fire: 97, food: 93, docs: 95, trend: 0.6, actionItems: 0 },
+    { name: 'Oceanview Lodge', region: 'West', district: 'CA/NV', state: 'CA', vertical: 'Destinations', compositeScore: 97.3, fire: 99, food: 96, docs: 97, trend: 1.2, actionItems: 0 },
+    { name: 'The Bayshore', region: 'West', district: 'CA/NV', state: 'CA', vertical: 'Destinations', compositeScore: 96.8, fire: 98, food: 95, docs: 97, trend: 0.5, actionItems: 0 },
+    { name: 'Stanford Dining Hall', region: 'West', district: 'CA/NV', state: 'CA', vertical: 'Higher Education', compositeScore: 96.1, fire: 97, food: 95, docs: 96, trend: 0.8, actionItems: 0 },
+    { name: 'Harvard Square Café', region: 'Northeast', district: 'New England', state: 'MA', vertical: 'Higher Education', compositeScore: 95.4, fire: 96, food: 94, docs: 96, trend: 1.0, actionItems: 0 },
+    { name: 'Cleveland Clinic East', region: 'Midwest', district: 'OH/IN', state: 'OH', vertical: 'Healthcare', compositeScore: 95.0, fire: 97, food: 93, docs: 95, trend: 0.6, actionItems: 0 },
   ];
   const bottomLocations: Partial<LocationRow>[] = [
-    { name: 'Tampa General', region: 'Southeast', district: 'FL', state: 'FL', vertical: 'Healthcare', overall: 58.2, fire: 45, food: 62, docs: 68, trend: -4.1, actionItems: 7 },
-    { name: 'Mall Food Court #12', region: 'Midwest', district: 'OH/IN', state: 'OH', vertical: 'Sports & Entertainment', overall: 54.7, fire: 51, food: 55, docs: 58, trend: -6.3, actionItems: 12 },
-    { name: 'Highway Rest Stop #7', region: 'Southwest', district: 'TX/OK', state: 'TX', vertical: 'Destinations', overall: 52.1, fire: 48, food: 54, docs: 55, trend: -3.8, actionItems: 9 },
+    { name: 'Tampa General', region: 'Southeast', district: 'FL', state: 'FL', vertical: 'Healthcare', compositeScore: 58.2, fire: 45, food: 62, docs: 68, trend: -4.1, actionItems: 7 },
+    { name: 'Mall Food Court #12', region: 'Midwest', district: 'OH/IN', state: 'OH', vertical: 'Sports & Entertainment', compositeScore: 54.7, fire: 51, food: 55, docs: 58, trend: -6.3, actionItems: 12 },
+    { name: 'Highway Rest Stop #7', region: 'Southwest', district: 'TX/OK', state: 'TX', vertical: 'Destinations', compositeScore: 52.1, fire: 48, food: 54, docs: 55, trend: -3.8, actionItems: 9 },
   ];
 
   let rank = 1;
@@ -218,7 +218,7 @@ function generateLocations(): LocationRow[] {
       district: loc.district!,
       state: loc.state!,
       vertical: loc.vertical!,
-      overall: loc.overall!,
+      compositeScore: loc.compositeScore!,
       fire: loc.fire!,
       food: loc.food!,
       docs: loc.docs!,
@@ -252,7 +252,7 @@ function generateLocations(): LocationRow[] {
       district,
       state,
       vertical,
-      overall,
+      compositeScore: overall,
       fire,
       food,
       docs,
@@ -277,7 +277,7 @@ function generateLocations(): LocationRow[] {
       district: loc.district!,
       state: loc.state!,
       vertical: loc.vertical!,
-      overall: loc.overall!,
+      compositeScore: loc.compositeScore!,
       fire: loc.fire!,
       food: loc.food!,
       docs: loc.docs!,
@@ -292,8 +292,8 @@ function generateLocations(): LocationRow[] {
     });
   }
 
-  // Sort by overall descending and re-rank
-  locations.sort((a, b) => b.overall - a.overall);
+  // Sort by compositeScore descending and re-rank
+  locations.sort((a, b) => b.compositeScore - a.compositeScore);
   locations.forEach((loc, i) => { loc.rank = i + 1; });
   return locations;
 }
@@ -303,7 +303,7 @@ export const locationLeaderboard: LocationRow[] = generateLocations();
 // ── Quartile Analysis ────────────────────────────────────────────
 
 export const quartileStats: QuartileStats[] = (() => {
-  const sorted = [...locationLeaderboard].sort((a, b) => b.overall - a.overall);
+  const sorted = [...locationLeaderboard].sort((a, b) => b.compositeScore - a.compositeScore);
   const q = Math.ceil(sorted.length / 4);
   const quartiles = [
     { label: 'Top Quartile (Q1)', start: 0, end: q },
@@ -316,9 +316,9 @@ export const quartileStats: QuartileStats[] = (() => {
     const avg = (arr: number[]) => +(arr.reduce((s, v) => s + v, 0) / arr.length).toFixed(1);
     return {
       quartile: label,
-      range: `${Math.min(...slice.map(l => l.overall))}–${Math.max(...slice.map(l => l.overall))}`,
+      range: `${Math.min(...slice.map(l => l.compositeScore))}–${Math.max(...slice.map(l => l.compositeScore))}`,
       count: slice.length,
-      avgScore: avg(slice.map(l => l.overall)),
+      avgScore: avg(slice.map(l => l.compositeScore)),
       avgChecklist: avg(slice.map(l => l.checklistPct)),
       avgTempCompliance: avg(slice.map(l => l.tempCompliancePct)),
       avgTurnover: avg(slice.map(l => l.turnover)),
@@ -355,33 +355,33 @@ export const sizeCohorts: CohortData[] = [
 // ── Seasonal Pattern Data ────────────────────────────────────────
 
 export const seasonalPatternThisYear: SeasonalPoint[] = [
-  { month: 'Jan', overall: 89.5, fire: 93.8, food: 85.9, docs: 90.2 },
-  { month: 'Feb', overall: 90.0, fire: 94.2, food: 86.7, docs: 91.3 },
-  { month: 'Mar', overall: 90.2, fire: 94.0, food: 87.1, docs: 91.0 },
-  { month: 'Apr', overall: 89.8, fire: 93.5, food: 86.5, docs: 90.8 },
-  { month: 'May', overall: 88.9, fire: 93.1, food: 84.8, docs: 90.5 },
-  { month: 'Jun', overall: 87.4, fire: 92.8, food: 82.1, docs: 89.8 },
-  { month: 'Jul', overall: 86.1, fire: 92.5, food: 80.3, docs: 88.9 },
-  { month: 'Aug', overall: 86.8, fire: 92.6, food: 81.2, docs: 89.2 },
-  { month: 'Sep', overall: 88.4, fire: 93.0, food: 84.5, docs: 90.0 },
-  { month: 'Oct', overall: 89.6, fire: 93.5, food: 86.2, docs: 90.8 },
-  { month: 'Nov', overall: 88.8, fire: 91.8, food: 86.0, docs: 90.4 },
-  { month: 'Dec', overall: 87.9, fire: 90.5, food: 85.8, docs: 89.6 },
+  { month: 'Jan', compositeScore: 89.5, fire: 93.8, food: 85.9, docs: 90.2 },
+  { month: 'Feb', compositeScore: 90.0, fire: 94.2, food: 86.7, docs: 91.3 },
+  { month: 'Mar', compositeScore: 90.2, fire: 94.0, food: 87.1, docs: 91.0 },
+  { month: 'Apr', compositeScore: 89.8, fire: 93.5, food: 86.5, docs: 90.8 },
+  { month: 'May', compositeScore: 88.9, fire: 93.1, food: 84.8, docs: 90.5 },
+  { month: 'Jun', compositeScore: 87.4, fire: 92.8, food: 82.1, docs: 89.8 },
+  { month: 'Jul', compositeScore: 86.1, fire: 92.5, food: 80.3, docs: 88.9 },
+  { month: 'Aug', compositeScore: 86.8, fire: 92.6, food: 81.2, docs: 89.2 },
+  { month: 'Sep', compositeScore: 88.4, fire: 93.0, food: 84.5, docs: 90.0 },
+  { month: 'Oct', compositeScore: 89.6, fire: 93.5, food: 86.2, docs: 90.8 },
+  { month: 'Nov', compositeScore: 88.8, fire: 91.8, food: 86.0, docs: 90.4 },
+  { month: 'Dec', compositeScore: 87.9, fire: 90.5, food: 85.8, docs: 89.6 },
 ];
 
 export const seasonalPatternLastYear: SeasonalPoint[] = [
-  { month: 'Jan', overall: 84.2, fire: 90.1, food: 80.5, docs: 84.8 },
-  { month: 'Feb', overall: 84.8, fire: 90.5, food: 81.2, docs: 85.3 },
-  { month: 'Mar', overall: 85.1, fire: 90.3, food: 81.8, docs: 85.5 },
-  { month: 'Apr', overall: 84.6, fire: 89.8, food: 81.0, docs: 85.0 },
-  { month: 'May', overall: 83.5, fire: 89.2, food: 79.2, docs: 84.5 },
-  { month: 'Jun', overall: 82.0, fire: 88.8, food: 76.5, docs: 83.8 },
-  { month: 'Jul', overall: 80.8, fire: 88.5, food: 74.8, docs: 82.9 },
-  { month: 'Aug', overall: 81.5, fire: 88.6, food: 75.6, docs: 83.2 },
-  { month: 'Sep', overall: 83.1, fire: 89.0, food: 78.9, docs: 84.0 },
-  { month: 'Oct', overall: 84.4, fire: 89.5, food: 80.8, docs: 84.8 },
-  { month: 'Nov', overall: 83.5, fire: 87.8, food: 80.4, docs: 84.4 },
-  { month: 'Dec', overall: 82.6, fire: 86.5, food: 80.0, docs: 83.6 },
+  { month: 'Jan', compositeScore: 84.2, fire: 90.1, food: 80.5, docs: 84.8 },
+  { month: 'Feb', compositeScore: 84.8, fire: 90.5, food: 81.2, docs: 85.3 },
+  { month: 'Mar', compositeScore: 85.1, fire: 90.3, food: 81.8, docs: 85.5 },
+  { month: 'Apr', compositeScore: 84.6, fire: 89.8, food: 81.0, docs: 85.0 },
+  { month: 'May', compositeScore: 83.5, fire: 89.2, food: 79.2, docs: 84.5 },
+  { month: 'Jun', compositeScore: 82.0, fire: 88.8, food: 76.5, docs: 83.8 },
+  { month: 'Jul', compositeScore: 80.8, fire: 88.5, food: 74.8, docs: 82.9 },
+  { month: 'Aug', compositeScore: 81.5, fire: 88.6, food: 75.6, docs: 83.2 },
+  { month: 'Sep', compositeScore: 83.1, fire: 89.0, food: 78.9, docs: 84.0 },
+  { month: 'Oct', compositeScore: 84.4, fire: 89.5, food: 80.8, docs: 84.8 },
+  { month: 'Nov', compositeScore: 83.5, fire: 87.8, food: 80.4, docs: 84.4 },
+  { month: 'Dec', compositeScore: 82.6, fire: 86.5, food: 80.0, docs: 83.6 },
 ];
 
 // ── Regulatory Impact Events ─────────────────────────────────────
@@ -513,10 +513,10 @@ export const riskPredictions: RiskPrediction[] = [
 
 // Risk summary counts
 export const riskSummary = {
-  low: locationLeaderboard.filter(l => l.overall >= 85).length,
-  moderate: locationLeaderboard.filter(l => l.overall >= 75 && l.overall < 85).length,
-  high: locationLeaderboard.filter(l => l.overall >= 65 && l.overall < 75).length,
-  critical: locationLeaderboard.filter(l => l.overall < 65).length,
+  low: locationLeaderboard.filter(l => l.compositeScore >= 85).length,
+  moderate: locationLeaderboard.filter(l => l.compositeScore >= 75 && l.compositeScore < 85).length,
+  high: locationLeaderboard.filter(l => l.compositeScore >= 65 && l.compositeScore < 75).length,
+  critical: locationLeaderboard.filter(l => l.compositeScore < 65).length,
 };
 
 // ── Single-CFPM risk locations ───────────────────────────────────
@@ -858,7 +858,7 @@ export interface PeriodChange {
 export interface AggregationLevel {
   level: string;
   entityName: string;
-  overall: AggregationStats;
+  compositeScore: AggregationStats;
   foodSafety: AggregationStats;
   workplace: AggregationStats;
   regulatory: AggregationStats;
@@ -892,7 +892,7 @@ function computeStats(values: number[]): AggregationStats {
 }
 
 // Compute real aggregation stats from the 487-location leaderboard
-const allOverall = locationLeaderboard.map(l => l.overall);
+const allOverall = locationLeaderboard.map(l => l.compositeScore);
 const allFood = locationLeaderboard.map(l => l.foodSafety);
 const allWorkplace = locationLeaderboard.map(l => l.workplace);
 const allRegulatory = locationLeaderboard.map(l => l.regulatory);
@@ -900,7 +900,7 @@ const allRegulatory = locationLeaderboard.map(l => l.regulatory);
 export const enterpriseAggregation: AggregationLevel = {
   level: 'enterprise',
   entityName: 'Pacific Coast Dining — All Locations',
-  overall: computeStats(allOverall),
+  compositeScore: computeStats(allOverall),
   foodSafety: computeStats(allFood),
   workplace: computeStats(allWorkplace),
   regulatory: computeStats(allRegulatory),
@@ -919,7 +919,7 @@ export const regionAggregations: AggregationLevel[] = regionNames.map(region => 
   return {
     level: 'region',
     entityName: region,
-    overall: computeStats(locs.map(l => l.overall)),
+    compositeScore: computeStats(locs.map(l => l.compositeScore)),
     foodSafety: computeStats(locs.map(l => l.foodSafety)),
     workplace: computeStats(locs.map(l => l.workplace)),
     regulatory: computeStats(locs.map(l => l.regulatory)),
@@ -977,7 +977,7 @@ export const databaseTables: DbTableSchema[] = [
       { name: 'id', type: 'uuid', description: 'Primary key' },
       { name: 'entity_type', type: 'enum', description: 'location | district | region | enterprise' },
       { name: 'entity_id', type: 'uuid', description: 'FK to locations/districts/regions' },
-      { name: 'metric_type', type: 'enum', description: 'overall | food_safety | workplace | regulatory' },
+      { name: 'metric_type', type: 'enum', description: 'composite_score | food_safety | workplace | regulatory' },
       { name: 'period', type: 'date', description: 'Aggregation period date' },
       { name: 'count', type: 'int', description: 'Number of data points' },
       { name: 'mean', type: 'numeric(5,2)', description: 'Arithmetic mean' },

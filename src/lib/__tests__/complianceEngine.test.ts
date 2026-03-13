@@ -231,7 +231,6 @@ describe('complianceEngine', () => {
       const results = computeAllSnapshots(snapshots);
       const org = computeOrgScores(results);
 
-      expect(org.overall).not.toBeNull();
       expect(org.foodSafety).toBeGreaterThan(0);
       expect(org.facilitySafety).toBeGreaterThan(0);
 
@@ -240,9 +239,8 @@ describe('complianceEngine', () => {
       expect(org.foodSafety).toBeGreaterThanOrEqual(results.university.foodSafetyScore);
     });
 
-    it('empty results → null overall', () => {
+    it('empty results → zero scores', () => {
       const org = computeOrgScores({});
-      expect(org.overall).toBeNull();
       expect(org.foodSafety).toBe(0);
     });
   });

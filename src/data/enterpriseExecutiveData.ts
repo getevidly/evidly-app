@@ -49,7 +49,7 @@ export interface PredictedScore {
   confidence: 'high' | 'medium' | 'low';
 }
 
-export type ComplianceCategory = 'overall' | 'foodSafety' | 'facilitySafety';
+export type ComplianceCategory = 'compositeScore' | 'foodSafety' | 'facilitySafety';
 
 // ── Enterprise tenant ────────────────────────────────────────────
 export const enterpriseTenant = enterpriseTenants.find(t => t.id === 'ent-pcdining')!;
@@ -117,19 +117,19 @@ export const businessUnitScorecard: BusinessUnitScorecard[] = [
 ];
 
 // ── 12-Month BU Trend Data ───────────────────────────────────────
-export const businessUnitTrends: { month: string; overall: number; higherEd: number; healthcare: number; destinations: number; corrections: number; sports: number }[] = [
-  { month: 'Mar 25', overall: 82.1, higherEd: 85.2, healthcare: 92.1, destinations: 84.8, corrections: 80.2, sports: 83.5 },
-  { month: 'Apr 25', overall: 83.4, higherEd: 86.0, healthcare: 92.5, destinations: 85.1, corrections: 81.0, sports: 84.2 },
-  { month: 'May 25', overall: 84.2, higherEd: 86.8, healthcare: 93.0, destinations: 85.6, corrections: 81.8, sports: 84.9 },
-  { month: 'Jun 25', overall: 85.0, higherEd: 87.5, healthcare: 93.2, destinations: 86.2, corrections: 82.4, sports: 85.4 },
-  { month: 'Jul 25', overall: 85.8, higherEd: 88.1, healthcare: 93.5, destinations: 86.8, corrections: 82.9, sports: 85.8 },
-  { month: 'Aug 25', overall: 86.5, higherEd: 88.8, healthcare: 93.8, destinations: 87.2, corrections: 83.5, sports: 86.3 },
-  { month: 'Sep 25', overall: 87.2, higherEd: 89.4, healthcare: 94.0, destinations: 87.6, corrections: 84.0, sports: 86.8 },
-  { month: 'Oct 25', overall: 87.8, higherEd: 89.9, healthcare: 94.2, destinations: 88.0, corrections: 84.6, sports: 87.2 },
-  { month: 'Nov 25', overall: 88.4, higherEd: 90.3, healthcare: 94.4, destinations: 88.4, corrections: 85.1, sports: 87.5 },
-  { month: 'Dec 25', overall: 89.0, higherEd: 90.7, healthcare: 94.5, destinations: 88.2, corrections: 85.6, sports: 87.8 },
-  { month: 'Jan 26', overall: 89.5, higherEd: 91.0, healthcare: 94.6, destinations: 88.6, corrections: 85.9, sports: 87.9 },
-  { month: 'Feb 26', overall: 90.0, higherEd: 91.2, healthcare: 94.7, destinations: 88.4, corrections: 86.1, sports: 88.0 },
+export const businessUnitTrends: { month: string; compositeScore: number; higherEd: number; healthcare: number; destinations: number; corrections: number; sports: number }[] = [
+  { month: 'Mar 25', compositeScore: 82.1, higherEd: 85.2, healthcare: 92.1, destinations: 84.8, corrections: 80.2, sports: 83.5 },
+  { month: 'Apr 25', compositeScore: 83.4, higherEd: 86.0, healthcare: 92.5, destinations: 85.1, corrections: 81.0, sports: 84.2 },
+  { month: 'May 25', compositeScore: 84.2, higherEd: 86.8, healthcare: 93.0, destinations: 85.6, corrections: 81.8, sports: 84.9 },
+  { month: 'Jun 25', compositeScore: 85.0, higherEd: 87.5, healthcare: 93.2, destinations: 86.2, corrections: 82.4, sports: 85.4 },
+  { month: 'Jul 25', compositeScore: 85.8, higherEd: 88.1, healthcare: 93.5, destinations: 86.8, corrections: 82.9, sports: 85.8 },
+  { month: 'Aug 25', compositeScore: 86.5, higherEd: 88.8, healthcare: 93.8, destinations: 87.2, corrections: 83.5, sports: 86.3 },
+  { month: 'Sep 25', compositeScore: 87.2, higherEd: 89.4, healthcare: 94.0, destinations: 87.6, corrections: 84.0, sports: 86.8 },
+  { month: 'Oct 25', compositeScore: 87.8, higherEd: 89.9, healthcare: 94.2, destinations: 88.0, corrections: 84.6, sports: 87.2 },
+  { month: 'Nov 25', compositeScore: 88.4, higherEd: 90.3, healthcare: 94.4, destinations: 88.4, corrections: 85.1, sports: 87.5 },
+  { month: 'Dec 25', compositeScore: 89.0, higherEd: 90.7, healthcare: 94.5, destinations: 88.2, corrections: 85.6, sports: 87.8 },
+  { month: 'Jan 26', compositeScore: 89.5, higherEd: 91.0, healthcare: 94.6, destinations: 88.6, corrections: 85.9, sports: 87.9 },
+  { month: 'Feb 26', compositeScore: 90.0, higherEd: 91.2, healthcare: 94.7, destinations: 88.4, corrections: 86.1, sports: 88.0 },
 ];
 
 // ── Regulatory Overlays ──────────────────────────────────────────
@@ -150,7 +150,7 @@ export const predictedScores: PredictedScore[] = [
 
 // ── BU Line Colors ───────────────────────────────────────────────
 export const BU_LINE_COLORS: Record<string, string> = {
-  overall: '#1e4d6b',
+  compositeScore: '#1e4d6b',
   higherEd: '#22c55e',
   healthcare: '#6b21a8',
   destinations: '#d4af37',
@@ -159,7 +159,7 @@ export const BU_LINE_COLORS: Record<string, string> = {
 };
 
 export const BU_LINE_LABELS: Record<string, string> = {
-  overall: 'Overall',
+  compositeScore: 'Composite Score',
   higherEd: 'Higher Education',
   healthcare: 'Healthcare',
   destinations: 'Destinations',
@@ -214,7 +214,7 @@ export function getAncestorPath(targetId: string): EnterpriseHierarchyNode[] {
 }
 
 export function getScoreByCategory(node: EnterpriseHierarchyNode, category: ComplianceCategory): number {
-  if (category === 'overall') return node.complianceScore;
+  if (category === 'compositeScore') return node.complianceScore;
   return node[category];
 }
 

@@ -15,7 +15,6 @@ import { DEMO_SCORE_BREAKDOWN } from '../data/demoCalcodeMap';
 export interface DemoScoreResult {
   locationId: string;
   locationName: string;
-  overallScore: number;
   foodSafety: { score: number; ops: number; docs: number };
   facilitySafety: { score: number; ops: number; docs: number };
   jurisdictionGrade: string;
@@ -49,7 +48,6 @@ export function calculateDemoScore(
   return {
     locationId: location.id,
     locationName: location.name,
-    overallScore: location.score,
     foodSafety: {
       score: Math.round((location.foodSafety.ops + location.foodSafety.docs) / 2),
       ops: location.foodSafety.ops,

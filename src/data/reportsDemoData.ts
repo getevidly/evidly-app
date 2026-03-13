@@ -421,7 +421,6 @@ export function getLocationComparisonData() {
     const tempAvg = temp ? Math.round(temp.reduce((s, t) => s + t.compliance, 0) / temp.length) : 0;
     return {
       location: loc.name, urlId: loc.urlId, foodSafety: food, facilitySafety: facility,
-      overall: Math.round((food + facility) / 2),
       foodStatus: getScoreStatus(food), facilityStatus: getScoreStatus(facility),
       checklistCompletion: checklistAvg, tempCompliance: tempAvg, openItems: loc.actionItems,
     };

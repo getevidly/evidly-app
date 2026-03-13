@@ -22,10 +22,10 @@ import { getScoresThirtyDaysAgo } from '../data/complianceEngineDemoData';
 // ────────────────────────────────────────────────────────
 
 export interface ComplianceScoresResult {
-  scores: { overall: number; foodSafety: number; facilitySafety: number };
-  locationScores: Record<string, { overall: number; foodSafety: number; facilitySafety: number }>;
-  scoresThirtyDaysAgo: { overall: number; foodSafety: number; facilitySafety: number };
-  locationScoresThirtyDaysAgo: Record<string, { overall: number; foodSafety: number; facilitySafety: number }>;
+  scores: { foodSafety: number; facilitySafety: number };
+  locationScores: Record<string, { foodSafety: number; facilitySafety: number }>;
+  scoresThirtyDaysAgo: { foodSafety: number; facilitySafety: number };
+  locationScoresThirtyDaysAgo: Record<string, { foodSafety: number; facilitySafety: number }>;
 }
 
 export interface ProgressData {
@@ -54,9 +54,9 @@ export interface DashboardData {
 // ── Empty results for live mode (no data yet) ───────────
 
 const EMPTY_SCORES: ComplianceScoresResult = {
-  scores: { overall: 0, foodSafety: 0, facilitySafety: 0 },
+  scores: { foodSafety: 0, facilitySafety: 0 },
   locationScores: {},
-  scoresThirtyDaysAgo: { overall: 0, foodSafety: 0, facilitySafety: 0 },
+  scoresThirtyDaysAgo: { foodSafety: 0, facilitySafety: 0 },
   locationScoresThirtyDaysAgo: {},
 };
 
@@ -97,20 +97,18 @@ function fetchComplianceScoresFromEngine(): ComplianceScoresResult {
   const thirtyDaysAgo = getScoresThirtyDaysAgo();
 
   // Build per-location scores
-  const locScores: Record<string, { overall: number; foodSafety: number; facilitySafety: number }> = {};
+  const locScores: Record<string, { foodSafety: number; facilitySafety: number }> = {};
   for (const [locId, r] of Object.entries(results)) {
     locScores[locId] = {
-      overall: Math.round((r.foodSafetyScore + r.facilitySafetyScore) / 2),
       foodSafety: r.foodSafetyScore,
       facilitySafety: r.facilitySafetyScore,
     };
   }
 
   // Build 30-day-ago scores
-  const locScoresAgo: Record<string, { overall: number; foodSafety: number; facilitySafety: number }> = {};
+  const locScoresAgo: Record<string, { foodSafety: number; facilitySafety: number }> = {};
   for (const [locId, ago] of Object.entries(thirtyDaysAgo)) {
     locScoresAgo[locId] = {
-      overall: Math.round((ago.foodSafety + ago.facilitySafety) / 2),
       foodSafety: ago.foodSafety,
       facilitySafety: ago.facilitySafety,
     };
@@ -120,15 +118,13 @@ function fetchComplianceScoresFromEngine(): ComplianceScoresResult {
   const agoEntries = Object.values(thirtyDaysAgo);
   const orgAgo = agoEntries.length > 0
     ? {
-        overall: Math.round(agoEntries.reduce((s, a) => s + (a.foodSafety + a.facilitySafety) / 2, 0) / agoEntries.length),
         foodSafety: Math.round(agoEntries.reduce((s, a) => s + a.foodSafety, 0) / agoEntries.length),
         facilitySafety: Math.round(agoEntries.reduce((s, a) => s + a.facilitySafety, 0) / agoEntries.length),
       }
-    : { overall: 0, foodSafety: 0, facilitySafety: 0 };
+    : { foodSafety: 0, facilitySafety: 0 };
 
   return {
     scores: {
-      overall: orgScores.overall ?? 0,
       foodSafety: orgScores.foodSafety,
       facilitySafety: orgScores.facilitySafety,
     },

@@ -24,7 +24,7 @@ const REPORT = {
   totalOrganizations: 890,
   counties: 14,
   states: 1,
-  overallScore: 79,
+  industryIndex: 79,
   prevQuarterScore: 77,
   quarterChange: +2,
   yearAgoScore: 74,
@@ -285,7 +285,7 @@ export function ComplianceIndex() {
           {/* Key stats row */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-6">
             <div className="bg-white/10 rounded-lg p-3 text-center">
-              <div className="text-xl sm:text-3xl font-bold">{REPORT.overallScore}</div>
+              <div className="text-xl sm:text-3xl font-bold">{REPORT.industryIndex}</div>
               <div className="text-xs text-gray-300">Industry Index</div>
             </div>
             <div className="bg-white/10 rounded-lg p-3 text-center">
@@ -341,7 +341,7 @@ export function ComplianceIndex() {
           <div className="p-4 sm:p-6">
             <div className="flex items-center gap-4 sm:gap-8 mb-6 flex-wrap">
               <div className="text-center">
-                <div className="text-3xl sm:text-5xl font-bold" style={{ color: '#1e4d6b' }}>{REPORT.overallScore}</div>
+                <div className="text-3xl sm:text-5xl font-bold" style={{ color: '#1e4d6b' }}>{REPORT.industryIndex}</div>
                 <div className="text-sm text-gray-500 mt-1">Q{REPORT.quarter} {REPORT.year}</div>
               </div>
               <div className="flex-1">
@@ -356,7 +356,7 @@ export function ComplianceIndex() {
                   </div>
                 </div>
                 <div className="h-4 bg-gray-100 rounded-full overflow-hidden">
-                  <div className="h-full rounded-full" style={{ width: `${REPORT.overallScore}%`, backgroundColor: '#1e4d6b' }} />
+                  <div className="h-full rounded-full" style={{ width: `${REPORT.industryIndex}%`, backgroundColor: '#1e4d6b' }} />
                 </div>
                 <div className="flex justify-between mt-1 text-[10px] text-gray-400">
                   <span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>

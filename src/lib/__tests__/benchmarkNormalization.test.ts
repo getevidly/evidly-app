@@ -92,7 +92,7 @@ describe('computePeerGroupComparison', () => {
 describe('peer populations', () => {
   it('industry population has correct sample size', () => {
     const pop = PEER_POPULATIONS['industry'];
-    expect(pop.overall.length).toBe(4200);
+    expect(pop.foodSafety.length).toBe(4200);
     expect(pop.metadata.sampleSize).toBe(4200);
   });
 
@@ -110,8 +110,8 @@ describe('peer populations', () => {
 
   it('populations are sorted ascending', () => {
     const pop = PEER_POPULATIONS['industry'];
-    for (let i = 1; i < pop.overall.length; i++) {
-      expect(pop.overall[i]).toBeGreaterThanOrEqual(pop.overall[i - 1]);
+    for (let i = 1; i < pop.foodSafety.length; i++) {
+      expect(pop.foodSafety[i]).toBeGreaterThanOrEqual(pop.foodSafety[i - 1]);
     }
   });
 

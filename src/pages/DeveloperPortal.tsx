@@ -436,7 +436,7 @@ const client = new EvidlyClient({
 const locations = await client.locations.list();
 for (const loc of locations.data) {
   const scores = await client.compliance.getScores(loc.id);
-  console.log(\`\${loc.name}: \${scores.overall}\`);
+  console.log(\`\${loc.name}: Food=${scores.foodSafety}, Facility=${scores.facilitySafety}\`);
 }`} />
       </div>
     </div>

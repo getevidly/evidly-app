@@ -78,8 +78,7 @@ export function ComplianceTrends() {
       {!loading && chartData.length > 0 && (
         <>
           {/* Summary Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <TrendSummaryCard label="Overall" analysis={orgTrend.overall} color="#1e4d6b" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <TrendSummaryCard label="Food Safety" analysis={orgTrend.foodSafety} color="#22c55e" />
             <TrendSummaryCard label="Facility Safety" analysis={orgTrend.facilitySafety} color="#d4af37" />
           </div>

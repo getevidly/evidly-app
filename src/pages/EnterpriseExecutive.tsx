@@ -94,7 +94,7 @@ export function EnterpriseExecutive() {
 
   // State
   const [drillDownNodeId, setDrillDownNodeId] = useState<string | null>(null);
-  const [selectedTrendUnits, setSelectedTrendUnits] = useState<string[]>(['overall']);
+  const [selectedTrendUnits, setSelectedTrendUnits] = useState<string[]>([]);
 
   // Derived data
   const activeNode = useMemo(() => {
@@ -119,15 +119,15 @@ export function EnterpriseExecutive() {
   const latestTrend = enterpriseTrendData[enterpriseTrendData.length - 1];
   const prevTrend = enterpriseTrendData[enterpriseTrendData.length - 2];
   const threeMonthAgo = enterpriseTrendData[enterpriseTrendData.length - 4];
-  const trendDelta = +(latestTrend.overall - prevTrend.overall).toFixed(1);
-  const trend3mDelta = +(latestTrend.overall - threeMonthAgo.overall).toFixed(1);
+  const trendDelta = +(latestTrend.foodSafety - prevTrend.foodSafety).toFixed(1);
+  const trend3mDelta = +(latestTrend.foodSafety - threeMonthAgo.foodSafety).toFixed(1);
 
   // Location breakdown
   const totalLocations = drillDownNodeId ? activeNode.locationCount : tenant.stats.totalLocations;
   const locationsCompliant = Math.round(totalLocations * 0.82);
   const locationsAtRisk = Math.round(totalLocations * 0.14);
   const locationsCritical = totalLocations - locationsCompliant - locationsAtRisk;
-  const overallScore = drillDownNodeId ? activeNode.complianceScore : tenant.stats.avgComplianceScore;
+  const foodSafetyScore = drillDownNodeId ? activeNode.foodSafety : tenant.stats.avgComplianceScore;
 
   // Scorecard rows — BU scorecard at root, or node children when drilled
   const scorecardRows = useMemo(() => {
@@ -151,10 +151,8 @@ export function EnterpriseExecutive() {
     const base = businessUnitTrends.map(d => ({ ...d }));
     // Add 2 prediction points
     const last = base[base.length - 1];
-    const overallPred = predictedScores.reduce((s, p) => s + p.predictedNextQuarter, 0) / predictedScores.length;
     base.push({
       month: 'Mar 26',
-      overall: +(overallPred * 0.5 + last.overall * 0.5).toFixed(1),
       higherEd: +(91.2 * 0.5 + 92.8 * 0.5).toFixed(1),
       healthcare: +(94.7 * 0.5 + 95.1 * 0.5).toFixed(1),
       destinations: +(88.4 * 0.5 + 89.6 * 0.5).toFixed(1),
@@ -163,7 +161,6 @@ export function EnterpriseExecutive() {
     });
     base.push({
       month: 'Apr 26',
-      overall: +overallPred.toFixed(1),
       higherEd: 92.8,
       healthcare: 95.1,
       destinations: 89.6,
@@ -175,7 +172,7 @@ export function EnterpriseExecutive() {
 
   function toggleTrendUnit(key: string) {
     setSelectedTrendUnits(prev => {
-      if (key === 'overall') return prev; // always shown
+      if (key === 'compositeScore') return prev; // always shown
       return prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key];
     });
   }
@@ -260,7 +257,7 @@ export function EnterpriseExecutive() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
             {[
-              { label: 'Overall Score', value: overallScore + '%', icon: EvidlyIcon as any, highlight: true },
+              { label: 'Food Safety', value: foodSafetyScore + '%', icon: EvidlyIcon as any, highlight: true },
               { label: 'vs Last Mo', value: (trendDelta >= 0 ? '+' : '') + trendDelta + '%', icon: trendDelta >= 0 ? TrendingUp : TrendingDown },
               { label: 'vs 3Mo Ago', value: (trend3mDelta >= 0 ? '+' : '') + trend3mDelta + '%', icon: trend3mDelta >= 0 ? TrendingUp : TrendingDown },
               { label: 'Locations', value: `${totalLocations.toLocaleString()} total`, icon: MapPin },
@@ -280,10 +277,10 @@ export function EnterpriseExecutive() {
           </div>
           <div className="flex items-center gap-4 sm:gap-6 mt-4 pt-3 border-t border-gray-100 flex-wrap">
             <div className="flex items-center gap-2">
-              <ScoreCircle score={overallScore} size={52} />
+              <ScoreCircle score={foodSafetyScore} size={52} />
               <div>
                 <p className="text-xs font-semibold text-gray-900">{drillDownNodeId ? activeNode.name : 'EvidLY Demo Org'}</p>
-                <p className="text-[10px] text-gray-500">Organization Score</p>
+                <p className="text-[10px] text-gray-500">Food Safety Score</p>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4 text-center">
@@ -400,7 +397,7 @@ export function EnterpriseExecutive() {
                   <td className="px-3 py-2.5 text-gray-900">{drillDownNodeId ? activeNode.name + ' Total' : 'Corporate Total'}</td>
                   <td className="px-3 py-2.5 text-center text-gray-700">{totalLocations.toLocaleString()}</td>
                   <td className="px-3 py-2.5 text-center">
-                    <span className="font-bold" style={{ color: scoreColor(overallScore) }}>{overallScore}%</span>
+                    <span className="font-bold" style={{ color: scoreColor(foodSafetyScore) }}>{foodSafetyScore}%</span>
                   </td>
                   <td className="px-3 py-2.5 text-center"><TrendBadge value={trendDelta} /></td>
                   <td className="px-3 py-2.5 text-gray-500 hidden sm:table-cell">—</td>
@@ -450,8 +447,6 @@ export function EnterpriseExecutive() {
                   label={{ value: r.label, position: 'top', style: { fontSize: 9, fill: r.color, fontWeight: 600 } }}
                 />
               ))}
-              {/* Overall line — always shown */}
-              <Line type="monotone" dataKey="overall" name="Overall" stroke={BU_LINE_COLORS.overall} strokeWidth={2.5} dot={false} activeDot={{ r: 4 }} />
               {/* BU lines — togglable */}
               {selectedTrendUnits.includes('higherEd') && (
                 <Line type="monotone" dataKey="higherEd" name="Higher Ed" stroke={BU_LINE_COLORS.higherEd} strokeWidth={1.5} dot={false} />
@@ -474,7 +469,7 @@ export function EnterpriseExecutive() {
           {/* BU Toggle checkboxes */}
           <div className="flex flex-wrap items-center gap-3 mt-3 pt-3 border-t border-gray-100">
             <span className="text-[10px] text-gray-400 font-medium">Compare:</span>
-            {Object.entries(BU_LINE_LABELS).filter(([k]) => k !== 'overall').map(([key, label]) => (
+            {Object.entries(BU_LINE_LABELS).filter(([k]) => k !== 'compositeScore').map(([key, label]) => (
               <label key={key} className="flex items-center gap-1.5 cursor-pointer">
                 <input
                   type="checkbox"

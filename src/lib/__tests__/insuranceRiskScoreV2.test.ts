@@ -269,7 +269,6 @@ describe('calculateInsuranceRiskScoreV2', () => {
   it('trend adjustment modifies overall score', () => {
     const input = makeInput('downtown');
     input.trendAnalysis = {
-      overall: makeTrend('improving', 3, 1.0),
       foodSafety: makeTrend('improving', 2, 1.0),
       facilitySafety: makeTrend('stable', 0.5, 1.0),
     };

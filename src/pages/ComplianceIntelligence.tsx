@@ -1,4 +1,4 @@
-// TODO: Replace .overall with independent pillar scores (FIX-WEIGHTS)
+// Enterprise composite scores — NOT a two-pillar compliance blend.
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -337,7 +337,7 @@ function CommandCenterTab() {
             <Legend wrapperStyle={{ fontSize: 10 }} />
             <ReferenceLine x="Jul" stroke="#d4af37" strokeDasharray="4 2" strokeWidth={1.5} label={{ value: 'AB 660', position: 'top', style: { fontSize: 9, fill: '#d4af37', fontWeight: 600 } }} />
             <ReferenceLine x="Nov" stroke="#6b21a8" strokeDasharray="4 2" strokeWidth={1.5} label={{ value: 'FDA Update', position: 'top', style: { fontSize: 9, fill: '#6b21a8', fontWeight: 600 } }} />
-            <Line type="monotone" dataKey="overall" name="Overall" stroke="#1e4d6b" strokeWidth={2.5} dot={false} />
+            <Line type="monotone" dataKey="compositeScore" name="Composite" stroke="#1e4d6b" strokeWidth={2.5} dot={false} />
             <Line type="monotone" dataKey="fire" name="Facility Safety" stroke="#ef4444" strokeWidth={1.5} dot={false} />
             <Line type="monotone" dataKey="food" name="Food Safety" stroke="#22c55e" strokeWidth={1.5} dot={false} />
           </LineChart>
@@ -475,7 +475,7 @@ function CompareTab() {
                     <th className="text-center px-2 py-2 font-medium text-gray-600 cursor-pointer" onClick={() => handleSort('rank')}>Rank<SortArrow col="rank" /></th>
                     <th className="text-left px-3 py-2 font-medium text-gray-600 cursor-pointer" onClick={() => handleSort('name')}>Location<SortArrow col="name" /></th>
                     <th className="text-left px-2 py-2 font-medium text-gray-600 cursor-pointer hidden sm:table-cell" onClick={() => handleSort('region')}>Region<SortArrow col="region" /></th>
-                    <th className="text-center px-2 py-2 font-medium text-gray-600 cursor-pointer" onClick={() => handleSort('overall')}>Overall<SortArrow col="overall" /></th>
+                    <th className="text-center px-2 py-2 font-medium text-gray-600 cursor-pointer" onClick={() => handleSort('compositeScore')}>Composite<SortArrow col="compositeScore" /></th>
                     <th className="text-center px-2 py-2 font-medium text-gray-600 cursor-pointer hidden sm:table-cell" onClick={() => handleSort('fire')}>Fire<SortArrow col="fire" /></th>
                     <th className="text-center px-2 py-2 font-medium text-gray-600 cursor-pointer hidden sm:table-cell" onClick={() => handleSort('food')}>Food<SortArrow col="food" /></th>
                     <th className="text-center px-2 py-2 font-medium text-gray-600 cursor-pointer hidden sm:table-cell" onClick={() => handleSort('docs')}>Docs<SortArrow col="docs" /></th>
@@ -489,7 +489,7 @@ function CompareTab() {
                       <td className="px-2 py-2 text-center text-gray-400 font-mono">{loc.rank}</td>
                       <td className="px-3 py-2 font-medium text-gray-900">{loc.name}</td>
                       <td className="px-2 py-2 text-gray-500 hidden sm:table-cell">{loc.region}</td>
-                      <td className="px-2 py-2 text-center"><span className="font-bold" style={{ color: scoreColor(loc.overall) }}>{loc.overall}</span></td>
+                      <td className="px-2 py-2 text-center"><span className="font-bold" style={{ color: scoreColor(loc.compositeScore) }}>{loc.compositeScore}</span></td>
                       <td className="px-2 py-2 text-center hidden sm:table-cell" style={{ color: scoreColor(loc.fire) }}>{loc.fire}</td>
                       <td className="px-2 py-2 text-center hidden sm:table-cell" style={{ color: scoreColor(loc.food) }}>{loc.food}</td>
                       <td className="px-2 py-2 text-center hidden sm:table-cell" style={{ color: scoreColor(loc.docs) }}>{loc.docs}</td>
@@ -619,9 +619,9 @@ function TrendsTab() {
             <YAxis domain={[70, 100]} tick={{ fontSize: 10, fill: '#9ca3af' }} />
             <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8 }} />
             <Legend wrapperStyle={{ fontSize: 10 }} />
-            <Line data={seasonalPatternThisYear} type="monotone" dataKey="overall" name="This Year — Overall" stroke="#1e4d6b" strokeWidth={2.5} dot={false} />
+            <Line data={seasonalPatternThisYear} type="monotone" dataKey="compositeScore" name="This Year — Composite" stroke="#1e4d6b" strokeWidth={2.5} dot={false} />
             <Line data={seasonalPatternThisYear} type="monotone" dataKey="food" name="This Year — Food" stroke="#22c55e" strokeWidth={1.5} dot={false} />
-            <Line data={seasonalPatternLastYear} type="monotone" dataKey="overall" name="Last Year — Overall" stroke="#1e4d6b" strokeWidth={1.5} strokeDasharray="5 3" dot={false} />
+            <Line data={seasonalPatternLastYear} type="monotone" dataKey="compositeScore" name="Last Year — Composite" stroke="#1e4d6b" strokeWidth={1.5} strokeDasharray="5 3" dot={false} />
             <Line data={seasonalPatternLastYear} type="monotone" dataKey="food" name="Last Year — Food" stroke="#22c55e" strokeWidth={1} strokeDasharray="5 3" dot={false} />
           </LineChart>
         </ResponsiveContainer>
@@ -912,10 +912,10 @@ const CustomScatterTooltip = ({ active, payload }: any) => {
 };
 
 function StaffingTab() {
-  const turnoverData = useMemo(() => getScatterData('turnover', 'overall'), []);
-  const trainingData = useMemo(() => getScatterData('trainingPct', 'overall'), []);
+  const turnoverData = useMemo(() => getScatterData('turnover', 'compositeScore'), []);
+  const trainingData = useMemo(() => getScatterData('trainingPct', 'compositeScore'), []);
   const checklistData = useMemo(() => getScatterData('headcount', 'checklistPct'), []);
-  const tenureData = useMemo(() => getScatterData('monthsOnPlatform', 'overall'), []);
+  const tenureData = useMemo(() => getScatterData('monthsOnPlatform', 'compositeScore'), []);
 
   const riskCounts = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -1610,9 +1610,9 @@ function PlatformTab() {
             onChange={e => setSelectedRegion(e.target.value)}
             className="text-xs border border-gray-200 rounded-lg px-3 py-1.5 text-gray-700"
           >
-            <option value="enterprise">Enterprise (All {enterpriseAggregation.overall.count} locations)</option>
+            <option value="enterprise">Enterprise (All {enterpriseAggregation.compositeScore.count} locations)</option>
             {regionAggregations.map(r => (
-              <option key={r.entityName} value={r.entityName}>{r.entityName} ({r.overall.count} locations)</option>
+              <option key={r.entityName} value={r.entityName}>{r.entityName} ({r.compositeScore.count} locations)</option>
             ))}
           </select>
         </div>
@@ -1635,7 +1635,7 @@ function PlatformTab() {
               </tr>
             </thead>
             <tbody>
-              <StatRow label="Overall Compliance" stats={activeAgg.overall} />
+              <StatRow label="Composite Score" stats={activeAgg.compositeScore} />
               <StatRow label="Food Safety" stats={activeAgg.foodSafety} />
               <StatRow label="Workplace Safety" stats={activeAgg.workplace} />
               <StatRow label="Regulatory" stats={activeAgg.regulatory} />

@@ -34,7 +34,7 @@ export default function LocationComparison({ config }: { config: ReportTypeConfi
   }
 
   // Find best / needs most attention
-  const sorted = [...data].sort((a, b) => b.overall - a.overall);
+  const sorted = [...data].sort((a, b) => b.foodSafety - a.foodSafety);
   const best = sorted[0];
   const worst = sorted[sorted.length - 1];
 
@@ -43,8 +43,8 @@ export default function LocationComparison({ config }: { config: ReportTypeConfi
     let y = drawReportHeader(doc, 'Location Comparison', 'Side-by-side scores and metrics', 'All Locations', 'Current');
     y = drawSectionHeading(doc, 'Comparison Table', y);
     drawTable(doc,
-      ['Location', 'Food Safety', 'Facility Safety', 'Overall', 'Checklists', 'Temperature Readings', 'Open Items'],
-      data.map(l => [l.location, String(l.foodSafety), String(l.facilitySafety), String(l.overall), `${l.checklistCompletion}%`, `${l.tempCompliance}%`, String(l.openItems)]),
+      ['Location', 'Food Safety', 'Facility Safety', 'Checklists', 'Temperature Readings', 'Open Items'],
+      data.map(l => [l.location, String(l.foodSafety), String(l.facilitySafety), `${l.checklistCompletion}%`, `${l.tempCompliance}%`, String(l.openItems)]),
       y,
     );
     saveReportPdf(doc, 'evidly-location-comparison.pdf');
@@ -59,14 +59,14 @@ export default function LocationComparison({ config }: { config: ReportTypeConfi
       {/* Best / Worst callouts */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="rounded-xl p-4 flex items-center gap-3" style={{ background: '#f0fdf4', border: '1px solid #bbf7d0' }}>
-          <span className="text-2xl font-bold" style={{ color: '#16a34a' }}>{best.overall}</span>
+          <span className="text-2xl font-bold" style={{ color: '#16a34a' }}>{best.foodSafety}</span>
           <div>
             <p className="text-xs font-semibold" style={{ color: '#166534' }}>Best Performing</p>
             <p className="text-sm font-medium" style={{ color: BODY_TEXT }}>{best.location}</p>
           </div>
         </div>
         <div className="rounded-xl p-4 flex items-center gap-3" style={{ background: '#fffbeb', border: '1px solid #fef3c7' }}>
-          <span className="text-2xl font-bold" style={{ color: '#d97706' }}>{worst.overall}</span>
+          <span className="text-2xl font-bold" style={{ color: '#d97706' }}>{worst.foodSafety}</span>
           <div>
             <p className="text-xs font-semibold" style={{ color: '#92400e' }}>Needs Most Attention</p>
             <p className="text-sm font-medium" style={{ color: BODY_TEXT }}>{worst.location}</p>
@@ -99,7 +99,7 @@ export default function LocationComparison({ config }: { config: ReportTypeConfi
           <table className="w-full text-sm">
             <thead>
               <tr style={{ borderBottom: `2px solid ${CARD_BORDER}` }}>
-                {['Location', 'Food Safety', 'Facility Safety', 'Overall', 'Checklist %', 'Temperature Reading %', 'Open Items'].map(h => (
+                {['Location', 'Food Safety', 'Facility Safety', 'Checklist %', 'Temperature Reading %', 'Open Items'].map(h => (
                   <th key={h} className="text-left py-2 px-3 text-xs font-semibold" style={{ color: MUTED }}>{h}</th>
                 ))}
               </tr>
@@ -113,9 +113,6 @@ export default function LocationComparison({ config }: { config: ReportTypeConfi
                   </td>
                   <td className="py-2 px-3">
                     <span className="font-bold" style={{ color: getScoreColor(l.facilitySafety) }}>{l.facilitySafety}</span>
-                  </td>
-                  <td className="py-2 px-3">
-                    <span className="font-bold" style={{ color: getScoreColor(l.overall) }}>{l.overall}</span>
                   </td>
                   <td className="py-2 px-3" style={{ color: l.checklistCompletion >= 90 ? '#16a34a' : '#d97706' }}>{l.checklistCompletion}%</td>
                   <td className="py-2 px-3" style={{ color: l.tempCompliance >= 90 ? '#16a34a' : '#d97706' }}>{l.tempCompliance}%</td>

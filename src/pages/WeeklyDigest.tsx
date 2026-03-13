@@ -12,13 +12,13 @@ const DEMO_DIGEST: DigestData = {
   facilitySafetyScore: 70,
   scoreTrend: 2,
   locations: [
-    { name: 'Location 1', overall: 92, trend: 3, operational: 95, equipment: 91, documentation: 89, status: 'Inspection Ready' }, // demo
-    { name: 'Location 2', overall: 74, trend: -2, operational: 78, equipment: 70, documentation: 72, status: 'Needs Attention' }, // demo
-    { name: 'Location 3', overall: 57, trend: 4, operational: 62, equipment: 55, documentation: 52, status: 'Critical' }, // demo
+    { name: 'Location 1', trend: 3, operational: 95, equipment: 91, documentation: 89, status: 'Inspection Ready' }, // demo
+    { name: 'Location 2', trend: -2, operational: 78, equipment: 70, documentation: 72, status: 'Needs Attention' }, // demo
+    { name: 'Location 3', trend: 4, operational: 62, equipment: 55, documentation: 52, status: 'Critical' }, // demo
   ],
   highlights: [
     'Location 1 maintained Inspection Ready status for 8 consecutive weeks', // demo
-    'Location 3 improved overall score by +4 points this week', // demo
+    'Location 3 improved food safety score by +4 points this week', // demo
     'Zero out-of-range temperature readings at Location 1', // demo
     'All closing checklists completed on time across all locations',
   ],

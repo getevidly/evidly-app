@@ -85,7 +85,6 @@ export default function Passport() {
   const locationData = {
     name: loc.name,
     address: loc.address,
-    overall: null as number | null, // DEPRECATED — no composite score
     foodSafety: scores.foodSafety,
     facilitySafety: scores.facilitySafety,
   };

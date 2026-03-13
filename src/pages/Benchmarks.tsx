@@ -1,4 +1,4 @@
-// TODO: Replace .overall with independent pillar scores (FIX-WEIGHTS)
+// P0-PURGE: No blended "overall" compliance score — pillars are independent
 import { useState, useRef } from 'react';
 import { toast } from 'sonner';
 import {
@@ -533,10 +533,9 @@ export function Benchmarks() {
                   <tr className="border-b border-gray-200">
                     <th className="text-left text-xs font-semibold text-gray-500 uppercase pb-3">#</th>
                     <th className="text-left text-xs font-semibold text-gray-500 uppercase pb-3">Location</th>
-                    <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3">Score</th>
+                    <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3">Food Safety</th>
+                    <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3">Facility Safety</th>
                     <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3">Industry Pct</th>
-                    <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3 hidden sm:table-cell">Food Safety</th>
-                    <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3 hidden sm:table-cell">Facility Safety</th>
                     <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3 hidden sm:table-cell">Badge</th>
                   </tr>
                 </thead>
@@ -550,10 +549,9 @@ export function Benchmarks() {
                         {i === 0 && <span className="text-xs text-green-600 font-medium">Best</span>}
                         {i === locationRankings.length - 1 && <span className="text-xs text-red-500 font-medium">Needs Attention</span>}
                       </td>
-                      <td className="py-3 text-center text-sm font-bold" style={{ color: '#1e4d6b' }}>{loc.overallScore}</td>
+                      <td className="py-3 text-center text-sm font-bold" style={{ color: '#1e4d6b' }}>{loc.foodSafety}</td>
+                      <td className="py-3 text-center text-sm text-gray-600">{loc.facilitySafety}</td>
                       <td className="py-3 text-center"><PercentileBadge pct={loc.industryPercentile} /></td>
-                      <td className="py-3 text-center text-sm text-gray-600 hidden sm:table-cell">{loc.foodSafety}</td>
-                      <td className="py-3 text-center text-sm text-gray-600 hidden sm:table-cell">{loc.facilitySafety}</td>
                       <td className="py-3 text-center hidden sm:table-cell">
                         {loc.badgeTier ? (
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold" style={{ backgroundColor: '#f1f5f9', color: '#3D5068' }}>
@@ -579,12 +577,12 @@ export function Benchmarks() {
                 <div className="space-y-2 text-xs text-gray-700">
                   <div className="flex items-start gap-2">
                     <CheckCircle2 className="h-3.5 w-3.5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span><strong>{locationRankings[0]?.name}</strong> leads with a score of {locationRankings[0]?.overallScore} — consistent management practices are the key differentiator.</span>
+                    <span><strong>{locationRankings[0]?.name}</strong> leads with a food safety score of {locationRankings[0]?.foodSafety} — consistent management practices are the key differentiator.</span>
                   </div>
                   {locationRankings.length > 2 && (
                     <div className="flex items-start gap-2">
                       <Info className="h-3.5 w-3.5 text-blue-500 mt-0.5 flex-shrink-0" />
-                      <span><strong>{locationRankings[locationRankings.length - 1]?.name}</strong> scores {locationRankings[0].overallScore - locationRankings[locationRankings.length - 1].overallScore} points below the top location — focus on {leadLag.lags[0]?.label?.toLowerCase() ?? 'improvement areas'} to close the gap.</span>
+                      <span><strong>{locationRankings[locationRankings.length - 1]?.name}</strong> scores {locationRankings[0].foodSafety - locationRankings[locationRankings.length - 1].foodSafety} points below the top location — focus on {leadLag.lags[0]?.label?.toLowerCase() ?? 'improvement areas'} to close the gap.</span>
                     </div>
                   )}
                 </div>

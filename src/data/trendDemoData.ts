@@ -15,7 +15,6 @@
 export interface CategoryTrendDataPoint {
   date: string;                 // ISO "YYYY-MM-DD"
   dateDisplay: string;          // "Jan 15" for chart labels
-  overall: number;
   foodSafety: number;
   facilitySafety: number;
   // Category-level
@@ -206,7 +205,6 @@ function buildLocationTrend(config: LocationConfig): CategoryTrendDataPoint[] {
     points.push({
       date: formatISO(d),
       dateDisplay: formatDisplay(d),
-      overall: Math.round((food[i] + facility[i]) / 2),
       foodSafety: food[i],
       facilitySafety: facility[i],
       tempCompliance: temp[i],
@@ -247,7 +245,6 @@ export const CATEGORY_ORG_TRENDS: CategoryTrendDataPoint[] = (() => {
     result.push({
       date: pts[0].date,
       dateDisplay: pts[0].dateDisplay,
-      overall: avg('overall'),
       foodSafety: avg('foodSafety'),
       facilitySafety: avg('facilitySafety'),
       tempCompliance: avg('tempCompliance'),

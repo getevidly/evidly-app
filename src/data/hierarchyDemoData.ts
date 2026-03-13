@@ -46,13 +46,12 @@ export const demoHierarchyConfig: HierarchyConfig = {
 export function computeRollup(
   children: HierarchyNode[],
   method: 'weighted' | 'equal'
-): { overall: number; foodSafety: number; facilitySafety: number } {
-  if (children.length === 0) return { overall: 0, foodSafety: 0, facilitySafety: 0 };
+): { foodSafety: number; facilitySafety: number } {
+  if (children.length === 0) return { foodSafety: 0, facilitySafety: 0 };
 
   if (method === 'equal') {
     const n = children.length;
     return {
-      overall: Math.round(children.reduce((s, c) => s + c.complianceScore, 0) / n),
       foodSafety: Math.round(children.reduce((s, c) => s + c.foodSafety, 0) / n),
       facilitySafety: Math.round(children.reduce((s, c) => s + c.facilitySafety, 0) / n),
     };
@@ -62,7 +61,6 @@ export function computeRollup(
   const totalLocs = children.reduce((s, c) => s + c.locationCount, 0);
   if (totalLocs === 0) return computeRollup(children, 'equal');
   return {
-    overall: Math.round(children.reduce((s, c) => s + c.complianceScore * c.locationCount, 0) / totalLocs),
     foodSafety: Math.round(children.reduce((s, c) => s + c.foodSafety * c.locationCount, 0) / totalLocs),
     facilitySafety: Math.round(children.reduce((s, c) => s + c.facilitySafety * c.locationCount, 0) / totalLocs),
   };
@@ -70,22 +68,22 @@ export function computeRollup(
 
 // ── Build Demo Tree ────────────────────────────────────────────
 
-function buildTree(scores: Record<string, { overall: number; foodSafety: number; facilitySafety: number }>): HierarchyNode {
+function buildTree(scores: Record<string, { foodSafety: number; facilitySafety: number }>): HierarchyNode {
   const downtown: HierarchyNode = {
     id: 'pcd-downtown', level: 'location', name: 'Location 1', code: 'PCD-DWN',
-    complianceScore: scores.downtown.overall, foodSafety: scores.downtown.foodSafety,
+    complianceScore: scores.downtown.foodSafety, foodSafety: scores.downtown.foodSafety,
     facilitySafety: scores.downtown.facilitySafety,
     locationCount: 1,
   };
   const airport: HierarchyNode = {
     id: 'pcd-airport', level: 'location', name: 'Location 2', code: 'PCD-AIR',
-    complianceScore: scores.airport.overall, foodSafety: scores.airport.foodSafety,
+    complianceScore: scores.airport.foodSafety, foodSafety: scores.airport.foodSafety,
     facilitySafety: scores.airport.facilitySafety,
     locationCount: 1,
   };
   const university: HierarchyNode = {
     id: 'pcd-university', level: 'location', name: 'Location 3', code: 'PCD-UNI',
-    complianceScore: scores.university.overall, foodSafety: scores.university.foodSafety,
+    complianceScore: scores.university.foodSafety, foodSafety: scores.university.foodSafety,
     facilitySafety: scores.university.facilitySafety,
     locationCount: 1,
   };
@@ -93,7 +91,7 @@ function buildTree(scores: Record<string, { overall: number; foodSafety: number;
   const fresnoRollup = computeRollup([downtown, airport], 'weighted');
   const fresnoMetro: HierarchyNode = {
     id: 'pcd-fresno', level: 'district', name: 'Fresno Metro', code: 'PCD-FRS',
-    complianceScore: fresnoRollup.overall, foodSafety: fresnoRollup.foodSafety,
+    complianceScore: fresnoRollup.foodSafety, foodSafety: fresnoRollup.foodSafety,
     facilitySafety: fresnoRollup.facilitySafety,
     locationCount: 2,
     children: [downtown, airport],
@@ -102,7 +100,7 @@ function buildTree(scores: Record<string, { overall: number; foodSafety: number;
   const mercedRollup = computeRollup([university], 'weighted');
   const mercedCounty: HierarchyNode = {
     id: 'pcd-merced', level: 'district', name: 'Merced County', code: 'PCD-MRC',
-    complianceScore: mercedRollup.overall, foodSafety: mercedRollup.foodSafety,
+    complianceScore: mercedRollup.foodSafety, foodSafety: mercedRollup.foodSafety,
     facilitySafety: mercedRollup.facilitySafety,
     locationCount: 1,
     children: [university],
@@ -111,7 +109,7 @@ function buildTree(scores: Record<string, { overall: number; foodSafety: number;
   const cvRollup = computeRollup([fresnoMetro, mercedCounty], 'weighted');
   const centralValley: HierarchyNode = {
     id: 'pcd-cv', level: 'region', name: 'Central Valley', code: 'PCD-CV',
-    complianceScore: cvRollup.overall, foodSafety: cvRollup.foodSafety,
+    complianceScore: cvRollup.foodSafety, foodSafety: cvRollup.foodSafety,
     facilitySafety: cvRollup.facilitySafety,
     locationCount: 3,
     children: [fresnoMetro, mercedCounty],
@@ -120,7 +118,7 @@ function buildTree(scores: Record<string, { overall: number; foodSafety: number;
   const corpRollup = computeRollup([centralValley], 'weighted');
   return {
     id: 'pcd-corp', level: 'corporate', name: 'Pacific Coast Dining', code: 'PCD',
-    complianceScore: corpRollup.overall, foodSafety: corpRollup.foodSafety,
+    complianceScore: corpRollup.foodSafety, foodSafety: corpRollup.foodSafety,
     facilitySafety: corpRollup.facilitySafety,
     locationCount: 3,
     children: [centralValley],
@@ -173,21 +171,18 @@ function generateWeeklyHistory(currentScore: number, thirtyDaysAgoScore: number)
 
 export interface WeeklyHistoryPoint {
   week: string;
-  overall: number;
   foodSafety: number;
   facilitySafety: number;
 }
 
 function buildNodeHistory(
-  current: { overall: number; foodSafety: number; facilitySafety: number },
-  prev: { overall: number; foodSafety: number; facilitySafety: number }
+  current: { foodSafety: number; facilitySafety: number },
+  prev: { foodSafety: number; facilitySafety: number }
 ): WeeklyHistoryPoint[] {
-  const overallHist = generateWeeklyHistory(current.overall, prev.overall);
   const fsHist = generateWeeklyHistory(current.foodSafety, prev.foodSafety);
   const fireHist = generateWeeklyHistory(current.facilitySafety, prev.facilitySafety);
   return WEEKS.map((week, i) => ({
     week,
-    overall: overallHist[i].score,
     foodSafety: fsHist[i].score,
     facilitySafety: fireHist[i].score,
   }));
@@ -202,8 +197,8 @@ function collectAllNodeIds(tree: HierarchyNode): string[] {
 function buildAllHistory(current: HierarchyNode, prev: HierarchyNode): Record<string, WeeklyHistoryPoint[]> {
   const result: Record<string, WeeklyHistoryPoint[]> = {};
   result[current.id] = buildNodeHistory(
-    { overall: current.complianceScore, foodSafety: current.foodSafety, facilitySafety: current.facilitySafety },
-    { overall: prev.complianceScore, foodSafety: prev.foodSafety, facilitySafety: prev.facilitySafety }
+    { foodSafety: current.foodSafety, facilitySafety: current.facilitySafety },
+    { foodSafety: prev.foodSafety, facilitySafety: prev.facilitySafety }
   );
   if (current.children && prev.children) {
     current.children.forEach((child, i) => {

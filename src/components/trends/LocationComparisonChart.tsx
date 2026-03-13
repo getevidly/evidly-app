@@ -15,10 +15,9 @@ interface Props {
   locationData: Record<string, CategoryTrendDataPoint[]>;
 }
 
-type Metric = 'overall' | 'foodSafety' | 'facilitySafety';
+type Metric = 'foodSafety' | 'facilitySafety';
 
 const METRIC_LABELS: Record<Metric, string> = {
-  overall: 'Overall',
   foodSafety: 'Food Safety',
   facilitySafety: 'Facility Safety',
 };
@@ -36,7 +35,7 @@ const LOCATION_LABELS: Record<string, string> = {
 };
 
 export function LocationComparisonChart({ locationData }: Props) {
-  const [metric, setMetric] = useState<Metric>('overall');
+  const [metric, setMetric] = useState<Metric>('foodSafety');
 
   // Build merged data for chart (one entry per day with columns per location)
   const locationIds = Object.keys(locationData);

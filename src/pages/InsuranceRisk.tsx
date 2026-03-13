@@ -714,7 +714,7 @@ export function InsuranceRisk() {
                     <tr key={loc.urlId} className="border-b border-gray-50 hover:bg-gray-50 cursor-pointer" onClick={() => handleLocationChange(loc.urlId)}>
                       <td className="py-3">
                         <div className="text-sm font-medium text-gray-900">{loc.name}</div>
-                        <div className="text-[11px] text-gray-400">Compliance: {locationScores[loc.urlId]?.overall || 0}</div>
+                        <div className="text-[11px] text-gray-400">Food Safety: {locationScores[loc.urlId]?.foodSafety || 0}</div>
                       </td>
                       <td className="text-center py-3">
                         <span className="text-sm font-bold" style={{ color: locTier.color }}>{locResult.overall}</span>

@@ -1,4 +1,4 @@
-// TODO: Replace .overall with independent pillar scores (FIX-WEIGHTS)
+// P0-PURGE: No blended "overall" compliance score — pillars are independent
 import { useState, useMemo, useRef, useCallback, useEffect, memo } from 'react';
 import { toast } from 'sonner';
 import {
@@ -278,7 +278,6 @@ function generateComplianceScores(location: string | null) {
   const locs = location ? [location] : LOCATIONS;
   return locs.map(loc => ({
     location: loc,
-    overall: rnd(72, 96),
     foodSafety: rnd(75, 98),
     facilitySafety: rnd(68, 95),
     trend: pick(['up', 'stable', 'down'] as const),
@@ -1005,14 +1004,19 @@ export function AuditTrail() {
                   <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {reportData.complianceScores.map((cs: any) => (
                       <div key={cs.location} className="flex items-center gap-3 p-3 rounded-lg border border-gray-100">
-                        <div className="w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold text-white" style={{ backgroundColor: getScoreColor(cs.overall) }}>
-                          {cs.overall}
+                        <div className="flex gap-2">
+                          <div className="w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold text-white" style={{ backgroundColor: getScoreColor(cs.foodSafety) }}>
+                            {cs.foodSafety}
+                          </div>
+                          <div className="w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold text-white" style={{ backgroundColor: getScoreColor(cs.facilitySafety) }}>
+                            {cs.facilitySafety}
+                          </div>
                         </div>
                         <div>
                           <p className="text-sm font-semibold text-gray-900">{cs.location}</p>
                           <div className="flex gap-2 text-xs text-gray-500">
                             <span>Food: {cs.foodSafety}</span>
-                            <span>Fire: {cs.facilitySafety}</span>
+                            <span>Facility: {cs.facilitySafety}</span>
                           </div>
                         </div>
                       </div>
@@ -1271,7 +1275,6 @@ export function AuditTrail() {
                         <thead>
                           <tr style={{ backgroundColor: '#f9fafb' }}>
                             <th style={thStyle}>Location</th>
-                            <th style={thStyle}>Overall</th>
                             <th style={thStyle}>Food Safety</th>
                             <th style={thStyle}>Facility Safety</th>
                             <th style={thStyle}>Trend</th>
@@ -1282,10 +1285,7 @@ export function AuditTrail() {
                           {reportData.complianceScores.map((cs: any) => (
                             <tr key={cs.location}>
                               <td style={tdStyle} className="font-semibold">{cs.location}</td>
-                              <td style={tdStyle}>
-                                <span className="font-bold" style={{ color: getScoreColor(cs.overall) }}>{cs.overall}</span>
-                              </td>
-                              <td style={tdStyle}><span className="font-medium" style={{ color: getScoreColor(cs.foodSafety) }}>{cs.foodSafety}</span></td>
+                              <td style={tdStyle}><span className="font-bold" style={{ color: getScoreColor(cs.foodSafety) }}>{cs.foodSafety}</span></td>
                               <td style={tdStyle}><span className="font-medium" style={{ color: getScoreColor(cs.facilitySafety) }}>{cs.facilitySafety}</span></td>
                               <td style={tdStyle}>
                                 <span style={badge(

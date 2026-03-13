@@ -30,7 +30,6 @@ export interface TrendAnalyticsState {
   availablePeriods: TimePeriod[];
 
   orgTrend: {
-    overall: TrendAnalysis;
     foodSafety: TrendAnalysis;
     facilitySafety: TrendAnalysis;
   };
@@ -45,7 +44,6 @@ export interface TrendAnalyticsState {
   };
 
   locationTrends: Record<string, {
-    overall: TrendAnalysis;
     foodSafety: TrendAnalysis;
     facilitySafety: TrendAnalysis;
   }>;
@@ -122,7 +120,6 @@ function transformSnapshots(
     const point: CategoryTrendDataPoint = {
       date: row.score_date,
       dateDisplay: formatDisplay(row.score_date),
-      overall: row.overall_score ?? 0,
       foodSafety: row.food_safety_score ?? 0,
       facilitySafety: row.facility_safety_score ?? 0,
       tempCompliance: row.temp_in_range_pct ?? 0,
@@ -156,7 +153,6 @@ function transformSnapshots(
       return {
         date,
         dateDisplay: formatDisplay(date),
-        overall: avg('overall'),
         foodSafety: avg('foodSafety'),
         facilitySafety: avg('facilitySafety'),
         tempCompliance: avg('tempCompliance'),
@@ -261,7 +257,6 @@ export function useTrendAnalytics(isDemoMode: boolean): TrendAnalyticsState {
   // ── Org-level pillar trends ─────────────────────────────────
 
   const orgTrend = useMemo(() => ({
-    overall: analyzeCategory(chartData, 'overall'),
     foodSafety: analyzeCategory(chartData, 'foodSafety'),
     facilitySafety: analyzeCategory(chartData, 'facilitySafety'),
   }), [chartData]);
@@ -281,13 +276,11 @@ export function useTrendAnalytics(isDemoMode: boolean): TrendAnalyticsState {
 
   const locationTrends = useMemo(() => {
     const result: Record<string, {
-      overall: TrendAnalysis;
       foodSafety: TrendAnalysis;
       facilitySafety: TrendAnalysis;
     }> = {};
     for (const [locId, data] of Object.entries(locationChartData)) {
       result[locId] = {
-        overall: analyzeCategory(data, 'overall'),
         foodSafety: analyzeCategory(data, 'foodSafety'),
         facilitySafety: analyzeCategory(data, 'facilitySafety'),
       };
@@ -299,7 +292,7 @@ export function useTrendAnalytics(isDemoMode: boolean): TrendAnalyticsState {
 
   const thresholdCrossings = useMemo(() => {
     if (chartData.length === 0) return [];
-    const mapped = chartData.map((d) => ({ date: d.date, value: d.overall }));
+    const mapped = chartData.map((d) => ({ date: d.date, value: d.foodSafety }));
     return detectThresholdCrossings(mapped, [60, 75, 90]);
   }, [chartData]);
 

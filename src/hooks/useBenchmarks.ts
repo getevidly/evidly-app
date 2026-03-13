@@ -45,7 +45,6 @@ export interface BenchmarkFilters {
 export interface LocationRanking {
   locationId: string;
   name: string;
-  overallScore: number;
   foodSafety: number;
   facilitySafety: number;
   industryPercentile: number;
@@ -122,15 +121,14 @@ export function useBenchmarks(
     if (locationId === 'all') {
       // Average across all locations
       const results = Object.values(compliance.results);
-      if (results.length === 0) return { overall: 0, foodSafety: 0, facilitySafety: 0 };
+      if (results.length === 0) return { foodSafety: 0, facilitySafety: 0 };
       const fs = Math.round(results.reduce((s, r) => s + r.foodSafetyScore, 0) / results.length);
       const fac = Math.round(results.reduce((s, r) => s + r.facilitySafetyScore, 0) / results.length);
-      return { overall: Math.round((fs + fac) / 2), foodSafety: fs, facilitySafety: fac };
+      return { foodSafety: fs, facilitySafety: fac };
     }
     const r = compliance.results[locationId];
-    if (!r) return { overall: 0, foodSafety: 0, facilitySafety: 0 };
+    if (!r) return { foodSafety: 0, facilitySafety: 0 };
     return {
-      overall: Math.round((r.foodSafetyScore + r.facilitySafetyScore) / 2),
       foodSafety: r.foodSafetyScore,
       facilitySafety: r.facilitySafetyScore,
     };
@@ -150,11 +148,11 @@ export function useBenchmarks(
     };
   }, [filters]);
 
-  // Compute normalized benchmark
+  // Compute normalized benchmark (use foodSafety as primary benchmark score)
   const benchmark = useMemo(() => {
-    if (scores.overall === 0) return EMPTY_BENCHMARK;
-    return computeNormalizedBenchmark(scores.overall, populations);
-  }, [scores.overall, populations]);
+    if (scores.foodSafety === 0) return EMPTY_BENCHMARK;
+    return computeNormalizedBenchmark(scores.foodSafety, populations);
+  }, [scores.foodSafety, populations]);
 
   // Pillar benchmarks
   const pillarBenchmarks = useMemo(() => {
@@ -199,13 +197,11 @@ export function useBenchmarks(
     const industryPop = PEER_POPULATIONS['industry'];
     return Object.entries(compliance.results)
       .map(([locId, result]) => {
-        const overall = Math.round((result.foodSafetyScore + result.facilitySafetyScore) / 2);
-        const { percentile: pct } = computePercentileRankForRanking(overall, industryPop.overall);
+        const { percentile: pct } = computePercentileRankForRanking(result.foodSafetyScore, industryPop.foodSafety);
         const badge = BADGE_QUALIFICATIONS[locId];
         return {
           locationId: locId,
           name: LOCATION_NAMES[locId] ?? locId,
-          overallScore: overall,
           foodSafety: result.foodSafetyScore,
           facilitySafety: result.facilitySafetyScore,
           industryPercentile: pct,
@@ -213,7 +209,7 @@ export function useBenchmarks(
           badgeTier: badge?.tier ?? null,
         };
       })
-      .sort((a, b) => b.overallScore - a.overallScore);
+      .sort((a, b) => b.foodSafety - a.foodSafety);
   }, [compliance.results]);
 
   // Peer group label

@@ -35,7 +35,6 @@ export interface AiMessage {
 export interface ComplianceContext {
   orgName: string;
   locations: { name: string; score: number; foodSafety: number; facilitySafety: number; stateCode?: string; county?: string; jurisdictionChain?: string[] }[];
-  overallScore?: number; // DEPRECATED — no composite score; kept for backwards compat
   recentAlerts: string[];
   overdueItems: string[];
   upcomingDeadlines: string[];

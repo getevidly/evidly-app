@@ -53,7 +53,7 @@ export function HeroJurisdictionSummary({ jieScores, jurisdictions, navigate, us
         <div className="flex items-center gap-2 mb-3">
           <UtensilsCrossed size={16} style={{ color: '#e2e8f0' }} />
           <span className="text-sm font-semibold text-white">{t('cards.foodSafety')}</span>
-          <SectionTooltip content={useTooltip('overallScore', userRole)} />
+          <SectionTooltip content={useTooltip('foodSafety', userRole)} />
           <span className="text-[10px] text-slate-200 ml-auto">
             {Object.keys(jurisdictions).length > 0 ? `${new Set(Object.values(jurisdictions).map(j => j.county)).size} County Health Depts` : ''}
           </span>

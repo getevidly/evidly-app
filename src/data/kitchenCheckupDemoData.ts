@@ -8,7 +8,7 @@ export interface DemoCheckupResult {
   id: string;
   foodSafetyScore: number;
   facilitySafetyScore: number;
-  overallScore: number;
+  checkupGrade: number;
   grade: Grade;
   completedAt: string;
   responses: Record<string, Answer>;
@@ -21,7 +21,7 @@ export const DEMO_CHECKUP_RESULT: DemoCheckupResult = {
   id: 'demo-checkup-1',
   foodSafetyScore: 82.0,
   facilitySafetyScore: 75.0,
-  overallScore: 78.5,
+  checkupGrade: 78.5,
   grade: 'C',
   completedAt: twoWeeksAgo,
   responses: {

@@ -1,4 +1,3 @@
-// TODO: Replace .overall with independent pillar scores (FIX-WEIGHTS)
 // ============================================================
 // Health Department Report Generator Engine
 // ============================================================
@@ -19,7 +18,6 @@ export type CountyTemplate = 'la' | 'san-diego' | 'kern' | 'orange' | 'sacrament
 
 // Phase 4: Live data interfaces for Supabase-sourced scores
 export interface LiveScoreData {
-  overall: number;
   foodSafety: number;
   facilitySafety: number;
   vendorScore?: number;
@@ -117,7 +115,6 @@ export interface CorrectiveAction {
 }
 
 export interface ComplianceScoreSection {
-  overall: number;
   foodSafety: number;
   facilitySafety: number;
   countyGrade?: string;
@@ -155,7 +152,7 @@ export interface TrendDataPoint {
   period: string;
   tempCompliance: number;
   checklistCompletion: number;
-  overallScore: number;
+  foodSafetyScore: number;
 }
 
 export interface ReportHistory {
@@ -501,8 +498,8 @@ function generateMissingDocs(locationUrlId: string): MissingDocAlert[] {
 
 function generateSelfAudit(locationUrlId: string): SelfAuditItem[] {
   const scores = locationScores[locationUrlId];
-  const isGood = scores?.overall >= 90;
-  const isMedium = scores?.overall >= 70;
+  const isGood = scores?.foodSafety >= 90;
+  const isMedium = scores?.foodSafety >= 70;
 
   return [
     // Temperature & Food Safety
@@ -536,22 +533,22 @@ function generateSelfAudit(locationUrlId: string): SelfAuditItem[] {
 function generateTrendData(locationUrlId: string): TrendDataPoint[] {
   const trends: Record<string, TrendDataPoint[]> = {
     'downtown': [
-      { period: '12 Weeks Ago', tempCompliance: 94, checklistCompletion: 92, overallScore: 85 },
-      { period: '8 Weeks Ago', tempCompliance: 96, checklistCompletion: 95, overallScore: 88 },
-      { period: '4 Weeks Ago', tempCompliance: 98, checklistCompletion: 97, overallScore: 90 },
-      { period: 'Current', tempCompliance: 98, checklistCompletion: 97, overallScore: 92 },
+      { period: '12 Weeks Ago', tempCompliance: 94, checklistCompletion: 92, foodSafetyScore: 85 },
+      { period: '8 Weeks Ago', tempCompliance: 96, checklistCompletion: 95, foodSafetyScore: 88 },
+      { period: '4 Weeks Ago', tempCompliance: 98, checklistCompletion: 97, foodSafetyScore: 90 },
+      { period: 'Current', tempCompliance: 98, checklistCompletion: 97, foodSafetyScore: 92 },
     ],
     'airport': [
-      { period: '12 Weeks Ago', tempCompliance: 82, checklistCompletion: 85, overallScore: 64 },
-      { period: '8 Weeks Ago', tempCompliance: 85, checklistCompletion: 82, overallScore: 67 },
-      { period: '4 Weeks Ago', tempCompliance: 87, checklistCompletion: 80, overallScore: 69 },
-      { period: 'Current', tempCompliance: 88, checklistCompletion: 85, overallScore: 70 },
+      { period: '12 Weeks Ago', tempCompliance: 82, checklistCompletion: 85, foodSafetyScore: 64 },
+      { period: '8 Weeks Ago', tempCompliance: 85, checklistCompletion: 82, foodSafetyScore: 67 },
+      { period: '4 Weeks Ago', tempCompliance: 87, checklistCompletion: 80, foodSafetyScore: 69 },
+      { period: 'Current', tempCompliance: 88, checklistCompletion: 85, foodSafetyScore: 70 },
     ],
     'university': [
-      { period: '12 Weeks Ago', tempCompliance: 75, checklistCompletion: 72, overallScore: 42 },
-      { period: '8 Weeks Ago', tempCompliance: 78, checklistCompletion: 75, overallScore: 48 },
-      { period: '4 Weeks Ago', tempCompliance: 80, checklistCompletion: 70, overallScore: 52 },
-      { period: 'Current', tempCompliance: 81, checklistCompletion: 73, overallScore: 54 },
+      { period: '12 Weeks Ago', tempCompliance: 75, checklistCompletion: 72, foodSafetyScore: 42 },
+      { period: '8 Weeks Ago', tempCompliance: 78, checklistCompletion: 75, foodSafetyScore: 48 },
+      { period: '4 Weeks Ago', tempCompliance: 80, checklistCompletion: 70, foodSafetyScore: 52 },
+      { period: 'Current', tempCompliance: 81, checklistCompletion: 73, foodSafetyScore: 54 },
     ],
   };
   return trends[locationUrlId] || trends['downtown'];
@@ -567,7 +564,7 @@ export function generateHealthDeptReport(
   const loc = locations.find(l => l.urlId === config.locationId) || locations[0];
   // Phase 4: Use live scores from compliance_score_snapshots when available, fall back to demo
   const scores = liveScores
-    ? { overall: liveScores.overall, foodSafety: liveScores.foodSafety, facilitySafety: liveScores.facilitySafety }
+    ? { foodSafety: liveScores.foodSafety, facilitySafety: liveScores.facilitySafety }
     : (locationScores[config.locationId] || locationScores['downtown']);
   // Phase 4: Use DB jurisdiction template when available, fall back to hardcoded COUNTY_TEMPLATES
   const template = jurisdictionTemplate || COUNTY_TEMPLATES[config.countyTemplate];
@@ -588,10 +585,9 @@ export function generateHealthDeptReport(
       const locationItems = scoreImpactData.filter(item => item.locationId === locObj?.id);
       const jResult = calculateJurisdictionScore(locationItems, countySlug);
       return {
-        overall: scores.overall,
         foodSafety: scores.foodSafety,
         facilitySafety: scores.facilitySafety,
-        countyGrade: template.getGrade(scores.overall),
+        countyGrade: template.getGrade(scores.foodSafety),
         countyScoreLabel: template.gradingSystem,
         jurisdictionScore: jResult.numericScore,
         jurisdictionGrade: jResult.grade.label,
@@ -634,7 +630,7 @@ export function startInspectorVisit(
 ): InspectorVisit {
   const loc = locations.find(l => l.urlId === locationUrlId) || locations[0];
   const scores = liveScores
-    ? { overall: liveScores.overall, foodSafety: liveScores.foodSafety, facilitySafety: liveScores.facilitySafety }
+    ? { foodSafety: liveScores.foodSafety, facilitySafety: liveScores.facilitySafety }
     : (locationScores[locationUrlId] || locationScores['downtown']);
   const template = jurisdictionTemplate || COUNTY_TEMPLATES[countyTemplate];
 
@@ -659,9 +655,9 @@ export function startInspectorVisit(
     locationId: locationUrlId,
     locationName: loc.name,
     startedAt: new Date().toISOString(),
-    score: scores.overall,
-    grade: template.getGrade(scores.overall),
-    gradeColor: template.getGradeColor(scores.overall),
+    score: scores.foodSafety,
+    grade: template.getGrade(scores.foodSafety),
+    gradeColor: template.getGradeColor(scores.foodSafety),
     reportId: report.id,
     notificationSent: true,
     qrPassportUrl: `https://evidly-app.vercel.app/passport/${locationUrlId}`,

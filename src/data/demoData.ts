@@ -159,7 +159,6 @@ export const LOCATIONS_WITH_SCORES = DEMO_LOCATIONS.map(loc => ({
 
 const _locs = LOCATIONS_WITH_SCORES;
 export const DEMO_ORG_SCORES = {
-  overall: null as number | null, // DEPRECATED — no composite score
   foodSafety: Math.round(_locs.reduce((s, l) => s + l.foodScore, 0) / _locs.length),
   facilitySafety: Math.round(_locs.reduce((s, l) => s + l.fireScore, 0) / _locs.length),
 };
@@ -168,18 +167,17 @@ export const DEMO_ORG_SCORES = {
 // Derived from the exec 2-pillar model above. NO vendorCompliance.
 // Consumers that previously imported the old 3-pillar locationScores
 // should migrate to LOCATION_JURISDICTION_STATUS for display.
-export const locationScores: Record<string, { overall: number | null; foodSafety: number; facilitySafety: number }> =
-  Object.fromEntries(LOCATIONS_WITH_SCORES.map(loc => [loc.id, { overall: null, foodSafety: loc.foodScore, facilitySafety: loc.fireScore }]));
+export const locationScores: Record<string, { foodSafety: number; facilitySafety: number }> =
+  Object.fromEntries(LOCATIONS_WITH_SCORES.map(loc => [loc.id, { foodSafety: loc.foodScore, facilitySafety: loc.fireScore }]));
 
-export const locationScoresThirtyDaysAgo: Record<string, { overall: number | null; foodSafety: number; facilitySafety: number }> = {
-  downtown: { foodSafety: 93, facilitySafety: 89, overall: null },
-  airport: { foodSafety: 82, facilitySafety: 76, overall: null },
-  university: { foodSafety: 67, facilitySafety: 59, overall: null },
+export const locationScoresThirtyDaysAgo: Record<string, { foodSafety: number; facilitySafety: number }> = {
+  downtown: { foodSafety: 93, facilitySafety: 89 },
+  airport: { foodSafety: 82, facilitySafety: 76 },
+  university: { foodSafety: 67, facilitySafety: 59 },
 };
 
 export const complianceScores = DEMO_ORG_SCORES;
 export const complianceScoresThirtyDaysAgo = {
-  overall: null as number | null, // DEPRECATED — no composite score
   foodSafety: Math.round((93 + 82 + 67) / 3),
   facilitySafety: Math.round((89 + 76 + 59) / 3),
 };
@@ -240,7 +238,6 @@ export const DEMO_TREND_DATA = (() => {
     const fr = fire[i];
     return {
       date: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-      overall: Math.round((f + fr) / 2),
       foodSafety: f,
       facilitySafety: fr,
     };
@@ -1763,24 +1760,24 @@ export const enterpriseOnboardingSodexo: EnterpriseOnboardingPhase[] = [
 
 export interface EnterpriseTrendPoint {
   month: string;
-  overall: number;
+  compositeScore: number;
   foodSafety: number;
   facilitySafety: number;
 }
 
 export const enterpriseTrendData: EnterpriseTrendPoint[] = [
-  { month: 'Mar 25', overall: 82.1, foodSafety: 84.0, facilitySafety: 80.2 },
-  { month: 'Apr 25', overall: 83.4, foodSafety: 85.1, facilitySafety: 81.0 },
-  { month: 'May 25', overall: 83.8, foodSafety: 85.6, facilitySafety: 81.5 },
-  { month: 'Jun 25', overall: 84.5, foodSafety: 86.2, facilitySafety: 82.1 },
-  { month: 'Jul 25', overall: 83.9, foodSafety: 85.8, facilitySafety: 81.8 },
-  { month: 'Aug 25', overall: 84.8, foodSafety: 86.5, facilitySafety: 82.6 },
-  { month: 'Sep 25', overall: 85.6, foodSafety: 87.2, facilitySafety: 83.4 },
-  { month: 'Oct 25', overall: 86.2, foodSafety: 87.8, facilitySafety: 84.1 },
-  { month: 'Nov 25', overall: 86.8, foodSafety: 88.2, facilitySafety: 84.8 },
-  { month: 'Dec 25', overall: 85.9, foodSafety: 87.5, facilitySafety: 84.0 },
-  { month: 'Jan 26', overall: 87.1, foodSafety: 88.8, facilitySafety: 85.2 },
-  { month: 'Feb 26', overall: 90.0, foodSafety: 92.0, facilitySafety: 88.0 },
+  { month: 'Mar 25', compositeScore: 82.1, foodSafety: 84.0, facilitySafety: 80.2 },
+  { month: 'Apr 25', compositeScore: 83.4, foodSafety: 85.1, facilitySafety: 81.0 },
+  { month: 'May 25', compositeScore: 83.8, foodSafety: 85.6, facilitySafety: 81.5 },
+  { month: 'Jun 25', compositeScore: 84.5, foodSafety: 86.2, facilitySafety: 82.1 },
+  { month: 'Jul 25', compositeScore: 83.9, foodSafety: 85.8, facilitySafety: 81.8 },
+  { month: 'Aug 25', compositeScore: 84.8, foodSafety: 86.5, facilitySafety: 82.6 },
+  { month: 'Sep 25', compositeScore: 85.6, foodSafety: 87.2, facilitySafety: 83.4 },
+  { month: 'Oct 25', compositeScore: 86.2, foodSafety: 87.8, facilitySafety: 84.1 },
+  { month: 'Nov 25', compositeScore: 86.8, foodSafety: 88.2, facilitySafety: 84.8 },
+  { month: 'Dec 25', compositeScore: 85.9, foodSafety: 87.5, facilitySafety: 84.0 },
+  { month: 'Jan 26', compositeScore: 87.1, foodSafety: 88.8, facilitySafety: 85.2 },
+  { month: 'Feb 26', compositeScore: 90.0, foodSafety: 92.0, facilitySafety: 88.0 },
 ];
 
 export interface EnterpriseBulkOp {

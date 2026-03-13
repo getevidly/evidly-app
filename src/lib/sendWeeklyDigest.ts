@@ -7,7 +7,6 @@
 
 export interface DigestLocationScore {
   name: string;
-  overall: number;
   trend: number; // +/- vs last week
   foodSafety: number;
   facilitySafety: number;
@@ -91,7 +90,7 @@ export function generateDigestHtml(data: DigestData, dashboardUrl: string = 'htt
       <tr>
         <td style="padding:10px 12px;border-bottom:1px solid #e5e7eb;font-weight:600;color:#1e4d6b;">${loc.name}</td>
         <td style="padding:10px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
-          <span style="display:inline-block;background:${statusColor(loc.status)};color:#fff;border-radius:20px;padding:2px 10px;font-size:13px;font-weight:700;">${loc.overall}</span>
+          <span style="display:inline-block;background:${statusColor(loc.status)};color:#fff;border-radius:20px;padding:2px 10px;font-size:13px;font-weight:700;">${loc.foodSafety}</span>
         </td>
         <td style="padding:10px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">${trendArrow(loc.trend)}</td>
         <td style="padding:10px 8px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:13px;">${loc.foodSafety}</td>

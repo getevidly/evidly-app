@@ -153,16 +153,16 @@ export function computeNormalizedBenchmark(
 ): NormalizedBenchmark {
   return {
     industryComparison: computePeerGroupComparison(
-      yourScore, populations.industry.overall, populations.industry.metadata.label,
+      yourScore, populations.industry.foodSafety, populations.industry.metadata.label,
     ),
     verticalComparison: computePeerGroupComparison(
-      yourScore, populations.vertical.overall, populations.vertical.metadata.label,
+      yourScore, populations.vertical.foodSafety, populations.vertical.metadata.label,
     ),
     geoComparison: computePeerGroupComparison(
-      yourScore, populations.geo.overall, populations.geo.metadata.label,
+      yourScore, populations.geo.foodSafety, populations.geo.metadata.label,
     ),
     sizeComparison: computePeerGroupComparison(
-      yourScore, populations.size.overall, populations.size.metadata.label,
+      yourScore, populations.size.foodSafety, populations.size.metadata.label,
     ),
   };
 }

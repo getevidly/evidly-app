@@ -1,7 +1,7 @@
 import type { UserRole } from '../contexts/RoleContext';
 
 export type TooltipSection =
-  | 'overallScore'
+  | 'foodSafety'
   | 'facilitySafety'
   | 'urgentItems'
   | 'todaysProgress'
@@ -33,23 +33,23 @@ export type TooltipSection =
 
 export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = {
   // ── TOOLTIPS-1 (original 5 sections) ──────────────────────
-  overallScore: {
+  foodSafety: {
     platform_admin:
-      'Your combined food safety and facility safety score across all locations, weighted by each jurisdiction\'s verified methodology. This is what regulators and auditors see.',
+      'Food safety score for each location, scored under the jurisdiction\'s verified methodology. Reflects checklist completion, documentation, and violation history.',
     owner_operator:
-      'Your combined food safety and facility safety score across all locations, weighted by each jurisdiction\'s verified methodology. This is what regulators and auditors see.',
+      'Food safety score for each location, scored under the jurisdiction\'s verified methodology. Reflects checklist completion, documentation, and violation history.',
     executive:
-      'Aggregate compliance posture across your portfolio. Drill into individual locations to identify where risk is concentrated.',
+      'Food safety compliance posture across your portfolio. Drill into individual locations to identify where risk is concentrated.',
     compliance_manager:
-      'Jurisdiction-weighted score combining food safety violations and facility safety pass/fail status. Reflects your current standing under active enforcement methodology.',
+      'Jurisdiction-scored food safety standing reflecting violations, documentation gaps, and checklist adherence under the active enforcement methodology.',
     chef:
-      'Your location\'s current compliance score. Completing daily checklists and addressing flagged items moves this number in real time.',
+      'Your location\'s current food safety score. Completing daily checklists and addressing flagged items moves this number in real time.',
     facilities_manager:
-      'Your facility safety systems directly impact this score. All four systems — Permit, Hood, Extinguisher, and Ansul — must pass at every location.',
+      'Food safety score for each location. This is independent of facility safety — both pillars must be managed separately.',
     kitchen_manager:
-      'Your location\'s current compliance score. Completing daily checklists and addressing flagged items moves this number in real time.',
+      'Your location\'s current food safety score. Completing daily checklists and addressing flagged items moves this number in real time.',
     kitchen_staff:
-      'This shows how your location is doing on health and safety. Complete your assigned tasks to keep it green.',
+      'This shows how your location is doing on food safety. Complete your assigned tasks to keep it green.',
   },
   facilitySafety: {
     platform_admin:
@@ -471,24 +471,6 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
 
 export const tooltipContentEs: Record<TooltipSection, Record<UserRole, string>> = {
   // ── TOOLTIPS-1 (original 5 sections) ──────────────────────
-  overallScore: {
-    platform_admin:
-      'Su puntuación combinada de seguridad alimentaria y seguridad contra incendios en todas las ubicaciones, ponderada por la metodología verificada de cada jurisdicción. Esto es lo que los reguladores y auditores ven.',
-    owner_operator:
-      'Su puntuación combinada de seguridad alimentaria y seguridad contra incendios en todas las ubicaciones, ponderada por la metodología verificada de cada jurisdicción. Esto es lo que los reguladores y auditores ven.',
-    executive:
-      'Postura de cumplimiento agregada en todo su portafolio. Profundice en ubicaciones individuales para identificar dónde se concentra el riesgo.',
-    compliance_manager:
-      'Puntuación ponderada por jurisdicción que combina violaciones de seguridad alimentaria y estado de aprobación/fallo de seguridad contra incendios. Refleja su situación actual bajo la metodología de aplicación activa.',
-    chef:
-      'La puntuación de cumplimiento actual de su ubicación. Completar las listas de verificación diarias y abordar los elementos señalados mueve este número en tiempo real.',
-    facilities_manager:
-      'Sus sistemas de seguridad contra incendios impactan directamente esta puntuación. Los cuatro sistemas — Permiso, Campana, Extintor y Ansul — deben aprobar en cada ubicación.',
-    kitchen_manager:
-      'La puntuación de cumplimiento actual de su ubicación. Completar las listas de verificación diarias y abordar los elementos señalados mueve este número en tiempo real.',
-    kitchen_staff:
-      'Esto muestra cómo le va a su ubicación en salud y seguridad. Complete sus tareas asignadas para mantenerlo en verde.',
-  },
   facilitySafety: {
     platform_admin:
       'Estado de Aprobado/Reprobado según NFPA 96 para cada Authority Having Jurisdiction. Una barra roja en cualquier ubicación es una falla de cumplimiento.',

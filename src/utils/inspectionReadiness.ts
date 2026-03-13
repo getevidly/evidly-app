@@ -17,7 +17,6 @@ export const COMPONENT_WEIGHTS = {
 // --------------- Types ---------------
 
 export interface InspectionReadinessScore {
-  overall: number | null;     // DEPRECATED — no composite score
   foodSafety: {
     score: number;            // 0-100
     ops: number;              // 0-100
@@ -59,7 +58,6 @@ export function calculateInspectionReadiness(
   const fireScore = (fireOps * COMPONENT_WEIGHTS.operations) + (fireDocs * COMPONENT_WEIGHTS.documentation);
 
   return {
-    overall: null, // DEPRECATED — pillars are independent
     foodSafety: { score: Math.round(foodScore), ops: Math.round(foodOps), docs: Math.round(foodDocs) },
     facilitySafety: { score: Math.round(fireScore), ops: Math.round(fireOps), docs: Math.round(fireDocs) },
     jurisdiction,

@@ -31,7 +31,7 @@ export interface ComplianceEngineState {
   /** Per-location engine results */
   results: Record<string, ComplianceEngineResult>;
   /** Org-level aggregated scores */
-  orgScores: { overall: number | null; foodSafety: number; facilitySafety: number };
+  orgScores: { foodSafety: number; facilitySafety: number };
   /** 30-day org-level trend */
   trendData: TrendDataPoint[];
   /** Per-location 30-day trends */

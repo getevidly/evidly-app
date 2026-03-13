@@ -41,9 +41,8 @@ export function OverallTrendChart({ data }: Props) {
           <ReferenceLine y={90} stroke="#22c55e" strokeDasharray="3 3" label={{ value: '90', position: 'right', fontSize: 10 }} />
           <ReferenceLine y={75} stroke="#eab308" strokeDasharray="3 3" label={{ value: '75', position: 'right', fontSize: 10 }} />
           <ReferenceLine y={60} stroke="#f59e0b" strokeDasharray="3 3" label={{ value: '60', position: 'right', fontSize: 10 }} />
-          <Line type="monotone" dataKey="overall" stroke="#1e4d6b" strokeWidth={2.5} dot={false} name="Overall" />
-          <Line type="monotone" dataKey="foodSafety" stroke="#22c55e" strokeWidth={1.5} dot={false} name="Food Safety" />
-          <Line type="monotone" dataKey="facilitySafety" stroke="#d4af37" strokeWidth={1.5} dot={false} name="Facility Safety" />
+          <Line type="monotone" dataKey="foodSafety" stroke="#22c55e" strokeWidth={2} dot={false} name="Food Safety" />
+          <Line type="monotone" dataKey="facilitySafety" stroke="#d4af37" strokeWidth={2} dot={false} name="Facility Safety" />
         </LineChart>
       </ResponsiveContainer>
     </div>

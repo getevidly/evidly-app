@@ -1,4 +1,3 @@
-// TODO: Replace .overall with independent pillar scores (FIX-WEIGHTS)
 // ============================================================
 // Benchmark Engine — Percentile Computation & Comparison
 // ============================================================
@@ -55,7 +54,7 @@ export interface QuarterlyReport {
   organizationName: string;
   industrySegment: string;
   jurisdiction: string;
-  overallScore: number;
+  foodSafetyScore: number;
   percentile: number;
   comparedTo: string;
   pillarComparison: BenchmarkResult['pillarComparison'];
@@ -130,14 +129,14 @@ export function getDemoBenchmark(
   const pctData = PERCENTILE_DATA[locationUrlId] || PERCENTILE_DATA['all'];
 
   const pctile = pctData.percentile;
-  const gap = Math.round((locScores.overall - vertBench.avgScore) * 10) / 10;
+  const gap = Math.round((locScores.foodSafety - vertBench.avgScore) * 10) / 10;
 
   return {
-    locationScore: locScores.overall,
+    locationScore: locScores.foodSafety,
     percentile: pctile,
     rank: `Top ${100 - pctile}%`,
     comparedTo: `${vertBench.peerCount.toLocaleString()} ${segment.toLowerCase()} locations${stateCode ? ` in ${stateCode}` : ' nationally'}`,
-    aboveAverage: locScores.overall > vertBench.avgScore,
+    aboveAverage: locScores.foodSafety > vertBench.avgScore,
     gap,
     pillarComparison: [
       { pillar: 'Food Safety', yourScore: locScores.foodSafety, industryAvg: vertBench.avgFoodSafety, percentile: estimatePercentile(locScores.foodSafety, vertBench.avgFoodSafety) },
@@ -154,7 +153,7 @@ export function getDemoBenchmark(
 
 function getDefaultBenchmark(): BenchmarkResult {
   return {
-    locationScore: complianceScores.overall,
+    locationScore: complianceScores.foodSafety,
     percentile: 58,
     rank: 'Top 42%',
     comparedTo: '4,200 restaurant locations nationally',
@@ -201,7 +200,7 @@ export function getDemoQuarterlyReport(locationUrlId: string = 'downtown'): Quar
     organizationName: 'Your Organization', // demo
     industrySegment: 'Restaurant — Casual Dining',
     jurisdiction: counties[locationUrlId] || 'Fresno County, CA',
-    overallScore: benchmark.locationScore,
+    foodSafetyScore: benchmark.locationScore,
     percentile: benchmark.percentile,
     comparedTo: benchmark.comparedTo,
     pillarComparison: benchmark.pillarComparison,

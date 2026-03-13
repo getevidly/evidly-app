@@ -96,7 +96,7 @@ export function KitchenCheckup() {
         user_id: user.id,
         food_safety_score: res.foodSafetyScore,
         facility_safety_score: res.facilitySafetyScore,
-        overall_score: res.overallScore,
+        overall_score: res.checkupGrade,
         grade: res.grade,
       }).select('id').single();
 
@@ -166,7 +166,7 @@ export function KitchenCheckup() {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="text-2xl font-bold" style={{ color: NAVY }}>
-                  {previousCheckup.overallScore}%
+                  {previousCheckup.checkupGrade}%
                 </div>
                 <div className="text-sm text-[var(--text-secondary)] mb-2">
                   {getGradeLabel(previousCheckup.grade)}
@@ -357,7 +357,7 @@ export function KitchenCheckup() {
             </span>
           </div>
           <div className="text-4xl font-bold mb-1" style={{ color: NAVY }}>
-            {result.overallScore}%
+            {result.checkupGrade}%
           </div>
           <div className="text-sm font-medium" style={{ color: result.gradeColor }}>
             {result.gradeLabel}

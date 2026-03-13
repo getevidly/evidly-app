@@ -34,7 +34,6 @@ export interface InsuranceRiskInput {
     facilitySafety: number;
   };
   trendAnalysis?: {
-    overall: TrendAnalysis;
     foodSafety: TrendAnalysis;
     facilitySafety: TrendAnalysis;
   };
@@ -310,7 +309,7 @@ export function calculateInsuranceRiskScoreV2(input: InsuranceRiskInput): Insura
 
   const { adjustedScore: overall } = applyTrendAdjustment(
     baseOverall,
-    trendAnalysis?.overall,
+    trendAnalysis?.foodSafety,
     profile.trendAdjustment,
   );
 

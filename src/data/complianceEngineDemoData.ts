@@ -8,7 +8,6 @@
 
 export interface TrendDataPoint {
   date: string;
-  overall: number;
   foodSafety: number;
   facilitySafety: number;
 }
@@ -36,7 +35,6 @@ function buildTrend(food: number[], facility: number[]): TrendDataPoint[] {
     const fr = facility[i];
     return {
       date: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-      overall: Math.round((f + fr) / 2),
       foodSafety: f,
       facilitySafety: fr,
     };
@@ -65,7 +63,6 @@ export const ENGINE_TREND_DATA: TrendDataPoint[] = (() => {
     const facility = Math.round((DOWNTOWN_FACILITY[i] + AIRPORT_FACILITY[i] + UNIVERSITY_FACILITY[i]) / 3);
     result.push({
       date: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-      overall: Math.round((food + facility) / 2),
       foodSafety: food,
       facilitySafety: facility,
     });

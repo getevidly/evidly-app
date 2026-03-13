@@ -80,7 +80,6 @@ export interface LocationWithScores {
 
 export interface TrendDataPoint {
   date: string;
-  overall: number;
   foodSafety: number;
   facilitySafety: number;
 }
@@ -91,7 +90,7 @@ export interface DashboardWeights {
 }
 
 export interface DashboardPayload {
-  orgScores: { overall: number | null; foodSafety: number; facilitySafety: number };
+  orgScores: { foodSafety: number; facilitySafety: number };
   locations: LocationWithScores[];
   locationScoresPrev: Record<string, { foodSafety: number; facilitySafety: number }>;
   tasks: TaskItem[];
@@ -282,7 +281,6 @@ function buildDemoPayload(): DashboardPayload {
 
   return {
     orgScores: {
-      overall: engineOrgScores.overall,
       foodSafety: engineOrgScores.foodSafety,
       facilitySafety: engineOrgScores.facilitySafety,
     },
@@ -305,7 +303,7 @@ function buildDemoPayload(): DashboardPayload {
 /** Empty payload for live mode — no hardcoded demo data */
 function buildEmptyPayload(): DashboardPayload {
   return {
-    orgScores: { overall: null, foodSafety: 0, facilitySafety: 0 },
+    orgScores: { foodSafety: 0, facilitySafety: 0 },
     locations: [],
     locationScoresPrev: {},
     tasks: [],
@@ -409,7 +407,6 @@ export function useDashboardData(): {
 
       setData({
         orgScores: {
-          overall: null,
           foodSafety: result.complianceData.scores.foodSafety,
           facilitySafety: result.complianceData.scores.facilitySafety,
         },

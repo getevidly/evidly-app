@@ -138,10 +138,10 @@ export function computeAllSnapshots(
  */
 export function computeOrgScores(
   results: Record<string, ComplianceEngineResult>,
-): { overall: number | null; foodSafety: number; facilitySafety: number } {
+): { foodSafety: number; facilitySafety: number } {
   const entries = Object.values(results);
   if (entries.length === 0) {
-    return { overall: null, foodSafety: 0, facilitySafety: 0 };
+    return { foodSafety: 0, facilitySafety: 0 };
   }
 
   const foodSafety = Math.round(
@@ -150,9 +150,8 @@ export function computeOrgScores(
   const facilitySafety = Math.round(
     entries.reduce((sum, r) => sum + r.facilitySafetyScore, 0) / entries.length,
   );
-  const overall = Math.round((foodSafety + facilitySafety) / 2);
 
-  return { overall, foodSafety, facilitySafety };
+  return { foodSafety, facilitySafety };
 }
 
 // ── Food Safety Ops Calculation ──────────────────────────────

@@ -100,7 +100,7 @@ export function useInsuranceRisk(
   // Trend modifier for the selected view
   const trendModifier = useMemo(() => {
     if (locationId === 'all') {
-      const orgTrend = trends.orgTrend?.overall;
+      const orgTrend = trends.orgTrend?.foodSafety;
       const { trendModifier: mod } = applyTrendAdjustment(
         result.overall,
         orgTrend,
@@ -108,7 +108,7 @@ export function useInsuranceRisk(
       );
       return mod;
     }
-    const locTrend = trends.locationTrends[locationId]?.overall;
+    const locTrend = trends.locationTrends[locationId]?.foodSafety;
     const { trendModifier: mod } = applyTrendAdjustment(
       result.overall,
       locTrend,

@@ -1,4 +1,4 @@
-// TODO: Replace .overall with independent pillar scores (FIX-WEIGHTS)
+// P0-PURGE: No blended "overall" compliance score — pillars are independent
 import { useState, useMemo, useRef } from 'react';
 import { toast } from 'sonner';
 import { Breadcrumb } from '../components/Breadcrumb';
@@ -166,9 +166,8 @@ export function HealthDeptReport() {
 
           if (snapshot) {
             liveScores = {
-              overall: snapshot.overall_score,
-              foodSafety: snapshot.food_safety_score ?? snapshot.overall_score,
-              facilitySafety: snapshot.facility_safety_score ?? snapshot.overall_score,
+              foodSafety: snapshot.food_safety_score ?? 0,
+              facilitySafety: snapshot.facility_safety_score ?? 0,
               vendorScore: snapshot.vendor_score ?? undefined,
               snapshotId: snapshot.id,
               snapshotDate: snapshot.score_date,
@@ -591,19 +590,26 @@ export function HealthDeptReport() {
                 {/* Phase 4: Wrap report content for PDF capture */}
                 <div ref={reportRef}>
                 {/* Report Header */}
-                <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 text-center" style={{ borderTop: `4px solid ${template.getGradeColor(generatedReport.complianceScore.overall)}` }}>
+                <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 text-center" style={{ borderTop: `4px solid ${template.getGradeColor(generatedReport.complianceScore.foodSafety)}` }}>
                   <div style={{ fontSize: 20, fontWeight: 700, color: '#1e4d6b', marginBottom: 4 }}>Health Department Inspection Compliance Report</div>
                   <div style={{ fontSize: 14, color: '#6b7280' }}>{template.name} — {template.gradingSystem}</div>
                   <div style={{ marginTop: 16, display: 'inline-flex', alignItems: 'center', gap: 16, padding: '12px 24px', borderRadius: 12, backgroundColor: '#f9fafb', border: '1px solid #e5e7eb' }}>
                     <div>
-                      <div style={{ fontSize: 40, fontWeight: 800, color: template.getGradeColor(generatedReport.complianceScore.overall), lineHeight: 1 }}>
-                        {generatedReport.complianceScore.overall}
+                      <div style={{ fontSize: 32, fontWeight: 800, color: template.getGradeColor(generatedReport.complianceScore.foodSafety), lineHeight: 1 }}>
+                        {generatedReport.complianceScore.foodSafety}
                       </div>
-                      <div style={{ fontSize: 12, color: '#6b7280' }}>Score</div>
+                      <div style={{ fontSize: 12, color: '#6b7280' }}>Food Safety</div>
                     </div>
                     <div style={{ width: 1, height: 50, backgroundColor: '#e5e7eb' }} />
                     <div>
-                      <div style={{ fontSize: 24, fontWeight: 700, color: template.getGradeColor(generatedReport.complianceScore.overall) }}>
+                      <div style={{ fontSize: 32, fontWeight: 800, color: template.getGradeColor(generatedReport.complianceScore.facilitySafety), lineHeight: 1 }}>
+                        {generatedReport.complianceScore.facilitySafety}
+                      </div>
+                      <div style={{ fontSize: 12, color: '#6b7280' }}>Facility Safety</div>
+                    </div>
+                    <div style={{ width: 1, height: 50, backgroundColor: '#e5e7eb' }} />
+                    <div>
+                      <div style={{ fontSize: 24, fontWeight: 700, color: template.getGradeColor(generatedReport.complianceScore.foodSafety) }}>
                         {generatedReport.complianceScore.countyGrade}
                       </div>
                       <div style={{ fontSize: 12, color: '#6b7280' }}>Grade</div>
@@ -865,13 +871,7 @@ export function HealthDeptReport() {
                   <CollapsibleSection title="Compliance Score & Trend Analytics" icon={<TrendingUp className="h-5 w-5 text-[#1e4d6b]" />} defaultOpen>
                     <div className="mt-4 space-y-6">
                       {/* Score Summary */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                        <div style={{ textAlign: 'center', padding: 12, backgroundColor: '#f9fafb', borderRadius: 8 }}>
-                          <div style={{ fontSize: 32, fontWeight: 800, color: template.getGradeColor(generatedReport.complianceScore.overall) }}>
-                            {generatedReport.complianceScore.overall}
-                          </div>
-                          <div style={{ fontSize: 12, color: '#6b7280' }}>Overall</div>
-                        </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                         {[
                           { label: 'Food Safety', value: generatedReport.complianceScore.foodSafety },
                           { label: 'Facility Safety', value: generatedReport.complianceScore.facilitySafety },
@@ -895,7 +895,6 @@ export function HealthDeptReport() {
                             <YAxis domain={[0, 100]} fontSize={12} />
                             <Tooltip />
                             <Legend />
-                            <Line type="monotone" dataKey="overallScore" name="Overall Score" stroke="#1e4d6b" strokeWidth={2} dot={{ r: 4 }} />
                             <Line type="monotone" dataKey="tempCompliance" name="Temp Compliance" stroke="#22c55e" strokeWidth={1.5} dot={{ r: 3 }} />
                             <Line type="monotone" dataKey="checklistCompletion" name="Checklist Completion" stroke="#d4af37" strokeWidth={1.5} dot={{ r: 3 }} />
                           </LineChart>

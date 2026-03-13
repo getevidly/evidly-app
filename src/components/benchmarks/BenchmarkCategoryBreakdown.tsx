@@ -6,11 +6,11 @@ interface Props {
 }
 
 // Simulated percentiles for category-level comparison
-const CATEGORY_PERCENTILES: Record<string, { foodSafety: number; facilitySafety: number; overall: number }> = {
-  downtown: { foodSafety: 93, facilitySafety: 85, overall: 89 },
-  airport: { foodSafety: 50, facilitySafety: 38, overall: 52 },
-  university: { foodSafety: 25, facilitySafety: 15, overall: 18 },
-  all: { foodSafety: 62, facilitySafety: 50, overall: 58 },
+const CATEGORY_PERCENTILES: Record<string, { foodSafety: number; facilitySafety: number }> = {
+  downtown: { foodSafety: 93, facilitySafety: 85 },
+  airport: { foodSafety: 50, facilitySafety: 38 },
+  university: { foodSafety: 25, facilitySafety: 15 },
+  all: { foodSafety: 62, facilitySafety: 50 },
 };
 
 export function BenchmarkCategoryBreakdown({ locationId }: Props) {
@@ -21,13 +21,12 @@ export function BenchmarkCategoryBreakdown({ locationId }: Props) {
   const rows = [
     { category: 'Food Safety', yours: scores.foodSafety, verticalAvg: vertical.avgFoodSafety, industryAvg: 76, percentile: pct.foodSafety },
     { category: 'Facility Safety', yours: scores.facilitySafety, verticalAvg: vertical.avgFacilitySafety, industryAvg: 70, percentile: pct.facilitySafety },
-    { category: 'Overall', yours: scores.overall, verticalAvg: vertical.avgScore, industryAvg: 73, percentile: pct.overall },
   ];
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
       <h3 className="text-lg font-semibold text-gray-900 mb-1">Category Breakdown</h3>
-      <p className="text-sm text-gray-500 mb-4">Compare your three compliance domains against peers</p>
+      <p className="text-sm text-gray-500 mb-4">Compare your compliance domains against peers</p>
 
       <div className="overflow-x-auto">
         <table className="w-full">
@@ -44,9 +43,8 @@ export function BenchmarkCategoryBreakdown({ locationId }: Props) {
           <tbody>
             {rows.map((row, i) => {
               const delta = row.yours - row.verticalAvg;
-              const isLast = row.category === 'Overall';
               return (
-                <tr key={row.category} className={isLast ? 'border-t-2 border-gray-200 font-semibold' : i < rows.length - 2 ? 'border-b border-gray-50' : ''}>
+                <tr key={row.category} className={i < rows.length - 1 ? 'border-b border-gray-50' : ''}>
                   <td className="py-3 pr-4 text-sm text-gray-900">{row.category}</td>
                   <td className="py-3 px-3 text-center">
                     <span className="text-sm font-bold" style={{

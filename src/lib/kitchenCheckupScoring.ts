@@ -16,7 +16,7 @@ export interface CheckupQuestion {
 export interface CheckupResult {
   foodSafetyScore: number;
   facilitySafetyScore: number;
-  overallScore: number;
+  checkupGrade: number;
   grade: Grade;
   gradeLabel: string;
   gradeColor: string;
@@ -154,9 +154,9 @@ function assignGrade(score: number): { grade: Grade; label: string; color: strin
 export function computeKitchenCheckupScore(answers: Record<string, Answer>): CheckupResult {
   const foodSafetyScore = Math.round(pillarScore(answers, 'food_safety') * 10) / 10;
   const facilitySafetyScore = Math.round(pillarScore(answers, 'facility_safety') * 10) / 10;
-  const overallScore = Math.round(((foodSafetyScore + facilitySafetyScore) / 2) * 10) / 10;
-  const { grade, label: gradeLabel, color: gradeColor } = assignGrade(overallScore);
-  return { foodSafetyScore, facilitySafetyScore, overallScore, grade, gradeLabel, gradeColor };
+  const checkupGrade = Math.round(((foodSafetyScore + facilitySafetyScore) / 2) * 10) / 10;
+  const { grade, label: gradeLabel, color: gradeColor } = assignGrade(checkupGrade);
+  return { foodSafetyScore, facilitySafetyScore, checkupGrade, grade, gradeLabel, gradeColor };
 }
 
 export function gradeColor(grade: Grade): string {

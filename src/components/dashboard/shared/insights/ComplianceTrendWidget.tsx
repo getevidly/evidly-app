@@ -12,7 +12,7 @@ interface Props {
 export function ComplianceTrendWidget({ trendData }: Props) {
   const [period, setPeriod] = useState<TimePeriod>('90d');
   const filtered = filterByPeriod(trendData, period);
-  const analysis = analyzeTrend(filtered.map(d => d.overall));
+  const analysis = analyzeTrend(filtered.map(d => d.foodSafety));
 
   const deltaColor = analysis.direction === 'improving' ? '#16a34a'
     : analysis.direction === 'declining' ? '#dc2626' : '#6b7280';

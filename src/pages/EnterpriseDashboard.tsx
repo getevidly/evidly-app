@@ -102,13 +102,13 @@ function ScoreCircle({ score, size = 48 }: { score: number; size?: number }) {
 // ── SVG Sparkline for trend data ───────────────────────────────
 function TrendSparkline({ data, width = 280, height = 80 }: { data: EnterpriseTrendPoint[]; width?: number; height?: number }) {
   if (data.length < 2) return null;
-  const scores = data.map(d => d.overall);
+  const scores = data.map(d => d.foodSafety);
   const min = Math.min(...scores) - 2;
   const max = Math.max(...scores) + 2;
   const range = max - min || 1;
   const points = data.map((d, i) => {
     const x = (i / (data.length - 1)) * width;
-    const y = height - ((d.overall - min) / range) * height;
+    const y = height - ((d.foodSafety - min) / range) * height;
     return `${x},${y}`;
   }).join(' ');
   const areaPoints = `0,${height} ${points} ${width},${height}`;
@@ -124,7 +124,7 @@ function TrendSparkline({ data, width = 280, height = 80 }: { data: EnterpriseTr
       <polyline points={points} fill="none" stroke="#1e4d6b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
       {data.map((d, i) => {
         const x = (i / (data.length - 1)) * width;
-        const y = height - ((d.overall - min) / range) * height;
+        const y = height - ((d.foodSafety - min) / range) * height;
         return <circle key={i} cx={x} cy={y} r={i === data.length - 1 ? 4 : 2} fill={i === data.length - 1 ? '#1e4d6b' : '#1e4d6b80'} />;
       })}
     </svg>
@@ -212,8 +212,8 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
   const latestTrend = trendData[trendData.length - 1];
   const prevTrend = trendData[trendData.length - 2];
   const threeMonthAgo = trendData[trendData.length - 4];
-  const trendDelta = +(latestTrend.overall - prevTrend.overall).toFixed(1);
-  const trend3mDelta = +(latestTrend.overall - threeMonthAgo.overall).toFixed(1);
+  const trendDelta = +(latestTrend.foodSafety - prevTrend.foodSafety).toFixed(1);
+  const trend3mDelta = +(latestTrend.foodSafety - threeMonthAgo.foodSafety).toFixed(1);
   // Division scorecard from hierarchy
   const divisions = enterpriseHierarchy.children || [];
   // Location risk breakdown
@@ -252,7 +252,7 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
           {[
-            { label: 'Overall Score', value: avgScore + '%', icon: EvidlyIcon as any, highlight: true },
+            { label: 'Food Safety', value: avgScore + '%', icon: EvidlyIcon as any, highlight: true },
             { label: 'vs Last Mo', value: (trendDelta >= 0 ? '+' : '') + trendDelta + '%', icon: trendDelta >= 0 ? TrendingUp : TrendingDown },
             { label: 'vs 3Mo Ago', value: (trend3mDelta >= 0 ? '+' : '') + trend3mDelta + '%', icon: trend3mDelta >= 0 ? TrendingUp : TrendingDown },
             { label: 'Locations', value: `${totalLocations.toLocaleString()} total`, icon: MapPin },
@@ -372,7 +372,7 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
         {/* 12-Month Trend */}
         <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <h3 className="text-sm font-semibold text-gray-900 mb-1">12-Month Compliance Trend</h3>
-          <p className="text-[10px] text-gray-400 mb-4">{companyName} — Overall Score · Predict next quarter: {(latestTrend.overall + trend3mDelta / 3).toFixed(1)}%</p>
+          <p className="text-[10px] text-gray-400 mb-4">{companyName} — Food Safety Score · Predict next quarter: {(latestTrend.foodSafety + trend3mDelta / 3).toFixed(1)}%</p>
           <div className="flex items-end gap-6 flex-wrap">
             <div className="relative overflow-x-auto">
               <TrendSparkline data={trendData} width={320} height={100} />
@@ -391,7 +391,7 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
             </div>
             <div className="space-y-2 flex-shrink-0">
               {[
-                { label: 'Current', value: latestTrend.overall, color: '#1e4d6b' },
+                { label: 'Current', value: latestTrend.foodSafety, color: '#1e4d6b' },
                 { label: 'Food Safety', value: latestTrend.foodSafety, color: '#22c55e' },
                 { label: 'Facility Safety', value: latestTrend.facilitySafety, color: '#d4af37' },
               ].map(m => (

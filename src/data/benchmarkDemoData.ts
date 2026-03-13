@@ -20,7 +20,6 @@ import {
 // ── Types ────────────────────────────────────────────────────
 
 export interface PeerPopulation {
-  overall: number[];
   foodSafety: number[];
   facilitySafety: number[];
   subcategories: Record<string, number[]>;
@@ -85,7 +84,6 @@ function generatePopulation(config: PopulationConfig, seed: number): PeerPopulat
   const fsMean = config.foodSafetyMean ?? config.mean + 2;
   const facMean = config.facilitySafetyMean ?? config.mean - 3;
 
-  const overall = generateNormalSamples(config.sampleSize, config.mean, config.stdDev, rng);
   const foodSafety = generateNormalSamples(config.sampleSize, fsMean, config.stdDev, rng);
   const facilitySafety = generateNormalSamples(config.sampleSize, facMean, config.stdDev + 1, rng);
 
@@ -98,7 +96,6 @@ function generatePopulation(config: PopulationConfig, seed: number): PeerPopulat
   }
 
   return {
-    overall,
     foodSafety,
     facilitySafety,
     subcategories,
