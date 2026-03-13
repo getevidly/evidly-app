@@ -196,6 +196,28 @@ export {
   useCreateRoadsideAssistance,
 } from './useInsurance';
 
+// Availability
+export {
+  useAvailabilitySubmission,
+  useTeamAvailability,
+  usePendingApprovals,
+  useSubmitAvailability,
+  useUpdateAvailability,
+  useApproveAvailability,
+  useRejectAvailability,
+  useAvailabilityDeadline,
+  useIsBeforeDeadline,
+  useNextWeekDates,
+} from './useAvailability';
+
+export type {
+  AvailabilitySubmission,
+  DayAvailability,
+  SubmissionStatus,
+  SubmitAvailabilityInput,
+  DeadlineInfo,
+} from './useAvailability';
+
 export type {
   CompanyInsurance,
   VehicleInsurance,

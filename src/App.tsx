@@ -233,6 +233,9 @@ const VehicleDetailPage = lazy(() => import('./pages/fleet/VehicleDetailPage').t
 const InsurancePage = lazy(() => import('./pages/insurance/InsurancePage').then(m => ({ default: m.InsurancePage })));
 const InsurancePolicyPage = lazy(() => import('./pages/insurance/InsurancePolicyPage').then(m => ({ default: m.InsurancePolicyPage })));
 const EmergencyInfoPage = lazy(() => import('./pages/EmergencyInfoPage').then(m => ({ default: m.EmergencyInfoPage })));
+const AvailabilitySubmissionPage = lazy(() => import('./pages/availability/AvailabilitySubmissionPage').then(m => ({ default: m.AvailabilitySubmissionPage })));
+const TeamAvailabilityPage = lazy(() => import('./pages/availability/TeamAvailabilityPage').then(m => ({ default: m.TeamAvailabilityPage })));
+const AvailabilityApprovalsPage = lazy(() => import('./pages/availability/AvailabilityApprovalsPage').then(m => ({ default: m.AvailabilityApprovalsPage })));
 
 import { CookieConsent } from './components/CookieConsent';
 import { usePageTracking } from './hooks/usePageTracking';
@@ -597,6 +600,9 @@ function AppRoutes() {
           <Route path="/insurance" element={<InsurancePage />} />
           <Route path="/insurance/:id" element={<InsurancePolicyPage />} />
           <Route path="/emergency" element={<EmergencyInfoPage />} />
+          <Route path="/availability" element={<AvailabilitySubmissionPage />} />
+          <Route path="/availability/team" element={<TeamAvailabilityPage />} />
+          <Route path="/availability/approvals" element={<AvailabilityApprovalsPage />} />
           <Route path="/help" element={<Help />} />
           <Route path="/weekly-digest" element={<WeeklyDigest />} />
           <Route path="/audit-report" element={<AuditReport />} />
