@@ -2,10 +2,20 @@
  * EquipmentServiceHistory — Timeline of services for an equipment item.
  */
 import { useState } from 'react';
-import { Wrench, Calendar, User, Clock, Camera, FileText, ChevronDown, ChevronUp } from 'lucide-react';
+import { Wrench, Calendar, User, Clock, Camera, FileText, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
 import { useEquipmentServiceHistory } from '../../hooks/api/useEquipment';
 import type { EquipmentCondition } from '../../hooks/api/useEquipment';
 import { NAVY, CARD_BG, CARD_BORDER, CARD_SHADOW, TEXT_TERTIARY, MUTED } from '../dashboard/shared/constants';
+import { SERVICE_TYPES, type ServiceTypeCode } from '../../constants/serviceTypes';
+
+const FILTER_PILLS = [
+  { label: 'All', code: null },
+  { label: 'KEC', code: 'KEC' },
+  { label: 'FPM', code: 'FPM' },
+  { label: 'GFX', code: 'GFX' },
+  { label: 'RGC', code: 'RGC' },
+  { label: 'Suppression', code: 'FS' },
+] as const;
 
 const CONDITION_STYLES: Record<EquipmentCondition, { bg: string; text: string }> = {
   clean: { bg: '#F0FFF4', text: '#059669' },
@@ -24,6 +34,7 @@ export function EquipmentServiceHistory({ equipmentId }: EquipmentServiceHistory
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [typeFilter, setTypeFilter] = useState<string | null>(null);
 
   if (isLoading) {
     return (
@@ -42,6 +53,7 @@ export function EquipmentServiceHistory({ equipmentId }: EquipmentServiceHistory
   const filtered = items.filter(r => {
     if (dateFrom && r.serviceDate < dateFrom) return false;
     if (dateTo && r.serviceDate > dateTo) return false;
+    if (typeFilter && (r as any).serviceTypeCode !== typeFilter) return false;
     return true;
   });
 
@@ -57,8 +69,32 @@ export function EquipmentServiceHistory({ equipmentId }: EquipmentServiceHistory
 
   return (
     <div className="space-y-4">
-      {/* Date filter */}
+      {/* Filters */}
       <div className="flex items-center gap-3 flex-wrap">
+        {/* Service type pills */}
+        <div className="flex items-center gap-1.5 flex-wrap">
+          {FILTER_PILLS.map(pill => {
+            const isActive = typeFilter === pill.code;
+            const stDef = pill.code ? SERVICE_TYPES[pill.code as ServiceTypeCode] : null;
+            return (
+              <button
+                key={pill.label}
+                onClick={() => setTypeFilter(isActive ? null : (pill.code || null))}
+                className="text-xs font-medium px-3 py-1.5 rounded-full border transition-colors"
+                style={{
+                  background: isActive ? (stDef?.color || NAVY) : 'transparent',
+                  color: isActive ? '#fff' : (stDef?.color || TEXT_TERTIARY),
+                  borderColor: isActive ? (stDef?.color || NAVY) : CARD_BORDER,
+                }}
+              >
+                {stDef && <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: isActive ? '#fff' : stDef.color, marginRight: 4, verticalAlign: 'middle' }} />}
+                {pill.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Date range */}
         <div className="flex items-center gap-2">
           <label className="text-xs font-medium" style={{ color: MUTED }}>From</label>
           <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)}
@@ -84,8 +120,12 @@ export function EquipmentServiceHistory({ equipmentId }: EquipmentServiceHistory
 
             return (
               <div key={record.id} className="relative pl-12">
-                {/* Timeline dot */}
-                <div className="absolute left-3.5 top-4 w-3 h-3 rounded-full border-2" style={{ background: CARD_BG, borderColor: '#1e4d6b' }} />
+                {/* Timeline dot — color-coded by service type */}
+                {(() => {
+                  const stCode = (record as any).serviceTypeCode as ServiceTypeCode;
+                  const stColor = stCode && SERVICE_TYPES[stCode] ? SERVICE_TYPES[stCode].color : '#1e4d6b';
+                  return <div className="absolute left-3.5 top-4 w-3 h-3 rounded-full border-2" style={{ background: CARD_BG, borderColor: stColor }} />;
+                })()}
 
                 <div className="rounded-xl" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
                   <button
@@ -136,6 +176,17 @@ export function EquipmentServiceHistory({ equipmentId }: EquipmentServiceHistory
                         <div className="text-xs" style={{ color: TEXT_TERTIARY }}>
                           Cost: <span style={{ color: NAVY, fontWeight: 600 }}>${record.cost.toLocaleString()}</span>
                         </div>
+                      )}
+                      {(record as any).certificateUrl && (
+                        <a
+                          href={(record as any).certificateUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 text-xs hover:underline"
+                          style={{ color: '#1e4d6b' }}
+                        >
+                          <ExternalLink className="w-3 h-3" /> View Certificate (from HoodOps)
+                        </a>
                       )}
                     </div>
                   )}

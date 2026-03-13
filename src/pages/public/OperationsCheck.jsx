@@ -15,7 +15,7 @@ const C = {
 const FF = "system-ui,-apple-system,'Segoe UI',Roboto,sans-serif";
 const FF_HEAD = "'Syne',system-ui,sans-serif";
 const FF_MONO = "'DM Mono','SF Mono','Fira Code',monospace";
-const CALENDLY = "https://calendly.com/founders-getevidly/30min";
+const CALENDLY = "https://calendly.com/founders-getevidly/60min";
 const FORMSPREE = "https://formspree.io/f/meeredlg";
 const inp = (extra = {}) => ({ width: "100%", padding: "10px 12px", border: `1px solid ${C.g3}`, borderRadius: 8, fontSize: "0.875rem", boxSizing: "border-box", outline: "none", background: C.white, color: C.g8, fontFamily: FF, ...extra });
 

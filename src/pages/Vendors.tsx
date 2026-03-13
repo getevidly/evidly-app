@@ -39,6 +39,9 @@ import {
   getServiceStatus,
   type VendorServiceDemo,
 } from '../data/vendorServicesDemoData';
+import { ServiceComplianceList } from '../components/services/ServiceComplianceList';
+import { ServiceExpenseTracker } from '../components/services/ServiceExpenseTracker';
+import { LogServiceModal } from '../components/services/LogServiceModal';
 
 // ══════════════════════════════════════════════════════════════════════
 // VENDOR BUTTON BUG — ROOT CAUSE ANALYSIS (PROMPT #12, 2026-03-04)
@@ -210,7 +213,8 @@ export function Vendors() {
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedVendorId = searchParams.get('id');
 
-  const [activeTab, setActiveTab] = useState<'list' | 'scorecard'>('list');
+  const [activeTab, setActiveTab] = useState<'list' | 'scorecard' | 'services'>('list');
+  const [showLogService, setShowLogService] = useState(false);
   const [statusFilter, setStatusFilter] = useState('all');
   const [serviceFilter, setServiceFilter] = useState('all');
   const [locationFilter, setLocationFilter] = useState('all');
@@ -1207,6 +1211,14 @@ export function Vendors() {
               Vendor List
             </button>
             <button
+              onClick={() => setActiveTab('services')}
+              className={`px-6 py-3 font-medium whitespace-nowrap transition-colors ${
+                activeTab === 'services' ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]' : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Services
+            </button>
+            <button
               onClick={() => setActiveTab('scorecard')}
               className={`px-6 py-3 font-medium whitespace-nowrap transition-colors ${
                 activeTab === 'scorecard' ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]' : 'text-gray-500 hover:text-gray-700'
@@ -1523,6 +1535,13 @@ export function Vendors() {
           </>
         )}
 
+        {activeTab === 'services' && (
+          <div className="space-y-4">
+            <ServiceComplianceList onLogService={() => setShowLogService(true)} />
+            <ServiceExpenseTracker />
+          </div>
+        )}
+
         {activeTab === 'scorecard' && (
           <>
             <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-lg p-4 sm:p-6 text-white">
@@ -1679,6 +1698,9 @@ export function Vendors() {
         organizationId={profile?.organization_id || null}
         accessibleLocations={vendorAccessibleLocs}
       />
+
+      {/* Log Service Modal */}
+      <LogServiceModal isOpen={showLogService} onClose={() => setShowLogService(false)} />
 
       {/* Toast */}
       {toastMessage && (

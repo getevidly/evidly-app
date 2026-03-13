@@ -20,6 +20,7 @@ import { K2CInviteModal } from '../referral/K2CInviteModal';
 import { demoReferral } from '../../data/demoData';
 import { IntelligenceFeedWidget } from './IntelligenceFeedWidget';
 import { AnnualVendorSpendWidget, ServicesDueSoonWidget } from './VendorServiceWidgets';
+import { PortfolioExpenseSummary } from '../services/PortfolioExpenseSummary';
 import { PortfolioRiskCard } from './PortfolioRiskCard';
 import {
   VENDOR_DEMO_SERVICES,
@@ -273,6 +274,13 @@ export default function OwnerOperatorDashboard() {
           <ServicesDueSoonWidget
             services={isDemoMode ? VENDOR_DEMO_SERVICES : []}
           />
+        </div>
+      )}
+
+      {/* Portfolio Service Spend (OO only) */}
+      {userRole === 'owner_operator' && (
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
+          <PortfolioExpenseSummary />
         </div>
       )}
 

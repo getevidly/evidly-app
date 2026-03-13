@@ -37,7 +37,7 @@ const E={
 };
 const S={grn:"#1B5E20",grnL:"#4CAF50",charD:"#2E3C47",char:"#445562",bg:"#F5F3F0",bd:"#D6CFC5",tx:"#2D2A26",sub:"#6B6560"};
 const ff="system-ui,-apple-system,sans-serif";
-const CALENDLY="https://calendly.com/evidly/demo";
+const CALENDLY="https://calendly.com/founders-getevidly/60min";
 
 // ═══ COUNTY DATA ═══
 const COUNTY_DATA={

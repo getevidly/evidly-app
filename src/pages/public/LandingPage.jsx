@@ -49,7 +49,7 @@ const C = {
 const FF_SANS = "system-ui,-apple-system,'Segoe UI',Roboto,sans-serif";
 const FF_HEAD = "'Syne',system-ui,sans-serif";
 const FF_MONO = "'DM Mono','SF Mono','Fira Code',monospace";
-const CALENDLY = "https://calendly.com/founders-getevidly/30min";
+const CALENDLY = "https://calendly.com/founders-getevidly/60min";
 const FORMSPREE = "https://formspree.io/f/meeredlg";
 
 const CA_COUNTIES = [

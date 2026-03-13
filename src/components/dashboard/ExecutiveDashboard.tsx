@@ -15,6 +15,7 @@ import { ConfidenceBanner } from './shared/ConfidenceBanner';
 import { LocationStandingList } from './shared/LocationStandingList';
 import { AttentionItemList } from './shared/AttentionItemList';
 import { AnnualVendorSpendWidget } from './VendorServiceWidgets';
+import { PortfolioExpenseSummary } from '../services/PortfolioExpenseSummary';
 import { PortfolioRiskCard } from './PortfolioRiskCard';
 import {
   getDemoAnnualSpend,
@@ -111,6 +112,11 @@ export default function ExecutiveDashboard() {
           serviceCount={isDemoMode ? VENDOR_DEMO_SERVICES.length : (vendorSummary?.totalVendors ?? 0)}
           locationCount={isDemoMode ? getDemoServiceLocationCount() : locations.length}
         />
+      </div>
+
+      {/* 6b. PORTFOLIO SERVICE SPEND */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-4">
+        <PortfolioExpenseSummary />
       </div>
 
       {/* 7. CALENDAR */}

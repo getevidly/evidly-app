@@ -107,7 +107,7 @@ export function DemoGenerator() {
       `Password: ${credentials.temp_password}\n\n` +
       (demoExpiresAt ? `Your demo expires on ${new Date(demoExpiresAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}.\n\n` : '') +
       `Log in and explore your jurisdiction-specific compliance dashboard, temperature monitoring, inspection readiness scoring, and more.\n\n` +
-      `Questions? Reply to this email or book a walkthrough: https://calendly.com/getevidly/30min\n\n` +
+      `Questions? Reply to this email or book a walkthrough: https://calendly.com/founders-getevidly/60min\n\n` +
       `— The EvidLY Team`
     );
     window.open(`mailto:${credentials.email}?subject=${subject}&body=${body}`, '_self');

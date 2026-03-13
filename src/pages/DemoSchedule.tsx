@@ -6,7 +6,7 @@ const NAVY = '#1E2D4D';
 const GOLD = '#d4af37';
 
 // Default Calendly URL — configurable in admin settings
-const DEFAULT_CALENDLY_URL = 'https://calendly.com/evidly/demo';
+const DEFAULT_CALENDLY_URL = 'https://calendly.com/founders-getevidly/60min';
 
 interface RequestData {
   sessionId: string;

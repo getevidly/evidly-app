@@ -186,7 +186,7 @@ export default function AIChatWidget() {
                   )}
                   {msg.cta === 'book_call' && (
                     <a
-                      href="https://calendly.com/evidly/demo"
+                      href="https://calendly.com/founders-getevidly/60min"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="block mt-2 text-sm font-medium hover:underline"

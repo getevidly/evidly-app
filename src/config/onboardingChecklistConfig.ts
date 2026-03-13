@@ -267,7 +267,7 @@ export const ONBOARDING_STEPS: OnboardingStepDef[] = [
     section: 'growth',
     order: 2,
     stepType: 'external',
-    externalUrl: 'https://calendly.com/evidly/onboarding',
+    externalUrl: 'https://calendly.com/founders-getevidly/60min',
     roles: ['owner_operator', 'executive', 'platform_admin'],
   },
   {

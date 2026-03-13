@@ -5,6 +5,26 @@ import { ServiceTypeFormModal } from '../../components/settings/ServiceTypeFormM
 import {
   CARD_BG, CARD_BORDER, CARD_SHADOW, PANEL_BG, BODY_TEXT, MUTED, TEXT_TERTIARY, NAVY, FONT,
 } from '../../components/dashboard/shared/constants';
+import { SERVICE_TYPES, SERVICE_TYPE_CODES } from '../../constants/serviceTypes';
+
+// Seed demo data from SERVICE_TYPES constants
+const DEMO_SERVICE_TYPES: ServiceType[] = SERVICE_TYPE_CODES.map(code => {
+  const st = SERVICE_TYPES[code];
+  return {
+    id: `demo-st-${code}`,
+    name: st.name,
+    code: st.code,
+    description: st.description,
+    icon: st.icon,
+    color: st.color,
+    durationMinutes: code === 'KEC' ? 180 : code === 'FS' ? 60 : 45,
+    basePrice: st.basePrice,
+    complianceCodes: st.complianceCodes,
+    isActive: true,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z',
+  };
+});
 
 const cardStyle: React.CSSProperties = {
   background: CARD_BG,
@@ -22,8 +42,9 @@ export function ServiceTypesPage() {
   const [showModal, setShowModal] = useState(false);
   const [editType, setEditType] = useState<ServiceType | null>(null);
 
-  // Merge server + local
-  const allTypes = [...(serverTypes || []), ...localTypes];
+  // Merge server + local; seed demo types when empty
+  const baseTypes = (serverTypes && serverTypes.length > 0) ? serverTypes : DEMO_SERVICE_TYPES;
+  const allTypes = [...baseTypes, ...localTypes];
 
   const handleAdd = () => {
     setEditType(null);

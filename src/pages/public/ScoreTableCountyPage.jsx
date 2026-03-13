@@ -45,7 +45,7 @@ const E={
 };
 const S={grn:"#1B5E20",grnL:"#4CAF50",charD:"#2E3C47",bg:"#F5F3F0",bd:"#D6CFC5",tx:"#2D2A26",sub:"#6B6560"};
 const ff="system-ui,-apple-system,sans-serif";
-const CALENDLY="https://calendly.com/evidly/demo";
+const CALENDLY="https://calendly.com/founders-getevidly/60min";
 
 // ═══ COUNTY DATA ═══
 const COUNTY_DATA={
@@ -409,7 +409,7 @@ export default function ScoreTableCountyPage({county: countyProp, cityName: _cn,
   var bST={padding:"11px 22px",border:"none",borderRadius:8,fontSize:"0.85rem",fontWeight:700,cursor:"pointer",background:S.grn,color:E.w,fontFamily:ff};
   var dinp={width:"100%",padding:"10px 12px",border:"1px solid "+E.g2,borderRadius:8,fontSize:"0.85rem",boxSizing:"border-box",outline:"none",background:E.w,color:E.g8,fontFamily:ff};
 
-  function openCalendly(){window.open("https://calendly.com/evidly/demo","_blank");}
+  function openCalendly(){window.open("https://calendly.com/founders-getevidly/60min","_blank");}
   function submitLead(name,email,phone,biz,setDone){if(!name||!email||!phone||!biz)return;window.open("mailto:founders@getevidly.com?subject="+encodeURIComponent("[ScoreTable] Lead - "+biz+" ("+c.name+" County)")+"&body="+encodeURIComponent("Name: "+name+"\nEmail: "+email+"\nPhone: "+phone+"\nBusiness: "+biz+"\nCounty: "+c.name),"_blank");setDone(true);}
   function submitVendorQuote(){if(!vqReady||vqBlk)return;window.open("mailto:founders@getevidly.com?subject="+encodeURIComponent("[ScoreTable] Vendor Quote - "+vqBiz+" needs "+vqVendor+" ("+c.name+" County)")+"&body="+encodeURIComponent("Name: "+vqName+"\nEmail: "+vqEmail+"\nPhone: "+vqPhone+"\nBusiness: "+vqBiz+"\nCounty: "+c.name+"\nService needed: "+vqVendor+"\n\nNote: $25 lead fee will be charged to vendor upon delivery."),"_blank");setVqDone(true);}
 

@@ -91,8 +91,9 @@ export function Login() {
               </div>
               {branding.brandName === 'EvidLY' ? (
                 <span className="ml-3 text-3xl font-bold">
-                  <span style={{ color: branding.colors.primary }}>Evid</span>
-                  <span style={{ color: branding.colors.accent }}>LY</span>
+                  <span style={{ color: '#A08C5A' }}>E</span>
+                  <span style={{ color: '#1E2D4D' }}>vid</span>
+                  <span style={{ color: '#A08C5A' }}>LY</span>
                 </span>
               ) : (
                 <span className="ml-3 text-2xl font-bold" style={{ color: branding.colors.primary }}>

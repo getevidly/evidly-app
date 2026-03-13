@@ -71,7 +71,7 @@ export default function DemoExpired() {
             <ArrowRight className="w-4 h-4" />
           </button>
           <a
-            href="https://calendly.com/evidly/demo"
+            href="https://calendly.com/founders-getevidly/60min"
             target="_blank"
             rel="noopener noreferrer"
             className="px-8 py-3 rounded-xl font-medium text-sm border border-gray-300 text-gray-700 hover:bg-gray-50 flex items-center justify-center gap-2 transition-colors"

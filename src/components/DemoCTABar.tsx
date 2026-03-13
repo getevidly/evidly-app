@@ -30,7 +30,7 @@ export function DemoCTABar() {
           </button>
           {showBooking && (
             <a
-              href="https://calendly.com/evidly/demo"
+              href="https://calendly.com/founders-getevidly/60min"
               target="_blank"
               rel="noopener noreferrer"
               className="px-4 py-2 text-sm font-medium border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-gray-700"

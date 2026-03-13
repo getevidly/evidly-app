@@ -8,9 +8,12 @@
  */
 
 import { useNavigate } from 'react-router-dom';
-import { DollarSign, Calendar, ArrowRight, Wrench } from 'lucide-react';
+import { DollarSign, Calendar, ArrowRight, Wrench, Flame, Fan, Filter, Shield, ShieldAlert } from 'lucide-react';
 import { NAVY, CARD_BORDER, CARD_SHADOW } from './shared/constants';
 import type { VendorServiceDemo } from '../../data/vendorServicesDemoData';
+import { SERVICE_TYPES, type ServiceTypeCode } from '../../constants/serviceTypes';
+
+const SVC_ICON_MAP: Record<string, any> = { Flame, Fan, Filter, Shield, ShieldAlert, Wrench };
 
 // ── Status pill colors ───────────────────────────────────────
 
@@ -188,7 +191,13 @@ export function ServicesDueSoonWidget({ services }: ServicesDueProps) {
                 }}
               >
                 <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                  <Wrench size={14} className="text-gray-400 flex-shrink-0" />
+                  {(() => {
+                    const stCode = s.service_type_code as ServiceTypeCode;
+                    const stDef = stCode ? SERVICE_TYPES[stCode] : null;
+                    const IconComp = stDef ? (SVC_ICON_MAP[stDef.icon] || Wrench) : Wrench;
+                    const iconColor = stDef ? stDef.color : '#9ca3af';
+                    return <IconComp size={14} style={{ color: iconColor, flexShrink: 0 }} />;
+                  })()}
                   <div className="min-w-0">
                     <p className="text-[13px] font-medium text-gray-800 truncate">
                       {s.service_type}
