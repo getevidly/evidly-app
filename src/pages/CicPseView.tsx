@@ -27,7 +27,7 @@ const PILLAR_INFO = [
     description: 'Risk of revenue loss from closures, downgrades, or operational disruptions caused by compliance failures.' },
   { id: 'liability', label: 'Liability Risk', color: '#991B1B', bg: '#FEF2F2', icon: '⚖️',
     description: 'Legal exposure from violations, injuries, contamination events, or negligence claims. Includes PSE coverage gaps.' },
-  { id: 'cost', label: 'Cost Risk', color: '#1E40AF', bg: '#EFF6FF', icon: '\u{1F4B8}',
+  { id: 'cost', label: 'Cost Risk', color: '#1E2D4D', bg: '#EFF6FF', icon: '\u{1F4B8}',
     description: 'Direct remediation costs — equipment replacement, emergency repairs, regulatory penalties, and compliance upgrades.' },
   { id: 'operational', label: 'Operational Risk', color: '#166534', bg: '#F0FDF4', icon: '⚙️',
     description: 'Disruption to daily kitchen operations from staffing gaps, supply chain issues, or equipment failures.' },
@@ -245,7 +245,7 @@ export function CicPseView() {
             padding: '14px 18px', display: 'flex', gap: 10, alignItems: 'flex-start',
           }}>
             <Info style={{ width: 16, height: 16, color: '#2563EB', flexShrink: 0, marginTop: 1 }} />
-            <p style={{ fontSize: 11, color: '#1E40AF', lineHeight: 1.6, margin: 0 }}>
+            <p style={{ fontSize: 11, color: '#1E2D4D', lineHeight: 1.6, margin: 0 }}>
               EvidLY does not generate compliance scores. All inspection results are displayed exactly as issued by the Environmental Health Department (food safety) or fire Authority Having Jurisdiction (fire safety).
             </p>
           </div>

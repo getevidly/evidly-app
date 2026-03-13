@@ -526,7 +526,7 @@ function AnimatedCounter({ end, suffix = "", duration = 1800 }) {
 // ─────────────────────────────────────────────
 function TrustBar() {
   return (
-    <section style={{ background: "#1a2744", borderBottom: "1px solid rgba(255,255,255,0.06)", padding: "26px 24px" }}>
+    <section style={{ background: "#283f6a", borderBottom: "1px solid rgba(255,255,255,0.06)", padding: "26px 24px" }}>
       <div style={{ maxWidth: 960, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center", gap: 36, flexWrap: "wrap" }}>
         {/* Animated stat counters */}
         <div style={{ textAlign: "center" }}>
@@ -873,7 +873,7 @@ function PricingSection({ onTour, onIRR }) {
 // ─────────────────────────────────────────────
 function IRRSection({ onIRR }) {
   return (
-    <section id="irr" style={{ padding: "88px 24px", background: `linear-gradient(155deg, #1a2744, ${C.navy})`, textAlign: "center", position: "relative", overflow: "hidden" }}>
+    <section id="irr" style={{ padding: "88px 24px", background: `linear-gradient(155deg, #283f6a, ${C.navy})`, textAlign: "center", position: "relative", overflow: "hidden" }}>
       <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle at 50% 50%, rgba(160,140,90,0.05) 0%, transparent 60%)", pointerEvents: "none" }} />
       <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px)", backgroundSize: "56px 56px", pointerEvents: "none" }} />
       <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg,transparent,${C.gold},transparent)` }} />
@@ -895,7 +895,7 @@ function IRRSection({ onIRR }) {
 // ─────────────────────────────────────────────
 function FinalCTA({ onTour, onIRR }) {
   return (
-    <section style={{ padding: "88px 24px", background: `linear-gradient(155deg, #1a2744, ${C.navy})`, textAlign: "center", position: "relative", overflow: "hidden" }}>
+    <section style={{ padding: "88px 24px", background: `linear-gradient(155deg, #283f6a, ${C.navy})`, textAlign: "center", position: "relative", overflow: "hidden" }}>
       <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle at 30% 70%, rgba(160,140,90,0.04) 0%, transparent 50%)", pointerEvents: "none" }} />
       <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: `linear-gradient(90deg,transparent,${C.gold},transparent)` }} />
       <div className="reveal" style={{ maxWidth: 580, margin: "0 auto", position: "relative" }}>
@@ -917,7 +917,7 @@ function Footer() {
   const col = { fontSize: "0.78rem", color: "rgba(255,255,255,0.35)", textDecoration: "none", display: "block", marginBottom: 10, fontFamily: FF_SANS, transition: "color 0.2s" };
   const head = { fontSize: "0.62rem", fontWeight: 700, color: "rgba(255,255,255,0.28)", marginBottom: 14, textTransform: "uppercase", letterSpacing: "0.16em", fontFamily: FF_MONO };
   return (
-    <footer style={{ background: "#1a2744", padding: "56px 24px 24px" }}>
+    <footer style={{ background: "#283f6a", padding: "56px 24px 24px" }}>
       <div style={{ maxWidth: 1060, margin: "0 auto" }}>
         <div className="footer-grid" style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 32, marginBottom: 40 }}>
           <div>
@@ -1022,7 +1022,7 @@ export default function LandingPage() {
           100% { background-position: 0% 50%; }
         }
         .hero-gradient {
-          background: linear-gradient(135deg, #1a2744, #1E2D4D, #253356, #1E2D4D, #192540);
+          background: linear-gradient(135deg, #283f6a, #1E2D4D, #253356, #1E2D4D, #192540);
           background-size: 300% 300%;
           animation: gradientShift 12s ease infinite;
         }

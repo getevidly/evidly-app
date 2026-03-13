@@ -142,7 +142,7 @@ const DEMO_SIGNALS: Signal[] = [
     jurisdiction: null,
     state_code: null,
     affected_pillars: ['facility_safety'],
-    raw_data: { edition: '2025', section: '11.4', change_type: 'frequency_requirement' },
+    raw_data: { edition: '2025', section: 'Table 12.4', change_type: 'frequency_requirement' },
     source_url: 'https://www.nfpa.org/codes-and-standards',
     confidence_score: 0.82,
     status: 'deferred',

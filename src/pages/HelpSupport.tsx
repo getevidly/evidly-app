@@ -14,7 +14,7 @@ const inputStyle = {
 };
 const labelStyle = { fontSize: '13px', fontWeight: 600, color: '#374151', marginBottom: '6px', display: 'block', ...F };
 const btnPrimary = {
-  padding: '10px 24px', borderRadius: '8px', border: 'none', backgroundColor: '#1b4965',
+  padding: '10px 24px', borderRadius: '8px', border: 'none', backgroundColor: '#1E2D4D',
   color: 'white', fontWeight: 700, fontSize: '14px', cursor: 'pointer', ...F,
 };
 
@@ -131,7 +131,7 @@ const FAQ_CATEGORIES: FaqCategory[] = [
 ];
 
 const QUICK_HELP = [
-  { id: 'qh-1', title: 'Quick Start Guide', icon: '\u{1F680}', desc: 'Get up and running in under 10 minutes', color: '#1b4965' },
+  { id: 'qh-1', title: 'Quick Start Guide', icon: '\u{1F680}', desc: 'Get up and running in under 10 minutes', color: '#1E2D4D' },
   { id: 'qh-2', title: 'Daily Temperature Readings', icon: '\u{1F321}️', desc: 'Step-by-step temperature logging walkthrough', color: '#dc2626' },
   { id: 'qh-3', title: 'Understanding Scores', icon: '\u{1F6E1}️', desc: 'How your compliance score is calculated', color: '#16a34a' },
 ];
@@ -229,7 +229,7 @@ export function HelpSupport() {
       <div className="p-4 sm:p-6" style={{ maxWidth: '1200px', margin: '0 auto', ...F }}>
         {/* Header */}
         <div style={{ marginBottom: '24px' }}>
-          <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#1b4965', margin: '0 0 4px 0', ...F }}>Help & Support</h1>
+          <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#1E2D4D', margin: '0 0 4px 0', ...F }}>Help & Support</h1>
           <p style={{ fontSize: '14px', color: '#6b7280', margin: 0, ...F }}>Find answers, submit tickets, and get in touch with our team</p>
         </div>
 
@@ -242,7 +242,7 @@ export function HelpSupport() {
               style={{
                 padding: '12px 20px', fontSize: '14px', fontWeight: 600, border: 'none',
                 backgroundColor: 'transparent', cursor: 'pointer', ...F, whiteSpace: 'nowrap', minHeight: '44px',
-                color: activeTab === tab.id ? '#1b4965' : '#6b7280',
+                color: activeTab === tab.id ? '#1E2D4D' : '#6b7280',
                 borderBottom: activeTab === tab.id ? '2px solid #d4af37' : '2px solid transparent',
                 marginBottom: '-2px', display: 'flex', alignItems: 'center', gap: '6px',
               }}
@@ -281,11 +281,11 @@ export function HelpSupport() {
     if (selectedArticle) {
       return (
         <div>
-          <button onClick={() => setSelectedArticle(null)} style={{ fontSize: '13px', color: '#1b4965', fontWeight: 600, border: 'none', background: 'none', cursor: 'pointer', marginBottom: '16px', ...F, display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <button onClick={() => setSelectedArticle(null)} style={{ fontSize: '13px', color: '#1E2D4D', fontWeight: 600, border: 'none', background: 'none', cursor: 'pointer', marginBottom: '16px', ...F, display: 'flex', alignItems: 'center', gap: '4px' }}>
             ← Back to Knowledge Base
           </button>
           <div style={cardStyle}>
-            <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#1b4965', margin: '0 0 8px 0', ...F }}>{selectedArticle.title}</h2>
+            <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#1E2D4D', margin: '0 0 8px 0', ...F }}>{selectedArticle.title}</h2>
             <div style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
               <span style={{ fontSize: '12px', color: '#6b7280', ...F }}>{selectedArticle.views.toLocaleString()} views</span>
               <span style={{ fontSize: '12px', color: '#16a34a', ...F }}>{selectedArticle.helpful}% found helpful</span>
@@ -336,7 +336,7 @@ export function HelpSupport() {
             }} style={{ ...cardStyle, cursor: 'pointer', borderLeft: `4px solid ${qh.color}`, transition: 'box-shadow 0.15s' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
                 <span style={{ fontSize: '20px' }}>{qh.icon}</span>
-                <div style={{ fontSize: '14px', fontWeight: 700, color: '#1b4965', ...F }}>{qh.title}</div>
+                <div style={{ fontSize: '14px', fontWeight: 700, color: '#1E2D4D', ...F }}>{qh.title}</div>
               </div>
               <div style={{ fontSize: '12px', color: '#6b7280', ...F }}>{qh.desc}</div>
             </div>
@@ -345,7 +345,7 @@ export function HelpSupport() {
 
         {/* FAQ Categories */}
         <div>
-          <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#1b4965', textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 12px 0', ...F }}>FAQ Categories</h3>
+          <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#1E2D4D', textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 12px 0', ...F }}>FAQ Categories</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {FAQ_CATEGORIES.map(cat => (
               <div key={cat.id} style={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '10px', overflow: 'hidden' }}>
@@ -355,7 +355,7 @@ export function HelpSupport() {
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <span style={{ fontSize: '18px' }}>{cat.icon}</span>
-                    <span style={{ fontSize: '14px', fontWeight: 600, color: '#1b4965' }}>{cat.name}</span>
+                    <span style={{ fontSize: '14px', fontWeight: 600, color: '#1E2D4D' }}>{cat.name}</span>
                     <span style={{ fontSize: '11px', color: '#6b7280', fontWeight: 500 }}>{cat.articles.length} articles</span>
                   </div>
                   <span style={{ fontSize: '16px', color: '#6b7280', transform: expandedCat === cat.id ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }}>{'▼'}</span>
@@ -391,13 +391,13 @@ export function HelpSupport() {
       return (
         <div style={{ ...cardStyle, textAlign: 'center', padding: '48px 24px' }}>
           <div style={{ fontSize: '48px', marginBottom: '16px' }}>{'✅'}</div>
-          <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#1b4965', margin: '0 0 8px 0', ...F }}>Ticket Submitted!</h2>
+          <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#1E2D4D', margin: '0 0 8px 0', ...F }}>Ticket Submitted!</h2>
           <p style={{ fontSize: '14px', color: '#6b7280', margin: '0 0 4px 0', ...F }}>Your ticket number is</p>
           <div style={{ fontSize: '24px', fontWeight: 800, color: '#d4af37', marginBottom: '24px', ...F }}>{ticketNumber}</div>
           <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '24px', ...F }}>We typically respond within 4 business hours. Check the "My Tickets" tab for updates.</p>
           <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
             <button onClick={resetTicketForm} style={{ ...btnPrimary, minHeight: '44px' }}>Submit Another</button>
-            <button onClick={() => setActiveTab('my-tickets')} style={{ ...btnPrimary, backgroundColor: 'white', color: '#1b4965', border: '2px solid #e5e7eb', minHeight: '44px' }}>View My Tickets</button>
+            <button onClick={() => setActiveTab('my-tickets')} style={{ ...btnPrimary, backgroundColor: 'white', color: '#1E2D4D', border: '2px solid #e5e7eb', minHeight: '44px' }}>View My Tickets</button>
           </div>
         </div>
       );
@@ -405,7 +405,7 @@ export function HelpSupport() {
 
     return (
       <div style={cardStyle}>
-        <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#1b4965', margin: '0 0 20px 0', ...F }}>Submit a Support Ticket</h2>
+        <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#1E2D4D', margin: '0 0 20px 0', ...F }}>Submit a Support Ticket</h2>
 
         {/* Category */}
         <div style={{ marginBottom: '16px' }}>
@@ -482,7 +482,7 @@ export function HelpSupport() {
     return (
       <div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
-          <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#1b4965', margin: 0, ...F }}>My Support Tickets</h2>
+          <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#1E2D4D', margin: 0, ...F }}>My Support Tickets</h2>
           <button onClick={() => { setActiveTab('ticket'); resetTicketForm(); }} style={{ ...btnPrimary, minHeight: '44px' }}>+ New Ticket</button>
         </div>
 
@@ -498,7 +498,7 @@ export function HelpSupport() {
             <tbody>
               {DEMO_TICKETS.map(t => (
                 <tr key={t.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                  <td style={{ padding: '12px 14px', fontSize: '13px', fontWeight: 700, color: '#1b4965', ...F }}>{t.id}</td>
+                  <td style={{ padding: '12px 14px', fontSize: '13px', fontWeight: 700, color: '#1E2D4D', ...F }}>{t.id}</td>
                   <td style={{ padding: '12px 14px', fontSize: '13px', color: '#374151', ...F }}>{t.subject}</td>
                   <td style={{ padding: '12px 14px', fontSize: '12px', color: '#6b7280', ...F }}>{t.category}</td>
                   <td style={{ padding: '12px 14px' }}>{statusBadge(t.status)}</td>
@@ -530,7 +530,7 @@ export function HelpSupport() {
           {/* Live Chat */}
           <div style={cardStyle}>
             <div style={{ fontSize: '28px', marginBottom: '10px' }}>{'\u{1F4AC}'}</div>
-            <div style={{ fontSize: '16px', fontWeight: 700, color: '#1b4965', marginBottom: '4px', ...F }}>Live Chat</div>
+            <div style={{ fontSize: '16px', fontWeight: 700, color: '#1E2D4D', marginBottom: '4px', ...F }}>Live Chat</div>
             <div style={{ fontSize: '13px', color: '#6b7280', marginBottom: '16px', ...F }}>Chat with our support team in real-time during business hours.</div>
             <button onClick={() => guardAction('chat', 'Live Support', openChat)} style={{ ...btnPrimary, width: '100%', minHeight: '44px' }}>Start Chat</button>
           </div>
@@ -538,7 +538,7 @@ export function HelpSupport() {
           {/* Email */}
           <div style={cardStyle}>
             <div style={{ fontSize: '28px', marginBottom: '10px' }}>{'\u{1F4E7}'}</div>
-            <div style={{ fontSize: '16px', fontWeight: 700, color: '#1b4965', marginBottom: '4px', ...F }}>Email Support</div>
+            <div style={{ fontSize: '16px', fontWeight: 700, color: '#1E2D4D', marginBottom: '4px', ...F }}>Email Support</div>
             <div style={{ fontSize: '13px', color: '#6b7280', marginBottom: '16px', ...F }}>Send us an email and we will respond within 4 business hours.</div>
             <a href="mailto:support@getevidly.com" style={{ ...btnPrimary, display: 'block', textAlign: 'center', textDecoration: 'none', width: '100%', boxSizing: 'border-box', minHeight: '44px' }}>support@getevidly.com</a>
           </div>
@@ -546,7 +546,7 @@ export function HelpSupport() {
           {/* Phone */}
           <div style={cardStyle}>
             <div style={{ fontSize: '28px', marginBottom: '10px' }}>{'\u{1F4DE}'}</div>
-            <div style={{ fontSize: '16px', fontWeight: 700, color: '#1b4965', marginBottom: '4px', ...F }}>Phone Support</div>
+            <div style={{ fontSize: '16px', fontWeight: 700, color: '#1E2D4D', marginBottom: '4px', ...F }}>Phone Support</div>
             <div style={{ fontSize: '13px', color: '#6b7280', marginBottom: '4px', ...F }}>(559) 555-0142</div>
             <div style={{ fontSize: '12px', color: '#9ca3af', marginBottom: '16px', ...F }}>Mon — Fri, 9:00 AM — 5:00 PM PST</div>
             <a href="tel:+15595550142" style={{ ...btnPrimary, display: 'block', textAlign: 'center', textDecoration: 'none', width: '100%', boxSizing: 'border-box', minHeight: '44px' }}>Call Now</a>
@@ -555,7 +555,7 @@ export function HelpSupport() {
           {/* Schedule */}
           <div style={cardStyle}>
             <div style={{ fontSize: '28px', marginBottom: '10px' }}>{'\u{1F4C5}'}</div>
-            <div style={{ fontSize: '16px', fontWeight: 700, color: '#1b4965', marginBottom: '4px', ...F }}>Schedule a Call</div>
+            <div style={{ fontSize: '16px', fontWeight: 700, color: '#1E2D4D', marginBottom: '4px', ...F }}>Schedule a Call</div>
             <div style={{ fontSize: '13px', color: '#6b7280', marginBottom: '16px', ...F }}>Book a 15-minute call with our support team at your convenience.</div>
             <button onClick={() => guardAction('schedule', 'Support', () => toast.info('Book Time (Demo)'))} style={{ ...btnPrimary, width: '100%', minHeight: '44px' }}>Book Time</button>
           </div>

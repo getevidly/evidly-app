@@ -47,7 +47,7 @@ export const CIC_PILLARS: CICPillar[] = [
     label: 'Cost Risk',
     shortLabel: 'P3 Cost',
     insuranceLines: ['Equipment Breakdown', 'Property', 'WC influence'],
-    color: '#1E40AF',
+    color: '#1E2D4D',
     bgColor: '#EFF6FF',
     border: '#BFDBFE',
   },

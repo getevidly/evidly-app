@@ -100,7 +100,7 @@ export default function AuthModal({ mode, onClose, onSwitchMode }: AuthModalProp
             <div style={{ marginBottom:'16px' }}>
               <div style={{ display:'flex',justifyContent:'space-between',marginBottom:'6px' }}>
                 <label style={{ fontSize:'14px',fontWeight:'500',color:'#374151' }}>Password</label>
-                {mode === 'login' && <a href="/forgot-password" onClick={() => onClose()} style={{ fontSize:'12px',color:'#1b4965',textDecoration:'none' }}>Forgot password?</a>}
+                {mode === 'login' && <a href="/forgot-password" onClick={() => onClose()} style={{ fontSize:'12px',color:'#1E2D4D',textDecoration:'none' }}>Forgot password?</a>}
               </div>
               <div style={{ position:'relative' }}>
                 <input type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} required style={{ width:'100%',padding:'12px 16px',border:'1px solid #d1d5db',borderRadius:'8px',fontSize:'14px',boxSizing:'border-box',paddingRight:'48px' }} />
@@ -115,12 +115,12 @@ export default function AuthModal({ mode, onClose, onSwitchMode }: AuthModalProp
                 <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required style={{ width:'100%',padding:'12px 16px',border:'1px solid #d1d5db',borderRadius:'8px',fontSize:'14px',boxSizing:'border-box' }} />
               </div>
             )}
-            <button type="submit" disabled={loading} style={{ width:'100%',padding:'12px',marginTop:'8px',fontWeight:'600',color:'white',background:'#1b4965',border:'none',borderRadius:'8px',fontSize:'14px',cursor:'pointer' }}>
+            <button type="submit" disabled={loading} style={{ width:'100%',padding:'12px',marginTop:'8px',fontWeight:'600',color:'white',background:'#1E2D4D',border:'none',borderRadius:'8px',fontSize:'14px',cursor:'pointer' }}>
               {loading ? (mode === 'login' ? 'Signing in...' : 'Creating account...') : (mode === 'login' ? 'Sign In' : 'Create Account')}
             </button>
             <p style={{ fontSize:'14px',textAlign:'center',color:'#6b7280',marginTop:'16px' }}>
               {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
-              <button type="button" onClick={() => onSwitchMode(mode === 'login' ? 'signup' : 'login')} style={{ background:'none',border:'none',color:'#1b4965',fontWeight:'600',cursor:'pointer',fontSize:'14px' }}>
+              <button type="button" onClick={() => onSwitchMode(mode === 'login' ? 'signup' : 'login')} style={{ background:'none',border:'none',color:'#1E2D4D',fontWeight:'600',cursor:'pointer',fontSize:'14px' }}>
                 {mode === 'login' ? 'Sign up' : 'Sign in'}
               </button>
             </p>

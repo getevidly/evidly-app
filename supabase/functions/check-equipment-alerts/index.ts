@@ -5,7 +5,7 @@
 // Checks all active equipment for:
 //   - Ansul system inspection due/overdue (NFPA 96 §12.1)
 //   - Fire extinguisher annual inspection due/overdue
-//   - Hood cleaning due/overdue (NFPA 96 §11.4)
+//   - Hood cleaning due/overdue (NFPA 96 Table 12.4)
 //   - Missing daily temperature logs for coolers/freezers
 //
 // Creates alerts in the `alerts` table
@@ -162,8 +162,8 @@ Deno.serve(async (req: Request) => {
               alert_type: "critical",
               category: "equipment_service",
               title: `Hood cleaning OVERDUE — ${eqName}`,
-              message: `The hood system "${eqName}" cleaning is overdue (was due ${nextClean.toLocaleDateString()}). NFPA 96 §11.4 requires cleaning based on cooking type/volume. Schedule IKECA-certified cleaning immediately.`,
-              authority_reference: "NFPA 96 §11.4",
+              message: `The hood system "${eqName}" cleaning is overdue (was due ${nextClean.toLocaleDateString()}). NFPA 96 Table 12.4 requires cleaning based on cooking type/volume. Schedule IKECA-certified cleaning immediately.`,
+              authority_reference: "NFPA 96 Table 12.4",
             });
           } else if (nextClean.toISOString() < in14Days) {
             alertsToCreate.push({
@@ -174,7 +174,7 @@ Deno.serve(async (req: Request) => {
               category: "equipment_service",
               title: `Hood cleaning due within 2 weeks — ${eqName}`,
               message: `The hood system "${eqName}" cleaning is due by ${nextClean.toLocaleDateString()}. Contact your cleaning vendor to schedule.`,
-              authority_reference: "NFPA 96 §11.4",
+              authority_reference: "NFPA 96 Table 12.4",
             });
           }
         }

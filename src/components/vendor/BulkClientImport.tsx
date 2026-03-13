@@ -341,7 +341,7 @@ export function BulkClientImport({ isOpen, onClose, onImportComplete, providerNa
                         className="font-mono px-1.5 py-0.5 rounded"
                         style={{
                           backgroundColor: col.required ? '#DBEAFE' : '#F3F4F6',
-                          color: col.required ? '#1E40AF' : '#6B7F96',
+                          color: col.required ? '#1E2D4D' : '#6B7F96',
                         }}
                       >
                         {col.header}

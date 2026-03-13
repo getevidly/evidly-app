@@ -247,7 +247,7 @@ function FieldRow({
 function AlertRow({ alert }: { alert: ExpirationAlert }) {
   const statusStyles: Record<string, { bg: string; text: string; label: string }> = {
     sent: { bg: '#dcfce7', text: '#166534', label: 'Sent' },
-    scheduled: { bg: '#dbeafe', text: '#1e40af', label: 'Scheduled' },
+    scheduled: { bg: '#dbeafe', text: '#1E2D4D', label: 'Scheduled' },
     skipped: { bg: '#f3f4f6', text: '#6b7280', label: 'Skipped' },
   };
   const s = statusStyles[alert.status] || statusStyles.scheduled;

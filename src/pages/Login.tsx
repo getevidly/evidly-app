@@ -78,11 +78,15 @@ export function Login() {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
           <div className="flex justify-center mb-2">
             <div className="flex items-center">
-              <div className="w-12 h-14">
-                <svg viewBox="0 0 56 65" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-                  <path d="M28 0L56 10V28C56 47.33 44.12 58.17 28 65C11.88 58.17 0 47.33 0 28V10L28 0Z" fill={branding.colors.accent}/>
-                  <path d="M28 6L50 14V28C50 43.5 40.5 52.5 28 58C15.5 52.5 6 43.5 6 28V14L28 6Z" fill={branding.colors.primary}/>
-                  <path d="M22 32L26 36L34 26" stroke={branding.colors.accent} strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <div>
+                <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" width="56" height="56">
+                  <rect width="48" height="48" rx="10.5" fill="#1E2D4D"/>
+                  <circle cx="24" cy="24" r="3" fill="white"/>
+                  <circle cx="24" cy="13" r="3" fill="#A08C5A"/>
+                  <circle cx="34.5" cy="19" r="3" fill="#A08C5A"/>
+                  <circle cx="30.5" cy="31" r="3" fill="#A08C5A"/>
+                  <circle cx="17.5" cy="31" r="3" fill="#A08C5A"/>
+                  <circle cx="13.5" cy="19" r="3" fill="#A08C5A"/>
                 </svg>
               </div>
               {branding.brandName === 'EvidLY' ? (

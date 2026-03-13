@@ -51,7 +51,7 @@ interface FeedItem {
 const DIM_META: Record<string, { icon: string; label: string; color: string }> = {
   revenue:     { icon: '\u{1F4B0}', label: 'Revenue',     color: '#C2410C' },
   liability:   { icon: '\u{2696}\u{FE0F}', label: 'Liability',   color: '#991B1B' },
-  cost:        { icon: '\u{1F4B8}', label: 'Cost',        color: '#1E40AF' },
+  cost:        { icon: '\u{1F4B8}', label: 'Cost',        color: '#1E2D4D' },
   operational: { icon: '\u{2699}\u{FE0F}', label: 'Operational', color: '#166534' },
   workforce:   { icon: '\u{1F477}', label: 'Workforce',  color: '#6B21A8' },
 };

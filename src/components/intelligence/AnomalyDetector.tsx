@@ -65,7 +65,7 @@ function detectAnomalies(data: any): Anomaly[] {
 const severityStyles: Record<string, { bg: string; text: string; border: string; icon: string; label: string }> = {
   alert:   { bg: '#7f1d1d15', text: '#fca5a5', border: '#991b1b', icon: '🚨', label: 'ALERT' },
   warning: { bg: '#78350f15', text: '#fde68a', border: '#854d0e', icon: '⚠️', label: 'WARNING' },
-  info:    { bg: '#1e3a5f15', text: '#93c5fd', border: '#1e40af', icon: 'ℹ️', label: 'INFO' },
+  info:    { bg: '#1e3a5f15', text: '#93c5fd', border: '#1E2D4D', icon: 'ℹ️', label: 'INFO' },
 };
 
 export const AnomalyDetector: React.FC<Props> = ({ data }) => {

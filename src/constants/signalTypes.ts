@@ -28,7 +28,7 @@ export const SIGNAL_TYPE_COLORS: Record<string, string> = {
   intelligence:        '#1E2D4D',   // Midnight Navy
   game_plan:           '#166534',   // P4 Operational green
   outbreak:            '#991B1B',   // P2 Liability red
-  regulatory_change:   '#1E40AF',   // P3 Cost blue
+  regulatory_change:   '#1E2D4D',   // P3 Cost blue
   vendor_intelligence: '#6B21A8',   // P5 Workforce purple
 };
 

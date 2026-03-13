@@ -293,7 +293,7 @@ const SAMPLE_CORRELATIONS = [
   {
     id: 'corr-005',
     pillar: 'Cost',
-    pillarColor: '#1E40AF',
+    pillarColor: '#1E2D4D',
     title: 'Vendor COI Lapse → Emergency Service Premium',
     description: 'Locations using vendors with expired COI are 3.1× more likely to incur emergency service charges averaging $4,200 per incident.',
     signalCount: 11,
@@ -305,7 +305,7 @@ const SAMPLE_CORRELATIONS = [
   {
     id: 'corr-006',
     pillar: 'Cost',
-    pillarColor: '#1E40AF',
+    pillarColor: '#1E2D4D',
     title: 'Temperature Log Gap → Food Loss Exposure',
     description: 'Missing temperature logs for 3+ consecutive days correlate with $1,800 avg food inventory loss and $3,200 corrective action costs.',
     signalCount: 8,
@@ -368,7 +368,7 @@ const CORR_PILLARS = ['Revenue', 'Liability', 'Cost', 'Operational', 'Workforce'
 const CORR_PILLAR_COLORS: Record<string, string> = {
   Revenue: '#C2410C',
   Liability: '#991B1B',
-  Cost: '#1E40AF',
+  Cost: '#1E2D4D',
   Operational: '#166534',
   Workforce: '#6B21A8',
 };
@@ -1694,7 +1694,7 @@ export default function EvidLYIntelligence() {
                           <div style={{ display: 'flex', gap: 4 }}>
                             {j.dims.rev && <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#C2410C', display: 'inline-block' }} title="Revenue" />}
                             {j.dims.liab && <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#991B1B', display: 'inline-block' }} title="Liability" />}
-                            {j.dims.cost && <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#1E40AF', display: 'inline-block' }} title="Cost" />}
+                            {j.dims.cost && <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#1E2D4D', display: 'inline-block' }} title="Cost" />}
                             {j.dims.ops && <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#166534', display: 'inline-block' }} title="Operational" />}
                             {j.dims.wkf && <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#6B21A8', display: 'inline-block' }} title="Workforce" />}
                             {!j.dims.rev && !j.dims.liab && !j.dims.cost && !j.dims.ops && !j.dims.wkf && (
@@ -2380,7 +2380,7 @@ export default function EvidLYIntelligence() {
                 {/* Impact Preview */}
                 {impactPreview && (
                   <div style={{ background: '#EFF6FF', border: '1px solid #BFDBFE', borderRadius: 8, padding: '10px 14px' }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: '#1E40AF', marginBottom: 4 }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: '#1E2D4D', marginBottom: 4 }}>
                       Impact Preview: {impactPreview.total_orgs} org{impactPreview.total_orgs !== 1 ? 's' : ''}, {impactPreview.total_locations} location{impactPreview.total_locations !== 1 ? 's' : ''}
                     </div>
                     {impactPreview.orgs.length > 0 && (

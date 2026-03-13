@@ -68,7 +68,7 @@ const DATE_RANGES: { label: string; value: DateRange }[] = [
 
 // Professional muted badge colors
 const RECORD_TYPE_STYLES: Record<RecordType, { badgeBg: string; badgeText: string; thumbBg: string }> = {
-  'Temperature Log': { badgeBg: '#dbeafe', badgeText: '#1e40af', thumbBg: '#3b82f6' },
+  'Temperature Log': { badgeBg: '#dbeafe', badgeText: '#1E2D4D', thumbBg: '#3b82f6' },
   'Checklist':       { badgeBg: '#dcfce7', badgeText: '#166534', thumbBg: '#22c55e' },
   'Incident':        { badgeBg: '#fef2f2', badgeText: '#991b1b', thumbBg: '#ef4444' },
   'Vendor Delivery': { badgeBg: '#fef3c7', badgeText: '#92400e', thumbBg: '#f59e0b' },

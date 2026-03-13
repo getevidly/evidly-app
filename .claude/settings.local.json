@@ -110,7 +110,13 @@
       "Bash(cmd /c \"if not exist C:\\\\Users\\\\newpa\\\\Downloads\\\\hoodops-pro\\\\apps\\\\web-vendor\\\\src\\\\pages\\\\jobs mkdir C:\\\\Users\\\\newpa\\\\Downloads\\\\hoodops-pro\\\\apps\\\\web-vendor\\\\src\\\\pages\\\\jobs && if not exist C:\\\\Users\\\\newpa\\\\Downloads\\\\hoodops-pro\\\\apps\\\\web-vendor\\\\src\\\\components\\\\jobs mkdir C:\\\\Users\\\\newpa\\\\Downloads\\\\hoodops-pro\\\\apps\\\\web-vendor\\\\src\\\\components\\\\jobs && echo done\")",
       "Bash(del \"C:\\\\Users\\\\newpa\\\\Downloads\\\\hoodops-pro\\\\apps\\\\web-vendor\\\\src\\\\pages\\\\JobsPage.tsx\")",
       "Bash(del \"C:\\\\Users\\\\newpa\\\\Downloads\\\\hoodops-pro\\\\apps\\\\web-vendor\\\\src\\\\pages\\\\JobDetailPage.tsx\")",
-      "WebFetch(domain:app.getevidly.com)"
+      "WebFetch(domain:app.getevidly.com)",
+      "Bash(if not exist \"C:\\\\Users\\\\newpa\\\\Downloads\\\\evidly-demo-final\\\\evidly-app-main\\\\src\\\\components\\\\employees\" mkdir \"C:\\\\Users\\\\newpa\\\\Downloads\\\\evidly-demo-final\\\\evidly-app-main\\\\src\\\\components\\\\employees\")",
+      "Bash(git revert:*)",
+      "Bash(git clone:*)",
+      "Bash(cat:*)",
+      "Bash(if not exist \"C:\\\\Users\\\\newpa\\\\Downloads\\\\evidly-demo-final\\\\evidly-app-main\\\\src\\\\components\\\\copilot\" mkdir \"C:\\\\Users\\\\newpa\\\\Downloads\\\\evidly-demo-final\\\\evidly-app-main\\\\src\\\\components\\\\copilot\")",
+      "Bash(test:*)"
     ]
   }
 }

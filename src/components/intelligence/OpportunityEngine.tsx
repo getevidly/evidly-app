@@ -69,7 +69,7 @@ export const OpportunityEngine: React.FC<Props> = ({ data }) => {
   const priorityStyles: Record<number, { bg: string; text: string; border: string; label: string }> = {
     1: { bg: '#7f1d1d20', text: '#fca5a5', border: '#991b1b', label: 'URGENT' },
     2: { bg: '#78350f20', text: '#fde68a', border: '#854d0e', label: 'HIGH' },
-    3: { bg: '#1e3a5f20', text: '#93c5fd', border: '#1e40af', label: 'MEDIUM' },
+    3: { bg: '#1e3a5f20', text: '#93c5fd', border: '#1E2D4D', label: 'MEDIUM' },
   };
 
   return (

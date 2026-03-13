@@ -549,7 +549,7 @@ export function Analysis() {
     switch (severity) {
       case 'high': return { bg: '#fef2f2', border: '#ef4444', text: '#991b1b', iconColor: '#dc2626', badge: '#fee2e2', badgeText: '#991b1b' };
       case 'medium': return { bg: '#fffbeb', border: '#f59e0b', text: '#92400e', iconColor: '#d97706', badge: '#fef3c7', badgeText: '#92400e' };
-      case 'low': return { bg: '#eff6ff', border: '#3b82f6', text: '#1e40af', iconColor: '#2563eb', badge: '#dbeafe', badgeText: '#1e40af' };
+      case 'low': return { bg: '#eff6ff', border: '#3b82f6', text: '#1E2D4D', iconColor: '#2563eb', badge: '#dbeafe', badgeText: '#1E2D4D' };
     }
   };
 
@@ -673,7 +673,7 @@ export function Analysis() {
           {[
             { label: 'Critical', count: highCount, bg: '#fef2f2', border: '#fecaca', color: '#991b1b', icon: <ShieldAlert className="h-5 w-5" style={{ color: '#dc2626' }} /> },
             { label: 'Warning', count: mediumCount, bg: '#fffbeb', border: '#fde68a', color: '#92400e', icon: <AlertTriangle className="h-5 w-5" style={{ color: '#d97706' }} /> },
-            { label: 'Watch', count: lowCount, bg: '#eff6ff', border: '#bfdbfe', color: '#1e40af', icon: <Eye className="h-5 w-5" style={{ color: '#2563eb' }} /> },
+            { label: 'Watch', count: lowCount, bg: '#eff6ff', border: '#bfdbfe', color: '#1E2D4D', icon: <Eye className="h-5 w-5" style={{ color: '#2563eb' }} /> },
             { label: 'Resolved This Week', count: resolvedThisWeek, bg: '#f0fdf4', border: '#bbf7d0', color: '#166534', icon: <CheckCircle className="h-5 w-5" style={{ color: '#16a34a' }} /> },
           ].map((kpi) => (
             <div key={kpi.label} style={{ backgroundColor: kpi.bg, border: `1px solid ${kpi.border}`, borderRadius: '12px', padding: '16px', textAlign: 'center' }}>

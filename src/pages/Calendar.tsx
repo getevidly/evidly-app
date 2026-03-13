@@ -1819,7 +1819,7 @@ export function Calendar() {
 
             {/* Today Card */}
             <div style={{
-              backgroundColor: '#1b4965',
+              backgroundColor: '#1E2D4D',
               borderRadius: '12px',
               padding: '16px',
               color: 'white',

@@ -78,7 +78,7 @@ export function TempIntelligenceCard() {
         </button>
       </div>
       {digestOpen && (
-        <p style={{ marginTop: 8, fontSize: 13, color: '#1E40AF', lineHeight: 1.6 }}>
+        <p style={{ marginTop: 8, fontSize: 13, color: '#1E2D4D', lineHeight: 1.6 }}>
           {digestText}
         </p>
       )}

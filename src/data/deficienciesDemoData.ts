@@ -56,7 +56,7 @@ export const SEVERITY_CONFIG: Record<DefSeverity, { label: string; color: string
   critical: { label: 'Critical', color: '#991b1b', bg: '#fef2f2', border: '#fecaca' },
   major:    { label: 'Major',    color: '#9a3412', bg: '#fff7ed', border: '#fed7aa' },
   minor:    { label: 'Minor',    color: '#854d0e', bg: '#fefce8', border: '#fde68a' },
-  advisory: { label: 'Advisory', color: '#1e40af', bg: '#eff6ff', border: '#bfdbfe' },
+  advisory: { label: 'Advisory', color: '#1E2D4D', bg: '#eff6ff', border: '#bfdbfe' },
 };
 
 export const STATUS_CONFIG: Record<DefStatus, { label: string; color: string; bg: string }> = {
@@ -101,9 +101,9 @@ export const DEMO_DEFICIENCIES: DeficiencyItem[] = [
   // ── OPEN (3) ────────────────────────────────────────────────
   {
     id: 'def-1',
-    code: 'NFPA96-11.4.1',
+    code: 'NFPA96-T12.4',
     title: 'Grease buildup exceeds acceptable depth on hood filters',
-    description: 'Kitchen exhaust hood filters show grease accumulation exceeding 1/4 inch depth, creating fire hazard per NFPA 96 Section 11.4.1.',
+    description: 'Kitchen exhaust hood filters show grease accumulation exceeding 1/4 inch depth, creating fire hazard per NFPA 96 Table 12.4.',
     locationDescription: 'Main hood system above fryer bank, filters #3 and #4',
     severity: 'critical',
     status: 'open',
@@ -344,9 +344,9 @@ export const DEMO_DEFICIENCIES: DeficiencyItem[] = [
   // ── RESOLVED (3) ────────────────────────────────────────────
   {
     id: 'def-8',
-    code: 'NFPA96-11.4.1',
+    code: 'NFPA96-T12.4',
     title: 'Grease drip tray not properly seated',
-    description: 'Hood grease drip tray found unseated, allowing grease to bypass collection system per NFPA 96 Section 11.4.1.',
+    description: 'Hood grease drip tray found unseated, allowing grease to bypass collection system per NFPA 96 Table 12.4.',
     locationDescription: 'Main hood, grease tray slot #2',
     severity: 'major',
     status: 'resolved',
@@ -491,9 +491,9 @@ export const DEMO_DEFICIENCIES: DeficiencyItem[] = [
   // ── ADVISORY / AI-DETECTED (1) ──────────────────────────────
   {
     id: 'def-12',
-    code: 'NFPA96-11.4',
+    code: 'NFPA96-T12.4',
     title: 'Potential grease accumulation pattern detected',
-    description: 'AI analysis of recent service records and temperature patterns suggests accelerated grease accumulation rate on the hood system, which may require increased cleaning frequency per NFPA 96 Section 11.4.',
+    description: 'AI analysis of recent service records and temperature patterns suggests accelerated grease accumulation rate on the hood system, which may require increased cleaning frequency per NFPA 96 Table 12.4.',
     locationDescription: 'Main hood system, full bank',
     severity: 'advisory',
     status: 'open',

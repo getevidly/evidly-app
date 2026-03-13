@@ -30,7 +30,7 @@ import type { IntelligenceInsight, ImpactLevel, RecallAlert, LegislativeItem, Pe
 const IMPACT_COLORS: Record<string, { bg: string; text: string; border: string }> = {
   critical: { bg: '#fef2f2', text: '#991b1b', border: '#fca5a5' },
   high: { bg: '#fffbeb', text: '#92400e', border: '#fcd34d' },
-  medium: { bg: '#eff6ff', text: '#1e40af', border: '#93c5fd' },
+  medium: { bg: '#eff6ff', text: '#1E2D4D', border: '#93c5fd' },
   low: { bg: '#f0fdf4', text: '#166534', border: '#86efac' },
 };
 
@@ -688,10 +688,10 @@ function InsightDetailView({
       {/* Affected Locations */}
       {affectedLocs.length > 0 && (
         <div className="rounded-xl p-4 mb-4" style={{ backgroundColor: '#eff6ff', border: '1px solid #bfdbfe' }}>
-          <h3 className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#1e40af' }}>Affects Your Locations</h3>
+          <h3 className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#1E2D4D' }}>Affects Your Locations</h3>
           <div className="flex flex-wrap gap-2">
             {affectedLocs.map(loc => (
-              <span key={loc} className="px-2 py-1 rounded-md text-xs font-semibold bg-white" style={{ color: '#1e40af', border: '1px solid #93c5fd' }}>
+              <span key={loc} className="px-2 py-1 rounded-md text-xs font-semibold bg-white" style={{ color: '#1E2D4D', border: '1px solid #93c5fd' }}>
                 {loc}
               </span>
             ))}
@@ -1031,7 +1031,7 @@ function LegislativeTracker({ items: rawItems, expandedId, onToggleExpand }: { i
         return (
           <div className="rounded-xl p-5" style={{ backgroundColor: CARD_BG, border: `1px solid ${GOLD}`, boxShadow: CARD_SHADOW }}>
             <div className="flex items-center gap-2 mb-3">
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold" style={{ backgroundColor: '#eff6ff', color: '#1e40af' }}>{item.bill_number}</span>
+              <span className="px-2 py-0.5 rounded text-[10px] font-bold" style={{ backgroundColor: '#eff6ff', color: '#1E2D4D' }}>{item.bill_number}</span>
               <h3 className="text-sm font-bold" style={{ color: BODY_TEXT }}>{item.title}</h3>
             </div>
             <p className="text-sm mb-3" style={{ color: MUTED }}>{item.summary}</p>

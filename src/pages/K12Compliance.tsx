@@ -537,7 +537,7 @@ export function K12Compliance() {
               <div style={{ background: '#EFF6FF', border: '1px solid #BFDBFE', borderRadius: 12, padding: '16px 20px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
                   <ShieldCheck size={16} style={{ color: '#1D4ED8' }} />
-                  <span style={{ fontSize: 14, fontWeight: 700, color: '#1E40AF' }}>USDA Child Nutrition Programs</span>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: '#1E2D4D' }}>USDA Child Nutrition Programs</span>
                 </div>
                 <p style={{ fontSize: 12, color: '#1E3A5F', lineHeight: 1.6 }}>
                   Administrative reviews every 3 years for NSLP schools. Reviewers assess meal pattern compliance,
@@ -733,7 +733,7 @@ export function K12Compliance() {
             <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 12, padding: '16px 20px', display: 'flex', gap: 12, alignItems: 'flex-start' }}>
               <ShieldCheck size={18} style={{ color: '#1D4ED8', flexShrink: 0, marginTop: 2 }} />
               <div>
-                <p style={{ fontSize: 12, fontWeight: 600, color: '#1e40af', marginBottom: 4 }}>NSLP Claim Documentation</p>
+                <p style={{ fontSize: 12, fontWeight: 600, color: '#1E2D4D', marginBottom: 4 }}>NSLP Claim Documentation</p>
                 <p style={{ fontSize: 11, color: '#1e3a5f', lineHeight: 1.6 }}>
                   EvidLY organizes your meal count records and supporting documentation for NSLP claim periods.
                   Submit your official claims through your state agency's designated system.

@@ -73,7 +73,7 @@ const RESULT_COLORS: Record<string, { bg: string; text: string; label: string }>
 const STATUS_BANNERS: Record<string, { bg: string; border: string; text: string; label: string }> = {
   verified:    { bg: '#ECFDF5', border: '#059669', text: '#065F46', label: 'Verified — Ready to Publish' },
   rejected:    { bg: '#FEF2F2', border: '#DC2626', text: '#991B1B', label: 'Rejected — Gate(s) Failed' },
-  in_review:   { bg: '#EFF6FF', border: '#2563EB', text: '#1E40AF', label: 'In Review — Not All Gates Passed' },
+  in_review:   { bg: '#EFF6FF', border: '#2563EB', text: '#1E2D4D', label: 'In Review — Not All Gates Passed' },
   unverified:  { bg: '#F9FAFB', border: '#D1D5DB', text: '#6B7280', label: 'Unverified — No Gates Checked Yet' },
   needs_update: { bg: '#FFFBEB', border: '#D97706', text: '#92400E', label: 'Needs Update — Re-review Required' },
   overdue:     { bg: '#FEF2F2', border: '#DC2626', text: '#991B1B', label: 'Overdue — Past Review Deadline' },

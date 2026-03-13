@@ -111,7 +111,7 @@ export function AddDeficiencyModal({ onClose, onSubmit }: AddDeficiencyModalProp
               type="text"
               value={code}
               onChange={(e) => setCode(e.target.value)}
-              placeholder="e.g. NFPA96-11.4.1"
+              placeholder="e.g. NFPA96-T12.4"
               className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
               style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
             />

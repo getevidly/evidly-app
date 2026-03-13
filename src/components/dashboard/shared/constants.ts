@@ -27,7 +27,7 @@ export const STEEL_SLATE_GRADIENT = 'linear-gradient(135deg, #1c2a3f 0%, #263d56
 export const CIC_PILLAR_COLORS = {
   revenue:     { color: '#C2410C', bg: '#FFF7ED', label: 'Revenue Risk' },
   liability:   { color: '#991B1B', bg: '#FEF2F2', label: 'Liability Risk' },
-  cost:        { color: '#1E40AF', bg: '#EFF6FF', label: 'Cost Risk' },
+  cost:        { color: '#1E2D4D', bg: '#EFF6FF', label: 'Cost Risk' },
   operational: { color: '#166534', bg: '#F0FDF4', label: 'Operational Risk' },
   workforce:   { color: '#6B21A8', bg: '#FAF5FF', label: 'Workforce Risk' },
 } as const;

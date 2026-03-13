@@ -303,7 +303,7 @@ export const INSPECTION_ITEMS: Record<string, InspectionItemDef> = {
     text: 'Grease filter cleaning schedule current',
     sectionId: 'facility-safety',
     codeBasis: 'nfpa_96_2024',
-    citation: 'NFPA 96 \u00A711.4',
+    citation: 'NFPA 96 Table 12.4',
     defaultSeverity: 'major',
     category: 'facility_safety',
   },

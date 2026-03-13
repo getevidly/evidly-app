@@ -1059,7 +1059,7 @@ export function PlaybookRunner() {
                               keep:     { text: 'KEEP', bg: '#dcfce7', border: '#22c55e', color: '#166534' },
                               discard:  { text: 'DISCARD', bg: '#fee2e2', border: '#dc2626', color: '#991b1b' },
                               cook_now: { text: 'COOK NOW', bg: '#fef9c3', border: '#d97706', color: '#854d0e' },
-                              refreeze: { text: 'REFREEZE', bg: '#dbeafe', border: '#3b82f6', color: '#1e40af' },
+                              refreeze: { text: 'REFREEZE', bg: '#dbeafe', border: '#3b82f6', color: '#1E2D4D' },
                             };
                             const l = labels[dec];
                             const isActive = item.decision === dec;

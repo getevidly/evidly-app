@@ -32,7 +32,7 @@ const SEVERITY_CONFIG = {
     border: '#bfdbfe',
     icon: Info,
     iconClass: 'text-blue-500',
-    textColor: '#1e40af',
+    textColor: '#1E2D4D',
     btnBg: '#2563eb',
   },
 } as const;

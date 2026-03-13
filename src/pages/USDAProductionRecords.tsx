@@ -180,7 +180,7 @@ export function USDAProductionRecords() {
                     <School size={16} style={{ color: '#2563EB' }} />
                     <span style={{ fontWeight: 600, color: '#111827', fontSize: 15 }}>{loc.name}</span>
                     {loc.nslp && (
-                      <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: '#DBEAFE', color: '#1E40AF' }}>
+                      <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: '#DBEAFE', color: '#1E2D4D' }}>
                         NSLP
                       </span>
                     )}
@@ -222,7 +222,7 @@ export function USDAProductionRecords() {
         <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 12, padding: '16px 20px', display: 'flex', gap: 12, alignItems: 'flex-start' }}>
           <ShieldCheck size={18} style={{ color: '#2563EB', flexShrink: 0, marginTop: 2 }} />
           <div>
-            <p style={{ fontSize: 12, fontWeight: 600, color: '#1e40af', marginBottom: 4 }}>USDA Child Nutrition Programs</p>
+            <p style={{ fontSize: 12, fontWeight: 600, color: '#1E2D4D', marginBottom: 4 }}>USDA Child Nutrition Programs</p>
             <p style={{ fontSize: 11, color: '#1e3a5f', lineHeight: 1.6 }}>
               Schools participating in the National School Lunch Program (NSLP) must meet USDA meal pattern requirements,
               maintain food safety plans, and ensure all food service staff hold current food handler certifications.

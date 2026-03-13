@@ -222,7 +222,7 @@ BEGIN
   RETURNING id INTO t_opening_fire;
 
   INSERT INTO checklist_template_items (template_id, title, item_text, item_type, pillar, category, authority_source, authority_section, authority_note, "order", sort_order) VALUES
-  (t_opening_fire, 'Hood system visual inspection', 'Hood system visual inspection — filters in place, no visible grease buildup', 'yes_no', 'fire_safety', 'hood_system', 'nfpa_96', '§11.4', 'NFPA 96 requires regular inspection of grease removal devices', 1, 1),
+  (t_opening_fire, 'Hood system visual inspection', 'Hood system visual inspection — filters in place, no visible grease buildup', 'yes_no', 'fire_safety', 'hood_system', 'nfpa_96', 'Table 12.4', 'NFPA 96 requires regular inspection of grease removal devices', 1, 1),
   (t_opening_fire, 'Ansul system gauge check', 'Ansul system indicator — gauge in green range', 'yes_no', 'fire_safety', 'suppression', 'nfpa_96', '§12.1', 'Fire suppression system must show proper pressure', 2, 2),
   (t_opening_fire, 'Manual pull station accessible', 'Manual pull station — accessible, not blocked', 'yes_no', 'fire_safety', 'suppression', 'cfc', '§607.2', 'Manual activation device must be unobstructed', 3, 3),
   (t_opening_fire, 'K-class extinguisher in place', 'K-class fire extinguisher — in place near cooking equipment, pin intact', 'yes_no', 'fire_safety', 'extinguisher', 'nfpa_96', '§12.3', 'Class K extinguisher required within 30ft of cooking', 4, 4),
@@ -296,7 +296,7 @@ BEGIN
   RETURNING id INTO t_fire_weekly;
 
   INSERT INTO checklist_template_items (template_id, title, item_text, item_type, pillar, category, authority_source, authority_section, authority_note, "order", sort_order) VALUES
-  (t_fire_weekly, 'Hood filters inspection', 'Hood filters — remove and inspect for grease saturation', 'yes_no', 'fire_safety', 'hood_system', 'nfpa_96', '§11.4', 'Grease removal devices must be cleaned when grease buildup is evident', 1, 1),
+  (t_fire_weekly, 'Hood filters inspection', 'Hood filters — remove and inspect for grease saturation', 'yes_no', 'fire_safety', 'hood_system', 'nfpa_96', 'Table 12.4', 'Grease removal devices must be cleaned when grease buildup is evident', 1, 1),
   (t_fire_weekly, 'Grease trap level check', 'Grease trap/grease interceptor level check', 'yes_no', 'fire_safety', 'hood_system', 'evidly_best_practice', NULL, 'Prevents overflow and sewer backup', 2, 2),
   (t_fire_weekly, 'Fire extinguishers visual', 'All fire extinguishers — visual inspection, accessible, charged, pin intact', 'yes_no', 'fire_safety', 'extinguisher', 'nfpa_96', '§12.3', 'Portable extinguishers must be inspected monthly minimum', 3, 3),
   (t_fire_weekly, 'Ansul nozzles visual', 'Ansul nozzles — visual check for grease blockage', 'yes_no', 'fire_safety', 'suppression', 'nfpa_96', '§12.1', 'Nozzle tips must be free of grease/debris', 4, 4),
@@ -315,7 +315,7 @@ BEGIN
   (t_fire_monthly, 'Extinguisher monthly inspection', 'Fire extinguisher monthly inspection — document on tag', 'yes_no', 'fire_safety', 'extinguisher', 'nfpa_96', '§12.3', 'Monthly inspection required per NFPA 10', true, 1, 1),
   (t_fire_monthly, 'Ansul gauge photo', 'Ansul system gauge — photograph current reading', 'photo', 'fire_safety', 'suppression', 'nfpa_96', '§12.1', 'Document suppression system pressure monthly', false, 2, 2),
   (t_fire_monthly, 'Hood/duct exterior inspection', 'Hood/duct system — visual exterior inspection', 'yes_no', 'fire_safety', 'hood_system', 'nfpa_96', '§11.6', 'Check for grease leaks at duct joints and access panels', false, 3, 3),
-  (t_fire_monthly, 'Roof grease containment', 'Grease containment on roof — check level', 'yes_no', 'fire_safety', 'hood_system', 'nfpa_96', '§11.4', 'Rooftop grease containment must not overflow', false, 4, 4),
+  (t_fire_monthly, 'Roof grease containment', 'Grease containment on roof — check level', 'yes_no', 'fire_safety', 'hood_system', 'nfpa_96', 'Table 12.4', 'Rooftop grease containment must not overflow', false, 4, 4),
   (t_fire_monthly, 'Fire alarm test', 'Fire alarm test (if owner-testable)', 'yes_no', 'fire_safety', 'general_fire', 'cfc', '§907.8', 'Fire alarm systems require periodic testing', false, 5, 5),
   (t_fire_monthly, 'Sprinkler head inspection', 'Sprinkler head inspection — not obstructed, not painted', 'yes_no', 'fire_safety', 'general_fire', 'cfc', '§903.5', 'Sprinkler heads must have proper clearance and not be painted or modified', false, 6, 6),
   (t_fire_monthly, 'K-class travel distance', 'K-class extinguisher — verify within 30ft travel distance of cooking', 'yes_no', 'fire_safety', 'extinguisher', 'nfpa_96', '§12.3', 'Maximum 30ft travel distance to Class K extinguisher from cooking equipment', false, 7, 7);

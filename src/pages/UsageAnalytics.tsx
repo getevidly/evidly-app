@@ -53,7 +53,7 @@ const MODULES: ModuleInfo[] = [
   { id: 'action-center', name: 'Action Center', icon: '🎯', color: '#0891b2' },
   { id: 'qr-passport', name: 'QR Passport', icon: '📱', color: '#d4af37' },
   { id: 'calendar', name: 'Calendar', icon: '📅', color: '#8b5cf6' },
-  { id: 'reports', name: 'Reporting', icon: '📊', color: '#1b4965' },
+  { id: 'reports', name: 'Reporting', icon: '📊', color: '#1E2D4D' },
   { id: 'analysis', name: 'Predictive Alerts', icon: '📈', color: '#059669' },
   { id: 'key-metrics', name: 'Key Metrics', icon: '📉', color: '#b45309' },
   { id: 'leaderboard', name: 'Leaderboard', icon: '🏆', color: '#ca8a04' },
@@ -294,7 +294,7 @@ export function UsageAnalytics() {
           <AdminBreadcrumb crumbs={[{ label: 'Usage Analytics' }]} />
         </div>
         <div style={{ padding: '0 24px 24px', maxWidth: '1400px', margin: '0 auto', ...F }}>
-          <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#1b4965', margin: '0 0 4px 0', ...F }}>Usage Analytics</h1>
+          <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#1E2D4D', margin: '0 0 4px 0', ...F }}>Usage Analytics</h1>
           <p style={{ fontSize: '14px', color: '#6b7280', margin: '0 0 32px 0', ...F }}>Internal — Track customer module adoption and platform usage</p>
           <div style={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '48px 24px', textAlign: 'center' }}>
             <div style={{ fontSize: '48px', marginBottom: '16px' }}>📊</div>
@@ -375,7 +375,7 @@ export function UsageAnalytics() {
   function heatmapColor(sessions: number): { bg: string; text: string } {
     if (sessions === 0) return { bg: '#f3f4f6', text: '#9ca3af' };
     if (sessions > p75) return { bg: '#dcfce7', text: '#16a34a' };
-    if (sessions > p25) return { bg: '#dbeafe', text: '#1b4965' };
+    if (sessions > p25) return { bg: '#dbeafe', text: '#1E2D4D' };
     return { bg: '#fef3c7', text: '#d4af37' };
   }
 
@@ -393,22 +393,22 @@ export function UsageAnalytics() {
       const emailHtml = `<!DOCTYPE html><html><head><meta charset="utf-8"></head>
 <body style="margin:0;padding:0;font-family:'DM Sans',Helvetica,Arial,sans-serif;background:#faf8f3">
 <div style="max-width:600px;margin:24px auto;background:white;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.08)">
-<div style="background:#1b4965;padding:32px 24px;text-align:center">
+<div style="background:#1E2D4D;padding:32px 24px;text-align:center">
 <div style="font-size:28px;font-weight:800;color:white"><span style="color:#d4af37">Evid</span>LY</div>
 <div style="color:rgba(255,255,255,0.7);font-size:12px;margin-top:4px">Usage Analytics Report</div>
 </div>
 <div style="padding:24px">
 <div style="font-size:14px;color:#6b7280;margin-bottom:16px">${periodLabel} · Generated ${today}</div>
 <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px"><tr>
-<td style="background:#f9fafb;padding:16px;border-radius:8px;text-align:center"><div style="font-size:24px;font-weight:800;color:#1b4965">${totalCustomers}</div><div style="font-size:11px;color:#6b7280">Customers</div></td>
+<td style="background:#f9fafb;padding:16px;border-radius:8px;text-align:center"><div style="font-size:24px;font-weight:800;color:#1E2D4D">${totalCustomers}</div><div style="font-size:11px;color:#6b7280">Customers</div></td>
 <td width="8"></td>
-<td style="background:#f9fafb;padding:16px;border-radius:8px;text-align:center"><div style="font-size:24px;font-weight:800;color:#1b4965">${totalLocations}</div><div style="font-size:11px;color:#6b7280">Locations</div></td>
+<td style="background:#f9fafb;padding:16px;border-radius:8px;text-align:center"><div style="font-size:24px;font-weight:800;color:#1E2D4D">${totalLocations}</div><div style="font-size:11px;color:#6b7280">Locations</div></td>
 <td width="8"></td>
-<td style="background:#f9fafb;padding:16px;border-radius:8px;text-align:center"><div style="font-size:24px;font-weight:800;color:#1b4965">${totalSessions.toLocaleString()}</div><div style="font-size:11px;color:#6b7280">Sessions</div></td>
+<td style="background:#f9fafb;padding:16px;border-radius:8px;text-align:center"><div style="font-size:24px;font-weight:800;color:#1E2D4D">${totalSessions.toLocaleString()}</div><div style="font-size:11px;color:#6b7280">Sessions</div></td>
 <td width="8"></td>
-<td style="background:#f9fafb;padding:16px;border-radius:8px;text-align:center"><div style="font-size:24px;font-weight:800;color:#1b4965">${avgSessionsPerCustomer}</div><div style="font-size:11px;color:#6b7280">Avg/Customer</div></td>
+<td style="background:#f9fafb;padding:16px;border-radius:8px;text-align:center"><div style="font-size:24px;font-weight:800;color:#1E2D4D">${avgSessionsPerCustomer}</div><div style="font-size:11px;color:#6b7280">Avg/Customer</div></td>
 </tr></table>
-<h3 style="font-size:14px;font-weight:700;color:#1b4965;margin-bottom:8px">Top 5 Most-Used Modules</h3>
+<h3 style="font-size:14px;font-weight:700;color:#1E2D4D;margin-bottom:8px">Top 5 Most-Used Modules</h3>
 <table style="width:100%;border-collapse:collapse;margin-bottom:20px">
 ${top5.map(m => `<tr><td style="padding:6px 0;font-size:13px">${m.icon} ${m.name}</td><td style="text-align:right;font-weight:700;color:#16a34a;font-size:13px">${m.adoptionRate}%</td></tr>`).join('')}
 </table>
@@ -416,7 +416,7 @@ ${top5.map(m => `<tr><td style="padding:6px 0;font-size:13px">${m.icon} ${m.name
 <table style="width:100%;border-collapse:collapse;margin-bottom:20px">
 ${bottom3.map(m => `<tr><td style="padding:6px 0;font-size:13px">${m.icon} ${m.name}</td><td style="text-align:right;font-weight:700;color:#d97706;font-size:13px">${m.adoptionRate}%</td></tr>`).join('')}
 </table>
-<h3 style="font-size:14px;font-weight:700;color:#1b4965;margin-bottom:8px">Industry Breakdown</h3>
+<h3 style="font-size:14px;font-weight:700;color:#1E2D4D;margin-bottom:8px">Industry Breakdown</h3>
 <table style="width:100%;border-collapse:collapse;margin-bottom:20px">
 ${INDUSTRIES.map(ind => {
         const indOrgs = filteredOrgs.filter(o => o.industry === ind);
@@ -476,7 +476,7 @@ Generated ${today} · This is an automated report from EvidLY Analytics
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
           <div>
-            <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#1b4965', margin: '0 0 4px 0', ...F }}>Usage Analytics</h1>
+            <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#1E2D4D', margin: '0 0 4px 0', ...F }}>Usage Analytics</h1>
             <p style={{ fontSize: '14px', color: '#6b7280', margin: 0, ...F }}>Internal — Track customer module adoption and platform usage</p>
           </div>
           <button
@@ -518,7 +518,7 @@ Generated ${today} · This is an automated report from EvidLY Analytics
               <div style={{ fontSize: '12px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>
                 {kpi.label}
               </div>
-              <div style={{ fontSize: '28px', fontWeight: 800, color: '#1b4965', marginBottom: '4px' }}>
+              <div style={{ fontSize: '28px', fontWeight: 800, color: '#1E2D4D', marginBottom: '4px' }}>
                 {kpi.fmt}
               </div>
               <div style={{ fontSize: '12px', fontWeight: 600, color: avgTrend >= 0 ? '#16a34a' : '#dc2626' }}>
@@ -537,7 +537,7 @@ Generated ${today} · This is an automated report from EvidLY Analytics
               style={{
                 padding: '12px 20px', fontSize: '14px', fontWeight: 600, border: 'none',
                 backgroundColor: 'transparent', cursor: 'pointer', ...F, whiteSpace: 'nowrap',
-                color: activeTab === tab.id ? '#1b4965' : '#6b7280',
+                color: activeTab === tab.id ? '#1E2D4D' : '#6b7280',
                 borderBottom: activeTab === tab.id ? '2px solid #d4af37' : '2px solid transparent',
                 marginBottom: '-2px',
               }}
@@ -568,7 +568,7 @@ Generated ${today} · This is an automated report from EvidLY Analytics
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '24px' }}>
           {/* Module Adoption Rate */}
           <div style={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px' }}>
-            <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#1b4965', margin: '0 0 16px 0', ...F, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#1E2D4D', margin: '0 0 16px 0', ...F, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
               Module Adoption Rate
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -595,7 +595,7 @@ Generated ${today} · This is an automated report from EvidLY Analytics
 
           {/* Sessions by Module */}
           <div style={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px' }}>
-            <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#1b4965', margin: '0 0 16px 0', ...F, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#1E2D4D', margin: '0 0 16px 0', ...F, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
               Sessions by Module
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -623,7 +623,7 @@ Generated ${today} · This is an automated report from EvidLY Analytics
 
         {/* Industry Breakdown */}
         <div>
-          <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#1b4965', margin: '0 0 16px 0', ...F, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+          <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#1E2D4D', margin: '0 0 16px 0', ...F, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
             Industry Breakdown
           </h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '16px' }}>
@@ -642,7 +642,7 @@ Generated ${today} · This is an automated report from EvidLY Analytics
 
               return (
                 <div key={ind} style={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '16px', ...F }}>
-                  <div style={{ fontSize: '14px', fontWeight: 700, color: '#1b4965', marginBottom: '12px' }}>{ind}</div>
+                  <div style={{ fontSize: '14px', fontWeight: 700, color: '#1E2D4D', marginBottom: '12px' }}>{ind}</div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
                     <div style={{ fontSize: '11px', color: '#6b7280' }}>Customers: <strong style={{ color: '#374151' }}>{indOrgs.length}</strong></div>
                     <div style={{ fontSize: '11px', color: '#6b7280' }}>Avg Sessions: <strong style={{ color: '#374151' }}>{avgSess.toLocaleString()}</strong></div>
@@ -679,7 +679,7 @@ Generated ${today} · This is an automated report from EvidLY Analytics
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
                   <span style={{ fontSize: '24px' }}>{mod.icon}</span>
-                  <div style={{ fontSize: '14px', fontWeight: 700, color: '#1b4965' }}>{mod.name}</div>
+                  <div style={{ fontSize: '14px', fontWeight: 700, color: '#1E2D4D' }}>{mod.name}</div>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
                   <div style={{ backgroundColor: '#f9fafb', borderRadius: '8px', padding: '10px', textAlign: 'center' }}>
@@ -704,7 +704,7 @@ Generated ${today} · This is an automated report from EvidLY Analytics
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <span style={{ fontSize: '24px' }}>{mod.icon}</span>
                   <div>
-                    <div style={{ fontSize: '14px', fontWeight: 700, color: '#1b4965' }}>{mod.name}</div>
+                    <div style={{ fontSize: '14px', fontWeight: 700, color: '#1E2D4D' }}>{mod.name}</div>
                     {hasShifts && (
                       <select
                         value={shiftFilter}
@@ -728,7 +728,7 @@ Generated ${today} · This is an automated report from EvidLY Analytics
                   <div style={{ fontSize: '10px', color: '#6b7280', fontWeight: 600 }}>Adoption ({mod.adoptedCount}/{totalCustomers})</div>
                 </div>
                 <div style={{ backgroundColor: '#f9fafb', borderRadius: '8px', padding: '10px', textAlign: 'center' }}>
-                  <div style={{ fontSize: '20px', fontWeight: 800, color: '#1b4965' }}>{displaySessions.toLocaleString()}</div>
+                  <div style={{ fontSize: '20px', fontWeight: 800, color: '#1E2D4D' }}>{displaySessions.toLocaleString()}</div>
                   <div style={{ fontSize: '10px', color: '#6b7280', fontWeight: 600 }}>
                     {hasShifts && shiftFilter !== 'all' ? `${shiftFilter.charAt(0).toUpperCase() + shiftFilter.slice(1)} Sessions` : 'Total Sessions'}
                   </div>
@@ -764,7 +764,7 @@ Generated ${today} · This is an automated report from EvidLY Analytics
                   <span key={ib.industry} style={{
                     fontSize: '10px', fontWeight: 600, padding: '2px 8px', borderRadius: '20px', ...F,
                     backgroundColor: ib.rate >= 80 ? '#dcfce7' : ib.rate >= 50 ? '#dbeafe' : '#fef3c7',
-                    color: ib.rate >= 80 ? '#16a34a' : ib.rate >= 50 ? '#1b4965' : '#d97706',
+                    color: ib.rate >= 80 ? '#16a34a' : ib.rate >= 50 ? '#1E2D4D' : '#d97706',
                   }}>
                     {ib.industry}: {ib.rate}%
                   </span>
@@ -808,7 +808,7 @@ Generated ${today} · This is an automated report from EvidLY Analytics
                   <td style={{ padding: '8px 6px', textAlign: 'center', fontSize: '11px', fontWeight: 600, color: '#374151' }}>
                     {org.locationCount}
                   </td>
-                  <td style={{ padding: '8px 6px', textAlign: 'right', fontSize: '12px', fontWeight: 700, color: '#1b4965' }}>
+                  <td style={{ padding: '8px 6px', textAlign: 'right', fontSize: '12px', fontWeight: 700, color: '#1E2D4D' }}>
                     {Math.round(org.totalSessions * timeScale).toLocaleString()}
                   </td>
                   {MODULES.map(mod => {
@@ -847,7 +847,7 @@ Generated ${today} · This is an automated report from EvidLY Analytics
           <span style={{ fontSize: '11px', fontWeight: 600, color: '#374151' }}>Legend:</span>
           {[
             { label: 'Heavy', bg: '#dcfce7', color: '#16a34a' },
-            { label: 'Active', bg: '#dbeafe', color: '#1b4965' },
+            { label: 'Active', bg: '#dbeafe', color: '#1E2D4D' },
             { label: 'Light', bg: '#fef3c7', color: '#d4af37' },
             { label: 'Not Adopted', bg: '#f3f4f6', color: '#9ca3af' },
             { label: 'Coming Soon', bg: '#f3f4f6', color: '#d1d5db' },
@@ -875,7 +875,7 @@ Generated ${today} · This is an automated report from EvidLY Analytics
             <div key={ind} style={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', ...F }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                 <div>
-                  <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#1b4965', margin: 0 }}>{ind}</h3>
+                  <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#1E2D4D', margin: 0 }}>{ind}</h3>
                   <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '2px' }}>
                     {indOrgs.length} customer{indOrgs.length !== 1 ? 's' : ''} · {indSessions.toLocaleString()} sessions
                   </div>
@@ -896,7 +896,7 @@ Generated ${today} · This is an automated report from EvidLY Analytics
                   const adoptedCount = indOrgs.filter(o => o.moduleUsage[mod.id].adopted).length;
                   const rate = Math.round((adoptedCount / indOrgs.length) * 100);
                   const bg = rate >= 80 ? '#dcfce7' : rate >= 60 ? '#dbeafe' : rate >= 40 ? '#fef3c7' : '#fef2f2';
-                  const color = rate >= 80 ? '#16a34a' : rate >= 60 ? '#1b4965' : rate >= 40 ? '#d97706' : '#dc2626';
+                  const color = rate >= 80 ? '#16a34a' : rate >= 60 ? '#1E2D4D' : rate >= 40 ? '#d97706' : '#dc2626';
 
                   return (
                     <div key={mod.id} style={{ backgroundColor: bg, borderRadius: '8px', padding: '8px', textAlign: 'center' }}>
@@ -938,13 +938,13 @@ Generated ${today} · This is an automated report from EvidLY Analytics
             maxWidth: '520px', width: '100%', overflow: 'hidden', ...F, maxHeight: '90vh', overflowY: 'auto',
           }}
         >
-          <div style={{ background: '#1b4965', padding: '20px 24px', color: 'white' }}>
+          <div style={{ background: '#1E2D4D', padding: '20px 24px', color: 'white' }}>
             <div style={{ fontSize: '18px', fontWeight: 800 }}>Send Usage Report</div>
             <div style={{ fontSize: '12px', opacity: 0.7, marginTop: '4px' }}>to usage@getevidly.com</div>
           </div>
 
           <div style={{ padding: '24px' }}>
-            <div style={{ fontSize: '13px', fontWeight: 700, color: '#1b4965', marginBottom: '8px' }}>Report Preview</div>
+            <div style={{ fontSize: '13px', fontWeight: 700, color: '#1E2D4D', marginBottom: '8px' }}>Report Preview</div>
             <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '12px' }}>
               Subject: EvidLY Usage Report — {periodLabel} — {today}
             </div>
@@ -952,10 +952,10 @@ Generated ${today} · This is an automated report from EvidLY Analytics
             <div style={{ backgroundColor: '#f9fafb', borderRadius: '8px', padding: '12px', marginBottom: '16px', fontSize: '12px' }}>
               <div style={{ fontWeight: 600, marginBottom: '8px', color: '#374151' }}>KPI Summary</div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px', color: '#6b7280' }}>
-                <div>Customers: <strong style={{ color: '#1b4965' }}>{totalCustomers}</strong></div>
-                <div>Locations: <strong style={{ color: '#1b4965' }}>{totalLocations}</strong></div>
-                <div>Sessions: <strong style={{ color: '#1b4965' }}>{totalSessions.toLocaleString()}</strong></div>
-                <div>Avg/Customer: <strong style={{ color: '#1b4965' }}>{avgSessionsPerCustomer}</strong></div>
+                <div>Customers: <strong style={{ color: '#1E2D4D' }}>{totalCustomers}</strong></div>
+                <div>Locations: <strong style={{ color: '#1E2D4D' }}>{totalLocations}</strong></div>
+                <div>Sessions: <strong style={{ color: '#1E2D4D' }}>{totalSessions.toLocaleString()}</strong></div>
+                <div>Avg/Customer: <strong style={{ color: '#1E2D4D' }}>{avgSessionsPerCustomer}</strong></div>
               </div>
             </div>
 
@@ -993,7 +993,7 @@ Generated ${today} · This is an automated report from EvidLY Analytics
 
             {/* Schedule */}
             <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '16px', marginBottom: '16px' }}>
-              <div style={{ fontSize: '13px', fontWeight: 700, color: '#1b4965', marginBottom: '8px' }}>Schedule</div>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: '#1E2D4D', marginBottom: '8px' }}>Schedule</div>
               <div style={{ display: 'flex', gap: '8px' }}>
                 {([
                   { id: 'none' as const, label: 'One-time' },
@@ -1034,7 +1034,7 @@ Generated ${today} · This is an automated report from EvidLY Analytics
                 disabled={emailSending}
                 style={{
                   flex: 1, padding: '12px', borderRadius: '8px', border: 'none',
-                  backgroundColor: emailSent ? '#16a34a' : '#1b4965',
+                  backgroundColor: emailSent ? '#16a34a' : '#1E2D4D',
                   fontWeight: 700, fontSize: '13px', color: 'white',
                   cursor: emailSending ? 'wait' : 'pointer', ...F,
                   opacity: emailSending ? 0.7 : 1,

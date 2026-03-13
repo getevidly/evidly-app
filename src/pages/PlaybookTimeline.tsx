@@ -26,13 +26,13 @@ const DECISION_COLORS: Record<string, { bg: string; text: string; label: string 
   keep:     { bg: '#dcfce7', text: '#166534', label: 'Keep' },
   discard:  { bg: '#fef2f2', text: '#991b1b', label: 'Discard' },
   cook_now: { bg: '#fefce8', text: '#854d0e', label: 'Cook Now' },
-  refreeze: { bg: '#dbeafe', text: '#1e40af', label: 'Refreeze' },
+  refreeze: { bg: '#dbeafe', text: '#1E2D4D', label: 'Refreeze' },
 };
 
 // ── Insurance status badge ───────────────────────────────────────────────────
 const INSURANCE_STATUS: Record<string, { bg: string; text: string; label: string }> = {
   draft:        { bg: '#f1f5f9', text: '#475569', label: 'Draft' },
-  filed:        { bg: '#dbeafe', text: '#1e40af', label: 'Filed' },
+  filed:        { bg: '#dbeafe', text: '#1E2D4D', label: 'Filed' },
   under_review: { bg: '#fefce8', text: '#854d0e', label: 'Under Review' },
   approved:     { bg: '#dcfce7', text: '#166534', label: 'Approved' },
   denied:       { bg: '#fef2f2', text: '#991b1b', label: 'Denied' },
@@ -375,7 +375,7 @@ export function PlaybookTimeline() {
                 <DollarSign size={15} style={{ verticalAlign: -2 }} /> Total Loss (discarded): ${totalLoss.toFixed(2)}
               </span>
               <span style={{ color: 'var(--text-secondary, #3D5068)' }}>
-                Insurance Status: <strong style={{ color: '#1e40af' }}>
+                Insurance Status: <strong style={{ color: '#1E2D4D' }}>
                   {INSURANCE_STATUS[demoInsuranceClaim.status]?.label || demoInsuranceClaim.status}
                 </strong>
               </span>
