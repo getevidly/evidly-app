@@ -156,3 +156,56 @@ export type {
   ScheduleView,
   ScheduleFilters,
 } from './useSchedule';
+
+// Vehicles / Fleet
+export {
+  useVehicles,
+  useVehicle,
+  useVehicleMaintenance,
+  useVehicleIncidents,
+  useCreateVehicle,
+  useUpdateVehicle,
+  useLogMaintenance,
+  useReportVehicleIncident,
+} from './useVehicles';
+
+export type {
+  Vehicle,
+  VehicleType,
+  VehicleStatus,
+  VehicleMaintenance as VehicleMaintenanceRecord,
+  VehicleIncident,
+  VehicleFilters,
+  CreateVehicleInput,
+  LogMaintenanceInput,
+  ReportIncidentInput,
+  MaintenanceType,
+  IncidentType,
+  IncidentStatus,
+} from './useVehicles';
+
+// Insurance
+export {
+  useCompanyInsurance,
+  useVehicleInsurance,
+  useRoadsideAssistance,
+  useInsurancePolicy,
+  useEmergencyInfo,
+  useCreateInsurancePolicy,
+  useUpdateInsurancePolicy,
+  useCreateRoadsideAssistance,
+} from './useInsurance';
+
+export type {
+  CompanyInsurance,
+  VehicleInsurance,
+  RoadsideAssistance,
+  EmergencyInfo,
+  CompanyPolicyType,
+  VehiclePolicyType,
+  PaymentFrequency,
+  CoverageType,
+  CreateCompanyInsuranceInput,
+  CreateVehicleInsuranceInput,
+  CreateRoadsideInput,
+} from './useInsurance';

@@ -246,6 +246,22 @@ const I: Record<string, NavItem> = {
     id: 'insurance-risk', label: 'Insurance Risk', path: '/insurance-risk', icon: '🛡️',
     roles: [], description: 'PSE insurance risk scoring, protective safeguard compliance, carrier-ready documentation, and premium reduction tracking.',
   },
+  insurance: {
+    id: 'insurance', label: 'Insurance', path: '/insurance', icon: '🛡️',
+    roles: [], description: 'Company and vehicle insurance policies, coverage details, and roadside assistance.',
+  },
+
+  // ── Fleet ──
+  fleet: {
+    id: 'fleet', label: 'Fleet', path: '/fleet', icon: '🚛',
+    roles: [], description: 'Vehicle inventory, maintenance schedules, registrations, and incidents.',
+  },
+
+  // ── Emergency ──
+  emergencyInfo: {
+    id: 'emergency-info', label: 'Emergency Info', path: '/emergency', icon: '📞',
+    roles: [], description: 'Quick access to roadside assistance, insurance, and company contacts.',
+  },
 
   // ── Food Safety (Chef) ──
   haccp: {
@@ -407,7 +423,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('administration', 'Administration', '⚙️',
         'Administration', 'Equipment, Internet of Things sensors, integrations, locations, settings, team, vendors, and role permissions.',
-        [I.equipment, I.integrations, I.iotSensors, I.locations, I.settings, I.rolesPermissions, I.team, I.timecards, I.employees, I.trainingRecords, I.trainingCatalog, I.vendors],
+        [I.equipment, I.fleet, I.insurance, I.integrations, I.iotSensors, I.locations, I.settings, I.rolesPermissions, I.team, I.timecards, I.employees, I.trainingRecords, I.trainingCatalog, I.vendors, I.emergencyInfo],
         '/admin',
       ),
       section('system', 'System', '🖥️',
@@ -437,7 +453,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('tools', 'Tools', '🔧',
         'Tools', 'Equipment diagnosis.',
-        [I.selfDiagnosis],
+        [I.selfDiagnosis, I.emergencyInfo],
         '/tools',
       ),
       section('help', 'Help', '❓',
@@ -478,7 +494,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('administration', 'Administration', '⚙️',
         'Administration', 'Team management and training records.',
-        [I.team, I.timecards, I.employees, I.trainingRecords],
+        [I.team, I.timecards, I.employees, I.trainingRecords, I.emergencyInfo],
         '/admin',
       ),
       section('help', 'Help', '❓',
@@ -524,7 +540,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('administration', 'Administration', '⚙️',
         'Administration', 'Account settings, team management, and training records.',
-        [I.settings, I.team, I.timecards, I.employees, I.trainingRecords],
+        [I.settings, I.team, I.timecards, I.employees, I.trainingRecords, I.emergencyInfo],
         '/admin',
       ),
       section('help', 'Help', '❓',
@@ -570,7 +586,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('administration', 'Administration', '⚙️',
         'Administration', 'Account settings and training records.',
-        [I.settings, I.timecards, I.employees, I.trainingRecords],
+        [I.settings, I.timecards, I.employees, I.trainingRecords, I.emergencyInfo],
         '/admin',
       ),
       section('help', 'Help', '❓',
@@ -620,7 +636,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('administration', 'Administration', '⚙️',
         'Administration', 'Equipment, Internet of Things sensors, account settings, team management, and vendors.',
-        [I.equipment, I.iotSensors, I.settings, I.team, I.vendors],
+        [I.equipment, I.fleet, I.insurance, I.iotSensors, I.settings, I.team, I.vendors, I.emergencyInfo],
         '/admin',
       ),
       section('help', 'Help', '❓',
@@ -666,7 +682,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('administration', 'Administration', '⚙️',
         'Administration', 'Equipment, integrations, Internet of Things sensors, locations, settings, team, vendors, and role permissions.',
-        [I.equipment, I.integrations, I.iotSensors, I.locations, I.settings, I.rolesPermissions, I.team, I.timecards, I.employees, I.trainingRecords, I.trainingCatalog, I.vendors],
+        [I.equipment, I.fleet, I.insurance, I.integrations, I.iotSensors, I.locations, I.settings, I.rolesPermissions, I.team, I.timecards, I.employees, I.trainingRecords, I.trainingCatalog, I.vendors, I.emergencyInfo],
         '/admin',
       ),
       section('help', 'Help', '❓',
@@ -712,7 +728,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('administration', 'Administration', '⚙️',
         'Administration', 'Account settings, integrations, role permissions, and training records.',
-        [I.integrations, I.settings, I.rolesPermissions, I.timecards, I.employees, I.trainingRecords],
+        [I.fleet, I.insurance, I.integrations, I.settings, I.rolesPermissions, I.timecards, I.employees, I.trainingRecords, I.emergencyInfo],
         '/admin',
       ),
       section('help', 'Help', '❓',

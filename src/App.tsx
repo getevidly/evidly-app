@@ -227,6 +227,11 @@ const Timecards = lazy(() => import('./pages/Timecards').then(m => ({ default: m
 const EmployeesPage = lazy(() => import('./pages/Employees').then(m => ({ default: m.Employees })));
 const EmployeeDetailPage = lazy(() => import('./pages/EmployeeDetail').then(m => ({ default: m.EmployeeDetail })));
 const SchedulePage = lazy(() => import('./pages/schedule/SchedulePage').then(m => ({ default: m.SchedulePage })));
+const VehiclesPage = lazy(() => import('./pages/fleet/VehiclesPage').then(m => ({ default: m.VehiclesPage })));
+const VehicleDetailPage = lazy(() => import('./pages/fleet/VehicleDetailPage').then(m => ({ default: m.VehicleDetailPage })));
+const InsurancePage = lazy(() => import('./pages/insurance/InsurancePage').then(m => ({ default: m.InsurancePage })));
+const InsurancePolicyPage = lazy(() => import('./pages/insurance/InsurancePolicyPage').then(m => ({ default: m.InsurancePolicyPage })));
+const EmergencyInfoPage = lazy(() => import('./pages/EmergencyInfoPage').then(m => ({ default: m.EmergencyInfoPage })));
 
 import { CookieConsent } from './components/CookieConsent';
 import { usePageTracking } from './hooks/usePageTracking';
@@ -586,6 +591,11 @@ function AppRoutes() {
           <Route path="/import" element={<ImportData />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/schedule" element={<SchedulePage />} />
+          <Route path="/fleet" element={<VehiclesPage />} />
+          <Route path="/fleet/:id" element={<VehicleDetailPage />} />
+          <Route path="/insurance" element={<InsurancePage />} />
+          <Route path="/insurance/:id" element={<InsurancePolicyPage />} />
+          <Route path="/emergency" element={<EmergencyInfoPage />} />
           <Route path="/help" element={<Help />} />
           <Route path="/weekly-digest" element={<WeeklyDigest />} />
           <Route path="/audit-report" element={<AuditReport />} />
