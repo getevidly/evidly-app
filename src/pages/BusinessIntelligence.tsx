@@ -17,6 +17,12 @@ import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { AlertTriangle, BarChart3, FileText, Printer, TableProperties } from 'lucide-react';
 import { NAVY, GOLD, CARD_BORDER, TEXT_TERTIARY } from '../components/dashboard/shared/constants';
 import {
+  SIGNAL_TYPE_LABELS,
+  SIGNAL_TYPE_COLORS,
+  getSignalRenderType,
+  type SignalType,
+} from '../constants/signalTypes';
+import {
   ExecFormat, FormalFormat, PrintFormat, RegisterFormat,
   DEMO_SIGNALS,
 } from '../components/shared/intelligence-formats';
@@ -48,6 +54,7 @@ export function BusinessIntelligence() {
   const [riskPlans, setRiskPlans] = useState<Map<string, RiskPlan>>(new Map());
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<FormatTab>('executive');
+  const [signalTypeFilter, setSignalTypeFilter] = useState<string>('all');
 
   const orgName = isDemoMode ? 'Pacific Coast Dining' : (profile?.organization_name || 'Your Organization');
   const jurisdiction = isDemoMode ? 'Central California' : 'Your Jurisdiction';
@@ -132,14 +139,27 @@ export function BusinessIntelligence() {
 
   useEffect(() => { loadSignals(); loadRiskPlans(); }, [loadSignals, loadRiskPlans]);
 
-  // Filter by location
+  // Filter by location + signal type
   const filteredSignals = useMemo(() => {
-    if (location === 'all') return signals;
-    return signals.filter(s => {
-      const lower = s.summary.toLowerCase() + ' ' + (s.relevance_reason || '').toLowerCase();
-      return lower.includes(location);
-    });
-  }, [signals, location]);
+    let result = signals;
+    if (location !== 'all') {
+      result = result.filter(s => {
+        const lower = s.summary.toLowerCase() + ' ' + (s.relevance_reason || '').toLowerCase();
+        return lower.includes(location);
+      });
+    }
+    if (signalTypeFilter !== 'all') {
+      result = result.filter(s => getSignalRenderType(s.signal_type) === signalTypeFilter);
+    }
+    return result;
+  }, [signals, location, signalTypeFilter]);
+
+  // Available signal type filters (only types that have at least one signal)
+  const availableTypes = useMemo(() => {
+    const typeSet = new Set<string>();
+    signals.forEach(s => typeSet.add(getSignalRenderType(s.signal_type)));
+    return Array.from(typeSet);
+  }, [signals]);
 
   // Save risk plan
   const handleSaveRiskPlan = useCallback(async (plan: RiskPlan) => {
@@ -210,6 +230,43 @@ export function BusinessIntelligence() {
             <strong>Sample Data</strong> — You are viewing sample intelligence data.
             In production, signals are generated from 80+ regulatory sources specific to your jurisdictions.
           </span>
+        </div>
+      )}
+
+      {/* Signal type filter bar */}
+      {availableTypes.length > 1 && (
+        <div style={{ display: 'flex', gap: 6, marginBottom: 12, flexWrap: 'wrap' }}>
+          <button
+            onClick={() => setSignalTypeFilter('all')}
+            style={{
+              fontSize: 11, fontWeight: 600, padding: '5px 14px', borderRadius: 20,
+              border: `1px solid ${signalTypeFilter === 'all' ? NAVY : CARD_BORDER}`,
+              background: signalTypeFilter === 'all' ? NAVY : '#fff',
+              color: signalTypeFilter === 'all' ? '#fff' : TEXT_TERTIARY,
+              cursor: 'pointer',
+            }}
+          >
+            All
+          </button>
+          {availableTypes.map(type => {
+            const active = signalTypeFilter === type;
+            const color = SIGNAL_TYPE_COLORS[type] || NAVY;
+            return (
+              <button
+                key={type}
+                onClick={() => setSignalTypeFilter(type)}
+                style={{
+                  fontSize: 11, fontWeight: 600, padding: '5px 14px', borderRadius: 20,
+                  border: `1px solid ${active ? color : CARD_BORDER}`,
+                  background: active ? color : '#fff',
+                  color: active ? '#fff' : color,
+                  cursor: 'pointer',
+                }}
+              >
+                {SIGNAL_TYPE_LABELS[type] || type}
+              </button>
+            );
+          })}
         </div>
       )}
 

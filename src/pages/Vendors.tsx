@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import {
   Plus, Building2, Mail, Phone, FileText, CheckCircle, AlertTriangle, Clock,
   ChevronRight, ArrowLeft, MapPin, Calendar, Send, Upload, Download,
@@ -232,6 +232,7 @@ export function Vendors() {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [liveVendors, setLiveVendors] = useState<ConsolidatedVendor[]>([]);
+  const [vendorSignals, setVendorSignals] = useState<{ id: string; title: string; summary: string; created_at: string }[]>([]);
 
   const showToast = useCallback((msg: string) => {
     setToastMessage(msg);
@@ -278,6 +279,25 @@ export function Vendors() {
     }
 
     fetchVendors();
+  }, [isDemoMode, profile?.organization_id]);
+
+  // Fetch vendor_intelligence signals (production only)
+  useEffect(() => {
+    if (isDemoMode || !profile?.organization_id) return;
+    async function fetchVendorSignals() {
+      const { data } = await supabase
+        .from('notifications')
+        .select('id, title, body, created_at')
+        .eq('organization_id', profile!.organization_id)
+        .eq('signal_type', 'vendor_intelligence')
+        .is('read_at', null)
+        .order('created_at', { ascending: false })
+        .limit(3);
+      if (data) setVendorSignals(data.map((n: any) => ({
+        id: n.id, title: n.title, summary: n.body || '', created_at: n.created_at,
+      })));
+    }
+    fetchVendorSignals();
   }, [isDemoMode, profile?.organization_id]);
 
   const consolidatedVendors = useMemo(() => {
@@ -1146,6 +1166,36 @@ export function Vendors() {
     <>
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Vendors' }]} />
       <div className="space-y-6">
+        {/* Vendor Intelligence Signals */}
+        {vendorSignals.length > 0 && (
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <span style={{ fontSize: 16 }}>📡</span>
+              <span className="text-sm font-bold" style={{ color: '#1E2D4D' }}>Vendor Intelligence</span>
+            </div>
+            <div className="space-y-3">
+              {vendorSignals.map(vs => (
+                <div key={vs.id} className="flex items-start justify-between gap-4">
+                  <div className="min-w-0 flex-1">
+                    <div className="text-sm font-semibold text-gray-800 truncate">{vs.title}</div>
+                    {vs.summary && (
+                      <div className="text-xs text-gray-500 mt-0.5 line-clamp-2">{vs.summary}</div>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-3 shrink-0">
+                    <span className="text-xs text-gray-400">
+                      {new Date(vs.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                    </span>
+                    <Link to="/insights/intelligence" className="text-xs font-bold" style={{ color: '#6B21A8', textDecoration: 'none' }}>
+                      View full signal →
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
           <div className="flex border-b border-gray-200 overflow-x-auto">
             <button

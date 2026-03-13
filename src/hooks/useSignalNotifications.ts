@@ -15,6 +15,7 @@ export interface SignalNotification {
   title: string;
   body: string | null;
   cic_pillar: string | null;
+  signal_type: string | null;
   priority: 'critical' | 'high' | 'medium' | 'low';
   created_at: string;
   is_read: boolean;
@@ -33,7 +34,7 @@ export function useSignalNotifications() {
     async function fetchSignalNotifications() {
       const { data } = await supabase
         .from('notifications')
-        .select('id, title, body, cic_pillar, priority, created_at, read_at')
+        .select('id, title, body, cic_pillar, signal_type, priority, created_at, read_at')
         .eq('organization_id', orgId)
         .eq('type', 'intelligence_signal')
         .is('read_at', null)
@@ -48,6 +49,7 @@ export function useSignalNotifications() {
             title: n.title,
             body: n.body,
             cic_pillar: n.cic_pillar,
+            signal_type: n.signal_type || null,
             priority: n.priority,
             created_at: n.created_at,
             is_read: !!n.read_at,

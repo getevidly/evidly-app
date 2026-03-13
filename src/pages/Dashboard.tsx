@@ -1,6 +1,8 @@
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import { useRole } from '../contexts/RoleContext';
 import { SignalAlertBanner } from '../components/SignalAlertBanner';
+import { useSignalNotifications } from '../hooks/useSignalNotifications';
+import { getSignalRenderType, SIGNAL_TYPES } from '../constants/signalTypes';
 import OwnerOperatorDashboard from '../components/dashboard/OwnerOperatorDashboard';
 import ExecutiveDashboard from '../components/dashboard/ExecutiveDashboard';
 import ComplianceManagerDashboard from '../components/dashboard/ComplianceManagerDashboard';
@@ -35,6 +37,41 @@ function RoleDashboard({ userRole }: { userRole: string }) {
   }
 }
 
+function OutbreakBanner() {
+  const { criticalNotifications } = useSignalNotifications();
+  const outbreaks = criticalNotifications.filter(
+    n => !n.is_read && getSignalRenderType(n.signal_type) === SIGNAL_TYPES.OUTBREAK
+  );
+  if (outbreaks.length === 0) return null;
+
+  return (
+    <div style={{
+      background: '#FEF2F2',
+      border: '2px solid #991B1B',
+      borderRadius: 8,
+      padding: '12px 16px',
+      marginBottom: 12,
+      display: 'flex',
+      alignItems: 'center',
+      gap: 12,
+    }}>
+      <span style={{ fontSize: 18 }}>🚨</span>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <strong style={{ color: '#991B1B', fontSize: 13 }}>
+          Outbreak Alert
+        </strong>
+        <span style={{ fontSize: 13, color: '#374151', marginLeft: 8 }}>
+          {outbreaks[0].title}
+        </span>
+      </div>
+      <Link to="/insights/intelligence" style={{
+        fontSize: 12, fontWeight: 700,
+        color: '#991B1B', textDecoration: 'none',
+      }}>View →</Link>
+    </div>
+  );
+}
+
 export function Dashboard() {
   const { userRole } = useRole();
   const [searchParams] = useSearchParams();
@@ -48,6 +85,7 @@ export function Dashboard() {
   return (
     <div>
       <SignalAlertBanner />
+      <OutbreakBanner />
       {tab === 'today' ? (
         <DashboardToday />
       ) : (

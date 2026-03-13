@@ -3,6 +3,7 @@ import { AlertTriangle } from 'lucide-react';
 import { type BISignal, type RiskPlan, DIMENSIONS, SEV_ORDER, getHighestSeverity } from './types';
 import { SevBadge } from './SevBadge';
 import { RiskCards } from './RiskCards';
+import { SignalCard } from '../../signals/SignalCard';
 import { NAVY, GOLD, CARD_BORDER, TEXT_TERTIARY } from '../../dashboard/shared/constants';
 
 interface Props {
@@ -77,82 +78,15 @@ export function ExecFormat({ signals, riskPlans, isDemoMode }: Props) {
         <RiskCards signals={signals} showNewBadge={isDemoMode} />
       </div>
 
-      {/* ── Immediate Actions ── */}
-      <div style={{
-        background: '#fff',
-        border: `1px solid ${CARD_BORDER}`,
-        borderRadius: 10,
-        padding: 20,
-        textAlign: 'left',
-      }}>
-        <div style={{ fontSize: 14, fontWeight: 700, color: NAVY, marginBottom: 14 }}>
-          Immediate Actions
+      {/* ── Signal Cards ── */}
+      <div>
+        <div style={{ fontSize: 12, fontWeight: 600, color: TEXT_TERTIARY, marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.5 }}>
+          Intelligence Signals ({sorted.length})
         </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          {sorted.map((signal) => {
-            const plan = riskPlans.get(signal.id);
-            return (
-              <div
-                key={signal.id}
-                style={{
-                  borderBottom: `1px solid ${CARD_BORDER}`,
-                  paddingBottom: 14,
-                }}
-              >
-                {/* Row 1: badge + title + county */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6, flexWrap: 'wrap' }}>
-                  <SevBadge level={signal.priority} />
-                  <span style={{ fontSize: 13, fontWeight: 600, color: '#0B1628' }}>{signal.title}</span>
-                  <span style={{ fontSize: 11, color: TEXT_TERTIARY }}>
-                    {signal.county}
-                  </span>
-                </div>
-
-                {/* Recommended action */}
-                {signal.recommended_action && (
-                  <div style={{ fontSize: 12, color: '#3D5068', lineHeight: 1.6, marginBottom: 6, paddingLeft: 4 }}>
-                    {signal.recommended_action}
-                  </div>
-                )}
-
-                {/* Action deadline + Risk Plan status */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 11, paddingLeft: 4 }}>
-                  {signal.action_deadline && (
-                    <span style={{ color: TEXT_TERTIARY }}>
-                      Deadline: <span style={{ fontWeight: 600, color: '#0B1628' }}>
-                        {new Date(signal.action_deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                      </span>
-                    </span>
-                  )}
-                  <span style={{ color: TEXT_TERTIARY }}>
-                    Risk Plan:{' '}
-                    {plan ? (
-                      <span style={{
-                        fontSize: 10,
-                        fontWeight: 600,
-                        padding: '2px 8px',
-                        borderRadius: 10,
-                        background: plan.status === 'completed' ? '#D1FAE5' :
-                                    plan.status === 'in_progress' ? '#DBEAFE' :
-                                    plan.status === 'accepted' ? '#FEF3C7' : '#F3F4F6',
-                        color: plan.status === 'completed' ? '#059669' :
-                               plan.status === 'in_progress' ? '#1D4ED8' :
-                               plan.status === 'accepted' ? '#D97706' : '#6B7280',
-                        whiteSpace: 'nowrap' as const,
-                      }}>
-                        {plan.status === 'not_started' ? 'Not Started' :
-                         plan.status === 'in_progress' ? 'In Progress' :
-                         plan.status === 'completed' ? 'Completed' : 'Accepted'}
-                      </span>
-                    ) : (
-                      <span style={{ color: TEXT_TERTIARY, fontStyle: 'italic' }}>No plan</span>
-                    )}
-                  </span>
-                </div>
-              </div>
-            );
-          })}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {sorted.map((signal) => (
+            <SignalCard key={signal.id} signal={signal} />
+          ))}
         </div>
       </div>
     </div>

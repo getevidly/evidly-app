@@ -28,6 +28,14 @@ export interface BISignal {
   action_deadline: string | null;
   relevance_reason: string | null;
   feed_type: string;
+  // Optional fields for signal-type–specific rendering
+  game_plan_steps?: { action: string; owner?: string }[] | null;
+  affected_jurisdictions?: string[] | null;
+  plain_english_impact?: string | null;
+  affected_ingredient?: string | null;
+  affected_supplier?: string | null;
+  outbreak_source_url?: string | null;
+  vendor_category?: string | null;
 }
 
 export interface RiskPlan {
