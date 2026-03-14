@@ -713,7 +713,6 @@ function AppRoutes() {
           <Route path="/intelligence" element={<IntelligenceHub />} />
           <Route path="/regulatory-updates" element={<Navigate to="/intelligence" replace />} />
           <Route path="/self-diagnosis" element={<SelfDiagnosis />} />
-          <Route path="/checkup" element={<Navigate to="/dashboard" replace />} />
           <Route path="/admin/regulatory-changes" element={<AdminRegulatoryChanges />} />
           <Route path="/admin/intelligence-admin" element={<IntelligenceAdmin />} />
           <Route path="/admin/intelligence-queue" element={<Navigate to="/admin/intelligence-admin" replace />} />

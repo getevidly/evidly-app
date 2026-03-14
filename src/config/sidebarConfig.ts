@@ -164,10 +164,6 @@ const I: Record<string, NavItem> = {
   },
 
   // ── Tools ──
-  kitchenCheckup: {
-    id: 'kitchen-checkup', label: 'Kitchen Checkup', path: '/checkup', icon: '📋',
-    roles: [], description: 'Self-assessment to evaluate compliance readiness across Food Safety and Facility Safety.',
-  },
   selfDiagnosis: {
     id: 'self-diagnosis', label: 'Self-Diagnosis', path: '/self-diagnosis', icon: '🔧',
     roles: [], description: 'Troubleshoot equipment issues, get resolution steps, attach photo + video, and notify your vendor — in under 2 minutes.',
