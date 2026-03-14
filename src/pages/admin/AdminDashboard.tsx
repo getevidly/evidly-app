@@ -154,8 +154,8 @@ export default function AdminDashboard() {
   const [k2cData, setK2cData] = useState<K2CRow[]>(isDemoMode ? DEMO_K2C : []);
 
   // Stats
-  const [orgCount, setOrgCount] = useState(isDemoMode ? 12 : 0);
-  const [locCount, setLocCount] = useState(isDemoMode ? 34 : 0);
+  const [orgCount, setOrgCount] = useState(0);
+  const [locCount, setLocCount] = useState(0);
 
   // ── Fetch all data ──────────────────────────────────────
   const fetchAll = useCallback(async () => {
@@ -644,7 +644,7 @@ function LeadsTab({ leads }: { leads: LeadRow[] }) {
 
 const KNOWN_FUNCTIONS = [
   'classify-document', 'ai-document-analysis', 'cloud-file-import', 'crawl-monitor',
-  'intelligence-collect', 'rfp-crawl', 'rfp-classify', 'checkup-notify',
+  'intelligence-collect', 'rfp-crawl', 'rfp-classify',
   'check-equipment-alerts', 'send-document-alerts', 'send-missing-doc-reminders',
   'auto-request-documents',
 ];
@@ -777,7 +777,7 @@ function UsageTab({ orgCount, locCount, isDemoMode }: { orgCount: number; locCou
 
   useEffect(() => {
     if (isDemoMode) {
-      setMetrics({ temp_logs: 4200, checklists: 1850, documents: 340, corrective_actions: 42, time_saved_hours: 1342, money_saved_dollars: 38926 });
+      // No hardcoded metrics — demo mode shows "no data" like production
       return;
     }
     (async () => {
