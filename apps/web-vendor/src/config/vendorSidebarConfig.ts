@@ -26,6 +26,8 @@ const I: Record<string, NavItem> = {
   clockReminders: { id: 'clock-reminders', label: 'Clock & Attendance', path: '/settings/clock-reminders', icon: '⏰', roles: [], description: 'Clock-in/out reminders.' },
   reports: { id: 'reports', label: 'Reports', path: '/reports', icon: '📊', roles: [], description: 'Operational reports.' },
   leaderboard: { id: 'leaderboard', label: 'Leaderboard', path: '/leaderboard', icon: '🏆', roles: [], description: 'Performance rankings.' },
+  surveys: { id: 'surveys', label: 'Customer Surveys', path: '/surveys', icon: '⭐', roles: [], description: 'Customer feedback and Google reviews.' },
+  surveySettings: { id: 'survey-settings', label: 'Survey Settings', path: '/settings/surveys', icon: '⚙️', roles: [], description: 'Configure survey automation.' },
   settings: { id: 'settings', label: 'Settings', path: '/settings', icon: '⚙️', roles: [], description: 'Company settings.' },
 };
 
@@ -41,12 +43,12 @@ const VENDOR_HOME: RoleHomeItem = {
 const ROLE_CONFIGS: Record<string, RoleSidebarConfig> = {
   vendor_admin: { home: VENDOR_HOME, sections: [
     section('operations', 'Operations', '📋', 'Operations', 'Schedule, timecards, employees.', [I.schedule, I.timecards, I.timecardAlterations, I.employees, I.leaderboard]),
-    section('performance', 'Performance', '🎯', 'Performance', 'Bonuses and quality.', [I.bonuses, I.performanceMetrics, I.callbacks]),
+    section('performance', 'Performance', '🎯', 'Performance', 'Bonuses and quality.', [I.bonuses, I.performanceMetrics, I.callbacks, I.surveys]),
     section('assets', 'Assets', '📦', 'Assets', 'Equipment, inventory, fleet.', [I.equipment, I.equipmentIncidents, I.inventory, I.fleet, I.insurance]),
     section('compliance', 'Compliance', '⚠️', 'Compliance', 'Deficiencies and safety.', [I.deficiencies, I.safetyIncidents]),
     section('team', 'Team', '👥', 'Team', 'Availability management.', [I.myAvailability, I.teamAvailability, I.availabilityApprovals]),
     section('reports', 'Reports', '📊', 'Reports', 'Operational reports.', [I.reports]),
-    section('admin', 'Administration', '⚙️', 'Admin', 'Settings and config.', [I.settings, I.clockReminders, I.emergencyInfo]),
+    section('admin', 'Administration', '⚙️', 'Admin', 'Settings and config.', [I.settings, I.surveySettings, I.clockReminders, I.emergencyInfo]),
   ]},
   hood_technician: { home: VENDOR_HOME, sections: [
     section('operations', 'Operations', '📋', 'Operations', 'Schedule and timecards.', [I.schedule, I.timecards, I.leaderboard]),
@@ -58,12 +60,12 @@ const ROLE_CONFIGS: Record<string, RoleSidebarConfig> = {
   ]},
   owner_operator: { home: VENDOR_HOME, sections: [
     section('operations', 'Operations', '📋', 'Operations', 'Schedule, timecards, employees.', [I.schedule, I.timecards, I.timecardAlterations, I.employees, I.leaderboard]),
-    section('performance', 'Performance', '🎯', 'Performance', 'Bonuses and quality.', [I.bonuses, I.performanceMetrics, I.callbacks]),
+    section('performance', 'Performance', '🎯', 'Performance', 'Bonuses and quality.', [I.bonuses, I.performanceMetrics, I.callbacks, I.surveys]),
     section('assets', 'Assets', '📦', 'Assets', 'Equipment, inventory, fleet.', [I.equipment, I.equipmentIncidents, I.inventory, I.fleet, I.insurance]),
     section('compliance', 'Compliance', '⚠️', 'Compliance', 'Deficiencies and safety.', [I.deficiencies, I.safetyIncidents]),
     section('team', 'Team', '👥', 'Team', 'Availability management.', [I.myAvailability, I.teamAvailability, I.availabilityApprovals]),
     section('reports', 'Reports', '📊', 'Reports', 'Operational reports.', [I.reports]),
-    section('admin', 'Administration', '⚙️', 'Admin', 'Settings and config.', [I.settings, I.clockReminders, I.emergencyInfo]),
+    section('admin', 'Administration', '⚙️', 'Admin', 'Settings and config.', [I.settings, I.surveySettings, I.clockReminders, I.emergencyInfo]),
   ]},
 };
 

@@ -64,6 +64,12 @@ const SettingsIntegrationsPage = lazy(() => import('./pages/settings/Integration
 const NotificationsPage = lazy(() => import('./pages/settings/NotificationsPage').then(m => ({ default: m.NotificationsPage })));
 const BillingPage = lazy(() => import('./pages/settings/BillingPage').then(m => ({ default: m.BillingPage })));
 const ClockRemindersPage = lazy(() => import('./pages/settings/ClockRemindersPage').then(m => ({ default: m.ClockRemindersPage })));
+const SurveyPage = lazy(() => import('./pages/public/SurveyPage').then(m => ({ default: m.SurveyPage })));
+const SurveyExpiredPage = lazy(() => import('./pages/public/SurveyExpiredPage').then(m => ({ default: m.SurveyExpiredPage })));
+const SurveyCompletedPage = lazy(() => import('./pages/public/SurveyCompletedPage').then(m => ({ default: m.SurveyCompletedPage })));
+const SurveysPage = lazy(() => import('./pages/surveys/SurveysPage').then(m => ({ default: m.SurveysPage })));
+const SurveyDetailPage = lazy(() => import('./pages/surveys/SurveyDetailPage').then(m => ({ default: m.SurveyDetailPage })));
+const SurveySettingsPage = lazy(() => import('./pages/settings/SurveySettingsPage').then(m => ({ default: m.SurveySettingsPage })));
 
 function PageSkeleton() {
   return (
@@ -112,6 +118,9 @@ function AppRoutes() {
       <Route path="/vendor/setup" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><VendorSetup /></Suspense></ProtectedRoute>} />
       <Route path="/leaderboard-preview" element={<Suspense fallback={<PageSkeleton />}><LeaderboardPreview /></Suspense>} />
       <Route path="/equipment/scan/:equipmentId" element={<Suspense fallback={<PageSkeleton />}><QRScanLandingPage /></Suspense>} />
+      <Route path="/survey/:token" element={<Suspense fallback={<PageSkeleton />}><SurveyPage /></Suspense>} />
+      <Route path="/survey-expired" element={<Suspense fallback={<PageSkeleton />}><SurveyExpiredPage /></Suspense>} />
+      <Route path="/survey-completed" element={<Suspense fallback={<PageSkeleton />}><SurveyCompletedPage /></Suspense>} />
       <Route element={<ProtectedLayout />}>
         <Route path="/dashboard" element={<VendorDashboard />} />
         <Route path="/schedule" element={<SchedulePage />} />
@@ -145,6 +154,9 @@ function AppRoutes() {
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/reports" element={<ReportsPage />} />
         <Route path="/reports/:slug" element={<ReportGeneratorPage />} />
+        <Route path="/surveys" element={<SurveysPage />} />
+        <Route path="/surveys/:id" element={<SurveyDetailPage />} />
+        <Route path="/settings/surveys" element={<SurveySettingsPage />} />
         <Route path="/settings/clock-reminders" element={<ClockRemindersPage />} />
         <Route path="/settings" element={<SettingsPage />}>
           <Route index element={<Navigate to="/settings/company" replace />} />
