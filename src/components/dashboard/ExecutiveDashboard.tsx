@@ -17,6 +17,7 @@ import { AttentionItemList } from './shared/AttentionItemList';
 import { AnnualVendorSpendWidget } from './VendorServiceWidgets';
 import { PortfolioExpenseSummary } from '../services/PortfolioExpenseSummary';
 import { PortfolioRiskCard } from './PortfolioRiskCard';
+import { MetricCardRow } from './shared/MetricCardRow';
 
 
 export default function ExecutiveDashboard() {
@@ -35,6 +36,9 @@ export default function ExecutiveDashboard() {
   const attentionLocCount = locations.filter(
     s => s.foodSafety !== 'ok' || s.facilitySafety !== 'ok' || s.openItemCount > 0
   ).length;
+
+  const fmtSpend = (n: number) => n >= 1000 ? `$${(n / 1000).toFixed(1)}K` : `$${n}`;
+  const criticalCAs = attentionItems.filter(i => i.severity === 'critical').length;
 
   // Live mode empty state
   if (!isDemoMode && !loading && locations.length === 0) {
@@ -69,6 +73,16 @@ export default function ExecutiveDashboard() {
         subtitle={`${locations.length} location${locations.length !== 1 ? 's' : ''}`}
         onSubtitleClick={() => navigate('/org-hierarchy')}
       />
+
+      {/* 1b. PORTFOLIO METRICS */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-4">
+        <MetricCardRow cards={[
+          { label: 'Locations', value: locations.length, onClick: () => navigate('/locations') },
+          { label: 'Gaps', value: attentionLocCount, color: attentionLocCount > 0 ? '#d97706' : undefined },
+          { label: 'Annual Spend', value: fmtSpend(vendorSummary?.totalAnnualSpend ?? 0), onClick: () => navigate('/vendors') },
+          { label: 'Open CAs', value: criticalCAs, color: criticalCAs > 0 ? '#dc2626' : undefined, onClick: () => navigate('/corrective-actions') },
+        ]} />
+      </div>
 
       {/* 2. ONBOARDING CHECKLIST */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-4">
@@ -118,7 +132,7 @@ export default function ExecutiveDashboard() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-4">
         <ErrorBoundary level="widget">
           <CalendarCard
-            events={EXECUTIVE_EVENTS}
+            events={isDemoMode ? EXECUTIVE_EVENTS : []}
             typeColors={EXECUTIVE_CALENDAR.typeColors}
             typeLabels={EXECUTIVE_CALENDAR.typeLabels}
             navigate={navigate}

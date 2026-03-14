@@ -32,6 +32,7 @@ import {
   type BenchmarkItem,
 } from './shared/insights';
 import { CATEGORY_ORG_TRENDS } from '../../data/trendDemoData';
+import { MetricCardRow } from './shared/MetricCardRow';
 
 
 // ================================================================
@@ -132,6 +133,17 @@ export default function OwnerOperatorDashboard() {
     s => s.foodSafety !== 'ok' || s.facilitySafety !== 'ok' || s.openItemCount > 0
   ).length;
 
+  // Portfolio health metrics
+  const fmtSpend = (n: number) => n >= 1000 ? `$${(n / 1000).toFixed(1)}K` : `$${n}`;
+  const criticalCAs = attentionItems.filter(i => i.severity === 'critical').length;
+
+  // Team task metrics derived from todaysTasks
+  const checklistTasks = todaysTasks.filter(t => t.route === '/checklists');
+  const checklistsDone = checklistTasks.filter(t => t.status === 'done').length;
+  const tempTasks = todaysTasks.filter(t => t.route === '/temp-logs');
+  const tempsLogged = tempTasks.filter(t => t.status === 'done').length;
+  const overdueCAs = todaysTasks.filter(t => t.status === 'overdue' && t.route === '/corrective-actions').length;
+
   if (loading) return <DashboardSkeleton />;
 
   return (
@@ -152,6 +164,16 @@ export default function OwnerOperatorDashboard() {
         <p style={{ color: '#6B7F96', fontSize: '0.875rem', marginTop: '4px' }}>
           {todayStr}
         </p>
+      </div>
+
+      {/* Portfolio Health */}
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
+        <MetricCardRow cards={[
+          { label: 'Locations', value: locations.length, onClick: () => navigate('/locations') },
+          { label: 'Open CAs', value: criticalCAs, color: criticalCAs > 0 ? '#dc2626' : undefined, onClick: () => navigate('/corrective-actions') },
+          { label: 'Service Gaps', value: vendorSummary?.overdue ?? 0, color: (vendorSummary?.overdue ?? 0) > 0 ? '#d97706' : undefined, onClick: () => navigate('/vendors') },
+          { label: 'Annual Spend', value: fmtSpend(vendorSummary?.totalAnnualSpend ?? 0), onClick: () => navigate('/vendors') },
+        ]} />
       </div>
 
       {/* Tab Bar (owner_operator + executive only) */}
@@ -207,6 +229,15 @@ export default function OwnerOperatorDashboard() {
       {/* Location Standing */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
         <LocationStandingList standings={locations} navigate={navigate} />
+      </div>
+
+      {/* Team Tasks Summary */}
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
+        <MetricCardRow cards={[
+          { label: 'Checklists', value: `${checklistsDone}/${checklistTasks.length}`, onClick: () => navigate('/checklists') },
+          { label: 'Temps Logged', value: tempsLogged, onClick: () => navigate('/temp-logs') },
+          { label: 'CAs Overdue', value: overdueCAs, color: overdueCAs > 0 ? '#dc2626' : undefined, onClick: () => navigate('/corrective-actions') },
+        ]} />
       </div>
 
       {/* Today's Tasks */}

@@ -21,7 +21,48 @@ import { DashboardSkeleton } from './shared/DashboardSkeleton';
 import { ConfidenceBanner } from './shared/ConfidenceBanner';
 import { LocationStandingList } from './shared/LocationStandingList';
 import { AttentionItemList } from './shared/AttentionItemList';
+import { MetricCardRow } from './shared/MetricCardRow';
+import { CheckCircle2, AlertCircle } from 'lucide-react';
+import type { ReadinessSignal } from '../../hooks/useDashboardStanding';
+import { BODY_TEXT } from './shared/constants';
 
+
+function InspectionReadiness({ signals }: { signals: ReadinessSignal[] }) {
+  if (signals.length === 0) return null;
+  return (
+    <div className="bg-white rounded-lg" style={{ border: '1px solid #e5e7eb' }}>
+      <div className="px-4 py-3" style={{ borderBottom: '1px solid #F0F0F0' }}>
+        <h3 className="text-sm font-semibold" style={{ color: BODY_TEXT }}>Inspection Readiness</h3>
+      </div>
+      <div>
+        {signals.map((signal, i) => {
+          const isCurrent = signal.status === 'current';
+          return (
+            <div key={i} className="flex items-center gap-3 px-4 py-3" style={{ borderBottom: '1px solid #F0F0F0' }}>
+              {isCurrent
+                ? <CheckCircle2 size={16} className="text-green-500 shrink-0" />
+                : <AlertCircle size={16} className="text-red-500 shrink-0" />
+              }
+              <div className="flex-1 min-w-0">
+                <p className="text-[13px] font-medium" style={{ color: BODY_TEXT }}>{signal.label}</p>
+                <p className="text-[11px] text-gray-500">{signal.detail}</p>
+              </div>
+              <span
+                className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0"
+                style={{
+                  backgroundColor: isCurrent ? '#dcfce7' : signal.status === 'overdue' ? '#fef2f2' : '#f3f4f6',
+                  color: isCurrent ? '#16a34a' : signal.status === 'overdue' ? '#dc2626' : '#6b7280',
+                }}
+              >
+                {signal.status === 'current' ? 'Current' : signal.status === 'overdue' ? 'Overdue' : 'Missing'}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 export default function ComplianceManagerDashboard() {
   const navigate = useNavigate();
@@ -41,9 +82,12 @@ export default function ComplianceManagerDashboard() {
   // Standing data
   const {
     locations, bannerStatus, bannerHeadline,
-    attentionItems,
+    attentionItems, inspectionReadiness,
     loading,
   } = useDashboardStanding('compliance_manager');
+
+  const criticalCAs = attentionItems.filter(i => i.severity === 'critical').length;
+  const warningCAs = attentionItems.filter(i => i.severity === 'warning').length;
 
   const attentionLocCount = locations.filter(
     s => s.foodSafety !== 'ok' || s.facilitySafety !== 'ok' || s.openItemCount > 0
@@ -106,8 +150,17 @@ export default function ComplianceManagerDashboard() {
         />
       </div>
 
-      {/* 4. LOCATION STANDING */}
+      {/* 3b. CA PIPELINE METRICS */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-4" style={stagger(2)}>
+        <MetricCardRow cards={[
+          { label: 'Total CAs', value: attentionItems.length, onClick: () => navigate('/corrective-actions') },
+          { label: 'Critical', value: criticalCAs, color: criticalCAs > 0 ? '#dc2626' : undefined },
+          { label: 'Warning', value: warningCAs, color: warningCAs > 0 ? '#d97706' : undefined },
+        ]} />
+      </div>
+
+      {/* 4. LOCATION STANDING */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-4" style={stagger(3)}>
         <LocationStandingList standings={locations} navigate={navigate} />
       </div>
 
@@ -116,11 +169,16 @@ export default function ComplianceManagerDashboard() {
         <AttentionItemList items={attentionItems} />
       </div>
 
-      {/* 6. CALENDAR */}
+      {/* 6. INSPECTION READINESS */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-4" style={stagger(4)}>
+        <InspectionReadiness signals={inspectionReadiness} />
+      </div>
+
+      {/* 7. CALENDAR */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-4" style={stagger(4)}>
         <ErrorBoundary level="widget">
           <CalendarCard
-            events={COMPLIANCE_EVENTS}
+            events={isDemoMode ? COMPLIANCE_EVENTS : []}
             typeColors={COMPLIANCE_CALENDAR.typeColors}
             typeLabels={COMPLIANCE_CALENDAR.typeLabels}
             navigate={navigate}

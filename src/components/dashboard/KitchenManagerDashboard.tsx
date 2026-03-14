@@ -11,6 +11,7 @@ import { ErrorBoundary } from '../ErrorBoundary';
 import { SelfDiagCard } from './shared/SelfDiagCard';
 import { NFPAReminder } from '../ui/NFPAReminder';
 import { OnboardingChecklistCard } from './shared/OnboardingChecklistCard';
+import { MetricCardRow } from './shared/MetricCardRow';
 import { useDashboardStanding } from '../../hooks/useDashboardStanding';
 import { DashboardSkeleton } from './shared/DashboardSkeleton';
 import { ConfidenceBanner } from './shared/ConfidenceBanner';
@@ -86,6 +87,13 @@ export default function KitchenManagerDashboard() {
   // Single location for kitchen manager
   const locationName = locations.length > 0 ? locations[0].locationName : '';
 
+  // Team completion metrics
+  const checklistTasks = todaysTasks.filter(t => t.route === '/checklists');
+  const checklistsDone = checklistTasks.filter(t => t.status === 'done').length;
+  const tempTasks = todaysTasks.filter(t => t.route === '/temp-logs');
+  const tempsLogged = tempTasks.filter(t => t.status === 'done').length;
+  const overdueCAs = todaysTasks.filter(t => t.status === 'overdue').length;
+
   // Live mode empty state
   if (!isDemoMode && !loading && locations.length === 0) {
     return (
@@ -126,6 +134,13 @@ export default function KitchenManagerDashboard() {
         headline={bannerHeadline}
       />
 
+      {/* 3b. TEAM COMPLETION METRICS */}
+      <MetricCardRow cards={[
+        { label: 'Checklists', value: `${checklistsDone}/${checklistTasks.length}`, onClick: () => navigate('/checklists') },
+        { label: 'Temps Logged', value: tempsLogged, onClick: () => navigate('/temp-logs') },
+        { label: 'Team CAs', value: overdueCAs, color: overdueCAs > 0 ? '#dc2626' : undefined, onClick: overdueCAs > 0 ? () => navigate('/corrective-actions') : undefined },
+      ]} />
+
       {/* 4. TODAY'S TASKS */}
       <TodaysOperations tasks={todaysTasks} navigate={navigate} />
 
@@ -144,7 +159,7 @@ export default function KitchenManagerDashboard() {
       {/* Schedule Calendar */}
       <ErrorBoundary level="widget">
         <CalendarCard
-          events={KITCHEN_MANAGER_EVENTS}
+          events={isDemoMode ? KITCHEN_MANAGER_EVENTS : []}
           typeColors={KITCHEN_MANAGER_CALENDAR.typeColors}
           typeLabels={KITCHEN_MANAGER_CALENDAR.typeLabels}
           navigate={navigate}

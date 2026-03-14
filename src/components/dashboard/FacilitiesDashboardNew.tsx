@@ -12,6 +12,8 @@ import { SelfDiagCard } from './shared/SelfDiagCard';
 import { NFPAReminder } from '../ui/NFPAReminder';
 import { OnboardingChecklistCard } from './shared/OnboardingChecklistCard';
 import { ServicesDueSoonWidget, AnnualVendorSpendWidget } from './VendorServiceWidgets';
+import { PSECoverageRiskWidget } from './PSECoverageRiskWidget';
+import { MetricCardRow } from './shared/MetricCardRow';
 import { useDashboardStanding } from '../../hooks/useDashboardStanding';
 import { DashboardSkeleton } from './shared/DashboardSkeleton';
 import { ConfidenceBanner } from './shared/ConfidenceBanner';
@@ -35,6 +37,8 @@ export default function FacilitiesDashboardNew() {
   const attentionLocCount = locations.filter(
     s => s.foodSafety !== 'ok' || s.facilitySafety !== 'ok' || s.openItemCount > 0
   ).length;
+
+  const fmtSpend = (n: number) => n >= 1000 ? `$${(n / 1000).toFixed(1)}K` : `$${n}`;
 
   // Live mode empty state
   if (!isDemoMode && !loading && locations.length === 0) {
@@ -75,6 +79,14 @@ export default function FacilitiesDashboardNew() {
         attentionCount={attentionLocCount}
       />
 
+      {/* 3b. SERVICE METRICS */}
+      <MetricCardRow cards={[
+        { label: 'Services Active', value: vendorSummary?.totalVendors ?? 0, onClick: () => navigate('/vendors') },
+        { label: 'Overdue', value: vendorSummary?.overdue ?? 0, color: (vendorSummary?.overdue ?? 0) > 0 ? '#dc2626' : undefined },
+        { label: 'Due Soon', value: vendorSummary?.dueSoon ?? 0, color: (vendorSummary?.dueSoon ?? 0) > 0 ? '#d97706' : undefined },
+        { label: 'Annual Cost', value: fmtSpend(vendorSummary?.totalAnnualSpend ?? 0) },
+      ]} />
+
       {/* 4. LOCATION STANDING */}
       <LocationStandingList standings={locations} navigate={navigate} />
 
@@ -93,6 +105,9 @@ export default function FacilitiesDashboardNew() {
         services={[]}
       />
 
+      {/* 7b. PSE ADVISORY */}
+      <PSECoverageRiskWidget />
+
       {/* NFPA Monthly Reminder */}
       <NFPAReminder />
 
@@ -102,7 +117,7 @@ export default function FacilitiesDashboardNew() {
       {/* Schedule Calendar */}
       <ErrorBoundary level="widget">
         <CalendarCard
-          events={FACILITIES_EVENTS}
+          events={isDemoMode ? FACILITIES_EVENTS : []}
           typeColors={FACILITIES_CALENDAR.typeColors}
           typeLabels={FACILITIES_CALENDAR.typeLabels}
           navigate={navigate}

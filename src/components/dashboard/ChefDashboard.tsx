@@ -11,6 +11,8 @@ import { ErrorBoundary } from '../ErrorBoundary';
 import { SelfDiagCard } from './shared/SelfDiagCard';
 import { NFPAReminder } from '../ui/NFPAReminder';
 import { OnboardingChecklistCard } from './shared/OnboardingChecklistCard';
+import { MetricCardRow } from './shared/MetricCardRow';
+import { CARD_BG, CARD_BORDER, BODY_TEXT, NAVY } from './shared/constants';
 import { useDashboardStanding } from '../../hooks/useDashboardStanding';
 import { DashboardSkeleton } from './shared/DashboardSkeleton';
 import { ConfidenceBanner } from './shared/ConfidenceBanner';
@@ -33,6 +35,11 @@ export default function ChefDashboard() {
 
   // Single location for chef
   const locationName = locations.length > 0 ? locations[0].locationName : '';
+
+  // Kitchen ops metrics derived from todaysTasks
+  const tempTasks = todaysTasks.filter(t => t.route === '/temp-logs');
+  const tempsLogged = tempTasks.filter(t => t.status === 'done').length;
+  const tempExcursions = tempTasks.filter(t => t.status === 'overdue').length;
 
   // Live mode empty state
   if (!isDemoMode && !loading && locations.length === 0) {
@@ -74,11 +81,30 @@ export default function ChefDashboard() {
         headline={bannerHeadline}
       />
 
+      {/* 3b. KITCHEN OPS METRICS */}
+      <MetricCardRow cards={[
+        { label: 'Temps Today', value: `${tempsLogged}/${tempTasks.length}`, onClick: () => navigate('/temp-logs') },
+        { label: 'Cooling Active', value: 0 },
+        { label: 'Excursions', value: tempExcursions, color: tempExcursions > 0 ? '#dc2626' : undefined, onClick: tempExcursions > 0 ? () => navigate('/temp-logs') : undefined },
+      ]} />
+
       {/* 4. TODAY'S TASKS */}
       <TodaysOperations tasks={todaysTasks} navigate={navigate} />
 
       {/* 5. WHAT NEEDS ATTENTION */}
       <AttentionItemList items={attentionItems} />
+
+      {/* 5b. HACCP CCP SUMMARY */}
+      <button
+        type="button"
+        onClick={() => navigate('/haccp')}
+        className="w-full rounded-lg px-4 py-4 text-left"
+        style={{ backgroundColor: CARD_BG, border: `1px solid ${CARD_BORDER}` }}
+      >
+        <h3 className="text-sm font-semibold" style={{ color: BODY_TEXT }}>HACCP CCP Status</h3>
+        <p className="text-[12px] text-gray-500 mt-1">No active CCPs for today</p>
+        <p className="text-[11px] font-semibold mt-2" style={{ color: NAVY }}>View HACCP plan &rarr;</p>
+      </button>
 
       {/* NFPA Monthly Reminder */}
       <NFPAReminder />
@@ -89,7 +115,7 @@ export default function ChefDashboard() {
       {/* Schedule Calendar */}
       <ErrorBoundary level="widget">
         <CalendarCard
-          events={KITCHEN_MANAGER_EVENTS}
+          events={isDemoMode ? KITCHEN_MANAGER_EVENTS : []}
           typeColors={KITCHEN_MANAGER_CALENDAR.typeColors}
           typeLabels={KITCHEN_MANAGER_CALENDAR.typeLabels}
           navigate={navigate}
