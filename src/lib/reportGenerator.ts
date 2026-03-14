@@ -660,7 +660,7 @@ export function startInspectorVisit(
     gradeColor: template.getGradeColor(scores.foodSafety),
     reportId: report.id,
     notificationSent: true,
-    qrPassportUrl: `https://evidly-app.vercel.app/passport/${locationUrlId}`,
+    qrPassportUrl: `https://app.getevidly.com/passport/${locationUrlId}`,
   };
 }
 
@@ -703,7 +703,7 @@ export function getDemoReportHistory(): ReportHistory[] {
       status: 'completed',
       sections: ['Facility Info', 'Food Safety', 'Employee Certs', 'Facility Safety', 'Vendor Docs', 'Corrective Actions', 'Compliance Score'],
       dateRange: 'Last 30 Days',
-      shareLink: 'https://evidly-app.vercel.app/shared/RPT-HIST-003',
+      shareLink: 'https://app.getevidly.com/shared/RPT-HIST-003',
       shareLinkExpiry: '2026-01-22T14:30:00Z',
     },
     {

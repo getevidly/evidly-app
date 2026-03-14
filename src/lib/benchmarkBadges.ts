@@ -52,7 +52,7 @@ export function calculateBadgeTier(locationId: string): BadgeQualification {
 
 export function generateSocialPost(tier: BadgeTier, locationName: string, percentile: number): string {
   const tierLabel = getBadgeLabel(tier);
-  return `Proud to announce ${locationName} has earned the ${tierLabel} Compliance Badge! We're in the top ${100 - percentile}% of restaurant operations in California. Verify our status at evidly-app.vercel.app #FoodSafety #Compliance #EvidLY`;
+  return `Proud to announce ${locationName} has earned the ${tierLabel} Compliance Badge! We're in the top ${100 - percentile}% of restaurant operations in California. Verify our status at app.getevidly.com #FoodSafety #Compliance #EvidLY`;
 }
 
 export const ALL_BADGE_TIERS: BadgeTier[] = ['bronze', 'silver', 'gold', 'platinum'];

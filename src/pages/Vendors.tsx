@@ -1015,11 +1015,11 @@ export function Vendors() {
                     <div className="flex items-center space-x-2 min-w-0">
                       <Link2 className="h-5 w-5 text-[#1e4d6b] flex-shrink-0" />
                       <code className="text-sm text-gray-700 bg-white px-3 py-1 rounded border break-all">
-                        https://evidly-app.vercel.app/vendor/upload/{selectedVendor.id}-{selectedVendor.companyName.toLowerCase().replace(/\s+/g, '-')}-abc123
+                        https://app.getevidly.com/vendor/upload/{selectedVendor.id}-{selectedVendor.companyName.toLowerCase().replace(/\s+/g, '-')}-abc123
                       </code>
                     </div>
                     <button
-                      onClick={() => { navigator.clipboard.writeText(`https://evidly-app.vercel.app/vendor/upload/${selectedVendor.id}`); showToast('Link copied to clipboard!'); }}
+                      onClick={() => { navigator.clipboard.writeText(`https://app.getevidly.com/vendor/upload/${selectedVendor.id}`); showToast('Link copied to clipboard!'); }}
                       className="flex items-center text-sm text-[#1e4d6b] hover:text-[#163a52] font-medium px-3 py-1"
                     >
                       <ExternalLink className="h-4 w-4 mr-1" />

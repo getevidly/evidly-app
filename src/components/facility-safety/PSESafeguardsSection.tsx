@@ -65,6 +65,7 @@ interface ServiceRecord {
   service_date: string | null;
   next_due_date: string | null;
   interval_label: string | null;
+  certificate_url: string | null;
 }
 
 function getPSEStatus(record: ServiceRecord | null): PSEStatus {
@@ -297,6 +298,18 @@ export function PSESafeguardsSection({ organizationId, locationId, isGuidedTour 
                   {sg.record?.interval_label && (
                     <div style={{ marginTop: 4, fontStyle: 'italic' }}>
                       {sg.record.interval_label}
+                    </div>
+                  )}
+                  {sg.record?.certificate_url && (
+                    <div style={{ marginTop: 6 }}>
+                      <a
+                        href={sg.record.certificate_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: NAVY, fontWeight: 600, textDecoration: 'underline' }}
+                      >
+                        View certificate ↗
+                      </a>
                     </div>
                   )}
                 </div>

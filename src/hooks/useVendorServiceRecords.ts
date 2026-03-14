@@ -15,6 +15,7 @@ export interface VendorServiceRecord {
   service_date: string | null;
   next_due_date: string | null;
   interval_label: string | null;
+  certificate_url: string | null;
 }
 
 export function useVendorServiceRecords(
@@ -33,7 +34,7 @@ export function useVendorServiceRecords(
 
     const { data: rows, error: queryError } = await supabase
       .from('vendor_service_records')
-      .select('safeguard_type, vendor_name, cert_number, service_date, next_due_date, interval_label')
+      .select('safeguard_type, vendor_name, cert_number, service_date, next_due_date, interval_label, certificate_url')
       .eq('organization_id', organizationId)
       .eq('location_id', locationId)
       .eq('is_sample', false)

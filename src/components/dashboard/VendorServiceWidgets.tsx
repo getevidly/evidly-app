@@ -7,10 +7,14 @@
  * Visible to owner_operator only. Cost figures hidden from all other roles.
  */
 
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DollarSign, Calendar, ArrowRight, Wrench, Flame, Fan, Filter, Shield, ShieldAlert } from 'lucide-react';
 import { NAVY, CARD_BORDER, CARD_SHADOW } from './shared/constants';
 import { SERVICE_TYPES, type ServiceTypeCode } from '../../constants/serviceTypes';
+import { useDemo } from '../../contexts/DemoContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '../../lib/supabase';
 
 /** Vendor service record shape for the widget — matches Supabase location_service_schedules */
 interface VendorServiceRecord {
@@ -131,11 +135,40 @@ export function AnnualVendorSpendWidget({
 // ══════════════════════════════════════════════════════════════
 
 interface ServicesDueProps {
-  services: VendorServiceRecord[];
+  services?: VendorServiceRecord[];
 }
 
-export function ServicesDueSoonWidget({ services }: ServicesDueProps) {
+export function ServicesDueSoonWidget({ services: externalServices }: ServicesDueProps) {
   const navigate = useNavigate();
+  const { isDemoMode } = useDemo();
+  const { profile } = useAuth();
+  const [fetchedServices, setFetchedServices] = useState<VendorServiceRecord[]>([]);
+
+  // Self-fetch from location_service_schedules when no external data provided
+  useEffect(() => {
+    if (isDemoMode || (externalServices && externalServices.length > 0)) return;
+    if (!profile?.organization_id) return;
+
+    supabase
+      .from('location_service_schedules')
+      .select('id, location_id, service_type_code, next_due_date, last_price, frequency, last_service_date, locations(name)')
+      .order('next_due_date', { ascending: true })
+      .limit(10)
+      .then(({ data }) => {
+        if (!data || data.length === 0) { setFetchedServices([]); return; }
+        setFetchedServices(data.map((s: any) => ({
+          id: s.id,
+          service_type: SERVICE_TYPES[s.service_type_code as ServiceTypeCode]?.name || s.service_type_code,
+          service_type_code: s.service_type_code,
+          vendor_name: '',
+          location_name: s.locations?.name || '',
+          next_service_date: s.next_due_date,
+          cost_per_visit: s.last_price || undefined,
+        })));
+      });
+  }, [isDemoMode, profile?.organization_id, externalServices]);
+
+  const services = (externalServices && externalServices.length > 0) ? externalServices : fetchedServices;
 
   // Filter to services due within 30 days (or overdue), sort by urgency, take 5
   const servicesDue = services
@@ -177,7 +210,7 @@ export function ServicesDueSoonWidget({ services }: ServicesDueProps) {
       {servicesDue.length === 0 ? (
         /* Empty state */
         <div className="px-4 py-4 text-center">
-          <p className="text-sm text-gray-500">No upcoming services in the next 30 days.</p>
+          <p className="text-sm text-gray-500">No upcoming services in the next 30 days. Records appear automatically when HoodOps completes work.</p>
           <button
             type="button"
             onClick={() => navigate('/vendors')}

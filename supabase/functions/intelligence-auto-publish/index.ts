@@ -173,7 +173,7 @@ Deno.serve(async (req: Request) => {
         recipientName: "Arthur",
         bodyHtml,
         ctaText: "View Intelligence",
-        ctaUrl: "https://evidly-app.vercel.app/admin/intelligence",
+        ctaUrl: "https://app.getevidly.com/admin/intelligence",
         footerNote: "Auto-published by the EvidLY Intelligence Routing Engine.",
       });
 

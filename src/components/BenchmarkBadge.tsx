@@ -106,7 +106,7 @@ function BadgeTierCard({ tier, isEarned, isCurrent, qualification, locationName 
           {showQR && (
             <div className="flex justify-center mt-3">
               <QRCodeSVG
-                value={`https://evidly-app.vercel.app/verify/${qualification.locationCode}`}
+                value={`https://app.getevidly.com/verify/${qualification.locationCode}`}
                 size={100}
                 level="M"
               />

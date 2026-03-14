@@ -985,7 +985,7 @@ Deno.serve(async (req: Request) => {
         recipientName: "Arthur",
         bodyHtml,
         ctaText: "Review Insights",
-        ctaUrl: "https://evidly-app.vercel.app/admin/intelligence",
+        ctaUrl: "https://app.getevidly.com/admin/intelligence",
         footerNote: "This email was sent automatically by the EvidLY intelligence pipeline.",
       });
 

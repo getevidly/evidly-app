@@ -300,7 +300,7 @@ Return ONLY valid JSON. Only cite specific regulations or code sections you are 
                     <ul>${(digestContent.highlights || []).map((h: string) => `<li>${h}</li>`).join("")}</ul>
                     ${digestContent.concerns?.length ? `<h3>Needs Attention</h3><ul>${digestContent.concerns.map((c: string) => `<li>${c}</li>`).join("")}</ul>` : ""}
                     <p><strong>Recommendation:</strong> ${digestContent.recommendation}</p>
-                    <p><a href="https://evidly-app.vercel.app/dashboard">View Dashboard →</a></p>
+                    <p><a href="https://app.getevidly.com/dashboard">View Dashboard →</a></p>
                   `,
                 }),
               });
