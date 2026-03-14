@@ -426,3 +426,418 @@
 | Route | Component | Auth | Description |
 |-------|-----------|------|-------------|
 | `/*` | `NotFound.jsx` | Public | 404 catch-all — unmatched URLs show "This page doesn't exist" with link to Dashboard |
+
+---
+
+## Auth Routes
+
+| Route | Component | Auth | Description |
+|-------|-----------|------|-------------|
+| `/` | Redirect → `/login` | None | Root redirect |
+| `/login` | `Login.tsx` | PublicRoute | Login form (redirects to dashboard if already logged in) |
+| `/admin-login` | `AdminLogin.tsx` | PublicRoute | Admin login — redirects to `/admin` |
+| `/signup` | `Signup.tsx` | PublicRoute | Signup form |
+| `/signup/locations` | `SignupLocations.tsx` | ProtectedRoute | Add locations during signup flow |
+| `/forgot-password` | `ForgotPassword.tsx` | PublicRoute | Password reset request |
+| `/reset-password` | `ResetPassword.tsx` | Protected | Password reset completion |
+| `/email-confirmed` | `EmailConfirmed.tsx` | Protected | Email confirmation landing |
+| `/auth/callback` | `AuthCallback.tsx` | Protected | OAuth callback handler |
+| `/setup-mfa` | `SetupMFA.tsx` | Protected | MFA setup page |
+| `/suspended` | `Suspended.tsx` | Protected | Account suspended notice |
+| `/invite/:token` | `InviteAccept.tsx` | Protected | Team invitation acceptance |
+
+---
+
+## Public Marketing & Legal Pages
+
+| Route | Component | Auth | Description |
+|-------|-----------|------|-------------|
+| `/partners/insurance` | `CarrierPartnership.tsx` | Public | Insurance carrier partnership landing |
+| `/providers` | `MarketplaceLanding.tsx` | Public | Provider marketplace landing |
+| `/enterprise` | `EnterpriseLanding.tsx` | Public | Enterprise solution landing |
+| `/iot` | `IoTSensorLanding.tsx` | Public | IoT sensor solution landing |
+| `/kitchen-to-community` | `KitchenToCommunity.tsx` | Public | Kitchen to Community program landing |
+| `/terms` | `TermsOfService.tsx` | Public | Terms of Service |
+| `/privacy` | `PrivacyPolicy.tsx` | Public | Privacy Policy |
+| `/blog` | `BlogList.tsx` | Public | Blog list |
+| `/blog/:slug` | `BlogPost.tsx` | Public | Blog post detail |
+
+---
+
+## Public Compliance & ScoreTable Pages
+
+| Route | Component | Auth | Description |
+|-------|-----------|------|-------------|
+| `/compliance/california` | `CaliforniaCompliance.tsx` | Public | California compliance overview |
+| `/compliance/california/:countySlug` | `CountyCompliance.tsx` | Public | County-specific compliance page |
+| `/scoretable/:slug` | `ScoreTableCountyPage.tsx` | Public | County score table with cross-links |
+| `/scoretable/city/:citySlug` | `ScoreTableCityPage.tsx` | Public | City-level score table |
+| `/kitchen-check/:slug` | `KitchenCheck.tsx` | Public | County kitchen check tool |
+| `/city/:citySlug` | `CityPage.tsx` | Public | City landing page |
+| `/:slug` | `CountyLanding.tsx` | Public | Catch-all county landing (URL param slug) |
+
+---
+
+## Public Tools & Shared Views
+
+| Route | Component | Auth | Description |
+|-------|-----------|------|-------------|
+| `/assessment` | `AssessmentTool.tsx` | Public | Kitchen Checkup assessment tool |
+| `/verify/:code` | `PublicVerification.tsx` | Public | Email/document verification |
+| `/ref/:code` | `ReferralRedirect.tsx` | Public | Referral link redirect |
+| `/r/:code` | `ReferralPage.tsx` | Public | Referral landing page |
+| `/risk/:shareToken` | `InsuranceRiskShared.tsx` | Public | Shared insurance risk report |
+| `/report/:token` | `SharedReport.tsx` | Public | Shared report view |
+| `/passport/demo` | `PassportDemo.tsx` | Public | Passport demo |
+| `/passport/:id` | `Passport.tsx` | Public | Public passport view |
+| `/leaderboard-preview` | `LeaderboardPreview.tsx` | Public | Leaderboard marketing preview |
+| `/equipment/scan/:equipmentId` | `QRScanLandingPage.tsx` | Public | QR scan equipment landing |
+
+---
+
+## Demo & Onboarding (No Shared Layout)
+
+| Route | Component | Auth | Description |
+|-------|-----------|------|-------------|
+| `/onboarding` | `Onboarding.tsx` | ProtectedRoute | New org onboarding wizard |
+| `/demo` | `DemoWizard.tsx` | Protected | Demo entry wizard |
+| `/demo/request` | `DemoRequest.tsx` | Protected | Demo request form |
+| `/demo/schedule/:sessionId` | `DemoSchedule.tsx` | Protected | Schedule demo session |
+| `/demo-expired` | `DemoExpired.tsx` | Protected | Demo period expired notice |
+
+---
+
+## Vendor Portal (No Shared Layout)
+
+| Route | Component | Auth | Description |
+|-------|-----------|------|-------------|
+| `/vendor/login` | `VendorLogin.tsx` | None | Vendor-specific login |
+| `/vendor/register` | `VendorRegister.tsx` | None | Vendor registration |
+| `/vendor/dashboard` | `VendorDashboard.tsx` | ProtectedRoute | Vendor dashboard (no sidebar) |
+| `/vendor/setup` | `VendorSetup.tsx` | ProtectedRoute | Vendor onboarding setup |
+| `/vendor/upload/:token` | `VendorSecureUpload.tsx` | None | Token-based secure file upload |
+| `/vendor/invite/:code` | `VendorInviteLanding.tsx` | None | Vendor invitation landing |
+| `/vendor-update/:token` | `VendorServiceUpdate.tsx` | None | Vendor service update form |
+
+---
+
+## Enterprise Portal (No Shared Layout)
+
+| Route | Component | Auth | Description |
+|-------|-----------|------|-------------|
+| `/enterprise/admin` | `EnterpriseDashboard.tsx` | ProtectedRoute | Enterprise admin dashboard |
+| `/enterprise/dashboard` | `EnterpriseExecutive.tsx` | ProtectedRoute | Enterprise executive dashboard |
+| `/enterprise/intelligence` | `ComplianceIntelligence.tsx` | ProtectedRoute | Enterprise compliance intelligence |
+
+---
+
+## QR-Protected Routes
+
+| Route | Component | Auth | Description |
+|-------|-----------|------|-------------|
+| `/temp/log` | `TempLogQuick.tsx` | QRAuthGuard | Quick temp entry via QR scan |
+| `/temp-logs/scan` | `TempLogScan.tsx` | QRAuthGuard | QR scanner for temp logging |
+
+---
+
+## Core Dashboard Routes (ProtectedLayout)
+
+| Route | Component | Auth | Description |
+|-------|-----------|------|-------------|
+| `/dashboard` | `Dashboard.tsx` | Protected | Main dashboard — role-specific widgets |
+| `/food-safety` | `FoodSafetyHub.tsx` | Protected | Food safety hub — pillar overview |
+| `/compliance` | `ComplianceHub.tsx` | Protected | Compliance hub — scoring, trends |
+| `/insights` | `InsightsHub.tsx` | Protected | Insights hub — analytics overview |
+| `/tools` | `ToolsHub.tsx` | Protected | Tools hub — utility index |
+| `/admin` | `AdminHome.tsx` / `AdminHub.tsx` | platform_admin | Admin dashboard (documented above) |
+
+---
+
+## Vendor Management (ProtectedLayout)
+
+| Route | Component | Auth | Description |
+|-------|-----------|------|-------------|
+| `/vendors` | `Vendors.tsx` | Protected | Vendor list — 3 tabs (List, Services, Scorecard) |
+| `/vendors/:vendorId` | `VendorDetail.tsx` | Protected | Vendor detail — docs, contacts, services |
+| `/marketplace` | `VendorMarketplace.tsx` | Protected | Vendor marketplace — browse providers |
+| `/marketplace/vendor/:vendorSlug` | `VendorProfile.tsx` | Protected | Vendor profile in marketplace |
+| `/marketplace/:vendorSlug` | `VendorProfile.tsx` | Protected | Vendor profile (alternate path) |
+
+---
+
+## Insurance & Risk (ProtectedLayout)
+
+| Route | Component | Auth | Description |
+|-------|-----------|------|-------------|
+| `/insurance-risk` | `InsuranceRisk.tsx` | Protected | Insurance risk assessment — CIC five-pillar view |
+| `/improve-score` | `ImproveScore.tsx` | Protected | Score improvement recommendations |
+| `/insurance-settings` | `InsuranceSettings.tsx` | Protected | Insurance configuration |
+| `/workforce-risk` | `WorkforceRisk.tsx` | Protected | Workforce risk analysis (P5 pillar) |
+| `/cic-pse` | `CicPseView.tsx` | Protected | PSE coverage & safeguards |
+
+---
+
+## AI & Intelligence (ProtectedLayout)
+
+| Route | Component | Auth | Description |
+|-------|-----------|------|-------------|
+| `/ai-advisor` | `AIAdvisor.tsx` | Protected | AI-powered compliance advisor chat |
+| `/intelligence` | `IntelligenceHub.tsx` | Protected | Intelligence hub overview |
+| `/insights/intelligence` | `BusinessIntelligence.tsx` | Protected | Business Intelligence — 4 format tabs (documented above) |
+| `/copilot` | `CopilotInsights.tsx` | Protected | AI copilot insights |
+| `/self-diagnosis` | `SelfDiagnosis.tsx` | Protected | Self-diagnosis assessment |
+
+---
+
+## Reports & Analytics (ProtectedLayout)
+
+| Route | Component | Auth | Description |
+|-------|-----------|------|-------------|
+| `/reports` | `ReportCenter.tsx` | Protected | Report center — 12-card grid |
+| `/reports/:slug` | `ReportDetail.tsx` | Protected | Individual report detail with PDF export |
+| `/insights/reports` | `ClientReports.tsx` | Protected | Client-facing reports |
+| `/analysis` | `Analysis.tsx` | Protected | Predictive analytics dashboard |
+| `/referrals` | `ReferralDashboard.tsx` | Protected | Referral program dashboard |
+
+---
+
+## Compliance & Regulatory (ProtectedLayout)
+
+| Route | Component | Auth | Description |
+|-------|-----------|------|-------------|
+| `/facility-safety` | `FacilitySafety.tsx` | Protected | Facility Safety checklist (was Fire Safety) |
+| `/food-recovery` | `FoodRecovery.tsx` | Protected | Food recovery tracking |
+| `/sb1383` | `SB1383Compliance.tsx` | Protected | SB 1383 compliance tracker |
+| `/k12` | `K12Compliance.tsx` | Protected | K-12 compliance module |
+| `/usda/production-records` | `USDAProductionRecords.tsx` | Protected | USDA production records |
+| `/compliance-index` | `ComplianceIndex.tsx` | Protected | Compliance index overview |
+| `/compliance-overview` | `ComplianceOverview.tsx` | Protected | Compliance overview dashboard |
+| `/compliance-trends` | `ComplianceTrends.tsx` | Protected | Compliance trend analysis |
+| `/scoring-breakdown` | `ScoringBreakdown.tsx` | Protected | Score breakdown by category |
+| `/benchmarks` | `Benchmarks.tsx` | Protected | Benchmarking against industry |
+| `/health-dept-report` | `HealthDeptReport.tsx` | Protected | Health department report generator |
+| `/jurisdiction` | `JurisdictionSettings.tsx` | Protected | Jurisdiction configuration |
+| `/regulatory-alerts` | `RegulatoryAlerts.tsx` | Protected | Regulatory change alerts |
+
+---
+
+## Team & HR (ProtectedLayout)
+
+| Route | Component | Auth | Description |
+|-------|-----------|------|-------------|
+| `/team` | `Team.tsx` | Protected | Team management — roster, roles |
+| `/employees` | `EmployeesPage.tsx` | Protected | Employee directory |
+| `/employees/:id` | `EmployeeDetailPage.tsx` | Protected | Employee detail profile |
+| `/timecards` | `Timecards.tsx` | Protected | Timecard management |
+| `/timecards/alterations` | `TimecardAlterationsPage.tsx` | Protected | Timecard alteration requests |
+| `/schedule` | `SchedulePage.tsx` | Protected | Shift scheduling |
+| `/availability` | `AvailabilitySubmissionPage.tsx` | Protected | Submit availability |
+| `/availability/team` | `TeamAvailabilityPage.tsx` | Protected | Team availability overview |
+| `/availability/approvals` | `AvailabilityApprovalsPage.tsx` | Protected | Approve availability requests |
+| `/performance` | `PerformanceMetricsPage.tsx` | Protected | Performance metrics dashboard |
+| `/performance/me` | `MyPerformancePage.tsx` | Protected | Personal performance view |
+| `/bonuses` | `BonusDashboardPage.tsx` | Protected | Bonus tracking dashboard |
+
+---
+
+## Settings (ProtectedLayout, nested under /settings)
+
+| Route | Component | Auth | Description |
+|-------|-----------|------|-------------|
+| `/settings` | `SettingsPage.tsx` | Protected | Settings index → redirects to `/settings/company` |
+| `/settings/company` | `CompanyProfilePage.tsx` | Protected | Company profile settings |
+| `/settings/team-roles` | `TeamRolesPage.tsx` | Protected | Team roles configuration |
+| `/settings/service-types` | `ServiceTypesPage.tsx` | Protected | Service type configuration |
+| `/settings/notifications` | `NotificationsPage.tsx` | Protected | Notification preferences |
+| `/settings/billing` | `BillingPage.tsx` | Protected | Billing & subscription |
+| `/settings/branding` | `BrandingSettings.tsx` | Protected | Branding customization |
+| `/settings/sensors` | `IoTSensorHub.tsx` | Protected | IoT sensor settings |
+| `/settings/roles-permissions` | `RolesPermissions.tsx` | Protected | Role permissions management (owner/exec/admin only) |
+| `/settings/integrations` | `SettingsIntegrationsPage.tsx` | Protected | Integration settings |
+| `/settings/api-keys` | `IntegrationHub.tsx` | Protected | API key management |
+| `/settings/webhooks` | `IntegrationHub.tsx` | Protected | Webhook configuration |
+| `/settings/clock-reminders` | `ClockRemindersPage.tsx` | Protected | Clock-in/out reminders |
+
+---
+
+## Playbooks (ProtectedLayout)
+
+| Route | Component | Auth | Description |
+|-------|-----------|------|-------------|
+| `/playbooks` | `IncidentPlaybooks.tsx` | Protected | Playbook list — templates & active |
+| `/playbooks/active/:id` | `PlaybookRunner.tsx` | Protected | Run active playbook |
+| `/playbooks/builder` | `PlaybookBuilder.tsx` | Protected | Create/edit playbook |
+| `/playbooks/analytics` | `PlaybookAnalytics.tsx` | Protected | Playbook usage analytics |
+| `/playbooks/history/:id` | `PlaybookTimeline.tsx` | Protected | Playbook execution history |
+
+---
+
+## Quality, Safety & Inspections (ProtectedLayout)
+
+| Route | Component | Auth | Description |
+|-------|-----------|------|-------------|
+| `/alerts` | `Alerts.tsx` | Protected | Alert management |
+| `/corrective-actions` | `CorrectiveActions.tsx` | Protected | Corrective action tracker |
+| `/corrective-actions/:actionId` | `CorrectiveActionDetail.tsx` | Protected | CA detail view |
+| `/deficiencies` | `Deficiencies.tsx` | Protected | Deficiency tracker |
+| `/deficiencies/:deficiencyId` | `DeficiencyDetail.tsx` | Protected | Deficiency detail |
+| `/self-audit` | `SelfAudit.tsx` | Protected | Self-inspection tool (41+ CalCode items) |
+| `/self-inspection` | `SelfAudit.tsx` | Protected | Alias for self-audit |
+| `/mock-inspection` | `MockInspection.tsx` | Protected | Mock inspection simulator |
+| `/photo-evidence` | `PhotoEvidencePage.tsx` | Protected | Photo evidence gallery |
+| `/audit-trail` | `AuditTrail.tsx` | Protected | System audit trail |
+| `/audit-report` | `AuditReport.tsx` | Protected | Audit report generator |
+| `/inspector-view` | `InspectorView.tsx` | Protected | Inspector-facing view |
+| `/quality/callbacks` | `CallbacksPage.tsx` | Protected | Quality callbacks |
+| `/equipment/incidents` | `EquipmentIncidentsPage.tsx` | Protected | Equipment incident log |
+| `/safety/incidents` | `IncidentReportsPage.tsx` | Protected | Safety incident reports |
+| `/safety/incidents/new` | `ReportIncidentPage.tsx` | Protected | Report new incident |
+| `/safety/incidents/:id` | `IncidentDetailPage.tsx` | Protected | Incident detail |
+
+---
+
+## Inventory, Fleet & Emergency (ProtectedLayout)
+
+| Route | Component | Auth | Description |
+|-------|-----------|------|-------------|
+| `/inventory` | `InventoryPage.tsx` | Protected | Inventory management |
+| `/inventory/requests` | `InventoryRequestsPage.tsx` | Protected | Inventory requests |
+| `/inventory/:id` | `InventoryItemPage.tsx` | Protected | Inventory item detail |
+| `/fleet` | `VehiclesPage.tsx` | Protected | Fleet management |
+| `/fleet/:id` | `VehicleDetailPage.tsx` | Protected | Vehicle detail |
+| `/insurance` | `InsurancePage.tsx` | Protected | Insurance policies |
+| `/insurance/:id` | `InsurancePolicyPage.tsx` | Protected | Insurance policy detail |
+| `/emergency` | `EmergencyInfoPage.tsx` | Protected | Emergency information |
+
+---
+
+## Integrations & Developer (ProtectedLayout)
+
+| Route | Component | Auth | Description |
+|-------|-----------|------|-------------|
+| `/integrations` | `IntegrationHub.tsx` | Protected | Integration hub |
+| `/developers` | `DeveloperPortal.tsx` | Protected | Developer portal |
+| `/services` | `ServicesPage.tsx` | Protected | Service records |
+| `/services/:recordId` | `ServiceRecordDetail.tsx` | Protected | Service record detail |
+| `/import` | `ImportData.tsx` | Protected | Data import tool |
+
+---
+
+## Miscellaneous Protected Routes (ProtectedLayout)
+
+| Route | Component | Auth | Description |
+|-------|-----------|------|-------------|
+| `/documents` | `Documents.tsx` | Protected | Document management |
+| `/document-checklist` | `DocumentChecklist.tsx` | Protected | Document checklist |
+| `/calendar` | `Calendar.tsx` | Protected | Calendar view |
+| `/org-hierarchy` | `OrgHierarchy.tsx` | Protected | Organization hierarchy |
+| `/help` | `HelpSupport.tsx` | Protected | Help & support |
+| `/weekly-digest` | `WeeklyDigest.tsx` | Protected | Weekly compliance digest |
+
+---
+
+## Admin Routes — RequireAdmin (ProtectedLayout)
+
+| Route | Component | Auth | Description |
+|-------|-----------|------|-------------|
+| `/admin/onboarding` | `AdminClientOnboarding.tsx` | platform_admin | Client onboarding management |
+| `/admin/usage-analytics` | `UsageAnalytics.tsx` | platform_admin | Platform usage analytics |
+| `/admin/billing` | `AdminBilling.tsx` | platform_admin | Admin billing management |
+| `/admin/crawl-monitor` | `AdminCrawlMonitor.tsx` | platform_admin | Crawl engine monitor |
+| `/admin/rfp-monitor` | `RfpIntelligence.tsx` | platform_admin | RFP intelligence monitor |
+| `/admin/messages` | `SystemMessages.tsx` | platform_admin | System messages |
+| `/admin/k2c` | `AdminK2C.tsx` | platform_admin | Kitchen to Community admin |
+| `/admin/backup` | `DatabaseBackup.tsx` | platform_admin | Database backup |
+| `/admin/maintenance` | `MaintenanceMode.tsx` | platform_admin | Maintenance mode toggle |
+| `/admin/security-settings` | `SecuritySettings.tsx` | platform_admin | Security settings |
+| `/admin/vault` | `DocumentVault.tsx` | platform_admin | Document vault |
+| `/admin/event-log` | `EventLog.tsx` | platform_admin | Event log viewer |
+| `/admin/users` | `AdminUsers.tsx` | platform_admin | User management |
+| `/admin/security` | `AdminSecurity.tsx` | platform_admin | Security dashboard |
+| `/admin/audit-log` | `AdminAuditLog.tsx` | platform_admin | Audit log viewer |
+| `/admin/orgs` | `AdminOrgs.tsx` | platform_admin | Organization management |
+| `/admin/user-provisioning` | `UserProvisioning.tsx` | platform_admin | User provisioning |
+| `/admin/support` | `SupportTickets.tsx` | platform_admin | Support tickets |
+| `/admin/remote-connect` | `RemoteConnect.tsx` | platform_admin | Remote connect tool |
+| `/admin/staff` | `StaffRoles.tsx` | platform_admin | Staff role management |
+| `/admin/intelligence` | `EvidLYIntelligence.tsx` | platform_admin | Intelligence dashboard |
+| `/admin/reports` | `AdminReports.tsx` | platform_admin | Admin reports |
+| `/admin/verification` | `VerificationReport.tsx` | platform_admin | Verification reports |
+| `/admin/system/edge-functions` | `EdgeFunctions.tsx` | platform_admin | Edge function monitor |
+| `/admin/feature-flags` | `FeatureFlags.tsx` | platform_admin | Feature flag management |
+| `/admin/regulatory-changes` | `AdminRegulatoryChanges.tsx` | platform_admin | Regulatory change tracking |
+| `/admin/intelligence-admin` | `IntelligenceAdmin.tsx` | platform_admin | Intelligence signal management |
+| `/admin/jurisdiction-intelligence` | `JurisdictionIntelligence.tsx` | platform_admin | Jurisdiction intelligence engine |
+| `/admin/configure` | `ConfigureAdmin.tsx` | platform_admin | Platform configuration |
+| `/admin/emulate` | `UserEmulation.tsx` | platform_admin | User emulation tool |
+| `/admin/demo/dashboard` | `DemoDashboard.tsx` | platform_admin | Demo dashboard |
+| `/admin/command-center` | `CommandCenter.tsx` | platform_admin | Command center |
+| `/admin/api-keys` | `InsuranceApiKeys.tsx` | platform_admin | Insurance API keys |
+| `/admin/role-preview` | `RolePreview.tsx` | platform_admin | Role preview (no layout) |
+| `/iot-platform` | `IoTSensorPlatform.tsx` | platform_admin | IoT platform admin |
+| `/sensors` | `SensorHub.tsx` | platform_admin | Sensor hub |
+| `/sensors/add` | `SensorSetupWizard.tsx` | platform_admin | Sensor setup wizard |
+| `/sensors/:id` | `SensorDetail.tsx` | platform_admin | Sensor detail |
+
+---
+
+## Admin Routes — SalesGuard (ProtectedLayout)
+
+| Route | Component | Auth | Description |
+|-------|-----------|------|-------------|
+| `/admin/demo-generator` | `DemoGenerator.tsx` | Sales | Demo environment generator |
+| `/admin/demo-launcher` | `DemoLauncher.tsx` | Sales | Demo session launcher |
+| `/admin/demo-pipeline` | `DemoPipeline.tsx` | Sales | Demo pipeline tracker |
+| `/admin/gtm` | `GtmDashboard.tsx` | Sales | Go-to-market dashboard |
+| `/admin/kitchen-checkup` | `AssessmentLeads.tsx` | Sales | Kitchen checkup leads |
+| `/admin/leads` | `AssessmentLeads.tsx` | Sales | Assessment leads (alias) |
+| `/admin/scoretable` | `AdminScoreTable.tsx` | Sales | Score table admin |
+| `/admin/campaigns` | `MarketingCampaigns.tsx` | Sales | Marketing campaigns |
+| `/admin/sales` | `SalesPipeline.tsx` | Sales | Sales pipeline |
+| `/admin/violation-outreach` | `ViolationOutreach.tsx` | Sales | Violation outreach tool |
+
+---
+
+## Redirect Aliases
+
+| Path | Redirect Target | Notes |
+|------|-----------------|-------|
+| `/admin/onboard-client` | `/admin/onboarding` | Legacy alias |
+| `/admin/emulation` | `/admin/emulate` | Legacy alias |
+| `/admin/regulatory` | `/admin/regulatory-changes` | Shortcut |
+| `/admin/rfp` | `/admin/rfp-monitor` | Shortcut |
+| `/admin/rfp-intelligence` | `/admin/rfp-monitor` | Legacy alias |
+| `/admin/jurisdiction-intel` | `/admin/jurisdiction-intelligence` | Shortcut |
+| `/admin/demos` | `/admin/demo-pipeline` | Shortcut |
+| `/admin/assessments` | `/admin/kitchen-checkup` | Legacy alias |
+| `/admin/home` | `/admin` | Shortcut |
+| `/admin/dashboard` | `/admin` | Shortcut |
+| `/admin/intelligence-queue` | `/admin/intelligence-admin` | Legacy alias |
+| `/checkup` | `/dashboard` | Redirect (checkup moved to /assessment) |
+| `/incident-playbook` | `/playbooks` | Legacy alias |
+| `/regulatory-tracking` | `/regulatory-alerts` | Legacy alias |
+| `/ai-insights` | `/ai-advisor` | Legacy alias |
+| `/analytics` | `/analysis` | Legacy alias |
+| `/daily-operations` | `/dashboard` | Legacy alias |
+| `/locations` | `/org-hierarchy` | Legacy alias |
+| `/inspections` | `/self-audit` | Legacy alias |
+| `/certifications` | `/training/certificates` | Legacy alias |
+| `/sensor-dashboard` | `/sensors` | Legacy alias |
+| `/regulatory-updates` | `/intelligence` | Legacy alias |
+| `/support/survey/:token` | `SurveyPage.tsx` | Support survey (standalone) |
+
+---
+
+## Route Statistics
+
+| Category | Count |
+|----------|-------|
+| Public routes (no auth) | ~30 |
+| Auth routes | 12 |
+| QR-protected routes | 2 |
+| Protected no-layout routes | ~25 |
+| Protected with layout (ProtectedLayout) | ~120 |
+| Admin routes (RequireAdmin) | ~35 |
+| Sales-guarded admin routes | 10 |
+| Redirect aliases | ~22 |
+| **Total route declarations** | **~170** |
