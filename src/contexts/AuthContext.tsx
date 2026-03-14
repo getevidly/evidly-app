@@ -15,6 +15,7 @@ interface UserProfile {
   first_login_at: string | null;
   last_login_at: string | null;
   onboarding_completed: boolean;
+  is_suspended?: boolean;
 }
 
 interface AuthContextType {
@@ -68,6 +69,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .maybeSingle();
 
     if (data && !error) {
+      // AUDIT-FIX-05 / A-1: Enforce suspension — sign out immediately
+      if (data.is_suspended) {
+        console.warn('[AuthContext] User is suspended:', userId);
+        await supabase.auth.signOut();
+        setProfile(null);
+        setUser(null);
+        setSession(null);
+        window.location.href = '/suspended';
+        return;
+      }
+
       if (!data.organization_id) {
         console.warn('[AuthContext] fetchProfile: organization_id is null for user', userId, '— check user_location_access row exists');
       }

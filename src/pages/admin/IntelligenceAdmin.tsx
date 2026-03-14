@@ -55,9 +55,15 @@ interface QueueSignal {
   dismissed_at?: string | null;
   dismissed_by?: string | null;
   cic_pillar?: string | null;
+  // AUDIT-FIX-05 / P-1: Delivery tracking
+  delivery_status?: string | null;
+  delivered_at?: string | null;
+  delivery_error?: string | null;
+  delivery_attempt_count?: number | null;
+  published_at?: string | null;
 }
 
-type TabFilter = 'all' | 'hold' | 'notify' | 'dismissed';
+type TabFilter = 'all' | 'hold' | 'notify' | 'dismissed' | 'published';
 
 const URGENCY_COLORS: Record<string, { bg: string; text: string }> = {
   critical:      { bg: '#FEF2F2', text: '#DC2626' },
@@ -123,8 +129,10 @@ export default function IntelligenceAdmin() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [signals, setSignals] = useState<QueueSignal[]>([]);
+  const [publishedSignals, setPublishedSignals] = useState<QueueSignal[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<TabFilter>('all');
+  const [redelivering, setRedelivering] = useState<string | null>(null);
   const [dimFilter, setDimFilter] = useState<'' | 'revenue' | 'liability' | 'cost' | 'operational' | 'workforce'>('');
   const [pillarFilter, setPillarFilter] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
@@ -204,8 +212,31 @@ export default function IntelligenceAdmin() {
     }
   }, []);
 
+  // AUDIT-FIX-05 / P-1: Re-deliver a failed signal
+  const redeliverSignal = useCallback(async (signalId: string) => {
+    setRedelivering(signalId);
+    try {
+      await supabase.functions.invoke('intelligence-deliver', {
+        body: { signal_id: signalId, manual_retry: true },
+      });
+      // Refresh published list after re-delivery
+      const { data: updated } = await supabase
+        .from('intelligence_signals')
+        .select('*')
+        .eq('id', signalId)
+        .single();
+      if (updated) {
+        setPublishedSignals(prev => prev.map(s => s.id === signalId ? updated : s));
+      }
+    } catch (err) {
+      console.error('[IntelligenceAdmin] Re-deliver failed:', err);
+    }
+    setRedelivering(null);
+  }, []);
+
   const loadQueue = useCallback(async () => {
     setLoading(true);
+    // Load unpublished queue
     const { data, error } = await supabase
       .from('intelligence_signals')
       .select('*')
@@ -214,6 +245,16 @@ export default function IntelligenceAdmin() {
       .order('created_at', { ascending: false })
       .limit(200);
     if (error) console.error('[SignalQueue] load error:', error.message);
+
+    // AUDIT-FIX-05 / P-1: Load published signals for delivery tracking
+    const { data: pubData } = await supabase
+      .from('intelligence_signals')
+      .select('*')
+      .eq('is_published', true)
+      .order('published_at', { ascending: false })
+      .limit(50);
+    if (pubData) setPublishedSignals(pubData);
+
     if (data) {
       setSignals(data);
       // Load verification statuses for all signals
@@ -323,6 +364,9 @@ export default function IntelligenceAdmin() {
         workforce_risk_level: getRiskLevel(sig, 'workforce'),
         is_published: true,
         published_at: new Date().toISOString(),
+        // AUDIT-FIX-05 / P-1: Initialize delivery tracking
+        delivery_status: 'pending',
+        delivery_attempt_count: 0,
       })
       .eq('id', sig.id);
     if (error) {
@@ -335,6 +379,14 @@ export default function IntelligenceAdmin() {
           body: { type: 'signal', id: sig.id },
         });
       } catch {}
+      // Refresh published list
+      const { data: pubData } = await supabase
+        .from('intelligence_signals')
+        .select('*')
+        .eq('is_published', true)
+        .order('published_at', { ascending: false })
+        .limit(50);
+      if (pubData) setPublishedSignals(pubData);
     }
     setPublishing(null);
   };
@@ -487,7 +539,10 @@ export default function IntelligenceAdmin() {
     return (cv && cv !== 'none') || (ov && ov !== 'none');
   }).length;
 
+  const publishedCount = publishedSignals.length;
+  const failedDeliveryCount = publishedSignals.filter(s => s.delivery_status === 'failed').length;
   const isDismissedTab = filter === 'dismissed';
+  const isPublishedTab = filter === 'published';
 
   const pillStyle = (active: boolean, color: string = NAVY): React.CSSProperties => ({
     padding: '5px 14px', borderRadius: 20, fontSize: 11, fontWeight: 600, cursor: 'pointer',
@@ -533,14 +588,19 @@ export default function IntelligenceAdmin() {
       </div>
 
       {/* Tab pills */}
-      <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+      <div style={{ display: 'flex', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
         {([
           { key: 'all' as TabFilter, label: `All (${activeSignals.length})` },
           { key: 'hold' as TabFilter, label: `Hold (${holdCount})` },
           { key: 'notify' as TabFilter, label: `Notify (${notifyCount})` },
           { key: 'dismissed' as TabFilter, label: `Dismissed (${dismissedCount})` },
+          { key: 'published' as TabFilter, label: `Published (${publishedCount})${failedDeliveryCount > 0 ? ` · ${failedDeliveryCount} failed` : ''}` },
         ]).map(f => (
-          <button key={f.key} onClick={() => setFilter(f.key)} style={pillStyle(filter === f.key)}>
+          <button key={f.key} onClick={() => setFilter(f.key)}
+            style={f.key === 'published' && failedDeliveryCount > 0
+              ? { ...pillStyle(filter === f.key), ...(filter !== f.key ? { borderColor: '#DC2626', color: '#DC2626' } : {}) }
+              : pillStyle(filter === f.key)
+            }>
             {f.label}
           </button>
         ))}
@@ -602,8 +662,101 @@ export default function IntelligenceAdmin() {
         ))}
       </div>
 
+      {/* AUDIT-FIX-05 / P-1: Published Signals with Delivery Status */}
+      {isPublishedTab ? (
+        <div>
+          {publishedSignals.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '48px 20px', background: '#FAFAF8', border: '1.5px dashed #E5E0D8', borderRadius: 10 }}>
+              <div style={{ fontSize: 14, fontWeight: 700, color: NAVY, marginBottom: 6 }}>No published signals</div>
+              <div style={{ fontSize: 12, color: TEXT_SEC }}>Published signals will appear here with their delivery status.</div>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {publishedSignals.map(sig => {
+                const ds = sig.delivery_status || 'pending';
+                const dsColor = ds === 'delivered' ? '#059669' : ds === 'failed' ? '#DC2626' : '#D97706';
+                const dsLabel = ds === 'delivered' ? 'Delivered' : ds === 'failed' ? 'Failed' : ds === 'partial' ? 'Partial' : 'Pending';
+                const dsIcon = ds === 'delivered' ? '\u2713' : ds === 'failed' ? '\u2717' : '\u27F3';
+                const isFailed = ds === 'failed' || ds === 'pending';
+
+                return (
+                  <div key={sig.id} style={{
+                    background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10,
+                    padding: '14px 18px',
+                    borderLeft: ds === 'failed' ? '4px solid #DC2626'
+                      : ds === 'delivered' ? '4px solid #059669'
+                      : `4px solid #D97706`,
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+                      <div style={{ flex: 1 }}>
+                        {/* Badges */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6, flexWrap: 'wrap' }}>
+                          <span style={{
+                            fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10,
+                            background: ds === 'delivered' ? '#ECFDF5' : ds === 'failed' ? '#FEF2F2' : '#FFFBEB',
+                            color: dsColor,
+                          }}>
+                            {dsIcon} {dsLabel.toUpperCase()}
+                          </span>
+                          <span style={{ fontSize: 9, fontWeight: 600, padding: '2px 8px', borderRadius: 10, background: '#F9FAFB', color: TEXT_SEC, border: `1px solid ${BORDER}` }}>
+                            {sig.signal_type?.replace(/_/g, ' ')}
+                          </span>
+                          {sig.delivery_attempt_count != null && sig.delivery_attempt_count > 1 && (
+                            <span style={{ fontSize: 9, fontWeight: 600, color: TEXT_MUTED }}>
+                              Attempt #{sig.delivery_attempt_count}
+                            </span>
+                          )}
+                        </div>
+                        {/* Title */}
+                        <div style={{ fontSize: 14, fontWeight: 700, color: NAVY, marginBottom: 4 }}>{sig.title}</div>
+                        {/* Summary */}
+                        {sig.content_summary && (
+                          <div style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.5, marginBottom: 6 }}>
+                            {sig.content_summary.slice(0, 150)}{sig.content_summary.length > 150 ? '...' : ''}
+                          </div>
+                        )}
+                        {/* Delivery details */}
+                        <div style={{ fontSize: 11, color: TEXT_MUTED }}>
+                          Published: {sig.published_at ? new Date(sig.published_at).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '—'}
+                          {sig.delivered_at && (
+                            <> · Delivered: {new Date(sig.delivered_at).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}</>
+                          )}
+                        </div>
+                        {/* Error message for failed */}
+                        {sig.delivery_error && (
+                          <div style={{ fontSize: 11, color: '#DC2626', marginTop: 4, padding: '4px 8px', background: '#FEF2F2', borderRadius: 4 }}>
+                            Error: {sig.delivery_error}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Re-deliver button for failed/pending */}
+                      {isFailed && (
+                        <button
+                          onClick={() => redeliverSignal(sig.id)}
+                          disabled={redelivering === sig.id}
+                          style={{
+                            padding: '6px 16px', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer',
+                            background: redelivering === sig.id ? '#E5E7EB' : '#D97706',
+                            color: redelivering === sig.id ? TEXT_MUTED : '#fff',
+                            border: 'none', flexShrink: 0,
+                            opacity: redelivering === sig.id ? 0.6 : 1,
+                          }}
+                        >
+                          {redelivering === sig.id ? 'Delivering...' : 'Re-deliver'}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      ) : null}
+
       {/* Signal cards */}
-      {loading ? (
+      {isPublishedTab ? null : loading ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {Array.from({ length: 5 }).map((_, i) => (
             <div key={i} style={{ height: 80, background: '#E5E7EB', borderRadius: 10, animation: 'pulse 1.5s ease-in-out infinite' }} />

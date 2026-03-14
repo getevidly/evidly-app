@@ -13,6 +13,15 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 
 const VALID_SERVICE_CODES = ["KEC", "FPM", "GFX", "RGC", "FS"];
 
+// Maps HoodOps service_type_code → PSE safeguard_type (null = not a PSE safeguard)
+const SERVICE_CODE_TO_SAFEGUARD: Record<string, string | null> = {
+  KEC: "hood_cleaning",
+  FS:  "fire_suppression",
+  FPM: null,
+  GFX: null,
+  RGC: null,
+};
+
 const FREQUENCY_DAYS: Record<string, number> = {
   monthly: 30,
   quarterly: 90,
@@ -99,12 +108,14 @@ Deno.serve(async (req: Request) => {
   try {
     if (event === "service.completed") {
       // Insert vendor_service_records
+      const safeguardType = SERVICE_CODE_TO_SAFEGUARD[service_type_code] ?? null;
       const { error: insertError } = await supabase
         .from("vendor_service_records")
         .insert({
           organization_id,
           location_id,
           service_type_code,
+          safeguard_type: safeguardType,
           service_type: data.service_name || service_type_code,
           vendor_name: vendor_name || "HoodOps Partner",
           technician_name: technician_name || null,

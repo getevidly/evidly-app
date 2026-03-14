@@ -94,6 +94,7 @@ const CarrierPartnership = lazy(() => import('./pages/CarrierPartnership').then(
 const VendorMarketplace = lazy(() => import('./pages/VendorMarketplace').then(m => ({ default: m.VendorMarketplace })));
 const VendorProfile = lazy(() => import('./pages/VendorProfile').then(m => ({ default: m.VendorProfile })));
 const MarketplaceLanding = lazy(() => import('./pages/MarketplaceLanding').then(m => ({ default: m.MarketplaceLanding })));
+const Suspended = lazy(() => import('./pages/Suspended').then(m => ({ default: m.Suspended })));
 const PublicVerification = lazy(() => import('./pages/PublicVerification'));
 const PassportDemo = lazy(() => import('./pages/PassportDemo'));
 const Passport = lazy(() => import('./pages/Passport'));
@@ -319,6 +320,11 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     return <Navigate to="/login" replace />;
   }
 
+  // AUDIT-FIX-05 / A-1: Suspended user redirect
+  if (profile?.is_suspended) {
+    return <Navigate to="/suspended" replace />;
+  }
+
   // Authenticated users: EvidlyAdmin bypasses route guards; others use DB role
   if (!isEvidlyAdmin) {
     const effectiveRole = dbRoleToUserRole(profile?.role);
@@ -393,6 +399,10 @@ function ProtectedLayout() {
     }
     if (!user) {
       return <Navigate to="/login" replace />;
+    }
+    // AUDIT-FIX-05 / A-1: Double-check suspension at layout level
+    if (profile?.is_suspended) {
+      return <Navigate to="/suspended" replace />;
     }
   }
 
@@ -522,6 +532,7 @@ function AppRoutes() {
         <Route path="/equipment/scan/:equipmentId" element={<Suspense fallback={<PageSkeleton />}><QRScanLandingPage /></Suspense>} />
         <Route path="/temp/log" element={<QRAuthGuard><Suspense fallback={<PageSkeleton />}><TempLogQuick /></Suspense></QRAuthGuard>} />
         <Route path="/temp-logs/scan" element={<QRAuthGuard><Suspense fallback={<PageSkeleton />}><TempLogScan /></Suspense></QRAuthGuard>} />
+        <Route path="/suspended" element={<Suspense fallback={<PageSkeleton />}><Suspended /></Suspense>} />
         <Route path="/login" element={<PublicRoute><Suspense fallback={<PageSkeleton />}><Login /></Suspense></PublicRoute>} />
         <Route path="/admin-login" element={<PublicRoute><Suspense fallback={<PageSkeleton />}><AdminLogin /></Suspense></PublicRoute>} />
         <Route path="/signup" element={<PublicRoute><Suspense fallback={<PageSkeleton />}><Signup /></Suspense></PublicRoute>} />

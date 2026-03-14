@@ -120,6 +120,27 @@ export const SERVICE_TYPES: Record<ServiceTypeCode, ServiceTypeDefinition> = {
   },
 };
 
+/**
+ * Maps HoodOps service_type_code to EvidLY PSE safeguard_type.
+ * KEC → hood_cleaning, FS → fire_suppression.
+ * FPM/GFX/RGC are KEC children — not standalone PSE safeguards.
+ */
+export const SERVICE_CODE_TO_SAFEGUARD: Record<ServiceTypeCode, string | null> = {
+  KEC: 'hood_cleaning',
+  FS:  'fire_suppression',
+  FPM: null,
+  GFX: null,
+  RGC: null,
+};
+
+/** PSE safeguard configuration with NFPA references and linked service codes */
+export const PSE_SAFEGUARD_CONFIG = [
+  { key: 'hood_cleaning',    label: 'Hood Cleaning',           code: 'NFPA 96-2024 Table 12.4', service_codes: ['KEC'] as ServiceTypeCode[] },
+  { key: 'fire_suppression', label: 'Fire Suppression System', code: 'NFPA 96',                 service_codes: ['FS']  as ServiceTypeCode[] },
+  { key: 'fire_alarm',       label: 'Fire Alarm System',       code: 'NFPA 72',                 service_codes: []      as ServiceTypeCode[] },
+  { key: 'sprinklers',       label: 'Sprinkler System',        code: 'NFPA 25',                 service_codes: []      as ServiceTypeCode[] },
+] as const;
+
 /** All service type codes in display order */
 export const SERVICE_TYPE_CODES: ServiceTypeCode[] = ['KEC', 'FPM', 'GFX', 'RGC', 'FS'];
 

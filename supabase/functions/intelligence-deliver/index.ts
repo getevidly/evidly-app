@@ -56,9 +56,14 @@ serve(async (req) => {
   );
 
   try {
-    const { type, id } = await req.json();
+    const body = await req.json();
+    const { type, id, signal_id, manual_retry } = body;
 
-    if (!type || !id) {
+    // Support both { type, id } and { signal_id, manual_retry } for re-delivery
+    const effectiveType = type || (signal_id ? 'signal' : null);
+    const effectiveId = id || signal_id;
+
+    if (!effectiveType || !effectiveId) {
       return new Response(
         JSON.stringify({ error: 'Missing type or id' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
@@ -69,11 +74,11 @@ serve(async (req) => {
     let emailed = 0;
 
     // ── ADVISORY DELIVERY ────────────────────────────────────────
-    if (type === 'advisory') {
+    if (effectiveType === 'advisory') {
       const { data: advisory } = await supabase
         .from('client_advisories')
         .select('*')
-        .eq('id', id)
+        .eq('id', effectiveId)
         .single();
 
       if (!advisory) {
@@ -195,12 +200,22 @@ serve(async (req) => {
         advisory.title, advisory.summary, priority, signal?.recommended_action || null,
       );
 
+      // AUDIT-FIX-05 / P-1: Update delivery status on the source signal
+      if (advisory.signal_id) {
+        await supabase.from('intelligence_signals').update({
+          delivery_status: delivered > 0 ? 'delivered' : 'failed',
+          delivered_at: delivered > 0 ? new Date().toISOString() : null,
+          delivery_error: delivered === 0 ? 'No feed entries created' : null,
+          delivery_attempt_count: supabase.rpc ? 1 : 1,
+        }).eq('id', advisory.signal_id);
+      }
+
     // ── JURISDICTION UPDATE DELIVERY ─────────────────────────────
-    } else if (type === 'jurisdiction_update') {
+    } else if (effectiveType === 'jurisdiction_update') {
       const { data: update } = await supabase
         .from('jurisdiction_intel_updates')
         .select('*')
-        .eq('id', id)
+        .eq('id', effectiveId)
         .single();
 
       if (!update) {
@@ -305,11 +320,11 @@ serve(async (req) => {
       );
 
     // ── REGULATORY UPDATE DELIVERY ───────────────────────────────
-    } else if (type === 'regulatory_update') {
+    } else if (effectiveType === 'regulatory_update') {
       const { data: update } = await supabase
         .from('regulatory_changes')
         .select('*')
-        .eq('id', id)
+        .eq('id', effectiveId)
         .single();
 
       if (!update) {
@@ -397,12 +412,147 @@ serve(async (req) => {
       // Mark as published
       await supabase.from('regulatory_changes')
         .update({ published: true, published_at: new Date().toISOString() })
-        .eq('id', id);
+        .eq('id', effectiveId);
 
       emailed = await sendEmailNotifications(
         supabase, orgCountyMap, update.id, 'regulatory_changes',
         update.title, update.summary || update.title, priority,
         update.recommended_action || `Review ${update.title} and update procedures before ${update.effective_date || 'deadline'}.`,
+      );
+
+    // ── DIRECT SIGNAL DELIVERY (publish flow + manual re-deliver) ─────
+    } else if (effectiveType === 'signal') {
+      const { data: signal } = await supabase
+        .from('intelligence_signals')
+        .select('*')
+        .eq('id', effectiveId)
+        .single();
+
+      if (!signal) {
+        return new Response(
+          JSON.stringify({ error: 'Signal not found' }),
+          { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+        );
+      }
+
+      // Increment attempt count
+      const attemptCount = (signal.delivery_attempt_count || 0) + 1;
+
+      try {
+        // Find affected orgs via correlations
+        const orgCountyMap = new Map<string, string | null>();
+
+        const { data: correlations } = await supabase
+          .from('intelligence_correlations')
+          .select('*')
+          .eq('signal_id', effectiveId);
+
+        if (correlations && correlations.length > 0) {
+          const jurisdictionKeys = correlations.map((c: any) => c.jurisdiction_key).filter(Boolean);
+          if (jurisdictionKeys.length > 0) {
+            const { data: locs } = await supabase
+              .from('locations')
+              .select('organization_id, county')
+              .in('jurisdiction_id', jurisdictionKeys);
+            (locs || []).forEach((l: any) => {
+              if (l.organization_id) orgCountyMap.set(l.organization_id, l.county || null);
+            });
+          }
+        }
+
+        // Fallback: if signal has org_id, deliver to that org
+        if (orgCountyMap.size === 0 && signal.org_id) {
+          orgCountyMap.set(signal.org_id, null);
+        }
+
+        // Fallback: all active orgs
+        if (orgCountyMap.size === 0) {
+          const { data: orgs } = await supabase
+            .from('organizations')
+            .select('id')
+            .eq('status', 'active');
+          (orgs || []).forEach((o: any) => orgCountyMap.set(o.id, null));
+        }
+
+        const riskLevels = [
+          signal.risk_revenue || signal.revenue_risk_level || 'none',
+          signal.risk_liability || signal.liability_risk_level || 'none',
+          signal.risk_cost || signal.cost_risk_level || 'none',
+          signal.risk_operational || signal.operational_risk_level || 'none',
+        ];
+        const priority = computePriority(riskLevels);
+
+        const feedEntries = Array.from(orgCountyMap.entries()).map(([orgId, county]) => ({
+          organization_id: orgId,
+          signal_id: signal.id,
+          title: signal.title,
+          summary: signal.content_summary || signal.title,
+          category: signal.category || 'food_safety',
+          signal_type: signal.signal_type || 'intelligence_signal',
+          source_name: signal.source_name || signal.source_key || null,
+          priority,
+          feed_type: 'signal',
+          revenue_risk_level: signal.revenue_risk_level || 'none',
+          revenue_risk_note: signal.revenue_risk_note || null,
+          liability_risk_level: signal.liability_risk_level || 'none',
+          liability_risk_note: signal.liability_risk_note || null,
+          cost_risk_level: signal.cost_risk_level || 'none',
+          cost_risk_note: signal.cost_risk_note || null,
+          operational_risk_level: signal.operational_risk_level || 'none',
+          operational_risk_note: signal.operational_risk_note || null,
+          opp_revenue_level: 'none', opp_revenue_note: null,
+          opp_liability_level: 'none', opp_liability_note: null,
+          opp_cost_level: 'none', opp_cost_note: null,
+          opp_operational_level: 'none', opp_operational_note: null,
+          recommended_action: signal.recommended_action || null,
+          action_deadline: null,
+          relevance_reason: buildRelevanceReason(county, 'advisory', signal.title),
+          dimension: 'operational',
+          risk_level: priority === 'normal' ? 'medium' : priority,
+          recommended_actions: [],
+          delivered_via: ['in_app'],
+          delivered_at: new Date().toISOString(),
+          published_at: new Date().toISOString(),
+          is_read: false,
+          is_actioned: false,
+          is_dismissed: false,
+        }));
+
+        if (feedEntries.length > 0) {
+          const { error: insertError } = await supabase
+            .from('client_intelligence_feed')
+            .insert(feedEntries);
+          if (!insertError) delivered = feedEntries.length;
+        }
+
+        emailed = await sendEmailNotifications(
+          supabase, orgCountyMap, signal.id, 'intelligence_signals',
+          signal.title, signal.content_summary || signal.title,
+          priority, signal.recommended_action || null,
+        );
+
+        // AUDIT-FIX-05 / P-1: Mark delivery success
+        await supabase.from('intelligence_signals').update({
+          delivery_status: delivered > 0 ? 'delivered' : 'failed',
+          delivered_at: delivered > 0 ? new Date().toISOString() : null,
+          delivery_error: delivered === 0 ? 'No feed entries created' : null,
+          delivery_attempt_count: attemptCount,
+        }).eq('id', effectiveId);
+
+      } catch (deliveryErr) {
+        // AUDIT-FIX-05 / P-1: Mark delivery failure
+        await supabase.from('intelligence_signals').update({
+          delivery_status: 'failed',
+          delivery_error: String(deliveryErr),
+          delivery_attempt_count: attemptCount,
+        }).eq('id', effectiveId);
+        console.error('[intelligence-deliver] Signal delivery failed:', deliveryErr);
+      }
+
+    } else {
+      return new Response(
+        JSON.stringify({ error: `Unknown type: ${effectiveType}` }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
       );
     }
 
