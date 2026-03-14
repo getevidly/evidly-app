@@ -1,10 +1,12 @@
 // ═══════════════════════════════════════════════════════════
-// hoodops-webhook — HOODOPS-SERVICES-01
+// hoodops-webhook — HOODOPS-SERVICES-01 + AUDIT-FIX-07 / H-3, H-4
 //
 // Receives webhook events from HoodOps platform:
-//   - service.completed → insert vendor_service_records + upsert schedule
+//   - service.completed → upsert vendor_service_records + upsert schedule
 //   - service.scheduled → upsert location_service_schedules
 //
+// H-3: Idempotency via event_id (deterministic if not provided by HoodOps)
+// H-4: All calls logged to platform_audit_log
 // No JWT verification — external webhook. Uses shared secret.
 // ═══════════════════════════════════════════════════════════
 
@@ -105,13 +107,36 @@ Deno.serve(async (req: Request) => {
     );
   }
 
+  // AUDIT-FIX-07 / H-3: Deterministic event_id for idempotency
+  const effectiveDate = service_date || new Date().toISOString().split("T")[0];
+  const eventId = data.event_id ||
+    `${organization_id}-${location_id}-${service_type_code}-${effectiveDate}`;
+
+  // AUDIT-FIX-07 / H-4: Audit logging helper
+  const logAudit = async (success: boolean, errorMessage?: string) => {
+    await supabase.from("platform_audit_log").insert({
+      action: "edge_fn.hoodops_webhook",
+      resource_type: "vendor_service_record",
+      resource_id: eventId,
+      success,
+      error_message: errorMessage || null,
+      metadata: {
+        event,
+        service_type_code,
+        location_id,
+        organization_id,
+      },
+    }).catch(() => {});
+  };
+
   try {
     if (event === "service.completed") {
-      // Insert vendor_service_records
+      // AUDIT-FIX-07 / H-3: Upsert with event_id for idempotency (was insert)
       const safeguardType = SERVICE_CODE_TO_SAFEGUARD[service_type_code] ?? null;
-      const { error: insertError } = await supabase
+      const { error: upsertRecordError } = await supabase
         .from("vendor_service_records")
-        .insert({
+        .upsert({
+          event_id: eventId,
           organization_id,
           location_id,
           service_type_code,
@@ -119,24 +144,24 @@ Deno.serve(async (req: Request) => {
           service_type: data.service_name || service_type_code,
           vendor_name: vendor_name || "HoodOps Partner",
           technician_name: technician_name || null,
-          service_date: service_date || new Date().toISOString().split("T")[0],
+          service_date: effectiveDate,
           price_charged: price_charged || null,
           certificate_url: certificate_url || null,
           notes: notes || null,
           source: "hoodops_webhook",
           webhook_payload: body,
-        });
+        }, { onConflict: "event_id" });
 
-      if (insertError) {
-        console.error("Insert error:", insertError);
+      if (upsertRecordError) {
+        console.error("Upsert record error:", upsertRecordError);
+        await logAudit(false, upsertRecordError.message);
         return new Response(
-          JSON.stringify({ error: "Failed to insert service record", detail: insertError.message }),
+          JSON.stringify({ error: "Failed to upsert service record", detail: upsertRecordError.message }),
           { status: 500, headers: { "Content-Type": "application/json" } },
         );
       }
 
       // Upsert schedule
-      const effectiveDate = service_date || new Date().toISOString().split("T")[0];
       const nextDue = calculateNextDue(effectiveDate, frequency || "quarterly");
 
       const { error: upsertError } = await supabase
@@ -160,8 +185,9 @@ Deno.serve(async (req: Request) => {
         console.error("Upsert error:", upsertError);
       }
 
+      await logAudit(true);
       return new Response(
-        JSON.stringify({ ok: true, event: "service.completed", next_due: nextDue }),
+        JSON.stringify({ ok: true, event: "service.completed", event_id: eventId, next_due: nextDue }),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
     }
@@ -190,24 +216,28 @@ Deno.serve(async (req: Request) => {
 
       if (upsertError) {
         console.error("Upsert error:", upsertError);
+        await logAudit(false, upsertError.message);
         return new Response(
           JSON.stringify({ error: "Failed to upsert schedule", detail: upsertError.message }),
           { status: 500, headers: { "Content-Type": "application/json" } },
         );
       }
 
+      await logAudit(true);
       return new Response(
-        JSON.stringify({ ok: true, event: "service.scheduled", next_due: nextDue }),
+        JSON.stringify({ ok: true, event: "service.scheduled", event_id: eventId, next_due: nextDue }),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
     }
 
+    await logAudit(false, `Unknown event: ${event}`);
     return new Response(
       JSON.stringify({ error: `Unknown event: ${event}` }),
       { status: 400, headers: { "Content-Type": "application/json" } },
     );
   } catch (err) {
     console.error("Webhook error:", err);
+    await logAudit(false, String(err));
     return new Response(
       JSON.stringify({ error: "Internal server error" }),
       { status: 500, headers: { "Content-Type": "application/json" } },

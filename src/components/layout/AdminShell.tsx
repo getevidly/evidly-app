@@ -82,6 +82,7 @@ const NAV_SECTIONS: NavSection[] = [
       { label: 'User Emulation', path: '/admin/emulate' },
       { label: 'Role Preview', path: '/admin/role-preview' },
       { label: 'Configure', path: '/admin/configure' },
+      { label: 'Organizations', path: '/admin/orgs' },
     ],
   },
   {

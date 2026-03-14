@@ -177,6 +177,7 @@ const VerificationReport = lazy(() => import('./pages/admin/VerificationReport')
 const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'));
 const AdminSecurity = lazy(() => import('./pages/admin/AdminSecurity'));
 const AdminAuditLog = lazy(() => import('./pages/admin/AdminAuditLog'));
+const AdminOrgs = lazy(() => import('./pages/admin/AdminOrgs'));
 const BusinessIntelligence = lazy(() => import('./pages/BusinessIntelligence').then(m => ({ default: m.BusinessIntelligence })));
 const ClientReports = lazy(() => import('./pages/ClientReports').then(m => ({ default: m.ClientReports })));
 const SharedReport = lazy(() => import('./pages/public/SharedReport').then(m => ({ default: m.SharedReport })));
@@ -756,6 +757,7 @@ function AppRoutes() {
           <Route path="/admin/users" element={<AdminUsers />} />
           <Route path="/admin/security" element={<AdminSecurity />} />
           <Route path="/admin/audit-log" element={<AdminAuditLog />} />
+          <Route path="/admin/orgs" element={<AdminOrgs />} />
           <Route path="/admin/user-provisioning" element={<UserProvisioning />} />
           <Route path="/admin/support" element={<SupportTickets />} />
           <Route path="/admin/remote-connect" element={<RemoteConnect />} />

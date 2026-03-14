@@ -1,10 +1,9 @@
 /**
- * AUDIT-FIX-04 / FIX 1 — Unread intelligence signal count for bell badge
+ * AUDIT-FIX-07 / P-5 — Unread intelligence signal count for bell badge
  *
- * Queries intelligence_signals WHERE is_published = true, scoped to org_id.
- * Uses signal_reads table to determine unread (no read record for current user).
+ * Uses two-step fetch (signals + reads) computed in JS.
+ * Replaces fragile PostgREST NOT IN subquery pattern.
  * Real-time subscription on intelligence_signals for INSERT/UPDATE events.
- * REQUIRED: cleanup via supabase.removeChannel.
  */
 
 import { useState, useEffect, useCallback } from 'react';
@@ -26,17 +25,28 @@ export function useUnreadSignals() {
       return;
     }
 
-    // Count published signals with no matching signal_reads record for this user
-    const { count, error } = await supabase
+    // Step 1: Get all published signal IDs for this org
+    const { data: signals, error: sigError } = await supabase
       .from('intelligence_signals')
-      .select('id', { count: 'exact', head: true })
+      .select('id')
       .eq('is_published', true)
-      .eq('org_id', orgId)
-      .not('id', 'in', `(SELECT signal_id FROM signal_reads WHERE user_id = '${userId}')`);
+      .eq('org_id', orgId);
 
-    if (!error && count !== null) {
-      setUnreadCount(count);
+    if (sigError || !signals) {
+      setUnreadCount(0);
+      return;
     }
+
+    // Step 2: Get all read signal IDs for this user
+    const { data: reads } = await supabase
+      .from('signal_reads')
+      .select('signal_id')
+      .eq('user_id', userId);
+
+    // Step 3: Count in JS — reliable, no PostgREST filter fragility
+    const readIds = new Set((reads || []).map(r => r.signal_id));
+    const count = signals.filter(s => !readIds.has(s.id)).length;
+    setUnreadCount(count);
   }, [isDemoMode, orgId, userId]);
 
   // Initial fetch
