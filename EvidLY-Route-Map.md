@@ -418,3 +418,11 @@
 - Landing page NavBar gold button, IRRAboveFold section, IRRSection
 - ScoreTable county pages cross-links grid
 - Direct link: `/operations-check`
+
+---
+
+## 404 Catch-All (AUDIT-FIX-01)
+
+| Route | Component | Auth | Description |
+|-------|-----------|------|-------------|
+| `/*` | `NotFound.jsx` | Public | 404 catch-all — unmatched URLs show "This page doesn't exist" with link to Dashboard |
