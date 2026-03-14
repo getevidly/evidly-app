@@ -83,15 +83,6 @@ interface ClassificationLogEntry {
   created_at: string;
 }
 
-// AUDIT-FIX-08: Demo classification log data
-const DEMO_CLASSIF_LOG: ClassificationLogEntry[] = [
-  { id: 'cl1', signal_id: 's1', signal_title: 'FDA Recall: Romaine Lettuce — E. coli O157:H7', signal_type: 'recall', model: 'claude-haiku-4-5-20251001', input_tokens: 342, output_tokens: 89, total_tokens: 431, total_cost_usd: 0.000787, success: true, error_message: null, created_at: new Date(Date.now() - 3600000).toISOString() },
-  { id: 'cl2', signal_id: 's2', signal_title: 'CalCode Update: Hood Suppression Inspection Frequency', signal_type: 'regulatory_change', model: 'claude-haiku-4-5-20251001', input_tokens: 410, output_tokens: 92, total_tokens: 502, total_cost_usd: 0.000870, success: true, error_message: null, created_at: new Date(Date.now() - 7200000).toISOString() },
-  { id: 'cl3', signal_id: 's3', signal_title: 'Allergen Alert: Undeclared Soy in Seasoning Mix', signal_type: 'allergen_alert', model: 'claude-haiku-4-5-20251001', input_tokens: 298, output_tokens: 85, total_tokens: 383, total_cost_usd: 0.000723, success: true, error_message: null, created_at: new Date(Date.now() - 14400000).toISOString() },
-  { id: 'cl4', signal_id: 's4', signal_title: 'Norovirus Outbreak: LA County Catering Event', signal_type: 'outbreak_alert', model: 'claude-haiku-4-5-20251001', input_tokens: 380, output_tokens: 91, total_tokens: 471, total_cost_usd: 0.000835, success: true, error_message: null, created_at: new Date(Date.now() - 28800000).toISOString() },
-  { id: 'cl5', signal_id: null, signal_title: 'API timeout on classification', signal_type: null, model: 'claude-haiku-4-5-20251001', input_tokens: null, output_tokens: null, total_tokens: null, total_cost_usd: null, success: false, error_message: 'Request timed out after 15000ms', created_at: new Date(Date.now() - 43200000).toISOString() },
-  { id: 'cl6', signal_id: 's5', signal_title: 'Fire Suppression System Recall: Ansul R-102', signal_type: 'fire_safety', model: 'claude-haiku-4-5-20251001', input_tokens: 356, output_tokens: 88, total_tokens: 444, total_cost_usd: 0.000796, success: true, error_message: null, created_at: new Date(Date.now() - 86400000).toISOString() },
-];
 
 const URGENCY_COLORS: Record<string, { bg: string; text: string }> = {
   critical:      { bg: '#FEF2F2', text: '#DC2626' },
@@ -464,13 +455,9 @@ export default function IntelligenceAdmin() {
       let logQ = supabase.from('intelligence_classification_log').select('*').order('created_at', { ascending: false }).limit(50);
       const { data: logData } = await logQ;
 
-      if (logData && logData.length > 0) {
-        setAiCostLog(logData);
-      } else {
-        setAiCostLog(DEMO_CLASSIF_LOG);
-      }
+      setAiCostLog(logData || []);
     } catch {
-      setAiCostLog(DEMO_CLASSIF_LOG);
+      setAiCostLog([]);
     }
     setAiCostsLoading(false);
   }, []);
@@ -1059,7 +1046,7 @@ export default function IntelligenceAdmin() {
                     });
                     if (filteredLog.length === 0) {
                       return (
-                        <tr><td colSpan={7} style={{ textAlign: 'center', padding: 20, color: TEXT_MUTED }}>No classification logs for this period</td></tr>
+                        <tr><td colSpan={7} style={{ textAlign: 'center', padding: 20, color: TEXT_MUTED }}>No classifications yet — costs will appear here once signals are classified.</td></tr>
                       );
                     }
                     const totalCost = filteredLog.reduce((s, e) => s + (e.total_cost_usd || 0), 0);

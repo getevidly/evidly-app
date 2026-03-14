@@ -11,6 +11,7 @@
  */
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../contexts/AuthContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { KpiTile } from '../../components/admin/KpiTile';
@@ -41,65 +42,6 @@ interface AuditEntry {
   created_at: string;
 }
 
-// ── Demo data ──
-const DEMO_ENTRIES: AuditEntry[] = [
-  {
-    id: 'a1', actor_id: 'd1', actor_email: 'arthur@getevidly.com', actor_role: 'platform_admin',
-    actor_ip: '192.168.1.1', action: 'admin.user_role_changed', resource_type: 'user', resource_id: 'd3',
-    old_value: { role: 'kitchen_staff' }, new_value: { role: 'kitchen_manager' },
-    metadata: null, success: true, error_message: null,
-    created_at: new Date(Date.now() - 300000).toISOString(),
-  },
-  {
-    id: 'a2', actor_id: 'd1', actor_email: 'arthur@getevidly.com', actor_role: 'platform_admin',
-    actor_ip: '192.168.1.1', action: 'admin.mfa_policy_changed', resource_type: 'mfa_policy', resource_id: 'owner_operator',
-    old_value: { mfa_required: false }, new_value: { mfa_required: true },
-    metadata: null, success: true, error_message: null,
-    created_at: new Date(Date.now() - 900000).toISOString(),
-  },
-  {
-    id: 'a3', actor_id: null, actor_email: null, actor_role: null,
-    actor_ip: '203.0.113.42', action: 'security.unauthorized_route_access', resource_type: 'admin_route', resource_id: '/admin/users',
-    old_value: null, new_value: null,
-    metadata: { attempted_role: 'kitchen_staff' }, success: false, error_message: 'Unauthorized',
-    created_at: new Date(Date.now() - 1800000).toISOString(),
-  },
-  {
-    id: 'a4', actor_id: 'd1', actor_email: 'arthur@getevidly.com', actor_role: 'platform_admin',
-    actor_ip: '192.168.1.1', action: 'admin.user_suspended', resource_type: 'user', resource_id: 'd4',
-    old_value: { is_suspended: false }, new_value: { is_suspended: true, reason: 'Account review' },
-    metadata: null, success: true, error_message: null,
-    created_at: new Date(Date.now() - 3600000).toISOString(),
-  },
-  {
-    id: 'a5', actor_id: 'd1', actor_email: 'arthur@getevidly.com', actor_role: 'platform_admin',
-    actor_ip: '192.168.1.1', action: 'admin.session_revoked', resource_type: 'user_session', resource_id: 's5',
-    old_value: null, new_value: null,
-    metadata: null, success: true, error_message: null,
-    created_at: new Date(Date.now() - 7200000).toISOString(),
-  },
-  {
-    id: 'a6', actor_id: 'd2', actor_email: 'sarah@downtown.com', actor_role: 'owner_operator',
-    actor_ip: '10.0.0.5', action: 'auth.login', resource_type: 'auth', resource_id: 'd2',
-    old_value: null, new_value: null,
-    metadata: { user_agent: 'Safari 17 / iOS' }, success: true, error_message: null,
-    created_at: new Date(Date.now() - 10800000).toISOString(),
-  },
-  {
-    id: 'a7', actor_id: null, actor_email: 'unknown@example.com', actor_role: null,
-    actor_ip: '198.51.100.23', action: 'auth.login_failed', resource_type: 'auth', resource_id: null,
-    old_value: null, new_value: null,
-    metadata: { reason: 'invalid_password', attempts: 5 }, success: false, error_message: 'Invalid credentials',
-    created_at: new Date(Date.now() - 14400000).toISOString(),
-  },
-  {
-    id: 'a8', actor_id: 'd1', actor_email: 'arthur@getevidly.com', actor_role: 'platform_admin',
-    actor_ip: '192.168.1.1', action: 'admin.flag_toggled', resource_type: 'feature_flag', resource_id: 'insurance_risk',
-    old_value: { enabled: true }, new_value: { enabled: false },
-    metadata: null, success: true, error_message: null,
-    created_at: new Date(Date.now() - 21600000).toISOString(),
-  },
-];
 
 const ACTION_CATEGORIES: Record<string, { label: string; color: string; bg: string }> = {
   'auth': { label: 'Auth', color: '#1D4ED8', bg: '#EFF6FF' },
@@ -123,6 +65,7 @@ const PAGE_SIZE = 50;
 
 export default function AdminAuditLog() {
   useDemoGuard();
+  const { user } = useAuth();
 
   const [entries, setEntries] = useState<AuditEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -169,22 +112,11 @@ export default function AdminAuditLog() {
       const { data, count, error } = await query;
       if (error) throw error;
 
-      if (data && data.length > 0) {
-        setEntries(data as AuditEntry[]);
-        setTotal(count || data.length);
-      } else if (page === 0) {
-        // First page with no results — show demo data
-        setEntries(DEMO_ENTRIES);
-        setTotal(DEMO_ENTRIES.length);
-      } else {
-        setEntries([]);
-        setTotal(0);
-      }
+      setEntries((data || []) as AuditEntry[]);
+      setTotal(count || (data || []).length);
     } catch {
-      if (page === 0) {
-        setEntries(DEMO_ENTRIES);
-        setTotal(DEMO_ENTRIES.length);
-      }
+      setEntries([]);
+      setTotal(0);
     }
     setLoading(false);
   }, [page, actionFilter, actorFilter, resourceFilter, successFilter, dateFrom, dateTo]);
@@ -201,7 +133,7 @@ export default function AdminAuditLog() {
   };
 
   // ── CSV Export ──
-  const exportCsv = () => {
+  const exportCsv = async () => {
     const headers = ['Timestamp', 'Actor', 'Role', 'IP', 'Action', 'Resource Type', 'Resource ID', 'Success', 'Error', 'Old Value', 'New Value', 'Metadata'];
     const rows = entries.map(e => [
       e.created_at,
@@ -227,6 +159,21 @@ export default function AdminAuditLog() {
     a.click();
     URL.revokeObjectURL(url);
     toast.success('Audit log exported');
+
+    // Log the export itself to the audit trail
+    await supabase.from('platform_audit_log').insert({
+      action: 'data.audit_log_exported',
+      actor_id: user?.id || null,
+      actor_email: user?.email || null,
+      resource_type: 'audit_log',
+      metadata: {
+        date_range_start: dateFrom || null,
+        date_range_end: dateTo || null,
+        row_count: entries.length,
+        filters_applied: hasFilters,
+      },
+      success: true,
+    }).catch(() => {}); // non-blocking — audit insert must never break export
   };
 
   // ── Stats ──

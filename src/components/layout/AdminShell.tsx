@@ -44,7 +44,9 @@ const NAV_SECTIONS: NavSection[] = [
     title: 'Intelligence',
     items: [
       { label: 'EvidLY Intelligence', path: '/admin/intelligence' },
+      { label: 'Intelligence Admin', path: '/admin/intelligence-admin' },
       { label: 'Jurisdiction Intel', path: '/admin/jurisdiction-intelligence' },
+      { label: 'Regulatory Changes', path: '/admin/regulatory-changes' },
       { label: 'Verification', path: '/admin/verification' },
     ],
   },

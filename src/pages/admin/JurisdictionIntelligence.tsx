@@ -33,6 +33,11 @@ interface JurisdictionUpdate {
   created_at: string;
 }
 
+interface JurisdictionMeta {
+  scoring_type: string | null;
+  confidence_score: number | null;
+}
+
 const PILLAR_BADGE: Record<string, { bg: string; text: string }> = {
   food_safety: { bg: '#ECFDF5', text: '#065F46' },
   facility_safety: { bg: '#FFF7ED', text: '#9A3412' },
@@ -42,17 +47,22 @@ const PILLAR_BADGE: Record<string, { bg: string; text: string }> = {
 export default function JurisdictionIntelligence() {
   useDemoGuard();
   const [updates, setUpdates] = useState<JurisdictionUpdate[]>([]);
+  const [jurisdictionMeta, setJurisdictionMeta] = useState<Record<string, JurisdictionMeta>>({});
   const [loading, setLoading] = useState(true);
   const [filterCounty, setFilterCounty] = useState('');
 
   useEffect(() => {
     const load = async () => {
-      const { data } = await supabase
-        .from('jurisdiction_intel_updates')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(200);
-      setUpdates(data || []);
+      const [updatesRes, metaRes] = await Promise.all([
+        supabase.from('jurisdiction_intel_updates').select('*').order('created_at', { ascending: false }).limit(200),
+        supabase.from('jurisdictions').select('agency_name, scoring_type, confidence_score'),
+      ]);
+      setUpdates(updatesRes.data || []);
+      const meta: Record<string, JurisdictionMeta> = {};
+      (metaRes.data || []).forEach((j: any) => {
+        meta[j.agency_name] = { scoring_type: j.scoring_type, confidence_score: j.confidence_score };
+      });
+      setJurisdictionMeta(meta);
       setLoading(false);
     };
     load();
@@ -124,6 +134,7 @@ export default function JurisdictionIntelligence() {
         <div className="space-y-3">
           {filtered.map(item => {
             const pc = PILLAR_BADGE[item.pillar] || PILLAR_BADGE.both;
+            const meta = jurisdictionMeta[item.jurisdiction_name] || jurisdictionMeta[item.jurisdiction_key];
             return (
               <div key={item.id} className="bg-white rounded-lg border border-gray-200 p-5">
                 <div className="flex items-start justify-between gap-4">
@@ -156,6 +167,8 @@ export default function JurisdictionIntelligence() {
                     )}
                     <div className="flex gap-4 text-xs text-gray-400">
                       {item.county && <span>{item.county} County</span>}
+                      {meta?.scoring_type && <span>Scoring: {meta.scoring_type.replace(/_/g, ' ')}</span>}
+                      {meta?.confidence_score != null && <span>Confidence: {meta.confidence_score}%</span>}
                       {item.effective_date && <span>Effective: {item.effective_date}</span>}
                       <span>{new Date(item.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                     </div>

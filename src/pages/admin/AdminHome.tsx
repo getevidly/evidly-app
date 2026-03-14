@@ -92,6 +92,8 @@ export default function AdminHome() {
   const [crawlErrors, setCrawlErrors] = useState(0);
   const [pendingSignals, setPendingSignals] = useState<number | null>(null);
   const [countdown, setCountdown] = useState('');
+  const [isLoading, setIsLoading] = useState(!isDemoMode);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   // Platform Health
   const [healthErrorCount, setHealthErrorCount] = useState<number | null>(null);
@@ -111,10 +113,11 @@ export default function AdminHome() {
     setCountdown(`${d}d ${h}h`);
   }, []);
 
-  useEffect(() => {
-    const loadStats = async () => {
-      if (isDemoMode) return;
-
+  const loadStats = useCallback(async () => {
+    if (isDemoMode) { setIsLoading(false); return; }
+    setIsLoading(true);
+    setLoadError(null);
+    try {
       const [subRes, orgRes, locRes, totalRes, liveRes, errorRes, sigRes, ticketRes] = await Promise.all([
         supabase.from('billing_subscriptions').select('mrr_cents').eq('status', 'active'),
         supabase.from('organizations').select('id', { count: 'exact', head: true }).eq('status', 'active'),
@@ -154,17 +157,54 @@ export default function AdminHome() {
         const meta = alertData[0].metadata as { daily_spend?: number; daily_budget?: number } | null;
         if (meta) setAiBudgetAlert({ spend: meta.daily_spend || 0, budget: meta.daily_budget || 0 });
       }
-    };
+    } catch (err: any) {
+      setLoadError(err?.message || 'Failed to load dashboard data');
+    }
+    setIsLoading(false);
+  }, [isDemoMode]);
 
+  useEffect(() => {
     loadStats();
     updateCountdown();
     const interval = setInterval(updateCountdown, 60000);
     return () => clearInterval(interval);
-  }, [updateCountdown, isDemoMode]);
+  }, [loadStats, updateCountdown]);
 
   const firstName = user?.user_metadata?.full_name?.split(' ')[0]
     || user?.email?.split('@')[0]
     || 'Admin';
+
+  if (isLoading) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <AdminBreadcrumb crumbs={[{ label: 'Home' }]} />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 14 }}>
+          {[...Array(6)].map((_, i) => (
+            <div key={i} style={{ height: 96, borderRadius: 10, background: '#E8EDF4', animation: 'pulse 1.5s ease-in-out infinite' }} />
+          ))}
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20 }}>
+          {[...Array(3)].map((_, i) => (
+            <div key={i} style={{ height: 220, borderRadius: 12, background: '#E8EDF4', animation: 'pulse 1.5s ease-in-out infinite' }} />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <AdminBreadcrumb crumbs={[{ label: 'Home' }]} />
+        <div style={{ textAlign: 'center', padding: '3rem' }}>
+          <p style={{ color: '#6B7F96', fontSize: 14 }}>Failed to load dashboard data.</p>
+          <button onClick={loadStats} style={{ marginTop: 12, background: GOLD, color: '#fff', border: 'none', borderRadius: 6, padding: '8px 20px', cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
+            Try again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
@@ -435,9 +475,9 @@ export default function AdminHome() {
                 color: pendingSignals !== null && pendingSignals > 0 ? '#C2410C' : '#059669',
               },
               {
-                label: 'Edge Functions Active',
-                value: '107 / 107',
-                color: '#059669',
+                label: 'Edge Functions',
+                value: 'See Supabase',
+                color: TEXT_MUTED,
               },
             ] as const).map((row, i) => (
               <div
