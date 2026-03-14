@@ -28,6 +28,8 @@ const I: Record<string, NavItem> = {
   leaderboard: { id: 'leaderboard', label: 'Leaderboard', path: '/leaderboard', icon: '🏆', roles: [], description: 'Performance rankings.' },
   surveys: { id: 'surveys', label: 'Customer Surveys', path: '/surveys', icon: '⭐', roles: [], description: 'Customer feedback and Google reviews.' },
   surveySettings: { id: 'survey-settings', label: 'Survey Settings', path: '/settings/surveys', icon: '⚙️', roles: [], description: 'Configure survey automation.' },
+  referrals: { id: 'referrals', label: 'Referrals', path: '/referrals', icon: '🤝', roles: [], description: 'Client referral program and rewards.' },
+  serviceRequests: { id: 'service-requests', label: 'Service Requests', path: '/service-requests', icon: '📥', roles: [], description: 'Inbound service requests from EvidLY.' },
   settings: { id: 'settings', label: 'Settings', path: '/settings', icon: '⚙️', roles: [], description: 'Company settings.' },
 };
 
@@ -44,6 +46,7 @@ const ROLE_CONFIGS: Record<string, RoleSidebarConfig> = {
   vendor_admin: { home: VENDOR_HOME, sections: [
     section('operations', 'Operations', '📋', 'Operations', 'Schedule, timecards, employees.', [I.schedule, I.timecards, I.timecardAlterations, I.employees, I.leaderboard]),
     section('performance', 'Performance', '🎯', 'Performance', 'Bonuses and quality.', [I.bonuses, I.performanceMetrics, I.callbacks, I.surveys]),
+    section('sales', 'Sales', '🤝', 'Sales', 'Referrals and service requests.', [I.referrals, I.serviceRequests]),
     section('assets', 'Assets', '📦', 'Assets', 'Equipment, inventory, fleet.', [I.equipment, I.equipmentIncidents, I.inventory, I.fleet, I.insurance]),
     section('compliance', 'Compliance', '⚠️', 'Compliance', 'Deficiencies and safety.', [I.deficiencies, I.safetyIncidents]),
     section('team', 'Team', '👥', 'Team', 'Availability management.', [I.myAvailability, I.teamAvailability, I.availabilityApprovals]),
@@ -61,6 +64,7 @@ const ROLE_CONFIGS: Record<string, RoleSidebarConfig> = {
   owner_operator: { home: VENDOR_HOME, sections: [
     section('operations', 'Operations', '📋', 'Operations', 'Schedule, timecards, employees.', [I.schedule, I.timecards, I.timecardAlterations, I.employees, I.leaderboard]),
     section('performance', 'Performance', '🎯', 'Performance', 'Bonuses and quality.', [I.bonuses, I.performanceMetrics, I.callbacks, I.surveys]),
+    section('sales', 'Sales', '🤝', 'Sales', 'Referrals and service requests.', [I.referrals, I.serviceRequests]),
     section('assets', 'Assets', '📦', 'Assets', 'Equipment, inventory, fleet.', [I.equipment, I.equipmentIncidents, I.inventory, I.fleet, I.insurance]),
     section('compliance', 'Compliance', '⚠️', 'Compliance', 'Deficiencies and safety.', [I.deficiencies, I.safetyIncidents]),
     section('team', 'Team', '👥', 'Team', 'Availability management.', [I.myAvailability, I.teamAvailability, I.availabilityApprovals]),

@@ -183,6 +183,7 @@ const SharedReport = lazy(() => import('./pages/public/SharedReport').then(m => 
 const AuthCallback = lazy(() => import('./pages/AuthCallback').then(m => ({ default: m.AuthCallback })));
 const ReferralDashboard = lazy(() => import('./pages/ReferralDashboard').then(m => ({ default: m.ReferralDashboard })));
 const ReferralRedirect = lazy(() => import('./pages/ReferralRedirect'));
+const ReferralPage = lazy(() => import('./pages/public/ReferralPage').then(m => ({ default: m.ReferralPage })));
 const TermsOfService = lazy(() => import('./pages/TermsOfService').then(m => ({ default: m.TermsOfService })));
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy').then(m => ({ default: m.PrivacyPolicy })));
 const TempLogQuick = lazy(() => import('./pages/TempLogQuick').then(m => ({ default: m.TempLogQuick })));
@@ -511,6 +512,7 @@ function AppRoutes() {
         {/* Public routes */}
         <Route path="/verify/:code" element={<Suspense fallback={<PageSkeleton />}><PublicVerification /></Suspense>} />
         <Route path="/ref/:code" element={<Suspense fallback={<PageSkeleton />}><ReferralRedirect /></Suspense>} />
+        <Route path="/r/:code" element={<Suspense fallback={<PageSkeleton />}><ReferralPage /></Suspense>} />
         <Route path="/risk/:shareToken" element={<Suspense fallback={<PageSkeleton />}><InsuranceRiskShared /></Suspense>} />
         <Route path="/report/:token" element={<Suspense fallback={<PageSkeleton />}><SharedReport /></Suspense>} />
         <Route path="/passport/demo" element={<Suspense fallback={<PageSkeleton />}><PassportDemo /></Suspense>} />

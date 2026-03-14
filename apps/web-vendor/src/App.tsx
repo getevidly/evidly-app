@@ -70,6 +70,12 @@ const SurveyCompletedPage = lazy(() => import('./pages/public/SurveyCompletedPag
 const SurveysPage = lazy(() => import('./pages/surveys/SurveysPage').then(m => ({ default: m.SurveysPage })));
 const SurveyDetailPage = lazy(() => import('./pages/surveys/SurveyDetailPage').then(m => ({ default: m.SurveyDetailPage })));
 const SurveySettingsPage = lazy(() => import('./pages/settings/SurveySettingsPage').then(m => ({ default: m.SurveySettingsPage })));
+const ReferralsPage = lazy(() => import('./pages/referrals/ReferralsPage').then(m => ({ default: m.ReferralsPage })));
+const ReferralDetailPage = lazy(() => import('./pages/referrals/ReferralDetailPage').then(m => ({ default: m.ReferralDetailPage })));
+const ReferralCodesPage = lazy(() => import('./pages/referrals/ReferralCodesPage').then(m => ({ default: m.ReferralCodesPage })));
+const CampaignsPage = lazy(() => import('./pages/referrals/CampaignsPage').then(m => ({ default: m.CampaignsPage })));
+const ServiceRequestsPage = lazy(() => import('./pages/service-requests/ServiceRequestsPage').then(m => ({ default: m.ServiceRequestsPage })));
+const ServiceRequestDetailPage = lazy(() => import('./pages/service-requests/ServiceRequestDetailPage').then(m => ({ default: m.ServiceRequestDetailPage })));
 
 function PageSkeleton() {
   return (
@@ -156,6 +162,12 @@ function AppRoutes() {
         <Route path="/reports/:slug" element={<ReportGeneratorPage />} />
         <Route path="/surveys" element={<SurveysPage />} />
         <Route path="/surveys/:id" element={<SurveyDetailPage />} />
+        <Route path="/referrals" element={<ReferralsPage />} />
+        <Route path="/referrals/:id" element={<ReferralDetailPage />} />
+        <Route path="/referrals/codes" element={<ReferralCodesPage />} />
+        <Route path="/referrals/campaigns" element={<CampaignsPage />} />
+        <Route path="/service-requests" element={<ServiceRequestsPage />} />
+        <Route path="/service-requests/:id" element={<ServiceRequestDetailPage />} />
         <Route path="/settings/surveys" element={<SurveySettingsPage />} />
         <Route path="/settings/clock-reminders" element={<ClockRemindersPage />} />
         <Route path="/settings" element={<SettingsPage />}>
