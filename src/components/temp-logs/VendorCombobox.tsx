@@ -8,11 +8,11 @@
 // - In demo mode, custom vendors persist in sessionStorage for the session
 // ---------------------------------------------------------------------------
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Search, Plus, X, ChevronDown } from 'lucide-react';
 import { SEED_VENDOR_NAMES, findSeedVendor, type VendorCategory } from '../../data/receivingVendors';
 import { useDemo } from '../../contexts/DemoContext';
-import { supabase } from '../../lib/supabase';
+import { useCustomVendors } from '../../hooks/useCustomVendors';
 
 interface Props {
   value: string;
@@ -20,13 +20,6 @@ interface Props {
   locationId?: string;
   className?: string;
 }
-
-interface CustomVendor {
-  name: string;
-  lastUsedAt: string; // ISO timestamp
-}
-
-const DEMO_STORAGE_KEY = 'evidly_custom_vendors';
 
 const CATEGORY_ORDER: VendorCategory[] = ['broadline', 'produce', 'dairy', 'beverage', 'protein'];
 const CATEGORY_LABELS: Record<VendorCategory, string> = {
@@ -39,61 +32,14 @@ const CATEGORY_LABELS: Record<VendorCategory, string> = {
 
 export function VendorCombobox({ value, onChange, locationId, className }: Props) {
   const { isDemoMode } = useDemo();
+  const { customVendors, saveCustomVendor, updateLastUsed } = useCustomVendors(locationId, isDemoMode);
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState('');
-  const [customVendors, setCustomVendors] = useState<CustomVendor[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [newVendorName, setNewVendorName] = useState('');
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
-
-  // Load custom vendors on mount
-  useEffect(() => {
-    if (isDemoMode) {
-      try {
-        const stored = sessionStorage.getItem(DEMO_STORAGE_KEY);
-        if (stored) setCustomVendors(JSON.parse(stored));
-      } catch { /* noop */ }
-    } else if (locationId) {
-      loadCustomVendors();
-    }
-  }, [isDemoMode, locationId]);
-
-  const loadCustomVendors = async () => {
-    if (!locationId) return;
-    const { data } = await supabase
-      .from('location_custom_vendors')
-      .select('vendor_name, last_used_at')
-      .eq('location_id', locationId)
-      .order('last_used_at', { ascending: false });
-    if (data) {
-      setCustomVendors(data.map(d => ({ name: d.vendor_name, lastUsedAt: d.last_used_at })));
-    }
-  };
-
-  const saveCustomVendor = useCallback(async (name: string) => {
-    const now = new Date().toISOString();
-    const updated = [{ name, lastUsedAt: now }, ...customVendors.filter(v => v.name !== name)];
-    setCustomVendors(updated);
-
-    if (isDemoMode) {
-      try { sessionStorage.setItem(DEMO_STORAGE_KEY, JSON.stringify(updated)); } catch { /* noop */ }
-    } else if (locationId) {
-      // Upsert into Supabase
-      await supabase.from('location_custom_vendors').upsert(
-        { location_id: locationId, vendor_name: name, last_used_at: now },
-        { onConflict: 'location_id,vendor_name' },
-      );
-    }
-  }, [customVendors, isDemoMode, locationId]);
-
-  const updateLastUsed = useCallback(async (name: string) => {
-    // For custom vendors, bump their last_used_at
-    const isCustom = customVendors.some(v => v.name === name);
-    if (!isCustom) return;
-    await saveCustomVendor(name);
-  }, [customVendors, saveCustomVendor]);
 
   // Close on outside click
   useEffect(() => {

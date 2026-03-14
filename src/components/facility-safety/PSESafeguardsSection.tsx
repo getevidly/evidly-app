@@ -6,9 +6,9 @@
  *
  * PSE language is advisory only — EvidLY does not know the operator's policy terms.
  */
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import { AlertTriangle, ChevronDown, ChevronRight, Shield } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
+import { useVendorServiceRecords } from '../../hooks/useVendorServiceRecords';
 import { SAMPLE_PSE_SAFEGUARDS } from '../../data/workforceRiskDemoData';
 
 // ── Brand ─────────────────────────────────────────────────────
@@ -125,29 +125,8 @@ function getDemoRecords(): Map<string, { record: ServiceRecord; status: PSEStatu
 }
 
 export function PSESafeguardsSection({ organizationId, locationId, isGuidedTour }: Props) {
-  const [records, setRecords] = useState<Map<string, ServiceRecord>>(new Map());
-  const [loading, setLoading] = useState(!isGuidedTour);
+  const { data: records, isLoading: loading } = useVendorServiceRecords(organizationId, locationId, isGuidedTour);
   const [pseOpen, setPseOpen] = useState(false);
-
-  const loadRecords = useCallback(async () => {
-    if (isGuidedTour) return;
-    setLoading(true);
-    const { data } = await supabase
-      .from('vendor_service_records')
-      .select('safeguard_type, vendor_name, cert_number, service_date, next_due_date, interval_label')
-      .eq('organization_id', organizationId)
-      .eq('location_id', locationId)
-      .eq('is_sample', false)
-      .in('safeguard_type', ['hood_cleaning', 'fire_suppression', 'fire_alarm', 'sprinklers']);
-    if (data) {
-      const map = new Map<string, ServiceRecord>();
-      for (const row of data) map.set(row.safeguard_type, row);
-      setRecords(map);
-    }
-    setLoading(false);
-  }, [organizationId, locationId, isGuidedTour]);
-
-  useEffect(() => { loadRecords(); }, [loadRecords]);
 
   // Build safeguard statuses
   const demoData = isGuidedTour ? getDemoRecords() : null;

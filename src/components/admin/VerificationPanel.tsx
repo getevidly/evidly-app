@@ -11,6 +11,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { useDemo } from '../../contexts/DemoContext';
+import { useContentVerification } from '../../hooks/useContentVerification';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -140,6 +141,8 @@ export default function VerificationPanel({
 
   useEffect(() => { load(); }, [load]);
 
+  const { submitVerification } = useContentVerification();
+
   const submitGateVerification = async (gateKey: string, gateLabel: string) => {
     if (isDemoMode) {
       console.error('Demo mode: verification log writes blocked');
@@ -149,7 +152,7 @@ export default function VerificationPanel({
     if (gateKey.includes('gate_1') && gateForm.result === 'passed' && !gateForm.sourceUrl) return;
 
     setSubmitting(true);
-    const { error } = await supabase.from('content_verification_log').insert({
+    const success = await submitVerification({
       content_table: contentTable,
       content_id: contentId,
       content_title: contentTitle,
@@ -166,9 +169,7 @@ export default function VerificationPanel({
         : [],
       reviewer_notes: gateForm.notes,
     });
-    if (error) {
-      console.error('Failed to log verification:', error.message);
-    } else {
+    if (success) {
       setActiveGate(null);
       setGateForm({ result: 'passed', method: 'manual_url_check', sourceUrl: '', notes: '' });
       await load();

@@ -3,6 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { useRole } from '../contexts/RoleContext';
 import { SignalAlertBanner } from '../components/SignalAlertBanner';
 import { useSignalNotifications } from '../hooks/useSignalNotifications';
+import { useActiveBanner } from '../hooks/useActiveBanner';
 import { getSignalRenderType, SIGNAL_TYPES } from '../constants/signalTypes';
 import OwnerOperatorDashboard from '../components/dashboard/OwnerOperatorDashboard';
 import ExecutiveDashboard from '../components/dashboard/ExecutiveDashboard';
@@ -14,6 +15,7 @@ import FacilitiesDashboardNew from '../components/dashboard/FacilitiesDashboardN
 import { DashboardToday } from '../components/dashboard/DashboardToday';
 import { CopilotBriefingCard } from '../components/copilot/CopilotBriefingCard';
 import { ErrorState } from '../components/shared/PageStates';
+import { X } from 'lucide-react';
 
 // ── Dashboard ────────────────────────────────────────────
 // Role visibility for above-fold items is now handled inside each
@@ -75,6 +77,50 @@ function OutbreakBanner() {
   );
 }
 
+function IntelligenceBanner() {
+  const { banner, dismiss } = useActiveBanner();
+  if (!banner) return null;
+
+  const isOutbreak = ['outbreak', 'health_alert', 'fda_recall', 'recall', 'allergen_alert'].includes(banner.signal_type);
+
+  return (
+    <div style={{
+      background: isOutbreak ? '#FEF2F2' : '#EFF6FF',
+      borderLeft: `4px solid ${isOutbreak ? '#DC2626' : '#1E2D4D'}`,
+      borderRadius: 8,
+      padding: '12px 16px',
+      marginBottom: 12,
+      display: 'flex',
+      alignItems: 'center',
+      gap: 12,
+    }}>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <strong style={{ color: isOutbreak ? '#991B1B' : '#1E2D4D', fontSize: 13 }}>
+          {banner.title}
+        </strong>
+        {banner.summary && (
+          <p style={{ fontSize: 12, color: '#374151', marginTop: 2 }}>
+            {banner.summary}
+          </p>
+        )}
+      </div>
+      <Link to="/insights/intelligence" style={{
+        fontSize: 12, fontWeight: 700,
+        color: isOutbreak ? '#991B1B' : '#1E2D4D',
+        textDecoration: 'none', flexShrink: 0,
+      }}>View →</Link>
+      <button
+        type="button"
+        onClick={dismiss}
+        style={{ color: '#9CA3AF', flexShrink: 0, padding: 4, background: 'none', border: 'none', cursor: 'pointer' }}
+        title="Dismiss"
+      >
+        <X size={16} />
+      </button>
+    </div>
+  );
+}
+
 export function Dashboard() {
   const { userRole } = useRole();
   const [searchParams] = useSearchParams();
@@ -94,6 +140,7 @@ export function Dashboard() {
     <div>
       <SignalAlertBanner />
       <OutbreakBanner />
+      <IntelligenceBanner />
       <CopilotBriefingCard />
       {tab === 'today' ? (
         <DashboardToday />

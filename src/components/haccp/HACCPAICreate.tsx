@@ -25,7 +25,7 @@ import {
 } from 'lucide-react';
 import { useDemo } from '../../contexts/DemoContext';
 import { useAuth } from '../../contexts/AuthContext';
-import { supabase } from '../../lib/supabase';
+import { useSaveDocument } from '../../hooks/useSaveDocument';
 import { toast } from 'sonner';
 import { jsPDF } from 'jspdf';
 
@@ -393,6 +393,8 @@ export function HACCPAICreate() {
 
   // ── Save to Documents ─────────────────────────────────────────
 
+  const { saveDocument } = useSaveDocument();
+
   const handleSave = useCallback(async () => {
     if (isDemoMode) {
       toast.success('Demo mode \u2014 HACCP plan saved to Documents');
@@ -404,8 +406,8 @@ export function HACCPAICreate() {
     try {
       const planContent = planSections.map(s => `## ${s.title}\n\n${s.content}`).join('\n\n---\n\n');
 
-      const { error } = await supabase.from('documents').insert({
-        organization_id: profile?.organization_id,
+      const success = await saveDocument({
+        organization_id: profile?.organization_id || '',
         title: `AI-Generated HACCP Plan \u2014 ${intake.kitchenType}`,
         category: 'HACCP',
         status: 'draft',
@@ -414,7 +416,7 @@ export function HACCPAICreate() {
         notes: planContent,
       });
 
-      if (error) throw error;
+      if (!success) throw new Error('Save failed');
       toast.success('HACCP plan saved to Documents');
       setSaved(true);
     } catch {

@@ -3,6 +3,7 @@ import { Bell, X, Check, Clock, AlertTriangle, Info, ShieldAlert, ChevronRight, 
 import { useNavigate } from 'react-router-dom';
 import { useDemo } from '../contexts/DemoContext';
 import { DEMO_VENDOR_DOC_NOTIFICATIONS } from '../data/vendorDocumentsDemoData';
+import { useUnreadSignals } from '../hooks/useUnreadSignals';
 
 // ── Types ──────────────────────────────────────────────────────
 type NotificationSeverity = 'urgent' | 'advisory' | 'info';
@@ -176,7 +177,12 @@ export function NotificationCenter() {
   const panelRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
-  const unreadCount = notifications.filter(n => n.status === 'unread').length;
+  // Real unread signal count from intelligence_signals (production)
+  const { unreadCount: signalUnreadCount } = useUnreadSignals();
+
+  const localUnreadCount = notifications.filter(n => n.status === 'unread').length;
+  // In demo mode use local count; in production combine local + signal count
+  const unreadCount = isDemoMode ? localUnreadCount : localUnreadCount + signalUnreadCount;
   const urgentUnread = notifications.filter(n => n.status === 'unread' && n.severity === 'urgent').length;
 
   // Close on outside click
@@ -246,7 +252,7 @@ export function NotificationCenter() {
               lineHeight: '18px',
             }}
           >
-            {unreadCount}
+            {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
       </button>

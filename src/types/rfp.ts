@@ -1,4 +1,5 @@
 // ── RFP Intelligence Monitor — Type Definitions ─────────
+// TODO: HOODOPS-RFP-01 — wire RFP listings to intelligence game_plan signals (post-launch)
 
 export type RfpSourceType = 'government' | 'k12' | 'healthcare' | 'enterprise';
 export type RfpCoverage = 'national' | 'state' | 'county' | 'district';

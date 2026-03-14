@@ -8,11 +8,11 @@
  * INTELLIGENCE-PIPELINE-ALIGN-01: Wired to production Supabase query.
  * Demo mode uses static DEMO_FEED; production queries client_intelligence_feed.
  */
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDemo } from '../../contexts/DemoContext';
 import { useAuth } from '../../contexts/AuthContext';
-import { supabase } from '../../lib/supabase';
+import { useIntelligenceFeed } from '../../hooks/useIntelligenceFeed';
 import { AlertTriangle, CheckCircle2, X, ChevronRight, Zap, RefreshCw } from 'lucide-react';
 
 const NAVY = '#1E2D4D';
@@ -181,59 +181,19 @@ export function IntelligenceFeedWidget() {
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
   const [actioned, setActioned] = useState<Set<string>>(new Set());
 
-  // Production state
-  const [liveItems, setLiveItems] = useState<FeedItem[]>([]);
-  const [loading, setLoading] = useState(!isDemoMode);
-  const [error, setError] = useState<string | null>(null);
-
   const orgId = profile?.organization_id;
 
-  // Fetch live feed items
-  const fetchFeed = useCallback(async () => {
-    if (isDemoMode || !orgId) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const { data, error: queryError } = await supabase
-        .from('client_intelligence_feed')
-        .select('*')
-        .eq('organization_id', orgId)
-        .eq('is_dismissed', false)
-        .order('delivered_at', { ascending: false })
-        .limit(5);
+  // Production data via extracted hook (handles fetch + realtime + cleanup)
+  const {
+    data: liveRows,
+    isLoading: loading,
+    error,
+    refetch: fetchFeed,
+    markActioned: liveMarkActioned,
+    markDismissed: liveMarkDismissed,
+  } = useIntelligenceFeed(isDemoMode ? undefined : orgId);
 
-      if (queryError) {
-        console.error('[IntelligenceFeedWidget] Query error:', queryError);
-        setError('Unable to load updates');
-      } else {
-        setLiveItems((data || []).map(mapRow));
-      }
-    } catch (err) {
-      console.error('[IntelligenceFeedWidget] Fetch error:', err);
-      setError('Unable to load updates');
-    } finally {
-      setLoading(false);
-    }
-  }, [isDemoMode, orgId]);
-
-  useEffect(() => { fetchFeed(); }, [fetchFeed]);
-
-  // Realtime subscription for new feed items
-  useEffect(() => {
-    if (isDemoMode || !orgId) return;
-    const channel = supabase
-      .channel('intelligence-feed')
-      .on('postgres_changes', {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'client_intelligence_feed',
-        filter: `organization_id=eq.${orgId}`,
-      }, (payload) => {
-        setLiveItems(prev => [mapRow(payload.new), ...prev].slice(0, 5));
-      })
-      .subscribe();
-    return () => { supabase.removeChannel(channel); };
-  }, [isDemoMode, orgId]);
+  const liveItems = useMemo(() => (liveRows || []).map(mapRow), [liveRows]);
 
   const items = useMemo(() => {
     if (isDemoMode) return DEMO_FEED.filter(item => !dismissed.has(item.id));
@@ -244,29 +204,18 @@ export function IntelligenceFeedWidget() {
   const criticalCount = unactioned.filter(i => i.priority === 'critical').length;
 
   const handleAction = async (id: string) => {
-    if (isDemoMode) {
-      setActioned(prev => new Set(prev).add(id));
-      return;
-    }
-    // Production: update DB
     setActioned(prev => new Set(prev).add(id));
-    await supabase
-      .from('client_intelligence_feed')
-      .update({ is_actioned: true, actioned_at: new Date().toISOString() })
-      .eq('id', id);
+    if (!isDemoMode) {
+      liveMarkActioned(id);
+    }
   };
 
   const handleDismiss = async (id: string) => {
     if (isDemoMode) {
       setDismissed(prev => new Set(prev).add(id));
-      return;
+    } else {
+      liveMarkDismissed(id);
     }
-    // Production: update DB + remove from local state
-    setLiveItems(prev => prev.filter(item => item.id !== id));
-    await supabase
-      .from('client_intelligence_feed')
-      .update({ is_dismissed: true, dismissed_at: new Date().toISOString() })
-      .eq('id', id);
   };
 
   const timeAgo = (dateStr: string) => {

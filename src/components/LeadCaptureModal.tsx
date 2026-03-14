@@ -4,6 +4,7 @@ import { X, User, Mail, Building2 } from 'lucide-react';
 import { EvidlyIcon } from './ui/EvidlyIcon';
 import { useDemo } from '../contexts/DemoContext';
 import type { DemoLead } from '../contexts/DemoContext';
+import { useDemoLeadCapture } from '../hooks/useDemoLeadCapture';
 
 const BUSINESS_TYPES = [
   { value: 'restaurant', label: 'Restaurant' },
@@ -23,6 +24,7 @@ interface LeadCaptureModalProps {
 export function LeadCaptureModal({ isOpen, onClose }: LeadCaptureModalProps) {
   const navigate = useNavigate();
   const { enterDemo } = useDemo();
+  const { captureLead } = useDemoLeadCapture();
   const [form, setForm] = useState({ fullName: '', email: '', companyName: '', businessType: '' });
   const [submitting, setSubmitting] = useState(false);
 
@@ -36,20 +38,7 @@ export function LeadCaptureModal({ isOpen, onClose }: LeadCaptureModalProps) {
     setSubmitting(true);
 
     const lead: DemoLead = { ...form };
-
-    // Attempt Supabase insert (silent fail)
-    try {
-      const { supabase } = await import('../lib/supabase');
-      await supabase.from('demo_leads').insert([{
-        full_name: lead.fullName,
-        email: lead.email,
-        organization_name: lead.companyName,
-        industry_type: lead.businessType,
-      }]);
-    } catch {
-      // Silent fail
-    }
-
+    captureLead(lead);
     enterDemo(lead);
     navigate('/dashboard');
   };

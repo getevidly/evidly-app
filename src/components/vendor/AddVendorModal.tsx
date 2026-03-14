@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Plus, XCircle } from 'lucide-react';
 import { toast } from 'sonner';
-import { supabase } from '../../lib/supabase';
+import { useCreateVendor } from '../../hooks/useCreateVendor';
 import { VENDOR_CATEGORIES, getCategoryById } from '../../config/vendorCategories';
 import { AIAssistButton, AIGeneratedIndicator } from '../ui/AIAssistButton';
 
@@ -45,6 +45,7 @@ export function AddVendorModal({
   accessibleLocations,
   existingEmails,
 }: AddVendorModalProps) {
+  const { createVendor } = useCreateVendor();
   const [form, setForm] = useState({
     companyName: '',
     contactName: '',
@@ -109,39 +110,27 @@ export function AddVendorModal({
       let vendorId = 'manual-' + Date.now();
 
       if (!isDemoMode && organizationId) {
-        const { data: vendorData, error: vendorError } = await supabase
-          .from('vendors')
-          .insert({
-            company_name: form.companyName.trim(),
-            contact_name: form.contactName.trim(),
-            email: emailLower,
-            phone: form.contactPhone.trim() || null,
-            contact_phone: form.contactPhone.trim() || null,
-            service_type: serviceType,
-            status: 'current',
-            invite_status: 'added',
-            license_cert_number: form.licenseCertNumber.trim() || null,
-            has_insurance_coi: form.hasInsuranceCOI,
-            notes: form.notes.trim() || null,
-            location_ids: form.locationIds.length > 0 ? form.locationIds : null,
-          })
-          .select('id')
-          .single();
+        const createdId = await createVendor({
+          company_name: form.companyName.trim(),
+          contact_name: form.contactName.trim(),
+          email: emailLower,
+          phone: form.contactPhone.trim() || null,
+          contact_phone: form.contactPhone.trim() || null,
+          service_type: serviceType,
+          status: 'current',
+          invite_status: 'added',
+          license_cert_number: form.licenseCertNumber.trim() || null,
+          has_insurance_coi: form.hasInsuranceCOI,
+          notes: form.notes.trim() || null,
+          location_ids: form.locationIds.length > 0 ? form.locationIds : null,
+        }, organizationId);
 
-        if (vendorError) {
-          toast.error(`Failed to add vendor: ${vendorError.message}`);
+        if (!createdId) {
+          toast.error('Failed to add vendor');
           setSubmitting(false);
           return;
         }
-
-        if (vendorData) {
-          vendorId = vendorData.id;
-          await supabase.from('vendor_client_relationships').insert({
-            vendor_id: vendorData.id,
-            organization_id: organizationId,
-            status: 'active',
-          });
-        }
+        vendorId = createdId;
       }
 
       onVendorAdded({
