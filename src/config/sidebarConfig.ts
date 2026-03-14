@@ -321,6 +321,16 @@ const I: Record<string, NavItem> = {
     roles: [], description: 'Review and approve late availability submissions.',
   },
 
+  // ── Clock & Attendance ──
+  clockReminders: {
+    id: 'clock-reminders', label: 'Clock & Attendance', path: '/settings/clock-reminders', icon: '⏰',
+    roles: [], description: 'Configure clock-in/out reminders, auto clock-out, and geofence settings.',
+  },
+  timecardAlterations: {
+    id: 'timecard-alterations', label: 'Timecard Alterations', path: '/timecards/alterations', icon: '📝',
+    roles: [], description: 'Audit trail of all timecard modifications and manual overrides.',
+  },
+
   // ── Food Safety (Chef) ──
   haccp: {
     id: 'haccp', label: 'Hazard Analysis Critical Control Points', path: '/haccp', icon: '🛡️',
@@ -489,7 +499,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('administration', 'Administration', '⚙️',
         'Administration', 'Equipment, Internet of Things sensors, integrations, locations, settings, team, vendors, and role permissions.',
-        [I.equipment, I.fleet, I.insurance, I.bonuses, I.performanceMetrics, I.myAvailability, I.teamAvailability, I.availabilityApprovals, I.integrations, I.iotSensors, I.locations, I.settings, I.rolesPermissions, I.team, I.timecards, I.employees, I.trainingRecords, I.trainingCatalog, I.vendors, I.emergencyInfo],
+        [I.equipment, I.fleet, I.insurance, I.bonuses, I.performanceMetrics, I.myAvailability, I.teamAvailability, I.availabilityApprovals, I.clockReminders, I.timecardAlterations, I.integrations, I.iotSensors, I.locations, I.settings, I.rolesPermissions, I.team, I.timecards, I.employees, I.trainingRecords, I.trainingCatalog, I.vendors, I.emergencyInfo],
         '/admin',
       ),
       // System section removed — admin tools accessed via AdminShell (/admin) outside demo mode.
@@ -777,7 +787,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('administration', 'Administration', '⚙️',
         'Administration', 'Equipment, integrations, Internet of Things sensors, locations, settings, team, vendors, and role permissions.',
-        [I.equipment, I.fleet, I.insurance, I.bonuses, I.performanceMetrics, I.integrations, I.iotSensors, I.locations, I.settings, I.rolesPermissions, I.team, I.timecards, I.employees, I.trainingRecords, I.trainingCatalog, I.vendors, I.teamAvailability, I.availabilityApprovals, I.emergencyInfo],
+        [I.equipment, I.fleet, I.insurance, I.bonuses, I.performanceMetrics, I.clockReminders, I.timecardAlterations, I.integrations, I.iotSensors, I.locations, I.settings, I.rolesPermissions, I.team, I.timecards, I.employees, I.trainingRecords, I.trainingCatalog, I.vendors, I.teamAvailability, I.availabilityApprovals, I.emergencyInfo],
         '/admin',
       ),
       section('help', 'Help', '❓',

@@ -34,6 +34,10 @@ export interface ScheduledJob {
   priority: 'low' | 'normal' | 'high' | 'urgent';
   recurringScheduleId: string | null;
   routeOrder: number | null;
+  meetingLocation: string | null;
+  meetingLocationNotes: string | null;
+  meetingLocationLat: number | null;
+  meetingLocationLng: number | null;
   createdAt: string;
 }
 

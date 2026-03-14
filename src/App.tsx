@@ -247,6 +247,8 @@ const EquipmentIncidentsPage = lazy(() => import('./pages/equipment/EquipmentInc
 const IncidentReportsPage = lazy(() => import('./pages/safety/IncidentReportsPage').then(m => ({ default: m.IncidentReportsPage })));
 const ReportIncidentPage = lazy(() => import('./pages/safety/ReportIncidentPage').then(m => ({ default: m.ReportIncidentPage })));
 const IncidentDetailPage = lazy(() => import('./pages/safety/IncidentDetailPage').then(m => ({ default: m.IncidentDetailPage })));
+const ClockRemindersPage = lazy(() => import('./pages/settings/ClockRemindersPage').then(m => ({ default: m.ClockRemindersPage })));
+const TimecardAlterationsPage = lazy(() => import('./pages/timecards/TimecardAlterationsPage').then(m => ({ default: m.TimecardAlterationsPage })));
 
 import { CookieConsent } from './components/CookieConsent';
 import { usePageTracking } from './hooks/usePageTracking';
@@ -627,6 +629,8 @@ function AppRoutes() {
           <Route path="/safety/incidents" element={<IncidentReportsPage />} />
           <Route path="/safety/incidents/new" element={<ReportIncidentPage />} />
           <Route path="/safety/incidents/:id" element={<IncidentDetailPage />} />
+          <Route path="/settings/clock-reminders" element={<ClockRemindersPage />} />
+          <Route path="/timecards/alterations" element={<TimecardAlterationsPage />} />
           <Route path="/help" element={<Help />} />
           <Route path="/weekly-digest" element={<WeeklyDigest />} />
           <Route path="/audit-report" element={<AuditReport />} />

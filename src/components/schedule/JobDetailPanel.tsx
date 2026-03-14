@@ -1,7 +1,7 @@
 /**
  * JobDetailPanel — Slide-in panel showing full job details with action buttons.
  */
-import { X, Calendar, Clock, MapPin, User, Wrench, FileText, ChevronRight, RotateCcw, UserPlus } from 'lucide-react';
+import { X, Calendar, Clock, MapPin, User, Wrench, FileText, ChevronRight, RotateCcw, UserPlus, Navigation, ExternalLink } from 'lucide-react';
 import type { ScheduledJob, JobStatus } from '../../hooks/api/useSchedule';
 import { NAVY, CARD_BG, CARD_BORDER, TEXT_TERTIARY, MUTED } from '../dashboard/shared/constants';
 
@@ -77,6 +77,23 @@ export function JobDetailPanel({ job, onClose, onReschedule, onAssign }: JobDeta
         )}
         {job.notes && (
           <InfoRow icon={FileText} label="Notes" value={job.notes} />
+        )}
+
+        {/* Meeting Location */}
+        {job.meetingLocation && job.meetingLocation !== job.locationAddress && (
+          <div className="mt-1">
+            <InfoRow icon={Navigation} label="Meeting Point" value={job.meetingLocation} subValue={job.meetingLocationNotes || undefined} />
+            <a
+              href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(job.meetingLocation)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ml-6 mt-1 inline-flex items-center gap-1 text-[10px] font-semibold hover:underline"
+              style={{ color: '#1e4d6b' }}
+            >
+              <ExternalLink className="w-3 h-3" />
+              Get Directions
+            </a>
+          </div>
         )}
       </div>
 

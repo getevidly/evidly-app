@@ -31,6 +31,8 @@ export interface ShiftEntry {
   approvedBy: string | null;
   approvedAt: string | null;
   rejectionReason: string | null;
+  autoClockedOut?: boolean;
+  autoClockoutReason?: string | null;
 }
 
 export interface PayPeriod {
