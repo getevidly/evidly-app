@@ -54,22 +54,30 @@ export async function dispatchTempViolationSignal(
       created_at: new Date().toISOString(),
     });
 
-    // Auto-create draft HACCP corrective action (operator must confirm)
+    // Auto-create corrective action (status = reported, operator must confirm)
     if (orgId) {
-      await supabase.from('haccp_corrective_actions').insert({
+      const { data: ca } = await supabase.from('corrective_actions').insert({
         organization_id: orgId,
-        plan_name: 'Temperature Monitoring',
-        ccp_number: 'CCP-TEMP',
-        ccp_hazard: 'Temperature abuse',
-        deviation: `${violation.equipment_name} recorded ${violation.temperature}°F (safe range: ${rangeText})`,
-        critical_limit: rangeText,
-        recorded_value: `${violation.temperature}°F`,
-        action_taken: violation.corrective_action || 'Pending operator review',
-        action_by: 'System (auto-generated)',
-        status: 'open',
-        source: 'temp_log',
         location_id: locationId || null,
-      });
+        title: `Temperature excursion — ${violation.equipment_name}`,
+        description: `Out-of-range temperature: ${violation.temperature}°F (safe range: ${rangeText}). Auto-created from temperature log.`,
+        category: 'food_safety',
+        severity: 'critical',
+        status: 'reported',
+        source: 'temperature_log',
+        ai_draft: `Immediate action: Remove affected food items held in the danger zone for more than 4 hours and check equipment calibration. Re-log temperature within 1 hour. Consult your CFPM and EHD for official guidance.`,
+        due_date: new Date(Date.now() + 24 * 3600000).toISOString().split('T')[0],
+      }).select('id').single();
+
+      if (ca?.id) {
+        await supabase.from('corrective_action_history').insert({
+          corrective_action_id: ca.id,
+          action: 'status_changed',
+          from_value: null,
+          to_value: 'reported',
+          detail: 'Auto-created from temperature excursion log.',
+        });
+      }
     }
   } catch (err) {
     // Fire-and-forget — never block the temp logging flow
