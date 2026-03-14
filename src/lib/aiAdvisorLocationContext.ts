@@ -14,6 +14,7 @@ import {
 import { generateTempDemoHistory } from '../data/tempDemoHistory';
 import { DEMO_SCENARIOS } from '../data/inspectorViewDemoData';
 import { SCORE_TRENDS, CHECKLIST_COMPLETION, TEMP_COMPLIANCE } from '../data/reportsDemoData';
+import { getJurisdictionForLocation } from '../data/jurisdictionChecklistData';
 
 // ── Interfaces ───────────────────────────────────────────────
 
@@ -56,6 +57,13 @@ export interface LocationContextPayload {
     direction: 'improving' | 'declining' | 'stable';
     recentWeeks: { week: string; foodSafety: number; facilitySafety: number }[];
   };
+  jurisdictionEnforcement: {
+    ehdName: string;
+    ahjName: string;
+    foodCodeVersion: string;
+    enforcementFocus: { codeSection: string; description: string; priority: string }[];
+    aiContextNote: string;
+  } | null;
   dataDateRange: { from: string; to: string };
 }
 
@@ -160,6 +168,18 @@ export function buildLocationContextPayload(locationId: string): LocationContext
   const trendDir: 'improving' | 'declining' | 'stable' =
     lastFood > firstFood ? 'improving' : lastFood < firstFood ? 'declining' : 'stable';
 
+  // Jurisdiction enforcement emphasis
+  const jEnf = getJurisdictionForLocation(locationId);
+  const jurisdictionEnforcement = jEnf
+    ? {
+        ehdName: jEnf.ehdName,
+        ahjName: jEnf.ahjName,
+        foodCodeVersion: jEnf.foodCodeVersion,
+        enforcementFocus: jEnf.enforcementFocus,
+        aiContextNote: jEnf.aiContextNote,
+      }
+    : null;
+
   return {
     locationId,
     locationName: loc.name,
@@ -188,6 +208,7 @@ export function buildLocationContextPayload(locationId: string): LocationContext
       direction: trendDir,
       recentWeeks: last4,
     },
+    jurisdictionEnforcement,
     dataDateRange: getDataDateRange(),
   };
 }
@@ -281,6 +302,19 @@ export function formatPayloadForPrompt(payload: LocationContextPayload): string 
     lines.push(`  - ${t.template}: ${t.rate}% (${t.completed} done, ${t.missed} missed)`);
   });
   lines.push('');
+
+  // Jurisdiction enforcement focus
+  if (payload.jurisdictionEnforcement) {
+    const je = payload.jurisdictionEnforcement;
+    lines.push(`JURISDICTION ENFORCEMENT FOCUS (${je.ehdName}):`);
+    lines.push(`  Food Code: ${je.foodCodeVersion}`);
+    lines.push(`  AHJ (facility safety): ${je.ahjName}`);
+    je.enforcementFocus.forEach(f => {
+      lines.push(`  - [${f.priority.toUpperCase()}] ${f.description} (${f.codeSection})`);
+    });
+    lines.push(`  Context: ${je.aiContextNote}`);
+    lines.push('');
+  }
 
   return lines.join('\n');
 }

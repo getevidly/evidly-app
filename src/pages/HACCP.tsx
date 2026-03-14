@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { AlertTriangle, CheckCircle, Clock, Thermometer, Activity, ChevronRight, XCircle, MapPin, Loader2, ChevronDown, FileText, Plus, Trash2, Save, Download, Wifi, Pencil, Shield, Sparkles } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Clock, Thermometer, Activity, ChevronRight, XCircle, MapPin, Loader2, ChevronDown, FileText, Plus, Trash2, Save, Download, Wifi, Pencil, Shield, Sparkles, Building2 } from 'lucide-react';
 import { HACCPAICreate } from '../components/haccp/HACCPAICreate';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { InfoTooltip } from '../components/ui/InfoTooltip';
@@ -13,6 +13,7 @@ import { useDemo } from '../contexts/DemoContext';
 import { supabase } from '../lib/supabase';
 import { jsPDF } from 'jspdf';
 import { toast } from 'sonner';
+import { getJurisdictionForLocation } from '../data/jurisdictionChecklistData';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -367,6 +368,7 @@ export function HACCP() {
   const [selectedPlan, setSelectedPlan] = useState<HACCPPlan | null>(null);
   const urlLocation = searchParams.get('location') || '';
   const [selectedLocation, setSelectedLocation] = useState(urlLocation || 'all');
+  const jurisdictionConfig = getJurisdictionForLocation(urlLocation);
   const { getAccessibleLocations, userRole } = useRole();
   const ttActivePlans = useTooltip('haccpActivePlans', userRole);
   const ttOverallCompliance = useTooltip('haccpOverallCompliance', userRole);
@@ -1141,6 +1143,32 @@ export function HACCP() {
               Roll-up view — data pulled from Temperature Logs and Checklists
             </p>
           </div>
+          {/* Jurisdiction Header */}
+          {jurisdictionConfig && (
+            <div className="flex items-start gap-3 px-4 py-3 rounded-lg bg-[#eef4f8] border border-[#b8d4e8] w-full order-last">
+              <Building2 size={18} className="text-[#1e4d6b] mt-0.5 shrink-0" />
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                  <span className="text-sm font-semibold text-[#1e4d6b]">{jurisdictionConfig.ehdName}</span>
+                  <span className="text-xs text-gray-400">·</span>
+                  <span className="text-xs text-gray-600">{jurisdictionConfig.foodCodeVersion}</span>
+                </div>
+                <div className="flex flex-wrap gap-1.5 mt-1.5">
+                  {jurisdictionConfig.enforcementFocus
+                    .filter(f => f.priority === 'high')
+                    .map(f => (
+                      <span
+                        key={f.codeSection}
+                        className="text-[10px] font-semibold px-1.5 py-0.5 rounded"
+                        style={{ color: '#0369a1', backgroundColor: '#e0f2fe' }}
+                      >
+                        {f.description} ({f.codeSection})
+                      </span>
+                    ))}
+                </div>
+              </div>
+            </div>
+          )}
           <div className="flex items-center space-x-2">
             {canExportPackage && (<>
               <select
@@ -2309,7 +2337,16 @@ export function HACCP() {
 
         {/* ── AI Create Tab ───────────────────────────────────── */}
         {!loading && activeTab === 'ai-create' && (
-          <HACCPAICreate />
+          <>
+            <HACCPAICreate />
+            <div className="mt-4 flex items-start gap-3 px-4 py-3 rounded-lg border" style={{ borderColor: '#d4af37', backgroundColor: '#fffbeb' }}>
+              <AlertTriangle size={16} className="shrink-0 mt-0.5" style={{ color: '#d4af37' }} />
+              <div className="text-xs text-gray-700 leading-relaxed">
+                <span className="font-semibold" style={{ color: '#92400e' }}>AI-generated</span> — review with a qualified food safety professional before implementation.
+                This is not an official HACCP plan and does not replace FDA/CalCode required documentation.
+              </div>
+            </div>
+          </>
         )}
       </div>
 

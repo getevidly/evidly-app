@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Plus, CheckSquare, Clock, Edit2, Trash2, Play, X, Check, ChevronRight, User, AlertTriangle, CheckCircle, Shield } from 'lucide-react';
+import { Plus, CheckSquare, Clock, Edit2, Trash2, Play, X, Check, ChevronRight, User, AlertTriangle, CheckCircle, Shield, Building2 } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
@@ -17,6 +17,7 @@ import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { useNotifications } from '../contexts/NotificationContext';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 import { ErrorState, PageEmptyState } from '../components/shared/PageStates';
+import { getJurisdictionForLocation } from '../data/jurisdictionChecklistData';
 
 interface ChecklistTemplate {
   id: string;
@@ -669,6 +670,9 @@ export function Checklists() {
   const { isDemoMode } = useDemo();
   const { t } = useTranslation();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  const [searchParams] = useSearchParams();
+  const locationParam = searchParams.get('location') || '';
+  const jurisdictionConfig = getJurisdictionForLocation(locationParam);
   const [pageError, setPageError] = useState<string | null>(null);
   const [activeView, setActiveView] = useState<'templates' | 'today' | 'history'>('today');
   const [demoItemsMap, setDemoItemsMap] = useState<Record<string, ChecklistTemplateItem[]>>({});
@@ -897,6 +901,17 @@ export function Checklists() {
         item_type: item.type,
         order: index,
         is_required: item.required,
+        authority_source: item.authority_source || null,
+        authority_section: item.authority_section || null,
+        authority_note: item.authority_note || null,
+        haccp_ccp: item.haccp_ccp || null,
+        haccp_hazard: item.haccp_hazard || null,
+        haccp_critical_limit: item.haccp_critical_limit || null,
+        temp_min: item.temp_min ?? null,
+        temp_max: item.temp_max ?? null,
+        is_critical: item.is_critical || false,
+        requires_corrective_action: item.requires_corrective_action || false,
+        requires_photo_on_fail: item.requires_photo_on_fail || false,
       }));
 
       const { error: itemsError } = await supabase
@@ -1419,7 +1434,7 @@ export function Checklists() {
                   <label className="text-sm font-medium text-gray-700">{t('common.correctiveActionRequired')}</label>
                   <AIAssistButton
                     fieldLabel="Corrective Action"
-                    context={{ itemName: checklistItemMap[item.title] || item.title, checklistName: selectedTemplate?.name || '' }}
+                    context={{ itemName: checklistItemMap[item.title] || item.title, checklistName: selectedTemplate?.name || '', jurisdictionName: jurisdictionConfig?.ehdName, enforcementNote: jurisdictionConfig?.aiContextNote, codeSection: item.authority_section }}
                     currentValue={response.corrective_action}
                     onGenerated={(text) => { handleItemResponse(item.id, 'no', false, text); setAiFields(prev => new Set(prev).add(`corrective_${item.id}`)); }}
                   />
@@ -1489,7 +1504,7 @@ export function Checklists() {
                   </label>
                   <AIAssistButton
                     fieldLabel="Corrective Action"
-                    context={{ itemName: checklistItemMap[item.title] || item.title, checklistName: selectedTemplate?.name || '' }}
+                    context={{ itemName: checklistItemMap[item.title] || item.title, checklistName: selectedTemplate?.name || '', jurisdictionName: jurisdictionConfig?.ehdName, enforcementNote: jurisdictionConfig?.aiContextNote, codeSection: item.authority_section, ccpNumber: item.haccp_ccp, criticalLimit: item.haccp_critical_limit }}
                     currentValue={response.corrective_action}
                     onGenerated={(text) => { handleItemResponse(item.id, response.response_value, false, text); setAiFields(prev => new Set(prev).add(`ccp_corrective_${item.id}`)); }}
                   />
@@ -1601,6 +1616,33 @@ export function Checklists() {
           <h1 className="text-2xl font-bold text-gray-900">{t('checklists.title')}</h1>
           <p className="text-sm text-gray-600 mt-1">{t('checklists.subtitle')}</p>
         </div>
+
+        {/* Jurisdiction Header */}
+        {jurisdictionConfig && (
+          <div className="flex items-start gap-3 px-4 py-3 rounded-lg bg-[#eef4f8] border border-[#b8d4e8]">
+            <Building2 size={18} className="text-[#1e4d6b] mt-0.5 shrink-0" />
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                <span className="text-sm font-semibold text-[#1e4d6b]">{jurisdictionConfig.ehdName}</span>
+                <span className="text-xs text-gray-400">·</span>
+                <span className="text-xs text-gray-600">{jurisdictionConfig.foodCodeVersion}</span>
+              </div>
+              <div className="flex flex-wrap gap-1.5 mt-1.5">
+                {jurisdictionConfig.enforcementFocus
+                  .filter(f => f.priority === 'high')
+                  .map(f => (
+                    <span
+                      key={f.codeSection}
+                      className="text-[10px] font-semibold px-1.5 py-0.5 rounded"
+                      style={{ color: '#0369a1', backgroundColor: '#e0f2fe' }}
+                    >
+                      {f.description} ({f.codeSection})
+                    </span>
+                  ))}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* View Tabs */}
         <div className="flex space-x-2 border-b border-gray-200 overflow-x-auto">

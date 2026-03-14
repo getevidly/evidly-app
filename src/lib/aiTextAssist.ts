@@ -81,16 +81,27 @@ function generateDemoText(fieldLabel: string, ctx: Record<string, any>): string 
   }
 
   if (label.includes('corrective action') || label.includes('action taken') || label.includes('immediate action')) {
-    if (title.includes('temperature') || title.includes('cooler') || title.includes('holding')) {
-      return 'Moved all TCS products to backup unit immediately. Discarded items above threshold for more than 4 hours per FDA Food Code. Placed out-of-order sign on unit. Called refrigeration vendor for emergency repair.';
+    const jName = ctx.jurisdictionName || '';
+    const jNote = ctx.enforcementNote || '';
+    const codeRef = ctx.codeSection ? ` (${ctx.codeSection})` : '';
+    const jPrefix = jName ? `Per ${jName} enforcement requirements${codeRef}, ` : '';
+
+    if (title.includes('temperature') || title.includes('cooler') || title.includes('holding') || ctx.ccpNumber) {
+      return `${jPrefix || ''}Moved all TCS products to backup unit immediately. Discarded items above threshold for more than 4 hours per FDA Food Code. Placed out-of-order sign on unit. Called refrigeration vendor for emergency repair.${jNote ? ' Note: ' + jNote : ''}`;
     }
     if (title.includes('handwash') || title.includes('soap')) {
-      return 'Restocked all handwashing stations with soap and paper towels. Verified warm water supply at each station. Added soap level check to closing checklist.';
+      return `${jPrefix || ''}Restocked all handwashing stations with soap and paper towels. Verified warm water supply at each station. Added soap level check to closing checklist.`;
     }
     if (title.includes('pest')) {
-      return 'Sealed identified entry point with expanding foam as temporary measure. Scheduled pest control vendor for emergency treatment. Increased sanitation frequency in affected area.';
+      return `${jPrefix || ''}Sealed identified entry point with expanding foam as temporary measure. Scheduled pest control vendor for emergency treatment. Increased sanitation frequency in affected area.`;
     }
-    return `Immediate containment actions taken. ${severity === 'critical' ? 'Area secured and affected products isolated.' : 'Issue documented and staff notified.'} Corrective measures initiated per standard operating procedure.`;
+    if (title.includes('cooling') || title.includes('cool')) {
+      return `${jPrefix || ''}Cooling process exceeded time limit. Food reheated to 165°F and cooling restarted using approved rapid cooling method (ice bath / blast chiller). All cooling logs updated with corrective action documentation.${jNote ? ' Note: ' + jNote : ''}`;
+    }
+    if (title.includes('sanitizer') || title.includes('concentration')) {
+      return `${jPrefix || ''}Sanitizer solution replaced and concentration verified with test strips. All food-contact surfaces re-sanitized. Staff reminded of correct dilution ratios per manufacturer label.`;
+    }
+    return `${jPrefix || ''}Immediate containment actions taken. ${severity === 'critical' ? 'Area secured and affected products isolated.' : 'Issue documented and staff notified.'} Corrective measures initiated per standard operating procedure.`;
   }
 
   if (label.includes('corrective action plan') || label.includes('preventive') || label.includes('prevention') || label.includes('follow-up')) {
