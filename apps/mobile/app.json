@@ -1,7 +1,8 @@
 {
   "expo": {
-    "name": "mobile",
-    "slug": "mobile",
+    "name": "HoodOps",
+    "slug": "hoodops",
+    "scheme": "hoodops",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -9,25 +10,71 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#1e4d6b"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false,
+      "bundleIdentifier": "com.hoodops.fieldservice",
+      "infoPlist": {
+        "NSCameraUsageDescription": "HoodOps needs camera access to capture job site photos and scan QR codes.",
+        "NSLocationWhenInUseUsageDescription": "HoodOps needs your location to verify job site check-ins.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "HoodOps needs your location to track field routes and verify job site check-ins.",
+        "NSMicrophoneUsageDescription": "HoodOps needs microphone access to record audio notes for job reports.",
+        "NSPhotoLibraryUsageDescription": "HoodOps needs photo library access to attach existing photos to job reports."
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#1e4d6b",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "package": "com.hoodops.fieldservice",
+      "permissions": [
+        "CAMERA",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "RECORD_AUDIO",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-secure-store"
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "HoodOps needs camera access to capture job site photos and scan QR codes."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "HoodOps needs your location to verify job site check-ins and track field routes.",
+          "locationAlwaysPermission": "HoodOps needs background location to track field routes.",
+          "locationWhenInUsePermission": "HoodOps needs your location to verify job site check-ins."
+        }
+      ],
+      [
+        "expo-av",
+        {
+          "microphonePermission": "HoodOps needs microphone access to record audio notes for job reports."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#1e4d6b"
+        }
+      ],
+      "expo-secure-store",
+      "expo-sqlite"
     ]
   }
 }

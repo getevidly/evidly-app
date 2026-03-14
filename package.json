@@ -11,7 +11,10 @@
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
     "intelligence": "node scripts/run-intelligence.js",
     "dev:vendor": "cd apps/web-vendor && npx vite",
-    "build:vendor": "cd apps/web-vendor && npx vite build"
+    "build:vendor": "cd apps/web-vendor && npx vite build",
+    "dev:mobile": "cd apps/mobile && npx expo start",
+    "ios": "cd apps/mobile && npx expo start --ios",
+    "android": "cd apps/mobile && npx expo start --android"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
