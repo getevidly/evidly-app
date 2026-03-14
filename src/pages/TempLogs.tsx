@@ -740,7 +740,7 @@ export function TempLogs() {
       fetchEquipment();
       fetchHistory();
 
-      // Dispatch intelligence signal for violations
+      // Dispatch intelligence signal + draft corrective action for violations
       if (!isWithinRange) {
         dispatchTempViolationSignal(supabase, {
           facility_id: facilityId,
@@ -750,7 +750,7 @@ export function TempLogs() {
           required_max: selectedEquipment.max_temp,
           log_type: logType,
           corrective_action: !isWithinRange ? correctiveAction : null,
-        });
+        }, profile?.organization_id, facilityId);
       }
     }
   };
@@ -869,7 +869,7 @@ export function TempLogs() {
           required_max: v.max_temp,
           organization_id: profile?.organization_id || '',
           location_id: (eq as any)?.location_id,
-        }).catch(() => {});
+        }, profile?.organization_id, (eq as any)?.location_id).catch(() => {});
       }
       setShowBatchModal(false);
       showSuccessToast(`${validEntries.length} temperatures logged successfully`);

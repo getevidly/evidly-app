@@ -1,7 +1,9 @@
 ﻿import { useState, useRef, useEffect } from 'react';
-import { Bell, X, Check, Clock, AlertTriangle, Info, ShieldAlert, ChevronRight, CheckCheck, FileText } from 'lucide-react';
+import { Bell, X, Check, Clock, AlertTriangle, Info, ShieldAlert, ChevronRight, CheckCheck, FileText, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useDemo } from '../contexts/DemoContext';
+import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase';
 import { DEMO_VENDOR_DOC_NOTIFICATIONS } from '../data/vendorDocumentsDemoData';
 import { useUnreadSignals } from '../hooks/useUnreadSignals';
 
@@ -172,7 +174,9 @@ function timeAgo(iso: string): string {
 export function NotificationCenter() {
   const [isOpen, setIsOpen] = useState(false);
   const { isDemoMode } = useDemo();
+  const { user, profile } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>(isDemoMode ? ALL_DEMO_NOTIFICATIONS : []);
+  const [signalNotifications, setSignalNotifications] = useState<Notification[]>([]);
   const [filter, setFilter] = useState<'all' | NotificationSeverity | 'vendor'>('all');
   const panelRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -180,10 +184,49 @@ export function NotificationCenter() {
   // Real unread signal count from intelligence_signals (production)
   const { unreadCount: signalUnreadCount } = useUnreadSignals();
 
+  // Fetch intelligence signals when drawer opens in production
+  useEffect(() => {
+    if (isDemoMode || !isOpen || !profile?.organization_id || !user?.id) return;
+
+    (async () => {
+      const { data: signals } = await supabase
+        .from('intelligence_signals')
+        .select('id, title, summary, priority, signal_type, created_at')
+        .eq('is_published', true)
+        .eq('org_id', profile.organization_id)
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+      if (!signals || signals.length === 0) { setSignalNotifications([]); return; }
+
+      const { data: reads } = await supabase
+        .from('signal_reads')
+        .select('signal_id')
+        .eq('user_id', user.id);
+
+      const readIds = new Set((reads || []).map(r => r.signal_id));
+
+      const mapped: Notification[] = signals.map(s => ({
+        id: `sig-${s.id}`,
+        severity: s.priority === 'high' ? 'urgent' as NotificationSeverity : s.priority === 'medium' ? 'advisory' as NotificationSeverity : 'info' as NotificationSeverity,
+        title: s.title || 'Intelligence Signal',
+        body: s.summary || '',
+        link: '/insights/intelligence',
+        status: readIds.has(s.id) ? 'read' as NotificationStatus : 'unread' as NotificationStatus,
+        created_at: s.created_at,
+      }));
+
+      setSignalNotifications(mapped);
+    })();
+  }, [isDemoMode, isOpen, profile?.organization_id, user?.id]);
+
+  // Merge local notifications + signal notifications
+  const allNotifications = isDemoMode ? notifications : [...notifications, ...signalNotifications];
+
   const localUnreadCount = notifications.filter(n => n.status === 'unread').length;
-  // In demo mode use local count; in production combine local + signal count
-  const unreadCount = isDemoMode ? localUnreadCount : localUnreadCount + signalUnreadCount;
-  const urgentUnread = notifications.filter(n => n.status === 'unread' && n.severity === 'urgent').length;
+  // In demo mode use local count; in production use actual signal notifications
+  const unreadCount = isDemoMode ? localUnreadCount : localUnreadCount + signalNotifications.filter(n => n.status === 'unread').length;
+  const urgentUnread = allNotifications.filter(n => n.status === 'unread' && n.severity === 'urgent').length;
 
   // Close on outside click
   useEffect(() => {
@@ -196,7 +239,7 @@ export function NotificationCenter() {
     return () => document.removeEventListener('mousedown', handler);
   }, [isOpen]);
 
-  const filtered = notifications.filter(n => {
+  const filtered = allNotifications.filter(n => {
     if (n.status === 'dismissed') return false;
     if (filter === 'vendor') return n.category === 'vendor_document';
     if (filter !== 'all' && n.severity !== filter) return false;
@@ -204,19 +247,43 @@ export function NotificationCenter() {
   });
 
   const markAsRead = (id: string) => {
+    // Signal notifications: insert into signal_reads
+    if (id.startsWith('sig-') && user?.id) {
+      const signalId = id.replace('sig-', '');
+      setSignalNotifications(prev => prev.map(n => n.id === id ? { ...n, status: 'read' as NotificationStatus } : n));
+      supabase.from('signal_reads').upsert({ signal_id: signalId, user_id: user.id }, { onConflict: 'signal_id,user_id' }).then(() => {});
+      return;
+    }
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, status: 'read' as NotificationStatus } : n));
   };
 
   const markAllRead = () => {
     setNotifications(prev => prev.map(n => n.status === 'unread' ? { ...n, status: 'read' as NotificationStatus } : n));
+    // Also mark all signal notifications as read
+    if (signalNotifications.length > 0 && user?.id) {
+      const unread = signalNotifications.filter(n => n.status === 'unread');
+      setSignalNotifications(prev => prev.map(n => ({ ...n, status: 'read' as NotificationStatus })));
+      const rows = unread.map(n => ({ signal_id: n.id.replace('sig-', ''), user_id: user.id! }));
+      if (rows.length > 0) supabase.from('signal_reads').upsert(rows, { onConflict: 'signal_id,user_id' }).then(() => {});
+    }
   };
 
   const snooze = (id: string) => {
     const until = new Date(Date.now() + 24 * 3600000).toISOString();
+    if (id.startsWith('sig-')) {
+      setSignalNotifications(prev => prev.map(n => n.id === id ? { ...n, status: 'snoozed' as NotificationStatus, snoozed_until: until } : n));
+      return;
+    }
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, status: 'snoozed' as NotificationStatus, snoozed_until: until } : n));
   };
 
   const dismiss = (id: string) => {
+    if (id.startsWith('sig-')) {
+      // For signals, dismiss = mark as read
+      markAsRead(id);
+      setSignalNotifications(prev => prev.map(n => n.id === id ? { ...n, status: 'dismissed' as NotificationStatus } : n));
+      return;
+    }
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, status: 'dismissed' as NotificationStatus } : n));
   };
 
@@ -296,10 +363,10 @@ export function NotificationCenter() {
               { key: 'vendor' as const, label: 'Vendor' },
             ]).map(tab => {
               const count = tab.key === 'all'
-                ? notifications.filter(n => n.status !== 'dismissed').length
+                ? allNotifications.filter(n => n.status !== 'dismissed').length
                 : tab.key === 'vendor'
-                  ? notifications.filter(n => n.category === 'vendor_document' && n.status !== 'dismissed').length
-                  : notifications.filter(n => n.severity === tab.key && n.status !== 'dismissed').length;
+                  ? allNotifications.filter(n => n.category === 'vendor_document' && n.status !== 'dismissed').length
+                  : allNotifications.filter(n => n.severity === tab.key && n.status !== 'dismissed').length;
               return (
                 <button
                   key={tab.key}
@@ -337,9 +404,11 @@ export function NotificationCenter() {
                         className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center mt-0.5"
                         style={{ backgroundColor: sev.bg }}
                       >
-                        {n.category === 'vendor_document'
-                          ? <FileText className="h-4 w-4" style={{ color: sev.color }} />
-                          : <SevIcon className="h-4 w-4" style={{ color: sev.color }} />
+                        {n.id.startsWith('sig-')
+                          ? <Zap className="h-4 w-4" style={{ color: sev.color }} />
+                          : n.category === 'vendor_document'
+                            ? <FileText className="h-4 w-4" style={{ color: sev.color }} />
+                            : <SevIcon className="h-4 w-4" style={{ color: sev.color }} />
                         }
                       </div>
                       {/* Content */}

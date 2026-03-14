@@ -4,10 +4,12 @@
  * Period-based expense tracking for vendor services at a single location.
  * Shows 4 metric cards + per-type expense rows.
  */
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Flame, Fan, Filter, Shield, ShieldAlert, DollarSign, TrendingUp, CheckCircle, Clock } from 'lucide-react';
 import { useDemo } from '../../contexts/DemoContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '../../lib/supabase';
 import {
   SERVICE_TYPES,
   SERVICE_TYPE_CODES,
@@ -28,16 +30,29 @@ const PERIODS = [
 
 export function ServiceExpenseTracker() {
   const { isDemoMode } = useDemo();
+  const { profile } = useAuth();
   const [searchParams] = useSearchParams();
   const locationFilter = searchParams.get('location');
   const [periodIdx, setPeriodIdx] = useState(1); // default Quarterly
   const period = PERIODS[periodIdx];
+  const [schedules, setSchedules] = useState([]);
 
   // Production: query location_service_schedules from Supabase.
-  // No seeded demo data — always empty until real records exist.
-  const schedules = useMemo(() => {
-    return [];
-  }, []);
+  useEffect(() => {
+    if (isDemoMode) return;
+    const query = supabase
+      .from('location_service_schedules')
+      .select('*')
+      .order('next_due_date', { ascending: true });
+
+    if (locationFilter && locationFilter !== 'all') {
+      query.eq('location_id', locationFilter);
+    }
+
+    query.then(({ data }) => {
+      setSchedules((data || []).map(s => ({ ...s, price: s.last_price })));
+    });
+  }, [isDemoMode, locationFilter]);
 
   const metrics = useMemo(() => {
     let periodTotal = 0;

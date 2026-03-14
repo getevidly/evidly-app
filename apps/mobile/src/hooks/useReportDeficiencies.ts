@@ -120,15 +120,16 @@ const DEMO_DEFICIENCIES: ReportDeficiency[] = [
   },
 ];
 
-export function useReportDeficiencies() {
+export function useReportDeficiencies(reportId: string) {
   const [deficiencies] = useState<ReportDeficiency[]>(DEMO_DEFICIENCIES);
   const [nfpaCodes] = useState<NfpaCode[]>(NFPA_CODES);
 
   return {
     deficiencies,
     nfpaCodes,
-    getByReport: (reportId: string) => deficiencies.filter(d => d.report_id === reportId),
+    getByReport: (rid: string) => deficiencies.filter(d => d.report_id === rid),
     getBySystem: (systemId: string) => deficiencies.filter(d => d.system_id === systemId),
+    getByComponent: (component: string) => deficiencies.filter(d => d.component === component),
     addDeficiency: async (_data: Omit<ReportDeficiency, 'id'>) => {
       throw new Error('Not implemented in demo mode');
     },
@@ -136,6 +137,13 @@ export function useReportDeficiencies() {
       throw new Error('Not implemented in demo mode');
     },
     getNfpaByCode: (code: string) => nfpaCodes.find(n => n.code === code) || null,
+    loading: false,
+  };
+}
+
+export function useRegenerateDeficiencies(reportId: string) {
+  return {
+    regenerate: async () => { throw new Error('Not implemented in demo mode'); },
     loading: false,
   };
 }

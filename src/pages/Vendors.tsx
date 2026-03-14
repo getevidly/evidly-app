@@ -1691,7 +1691,7 @@ export function Vendors() {
       />
 
       {/* Log Service Modal */}
-      <LogServiceModal isOpen={showLogService} onClose={() => setShowLogService(false)} />
+      <LogServiceModal isOpen={showLogService} onClose={() => setShowLogService(false)} locationId={null} />
 
       {/* Toast */}
       {toastMessage && (

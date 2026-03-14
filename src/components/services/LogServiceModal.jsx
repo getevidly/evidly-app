@@ -5,8 +5,11 @@
  * with FPM/GFX/RGC children, plus FS as standalone.
  */
 import { useState } from 'react';
-import { X, Upload } from 'lucide-react';
+import { X, Upload, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 import { useDemo } from '../../contexts/DemoContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '../../lib/supabase';
 import { SERVICE_TYPES, SERVICE_TYPE_CODES, KEC_CHILDREN, formatFrequency } from '../../constants/serviceTypes';
 
 const FREQUENCY_OPTIONS = [
@@ -16,8 +19,21 @@ const FREQUENCY_OPTIONS = [
   { value: 'annual', label: 'Annual' },
 ];
 
-export function LogServiceModal({ isOpen, onClose }) {
+function calculateNextDue(fromDate, frequency) {
+  const d = new Date(fromDate);
+  switch (frequency) {
+    case 'monthly':       d.setMonth(d.getMonth() + 1); break;
+    case 'quarterly':     d.setMonth(d.getMonth() + 3); break;
+    case 'semi_annual':   d.setMonth(d.getMonth() + 6); break;
+    case 'annual':        d.setFullYear(d.getFullYear() + 1); break;
+  }
+  return d.toISOString().split('T')[0];
+}
+
+export function LogServiceModal({ isOpen, onClose, locationId, onSuccess }) {
   const { isDemoMode } = useDemo();
+  const { user, profile } = useAuth();
+  const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
     service_type_code: 'KEC',
     date: new Date().toISOString().split('T')[0],
@@ -31,16 +47,90 @@ export function LogServiceModal({ isOpen, onClose }) {
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (isDemoMode) {
-      alert('Service logged (demo mode — not persisted)');
+      toast.success('Service logged (demo mode — not persisted)');
       onClose();
       return;
     }
-    // Production: insert vendor_service_records + upsert location_service_schedules
-    alert('Service logged successfully');
-    onClose();
+
+    setSaving(true);
+    try {
+      const orgId = profile?.organization_id;
+      const userId = user?.id;
+
+      // 1. Insert service record
+      const { data: record, error } = await supabase
+        .from('vendor_service_records')
+        .insert({
+          organization_id:   orgId,
+          location_id:       locationId || null,
+          service_type_code: form.service_type_code,
+          service_date:      form.date,
+          provider_name:     form.provider || null,
+          technician_name:   form.technician || null,
+          price_charged:     form.price ? parseFloat(form.price) : null,
+          notes:             form.notes || null,
+          source:            'manual',
+          entered_by:        userId,
+          status:            'completed',
+        })
+        .select()
+        .single();
+
+      if (error) {
+        toast.error('Error saving service record. Please try again.');
+        setSaving(false);
+        return;
+      }
+
+      // 2. Upload certificate if provided (fire-and-forget)
+      if (form.certificate && record) {
+        const filename = `${orgId}/${locationId || 'org'}/${record.id}/${form.certificate.name}`;
+        const { data: upload } = await supabase.storage
+          .from('service-certificates')
+          .upload(filename, form.certificate, { upsert: true });
+
+        if (upload) {
+          const { data: urlData } = supabase.storage
+            .from('service-certificates')
+            .getPublicUrl(filename);
+
+          if (urlData?.publicUrl) {
+            await supabase
+              .from('vendor_service_records')
+              .update({ certificate_url: urlData.publicUrl })
+              .eq('id', record.id);
+          }
+        }
+      }
+
+      // 3. Update location_service_schedules
+      if (locationId) {
+        const nextDue = calculateNextDue(form.date, form.frequency);
+        await supabase
+          .from('location_service_schedules')
+          .upsert({
+            location_id:        locationId,
+            service_type_code:  form.service_type_code,
+            last_service_date:  form.date,
+            next_due_date:      nextDue,
+            last_price:         form.price ? parseFloat(form.price) : null,
+            frequency:          form.frequency,
+          }, { onConflict: 'location_id,service_type_code' });
+      }
+
+      // 4. Success
+      toast.success('Service record saved.');
+      onClose();
+      onSuccess?.();
+    } catch {
+      toast.error('Unexpected error. Please try again.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const set = (field, value) => setForm(prev => ({ ...prev, [field]: value }));
@@ -160,15 +250,22 @@ export function LogServiceModal({ isOpen, onClose }) {
             {/* Certificate upload */}
             <div>
               <label style={labelStyle}>Certificate / Document</label>
-              <div style={{
+              <label style={{
                 border: '2px dashed var(--border, #D1D9E6)', borderRadius: 8,
                 padding: '14px 16px', textAlign: 'center', cursor: 'pointer',
+                display: 'block',
               }}>
+                <input
+                  type="file"
+                  accept=".pdf,.jpg,.jpeg,.png,.heic,.doc,.docx"
+                  style={{ display: 'none' }}
+                  onChange={e => set('certificate', e.target.files?.[0] || null)}
+                />
                 <Upload style={{ width: 18, height: 18, color: '#6B7F96', margin: '0 auto 4px' }} />
                 <div style={{ fontSize: 12, color: 'var(--text-tertiary, #6B7F96)' }}>
                   {form.certificate ? form.certificate.name : 'Click or drag to upload certificate'}
                 </div>
-              </div>
+              </label>
             </div>
 
             {/* Actions */}
@@ -176,6 +273,7 @@ export function LogServiceModal({ isOpen, onClose }) {
               <button
                 type="button"
                 onClick={onClose}
+                disabled={saving}
                 style={{
                   padding: '8px 20px', borderRadius: 8,
                   border: '1px solid var(--border, #D1D9E6)',
@@ -187,13 +285,17 @@ export function LogServiceModal({ isOpen, onClose }) {
               </button>
               <button
                 type="submit"
+                disabled={saving}
                 style={{
                   padding: '8px 20px', borderRadius: 8,
                   border: 'none', background: '#1e4d6b',
                   fontSize: 13, fontWeight: 600, color: '#fff', cursor: 'pointer',
+                  opacity: saving ? 0.7 : 1,
+                  display: 'flex', alignItems: 'center', gap: 6,
                 }}
               >
-                Save Service
+                {saving && <Loader2 style={{ width: 14, height: 14, animation: 'spin 1s linear infinite' }} />}
+                {saving ? 'Saving...' : 'Save Service'}
               </button>
             </div>
           </form>

@@ -4,11 +4,13 @@
  * Shows all 5 service types with compliance status per location.
  * KEC is parent row; FPM/GFX/RGC are indented children; FS is standalone.
  */
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Flame, Fan, Filter, Shield, ShieldAlert, ChevronDown, ChevronRight, Plus } from 'lucide-react';
 import { useDemo } from '../../contexts/DemoContext';
 import { useRole } from '../../contexts/RoleContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '../../lib/supabase';
 import {
   SERVICE_TYPES,
   SERVICE_TYPE_CODES,
@@ -27,13 +29,26 @@ export function ServiceComplianceList({ onLogService }) {
   const { userRole } = useRole();
   const [searchParams] = useSearchParams();
   const locationFilter = searchParams.get('location');
+  const { profile } = useAuth();
   const [kecExpanded, setKecExpanded] = useState(true);
+  const [schedules, setSchedules] = useState([]);
 
   // Production: query location_service_schedules from Supabase.
-  // No seeded demo data — always empty until real records exist.
-  const schedules = useMemo(() => {
-    return [];
-  }, []);
+  useEffect(() => {
+    if (isDemoMode) return;
+    const query = supabase
+      .from('location_service_schedules')
+      .select('*')
+      .order('next_due_date', { ascending: true });
+
+    if (locationFilter && locationFilter !== 'all') {
+      query.eq('location_id', locationFilter);
+    }
+
+    query.then(({ data }) => {
+      setSchedules((data || []).map(s => ({ ...s, price: s.last_price })));
+    });
+  }, [isDemoMode, locationFilter]);
 
   // Group by service type
   const byType = useMemo(() => {
