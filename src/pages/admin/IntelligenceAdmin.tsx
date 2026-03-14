@@ -14,6 +14,7 @@ import { CIC_PILLARS, getPillarForSignalType, isPseSignalType } from '../../lib/
 import { RiskLevelTooltip } from '../../components/RiskLevelTooltip';
 import VerificationPanel from '../../components/admin/VerificationPanel';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
+import { toast } from 'sonner';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -146,6 +147,22 @@ export default function IntelligenceAdmin() {
     last_verified_at?: string; verified_by?: string;
   }>>({});
   const [verificationAvailable, setVerificationAvailable] = useState(true);
+
+  // AUDIT-FIX-06 / P-2: Create signal modal
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [createForm, setCreateForm] = useState({
+    title: '', summary: '', detail_markdown: '', signal_type: 'intelligence',
+    category: 'food_safety', priority: 'medium',
+    affected_jurisdictions: [] as string[],
+    game_plan_steps: [] as string[],
+    affected_ingredient: '', affected_supplier: '',
+  });
+  const [creating, setCreating] = useState(false);
+
+  // AUDIT-FIX-06 / P-3: Inline edit state
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({ title: '', summary: '', detail_markdown: '' });
+  const [savingEdit, setSavingEdit] = useState(false);
 
   // Saved flash state — key is `${signalId}_${dim}`
   const [savedDim, setSavedDim] = useState<Record<string, boolean>>({});
@@ -293,6 +310,85 @@ export default function IntelligenceAdmin() {
   }, [classifySignals]);
 
   useEffect(() => { loadQueue(); }, [loadQueue]);
+
+  // AUDIT-FIX-06 / P-2: Create a new signal manually
+  const createSignal = useCallback(async () => {
+    if (!createForm.title.trim()) return;
+    setCreating(true);
+    try {
+      const { error } = await supabase.from('intelligence_signals').insert({
+        title: createForm.title.trim(),
+        content_summary: createForm.summary.trim() || null,
+        detail_markdown: createForm.detail_markdown.trim() || null,
+        signal_type: createForm.signal_type,
+        category: createForm.category,
+        severity_score: createForm.priority === 'critical' ? 90 : createForm.priority === 'high' ? 70 : createForm.priority === 'medium' ? 50 : 30,
+        is_published: false,
+        source_url: 'manual',
+        source_name: 'Admin — Manual Entry',
+        affected_jurisdictions: createForm.affected_jurisdictions.length > 0 ? createForm.affected_jurisdictions : null,
+      });
+      if (error) throw error;
+      await supabase.from('platform_audit_log').insert({
+        actor_id: user?.id,
+        actor_email: user?.email,
+        action: 'signal.created_manual',
+        resource_type: 'intelligence_signal',
+        old_value: null,
+        new_value: { title: createForm.title, signal_type: createForm.signal_type },
+      }).catch(() => {});
+      toast.success('Signal created');
+      setShowCreateModal(false);
+      setCreateForm({ title: '', summary: '', detail_markdown: '', signal_type: 'intelligence', category: 'food_safety', priority: 'medium', affected_jurisdictions: [], game_plan_steps: [], affected_ingredient: '', affected_supplier: '' });
+      await loadQueue();
+    } catch (err: any) {
+      toast.error(`Failed to create signal: ${err?.message || 'Unknown error'}`);
+    }
+    setCreating(false);
+  }, [createForm, user, loadQueue]);
+
+  // AUDIT-FIX-06 / P-3: Inline edit helpers
+  const startEdit = (sig: QueueSignal) => {
+    setEditingId(sig.id);
+    setEditForm({
+      title: sig.title || '',
+      summary: sig.ai_summary || sig.content_summary || '',
+      detail_markdown: '',
+    });
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditForm({ title: '', summary: '', detail_markdown: '' });
+  };
+
+  const saveEdit = useCallback(async () => {
+    if (!editingId) return;
+    setSavingEdit(true);
+    try {
+      const updates: Record<string, any> = {};
+      if (editForm.title.trim()) updates.title = editForm.title.trim();
+      if (editForm.summary.trim()) updates.content_summary = editForm.summary.trim();
+      if (Object.keys(updates).length === 0) { setSavingEdit(false); return; }
+      const { error } = await supabase.from('intelligence_signals').update(updates).eq('id', editingId);
+      if (error) throw error;
+      await supabase.from('platform_audit_log').insert({
+        actor_id: user?.id,
+        actor_email: user?.email,
+        action: 'signal.edited',
+        resource_type: 'intelligence_signal',
+        resource_id: editingId,
+        old_value: null,
+        new_value: updates,
+      }).catch(() => {});
+      toast.success('Signal updated');
+      setSignals(prev => prev.map(s => s.id === editingId ? { ...s, ...updates } : s));
+      setEditingId(null);
+    } catch (err: any) {
+      toast.error(`Save failed: ${err?.message || 'Unknown error'}`);
+    }
+    setSavingEdit(false);
+  }, [editingId, editForm, user]);
 
   // Cleanup undo timer on unmount
   useEffect(() => {
@@ -561,13 +657,24 @@ export default function IntelligenceAdmin() {
   return (
     <div>
       {/* Header */}
-      <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 800, color: NAVY, margin: '0 0 4px' }}>
-          Signal Approval Queue
-        </h1>
-        <p style={{ fontSize: 13, color: TEXT_SEC, margin: 0 }}>
-          Review and publish intelligence signals to client feeds. Sorted by severity.
-        </p>
+      <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div>
+          <h1 style={{ fontSize: 22, fontWeight: 800, color: NAVY, margin: '0 0 4px' }}>
+            Signal Approval Queue
+          </h1>
+          <p style={{ fontSize: 13, color: TEXT_SEC, margin: 0 }}>
+            Review and publish intelligence signals to client feeds. Sorted by severity.
+          </p>
+        </div>
+        <button
+          onClick={() => setShowCreateModal(true)}
+          style={{
+            padding: '8px 18px', borderRadius: 6, fontSize: 13, fontWeight: 700, cursor: 'pointer',
+            background: GOLD, color: '#fff', border: 'none', flexShrink: 0,
+          }}
+        >
+          + New Signal
+        </button>
       </div>
 
       {/* Stats row */}
@@ -856,17 +963,32 @@ export default function IntelligenceAdmin() {
                     </div>
 
                     {/* Title */}
-                    <div style={{ fontSize: 14, fontWeight: 700, color: NAVY, marginBottom: 4 }}>
-                      {sig.title}
-                    </div>
+                    {editingId === sig.id ? (
+                      <input
+                        value={editForm.title}
+                        onChange={e => setEditForm(prev => ({ ...prev, title: e.target.value }))}
+                        style={{ fontSize: 14, fontWeight: 700, color: NAVY, marginBottom: 4, width: '100%', padding: '4px 8px', border: `1px solid ${GOLD}`, borderRadius: 4, outline: 'none' }}
+                      />
+                    ) : (
+                      <div style={{ fontSize: 14, fontWeight: 700, color: NAVY, marginBottom: 4 }}>
+                        {sig.title}
+                      </div>
+                    )}
 
                     {/* Summary */}
-                    {(sig.ai_summary || sig.content_summary) && (
+                    {editingId === sig.id ? (
+                      <textarea
+                        value={editForm.summary}
+                        onChange={e => setEditForm(prev => ({ ...prev, summary: e.target.value }))}
+                        rows={3}
+                        style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.5, marginBottom: 6, width: '100%', padding: '4px 8px', border: `1px solid ${GOLD}`, borderRadius: 4, resize: 'vertical', outline: 'none' }}
+                      />
+                    ) : (sig.ai_summary || sig.content_summary) ? (
                       <div style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.5, marginBottom: 6 }}>
                         {(sig.ai_summary || sig.content_summary || '').slice(0, 200)}
                         {(sig.ai_summary || sig.content_summary || '').length > 200 ? '...' : ''}
                       </div>
-                    )}
+                    ) : null}
 
                     {/* Source & Verification */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 2, marginBottom: 6 }}>
@@ -1038,6 +1160,39 @@ export default function IntelligenceAdmin() {
                             return vs ? ` (${vs.gates_passed}/${vs.gates_required})` : '';
                           })()}
                         </button>
+                        {editingId === sig.id ? (
+                          <>
+                            <button
+                              onClick={saveEdit}
+                              disabled={savingEdit}
+                              style={{
+                                padding: '6px 16px', borderRadius: 6, fontSize: 11, fontWeight: 700, cursor: 'pointer',
+                                background: savingEdit ? '#E5E7EB' : '#059669', color: savingEdit ? TEXT_MUTED : '#fff', border: 'none',
+                              }}
+                            >
+                              {savingEdit ? 'Saving...' : 'Save'}
+                            </button>
+                            <button
+                              onClick={cancelEdit}
+                              style={{
+                                padding: '6px 16px', borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: 'pointer',
+                                background: 'transparent', color: TEXT_MUTED, border: `1px solid ${BORDER}`,
+                              }}
+                            >
+                              Cancel
+                            </button>
+                          </>
+                        ) : (
+                          <button
+                            onClick={() => startEdit(sig)}
+                            style={{
+                              padding: '6px 16px', borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: 'pointer',
+                              background: '#EFF6FF', color: '#2563EB', border: '1px solid #BFDBFE',
+                            }}
+                          >
+                            Edit
+                          </button>
+                        )}
                         <button
                           onClick={() => openDismissModal(sig)}
                           style={{
@@ -1156,6 +1311,142 @@ export default function IntelligenceAdmin() {
                 }}
               >
                 Dismiss Signal
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* AUDIT-FIX-06 / P-2: Create Signal Modal */}
+      {showCreateModal && (
+        <div style={{
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', display: 'flex',
+          alignItems: 'center', justifyContent: 'center', zIndex: 1000,
+        }}
+          onClick={() => setShowCreateModal(false)}
+        >
+          <div
+            style={{
+              background: '#fff', borderRadius: 12, padding: '24px 28px', maxWidth: 520, width: '100%',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.15)', maxHeight: '80vh', overflowY: 'auto',
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: NAVY, margin: '0 0 4px' }}>
+              Create Signal
+            </h3>
+            <p style={{ fontSize: 12, color: TEXT_SEC, margin: '0 0 16px' }}>
+              Manually create a new intelligence signal for review and publishing.
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {/* Title */}
+              <div>
+                <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Title *</label>
+                <input
+                  value={createForm.title}
+                  onChange={e => setCreateForm(prev => ({ ...prev, title: e.target.value }))}
+                  placeholder="Signal title..."
+                  style={{ width: '100%', padding: '8px 12px', fontSize: 13, border: `1px solid ${BORDER}`, borderRadius: 6, color: NAVY, outline: 'none' }}
+                />
+              </div>
+
+              {/* Summary */}
+              <div>
+                <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Summary</label>
+                <textarea
+                  value={createForm.summary}
+                  onChange={e => setCreateForm(prev => ({ ...prev, summary: e.target.value }))}
+                  placeholder="Brief summary..."
+                  rows={3}
+                  style={{ width: '100%', padding: '8px 12px', fontSize: 13, border: `1px solid ${BORDER}`, borderRadius: 6, color: NAVY, resize: 'vertical', outline: 'none' }}
+                />
+              </div>
+
+              {/* Detail */}
+              <div>
+                <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Detail / Body</label>
+                <textarea
+                  value={createForm.detail_markdown}
+                  onChange={e => setCreateForm(prev => ({ ...prev, detail_markdown: e.target.value }))}
+                  placeholder="Full detail (markdown supported)..."
+                  rows={4}
+                  style={{ width: '100%', padding: '8px 12px', fontSize: 13, border: `1px solid ${BORDER}`, borderRadius: 6, color: NAVY, resize: 'vertical', outline: 'none' }}
+                />
+              </div>
+
+              {/* Signal Type + Category row */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div>
+                  <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Signal Type</label>
+                  <select
+                    value={createForm.signal_type}
+                    onChange={e => setCreateForm(prev => ({ ...prev, signal_type: e.target.value }))}
+                    style={{ width: '100%', padding: '8px 12px', fontSize: 13, border: `1px solid ${BORDER}`, borderRadius: 6, color: NAVY, cursor: 'pointer' }}
+                  >
+                    <option value="intelligence">Intelligence</option>
+                    <option value="game_plan">Game Plan</option>
+                    <option value="outbreak">Outbreak</option>
+                    <option value="regulatory_change">Regulatory Change</option>
+                    <option value="vendor_intelligence">Vendor Intelligence</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Category</label>
+                  <select
+                    value={createForm.category}
+                    onChange={e => setCreateForm(prev => ({ ...prev, category: e.target.value }))}
+                    style={{ width: '100%', padding: '8px 12px', fontSize: 13, border: `1px solid ${BORDER}`, borderRadius: 6, color: NAVY, cursor: 'pointer' }}
+                  >
+                    <option value="food_safety">Food Safety</option>
+                    <option value="recall">Recall</option>
+                    <option value="allergen_alert">Allergen Alert</option>
+                    <option value="regulatory_updates">Regulatory Update</option>
+                    <option value="fire_safety">Fire Safety</option>
+                    <option value="outbreak_alert">Health Alert</option>
+                    <option value="workforce_risk">Workforce Risk</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Priority */}
+              <div>
+                <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Priority</label>
+                <select
+                  value={createForm.priority}
+                  onChange={e => setCreateForm(prev => ({ ...prev, priority: e.target.value }))}
+                  style={{ width: '100%', padding: '8px 12px', fontSize: 13, border: `1px solid ${BORDER}`, borderRadius: 6, color: NAVY, cursor: 'pointer' }}
+                >
+                  <option value="critical">Critical</option>
+                  <option value="high">High</option>
+                  <option value="medium">Medium</option>
+                  <option value="low">Low</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 20 }}>
+              <button
+                onClick={() => setShowCreateModal(false)}
+                style={{
+                  padding: '8px 20px', borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                  background: 'transparent', color: TEXT_SEC, border: `1px solid ${BORDER}`,
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={createSignal}
+                disabled={creating || !createForm.title.trim()}
+                style={{
+                  padding: '8px 20px', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer',
+                  background: creating || !createForm.title.trim() ? '#E5E7EB' : GOLD,
+                  color: creating || !createForm.title.trim() ? TEXT_MUTED : '#fff',
+                  border: 'none',
+                }}
+              >
+                {creating ? 'Creating...' : 'Create Signal'}
               </button>
             </div>
           </div>

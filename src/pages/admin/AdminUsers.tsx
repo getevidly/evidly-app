@@ -106,6 +106,9 @@ export default function AdminUsers() {
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRole, setInviteRole] = useState('kitchen_staff');
 
+  // AUDIT-FIX-06 / A-2: More-menu state
+  const [moreMenuId, setMoreMenuId] = useState<string | null>(null);
+
   const isDemoMode = users === DEMO_USERS;
 
   const loadUsers = useCallback(async () => {
@@ -425,13 +428,35 @@ export default function AdminUsers() {
                   {u.locked_until && new Date(u.locked_until) > new Date() && (
                     <button onClick={() => openAction(u, 'unlock')} style={btnStyle('#FFFBEB', AMBER)}>Unlock</button>
                   )}
-                  <button onClick={() => {
-                    const el = document.createElement('div');
-                    el.innerHTML = `<div style="position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center" id="more-menu-${u.id}"></div>`;
-                    // Simple inline more menu
-                  }} style={{ ...btnStyle('#F0F4F8', TEXT_SEC), padding: '6px 8px' }}>
-                    ···
-                  </button>
+                  <div style={{ position: 'relative' }}>
+                    <button onClick={() => setMoreMenuId(moreMenuId === u.id ? null : u.id)} style={{ ...btnStyle('#F0F4F8', TEXT_SEC), padding: '6px 8px' }}>
+                      ···
+                    </button>
+                    {moreMenuId === u.id && (
+                      <div style={{
+                        position: 'absolute', right: 0, top: '100%', marginTop: 4, zIndex: 50,
+                        background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 8,
+                        boxShadow: '0 8px 24px rgba(0,0,0,0.12)', minWidth: 180, overflow: 'hidden',
+                      }}>
+                        <button
+                          onClick={() => { setMoreMenuId(null); openAction(u, 'reset_password'); }}
+                          style={{ display: 'block', width: '100%', padding: '10px 14px', fontSize: 12, fontWeight: 600, color: NAVY, background: 'transparent', border: 'none', textAlign: 'left', cursor: 'pointer' }}
+                          onMouseEnter={e => (e.currentTarget.style.background = '#F0F4F8')}
+                          onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                        >
+                          Reset Password
+                        </button>
+                        <button
+                          onClick={() => { setMoreMenuId(null); openAction(u, 'revoke_sessions'); }}
+                          style={{ display: 'block', width: '100%', padding: '10px 14px', fontSize: 12, fontWeight: 600, color: RED, background: 'transparent', border: 'none', textAlign: 'left', cursor: 'pointer' }}
+                          onMouseEnter={e => (e.currentTarget.style.background = '#FEF2F2')}
+                          onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                        >
+                          Revoke Sessions
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             );
