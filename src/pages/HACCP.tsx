@@ -368,7 +368,6 @@ export function HACCP() {
   const [selectedPlan, setSelectedPlan] = useState<HACCPPlan | null>(null);
   const urlLocation = searchParams.get('location') || '';
   const [selectedLocation, setSelectedLocation] = useState(urlLocation || 'all');
-  const jurisdictionConfig = getJurisdictionForLocation(urlLocation);
   const { getAccessibleLocations, userRole } = useRole();
   const ttActivePlans = useTooltip('haccpActivePlans', userRole);
   const ttOverallCompliance = useTooltip('haccpOverallCompliance', userRole);
@@ -381,6 +380,8 @@ export function HACCP() {
 
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
+  // Enforcement emphasis data is demo-only; production operators get jurisdiction from DB
+  const jurisdictionConfig = isDemoMode ? getJurisdictionForLocation(urlLocation) : null;
   const [loading, setLoading] = useState(false);
   const [livePlans, setLivePlans] = useState<HACCPPlan[]>([]);
   const [liveCorrectiveActions, setLiveCorrectiveActions] = useState<CorrectiveActionRecord[]>([]);

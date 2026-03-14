@@ -168,7 +168,7 @@ export function buildLocationContextPayload(locationId: string): LocationContext
   const trendDir: 'improving' | 'declining' | 'stable' =
     lastFood > firstFood ? 'improving' : lastFood < firstFood ? 'declining' : 'stable';
 
-  // Jurisdiction enforcement emphasis
+  // Jurisdiction enforcement emphasis (demo-only — this module only processes demo location IDs)
   const jEnf = getJurisdictionForLocation(locationId);
   const jurisdictionEnforcement = jEnf
     ? {

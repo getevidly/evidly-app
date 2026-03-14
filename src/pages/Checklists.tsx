@@ -672,7 +672,8 @@ export function Checklists() {
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [searchParams] = useSearchParams();
   const locationParam = searchParams.get('location') || '';
-  const jurisdictionConfig = getJurisdictionForLocation(locationParam);
+  // Enforcement emphasis data is demo-only; production operators get jurisdiction from DB
+  const jurisdictionConfig = isDemoMode ? getJurisdictionForLocation(locationParam) : null;
   const [pageError, setPageError] = useState<string | null>(null);
   const [activeView, setActiveView] = useState<'templates' | 'today' | 'history'>('today');
   const [demoItemsMap, setDemoItemsMap] = useState<Record<string, ChecklistTemplateItem[]>>({});
