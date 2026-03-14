@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import { supabase } from "../../lib/supabase";
 
 const C = {
   navy: "#1E2D4D", gold: "#A08C5A",
@@ -202,9 +204,18 @@ function Select({ value, onChange, children, placeholder }) {
 
 // ── STEP 1 — INTAKE FORM ─────────────────────────────────
 function IntakeForm({ onSubmit }) {
-  const [f, setF] = useState({ firstName: "", lastName: "", email: "", businessName: "", county: "", locations: "", opType: "" });
+  const [searchParams] = useSearchParams();
+  const [f, setF] = useState({ firstName: "", lastName: "", email: "", phone: "", businessName: "", street: "", city: "", state: "CA", zip: "", county: "", locations: "", opType: "", _source: "" });
   const [errors, setErrors] = useState({});
   const set = (k, v) => { setF(p => ({ ...p, [k]: v })); setErrors(p => ({ ...p, [k]: "" })); };
+
+  // Pre-fill from URL params (e.g. from ScoreTable links)
+  useEffect(() => {
+    const countyParam = searchParams.get("county");
+    const sourceParam = searchParams.get("source");
+    if (countyParam) set("county", countyParam);
+    if (sourceParam) setF(p => ({ ...p, _source: sourceParam }));
+  }, []);
 
   function validate() {
     const e = {};
@@ -224,10 +235,13 @@ function IntakeForm({ onSubmit }) {
       body: JSON.stringify({
         name: (f.firstName + " " + f.lastName).trim(),
         email: f.email,
+        phone: f.phone || "(not provided)",
         company: f.businessName || "(not provided)",
+        address: [f.street, f.city, f.state, f.zip].filter(Boolean).join(", ") || "(not provided)",
         county: f.county,
         locations: f.locations || "1",
         opType: f.opType || "(not provided)",
+        source: f._source || "direct",
         _subject: "[EvidLY] Operations Check — " + (f.businessName || f.firstName),
       }),
     }).catch(() => {});
@@ -268,6 +282,13 @@ function IntakeForm({ onSubmit }) {
 
         {fld("email", "Work Email *", <input type="email" style={inp({ borderColor: errors.email ? C.red : C.g3 })} value={f.email} onChange={e => set("email", e.target.value)} placeholder="you@yourbusiness.com" />)}
         {fld("businessName", "Business Name", <input style={inp({ borderColor: errors.businessName ? C.red : C.g3 })} value={f.businessName} onChange={e => set("businessName", e.target.value)} placeholder="Your business or DBA name" />)}
+        {fld("phone", "Phone", <input type="tel" style={inp()} value={f.phone} onChange={e => set("phone", e.target.value)} placeholder="(555) 123-4567" />)}
+        {fld("street", "Street Address", <input style={inp()} value={f.street} onChange={e => set("street", e.target.value)} placeholder="123 Main Street" />)}
+        <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", gap: "0 14px" }}>
+          {fld("city", "City", <input style={inp()} value={f.city} onChange={e => set("city", e.target.value)} placeholder="City" />)}
+          {fld("state", "State", <input style={inp()} value={f.state} onChange={e => set("state", e.target.value)} placeholder="CA" />)}
+          {fld("zip", "Zip", <input style={inp()} value={f.zip} onChange={e => set("zip", e.target.value)} placeholder="90210" />)}
+        </div>
         {fld("county", "County *", <Select value={f.county} onChange={v => set("county", v)} placeholder="Select county">{CA_COUNTIES.map(c => <option key={c} value={c}>{c}</option>)}</Select>)}
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 14px" }}>
@@ -398,7 +419,7 @@ function Assessment({ form, onComplete, onRestartQuestions }) {
 }
 
 // ── STEP 3 — REPORT ──────────────────────────────────────
-function Report({ form, answers, onBookTour }) {
+function Report({ form, answers, onBookTour, magicLinkSent }) {
   const yesCount     = answers.filter(a => a === "yes").length;
   const noCount      = answers.filter(a => a === "no").length;
   const partialCount = answers.filter(a => a === "partial").length;
@@ -431,6 +452,7 @@ function Report({ form, answers, onBookTour }) {
               <div style={{ textAlign: "right" }}>
                 <div style={{ fontSize: "0.67rem", color: "rgba(255,255,255,0.28)", fontFamily: FF }}>{dateStr}</div>
                 <div style={{ fontSize: "0.67rem", color: "rgba(255,255,255,0.28)", fontFamily: FF }}>{form.county} County, CA</div>
+                <div style={{ fontSize: "0.58rem", color: C.gold, fontFamily: FF_MONO, marginTop: 3, letterSpacing: "0.08em" }}>Jurisdiction: {form.county} County, California</div>
               </div>
             </div>
             <div style={{ fontWeight: 800, fontSize: "1.2rem", color: C.white, fontFamily: FF_HEAD, marginBottom: 2, letterSpacing: "-0.03em" }}>{form.businessName || form.firstName + "'s Operation"}</div>
@@ -449,6 +471,19 @@ function Report({ form, answers, onBookTour }) {
           </div>
         </div>
 
+        {/* MAGIC LINK BANNER */}
+        {magicLinkSent && (
+          <div style={{ background: C.blueBg, border: `1px solid ${C.blueBd}`, borderLeft: `4px solid ${C.blue}`, borderRadius: 10, padding: "12px 16px", marginBottom: 14, display: "flex", alignItems: "center", gap: 12 }}>
+            <span style={{ fontSize: "1.1rem", flexShrink: 0 }}>{"\u2709\uFE0F"}</span>
+            <div>
+              <div style={{ fontWeight: 700, fontSize: "0.86rem", color: "#1e3a8a", fontFamily: FF }}>Check your email for dashboard access.</div>
+              <div style={{ fontSize: "0.73rem", color: "#1e3a8a", opacity: 0.75, fontFamily: FF, marginTop: 2 }}>
+                We sent a link to <strong>{form.email}</strong> — click to unlock your full dashboard with {form.county} County data pre-loaded.
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* POSTURE */}
         <div style={{ background: P.bg, border: `1px solid ${P.bd}`, borderLeft: `4px solid ${P.dot}`, borderRadius: 10, padding: "13px 16px", marginBottom: 14, display: "flex", alignItems: "center", gap: 13 }}>
           <div style={{ width: 10, height: 10, borderRadius: "50%", background: P.dot, flexShrink: 0, boxShadow: `0 0 0 3px ${P.bd}` }} />
@@ -463,6 +498,21 @@ function Report({ form, answers, onBookTour }) {
               <div key={i} title={ALL_Q[i]?.cardLabel} style={{ width: 8, height: 8, borderRadius: "50%", background: a === "yes" ? C.green : a === "partial" ? C.amber : C.red }} />
             ))}
           </div>
+        </div>
+
+        {/* EXECUTIVE NARRATIVE */}
+        <div style={{ background: C.cream, border: `1px solid ${C.g2}`, borderRadius: 10, padding: "16px 18px", marginBottom: 14 }}>
+          <div style={{ fontSize: "0.58rem", fontWeight: 500, letterSpacing: "0.2em", textTransform: "uppercase", color: C.gold, marginBottom: 8, fontFamily: FF_MONO }}>Executive Summary</div>
+          <p style={{ fontSize: "0.82rem", color: C.g8, margin: 0, lineHeight: 1.7, fontFamily: FF }}>
+            {posture === "strong"
+              ? `${form.businessName || form.firstName + "\u2019s operation"} in ${form.county} County is well positioned across both food safety and facility safety. ${yesCount} of ${TOTAL} operational areas are documented and current. Continue maintaining your current practices and ensure records remain accessible for your next unannounced inspection.`
+              : posture === "moderate"
+              ? `${form.businessName || form.firstName + "\u2019s operation"} in ${form.county} County has ${gapCount} area${gapCount > 1 ? "s" : ""} that need attention. ${noCount > 0 ? `${noCount} area${noCount > 1 ? "s" : ""} currently lack${noCount === 1 ? "s" : ""} documentation or compliance \u2014 each representing a potential citation. ` : ""}${partialCount > 0 ? `${partialCount} area${partialCount > 1 ? "s" : ""} ha${partialCount > 1 ? "ve" : "s"} partial gaps that should be closed before your next inspection. ` : ""}Addressing these gaps proactively is significantly less costly than addressing them after an inspector documents them.`
+              : posture === "high"
+              ? `${form.businessName || form.firstName + "\u2019s operation"} in ${form.county} County has ${noCount} undocumented area${noCount > 1 ? "s" : ""} and ${partialCount} partial gap${partialCount > 1 ? "s" : ""}. These represent significant financial exposure \u2014 from per-violation fines to temporary closure risk. The areas identified in this report are the same ones ${form.county} County inspectors prioritize during unannounced visits.`
+              : `${form.businessName || form.firstName + "\u2019s operation"} in ${form.county} County has critical gaps across ${noCount} area${noCount > 1 ? "s" : ""}. This level of undocumented compliance represents immediate financial and operational risk \u2014 including potential temporary closure, per-violation fines, and insurance coverage gaps. Addressing these gaps should be treated as an urgent priority.`
+            }
+          </p>
         </div>
 
         {/* RISK SUMMARY */}
@@ -482,6 +532,59 @@ function Report({ form, answers, onBookTour }) {
                   </div>
                 );
               }).filter(Boolean)}
+            </div>
+          </div>
+        )}
+
+        {/* PSE & SUPPRESSION ADVISORY */}
+        {answers.slice(6, 8).some(a => a !== "yes") && (
+          <div style={{ background: "#eff6ff", border: `1px solid ${C.blueBd}`, borderLeft: `4px solid ${C.blue}`, borderRadius: 10, padding: "14px 16px", marginBottom: 14 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+              <span style={{ fontSize: "1rem" }}>{"\uD83E\uDDEF"}</span>
+              <div style={{ fontWeight: 800, fontSize: "0.86rem", color: "#1e3a8a", fontFamily: FF_HEAD }}>PSE & Suppression System Advisory</div>
+            </div>
+            <p style={{ fontSize: "0.78rem", color: "#1e3a8a", margin: "0 0 6px", lineHeight: 1.6, fontFamily: FF }}>
+              Your answers indicate gaps in hood cleaning documentation or fire suppression system inspection records. Under NFPA 96-2024 Table 12.4, hood cleaning frequency is determined by your cooking load and fuel type — not a fixed calendar schedule. Your Ansul or suppression system requires semi-annual inspection per NFPA 17A, and the signed tag must be visible on-site.
+            </p>
+            <p style={{ fontSize: "0.74rem", color: "#1e3a8a", opacity: 0.7, margin: 0, lineHeight: 1.55, fontFamily: FF, fontStyle: "italic" }}>
+              An uninspected suppression system can void your insurance coverage for a fire event. This is your highest single facility liability.
+            </p>
+          </div>
+        )}
+
+        {/* PRIORITY ACTION ITEMS */}
+        {gapCount > 0 && (
+          <div style={{ marginBottom: 16 }}>
+            <div style={{ fontSize: "0.6rem", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", color: C.navy, fontFamily: FF, marginBottom: 10 }}>Priority Action Items</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+              {[...ALL_Q]
+                .map((q, i) => ({ ...q, ans: answers[i], origIndex: i }))
+                .filter(q => q.ans !== "yes")
+                .sort((a, b) => (a.ans === "no" ? 0 : 1) - (b.ans === "no" ? 0 : 1))
+                .map((q, rank) => (
+                  <div key={q.origIndex} style={{
+                    display: "flex", alignItems: "flex-start", gap: 12,
+                    padding: "13px 15px", borderRadius: 10,
+                    background: q.ans === "no" ? C.redBg : C.amberBg,
+                    border: `1px solid ${q.ans === "no" ? C.redBd : C.amberBd}`,
+                    borderLeft: `4px solid ${q.ans === "no" ? C.red : C.amber}`,
+                  }}>
+                    <div style={{ width: 24, height: 24, borderRadius: "50%", background: q.ans === "no" ? C.red : C.amber, color: C.white, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.7rem", fontWeight: 800, fontFamily: FF, flexShrink: 0, marginTop: 2 }}>
+                      {rank + 1}
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontWeight: 800, fontSize: "0.86rem", color: q.ans === "no" ? "#7f1d1d" : "#78350f", fontFamily: FF, lineHeight: 1.3 }}>{q.cardLabel}</div>
+                      <p style={{ fontSize: "0.74rem", color: q.ans === "no" ? "#7f1d1d" : "#78350f", margin: "4px 0 6px", lineHeight: 1.5, fontFamily: FF, opacity: 0.8 }}>
+                        {q.ans === "no" ? q.noSignal : q.partialSignal}
+                      </p>
+                      <div style={{ display: "inline-flex", alignItems: "center", gap: 5, background: C.white, border: `1px solid ${q.ans === "no" ? C.redBd : C.amberBd}`, borderRadius: 6, padding: "4px 10px" }}>
+                        <span style={{ fontSize: "0.76rem", fontWeight: 900, color: q.color, fontFamily: FF }}>{q.riskIfNo}</span>
+                        <span style={{ fontSize: "0.62rem", color: q.tx, opacity: 0.6, fontFamily: FF }}>{q.riskLabel}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              }
             </div>
           </div>
         )}
@@ -558,6 +661,12 @@ function Report({ form, answers, onBookTour }) {
           </div>
         </div>
 
+        {magicLinkSent && (
+          <p style={{ textAlign: "center", fontSize: "0.73rem", color: C.navy, marginTop: 10, fontFamily: FF, fontWeight: 600 }}>
+            {"\u{1F4E7}"} We've sent a dashboard access link to {form.email} — check your inbox.
+          </p>
+        )}
+
         <p style={{ textAlign: "center", fontSize: "0.67rem", color: C.g4, marginTop: 14, fontFamily: FF }}>
           Questions? <a href="mailto:founders@getevidly.com" style={{ color: C.navy }}>founders@getevidly.com</a> · (855) EVIDLY1
         </p>
@@ -572,11 +681,65 @@ export default function OperationsCheck() {
   const [form, setForm]       = useState(null);
   const [answers, setAnswers] = useState([]);
   const [showTourModal, setShowTourModal] = useState(false);
+  const [magicLinkSent, setMagicLinkSent] = useState(false);
 
   useEffect(() => { document.title = "Free Operations Check — EvidLY"; }, []);
 
   function handleFormSubmit(f) { setForm(f); setStep("assessment"); window.scrollTo(0, 0); }
-  function handleAssessmentComplete(a) { setAnswers(a); setStep("report"); window.scrollTo(0, 0); }
+
+  function handleAssessmentComplete(a) {
+    setAnswers(a);
+    setStep("report");
+    window.scrollTo(0, 0);
+
+    // Map answers: "yes"→1, "partial"→2, "no"→3
+    const M = { yes: 1, partial: 2, no: 3 };
+    const noCount = a.filter(x => x === "no").length;
+    const partialCount = a.filter(x => x === "partial").length;
+    const posture = noCount >= 4 ? "critical" : noCount >= 2 ? "high" : noCount >= 1 || partialCount >= 3 ? "moderate" : "strong";
+    const foodYes = a.slice(0, 6).filter(x => x === "yes").length;
+    const fireYes = a.slice(6).filter(x => x === "yes").length;
+
+    // Fire-and-forget DB persist
+    supabase.from("irr_submissions").insert({
+      first_name: form.firstName,
+      last_name: form.lastName || null,
+      email: form.email,
+      phone: form.phone || null,
+      business_name: form.businessName || null,
+      street: form.street || null,
+      city: form.city || null,
+      state: form.state || "CA",
+      zip: form.zip || null,
+      county: form.county,
+      locations: form.locations || null,
+      op_type: form.opType || null,
+      q1_receiving_temps: M[a[0]],
+      q2_cold_hot_holding: M[a[1]],
+      q3_cooldown_logs: M[a[2]],
+      q4_checklists_haccp: M[a[3]],
+      q5_food_handler_cards: M[a[4]],
+      q6_staff_cert_tracking: M[a[5]],
+      q7_hood_cleaning: M[a[6]],
+      q8_fire_suppression: M[a[7]],
+      q9_vendor_performance: M[a[8]],
+      q10_vendor_records: M[a[9]],
+      q11_vendor_coi: M[a[10]],
+      posture,
+      food_safety_score: foodYes,
+      facility_safety_score: fireYes,
+      source_page: form._source || "operations-check",
+    }).then(() => {}).catch(() => {});
+
+    // Fire-and-forget magic link — sends dashboard access email
+    supabase.auth.signInWithOtp({
+      email: form.email,
+      options: {
+        emailRedirectTo: window.location.origin + "/onboarding",
+        data: { source: "irr", county: form.county, business_name: form.businessName },
+      },
+    }).then(() => setMagicLinkSent(true)).catch(() => {});
+  }
   function handleRestartQuestions() { setStep("assessment"); setAnswers([]); window.scrollTo(0, 0); }
   function handleFullReset() { setStep("form"); setForm(null); setAnswers([]); }
 
@@ -659,7 +822,7 @@ export default function OperationsCheck() {
         <h1 style={{ position: "absolute", width: 1, height: 1, overflow: "hidden", clip: "rect(0,0,0,0)", whiteSpace: "nowrap", border: 0 }}>Free Operations Check for California Commercial Kitchens</h1>
         {step === "form"       && <IntakeForm onSubmit={handleFormSubmit} />}
         {step === "assessment" && <Assessment form={form} onComplete={handleAssessmentComplete} onRestartQuestions={handleRestartQuestions} />}
-        {step === "report"     && <Report form={form} answers={answers} onBookTour={() => setShowTourModal(true)} />}
+        {step === "report"     && <Report form={form} answers={answers} onBookTour={() => setShowTourModal(true)} magicLinkSent={magicLinkSent} />}
       </div>
     </div>
   );

@@ -62,6 +62,7 @@ const ALWAYS_ALLOWED = new Set([
   'assessment_results',
   'kitchen_checkups',
   'kitchen_checkup_responses',
+  'irr_submissions',
 ]);
 
 /**

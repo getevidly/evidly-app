@@ -397,3 +397,24 @@
 - **Demo mode**: static `DEMO_SIGNALS` array (6 signals), local-state risk plans
 - **Production**: `intelligence_signals WHERE is_published=true AND org_id=current_org`
 - **Empty state**: "No active intelligence signals" — zero sample data in production
+
+---
+
+## Operations Check / IRR Lead Magnet (IRR-LEAD-MAGNET-01)
+
+| Route | Component | Auth | Description |
+|-------|-----------|------|-------------|
+| `/operations-check` | `OperationsCheck.jsx` | Public | 3-step lead magnet: intake → 11-question assessment → instant risk report |
+
+### Features
+- **Intake**: firstName, lastName, email, phone, businessName, street, city, state, zip, county, locations, opType
+- **Assessment**: 11 questions across Food Safety (6) and Fire & Facility Safety (5)
+- **Report**: posture banner, executive narrative, PSE advisory, priority-ranked action items, grouped breakdown
+- **Persistence**: `irr_submissions` table (fire-and-forget), Formspree backup
+- **Auto account**: magic link via `signInWithOtp` → redirects to `/onboarding`
+- **URL params**: `?county=Los+Angeles&source=scoretable` for pre-fill from ScoreTable pages
+
+### Entry Points
+- Landing page NavBar gold button, IRRAboveFold section, IRRSection
+- ScoreTable county pages cross-links grid
+- Direct link: `/operations-check`

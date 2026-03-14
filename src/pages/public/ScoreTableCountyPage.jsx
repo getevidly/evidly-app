@@ -806,6 +806,7 @@ export default function ScoreTableCountyPage({county: countyProp, cityName: _cn,
       <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))",gap:14}}>
         {[
           {href:_cs?"/city/"+_cs:"/"+c.landingSlug,label:"EvidLY for "+(_cn||c.name+" County"),desc:"Track your "+(_cn?_cn+" ("+c.name+" County)":c.name+" County")+" compliance score daily. Food safety + facility safety. Configured for "+c.agencyShort+".",cta:"Learn More →",color:E.navy},
+          {href:"/operations-check?county="+encodeURIComponent(c.name)+"&source=scoretable",label:"Free Operations Check",desc:"11 questions. Every risk in dollars. See where your "+c.name+" County operation stands — 2 minutes, no account.",cta:"Get My Free Operations Check →",color:E.gold},
           {href:"/kitchen-check/"+c.kcSlug,label:"Kitchen Self Check",desc:"8 questions. Free. Know your "+c.name+" County gaps right now — no account needed.",cta:"Check My Kitchen →",color:S.grn},
           {href:"/kitchen-to-community",label:"Kitchen to Community",desc:"Every EvidLY subscription funds ~100 meals per location per month through No Kid Hungry.",cta:"Learn More →",color:E.gold},
         ].map(function(link){return(
