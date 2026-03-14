@@ -188,15 +188,11 @@ serve(async (req) => {
         is_dismissed: false,
       }));
 
-      if (feedEntries.length > 0) {
-        const { error: insertError } = await supabase
-          .from('client_intelligence_feed')
-          .insert(feedEntries);
-        if (!insertError) delivered = feedEntries.length;
-      }
+      // client_intelligence_feed insert removed — reads now use intelligence_signals directly
+      delivered = feedEntries.length;
 
       emailed = await sendEmailNotifications(
-        supabase, orgCountyMap, advisory.id, 'client_intelligence_feed',
+        supabase, orgCountyMap, advisory.id, 'intelligence_signals',
         advisory.title, advisory.summary, priority, signal?.recommended_action || null,
       );
 
@@ -307,12 +303,8 @@ serve(async (req) => {
         is_dismissed: false,
       }));
 
-      if (feedEntries.length > 0) {
-        const { error: insertError } = await supabase
-          .from('client_intelligence_feed')
-          .insert(feedEntries);
-        if (!insertError) delivered = feedEntries.length;
-      }
+      // client_intelligence_feed insert removed — reads now use intelligence_signals directly
+      delivered = feedEntries.length;
 
       emailed = await sendEmailNotifications(
         supabase, orgCountyMap, update.id, 'jurisdiction_intel_updates',
@@ -402,12 +394,8 @@ serve(async (req) => {
         is_dismissed: false,
       }));
 
-      if (feedEntries.length > 0) {
-        const { error: insertError } = await supabase
-          .from('client_intelligence_feed')
-          .insert(feedEntries);
-        if (!insertError) delivered = feedEntries.length;
-      }
+      // client_intelligence_feed insert removed — reads now use intelligence_signals directly
+      delivered = feedEntries.length;
 
       // Mark as published
       await supabase.from('regulatory_changes')
@@ -518,12 +506,8 @@ serve(async (req) => {
           is_dismissed: false,
         }));
 
-        if (feedEntries.length > 0) {
-          const { error: insertError } = await supabase
-            .from('client_intelligence_feed')
-            .insert(feedEntries);
-          if (!insertError) delivered = feedEntries.length;
-        }
+        // client_intelligence_feed insert removed — reads now use intelligence_signals directly
+        delivered = feedEntries.length;
 
         emailed = await sendEmailNotifications(
           supabase, orgCountyMap, signal.id, 'intelligence_signals',
@@ -662,15 +646,7 @@ async function sendEmailNotifications(
       }
 
       // Update feed entries with notification status
-      await supabase
-        .from('client_intelligence_feed')
-        .update({
-          notification_sent: true,
-          notification_sent_at: new Date().toISOString(),
-          notification_channel: 'email',
-        })
-        .eq('organization_id', orgId)
-        .eq(entityType === 'client_intelligence_feed' ? 'advisory_id' : 'title', entityType === 'client_intelligence_feed' ? entityId : title);
+      // client_intelligence_feed notification update removed — table no longer written to
 
     } catch (orgErr) {
       console.error(`[intelligence-deliver] Email error for org ${orgId}:`, orgErr);

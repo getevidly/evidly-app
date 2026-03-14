@@ -6,7 +6,7 @@
  * Used on OwnerOperatorDashboard.
  *
  * INTELLIGENCE-PIPELINE-ALIGN-01: Wired to production Supabase query.
- * Demo mode uses static DEMO_FEED; production queries client_intelligence_feed.
+ * Demo mode uses static DEMO_FEED; production queries intelligence_signals.
  */
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -147,7 +147,7 @@ const DEMO_FEED: FeedItem[] = [
   },
 ];
 
-/** Map a client_intelligence_feed DB row to a FeedItem */
+/** Map an intelligence_signals DB row to a FeedItem */
 function mapRow(row: any): FeedItem {
   return {
     id: row.id,

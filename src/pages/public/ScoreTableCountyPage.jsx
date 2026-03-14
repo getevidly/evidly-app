@@ -472,7 +472,7 @@ export default function ScoreTableCountyPage({county: countyProp, cityName: _cn,
         {[["Methodology","#methodology"],["Violations","#violations"],["Simulator","#simulator"],["Vendors","#vendors"],["FAQ","#faq"]].map(function(x){return <a key={x[0]} href={x[1]} style={{textDecoration:"none",color:E.g5,fontWeight:500,fontSize:"0.8rem"}}>{x[0]}</a>;})}
       </nav>
       <div style={{display:"flex",gap:8}}>
-        <a className="btn" href={_cs?"/city/"+_cs:"/"+c.landingSlug} style={{padding:"7px 14px",fontSize:"0.78rem",fontWeight:700,textDecoration:"none",display:"inline-block",background:E.navy,color:E.w,borderRadius:8,fontFamily:ff,cursor:"pointer"}}>Get EvidLY →</a>
+        <a className="btn" href="https://www.getevidly.com" style={{padding:"7px 14px",fontSize:"0.78rem",fontWeight:700,textDecoration:"none",display:"inline-block",background:E.navy,color:E.w,borderRadius:8,fontFamily:ff,cursor:"pointer"}}>Get EvidLY →</a>
       </div>
     </div>
   </header>

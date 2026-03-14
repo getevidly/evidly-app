@@ -70,10 +70,13 @@ export function CicPseView() {
 
   const [activeTab, setActiveTab] = useState<Tab>('pse');
 
-  const currentCount = SAMPLE_PSE_SAFEGUARDS.filter(s => s.status === 'current').length;
-  const expiringCount = SAMPLE_PSE_SAFEGUARDS.filter(s => s.status === 'expiring').length;
-  const overdueCount = SAMPLE_PSE_SAFEGUARDS.filter(s => s.status === 'overdue').length;
-  const unverifiedCount = SAMPLE_PSE_SAFEGUARDS.filter(s => s.status === 'unverified').length;
+  // Only use sample data in demo mode
+  const safeguards = isDemoMode ? SAMPLE_PSE_SAFEGUARDS : [];
+
+  const currentCount = safeguards.filter(s => s.status === 'current').length;
+  const expiringCount = safeguards.filter(s => s.status === 'expiring').length;
+  const overdueCount = safeguards.filter(s => s.status === 'overdue').length;
+  const unverifiedCount = safeguards.filter(s => s.status === 'unverified').length;
 
   return (
     <RoleGuard
@@ -113,7 +116,7 @@ export function CicPseView() {
           {/* KPI Row */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12, marginBottom: 16 }}>
             {[
-              { label: 'Total Safeguards', value: SAMPLE_PSE_SAFEGUARDS.length, color: NAVY },
+              { label: 'Total Safeguards', value: safeguards.length, color: NAVY },
               { label: 'Current', value: currentCount, color: '#059669' },
               { label: 'Due Within 30d', value: expiringCount, color: '#D97706' },
               { label: 'Overdue', value: overdueCount, color: '#DC2626' },
@@ -151,8 +154,19 @@ export function CicPseView() {
           )}
 
           {/* Safeguard Cards */}
+          {safeguards.length === 0 && (
+            <div style={{
+              background: '#F9FAFB', border: `1px solid ${BORDER}`, borderRadius: 10,
+              padding: '24px 18px', textAlign: 'center', marginBottom: 20,
+            }}>
+              <Shield style={{ width: 32, height: 32, color: '#9CA3AF', margin: '0 auto 10px' }} />
+              <p style={{ fontSize: 13, color: TEXT_SEC, lineHeight: 1.6, margin: 0 }}>
+                No service records on file. Records appear automatically when HoodOps completes work, or log a service manually.
+              </p>
+            </div>
+          )}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 14, marginBottom: 20 }}>
-            {SAMPLE_PSE_SAFEGUARDS.map((sg, idx) => {
+            {safeguards.map((sg, idx) => {
               const sc = STATUS_COLORS[sg.status];
               return (
                 <div key={idx} style={cardStyle}>

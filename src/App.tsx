@@ -111,6 +111,7 @@ const SensorSetupWizard = lazy(() => import('./pages/SensorSetupWizard').then(m 
 const SensorDetail = lazy(() => import('./pages/SensorDetail').then(m => ({ default: m.SensorDetail })));
 const IoTSensorPlatform = lazy(() => import('./pages/IoTSensorPlatform').then(m => ({ default: m.IoTSensorPlatform })));
 
+const NotFound = lazy(() => import('./pages/NotFound'));
 const CorrectiveActions = lazy(() => import('./pages/CorrectiveActions').then(m => ({ default: m.CorrectiveActions })));
 const CorrectiveActionDetail = lazy(() => import('./pages/CorrectiveActionDetail').then(m => ({ default: m.CorrectiveActionDetail })));
 const Deficiencies = lazy(() => import('./pages/Deficiencies').then(m => ({ default: m.Deficiencies })));
@@ -788,6 +789,7 @@ function AppRoutes() {
           <Route path="/certifications" element={<Navigate to="/training/certificates" replace />} />
           <Route path="/sensor-dashboard" element={<Navigate to="/sensors" replace />} />
         </Route>
+        <Route path="*" element={<Suspense fallback={null}><NotFound /></Suspense>} />
       </Routes>
     </>
   );

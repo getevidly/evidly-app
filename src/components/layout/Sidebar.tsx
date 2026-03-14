@@ -18,7 +18,7 @@ import {
   type NavItem,
   type SidebarSection,
 } from '../../config/sidebarConfig';
-import { useIntelligenceUnread } from '../../hooks/useIntelligenceUnread';
+import { useUnreadSignals } from '../../hooks/useUnreadSignals';
 
 // ── Item descriptions (EN) ───────────────────────────────
 // Fallback descriptions keyed by item id; config descriptions take precedence.
@@ -347,7 +347,7 @@ export function Sidebar() {
   const { branding } = useBranding();
   const { t, locale } = useTranslation();
   const { orgType } = useOrgType();
-  const intelUnread = useIntelligenceUnread();
+  const { unreadCount: intelUnread } = useUnreadSignals();
 
   const handleLogout = async () => {
     await signOut();

@@ -294,15 +294,15 @@ export function Vendors() {
     if (isDemoMode || !profile?.organization_id) return;
     async function fetchVendorSignals() {
       const { data } = await supabase
-        .from('notifications')
-        .select('id, title, body, created_at')
-        .eq('organization_id', profile!.organization_id)
+        .from('intelligence_signals')
+        .select('id, title, content_summary, created_at')
+        .eq('is_published', true)
         .eq('signal_type', 'vendor_intelligence')
-        .is('read_at', null)
+        .eq('org_id', profile!.organization_id)
         .order('created_at', { ascending: false })
         .limit(3);
-      if (data) setVendorSignals(data.map((n: any) => ({
-        id: n.id, title: n.title, summary: n.body || '', created_at: n.created_at,
+      if (data) setVendorSignals(data.map((s: any) => ({
+        id: s.id, title: s.title, summary: s.content_summary || '', created_at: s.created_at,
       })));
     }
     fetchVendorSignals();

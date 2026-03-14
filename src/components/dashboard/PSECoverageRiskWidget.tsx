@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Shield, AlertTriangle } from 'lucide-react';
+import { useDemo } from '../../contexts/DemoContext';
 import { SAMPLE_PSE_SAFEGUARDS } from '../../data/workforceRiskDemoData';
 
 const NAVY = '#1e4d6b';
@@ -9,6 +10,10 @@ const BORDER = '#D1D9E6';
 
 export function PSECoverageRiskWidget({ locationId }: { locationId?: string }) {
   const navigate = useNavigate();
+  const { isDemoMode } = useDemo();
+
+  // Only show sample data in demo mode; production shows nothing until real service records exist
+  if (!isDemoMode) return null;
 
   const safeguards = SAMPLE_PSE_SAFEGUARDS;
   const overdue = safeguards.filter((s) => s.status === 'overdue');
