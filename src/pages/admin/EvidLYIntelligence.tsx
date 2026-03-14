@@ -13,6 +13,7 @@ import { CIC_PILLARS, getPillarForSignalType, isPseSignalType } from '../../lib/
 import { RiskLevelTooltip } from '../../components/RiskLevelTooltip';
 import VerificationPanel from '../../components/admin/VerificationPanel';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
+import { useDemo } from '../../contexts/DemoContext';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -378,6 +379,7 @@ const REPORT_FORMATS = ['Executive Summary', 'Formal Document', 'PDF/Print Ready
 export default function EvidLYIntelligence() {
   useDemoGuard();
   const { user } = useAuth();
+  const { isDemoMode } = useDemo();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [sources, setSources] = useState<Source[]>([]);
@@ -1357,7 +1359,7 @@ export default function EvidLYIntelligence() {
               )}
             </div>
             <div style={{ fontSize: 12, color: '#9CA3AF', flexShrink: 0 }}>
-              {SAMPLE_CORRELATIONS.length} correlations · {CORR_PILLARS.length} pillars
+              {(isDemoMode ? SAMPLE_CORRELATIONS : []).length} correlations · {CORR_PILLARS.length} pillars
             </div>
           </div>
 
@@ -1444,9 +1446,22 @@ export default function EvidLYIntelligence() {
             </button>
           </div>
 
+          {/* Empty state for production (no sample data) */}
+          {!isDemoMode && correlations.length === 0 && (
+            <div style={{
+              background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: 10,
+              padding: '32px 24px', textAlign: 'center', marginBottom: 20,
+            }}>
+              <div style={{ fontSize: 14, fontWeight: 600, color: NAVY, marginBottom: 6 }}>No correlation data available</div>
+              <div style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.6 }}>
+                Correlations appear as intelligence signals are published and analyzed.
+              </div>
+            </div>
+          )}
+
           {/* Correlations grouped by pillar */}
           {CORR_PILLARS.filter(p => corrPillarFilter === 'All' || corrPillarFilter === p).map(pillar => {
-            const items = SAMPLE_CORRELATIONS.filter(c => c.pillar === pillar);
+            const items = (isDemoMode ? SAMPLE_CORRELATIONS : []).filter(c => c.pillar === pillar);
             if (items.length === 0) return null;
             const color = CORR_PILLAR_COLORS[pillar];
             return (
