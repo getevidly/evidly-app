@@ -17,7 +17,6 @@ import {
   Download,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { useRole } from '../contexts/RoleContext';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
@@ -32,7 +31,6 @@ import {
   type CASeverity,
 } from '../constants/correctiveActionStatus';
 import {
-  DEMO_CORRECTIVE_ACTIONS,
   CA_SYSTEM_TEMPLATES,
   getTemplatesByCategory,
   CATEGORY_LABELS,
@@ -104,7 +102,6 @@ type SortOption = 'due_date' | 'severity' | 'created' | 'status';
 export function CorrectiveActions() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { isDemoMode } = useDemo();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const { userRole } = useRole();
 
@@ -125,14 +122,9 @@ export function CorrectiveActions() {
   // AI Assist tracking
   const [aiFields, setAiFields] = useState<Set<string>>(new Set());
 
-  // Local actions state (for demo lifecycle transitions)
+  // Local actions state (user-created actions in this session)
   const [localActions, setLocalActions] = useState<CorrectiveActionItem[]>([]);
-  const allActions = localActions.length > 0 ? localActions : (isDemoMode ? DEMO_CORRECTIVE_ACTIONS : []);
-
-  // Initialize local state from demo data on first render
-  useState(() => {
-    if (isDemoMode) setLocalActions([...DEMO_CORRECTIVE_ACTIONS]);
-  });
+  const allActions = localActions;
 
   // ── Self-Inspection Handoff ──────────────────────────────────
   const isFromInspection = searchParams.get('from') === 'self-inspection';
@@ -508,9 +500,9 @@ export function CorrectiveActions() {
         {actions.length === 0 && (
           <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
             <AlertTriangle className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-            <p className="text-sm font-medium text-gray-700">No corrective actions yet</p>
+            <p className="text-sm font-medium text-gray-700">No corrective actions on file</p>
             <p className="text-xs text-gray-500 mt-1">
-              When violations or issues are found, create a corrective action to track resolution.
+              Actions are created from self-inspections, failed checklists, temperature excursions, or manually.
             </p>
           </div>
         )}

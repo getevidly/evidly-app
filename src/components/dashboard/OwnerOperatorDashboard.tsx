@@ -32,7 +32,6 @@ import {
   type BenchmarkItem,
 } from './shared/insights';
 import { CATEGORY_ORG_TRENDS } from '../../data/trendDemoData';
-import { DEMO_CORRECTIVE_ACTIONS } from '../../data/correctiveActionsDemoData';
 
 
 // ================================================================
@@ -101,22 +100,10 @@ export default function OwnerOperatorDashboard() {
   // Strategic Insights: role gate (owner_operator + executive only)
   const showInsightsTab = userRole === 'owner_operator' || userRole === 'executive';
 
-  // Strategic Insights: demo data
+  // Strategic Insights: no seeded data — in production, query Supabase for open CAs
   const insightsRiskItems: RiskItem[] = useMemo(() => {
-    if (!isDemoMode) return [];
-    return DEMO_CORRECTIVE_ACTIONS
-      .filter(ca => ca.status === 'created' || ca.status === 'in_progress')
-      .map(ca => ({
-        id: ca.id,
-        title: ca.title,
-        location: ca.location,
-        severity: ca.severity,
-        category: ca.category === 'food_safety' ? 'Food Safety'
-          : ca.category === 'facility_safety' ? 'Facility Safety' : 'Operational',
-        dueDate: ca.dueDate,
-        route: `/corrective-actions/${ca.id}`,
-      }));
-  }, [isDemoMode]);
+    return [];
+  }, []);
 
   const insightsInspectionData: InspectionEstimate[] = useMemo(() => {
     if (!isDemoMode) return [];

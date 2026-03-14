@@ -11,8 +11,6 @@ import {
   LOCATION_JURISDICTION_STATUS,
 } from '../data/demoData';
 
-import { DEMO_CORRECTIVE_ACTIONS } from '../data/correctiveActionsDemoData';
-import type { CorrectiveActionItem } from '../data/correctiveActionsDemoData';
 import { generateTempDemoHistory } from '../data/tempDemoHistory';
 import { DEMO_SCENARIOS } from '../data/inspectorViewDemoData';
 import { SCORE_TRENDS, CHECKLIST_COMPLETION, TEMP_COMPLIANCE } from '../data/reportsDemoData';
@@ -120,26 +118,14 @@ export function buildLocationContextPayload(locationId: string): LocationContext
       }
     : null;
 
-  // Corrective actions for this location
-  const locationCAs = DEMO_CORRECTIVE_ACTIONS.filter(
-    (ca: CorrectiveActionItem) => ca.locationId === locationId
-  );
-  const openCAs = locationCAs.filter(
-    (ca: CorrectiveActionItem) => ca.status === 'reported' || ca.status === 'assigned' || ca.status === 'in_progress'
-  );
-
+  // Corrective actions — no seeded data, empty in demo mode
   const openCorrectiveActions = {
-    count: openCAs.length,
-    critical: openCAs.filter(ca => ca.severity === 'critical').length,
-    high: openCAs.filter(ca => ca.severity === 'high').length,
-    medium: openCAs.filter(ca => ca.severity === 'medium').length,
-    low: openCAs.filter(ca => ca.severity === 'low').length,
-    items: openCAs.map(ca => ({
-      title: ca.title,
-      severity: ca.severity,
-      status: ca.status,
-      category: ca.category,
-    })),
+    count: 0,
+    critical: 0,
+    high: 0,
+    medium: 0,
+    low: 0,
+    items: [] as { title: string; severity: string; status: string; category: string }[],
   };
 
   // Temperature compliance from reportsDemoData

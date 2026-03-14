@@ -19,7 +19,6 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Breadcrumb } from '../components/Breadcrumb';
-import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { useRole } from '../contexts/RoleContext';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
@@ -31,7 +30,6 @@ import {
   type CAStatus,
 } from '../constants/correctiveActionStatus';
 import {
-  DEMO_CORRECTIVE_ACTIONS,
   CATEGORY_LABELS,
   SEVERITY_LABELS,
   SOURCE_TYPE_LABELS,
@@ -65,16 +63,11 @@ function formatTimestamp(iso: string): string {
 export function CorrectiveActionDetail() {
   const { actionId } = useParams<{ actionId: string }>();
   const navigate = useNavigate();
-  const { isDemoMode } = useDemo();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const { userRole } = useRole();
 
-  // Local state for demo lifecycle + notes
-  const [localAction, setLocalAction] = useState<CorrectiveActionItem | null>(() => {
-    if (!isDemoMode || !actionId) return null;
-    const found = DEMO_CORRECTIVE_ACTIONS.find(a => a.id === actionId);
-    return found ? { ...found, notes: [...found.notes], history: [...found.history] } : null;
-  });
+  // Local state for lifecycle + notes (no seeded data — items come from list page or DB)
+  const [localAction, setLocalAction] = useState<CorrectiveActionItem | null>(null);
 
   const [newNote, setNewNote] = useState('');
   const [resolutionNote, setResolutionNote] = useState('');
