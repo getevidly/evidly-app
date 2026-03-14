@@ -51,12 +51,6 @@ interface OrgRow {
   updated_at: string | null;
 }
 
-// Demo data
-const DEMO_ORGS: OrgRow[] = [
-  { id: 'org1', name: 'Downtown Kitchen', industry_type: 'restaurant', plan: 'founder', status: 'active', timezone: 'America/Los_Angeles', notes: null, created_at: '2025-06-01T00:00:00Z', updated_at: '2026-03-01T00:00:00Z' },
-  { id: 'org2', name: 'Airport Bistro', industry_type: 'restaurant', plan: 'standard', status: 'active', timezone: 'America/Los_Angeles', notes: 'Multi-location', created_at: '2025-08-15T00:00:00Z', updated_at: '2026-02-15T00:00:00Z' },
-  { id: 'org3', name: 'University Dining', industry_type: 'school', plan: 'enterprise', status: 'active', timezone: 'America/Chicago', notes: 'K-12 contract', created_at: '2025-09-01T00:00:00Z', updated_at: '2026-01-20T00:00:00Z' },
-];
 
 const inputStyle: React.CSSProperties = {
   padding: '7px 10px', fontSize: 13, border: `1px solid ${BORDER}`,
@@ -88,13 +82,9 @@ export default function AdminOrgs() {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      if (data && data.length > 0) {
-        setOrgs(data as OrgRow[]);
-      } else {
-        setOrgs(DEMO_ORGS);
-      }
+      setOrgs((data || []) as OrgRow[]);
     } catch {
-      setOrgs(DEMO_ORGS);
+      setOrgs([]);
     }
     setLoading(false);
   }, []);

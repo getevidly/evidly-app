@@ -52,88 +52,6 @@ interface AssessmentLeadRow {
   findings_json?: any[];
 }
 
-// ── Demo Data ─────────────────────────────────────────────────────────────────
-
-const DEMO_LEADS: AssessmentLeadRow[] = [
-  {
-    id: '1', business_name: "Tony's Pizzeria", contact_name: 'Tony Russo', email: 'tony@tonyspizza.com',
-    phone: '(213) 555-0101', city: 'Los Angeles', zip_code: '90012', referral_source: 'google',
-    created_at: new Date(Date.now() - 2 * 86400000).toISOString(),
-    overall_grade: 'D', facility_safety_score: 70, food_safety_score: 45, documentation_score: 55,
-    revenue_risk: 65, liability_risk: 72, cost_risk: 58, operational_risk: 61,
-    total_estimated_exposure_low: 42000, total_estimated_exposure_high: 168000,
-    findings_json: [
-      { title: 'Hood cleaning overdue', severity: 'high', isPositive: false },
-      { title: 'Fire suppression not recently inspected', severity: 'critical', isPositive: false },
-      { title: 'Backflow testing overdue', severity: 'critical', isPositive: false },
-    ],
-  },
-  {
-    id: '2', business_name: 'Sunrise Café', contact_name: 'Maria Chen', email: 'maria@sunrisecafe.com',
-    phone: null, city: 'San Francisco', zip_code: '94110', referral_source: 'referral',
-    created_at: new Date(Date.now() - 5 * 86400000).toISOString(),
-    overall_grade: 'B', facility_safety_score: 25, food_safety_score: 30, documentation_score: 35,
-    revenue_risk: 28, liability_risk: 35, cost_risk: 22, operational_risk: 30,
-    total_estimated_exposure_low: 8000, total_estimated_exposure_high: 35000,
-    findings_json: [
-      { title: 'HACCP plan is outdated', severity: 'medium', isPositive: false },
-      { title: 'Paper-based food safety tracking', severity: 'medium', isPositive: false },
-    ],
-  },
-  {
-    id: '3', business_name: 'Harbor Hotel & Kitchen', contact_name: 'James Park', email: 'jpark@harborhotel.com',
-    phone: '(619) 555-0202', city: 'San Diego', zip_code: '92101', referral_source: 'trade_show',
-    created_at: new Date(Date.now() - 7 * 86400000).toISOString(),
-    overall_grade: 'C', facility_safety_score: 55, food_safety_score: 40, documentation_score: 60,
-    revenue_risk: 48, liability_risk: 55, cost_risk: 42, operational_risk: 52,
-    total_estimated_exposure_low: 85000, total_estimated_exposure_high: 320000,
-    findings_json: [
-      { title: 'Elevator not recently inspected', severity: 'medium', isPositive: false },
-      { title: 'Grease trap pumping overdue', severity: 'high', isPositive: false },
-      { title: 'No vendor document tracking', severity: 'high', isPositive: false },
-    ],
-  },
-  {
-    id: '4', business_name: "Mama Rosa's Catering", contact_name: 'Rosa Gonzalez', email: 'rosa@mamarosas.com',
-    phone: '(323) 555-0303', city: 'Pasadena', zip_code: '91101', referral_source: 'cleaning_pros',
-    created_at: new Date(Date.now() - 10 * 86400000).toISOString(),
-    overall_grade: 'F', facility_safety_score: 85, food_safety_score: 70, documentation_score: 90,
-    revenue_risk: 82, liability_risk: 88, cost_risk: 75, operational_risk: 85,
-    total_estimated_exposure_low: 120000, total_estimated_exposure_high: 450000,
-    findings_json: [
-      { title: 'Solid-fuel cooking with shared exhaust — code violation', severity: 'critical', isPositive: false },
-      { title: 'No consistent temperature logging', severity: 'critical', isPositive: false },
-      { title: 'No formal food safety tracking', severity: 'critical', isPositive: false },
-      { title: 'Fire suppression not recently inspected', severity: 'critical', isPositive: false },
-    ],
-  },
-  {
-    id: '5', business_name: 'Green Leaf Kitchen', contact_name: 'David Kim', email: 'david@greenleaf.com',
-    phone: null, city: 'Oakland', zip_code: '94607', referral_source: 'social_media',
-    created_at: new Date(Date.now() - 14 * 86400000).toISOString(),
-    overall_grade: 'A', facility_safety_score: 10, food_safety_score: 15, documentation_score: 20,
-    revenue_risk: 12, liability_risk: 18, cost_risk: 10, operational_risk: 15,
-    total_estimated_exposure_low: 2500, total_estimated_exposure_high: 12000,
-    findings_json: [
-      { title: 'Hood cleaning is current', severity: 'positive', isPositive: true },
-      { title: 'Fire suppression system is current', severity: 'positive', isPositive: true },
-      { title: 'Backflow testing is current', severity: 'positive', isPositive: true },
-    ],
-  },
-  {
-    id: '6', business_name: 'Pacific School District', contact_name: 'Sarah Johnson', email: 'sjohnson@pacificsd.edu',
-    phone: '(510) 555-0404', city: 'Berkeley', zip_code: '94703', referral_source: 'flyer',
-    created_at: new Date(Date.now() - 21 * 86400000).toISOString(),
-    overall_grade: 'C', facility_safety_score: 40, food_safety_score: 50, documentation_score: 55,
-    revenue_risk: 45, liability_risk: 52, cost_risk: 38, operational_risk: 48,
-    total_estimated_exposure_low: 95000, total_estimated_exposure_high: 380000,
-    findings_json: [
-      { title: 'No HACCP plan', severity: 'high', isPositive: false },
-      { title: 'No grease disposal manifests on file', severity: 'high', isPositive: false },
-    ],
-  },
-];
-
 // ── Component ─────────────────────────────────────────────────────────────────
 
 function AssessmentLeadsPage() {
@@ -160,7 +78,7 @@ function AssessmentLeadsPage() {
     if (!allowed) return;
 
     if (isDemoMode) {
-      setLeads(DEMO_LEADS);
+      setLeads([]);
       setLoading(false);
       return;
     }

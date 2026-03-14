@@ -60,15 +60,6 @@ interface UserRow {
   organization_id: string | null;
 }
 
-// ── Demo data ──
-const DEMO_USERS: UserRow[] = [
-  { id: 'd1', full_name: 'Arthur Chen', email: 'arthur@getevidly.com', role: 'platform_admin', is_suspended: false, suspended_at: null, suspend_reason: null, failed_login_count: 0, locked_until: null, last_login_at: new Date().toISOString(), last_login_ip: '192.168.1.1', created_at: '2025-06-01T00:00:00Z', organization_id: 'org1' },
-  { id: 'd2', full_name: 'Sarah Johnson', email: 'sarah@downtown.com', role: 'owner_operator', is_suspended: false, suspended_at: null, suspend_reason: null, failed_login_count: 0, locked_until: null, last_login_at: '2026-03-12T14:00:00Z', last_login_ip: '10.0.0.5', created_at: '2025-08-15T00:00:00Z', organization_id: 'org2' },
-  { id: 'd3', full_name: 'Mike Torres', email: 'mike@airport.com', role: 'kitchen_manager', is_suspended: false, suspended_at: null, suspend_reason: null, failed_login_count: 3, locked_until: null, last_login_at: '2026-03-11T09:00:00Z', last_login_ip: '172.16.0.8', created_at: '2025-09-01T00:00:00Z', organization_id: 'org3' },
-  { id: 'd4', full_name: 'Lisa Park', email: 'lisa@university.com', role: 'compliance_officer', is_suspended: true, suspended_at: '2026-03-10T12:00:00Z', suspend_reason: 'Account review', failed_login_count: 0, locked_until: null, last_login_at: '2026-03-10T11:00:00Z', last_login_ip: '192.168.2.10', created_at: '2025-10-01T00:00:00Z', organization_id: 'org4' },
-  { id: 'd5', full_name: 'James Lee', email: 'james@downtown.com', role: 'chef', is_suspended: false, suspended_at: null, suspend_reason: null, failed_login_count: 12, locked_until: new Date(Date.now() + 3600000).toISOString(), last_login_at: '2026-03-12T10:00:00Z', last_login_ip: '10.0.0.15', created_at: '2025-11-01T00:00:00Z', organization_id: 'org2' },
-  { id: 'd6', full_name: 'Ana Rivera', email: 'ana@downtown.com', role: 'kitchen_staff', is_suspended: false, suspended_at: null, suspend_reason: null, failed_login_count: 0, locked_until: null, last_login_at: '2026-03-12T08:00:00Z', last_login_ip: '10.0.0.20', created_at: '2026-01-15T00:00:00Z', organization_id: 'org2' },
-];
 
 const inputStyle: React.CSSProperties = {
   padding: '7px 10px', fontSize: 13, border: `1px solid ${BORDER}`,
@@ -109,8 +100,6 @@ export default function AdminUsers() {
   // AUDIT-FIX-06 / A-2: More-menu state
   const [moreMenuId, setMoreMenuId] = useState<string | null>(null);
 
-  const isDemoMode = users === DEMO_USERS;
-
   const loadUsers = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -121,13 +110,9 @@ export default function AdminUsers() {
         .order('created_at', { ascending: false });
 
       if (fetchErr) throw fetchErr;
-      if (data && data.length > 0) {
-        setUsers(data as UserRow[]);
-      } else {
-        setUsers(DEMO_USERS);
-      }
+      setUsers((data || []) as UserRow[]);
     } catch {
-      setUsers(DEMO_USERS);
+      setUsers([]);
     }
     setLoading(false);
   }, []);

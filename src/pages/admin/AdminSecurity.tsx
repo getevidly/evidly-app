@@ -37,8 +37,6 @@ const ROLE_LABELS: Record<string, string> = {
   kitchen_staff: 'Kitchen Staff',
 };
 
-// ── Demo data ──
-
 interface MfaPolicyRow {
   role: string;
   mfa_required: boolean;
@@ -66,34 +64,6 @@ interface ActiveSession {
   revoked_at: string | null;
 }
 
-const DEMO_MFA_POLICY: MfaPolicyRow[] = [
-  { role: 'platform_admin', mfa_required: true, grace_period_days: 0, enforce_at: null },
-  { role: 'owner_operator', mfa_required: false, grace_period_days: 30, enforce_at: null },
-  { role: 'executive', mfa_required: false, grace_period_days: 30, enforce_at: null },
-  { role: 'compliance_officer', mfa_required: false, grace_period_days: 30, enforce_at: null },
-  { role: 'facilities', mfa_required: false, grace_period_days: 30, enforce_at: null },
-  { role: 'chef', mfa_required: false, grace_period_days: 30, enforce_at: null },
-  { role: 'kitchen_manager', mfa_required: false, grace_period_days: 30, enforce_at: null },
-  { role: 'kitchen_staff', mfa_required: false, grace_period_days: 30, enforce_at: null },
-];
-
-const DEMO_SESSION_POLICY: SessionPolicyRow[] = [
-  { role: 'platform_admin', idle_timeout_minutes: 15, absolute_timeout_hours: 8, admin_timeout_minutes: 15 },
-  { role: 'owner_operator', idle_timeout_minutes: 60, absolute_timeout_hours: 24, admin_timeout_minutes: 30 },
-  { role: 'executive', idle_timeout_minutes: 60, absolute_timeout_hours: 24, admin_timeout_minutes: 30 },
-  { role: 'compliance_officer', idle_timeout_minutes: 60, absolute_timeout_hours: 24, admin_timeout_minutes: 30 },
-  { role: 'facilities', idle_timeout_minutes: 120, absolute_timeout_hours: 48, admin_timeout_minutes: 60 },
-  { role: 'chef', idle_timeout_minutes: 120, absolute_timeout_hours: 48, admin_timeout_minutes: 60 },
-  { role: 'kitchen_manager', idle_timeout_minutes: 120, absolute_timeout_hours: 48, admin_timeout_minutes: 60 },
-  { role: 'kitchen_staff', idle_timeout_minutes: 240, absolute_timeout_hours: 72, admin_timeout_minutes: 60 },
-];
-
-const DEMO_SESSIONS: ActiveSession[] = [
-  { id: 's1', user_id: 'd1', user_email: 'arthur@getevidly.com', user_name: 'Arthur Chen', ip_address: '192.168.1.1', user_agent: 'Chrome 120 / macOS', created_at: new Date(Date.now() - 3600000).toISOString(), last_active_at: new Date(Date.now() - 120000).toISOString(), expires_at: new Date(Date.now() + 25200000).toISOString(), revoked_at: null },
-  { id: 's2', user_id: 'd2', user_email: 'sarah@downtown.com', user_name: 'Sarah Johnson', ip_address: '10.0.0.5', user_agent: 'Safari 17 / iOS', created_at: new Date(Date.now() - 7200000).toISOString(), last_active_at: new Date(Date.now() - 900000).toISOString(), expires_at: new Date(Date.now() + 79200000).toISOString(), revoked_at: null },
-  { id: 's3', user_id: 'd3', user_email: 'mike@airport.com', user_name: 'Mike Torres', ip_address: '172.16.0.8', user_agent: 'Chrome 120 / Android', created_at: new Date(Date.now() - 14400000).toISOString(), last_active_at: new Date(Date.now() - 3600000).toISOString(), expires_at: new Date(Date.now() + 158400000).toISOString(), revoked_at: null },
-  { id: 's4', user_id: 'd6', user_email: 'ana@downtown.com', user_name: 'Ana Rivera', ip_address: '10.0.0.20', user_agent: 'Firefox 121 / Windows', created_at: new Date(Date.now() - 28800000).toISOString(), last_active_at: new Date(Date.now() - 7200000).toISOString(), expires_at: new Date(Date.now() + 230400000).toISOString(), revoked_at: null },
-];
 
 const inputStyle: React.CSSProperties = {
   padding: '7px 10px', fontSize: 13, border: `1px solid ${BORDER}`,
@@ -145,17 +115,8 @@ export default function AdminSecurity() {
         supabase.from('user_sessions').select('id, user_id, ip_address, user_agent, created_at, last_active_at, expires_at, revoked_at').is('revoked_at', null).order('last_active_at', { ascending: false }),
       ]);
 
-      if (mfaRes.data && mfaRes.data.length > 0) {
-        setMfaPolicy(mfaRes.data as MfaPolicyRow[]);
-      } else {
-        setMfaPolicy(DEMO_MFA_POLICY);
-      }
-
-      if (sessRes.data && sessRes.data.length > 0) {
-        setSessionPolicy(sessRes.data as SessionPolicyRow[]);
-      } else {
-        setSessionPolicy(DEMO_SESSION_POLICY);
-      }
+      setMfaPolicy((mfaRes.data || []) as MfaPolicyRow[]);
+      setSessionPolicy((sessRes.data || []) as SessionPolicyRow[]);
 
       if (activeRes.data && activeRes.data.length > 0) {
         // Enrich sessions with user info
@@ -175,12 +136,12 @@ export default function AdminSecurity() {
         });
         setSessions(enriched as ActiveSession[]);
       } else {
-        setSessions(DEMO_SESSIONS);
+        setSessions([]);
       }
     } catch {
-      setMfaPolicy(DEMO_MFA_POLICY);
-      setSessionPolicy(DEMO_SESSION_POLICY);
-      setSessions(DEMO_SESSIONS);
+      setMfaPolicy([]);
+      setSessionPolicy([]);
+      setSessions([]);
     }
     setLoading(false);
   }, []);
