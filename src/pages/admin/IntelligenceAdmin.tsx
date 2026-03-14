@@ -15,6 +15,7 @@ import { RiskLevelTooltip } from '../../components/RiskLevelTooltip';
 import VerificationPanel from '../../components/admin/VerificationPanel';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 import { toast } from 'sonner';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -64,7 +65,33 @@ interface QueueSignal {
   published_at?: string | null;
 }
 
-type TabFilter = 'all' | 'hold' | 'notify' | 'dismissed' | 'published';
+type TabFilter = 'all' | 'hold' | 'notify' | 'dismissed' | 'published' | 'ai-costs';
+
+// AUDIT-FIX-08 / A-3: Classification log entry
+interface ClassificationLogEntry {
+  id: string;
+  signal_id: string | null;
+  signal_title: string | null;
+  signal_type: string | null;
+  model: string;
+  input_tokens: number | null;
+  output_tokens: number | null;
+  total_tokens: number | null;
+  total_cost_usd: number | null;
+  success: boolean;
+  error_message: string | null;
+  created_at: string;
+}
+
+// AUDIT-FIX-08: Demo classification log data
+const DEMO_CLASSIF_LOG: ClassificationLogEntry[] = [
+  { id: 'cl1', signal_id: 's1', signal_title: 'FDA Recall: Romaine Lettuce — E. coli O157:H7', signal_type: 'recall', model: 'claude-haiku-4-5-20251001', input_tokens: 342, output_tokens: 89, total_tokens: 431, total_cost_usd: 0.000787, success: true, error_message: null, created_at: new Date(Date.now() - 3600000).toISOString() },
+  { id: 'cl2', signal_id: 's2', signal_title: 'CalCode Update: Hood Suppression Inspection Frequency', signal_type: 'regulatory_change', model: 'claude-haiku-4-5-20251001', input_tokens: 410, output_tokens: 92, total_tokens: 502, total_cost_usd: 0.000870, success: true, error_message: null, created_at: new Date(Date.now() - 7200000).toISOString() },
+  { id: 'cl3', signal_id: 's3', signal_title: 'Allergen Alert: Undeclared Soy in Seasoning Mix', signal_type: 'allergen_alert', model: 'claude-haiku-4-5-20251001', input_tokens: 298, output_tokens: 85, total_tokens: 383, total_cost_usd: 0.000723, success: true, error_message: null, created_at: new Date(Date.now() - 14400000).toISOString() },
+  { id: 'cl4', signal_id: 's4', signal_title: 'Norovirus Outbreak: LA County Catering Event', signal_type: 'outbreak_alert', model: 'claude-haiku-4-5-20251001', input_tokens: 380, output_tokens: 91, total_tokens: 471, total_cost_usd: 0.000835, success: true, error_message: null, created_at: new Date(Date.now() - 28800000).toISOString() },
+  { id: 'cl5', signal_id: null, signal_title: 'API timeout on classification', signal_type: null, model: 'claude-haiku-4-5-20251001', input_tokens: null, output_tokens: null, total_tokens: null, total_cost_usd: null, success: false, error_message: 'Request timed out after 15000ms', created_at: new Date(Date.now() - 43200000).toISOString() },
+  { id: 'cl6', signal_id: 's5', signal_title: 'Fire Suppression System Recall: Ansul R-102', signal_type: 'fire_safety', model: 'claude-haiku-4-5-20251001', input_tokens: 356, output_tokens: 88, total_tokens: 444, total_cost_usd: 0.000796, success: true, error_message: null, created_at: new Date(Date.now() - 86400000).toISOString() },
+];
 
 const URGENCY_COLORS: Record<string, { bg: string; text: string }> = {
   critical:      { bg: '#FEF2F2', text: '#DC2626' },
@@ -163,6 +190,18 @@ export default function IntelligenceAdmin() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState({ title: '', summary: '', detail_markdown: '' });
   const [savingEdit, setSavingEdit] = useState(false);
+
+  // AUDIT-FIX-08 / A-3: AI Costs tab state
+  const [aiCostsLoading, setAiCostsLoading] = useState(false);
+  const [aiCostLog, setAiCostLog] = useState<ClassificationLogEntry[]>([]);
+  const [aiDailySpend, setAiDailySpend] = useState<{ date: string; spend: number }[]>([]);
+  const [aiTodaySpend, setAiTodaySpend] = useState(0);
+  const [aiMonthSpend, setAiMonthSpend] = useState(0);
+  const [aiMonthCount, setAiMonthCount] = useState(0);
+  const [aiBudget, setAiBudget] = useState({ daily: 10, monthly: 100, threshold: 80 });
+  const [editBudget, setEditBudget] = useState({ daily: '10', monthly: '100', threshold: '80' });
+  const [savingBudget, setSavingBudget] = useState(false);
+  const [aiCostTimeFilter, setAiCostTimeFilter] = useState<'today' | 'week' | 'month' | 'all'>('month');
 
   // Saved flash state — key is `${signalId}_${dim}`
   const [savedDim, setSavedDim] = useState<Record<string, boolean>>({});
@@ -389,6 +428,97 @@ export default function IntelligenceAdmin() {
     }
     setSavingEdit(false);
   }, [editingId, editForm, user]);
+
+  // AUDIT-FIX-08 / A-3: Load AI cost data
+  const loadAiCosts = useCallback(async () => {
+    setAiCostsLoading(true);
+    try {
+      const now = new Date();
+      const today = now.toISOString().split('T')[0];
+      const monthStart = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;
+
+      const { data: config } = await supabase.from('ai_budget_config').select('*').single();
+      if (config) {
+        setAiBudget({ daily: config.daily_budget_usd, monthly: config.monthly_budget_usd, threshold: config.alert_threshold_pct });
+        setEditBudget({ daily: String(config.daily_budget_usd), monthly: String(config.monthly_budget_usd), threshold: String(config.alert_threshold_pct) });
+      }
+
+      const { data: todayData } = await supabase.from('intelligence_classification_log').select('total_cost_usd').gte('created_at', today).eq('success', true);
+      const { data: monthData } = await supabase.from('intelligence_classification_log').select('total_cost_usd').gte('created_at', monthStart).eq('success', true);
+
+      setAiTodaySpend((todayData || []).reduce((s, r) => s + (r.total_cost_usd || 0), 0));
+      setAiMonthSpend((monthData || []).reduce((s, r) => s + (r.total_cost_usd || 0), 0));
+      setAiMonthCount((monthData || []).length);
+
+      // 30-day daily aggregation
+      const thirtyAgo = new Date(Date.now() - 30 * 86400000).toISOString().split('T')[0];
+      const { data: dailyRaw } = await supabase.from('intelligence_classification_log').select('created_at, total_cost_usd').gte('created_at', thirtyAgo).eq('success', true).order('created_at', { ascending: true });
+      const dmap: Record<string, number> = {};
+      (dailyRaw || []).forEach(r => {
+        const d = new Date(r.created_at).toISOString().split('T')[0];
+        dmap[d] = (dmap[d] || 0) + (r.total_cost_usd || 0);
+      });
+      setAiDailySpend(Object.entries(dmap).map(([date, spend]) => ({ date, spend: Math.round(spend * 1000000) / 1000000 })).sort((a, b) => a.date.localeCompare(b.date)));
+
+      // Log entries
+      let logQ = supabase.from('intelligence_classification_log').select('*').order('created_at', { ascending: false }).limit(50);
+      const { data: logData } = await logQ;
+
+      if (logData && logData.length > 0) {
+        setAiCostLog(logData);
+      } else {
+        setAiCostLog(DEMO_CLASSIF_LOG);
+      }
+    } catch {
+      setAiCostLog(DEMO_CLASSIF_LOG);
+    }
+    setAiCostsLoading(false);
+  }, []);
+
+  const saveBudgetConfig = useCallback(async () => {
+    setSavingBudget(true);
+    try {
+      const daily = parseFloat(editBudget.daily) || 10;
+      const monthly = parseFloat(editBudget.monthly) || 100;
+      const threshold = parseInt(editBudget.threshold) || 80;
+
+      const { data: existing } = await supabase.from('ai_budget_config').select('id').limit(1);
+      if (existing && existing.length > 0) {
+        await supabase.from('ai_budget_config').update({ daily_budget_usd: daily, monthly_budget_usd: monthly, alert_threshold_pct: threshold, updated_at: new Date().toISOString() }).eq('id', existing[0].id);
+      } else {
+        await supabase.from('ai_budget_config').insert({ daily_budget_usd: daily, monthly_budget_usd: monthly, alert_threshold_pct: threshold });
+      }
+
+      setAiBudget({ daily, monthly, threshold });
+      toast.success('Budget config saved');
+    } catch (err: any) {
+      toast.error(`Save failed: ${err?.message || 'Unknown error'}`);
+    }
+    setSavingBudget(false);
+  }, [editBudget]);
+
+  const exportClassifCsv = useCallback(() => {
+    const headers = ['Timestamp', 'Signal Title', 'Type', 'Model', 'Input Tokens', 'Output Tokens', 'Total Cost USD', 'Success', 'Error'];
+    const rows = aiCostLog.map(e => [
+      e.created_at, e.signal_title || '', e.signal_type || '', e.model,
+      String(e.input_tokens || ''), String(e.output_tokens || ''),
+      String(e.total_cost_usd || ''), String(e.success), e.error_message || '',
+    ]);
+    const csv = [headers, ...rows].map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ai-classification-costs-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success('Classification log exported');
+  }, [aiCostLog]);
+
+  // Load AI costs when tab is selected
+  useEffect(() => {
+    if (filter === 'ai-costs') loadAiCosts();
+  }, [filter, loadAiCosts]);
 
   // Cleanup undo timer on unmount
   useEffect(() => {
@@ -702,6 +832,7 @@ export default function IntelligenceAdmin() {
           { key: 'notify' as TabFilter, label: `Notify (${notifyCount})` },
           { key: 'dismissed' as TabFilter, label: `Dismissed (${dismissedCount})` },
           { key: 'published' as TabFilter, label: `Published (${publishedCount})${failedDeliveryCount > 0 ? ` · ${failedDeliveryCount} failed` : ''}` },
+          { key: 'ai-costs' as TabFilter, label: '$ AI Costs' },
         ]).map(f => (
           <button key={f.key} onClick={() => setFilter(f.key)}
             style={f.key === 'published' && failedDeliveryCount > 0
@@ -768,6 +899,224 @@ export default function IntelligenceAdmin() {
           </button>
         ))}
       </div>
+
+      {/* AUDIT-FIX-08 / A-3: AI Costs Tab */}
+      {filter === 'ai-costs' ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {/* KPI row */}
+          {aiCostsLoading ? (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} style={{ height: 80, background: '#E5E7EB', borderRadius: 10, animation: 'pulse 1.5s ease-in-out infinite' }} />
+              ))}
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+              {/* Today's Spend */}
+              <div style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '14px 16px' }}>
+                <div style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, marginBottom: 4 }}>Today&apos;s Spend</div>
+                <div style={{ fontSize: 22, fontWeight: 800, color: NAVY }}>${aiTodaySpend.toFixed(4)}</div>
+                <div style={{ fontSize: 10, color: TEXT_MUTED, marginTop: 2 }}>
+                  Budget: ${aiBudget.daily.toFixed(2)}/day
+                </div>
+              </div>
+              {/* Month Spend */}
+              <div style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '14px 16px' }}>
+                <div style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, marginBottom: 4 }}>Month Spend</div>
+                <div style={{ fontSize: 22, fontWeight: 800, color: NAVY }}>${aiMonthSpend.toFixed(4)}</div>
+                <div style={{ fontSize: 10, color: TEXT_MUTED, marginTop: 2 }}>
+                  {aiMonthCount} classifications
+                </div>
+              </div>
+              {/* Monthly Budget */}
+              {(() => {
+                const pct = aiBudget.monthly > 0 ? (aiMonthSpend / aiBudget.monthly) * 100 : 0;
+                const barColor = pct >= 90 ? '#DC2626' : pct >= 70 ? '#D97706' : '#059669';
+                return (
+                  <div style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '14px 16px' }}>
+                    <div style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, marginBottom: 4 }}>Monthly Budget</div>
+                    <div style={{ fontSize: 22, fontWeight: 800, color: NAVY }}>{pct.toFixed(1)}%</div>
+                    <div style={{ height: 4, background: '#E5E7EB', borderRadius: 2, marginTop: 6 }}>
+                      <div style={{ height: 4, borderRadius: 2, background: barColor, width: `${Math.min(pct, 100)}%`, transition: 'width 0.3s' }} />
+                    </div>
+                    <div style={{ fontSize: 10, color: TEXT_MUTED, marginTop: 2 }}>
+                      ${aiMonthSpend.toFixed(2)} / ${aiBudget.monthly.toFixed(2)}
+                    </div>
+                  </div>
+                );
+              })()}
+              {/* Avg Cost / Signal */}
+              <div style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '14px 16px' }}>
+                <div style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, marginBottom: 4 }}>Avg Cost / Signal</div>
+                <div style={{ fontSize: 22, fontWeight: 800, color: NAVY }}>
+                  ${aiMonthCount > 0 ? (aiMonthSpend / aiMonthCount).toFixed(5) : '0.00000'}
+                </div>
+                <div style={{ fontSize: 10, color: TEXT_MUTED, marginTop: 2 }}>
+                  Claude Haiku 4.5
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 30-day bar chart */}
+          <div style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '18px 20px' }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: NAVY, marginBottom: 12 }}>Daily Spend (30 days)</div>
+            {aiDailySpend.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: 24, fontSize: 12, color: TEXT_MUTED }}>No classification data yet</div>
+            ) : (
+              <ResponsiveContainer width="100%" height={200}>
+                <BarChart data={aiDailySpend}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                  <XAxis dataKey="date" tick={{ fontSize: 10, fill: TEXT_MUTED }} tickFormatter={(v: string) => v.slice(5)} />
+                  <YAxis tick={{ fontSize: 10, fill: TEXT_MUTED }} tickFormatter={(v: number) => `$${v.toFixed(3)}`} width={60} />
+                  <Tooltip formatter={(v: number) => [`$${v.toFixed(5)}`, 'Spend']} labelFormatter={(l: string) => `Date: ${l}`} />
+                  <Bar dataKey="spend" fill={GOLD} radius={[3, 3, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
+          </div>
+
+          {/* Budget configuration */}
+          <div style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '18px 20px' }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: NAVY, marginBottom: 12 }}>Budget Configuration</div>
+            <div style={{ display: 'flex', gap: 16, alignItems: 'flex-end', flexWrap: 'wrap' }}>
+              <div>
+                <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Daily Budget ($)</label>
+                <input type="number" step="0.50" min="0" value={editBudget.daily}
+                  onChange={e => setEditBudget(p => ({ ...p, daily: e.target.value }))}
+                  style={{ width: 100, padding: '6px 10px', borderRadius: 6, border: `1px solid ${BORDER}`, fontSize: 13 }} />
+              </div>
+              <div>
+                <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Monthly Budget ($)</label>
+                <input type="number" step="1" min="0" value={editBudget.monthly}
+                  onChange={e => setEditBudget(p => ({ ...p, monthly: e.target.value }))}
+                  style={{ width: 100, padding: '6px 10px', borderRadius: 6, border: `1px solid ${BORDER}`, fontSize: 13 }} />
+              </div>
+              <div>
+                <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>Alert Threshold (%)</label>
+                <input type="number" step="5" min="0" max="100" value={editBudget.threshold}
+                  onChange={e => setEditBudget(p => ({ ...p, threshold: e.target.value }))}
+                  style={{ width: 80, padding: '6px 10px', borderRadius: 6, border: `1px solid ${BORDER}`, fontSize: 13 }} />
+              </div>
+              <button onClick={saveBudgetConfig} disabled={savingBudget}
+                style={{ padding: '7px 20px', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer', border: 'none', background: GOLD, color: '#fff', opacity: savingBudget ? 0.6 : 1 }}>
+                {savingBudget ? 'Saving...' : 'Save'}
+              </button>
+            </div>
+            {/* Rate limit note */}
+            <div style={{ marginTop: 12, padding: '8px 12px', background: '#F9FAFB', borderRadius: 6, fontSize: 11, color: TEXT_SEC, lineHeight: 1.5 }}>
+              <strong>Model:</strong> Claude Haiku 4.5 &middot; <strong>Pricing:</strong> $1.00/M input tokens, $5.00/M output tokens &middot; <strong>Limit:</strong> 10 signals/request &middot; 15s timeout/signal
+            </div>
+          </div>
+
+          {/* Classification log table */}
+          <div style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '18px 20px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: NAVY }}>Classification Log</div>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                {/* Time filter pills */}
+                {(['today', 'week', 'month', 'all'] as const).map(tf => (
+                  <button key={tf} onClick={() => setAiCostTimeFilter(tf)}
+                    style={{
+                      padding: '3px 10px', borderRadius: 12, fontSize: 10, fontWeight: 600, cursor: 'pointer',
+                      border: `1px solid ${aiCostTimeFilter === tf ? GOLD : BORDER}`,
+                      background: aiCostTimeFilter === tf ? GOLD : 'transparent',
+                      color: aiCostTimeFilter === tf ? '#fff' : TEXT_SEC,
+                    }}>
+                    {tf.charAt(0).toUpperCase() + tf.slice(1)}
+                  </button>
+                ))}
+                <button onClick={exportClassifCsv}
+                  style={{ padding: '3px 12px', borderRadius: 6, fontSize: 10, fontWeight: 700, cursor: 'pointer', border: `1px solid ${BORDER}`, background: '#F9FAFB', color: NAVY }}>
+                  Export CSV
+                </button>
+              </div>
+            </div>
+
+            {/* Table */}
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+                <thead>
+                  <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
+                    <th style={{ textAlign: 'left', padding: '6px 8px', fontWeight: 700, color: TEXT_SEC, fontSize: 10 }}>Timestamp</th>
+                    <th style={{ textAlign: 'left', padding: '6px 8px', fontWeight: 700, color: TEXT_SEC, fontSize: 10 }}>Signal</th>
+                    <th style={{ textAlign: 'left', padding: '6px 8px', fontWeight: 700, color: TEXT_SEC, fontSize: 10 }}>Model</th>
+                    <th style={{ textAlign: 'right', padding: '6px 8px', fontWeight: 700, color: TEXT_SEC, fontSize: 10 }}>Input</th>
+                    <th style={{ textAlign: 'right', padding: '6px 8px', fontWeight: 700, color: TEXT_SEC, fontSize: 10 }}>Output</th>
+                    <th style={{ textAlign: 'right', padding: '6px 8px', fontWeight: 700, color: TEXT_SEC, fontSize: 10 }}>Cost</th>
+                    <th style={{ textAlign: 'center', padding: '6px 8px', fontWeight: 700, color: TEXT_SEC, fontSize: 10 }}>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(() => {
+                    const now = new Date();
+                    const filteredLog = aiCostLog.filter(entry => {
+                      if (aiCostTimeFilter === 'all') return true;
+                      const d = new Date(entry.created_at);
+                      if (aiCostTimeFilter === 'today') return d.toDateString() === now.toDateString();
+                      if (aiCostTimeFilter === 'week') return (now.getTime() - d.getTime()) < 7 * 86400000;
+                      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+                    });
+                    if (filteredLog.length === 0) {
+                      return (
+                        <tr><td colSpan={7} style={{ textAlign: 'center', padding: 20, color: TEXT_MUTED }}>No classification logs for this period</td></tr>
+                      );
+                    }
+                    const totalCost = filteredLog.reduce((s, e) => s + (e.total_cost_usd || 0), 0);
+                    const totalIn = filteredLog.reduce((s, e) => s + (e.input_tokens || 0), 0);
+                    const totalOut = filteredLog.reduce((s, e) => s + (e.output_tokens || 0), 0);
+                    return (
+                      <>
+                        {filteredLog.map(entry => (
+                          <tr key={entry.id} style={{ borderBottom: `1px solid #F3F4F6` }}>
+                            <td style={{ padding: '6px 8px', color: TEXT_MUTED, whiteSpace: 'nowrap', fontSize: 11 }}>
+                              {new Date(entry.created_at).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
+                            </td>
+                            <td style={{ padding: '6px 8px', color: NAVY, fontWeight: 500, maxWidth: 240, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              {entry.signal_title || '—'}
+                            </td>
+                            <td style={{ padding: '6px 8px', color: TEXT_MUTED, fontSize: 10, fontFamily: 'monospace' }}>
+                              {entry.model.replace('claude-', '').replace('-20251001', '')}
+                            </td>
+                            <td style={{ padding: '6px 8px', textAlign: 'right', color: TEXT_SEC, fontFamily: 'monospace' }}>
+                              {entry.input_tokens?.toLocaleString() || '—'}
+                            </td>
+                            <td style={{ padding: '6px 8px', textAlign: 'right', color: TEXT_SEC, fontFamily: 'monospace' }}>
+                              {entry.output_tokens?.toLocaleString() || '—'}
+                            </td>
+                            <td style={{ padding: '6px 8px', textAlign: 'right', color: NAVY, fontWeight: 600, fontFamily: 'monospace' }}>
+                              {entry.total_cost_usd != null ? `$${entry.total_cost_usd.toFixed(5)}` : '—'}
+                            </td>
+                            <td style={{ padding: '6px 8px', textAlign: 'center' }}>
+                              <span style={{
+                                fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10,
+                                background: entry.success ? '#ECFDF5' : '#FEF2F2',
+                                color: entry.success ? '#059669' : '#DC2626',
+                              }}>
+                                {entry.success ? 'OK' : 'FAIL'}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                        {/* Totals row */}
+                        <tr style={{ borderTop: `2px solid ${BORDER}`, fontWeight: 700 }}>
+                          <td style={{ padding: '8px 8px', color: NAVY, fontSize: 11 }}>TOTAL ({filteredLog.length})</td>
+                          <td style={{ padding: '8px 8px' }}></td>
+                          <td style={{ padding: '8px 8px' }}></td>
+                          <td style={{ padding: '8px 8px', textAlign: 'right', color: NAVY, fontFamily: 'monospace', fontSize: 11 }}>{totalIn.toLocaleString()}</td>
+                          <td style={{ padding: '8px 8px', textAlign: 'right', color: NAVY, fontFamily: 'monospace', fontSize: 11 }}>{totalOut.toLocaleString()}</td>
+                          <td style={{ padding: '8px 8px', textAlign: 'right', color: NAVY, fontFamily: 'monospace', fontSize: 11 }}>${totalCost.toFixed(5)}</td>
+                          <td style={{ padding: '8px 8px' }}></td>
+                        </tr>
+                      </>
+                    );
+                  })()}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {/* AUDIT-FIX-05 / P-1: Published Signals with Delivery Status */}
       {isPublishedTab ? (
@@ -863,7 +1212,7 @@ export default function IntelligenceAdmin() {
       ) : null}
 
       {/* Signal cards */}
-      {isPublishedTab ? null : loading ? (
+      {isPublishedTab || filter === 'ai-costs' ? null : loading ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {Array.from({ length: 5 }).map((_, i) => (
             <div key={i} style={{ height: 80, background: '#E5E7EB', borderRadius: 10, animation: 'pulse 1.5s ease-in-out infinite' }} />

@@ -96,6 +96,9 @@ export default function AdminHome() {
   // Platform Health
   const [healthErrorCount, setHealthErrorCount] = useState<number | null>(null);
 
+  // AUDIT-FIX-08 / A-3: AI budget alert
+  const [aiBudgetAlert, setAiBudgetAlert] = useState<{ spend: number; budget: number } | null>(null);
+
   // Open Tickets
   const [tickets, setTickets] = useState<Ticket[]>([]);
 
@@ -137,6 +140,20 @@ export default function AdminHome() {
 
       setPendingSignals(sigRes.count ?? 0);
       setTickets(ticketRes.data || []);
+
+      // AUDIT-FIX-08 / A-3: Check for AI budget threshold alert
+      const today = new Date().toISOString().split('T')[0];
+      const { data: alertData } = await supabase
+        .from('platform_audit_log')
+        .select('metadata')
+        .eq('action', 'security.ai_budget_threshold_reached')
+        .gte('created_at', today)
+        .order('created_at', { ascending: false })
+        .limit(1);
+      if (alertData && alertData.length > 0) {
+        const meta = alertData[0].metadata as { daily_spend?: number; daily_budget?: number } | null;
+        if (meta) setAiBudgetAlert({ spend: meta.daily_spend || 0, budget: meta.daily_budget || 0 });
+      }
     };
 
     loadStats();
@@ -175,6 +192,32 @@ export default function AdminHome() {
             style={{ cursor: 'pointer', fontWeight: 600, textDecoration: 'underline', textDecorationColor: '#D97706' }}
           >
             View in EvidLY Intelligence &rarr; Sources
+          </span>
+        </div>
+      )}
+
+      {/* AUDIT-FIX-08 / A-3: AI Budget Alert Banner */}
+      {aiBudgetAlert && (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '12px 18px',
+            background: '#FEF3C7',
+            border: '1px solid #F59E0B',
+            borderRadius: 10,
+            fontSize: 13,
+            fontWeight: 500,
+            color: '#92400E',
+          }}
+        >
+          <span>AI classification spend today: ${aiBudgetAlert.spend.toFixed(4)} / ${aiBudgetAlert.budget.toFixed(2)} daily budget</span>
+          <span
+            onClick={() => navigate('/admin/intelligence-admin')}
+            style={{ cursor: 'pointer', fontWeight: 600, textDecoration: 'underline', textDecorationColor: '#D97706' }}
+          >
+            View AI Costs &rarr;
           </span>
         </div>
       )}
