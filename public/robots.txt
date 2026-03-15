@@ -1,9 +1,29 @@
-# EvidLY — Lead with Confidence — Know Where You Stand
-# Unauthorized scraping, crawling, or automated access is prohibited.
-# This includes AI training data collection, competitive intelligence gathering,
-# and automated feature discovery.
+User-agent: *
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /vendor
+Disallow: /operations
+Disallow: /settings
+Disallow: /api
+Disallow: /demo
+Disallow: /checklist
+Disallow: /inspection
+Disallow: /corrective
+Disallow: /temperature
+Disallow: /haccp
+Disallow: /intelligence
+Disallow: /signals
+Disallow: /copilot
+Disallow: /leaderboard
+Disallow: /risk
+Disallow: /pse
+Disallow: /fire
+Disallow: /food-safety
+Allow: /login
+Allow: /admin-login
+Allow: /
+Sitemap: https://app.getevidly.com/sitemap.xml
 
-# Block all AI training crawlers
 User-agent: GPTBot
 Disallow: /
 
@@ -16,121 +36,5 @@ Disallow: /
 User-agent: anthropic-ai
 Disallow: /
 
-User-agent: Claude-Web
-Disallow: /
-
 User-agent: Google-Extended
 Disallow: /
-
-User-agent: PerplexityBot
-Disallow: /
-
-User-agent: YouBot
-Disallow: /
-
-User-agent: Omgilibot
-Disallow: /
-
-User-agent: FacebookBot
-Disallow: /
-
-User-agent: Applebot-Extended
-Disallow: /
-
-# Block all bots from authenticated/app content
-User-agent: *
-Disallow: /dashboard
-Disallow: /temp-logs
-Disallow: /checklists
-Disallow: /documents
-Disallow: /document-checklist
-Disallow: /vendors
-Disallow: /marketplace
-Disallow: /haccp
-Disallow: /alerts
-Disallow: /incidents
-Disallow: /ai-advisor
-Disallow: /leaderboard
-Disallow: /referrals
-Disallow: /analysis
-Disallow: /team
-Disallow: /reports
-Disallow: /settings
-Disallow: /import
-Disallow: /calendar
-Disallow: /help
-Disallow: /weekly-digest
-Disallow: /audit-report
-Disallow: /facility-safety
-Disallow: /equipment
-Disallow: /regulatory-alerts
-Disallow: /jurisdiction
-Disallow: /health-dept-report
-Disallow: /scoring-breakdown
-Disallow: /benchmarks
-Disallow: /org-hierarchy
-Disallow: /compliance-index
-Disallow: /insurance-risk
-Disallow: /insurance-settings
-Disallow: /improve-score
-Disallow: /admin/
-Disallow: /iot-platform
-Disallow: /iot-monitoring
-Disallow: /iot/hub
-Disallow: /sensors
-Disallow: /integrations
-Disallow: /developers
-Disallow: /training
-Disallow: /playbooks
-Disallow: /inspector-view
-Disallow: /self-audit
-Disallow: /self-inspection
-Disallow: /photo-evidence
-Disallow: /audit-trail
-Disallow: /copilot
-Disallow: /self-diagnosis
-Disallow: /corrective-actions
-Disallow: /vendor-certifications
-Disallow: /violation-trends
-Disallow: /export-center
-Disallow: /allergen-tracking
-Disallow: /cooling-logs
-Disallow: /receiving-log
-Disallow: /billing
-Disallow: /business-intelligence
-Disallow: /onboarding
-Disallow: /signup/locations
-Disallow: /vendor/dashboard
-Disallow: /enterprise/admin
-Disallow: /enterprise/dashboard
-Disallow: /enterprise/intelligence
-Disallow: /api/
-Disallow: /auth/callback
-
-# Allow indexing of public pages
-Allow: /
-Allow: /operations-check
-Allow: /kitchen-to-community
-Allow: /assessment
-Allow: /login
-Allow: /signup
-Allow: /demo
-Allow: /enterprise
-Allow: /iot
-Allow: /providers
-Allow: /partners/
-Allow: /terms
-Allow: /privacy
-Allow: /verify/
-Allow: /passport/
-Allow: /compliance/
-Allow: /scoretable/
-Allow: /kitchen-check/
-Allow: /blog
-Allow: /blog/
-
-# Crawl delay for any allowed crawlers
-Crawl-delay: 10
-
-# Sitemap
-Sitemap: https://getevidly.com/sitemap.xml

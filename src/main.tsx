@@ -12,6 +12,18 @@ window.addEventListener('vite:preloadError', () => {
   window.location.reload();
 });
 
+// Production anti-inspection protections
+if (import.meta.env.PROD) {
+  document.addEventListener('contextmenu', (e) => e.preventDefault());
+  document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.key === 'u') e.preventDefault();
+  });
+  console.log(
+    '%cEvidLY platform inspection is prohibited. All features are proprietary and protected under pending IP.',
+    'color: #d4af37; font-weight: bold; font-size: 14px;',
+  );
+}
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <HelmetProvider>
