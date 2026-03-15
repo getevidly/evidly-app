@@ -110,6 +110,7 @@ const SensorHub = lazy(() => import('./pages/SensorHub').then(m => ({ default: m
 const SensorSetupWizard = lazy(() => import('./pages/SensorSetupWizard').then(m => ({ default: m.SensorSetupWizard })));
 const SensorDetail = lazy(() => import('./pages/SensorDetail').then(m => ({ default: m.SensorDetail })));
 const IoTSensorPlatform = lazy(() => import('./pages/IoTSensorPlatform').then(m => ({ default: m.IoTSensorPlatform })));
+const Progress = lazy(() => import('./pages/Progress'));
 
 const NotFound = lazy(() => import('./pages/NotFound'));
 const CorrectiveActions = lazy(() => import('./pages/CorrectiveActions').then(m => ({ default: m.CorrectiveActions })));
@@ -652,6 +653,7 @@ function AppRoutes() {
           <Route path="/facility-safety" element={<FacilitySafety />} />
           <Route path="/workforce-risk" element={<WorkforceRisk />} />
           <Route path="/cic-pse" element={<CicPseView />} />
+          <Route path="/progress" element={<Progress />} />
           <Route path="/food-recovery" element={<FoodRecovery />} />
           <Route path="/sb1383" element={<SB1383Compliance />} />
           <Route path="/k12" element={<K12Compliance />} />

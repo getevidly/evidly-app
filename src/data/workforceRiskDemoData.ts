@@ -265,3 +265,71 @@ export const SAMPLE_PSE_SAFEGUARDS: PSESafeguard[] = [
     status: 'unverified',
   },
 ];
+
+// ── IRR (Inspection Readiness Report) ────────────────────────
+
+export interface IRRSubmission {
+  id: string;
+  business_name: string | null;
+  email: string;
+  posture: 'critical' | 'high' | 'moderate' | 'strong';
+  food_safety_score: number;
+  facility_safety_score: number;
+  q1_receiving_temps: number;     // 1=yes, 2=partial, 3=no
+  q2_cold_hot_holding: number;
+  q3_cooldown_logs: number;
+  q4_checklists_haccp: number;
+  q5_food_handler_cards: number;
+  q6_staff_cert_tracking: number;
+  q7_hood_cleaning: number;
+  q8_fire_suppression: number;
+  q9_vendor_performance: number;
+  q10_vendor_records: number;
+  q11_vendor_coi: number;
+  created_at: string;
+}
+
+/** Demo IRR submission — moderate posture, mix of yes/partial/no */
+export const DEMO_IRR_SUBMISSION: IRRSubmission = {
+  id: 'demo-irr-001',
+  business_name: 'Pacific Coast Kitchen',
+  email: 'demo@getevidly.com',
+  posture: 'moderate',
+  food_safety_score: 4,
+  facility_safety_score: 3,
+  q1_receiving_temps: 1,      // yes
+  q2_cold_hot_holding: 1,     // yes
+  q3_cooldown_logs: 2,        // partial
+  q4_checklists_haccp: 1,     // yes
+  q5_food_handler_cards: 1,   // yes
+  q6_staff_cert_tracking: 2,  // partial
+  q7_hood_cleaning: 1,        // yes
+  q8_fire_suppression: 1,     // yes
+  q9_vendor_performance: 2,   // partial
+  q10_vendor_records: 3,      // no
+  q11_vendor_coi: 1,          // yes
+  created_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+};
+
+/** IRR question config — maps DB columns to display labels and platform paths */
+export const IRR_QUESTIONS = [
+  { key: 'q1_receiving_temps',    label: 'Receiving Temps',            group: 'Food Safety',     path: '/temp-logs' },
+  { key: 'q2_cold_hot_holding',   label: 'Cold & Hot Holding',         group: 'Food Safety',     path: '/temp-logs' },
+  { key: 'q3_cooldown_logs',      label: 'Cooldown Logs',              group: 'Food Safety',     path: '/temp-logs' },
+  { key: 'q4_checklists_haccp',   label: 'Daily Checklists & HACCP',   group: 'Food Safety',     path: '/checklists' },
+  { key: 'q5_food_handler_cards', label: 'Food Handler Cards & CFPM',  group: 'Food Safety',     path: '/dashboard/training' },
+  { key: 'q6_staff_cert_tracking',label: 'Staff Cert Tracking',        group: 'Food Safety',     path: '/dashboard/training' },
+  { key: 'q7_hood_cleaning',      label: 'Hood Cleaning Schedule',     group: 'Facility Safety', path: '/facility-safety' },
+  { key: 'q8_fire_suppression',   label: 'Fire Suppression System',    group: 'Facility Safety', path: '/facility-safety' },
+  { key: 'q9_vendor_performance', label: 'Vendor Performance',         group: 'Facility Safety', path: '/vendors' },
+  { key: 'q10_vendor_records',    label: 'Vendor Performance Records', group: 'Facility Safety', path: '/vendors' },
+  { key: 'q11_vendor_coi',        label: 'Vendor COI & Licensing',     group: 'Facility Safety', path: '/vendors' },
+] as const;
+
+/** Posture display labels — matches OperationsCheck.jsx */
+export const POSTURE_LABELS: Record<IRRSubmission['posture'], { label: string; color: string; bg: string }> = {
+  critical: { label: 'Critical Gaps Identified',  color: '#991B1B', bg: '#FEF2F2' },
+  high:     { label: 'High-Risk Areas Found',     color: '#C2410C', bg: '#FFF7ED' },
+  moderate: { label: 'Some Areas Need Attention', color: '#92400E', bg: '#FFFBEB' },
+  strong:   { label: 'Well Positioned',           color: '#166534', bg: '#F0FDF4' },
+};

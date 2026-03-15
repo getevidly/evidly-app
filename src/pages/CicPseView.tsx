@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { Shield, Lock, Info, CheckCircle2, AlertTriangle, Users, ArrowRight } from 'lucide-react';
 import { useRole } from '../contexts/RoleContext';
 import { useDemo } from '../contexts/DemoContext';
+import { useAuth } from '../contexts/AuthContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
+import { usePSESchedules } from '../hooks/usePSESchedules';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { RoleGuard } from '../components/auth/RoleGuard';
-import { SAMPLE_PSE_SAFEGUARDS, type PSESafeguard } from '../data/workforceRiskDemoData';
+import type { PSESafeguard } from '../data/workforceRiskDemoData';
 
 const NAVY = '#1e4d6b';
 const GOLD = '#d4af37';
@@ -66,12 +68,11 @@ export function CicPseView() {
   const navigate = useNavigate();
   const { role } = useRole();
   const { isDemoMode } = useDemo();
+  const { profile } = useAuth();
   const { guardAction, showUpgrade, upgradeAction, upgradeFeature, setShowUpgrade } = useDemoGuard();
+  const { safeguards, isLoading: pseLoading } = usePSESchedules(profile?.organization_id);
 
   const [activeTab, setActiveTab] = useState<Tab>('pse');
-
-  // Only use sample data in demo mode
-  const safeguards = isDemoMode ? SAMPLE_PSE_SAFEGUARDS : [];
 
   const currentCount = safeguards.filter(s => s.status === 'current').length;
   const expiringCount = safeguards.filter(s => s.status === 'expiring').length;
@@ -111,7 +112,14 @@ export function CicPseView() {
       </div>
 
       {/* ── TAB 1: PSE Records ── */}
-      {activeTab === 'pse' && (
+      {activeTab === 'pse' && pseLoading && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: '20px 0' }}>
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} style={{ height: 60, background: '#E5E7EB', borderRadius: 10, animation: 'pulse 1.5s ease-in-out infinite' }} />
+          ))}
+        </div>
+      )}
+      {activeTab === 'pse' && !pseLoading && (
         <div>
           {/* KPI Row */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12, marginBottom: 16 }}>

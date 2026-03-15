@@ -107,6 +107,10 @@ const I: Record<string, NavItem> = {
     id: 'cic-pse', label: 'CIC / PSE', path: '/cic-pse', icon: '🛡️',
     roles: [], description: 'Compliance Intelligence Center, Protective Safeguards Endorsement records, and insurance program.',
   },
+  progress: {
+    id: 'progress', label: 'Progress', path: '/progress', icon: '📈',
+    roles: [], description: 'Your Operations Check results — review responses and find the corresponding platform tools.',
+  },
 
   // ── Insights ──
   intelligence: {
@@ -472,7 +476,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('compliance', 'Compliance', '📋',
         'Compliance', 'Documents, inspections, insurance risk, regulatory tracking, vendor marketplace, and more.',
-        [I.complianceOverview, I.deficiencies, I.documents, I.inspectorArrival, I.insuranceRisk, I.workforceRisk, I.cicPse, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.selfInspection, I.mockInspection, I.services, I.vendorMarketplace],
+        [I.complianceOverview, I.deficiencies, I.documents, I.inspectorArrival, I.insuranceRisk, I.workforceRisk, I.cicPse, I.progress, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.selfInspection, I.mockInspection, I.services, I.vendorMarketplace],
         '/compliance',
       ),
       section('insights', 'Insights', '💡',
@@ -652,7 +656,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('compliance', 'Compliance', '📋',
         'Compliance', 'Documentation, incidents, inspector view, jurisdiction intelligence, regulatory tracking, reporting, services, and vendor marketplace.',
-        [I.complianceOverview, I.deficiencies, I.documents, I.incidentsViewOnly, I.inspectorArrival, I.insuranceRisk, I.workforceRisk, I.cicPse, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.services, I.vendorMarketplace],
+        [I.complianceOverview, I.deficiencies, I.documents, I.incidentsViewOnly, I.inspectorArrival, I.insuranceRisk, I.workforceRisk, I.cicPse, I.progress, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.services, I.vendorMarketplace],
         '/compliance',
       ),
       section('insights', 'Insights', '💡',
@@ -760,7 +764,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('compliance', 'Compliance', '📋',
         'Compliance', 'Documents, incidents, insurance risk, regulatory tracking, reporting, self-inspection, vendor services, and vendor marketplace.',
-        [I.complianceOverview, I.deficiencies, I.documents, I.incidents, I.insuranceRisk, I.workforceRisk, I.cicPse, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.selfInspection, I.mockInspection, I.services, I.vendorMarketplace],
+        [I.complianceOverview, I.deficiencies, I.documents, I.incidents, I.insuranceRisk, I.workforceRisk, I.cicPse, I.progress, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.selfInspection, I.mockInspection, I.services, I.vendorMarketplace],
         '/compliance',
       ),
       section('insights', 'Insights', '💡',
@@ -819,7 +823,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('compliance', 'Compliance', '📋',
         'Compliance', 'Incidents, insurance risk, Know Your Inspector, regulatory tracking, compliance reporting, vendor services, and vendor marketplace.',
-        [I.complianceOverview, I.correctiveActions, I.deficiencies, I.incidentsViewOnly, I.insuranceRisk, I.workforceRisk, I.cicPse, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.services, I.vendorMarketplace],
+        [I.complianceOverview, I.correctiveActions, I.deficiencies, I.incidentsViewOnly, I.insuranceRisk, I.workforceRisk, I.cicPse, I.progress, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.services, I.vendorMarketplace],
         '/compliance',
       ),
       section('tools', 'Tools', '🔧',

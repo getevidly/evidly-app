@@ -22,6 +22,7 @@ import { IntelligenceFeedWidget } from './IntelligenceFeedWidget';
 import { AnnualVendorSpendWidget, ServicesDueSoonWidget } from './VendorServiceWidgets';
 import { PortfolioExpenseSummary } from '../services/PortfolioExpenseSummary';
 import { PortfolioRiskCard } from './PortfolioRiskCard';
+import { IRRProgressCard } from './IRRProgressCard';
 import {
   ComplianceTrendWidget,
   TopRiskItemsWidget,
@@ -216,6 +217,11 @@ export default function OwnerOperatorDashboard() {
         <OnboardingChecklistCard />
       </div>
 
+      {/* IRR Progress Card */}
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
+        <IRRProgressCard />
+      </div>
+
       {/* Confidence Banner */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
         <ConfidenceBanner
@@ -350,7 +356,7 @@ interface PreviewAsStaffCardProps {
   profile: any;
   userRole: string;
   isDemoMode: boolean;
-  startEmulation: (user: EmulatedUser, admin: { adminRole: any; adminName: string; adminId: string }) => Promise<void>;
+  startEmulation: (user: EmulatedUser, admin: { adminRole: any; adminName: string; adminId: string }, orgId: string, orgName: string) => Promise<void>;
   confirmRole: string | null;
   setConfirmRole: (role: string | null) => void;
   navigate: (path: string) => void;
@@ -371,7 +377,7 @@ function PreviewAsStaffCard({ profile, userRole, isDemoMode, startEmulation, con
       adminName: profile?.full_name || 'Owner',
       adminId: profile?.id || 'owner',
     };
-    await startEmulation(emUser, admin);
+    await startEmulation(emUser, admin, profile?.organization_id || '', '');
     setConfirmRole(null);
     navigate('/dashboard');
   };

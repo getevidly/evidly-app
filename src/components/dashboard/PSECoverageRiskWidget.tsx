@@ -1,21 +1,20 @@
 import { useNavigate } from 'react-router-dom';
 import { Shield, AlertTriangle } from 'lucide-react';
-import { useDemo } from '../../contexts/DemoContext';
-import { SAMPLE_PSE_SAFEGUARDS } from '../../data/workforceRiskDemoData';
+import { useAuth } from '../../contexts/AuthContext';
+import { usePSESchedules } from '../../hooks/usePSESchedules';
 
 const NAVY = '#1e4d6b';
-const GOLD = '#d4af37';
 const TEXT_SEC = '#6B7F96';
 const BORDER = '#D1D9E6';
 
 export function PSECoverageRiskWidget({ locationId }: { locationId?: string }) {
   const navigate = useNavigate();
-  const { isDemoMode } = useDemo();
+  const { profile } = useAuth();
+  const { safeguards, isLoading } = usePSESchedules(profile?.organization_id, locationId);
 
-  // Only show sample data in demo mode; production shows nothing until real service records exist
-  if (!isDemoMode) return null;
+  // Hide during loading or if no data
+  if (isLoading || safeguards.length === 0) return null;
 
-  const safeguards = SAMPLE_PSE_SAFEGUARDS;
   const overdue = safeguards.filter((s) => s.status === 'overdue');
 
   if (overdue.length === 0) return null;
