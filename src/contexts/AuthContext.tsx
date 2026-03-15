@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useMemo, useRef, useState, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import { syncOrgToIntelligence } from '../lib/intelligenceBridge';
@@ -29,15 +29,25 @@ interface AuthContextType {
   signUp: (email: string, password: string, fullName: string, phone: string, orgName: string, industryType?: string, industrySubtype?: string, qualificationFlags?: { k12_enrolled?: boolean; k12_enrolled_at?: string | null; sb1383_enrolled?: boolean; sb1383_enrolled_at?: string | null; org_type?: string }) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
+  /** Override profile.organization_id during emulation */
+  setOrgOverride: (orgId: string | null) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [rawProfile, setRawProfile] = useState<UserProfile | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [orgOverride, setOrgOverride] = useState<string | null>(null);
+
+  // Computed profile — organization_id overridden during emulation
+  const profile = useMemo(() => {
+    if (!rawProfile) return null;
+    if (!orgOverride) return rawProfile;
+    return { ...rawProfile, organization_id: orgOverride };
+  }, [rawProfile, orgOverride]);
 
   const updateLoginTimestamps = async (userId: string) => {
     const { data: currentProfile } = await supabase
@@ -73,7 +83,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (data.is_suspended) {
         console.warn('[AuthContext] User is suspended:', userId);
         await supabase.auth.signOut();
-        setProfile(null);
+        setRawProfile(null);
         setUser(null);
         setSession(null);
         window.location.href = '/suspended';
@@ -83,7 +93,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!data.organization_id) {
         console.warn('[AuthContext] fetchProfile: organization_id is null for user', userId, '— check user_location_access row exists');
       }
-      setProfile(data);
+      setRawProfile(data);
     } else {
       console.warn('[AuthContext] fetchProfile failed or empty:', { userId, error: error?.message, data });
     }
@@ -110,7 +120,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (session?.user) {
           await fetchProfile(session.user.id);
         } else {
-          setProfile(null);
+          setRawProfile(null);
         }
       })();
     });
@@ -237,7 +247,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     await supabase.auth.signOut();
-    setProfile(null);
+    setRawProfile(null);
   };
 
   const refreshProfile = async () => {
@@ -251,7 +261,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, profile, session, loading, isEvidlyAdmin, isAdmin, signIn, signUp, signOut, refreshProfile }}
+      value={{ user, profile, session, loading, isEvidlyAdmin, isAdmin, signIn, signUp, signOut, refreshProfile, setOrgOverride }}
     >
       {children}
     </AuthContext.Provider>

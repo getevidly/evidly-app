@@ -10,6 +10,8 @@
 import { createContext, useContext, useState, useCallback, useRef, ReactNode } from 'react';
 import { X, AlertTriangle, ShieldAlert } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { setEmulationWriteBlock } from '../lib/supabaseGuard';
+import { useAuth } from './AuthContext';
 import { useRole } from './RoleContext';
 import type { UserRole } from './RoleContext';
 
@@ -40,8 +42,12 @@ interface EmulationContextType {
   originalAdmin: OriginalAdminSession | null;
   /** The audit log ID for the current emulation session */
   auditLogId: string | null;
-  /** Start emulating a user */
-  startEmulation: (user: EmulatedUser, admin: OriginalAdminSession) => Promise<void>;
+  /** Emulated org ID (null when not emulating) */
+  emulatedOrgId: string | null;
+  /** Emulated org name (null when not emulating) */
+  emulatedOrgName: string | null;
+  /** Start emulating a user — orgId/orgName override profile.organization_id */
+  startEmulation: (user: EmulatedUser, admin: OriginalAdminSession, orgId: string, orgName: string) => Promise<void>;
   /** Stop emulation and restore admin session */
   stopEmulation: () => Promise<void>;
   /** Check if an operation is blocked during emulation */
@@ -90,18 +96,21 @@ const EmulationContext = createContext<EmulationContextType | undefined>(undefin
 // ---------------------------------------------------------------------------
 
 export function EmulationProvider({ children }: { children: ReactNode }) {
+  const { setOrgOverride } = useAuth();
   const { userRole, setUserRole } = useRole();
   const [isEmulating, setIsEmulating] = useState(false);
   const [emulatedUser, setEmulatedUser] = useState<EmulatedUser | null>(null);
   const [originalAdmin, setOriginalAdmin] = useState<OriginalAdminSession | null>(null);
   const [auditLogId, setAuditLogId] = useState<string | null>(null);
+  const [emulatedOrgId, setEmulatedOrgId] = useState<string | null>(null);
+  const [emulatedOrgName, setEmulatedOrgName] = useState<string | null>(null);
   const [blockedModalState, setBlockedModalState] = useState<{
     show: boolean;
     operation: BlockedOperation | null;
   }>({ show: false, operation: null });
   const emulationStartTime = useRef<number>(0);
 
-  const startEmulation = useCallback(async (user: EmulatedUser, admin: OriginalAdminSession) => {
+  const startEmulation = useCallback(async (user: EmulatedUser, admin: OriginalAdminSession, orgId: string, orgName: string) => {
     // Log emulation start to audit table
     try {
       const { data } = await supabase
@@ -110,7 +119,7 @@ export function EmulationProvider({ children }: { children: ReactNode }) {
           admin_id: admin.adminId,
           target_user_id: user.id,
           started_at: new Date().toISOString(),
-          actions_summary: `Emulation started: ${admin.adminName} → ${user.full_name} (${user.role})`,
+          actions_summary: `Emulation started: ${admin.adminName} → ${user.full_name} (${user.role}) @ ${orgName || orgId}`,
         })
         .select('id')
         .single();
@@ -123,11 +132,19 @@ export function EmulationProvider({ children }: { children: ReactNode }) {
     emulationStartTime.current = Date.now();
     setEmulatedUser(user);
     setOriginalAdmin(admin);
+    setEmulatedOrgId(orgId);
+    setEmulatedOrgName(orgName);
     setIsEmulating(true);
 
     // Inject the target user's role into the active session
     setUserRole(user.role);
-  }, [setUserRole]);
+
+    // Override profile.organization_id — ALL data queries now scope to emulated org
+    setOrgOverride(orgId);
+
+    // Block all writes via supabaseGuard module flag
+    setEmulationWriteBlock(true);
+  }, [setUserRole, setOrgOverride]);
 
   const stopEmulation = useCallback(async () => {
     // Log emulation end
@@ -154,8 +171,16 @@ export function EmulationProvider({ children }: { children: ReactNode }) {
     setIsEmulating(false);
     setEmulatedUser(null);
     setOriginalAdmin(null);
+    setEmulatedOrgId(null);
+    setEmulatedOrgName(null);
     setAuditLogId(null);
-  }, [auditLogId, originalAdmin, setUserRole]);
+
+    // Restore real profile.organization_id
+    setOrgOverride(null);
+
+    // Unblock writes
+    setEmulationWriteBlock(false);
+  }, [auditLogId, originalAdmin, setUserRole, setOrgOverride]);
 
   const isOperationBlocked = useCallback(
     (operation: BlockedOperation): boolean => {
@@ -179,6 +204,8 @@ export function EmulationProvider({ children }: { children: ReactNode }) {
         emulatedUser,
         originalAdmin,
         auditLogId,
+        emulatedOrgId,
+        emulatedOrgName,
         startEmulation,
         stopEmulation,
         isOperationBlocked,
@@ -198,7 +225,7 @@ export function EmulationProvider({ children }: { children: ReactNode }) {
             left: 0,
             right: 0,
             zIndex: 99999,
-            background: '#A08C5A',
+            background: '#1E2D4D',
             color: '#ffffff',
             padding: '10px 16px',
             display: 'flex',
@@ -208,21 +235,29 @@ export function EmulationProvider({ children }: { children: ReactNode }) {
             fontFamily: "'DM Sans', sans-serif",
             fontSize: '14px',
             fontWeight: 600,
-            boxShadow: '0 4px 12px rgba(160, 140, 90, 0.4)',
+            boxShadow: '0 4px 12px rgba(30, 45, 77, 0.4)',
             minHeight: '44px',
           }}
         >
           <ShieldAlert size={18} style={{ flexShrink: 0 }} />
           <span>
-            You are viewing as{' '}
-            <span style={{ textDecoration: 'underline', textUnderlineOffset: '3px' }}>
+            Emulating:{' '}
+            <strong style={{ textDecoration: 'underline', textUnderlineOffset: '3px' }}>
               {emulatedUser.full_name}
-            </span>
-            {' '}({emulatedUser.role.replace(/_/g, ' ')})
+            </strong>
+            {emulatedOrgName ? ` · ${emulatedOrgName}` : ''}
+            {' · '}
+            <span style={{ opacity: 0.85 }}>{emulatedUser.role.replace(/_/g, ' ')}</span>
           </span>
-          <span style={{ opacity: 0.6, margin: '0 4px' }}>|</span>
-          <span style={{ opacity: 0.8, fontSize: '13px', fontWeight: 400 }}>
-            RLS active — read-only operations only
+          <span
+            style={{
+              background: '#C2410C', color: '#fff',
+              padding: '1px 8px', borderRadius: 4,
+              fontSize: 11, fontWeight: 700,
+              marginLeft: 4,
+            }}
+          >
+            Read-only
           </span>
           <button
             onClick={stopEmulation}

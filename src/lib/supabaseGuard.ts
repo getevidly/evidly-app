@@ -52,6 +52,19 @@ export function isDemoWriteGuardActive(): boolean {
   return _guardMode !== 'live';
 }
 
+// ── Emulation write block ──────────────────────────────────
+let _emulationActive = false;
+
+export function setEmulationWriteBlock(active: boolean) {
+  _emulationActive = active;
+  if (active) {
+    console.log(
+      '%c[EvidLY] Emulation active — all Supabase writes blocked',
+      'color:#C2410C;font-weight:bold',
+    );
+  }
+}
+
 // ── Table classification ────────────────────────────────────
 
 /** Tables that can ALWAYS be written, in any mode */
@@ -123,6 +136,9 @@ function createNoOpChain(): unknown {
  * under the current guard mode.
  */
 function shouldBlockWrite(tableName: string): boolean {
+  // Emulation blocks ALL writes unconditionally (read-only mode)
+  if (_emulationActive) return true;
+
   if (_guardMode === 'live') return false;
 
   // Always-allowed tables pass through in any mode
@@ -181,6 +197,10 @@ export function createDemoGuardProxy<T extends SupabaseClient>(client: T): T {
       if (prop === 'rpc') {
         const originalRpc = Reflect.get(target, prop, receiver) as (...args: unknown[]) => unknown;
         return (...args: unknown[]) => {
+          if (_emulationActive) {
+            console.warn(`%c[EMULATION GUARD] Blocked .rpc("${args[0]}")`, 'color:#C2410C');
+            return createNoOpChain();
+          }
           if (_guardMode === 'live') return originalRpc.apply(target, args);
           // In authenticated_demo, allow RPC calls (needed for conversion, etc.)
           if (_guardMode === 'authenticated_demo') return originalRpc.apply(target, args);
@@ -195,7 +215,7 @@ export function createDemoGuardProxy<T extends SupabaseClient>(client: T): T {
       // ── Guard .storage ─────────────────────────────────
       if (prop === 'storage') {
         const storage = Reflect.get(target, prop, receiver);
-        if (_guardMode === 'live') return storage;
+        if (_guardMode === 'live' && !_emulationActive) return storage;
 
         return new Proxy(storage as object, {
           get(storageTarget, storageProp, storageReceiver) {

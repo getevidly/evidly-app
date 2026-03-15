@@ -866,6 +866,8 @@ export function Team() {
                                         adminName: profile?.full_name || 'Admin',
                                         adminId: profile?.id || '',
                                       },
+                                      profile?.organization_id || '',
+                                      '',
                                     );
                                   }}
                                   className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"

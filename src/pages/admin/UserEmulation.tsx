@@ -109,6 +109,7 @@ export default function UserEmulation() {
     if (isEmulating) {
       return;
     }
+    const org = orgs.find(o => o.id === user.organization_id);
     await startEmulation(
       {
         id: user.id,
@@ -120,7 +121,9 @@ export default function UserEmulation() {
         adminRole: userRole,
         adminName: userName || 'Admin',
         adminId: userId || 'unknown',
-      }
+      },
+      user.organization_id || '',
+      org?.name || 'Unknown',
     );
     navigate('/dashboard');
   };

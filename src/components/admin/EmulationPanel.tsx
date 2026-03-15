@@ -165,7 +165,7 @@ export function EmulationPanel() {
       adminId: profile?.id || 'admin',
     };
 
-    await startEmulation(emUser, admin);
+    await startEmulation(emUser, admin, selectedOrg!.id, orgName);
     setConfirmUser(null);
     navigate('/dashboard');
   };
