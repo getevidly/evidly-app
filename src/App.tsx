@@ -18,6 +18,7 @@ import { SalesGuard } from './components/layout/SalesGuard';
 import QRAuthGuard from './components/auth/QRAuthGuard';
 
 const Login = lazy(() => import('./pages/Login').then(m => ({ default: m.Login })));
+const AdminLogin = lazy(() => import('./pages/AdminLogin').then(m => ({ default: m.AdminLogin })));
 const Signup = lazy(() => import('./pages/Signup').then(m => ({ default: m.Signup })));
 const SignupLocations = lazy(() => import('./pages/SignupLocations').then(m => ({ default: m.SignupLocations })));
 const VendorLogin = lazy(() => import('./pages/VendorLogin').then(m => ({ default: m.VendorLogin })));
@@ -447,6 +448,7 @@ function AppRoutes() {
         <Route path="/temp/log" element={<QRAuthGuard><Suspense fallback={<PageSkeleton />}><TempLogQuick /></Suspense></QRAuthGuard>} />
         <Route path="/temp-logs/scan" element={<QRAuthGuard><Suspense fallback={<PageSkeleton />}><TempLogScan /></Suspense></QRAuthGuard>} />
         <Route path="/login" element={<PublicRoute><Suspense fallback={<PageSkeleton />}><Login /></Suspense></PublicRoute>} />
+        <Route path="/admin-login" element={<PublicRoute><Suspense fallback={<PageSkeleton />}><AdminLogin /></Suspense></PublicRoute>} />
         <Route path="/signup" element={<PublicRoute><Suspense fallback={<PageSkeleton />}><Signup /></Suspense></PublicRoute>} />
         <Route path="/signup/locations" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><SignupLocations /></Suspense></ProtectedRoute>} />
         <Route path="/invite/:token" element={<Suspense fallback={<PageSkeleton />}><InviteAccept /></Suspense>} />

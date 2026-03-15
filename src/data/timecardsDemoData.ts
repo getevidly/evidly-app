@@ -31,6 +31,8 @@ export interface ShiftEntry {
   approvedBy: string | null;
   approvedAt: string | null;
   rejectionReason: string | null;
+  autoClockedOut?: boolean;
+  autoClockoutReason?: string | null;
 }
 
 export interface PayPeriod {
@@ -432,6 +434,64 @@ export function getEmployeeWeekSummaries(): EmployeeWeekSummary[] {
 export function formatDateShort(iso: string): string {
   return new Date(iso + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
+
+// ── Profitability Data ────────────────────────────────────────
+
+export interface JobMargin {
+  jobId: string;
+  clientName: string;
+  locationId: string;
+  locationName: string;
+  margin: number;      // 0-100
+  revenue: number;
+  cost: number;
+  flagged: boolean;    // true if margin < 60
+}
+
+export const DEMO_JOB_MARGINS: JobMargin[] = [
+  { jobId: 'j1', clientName: 'Fresno Convention Center', locationId: 'downtown', locationName: 'Downtown Kitchen', margin: 72, revenue: 18500, cost: 5180, flagged: false },
+  { jobId: 'j2', clientName: 'Valley Medical Cafeteria', locationId: 'downtown', locationName: 'Downtown Kitchen', margin: 45, revenue: 12200, cost: 6710, flagged: true },
+  { jobId: 'j3', clientName: 'SkyLounge Terminal B',     locationId: 'airport',   locationName: 'Airport Concourse B', margin: 68, revenue: 22000, cost: 7040, flagged: false },
+  { jobId: 'j4', clientName: 'Airport Staff Canteen',    locationId: 'airport',   locationName: 'Airport Concourse B', margin: 53, revenue: 8900,  cost: 4183, flagged: true },
+  { jobId: 'j5', clientName: 'Bulldog Dining Hall',      locationId: 'university', locationName: 'University Dining Hall', margin: 65, revenue: 31000, cost: 10850, flagged: false },
+  { jobId: 'j6', clientName: 'Faculty Club Catering',    locationId: 'university', locationName: 'University Dining Hall', margin: 78, revenue: 9500,  cost: 2090, flagged: false },
+];
+
+export function getJobMargins(locationId?: string): JobMargin[] {
+  if (!locationId || locationId === 'all') return DEMO_JOB_MARGINS;
+  return DEMO_JOB_MARGINS.filter(j => j.locationId === locationId);
+}
+
+// ── Overtime Summary Helper ──────────────────────────────────
+
+export interface OvertimeEntry {
+  employeeId: string;
+  employeeName: string;
+  locationName: string;
+  regular: number;
+  ot: number;
+  dt: number;
+  total: number;
+  estimatedCost: number; // rough estimate: reg*20 + ot*30 + dt*40
+}
+
+export function getOvertimeSummary(): OvertimeEntry[] {
+  const summaries = getEmployeeWeekSummaries();
+  return summaries
+    .filter(s => s.totalOT > 0 || s.totalDT > 0)
+    .map(s => ({
+      employeeId: s.employeeId,
+      employeeName: s.employeeName,
+      locationName: s.locationName,
+      regular: s.totalRegular,
+      ot: s.totalOT,
+      dt: s.totalDT,
+      total: s.totalHours,
+      estimatedCost: Math.round(s.totalRegular * 20 + s.totalOT * 30 + s.totalDT * 40),
+    }));
+}
+
+// ── Formatters ───────────────────────────────────────────────
 
 export function formatDateRange(start: string, end: string): string {
   const s = new Date(start + 'T00:00:00');
