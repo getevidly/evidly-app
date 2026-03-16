@@ -45,6 +45,8 @@ const QUICK_ACCESS: QuickCard[] = [
   { label: 'Signal Queue', path: '/admin/intelligence-admin', icon: '🔔', color: '#D97706', bg: '#FFFBEB' },
   { label: 'User Provisioning', path: '/admin/users', icon: '👤', color: '#1E2D4D', bg: '#F4F1EB' },
   { label: 'Billing', path: '/admin/billing', icon: '💳', color: '#A08C5A', bg: '#FDF8EE' },
+  { label: 'Email Sequences', path: '/admin/email-sequences', icon: '📧', color: '#7C3AED', bg: '#F5F3FF' },
+  { label: 'Trial Health', path: '/admin/trial-health', icon: '💊', color: '#059669', bg: '#ECFDF5' },
 ];
 
 /* ------------------------------------------------------------------ */

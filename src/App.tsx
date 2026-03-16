@@ -174,6 +174,8 @@ const RemoteConnect = lazy(() => import('./pages/admin/RemoteConnect'));
 const StaffRoles = lazy(() => import('./pages/admin/StaffRoles'));
 const AdminReports = lazy(() => import('./pages/admin/AdminReports'));
 const ViolationOutreach = lazy(() => import('./pages/admin/ViolationOutreach'));
+const EmailSequenceManager = lazy(() => import('./pages/admin/EmailSequenceManager'));
+const TrialHealth = lazy(() => import('./pages/admin/TrialHealth'));
 const FeatureFlags = lazy(() => import('./pages/admin/FeatureFlags'));
 const VerificationReport = lazy(() => import('./pages/admin/VerificationReport'));
 const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'));
@@ -767,6 +769,8 @@ function AppRoutes() {
           <Route path="/admin/intelligence" element={<EvidLYIntelligence />} />
           <Route path="/admin/reports" element={<AdminReports />} />
           <Route path="/admin/violation-outreach" element={<SalesGuard><ViolationOutreach /></SalesGuard>} />
+          <Route path="/admin/email-sequences" element={<SalesGuard><EmailSequenceManager /></SalesGuard>} />
+          <Route path="/admin/trial-health" element={<SalesGuard><TrialHealth /></SalesGuard>} />
           <Route path="/admin/verification" element={<VerificationReport />} />
           <Route path="/admin/system/edge-functions" element={<EdgeFunctions />} />
           <Route path="/admin/feature-flags" element={<FeatureFlags />} />

@@ -392,6 +392,18 @@ const I: Record<string, NavItem> = {
     badge: 'NEW',
   },
 
+  // ── Email & Trial (Admin) ──
+  emailSequences: {
+    id: 'email-sequences', label: 'Email Sequences', path: '/admin/email-sequences', icon: '📧',
+    roles: [], description: 'Manage trial email sequences, vendor outreach pipeline, and referral tracking.',
+    badge: 'NEW',
+  },
+  trialHealth: {
+    id: 'trial-health', label: 'Trial Health', path: '/admin/trial-health', icon: '💊',
+    roles: [], description: 'Trial cohort analytics, email funnel metrics, and expiring trial management.',
+    badge: 'NEW',
+  },
+
   // ── Assessment (Admin) ──
   assessmentLeads: {
     id: 'assessment-leads', label: 'Leads', path: '/admin/assessments', icon: '📊',
