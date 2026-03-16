@@ -1,7 +1,6 @@
 import { lazy, ReactNode, Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { toast } from 'sonner';
 import { Sidebar } from './Sidebar';
 import { TopBar } from './TopBar';
 import { MobileTabBar } from './MobileTabBar';
@@ -11,7 +10,6 @@ import { useDemo } from '../../contexts/DemoContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { useEmulation } from '../../contexts/EmulationContext';
 import { useNotifications } from '../../contexts/NotificationContext';
-import { useRealtimeNotifications } from '../../hooks/useRealtimeNotifications';
 import { useMobile } from '../../hooks/useMobile';
 import { trackEvent } from '../../utils/analytics';
 
@@ -51,34 +49,12 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
   const { tourActive, isDemoMode, presenterMode } = useDemo();
   const { session } = useAuth();
   const { isEmulating } = useEmulation();
-  const { setNotifications, notifications: currentNotifications } = useNotifications();
+  const { unreadCount: _notifCount } = useNotifications();
   const [guidedTourActive, setGuidedTourActive] = useState(false);
   const handleGuidedTourActiveChange = useCallback((active: boolean) => setGuidedTourActive(active), []);
   const anyTourActive = tourActive || guidedTourActive;
 
-  // Real-time notification subscription (no-op in demo mode — no org profile)
-  useRealtimeNotifications(useCallback((notification) => {
-    setNotifications([
-      {
-        id: notification.id,
-        title: notification.title,
-        time: notification.created_at,
-        link: notification.action_url || '',
-        type: notification.priority === 'high' || notification.priority === 'critical'
-          ? 'alert' : notification.type === 'success' ? 'success' : 'info',
-        locationId: '',
-        read: false,
-      },
-      ...currentNotifications,
-    ]);
-
-    if (notification.priority === 'high' || notification.priority === 'critical') {
-      toast.warning(notification.title, {
-        description: notification.body || undefined,
-        duration: 8000,
-      });
-    }
-  }, [setNotifications, currentNotifications]));
+  // Realtime notifications are now handled inside NotificationContext via useNotificationData
 
   // Mobile daily tasks overlay (demo only, mobile/tablet, dashboard route)
   const { isMobile, isTablet } = useMobile();

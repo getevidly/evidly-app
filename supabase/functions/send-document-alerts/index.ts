@@ -3,6 +3,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { sendEmail, buildEmailHtml } from "../_shared/email.ts";
 import { sendSms } from "../_shared/sms.ts";
 import { getCorsHeaders } from '../_shared/cors.ts';
+import { createNotification } from "../_shared/notify.ts";
 
 // ── Batch processing constants ──────────────────────────────────
 const BATCH_SIZE = 50;
@@ -148,6 +149,39 @@ Deno.serve(async (req: Request) => {
           type: alertType,
           via: shouldSendSMS ? ['email', 'sms'] : ['email'],
         });
+      }
+
+      // Create in-app notification for each org user
+      if (orgUsers) {
+        for (const user of orgUsers) {
+          const notifPriority = daysUntilExpiry <= 1 ? 'critical' as const
+            : daysUntilExpiry <= 7 ? 'high' as const
+            : 'medium' as const;
+          const notifSeverity = daysUntilExpiry <= 7 ? 'urgent' as const
+            : daysUntilExpiry <= 14 ? 'advisory' as const
+            : 'info' as const;
+
+          await createNotification({
+            supabase,
+            organizationId: doc.organization_id,
+            userId: user.id,
+            type: 'document_expiry',
+            category: 'documents',
+            title: daysUntilExpiry < 0
+              ? `${doc.title} is ${Math.abs(daysUntilExpiry)} days overdue`
+              : daysUntilExpiry === 0
+                ? `${doc.title} expires today`
+                : `${doc.title} expires in ${daysUntilExpiry} days`,
+            body: `Expiration date: ${new Date(doc.expiration_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`,
+            actionUrl: '/documents',
+            actionLabel: 'View Documents',
+            priority: notifPriority,
+            severity: notifSeverity,
+            sourceType: 'document',
+            sourceId: doc.id,
+            deduplicate: true,
+          });
+        }
       }
 
       await supabase.from("document_alerts").insert({

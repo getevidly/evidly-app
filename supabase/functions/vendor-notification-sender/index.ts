@@ -11,6 +11,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { sendEmail, buildEmailHtml } from "../_shared/email.ts";
 import { logger } from "../_shared/logger.ts";
 import { getCorsHeaders } from '../_shared/cors.ts';
+import { createNotification } from "../_shared/notify.ts";
 let corsHeaders = getCorsHeaders(null);
 
 const APP_URL = "https://app.getevidly.com";
@@ -144,6 +145,28 @@ Deno.serve(async (req: Request) => {
           }
         }
 
+        // Create in-app notification for each org user
+        if (orgUsers) {
+          for (const user of orgUsers) {
+            await createNotification({
+              supabase,
+              organizationId: doc.organization_id,
+              userId: user.id,
+              type: 'vendor_coi_expiry',
+              category: 'vendors',
+              title: `${vendorName}'s COI expires in 30 days`,
+              body: `Certificate of insurance expires ${expirationDate}. Request an updated COI.`,
+              actionUrl: '/vendors',
+              actionLabel: 'View Vendor',
+              priority: 'high',
+              severity: 'advisory',
+              sourceType: 'document',
+              sourceId: doc.id,
+              deduplicate: true,
+            });
+          }
+        }
+
         // Mark as sent to avoid re-sending
         await supabase
           .from("documents")
@@ -226,6 +249,28 @@ Deno.serve(async (req: Request) => {
             }
           }
 
+          // Create in-app notification for each org user
+          if (orgUsers) {
+            for (const user of orgUsers) {
+              await createNotification({
+                supabase,
+                organizationId: record.organization_id,
+                userId: user.id,
+                type: 'vendor_service_overdue',
+                category: 'vendors',
+                title: `${record.service_type} is ${daysOverdue} days overdue at ${locationName}`,
+                body: `Service was due ${fmtDate(record.service_due_date)}. Frequency: ${frequency}.`,
+                actionUrl: '/vendors',
+                actionLabel: 'View Services',
+                priority: daysOverdue > 30 ? 'critical' : 'high',
+                severity: 'urgent',
+                sourceType: 'vendor_service_record',
+                sourceId: record.id,
+                deduplicate: true,
+              });
+            }
+          }
+
           // Mark as notified
           await supabase
             .from("vendor_service_records")
@@ -292,6 +337,28 @@ Deno.serve(async (req: Request) => {
                 to: authUser.email,
                 subject: `No certificate on file for ${record.service_type} at ${locationName}`,
                 html,
+              });
+            }
+          }
+
+          // Create in-app notification for each org user
+          if (orgUsers) {
+            for (const user of orgUsers) {
+              await createNotification({
+                supabase,
+                organizationId: record.organization_id,
+                userId: user.id,
+                type: 'vendor_cert_missing',
+                category: 'vendors',
+                title: `No certificate on file for ${record.service_type} at ${locationName}`,
+                body: `Service completed ${fmtDate(record.service_date)} but no certificate uploaded.`,
+                actionUrl: '/vendors',
+                actionLabel: 'Upload Certificate',
+                priority: 'medium',
+                severity: 'advisory',
+                sourceType: 'vendor_service_record',
+                sourceId: record.id,
+                deduplicate: true,
               });
             }
           }
