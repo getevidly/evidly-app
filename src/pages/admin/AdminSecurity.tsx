@@ -92,6 +92,7 @@ export default function AdminSecurity() {
 
   const [tab, setTab] = useState<Tab>('mfa');
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
   // MFA Policy
   const [mfaPolicy, setMfaPolicy] = useState<MfaPolicyRow[]>([]);
@@ -108,6 +109,7 @@ export default function AdminSecurity() {
   // ── Load data ──
   const loadData = useCallback(async () => {
     setLoading(true);
+    setLoadError(false);
     try {
       const [mfaRes, sessRes, activeRes] = await Promise.all([
         supabase.from('mfa_policy').select('*').order('role'),
@@ -142,6 +144,7 @@ export default function AdminSecurity() {
       setMfaPolicy([]);
       setSessionPolicy([]);
       setSessions([]);
+      setLoadError(true);
     }
     setLoading(false);
   }, []);
@@ -259,6 +262,15 @@ export default function AdminSecurity() {
           MFA enforcement, session policies, and active session management
         </p>
       </div>
+
+      {loadError && (
+        <div style={{ textAlign: 'center', padding: '3rem' }}>
+          <p style={{ color: '#6B7F96' }}>Failed to load data.</p>
+          <button onClick={loadData} style={{ marginTop: 12, background: '#A08C5A', color: 'white', border: 'none', borderRadius: 6, padding: '8px 20px', cursor: 'pointer' }}>
+            Try again
+          </button>
+        </div>
+      )}
 
       {/* KPI row */}
       <div className="grid grid-cols-4 gap-4">

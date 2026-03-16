@@ -18,6 +18,7 @@ import { useState, useMemo } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useDemo } from '../../../contexts/DemoContext';
+import { useDemoGuard } from '../../../hooks/useDemoGuard';
 import { useEdgeFunctions } from '../../../hooks/useEdgeFunctions';
 import AdminBreadcrumb from '../../../components/admin/AdminBreadcrumb';
 import type {
@@ -932,6 +933,7 @@ function FilterBar({
 // ── Main Page ────────────────────────────────────────────────
 
 export default function EdgeFunctions() {
+  useDemoGuard();
   const { isEvidlyAdmin } = useAuth();
   const { isDemoMode } = useDemo();
 

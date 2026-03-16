@@ -72,6 +72,7 @@ export default function UserEmulation() {
   const [users, setUsers] = useState<UserRow[]>([]);
   const [auditLog, setAuditLog] = useState<AuditRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
   const [orgSearch, setOrgSearch] = useState('');
   const [userSearch, setUserSearch] = useState('');
@@ -79,14 +80,19 @@ export default function UserEmulation() {
 
   const loadData = useCallback(async () => {
     setLoading(true);
-    const [orgRes, userRes, auditRes] = await Promise.all([
-      supabase.from('organizations').select('id, name, created_at').order('name'),
-      supabase.from('profiles').select('id, full_name, email, role, organization_id').order('full_name'),
-      supabase.from('emulation_audit_log').select('*').order('started_at', { ascending: false }).limit(20),
-    ]);
-    if (orgRes.data) setOrgs(orgRes.data);
-    if (userRes.data) setUsers(userRes.data);
-    if (auditRes.data) setAuditLog(auditRes.data);
+    setLoadError(false);
+    try {
+      const [orgRes, userRes, auditRes] = await Promise.all([
+        supabase.from('organizations').select('id, name, created_at').order('name'),
+        supabase.from('profiles').select('id, full_name, email, role, organization_id').order('full_name'),
+        supabase.from('emulation_audit_log').select('*').order('started_at', { ascending: false }).limit(20),
+      ]);
+      if (orgRes.data) setOrgs(orgRes.data);
+      if (userRes.data) setUsers(userRes.data);
+      if (auditRes.data) setAuditLog(auditRes.data);
+    } catch {
+      setLoadError(true);
+    }
     setLoading(false);
   }, []);
 
@@ -167,6 +173,15 @@ export default function UserEmulation() {
         <input value={userSearch} onChange={e => setUserSearch(e.target.value)} placeholder="Search users by name or email..."
           style={{ ...inputStyle, flex: 1, minWidth: 200 }} />
       </div>
+
+      {loadError && (
+        <div style={{ textAlign: 'center', padding: '3rem' }}>
+          <p style={{ color: '#6B7F96' }}>Failed to load data.</p>
+          <button onClick={loadData} style={{ marginTop: 12, background: '#A08C5A', color: 'white', border: 'none', borderRadius: 6, padding: '8px 20px', cursor: 'pointer' }}>
+            Try again
+          </button>
+        </div>
+      )}
 
       {/* Users table */}
       <div style={{ background: '#FFFFFF', borderRadius: 12, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>

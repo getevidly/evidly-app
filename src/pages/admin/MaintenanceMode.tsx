@@ -42,20 +42,26 @@ export default function MaintenanceMode() {
   const { isDemoMode } = useDemo();
   const [config, setConfig] = useState<MaintenanceConfig>(DEFAULT_CONFIG);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [saving, setSaving] = useState(false);
   const [history, setHistory] = useState<EventRow[]>([]);
   const [bypassInput, setBypassInput] = useState('');
 
   const loadConfig = useCallback(async () => {
     setLoading(true);
-    const [configRes, historyRes] = await Promise.all([
-      supabase.from('admin_security_config').select('config_value').eq('config_key', 'maintenance_mode').maybeSingle(),
-      supabase.from('admin_event_log').select('id, event_time, level, message').eq('category', 'maintenance').order('event_time', { ascending: false }).limit(10),
-    ]);
-    if (configRes.data?.config_value) {
-      setConfig({ ...DEFAULT_CONFIG, ...configRes.data.config_value });
+    setLoadError(false);
+    try {
+      const [configRes, historyRes] = await Promise.all([
+        supabase.from('admin_security_config').select('config_value').eq('config_key', 'maintenance_mode').maybeSingle(),
+        supabase.from('admin_event_log').select('id, event_time, level, message').eq('category', 'maintenance').order('event_time', { ascending: false }).limit(10),
+      ]);
+      if (configRes.data?.config_value) {
+        setConfig({ ...DEFAULT_CONFIG, ...configRes.data.config_value });
+      }
+      if (historyRes.data) setHistory(historyRes.data);
+    } catch {
+      setLoadError(true);
     }
-    if (historyRes.data) setHistory(historyRes.data);
     setLoading(false);
   }, []);
 
@@ -106,6 +112,17 @@ export default function MaintenanceMode() {
     return (
       <div className="flex items-center justify-center py-20">
         <div style={{ color: TEXT_SEC }}>Loading...</div>
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div style={{ textAlign: 'center', padding: '3rem' }}>
+        <p style={{ color: '#6B7F96' }}>Failed to load data.</p>
+        <button onClick={loadConfig} style={{ marginTop: 12, background: '#A08C5A', color: 'white', border: 'none', borderRadius: 6, padding: '8px 20px', cursor: 'pointer' }}>
+          Try again
+        </button>
       </div>
     );
   }

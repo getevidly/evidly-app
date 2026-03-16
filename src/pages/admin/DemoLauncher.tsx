@@ -50,6 +50,7 @@ export default function DemoLauncher() {
   const [sessions, setSessions] = useState<DemoSession[]>([]);
   const [loading, setLoading] = useState(false);
   const [launched, setLaunched] = useState(false);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
     loadSessions();
@@ -57,12 +58,17 @@ export default function DemoLauncher() {
 
   const loadSessions = async () => {
     if (isDemoMode) return;
-    const { data } = await supabase
-      .from('demo_sessions')
-      .select('*')
-      .order('launched_at', { ascending: false })
-      .limit(10);
-    setSessions(data || []);
+    setLoadError(false);
+    try {
+      const { data } = await supabase
+        .from('demo_sessions')
+        .select('*')
+        .order('launched_at', { ascending: false })
+        .limit(10);
+      setSessions(data || []);
+    } catch {
+      setLoadError(true);
+    }
   };
 
   const handleLaunch = async () => {
@@ -238,7 +244,14 @@ export default function DemoLauncher() {
       {/* Recent sessions */}
       <div className="mt-8">
         <h2 className="text-sm font-semibold text-gray-700 mb-3">Recent Demo Sessions</h2>
-        {sessions.length === 0 ? (
+        {loadError ? (
+          <div style={{ textAlign: 'center', padding: '3rem' }}>
+            <p style={{ color: '#6B7F96' }}>Failed to load data.</p>
+            <button onClick={loadSessions} style={{ marginTop: 12, background: '#A08C5A', color: 'white', border: 'none', borderRadius: 6, padding: '8px 20px', cursor: 'pointer' }}>
+              Try again
+            </button>
+          </div>
+        ) : sessions.length === 0 ? (
           <div className="text-center py-8 text-gray-400 text-sm">
             No demo sessions yet. Launch your first demo above.
           </div>

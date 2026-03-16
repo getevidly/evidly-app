@@ -44,13 +44,19 @@ export default function SalesPipeline() {
   const { isDemoMode } = useDemo();
   const [pipeline, setPipeline] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [viewMode, setViewMode] = useState<'kanban' | 'table'>('kanban');
   const [selectedDeal, setSelectedDeal] = useState<any | null>(null);
 
   const loadData = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase.from('sales_pipeline').select('*').order('estimated_mrr_cents', { ascending: false });
-    if (data) setPipeline(data);
+    setLoadError(false);
+    try {
+      const { data } = await supabase.from('sales_pipeline').select('*').order('estimated_mrr_cents', { ascending: false });
+      if (data) setPipeline(data);
+    } catch {
+      setLoadError(true);
+    }
     setLoading(false);
   }, []);
 
@@ -121,6 +127,17 @@ export default function SalesPipeline() {
     return (
       <div className="flex items-center justify-center py-20">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#d4af37]" />
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div style={{ textAlign: 'center', padding: '3rem' }}>
+        <p style={{ color: '#6B7F96' }}>Failed to load data.</p>
+        <button onClick={loadData} style={{ marginTop: 12, background: '#A08C5A', color: 'white', border: 'none', borderRadius: 6, padding: '8px 20px', cursor: 'pointer' }}>
+          Try again
+        </button>
       </div>
     );
   }

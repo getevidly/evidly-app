@@ -62,6 +62,7 @@ function AssessmentLeadsPage() {
 
   const [leads, setLeads] = useState<AssessmentLeadRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [tab, setTab] = useState<'leads' | 'analytics'>('leads');
   const [search, setSearch] = useState('');
   const [gradeFilter, setGradeFilter] = useState<string>('all');
@@ -84,6 +85,7 @@ function AssessmentLeadsPage() {
     }
 
     (async () => {
+      setLoadError(false);
       try {
         const { data } = await supabase
           .from('assessment_leads')
@@ -103,7 +105,9 @@ function AssessmentLeadsPage() {
             ...(d.assessment_results?.[0] || {}),
           })));
         }
-      } catch { /* silent */ }
+      } catch {
+        setLoadError(true);
+      }
       setLoading(false);
     })();
   }, [allowed, isDemoMode]);
@@ -215,7 +219,14 @@ function AssessmentLeadsPage() {
             </select>
           </div>
 
-          {loading ? (
+          {loadError ? (
+            <div style={{ textAlign: 'center', padding: '3rem' }}>
+              <p style={{ color: '#6B7F96' }}>Failed to load data.</p>
+              <button onClick={() => { setLoading(true); setLoadError(false); }} style={{ marginTop: 12, background: '#A08C5A', color: 'white', border: 'none', borderRadius: 6, padding: '8px 20px', cursor: 'pointer' }}>
+                Try again
+              </button>
+            </div>
+          ) : loading ? (
             <div className="text-center py-12 text-gray-500">Loading...</div>
           ) : filtered.length === 0 ? (
             <div className="text-center py-12 text-gray-500">No leads found.</div>

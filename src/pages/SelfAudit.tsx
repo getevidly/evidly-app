@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { useSearchParams, useNavigate } from 'react-router-dom';
@@ -22,6 +22,8 @@ import { PhotoGallery } from '../components/PhotoGallery';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 import { useJurisdiction } from '../hooks/useJurisdiction';
 import { useDemo } from '../contexts/DemoContext';
+import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase';
 import { DEMO_JURISDICTIONS, type DemoJurisdiction } from '../data/demoJurisdictions';
 import {
   INSPECTION_SECTIONS,

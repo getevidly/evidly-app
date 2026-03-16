@@ -166,7 +166,6 @@ const DocumentVault = lazy(() => import('./pages/admin/DocumentVault'));
 const EventLog = lazy(() => import('./pages/admin/EventLog'));
 const MarketingCampaigns = lazy(() => import('./pages/admin/MarketingCampaigns'));
 const SalesPipeline = lazy(() => import('./pages/admin/SalesPipeline'));
-const UserProvisioning = lazy(() => import('./pages/admin/UserProvisioning'));
 const EvidLYIntelligence = lazy(() => import('./pages/admin/EvidLYIntelligence'));
 const SupportTickets = lazy(() => import('./pages/admin/SupportTickets'));
 const SurveyPage = lazy(() => import('./pages/admin/SurveyPage'));
@@ -762,7 +761,7 @@ function AppRoutes() {
           <Route path="/admin/security" element={<AdminSecurity />} />
           <Route path="/admin/audit-log" element={<AdminAuditLog />} />
           <Route path="/admin/orgs" element={<AdminOrgs />} />
-          <Route path="/admin/user-provisioning" element={<UserProvisioning />} />
+          <Route path="/admin/user-provisioning" element={<Navigate to="/admin/users" replace />} />
           <Route path="/admin/support" element={<SupportTickets />} />
           <Route path="/admin/remote-connect" element={<RemoteConnect />} />
           <Route path="/admin/staff" element={<StaffRoles />} />
