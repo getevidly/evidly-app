@@ -8,13 +8,14 @@
  * NOTE: EvidLY NEVER generates a compliance score, grade, or rating.
  * Only the jurisdiction (EHD / AHJ) has that authority.
  */
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { format } from 'date-fns';
 import {
   Target, Shield, AlertTriangle, CheckCircle2, XCircle,
   ChevronRight, ChevronLeft, Play, RotateCcw,
-  ListChecks, MessageSquare, User, Clock,
+  ListChecks, MessageSquare, User, Clock, History,
 } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useDemoGuard } from '../hooks/useDemoGuard';
@@ -32,6 +33,8 @@ import {
   type MockInspectorQuestion,
 } from '../data/mockInspectionData';
 import { hasAccess, type PlanTier } from '../lib/featureGating';
+import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -97,6 +100,111 @@ export default function MockInspection() {
   const [currentIdx, setCurrentIdx] = useState(0);
   const [startedAt, setStartedAt] = useState<string | null>(null);
 
+  // DB persistence
+  const { user, profile } = useAuth();
+  const dbSessionId = useRef<string | null>(null);
+
+  // Past sessions
+  interface PastMockSession {
+    id: string;
+    date: string;
+    difficulty: string;
+    violations_found: number;
+    questions_json: any[];
+  }
+  const [pastSessions, setPastSessions] = useState<PastMockSession[]>([]);
+
+  useEffect(() => {
+    if (phase !== 'setup') return;
+    if (isDemoMode || !profile?.organization_id) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data } = await supabase
+          .from('mock_inspection_sessions')
+          .select('id, completed_at, difficulty, violations_found, questions_json')
+          .eq('org_id', profile.organization_id)
+          .not('completed_at', 'is', null)
+          .order('completed_at', { ascending: false })
+          .limit(10);
+        if (cancelled || !data) return;
+        setPastSessions(data.map((r: any) => ({
+          id: r.id,
+          date: r.completed_at,
+          difficulty: r.difficulty || 'routine',
+          violations_found: r.violations_found || 0,
+          questions_json: r.questions_json || [],
+        })));
+      } catch {
+        // silent
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [phase, isDemoMode, profile?.organization_id]);
+
+  const createDbSession = async (now: string, diff: MockDifficulty) => {
+    if (isDemoMode || !profile?.organization_id || !user?.id) return;
+    try {
+      const { data } = await supabase
+        .from('mock_inspection_sessions')
+        .insert({
+          org_id: profile.organization_id,
+          user_id: user.id,
+          jurisdiction_key: scoringConfig.key,
+          difficulty: diff,
+          started_at: now,
+        })
+        .select('id')
+        .single();
+      if (data) dbSessionId.current = data.id;
+    } catch {
+      // silent
+    }
+  };
+
+  const updateDbSession = async (qs: QuestionAnswer[]) => {
+    if (isDemoMode || !dbSessionId.current) return;
+    try {
+      const stripped = qs.map(qa => ({
+        id: qa.question.id, text: qa.question.text,
+        answer: qa.answer, notes: qa.notes,
+        severity: qa.question.severity,
+        category: qa.question.category,
+        citation: qa.question.citation,
+      }));
+      await supabase
+        .from('mock_inspection_sessions')
+        .update({ questions_json: stripped })
+        .eq('id', dbSessionId.current);
+    } catch {
+      // silent
+    }
+  };
+
+  const finalizeDbSession = async (qs: QuestionAnswer[]) => {
+    if (isDemoMode || !dbSessionId.current) return;
+    try {
+      const stripped = qs.map(qa => ({
+        id: qa.question.id, text: qa.question.text,
+        answer: qa.answer, notes: qa.notes,
+        severity: qa.question.severity,
+        category: qa.question.category,
+        citation: qa.question.citation,
+      }));
+      const violationCount = qs.filter(q => q.answer === 'fail').length;
+      await supabase
+        .from('mock_inspection_sessions')
+        .update({
+          questions_json: stripped,
+          violations_found: violationCount,
+          completed_at: new Date().toISOString(),
+        })
+        .eq('id', dbSessionId.current);
+    } catch {
+      // silent
+    }
+  };
+
   // ---------------------------------------------------------------------------
   // Handlers
   // ---------------------------------------------------------------------------
@@ -108,8 +216,10 @@ export default function MockInspection() {
       : selectInspectionQuestions(difficulty); // TODO: replace with AI-generated questions in production
     setQuestions(selected.map(q => ({ question: q, answer: null, notes: '' })));
     setCurrentIdx(0);
-    setStartedAt(new Date().toISOString());
+    const now = new Date().toISOString();
+    setStartedAt(now);
     setPhase('walkthrough');
+    createDbSession(now, difficulty);
   };
 
   const resetInspection = () => {
@@ -117,10 +227,15 @@ export default function MockInspection() {
     setQuestions([]);
     setCurrentIdx(0);
     setStartedAt(null);
+    dbSessionId.current = null;
   };
 
   const setAnswer = (idx: number, answer: AnswerStatus) => {
-    setQuestions(prev => prev.map((qa, i) => i === idx ? { ...qa, answer } : qa));
+    setQuestions(prev => {
+      const next = prev.map((qa, i) => i === idx ? { ...qa, answer } : qa);
+      updateDbSession(next);
+      return next;
+    });
   };
 
   const setNotes = (idx: number, notes: string) => {
@@ -133,6 +248,7 @@ export default function MockInspection() {
       toast.error(`${unanswered} question${unanswered > 1 ? 's' : ''} still unanswered.`);
       return;
     }
+    finalizeDbSession(questions);
     setPhase('results');
   };
 
@@ -246,6 +362,36 @@ export default function MockInspection() {
           Begin Mock Inspection
         </button>
       </div>
+
+      {/* Past sessions (live mode only) */}
+      {!isDemoMode && pastSessions.length > 0 && (
+        <div className="bg-white rounded-xl border border-[#b8d4e8] p-4 sm:p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <History className="h-5 w-5 text-gray-500" />
+            <h3 className="text-sm font-bold text-gray-900">Past Mock Inspections</h3>
+          </div>
+          <div className="space-y-2">
+            {pastSessions.map(session => {
+              const diffInfo = DIFFICULTY_INFO[session.difficulty as MockDifficulty] || DIFFICULTY_INFO.routine;
+              return (
+                <div key={session.id} className="flex items-center justify-between p-3 rounded-lg bg-gray-50 border border-gray-200">
+                  <div>
+                    <span className="text-sm font-medium text-gray-900">
+                      {format(new Date(session.date), 'MMM d, yyyy')}
+                    </span>
+                    <span className="ml-2 text-xs font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: diffInfo.bgColor, color: diffInfo.color }}>
+                      {diffInfo.label}
+                    </span>
+                  </div>
+                  <span className="text-xs text-gray-500">
+                    {session.violations_found} violation{session.violations_found !== 1 ? 's' : ''}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 

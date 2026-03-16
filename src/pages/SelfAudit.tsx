@@ -362,6 +362,8 @@ export function SelfAudit() {
 
   // History state
   const [expandedHistory, setExpandedHistory] = useState<string | null>(null);
+  const [pastSessions, setPastSessions] = useState<HistoryAudit[]>([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
 
   // Saved state detection
   const [hasSavedState, setHasSavedState] = useState(false);
@@ -369,6 +371,10 @@ export function SelfAudit() {
   // Photo evidence
   const [auditPhotos, setAuditPhotos] = useState<PhotoRecord[]>([]);
   const [aiFields, setAiFields] = useState<Set<string>>(new Set());
+
+  // DB persistence
+  const { user, profile } = useAuth();
+  const dbSessionId = useRef<string | null>(null);
 
   // Check for saved state on mount
   useEffect(() => {
@@ -379,6 +385,58 @@ export function SelfAudit() {
       // ignore
     }
   }, []);
+
+  // Fetch past sessions from DB when history tab is selected
+  useEffect(() => {
+    if (activeTab !== 'history') return;
+    if (isDemoMode) {
+      setPastSessions(DEMO_HISTORY);
+      return;
+    }
+    if (!profile?.organization_id) return;
+    let cancelled = false;
+    setLoadingHistory(true);
+    (async () => {
+      try {
+        const { data } = await supabase
+          .from('self_inspection_sessions')
+          .select('id, started_at, completed_at, sections_json, failed_items_json, user_id')
+          .eq('org_id', profile.organization_id)
+          .not('completed_at', 'is', null)
+          .order('completed_at', { ascending: false })
+          .limit(20);
+        if (cancelled || !data) return;
+        const mapped: HistoryAudit[] = data.map((row: any) => {
+          const failedItems = (row.failed_items_json || []) as any[];
+          const critical = failedItems.filter((f: any) => f.severity === 'critical').length;
+          const major = failedItems.filter((f: any) => f.severity === 'major').length;
+          const minor = failedItems.filter((f: any) => f.severity === 'minor').length;
+          return {
+            id: row.id,
+            date: row.completed_at || row.started_at,
+            score: 0, // Not stored — severity counts only
+            totalFails: failedItems.length,
+            critical,
+            major,
+            minor,
+            auditor: '',
+            fails: failedItems.map((f: any) => ({
+              section: f.section || '',
+              item: f.text || '',
+              severity: f.severity || 'major',
+              notes: f.notes || '',
+            })),
+          };
+        });
+        setPastSessions(mapped);
+      } catch {
+        // silent
+      } finally {
+        if (!cancelled) setLoadingHistory(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [activeTab, isDemoMode, profile?.organization_id]);
 
   // Auto-save on every answer change
   const saveState = useCallback(() => {
@@ -393,11 +451,84 @@ export function SelfAudit() {
     } catch {
       // ignore
     }
+    updateDbSession(sections);
   }, [sections, currentSection, auditPhase, startedAt]);
 
   useEffect(() => {
     if (auditPhase === 'walkthrough') saveState();
   }, [sections, currentSection, saveState, auditPhase]);
+
+  // DB helpers
+  const createDbSession = async (now: string) => {
+    if (isDemoMode || !profile?.organization_id || !user?.id) return;
+    try {
+      const { data } = await supabase
+        .from('self_inspection_sessions')
+        .insert({
+          org_id: profile.organization_id,
+          user_id: user.id,
+          jurisdiction_key: scoringConfig.key,
+          scoring_type: scoringConfig.scoringType,
+          started_at: now,
+        })
+        .select('id')
+        .single();
+      if (data) dbSessionId.current = data.id;
+    } catch {
+      // silent — localStorage is the primary save
+    }
+  };
+
+  const updateDbSession = async (sectionsData: AuditSection[]) => {
+    if (isDemoMode || !dbSessionId.current) return;
+    try {
+      const stripped = sectionsData.map(s => ({
+        id: s.id, name: s.name,
+        items: s.items.map(it => ({
+          id: it.id, text: it.text, status: it.status,
+          notes: it.notes, severity: it.severity,
+          itemDefId: it.itemDefId, citation: it.citation,
+          category: it.category,
+        })),
+      }));
+      await supabase
+        .from('self_inspection_sessions')
+        .update({ sections_json: stripped })
+        .eq('id', dbSessionId.current);
+    } catch {
+      // silent
+    }
+  };
+
+  const finalizeDbSession = async (sectionsData: AuditSection[]) => {
+    if (isDemoMode || !dbSessionId.current) return;
+    try {
+      const failed = sectionsData.flatMap(s =>
+        s.items.filter(i => i.status === 'fail').map(i => ({
+          id: i.id, text: i.text, severity: i.severity,
+          notes: i.notes, section: s.name,
+        })),
+      );
+      await supabase
+        .from('self_inspection_sessions')
+        .update({
+          sections_json: sectionsData.map(s => ({
+            id: s.id, name: s.name,
+            items: s.items.map(it => ({
+              id: it.id, text: it.text, status: it.status,
+              notes: it.notes, severity: it.severity,
+              itemDefId: it.itemDefId, citation: it.citation,
+              category: it.category,
+            })),
+          })),
+          failed_items_json: failed,
+          completed_at: new Date().toISOString(),
+        })
+        .eq('id', dbSessionId.current);
+    } catch {
+      // silent
+    }
+  };
 
   // Handlers
   const startAudit = (track: 'primary' | 'federal' = 'primary') => {
@@ -406,9 +537,11 @@ export function SelfAudit() {
     setSections(demo);
     setActiveTrack(track);
     setCurrentSection(6); // land on section 7 (index 6)
-    setStartedAt(new Date().toISOString());
+    const now = new Date().toISOString();
+    setStartedAt(now);
     setAuditPhase('walkthrough');
     setHasSavedState(false);
+    createDbSession(now);
   };
 
   const resumeAudit = () => {
@@ -451,6 +584,7 @@ export function SelfAudit() {
     setStartedAt(null);
     setAuditPhase('overview');
     setHasSavedState(false);
+    dbSessionId.current = null;
   };
 
   const setItemStatus = (sectionIdx: number, itemIdx: number, status: ItemStatus) => {
@@ -503,6 +637,7 @@ export function SelfAudit() {
       return;
     }
     localStorage.removeItem(STORAGE_KEY);
+    finalizeDbSession(sections);
     setAuditPhase('results');
   };
 
@@ -1119,20 +1254,36 @@ export function SelfAudit() {
 
   const renderHistory = () => (
     <div className="space-y-4">
-      {/* Trend header */}
-      <div className="bg-white rounded-xl border border-[#b8d4e8] p-5">
-        <div className="flex items-center gap-2 mb-2">
-          <TrendingUp className="h-5 w-5 text-green-600" />
-          <h3 className="text-sm font-bold text-gray-900">Inspection Trend</h3>
+      {/* Trend header (demo only) */}
+      {isDemoMode && pastSessions.length > 1 && (
+        <div className="bg-white rounded-xl border border-[#b8d4e8] p-5">
+          <div className="flex items-center gap-2 mb-2">
+            <TrendingUp className="h-5 w-5 text-green-600" />
+            <h3 className="text-sm font-bold text-gray-900">Inspection Trend</h3>
+          </div>
+          <p className="text-sm text-gray-600">
+            Your scores have improved from 85% to 94% over the last 3 inspections — a{' '}
+            <span className="font-semibold text-green-600">+9 point</span> improvement.
+          </p>
         </div>
-        <p className="text-sm text-gray-600">
-          Your scores have improved from 85% to 94% over the last 3 inspections — a{' '}
-          <span className="font-semibold text-green-600">+9 point</span> improvement.
-        </p>
-      </div>
+      )}
+
+      {loadingHistory && (
+        <div className="bg-white rounded-xl border border-[#b8d4e8] p-8 text-center text-sm text-gray-500">
+          Loading past inspections...
+        </div>
+      )}
+
+      {!loadingHistory && pastSessions.length === 0 && (
+        <div className="bg-white rounded-xl border border-[#b8d4e8] p-8 text-center">
+          <ClipboardList className="h-10 w-10 mx-auto mb-3 text-gray-300" />
+          <p className="text-sm text-gray-500">No completed inspections yet.</p>
+          <p className="text-xs text-gray-400 mt-1">Complete a self-inspection to see it here.</p>
+        </div>
+      )}
 
       {/* Audit rows */}
-      {DEMO_HISTORY.map((audit) => {
+      {pastSessions.map((audit) => {
         const isExpanded = expandedHistory === audit.id;
         return (
           <div
@@ -1148,19 +1299,11 @@ export function SelfAudit() {
                   <span className="text-sm font-semibold text-gray-900">
                     {format(new Date(audit.date), 'MMM d, yyyy')}
                   </span>
-                  <span className={`text-lg font-bold ${getScoreColor(audit.score)}`}>
-                    {audit.score}%
-                  </span>
-                  {/* Trend arrow */}
-                  {audit.score >= 90 ? (
-                    <span className="text-xs text-green-600 font-medium flex items-center gap-0.5">
-                      <TrendingUp className="h-3 w-3" />
+                  {audit.score > 0 && (
+                    <span className={`text-lg font-bold ${getScoreColor(audit.score)}`}>
+                      {audit.score}%
                     </span>
-                  ) : audit.score >= 85 ? (
-                    <span className="text-xs text-yellow-600 font-medium flex items-center gap-0.5">
-                      <TrendingUp className="h-3 w-3" />
-                    </span>
-                  ) : null}
+                  )}
                 </div>
                 <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
                   <span>{audit.totalFails} fail{audit.totalFails !== 1 ? 's' : ''}</span>
@@ -1173,8 +1316,12 @@ export function SelfAudit() {
                   {audit.minor > 0 && (
                     <span className="text-yellow-600 font-medium">{audit.minor} minor</span>
                   )}
-                  <span className="text-gray-400">|</span>
-                  <span>{audit.auditor}</span>
+                  {audit.auditor && (
+                    <>
+                      <span className="text-gray-400">|</span>
+                      <span>{audit.auditor}</span>
+                    </>
+                  )}
                 </div>
               </div>
               <ChevronRight
