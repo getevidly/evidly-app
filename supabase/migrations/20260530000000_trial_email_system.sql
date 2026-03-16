@@ -7,11 +7,10 @@
 ALTER TABLE organizations
   ADD COLUMN IF NOT EXISTS trial_start_date timestamptz DEFAULT now();
 
--- trial_end_date as a generated column (start + 14 days)
--- Note: Supabase/Postgres supports GENERATED ALWAYS AS ... STORED
+-- trial_end_date as a regular column (kept in sync via trigger)
+-- Cannot use GENERATED ALWAYS AS because timestamptz + interval is not immutable
 ALTER TABLE organizations
-  ADD COLUMN IF NOT EXISTS trial_end_date timestamptz
-    GENERATED ALWAYS AS (trial_start_date + INTERVAL '14 days') STORED;
+  ADD COLUMN IF NOT EXISTS trial_end_date timestamptz;
 
 ALTER TABLE organizations
   ADD COLUMN IF NOT EXISTS plan_tier text DEFAULT 'trial'
@@ -21,6 +20,27 @@ ALTER TABLE organizations
 UPDATE organizations
 SET trial_start_date = created_at
 WHERE trial_start_date IS NULL;
+
+-- Backfill trial_end_date = trial_start_date + 14 days
+UPDATE organizations
+SET trial_end_date = trial_start_date + INTERVAL '14 days'
+WHERE trial_end_date IS NULL AND trial_start_date IS NOT NULL;
+
+-- Trigger: auto-set trial_end_date when trial_start_date changes
+CREATE OR REPLACE FUNCTION set_trial_end_date()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF NEW.trial_start_date IS NOT NULL THEN
+    NEW.trial_end_date := NEW.trial_start_date + INTERVAL '14 days';
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trg_set_trial_end_date ON organizations;
+CREATE TRIGGER trg_set_trial_end_date
+  BEFORE INSERT OR UPDATE OF trial_start_date ON organizations
+  FOR EACH ROW EXECUTE FUNCTION set_trial_end_date();
 
 -- ── 2. Trial email log — prevents duplicate sends ─────────────────
 
@@ -71,14 +91,19 @@ CREATE INDEX IF NOT EXISTS idx_vendor_partners_status
   ON vendor_partners(status, outreach_step);
 
 -- ── 5. Notification tracking columns for vendor-notification-sender ─
+-- These use DO blocks to gracefully skip if tables don't exist yet
 
--- COI expiry warning tracking on documents table
-ALTER TABLE documents
-  ADD COLUMN IF NOT EXISTS coi_warning_sent_at timestamptz;
+DO $$ BEGIN
+  ALTER TABLE documents ADD COLUMN IF NOT EXISTS coi_warning_sent_at timestamptz;
+EXCEPTION WHEN undefined_table THEN NULL;
+END $$;
 
--- Service overdue + cert missing tracking on vendor_service_records
-ALTER TABLE vendor_service_records
-  ADD COLUMN IF NOT EXISTS overdue_notification_sent_at timestamptz;
+DO $$ BEGIN
+  ALTER TABLE vendor_service_records ADD COLUMN IF NOT EXISTS overdue_notification_sent_at timestamptz;
+EXCEPTION WHEN undefined_table THEN NULL;
+END $$;
 
-ALTER TABLE vendor_service_records
-  ADD COLUMN IF NOT EXISTS cert_missing_notification_sent_at timestamptz;
+DO $$ BEGIN
+  ALTER TABLE vendor_service_records ADD COLUMN IF NOT EXISTS cert_missing_notification_sent_at timestamptz;
+EXCEPTION WHEN undefined_table THEN NULL;
+END $$;
