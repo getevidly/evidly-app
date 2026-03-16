@@ -355,30 +355,21 @@ export function SecuritySettings() {
             />
           </div>
 
-          <div className="flex items-center gap-8">
-            <Toggle
-              checked={config.cookie_secure}
-              onChange={v => setConfig(c => ({ ...c, cookie_secure: v }))}
-              label="Secure Cookies Only"
-              description="Cookies sent over HTTPS only"
-            />
-          </div>
-
-          <div className="flex items-center justify-between py-2">
+          {/* Cookie security is managed by Supabase Auth automatically.
+              Supabase Dashboard → Authentication → Settings:
+              - "Secure cookies" must be enabled
+              - JWT expiry: 3600s (1 hour recommended)
+              - Refresh token rotation: enabled
+              These cannot be changed from the app — must be configured in Supabase Dashboard. */}
+          <div className="flex items-start gap-3 py-3 px-4 rounded-lg" style={{ backgroundColor: '#F4F6FA', border: '1px solid #E8EDF5' }}>
+            <Info size={16} className="mt-0.5 flex-shrink-0" style={{ color: BRAND }} />
             <div>
-              <p className="text-sm font-medium" style={{ color: '#0B1628' }}>SameSite Policy</p>
-              <p className="text-xs mt-0.5" style={{ color: TEXT_TERT }}>Controls cross-site cookie behavior</p>
+              <p className="text-sm font-medium" style={{ color: '#0B1628' }}>Session Cookies</p>
+              <p className="text-xs mt-1" style={{ color: TEXT_TERT }}>
+                Session cookies are managed by Supabase Auth with <strong>httpOnly</strong> and <strong>Secure</strong> flags enforced automatically.
+                Cookie settings (JWT expiry, refresh token rotation, SameSite policy) are configured in the Supabase Dashboard under Authentication → Settings.
+              </p>
             </div>
-            <select
-              value={config.cookie_samesite}
-              onChange={e => setConfig(c => ({ ...c, cookie_samesite: e.target.value }))}
-              className="px-3 py-1.5 text-sm border rounded-lg"
-              style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
-            >
-              <option value="Strict">Strict</option>
-              <option value="Lax">Lax</option>
-              <option value="None">None</option>
-            </select>
           </div>
 
           <button

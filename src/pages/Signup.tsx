@@ -81,7 +81,7 @@ export function Signup() {
   };
 
   const passwordRequirements = {
-    minLength: password.length >= 8,
+    minLength: password.length >= 12,
     hasUpper: /[A-Z]/.test(password),
     hasLower: /[a-z]/.test(password),
     hasNumber: /[0-9]/.test(password),
@@ -407,7 +407,7 @@ export function Signup() {
               <div className="mt-2 space-y-1">
                 <div className={`flex items-center text-xs ${passwordRequirements.minLength ? 'text-green-600' : 'text-gray-500'}`}>
                   {passwordRequirements.minLength ? <Check className="h-3 w-3 mr-1" /> : <X className="h-3 w-3 mr-1" />}
-                  Minimum 8 characters
+                  Minimum 12 characters
                 </div>
                 <div className={`flex items-center text-xs ${passwordRequirements.hasUpper ? 'text-green-600' : 'text-gray-500'}`}>
                   {passwordRequirements.hasUpper ? <Check className="h-3 w-3 mr-1" /> : <X className="h-3 w-3 mr-1" />}

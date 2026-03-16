@@ -57,7 +57,7 @@ export function VendorRegister() {
   };
 
   const passwordRequirements = {
-    minLength: password.length >= 8,
+    minLength: password.length >= 12,
     hasUpper: /[A-Z]/.test(password),
     hasLower: /[a-z]/.test(password),
     hasNumber: /[0-9]/.test(password),

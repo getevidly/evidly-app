@@ -15,7 +15,7 @@ export function ResetPassword() {
   const resolvedRef = useRef(false);
 
   const passwordRequirements = {
-    minLength: password.length >= 8,
+    minLength: password.length >= 12,
     hasUpper: /[A-Z]/.test(password),
     hasLower: /[a-z]/.test(password),
     hasNumber: /[0-9]/.test(password),
@@ -219,7 +219,7 @@ export function ResetPassword() {
                 {Object.entries(passwordRequirements).map(([key, met]) => (
                   <div key={key} className={`flex items-center text-xs ${met ? 'text-green-600' : 'text-gray-500'}`}>
                     {met ? <Check className="h-3 w-3 mr-1" /> : <X className="h-3 w-3 mr-1" />}
-                    {key === 'minLength' && 'Minimum 8 characters'}
+                    {key === 'minLength' && 'Minimum 12 characters'}
                     {key === 'hasUpper' && 'At least one uppercase letter'}
                     {key === 'hasLower' && 'At least one lowercase letter'}
                     {key === 'hasNumber' && 'At least one number'}

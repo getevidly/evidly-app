@@ -57,10 +57,11 @@ export function InviteAccept() {
   };
 
   const passwordRequirements = {
-    length: password.length >= 8,
+    length: password.length >= 12,
     uppercase: /[A-Z]/.test(password),
     lowercase: /[a-z]/.test(password),
     number: /[0-9]/.test(password),
+    special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
   };
 
   const allRequirementsMet = Object.values(passwordRequirements).every(req => req);
@@ -273,7 +274,7 @@ export function InviteAccept() {
                 <div className="space-y-1 text-sm">
                   <div className={`flex items-center gap-2 ${passwordRequirements.length ? 'text-green-600' : 'text-gray-500'}`}>
                     {passwordRequirements.length ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
-                    At least 8 characters
+                    At least 12 characters
                   </div>
                   <div className={`flex items-center gap-2 ${passwordRequirements.uppercase ? 'text-green-600' : 'text-gray-500'}`}>
                     {passwordRequirements.uppercase ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
@@ -286,6 +287,10 @@ export function InviteAccept() {
                   <div className={`flex items-center gap-2 ${passwordRequirements.number ? 'text-green-600' : 'text-gray-500'}`}>
                     {passwordRequirements.number ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
                     One number
+                  </div>
+                  <div className={`flex items-center gap-2 ${passwordRequirements.special ? 'text-green-600' : 'text-gray-500'}`}>
+                    {passwordRequirements.special ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
+                    One special character
                   </div>
                 </div>
               </div>
