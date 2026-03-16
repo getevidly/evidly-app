@@ -1,6 +1,11 @@
 import { useState } from 'react';
 import { X, FileText, Copy, Printer } from 'lucide-react';
+import DOMPurify from 'dompurify';
 import { supabase } from '../../lib/supabase';
+
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
 
 export function HACCPDeviationReport({ violation, onClose }) {
   const [narrative, setNarrative] = useState('');
@@ -47,7 +52,7 @@ export function HACCPDeviationReport({ violation, onClose }) {
   const handlePrint = () => {
     const printWindow = window.open('', '_blank');
     if (!printWindow) return;
-    printWindow.document.write(`
+    printWindow.document.write(DOMPurify.sanitize(`
       <html><head><title>HACCP Deviation Report</title>
       <style>body { font-family: system-ui, sans-serif; max-width: 700px; margin: 40px auto; padding: 20px; line-height: 1.6; font-size: 14px; }
       h1 { font-size: 18px; border-bottom: 2px solid #1E2D4D; padding-bottom: 8px; color: #1E2D4D; }
@@ -55,9 +60,9 @@ export function HACCPDeviationReport({ violation, onClose }) {
       .content { white-space: pre-wrap; }
       @media print { body { margin: 20px; } }</style></head>
       <body><h1>HACCP Critical Control Point Deviation Report</h1>
-      <div class="meta">Equipment: ${violation.equipment_name} · Date: ${new Date(violation.created_at).toLocaleString()} · Generated: ${new Date().toLocaleString()}</div>
+      <div class="meta">Equipment: ${escapeHtml(violation.equipment_name)} · Date: ${new Date(violation.created_at).toLocaleString()} · Generated: ${new Date().toLocaleString()}</div>
       <div class="content">${narrative}</div></body></html>
-    `);
+    `, { ADD_TAGS: ['style'], ADD_ATTR: ['class', 'style'] }));
     printWindow.document.close();
     printWindow.print();
   };

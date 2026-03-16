@@ -1,5 +1,9 @@
 import { QRCodeSVG } from 'qrcode.react';
 
+function escapeHtml(str: string): string {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+
 interface EquipmentQRCodeProps {
   equipmentId: string;
   equipmentName: string;
@@ -21,13 +25,13 @@ export function EquipmentQRCode({ equipmentId, equipmentName, locationName, size
           const printWindow = window.open('', '_blank');
           if (printWindow) {
             printWindow.document.write(`
-              <html><head><title>QR - ${equipmentName}</title>
+              <html><head><title>QR - ${escapeHtml(equipmentName)}</title>
               <style>body{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:sans-serif;}
               .ref{margin-top:16px;padding:8px 16px;background:#f0f0f0;border-radius:6px;font-size:11px;color:#888;}</style>
               </head><body>
               <div id="qr"></div>
-              <h2>${equipmentName}</h2>
-              ${locationName ? `<p style="color:#555;font-size:14px">${locationName}</p>` : ''}
+              <h2>${escapeHtml(equipmentName)}</h2>
+              ${locationName ? `<p style="color:#555;font-size:14px">${escapeHtml(locationName)}</p>` : ''}
               <p style="color:#666">Scan to log temperature reading</p>
               <p style="color:#999;font-size:12px">${qrUrl}</p>
               <div class="ref">CalCode §113996 — Temperature monitoring required</div>

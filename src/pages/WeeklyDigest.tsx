@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import DOMPurify from 'dompurify';
 import { useDemo } from '../contexts/DemoContext';
 import { useAuth } from '../contexts/AuthContext';
 import { generateDigestHtml, sendWeeklyDigest, type DigestData } from '../lib/sendWeeklyDigest';
@@ -375,7 +376,7 @@ export function WeeklyDigest() {
               padding: '16px', overflow: 'auto', maxHeight: 'calc(100vh - 240px)',
             }}>
               <div
-                dangerouslySetInnerHTML={{ __html: previewHtml }}
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(previewHtml) }}
                 style={{ transform: 'scale(0.85)', transformOrigin: 'top center' }}
               />
             </div>

@@ -6,6 +6,10 @@ import { X, Printer, QrCode, Search, CheckSquare } from 'lucide-react';
 import type { EquipmentItem } from '../../hooks/api/useEquipment';
 import { NAVY, CARD_BG, CARD_BORDER, TEXT_TERTIARY, MUTED } from '../dashboard/shared/constants';
 
+function escapeHtml(str: string): string {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+
 interface BulkQRPrintModalProps {
   items: EquipmentItem[];
   onClose: () => void;
@@ -44,8 +48,8 @@ export function BulkQRPrintModal({ items, onClose }: BulkQRPrintModalProps) {
     const labelsHtml = selectedItems.map(e => `
       <div style="display:inline-block;width:${layout === 'labels' ? '30%' : '100%'};padding:12px;margin:4px;border:1px solid #ddd;border-radius:6px;text-align:center;page-break-inside:avoid;">
         <div id="qr-${e.id}" style="margin:0 auto 6px;"></div>
-        <p style="font-size:10px;font-weight:bold;color:#1E2D4D;margin:0;">${e.name}</p>
-        <p style="font-size:8px;color:#6B7F96;margin:2px 0 0;">${e.locationName}</p>
+        <p style="font-size:10px;font-weight:bold;color:#1E2D4D;margin:0;">${escapeHtml(e.name)}</p>
+        <p style="font-size:8px;color:#6B7F96;margin:2px 0 0;">${escapeHtml(e.locationName)}</p>
         <p style="font-size:7px;font-family:monospace;color:#9CA3AF;margin:2px 0 0;">${e.qrCodeId}</p>
       </div>
     `).join('');

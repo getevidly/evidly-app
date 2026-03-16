@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import DOMPurify from 'dompurify';
 import { Brain, Send, Sparkles, Plus, Upload, X, ClipboardList, MessageSquare, FileSearch, ChevronRight, ChevronLeft, CheckCircle2 } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useDemo } from '../contexts/DemoContext';
@@ -720,7 +721,7 @@ export function AIAdvisor() {
                       )}
                       <div
                         style={{ fontSize: '13px', lineHeight: '1.6', whiteSpace: 'pre-line' }}
-                        dangerouslySetInnerHTML={{ __html: parseMarkdown(msg.content) }}
+                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(parseMarkdown(msg.content)) }}
                       />
                       {msg.role === 'assistant' && msg.dataDateRange && (
                         <div style={{ marginTop: '10px', paddingTop: '8px', borderTop: '1px solid #f0f0f0', fontSize: '10px', fontStyle: 'italic', color: '#9ca3af' }}>

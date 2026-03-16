@@ -1,5 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { getCorsHeaders } from '../_shared/cors.ts';
+const corsHeaders = getCorsHeaders(null);
 
 // ---------------------------------------------------------------------------
 // document-scan — Layer 2: Backend magic-byte validation
@@ -12,13 +14,6 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 // 5. On mismatch: moves file to quarantined/ bucket, updates document status,
 //    and creates an admin notification (Layer 5)
 // ---------------------------------------------------------------------------
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers":
-    "Content-Type, Authorization, X-Client-Info, Apikey",
-};
 
 // Magic byte signatures for allowed file types
 const MAGIC_SIGNATURES: {

@@ -1,16 +1,11 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { getCorsHeaders } from '../_shared/cors.ts';
+const corsHeaders = getCorsHeaders(null);
 
 // ── VIOLATION-OUTREACH-01: Crawl public health inspection databases ──
 // Identifies commercial kitchens with recent violations,
 // scores relevance to EvidLY/CPP/Filta, inserts into violation_prospects.
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers":
-    "Content-Type, Authorization, X-Client-Info, Apikey, x-cron-secret",
-};
 
 function jsonResponse(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {

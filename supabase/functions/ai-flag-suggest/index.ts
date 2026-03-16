@@ -1,15 +1,10 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { getCorsHeaders } from '../_shared/cors.ts';
+const corsHeaders = getCorsHeaders(null);
 
 // ── FEATURE-FLAGS-01: AI message suggestion for feature flags ──
 // Generates a professional disabled-message title + body
 // based on the feature name, trigger type, and criteria.
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers":
-    "Content-Type, Authorization, X-Client-Info, Apikey",
-};
 
 function jsonResponse(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {

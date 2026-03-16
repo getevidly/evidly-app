@@ -6,14 +6,12 @@
  */
 
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { sendEmail } from "../_shared/email.ts";
+import { checkRateLimit } from '../_shared/rateLimit.ts';
+import { PUBLIC_CORS_HEADERS } from '../_shared/cors.ts';
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers":
-    "Content-Type, Authorization, X-Client-Info, Apikey",
-};
+const corsHeaders = PUBLIC_CORS_HEADERS;
 
 function jsonResponse(data: Record<string, unknown>, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -154,6 +152,22 @@ Deno.serve(async (req: Request) => {
   try {
     if (req.method !== "POST") {
       return jsonResponse({ error: "Method not allowed" }, 405);
+    }
+
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+    );
+
+    const clientIp = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+    const { allowed } = await checkRateLimit({
+      key: `assessment_notify:${clientIp}`,
+      maxRequests: 10,
+      windowSeconds: 3600,
+      supabase,
+    });
+    if (!allowed) {
+      return jsonResponse({ error: 'Rate limit exceeded' }, 429);
     }
 
     const payload: AssessmentPayload = await req.json();

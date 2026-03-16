@@ -2,10 +2,11 @@
 // Shared utilities for all POS integrations
 // ============================================================
 
-export const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+import { getCorsHeaders } from './cors.ts';
+
+export function corsHeaders(requestOrigin?: string | null): Record<string, string> {
+  return getCorsHeaders(requestOrigin ?? null);
+}
 
 export interface POSLocation {
   posLocationId:  string;
@@ -68,14 +69,14 @@ export const detectCountyFromCity = (city: string, state: string): string | null
 };
 
 // Standard success/error response
-export const ok = (data: Record<string, unknown>) => new Response(
+export const ok = (data: Record<string, unknown>, origin?: string | null) => new Response(
   JSON.stringify({ success: true, ...data }),
-  { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+  { status: 200, headers: { ...corsHeaders(origin), 'Content-Type': 'application/json' } }
 );
 
-export const err = (message: string, status = 200) => new Response(
+export const err = (message: string, status = 200, origin?: string | null) => new Response(
   JSON.stringify({ success: false, error: message }),
-  { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+  { status, headers: { ...corsHeaders(origin), 'Content-Type': 'application/json' } }
 );
 
 // POS type → credential field names (used by connect UI)

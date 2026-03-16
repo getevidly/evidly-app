@@ -11,12 +11,7 @@
 
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
-};
+import { getCorsHeaders } from '../_shared/cors.ts';
 
 const EXTRACTION_PROMPT = `You are an expert kitchen exhaust inspection technician assistant. A field technician has recorded a voice note during a kitchen exhaust inspection or service job. Extract structured data from their transcription.
 
@@ -66,6 +61,7 @@ Guidelines:
 - Return empty arrays if no items found for a category`;
 
 Deno.serve(async (req: Request) => {
+  const corsHeaders = getCorsHeaders(req.headers.get('origin'));
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 200, headers: corsHeaders });
   }

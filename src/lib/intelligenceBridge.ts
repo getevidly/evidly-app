@@ -10,20 +10,23 @@
  *   - 5-second hard timeout on all requests
  */
 
-const BRIDGE_URL = import.meta.env.VITE_INTELLIGENCE_BRIDGE_URL as string | undefined;
-const BRIDGE_SECRET = import.meta.env.VITE_INTELLIGENCE_WEBHOOK_SECRET as string | undefined;
+// Bridge calls are proxied through a Supabase edge function that holds the
+// webhook secret server-side. The client never sees the secret.
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
 
 // ── Internal transport ────────────────────────────────────
 
 async function bridgePost(payload: object): Promise<void> {
-  if (!BRIDGE_URL) return; // graceful degradation — Intelligence not configured
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return; // graceful degradation
 
   try {
-    await fetch(BRIDGE_URL, {
+    await fetch(`${SUPABASE_URL}/functions/v1/intelligence-bridge-proxy`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-evidly-bridge-secret': BRIDGE_SECRET || '',
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'apikey': SUPABASE_ANON_KEY,
       },
       body: JSON.stringify(payload),
       signal: AbortSignal.timeout(5000), // 5-second timeout max

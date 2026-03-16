@@ -1,5 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { getCorsHeaders } from '../_shared/cors.ts';
+const corsHeaders = getCorsHeaders(null);
 
 /**
  * intelligence-feed — Public intelligence insights feed
@@ -15,13 +17,6 @@ import { createClient } from "npm:@supabase/supabase-js@2";
  * Demo mode: returns all items regardless of status
  * Live mode: returns only published items
  */
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  "Access-Control-Allow-Headers":
-    "Content-Type, Authorization, X-Client-Info, Apikey",
-};
 
 function jsonResponse(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {

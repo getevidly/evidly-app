@@ -6,6 +6,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import DOMPurify from 'dompurify';
 import { supabase } from '../../lib/supabase';
 import { useDemo } from '../../contexts/DemoContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
@@ -660,7 +661,7 @@ function EditorTab({ sequences, setSequences, isDemoMode }: {
           style={{ borderColor: BORDER }}
         >
           <div
-            dangerouslySetInnerHTML={{ __html: renderEmailPreview(editSubject, editBody) }}
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(renderEmailPreview(editSubject, editBody)) }}
             style={{ maxHeight: 520, overflowY: 'auto' }}
           />
         </div>

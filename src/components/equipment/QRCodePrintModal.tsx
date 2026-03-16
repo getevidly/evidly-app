@@ -7,6 +7,10 @@ import { QRCodeDisplay } from './QRCodeDisplay';
 import type { EquipmentItem } from '../../hooks/api/useEquipment';
 import { NAVY, CARD_BG, CARD_BORDER, TEXT_TERTIARY, MUTED } from '../dashboard/shared/constants';
 
+function escapeHtml(str: string): string {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+
 interface QRCodePrintModalProps {
   equipment: EquipmentItem;
   onClose: () => void;
@@ -23,8 +27,8 @@ export function QRCodePrintModal({ equipment, onClose }: QRCodePrintModalProps) 
 
     const content = layout === 'large'
       ? `<div style="text-align:center;padding:40px;font-family:sans-serif;">
-          <h2 style="color:#1E2D4D;margin-bottom:8px;">${equipment.name}</h2>
-          <p style="color:#6B7F96;margin-bottom:24px;">${equipment.locationName}</p>
+          <h2 style="color:#1E2D4D;margin-bottom:8px;">${escapeHtml(equipment.name)}</h2>
+          <p style="color:#6B7F96;margin-bottom:24px;">${escapeHtml(equipment.locationName)}</p>
           <div id="qr" style="margin:0 auto 16px;"></div>
           <p style="font-family:monospace;color:#6B7F96;font-size:12px;">${equipment.qrCodeId}</p>
           <p style="color:#A08C5A;font-size:10px;margin-top:24px;">Powered by HoodOps</p>
@@ -32,14 +36,14 @@ export function QRCodePrintModal({ equipment, onClose }: QRCodePrintModalProps) 
       : layout === 'label'
       ? `<div style="display:inline-block;padding:16px;border:1px solid #ddd;border-radius:8px;font-family:sans-serif;text-align:center;">
           <div id="qr" style="margin-bottom:8px;"></div>
-          <p style="font-size:11px;font-weight:bold;color:#1E2D4D;margin:0;">${equipment.name}</p>
-          <p style="font-size:9px;color:#6B7F96;margin:2px 0 0;">${equipment.locationName}</p>
+          <p style="font-size:11px;font-weight:bold;color:#1E2D4D;margin:0;">${escapeHtml(equipment.name)}</p>
+          <p style="font-size:9px;color:#6B7F96;margin:2px 0 0;">${escapeHtml(equipment.locationName)}</p>
         </div>`
       : `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:20px;font-family:sans-serif;">
           ${Array.from({ length: 9 }).map(() => `
             <div style="border:1px solid #ddd;border-radius:6px;padding:12px;text-align:center;">
               <div class="qr-placeholder" style="width:80px;height:80px;margin:0 auto 6px;background:#f0f0f0;"></div>
-              <p style="font-size:9px;font-weight:bold;color:#1E2D4D;margin:0;">${equipment.name}</p>
+              <p style="font-size:9px;font-weight:bold;color:#1E2D4D;margin:0;">${escapeHtml(equipment.name)}</p>
               <p style="font-size:7px;color:#6B7F96;margin:2px 0 0;">${equipment.qrCodeId}</p>
             </div>
           `).join('')}
@@ -47,7 +51,7 @@ export function QRCodePrintModal({ equipment, onClose }: QRCodePrintModalProps) 
 
     printWin.document.write(`
       <!DOCTYPE html>
-      <html><head><title>QR Code - ${equipment.name}</title>
+      <html><head><title>QR Code - ${escapeHtml(equipment.name)}</title>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>
       </head><body>
       ${content}

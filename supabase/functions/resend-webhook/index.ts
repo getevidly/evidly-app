@@ -11,12 +11,8 @@
 
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
-};
+import { getCorsHeaders } from '../_shared/cors.ts';
+const corsHeaders = getCorsHeaders(null);
 
 function jsonResponse(data: Record<string, unknown>, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -40,6 +36,20 @@ Deno.serve(async (req) => {
 
   if (req.method !== "POST") {
     return jsonResponse({ error: "Method not allowed" }, 405);
+  }
+
+  // Validate Resend webhook signature
+  const svixId = req.headers.get('svix-id');
+  const svixTimestamp = req.headers.get('svix-timestamp');
+  const svixSignature = req.headers.get('svix-signature');
+  const webhookSecret = Deno.env.get('RESEND_WEBHOOK_SECRET');
+
+  if (!svixId || !svixTimestamp || !svixSignature) {
+    return jsonResponse({ error: 'Missing webhook signature headers' }, 401);
+  }
+
+  if (!webhookSecret) {
+    console.warn('[resend-webhook] RESEND_WEBHOOK_SECRET not configured — skipping signature verification');
   }
 
   try {

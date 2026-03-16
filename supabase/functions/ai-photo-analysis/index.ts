@@ -11,12 +11,7 @@
 
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
-};
+import { getCorsHeaders } from '../_shared/cors.ts';
 
 const SYSTEM_PROMPT = `You are an expert kitchen exhaust system inspector with deep knowledge of NFPA 96, UL 300, and commercial kitchen fire safety standards. You are analyzing a photo of a kitchen exhaust system component (hood, duct, fan, filter, or related equipment).
 
@@ -72,6 +67,7 @@ Return ONLY valid JSON with this structure:
 }`;
 
 Deno.serve(async (req: Request) => {
+  const corsHeaders = getCorsHeaders(req.headers.get('origin'));
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 200, headers: corsHeaders });
   }

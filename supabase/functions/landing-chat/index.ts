@@ -1,37 +1,17 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { checkRateLimit } from '../_shared/rateLimit.ts';
+import { PUBLIC_CORS_HEADERS } from '../_shared/cors.ts';
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers":
-    "Content-Type, Authorization, X-Client-Info, Apikey",
-};
+const corsHeaders = PUBLIC_CORS_HEADERS;
 
 /**
  * landing-chat — Lightweight AI compliance chat for landing page visitors
  *
- * No authentication required. Rate limited by IP (10 messages/hour).
+ * No authentication required. Rate limited by IP (20 messages/hour).
  * Uses Claude Sonnet for cost-efficient, high-volume public endpoint.
  * Responses are 2-3 sentences max with soft CTAs to try demo or sign up.
  */
-
-// In-memory rate limit store (resets when function cold-starts)
-const rateLimits = new Map<string, { count: number; resetAt: number }>();
-
-function checkRateLimit(ip: string): boolean {
-  const now = Date.now();
-  const limit = rateLimits.get(ip);
-
-  if (!limit || now > limit.resetAt) {
-    rateLimits.set(ip, { count: 1, resetAt: now + 3600000 }); // 1 hour window
-    return true;
-  }
-
-  if (limit.count >= 10) return false;
-
-  limit.count++;
-  return true;
-}
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
@@ -51,20 +31,23 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    const ip =
-      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-      req.headers.get("cf-connecting-ip") ||
-      "unknown";
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+    );
 
-    if (!checkRateLimit(ip)) {
-      return jsonResponse(
-        {
-          reply:
-            "I've answered a lot of questions this session! Sign up for unlimited access to EvidLY's AI compliance assistant.",
-          cta: "sign_up",
-        },
-        429,
-      );
+    const clientIp = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+    const { allowed } = await checkRateLimit({
+      key: `landing_chat:${clientIp}`,
+      maxRequests: 20,
+      windowSeconds: 3600,
+      supabase,
+    });
+    if (!allowed) {
+      return new Response(JSON.stringify({ error: 'Rate limit exceeded. Try again later.' }), {
+        status: 429,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     const { message } = await req.json();

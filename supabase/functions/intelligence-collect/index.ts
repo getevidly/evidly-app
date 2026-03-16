@@ -1,6 +1,8 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { sendEmail, buildEmailHtml } from "../_shared/email.ts";
+import { getCorsHeaders } from '../_shared/cors.ts';
+const corsHeaders = getCorsHeaders(null);
 
 /**
  * intelligence-collect — Cron-triggered intelligence data collection
@@ -163,13 +165,6 @@ const INTELLIGENCE_SOURCES: IntelligenceSource[] = [
 ];
 
 // ── CORS / Helpers ───────────────────────────────────────────
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers":
-    "Content-Type, Authorization, X-Client-Info, Apikey, x-cron-secret",
-};
 
 function jsonResponse(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {

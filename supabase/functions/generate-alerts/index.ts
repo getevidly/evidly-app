@@ -1,5 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { getCorsHeaders } from '../_shared/cors.ts';
 
 // ── PREDICTIVE INTELLIGENCE — Phase Roadmap ──────────────────────────────────
 //
@@ -22,13 +23,6 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 //    — Switch prediction_method to 'ml-python', bump model_version accordingly.
 //
 // ─────────────────────────────────────────────────────────────────────────────
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers":
-    "Content-Type, Authorization, X-Client-Info, Apikey",
-};
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -758,6 +752,7 @@ async function generateAlerts(
 // Triggered daily by pg_cron or manually via POST with { organization_id }
 
 Deno.serve(async (req: Request) => {
+  const corsHeaders = getCorsHeaders(req.headers.get('origin'));
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: corsHeaders });
   }

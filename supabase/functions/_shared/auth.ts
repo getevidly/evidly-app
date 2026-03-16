@@ -19,10 +19,17 @@ export function unauthorizedResponse(): Response {
 }
 
 /** Standard CORS headers for API responses */
-export function corsHeaders(): Record<string, string> {
+export function corsHeaders(requestOrigin?: string | null): Record<string, string> {
+  const ALLOWED = [
+    'https://app.getevidly.com',
+    'https://www.getevidly.com',
+    'https://getevidly.com',
+  ];
+  const origin = ALLOWED.includes(requestOrigin ?? '') ? requestOrigin! : ALLOWED[0];
   return {
     'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': origin,
     'Access-Control-Allow-Headers': 'Content-Type, X-API-Key',
+    'Access-Control-Allow-Credentials': 'true',
   };
 }

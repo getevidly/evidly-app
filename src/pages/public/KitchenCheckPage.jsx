@@ -236,7 +236,8 @@ function SL({t,c}){return <div style={{fontSize:"0.68rem",fontWeight:800,letterS
 function TBadge({level}){var m={HIGH:{bg:E.grnBg,bd:E.grn,tx:"#065f46"},MEDIUM:{bg:E.wrnBg,bd:E.wrn,tx:"#92400e"},LOW:{bg:E.redBg,bd:E.red,tx:"#991b1b"}};var co=m[level]||m.MEDIUM;return <span style={{display:"inline-block",padding:"2px 9px",borderRadius:100,fontSize:"0.64rem",fontWeight:700,background:co.bg,border:"1px solid "+co.bd,color:co.tx,marginLeft:8}}>{level} TRANSPARENCY</span>;}
 function RiskBadge({risk}){var m={critical:{bg:E.redBg,bd:E.red,tx:E.red},high:{bg:E.wrnBg,bd:E.wrn,tx:"#92400e"},medium:{bg:E.bluePale,bd:E.g3,tx:E.g5}};var co=m[risk]||m.medium;return <span style={{display:"inline-block",padding:"1px 7px",borderRadius:100,fontSize:"0.62rem",fontWeight:700,textTransform:"uppercase",letterSpacing:0.5,background:co.bg,border:"1px solid "+co.bd,color:co.tx}}>{risk}</span>;}
 
-function SchemaMarkup({c}){var schema={"@context":"https://schema.org","@graph":[{"@type":"FAQPage","mainEntity":c.faq.map(function(f){return{"@type":"Question","name":f.q,"acceptedAnswer":{"@type":"Answer","text":f.a}};})},{"@type":"WebPage","name":c.metaTitle,"description":c.metaDesc,"url":"https://getevidly.com/kitchen-check/"+c.slug}]};return <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema)}}/>;}
+function SchemaMarkup({c}){var schema={"@context":"https://schema.org","@graph":[{"@type":"FAQPage","mainEntity":c.faq.map(function(f){return{"@type":"Question","name":f.q,"acceptedAnswer":{"@type":"Answer","text":f.a}};})},{"@type":"WebPage","name":c.metaTitle,"description":c.metaDesc,"url":"https://getevidly.com/kitchen-check/"+c.slug}]};return <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema)}}/>; // Safe: static JSON-LD
+}
 
 // Score estimate based on county method
 function estimateOutcome(c,items,answers){

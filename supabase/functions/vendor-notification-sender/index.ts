@@ -10,13 +10,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { sendEmail, buildEmailHtml } from "../_shared/email.ts";
 import { logger } from "../_shared/logger.ts";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  "Access-Control-Allow-Headers":
-    "Content-Type, Authorization, X-Client-Info, Apikey",
-};
+import { getCorsHeaders } from '../_shared/cors.ts';
 
 const APP_URL = "https://app.getevidly.com";
 const MAX_RUNTIME_MS = 50_000;
@@ -52,6 +46,7 @@ const NFPA_FREQUENCIES: Record<string, string> = {
 // ═══════════════════════════════════════════════════════════════════
 
 Deno.serve(async (req: Request) => {
+  const corsHeaders = getCorsHeaders(req.headers.get('origin'));
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 200, headers: corsHeaders });
   }

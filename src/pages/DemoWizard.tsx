@@ -80,13 +80,20 @@ export function DemoWizard() {
   const [staffPass, setStaffPass] = useState('');
   const [staffError, setStaffError] = useState('');
 
-  const handleStaffLogin = () => {
-    const expectedUser = import.meta.env.VITE_DEMO_STAFF_USER;
-    const expectedPass = import.meta.env.VITE_DEMO_STAFF_PASS;
-    if (staffUser === expectedUser && staffPass === expectedPass) {
+  const handleStaffLogin = async () => {
+    try {
+      const { supabase } = await import('../lib/supabase');
+      const { error } = await supabase.auth.signInWithPassword({
+        email: staffUser,
+        password: staffPass,
+      });
+      if (error) {
+        setStaffError('Invalid credentials');
+        return;
+      }
       enterDemo();
       navigate('/dashboard', { replace: true });
-    } else {
+    } catch {
       setStaffError('Invalid credentials');
     }
   };

@@ -1,12 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers":
-    "Content-Type, Authorization, X-Client-Info, Apikey",
-};
+import { getCorsHeaders } from '../_shared/cors.ts';
 
 /** Days after signup when a reminder should be sent. */
 const TRIGGER_DAYS = [3, 7, 14, 21, 28];
@@ -35,6 +29,7 @@ function pillarFor(documentType: string): string {
 }
 
 Deno.serve(async (req: Request) => {
+  const corsHeaders = getCorsHeaders(req.headers.get('origin'));
   // ── CORS pre-flight ────────────────────────────────────────────
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 200, headers: corsHeaders });

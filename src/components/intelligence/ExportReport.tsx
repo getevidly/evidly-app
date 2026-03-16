@@ -1,4 +1,5 @@
 import React from 'react';
+import DOMPurify from 'dompurify';
 
 interface Props { data: any }
 
@@ -72,7 +73,7 @@ export const ExportReport: React.FC<Props> = ({ data }) => {
 </body>
 </html>`;
 
-    printWindow.document.write(html);
+    printWindow.document.write(DOMPurify.sanitize(html, { ADD_TAGS: ['style'], ADD_ATTR: ['class', 'style'] }));
     printWindow.document.close();
     setTimeout(() => { printWindow.print(); }, 500);
   };

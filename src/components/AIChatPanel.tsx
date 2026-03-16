@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import DOMPurify from 'dompurify';
 import { Brain, X, Send, ArrowRight, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getDemoContext, generateSuggestions, extractActionItems, parseMarkdown } from '../lib/aiAdvisor';
@@ -186,7 +187,7 @@ export function AIChatPanel({ hidden = false }: { hidden?: boolean }) {
                 {msg.role === 'assistant' ? (
                   <div
                     className="whitespace-pre-wrap text-sm leading-relaxed"
-                    dangerouslySetInnerHTML={{ __html: parseMarkdown(msg.content) }}
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(parseMarkdown(msg.content)) }}
                   />
                 ) : (
                   <span>{msg.content}</span>
