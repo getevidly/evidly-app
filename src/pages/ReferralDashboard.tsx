@@ -4,8 +4,9 @@
  */
 import { useState } from 'react';
 import {
-  Gift, Trophy, Heart, Truck, Share2, Copy, CheckCircle,
+  Gift, Trophy, Heart, Truck, Share2, Copy, CheckCircle, Check,
   ExternalLink, Star, Award, TrendingUp, Users, ArrowRight, Sparkles,
+  Linkedin, Mail, MessageSquare,
 } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useDemo } from '../contexts/DemoContext';
@@ -19,6 +20,16 @@ import {
   type ReferralMechanic,
   type ComplianceBadge,
 } from '../lib/referralSystem';
+import {
+  demoReferrals, demoBadges, demoNetworkScores, demoK2CDonations,
+  demoVendorRipples, demoHeroStories, demoReferralStats,
+} from '../data/referralDemoData';
+import { demoReferral } from '../data/demoData';
+import { SHARE_MESSAGES } from '../data/ambassadorDemoData';
+import {
+  generateLinkedInShareUrl, generateEmailShareHref, generateSmsShareHref,
+  getStandingVerifyUrl,
+} from '../lib/ambassadorSystem';
 
 type Tab = 'overview' | 'badges' | 'network' | 'k2c' | 'stories' | 'vendor';
 
@@ -116,14 +127,33 @@ export function ReferralDashboard() {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<Tab>('overview');
 
-  // Production: fetch from DB. Demo: empty until connected.
-  const stats = { totalReferrals: 0, converted: 0, totalRewardsEarned: 0, monthsFreeEarned: 0, k2cTotalDonated: 0, networkRank: 0, referralPoints: 0 };
-  const referrals: any[] = [];
-  const badges: ComplianceBadge[] = [];
-  const network: any[] = [];
-  const k2cDonations: any[] = [];
-  const vendorRipples: any[] = [];
-  const heroStories: any[] = [];
+  const [copied, setCopied] = useState(false);
+
+  // Demo: wire rich demo data. Production: fetch from DB (empty until connected).
+  const stats = isDemoMode
+    ? { totalReferrals: demoReferralStats.totalReferrals, converted: demoReferralStats.converted, totalRewardsEarned: demoReferralStats.totalRewardsEarned, monthsFreeEarned: demoReferralStats.monthsFreeEarned, k2cTotalDonated: demoReferralStats.k2cTotalDonated, networkRank: demoReferralStats.networkRank, referralPoints: demoReferralStats.referralPoints }
+    : { totalReferrals: 0, converted: 0, totalRewardsEarned: 0, monthsFreeEarned: 0, k2cTotalDonated: 0, networkRank: 0, referralPoints: 0 };
+  const referrals = isDemoMode ? demoReferrals : ([] as any[]);
+  const badges = isDemoMode ? demoBadges : ([] as ComplianceBadge[]);
+  const network = isDemoMode ? demoNetworkScores : ([] as any[]);
+  const k2cDonations = isDemoMode ? demoK2CDonations : ([] as any[]);
+  const vendorRipples = isDemoMode ? demoVendorRipples : ([] as any[]);
+  const heroStories = isDemoMode ? demoHeroStories : ([] as any[]);
+
+  const referralCode = isDemoMode ? demoReferral.referralCode : '';
+  const referralUrl = isDemoMode ? getStandingVerifyUrl(demoReferral.referralCode) : '';
+
+  const handleCopyReferralLink = () => {
+    if (!referralUrl && !referralCode) {
+      toast.info('No referral code generated yet');
+      return;
+    }
+    navigator.clipboard.writeText(referralUrl || referralCode).then(() => {
+      setCopied(true);
+      toast.success(t('referral.linkCopied'));
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
 
   const handleGenerateCode = (mechanic: ReferralMechanic) => {
     const code = generateReferralCode('arthur', mechanic);
@@ -181,6 +211,51 @@ export function ReferralDashboard() {
             );
           })}
         </div>
+
+        {/* ── SHARE YOUR REFERRAL ─────────────────── */}
+        {activeTab === 'overview' && (
+          <div className="bg-white rounded-xl shadow-sm p-5 border border-gray-100">
+            <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">Your referral link</p>
+            <div className="flex items-center gap-2 mb-4">
+              <div className="flex-1 bg-gray-50 rounded-lg px-4 py-2.5 font-mono text-sm text-[#1e4d6b] truncate border border-gray-200">
+                {referralUrl || 'getevidly.com/verify/...'}
+              </div>
+              <button
+                onClick={handleCopyReferralLink}
+                className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer"
+                style={{ backgroundColor: '#1e4d6b', color: '#fff' }}
+              >
+                {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                {copied ? 'Copied' : 'Copy'}
+              </button>
+            </div>
+            <div className="flex gap-2">
+              <a
+                href={generateLinkedInShareUrl(referralCode, SHARE_MESSAGES.linkedin)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold border border-gray-200 text-[#1E2D4D] hover:bg-gray-50 transition-colors"
+                style={{ textDecoration: 'none' }}
+              >
+                <Linkedin className="h-3.5 w-3.5" /> LinkedIn
+              </a>
+              <a
+                href={generateEmailShareHref('My Kitchen', referralCode, SHARE_MESSAGES.email_body)}
+                className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold border border-gray-200 text-[#1E2D4D] hover:bg-gray-50 transition-colors"
+                style={{ textDecoration: 'none' }}
+              >
+                <Mail className="h-3.5 w-3.5" /> Email
+              </a>
+              <a
+                href={generateSmsShareHref('My Kitchen', referralCode, SHARE_MESSAGES.sms)}
+                className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold border border-gray-200 text-[#1E2D4D] hover:bg-gray-50 transition-colors"
+                style={{ textDecoration: 'none' }}
+              >
+                <MessageSquare className="h-3.5 w-3.5" /> Text
+              </a>
+            </div>
+          </div>
+        )}
 
         {/* ── OVERVIEW TAB ─────────────────────────── */}
         {activeTab === 'overview' && (

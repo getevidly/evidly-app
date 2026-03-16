@@ -263,7 +263,24 @@ export function Settings() {
         <div className="flex-1 bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
           {activeTab === 'profile' && (
             <div className="space-y-6">
-              <h3 className="text-xl font-bold text-gray-900">{t('settings.profileSettings')}</h3>
+              <div className="flex items-center gap-3">
+                <h3 className="text-xl font-bold text-gray-900">{t('settings.profileSettings')}</h3>
+                {isDemoMode && (
+                  <span
+                    style={{
+                      background: '#d4af37',
+                      color: '#FAF7F0',
+                      padding: '3px 10px',
+                      borderRadius: 4,
+                      fontSize: 11,
+                      fontWeight: 700,
+                    }}
+                    title="You've referred 3+ active EvidLY kitchens"
+                  >
+                    ★ Ambassador
+                  </span>
+                )}
+              </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">{t('settings.fullName')}</label>
                 <input

@@ -23,6 +23,11 @@ import { AnnualVendorSpendWidget, ServicesDueSoonWidget } from './VendorServiceW
 import { PortfolioExpenseSummary } from '../services/PortfolioExpenseSummary';
 import { PortfolioRiskCard } from './PortfolioRiskCard';
 import { IRRProgressCard } from './IRRProgressCard';
+import { StandingCardModal } from '../ambassador/StandingCardModal';
+import { MilestoneCelebrationModal } from '../ambassador/MilestoneCelebrationModal';
+import { useMilestoneCheck } from '../../hooks/useMilestoneCheck';
+import { demoStandingCard } from '../../data/ambassadorDemoData';
+import type { StandingCardData } from '../../lib/ambassadorSystem';
 import {
   ComplianceTrendWidget,
   TopRiskItemsWidget,
@@ -72,6 +77,13 @@ export default function OwnerOperatorDashboard() {
   const navigate = useNavigate();
   const { isDemoMode, firstName: demoFirstName } = useDemo();
   const [showInviteModal, setShowInviteModal] = useState(false);
+  const [showStandingCard, setShowStandingCard] = useState(false);
+  const { pendingMilestone, dismissMilestone } = useMilestoneCheck();
+
+  // Standing card data: demo uses demoStandingCard, production would assemble from real data
+  const standingCardData: StandingCardData = isDemoMode
+    ? demoStandingCard
+    : { orgName: profile?.full_name || 'My Kitchen', city: 'California', isAmbassador: false, daysActive: 0, tempLogs: 0, checklistsCompleted: 0, kecStatus: 'Not Started', documentsOnFile: 0, referralCode: '' };
   const [activeTab, setActiveTab] = useState<'overview' | 'insights'>('overview');
   const { user, profile } = useAuth();
   const { userRole } = useRole();
@@ -359,6 +371,56 @@ export default function OwnerOperatorDashboard() {
         </div>
       )}
 
+      {/* Share My Standing CTA */}
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '12px 16px',
+            background: '#FFFFFF',
+            border: '1px solid #D1D9E6',
+            borderRadius: 10,
+            boxShadow: '0 1px 3px rgba(11,22,40,.06)',
+          }}
+        >
+          <span style={{ fontSize: 13, color: '#3D5068', fontFamily: "'DM Sans', sans-serif" }}>
+            Know another kitchen operator in California?
+          </span>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button
+              onClick={() => setShowStandingCard(true)}
+              style={{
+                fontSize: 12,
+                fontWeight: 600,
+                color: '#fff',
+                background: '#1E2D4D',
+                border: 'none',
+                borderRadius: 6,
+                padding: '6px 14px',
+                cursor: 'pointer',
+              }}
+            >
+              Share My Standing
+            </button>
+            <Link
+              to="/referrals"
+              style={{
+                fontSize: 12,
+                fontWeight: 600,
+                color: '#A08C5A',
+                textDecoration: 'none',
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              Share EvidLY →
+            </Link>
+          </div>
+        </div>
+      </div>
+
       {/* K2C Widget */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
         <K2CWidget onInviteClick={() => setShowInviteModal(true)} />
@@ -381,6 +443,17 @@ export default function OwnerOperatorDashboard() {
         isOpen={showInviteModal}
         onClose={() => setShowInviteModal(false)}
         referralCode={isDemoMode ? demoReferral.referralCode : ''}
+      />
+
+      <StandingCardModal
+        isOpen={showStandingCard}
+        onClose={() => setShowStandingCard(false)}
+        data={standingCardData}
+      />
+
+      <MilestoneCelebrationModal
+        milestone={pendingMilestone}
+        onDismiss={dismissMilestone}
       />
 
       </>}
