@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams, Link, Navigate } from 'react-router-dom';
 import { useRole } from '../contexts/RoleContext';
 import { SignalAlertBanner } from '../components/SignalAlertBanner';
 import { useSignalNotifications } from '../hooks/useSignalNotifications';
@@ -37,6 +37,8 @@ function RoleDashboard({ userRole }: { userRole: string }) {
       return <KitchenManagerDashboard />;
     case 'kitchen_staff':
       return <KitchenStaffTaskList />;
+    case 'platform_admin':
+      return <Navigate to="/admin" replace />;
     default:
       return <OwnerOperatorDashboard />;
   }
