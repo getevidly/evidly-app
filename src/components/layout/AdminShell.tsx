@@ -237,7 +237,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
           <button
             onClick={async () => {
               await signOut();
-              navigate('/login');
+              navigate('/admin-login');
             }}
             style={{
               display: 'flex',
