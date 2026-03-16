@@ -30,7 +30,12 @@ export function TodaysOperations({ tasks, navigate, maxVisible = 6 }: TodaysOper
       <div>
         {tasks.length === 0 && (
           <div className="px-4 py-6 text-center">
-            <p className="text-sm text-gray-500">No tasks assigned for today.</p>
+            <p className="text-[13px] font-medium" style={{ color: BODY_TEXT, margin: '0 0 4px' }}>
+              No operations logged today yet
+            </p>
+            <p className="text-xs" style={{ color: '#6B7F96', margin: 0, maxWidth: 340, marginLeft: 'auto', marginRight: 'auto' }}>
+              Your team's temperature logs, checklist completions, and corrective actions will appear here throughout the day.
+            </p>
           </div>
         )}
         {visible.map(task => {

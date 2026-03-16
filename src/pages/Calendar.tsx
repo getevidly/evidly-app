@@ -1859,7 +1859,12 @@ export function Calendar() {
               </h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {upcomingEvents.length === 0 && (
-                  <p style={{ fontSize: '13px', color: '#9ca3af', margin: 0, fontFamily: "'DM Sans', sans-serif" }}>{tr('pages.calendar.noUpcomingEvents')}</p>
+                  <div style={{ padding: '4px 0' }}>
+                    <p style={{ fontSize: '13px', color: '#9ca3af', margin: '0 0 6px', fontFamily: "'DM Sans', sans-serif" }}>{tr('pages.calendar.noUpcomingEvents')}</p>
+                    <p style={{ fontSize: '12px', color: '#9ca3af', margin: 0, fontFamily: "'DM Sans', sans-serif", lineHeight: 1.5 }}>
+                      EvidLY adds events automatically when services are scheduled, inspections are predicted, or corrective actions are due.
+                    </p>
+                  </div>
                 )}
                 {upcomingEvents.map(event => {
                   const t = typeMap[event.type];

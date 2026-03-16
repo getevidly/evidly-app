@@ -363,7 +363,18 @@ export default function MockInspection() {
         </button>
       </div>
 
-      {/* Past sessions (live mode only) */}
+      {/* Past sessions */}
+      {!isDemoMode && pastSessions.length === 0 && (
+        <div className="bg-white rounded-xl border border-[#b8d4e8] p-4 sm:p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <History className="h-5 w-5 text-gray-500" />
+            <h3 className="text-sm font-bold text-gray-900">Past Mock Inspections</h3>
+          </div>
+          <p style={{ fontSize: 13, color: '#6B7F96', textAlign: 'center', margin: '8px 0', padding: '8px 0' }}>
+            No past sessions yet. Complete your first mock inspection above to see your history here.
+          </p>
+        </div>
+      )}
       {!isDemoMode && pastSessions.length > 0 && (
         <div className="bg-white rounded-xl border border-[#b8d4e8] p-4 sm:p-5">
           <div className="flex items-center gap-2 mb-3">

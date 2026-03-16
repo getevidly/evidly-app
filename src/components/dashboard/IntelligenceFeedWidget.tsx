@@ -347,9 +347,22 @@ export function IntelligenceFeedWidget() {
             <ChevronRight size={14} style={{ color: GOLD }} />
           </div>
         </button>
-        <div className="px-4 py-6 text-center">
+        <div className="px-4 py-5 text-center">
           <Zap size={20} className="mx-auto mb-2" style={{ color: '#D1D5DB' }} />
-          <p className="text-xs" style={{ color: MUTED }}>No new intelligence updates</p>
+          <p className="text-[13px] font-medium mb-1" style={{ color: NAVY }}>
+            Your intelligence feed is active
+          </p>
+          <p className="text-xs mb-3" style={{ color: MUTED, maxWidth: 320, margin: '0 auto 12px' }}>
+            EvidLY monitors FDA recalls, CalCode updates, outbreak alerts, and regulatory changes affecting your county. Signals appear here when something relevant happens.
+          </p>
+          <button
+            type="button"
+            onClick={() => navigate('/insights/intelligence')}
+            className="text-xs font-semibold"
+            style={{ color: GOLD, background: 'none', border: 'none', cursor: 'pointer' }}
+          >
+            View intelligence hub →
+          </button>
         </div>
       </div>
     );

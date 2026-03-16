@@ -507,10 +507,32 @@ export function InsuranceRisk() {
       {!isDemoMode && (
         <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
           <ShieldAlert className="h-12 w-12 mx-auto mb-4" style={{ color: '#9ca3af' }} />
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">No Risk Data Available</h2>
-          <p className="text-sm text-gray-500 max-w-md mx-auto">
-            Add your equipment and documents to see your risk profile.
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">Your insurance risk profile builds as you use EvidLY</h2>
+          <p className="text-sm text-gray-500 max-w-md mx-auto mb-6">
+            Add your service records and compliance documents to see how carriers evaluate your operations. EvidLY tracks fire suppression, hood cleaning, and food safety documentation to identify coverage gaps before they become claim denials.
           </p>
+          <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <a
+              href="/documents"
+              style={{
+                display: 'inline-block', padding: '8px 16px', borderRadius: '8px',
+                backgroundColor: '#1e4d6b', color: '#fff', fontSize: '13px',
+                fontWeight: 600, textDecoration: 'none',
+              }}
+            >
+              Upload documents
+            </a>
+            <a
+              href="/vendors"
+              style={{
+                display: 'inline-block', padding: '8px 16px', borderRadius: '8px',
+                backgroundColor: '#fff', color: '#1E2D4D', fontSize: '13px',
+                fontWeight: 600, textDecoration: 'none', border: '1px solid #D1D9E6',
+              }}
+            >
+              Add a vendor
+            </a>
+          </div>
         </div>
       )}
 

@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams, Link, Navigate } from 'react-router-dom';
 import { useRole } from '../contexts/RoleContext';
+import { useAuth } from '../contexts/AuthContext';
+import { useDemo } from '../contexts/DemoContext';
 import { SignalAlertBanner } from '../components/SignalAlertBanner';
 import { useSignalNotifications } from '../hooks/useSignalNotifications';
 import { useActiveBanner } from '../hooks/useActiveBanner';
@@ -14,6 +16,7 @@ import KitchenStaffTaskList from '../components/dashboard/KitchenStaffTaskList';
 import FacilitiesDashboardNew from '../components/dashboard/FacilitiesDashboardNew';
 import { DashboardToday } from '../components/dashboard/DashboardToday';
 import { CopilotBriefingCard } from '../components/copilot/CopilotBriefingCard';
+import { WelcomeModal } from '../components/WelcomeModal';
 import { ErrorState } from '../components/shared/PageStates';
 import { X } from 'lucide-react';
 
@@ -125,9 +128,24 @@ function IntelligenceBanner() {
 
 export function Dashboard() {
   const { userRole } = useRole();
+  const { user, profile } = useAuth();
+  const { isDemoMode, firstName: demoFirstName } = useDemo();
   const [searchParams] = useSearchParams();
   const tab = searchParams.get('tab') || 'overview';
   const [pageError, setPageError] = useState<string | null>(null);
+  const [showWelcome, setShowWelcome] = useState(false);
+
+  // Show WelcomeModal exactly once per user (first login)
+  useEffect(() => {
+    const seen = localStorage.getItem('evidly_welcome_seen');
+    if (!seen) {
+      setShowWelcome(true);
+    }
+  }, []);
+
+  const welcomeFirstName = isDemoMode
+    ? (demoFirstName || 'there')
+    : (profile?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'there');
 
   if (pageError) {
     return <ErrorState error={pageError} onRetry={() => { setPageError(null); }} />;
@@ -140,6 +158,12 @@ export function Dashboard() {
 
   return (
     <div>
+      {showWelcome && (
+        <WelcomeModal
+          firstName={welcomeFirstName}
+          onDismiss={() => setShowWelcome(false)}
+        />
+      )}
       <SignalAlertBanner />
       <OutbreakBanner />
       <IntelligenceBanner />

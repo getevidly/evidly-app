@@ -24,7 +24,45 @@ export function IRRProgressCard() {
   const navigate = useNavigate();
   const { submission, isLoading } = useIRRSubmission();
 
-  if (isLoading || !submission) return null;
+  if (isLoading) return null;
+
+  if (!submission) {
+    return (
+      <div
+        style={{
+          background: '#F8F9FB',
+          border: '1px dashed #D1D9E6',
+          borderRadius: 12,
+          padding: '16px 20px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 16,
+        }}
+      >
+        <div>
+          <p style={{ fontSize: 13, fontWeight: 500, color: '#0B1628', margin: '0 0 4px' }}>
+            See how your readiness improves over time
+          </p>
+          <p style={{ fontSize: 12, color: '#6B7F96', margin: 0 }}>
+            Complete the free Operations Check to unlock your personalized readiness report.
+          </p>
+        </div>
+        <a
+          href="https://www.getevidly.com/operations-check"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            fontSize: 12, fontWeight: 600,
+            color: '#A08C5A', textDecoration: 'none',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          Get your free report →
+        </a>
+      </div>
+    );
+  }
 
   const posture = POSTURE_LABELS[submission.posture];
   const dateStr = new Date(submission.created_at).toLocaleDateString('en-US', {

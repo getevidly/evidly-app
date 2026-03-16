@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { AlertTriangle } from 'lucide-react';
 import { useDemo } from '../../contexts/DemoContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -169,12 +169,46 @@ export default function OwnerOperatorDashboard() {
 
       {/* Portfolio Health */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
-        <MetricCardRow cards={[
-          { label: 'Locations', value: locations.length, onClick: () => navigate('/locations') },
-          { label: 'Open CAs', value: criticalCAs, color: criticalCAs > 0 ? '#dc2626' : undefined, onClick: () => navigate('/corrective-actions') },
-          { label: 'Service Gaps', value: vendorSummary?.overdue ?? 0, color: (vendorSummary?.overdue ?? 0) > 0 ? '#d97706' : undefined, onClick: () => navigate('/vendors') },
-          { label: 'Annual Spend', value: fmtSpend(vendorSummary?.totalAnnualSpend ?? 0), onClick: () => navigate('/vendors') },
-        ]} />
+        {locations.length === 0 && criticalCAs === 0 && (vendorSummary?.overdue ?? 0) === 0 && (vendorSummary?.totalAnnualSpend ?? 0) === 0 && !isDemoMode ? (
+          <div
+            className="rounded-xl text-center"
+            style={{
+              background: '#F5F0E8',
+              border: '0.5px solid #A08C5A',
+              padding: '20px 24px',
+            }}
+          >
+            <p style={{ fontSize: 15, fontWeight: 500, color: '#1E2D4D', margin: '0 0 8px' }}>
+              Your compliance picture builds as you use EvidLY
+            </p>
+            <p style={{ fontSize: 13, color: '#6B7280', margin: '0 0 16px' }}>
+              Log your first temperature, complete a checklist, or add a vendor to see your standing update in real time.
+            </p>
+            <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
+              <Link
+                to="/temp-logs"
+                className="inline-block rounded-lg text-sm font-semibold transition-colors"
+                style={{ padding: '8px 16px', backgroundColor: '#A08C5A', color: '#FFFFFF' }}
+              >
+                Log a temperature
+              </Link>
+              <Link
+                to="/checklists"
+                className="inline-block rounded-lg text-sm font-semibold transition-colors"
+                style={{ padding: '8px 16px', backgroundColor: '#FFFFFF', color: '#1E2D4D', border: '1px solid #D1D9E6' }}
+              >
+                Start a checklist
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <MetricCardRow cards={[
+            { label: 'Locations', value: locations.length, onClick: () => navigate('/locations') },
+            { label: 'Open CAs', value: criticalCAs, color: criticalCAs > 0 ? '#dc2626' : undefined, onClick: () => navigate('/corrective-actions') },
+            { label: 'Service Gaps', value: vendorSummary?.overdue ?? 0, color: (vendorSummary?.overdue ?? 0) > 0 ? '#d97706' : undefined, onClick: () => navigate('/vendors') },
+            { label: 'Annual Spend', value: fmtSpend(vendorSummary?.totalAnnualSpend ?? 0), onClick: () => navigate('/vendors') },
+          ]} />
+        )}
       </div>
 
       {/* Tab Bar (owner_operator + executive only) */}
@@ -239,11 +273,33 @@ export default function OwnerOperatorDashboard() {
 
       {/* Team Tasks Summary */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
-        <MetricCardRow cards={[
-          { label: 'Checklists', value: `${checklistsDone}/${checklistTasks.length}`, onClick: () => navigate('/checklists') },
-          { label: 'Temps Logged', value: tempsLogged, onClick: () => navigate('/temp-logs') },
-          { label: 'CAs Overdue', value: overdueCAs, color: overdueCAs > 0 ? '#dc2626' : undefined, onClick: () => navigate('/corrective-actions') },
-        ]} />
+        {todaysTasks.length === 0 && !isDemoMode ? (
+          <div
+            className="bg-white rounded-lg"
+            style={{ border: '1px solid #e5e7eb', padding: '16px 20px', textAlign: 'center' }}
+          >
+            <p style={{ fontSize: 13, fontWeight: 500, color: '#0B1628', margin: '0 0 4px' }}>
+              No tasks assigned yet
+            </p>
+            <p style={{ fontSize: 12, color: '#6B7F96', margin: '0 0 12px' }}>
+              Invite your team and assign roles to see their daily task completion here.
+            </p>
+            <button
+              type="button"
+              onClick={() => navigate('/team')}
+              className="text-xs font-semibold"
+              style={{ color: '#A08C5A', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+            >
+              Invite team →
+            </button>
+          </div>
+        ) : (
+          <MetricCardRow cards={[
+            { label: 'Checklists', value: `${checklistsDone}/${checklistTasks.length}`, onClick: () => navigate('/checklists') },
+            { label: 'Temps Logged', value: tempsLogged, onClick: () => navigate('/temp-logs') },
+            { label: 'CAs Overdue', value: overdueCAs, color: overdueCAs > 0 ? '#dc2626' : undefined, onClick: () => navigate('/corrective-actions') },
+          ]} />
+        )}
       </div>
 
       {/* Today's Tasks */}

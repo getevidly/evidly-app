@@ -87,6 +87,42 @@ export function WeeklyDigest() {
   const { isDemoMode, companyName, userName } = useDemo();
   const { profile } = useAuth();
 
+  // Live mode with no data — show guided empty state
+  if (!isDemoMode) {
+    return (
+      <div style={{ fontFamily: "'DM Sans', 'Inter', system-ui, sans-serif" }}>
+        <div style={{ marginBottom: '24px' }}>
+          <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#1e4d6b', margin: 0 }}>Weekly Digest</h1>
+          <p style={{ fontSize: '14px', color: '#6b7280', margin: '4px 0 0' }}>
+            Automated weekly compliance summary delivered to your inbox
+          </p>
+        </div>
+        <div style={{ textAlign: 'center', padding: '60px 20px' }}>
+          <p style={{ fontSize: 16, fontWeight: 500, color: '#1E2D4D', margin: '0 0 8px' }}>
+            Your weekly digest is being prepared
+          </p>
+          <p style={{
+            fontSize: 13, color: '#6B7F96', margin: '0 0 20px',
+            maxWidth: 400, marginLeft: 'auto', marginRight: 'auto',
+          }}>
+            EvidLY generates your weekly intelligence summary every Monday morning.
+            Check back then — or start building your compliance record now.
+          </p>
+          <a
+            href="/dashboard"
+            style={{
+              display: 'inline-block', padding: '10px 20px', borderRadius: '8px',
+              backgroundColor: '#1e4d6b', color: '#fff', fontSize: '13px',
+              fontWeight: 600, textDecoration: 'none',
+            }}
+          >
+            Go to Dashboard
+          </a>
+        </div>
+      </div>
+    );
+  }
+
   const defaultEmail = isDemoMode ? 'james.wilson@cleaningprosplus.com' : (profile?.full_name ? '' : '');
   const orgName = isDemoMode ? companyName : (profile?.organization_id || 'Your Organization');
 

@@ -46,6 +46,9 @@ const STATUS_CONFIG = {
 } as const;
 
 export function ConfidenceBanner({ status, headline, locationCount, attentionCount }: ConfidenceBannerProps) {
+  // Hide entirely when there's no meaningful data (new user with 0 locations)
+  if (locationCount === 0) return null;
+
   const config = STATUS_CONFIG[status];
   const { Icon } = config;
 
