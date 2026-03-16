@@ -7,6 +7,7 @@
  */
 import { ReactNode } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { LogOut } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useEvidlyPermissions } from '../../hooks/useEvidlyPermissions';
 
@@ -147,7 +148,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
           left: 0,
           bottom: 0,
           zIndex: 50,
-          overflowY: 'auto',
+          overflow: 'hidden',
         }}
       >
         {/* Logo */}
@@ -225,41 +226,38 @@ export function AdminShell({ children }: { children: ReactNode }) {
           ))}
         </nav>
 
-        {/* Footer */}
-        <div style={{ borderTop: `1px solid ${DIVIDER}`, padding: '12px 16px' }}>
+        {/* Footer — always visible, never scrolls */}
+        <div style={{ borderTop: `1px solid ${DIVIDER}`, padding: '12px 16px', flexShrink: 0 }}>
           {/* Status indicator */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
             <div style={{ width: 6, height: 6, borderRadius: '50%', background: STATUS_GREEN }} />
             <span style={{ fontSize: 11, color: NAV_INACTIVE }}>Systems Operational</span>
           </div>
-          {/* User email */}
-          <div
-            style={{
-              fontSize: 12,
-              color: EMAIL_COLOR,
-              marginBottom: 8,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {user?.email || 'admin'}
-          </div>
+          {/* Sign Out */}
           <button
-            onClick={() => signOut()}
+            onClick={async () => {
+              await signOut();
+              navigate('/login');
+            }}
             style={{
-              display: 'block',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
               width: '100%',
-              padding: '6px 0',
-              fontSize: 12,
-              fontWeight: 700,
-              color: GOLD,
+              padding: '7px 0',
+              fontSize: 13,
+              fontWeight: 500,
+              color: '#E57373',
               background: 'none',
               border: 'none',
               cursor: 'pointer',
               textAlign: 'left',
+              transition: 'color 0.15s',
             }}
+            onMouseEnter={e => { e.currentTarget.style.color = '#EF5350'; }}
+            onMouseLeave={e => { e.currentTarget.style.color = '#E57373'; }}
           >
+            <LogOut size={15} />
             Sign Out
           </button>
         </div>

@@ -1,0 +1,1129 @@
+# PROMPT: Marketing & Sales Superpowers
+
+Build comprehensive marketing and sales tools to help CPP/Filta grow their customer base and close more deals.
+
+**IMPORTANT:**
+- Build HoodOps pages in `apps/web-vendor/` (the HoodOps vendor app)
+- Deploy HoodOps to web-vendor.vercel.app
+- Company name is "HoodOps" (not "HoodOps PRO")
+- NO demo/fake data - use real API hooks with empty states
+- All data from Supabase via stubbed hooks
+- All cards center-aligned
+
+---
+
+## Part 1: Sales Pipeline & CRM
+
+### 1.1 Database Schema
+
+```sql
+-- Leads table
+CREATE TABLE leads (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  vendor_id UUID NOT NULL REFERENCES vendors(id),
+  
+  -- Lead info
+  business_name TEXT NOT NULL,
+  contact_name TEXT,
+  contact_email TEXT,
+  contact_phone TEXT,
+  address TEXT,
+  city TEXT,
+  state TEXT,
+  zip TEXT,
+  
+  -- Classification
+  lead_source TEXT NOT NULL, -- 'ai_estimate', 'referral', 'website', 'cold_call', 'door_knock', 'violation_outreach', 'google_ads', 'facebook', 'yelp', 'thumbtack', 'homeadvisor', 'trade_show', 'other'
+  lead_type TEXT DEFAULT 'prospect', -- 'prospect', 'qualified', 'opportunity', 'customer', 'lost'
+  industry TEXT, -- 'restaurant', 'hotel', 'hospital', 'school', 'catering', 'food_truck', 'other'
+  kitchen_type TEXT, -- 'full_service', 'fast_food', 'ghost_kitchen', 'commissary', 'institutional'
+  estimated_value DECIMAL(10,2),
+  estimated_monthly_value DECIMAL(10,2),
+  
+  -- Pipeline
+  pipeline_stage TEXT DEFAULT 'new', -- 'new', 'contacted', 'qualified', 'proposal_sent', 'negotiating', 'won', 'lost'
+  probability INTEGER DEFAULT 10, -- Win probability %
+  expected_close_date DATE,
+  
+  -- Assignment
+  assigned_to UUID REFERENCES employees(id),
+  
+  -- Tracking
+  last_contact_at TIMESTAMPTZ,
+  next_followup_at TIMESTAMPTZ,
+  followup_count INTEGER DEFAULT 0,
+  
+  -- If converted
+  organization_id UUID REFERENCES organizations(id),
+  first_job_id UUID REFERENCES jobs(id),
+  converted_at TIMESTAMPTZ,
+  
+  -- If lost
+  lost_reason TEXT,
+  lost_at TIMESTAMPTZ,
+  
+  -- Source tracking
+  referral_id UUID REFERENCES referrals(id),
+  service_request_id UUID REFERENCES service_requests(id),
+  campaign_id UUID REFERENCES marketing_campaigns(id),
+  utm_source TEXT,
+  utm_medium TEXT,
+  utm_campaign TEXT,
+  
+  notes TEXT,
+  tags TEXT[],
+  
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_leads_stage ON leads(pipeline_stage);
+CREATE INDEX idx_leads_assigned ON leads(assigned_to);
+CREATE INDEX idx_leads_source ON leads(lead_source);
+
+-- Lead activities
+CREATE TABLE lead_activities (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  vendor_id UUID NOT NULL REFERENCES vendors(id),
+  lead_id UUID NOT NULL REFERENCES leads(id) ON DELETE CASCADE,
+  
+  activity_type TEXT NOT NULL, -- 'call', 'email', 'meeting', 'site_visit', 'estimate_sent', 'proposal_sent', 'follow_up', 'note', 'stage_change'
+  description TEXT,
+  outcome TEXT, -- 'connected', 'voicemail', 'no_answer', 'scheduled', 'not_interested', 'call_back'
+  
+  -- For calls
+  call_duration_seconds INTEGER,
+  
+  -- For emails
+  email_subject TEXT,
+  email_opened BOOLEAN,
+  email_clicked BOOLEAN,
+  
+  -- For meetings/site visits
+  meeting_date TIMESTAMPTZ,
+  meeting_location TEXT,
+  
+  performed_by UUID REFERENCES employees(id),
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Sales goals
+CREATE TABLE sales_goals (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  vendor_id UUID NOT NULL REFERENCES vendors(id),
+  employee_id UUID REFERENCES employees(id), -- NULL = company-wide
+  
+  period_type TEXT NOT NULL, -- 'monthly', 'quarterly', 'yearly'
+  period_start DATE NOT NULL,
+  period_end DATE NOT NULL,
+  
+  -- Targets
+  revenue_target DECIMAL(12,2),
+  new_customers_target INTEGER,
+  leads_target INTEGER,
+  jobs_target INTEGER,
+  
+  -- Actual
+  revenue_actual DECIMAL(12,2) DEFAULT 0,
+  new_customers_actual INTEGER DEFAULT 0,
+  leads_actual INTEGER DEFAULT 0,
+  jobs_actual INTEGER DEFAULT 0,
+  
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+```
+
+### 1.2 Sales Pipeline Page
+
+File: apps/web-vendor/src/pages/sales/SalesPipelinePage.tsx
+
+Route: /sales/pipeline
+
+**Kanban view:**
+- Columns: New → Contacted → Qualified → Proposal Sent → Negotiating → Won/Lost
+- Drag-drop leads between stages
+- Lead cards show:
+  - Business name
+  - Contact info
+  - Estimated value
+  - Days in stage
+  - Next followup indicator
+  - Source badge
+
+**Stats row (center-aligned):**
+- Total pipeline value
+- Leads this month
+- Conversion rate
+- Avg days to close
+
+**Filters:**
+- Source
+- Assigned to
+- Date range
+- Industry
+
+### 1.3 Lead Detail Page
+
+File: apps/web-vendor/src/pages/sales/LeadDetailPage.tsx
+
+Route: /sales/leads/:id
+
+- Lead info card (editable)
+- Pipeline stage selector
+- Activity timeline
+- Quick actions:
+  - Log call
+  - Send email
+  - Schedule meeting
+  - Create estimate
+  - Convert to customer
+  - Mark as lost
+- Upcoming tasks/followups
+- If from AI Estimate: show AI data
+- If from referral: show referrer info
+
+### 1.4 Sales Dashboard
+
+File: apps/web-vendor/src/pages/sales/SalesDashboardPage.tsx
+
+Route: /sales
+
+- Stats row (center-aligned):
+  - Revenue this month
+  - Goal progress (bar)
+  - New leads
+  - Conversion rate
+- Pipeline summary chart (funnel)
+- Revenue by source (pie)
+- Recent activity feed
+- Top leads (by value)
+- Overdue followups (red alert)
+- Leaderboard (if multiple salespeople)
+
+---
+
+## Part 2: Marketing Campaigns
+
+### 2.1 Database Schema
+
+```sql
+CREATE TABLE marketing_campaigns (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  vendor_id UUID NOT NULL REFERENCES vendors(id),
+  
+  name TEXT NOT NULL,
+  description TEXT,
+  campaign_type TEXT NOT NULL, -- 'email', 'sms', 'direct_mail', 'door_knock', 'cold_call', 'digital_ads', 'social', 'event', 'violation_outreach'
+  
+  -- Targeting
+  target_audience TEXT, -- 'all_leads', 'past_customers', 'lapsed_customers', 'geographic', 'industry', 'violation_list'
+  target_criteria JSONB, -- Filters for targeting
+  
+  -- Schedule
+  status TEXT DEFAULT 'draft', -- 'draft', 'scheduled', 'active', 'paused', 'completed'
+  starts_at TIMESTAMPTZ,
+  ends_at TIMESTAMPTZ,
+  
+  -- Content
+  subject_line TEXT, -- For email
+  message_body TEXT,
+  template_id UUID,
+  
+  -- Budget
+  budget DECIMAL(10,2),
+  spent DECIMAL(10,2) DEFAULT 0,
+  
+  -- Metrics
+  sent_count INTEGER DEFAULT 0,
+  delivered_count INTEGER DEFAULT 0,
+  opened_count INTEGER DEFAULT 0,
+  clicked_count INTEGER DEFAULT 0,
+  responded_count INTEGER DEFAULT 0,
+  leads_generated INTEGER DEFAULT 0,
+  revenue_attributed DECIMAL(12,2) DEFAULT 0,
+  
+  created_by UUID REFERENCES employees(id),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Violation outreach tracking
+CREATE TABLE violation_outreach (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  vendor_id UUID NOT NULL REFERENCES vendors(id),
+  campaign_id UUID REFERENCES marketing_campaigns(id),
+  
+  -- Violation source
+  source TEXT NOT NULL, -- 'health_dept', 'fire_marshal', 'yelp_reviews', 'google_reviews', 'manual'
+  source_url TEXT,
+  violation_date DATE,
+  violation_type TEXT, -- 'hood_cleaning', 'fire_suppression', 'grease_buildup', 'general_cleanliness'
+  
+  -- Business info (scraped or entered)
+  business_name TEXT NOT NULL,
+  address TEXT,
+  city TEXT,
+  state TEXT,
+  zip TEXT,
+  phone TEXT,
+  email TEXT,
+  
+  -- Outreach
+  status TEXT DEFAULT 'pending', -- 'pending', 'contacted', 'interested', 'not_interested', 'converted', 'invalid'
+  outreach_method TEXT, -- 'phone', 'email', 'mail', 'door_knock'
+  outreach_count INTEGER DEFAULT 0,
+  last_outreach_at TIMESTAMPTZ,
+  
+  -- If converted
+  lead_id UUID REFERENCES leads(id),
+  organization_id UUID REFERENCES organizations(id),
+  
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+```
+
+### 2.2 Campaigns Page
+
+File: apps/web-vendor/src/pages/marketing/CampaignsPage.tsx
+
+Route: /marketing/campaigns
+
+- "Create Campaign" button
+- Stats row (center-aligned):
+  - Active campaigns
+  - Total sent
+  - Avg open rate
+  - Leads generated
+- Campaign cards:
+  - Name, type, status
+  - Date range
+  - Metrics (sent, opened, leads)
+  - ROI
+- Filter by type, status
+
+### 2.3 Campaign Builder
+
+File: apps/web-vendor/src/pages/marketing/CampaignBuilderPage.tsx
+
+Route: /marketing/campaigns/new
+
+Steps:
+1. **Campaign Type** - Email, SMS, Direct Mail, Door Knock, Cold Call, Violation Outreach
+2. **Audience** - Select target (all leads, past customers, geographic, industry, upload list)
+3. **Content** - Write message or select template
+4. **Schedule** - Send now or schedule
+5. **Review & Launch**
+
+### 2.4 Violation Outreach Page
+
+File: apps/web-vendor/src/pages/marketing/ViolationOutreachPage.tsx
+
+Route: /marketing/violations
+
+**The killer feature - target restaurants that just got health/fire violations:**
+
+- Stats row (center-aligned):
+  - Violations found
+  - Contacted
+  - Converted
+  - Revenue generated
+- Data sources:
+  - Health department inspection feeds
+  - Fire marshal records
+  - Yelp/Google reviews mentioning cleanliness
+- Table:
+  - Business name
+  - Violation type
+  - Violation date
+  - Location
+  - Status
+  - Actions (Call, Email, Add to campaign)
+- "Import Violations" button (manual CSV upload)
+- "Scan for New Violations" button
+
+### 2.5 Email Templates
+
+File: apps/web-vendor/src/pages/marketing/EmailTemplatesPage.tsx
+
+Route: /marketing/templates
+
+Pre-built templates:
+- New customer welcome
+- Quote follow-up
+- Service reminder
+- Re-engagement (lapsed customer)
+- Violation outreach
+- Referral request
+- Review request
+- Seasonal promotion
+
+Template editor with merge fields:
+- {business_name}
+- {contact_name}
+- {last_service_date}
+- {next_due_date}
+- {quote_amount}
+- {referral_link}
+
+---
+
+## Part 3: Automated Outreach
+
+### 3.1 Database Schema
+
+```sql
+CREATE TABLE outreach_sequences (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  vendor_id UUID NOT NULL REFERENCES vendors(id),
+  
+  name TEXT NOT NULL,
+  description TEXT,
+  trigger_type TEXT NOT NULL, -- 'new_lead', 'estimate_sent', 'job_complete', 'no_response', 'lapsed_customer', 'violation_found'
+  
+  is_active BOOLEAN DEFAULT true,
+  
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE outreach_sequence_steps (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  sequence_id UUID NOT NULL REFERENCES outreach_sequences(id) ON DELETE CASCADE,
+  
+  step_order INTEGER NOT NULL,
+  delay_days INTEGER DEFAULT 0, -- Days after trigger or previous step
+  delay_hours INTEGER DEFAULT 0,
+  
+  action_type TEXT NOT NULL, -- 'email', 'sms', 'task', 'call_reminder'
+  template_id UUID,
+  subject TEXT,
+  message TEXT,
+  
+  -- Conditions
+  skip_if TEXT, -- 'responded', 'converted', 'unsubscribed'
+  
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE outreach_enrollments (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  sequence_id UUID NOT NULL REFERENCES outreach_sequences(id),
+  lead_id UUID REFERENCES leads(id),
+  organization_id UUID REFERENCES organizations(id),
+  
+  status TEXT DEFAULT 'active', -- 'active', 'completed', 'stopped', 'converted'
+  current_step INTEGER DEFAULT 0,
+  
+  enrolled_at TIMESTAMPTZ DEFAULT NOW(),
+  completed_at TIMESTAMPTZ,
+  stopped_reason TEXT
+);
+```
+
+### 3.2 Sequences Page
+
+File: apps/web-vendor/src/pages/marketing/SequencesPage.tsx
+
+Route: /marketing/sequences
+
+Pre-built sequences:
+
+**New Lead Follow-up:**
+1. Day 0: Welcome email
+2. Day 2: SMS "Did you get our quote?"
+3. Day 5: Call task created
+4. Day 7: "Still interested?" email
+5. Day 14: Final follow-up
+
+**Lapsed Customer Re-engagement:**
+1. Day 0: "We miss you" email
+2. Day 7: Special offer email
+3. Day 14: Call task
+4. Day 30: Final outreach
+
+**Post-Job Review Request:**
+1. Day 1: Survey email (links to survey system)
+2. Day 3: If 4+ stars → Google review request
+3. Day 7: Referral request email
+
+### 3.3 Sequence Builder
+
+File: apps/web-vendor/src/pages/marketing/SequenceBuilderPage.tsx
+
+Route: /marketing/sequences/:id
+
+- Visual timeline editor
+- Add steps: Email, SMS, Task, Wait
+- Set delays between steps
+- Set exit conditions
+- Preview sequence
+- Test with sample lead
+
+---
+
+## Part 5: Service Agreements
+
+### 5.1 Database Schema
+
+```sql
+-- Service agreement templates
+CREATE TABLE agreement_templates (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  vendor_id UUID NOT NULL REFERENCES vendors(id),
+  
+  name TEXT NOT NULL,
+  description TEXT,
+  
+  -- Template content
+  content_html TEXT NOT NULL, -- Rich text with merge fields
+  content_json JSONB, -- Structured sections for editor
+  
+  -- Default terms
+  default_term_months INTEGER DEFAULT 12,
+  default_payment_terms TEXT DEFAULT 'net_30', -- 'due_on_receipt', 'net_15', 'net_30', 'net_60'
+  default_auto_renew BOOLEAN DEFAULT true,
+  default_cancellation_days INTEGER DEFAULT 30,
+  
+  -- Services included
+  default_services JSONB, -- [{service_type, frequency, price}]
+  
+  -- Legal
+  terms_and_conditions TEXT,
+  liability_limit DECIMAL(12,2),
+  insurance_requirements TEXT,
+  
+  is_default BOOLEAN DEFAULT false,
+  is_active BOOLEAN DEFAULT true,
+  
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Service agreements (contracts)
+CREATE TABLE service_agreements (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  vendor_id UUID NOT NULL REFERENCES vendors(id),
+  template_id UUID REFERENCES agreement_templates(id),
+  
+  -- Agreement number
+  agreement_number TEXT NOT NULL UNIQUE,
+  
+  -- Parties
+  organization_id UUID NOT NULL REFERENCES organizations(id),
+  location_ids UUID[], -- Which locations covered
+  
+  -- Contact who signed
+  signer_name TEXT,
+  signer_title TEXT,
+  signer_email TEXT,
+  
+  -- Term
+  start_date DATE NOT NULL,
+  end_date DATE NOT NULL,
+  term_months INTEGER NOT NULL,
+  auto_renew BOOLEAN DEFAULT true,
+  cancellation_notice_days INTEGER DEFAULT 30,
+  
+  -- Pricing
+  pricing_type TEXT DEFAULT 'per_service', -- 'per_service', 'monthly_flat', 'annual_flat', 'custom'
+  monthly_amount DECIMAL(10,2),
+  annual_amount DECIMAL(10,2),
+  
+  -- Services included
+  services JSONB NOT NULL, -- [{service_type, frequency, locations, price_per_service}]
+  
+  -- Payment
+  payment_terms TEXT DEFAULT 'net_30',
+  billing_frequency TEXT DEFAULT 'per_service', -- 'per_service', 'monthly', 'quarterly', 'annually'
+  
+  -- Discounts
+  discount_percent DECIMAL(5,2) DEFAULT 0,
+  discount_reason TEXT,
+  
+  -- Status
+  status TEXT DEFAULT 'draft', -- 'draft', 'sent', 'viewed', 'signed', 'active', 'expired', 'cancelled', 'renewed'
+  
+  -- Signature tracking
+  sent_at TIMESTAMPTZ,
+  viewed_at TIMESTAMPTZ,
+  signed_at TIMESTAMPTZ,
+  signature_ip TEXT,
+  signature_data JSONB, -- Signature image or typed name
+  
+  -- Document
+  pdf_url TEXT,
+  signed_pdf_url TEXT,
+  
+  -- Renewal
+  renewed_from_id UUID REFERENCES service_agreements(id),
+  renewed_to_id UUID REFERENCES service_agreements(id),
+  renewal_reminder_sent BOOLEAN DEFAULT false,
+  
+  -- Internal
+  created_by UUID REFERENCES employees(id),
+  notes TEXT,
+  
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_agreements_org ON service_agreements(organization_id);
+CREATE INDEX idx_agreements_status ON service_agreements(status);
+CREATE INDEX idx_agreements_dates ON service_agreements(start_date, end_date);
+
+-- Agreement activity log
+CREATE TABLE agreement_activities (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  agreement_id UUID NOT NULL REFERENCES service_agreements(id) ON DELETE CASCADE,
+  
+  activity_type TEXT NOT NULL, -- 'created', 'sent', 'viewed', 'signed', 'reminder_sent', 'renewed', 'cancelled', 'modified'
+  description TEXT,
+  performed_by UUID REFERENCES employees(id),
+  ip_address TEXT,
+  
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+```
+
+### 5.2 Agreement Templates Page
+
+File: apps/web-vendor/src/pages/agreements/AgreementTemplatesPage.tsx
+
+Route: /agreements/templates
+
+- "Create Template" button
+- Template cards:
+  - Name
+  - Default term
+  - Services included
+  - Last used
+  - Edit / Duplicate / Delete
+- Pre-built templates:
+  - Standard Annual Agreement
+  - Monthly Service Agreement
+  - Multi-Location Agreement
+  - Kitchen Exhaust Only
+  - Full Fire Safety Package
+
+### 5.3 Template Editor
+
+File: apps/web-vendor/src/pages/agreements/TemplateEditorPage.tsx
+
+Route: /agreements/templates/:id
+
+Rich text editor with:
+- Company letterhead
+- Merge fields:
+  - {{customer_name}}
+  - {{customer_address}}
+  - {{location_addresses}}
+  - {{services_table}}
+  - {{pricing_table}}
+  - {{term_start}}
+  - {{term_end}}
+  - {{monthly_amount}}
+  - {{annual_amount}}
+  - {{payment_terms}}
+  - {{cancellation_terms}}
+  - {{agreement_number}}
+  - {{date}}
+  - {{signer_name}}
+- Section blocks:
+  - Services & Pricing
+  - Term & Renewal
+  - Payment Terms
+  - Cancellation Policy
+  - Insurance & Liability
+  - Terms & Conditions
+  - Signature Block
+- Preview mode
+- Save as default
+
+### 5.4 Agreements List Page
+
+File: apps/web-vendor/src/pages/agreements/AgreementsPage.tsx
+
+Route: /agreements
+
+- Stats row (center-aligned):
+  - Active agreements
+  - Pending signature
+  - Expiring soon (30 days)
+  - Monthly recurring value
+- Tabs: All | Draft | Pending | Active | Expiring | Expired
+- Table:
+  - Agreement #
+  - Customer
+  - Locations
+  - Term
+  - Monthly value
+  - Status badge
+  - Expires
+  - Actions
+- Quick filters:
+  - By customer
+  - By status
+  - Expiring in X days
+
+### 5.5 Create Agreement Page
+
+File: apps/web-vendor/src/pages/agreements/CreateAgreementPage.tsx
+
+Route: /agreements/new
+
+Step-by-step wizard:
+
+**Step 1: Customer & Locations**
+- Select existing customer OR create new
+- Select locations to cover
+- Multi-select for multi-location agreements
+
+**Step 2: Services**
+- Select services to include:
+  | Service | Frequency | Per Location | Price |
+  |---------|-----------|--------------|-------|
+  | ☑ Kitchen Exhaust Cleaning | Quarterly | ☑ All | $450 |
+  | ☑ Fan Performance Mgmt | Quarterly | ☑ All | $150 |
+  | ☐ Grease Filter Exchange | Monthly | — | — |
+  | ☑ Fire Suppression | Semi-Annual | ☑ All | $250 |
+- Price per service or flat monthly
+- Auto-calculate totals
+
+**Step 3: Term & Pricing**
+- Start date
+- Term length (6mo, 12mo, 24mo, 36mo, custom)
+- Auto-renew toggle
+- Cancellation notice days
+- Discount (% or $)
+- Payment terms
+
+**Step 4: Review**
+- Preview generated agreement
+- Edit any section
+- Add notes
+
+**Step 5: Send or Save**
+- Save as draft
+- Send for signature (email)
+- Download PDF
+
+### 5.6 Agreement Detail Page
+
+File: apps/web-vendor/src/pages/agreements/AgreementDetailPage.tsx
+
+Route: /agreements/:id
+
+- Agreement header:
+  - Agreement # and status badge
+  - Customer name
+  - Term dates
+  - Value
+- Tabs:
+  - **Overview** - Summary, services, pricing
+  - **Document** - View/download PDF, signed version
+  - **Activity** - Timeline of events
+  - **Jobs** - Jobs under this agreement
+  - **Billing** - Invoices generated
+- Actions:
+  - Send/Resend for signature
+  - Download PDF
+  - Edit (if draft)
+  - Renew
+  - Cancel
+  - Duplicate
+
+### 5.7 Public Signature Page
+
+File: apps/web-vendor/src/pages/public/SignAgreementPage.tsx
+
+Route: /sign/:token (public, no auth)
+
+Customer-facing page:
+- Company branding
+- Agreement preview (scrollable)
+- "I agree to the terms" checkbox
+- Signature capture:
+  - Draw signature (touch/mouse)
+  - Type name
+  - Upload signature image
+- Signer name and title fields
+- "Sign Agreement" button
+- Confirmation page with PDF download
+
+### 5.8 Agreement PDF Generation
+
+File: supabase/functions/generate-agreement-pdf/index.ts
+
+Generates professional PDF:
+- Company letterhead/logo
+- Agreement number and date
+- Customer info
+- Services table with pricing
+- Terms and conditions
+- Signature blocks (blank for unsigned, filled for signed)
+- Page numbers
+- Footer with company contact
+
+### 5.9 Agreement Renewal System
+
+**Auto-renewal reminders:**
+- 60 days before expiry: Internal reminder
+- 45 days before expiry: Customer email "Agreement renewing soon"
+- 30 days before expiry: Final reminder with renewal terms
+- If not cancelled: Auto-generate renewal agreement
+
+**Manual renewal:**
+- "Renew" button on agreement detail
+- Pre-fills from existing agreement
+- Adjust pricing/terms as needed
+- Send new agreement for signature
+
+### 5.10 Agreement from Quote/Estimate
+
+When estimate is accepted:
+- "Create Agreement" button appears
+- Pre-fills from estimate:
+  - Customer
+  - Location
+  - Services
+  - Pricing
+- Add term and conditions
+- Generate agreement
+
+### 5.11 Agreement from Lead
+
+When converting lead to customer:
+- Option to create agreement
+- Pre-fills customer info
+- Select services and pricing
+
+---
+
+## Part 6: Sales Tools
+
+### 4.1 Quote Generator
+
+File: apps/web-vendor/src/pages/sales/QuoteGeneratorPage.tsx
+
+Route: /sales/quote
+
+Quick quote tool:
+- Select services (KEC, FPM, GFX, etc.)
+- Enter equipment details
+- Select frequency
+- Apply discounts
+- Generate PDF quote
+- Email directly or copy link
+- Track quote views
+
+### 4.2 Door Knock Tracker
+
+File: apps/web-vendor/src/pages/sales/DoorKnockPage.tsx
+
+Route: /sales/door-knock
+
+For field sales:
+- Map view of territory
+- Log visits:
+  - Business name
+  - Address (auto-fill from GPS)
+  - Contact made? (yes/no)
+  - Outcome (interested, not interested, callback, already has vendor)
+  - Notes
+  - Photo of business
+- Route planning for the day
+- Stats: Visits today, contacts made, leads generated
+
+### 4.3 Call List
+
+File: apps/web-vendor/src/pages/sales/CallListPage.tsx
+
+Route: /sales/calls
+
+Daily call list:
+- Prioritized by:
+  - Hot leads (high value, recent activity)
+  - Overdue followups
+  - New leads
+  - Scheduled callbacks
+- Click to call
+- Quick log outcome
+- Schedule next action
+- Auto-advance to next lead
+
+### 4.4 Competitor Intel
+
+File: apps/web-vendor/src/pages/sales/CompetitorIntelPage.tsx
+
+Route: /sales/competitors
+
+Track competitor info:
+- Competitor name
+- Pricing (if known)
+- Service quality notes
+- Customers lost to them
+- Customers won from them
+- Strengths/weaknesses
+
+---
+
+## Part 5: Analytics & Reporting
+
+### 5.1 Marketing Analytics
+
+File: apps/web-vendor/src/pages/marketing/MarketingAnalyticsPage.tsx
+
+Route: /marketing/analytics
+
+- Lead source breakdown (pie chart)
+- Cost per lead by source
+- Conversion rate by source
+- Campaign ROI comparison
+- Best performing campaigns
+- Monthly trends
+
+### 5.2 Sales Analytics
+
+File: apps/web-vendor/src/pages/sales/SalesAnalyticsPage.tsx
+
+Route: /sales/analytics
+
+- Revenue by month (bar chart)
+- Pipeline value trend
+- Win/loss rate
+- Average deal size
+- Sales cycle length
+- Forecast (based on pipeline × probability)
+
+### 5.3 Territory Map
+
+File: apps/web-vendor/src/pages/sales/TerritoryMapPage.tsx
+
+Route: /sales/map
+
+- Map showing:
+  - Current customers (green pins)
+  - Leads (yellow pins)
+  - Violations found (red pins)
+  - Competitors' customers (gray pins, if known)
+- Filter by status, industry, value
+- Click pin for details
+- Draw territories
+- Route planning
+
+---
+
+## Part 6: Integrations
+
+### 6.1 Google Ads Integration
+
+Track leads from Google Ads:
+- UTM parameter capture
+- Conversion tracking
+- Cost per lead calculation
+- ROAS reporting
+
+### 6.2 Facebook/Instagram Ads
+
+Same as Google Ads tracking
+
+### 6.3 Yelp/Thumbtack/HomeAdvisor
+
+Import leads from these platforms:
+- Manual import
+- API integration (where available)
+- Track source attribution
+
+### 6.4 Email Integration
+
+- Send emails through HoodOps
+- Track opens and clicks
+- Sync with Gmail/Outlook (optional)
+
+---
+
+## Part 8: Hooks
+
+File: apps/web-vendor/src/hooks/api/useLeads.ts
+```typescript
+useLeads(filters?)
+useLead(id)
+useCreateLead()
+useUpdateLead()
+useUpdateLeadStage()
+useConvertLead()
+useLeadActivities(leadId)
+useLogActivity()
+usePipelineStats()
+useSalesGoals()
+```
+
+File: apps/web-vendor/src/hooks/api/useMarketing.ts
+```typescript
+useCampaigns(filters?)
+useCampaign(id)
+useCreateCampaign()
+useLaunchCampaign()
+usePauseCampaign()
+useCampaignStats()
+useViolationOutreach(filters?)
+useImportViolations()
+useEmailTemplates()
+useSequences()
+useSequence(id)
+useCreateSequence()
+```
+
+File: apps/web-vendor/src/hooks/api/useAgreements.ts
+```typescript
+// Templates
+useAgreementTemplates()
+useAgreementTemplate(id)
+useCreateAgreementTemplate()
+useUpdateAgreementTemplate()
+useDuplicateAgreementTemplate()
+
+// Agreements
+useAgreements(filters?)
+useAgreement(id)
+useCreateAgreement()
+useUpdateAgreement()
+useSendAgreement()
+useResendAgreement()
+useAgreementActivities(agreementId)
+
+// Public signing
+useAgreementByToken(token) // For public sign page
+useSignAgreement()
+
+// Renewal
+useRenewAgreement()
+useCancelAgreement()
+useExpiringAgreements(days)
+
+// PDF
+useGenerateAgreementPdf()
+useDownloadAgreementPdf()
+
+// Stats
+useAgreementStats()
+useMonthlyRecurringValue()
+```
+
+---
+
+## Part 8: Routes
+
+```typescript
+// Sales
+/sales → SalesDashboardPage
+/sales/pipeline → SalesPipelinePage
+/sales/leads/:id → LeadDetailPage
+/sales/quote → QuoteGeneratorPage
+/sales/door-knock → DoorKnockPage
+/sales/calls → CallListPage
+/sales/competitors → CompetitorIntelPage
+/sales/analytics → SalesAnalyticsPage
+/sales/map → TerritoryMapPage
+
+// Marketing
+/marketing/campaigns → CampaignsPage
+/marketing/campaigns/new → CampaignBuilderPage
+/marketing/campaigns/:id → CampaignDetailPage
+/marketing/violations → ViolationOutreachPage
+/marketing/templates → EmailTemplatesPage
+/marketing/sequences → SequencesPage
+/marketing/sequences/:id → SequenceBuilderPage
+/marketing/analytics → MarketingAnalyticsPage
+
+// Agreements
+/agreements → AgreementsPage
+/agreements/new → CreateAgreementPage
+/agreements/templates → AgreementTemplatesPage
+/agreements/templates/:id → TemplateEditorPage
+/agreements/:id → AgreementDetailPage
+
+// Public (no auth)
+/sign/:token → SignAgreementPage
+```
+
+---
+
+## Part 10: Sidebar Updates
+
+Add to sidebar under "Sales & Marketing":
+
+```typescript
+{
+  section: 'Sales & Marketing',
+  items: [
+    { label: 'Dashboard', path: '/sales', icon: TrendingUp },
+    { label: 'Pipeline', path: '/sales/pipeline', icon: Kanban },
+    { label: 'Agreements', path: '/agreements', icon: FileSignature, badge: pendingSignatureCount },
+    { label: 'Call List', path: '/sales/calls', icon: Phone, badge: todayCallsCount },
+    { label: 'Door Knock', path: '/sales/door-knock', icon: DoorOpen },
+    { label: 'Territory Map', path: '/sales/map', icon: Map },
+    { label: 'Campaigns', path: '/marketing/campaigns', icon: Megaphone },
+    { label: 'Violation Outreach', path: '/marketing/violations', icon: AlertTriangle, badge: newViolationsCount },
+    { label: 'Sequences', path: '/marketing/sequences', icon: GitBranch },
+    { label: 'Templates', path: '/marketing/templates', icon: FileText },
+  ]
+}
+```
+
+---
+
+## Part 11: Notifications
+
+- New lead from website/AI estimate
+- Lead assigned to you
+- Overdue followup reminder
+- Sequence step due
+- New violation found in territory
+- Campaign completed with results
+- Quote viewed by customer
+- Lead converted to customer
+- **Agreement sent for signature**
+- **Agreement viewed by customer**
+- **Agreement signed!**
+- **Agreement expiring in 30 days**
+- **Agreement auto-renewed**
+
+---
+
+## Part 12: Empty States
+
+- No leads: "No leads yet. Start prospecting or wait for inbound requests!"
+- No campaigns: "Create your first marketing campaign"
+- No violations: "No violations found. Check back later or import manually."
+- No call list: "No calls scheduled for today. Great job!"
+- No agreements: "No service agreements yet. Create your first agreement!"
+
+---
+
+## Verification Checklist
+
+- [ ] Sales pipeline with drag-drop stages
+- [ ] Lead detail with activity timeline
+- [ ] Sales dashboard with goal tracking
+- [ ] Marketing campaigns CRUD
+- [ ] Violation outreach system
+- [ ] Email templates with merge fields
+- [ ] Automated sequences
+- [ ] Quote generator
+- [ ] Door knock tracker with GPS
+- [ ] Call list prioritization
+- [ ] Territory map with pins
+- [ ] Analytics dashboards
+- [ ] Lead source attribution
+- [ ] **Agreement templates with merge fields**
+- [ ] **Agreement creation wizard**
+- [ ] **Public signature page with signature capture**
+- [ ] **Agreement PDF generation**
+- [ ] **Agreement renewal system**
+- [ ] **Expiring agreement alerts**
+- [ ] **Agreement from quote/estimate**
+- [ ] All cards center-aligned
+- [ ] Empty states for all pages
