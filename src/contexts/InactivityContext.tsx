@@ -17,7 +17,7 @@ interface InactivityContextType {
 const InactivityContext = createContext<InactivityContextType>({ isLocked: false });
 
 export function InactivityProvider({ children }: { children: ReactNode }) {
-  const { user, signOut } = useAuth();
+  const { user, profile, signOut } = useAuth();
   const { isDemoMode } = useDemo();
   const navigate = useNavigate();
   const [isLocked, setIsLocked] = useState(false);
@@ -44,9 +44,10 @@ export function InactivityProvider({ children }: { children: ReactNode }) {
       // localStorage unavailable
     }
     await signOut();
-    navigate('/login');
+    const redirectPath = profile?.role === 'platform_admin' ? '/admin-login' : '/login';
+    navigate(redirectPath, { replace: true });
     toast.info(message);
-  }, [signOut, navigate]);
+  }, [signOut, navigate, profile]);
 
   const handleLogout = useCallback(() => {
     performLogout('Logged out due to inactivity');
@@ -83,8 +84,9 @@ export function InactivityProvider({ children }: { children: ReactNode }) {
       // localStorage unavailable
     }
     await signOut();
-    navigate('/login');
-  }, [signOut, navigate]);
+    const redirectPath = profile?.role === 'platform_admin' ? '/admin-login' : '/login';
+    navigate(redirectPath, { replace: true });
+  }, [signOut, navigate, profile]);
 
   const handleMaxAttempts = useCallback(() => {
     performLogout('Logged out after too many failed unlock attempts');
