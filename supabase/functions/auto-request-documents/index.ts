@@ -1,6 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { getCorsHeaders } from '../_shared/cors.ts';
+let corsHeaders = getCorsHeaders(null);
 
 // ── Batch processing constants ──────────────────────────────────
 const BATCH_SIZE = 50;
@@ -12,7 +13,7 @@ const MAX_RUNTIME_MS = 50_000; // 50s hard stop (Edge Function limit ~60s)
 // 3. Sends reminders on day 4, 7, 14 for pending requests
 
 Deno.serve(async (req: Request) => {
-  const corsHeaders = getCorsHeaders(req.headers.get('origin'));
+  corsHeaders = getCorsHeaders(req.headers.get('origin'));
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 200, headers: corsHeaders });
   }

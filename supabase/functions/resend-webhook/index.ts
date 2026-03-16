@@ -12,7 +12,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { getCorsHeaders } from '../_shared/cors.ts';
-const corsHeaders = getCorsHeaders(null);
+let corsHeaders = getCorsHeaders(null);
 
 function jsonResponse(data: Record<string, unknown>, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -30,6 +30,7 @@ const EVENT_COLUMN_MAP: Record<string, string> = {
 };
 
 Deno.serve(async (req) => {
+  corsHeaders = getCorsHeaders(req.headers.get('origin'));
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }

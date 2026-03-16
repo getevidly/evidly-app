@@ -2,6 +2,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { PDFDocument, rgb, StandardFonts } from "npm:pdf-lib@1.17.1";
 import { getCorsHeaders } from '../_shared/cors.ts';
+let corsHeaders = getCorsHeaders(null);
 
 // Generates a compliance package containing:
 // 1. Cover page with compliance score and organization info
@@ -19,7 +20,7 @@ interface PackageRequest {
 }
 
 Deno.serve(async (req: Request) => {
-  const corsHeaders = getCorsHeaders(req.headers.get('origin'));
+  corsHeaders = getCorsHeaders(req.headers.get('origin'));
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 200, headers: corsHeaders });
   }

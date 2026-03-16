@@ -1,6 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { getCorsHeaders } from '../_shared/cors.ts';
+let corsHeaders = getCorsHeaders(null);
 
 /**
  * benchmark-aggregate — Weekly Sunday 4am
@@ -10,7 +11,7 @@ import { getCorsHeaders } from '../_shared/cors.ts';
  * Only publishes segments with 10+ data points (privacy threshold).
  */
 Deno.serve(async (req: Request) => {
-  const corsHeaders = getCorsHeaders(req.headers.get('origin'));
+  corsHeaders = getCorsHeaders(req.headers.get('origin'));
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 200, headers: corsHeaders });
   }

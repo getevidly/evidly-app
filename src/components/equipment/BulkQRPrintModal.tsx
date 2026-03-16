@@ -3,6 +3,7 @@
  */
 import { useState, useMemo } from 'react';
 import { X, Printer, QrCode, Search, CheckSquare } from 'lucide-react';
+import DOMPurify from 'dompurify';
 import type { EquipmentItem } from '../../hooks/api/useEquipment';
 import { NAVY, CARD_BG, CARD_BORDER, TEXT_TERTIARY, MUTED } from '../dashboard/shared/constants';
 
@@ -63,7 +64,7 @@ export function BulkQRPrintModal({ items, onClose }: BulkQRPrintModalProps) {
       });
     `).join('\n');
 
-    printWin.document.write(`
+    printWin.document.write(DOMPurify.sanitize(`
       <!DOCTYPE html>
       <html><head><title>Bulk QR Codes - HoodOps</title>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>
@@ -79,7 +80,7 @@ export function BulkQRPrintModal({ items, onClose }: BulkQRPrintModalProps) {
         setTimeout(function() { window.print(); window.close(); }, 800);
       <\/script>
       </body></html>
-    `);
+    `, { WHOLE_DOCUMENT: true, ADD_TAGS: ['style', 'script'], ADD_ATTR: ['src', 'class', 'style', 'id'] }));
     printWin.document.close();
   };
 

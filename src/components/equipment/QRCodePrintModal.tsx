@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import { X, Printer } from 'lucide-react';
 import { QRCodeDisplay } from './QRCodeDisplay';
+import DOMPurify from 'dompurify';
 import type { EquipmentItem } from '../../hooks/api/useEquipment';
 import { NAVY, CARD_BG, CARD_BORDER, TEXT_TERTIARY, MUTED } from '../dashboard/shared/constants';
 
@@ -49,7 +50,7 @@ export function QRCodePrintModal({ equipment, onClose }: QRCodePrintModalProps) 
           `).join('')}
         </div>`;
 
-    printWin.document.write(`
+    printWin.document.write(DOMPurify.sanitize(`
       <!DOCTYPE html>
       <html><head><title>QR Code - ${escapeHtml(equipment.name)}</title>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>
@@ -61,7 +62,7 @@ export function QRCodePrintModal({ equipment, onClose }: QRCodePrintModalProps) 
         setTimeout(function() { window.print(); window.close(); }, 500);
       <\/script>
       </body></html>
-    `);
+    `, { WHOLE_DOCUMENT: true, ADD_TAGS: ['script'], ADD_ATTR: ['src'] }));
     printWin.document.close();
   };
 

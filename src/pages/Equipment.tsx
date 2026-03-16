@@ -26,6 +26,7 @@ import { useTranslation } from '../contexts/LanguageContext';
 import { useRole } from '../contexts/RoleContext';
 import { useTooltip } from '../hooks/useTooltip';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
+import DOMPurify from 'dompurify';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -1861,7 +1862,10 @@ export function Equipment() {
                 onClick={() => {
                   const printWindow = window.open('', '_blank', 'width=400,height=500');
                   if (!printWindow) { toast.error('Pop-up blocked — please allow pop-ups for printing.'); return; }
-                  printWindow.document.write(`<!DOCTYPE html><html><head><title>QR Label</title><style>body{font-family:sans-serif;text-align:center;padding:40px}h1{font-size:12px;letter-spacing:3px;color:#888;margin-bottom:16px}h2{font-size:14px;margin:12px 0 4px}p{font-size:11px;color:#666;margin:2px 0}.small{font-size:9px;color:#aaa;margin-top:8px}</style></head><body><h1>EVIDLY</h1><img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`evidly://equipment/${selected.id}`)}" width="200" height="200" /><h2>${selected.name}</h2><p>ID: ${selected.id}</p><p>${selected.type?.toLowerCase().includes('freezer') ? 'Required: ≤0°F' : selected.type?.toLowerCase().includes('hot') ? 'Required: ≥135°F' : 'Required: ≤41°F'}</p><p class="small">CalCode §113996</p><script>window.onload=function(){window.print();window.close()}</script></body></html>`);
+                  const eName = (selected.name || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+                  const eId = (selected.id || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+                  const tempReq = selected.type?.toLowerCase().includes('freezer') ? 'Required: ≤0°F' : selected.type?.toLowerCase().includes('hot') ? 'Required: ≥135°F' : 'Required: ≤41°F';
+                  printWindow.document.write(DOMPurify.sanitize(`<!DOCTYPE html><html><head><title>QR Label</title><style>body{font-family:sans-serif;text-align:center;padding:40px}h1{font-size:12px;letter-spacing:3px;color:#888;margin-bottom:16px}h2{font-size:14px;margin:12px 0 4px}p{font-size:11px;color:#666;margin:2px 0}.small{font-size:9px;color:#aaa;margin-top:8px}</style></head><body><h1>EVIDLY</h1><img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`evidly://equipment/${selected.id}`)}" width="200" height="200" /><h2>${eName}</h2><p>ID: ${eId}</p><p>${tempReq}</p><p class="small">CalCode §113996</p><script>window.onload=function(){window.print();window.close()}</script></body></html>`, { WHOLE_DOCUMENT: true, ADD_TAGS: ['script'], ADD_ATTR: ['src'] }));
                   printWindow.document.close();
                 }}
                 className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-white text-xs font-semibold rounded-lg transition-colors"

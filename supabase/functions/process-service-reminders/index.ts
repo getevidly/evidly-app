@@ -3,6 +3,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { sendEmail, buildEmailHtml } from "../_shared/email.ts";
 import { sendSms } from "../_shared/sms.ts";
 import { getCorsHeaders } from '../_shared/cors.ts';
+let corsHeaders = getCorsHeaders(null);
 
 // ── Reminder cadence: 30 / 14 / 7 / 3 / 1 days before due ──────
 const reminderWindows = [
@@ -91,7 +92,7 @@ const MAX_RUNTIME_MS = 50_000; // 50s hard stop (Edge Function limit ~60s)
 
 // ── Main handler ────────────────────────────────────────────────
 Deno.serve(async (req: Request) => {
-  const corsHeaders = getCorsHeaders(req.headers.get('origin'));
+  corsHeaders = getCorsHeaders(req.headers.get('origin'));
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 200, headers: corsHeaders });
   }

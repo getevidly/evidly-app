@@ -1,6 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { getCorsHeaders } from '../_shared/cors.ts';
+let corsHeaders = getCorsHeaders(null);
 
 // Accepts an uploaded document (PDF or image) and uses Claude AI to extract:
 // - Document type (hood cleaning cert, COI, health permit, etc.)
@@ -11,7 +12,7 @@ import { getCorsHeaders } from '../_shared/cors.ts';
 // - Key compliance details
 
 Deno.serve(async (req: Request) => {
-  const corsHeaders = getCorsHeaders(req.headers.get('origin'));
+  corsHeaders = getCorsHeaders(req.headers.get('origin'));
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 200, headers: corsHeaders });
   }

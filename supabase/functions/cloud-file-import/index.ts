@@ -1,5 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { getCorsHeaders } from '../_shared/cors.ts';
+let corsHeaders = getCorsHeaders(null);
 
 // ---------------------------------------------------------------------------
 // Cloud File Import — server-side fetch from cloud provider download URLs
@@ -15,7 +16,7 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB — matches client-side limit
 const FETCH_TIMEOUT_MS = 30_000;
 
 Deno.serve(async (req) => {
-  const corsHeaders = getCorsHeaders(req.headers.get('origin'));
+  corsHeaders = getCorsHeaders(req.headers.get('origin'));
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }

@@ -11,6 +11,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { sendEmail, buildEmailHtml } from "../_shared/email.ts";
 import { logger } from "../_shared/logger.ts";
 import { getCorsHeaders } from '../_shared/cors.ts';
+let corsHeaders = getCorsHeaders(null);
 
 const APP_URL = "https://app.getevidly.com";
 const MAX_RUNTIME_MS = 50_000;
@@ -46,7 +47,7 @@ const NFPA_FREQUENCIES: Record<string, string> = {
 // ═══════════════════════════════════════════════════════════════════
 
 Deno.serve(async (req: Request) => {
-  const corsHeaders = getCorsHeaders(req.headers.get('origin'));
+  corsHeaders = getCorsHeaders(req.headers.get('origin'));
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 200, headers: corsHeaders });
   }

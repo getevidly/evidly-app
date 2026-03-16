@@ -12,6 +12,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { sendEmail, buildEmailHtml } from "../_shared/email.ts";
 import { logger } from "../_shared/logger.ts";
 import { getCorsHeaders } from '../_shared/cors.ts';
+let corsHeaders = getCorsHeaders(null);
 
 const REPLY_TO = "founders@getevidly.com";
 
@@ -111,7 +112,7 @@ function step3Email(v: VendorPartner): { subject: string; bodyHtml: string } {
 // ═══════════════════════════════════════════════════════════════════
 
 Deno.serve(async (req: Request) => {
-  const corsHeaders = getCorsHeaders(req.headers.get('origin'));
+  corsHeaders = getCorsHeaders(req.headers.get('origin'));
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 200, headers: corsHeaders });
   }

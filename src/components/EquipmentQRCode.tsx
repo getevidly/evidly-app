@@ -1,4 +1,5 @@
 import { QRCodeSVG } from 'qrcode.react';
+import DOMPurify from 'dompurify';
 
 function escapeHtml(str: string): string {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
@@ -24,7 +25,7 @@ export function EquipmentQRCode({ equipmentId, equipmentName, locationName, size
         onClick={() => {
           const printWindow = window.open('', '_blank');
           if (printWindow) {
-            printWindow.document.write(`
+            printWindow.document.write(DOMPurify.sanitize(`
               <html><head><title>QR - ${escapeHtml(equipmentName)}</title>
               <style>body{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:sans-serif;}
               .ref{margin-top:16px;padding:8px 16px;background:#f0f0f0;border-radius:6px;font-size:11px;color:#888;}</style>
@@ -44,7 +45,7 @@ export function EquipmentQRCode({ equipmentId, equipmentName, locationName, size
                 });
               <\/script>
               </body></html>
-            `);
+            `, { WHOLE_DOCUMENT: true, ADD_TAGS: ['script'], ADD_ATTR: ['src'] }));
             printWindow.document.close();
           }
         }}
