@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShieldX } from 'lucide-react';
+import { ShieldX, Download } from 'lucide-react';
 import { useRole } from '../contexts/RoleContext';
 import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
@@ -8,6 +8,7 @@ import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { ReportCard } from '../components/reports/ReportCard';
 import { getReportsForRole, CATEGORY_LABELS, type ReportCategory } from '../config/reportConfig';
 import { BODY_TEXT, MUTED } from '../components/dashboard/shared/constants';
+import { exportCompliancePackage } from '../lib/compliancePackagePdf';
 
 const F: React.CSSProperties = { fontFamily: "'DM Sans', 'Inter', sans-serif" };
 const CATEGORIES: ReportCategory[] = ['overview', 'compliance', 'operations', 'team', 'community'];
@@ -38,11 +39,20 @@ export function ReportCenter() {
   return (
     <div className="space-y-6 p-1" style={F}>
       {/* Header */}
-      <div>
-        <h1 className="text-xl sm:text-2xl font-bold" style={{ color: BODY_TEXT }}>Reports</h1>
-        <p className="text-sm mt-1" style={{ color: MUTED }}>
-          See where things stand across your kitchen operations
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-bold" style={{ color: BODY_TEXT }}>Reports</h1>
+          <p className="text-sm mt-1" style={{ color: MUTED }}>
+            See where things stand across your kitchen operations
+          </p>
+        </div>
+        <button
+          onClick={() => exportCompliancePackage()}
+          className="shrink-0 flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-colors hover:opacity-90"
+          style={{ background: '#1E2D4D', color: '#fff' }}
+        >
+          <Download size={14} /> Export Compliance Package
+        </button>
       </div>
 
       {/* Report cards grouped by category */}

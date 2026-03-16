@@ -1,9 +1,21 @@
+/**
+ * DemoLauncher — DEMO-SCRIPT-01
+ *
+ * Route: /admin/demo-launcher
+ * Arthur's pre-demo control panel: configure prospect, launch 3 emotional
+ * trigger flows, fire demo signals, quick-link to key pages.
+ */
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { Bell, ExternalLink, FileText, Globe, Zap } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useDemo } from '../../contexts/DemoContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
+import { toast } from 'sonner';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
+
+const NAVY = '#1E2D4D';
+const GOLD = '#A08C5A';
 
 const CA_COUNTIES = [
   'Alameda','Alpine','Amador','Butte','Calaveras','Colusa','Contra Costa',
@@ -34,6 +46,18 @@ interface DemoSession {
   status: string;
 }
 
+// Quick-link targets
+const QUICK_LINKS = [
+  { label: 'Dashboard',        path: '/dashboard' },
+  { label: 'AI Advisor',       path: '/ai-advisor' },
+  { label: 'Copilot',          path: '/copilot' },
+  { label: 'Mock Inspection',  path: '/mock-inspection' },
+  { label: 'Self Audit',       path: '/self-audit' },
+  { label: 'Vendors',          path: '/vendors' },
+  { label: 'Documents',        path: '/documents' },
+  { label: 'Temp Logs',        path: '/temp-logs' },
+];
+
 export default function DemoLauncher() {
   useDemoGuard();
   const navigate = useNavigate();
@@ -51,6 +75,7 @@ export default function DemoLauncher() {
   const [loading, setLoading] = useState(false);
   const [launched, setLaunched] = useState(false);
   const [loadError, setLoadError] = useState(false);
+  const [firingSignal, setFiringSignal] = useState(false);
 
   useEffect(() => {
     loadSessions();
@@ -122,19 +147,173 @@ export default function DemoLauncher() {
     setForm({ prospectName: '', company: '', counties: [], industry: '', locationCount: '', notes: '' });
   };
 
+  // Fire Demo Signal — inserts a published signal for the guided tour org
+  const fireDemoSignal = async () => {
+    setFiringSignal(true);
+    try {
+      if (isDemoMode) {
+        // In demo mode, just show success
+        await new Promise(r => setTimeout(r, 800));
+        toast.success('Demo signal fired (simulated in demo mode)');
+      } else {
+        const { error } = await supabase.from('intelligence_signals').insert({
+          title: 'FDA recall affecting leafy greens — California suppliers',
+          summary: 'An FDA recall has been issued affecting romaine lettuce from California suppliers. Review your receiving logs for the past 30 days.',
+          content_summary: 'The FDA has issued a Class I recall for romaine lettuce originating from Central Valley, CA growing regions due to potential E. coli O157:H7 contamination. Commercial kitchens sourcing from California suppliers should review receiving logs and supplier invoices from the past 30 days.',
+          signal_type: 'fda_recall',
+          category: 'food_safety',
+          cic_pillar: 'liability_risk',
+          severity_score: 90,
+          confidence_score: 95,
+          revenue_risk_level: 'high',
+          liability_risk_level: 'critical',
+          cost_risk_level: 'low',
+          operational_risk_level: 'high',
+          recommended_action: 'Check receiving logs for romaine lettuce from California suppliers in the last 30 days. Quarantine any affected product.',
+          is_published: true,
+          published_at: new Date().toISOString(),
+          status: 'published',
+          routing_tier: 'notify',
+        });
+        if (error) throw error;
+        toast.success('Demo signal fired — check the notification bell');
+      }
+    } catch (err: any) {
+      toast.error(`Failed to fire signal: ${err.message}`);
+    }
+    setFiringSignal(false);
+  };
+
+  // County for jurisdiction link
+  const jieCounty = form.counties[0] || 'Fresno';
+
   return (
     <div className="p-8 max-w-3xl">
       <AdminBreadcrumb crumbs={[{ label: 'Demo Launcher' }]} />
 
       <h1 className="text-2xl font-bold text-[#1E2D4D] mb-1 mt-4">Demo Launcher</h1>
-      <p className="text-sm text-gray-500 mb-8">
-        Configure and launch a personalized demo session for a prospect.
-        The demo will be filtered to their jurisdiction and industry automatically.
+      <p className="text-sm text-gray-500 mb-6">
+        Prepare your demo in 60 seconds. Configure the prospect, then use the 3 flows below.
       </p>
+
+      {/* ── 3 EMOTIONAL TRIGGER FLOWS ── */}
+      <div className="bg-white border border-gray-200 rounded-xl p-5 mb-6">
+        <h2 className="text-xs font-bold uppercase tracking-wider mb-4" style={{ color: GOLD }}>
+          3 Demo Flows
+        </h2>
+        <div className="space-y-3">
+
+          {/* Flow 1: Jurisdiction Reveal */}
+          <div className="flex items-center gap-4 p-4 rounded-lg" style={{ background: '#F8F9FB', border: '1px solid #E5E7EB' }}>
+            <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style={{ background: '#EEF4F8' }}>
+              <Globe size={18} style={{ color: NAVY }} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold" style={{ color: NAVY }}>
+                Flow 1: "I didn't know that"
+              </p>
+              <p className="text-xs text-gray-500 mt-0.5">
+                Show how their inspector actually scores kitchens in their county.
+              </p>
+            </div>
+            <Link
+              to={`/admin/jurisdiction-intelligence?county=${encodeURIComponent(jieCounty)}`}
+              className="shrink-0 px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors hover:opacity-90"
+              style={{ background: NAVY, color: '#fff' }}
+            >
+              <ExternalLink size={12} /> Open
+            </Link>
+          </div>
+
+          {/* Flow 2: Live Notification */}
+          <div className="flex items-center gap-4 p-4 rounded-lg" style={{ background: '#F8F9FB', border: '1px solid #E5E7EB' }}>
+            <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style={{ background: '#FEF2F2' }}>
+              <Bell size={18} style={{ color: '#DC2626' }} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold" style={{ color: NAVY }}>
+                Flow 2: "It caught something"
+              </p>
+              <p className="text-xs text-gray-500 mt-0.5">
+                Fire a live signal — the bell badge updates in real time.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={fireDemoSignal}
+                disabled={firingSignal}
+                className="px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors hover:opacity-90 disabled:opacity-50"
+                style={{ background: '#DC2626', color: '#fff', border: 'none', cursor: firingSignal ? 'not-allowed' : 'pointer' }}
+              >
+                <Zap size={12} /> {firingSignal ? 'Firing...' : 'Fire Signal'}
+              </button>
+              <Link
+                to="/insights/intelligence"
+                className="px-3 py-2 rounded-lg text-xs font-semibold transition-colors hover:bg-gray-100"
+                style={{ color: NAVY, border: '1px solid #E5E7EB' }}
+              >
+                View Feed
+              </Link>
+            </div>
+          </div>
+
+          {/* Flow 3: Compliance Record */}
+          <div className="flex items-center gap-4 p-4 rounded-lg" style={{ background: '#F8F9FB', border: '1px solid #E5E7EB' }}>
+            <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style={{ background: '#F0FDF4' }}>
+              <FileText size={18} style={{ color: '#166534' }} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold" style={{ color: NAVY }}>
+                Flow 3: "I look good"
+              </p>
+              <p className="text-xs text-gray-500 mt-0.5">
+                Show the full compliance record — documents, reports, export.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <Link
+                to="/documents"
+                className="px-3 py-2 rounded-lg text-xs font-semibold transition-colors hover:bg-gray-100"
+                style={{ color: NAVY, border: '1px solid #E5E7EB' }}
+              >
+                Documents
+              </Link>
+              <Link
+                to="/reports"
+                className="px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors hover:opacity-90"
+                style={{ background: NAVY, color: '#fff' }}
+              >
+                <ExternalLink size={12} /> Reports
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── QUICK LINKS ── */}
+      <div className="bg-white border border-gray-200 rounded-xl p-5 mb-6">
+        <h2 className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: GOLD }}>
+          Quick Links
+        </h2>
+        <div className="flex flex-wrap gap-2">
+          {QUICK_LINKS.map(l => (
+            <Link
+              key={l.path}
+              to={l.path}
+              className="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors hover:bg-gray-100"
+              style={{ color: NAVY, border: '1px solid #E5E7EB' }}
+            >
+              {l.label}
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* ── PROSPECT CONFIG ── */}
+      <h2 className="text-sm font-semibold text-gray-700 mb-3">Prospect Setup (Optional)</h2>
 
       {launched ? (
         <div className="bg-green-50 border border-green-200 rounded-xl p-6 text-center">
-          <div className="text-3xl mb-3">🚀</div>
           <h2 className="text-lg font-semibold text-green-800 mb-1">Demo Launched</h2>
           <p className="text-sm text-green-600 mb-4">
             Personalized demo for {form.prospectName} at {form.company} is now open.

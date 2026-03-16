@@ -261,6 +261,7 @@ import { usePageTracking } from './hooks/usePageTracking';
 
 const KitchenToCommunity = lazy(() => import('./pages/KitchenToCommunity'));
 const DemoBookingBanner = lazy(() => import('./components/landing/DemoBookingBanner'));
+const DemoTalkingPoints = lazy(() => import('./components/DemoTalkingPoints'));
 import { PageSkeleton } from './components/LoadingSkeleton';
 import { Layout } from './components/layout/Layout';
 import { AdminShell } from './components/layout/AdminShell';
@@ -497,6 +498,7 @@ function ProtectedLayout() {
       {isDemoMode && (
         <Suspense fallback={null}>
           <DemoBookingBanner />
+          <DemoTalkingPoints />
         </Suspense>
       )}
       <EnvBadge />

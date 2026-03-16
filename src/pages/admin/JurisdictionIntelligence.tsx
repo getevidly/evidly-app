@@ -6,9 +6,11 @@
  * Queries jurisdiction_intel_updates table.
  */
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { toast } from 'sonner';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
+import { useDemo } from '../../contexts/DemoContext';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { KpiTile } from '../../components/admin/KpiTile';
 
@@ -46,10 +48,12 @@ const PILLAR_BADGE: Record<string, { bg: string; text: string }> = {
 
 export default function JurisdictionIntelligence() {
   useDemoGuard();
+  const { isDemoMode } = useDemo();
+  const [searchParams] = useSearchParams();
   const [updates, setUpdates] = useState<JurisdictionUpdate[]>([]);
   const [jurisdictionMeta, setJurisdictionMeta] = useState<Record<string, JurisdictionMeta>>({});
   const [loading, setLoading] = useState(true);
-  const [filterCounty, setFilterCounty] = useState('');
+  const [filterCounty, setFilterCounty] = useState(searchParams.get('county') || '');
 
   useEffect(() => {
     const load = async () => {
@@ -122,6 +126,20 @@ export default function JurisdictionIntelligence() {
           {counties.map(c => <option key={c} value={c}>{c}</option>)}
         </select>
       </div>
+
+      {/* Demo highlight banner */}
+      {isDemoMode && filterCounty && (
+        <div
+          className="rounded-lg mb-6"
+          style={{
+            background: NAVY, color: '#FAF7F0',
+            padding: '12px 16px', fontSize: 13,
+          }}
+        >
+          Showing real inspection data for <strong>{filterCounty} County</strong>.
+          This is how your inspector actually scores your kitchen.
+        </div>
+      )}
 
       {filtered.length === 0 ? (
         <div className="text-center py-16">
