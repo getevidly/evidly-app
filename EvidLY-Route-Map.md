@@ -155,7 +155,10 @@
 | `/temp-logs/scan` | `TempLogScan.tsx` | QR Scanner — camera viewfinder (demo: tap-to-scan), equipment lookup, inline temp entry |
 | `/iot-monitoring` | `IoTMonitoring.tsx` | IoT Monitoring — 4-tab dashboard: Live Dashboard, Sensors, Alerts, Settings |
 | `/iot-sensors` | `IoTSensorHub.tsx` | IoT Sensor Hub — 6-tab sensor management platform |
-| `/iot/platform` | `IoTSensorPlatform.tsx` | IoT Platform — defrost, door events, cooling logs |
+| `/iot/platform` | `IoTSensorPlatform.tsx` | Sensor platform landing — readiness score, cost calculator, device ecosystem, zero lock-in |
+| `/iot/hub` | `IoTSensorHub.tsx` | Live sensor dashboard — real-time readings, fleet, alerts, analytics |
+| `/iot/setup` | `SensorSetupWizard.tsx` | Step-by-step sensor pairing wizard — equipment → type → connection → alerts → activate |
+| `/migrate` | `VendorMigration.jsx` | Competitor migration wizard — CSV data import from Zenput/Squadle/ComplianceMate |
 | `/sensors` | `SensorHub.tsx` | Sensor Hub — 8 provider integrations |
 | `/sensors/:sensorId` | `SensorDetail.tsx` | Sensor Detail — history chart, calibration |
 | `/sensors/setup` | `SensorSetupWizard.tsx` | Sensor Setup — 5-step onboarding wizard |

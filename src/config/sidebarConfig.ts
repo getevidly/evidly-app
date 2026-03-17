@@ -188,6 +188,15 @@ const I: Record<string, NavItem> = {
     id: 'iot-sensors', label: 'Manage Sensors', path: '/sensors', icon: '📡',
     roles: [], description: 'Add, configure, and manage Internet of Things temperature sensors across your locations.',
   },
+  connectSensors: {
+    id: 'connect-sensors', label: 'Connect Sensors', path: '/iot/platform', icon: '📶',
+    roles: [], description: 'Hardware-agnostic sensor platform — connect any WiFi, Bluetooth, LoRaWAN, or MQTT sensor to EvidLY.',
+    badge: 'NEW',
+  },
+  importData: {
+    id: 'import-data', label: 'Import Data', path: '/migrate', icon: '📥',
+    roles: [], description: 'Import temperature logs and compliance data from Zenput, Squadle, ComplianceMate, or CSV exports.',
+  },
   foodSafetyOverview: {
     id: 'food-safety-overview', label: 'Food Safety', path: '/scoring-breakdown', icon: '🍽️',
     roles: [], description: 'Food safety compliance scoring, critical control points, and inspection readiness overview.',
@@ -527,7 +536,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('administration', 'Administration', '⚙️',
         'Administration', 'Equipment, Internet of Things sensors, integrations, locations, settings, team, vendors, and role permissions.',
-        [I.equipment, I.fleet, I.insurance, I.bonuses, I.performanceMetrics, I.myAvailability, I.teamAvailability, I.availabilityApprovals, I.clockReminders, I.timecardAlterations, I.integrations, I.iotSensors, I.locations, I.settings, I.rolesPermissions, I.team, I.timecards, I.employees, I.trainingRecords, I.trainingCatalog, I.vendors, I.emergencyInfo, I.demoLauncher, I.adminTestimonials],
+        [I.equipment, I.fleet, I.insurance, I.bonuses, I.performanceMetrics, I.myAvailability, I.teamAvailability, I.availabilityApprovals, I.clockReminders, I.timecardAlterations, I.integrations, I.iotSensors, I.connectSensors, I.importData, I.locations, I.settings, I.rolesPermissions, I.team, I.timecards, I.employees, I.trainingRecords, I.trainingCatalog, I.vendors, I.emergencyInfo, I.demoLauncher, I.adminTestimonials],
         '/admin',
       ),
       // System section removed — admin tools accessed via AdminShell (/admin) outside demo mode.
@@ -761,7 +770,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('administration', 'Administration', '⚙️',
         'Administration', 'Equipment, Internet of Things sensors, account settings, team management, and vendors.',
-        [I.equipment, I.fleet, I.insurance, I.iotSensors, I.settings, I.team, I.vendors, I.myAvailability, I.teamAvailability, I.availabilityApprovals, I.emergencyInfo],
+        [I.equipment, I.fleet, I.insurance, I.iotSensors, I.connectSensors, I.importData, I.settings, I.team, I.vendors, I.myAvailability, I.teamAvailability, I.availabilityApprovals, I.emergencyInfo],
         '/admin',
       ),
       section('help', 'Help', '❓',
@@ -815,7 +824,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('administration', 'Administration', '⚙️',
         'Administration', 'Equipment, integrations, Internet of Things sensors, locations, settings, team, vendors, and role permissions.',
-        [I.equipment, I.fleet, I.insurance, I.bonuses, I.performanceMetrics, I.clockReminders, I.timecardAlterations, I.integrations, I.iotSensors, I.locations, I.settings, I.rolesPermissions, I.team, I.timecards, I.employees, I.trainingRecords, I.trainingCatalog, I.vendors, I.teamAvailability, I.availabilityApprovals, I.emergencyInfo],
+        [I.equipment, I.fleet, I.insurance, I.bonuses, I.performanceMetrics, I.clockReminders, I.timecardAlterations, I.integrations, I.iotSensors, I.connectSensors, I.importData, I.locations, I.settings, I.rolesPermissions, I.team, I.timecards, I.employees, I.trainingRecords, I.trainingCatalog, I.vendors, I.teamAvailability, I.availabilityApprovals, I.emergencyInfo],
         '/admin',
       ),
       section('help', 'Help', '❓',

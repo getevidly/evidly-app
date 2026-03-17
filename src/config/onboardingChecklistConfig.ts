@@ -230,6 +230,21 @@ export const ONBOARDING_STEPS: OnboardingStepDef[] = [
     // Visibility controlled by k12_enrolled flag in resolveVisibleSteps
   },
 
+  // ── IoT Readiness ────────────────────────────────────────
+  {
+    id: 'iot_readiness',
+    label: 'Sensor-Ready Setup',
+    description: 'Configure your equipment records so sensors connect instantly when you\'re ready.',
+    hint: 'Enables automated temp logging when you add sensors',
+    route: '/equipment',
+    actionLabel: 'Configure Equipment',
+    section: 'safety_setup',
+    order: 7,
+    roles: ['owner_operator', 'executive', 'facilities_manager', 'kitchen_manager', 'platform_admin'],
+    completionTable: 'temperature_equipment',
+    completionMinCount: 1,
+  },
+
   // ── Platform Tour ─────────────────────────────────────────
   {
     id: 'take_tour',

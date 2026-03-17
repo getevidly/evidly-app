@@ -110,6 +110,7 @@ const SensorHub = lazy(() => import('./pages/SensorHub').then(m => ({ default: m
 const SensorSetupWizard = lazy(() => import('./pages/SensorSetupWizard').then(m => ({ default: m.SensorSetupWizard })));
 const SensorDetail = lazy(() => import('./pages/SensorDetail').then(m => ({ default: m.SensorDetail })));
 const IoTSensorPlatform = lazy(() => import('./pages/IoTSensorPlatform').then(m => ({ default: m.IoTSensorPlatform })));
+const VendorMigration = lazy(() => import('./pages/VendorMigration').then(m => ({ default: m.VendorMigration })));
 const Progress = lazy(() => import('./pages/Progress'));
 
 const NotFound = lazy(() => import('./pages/NotFound'));
@@ -682,6 +683,11 @@ function AppRoutes() {
           <Route path="/insurance-risk" element={<InsuranceRisk />} />
           <Route path="/improve-score" element={<ImproveScore />} />
           <Route path="/insurance-settings" element={<InsuranceSettings />} />
+          {/* IoT Sensor Platform + Vendor Migration (all authenticated users) */}
+          <Route path="/iot/platform" element={<IoTSensorPlatform />} />
+          <Route path="/iot/setup" element={<SensorSetupWizard />} />
+          <Route path="/migrate" element={<VendorMigration />} />
+
           {/* Admin routes — RequireAdmin enforces platform_admin access */}
           <Route element={<RequireAdmin />}>
           <Route path="/admin/onboarding" element={<AdminClientOnboarding />} />

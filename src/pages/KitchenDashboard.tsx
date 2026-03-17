@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CheckCircle, Clock, Thermometer, ClipboardCheck, Truck, AlertCircle, ChevronRight } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { MigrationStatusCard } from '../components/migration/MigrationStatusCard';
 
 interface Task {
   id: string;
@@ -46,6 +47,8 @@ export function KitchenDashboard() {
           <p className="text-blue-100">Today is {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
           <p className="text-blue-100 text-sm mt-1">Shift: 6:00 AM - 2:00 PM</p>
         </div>
+
+        <MigrationStatusCard />
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
           <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
