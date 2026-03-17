@@ -3,6 +3,8 @@ import { Check } from 'lucide-react';
 import { ModalShell, FormField, ReadingMethodSelect, OutOfRangeWarning, tempInputClass, formatDateTimeLocal, INPUT_CLASS, BTN_PRIMARY, BTN_CANCEL, isOutOfRange } from './shared';
 import type { TemperatureEquipment, ReadingMethod } from './types';
 import { AIAssistButton, AIGeneratedIndicator } from '../../components/ui/AIAssistButton';
+import { GhostInput } from '../ai/GhostInput';
+import { TapToFillButton } from '../ai/TapToFillButton';
 
 export interface HoldingReadingSaveData {
   equipmentId: string;
@@ -104,7 +106,23 @@ export function AddHoldingReadingModal({ open, onClose, equipment, isHoldingHot:
         </FormField>
 
         <FormField label="Food Item" required>
-          <input type="text" value={foodItem} onChange={e => setFoodItem(e.target.value)} required placeholder="e.g., Chicken Wings, Caesar Salad" className={INPUT_CLASS} />
+          <GhostInput
+            type="text"
+            value={foodItem}
+            onChange={e => setFoodItem(e.target.value)}
+            required
+            placeholder="e.g., Chicken Wings, Caesar Salad"
+            className={INPUT_CLASS}
+            fieldLabel="Food Item"
+            formContext={{ equipmentName: selectedEq?.name || '' }}
+            entityType="temperature"
+          />
+          <TapToFillButton
+            fieldLabel="Food Item"
+            formContext={{ equipmentName: selectedEq?.name || '' }}
+            entityType="temperature"
+            onAccept={(text) => setFoodItem(text)}
+          />
         </FormField>
 
         <FormField label="Temperature (°F)" required>

@@ -13,6 +13,7 @@ import {
 } from '../data/onboardingDocuments';
 import { SmartUploadModal, type ClassifiedFile } from '../components/SmartUploadModal';
 import { useDemoGuard } from '../hooks/useDemoGuard';
+import { GhostInput } from '../components/ai/GhostInput';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 // ---------------------------------------------------------------------------
@@ -471,12 +472,15 @@ export function DocumentChecklist() {
             </div>
 
             {naModal.reason === 'Other' && (
-              <input
+              <GhostInput
                 type="text"
                 className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2"
                 placeholder="Please explain..."
                 value={naModal.customReason}
-                onChange={(e) => setNaModal({ ...naModal, customReason: e.target.value })}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNaModal({ ...naModal, customReason: e.target.value })}
+                fieldLabel="N/A Reason"
+                formContext={{ documentType: 'compliance document' }}
+                entityType="document"
               />
             )}
 

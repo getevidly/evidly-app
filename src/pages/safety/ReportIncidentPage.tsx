@@ -5,6 +5,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShieldAlert, ArrowLeft } from 'lucide-react';
+import { SuggestionPill } from '../../components/ai/SuggestionPill';
 import type { SafetyIncidentType, IncidentSeverity } from '../../hooks/api/useIncidents';
 
 // ── Design tokens ────────────────────────────────────────────
@@ -193,6 +194,12 @@ export function ReportIncidentPage() {
               style={inputStyle}
               required
             />
+            <SuggestionPill
+              fieldLabel="Description"
+              formContext={{ incidentType, severity, location }}
+              entityType="incident"
+              onAccept={(text) => setDescription(text)}
+            />
           </div>
         </div>
 
@@ -256,6 +263,12 @@ export function ReportIncidentPage() {
               className={inputClass}
               style={inputStyle}
             />
+            <SuggestionPill
+              fieldLabel="Immediate Actions"
+              formContext={{ incidentType, severity, location }}
+              entityType="incident"
+              onAccept={(text) => setImmediateActions(text)}
+            />
           </div>
 
           <div>
@@ -267,6 +280,12 @@ export function ReportIncidentPage() {
               rows={2}
               className={inputClass}
               style={inputStyle}
+            />
+            <SuggestionPill
+              fieldLabel="Witnesses"
+              formContext={{ incidentType, severity }}
+              entityType="incident"
+              onAccept={(text) => setWitnesses(text)}
             />
           </div>
         </div>

@@ -5,6 +5,8 @@ import { useState } from 'react';
 import { X, Calendar, Clock, MapPin, User, Wrench, FileText, Save } from 'lucide-react';
 import { NAVY, CARD_BG, CARD_BORDER, TEXT_TERTIARY } from '../dashboard/shared/constants';
 import { MeetingLocationField } from './MeetingLocationField';
+import { GhostInput } from '../ai/GhostInput';
+import { SuggestionPill } from '../ai/SuggestionPill';
 import type { ScheduledJob } from '../../hooks/api/useSchedule';
 
 interface JobFormModalProps {
@@ -93,13 +95,16 @@ export function JobFormModal({ job, onClose, onSave }: JobFormModalProps) {
             <label className="flex items-center gap-1.5 text-xs font-semibold mb-1" style={{ color: NAVY }}>
               <FileText className="w-3.5 h-3.5" /> Job Title
             </label>
-            <input
+            <GhostInput
               type="text"
               value={title}
               onChange={e => setTitle(e.target.value)}
               className={inputClass}
               style={{ borderColor: CARD_BORDER }}
               placeholder="e.g. Hood Cleaning — Main Kitchen"
+              fieldLabel="Job Title"
+              formContext={{ customerName, locationAddress }}
+              entityType="calendar"
             />
           </div>
 
@@ -215,6 +220,12 @@ export function JobFormModal({ job, onClose, onSave }: JobFormModalProps) {
               className={inputClass}
               style={{ borderColor: CARD_BORDER }}
               placeholder="Additional job notes..."
+            />
+            <SuggestionPill
+              fieldLabel="Job Notes"
+              formContext={{ title, customerName }}
+              entityType="calendar"
+              onAccept={(text) => setNotes(text)}
             />
           </div>
 

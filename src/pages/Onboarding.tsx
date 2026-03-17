@@ -9,6 +9,7 @@ import { supabase } from '../lib/supabase';
 import { INDUSTRY_TEMPLATES, getCategoryLabel, TemplateItem } from '../config/industryTemplates';
 import { toast } from 'sonner';
 import { lookupJurisdiction, linkJurisdictionToLocation } from '../utils/jurisdictionLookup';
+import { GhostInput } from '../components/ai/GhostInput';
 
 const steps = [
   { id: 1, name: 'Welcome', icon: () => <EvidlyIcon size={20} /> },
@@ -238,12 +239,15 @@ export function Onboarding() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Location Name</label>
-                <input
+                <GhostInput
                   type="text"
                   value={locationName}
                   onChange={(e) => setLocationName(e.target.value)}
                   placeholder="e.g., Main Street Restaurant"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  fieldLabel="Location Name"
+                  formContext={{ address: locationAddress || '' }}
+                  entityType="location"
                 />
               </div>
               <div>
@@ -401,13 +405,16 @@ export function Onboarding() {
                     })}
 
                     <div className="flex gap-2 mt-3">
-                      <input
+                      <GhostInput
                         type="text"
                         placeholder="Add custom item..."
                         value={customItems[category] || ''}
                         onChange={(e) => setCustomItems({ ...customItems, [category]: e.target.value })}
                         onKeyPress={(e) => e.key === 'Enter' && addCustomItem(category)}
                         className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37] text-sm"
+                        fieldLabel="Custom Item"
+                        formContext={{}}
+                        entityType="checklist"
                       />
                       <button
                         type="button"

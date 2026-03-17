@@ -14,15 +14,18 @@ export async function generateFieldText(
   context: Record<string, any>,
   isDemoMode: boolean,
 ): Promise<string> {
+  const mode = context.mode || 'full';
+
   if (isDemoMode) {
     // Simulate brief network delay for realism
-    await new Promise(r => setTimeout(r, 600 + Math.random() * 400));
+    await new Promise(r => setTimeout(r, mode === 'ghost' ? 300 : 600 + Math.random() * 400));
+    if (mode === 'ghost') return generateGhostText(fieldLabel, context);
     return generateDemoText(fieldLabel, context);
   }
 
   // Production: call edge function
   const { data, error } = await supabase.functions.invoke('ai-text-assist', {
-    body: { fieldLabel, context },
+    body: { fieldLabel, context, mode },
   });
 
   if (error) throw error;
@@ -230,6 +233,55 @@ function generateDemoText(fieldLabel: string, ctx: Record<string, any>): string 
 
   // ── Generic fallback ──
   return `${capitalize(fieldLabel)} documented for ${location || 'this location'}. Details recorded per standard operating procedure. ${severity === 'critical' ? 'Flagged for immediate review.' : 'Available for review in compliance records.'}`;
+}
+
+// ── Ghost-mode text generator (short 3-6 word completions) ────
+
+const GHOST_TEMPLATES: Record<string, string[]> = {
+  'food item': ['Grilled chicken breast', 'Cooked rice', 'Sliced tomatoes', 'Fish fillets', 'Beef stew'],
+  'item/product name': ['Fresh romaine lettuce', 'Raw chicken thighs', 'Ground beef patties', 'Heavy cream'],
+  'item description': ['Fresh romaine lettuce', 'Raw chicken thighs', 'Ground beef patties', 'Heavy cream'],
+  'kitchen name': ['Main Kitchen', 'Prep Kitchen', 'Catering Kitchen', 'Banquet Kitchen'],
+  'vendor name': ['Pacific Coast Seafood', 'Valley Fresh Produce', 'Metro Restaurant Supply'],
+  'event title': ['Hood Cleaning Service', 'Health Inspection Prep', 'Staff Food Safety Training'],
+  'job title': ['Kitchen Exhaust Cleaning', 'Grease Trap Service', 'Fire Suppression Inspection'],
+  'cert name': ['Food Handler Certificate', 'CFPM Certification', 'ServSafe Manager'],
+  'certificate name': ['Food Handler Certificate', 'CFPM Certification', 'ServSafe Manager'],
+  'authority': ['CA Dept of Public Health', 'ServSafe', 'ANSI-CFP'],
+  'issuing authority': ['CA Dept of Public Health', 'ServSafe', 'ANSI-CFP'],
+  'location name': ['Main Street Location', 'Downtown Kitchen', 'Airport Terminal Kitchen'],
+  'location code': ['MAIN', 'DT-01', 'APT-K'],
+  'incident title': ['Walk-in Cooler Temp Excursion', 'Chemical Spill — Prep Area', 'Slip and Fall — Kitchen'],
+  'title': ['Walk-in Cooler Temp Excursion', 'Hood Filter Maintenance', 'Handwash Station Issue'],
+  'custom item': ['Check sanitizer concentration', 'Verify allergen labels', 'Inspect floor drains'],
+  'add a note': ['Followed up with vendor', 'Verified repair complete', 'Retrained staff on procedure'],
+  'vendor contact': ['(555) 123-4567', 'service@vendor.com'],
+  'certificate number': ['FH-2026-12345', 'SM-CA-98765', 'CFPM-2026-001'],
+  'license/cert number': ['FH-2026-12345', 'SM-CA-98765'],
+  'compliance codes': ['NFPA 96, UL 300', 'CalCode 114380', 'FDA 3-501.16'],
+  'custom n/a reason': ['Not applicable to this location', 'Equipment not installed'],
+  'n/a reason': ['Not applicable to this location', 'Equipment not installed'],
+};
+
+function generateGhostText(fieldLabel: string, ctx: Record<string, any>): string {
+  const label = fieldLabel.toLowerCase();
+
+  // Direct match
+  for (const [key, templates] of Object.entries(GHOST_TEMPLATES)) {
+    if (label.includes(key) || label === key) {
+      return templates[Math.floor(Math.random() * templates.length)];
+    }
+  }
+
+  // Context-based fallback
+  if (ctx.entityType === 'temperature') {
+    return GHOST_TEMPLATES['food item'][Math.floor(Math.random() * GHOST_TEMPLATES['food item'].length)];
+  }
+  if (ctx.entityType === 'vendor') {
+    return GHOST_TEMPLATES['vendor name'][Math.floor(Math.random() * GHOST_TEMPLATES['vendor name'].length)];
+  }
+
+  return '';
 }
 
 function capitalize(s: string): string {

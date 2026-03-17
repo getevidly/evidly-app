@@ -12,6 +12,8 @@ import { toast } from 'sonner';
 import { useDemo } from '../../contexts/DemoContext';
 import { supabase } from '../../lib/supabase';
 import type { TrainingEmployeeCert } from '../../data/trainingRecordsDemoData';
+import { GhostInput } from '../ai/GhostInput';
+import { SuggestionPill } from '../ai/SuggestionPill';
 
 const NAVY = '#1e4d6b';
 
@@ -176,12 +178,15 @@ export function AddCertificationModal({ isOpen, onClose, employeeId, employeeNam
             <label className={labelClass}>
               Certificate Name <span className="text-red-500">*</span>
             </label>
-            <input
+            <GhostInput
               type="text"
               value={certName}
-              onChange={e => setCertName(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCertName(e.target.value)}
               placeholder="e.g., California Food Handler Card"
               className={inputClass}
+              fieldLabel="Cert Name"
+              formContext={{ certType }}
+              entityType="training"
             />
           </div>
 
@@ -191,12 +196,15 @@ export function AddCertificationModal({ isOpen, onClose, employeeId, employeeNam
               <Building2 size={14} className="inline mr-1" />
               Issuing Authority <span className="text-red-500">*</span>
             </label>
-            <input
+            <GhostInput
               type="text"
               value={authority}
-              onChange={e => setAuthority(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAuthority(e.target.value)}
               placeholder="e.g., ServSafe, ANSI, State of CA"
               className={inputClass}
+              fieldLabel="Issuing Authority"
+              formContext={{ certType }}
+              entityType="training"
             />
           </div>
 
@@ -256,6 +264,12 @@ export function AddCertificationModal({ isOpen, onClose, employeeId, employeeNam
               placeholder="Optional notes about this certification..."
               rows={2}
               className={`${inputClass} resize-none`}
+            />
+            <SuggestionPill
+              fieldLabel="Certification Notes"
+              formContext={{ certType, certName }}
+              entityType="training"
+              onAccept={(text: string) => setNotes(text)}
             />
           </div>
         </div>

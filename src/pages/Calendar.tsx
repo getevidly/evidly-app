@@ -15,6 +15,8 @@ import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { InfoTooltip } from '../components/ui/InfoTooltip';
 import { useTooltip } from '../hooks/useTooltip';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
+import { GhostInput } from '../components/ai/GhostInput';
+import { SuggestionPill } from '../components/ai/SuggestionPill';
 import { vendors as demoVendors } from '../data/demoData';
 import { ENHANCED_VENDOR_PERFORMANCE } from '../data/vendorServiceWorkflowDemo';
 
@@ -2026,11 +2028,14 @@ export function Calendar() {
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                       Title *
                     </label>
-                    <input
+                    <GhostInput
                       type="text"
                       value={eventForm.title}
                       onChange={(e) => setEventForm(prev => ({ ...prev, title: e.target.value }))}
                       placeholder="e.g., Hood Cleaning Service"
+                      fieldLabel="Event Title"
+                      formContext={{ category: eventForm.category, location: eventForm.location }}
+                      entityType="calendar"
                       style={{
                         width: '100%', padding: '10px 12px', borderRadius: '8px',
                         border: '1px solid #e5e7eb', fontSize: '14px', color: '#111827',
@@ -2307,6 +2312,12 @@ export function Calendar() {
                                 }}
                               />
                               {aiFields.has('vendorChangeDetails') && <AIGeneratedIndicator />}
+                              <SuggestionPill
+                                fieldLabel="Vendor Change Details"
+                                formContext={{ reason: vendorChangeForm?.reason || '' }}
+                                entityType="calendar"
+                                onAccept={(text) => setVendorChangeForm(prev => ({ ...prev, reasonDetails: text }))}
+                              />
                             </div>
 
                             {/* Scope radio */}
@@ -2531,6 +2542,12 @@ export function Calendar() {
                           }}
                         />
                         {aiFields.has('freqReductionDetails') && <AIGeneratedIndicator />}
+                        <SuggestionPill
+                          fieldLabel="Frequency Reduction Details"
+                          formContext={{ reason: freqReductionReason || '' }}
+                          entityType="calendar"
+                          onAccept={(text) => setFreqReductionDetails(text)}
+                        />
                       </div>
                     </div>
                   )}

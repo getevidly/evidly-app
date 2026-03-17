@@ -31,6 +31,8 @@ import { useRole } from '../../contexts/RoleContext';
 import { useSaveDocument } from '../../hooks/useSaveDocument';
 import { toast } from 'sonner';
 import { parseWizardToCCPs, parseCCPsFromText } from '../../lib/haccpParser';
+import { SuggestionPill } from '../ai/SuggestionPill';
+import { GhostInput } from '../ai/GhostInput';
 import { exportHACCPPlanPdf } from '../../lib/haccpPdf';
 
 // ── Types ───────────────────────────────────────────────────────────
@@ -587,11 +589,13 @@ export function HACCPAICreate() {
         {/* Kitchen Name */}
         <div className="bg-white rounded-xl shadow-sm p-5 border border-gray-200">
           <label className="block text-sm font-semibold text-gray-800 mb-2">Kitchen / Location Name</label>
-          <input
-            type="text"
+          <GhostInput
             value={intake.kitchenName}
             onChange={e => setIntake(prev => ({ ...prev, kitchenName: e.target.value }))}
             placeholder="e.g., Downtown Kitchen, Main Commissary..."
+            fieldLabel="Kitchen Name"
+            formContext={{ kitchenType: intake.kitchenType }}
+            entityType="haccp"
             className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent"
           />
         </div>
@@ -650,6 +654,12 @@ export function HACCPAICreate() {
             rows={3}
             className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent"
           />
+          <SuggestionPill
+            fieldLabel="Equipment"
+            formContext={{ kitchenType: intake.kitchenType, menuCategories: intake.menuCategories }}
+            entityType="haccp"
+            onAccept={(text) => setIntake(prev => ({ ...prev, equipment: text }))}
+          />
         </div>
 
         {/* Allergens */}
@@ -703,6 +713,12 @@ export function HACCPAICreate() {
             placeholder="Any specific concerns, unique processes, or regulatory requirements..."
             rows={2}
             className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent"
+          />
+          <SuggestionPill
+            fieldLabel="Additional Notes"
+            formContext={{ kitchenType: intake.kitchenType, menuCategories: intake.menuCategories }}
+            entityType="haccp"
+            onAccept={(text) => setIntake(prev => ({ ...prev, additionalNotes: text }))}
           />
         </div>
 

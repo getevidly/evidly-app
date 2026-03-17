@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef } from 'react';
 import { X, Send, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
+import { SuggestionPill } from '../ai/SuggestionPill';
 import {
   CLIENT_ROLE_OPTIONS,
   SERVICE_FREQUENCIES,
@@ -526,6 +527,12 @@ export function ClientInviteModal({
                   resize: 'vertical',
                   lineHeight: '1.5',
                 }}
+              />
+              <SuggestionPill
+                fieldLabel="Personal Message"
+                formContext={{ contactName, businessName }}
+                entityType="vendor"
+                onAccept={(text: string) => setMessage(text)}
               />
               <p style={{ margin: '4px 0 0', fontSize: '11px', color: '#6B7F96' }}>
                 Pre-filled based on role. Edit freely -- your message will be included in the invitation email.

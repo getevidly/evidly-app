@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { X, Loader2 } from 'lucide-react';
 import { useCreateServiceType, useUpdateServiceType, type ServiceType } from '../../hooks/api/useSettings';
+import { SuggestionPill } from '../ai/SuggestionPill';
+import { GhostInput } from '../ai/GhostInput';
 import {
   CARD_BG, CARD_BORDER, BODY_TEXT, MUTED, NAVY, FONT,
 } from '../../components/dashboard/shared/constants';
@@ -165,6 +167,12 @@ export function ServiceTypeFormModal({ isOpen, onClose, serviceType, onSaved }: 
         <div style={{ marginBottom: 14 }}>
           <label style={labelStyle}>Description</label>
           <textarea style={{ ...inputStyle, minHeight: 60, resize: 'vertical' }} value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} placeholder="Describe the service..." />
+          <SuggestionPill
+            fieldLabel="Service Description"
+            formContext={{ name: form.name, code: form.code }}
+            entityType="service"
+            onAccept={(text: string) => setForm(p => ({ ...p, description: text }))}
+          />
         </div>
 
         {/* Icon picker */}
@@ -236,7 +244,15 @@ export function ServiceTypeFormModal({ isOpen, onClose, serviceType, onSaved }: 
         {/* Compliance codes */}
         <div style={{ marginBottom: 14 }}>
           <label style={labelStyle}>Compliance Codes</label>
-          <input style={inputStyle} value={form.complianceCodes} onChange={e => setForm(p => ({ ...p, complianceCodes: e.target.value }))} placeholder="NFPA-96, UL-300 (comma-separated)" />
+          <GhostInput
+            style={inputStyle}
+            value={form.complianceCodes}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm(p => ({ ...p, complianceCodes: e.target.value }))}
+            placeholder="NFPA-96, UL-300 (comma-separated)"
+            fieldLabel="Compliance Codes"
+            formContext={{ name: form.name }}
+            entityType="service"
+          />
         </div>
 
         {/* Active toggle */}

@@ -20,6 +20,8 @@ import {
 import { toast } from 'sonner';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useDemoGuard } from '../hooks/useDemoGuard';
+import { SuggestionPill } from '../components/ai/SuggestionPill';
+import { GhostInput } from '../components/ai/GhostInput';
 import { useRole } from '../contexts/RoleContext';
 import { useConfetti } from '../hooks/useConfetti';
 import { useMilestoneCheck } from '../hooks/useMilestoneCheck';
@@ -428,6 +430,12 @@ export function CorrectiveActionDetail() {
                 placeholder="Describe resolution actions taken..."
                 className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1e4d6b] resize-none"
               />
+              <SuggestionPill
+                fieldLabel="Resolution Note"
+                formContext={{ title: item?.title, category: item?.category, severity: item?.severity }}
+                entityType="corrective_action"
+                onAccept={(text) => setResolutionNote(text)}
+              />
             </div>
           ) : (
             <p className="text-xs text-gray-400">No resolution note recorded.</p>
@@ -463,6 +471,12 @@ export function CorrectiveActionDetail() {
                 placeholder="Describe verification findings..."
                 className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1e4d6b] resize-none"
               />
+              <SuggestionPill
+                fieldLabel="Verification Note"
+                formContext={{ title: item?.title, category: item?.category, severity: item?.severity }}
+                entityType="corrective_action"
+                onAccept={(text) => setVerificationNote(text)}
+              />
             </div>
           ) : item.status === 'resolved' ? (
             <p className="text-xs text-gray-500">Awaiting verification from a manager or compliance officer.</p>
@@ -496,12 +510,14 @@ export function CorrectiveActionDetail() {
 
         {/* Add note form */}
         <div className="flex gap-2">
-          <input
-            type="text"
+          <GhostInput
             value={newNote}
             onChange={(e) => setNewNote(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleAddNote()}
             placeholder="Add a note..."
+            fieldLabel="Add a note"
+            formContext={{ title: item?.title, category: item?.category, severity: item?.severity }}
+            entityType="corrective_action"
             className="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1e4d6b]"
           />
           <button

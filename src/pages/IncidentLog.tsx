@@ -19,6 +19,7 @@ import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { EmptyState } from '../components/EmptyState';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
+import { GhostInput } from '../components/ai/GhostInput';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -1571,11 +1572,14 @@ export function IncidentLog() {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               {t('incidents.titleField')} <span className="text-red-600">*</span>
             </label>
-            <input
+            <GhostInput
               value={newTitle}
               onChange={e => setNewTitle(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
               placeholder={t('incidents.titlePlaceholder')}
+              fieldLabel="Incident Title"
+              formContext={{ incidentType: newType || '', severity: newSeverity || '' }}
+              entityType="incident"
             />
           </div>
           <div>

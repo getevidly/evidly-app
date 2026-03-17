@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
+import { GhostInput } from '../components/ai/GhostInput';
 import { useDemo } from '../contexts/DemoContext';
 
 // ── Brand ─────────────────────────────────────────────────────────
@@ -239,12 +240,15 @@ export function ServiceRecordEntry() {
             </div>
             <div>
               <label className={labelClass}>Vendor Contact</label>
-              <input
+              <GhostInput
                 type="text"
                 value={form.vendorContact}
                 onChange={e => update('vendorContact', e.target.value)}
                 placeholder="Phone or email"
                 className={inputClass}
+                fieldLabel="Vendor Contact"
+                formContext={{ vendorName: form.vendorName, serviceType: form.serviceType }}
+                entityType="service"
               />
             </div>
           </div>
@@ -253,12 +257,15 @@ export function ServiceRecordEntry() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className={labelClass}>Certificate Number</label>
-              <input
+              <GhostInput
                 type="text"
                 value={form.certificateNumber}
                 onChange={e => update('certificateNumber', e.target.value)}
                 placeholder="IKECA / NFPA cert #"
                 className={inputClass}
+                fieldLabel="Certificate Number"
+                formContext={{ vendorName: form.vendorName, serviceType: form.serviceType }}
+                entityType="service"
               />
             </div>
             <div>

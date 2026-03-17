@@ -4,6 +4,8 @@ import { ModalShell, FormField, ReadingMethodSelect, formatDateTimeLocal, INPUT_
 import { VendorCombobox } from './VendorCombobox';
 import type { ReadingMethod, CategoryTempConfig } from './types';
 import { AIAssistButton, AIGeneratedIndicator } from '../../components/ui/AIAssistButton';
+import { GhostInput } from '../ai/GhostInput';
+import { TapToFillButton } from '../ai/TapToFillButton';
 
 export interface ReceivingReadingSaveData {
   itemDescription: string;
@@ -72,7 +74,23 @@ export function AddReceivingReadingModal({ open, onClose, locationId, categoryCo
     <ModalShell open={open} onClose={handleClose} title="Add Receiving Reading" subtitle="Log temperature for incoming delivery">
       <form onSubmit={handleSubmit} className="space-y-4">
         <FormField label="Item / Product Name" required>
-          <input type="text" value={itemDescription} onChange={e => setItemDescription(e.target.value)} required placeholder="e.g., Ground Beef, Chicken Breast" className={INPUT_CLASS} />
+          <GhostInput
+            type="text"
+            value={itemDescription}
+            onChange={e => setItemDescription(e.target.value)}
+            required
+            placeholder="e.g., Ground Beef, Chicken Breast"
+            className={INPUT_CLASS}
+            fieldLabel="Item/Product Name"
+            formContext={{ foodCategory }}
+            entityType="temperature"
+          />
+          <TapToFillButton
+            fieldLabel="Item/Product Name"
+            formContext={{ foodCategory }}
+            entityType="temperature"
+            onAccept={(text) => setItemDescription(text)}
+          />
         </FormField>
 
         <FormField label="Food Category" required>

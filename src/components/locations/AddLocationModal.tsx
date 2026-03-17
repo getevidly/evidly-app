@@ -7,6 +7,7 @@ import {
 } from '../../contexts/OperatingHoursContext';
 import { getAvailableCounties } from '../../lib/jurisdictionScoring';
 import { US_STATES } from '../../types/rfp';
+import { GhostInput } from '../ai/GhostInput';
 
 // ── Types ────────────────────────────────────────────────────
 
@@ -96,24 +97,30 @@ export function AddLocationModal({ open, onClose, onSave, existingCodes = [] }: 
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Location Name */}
         <FormField label="Location Name" required>
-          <input
+          <GhostInput
             type="text"
             value={name}
             onChange={e => setName(e.target.value)}
             placeholder="e.g., Downtown Kitchen"
             className={INPUT_CLASS}
+            fieldLabel="Location Name"
+            formContext={{ city, state }}
+            entityType="location"
           />
         </FormField>
 
         {/* Location Code */}
         <FormField label="Location Code" required>
-          <input
+          <GhostInput
             type="text"
             value={code}
             onChange={e => setCode(e.target.value.toUpperCase())}
             placeholder="e.g., DK"
             maxLength={6}
             className={`${INPUT_CLASS} ${codeConflict ? 'border-red-400 focus:ring-red-300' : ''}`}
+            fieldLabel="Location Code"
+            formContext={{ name }}
+            entityType="location"
           />
           {codeConflict && (
             <p className="text-xs text-red-600 mt-1">Code already in use</p>

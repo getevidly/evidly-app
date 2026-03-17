@@ -3,6 +3,8 @@ import { AlertTriangle } from 'lucide-react';
 import { ModalShell, FormField, ReadingMethodSelect, formatDateTimeLocal, INPUT_CLASS, BTN_PRIMARY, BTN_CANCEL } from './shared';
 import type { Cooldown, ReadingMethod } from './types';
 import { AIAssistButton, AIGeneratedIndicator } from '../../components/ui/AIAssistButton';
+import { GhostInput } from '../ai/GhostInput';
+import { TapToFillButton } from '../ai/TapToFillButton';
 
 export interface CooldownNewSaveData {
   mode: 'new';
@@ -164,7 +166,23 @@ export function AddCooldownReadingModal({ open, onClose, activeCooldowns, locati
         ) : (
           <>
             <FormField label="Food Item" required>
-              <input type="text" value={foodItem} onChange={e => setFoodItem(e.target.value)} required placeholder="e.g., Chicken Soup, Rice" className={INPUT_CLASS} />
+              <GhostInput
+                type="text"
+                value={foodItem}
+                onChange={e => setFoodItem(e.target.value)}
+                required
+                placeholder="e.g., Chicken Soup, Rice"
+                className={INPUT_CLASS}
+                fieldLabel="Food Item"
+                formContext={{ equipmentName: location }}
+                entityType="temperature"
+              />
+              <TapToFillButton
+                fieldLabel="Food Item"
+                formContext={{ equipmentName: location }}
+                entityType="temperature"
+                onAccept={(text) => setFoodItem(text)}
+              />
             </FormField>
 
             <div className="grid grid-cols-2 gap-3">

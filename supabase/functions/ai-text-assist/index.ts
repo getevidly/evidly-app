@@ -27,13 +27,28 @@ Deno.serve(async (req: Request) => {
       return jsonResponse({ error: "AI service not configured" }, 503);
     }
 
-    const { fieldLabel, context } = await req.json();
+    const { fieldLabel, context, mode = 'full' } = await req.json();
 
     if (!fieldLabel) {
       return jsonResponse({ error: "fieldLabel is required" }, 400);
     }
 
     const startTime = Date.now();
+    const isGhost = mode === 'ghost';
+
+    const systemPrompt = isGhost
+      ? `You are a smart form autocomplete for EvidLY, a commercial kitchen compliance platform.
+Return ONLY 3-6 words to complete the form field. No punctuation at the end. No explanation.
+Just the completion text. Use food safety and kitchen operations terminology.`
+      : `You are an AI assistant for EvidLY, a commercial kitchen compliance platform.
+Generate concise, professional text for the specified form field.
+Keep responses brief — 1-3 sentences max for descriptions, 2-4 sentences for action plans.
+Use industry-standard food safety and facility safety terminology.
+Be specific and actionable. No filler words.
+Do NOT use markdown formatting — plain text only.
+If context is insufficient, generate a reasonable template the user can customize.
+Equipment safety (hoods, fire suppression, grease traps) = Facility Safety (NFPA 96).
+Food contact surfaces (ice machines, prep surfaces) = Food Safety (FDA Food Code).`;
 
     const anthropicRes = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -44,20 +59,14 @@ Deno.serve(async (req: Request) => {
       },
       body: JSON.stringify({
         model: "claude-sonnet-4-5-20250929",
-        max_tokens: 300,
-        system: `You are an AI assistant for EvidLY, a commercial kitchen compliance platform.
-Generate concise, professional text for the specified form field.
-Keep responses brief — 1-3 sentences max for descriptions, 2-4 sentences for action plans.
-Use industry-standard food safety and facility safety terminology.
-Be specific and actionable. No filler words.
-Do NOT use markdown formatting — plain text only.
-If context is insufficient, generate a reasonable template the user can customize.
-Equipment safety (hoods, fire suppression, grease traps) = Facility Safety (NFPA 96).
-Food contact surfaces (ice machines, prep surfaces) = Food Safety (FDA Food Code).`,
+        max_tokens: isGhost ? 20 : 300,
+        system: systemPrompt,
         messages: [
           {
             role: "user",
-            content: `Generate text for the "${fieldLabel}" field.\nForm context: ${JSON.stringify(context)}\nKeep it concise and professional.`,
+            content: isGhost
+              ? `Complete this field: "${fieldLabel}". Context: ${JSON.stringify(context)}`
+              : `Generate text for the "${fieldLabel}" field.\nForm context: ${JSON.stringify(context)}\nKeep it concise and professional.`,
           },
         ],
       }),

@@ -18,6 +18,7 @@ import {
   ListChecks, MessageSquare, User, Clock, History,
 } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
+import { SuggestionPill } from '../components/ai/SuggestionPill';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { useJurisdiction } from '../hooks/useJurisdiction';
@@ -543,6 +544,12 @@ export default function MockInspection() {
                 placeholder="Document the issue..."
                 rows={2}
                 className="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/30 focus:border-[#1e4d6b] resize-none"
+              />
+              <SuggestionPill
+                fieldLabel="Question Notes"
+                formContext={{ questionText: current.question?.text || '', category: current.question?.category || '' }}
+                entityType="checklist"
+                onAccept={(text) => setNotes(currentIdx, text)}
               />
             </div>
           )}
