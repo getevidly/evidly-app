@@ -74,6 +74,7 @@ export function NotificationPanel({ isOpen, onClose }: NotificationPanelProps) {
       {/* Panel */}
       <div
         ref={panelRef}
+        data-testid="notification-panel"
         className="fixed right-0 top-0 h-full z-50 bg-white shadow-2xl flex flex-col"
         style={{
           width: '420px',

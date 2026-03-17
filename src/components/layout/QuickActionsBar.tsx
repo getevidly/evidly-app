@@ -86,6 +86,7 @@ export function QuickActionsBar() {
     <>
       {/* Desktop — fixed bottom bar (lg+ only, matches sidebar breakpoint) */}
       <div
+        data-testid="quick-actions-bar"
         className="hidden lg:flex fixed bottom-0 left-0 lg:left-60 right-0 z-40 bg-white border-t justify-center items-center gap-6"
         style={{
           padding: '8px 32px',
@@ -119,6 +120,7 @@ export function QuickActionsBar() {
 
       {/* Mobile — above MobileTabBar (h-14 at bottom-0) + DemoCTABar when in demo */}
       <div
+        data-testid="quick-actions-bar-mobile"
         className={`lg:hidden fixed left-0 right-0 z-40 bg-white border-t ${showDemoCTA ? 'bottom-[7rem]' : 'bottom-14'}`}
         style={{
           height: 56,

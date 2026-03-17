@@ -39,7 +39,7 @@ export function WelcomeModal({ firstName, onDismiss }: WelcomeModalProps) {
       className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity duration-200 ${visible ? 'opacity-100' : 'opacity-0'}`}
       style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
     >
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <div data-testid="welcome-modal" className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <button
           onClick={handleGetStarted}
           className="absolute top-4 right-4 p-1 text-gray-400 hover:text-gray-600 transition-colors z-10"

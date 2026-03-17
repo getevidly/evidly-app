@@ -16,6 +16,7 @@ export function NotificationBell({ onClick }: NotificationBellProps) {
 
   return (
     <button
+      data-testid="notification-bell"
       onClick={onClick}
       className="relative p-2 rounded-md transition-colors duration-150"
       style={{ color: '#1E2D4D' }}
