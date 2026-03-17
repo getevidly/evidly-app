@@ -63,9 +63,69 @@ interface QueueSignal {
   delivery_error?: string | null;
   delivery_attempt_count?: number | null;
   published_at?: string | null;
+  // SIGNAL-VALIDATION-01: Review pipeline fields
+  arthur_notes?: string | null;
+  target_org_ids?: string[] | null;
+  preview_sent?: boolean;
+  edit_count?: number;
+  detail_markdown?: string | null;
+  reviewed_at?: string | null;
+  reviewed_by?: string | null;
 }
 
-type TabFilter = 'all' | 'hold' | 'notify' | 'dismissed' | 'published' | 'ai-costs';
+type TabFilter = 'all' | 'hold' | 'notify' | 'rejected' | 'published' | 'ai-costs';
+
+// SIGNAL-VALIDATION-01: Seven-step pipeline
+type PipelineStep = 'crawled' | 'ai_triage' | 'game_plan' | 'arthur_reviews' | 'impact_check' | 'approve' | 'deliver';
+
+const PIPELINE_STEPS: { key: PipelineStep; label: string; auto: boolean }[] = [
+  { key: 'crawled',        label: 'Crawled',        auto: true },
+  { key: 'ai_triage',      label: 'AI Triage',      auto: true },
+  { key: 'game_plan',      label: 'Game Plan',      auto: true },
+  { key: 'arthur_reviews', label: 'Arthur Reviews',  auto: false },
+  { key: 'impact_check',   label: 'Impact Check',   auto: false },
+  { key: 'approve',        label: 'Approve',        auto: false },
+  { key: 'deliver',        label: 'Deliver',        auto: false },
+];
+
+function derivePipelineStep(sig: QueueSignal, hasGamePlan: boolean): number {
+  if (sig.is_published && sig.delivery_status && sig.delivery_status !== 'pending') return 6;
+  if (sig.is_published) return 5;
+  if (sig.reviewed_at) return 4;
+  if (sig.routing_tier && sig.routing_tier !== 'auto') return 3;
+  if (hasGamePlan || (sig.ai_urgency && sig.ai_summary)) return 2;
+  if (sig.severity_score != null && sig.severity_score > 0) return 1;
+  return 0;
+}
+
+function PipelineStepBar({ currentStep }: { currentStep: number }) {
+  return (
+    <div style={{ display: 'flex', gap: 2, marginBottom: 10 }}>
+      {PIPELINE_STEPS.map((step, i) => {
+        const isComplete = i < currentStep;
+        const isCurrent = i === currentStep;
+        return (
+          <div key={step.key} style={{ flex: 1, textAlign: 'center' }}>
+            <div style={{
+              height: 4, borderRadius: 2,
+              background: isComplete ? '#059669' : isCurrent ? GOLD : '#E5E7EB',
+              transition: 'background 0.3s',
+              marginBottom: 3,
+            }} />
+            <div style={{
+              fontSize: 8, fontWeight: 700,
+              color: isComplete ? '#059669' : isCurrent ? GOLD : TEXT_MUTED,
+              whiteSpace: 'nowrap',
+            }}>
+              {step.label}
+              {step.auto && <span style={{ fontSize: 7, color: TEXT_MUTED }}> (AI)</span>}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 // AUDIT-FIX-08 / A-3: Classification log entry
 interface ClassificationLogEntry {
@@ -111,7 +171,7 @@ const DIM_COLORS: Record<string, string> = {
 const LEVELS = ['critical', 'high', 'medium', 'low', 'none'] as const;
 const LEVEL_LABELS: Record<string, string> = { critical: 'Crit', high: 'High', medium: 'Med', low: 'Low', none: 'None' };
 
-const DISMISS_REASONS = [
+const REJECT_REASONS = [
   'Not relevant to CA commercial kitchens',
   'Duplicate signal',
   'Outdated / superseded',
@@ -201,13 +261,29 @@ export default function IntelligenceAdmin() {
   const [aiSuggested, setAiSuggested] = useState<Record<string, Record<string, boolean>>>({});
   const aiClassifiedRef = useRef<Set<string>>(new Set());
 
-  // Dismiss modal state
-  const [dismissModal, setDismissModal] = useState<{ signalId: string; previousTier: RoutingTier | null } | null>(null);
-  const [dismissReason, setDismissReason] = useState('');
-  const [dismissNote, setDismissNote] = useState('');
+  // SIGNAL-VALIDATION-01: Reject modal state (renamed from dismiss)
+  const [rejectModal, setRejectModal] = useState<{ signalId: string; previousTier: RoutingTier | null } | null>(null);
+  const [rejectReason, setRejectReason] = useState('');
+  const [rejectNote, setRejectNote] = useState('');
 
-  // Undo toast state
-  const [lastDismissed, setLastDismissed] = useState<{ id: string; previousTier: RoutingTier | null; signal: QueueSignal } | null>(null);
+  // SIGNAL-VALIDATION-01: Review panel state
+  const [expandedSignalId, setExpandedSignalId] = useState<string | null>(null);
+  const [reviewTab, setReviewTab] = useState<'content' | 'source' | 'preview' | 'gameplan'>('content');
+  const [editFormExtended, setEditFormExtended] = useState({ title: '', summary: '', detail_markdown: '', recommended_action: '' });
+  const [gamePlans, setGamePlans] = useState<Record<string, { id: string; title: string; description: string | null; priority: string; status: string; tasks: any[]; task_status: Record<string, string>; created_at: string }[]>>({});
+  const [gamePlanLoading, setGamePlanLoading] = useState<string | null>(null);
+  const [newTaskText, setNewTaskText] = useState('');
+  const [arthurNotes, setArthurNotes] = useState<Record<string, string>>({});
+  const [savingNotes, setSavingNotes] = useState<string | null>(null);
+  const [subsetModal, setSubsetModal] = useState<{ signalId: string } | null>(null);
+  const [subsetOrgIds, setSubsetOrgIds] = useState<string[]>([]);
+  const [sendingPreview, setSendingPreview] = useState<string | null>(null);
+  const [weeklyPublished, setWeeklyPublished] = useState(0);
+  const [weeklyRejected, setWeeklyRejected] = useState(0);
+  const [avgReviewHours, setAvgReviewHours] = useState<number | null>(null);
+
+  // Undo toast state (reject)
+  const [lastRejected, setLastRejected] = useState<{ id: string; previousTier: RoutingTier | null; signal: QueueSignal } | null>(null);
   const undoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Restored flash
@@ -258,6 +334,62 @@ export default function IntelligenceAdmin() {
       // Silent fail — leave buttons unset
     }
   }, []);
+
+  // SIGNAL-VALIDATION-01: Log review action to signal_review_log
+  const logReviewAction = useCallback(async (
+    signalId: string, action: string, notes?: string, metadata?: Record<string, any>
+  ) => {
+    await supabase.from('signal_review_log').insert({
+      signal_id: signalId,
+      action,
+      actor_id: user?.id,
+      actor_email: user?.email,
+      notes: notes || null,
+      metadata: metadata || {},
+    }).catch(() => {});
+  }, [user]);
+
+  // SIGNAL-VALIDATION-01: Load game plans for a signal
+  const loadGamePlansForSignal = useCallback(async (signalId: string) => {
+    setGamePlanLoading(signalId);
+    const { data } = await supabase
+      .from('intelligence_game_plans')
+      .select('*')
+      .eq('signal_id', signalId)
+      .order('created_at', { ascending: false });
+    setGamePlans(prev => ({ ...prev, [signalId]: data || [] }));
+    setGamePlanLoading(null);
+  }, []);
+
+  // SIGNAL-VALIDATION-01: Save arthur notes
+  const saveArthurNotes = useCallback(async (signalId: string) => {
+    const notes = arthurNotes[signalId];
+    if (notes === undefined) return;
+    setSavingNotes(signalId);
+    await supabase.from('intelligence_signals').update({ arthur_notes: notes }).eq('id', signalId);
+    setSignals(prev => prev.map(s => s.id === signalId ? { ...s, arthur_notes: notes } : s));
+    await logReviewAction(signalId, 'edit', `Updated notes: ${notes.slice(0, 100)}`);
+    setSavingNotes(null);
+    toast.success('Notes saved');
+  }, [arthurNotes, logReviewAction]);
+
+  // SIGNAL-VALIDATION-01: Send preview
+  const sendPreview = useCallback(async (signalId: string) => {
+    setSendingPreview(signalId);
+    await supabase.from('intelligence_signals').update({ preview_sent: true }).eq('id', signalId);
+    setSignals(prev => prev.map(s => s.id === signalId ? { ...s, preview_sent: true } : s));
+    await logReviewAction(signalId, 'preview_sent');
+    setSendingPreview(null);
+    toast.success('Preview marked as sent');
+  }, [logReviewAction]);
+
+  // SIGNAL-VALIDATION-01: Hold signal
+  const holdSignal = useCallback(async (signalId: string) => {
+    await supabase.from('intelligence_signals').update({ routing_tier: 'hold' }).eq('id', signalId);
+    setSignals(prev => prev.map(s => s.id === signalId ? { ...s, routing_tier: 'hold' as RoutingTier } : s));
+    await logReviewAction(signalId, 'hold');
+    toast.success('Signal placed on hold');
+  }, [logReviewAction]);
 
   // AUDIT-FIX-05 / P-1: Re-deliver a failed signal
   const redeliverSignal = useCallback(async (signalId: string) => {
@@ -336,6 +468,37 @@ export default function IntelligenceAdmin() {
         classifySignals(needsAI);
       }
     }
+    // SIGNAL-VALIDATION-01: Enhanced weekly KPIs
+    const oneWeekAgo = new Date(Date.now() - 7 * 86400000).toISOString();
+    const { count: weekPubCount } = await supabase
+      .from('intelligence_signals')
+      .select('*', { count: 'exact', head: true })
+      .eq('is_published', true)
+      .gte('published_at', oneWeekAgo);
+    setWeeklyPublished(weekPubCount || 0);
+
+    const { count: weekRejCount } = await supabase
+      .from('intelligence_signals')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'dismissed')
+      .gte('dismissed_at', oneWeekAgo);
+    setWeeklyRejected(weekRejCount || 0);
+
+    const { data: reviewedSigs } = await supabase
+      .from('intelligence_signals')
+      .select('created_at, reviewed_at')
+      .not('reviewed_at', 'is', null)
+      .gte('reviewed_at', oneWeekAgo)
+      .limit(100);
+    if (reviewedSigs && reviewedSigs.length > 0) {
+      const totalHrs = reviewedSigs.reduce((sum: number, s: { created_at: string; reviewed_at: string }) => {
+        return sum + (new Date(s.reviewed_at).getTime() - new Date(s.created_at).getTime()) / 3600000;
+      }, 0);
+      setAvgReviewHours(Math.round((totalHrs / reviewedSigs.length) * 10) / 10);
+    } else {
+      setAvgReviewHours(null);
+    }
+
     setLoading(false);
   }, [classifySignals]);
 
@@ -400,6 +563,9 @@ export default function IntelligenceAdmin() {
       if (editForm.title.trim()) updates.title = editForm.title.trim();
       if (editForm.summary.trim()) updates.content_summary = editForm.summary.trim();
       if (Object.keys(updates).length === 0) { setSavingEdit(false); return; }
+      // SIGNAL-VALIDATION-01: Increment edit_count
+      const currentSig = signals.find(s => s.id === editingId);
+      updates.edit_count = (currentSig?.edit_count || 0) + 1;
       const { error } = await supabase.from('intelligence_signals').update(updates).eq('id', editingId);
       if (error) throw error;
       await supabase.from('platform_audit_log').insert({
@@ -411,6 +577,7 @@ export default function IntelligenceAdmin() {
         old_value: null,
         new_value: updates,
       }).catch(() => {});
+      await logReviewAction(editingId, 'edit', null, updates);
       toast.success('Signal updated');
       setSignals(prev => prev.map(s => s.id === editingId ? { ...s, ...updates } : s));
       setEditingId(null);
@@ -418,7 +585,7 @@ export default function IntelligenceAdmin() {
       toast.error(`Save failed: ${err?.message || 'Unknown error'}`);
     }
     setSavingEdit(false);
-  }, [editingId, editForm, user]);
+  }, [editingId, editForm, user, signals, logReviewAction]);
 
   // AUDIT-FIX-08 / A-3: Load AI cost data
   const loadAiCosts = useCallback(async () => {
@@ -577,6 +744,8 @@ export default function IntelligenceAdmin() {
         workforce_risk_level: getRiskLevel(sig, 'workforce'),
         is_published: true,
         published_at: new Date().toISOString(),
+        reviewed_at: new Date().toISOString(),
+        reviewed_by: user?.email || 'admin',
         // AUDIT-FIX-05 / P-1: Initialize delivery tracking
         delivery_status: 'pending',
         delivery_attempt_count: 0,
@@ -585,6 +754,7 @@ export default function IntelligenceAdmin() {
     if (error) {
       console.error(`Failed to publish: ${error.message}`);
     } else {
+      await logReviewAction(sig.id, 'approve');
       setSignals(prev => prev.filter(s => s.id !== sig.id));
       setRiskEdits(prev => { const next = { ...prev }; delete next[sig.id]; return next; });
       try {
@@ -604,36 +774,68 @@ export default function IntelligenceAdmin() {
     setPublishing(null);
   };
 
-  // Open dismiss modal
-  const openDismissModal = (sig: QueueSignal) => {
-    setDismissModal({ signalId: sig.id, previousTier: sig.routing_tier });
-    setDismissReason('');
-    setDismissNote('');
+  // SIGNAL-VALIDATION-01: Publish for subset
+  const publishForSubset = async (sig: QueueSignal, orgIds: string[]) => {
+    setPublishing(sig.id);
+    const { error } = await supabase
+      .from('intelligence_signals')
+      .update({
+        revenue_risk_level: getRiskLevel(sig, 'revenue'),
+        liability_risk_level: getRiskLevel(sig, 'liability'),
+        cost_risk_level: getRiskLevel(sig, 'cost'),
+        operational_risk_level: getRiskLevel(sig, 'operational'),
+        workforce_risk_level: getRiskLevel(sig, 'workforce'),
+        is_published: true,
+        published_at: new Date().toISOString(),
+        reviewed_at: new Date().toISOString(),
+        reviewed_by: user?.email || 'admin',
+        delivery_status: 'pending',
+        delivery_attempt_count: 0,
+        target_org_ids: orgIds,
+      })
+      .eq('id', sig.id);
+    if (!error) {
+      await logReviewAction(sig.id, 'approve_subset', null, { target_org_ids: orgIds });
+      setSignals(prev => prev.filter(s => s.id !== sig.id));
+      setRiskEdits(prev => { const next = { ...prev }; delete next[sig.id]; return next; });
+      try { await supabase.functions.invoke('intelligence-deliver', { body: { type: 'signal', id: sig.id } }); } catch {}
+      const { data: pubData } = await supabase.from('intelligence_signals').select('*').eq('is_published', true).order('published_at', { ascending: false }).limit(50);
+      if (pubData) setPublishedSignals(pubData);
+    }
+    setPublishing(null);
+    setSubsetModal(null);
   };
 
-  // Confirm dismiss with reason
-  const confirmDismiss = async () => {
-    if (!dismissModal || !dismissReason) return;
-    if (dismissReason === 'Other' && dismissNote.length < 1) return;
+  // Open reject modal (renamed from dismiss)
+  const openRejectModal = (sig: QueueSignal) => {
+    setRejectModal({ signalId: sig.id, previousTier: sig.routing_tier });
+    setRejectReason('');
+    setRejectNote('');
+  };
 
-    const sig = signals.find(s => s.id === dismissModal.signalId);
+  // Confirm reject with reason
+  const confirmReject = async () => {
+    if (!rejectModal || !rejectReason) return;
+    if (rejectReason === 'Other' && rejectNote.length < 1) return;
+
+    const sig = signals.find(s => s.id === rejectModal.signalId);
     if (!sig) return;
 
-    const fullReason = dismissReason === 'Other' ? `Other: ${dismissNote}` : dismissReason;
+    const fullReason = rejectReason === 'Other' ? `Other: ${rejectNote}` : rejectReason;
 
     // Optimistic update
     setSignals(prev => prev.map(s =>
-      s.id === dismissModal.signalId
+      s.id === rejectModal.signalId
         ? { ...s, status: 'dismissed', dismissed_reason: fullReason, dismissed_at: new Date().toISOString(), dismissed_by: user?.email || 'admin' }
         : s
     ));
-    setDismissModal(null);
+    setRejectModal(null);
 
     // Start undo timer
     if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
-    setLastDismissed({ id: sig.id, previousTier: sig.routing_tier, signal: sig });
+    setLastRejected({ id: sig.id, previousTier: sig.routing_tier, signal: sig });
     undoTimerRef.current = setTimeout(() => {
-      setLastDismissed(null);
+      setLastRejected(null);
     }, 6000);
 
     // Persist
@@ -644,16 +846,20 @@ export default function IntelligenceAdmin() {
         dismissed_reason: fullReason,
         dismissed_at: new Date().toISOString(),
         dismissed_by: user?.email || 'admin',
+        reviewed_at: new Date().toISOString(),
+        reviewed_by: user?.email || 'admin',
       })
-      .eq('id', dismissModal.signalId);
+      .eq('id', rejectModal.signalId);
+
+    await logReviewAction(rejectModal.signalId, 'reject', fullReason);
   };
 
-  // Undo dismiss
-  const undoDismiss = async () => {
-    if (!lastDismissed) return;
-    const { id, signal } = lastDismissed;
+  // Undo reject
+  const undoReject = async () => {
+    if (!lastRejected) return;
+    const { id, signal } = lastRejected;
     if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
-    setLastDismissed(null);
+    setLastRejected(null);
 
     // Optimistic: restore to original state
     setSignals(prev => prev.map(s =>
@@ -671,6 +877,8 @@ export default function IntelligenceAdmin() {
         dismissed_by: null,
       })
       .eq('id', id);
+
+    await logReviewAction(id, 'restore');
   };
 
   // Restore from dismissed tab
@@ -693,11 +901,13 @@ export default function IntelligenceAdmin() {
         dismissed_by: null,
       })
       .eq('id', sig.id);
+
+    await logReviewAction(sig.id, 'restore');
   };
 
   // Split signals
   const activeSignals = signals.filter(s => s.status !== 'dismissed');
-  const dismissedSignals = signals.filter(s => s.status === 'dismissed');
+  const rejectedSignals = signals.filter(s => s.status === 'dismissed');
 
   // Date filter helper
   const passesDateFilter = (createdAt: string): boolean => {
@@ -716,7 +926,7 @@ export default function IntelligenceAdmin() {
   };
 
   // Apply all filters
-  const filtered = (filter === 'dismissed' ? dismissedSignals : activeSignals).filter(s => {
+  const filtered = (filter === 'rejected' ? rejectedSignals : activeSignals).filter(s => {
     if (filter === 'hold' && s.routing_tier !== 'hold') return false;
     if (filter === 'notify' && s.routing_tier !== 'notify') return false;
     if (pillarFilter && getSignalPillar(s) !== pillarFilter) return false;
@@ -737,7 +947,7 @@ export default function IntelligenceAdmin() {
 
   const holdCount = activeSignals.filter(s => s.routing_tier === 'hold').length;
   const notifyCount = activeSignals.filter(s => s.routing_tier === 'notify').length;
-  const dismissedCount = dismissedSignals.length;
+  const rejectedCount = rejectedSignals.length;
   const revenueCount = activeSignals.filter(s => {
     const v = riskEdits[s.id]?.revenue ?? s.revenue_risk_level;
     return v && v !== 'none';
@@ -754,7 +964,7 @@ export default function IntelligenceAdmin() {
 
   const publishedCount = publishedSignals.length;
   const failedDeliveryCount = publishedSignals.filter(s => s.delivery_status === 'failed').length;
-  const isDismissedTab = filter === 'dismissed';
+  const isRejectedTab = filter === 'rejected';
   const isPublishedTab = filter === 'published';
 
   const pillStyle = (active: boolean, color: string = NAVY): React.CSSProperties => ({
@@ -822,13 +1032,13 @@ export default function IntelligenceAdmin() {
         </div>
       </div>
 
-      {/* Stats row */}
+      {/* Stats row — SIGNAL-VALIDATION-01 enhanced KPIs */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 20 }}>
         {[
-          { label: 'Total Pending', value: activeSignals.length, color: NAVY },
-          { label: 'Revenue', value: revenueCount, color: '#DC2626' },
-          { label: 'Liability', value: liabilityCount, color: '#7C3AED' },
-          { label: 'Cost + Ops', value: costOpsCount, color: '#D97706' },
+          { label: 'In Queue', value: String(activeSignals.length), color: NAVY },
+          { label: 'Published (7d)', value: String(weeklyPublished), color: '#059669' },
+          { label: 'Rejected (7d)', value: String(weeklyRejected), color: '#DC2626' },
+          { label: 'Avg Review Time', value: avgReviewHours != null ? `${avgReviewHours}h` : '—', color: GOLD },
         ].map(s => (
           <div key={s.label} style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '14px 16px' }}>
             <div style={{ fontSize: 10, fontWeight: 700, color: TEXT_MUTED, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 4 }}>
@@ -845,7 +1055,7 @@ export default function IntelligenceAdmin() {
           { key: 'all' as TabFilter, label: `All (${activeSignals.length})` },
           { key: 'hold' as TabFilter, label: `Hold (${holdCount})` },
           { key: 'notify' as TabFilter, label: `Notify (${notifyCount})` },
-          { key: 'dismissed' as TabFilter, label: `Dismissed (${dismissedCount})` },
+          { key: 'rejected' as TabFilter, label: `Rejected (${rejectedCount})` },
           { key: 'published' as TabFilter, label: `Published (${publishedCount})${failedDeliveryCount > 0 ? ` · ${failedDeliveryCount} failed` : ''}` },
           { key: 'ai-costs' as TabFilter, label: '$ AI Costs' },
         ]).map(f => (
@@ -1236,11 +1446,11 @@ export default function IntelligenceAdmin() {
       ) : filtered.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '48px 20px', background: '#FAFAF8', border: '1.5px dashed #E5E0D8', borderRadius: 10 }}>
           <div style={{ fontSize: 14, fontWeight: 700, color: NAVY, marginBottom: 6 }}>
-            {isDismissedTab ? 'No dismissed signals' : 'Queue is clear'}
+            {isRejectedTab ? 'No rejected signals' : 'Queue is clear'}
           </div>
           <div style={{ fontSize: 12, color: TEXT_SEC, maxWidth: 400, margin: '0 auto', lineHeight: 1.6 }}>
-            {isDismissedTab
-              ? 'Dismissed signals will appear here. Use the Restore button to return them to the review queue.'
+            {isRejectedTab
+              ? 'Rejected signals will appear here. Use the Restore button to return them to the review queue.'
               : 'No signals pending review. New signals will appear here when the intelligence crawler detects changes.'
             }
           </div>
@@ -1250,7 +1460,7 @@ export default function IntelligenceAdmin() {
           {filtered.map(sig => {
             const uc = URGENCY_COLORS[sig.ai_urgency || 'low'] || URGENCY_COLORS.low;
             const rc = sig.routing_tier ? routingTierColor(sig.routing_tier) : null;
-            const isDismissed = sig.status === 'dismissed';
+            const isRejected = sig.status === 'dismissed';
             const isRestored = restoredId === sig.id;
 
             if (isRestored) {
@@ -1266,16 +1476,37 @@ export default function IntelligenceAdmin() {
 
             return (
               <div key={sig.id} style={{
-                background: isDismissed ? '#FAFAF8' : '#fff',
+                background: isRejected ? '#FAFAF8' : '#fff',
                 border: `1px solid ${BORDER}`,
                 borderRadius: 10,
                 padding: '16px 18px',
-                borderLeft: isDismissed ? `4px solid ${TEXT_MUTED}`
+                borderLeft: isRejected ? `4px solid ${TEXT_MUTED}`
                   : sig.routing_tier === 'hold' ? '4px solid #DC2626'
                   : sig.routing_tier === 'notify' ? '4px solid #D97706'
                   : `4px solid ${BORDER}`,
-                opacity: isDismissed ? 0.85 : 1,
-              }}>
+                opacity: isRejected ? 0.85 : 1,
+                cursor: 'pointer',
+              }}
+                onClick={() => {
+                  if (expandedSignalId === sig.id) { setExpandedSignalId(null); }
+                  else {
+                    setExpandedSignalId(sig.id);
+                    setReviewTab('content');
+                    setEditFormExtended({
+                      title: sig.title || '',
+                      summary: sig.ai_summary || sig.content_summary || '',
+                      detail_markdown: sig.detail_markdown || '',
+                      recommended_action: sig.recommended_action || '',
+                    });
+                    setArthurNotes(prev => ({ ...prev, [sig.id]: sig.arthur_notes || '' }));
+                    if (!gamePlans[sig.id]) loadGamePlansForSignal(sig.id);
+                  }
+                }}
+              >
+                {/* SIGNAL-VALIDATION-01: Pipeline step bar */}
+                {!isRejected && (
+                  <PipelineStepBar currentStep={derivePipelineStep(sig, !!(gamePlans[sig.id]?.length))} />
+                )}
                 <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
                   <div style={{ flex: 1 }}>
                     {/* Badges */}
@@ -1319,9 +1550,27 @@ export default function IntelligenceAdmin() {
                           Confidence: {sig.confidence_score}%
                         </span>
                       )}
-                      {isDismissed && (
+                      {isRejected && (
                         <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: '#F3F4F6', color: TEXT_MUTED }}>
-                          DISMISSED
+                          REJECTED
+                        </span>
+                      )}
+                      {/* SIGNAL-VALIDATION-01: Edit count badge */}
+                      {sig.edit_count != null && sig.edit_count > 0 && (
+                        <span style={{ fontSize: 9, fontWeight: 600, padding: '2px 8px', borderRadius: 10, background: '#EFF6FF', color: '#2563EB', border: '1px solid #BFDBFE' }}>
+                          {sig.edit_count} edit{sig.edit_count > 1 ? 's' : ''}
+                        </span>
+                      )}
+                      {/* SIGNAL-VALIDATION-01: Preview sent */}
+                      {sig.preview_sent && (
+                        <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: '#F0FDF4', color: '#059669' }}>
+                          PREVIEW SENT
+                        </span>
+                      )}
+                      {/* SIGNAL-VALIDATION-01: Subset target */}
+                      {sig.target_org_ids && sig.target_org_ids.length > 0 && (
+                        <span style={{ fontSize: 9, fontWeight: 600, padding: '2px 8px', borderRadius: 10, background: '#FFF7ED', color: '#C2410C' }}>
+                          {sig.target_org_ids.length} org target{sig.target_org_ids.length > 1 ? 's' : ''}
                         </span>
                       )}
                     </div>
@@ -1387,7 +1636,7 @@ export default function IntelligenceAdmin() {
                     </div>
 
                     {/* Dismissed info — replaces risk dimensions for dismissed signals */}
-                    {isDismissed ? (
+                    {isRejected ? (
                       <div style={{ marginTop: 4, marginBottom: 8, padding: '8px 12px', background: '#F9FAFB', borderRadius: 6, border: `1px solid #E5E7EB` }}>
                         <div style={{ fontSize: 12, color: NAVY, fontWeight: 600 }}>
                           Dismissed: {sig.dismissed_at ? new Date(sig.dismissed_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
@@ -1449,7 +1698,7 @@ export default function IntelligenceAdmin() {
                     )}
 
                     {/* All-none warning */}
-                    {!isDismissed && isAllNone(sig) && (
+                    {!isRejected && isAllNone(sig) && (
                       <div style={{ fontSize: 10, color: '#D97706', background: '#FFFBEB', padding: '4px 10px', borderRadius: 6, marginBottom: 6 }}>
                         No risk dimensions assigned — this signal will not appear under any dimension in the Intelligence Center.
                       </div>
@@ -1465,111 +1714,68 @@ export default function IntelligenceAdmin() {
                     </div>
                   </div>
 
-                  {/* Actions */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flexShrink: 0 }}>
-                    {isDismissed ? (
-                      /* Restore button for dismissed signals */
-                      <button
-                        onClick={() => restoreSignal(sig)}
-                        style={{
-                          padding: '6px 16px', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer',
-                          background: '#059669', color: '#fff', border: 'none',
-                        }}
-                      >
+                  {/* SIGNAL-VALIDATION-01: 6 Action Buttons */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 5, flexShrink: 0 }} onClick={e => e.stopPropagation()}>
+                    {isRejected ? (
+                      <button onClick={() => restoreSignal(sig)}
+                        style={{ padding: '5px 14px', borderRadius: 6, fontSize: 11, fontWeight: 700, cursor: 'pointer', background: '#059669', color: '#fff', border: 'none' }}>
                         Restore
                       </button>
                     ) : (
-                      /* Normal action buttons for active signals */
                       <>
+                        {/* 1. Approve & Publish */}
                         {(() => {
                           const vs = verificationStatuses[sig.id];
                           const blocked = vs?.publish_blocked ?? true;
-                          const label = vs
-                            ? blocked
-                              ? `${vs.gates_passed}/${vs.gates_required} verified`
-                              : 'Verified — Publish'
-                            : 'Unverified';
                           return (
-                            <button
-                              onClick={() => publishSignal(sig)}
-                              disabled={publishing === sig.id || blocked}
-                              style={{
-                                padding: '6px 16px', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: blocked ? 'not-allowed' : 'pointer',
+                            <button onClick={() => publishSignal(sig)} disabled={publishing === sig.id || blocked}
+                              style={{ padding: '5px 14px', borderRadius: 6, fontSize: 11, fontWeight: 700, cursor: blocked ? 'not-allowed' : 'pointer',
                                 background: blocked ? '#E5E7EB' : '#059669', color: blocked ? TEXT_MUTED : '#fff', border: 'none',
-                                opacity: publishing === sig.id ? 0.5 : 1,
-                              }}
-                            >
-                              {publishing === sig.id ? 'Publishing...' : label}
+                                opacity: publishing === sig.id ? 0.5 : 1 }}>
+                              {publishing === sig.id ? 'Publishing...' : blocked ? `${vs?.gates_passed || 0}/${vs?.gates_required || '?'} gates` : 'Approve & Publish'}
                             </button>
                           );
                         })()}
-                        <button
-                          onClick={(e) => { e.stopPropagation(); setExpandedVerification(expandedVerification === sig.id ? null : sig.id); }}
-                          style={{
-                            padding: '4px 12px', borderRadius: 6, fontSize: 10, fontWeight: 600, cursor: 'pointer',
-                            background: 'transparent', color: TEXT_SEC, border: `1px solid ${BORDER}`,
-                          }}
-                        >
-                          {expandedVerification === sig.id ? 'Hide Gates' : 'Verify Gates'}
+                        {/* 2. Approve for Subset */}
+                        <button onClick={() => setSubsetModal({ signalId: sig.id })}
+                          style={{ padding: '5px 14px', borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: 'pointer', background: '#FFF7ED', color: '#C2410C', border: '1px solid #FDBA74' }}>
+                          Approve Subset
                         </button>
-                        <button
-                          onClick={() => navigate(`/admin/verification?signal=${sig.id}`)}
-                          style={{
-                            padding: '4px 12px', borderRadius: 6, fontSize: 10, fontWeight: 600, cursor: 'pointer',
-                            background: NAVY, color: '#fff', border: 'none',
-                          }}
-                        >
-                          Verify{(() => {
-                            const vs = verificationStatuses[sig.id];
-                            return vs ? ` (${vs.gates_passed}/${vs.gates_required})` : '';
-                          })()}
+                        {/* 3. Edit & Approve */}
+                        <button onClick={() => { setExpandedSignalId(sig.id); setReviewTab('content');
+                          setEditFormExtended({ title: sig.title || '', summary: sig.ai_summary || sig.content_summary || '', detail_markdown: sig.detail_markdown || '', recommended_action: sig.recommended_action || '' });
+                        }}
+                          style={{ padding: '5px 14px', borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: 'pointer', background: '#EFF6FF', color: '#2563EB', border: '1px solid #BFDBFE' }}>
+                          Edit & Approve
                         </button>
-                        {editingId === sig.id ? (
-                          <>
-                            <button
-                              onClick={saveEdit}
-                              disabled={savingEdit}
-                              style={{
-                                padding: '6px 16px', borderRadius: 6, fontSize: 11, fontWeight: 700, cursor: 'pointer',
-                                background: savingEdit ? '#E5E7EB' : '#059669', color: savingEdit ? TEXT_MUTED : '#fff', border: 'none',
-                              }}
-                            >
-                              {savingEdit ? 'Saving...' : 'Save'}
-                            </button>
-                            <button
-                              onClick={cancelEdit}
-                              style={{
-                                padding: '6px 16px', borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: 'pointer',
-                                background: 'transparent', color: TEXT_MUTED, border: `1px solid ${BORDER}`,
-                              }}
-                            >
-                              Cancel
-                            </button>
-                          </>
-                        ) : (
-                          <button
-                            onClick={() => startEdit(sig)}
-                            style={{
-                              padding: '6px 16px', borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: 'pointer',
-                              background: '#EFF6FF', color: '#2563EB', border: '1px solid #BFDBFE',
-                            }}
-                          >
-                            Edit
-                          </button>
-                        )}
-                        <button
-                          onClick={() => openDismissModal(sig)}
-                          style={{
-                            padding: '6px 16px', borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: 'pointer',
+                        {/* 4. Send Preview */}
+                        <button onClick={() => sendPreview(sig.id)} disabled={sendingPreview === sig.id || sig.preview_sent}
+                          style={{ padding: '5px 14px', borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: sig.preview_sent ? 'not-allowed' : 'pointer',
+                            background: 'transparent', color: sig.preview_sent ? '#059669' : TEXT_SEC, border: `1px solid ${sig.preview_sent ? '#059669' : BORDER}`,
+                            opacity: sendingPreview === sig.id ? 0.5 : 1 }}>
+                          {sig.preview_sent ? 'Preview Sent' : sendingPreview === sig.id ? 'Sending...' : 'Send Preview'}
+                        </button>
+                        {/* 5. Reject */}
+                        <button onClick={() => openRejectModal(sig)}
+                          style={{ padding: '5px 14px', borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: 'pointer', background: '#FEF2F2', color: '#DC2626', border: '1px solid #FECACA' }}>
+                          Reject
+                        </button>
+                        {/* 6. Hold */}
+                        <button onClick={() => holdSignal(sig.id)} disabled={sig.routing_tier === 'hold'}
+                          style={{ padding: '5px 14px', borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: sig.routing_tier === 'hold' ? 'not-allowed' : 'pointer',
                             background: 'transparent', color: TEXT_MUTED, border: `1px solid ${BORDER}`,
-                          }}
-                        >
-                          Dismiss
+                            opacity: sig.routing_tier === 'hold' ? 0.5 : 1 }}>
+                          {sig.routing_tier === 'hold' ? 'On Hold' : 'Hold'}
+                        </button>
+                        {/* Verification gates */}
+                        <button onClick={(e) => { e.stopPropagation(); setExpandedVerification(expandedVerification === sig.id ? null : sig.id); }}
+                          style={{ padding: '3px 10px', borderRadius: 6, fontSize: 9, fontWeight: 600, cursor: 'pointer', background: 'transparent', color: TEXT_SEC, border: `1px solid ${BORDER}` }}>
+                          {expandedVerification === sig.id ? 'Hide Gates' : 'Verify Gates'}
                         </button>
                       </>
                     )}
                     {sig.source_url && (
-                      <a href={sig.source_url} target="_blank" rel="noopener noreferrer"
+                      <a href={sig.source_url} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}
                         style={{ fontSize: 10, color: TEXT_SEC, textAlign: 'center', textDecoration: 'underline' }}>
                         Source
                       </a>
@@ -1578,8 +1784,8 @@ export default function IntelligenceAdmin() {
                 </div>
 
                 {/* Verification Panel (expanded) */}
-                {!isDismissed && expandedVerification === sig.id && (
-                  <div style={{ marginTop: 12 }}>
+                {!isRejected && expandedVerification === sig.id && (
+                  <div style={{ marginTop: 12 }} onClick={e => e.stopPropagation()}>
                     <VerificationPanel
                       contentTable="intelligence_signals"
                       contentId={sig.id}
@@ -1589,19 +1795,255 @@ export default function IntelligenceAdmin() {
                     />
                   </div>
                 )}
+
+                {/* SIGNAL-VALIDATION-01: Review Panel with 4 Tabs */}
+                {expandedSignalId === sig.id && !isRejected && (
+                  <div style={{ marginTop: 16, borderTop: `1px solid ${BORDER}`, paddingTop: 16 }} onClick={e => e.stopPropagation()}>
+                    {/* Tab pills */}
+                    <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
+                      {(['content', 'source', 'preview', 'gameplan'] as const).map(t => (
+                        <button key={t} onClick={() => setReviewTab(t)}
+                          style={{
+                            padding: '4px 12px', borderRadius: 14, fontSize: 10, fontWeight: 600, cursor: 'pointer',
+                            background: reviewTab === t ? GOLD : '#fff',
+                            color: reviewTab === t ? '#fff' : TEXT_MUTED,
+                            border: `1px solid ${reviewTab === t ? GOLD : BORDER}`,
+                          }}>
+                          {{ content: 'Signal Content', source: 'Source & AI', preview: 'Operator Preview', gameplan: 'Game Plan' }[t]}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Tab 1: Signal Content */}
+                    {reviewTab === 'content' && (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                        <div>
+                          <label style={{ fontSize: 10, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 3 }}>Title</label>
+                          <input value={editFormExtended.title} onChange={e => setEditFormExtended(p => ({ ...p, title: e.target.value }))}
+                            style={{ width: '100%', padding: '6px 10px', fontSize: 12, border: `1px solid ${BORDER}`, borderRadius: 6, color: NAVY, outline: 'none' }} />
+                        </div>
+                        <div>
+                          <label style={{ fontSize: 10, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 3 }}>Summary</label>
+                          <textarea value={editFormExtended.summary} onChange={e => setEditFormExtended(p => ({ ...p, summary: e.target.value }))} rows={3}
+                            style={{ width: '100%', padding: '6px 10px', fontSize: 12, border: `1px solid ${BORDER}`, borderRadius: 6, color: NAVY, resize: 'vertical', outline: 'none' }} />
+                        </div>
+                        <div>
+                          <label style={{ fontSize: 10, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 3 }}>Detail (Markdown)</label>
+                          <textarea value={editFormExtended.detail_markdown} onChange={e => setEditFormExtended(p => ({ ...p, detail_markdown: e.target.value }))} rows={4}
+                            style={{ width: '100%', padding: '6px 10px', fontSize: 12, border: `1px solid ${BORDER}`, borderRadius: 6, color: NAVY, resize: 'vertical', outline: 'none', fontFamily: 'monospace' }} />
+                        </div>
+                        <div>
+                          <label style={{ fontSize: 10, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 3 }}>Recommended Action</label>
+                          <textarea value={editFormExtended.recommended_action} onChange={e => setEditFormExtended(p => ({ ...p, recommended_action: e.target.value }))} rows={2}
+                            style={{ width: '100%', padding: '6px 10px', fontSize: 12, border: `1px solid ${BORDER}`, borderRadius: 6, color: NAVY, resize: 'vertical', outline: 'none' }} />
+                        </div>
+                        <div>
+                          <label style={{ fontSize: 10, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 3 }}>Arthur&apos;s Notes</label>
+                          <textarea value={arthurNotes[sig.id] || ''} onChange={e => setArthurNotes(prev => ({ ...prev, [sig.id]: e.target.value }))} rows={2}
+                            placeholder="Internal notes about this signal..."
+                            style={{ width: '100%', padding: '6px 10px', fontSize: 12, border: `1px solid ${BORDER}`, borderRadius: 6, color: NAVY, resize: 'vertical', outline: 'none' }} />
+                          <button onClick={() => saveArthurNotes(sig.id)} disabled={savingNotes === sig.id}
+                            style={{ marginTop: 4, padding: '4px 14px', borderRadius: 6, fontSize: 10, fontWeight: 700, cursor: 'pointer', background: GOLD, color: '#fff', border: 'none', opacity: savingNotes === sig.id ? 0.5 : 1 }}>
+                            {savingNotes === sig.id ? 'Saving...' : 'Save Notes'}
+                          </button>
+                        </div>
+                        {/* Save & Publish from content tab */}
+                        <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
+                          <button onClick={async () => {
+                            const updates: Record<string, any> = {};
+                            if (editFormExtended.title.trim()) updates.title = editFormExtended.title.trim();
+                            if (editFormExtended.summary.trim()) updates.content_summary = editFormExtended.summary.trim();
+                            if (editFormExtended.detail_markdown.trim()) updates.detail_markdown = editFormExtended.detail_markdown.trim();
+                            if (editFormExtended.recommended_action.trim()) updates.recommended_action = editFormExtended.recommended_action.trim();
+                            updates.edit_count = (sig.edit_count || 0) + 1;
+                            if (Object.keys(updates).length > 1) {
+                              await supabase.from('intelligence_signals').update(updates).eq('id', sig.id);
+                              await logReviewAction(sig.id, 'edit_approve', null, updates);
+                              setSignals(prev => prev.map(s => s.id === sig.id ? { ...s, ...updates } : s));
+                            }
+                            publishSignal({ ...sig, ...updates });
+                            setExpandedSignalId(null);
+                          }}
+                            style={{ padding: '6px 18px', borderRadius: 6, fontSize: 11, fontWeight: 700, cursor: 'pointer', background: '#059669', color: '#fff', border: 'none' }}>
+                            Save & Publish
+                          </button>
+                          <button onClick={async () => {
+                            const updates: Record<string, any> = {};
+                            if (editFormExtended.title.trim()) updates.title = editFormExtended.title.trim();
+                            if (editFormExtended.summary.trim()) updates.content_summary = editFormExtended.summary.trim();
+                            if (editFormExtended.detail_markdown.trim()) updates.detail_markdown = editFormExtended.detail_markdown.trim();
+                            if (editFormExtended.recommended_action.trim()) updates.recommended_action = editFormExtended.recommended_action.trim();
+                            updates.edit_count = (sig.edit_count || 0) + 1;
+                            if (Object.keys(updates).length > 1) {
+                              await supabase.from('intelligence_signals').update(updates).eq('id', sig.id);
+                              await logReviewAction(sig.id, 'edit', null, updates);
+                              setSignals(prev => prev.map(s => s.id === sig.id ? { ...s, ...updates } : s));
+                              toast.success('Signal saved');
+                            }
+                          }}
+                            style={{ padding: '6px 18px', borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: 'pointer', background: '#EFF6FF', color: '#2563EB', border: '1px solid #BFDBFE' }}>
+                            Save Only
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Tab 2: Source & AI Analysis */}
+                    {reviewTab === 'source' && (
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, fontSize: 12 }}>
+                        <div>
+                          <div style={{ fontWeight: 700, color: NAVY, marginBottom: 8 }}>Source</div>
+                          <div style={{ color: TEXT_SEC, marginBottom: 4 }}><strong>Name:</strong> {sig.source_name || '—'}</div>
+                          <div style={{ color: TEXT_SEC, marginBottom: 4 }}><strong>Key:</strong> {sig.source_key || '—'}</div>
+                          {sig.source_url && (
+                            <div style={{ marginBottom: 4 }}>
+                              <strong style={{ color: TEXT_SEC }}>URL:</strong>{' '}
+                              <a href={sig.source_url} target="_blank" rel="noopener noreferrer" style={{ color: '#2563EB', textDecoration: 'underline' }}>
+                                {(() => { try { return new URL(sig.source_url).hostname; } catch { return sig.source_url; } })()}
+                              </a>
+                            </div>
+                          )}
+                          {sig.original_url && sig.original_url !== sig.source_url && (
+                            <div style={{ color: TEXT_SEC, marginBottom: 4 }}><strong>Original:</strong>{' '}
+                              <a href={sig.original_url} target="_blank" rel="noopener noreferrer" style={{ color: '#2563EB' }}>{sig.original_url}</a>
+                            </div>
+                          )}
+                        </div>
+                        <div>
+                          <div style={{ fontWeight: 700, color: NAVY, marginBottom: 8 }}>AI Analysis</div>
+                          <div style={{ color: TEXT_SEC, marginBottom: 4 }}><strong>Urgency:</strong> {sig.ai_urgency || '—'}</div>
+                          <div style={{ color: TEXT_SEC, marginBottom: 4 }}><strong>Confidence:</strong> {sig.confidence_score != null ? `${sig.confidence_score}%` : '—'}</div>
+                          <div style={{ color: TEXT_SEC, marginBottom: 4 }}><strong>Severity:</strong> {sig.severity_score || '—'}</div>
+                          <div style={{ color: TEXT_SEC, marginBottom: 4 }}><strong>Routing:</strong> {sig.routing_tier || '—'}{sig.routing_reason ? ` — ${sig.routing_reason}` : ''}</div>
+                          <div style={{ color: TEXT_SEC, marginBottom: 4 }}><strong>Scope:</strong> {sig.scope || '—'}</div>
+                          {sig.ai_summary && (
+                            <div style={{ marginTop: 8, padding: '8px 10px', background: '#F9FAFB', borderRadius: 6, fontSize: 11, color: TEXT_SEC, lineHeight: 1.5 }}>
+                              <strong>AI Summary:</strong> {sig.ai_summary}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Tab 3: Operator Preview */}
+                    {reviewTab === 'preview' && (
+                      <div style={{ position: 'relative', maxWidth: 480 }}>
+                        <div style={{ position: 'absolute', top: 8, right: 8, fontSize: 9, fontWeight: 800, color: '#D97706', background: '#FFFBEB', padding: '2px 8px', borderRadius: 6, zIndex: 1, border: '1px solid #FDE68A' }}>
+                          PREVIEW
+                        </div>
+                        <div style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '16px 18px' }}>
+                          <div style={{ display: 'flex', gap: 6, marginBottom: 8, flexWrap: 'wrap' }}>
+                            <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: `${URGENCY_COLORS[sig.ai_urgency || 'low']?.bg || '#F9FAFB'}`, color: URGENCY_COLORS[sig.ai_urgency || 'low']?.text || '#6B7280', textTransform: 'uppercase' }}>
+                              {sig.ai_urgency || 'low'}
+                            </span>
+                            <span style={{ fontSize: 10, fontWeight: 600, padding: '2px 8px', borderRadius: 10, background: '#F3F4F6', color: TEXT_MUTED }}>
+                              {sig.signal_type?.replace(/_/g, ' ') || 'intelligence'}
+                            </span>
+                          </div>
+                          <div style={{ fontSize: 15, fontWeight: 700, color: NAVY, marginBottom: 6 }}>{editFormExtended.title || sig.title}</div>
+                          <div style={{ fontSize: 12, color: TEXT_SEC, lineHeight: 1.6, marginBottom: 8 }}>{editFormExtended.summary || sig.content_summary || sig.ai_summary || ''}</div>
+                          {(editFormExtended.recommended_action || sig.recommended_action) && (
+                            <div style={{ fontSize: 11, color: NAVY, background: '#F0FDF4', padding: '8px 10px', borderRadius: 6, marginBottom: 8 }}>
+                              <strong>Action:</strong> {editFormExtended.recommended_action || sig.recommended_action}
+                            </div>
+                          )}
+                          <div style={{ fontSize: 10, color: TEXT_MUTED }}>{new Date(sig.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Tab 4: Game Plan */}
+                    {reviewTab === 'gameplan' && (
+                      <div>
+                        {gamePlanLoading === sig.id ? (
+                          <div style={{ padding: 20, textAlign: 'center', fontSize: 12, color: TEXT_MUTED }}>Loading game plans...</div>
+                        ) : !gamePlans[sig.id] || gamePlans[sig.id].length === 0 ? (
+                          <div style={{ padding: '20px 16px', textAlign: 'center', background: '#FAFAF8', border: `1.5px dashed ${BORDER}`, borderRadius: 8 }}>
+                            <div style={{ fontSize: 13, fontWeight: 600, color: NAVY, marginBottom: 4 }}>No game plan linked</div>
+                            <div style={{ fontSize: 11, color: TEXT_SEC }}>Game plans are auto-generated during AI triage or can be created manually.</div>
+                          </div>
+                        ) : (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                            {gamePlans[sig.id].map(gp => (
+                              <div key={gp.id} style={{ border: `1px solid ${BORDER}`, borderRadius: 8, padding: '12px 14px' }}>
+                                <div style={{ fontSize: 13, fontWeight: 700, color: NAVY, marginBottom: 4 }}>{gp.title}</div>
+                                {gp.description && <div style={{ fontSize: 11, color: TEXT_SEC, marginBottom: 8 }}>{gp.description}</div>}
+                                <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
+                                  <span style={{ fontSize: 9, fontWeight: 600, padding: '2px 8px', borderRadius: 10, background: gp.priority === 'critical' ? '#FEF2F2' : gp.priority === 'high' ? '#FFFBEB' : '#F9FAFB', color: gp.priority === 'critical' ? '#DC2626' : gp.priority === 'high' ? '#D97706' : TEXT_MUTED }}>
+                                    {gp.priority}
+                                  </span>
+                                  <span style={{ fontSize: 9, fontWeight: 600, padding: '2px 8px', borderRadius: 10, background: '#F3F4F6', color: TEXT_SEC }}>
+                                    {gp.status}
+                                  </span>
+                                </div>
+                                {/* Tasks */}
+                                {Array.isArray(gp.tasks) && gp.tasks.length > 0 && (
+                                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                    {gp.tasks.map((task: any, ti: number) => {
+                                      const taskId = task.id || String(ti);
+                                      const taskStatus = gp.task_status?.[taskId] || 'pending';
+                                      return (
+                                        <div key={taskId} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11 }}>
+                                          <button onClick={async () => {
+                                            const newStatus = taskStatus === 'completed' ? 'pending' : 'completed';
+                                            const updatedTaskStatus = { ...gp.task_status, [taskId]: newStatus };
+                                            await supabase.from('intelligence_game_plans').update({ task_status: updatedTaskStatus }).eq('id', gp.id);
+                                            setGamePlans(prev => ({
+                                              ...prev,
+                                              [sig.id]: prev[sig.id].map(p => p.id === gp.id ? { ...p, task_status: updatedTaskStatus } : p),
+                                            }));
+                                          }}
+                                            style={{ width: 16, height: 16, borderRadius: 3, border: `1px solid ${taskStatus === 'completed' ? '#059669' : BORDER}`, background: taskStatus === 'completed' ? '#059669' : '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 10, flexShrink: 0 }}>
+                                            {taskStatus === 'completed' ? '\u2713' : ''}
+                                          </button>
+                                          <span style={{ color: taskStatus === 'completed' ? TEXT_MUTED : NAVY, textDecoration: taskStatus === 'completed' ? 'line-through' : 'none' }}>
+                                            {task.title || task}
+                                          </span>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                )}
+                                {/* Add task */}
+                                <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
+                                  <input value={newTaskText} onChange={e => setNewTaskText(e.target.value)} placeholder="Add a task..."
+                                    style={{ flex: 1, padding: '4px 8px', fontSize: 11, border: `1px solid ${BORDER}`, borderRadius: 4, outline: 'none' }} />
+                                  <button onClick={async () => {
+                                    if (!newTaskText.trim()) return;
+                                    const newTask = { id: crypto.randomUUID(), title: newTaskText.trim() };
+                                    const updatedTasks = [...(gp.tasks || []), newTask];
+                                    await supabase.from('intelligence_game_plans').update({ tasks: updatedTasks }).eq('id', gp.id);
+                                    setGamePlans(prev => ({
+                                      ...prev,
+                                      [sig.id]: prev[sig.id].map(p => p.id === gp.id ? { ...p, tasks: updatedTasks } : p),
+                                    }));
+                                    setNewTaskText('');
+                                  }}
+                                    style={{ padding: '4px 10px', borderRadius: 4, fontSize: 10, fontWeight: 700, cursor: 'pointer', background: GOLD, color: '#fff', border: 'none' }}>
+                                    Add
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             );
           })}
         </div>
       )}
 
-      {/* Dismiss reason modal */}
-      {dismissModal && (
+      {/* SIGNAL-VALIDATION-01: Reject reason modal */}
+      {rejectModal && (
         <div style={{
           position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', display: 'flex',
           alignItems: 'center', justifyContent: 'center', zIndex: 1000,
         }}
-          onClick={() => setDismissModal(null)}
+          onClick={() => setRejectModal(null)}
         >
           <div
             style={{
@@ -1611,38 +2053,36 @@ export default function IntelligenceAdmin() {
             onClick={e => e.stopPropagation()}
           >
             <h3 style={{ fontSize: 16, fontWeight: 700, color: NAVY, margin: '0 0 4px' }}>
-              Dismiss Signal
+              Reject Signal
             </h3>
             <p style={{ fontSize: 12, color: TEXT_SEC, margin: '0 0 16px' }}>
-              Select a reason for dismissing this signal. It can be restored later.
+              Select a reason for rejecting this signal. It can be restored later.
             </p>
 
-            {/* Reason dropdown */}
             <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>
               Reason *
             </label>
             <select
-              value={dismissReason}
-              onChange={e => setDismissReason(e.target.value)}
+              value={rejectReason}
+              onChange={e => setRejectReason(e.target.value)}
               style={{
                 width: '100%', padding: '8px 12px', fontSize: 13, border: `1px solid ${BORDER}`,
                 borderRadius: 6, background: '#F9FAFB', color: NAVY, cursor: 'pointer', marginBottom: 12,
               }}
             >
               <option value="">Select a reason...</option>
-              {DISMISS_REASONS.map(r => (
+              {REJECT_REASONS.map(r => (
                 <option key={r} value={r}>{r}</option>
               ))}
             </select>
 
-            {/* Note field */}
             <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>
-              Note {dismissReason === 'Other' ? '*' : '(optional)'}
+              Note {rejectReason === 'Other' ? '*' : '(optional)'}
             </label>
             <textarea
-              value={dismissNote}
-              onChange={e => setDismissNote(e.target.value.slice(0, 280))}
-              placeholder={dismissReason === 'Other' ? 'Required — describe the reason...' : 'Optional note...'}
+              value={rejectNote}
+              onChange={e => setRejectNote(e.target.value.slice(0, 280))}
+              placeholder={rejectReason === 'Other' ? 'Required — describe the reason...' : 'Optional note...'}
               rows={3}
               style={{
                 width: '100%', padding: '8px 12px', fontSize: 12, border: `1px solid ${BORDER}`,
@@ -1650,13 +2090,12 @@ export default function IntelligenceAdmin() {
               }}
             />
             <div style={{ fontSize: 10, color: TEXT_MUTED, textAlign: 'right', marginTop: 2, marginBottom: 16 }}>
-              {dismissNote.length}/280
+              {rejectNote.length}/280
             </div>
 
-            {/* Actions */}
             <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
               <button
-                onClick={() => setDismissModal(null)}
+                onClick={() => setRejectModal(null)}
                 style={{
                   padding: '8px 20px', borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: 'pointer',
                   background: 'transparent', color: TEXT_SEC, border: `1px solid ${BORDER}`,
@@ -1665,16 +2104,86 @@ export default function IntelligenceAdmin() {
                 Cancel
               </button>
               <button
-                onClick={confirmDismiss}
-                disabled={!dismissReason || (dismissReason === 'Other' && dismissNote.length < 1)}
+                onClick={confirmReject}
+                disabled={!rejectReason || (rejectReason === 'Other' && rejectNote.length < 1)}
                 style={{
                   padding: '8px 20px', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer',
-                  background: !dismissReason || (dismissReason === 'Other' && dismissNote.length < 1) ? '#E5E7EB' : '#DC2626',
-                  color: !dismissReason || (dismissReason === 'Other' && dismissNote.length < 1) ? TEXT_MUTED : '#fff',
+                  background: !rejectReason || (rejectReason === 'Other' && rejectNote.length < 1) ? '#E5E7EB' : '#DC2626',
+                  color: !rejectReason || (rejectReason === 'Other' && rejectNote.length < 1) ? TEXT_MUTED : '#fff',
                   border: 'none',
                 }}
               >
-                Dismiss Signal
+                Reject Signal
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SIGNAL-VALIDATION-01: Subset targeting modal */}
+      {subsetModal && (
+        <div style={{
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', display: 'flex',
+          alignItems: 'center', justifyContent: 'center', zIndex: 1000,
+        }}
+          onClick={() => setSubsetModal(null)}
+        >
+          <div
+            style={{
+              background: '#fff', borderRadius: 12, padding: '24px 28px', maxWidth: 480, width: '100%',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: NAVY, margin: '0 0 4px' }}>
+              Approve for Subset
+            </h3>
+            <p style={{ fontSize: 12, color: TEXT_SEC, margin: '0 0 16px' }}>
+              Enter organization IDs to target this signal to specific operators.
+            </p>
+
+            <label style={{ fontSize: 11, fontWeight: 600, color: TEXT_SEC, display: 'block', marginBottom: 4 }}>
+              Organization IDs (comma-separated UUIDs)
+            </label>
+            <textarea
+              value={subsetOrgIds.join(', ')}
+              onChange={e => setSubsetOrgIds(e.target.value.split(',').map(s => s.trim()).filter(Boolean))}
+              rows={3}
+              placeholder="org-uuid-1, org-uuid-2, ..."
+              style={{
+                width: '100%', padding: '8px 12px', fontSize: 12, border: `1px solid ${BORDER}`,
+                borderRadius: 6, background: '#F9FAFB', color: NAVY, resize: 'vertical', fontFamily: 'monospace',
+              }}
+            />
+            <div style={{ fontSize: 10, color: TEXT_MUTED, marginTop: 4, marginBottom: 16 }}>
+              {subsetOrgIds.length} organization{subsetOrgIds.length !== 1 ? 's' : ''} targeted
+            </div>
+
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => setSubsetModal(null)}
+                style={{
+                  padding: '8px 20px', borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                  background: 'transparent', color: TEXT_SEC, border: `1px solid ${BORDER}`,
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  const sig = signals.find(s => s.id === subsetModal.signalId);
+                  if (sig) publishForSubset(sig, subsetOrgIds);
+                }}
+                disabled={subsetOrgIds.length === 0 || publishing === subsetModal.signalId}
+                style={{
+                  padding: '8px 20px', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: subsetOrgIds.length === 0 ? 'not-allowed' : 'pointer',
+                  background: subsetOrgIds.length === 0 ? '#E5E7EB' : '#C2410C',
+                  color: subsetOrgIds.length === 0 ? TEXT_MUTED : '#fff',
+                  border: 'none',
+                  opacity: publishing === subsetModal.signalId ? 0.5 : 1,
+                }}
+              >
+                {publishing === subsetModal.signalId ? 'Publishing...' : `Publish to ${subsetOrgIds.length} Org${subsetOrgIds.length !== 1 ? 's' : ''}`}
               </button>
             </div>
           </div>
@@ -1818,16 +2327,16 @@ export default function IntelligenceAdmin() {
       )}
 
       {/* Undo toast */}
-      {lastDismissed && (
+      {lastRejected && (
         <div style={{
           position: 'fixed', bottom: 24, left: '50%', transform: 'translateX(-50%)',
           background: NAVY, color: '#fff', padding: '12px 24px', borderRadius: 10,
           fontSize: 13, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 16,
           boxShadow: '0 8px 30px rgba(0,0,0,0.2)', zIndex: 1001,
         }}>
-          <span>Signal dismissed.</span>
+          <span>Signal rejected.</span>
           <button
-            onClick={undoDismiss}
+            onClick={undoReject}
             style={{
               background: 'transparent', border: `1px solid rgba(255,255,255,0.4)`, color: '#fff',
               padding: '4px 14px', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer',
