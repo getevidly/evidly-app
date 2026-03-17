@@ -8,7 +8,7 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { submitTestimonial } from '../../lib/testimonialSystem';
-import { useDemo } from '../../hooks/useDemo';
+import { useDemo } from '../../contexts/DemoContext';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
