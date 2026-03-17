@@ -356,6 +356,14 @@ body {
 
 /* ── Accessibility: Respect reduced motion ──────────── */
 
+/* ── Crisp Chat: push widget above mobile bottom nav ── */
+
+@media (max-width: 768px) {
+  #crisp-chatbox {
+    bottom: 80px !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

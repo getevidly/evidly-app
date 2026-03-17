@@ -10,6 +10,7 @@ import { INDUSTRY_TEMPLATES, getCategoryLabel, TemplateItem } from '../config/in
 import { toast } from 'sonner';
 import { lookupJurisdiction, linkJurisdictionToLocation } from '../utils/jurisdictionLookup';
 import { GhostInput } from '../components/ai/GhostInput';
+import { useCrispHide } from '../hooks/useCrisp';
 
 const steps = [
   { id: 1, name: 'Welcome', icon: () => <EvidlyIcon size={20} /> },
@@ -25,6 +26,7 @@ const steps = [
 ];
 
 export function Onboarding() {
+  useCrispHide();
   const [currentStep, setCurrentStep] = useState(1);
   const [locationName, setLocationName] = useState('');
   const [locationAddress, setLocationAddress] = useState('');

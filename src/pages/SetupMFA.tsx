@@ -11,6 +11,7 @@ import { Shield, CheckCircle, Copy, AlertTriangle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'sonner';
+import { useCrispHide } from '../hooks/useCrisp';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -18,6 +19,7 @@ const TEXT_SEC = '#6B7F96';
 const BG = '#F4F6FA';
 
 export function SetupMFA() {
+  useCrispHide();
   const navigate = useNavigate();
   const { user, profile } = useAuth();
 
