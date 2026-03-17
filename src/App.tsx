@@ -225,6 +225,7 @@ const DemoRequest = lazy(() => import('./pages/DemoRequest'));
 const DemoSchedule = lazy(() => import('./pages/DemoSchedule'));
 const DemoExpired = lazy(() => import('./pages/DemoExpired'));
 const SetupMFA = lazy(() => import('./pages/SetupMFA').then(m => ({ default: m.SetupMFA })));
+const MFAChallenge = lazy(() => import('./pages/MFAChallenge').then(m => ({ default: m.MFAChallenge })));
 const FoodSafetyHub = lazy(() => import('./pages/FoodSafetyHub').then(m => ({ default: m.FoodSafetyHub })));
 const ComplianceHub = lazy(() => import('./pages/ComplianceHub').then(m => ({ default: m.ComplianceHub })));
 const InsightsHub = lazy(() => import('./pages/InsightsHub').then(m => ({ default: m.InsightsHub })));
@@ -556,6 +557,7 @@ function AppRoutes() {
         <Route path="/demo/schedule/:sessionId" element={<Suspense fallback={<PageSkeleton />}><DemoSchedule /></Suspense>} />
         <Route path="/auth/callback" element={<Suspense fallback={<PageSkeleton />}><AuthCallback /></Suspense>} />
         <Route path="/setup-mfa" element={<Suspense fallback={<PageSkeleton />}><SetupMFA /></Suspense>} />
+        <Route path="/mfa-challenge" element={<Suspense fallback={<PageSkeleton />}><MFAChallenge /></Suspense>} />
         <Route path="/vendor/login" element={<Suspense fallback={<PageSkeleton />}><VendorLogin /></Suspense>} />
         <Route path="/vendor/register" element={<Suspense fallback={<PageSkeleton />}><VendorRegister /></Suspense>} />
         <Route path="/vendor/upload/:token" element={<Suspense fallback={<PageSkeleton />}><VendorSecureUpload /></Suspense>} />

@@ -62,12 +62,20 @@ export function Login() {
       const { data: { user } } = await supabase.auth.getUser();
       const userType = user?.user_metadata?.user_type;
 
+      // Determine intended destination
+      let destination = '/dashboard';
       if (userType === 'vendor') {
-        navigate('/vendor/dashboard');
+        destination = '/vendor/dashboard';
       } else if (user?.email?.endsWith('@getevidly.com') || userType === 'platform_admin') {
-        navigate('/admin');
+        destination = '/admin';
+      }
+
+      // Check for enrolled MFA factors — redirect to challenge if present
+      const { data: mfaFactors } = await supabase.auth.mfa.listFactors();
+      if (mfaFactors?.totp?.length && mfaFactors.totp.length > 0) {
+        navigate('/mfa-challenge', { state: { redirectTo: destination } });
       } else {
-        navigate('/dashboard');
+        navigate(destination);
       }
     }
   };
@@ -150,6 +158,7 @@ export function Login() {
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 right-0 flex items-center pr-3"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? (
                     <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
@@ -196,7 +205,7 @@ export function Login() {
             <button
               type="submit"
               disabled={loading || (captchaEnabled && !captchaToken)}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2"
+              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2"
               style={{ backgroundColor: branding.colors.primary, '--tw-ring-color': branding.colors.primary } as React.CSSProperties}
               onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = branding.colors.primaryLight)}
               onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = branding.colors.primary)}

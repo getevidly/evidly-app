@@ -289,6 +289,9 @@ export default function IntelligenceAdmin() {
   // Restored flash
   const [restoredId, setRestoredId] = useState<string | null>(null);
 
+  // E2E-FIX-01: Manual per-signal classify state
+  const [classifyingId, setClassifyingId] = useState<string | null>(null);
+
   // AI auto-classification via server-side edge function [P0-API-KEY-01]
   const classifySignals = useCallback(async (sigs: QueueSignal[]) => {
     try {
@@ -333,6 +336,40 @@ export default function IntelligenceAdmin() {
     } catch {
       // Silent fail — leave buttons unset
     }
+  }, []);
+
+  // E2E-FIX-01: Manual per-signal classify
+  const classifySingle = useCallback(async (sig: QueueSignal) => {
+    setClassifyingId(sig.id);
+    try {
+      const { data, error } = await supabase.functions.invoke('classify-signals', {
+        body: {
+          signals: [{ id: sig.id, title: sig.title, content_summary: sig.content_summary, category: sig.category }],
+        },
+      });
+      if (error || !data?.results) throw error || new Error('No results');
+      for (const result of data.results as Array<{ id: string; revenue_risk_level: string; liability_risk_level: string; cost_risk_level: string; operational_risk_level: string; workforce_risk_level?: string }>) {
+        setRiskEdits(prev => ({
+          ...prev,
+          [result.id]: { revenue: result.revenue_risk_level, liability: result.liability_risk_level, cost: result.cost_risk_level, operational: result.operational_risk_level, workforce: result.workforce_risk_level || 'none' },
+        }));
+        setAiSuggested(prev => ({
+          ...prev,
+          [result.id]: { revenue: true, liability: true, cost: true, operational: true, workforce: true },
+        }));
+        await supabase.from('intelligence_signals').update({
+          revenue_risk_level: result.revenue_risk_level,
+          liability_risk_level: result.liability_risk_level,
+          cost_risk_level: result.cost_risk_level,
+          operational_risk_level: result.operational_risk_level,
+          workforce_risk_level: result.workforce_risk_level || 'none',
+        }).eq('id', result.id);
+      }
+      toast.success('Signal classified');
+    } catch {
+      toast.error('Classification failed');
+    }
+    setClassifyingId(null);
   }, []);
 
   // SIGNAL-VALIDATION-01: Log review action to signal_review_log
@@ -1772,6 +1809,16 @@ export default function IntelligenceAdmin() {
                           style={{ padding: '3px 10px', borderRadius: 6, fontSize: 9, fontWeight: 600, cursor: 'pointer', background: 'transparent', color: TEXT_SEC, border: `1px solid ${BORDER}` }}>
                           {expandedVerification === sig.id ? 'Hide Gates' : 'Verify Gates'}
                         </button>
+                        {/* E2E-FIX-01: Manual classify button for unclassified signals */}
+                        {isAllNone(sig) && (
+                          <button onClick={(e) => { e.stopPropagation(); classifySingle(sig); }}
+                            disabled={classifyingId === sig.id}
+                            style={{ padding: '5px 14px', borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: classifyingId === sig.id ? 'not-allowed' : 'pointer',
+                              background: 'transparent', color: GOLD, border: `1px solid ${GOLD}`,
+                              opacity: classifyingId === sig.id ? 0.5 : 1 }}>
+                            {classifyingId === sig.id ? 'Classifying...' : '\u2726 Classify'}
+                          </button>
+                        )}
                       </>
                     )}
                     {sig.source_url && (
