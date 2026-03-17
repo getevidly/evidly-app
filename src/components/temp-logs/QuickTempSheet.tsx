@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { X, Thermometer } from 'lucide-react';
 import { toast } from 'sonner';
+import { useConfetti } from '../../hooks/useConfetti';
+import { useMilestoneCheck } from '../../hooks/useMilestoneCheck';
+import { MilestoneCelebrationModal } from '../ambassador/MilestoneCelebrationModal';
+import { incrementStreak, STREAK_MILESTONES } from '../../lib/streakTracker';
 
 interface QuickEquipment {
   id: string;
@@ -26,6 +30,9 @@ interface QuickTempSheetProps {
 export function QuickTempSheet({ open, onClose }: QuickTempSheetProps) {
   const [equipmentId, setEquipmentId] = useState('');
   const [temperature, setTemperature] = useState('');
+  const [streakMessage, setStreakMessage] = useState<string | null>(null);
+  const { triggerConfetti } = useConfetti();
+  const { pendingMilestone, checkMilestone, dismissMilestone } = useMilestoneCheck();
 
   if (!open) return null;
 
@@ -51,6 +58,20 @@ export function QuickTempSheet({ open, onClose }: QuickTempSheetProps) {
         toast.error(`${selected.name}: ${temp}°F — OUT OF RANGE`);
       }
     }
+
+    // Milestone check
+    checkMilestone('first_temp_log');
+
+    // Streak tracking
+    const newStreak = incrementStreak('temp_log');
+    if (STREAK_MILESTONES.includes(newStreak)) {
+      triggerConfetti();
+      setStreakMessage(`${newStreak}-day logging streak!`);
+      setTimeout(() => {
+        setStreakMessage(null);
+      }, 3000);
+    }
+
     setEquipmentId('');
     setTemperature('');
     onClose();
@@ -122,6 +143,19 @@ export function QuickTempSheet({ open, onClose }: QuickTempSheetProps) {
           Log Temperature
         </button>
       </div>
+
+      {/* Streak celebration overlay */}
+      {streakMessage && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center pointer-events-none">
+          <div className="bg-white rounded-2xl shadow-2xl px-8 py-6 text-center animate-slide-up">
+            <p className="text-3xl mb-2">🔥</p>
+            <p className="text-lg font-bold" style={{ color: '#1E2D4D' }}>{streakMessage}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Milestone modal */}
+      <MilestoneCelebrationModal milestone={pendingMilestone} onDismiss={dismissMilestone} />
     </>
   );
 }

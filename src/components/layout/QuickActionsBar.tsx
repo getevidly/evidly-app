@@ -21,7 +21,7 @@ const ROLE_ACTIONS: Record<UserRole, QuickAction[]> = {
     { emoji: '🌡️', label: 'Temps', route: '/temp-logs', permission: 'bottom.temps' },
     { emoji: '🔥', label: 'Facility Safety', route: '/facility-safety', permission: 'bottom.facility-safety' },
     { emoji: '📊', label: 'Reporting', route: '/reports', permission: 'bottom.reports' },
-    { emoji: '🔧', label: 'Fix Items', route: '/corrective-actions', permission: 'bottom.corrective-actions' },
+    { emoji: '🔍', label: 'Inspector', route: '/inspector-mode', permission: 'bottom.corrective-actions' },
   ],
   executive: [
     { emoji: '📊', label: 'Reporting', route: '/reports', permission: 'bottom.reports' },
@@ -56,7 +56,7 @@ const ROLE_ACTIONS: Record<UserRole, QuickAction[]> = {
     { emoji: '🌡️', label: 'Temps', route: '/temp-logs', permission: 'bottom.temps' },
     { emoji: '📱', label: 'QR Scan', route: '/temp-logs/scan', permission: 'bottom.qr-scan' },
     { emoji: '👥', label: 'Team', route: '/team', permission: 'bottom.team' },
-    { emoji: '⚠️', label: 'Incidents', route: '/incidents', permission: 'bottom.incidents' },
+    { emoji: '🏁', label: 'End Shift', route: '/shift-handoff', permission: 'bottom.incidents' },
   ],
   kitchen_staff: [
     { emoji: '📋', label: 'Tasks', route: '/dashboard', permission: 'bottom.tasks' },

@@ -157,6 +157,19 @@ export async function createNotification(
       }
     }
 
+    // ── 4. Push notification (critical only) ────────────────
+    if (userId && priority === 'critical') {
+      try {
+        await sendPushNotification(supabase, userId, {
+          title,
+          body: body || '',
+          url: actionUrl || '/dashboard',
+        });
+      } catch {
+        // Push delivery is best-effort — never block
+      }
+    }
+
     return { notificationId: notification.id, emailSent, deduplicated: false };
   } catch (err) {
     logger.error('[NOTIFY] Unexpected error', (err as Error).message);
@@ -213,6 +226,34 @@ async function sendNotificationEmail(
   } catch (err) {
     logger.error('[NOTIFY] Email send failed', (err as Error).message);
     return false;
+  }
+}
+
+// ── Push notification helper ─────────────────────────────────
+
+async function sendPushNotification(
+  supabase: SupabaseClient,
+  userId: string,
+  payload: { title: string; body: string; url: string },
+): Promise<void> {
+  const { data: subscriptions } = await supabase
+    .from('push_subscriptions')
+    .select('endpoint, p256dh, auth')
+    .eq('user_id', userId);
+
+  if (!subscriptions || subscriptions.length === 0) return;
+
+  const vapidPublicKey = Deno.env.get('VAPID_PUBLIC_KEY');
+  const vapidPrivateKey = Deno.env.get('VAPID_PRIVATE_KEY');
+  if (!vapidPublicKey || !vapidPrivateKey) {
+    logger.info('[NOTIFY] VAPID keys not configured — skipping push');
+    return;
+  }
+
+  // Use web-push via Deno fetch with VAPID headers
+  // For now, log that push would be sent (VAPID signing requires web-push library)
+  for (const sub of subscriptions) {
+    logger.info('[NOTIFY] Push queued', sub.endpoint.slice(0, 60), payload.title);
   }
 }
 

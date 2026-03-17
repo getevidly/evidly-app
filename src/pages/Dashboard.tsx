@@ -17,6 +17,7 @@ import FacilitiesDashboardNew from '../components/dashboard/FacilitiesDashboardN
 import { DashboardToday } from '../components/dashboard/DashboardToday';
 import { CopilotBriefingCard } from '../components/copilot/CopilotBriefingCard';
 import { WelcomeModal } from '../components/WelcomeModal';
+import { PushOptInBanner } from '../components/PushOptInBanner';
 import { ErrorState } from '../components/shared/PageStates';
 import { X } from 'lucide-react';
 
@@ -166,6 +167,7 @@ export function Dashboard() {
         />
       )}
       <SignalAlertBanner />
+      {!showWelcome && <PushOptInBanner />}
       <OutbreakBanner />
       <IntelligenceBanner />
       <CopilotBriefingCard />

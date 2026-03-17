@@ -135,6 +135,8 @@ const PlaybookAnalytics = lazy(() => import('./pages/PlaybookAnalytics').then(m 
 const PlaybookTimeline = lazy(() => import('./pages/PlaybookTimeline').then(m => ({ default: m.PlaybookTimeline })));
 const ImportData = lazy(() => import('./pages/ImportData').then(m => ({ default: m.ImportData })));
 const InspectorView = lazy(() => import('./pages/InspectorView').then(m => ({ default: m.InspectorView })));
+const ShiftHandoff = lazy(() => import('./pages/ShiftHandoff').then(m => ({ default: m.ShiftHandoff })));
+const InspectorMode = lazy(() => import('./pages/InspectorMode').then(m => ({ default: m.InspectorMode })));
 const ServicesPage = lazy(() => import('./pages/ServicesPage'));
 const SelfAudit = lazy(() => import('./pages/SelfAudit').then(m => ({ default: m.SelfAudit })));
 const MockInspection = lazy(() => import('./pages/MockInspection'));
@@ -708,6 +710,8 @@ function AppRoutes() {
           <Route path="/playbooks/analytics" element={<PlaybookAnalytics />} />
           <Route path="/playbooks/history/:id" element={<PlaybookTimeline />} />
           <Route path="/inspector-view" element={<InspectorView />} />
+          <Route path="/shift-handoff" element={<ShiftHandoff />} />
+          <Route path="/inspector-mode" element={<InspectorMode />} />
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/services/:recordId" element={<ServiceRecordDetail />} />
           <Route path="/timecards" element={<Timecards />} />

@@ -21,6 +21,9 @@ import { toast } from 'sonner';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { useRole } from '../contexts/RoleContext';
+import { useConfetti } from '../hooks/useConfetti';
+import { useMilestoneCheck } from '../hooks/useMilestoneCheck';
+import { MilestoneCelebrationModal } from '../components/ambassador/MilestoneCelebrationModal';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import {
   CA_STATUS_MAP,
@@ -65,6 +68,8 @@ export function CorrectiveActionDetail() {
   const navigate = useNavigate();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const { userRole } = useRole();
+  const { triggerConfetti } = useConfetti();
+  const { pendingMilestone, checkMilestone, dismissMilestone } = useMilestoneCheck();
 
   // Local state for lifecycle + notes (no seeded data — items come from list page or DB)
   const [localAction, setLocalAction] = useState<CorrectiveActionItem | null>(null);
@@ -116,8 +121,14 @@ export function CorrectiveActionDetail() {
         };
       });
       toast.success(`Status updated to ${CA_STATUS_MAP[nextStatus].label}`);
+
+      // Celebration on verified (final status)
+      if (nextStatus === 'verified') {
+        triggerConfetti();
+        checkMilestone('zero_open_cas');
+      }
     });
-  }, [guardAction, resolutionNote, verificationNote]);
+  }, [guardAction, resolutionNote, verificationNote, triggerConfetti, checkMilestone]);
 
   const handleReassign = useCallback((newAssignee: string) => {
     guardAction('update', 'Corrective Actions', () => {
@@ -608,6 +619,9 @@ export function CorrectiveActionDetail() {
           onClose={() => setShowUpgrade(false)}
         />
       )}
+
+      {/* Milestone modal */}
+      <MilestoneCelebrationModal milestone={pendingMilestone} onDismiss={dismissMilestone} />
     </div>
   );
 }

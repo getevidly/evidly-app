@@ -3,6 +3,10 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Thermometer, CheckCircle, ArrowLeft, QrCode, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 import { useDemo } from '../contexts/DemoContext';
+import { useConfetti } from '../hooks/useConfetti';
+import { useMilestoneCheck } from '../hooks/useMilestoneCheck';
+import { MilestoneCelebrationModal } from '../components/ambassador/MilestoneCelebrationModal';
+import { incrementStreak, STREAK_MILESTONES } from '../lib/streakTracker';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 
 interface QuickEquipment {
@@ -33,6 +37,9 @@ export function TempLogQuick() {
   const [notes, setNotes] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [aiFields, setAiFields] = useState<Set<string>>(new Set());
+  const [streakMessage, setStreakMessage] = useState<string | null>(null);
+  const { triggerConfetti } = useConfetti();
+  const { pendingMilestone, checkMilestone, dismissMilestone } = useMilestoneCheck();
 
   const equipment = useMemo(() => isDemoMode ? DEMO_EQUIPMENT : [], [isDemoMode]);
   const selected = equipment.find(e => e.id === selectedEquipment);
@@ -48,11 +55,25 @@ export function TempLogQuick() {
       return;
     }
 
-    if (isDemoMode) {
+    if (isInRange === false) {
+      toast.error('Temperature logged — OUT OF RANGE. Corrective action may be required.');
+    } else if (isDemoMode) {
       toast.success('Temperature logged! (Demo mode — data not saved)');
     } else {
       toast.success('Temperature logged successfully!');
     }
+
+    // Milestone check (first temp log)
+    checkMilestone('first_temp_log');
+
+    // Streak tracking
+    const newStreak = incrementStreak('temp_log');
+    if (STREAK_MILESTONES.includes(newStreak)) {
+      triggerConfetti();
+      setStreakMessage(`${newStreak}-day logging streak!`);
+      setTimeout(() => setStreakMessage(null), 3000);
+    }
+
     setSubmitted(true);
   };
 
@@ -187,6 +208,19 @@ export function TempLogQuick() {
           </div>
         </form>
       </div>
+
+      {/* Streak celebration overlay */}
+      {streakMessage && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
+          <div className="bg-white rounded-2xl shadow-2xl px-8 py-6 text-center animate-slide-up">
+            <p className="text-3xl mb-2">🔥</p>
+            <p className="text-lg font-bold" style={{ color: '#1E2D4D' }}>{streakMessage}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Milestone modal */}
+      <MilestoneCelebrationModal milestone={pendingMilestone} onDismiss={dismissMilestone} />
     </div>
   );
 }
