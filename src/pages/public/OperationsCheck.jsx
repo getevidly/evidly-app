@@ -192,9 +192,9 @@ function Logo({ size = "1.1rem", light = false }) {
 function Label({ children }) {
   return <label style={{ fontSize: "0.7rem", fontWeight: 700, color: C.g5, display: "block", marginBottom: 5, fontFamily: FF, textTransform: "uppercase", letterSpacing: "0.04em" }}>{children}</label>;
 }
-function Select({ value, onChange, children, placeholder }) {
+function Select({ value, onChange, children, placeholder, "data-testid": testId }) {
   return (
-    <select value={value} onChange={e => onChange(e.target.value)}
+    <select data-testid={testId} value={value} onChange={e => onChange(e.target.value)}
       style={{ ...inp(), color: value ? C.g8 : C.g4, appearance: "none", backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23a8a29e' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")`, backgroundRepeat: "no-repeat", backgroundPosition: "right 12px center" }}>
       <option value="">{placeholder}</option>
       {children}
@@ -257,7 +257,7 @@ function IntakeForm({ onSubmit }) {
   );
 
   return (
-    <div style={{ background: C.white, borderRadius: 16, border: `1px solid ${C.g2}`, overflow: "hidden", boxShadow: "0 4px 24px rgba(0,0,0,0.07)" }}>
+    <div data-testid="intake-form" style={{ background: C.white, borderRadius: 16, border: `1px solid ${C.g2}`, overflow: "hidden", boxShadow: "0 4px 24px rgba(0,0,0,0.07)" }}>
       {/* Header */}
       <div style={{ background: `linear-gradient(135deg, #253356, ${C.navy})`, padding: "24px 26px 20px", position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px)", backgroundSize: "28px 28px" }} />
@@ -276,12 +276,12 @@ function IntakeForm({ onSubmit }) {
         <div style={{ fontSize: "0.6rem", fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", color: C.g4, marginBottom: 16, fontFamily: FF }}>Tell us about your operation</div>
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 14px" }}>
-          {fld("firstName", "First Name *", <input style={inp({ borderColor: errors.firstName ? C.red : C.g3 })} value={f.firstName} onChange={e => set("firstName", e.target.value)} placeholder="First name" />)}
+          {fld("firstName", "First Name *", <input data-testid="intake-first-name" style={inp({ borderColor: errors.firstName ? C.red : C.g3 })} value={f.firstName} onChange={e => set("firstName", e.target.value)} placeholder="First name" />)}
           {fld("lastName",  "Last Name",  <input style={inp({ borderColor: errors.lastName  ? C.red : C.g3 })} value={f.lastName}  onChange={e => set("lastName",  e.target.value)} placeholder="Last name"  />)}
         </div>
 
-        {fld("email", "Work Email *", <input type="email" style={inp({ borderColor: errors.email ? C.red : C.g3 })} value={f.email} onChange={e => set("email", e.target.value)} placeholder="you@yourbusiness.com" />)}
-        {fld("businessName", "Business Name", <input style={inp({ borderColor: errors.businessName ? C.red : C.g3 })} value={f.businessName} onChange={e => set("businessName", e.target.value)} placeholder="Your business or DBA name" />)}
+        {fld("email", "Work Email *", <input data-testid="intake-email" type="email" style={inp({ borderColor: errors.email ? C.red : C.g3 })} value={f.email} onChange={e => set("email", e.target.value)} placeholder="you@yourbusiness.com" />)}
+        {fld("businessName", "Business Name", <input data-testid="intake-business" style={inp({ borderColor: errors.businessName ? C.red : C.g3 })} value={f.businessName} onChange={e => set("businessName", e.target.value)} placeholder="Your business or DBA name" />)}
         {fld("phone", "Phone", <input type="tel" style={inp()} value={f.phone} onChange={e => set("phone", e.target.value)} placeholder="(555) 123-4567" />)}
         {fld("street", "Street Address", <input style={inp()} value={f.street} onChange={e => set("street", e.target.value)} placeholder="123 Main Street" />)}
         <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", gap: "0 14px" }}>
@@ -289,7 +289,7 @@ function IntakeForm({ onSubmit }) {
           {fld("state", "State", <input style={inp()} value={f.state} onChange={e => set("state", e.target.value)} placeholder="CA" />)}
           {fld("zip", "Zip", <input style={inp()} value={f.zip} onChange={e => set("zip", e.target.value)} placeholder="90210" />)}
         </div>
-        {fld("county", "County *", <Select value={f.county} onChange={v => set("county", v)} placeholder="Select county">{CA_COUNTIES.map(c => <option key={c} value={c}>{c}</option>)}</Select>)}
+        {fld("county", "County *", <Select data-testid="intake-county" value={f.county} onChange={v => set("county", v)} placeholder="Select county">{CA_COUNTIES.map(c => <option key={c} value={c}>{c}</option>)}</Select>)}
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 14px" }}>
           {fld("locations", "Number of Locations",
@@ -304,7 +304,7 @@ function IntakeForm({ onSubmit }) {
           )}
         </div>
 
-        <button className="btn-lift" onClick={handleSubmit} style={{ width: "100%", padding: "15px", background: C.gold, color: C.white, border: "none", borderRadius: 10, fontWeight: 800, fontSize: "0.96rem", cursor: "pointer", fontFamily: FF, marginTop: 4 }}>
+        <button data-testid="intake-submit" className="btn-lift" onClick={handleSubmit} style={{ width: "100%", padding: "15px", background: C.gold, color: C.white, border: "none", borderRadius: 10, fontWeight: 800, fontSize: "0.96rem", cursor: "pointer", fontFamily: FF, marginTop: 4 }}>
           Start My Operations Check →
         </button>
         <p style={{ textAlign: "center", fontSize: "0.7rem", color: C.g4, margin: "10px 0 0", fontFamily: FF, lineHeight: 1.5 }}>
@@ -381,7 +381,7 @@ function Assessment({ form, onComplete, onRestartQuestions }) {
 
       {/* Question card */}
       <div style={{ padding: "16px 20px 24px" }}>
-        <div key={currentQ} className="slide-in" style={{ borderRadius: 14, border: `2px solid ${q.color}`, borderLeft: `5px solid ${q.color}`, background: q.bg, padding: "22px 20px" }}>
+        <div data-testid="assessment-question" key={currentQ} className="slide-in" style={{ borderRadius: 14, border: `2px solid ${q.color}`, borderLeft: `5px solid ${q.color}`, background: q.bg, padding: "22px 20px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
             <span style={{ fontSize: "1.4rem" }}>{q.icon}</span>
             <div style={{ fontWeight: 800, fontSize: "1.05rem", color: q.tx, fontFamily: FF_HEAD, lineHeight: 1.25, letterSpacing: "-0.02em" }}>{q.cardLabel}</div>
@@ -389,9 +389,9 @@ function Assessment({ form, onComplete, onRestartQuestions }) {
           <p style={{ fontSize: "0.93rem", fontWeight: 700, color: q.tx, margin: "0 0 8px", lineHeight: 1.6, fontFamily: FF }}>{q.question}</p>
           <p style={{ fontSize: "0.73rem", color: q.tx, opacity: 0.55, margin: "0 0 20px", lineHeight: 1.55, fontFamily: FF, fontStyle: "italic" }}>{q.hint}</p>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            <button className="answer-btn" onClick={() => handleAnswer("yes")}     style={{ padding: "14px 18px", borderRadius: 10, fontSize: "0.9rem", fontWeight: 700, textAlign: "left", background: C.greenBg, color: "#14532d", border: `1.5px solid ${C.greenBd}`, fontFamily: FF, cursor: "pointer" }}>{"\u2713"}&nbsp;&nbsp;Yes — documented and current</button>
-            <button className="answer-btn" onClick={() => handleAnswer("partial")} style={{ padding: "14px 18px", borderRadius: 10, fontSize: "0.9rem", fontWeight: 700, textAlign: "left", background: C.amberBg, color: "#78350f", border: `1.5px solid ${C.amberBd}`, fontFamily: FF, cursor: "pointer" }}>~&nbsp;&nbsp;Partially — some gaps I'm aware of</button>
-            <button className="answer-btn" onClick={() => handleAnswer("no")}      style={{ padding: "14px 18px", borderRadius: 10, fontSize: "0.9rem", fontWeight: 700, textAlign: "left", background: C.redBg,   color: "#7f1d1d", border: `1.5px solid ${C.redBd}`,   fontFamily: FF, cursor: "pointer" }}>{"\u2717"}&nbsp;&nbsp;No — not current or not sure</button>
+            <button data-testid="answer-yes" className="answer-btn" onClick={() => handleAnswer("yes")}     style={{ padding: "14px 18px", borderRadius: 10, fontSize: "0.9rem", fontWeight: 700, textAlign: "left", background: C.greenBg, color: "#14532d", border: `1.5px solid ${C.greenBd}`, fontFamily: FF, cursor: "pointer" }}>{"\u2713"}&nbsp;&nbsp;Yes — documented and current</button>
+            <button data-testid="answer-partial" className="answer-btn" onClick={() => handleAnswer("partial")} style={{ padding: "14px 18px", borderRadius: 10, fontSize: "0.9rem", fontWeight: 700, textAlign: "left", background: C.amberBg, color: "#78350f", border: `1.5px solid ${C.amberBd}`, fontFamily: FF, cursor: "pointer" }}>~&nbsp;&nbsp;Partially — some gaps I'm aware of</button>
+            <button data-testid="answer-no" className="answer-btn" onClick={() => handleAnswer("no")}      style={{ padding: "14px 18px", borderRadius: 10, fontSize: "0.9rem", fontWeight: 700, textAlign: "left", background: C.redBg,   color: "#7f1d1d", border: `1.5px solid ${C.redBd}`,   fontFamily: FF, cursor: "pointer" }}>{"\u2717"}&nbsp;&nbsp;No — not current or not sure</button>
           </div>
         </div>
 
@@ -436,7 +436,7 @@ function Report({ form, answers, onBookTour, magicLinkSent }) {
   const dateStr = new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
 
   return (
-    <div style={{ background: C.white, borderRadius: 16, border: `1px solid ${C.g2}`, overflow: "hidden", boxShadow: "0 4px 24px rgba(0,0,0,0.07)" }}>
+    <div data-testid="operations-check-report" style={{ background: C.white, borderRadius: 16, border: `1px solid ${C.g2}`, overflow: "hidden", boxShadow: "0 4px 24px rgba(0,0,0,0.07)" }}>
       <div style={{ padding: "22px 22px 28px" }}>
 
         {/* REPORT HEADER */}
@@ -488,7 +488,7 @@ function Report({ form, answers, onBookTour, magicLinkSent }) {
         <div style={{ background: P.bg, border: `1px solid ${P.bd}`, borderLeft: `4px solid ${P.dot}`, borderRadius: 10, padding: "13px 16px", marginBottom: 14, display: "flex", alignItems: "center", gap: 13 }}>
           <div style={{ width: 10, height: 10, borderRadius: "50%", background: P.dot, flexShrink: 0, boxShadow: `0 0 0 3px ${P.bd}` }} />
           <div style={{ flex: 1 }}>
-            <div style={{ fontWeight: 800, fontSize: "0.96rem", color: P.color, fontFamily: FF_HEAD, letterSpacing: "-0.02em" }}>{P.label}</div>
+            <div data-testid="posture-badge" style={{ fontWeight: 800, fontSize: "0.96rem", color: P.color, fontFamily: FF_HEAD, letterSpacing: "-0.02em" }}>{P.label}</div>
             <div style={{ fontSize: "0.73rem", color: P.color, opacity: 0.65, fontFamily: FF, marginTop: 2 }}>
               {yesCount} on track · {partialCount} partial · {noCount} {noCount === 1 ? "area needs" : "areas need"} attention — across {TOTAL} questions
             </div>

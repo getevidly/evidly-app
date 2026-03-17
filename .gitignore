@@ -26,6 +26,12 @@ dist-ssr
 .vercel
 nul
 
+# Test artifacts
+playwright-report/
+test-results/
+coverage/
+.env.test
+
 # Sanity Studio
 studio/node_modules
 studio/dist
