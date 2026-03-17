@@ -244,7 +244,7 @@ export function IntelligenceFeedWidget() {
           return (
             <span key={d.key} title={d.note || `${meta.label}: ${d.level}`}
               style={{
-                fontSize: 9, fontWeight: 700, padding: '2px 6px', borderRadius: 6,
+                fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 6,
                 background: lc.bg, color: lc.text, border: `1px solid ${lc.text}18`,
                 display: 'inline-flex', alignItems: 'center', gap: 2,
               }}>
@@ -453,18 +453,18 @@ export function IntelligenceFeedWidget() {
                     <button
                       type="button"
                       onClick={() => handleAction(item.id)}
-                      className="p-1 rounded transition-colors hover:bg-green-50"
+                      className="p-2 rounded transition-colors hover:bg-green-50"
                       title="Mark as actioned"
                     >
-                      <CheckCircle2 size={14} style={{ color: '#059669' }} />
+                      <CheckCircle2 size={18} style={{ color: '#059669' }} />
                     </button>
                     <button
                       type="button"
                       onClick={() => handleDismiss(item.id)}
-                      className="p-1 rounded transition-colors hover:bg-red-50"
+                      className="p-2 rounded transition-colors hover:bg-red-50"
                       title="Dismiss"
                     >
-                      <X size={14} style={{ color: MUTED }} />
+                      <X size={18} style={{ color: MUTED }} />
                     </button>
                   </>
                 )}

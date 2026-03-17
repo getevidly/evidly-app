@@ -20,12 +20,7 @@ export function MetricCardRow({ cards }: MetricCardRowProps) {
   if (cards.length === 0) return null;
 
   return (
-    <div
-      className="grid gap-3"
-      style={{
-        gridTemplateColumns: `repeat(${Math.min(cards.length, 4)}, 1fr)`,
-      }}
-    >
+    <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
       {cards.map((card, i) => (
         <button
           key={i}
@@ -47,14 +42,14 @@ export function MetricCardRow({ cards }: MetricCardRowProps) {
             {card.value ?? '\u2014'}
           </p>
           <p
-            className="text-[11px] font-medium mt-1 leading-tight"
+            className="text-xs font-medium mt-1 leading-tight"
             style={{ color: TEXT_TERTIARY }}
           >
             {card.label}
           </p>
           {card.detail && (
             <p
-              className="text-[10px] mt-0.5 leading-tight"
+              className="text-[11px] mt-0.5 leading-tight"
               style={{ color: TEXT_TERTIARY }}
             >
               {card.detail}

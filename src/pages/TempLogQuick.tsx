@@ -134,6 +134,7 @@ export function TempLogQuick() {
             <label className="block text-sm font-medium text-gray-700 mb-1">Temperature (°F)</label>
             <input
               type="number"
+              inputMode="decimal"
               step="0.1"
               value={temperature}
               onChange={e => setTemperature(e.target.value)}
@@ -141,6 +142,7 @@ export function TempLogQuick() {
               className={`w-full px-3 py-3 border rounded-lg text-lg font-semibold focus:ring-2 focus:ring-[#1e4d6b] focus:border-[#1e4d6b] ${
                 isInRange === false ? 'border-red-300 bg-red-50' : 'border-gray-300'
               }`}
+              style={{ fontSize: 16 }}
               autoFocus={!!preselectedId}
             />
             {isInRange === false && (

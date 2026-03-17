@@ -68,7 +68,7 @@ export function ReportEquipmentIncidentModal({ isOpen, onClose }: ReportEquipmen
           <h2 className="text-lg font-bold" style={{ color: NAVY }}>Report Equipment Incident</h2>
           <button
             onClick={onClose}
-            className="p-1 rounded-md hover:bg-gray-100 transition-colors"
+            className="p-2.5 -m-1 rounded-md hover:bg-gray-100 transition-colors"
             aria-label="Close"
           >
             <X className="w-5 h-5" style={{ color: TEXT_TERTIARY }} />
@@ -184,13 +184,14 @@ export function ReportEquipmentIncidentModal({ isOpen, onClose }: ReportEquipmen
             </label>
             <input
               type="number"
+              inputMode="decimal"
               min="0"
               step="0.01"
               value={estimatedCost}
               onChange={(e) => setEstimatedCost(e.target.value)}
               placeholder="0.00"
               className={inputClass}
-              style={inputStyle}
+              style={{ ...inputStyle, fontSize: 16 }}
             />
           </div>
 

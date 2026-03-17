@@ -347,7 +347,7 @@ export function SmartUploadModal({
             </h2>
           </div>
           <button
-            className="p-1 rounded hover:bg-gray-100"
+            className="p-2.5 -m-1 rounded hover:bg-gray-100"
             onClick={handleClose}
             aria-label="Close"
           >

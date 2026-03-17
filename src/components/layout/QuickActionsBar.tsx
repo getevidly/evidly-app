@@ -1,9 +1,11 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useRole } from '../../contexts/RoleContext';
 import type { UserRole } from '../../contexts/RoleContext';
 import { checkPermission } from '../../hooks/usePermission';
 import { useDemo } from '../../contexts/DemoContext';
+import { useMobile } from '../../hooks/useMobile';
+import { QuickTempSheet } from '../temp-logs/QuickTempSheet';
 
 interface QuickAction {
   emoji: string;
@@ -70,6 +72,8 @@ export function QuickActionsBar() {
   const location = useLocation();
   const { userRole } = useRole();
   const { isDemoMode, presenterMode } = useDemo();
+  const { isMobile } = useMobile();
+  const [showQuickTemp, setShowQuickTemp] = useState(false);
   const showDemoCTA = isDemoMode && !presenterMode;
 
   const actions = useMemo(() => {
@@ -134,7 +138,13 @@ export function QuickActionsBar() {
             return (
               <button
                 key={action.label}
-                onClick={() => navigate(action.route)}
+                onClick={() => {
+                  if (isMobile && action.route === '/temp-logs') {
+                    setShowQuickTemp(true);
+                  } else {
+                    navigate(action.route);
+                  }
+                }}
                 className={`flex flex-col items-center justify-center gap-0.5 transition-colors ${
                   isActive ? '' : 'active:bg-gray-50'
                 }`}
@@ -152,6 +162,8 @@ export function QuickActionsBar() {
           })}
         </div>
       </div>
+
+      <QuickTempSheet open={showQuickTemp} onClose={() => setShowQuickTemp(false)} />
     </>
   );
 }

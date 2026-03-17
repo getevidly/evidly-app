@@ -146,18 +146,18 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
       <div data-topbar className="sticky top-0 z-50 flex-shrink-0 flex h-16 shadow-sm" style={{ backgroundColor: '#FAF7F0', borderBottom: '2px solid #A08C5A' }}>
         <div className="flex-1 px-4 flex justify-between items-center">
           <div className="flex items-center space-x-3">
-            <div className="text-sm md:text-base font-semibold truncate max-w-[200px] lg:max-w-none" style={{ color: '#1E2D4D' }}>
+            <div className="text-sm md:text-base font-semibold truncate max-w-[120px] sm:max-w-[200px] lg:max-w-none" style={{ color: '#1E2D4D' }}>
               {(isDemoMode || isAuthenticatedDemo) ? companyName : profile?.organization_name || title}
             </div>
             <DemoModeBadge />
             {userRole === 'platform_admin' && (
-              <span className="px-2 py-0.5 text-[10px] font-bold tracking-wider rounded bg-[#d4af37] text-[#1E2D4D] uppercase whitespace-nowrap flex-shrink-0">
+              <span className="hidden sm:inline px-2 py-0.5 text-[10px] font-bold tracking-wider rounded bg-[#d4af37] text-[#1E2D4D] uppercase whitespace-nowrap flex-shrink-0">
                 Platform Admin
               </span>
             )}
           </div>
 
-          <div className="ml-4 flex items-center md:ml-6 space-x-4">
+          <div className="ml-2 flex items-center md:ml-6 space-x-2 md:space-x-4">
             {/* Quick Switcher trigger (Ctrl+K) */}
             <button
               onClick={() => window.dispatchEvent(new Event('open-quick-switcher'))}

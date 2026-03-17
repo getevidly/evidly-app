@@ -47,7 +47,7 @@ export function FlagDocumentModal({ documentTitle, vendorName, onClose, onSubmit
             <button
               type="button"
               onClick={onClose}
-              className="p-1 rounded hover:bg-black/5 transition-colors"
+              className="p-2.5 -m-1 rounded hover:bg-black/5 transition-colors"
               aria-label="Close"
             >
               <X size={16} style={{ color: '#9CA3AF' }} />

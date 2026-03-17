@@ -53,7 +53,7 @@ export function InviteEmployeeModal({ open, onClose, onInvite }: InviteEmployeeM
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b sticky top-0 bg-white z-10" style={{ borderColor: '#D1D9E6' }}>
           <h3 className="text-lg font-semibold" style={{ color: '#0B1628' }}>Invite Employee</h3>
-          <button onClick={onClose} className="p-1 rounded-lg hover:bg-gray-100" aria-label="Close"><X className="w-5 h-5" style={{ color: '#6B7F96' }} /></button>
+          <button onClick={onClose} className="p-2.5 -m-1 rounded-lg hover:bg-gray-100" aria-label="Close"><X className="w-5 h-5" style={{ color: '#6B7F96' }} /></button>
         </div>
 
         {/* Body */}

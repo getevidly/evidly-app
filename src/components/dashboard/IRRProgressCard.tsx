@@ -108,7 +108,7 @@ export function IRRProgressCard() {
 
       {/* Question grid */}
       <div style={{ padding: '12px 20px 8px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 16px' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5">
           {IRR_QUESTIONS.map((q) => {
             const value = (submission as Record<string, unknown>)[q.key] as number;
             const display = ANSWER_DISPLAY[value] || ANSWER_DISPLAY[3];
@@ -122,14 +122,14 @@ export function IRRProgressCard() {
                   padding: '5px 0',
                 }}
               >
-                <span style={{ fontSize: 11, color: '#374151', fontWeight: 500 }}>
+                <span style={{ fontSize: 12, color: '#374151', fontWeight: 500 }}>
                   {q.label}
                 </span>
                 <span
                   style={{
-                    fontSize: 9,
+                    fontSize: 10,
                     fontWeight: 700,
-                    padding: '2px 7px',
+                    padding: '3px 8px',
                     borderRadius: 8,
                     background: display.bg,
                     color: display.color,

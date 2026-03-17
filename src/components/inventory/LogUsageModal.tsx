@@ -51,7 +51,7 @@ export function LogUsageModal({ isOpen, onClose }: LogUsageModalProps) {
           </h2>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg hover:bg-gray-100 transition-colors"
+            className="p-2.5 -m-1 rounded-lg hover:bg-gray-100 transition-colors"
             aria-label="Close"
           >
             <X className="w-5 h-5" style={{ color: TEXT_TERTIARY }} />

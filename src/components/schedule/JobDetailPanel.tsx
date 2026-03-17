@@ -32,7 +32,7 @@ export function JobDetailPanel({ job, onClose, onReschedule, onAssign }: JobDeta
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b" style={{ borderColor: CARD_BORDER }}>
         <h3 className="text-sm font-bold" style={{ color: NAVY }}>Job Details</h3>
-        <button onClick={onClose} className="p-1 rounded hover:bg-gray-100" aria-label="Close">
+        <button onClick={onClose} className="p-2.5 -m-1 rounded hover:bg-gray-100" aria-label="Close">
           <X className="w-4 h-4" style={{ color: TEXT_TERTIARY }} />
         </button>
       </div>

@@ -63,7 +63,7 @@ export function AddDeficiencyModal({ onClose, onSubmit }: AddDeficiencyModalProp
             <Plus className="w-5 h-5" style={{ color: '#1e4d6b' }} />
             <h3 className="text-lg font-semibold" style={{ color: '#0B1628' }}>Add Deficiency</h3>
           </div>
-          <button onClick={onClose} className="p-1 rounded-lg hover:bg-gray-100 transition-colors" aria-label="Close">
+          <button onClick={onClose} className="p-2.5 -m-1 rounded-lg hover:bg-gray-100 transition-colors" aria-label="Close">
             <X className="w-5 h-5" style={{ color: '#6B7F96' }} />
           </button>
         </div>
@@ -165,13 +165,14 @@ export function AddDeficiencyModal({ onClose, onSubmit }: AddDeficiencyModalProp
             </label>
             <input
               type="number"
+              inputMode="decimal"
               value={costStr}
               onChange={(e) => setCostStr(e.target.value)}
               placeholder="0.00"
               min="0"
               step="0.01"
               className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
-              style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
+              style={{ borderColor: '#D1D9E6', color: '#0B1628', fontSize: 16 }}
             />
           </div>
         </div>

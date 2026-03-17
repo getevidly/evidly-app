@@ -76,7 +76,7 @@ export function QRCodePrintModal({ equipment, onClose }: QRCodePrintModalProps) 
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b" style={{ borderColor: CARD_BORDER }}>
           <h2 className="text-base font-bold" style={{ color: NAVY }}>Print QR Code</h2>
-          <button onClick={onClose} className="p-1 rounded hover:bg-gray-100" aria-label="Close"><X className="w-5 h-5" style={{ color: TEXT_TERTIARY }} /></button>
+          <button onClick={onClose} className="p-2.5 -m-1 rounded hover:bg-gray-100" aria-label="Close"><X className="w-5 h-5" style={{ color: TEXT_TERTIARY }} /></button>
         </div>
 
         <div className="p-5 space-y-4">

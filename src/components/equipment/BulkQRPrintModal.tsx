@@ -97,7 +97,7 @@ export function BulkQRPrintModal({ items, onClose }: BulkQRPrintModalProps) {
             <QrCode className="w-5 h-5" style={{ color: '#1e4d6b' }} />
             <h2 className="text-base font-bold" style={{ color: NAVY }}>Print QR Codes</h2>
           </div>
-          <button onClick={onClose} className="p-1 rounded hover:bg-gray-100" aria-label="Close"><X className="w-5 h-5" style={{ color: TEXT_TERTIARY }} /></button>
+          <button onClick={onClose} className="p-2.5 -m-1 rounded hover:bg-gray-100" aria-label="Close"><X className="w-5 h-5" style={{ color: TEXT_TERTIARY }} /></button>
         </div>
 
         <div className="p-5 space-y-4 overflow-y-auto flex-1">

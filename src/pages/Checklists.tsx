@@ -18,6 +18,7 @@ import { useNotifications } from '../contexts/NotificationContext';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 import { ErrorState, PageEmptyState } from '../components/shared/PageStates';
 import { getJurisdictionForLocation } from '../data/jurisdictionChecklistData';
+import { addPendingAction } from '../lib/offlineDb';
 
 interface ChecklistTemplate {
   id: string;
@@ -1107,6 +1108,19 @@ export function Checklists() {
         corrective_action: correctiveAction,
       },
     });
+
+    // Persist to IndexedDB for offline resilience (fire-and-forget)
+    try {
+      addPendingAction({
+        id: crypto.randomUUID(),
+        type: 'update',
+        table: 'checklist_item_responses',
+        payload: { itemId, response_value: value, is_pass: isPass, corrective_action: correctiveAction },
+        timestamp: Date.now(),
+        status: 'pending',
+        retries: 0,
+      });
+    } catch { /* silent — offline persistence is best-effort */ }
   };
 
   const handleSubmitCompletion = async () => {
@@ -1367,14 +1381,14 @@ export function Checklists() {
       case 'checkbox':
         return (
           <div>
-            <label className="flex items-center space-x-3 cursor-pointer">
+            <label className="flex items-center space-x-3 cursor-pointer min-h-[44px] py-1">
               <input
                 type="checkbox"
                 checked={response?.response_value === 'checked'}
                 onChange={(e) =>
                   handleItemResponse(item.id, e.target.checked ? 'checked' : 'unchecked', e.target.checked, '')
                 }
-                className="h-6 w-6 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded"
+                className="h-7 w-7 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded"
               />
               <span className="text-lg text-gray-900">
                 {checklistItemMap[item.title] || item.title}

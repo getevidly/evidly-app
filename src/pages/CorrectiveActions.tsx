@@ -441,7 +441,8 @@ export function CorrectiveActions() {
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value as any)}
-          className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 text-gray-700"
+          className="text-sm border border-gray-200 rounded-lg px-3 py-2.5 text-gray-700"
+          style={{ fontSize: 16 }}
         >
           <option value="all">All Statuses</option>
           <option value="reported">Reported</option>
@@ -453,7 +454,8 @@ export function CorrectiveActions() {
         <select
           value={filterLocation}
           onChange={(e) => setFilterLocation(e.target.value)}
-          className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 text-gray-700"
+          className="text-sm border border-gray-200 rounded-lg px-3 py-2.5 text-gray-700"
+          style={{ fontSize: 16 }}
         >
           <option value="all">All Locations</option>
           {locations.map(loc => (
@@ -463,7 +465,8 @@ export function CorrectiveActions() {
         <select
           value={filterSeverity}
           onChange={(e) => setFilterSeverity(e.target.value as any)}
-          className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 text-gray-700"
+          className="text-sm border border-gray-200 rounded-lg px-3 py-2.5 text-gray-700"
+          style={{ fontSize: 16 }}
         >
           <option value="all">All Severities</option>
           <option value="critical">Critical</option>
@@ -476,7 +479,8 @@ export function CorrectiveActions() {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as SortOption)}
-            className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 text-gray-700"
+            className="text-sm border border-gray-200 rounded-lg px-3 py-2.5 text-gray-700"
+            style={{ fontSize: 16 }}
           >
             <option value="due_date">Sort: Due Date</option>
             <option value="severity">Sort: Severity</option>
@@ -694,7 +698,7 @@ export function CorrectiveActions() {
                   </div>
 
                   {/* Category + Severity side by side */}
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-medium text-gray-700 mb-1">Category</label>
                       <select
@@ -722,7 +726,7 @@ export function CorrectiveActions() {
                   </div>
 
                   {/* Source + Location side by side */}
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-medium text-gray-700 mb-1">Source</label>
                       <input
@@ -749,7 +753,7 @@ export function CorrectiveActions() {
                   </div>
 
                   {/* Assignee + Due Date side by side */}
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-medium text-gray-700 mb-1">Assignee</label>
                       <select
