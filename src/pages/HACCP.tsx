@@ -14,6 +14,8 @@ import { supabase } from '../lib/supabase';
 import { jsPDF } from 'jspdf';
 import { toast } from 'sonner';
 import { getJurisdictionForLocation } from '../data/jurisdictionChecklistData';
+import { exportHACCPPlanPdf } from '../lib/haccpPdf';
+import type { ParsedCCP } from '../lib/haccpParser';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -1430,11 +1432,42 @@ export function HACCP() {
                   <p className="text-gray-600 mt-1">{selectedPlan.description}</p>
                   <p className="text-xs text-gray-400 mt-1">Last reviewed: {new Date(selectedPlan.lastReviewed).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
                 </div>
-                <div className="text-center">
-                  <p className={`text-xl sm:text-3xl font-bold text-center ${getPlanCompliance(selectedPlan) === 100 ? 'text-green-600' : 'text-amber-600'}`}>
-                    {getPlanCompliance(selectedPlan)}%
-                  </p>
-                  <p className="text-xs text-gray-500 text-center">Compliance</p>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => {
+                      const ccps: ParsedCCP[] = selectedPlan.ccps.map((ccp, idx) => ({
+                        ccp_number: ccp.ccpNumber,
+                        step_name: ccp.hazard,
+                        hazard_type: ccp.hazard,
+                        principle_number: 2,
+                        critical_limit: ccp.criticalLimit,
+                        monitoring_procedure: ccp.monitoringProcedure,
+                        corrective_action: ccp.correctiveAction,
+                        verification_procedure: ccp.verification,
+                        record_keeping: '',
+                        display_order: idx,
+                      }));
+                      exportHACCPPlanPdf(
+                        { name: selectedPlan.name, created_at: selectedPlan.lastReviewed },
+                        ccps,
+                        [{ title: 'Plan Description', content: selectedPlan.description }],
+                      );
+                      toast.success('PDF downloaded');
+                    }}
+                    className="inline-flex items-center px-3 py-1.5 rounded-lg text-white text-xs font-medium transition-colors"
+                    style={{ backgroundColor: '#1e4d6b' }}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+                  >
+                    <Download className="h-3.5 w-3.5 mr-1.5" />
+                    Export PDF
+                  </button>
+                  <div className="text-center">
+                    <p className={`text-xl sm:text-3xl font-bold text-center ${getPlanCompliance(selectedPlan) === 100 ? 'text-green-600' : 'text-amber-600'}`}>
+                      {getPlanCompliance(selectedPlan)}%
+                    </p>
+                    <p className="text-xs text-gray-500 text-center">Compliance</p>
+                  </div>
                 </div>
               </div>
             </div>
