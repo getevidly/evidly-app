@@ -84,6 +84,7 @@ export default function ChefDashboard() {
       <ConfidenceBanner
         status={bannerStatus}
         headline={bannerHeadline}
+        role="chef"
       />
 
       {/* 3b. KITCHEN OPS METRICS */}

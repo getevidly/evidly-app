@@ -304,6 +304,7 @@ export default function OwnerOperatorDashboard() {
           headline={bannerHeadline}
           locationCount={locations.length}
           attentionCount={attentionLocCount}
+          role="owner_operator"
         />
       </div>
 

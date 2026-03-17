@@ -103,6 +103,7 @@ export default function ExecutiveDashboard() {
           headline={bannerHeadline}
           locationCount={locations.length}
           attentionCount={attentionLocCount}
+          role="executive"
         />
       </div>
 

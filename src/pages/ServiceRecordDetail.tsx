@@ -13,6 +13,7 @@ import { PhotoGallery } from '../components/PhotoGallery';
 import { PhotoEvidence } from '../components/PhotoEvidence';
 import type { PhotoRecord } from '../components/PhotoEvidence';
 import { FlagServiceModal } from '../components/services/FlagServiceModal';
+import { EmptyState } from '../components/shared/EmptyState';
 import {
   CARD_BG, CARD_BORDER, CARD_SHADOW, PANEL_BG,
   BODY_TEXT, MUTED, TEXT_TERTIARY, PAGE_BG, FONT,
@@ -116,10 +117,8 @@ export function ServiceRecordDetail() {
     return (
       <div className="p-6" style={{ ...FONT, background: PAGE_BG, minHeight: '100vh' }}>
         <h1 className="text-2xl font-bold mb-2" style={{ color: BODY_TEXT }}>Service Record</h1>
-        <div className="rounded-xl border p-12 text-center" style={{ background: CARD_BG, borderColor: CARD_BORDER }}>
-          <FileText className="h-12 w-12 mx-auto mb-4" style={{ color: TEXT_TERTIARY }} />
-          <h2 className="text-lg font-semibold mb-2" style={{ color: BODY_TEXT }}>No Data Available</h2>
-          <p className="text-sm" style={{ color: MUTED }}>Service record details will appear here once connected to your account.</p>
+        <div className="rounded-xl border" style={{ background: CARD_BG, borderColor: CARD_BORDER }}>
+          <EmptyState type="service_records" customHeading="No Data Available" customSubtext="Service record details will appear here once connected to your account." />
         </div>
       </div>
     );

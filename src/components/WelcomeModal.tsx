@@ -16,6 +16,8 @@ export function WelcomeModal({ firstName, onDismiss }: WelcomeModalProps) {
   const [visible, setVisible] = useState(false);
   const { isDemoMode } = useDemo();
   const { profile } = useAuth();
+  const { userRole } = useRole();
+  const roleSubtext = WELCOME_SUBTEXT[userRole] || WELCOME_SUBTEXT.owner_operator;
 
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 50);
@@ -60,8 +62,11 @@ export function WelcomeModal({ firstName, onDismiss }: WelcomeModalProps) {
             </svg>
           </div>
           <h2 className="text-2xl sm:text-[28px] font-bold text-[#1e4d6b] leading-tight">
-            Welcome to EvidLY, {firstName}!
+            Your kitchen. Your standards.<br />Always protected.
           </h2>
+          <p className="text-sm text-gray-600 mt-2 leading-relaxed">
+            {roleSubtext}
+          </p>
         </div>
 
         {/* Body */}
@@ -134,7 +139,7 @@ export function WelcomeModal({ firstName, onDismiss }: WelcomeModalProps) {
             onClick={handleGetStarted}
             className="w-full py-3.5 px-6 rounded-xl font-semibold text-base transition-all bg-[#1e4d6b] text-white hover:bg-[#163a52] shadow-sm hover:shadow-lg transform hover:-translate-y-0.5"
           >
-            Get Started
+            Let's build your kitchen's foundation
           </button>
         </div>
       </div>

@@ -7,12 +7,14 @@
 
 import { CheckCircle2, AlertTriangle, AlertCircle } from 'lucide-react';
 import type { BannerStatus } from '../../../hooks/useDashboardStanding';
+import { CONFIDENCE_BANNER_COPY } from '../../../config/emotionalCopy';
 
 interface ConfidenceBannerProps {
   status: BannerStatus;
   headline: string;
   locationCount?: number;
   attentionCount?: number;
+  role?: string;
 }
 
 const STATUS_CONFIG = {
@@ -45,12 +47,16 @@ const STATUS_CONFIG = {
   },
 } as const;
 
-export function ConfidenceBanner({ status, headline, locationCount, attentionCount }: ConfidenceBannerProps) {
+export function ConfidenceBanner({ status, headline, locationCount, attentionCount, role }: ConfidenceBannerProps) {
   // Hide entirely when there's no meaningful data (new user with 0 locations)
   if (locationCount === 0) return null;
 
   const config = STATUS_CONFIG[status];
   const { Icon } = config;
+
+  // Map banner status to emotional copy status key
+  const copyKey = status === 'covered' ? 'strong' : status === 'attention' ? 'moderate' : 'needs_attention';
+  const roleCopy = role && CONFIDENCE_BANNER_COPY[role]?.[copyKey];
 
   return (
     <div
@@ -76,7 +82,7 @@ export function ConfidenceBanner({ status, headline, locationCount, attentionCou
           )}
         </div>
         <p className="text-[11px]" style={{ color: config.subTextColor }}>
-          {headline}
+          {roleCopy || headline}
         </p>
       </div>
     </div>

@@ -20,6 +20,8 @@ import { AttentionItemList } from './shared/AttentionItemList';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
 import type { ReadinessSignal } from '../../hooks/useDashboardStanding';
 import { BODY_TEXT } from './shared/constants';
+import { DashboardGreeting } from './DashboardGreeting';
+import { useAuth } from '../../contexts/AuthContext';
 
 
 // ── Inspection Readiness inline ─────────────────────────────
@@ -75,6 +77,7 @@ export default function KitchenManagerDashboard() {
   const navigate = useNavigate();
   const { userRole } = useRole();
   const { companyName, isDemoMode } = useDemo();
+  const { profile } = useAuth();
 
   const scheduleCalendarTooltip = useTooltip('scheduleCalendar', userRole);
 
@@ -118,6 +121,8 @@ export default function KitchenManagerDashboard() {
 
   return (
     <div className="space-y-6" style={FONT}>
+      <DashboardGreeting role="kitchen_manager" firstName={profile?.first_name} />
+
       {/* 1. HERO */}
       <DashboardHero
         firstName={DEMO_ROLE_NAMES[userRole]?.firstName || 'Manager'}
@@ -132,6 +137,7 @@ export default function KitchenManagerDashboard() {
       <ConfidenceBanner
         status={bannerStatus}
         headline={bannerHeadline}
+        role="kitchen_manager"
       />
 
       {/* 3b. TEAM COMPLETION METRICS */}

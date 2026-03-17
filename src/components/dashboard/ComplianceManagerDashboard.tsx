@@ -154,6 +154,7 @@ export default function ComplianceManagerDashboard() {
           headline={bannerHeadline}
           locationCount={locations.length}
           attentionCount={attentionLocCount}
+          role="compliance_manager"
         />
       </div>
 

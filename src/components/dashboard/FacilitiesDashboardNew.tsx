@@ -82,6 +82,7 @@ export default function FacilitiesDashboardNew() {
         headline={bannerHeadline}
         locationCount={locations.length}
         attentionCount={attentionLocCount}
+        role="facilities_manager"
       />
 
       {/* 3b. SERVICE METRICS */}

@@ -15,6 +15,7 @@ import {
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { useDemo } from '../contexts/DemoContext';
+import { EmptyState } from '../components/shared/EmptyState';
 
 const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
 const PRIMARY = '#1e4d6b';
@@ -501,7 +502,7 @@ export function SensorDetail() {
               })}
             </div>
           ) : (
-            <div className="text-center py-8 text-sm text-gray-400">No maintenance records yet.</div>
+            <EmptyState type="service_records" customHeading="No maintenance records yet" />
           )}
         </div>
       </div>

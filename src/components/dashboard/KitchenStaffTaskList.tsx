@@ -25,6 +25,8 @@ import { StaffStanding } from './shared/StaffStanding';
 import { ConfidenceBanner } from './shared/ConfidenceBanner';
 import { useDashboardStanding } from '../../hooks/useDashboardStanding';
 import { DashboardSkeleton } from './shared/DashboardSkeleton';
+import { DashboardGreeting } from './DashboardGreeting';
+import { useAuth } from '../../contexts/AuthContext';
 
 // --------------- Demo Data ---------------
 
@@ -125,6 +127,7 @@ export default function KitchenStaffTaskList() {
   const { locale, setLocale } = useTranslation();
   const { userRole } = useRole();
   const { isDemoMode, companyName } = useDemo();
+  const { profile } = useAuth();
 
   const lang = (locale === 'es' ? 'es' : 'en') as 'en' | 'es';
   const s = STRINGS[lang];
@@ -192,6 +195,8 @@ export default function KitchenStaffTaskList() {
     <div className="w-full flex justify-center" style={{ fontFamily: 'Inter, sans-serif' }}>
       <div className="w-full" style={{ maxWidth: 480 }}>
         <div className="space-y-6">
+          <DashboardGreeting role="kitchen_staff" firstName={profile?.first_name} />
+
           {/* Hero Banner */}
           <DashboardHero
             firstName={staffName}
@@ -206,6 +211,7 @@ export default function KitchenStaffTaskList() {
           <ConfidenceBanner
             status={bannerStatus}
             headline={bannerHeadline}
+            role="kitchen_staff"
           />
 
           {/* Staff Standing — progress ring */}

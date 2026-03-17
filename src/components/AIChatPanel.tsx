@@ -4,6 +4,8 @@ import { Brain, X, Send, ArrowRight, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getDemoContext, generateSuggestions, extractActionItems, parseMarkdown } from '../lib/aiAdvisor';
 import { useDemo } from '../contexts/DemoContext';
+import { useRole } from '../contexts/RoleContext';
+import { AI_ADVISOR_INTROS } from '../config/emotionalCopy';
 import { locations as demoLocations } from '../data/demoData';
 
 // Display names for AI context — richer than generic demoData names
@@ -64,6 +66,8 @@ export function AIChatPanel({ hidden = false }: { hidden?: boolean }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const { isDemoMode } = useDemo();
+  const { userRole } = useRole();
+  const advisorIntro = AI_ADVISOR_INTROS[userRole] || AI_ADVISOR_INTROS.owner_operator;
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -159,7 +163,7 @@ export function AIChatPanel({ hidden = false }: { hidden?: boolean }) {
             <div className="text-center pt-8">
               <Brain className="h-10 w-10 mx-auto mb-3" style={{ color: '#d4af37' }} />
               <p className="text-sm font-semibold text-gray-700 mb-1">AI Compliance Advisor</p>
-              <p className="text-xs text-gray-500 mb-4">Ask about scores, inspections, vendors, or compliance risks.</p>
+              <p className="text-xs text-gray-500 mb-4">{advisorIntro}</p>
               <div className="flex flex-wrap gap-2 justify-center">
                 {QUICK_PROMPTS.map((qp) => (
                   <button

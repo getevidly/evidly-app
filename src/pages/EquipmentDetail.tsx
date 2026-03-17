@@ -10,6 +10,7 @@ import { EquipmentQRCode } from '../components/EquipmentQRCode';
 import { format } from 'date-fns';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { EmptyState } from '../components/shared/EmptyState';
 
 // ── Brand ─────────────────────────────────────────────────────────
 const NAVY = '#1e4d6b';
@@ -226,7 +227,7 @@ export function EquipmentDetail() {
                 <div className="text-xs text-gray-500">Total cost: <strong className="text-gray-900">${totalServiceCost.toLocaleString()}</strong></div>
               </div>
               {equipment.serviceHistory.length === 0 ? (
-                <div className="text-center py-8 text-gray-400 text-sm">No service records yet.</div>
+                <EmptyState type="service_records" />
               ) : (
                 <div className="space-y-3">
                   {equipment.serviceHistory.map((sr, i) => (
