@@ -59,7 +59,7 @@ export function UnassignedPanel({ jobs, onClose, onJobClick }: UnassignedPanelPr
             {jobs.length} job{jobs.length !== 1 ? 's' : ''} pending assignment
           </p>
         </div>
-        <button onClick={onClose} className="p-1 rounded hover:bg-gray-100">
+        <button onClick={onClose} className="p-1 rounded hover:bg-gray-100" aria-label="Close">
           <X className="w-4 h-4" style={{ color: TEXT_TERTIARY }} />
         </button>
       </div>

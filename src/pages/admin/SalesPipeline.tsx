@@ -353,7 +353,7 @@ function DealPanel({ deal, onClose, onStageChange, onNotes, onCloseDate, onRefre
       <div className="bg-white rounded-t-xl sm:rounded-xl w-full sm:max-w-md max-h-[80vh] overflow-y-auto p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-bold text-gray-900">{deal.org_name}</h3>
-          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded"><X className="h-5 w-5 text-gray-400" /></button>
+          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded" aria-label="Close"><X className="h-5 w-5 text-gray-400" /></button>
         </div>
 
         <div className="space-y-3 text-sm">

@@ -143,7 +143,7 @@ export function ServiceTypeFormModal({ isOpen, onClose, serviceType, onSaved }: 
           <h2 style={{ fontSize: 18, fontWeight: 700, color: BODY_TEXT, margin: 0 }}>
             {isEdit ? 'Edit Service Type' : 'Add Service Type'}
           </h2>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }} aria-label="Close">
             <X size={20} color={MUTED} />
           </button>
         </div>

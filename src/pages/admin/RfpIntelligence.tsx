@@ -718,7 +718,7 @@ function DetailPanel({ item, onClose, onAction }: {
         {/* Header */}
         <div className="sticky top-0 z-10 flex items-center justify-between px-5 py-4 border-b" style={{ background: MIDNIGHT_NAVY, borderColor: '#1e2d4d' }}>
           <h2 className="text-sm font-semibold text-white truncate pr-4">{item.title}</h2>
-          <button onClick={onClose} className="text-white/70 hover:text-white">
+          <button onClick={onClose} className="text-white/70 hover:text-white" aria-label="Close">
             <X size={18} />
           </button>
         </div>

@@ -95,6 +95,7 @@ export function ShareModal({ isOpen, onClose, preselectedDocuments = [], documen
                   <button
                     onClick={onClose}
                     className="text-gray-400 hover:text-gray-500 transition-colors"
+                    aria-label="Close"
                   >
                     <X className="h-6 w-6" />
                   </button>

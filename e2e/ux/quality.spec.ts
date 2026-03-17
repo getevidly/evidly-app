@@ -136,7 +136,7 @@ test.describe('UX — Emotional Arc', () => {
 });
 
 test.describe('UX — Brand Consistency', () => {
-  test('Operations Check uses gold (#A08C5A) on submit button', async ({ page }) => {
+  test('Operations Check uses navy (#1E2D4D) on submit button', async ({ page }) => {
     await page.goto('/operations-check');
     await page.waitForLoadState('networkidle');
 
@@ -146,8 +146,8 @@ test.describe('UX — Brand Consistency', () => {
       el => window.getComputedStyle(el).backgroundColor
     );
 
-    // Gold #A08C5A = rgb(160, 140, 90)
-    expect(bgColor).toBe('rgb(160, 140, 90)');
+    // Navy #1E2D4D = rgb(30, 45, 77) — WCAG AA compliant with white text
+    expect(bgColor).toBe('rgb(30, 45, 77)');
   });
 
   test('404 page uses navy (#1E2D4D) for heading', async ({ page }) => {

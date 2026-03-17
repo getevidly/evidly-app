@@ -119,6 +119,7 @@ function IntelligenceBanner() {
         onClick={dismiss}
         style={{ color: '#9CA3AF', flexShrink: 0, padding: 4, background: 'none', border: 'none', cursor: 'pointer' }}
         title="Dismiss"
+        aria-label="Dismiss"
       >
         <X size={16} />
       </button>

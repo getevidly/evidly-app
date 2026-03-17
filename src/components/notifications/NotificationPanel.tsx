@@ -105,6 +105,7 @@ export function NotificationPanel({ isOpen, onClose }: NotificationPanelProps) {
             <button
               onClick={onClose}
               className="p-1 rounded hover:bg-gray-200 transition-colors"
+              aria-label="Close"
             >
               <X className="h-4 w-4 text-gray-500" />
             </button>

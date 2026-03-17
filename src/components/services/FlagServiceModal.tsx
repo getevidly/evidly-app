@@ -34,7 +34,7 @@ export function FlagServiceModal({ serviceName, vendorName, onClose, onSubmit }:
             <Flag className="w-5 h-5 text-red-500" />
             <h3 className="text-lg font-semibold" style={{ color: '#0B1628' }}>Flag Service Record</h3>
           </div>
-          <button onClick={onClose} className="p-1 rounded-lg hover:bg-gray-100 transition-colors">
+          <button onClick={onClose} className="p-1 rounded-lg hover:bg-gray-100 transition-colors" aria-label="Close">
             <X className="w-5 h-5" style={{ color: '#6B7F96' }} />
           </button>
         </div>

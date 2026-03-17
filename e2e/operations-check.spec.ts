@@ -53,8 +53,10 @@ test.describe('Operations Check — public lead magnet flow', () => {
 
     await expect(page.getByTestId('operations-check-report')).toBeVisible();
     const reportText = await page.getByTestId('operations-check-report').textContent();
-    // Must never contain a percentage score (e.g. "85%") or the word "score"
+    // Must never contain a percentage score (e.g. "85%")
     expect(reportText).not.toMatch(/\d+%/);
-    expect(reportText?.toLowerCase()).not.toContain('compliance score');
+    // Must not present a "compliance score" as EvidLY's own output
+    // (the disclaimer "it is not... a compliance score" is acceptable)
+    expect(reportText?.toLowerCase()).not.toMatch(/your compliance score|compliance score:\s*\d/);
   });
 });

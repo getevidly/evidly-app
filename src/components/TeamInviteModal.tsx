@@ -295,6 +295,7 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
           <button
             onClick={handleClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"
+            aria-label="Close"
           >
             <X className="w-6 h-6" />
           </button>

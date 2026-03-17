@@ -297,6 +297,7 @@ function AddSensorModal({ open, onClose, onSave, isDemoMode }: AddSensorModalPro
         <button
           onClick={handleClose}
           className="absolute top-4 right-4 p-1 text-gray-400 hover:text-gray-600 transition-colors"
+          aria-label="Close"
         >
           <X className="w-5 h-5" />
         </button>

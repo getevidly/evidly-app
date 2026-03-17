@@ -63,7 +63,7 @@ export function AssignTrainingModal({ open, onClose, employeeId, employeeName, e
             <GraduationCap size={20} color={NAVY} />
             <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: BODY_TEXT }}>Assign Training</h3>
           </div>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, borderRadius: 6 }}>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, borderRadius: 6 }} aria-label="Close">
             <X size={20} color={TEXT_TERTIARY} />
           </button>
         </div>

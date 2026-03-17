@@ -732,6 +732,7 @@ function ManualInvokeDrawer({
             background: 'none', border: 'none', cursor: 'pointer',
             color: TEXT_TERTIARY, padding: 4,
           }}
+          aria-label="Close"
         >
           <X size={16} />
         </button>

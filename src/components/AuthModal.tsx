@@ -56,7 +56,7 @@ export default function AuthModal({ mode, onClose, onSwitchMode }: AuthModalProp
   return (
     <div onClick={handleBackdrop} style={{ position:'fixed',inset:'0',zIndex:9999,display:'flex',alignItems:'center',justifyContent:'center',padding:'16px',backgroundColor:'rgba(0,0,0,0.5)',backdropFilter:'blur(4px)' }}>
       <div style={{ position:'relative',width:'100%',maxWidth:'420px',background:'white',borderRadius:'16px',boxShadow:'0 25px 50px rgba(0,0,0,0.25)',overflow:'hidden' }}>
-        <button onClick={onClose} style={{ position:'absolute',top:'16px',right:'16px',background:'none',border:'none',cursor:'pointer',padding:'6px',borderRadius:'50%' }}>
+        <button onClick={onClose} style={{ position:'absolute',top:'16px',right:'16px',background:'none',border:'none',cursor:'pointer',padding:'6px',borderRadius:'50%' }} aria-label="Close">
           <X size={20} color="#9ca3af" />
         </button>
         <div style={{ padding:'32px 32px 16px',textAlign:'center' }}>

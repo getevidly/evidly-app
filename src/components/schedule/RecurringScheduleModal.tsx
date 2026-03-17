@@ -65,7 +65,7 @@ export function RecurringScheduleModal({ technicians, onClose }: RecurringSchedu
             <RotateCcw className="w-4 h-4" style={{ color: '#1e4d6b' }} />
             <h2 className="text-base font-bold" style={{ color: NAVY }}>Recurring Schedule</h2>
           </div>
-          <button onClick={onClose} className="p-1 rounded hover:bg-gray-100">
+          <button onClick={onClose} className="p-1 rounded hover:bg-gray-100" aria-label="Close">
             <X className="w-4 h-4" style={{ color: TEXT_TERTIARY }} />
           </button>
         </div>

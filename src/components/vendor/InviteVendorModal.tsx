@@ -124,7 +124,7 @@ export function InviteVendorModal({
                   <p className="text-sm text-gray-500">Send a branded invite to join EvidLY</p>
                 </div>
               </div>
-              <button onClick={handleClose} className="text-gray-400 hover:text-gray-600">
+              <button onClick={handleClose} className="text-gray-400 hover:text-gray-600" aria-label="Close">
                 <XCircle className="h-5 w-5" />
               </button>
             </div>

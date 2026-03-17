@@ -120,7 +120,7 @@ export function EquipmentFormModal({ equipment, onClose }: EquipmentFormModalPro
               {isEdit ? 'Edit Equipment' : 'Add Equipment'}
             </h2>
           </div>
-          <button onClick={onClose} className="p-1 rounded hover:bg-gray-100">
+          <button onClick={onClose} className="p-1 rounded hover:bg-gray-100" aria-label="Close">
             <X className="w-5 h-5" style={{ color: TEXT_TERTIARY }} />
           </button>
         </div>

@@ -175,7 +175,7 @@ export function LogServiceModal({ isOpen, onClose, locationId, onSuccess }) {
                 Record a completed vendor service
               </div>
             </div>
-            <button onClick={onClose} style={{ padding: 6, borderRadius: 8, border: 'none', background: 'none', cursor: 'pointer' }}>
+            <button onClick={onClose} style={{ padding: 6, borderRadius: 8, border: 'none', background: 'none', cursor: 'pointer' }} aria-label="Close">
               <X style={{ width: 18, height: 18, color: '#6B7F96' }} />
             </button>
           </div>

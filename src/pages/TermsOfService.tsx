@@ -6,7 +6,7 @@ export function TermsOfService() {
       <Breadcrumb items={[{ label: 'Terms of Service' }]} />
       <div className="max-w-3xl mx-auto py-8 px-4">
         <h1 className="text-2xl font-bold text-gray-900 mb-2">Terms of Service</h1>
-        <p className="text-sm text-gray-500 mb-8">Last updated: February 14, 2026</p>
+        <p className="text-sm text-gray-600 mb-8">Last updated: February 14, 2026</p>
 
         <div className="prose prose-sm max-w-none text-gray-700 space-y-6">
           <section>

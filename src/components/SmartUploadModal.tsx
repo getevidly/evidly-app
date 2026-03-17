@@ -349,6 +349,7 @@ export function SmartUploadModal({
           <button
             className="p-1 rounded hover:bg-gray-100"
             onClick={handleClose}
+            aria-label="Close"
           >
             <X size={18} className="text-gray-500" />
           </button>

@@ -113,7 +113,7 @@ export function IntegrationDetailModal({ isOpen, onClose, integration }: Props) 
               {integration.name}
             </h2>
           </div>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }} aria-label="Close">
             <X size={20} color={MUTED} />
           </button>
         </div>

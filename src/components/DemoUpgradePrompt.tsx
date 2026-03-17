@@ -45,6 +45,7 @@ export function DemoUpgradePrompt({ action, featureName, onClose, isOpen }: Demo
           <button
             onClick={onClose}
             className="text-white/70 hover:text-white transition-colors"
+            aria-label="Close"
           >
             <X className="h-5 w-5" />
           </button>

@@ -122,6 +122,7 @@ export function InspectionBadgeModal({ isOpen, onClose, data }: InspectionBadgeM
             color: '#9CA3AF',
             padding: 4,
           }}
+          aria-label="Close"
         >
           <X size={20} />
         </button>

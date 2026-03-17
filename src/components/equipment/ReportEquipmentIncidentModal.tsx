@@ -69,6 +69,7 @@ export function ReportEquipmentIncidentModal({ isOpen, onClose }: ReportEquipmen
           <button
             onClick={onClose}
             className="p-1 rounded-md hover:bg-gray-100 transition-colors"
+            aria-label="Close"
           >
             <X className="w-5 h-5" style={{ color: TEXT_TERTIARY }} />
           </button>

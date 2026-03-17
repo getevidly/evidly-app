@@ -192,9 +192,9 @@ function Logo({ size = "1.1rem", light = false }) {
 function Label({ children }) {
   return <label style={{ fontSize: "0.7rem", fontWeight: 700, color: C.g5, display: "block", marginBottom: 5, fontFamily: FF, textTransform: "uppercase", letterSpacing: "0.04em" }}>{children}</label>;
 }
-function Select({ value, onChange, children, placeholder, "data-testid": testId }) {
+function Select({ value, onChange, children, placeholder, "data-testid": testId, "aria-label": ariaLabel }) {
   return (
-    <select data-testid={testId} value={value} onChange={e => onChange(e.target.value)}
+    <select data-testid={testId} aria-label={ariaLabel} value={value} onChange={e => onChange(e.target.value)}
       style={{ ...inp(), color: value ? C.g8 : C.g4, appearance: "none", backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23a8a29e' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")`, backgroundRepeat: "no-repeat", backgroundPosition: "right 12px center" }}>
       <option value="">{placeholder}</option>
       {children}
@@ -273,7 +273,7 @@ function IntakeForm({ onSubmit }) {
       </div>
 
       <div style={{ padding: "22px 26px 28px" }}>
-        <div style={{ fontSize: "0.6rem", fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", color: C.g4, marginBottom: 16, fontFamily: FF }}>Tell us about your operation</div>
+        <div style={{ fontSize: "0.6rem", fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", color: C.g5, marginBottom: 16, fontFamily: FF }}>Tell us about your operation</div>
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 14px" }}>
           {fld("firstName", "First Name *", <input data-testid="intake-first-name" style={inp({ borderColor: errors.firstName ? C.red : C.g3 })} value={f.firstName} onChange={e => set("firstName", e.target.value)} placeholder="First name" />)}
@@ -289,25 +289,25 @@ function IntakeForm({ onSubmit }) {
           {fld("state", "State", <input style={inp()} value={f.state} onChange={e => set("state", e.target.value)} placeholder="CA" />)}
           {fld("zip", "Zip", <input style={inp()} value={f.zip} onChange={e => set("zip", e.target.value)} placeholder="90210" />)}
         </div>
-        {fld("county", "County *", <Select data-testid="intake-county" value={f.county} onChange={v => set("county", v)} placeholder="Select county">{CA_COUNTIES.map(c => <option key={c} value={c}>{c}</option>)}</Select>)}
+        {fld("county", "County *", <Select data-testid="intake-county" aria-label="County" value={f.county} onChange={v => set("county", v)} placeholder="Select county">{CA_COUNTIES.map(c => <option key={c} value={c}>{c}</option>)}</Select>)}
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 14px" }}>
           {fld("locations", "Number of Locations",
-            <Select value={f.locations} onChange={v => set("locations", v)} placeholder="How many?">
+            <Select aria-label="Number of Locations" value={f.locations} onChange={v => set("locations", v)} placeholder="How many?">
               {["1","2","3","4","5","6","7","8","9","10","11+"].map(n => <option key={n} value={n}>{n}</option>)}
             </Select>
           )}
           {fld("opType", "Operation Type",
-            <Select value={f.opType} onChange={v => set("opType", v)} placeholder="Select type">
+            <Select aria-label="Operation Type" value={f.opType} onChange={v => set("opType", v)} placeholder="Select type">
               {OP_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
             </Select>
           )}
         </div>
 
-        <button data-testid="intake-submit" className="btn-lift" onClick={handleSubmit} style={{ width: "100%", padding: "15px", background: C.gold, color: C.white, border: "none", borderRadius: 10, fontWeight: 800, fontSize: "0.96rem", cursor: "pointer", fontFamily: FF, marginTop: 4 }}>
+        <button data-testid="intake-submit" className="btn-lift" onClick={handleSubmit} style={{ width: "100%", padding: "15px", background: C.navy, color: C.white, border: "none", borderRadius: 10, fontWeight: 800, fontSize: "0.96rem", cursor: "pointer", fontFamily: FF, marginTop: 4 }}>
           Start My Operations Check →
         </button>
-        <p style={{ textAlign: "center", fontSize: "0.7rem", color: C.g4, margin: "10px 0 0", fontFamily: FF, lineHeight: 1.5 }}>
+        <p style={{ textAlign: "center", fontSize: "0.7rem", color: C.g5, margin: "10px 0 0", fontFamily: FF, lineHeight: 1.5 }}>
           Free. No credit card. Your report is ready the moment you finish.
         </p>
       </div>
@@ -806,14 +806,14 @@ export default function OperationsCheck() {
           <a href="/" style={{ textDecoration: "none" }}><Logo size="1rem" /></a>
           <div style={{ marginLeft: 14, display: "flex", gap: 6 }}>
             {[["form","1 \u00B7 Info"],["assessment","2 \u00B7 Check"],["report","3 \u00B7 Report"]].map(([k, label]) => (
-              <div key={k} style={{ fontSize: "0.68rem", fontWeight: step === k ? 700 : 400, color: step === k ? C.navy : C.g4, fontFamily: FF, padding: "2px 0", borderBottom: `2px solid ${step === k ? C.gold : "transparent"}` }}>
+              <div key={k} style={{ fontSize: "0.68rem", fontWeight: step === k ? 700 : 400, color: step === k ? C.navy : C.g5, fontFamily: FF, padding: "2px 0", borderBottom: `2px solid ${step === k ? C.gold : "transparent"}` }}>
                 {label}
               </div>
             ))}
           </div>
           <div style={{ marginLeft: "auto", display: "flex", gap: 12, alignItems: "center" }}>
-            <button onClick={handleFullReset} style={{ fontSize: "0.7rem", color: C.g4, background: "none", border: "none", cursor: "pointer", fontFamily: FF }}>Start Over {"\u21BA"}</button>
-            <a href="/" style={{ fontSize: "0.7rem", color: C.g4, textDecoration: "none", fontFamily: FF }}>{"\u2190"} EvidLY</a>
+            <button onClick={handleFullReset} style={{ fontSize: "0.7rem", color: C.g5, background: "none", border: "none", cursor: "pointer", fontFamily: FF }}>Start Over {"\u21BA"}</button>
+            <a href="/" style={{ fontSize: "0.7rem", color: C.g5, textDecoration: "underline", textUnderlineOffset: "2px", fontFamily: FF }}>{"\u2190"} EvidLY</a>
           </div>
         </div>
       </div>

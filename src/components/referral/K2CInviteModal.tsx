@@ -330,6 +330,7 @@ export function K2CInviteModal({
               background: 'none', border: 'none', cursor: 'pointer',
               padding: '4px', borderRadius: '6px', color: '#6B7F96',
             }}
+            aria-label="Close"
           >
             <X size={20} />
           </button>

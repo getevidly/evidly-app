@@ -1111,7 +1111,7 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
             <h2 className="text-lg font-bold text-gray-900">Add New Sensor Integration</h2>
             <p className="text-xs text-gray-500">Step {step} of 5 — {WIZARD_STEPS[step - 1].label}</p>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600"><X className="h-5 w-5" /></button>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600" aria-label="Close"><X className="h-5 w-5" /></button>
         </div>
 
         {/* Step indicators */}

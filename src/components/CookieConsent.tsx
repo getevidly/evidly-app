@@ -32,7 +32,7 @@ export function CookieConsent() {
     <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
       <p className="text-sm text-gray-600">
         We use cookies to improve your experience and analyze site traffic.{' '}
-        <a href="/privacy" className="text-[#1e4d6b] hover:underline">Privacy Policy</a>
+        <a href="/privacy" className="text-[#1e4d6b] underline">Privacy Policy</a>
       </p>
       <div className="flex gap-2 shrink-0">
         <button

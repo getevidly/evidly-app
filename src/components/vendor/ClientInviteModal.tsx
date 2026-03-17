@@ -272,6 +272,7 @@ export function ClientInviteModal({
               borderRadius: '6px',
               color: '#ffffff',
             }}
+            aria-label="Close"
           >
             <X size={20} />
           </button>

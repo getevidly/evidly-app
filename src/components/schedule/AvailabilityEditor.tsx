@@ -78,7 +78,7 @@ export function AvailabilityEditor({ technician, weekStart, onClose }: Availabil
             <h2 className="text-base font-bold" style={{ color: NAVY }}>Set Availability</h2>
             <p className="text-xs mt-0.5" style={{ color: TEXT_TERTIARY }}>{technician.name}</p>
           </div>
-          <button onClick={onClose} className="p-1 rounded hover:bg-gray-100">
+          <button onClick={onClose} className="p-1 rounded hover:bg-gray-100" aria-label="Close">
             <X className="w-4 h-4" style={{ color: TEXT_TERTIARY }} />
           </button>
         </div>

@@ -82,7 +82,7 @@ export function JobFormModal({ job, onClose, onSave }: JobFormModalProps) {
           <h2 className="text-base font-bold" style={{ color: NAVY }}>
             {isEdit ? 'Edit Job' : 'New Job'}
           </h2>
-          <button onClick={onClose} className="p-1 rounded hover:bg-gray-100">
+          <button onClick={onClose} className="p-1 rounded hover:bg-gray-100" aria-label="Close">
             <X className="w-4 h-4" style={{ color: TEXT_TERTIARY }} />
           </button>
         </div>

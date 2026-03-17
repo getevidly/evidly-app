@@ -69,8 +69,8 @@ test.describe('Mobile — Touch Targets (44px minimum)', () => {
     if (await signInBtn.isVisible()) {
       const box = await signInBtn.boundingBox();
       expect(box).toBeTruthy();
-      // Login button is 38px — below WCAG 2.5.8 ideal (44px) but meets 36px practical minimum
-      expect(box!.height).toBeGreaterThanOrEqual(36);
+      // Login button meets WCAG 2.5.8 minimum (44px)
+      expect(box!.height).toBeGreaterThanOrEqual(44);
     }
   });
 });

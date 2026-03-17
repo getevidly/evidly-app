@@ -172,7 +172,7 @@ export function AddVendorModal({
                   <p className="text-sm text-gray-500">Enter vendor details to create a record</p>
                 </div>
               </div>
-              <button onClick={handleClose} className="text-gray-400 hover:text-gray-600">
+              <button onClick={handleClose} className="text-gray-400 hover:text-gray-600" aria-label="Close">
                 <XCircle className="h-5 w-5" />
               </button>
             </div>

@@ -40,7 +40,7 @@ export function DemoConversionModal({ session, onClose, onConvert }: Props) {
           <h2 className="font-bold" style={{ color: NAVY }}>
             Convert {session.company_name} to Live Account
           </h2>
-          <button onClick={onClose} className="p-1 rounded-md hover:bg-gray-100">
+          <button onClick={onClose} className="p-1 rounded-md hover:bg-gray-100" aria-label="Close">
             <X className="w-5 h-5 text-gray-400" />
           </button>
         </div>

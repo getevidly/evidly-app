@@ -151,7 +151,7 @@ export function AddCertificationModal({ isOpen, onClose, employeeId, employeeNam
               {existingCert ? 'Edit Certification' : 'Add Certification'}
             </h3>
           </div>
-          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded">
+          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded" aria-label="Close">
             <X size={18} className="text-gray-400" />
           </button>
         </div>

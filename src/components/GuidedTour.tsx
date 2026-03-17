@@ -240,7 +240,7 @@ export function GuidedTour({ onComplete, onActiveChange }: GuidedTourProps) {
         <div className="p-5">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-lg font-bold text-gray-900">{step.title}</h3>
-            <button onClick={endTour} className="p-1 hover:bg-gray-100 rounded-full transition-colors">
+            <button onClick={endTour} className="p-1 hover:bg-gray-100 rounded-full transition-colors" aria-label="Close">
               <X className="w-4 h-4 text-gray-400" />
             </button>
           </div>

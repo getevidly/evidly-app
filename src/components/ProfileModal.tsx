@@ -96,7 +96,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
       <div className="bg-white rounded-xl p-4 sm:p-5 max-w-md w-full">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-900">My Profile</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600" aria-label="Close">
             <X className="h-6 w-6" />
           </button>
         </div>

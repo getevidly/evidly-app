@@ -3,17 +3,14 @@ import AxeBuilder from '@axe-core/playwright';
 
 /**
  * WCAG 2.1 AA compliance tests on public pages.
- * Catches NEW accessibility regressions.
- *
- * Pre-existing known issues (excluded from general tests):
- * - color-contrast: Tailwind gray-500 (#6b7280) on custom bg (#f4f6fa) = 4.46 (needs 4.5:1)
- * - link-in-text-block: Links use color only (no underline) — app-wide design choice
+ * All rules enabled — violations are BLOCKING.
  *
  * Note: 404 page uses multi-segment URL to bypass /:slug county catch-all.
+ * Note: EvidLY logotype text is excluded per WCAG 1.4.3 (logotype exemption).
  */
 
 const PUBLIC_PAGES = [
-  { name: 'Operations Check',  url: '/operations-check' },
+  { name: 'Operations Check',  url: '/operations-check', excludeSelectors: ['a[href="/"] span'] },
   { name: 'Login',             url: '/login' },
   { name: 'Terms of Service',  url: '/terms' },
   { name: 'Privacy Policy',    url: '/privacy' },
@@ -25,15 +22,17 @@ test.describe('WCAG 2.1 AA — Public Pages', () => {
       await page.goto(pageDef.url);
       await page.waitForLoadState('networkidle');
 
-      const results = await new AxeBuilder({ page })
-        .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
-        .disableRules([
-          'color-contrast',       // Pre-existing: Tailwind gray-500 on custom bg
-          'link-in-text-block',   // Pre-existing: links use color, no underline
-          'button-name',          // Pre-existing: third-party widget buttons (Intercom, etc.)
-          'select-name',          // Pre-existing: select elements use styled divs as labels
-        ])
-        .analyze();
+      let builder = new AxeBuilder({ page })
+        .withTags(['wcag2a', 'wcag2aa', 'wcag21aa']);
+
+      // Exclude logotype elements (WCAG 1.4.3 exemption)
+      if (pageDef.excludeSelectors) {
+        for (const sel of pageDef.excludeSelectors) {
+          builder = builder.exclude(sel);
+        }
+      }
+
+      const results = await builder.analyze();
 
       if (results.violations.length > 0) {
         console.log(`\n${pageDef.name} violations:`);
@@ -49,19 +48,14 @@ test.describe('WCAG 2.1 AA — Public Pages', () => {
 });
 
 test.describe('WCAG 2.1 AA — 404 Page', () => {
-  test('404 page passes axe-core (minimal page exclusions)', async ({ page }) => {
+  test('404 page passes axe-core WCAG 2.1 AA', async ({ page }) => {
     // Multi-segment URL bypasses /:slug county route
     await page.goto('/not/a/real/page');
     await page.waitForLoadState('networkidle');
 
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
-      .disableRules([
-        'region',               // 404 is a minimal page without landmark regions
-        'color-contrast',       // Pre-existing: Tailwind gray-500 on custom bg
-        'link-in-text-block',   // Pre-existing: links use color, no underline
-        'button-name',          // Pre-existing: third-party widget buttons (Intercom, etc.)
-      ])
+      .disableRules(['region'])  // 404 is a minimal page without landmark regions
       .analyze();
 
     if (results.violations.length > 0) {

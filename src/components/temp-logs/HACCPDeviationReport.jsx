@@ -85,7 +85,7 @@ export function HACCPDeviationReport({ violation, onClose }) {
             <FileText size={18} color="#1E2D4D" />
             <span style={{ fontSize: 16, fontWeight: 700, color: '#1E2D4D' }}>HACCP Deviation Report</span>
           </div>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }} aria-label="Close">
             <X size={18} color="#6B7280" />
           </button>
         </div>

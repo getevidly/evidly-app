@@ -134,6 +134,7 @@ export function DemoTalkingPoints() {
                 onClick={handleDismiss}
                 style={{ background: 'none', border: 'none', color: '#9CA3AF', cursor: 'pointer', padding: 2 }}
                 title="Dismiss for this session"
+                aria-label="Dismiss"
               >
                 <X size={14} />
               </button>

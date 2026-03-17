@@ -508,7 +508,7 @@ function DetailModal({ item, onClose, isDemoMode }: { item: TrainingCatalogItem;
             </div>
             <h2 style={{ fontSize: 20, fontWeight: 700, color: BODY_TEXT, margin: 0 }}>{item.name}</h2>
           </div>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, marginLeft: 12 }}>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, marginLeft: 12 }} aria-label="Close">
             <X size={20} color={MUTED} />
           </button>
         </div>
@@ -678,7 +678,7 @@ function AddTrainingModal({
         {/* Modal header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
           <h2 style={{ fontSize: 18, fontWeight: 700, color: BODY_TEXT, margin: 0 }}>Add Training Item</h2>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }} aria-label="Close">
             <X size={20} color={MUTED} />
           </button>
         </div>
