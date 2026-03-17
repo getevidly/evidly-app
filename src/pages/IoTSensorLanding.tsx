@@ -104,7 +104,7 @@ export function IoTSensorLanding() {
         </div>
 
         {/* ROI Stats */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
           {[
             { value: '94%', label: 'Less Manual Logging', desc: 'Automated sensor readings replace clipboard checks' },
             { value: '2 min', label: 'Alert Response', desc: 'Real-time threshold monitoring with instant notifications' },

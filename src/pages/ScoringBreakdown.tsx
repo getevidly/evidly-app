@@ -247,7 +247,7 @@ export function ScoringBreakdown() {
 
             {/* Details if available */}
             {gradeData.foodSafety.details && (
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="text-center p-3 rounded-lg bg-gray-50">
                   <div className="text-lg font-bold text-gray-900">{gradeData.foodSafety.details.majorViolations}</div>
                   <div className="text-xs text-gray-500">Major Violations</div>

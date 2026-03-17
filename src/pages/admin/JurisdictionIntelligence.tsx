@@ -109,7 +109,7 @@ export default function JurisdictionIntelligence() {
         </p>
       </div>
 
-      <div className="grid grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         <KpiTile label="Total Updates" value={updates.length} />
         <KpiTile label="Pending Publish" value={updates.filter(u => !u.published).length} valueColor="amber" />
         <KpiTile label="Jurisdictions Affected" value={counties.length} />

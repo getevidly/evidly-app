@@ -70,7 +70,7 @@ export function EmployeeTimecards({ employeeId }: EmployeeTimecardsProps) {
       {/* Week totals */}
       <div className="rounded-xl border p-5" style={{ backgroundColor: '#FFFFFF', borderColor: '#D1D9E6', boxShadow: '0 1px 3px rgba(11,22,40,.06)' }}>
         <h4 className="text-sm font-semibold mb-3" style={{ color: '#0B1628' }}>Week Totals</h4>
-        <div className="grid grid-cols-4 gap-4 mb-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
           {[
             { label: 'Regular', value: totals.regular },
             { label: 'Overtime', value: totals.ot },

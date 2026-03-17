@@ -78,7 +78,7 @@ export function ShiftDetailModal({ shift, onClose, onApprove, onReject, onFlag, 
           </div>
 
           {/* Clock Times */}
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="p-3 rounded-lg text-center" style={{ backgroundColor: '#EEF1F7' }}>
               <p className="text-xs font-medium" style={{ color: '#6B7F96' }}>Clock In</p>
               <p className="text-lg font-bold mt-1" style={{ color: '#0B1628' }}>{shift.clockIn || '—'}</p>

@@ -120,7 +120,7 @@ export function ReportIncidentPage() {
           {/* Severity */}
           <div>
             <label className={labelClass} style={labelStyle}>Severity</label>
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {SEVERITY_LEVELS.map((s) => (
                 <button
                   key={s.value}

@@ -239,6 +239,7 @@ export function FileUpload({
                     <img
                       src={uploadedFile.preview}
                       alt={uploadedFile.file.name}
+                      loading="lazy"
                       className="w-12 h-12 object-cover rounded"
                     />
                   ) : uploadedFile.file.type === 'application/pdf' ? (

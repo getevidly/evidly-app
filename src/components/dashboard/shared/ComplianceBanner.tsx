@@ -123,7 +123,7 @@ export function ComplianceBanner({ isSingleLocation }: { isSingleLocation?: bool
             <button
               type="button"
               onClick={() => handleDismiss(alert.id)}
-              className="p-1 rounded hover:bg-black/5 transition-colors shrink-0"
+              className="p-2.5 -m-1 rounded hover:bg-black/5 transition-colors shrink-0"
             >
               <X size={14} style={{ color: isWarning ? '#92400e' : '#991b1b' }} />
             </button>

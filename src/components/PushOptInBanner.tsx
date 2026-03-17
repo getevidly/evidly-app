@@ -74,7 +74,7 @@ export function PushOptInBanner() {
         </button>
         <button
           onClick={handleDismiss}
-          className="p-1 rounded hover:bg-white/10 transition-colors"
+          className="p-2.5 -m-1 rounded hover:bg-white/10 transition-colors"
           aria-label="Dismiss"
         >
           <X size={16} style={{ color: 'rgba(250,247,240,0.5)' }} />

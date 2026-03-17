@@ -57,7 +57,7 @@ export function ShareInviteLinkPanel({ isOpen, onClose, providerName, inviteCode
           <button
             type="button"
             onClick={onClose}
-            className="p-1 rounded hover:bg-white/10 transition-colors"
+            className="p-2.5 -m-1 rounded hover:bg-white/10 transition-colors"
             aria-label="Close"
           >
             <X size={18} color="#FFFFFF" />

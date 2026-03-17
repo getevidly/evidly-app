@@ -248,7 +248,7 @@ export function NotificationDropdown({ isOpen, onClose, demoMode = false }: Noti
     >
       <div className="p-4 border-b border-gray-200 flex items-center justify-between">
         <h3 className="font-semibold text-gray-900">Notifications</h3>
-        <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded transition-colors" aria-label="Close">
+        <button onClick={onClose} className="p-2.5 -m-1 hover:bg-gray-100 rounded transition-colors" aria-label="Close">
           <X className="w-4 h-4 text-gray-500" />
         </button>
       </div>

@@ -16,7 +16,7 @@ export default function DemoBookingBanner() {
       <div className="bg-white rounded-xl shadow-xl border border-gray-200 p-4 relative">
         <button
           onClick={dismiss}
-          className="absolute top-3 right-3 p-1 text-gray-400 hover:text-gray-600 transition-colors bg-transparent border-none cursor-pointer"
+          className="absolute top-3 right-3 p-2.5 -m-1 text-gray-400 hover:text-gray-600 transition-colors bg-transparent border-none cursor-pointer"
           aria-label="Dismiss"
         >
           <X className="w-4 h-4" />

@@ -90,7 +90,7 @@ export function QRCodePrintModal({ equipment, onClose }: QRCodePrintModalProps) 
           {/* Layout options */}
           <div>
             <label className="block text-xs font-semibold mb-2" style={{ color: MUTED }}>Print Layout</label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               {([
                 { key: 'large' as const, label: 'Single (Large)', desc: 'Full page with details' },
                 { key: 'label' as const, label: 'Label', desc: 'Small label format' },

@@ -183,6 +183,7 @@ export const PhotoCapture: React.FC<Props> = ({ photos, onPhotosChange, maxPhoto
                 <img
                   src={photo.url}
                   alt={photo.filename}
+                  loading="lazy"
                   style={{
                     width: 80, height: 80, objectFit: 'cover',
                     borderRadius: '6px', border: '1px solid #D1D9E6',

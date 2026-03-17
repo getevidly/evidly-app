@@ -106,6 +106,7 @@ export function PhotoGallery({ photos, title = 'Photo Evidence' }: PhotoGalleryP
             <img
               src={photo.dataUrl}
               alt={`Evidence ${idx + 1}`}
+              loading="lazy"
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
             <div style={{
@@ -183,6 +184,7 @@ export function PhotoGallery({ photos, title = 'Photo Evidence' }: PhotoGalleryP
             <img
               src={selected.dataUrl}
               alt="Evidence full size"
+              loading="lazy"
               style={{ maxWidth: '100%', maxHeight: '75vh', borderRadius: '8px', objectFit: 'contain' }}
             />
 

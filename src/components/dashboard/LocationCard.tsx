@@ -40,7 +40,7 @@ export default function LocationCard({ locationId, locationName, score, onClick,
         <button
           type="button"
           onClick={(e) => { e.stopPropagation(); setShowQrModal(true); }}
-          className="absolute top-1 right-1 p-0.5 rounded hover:bg-gray-100 transition-colors"
+          className="absolute top-1 right-1 p-2 -m-1 rounded hover:bg-gray-100 transition-colors"
           title="Share Passport"
           style={{ lineHeight: 0 }}
         >

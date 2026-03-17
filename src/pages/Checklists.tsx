@@ -1194,8 +1194,10 @@ export function Checklists() {
           toast.warning('Out-of-limit CCP detected — manager notified');
         }
       } else if (scorePercentage === 100) {
+        navigator.vibrate?.(100);
         setTimeout(() => toast.success('Checklist completed with 100% score'), 100);
       } else {
+        navigator.vibrate?.(100);
         toast.success(`Checklist submitted — score: ${scorePercentage}%`);
       }
       return;
@@ -1288,8 +1290,10 @@ export function Checklists() {
     fetchCompletions();
 
     if ((!ccpLogs || ccpLogs.length === 0) && scorePercentage === 100) {
+      navigator.vibrate?.(100);
       setTimeout(() => toast.success('Checklist completed with 100% score'), 100);
     } else if (!ccpLogs || ccpLogs.length === 0) {
+      navigator.vibrate?.(100);
       toast.success(`Checklist submitted — score: ${scorePercentage}%`);
     }
   };

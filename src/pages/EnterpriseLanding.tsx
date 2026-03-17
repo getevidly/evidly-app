@@ -35,7 +35,7 @@ export function EnterpriseLanding() {
         {/* Target Enterprises */}
         <div className="mb-12">
           <p className="text-center text-sm text-gray-500 font-medium mb-4">Built for the world's largest food service operators</p>
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {['Compass Group', 'Sodexo', 'Aramark', 'Kaiser', 'HCA Healthcare', 'CommonSpirit', 'Delaware North', 'Levy'].map(name => (
               <div key={name} className="bg-white rounded-xl border border-gray-200 p-3 flex items-center justify-center">
                 <span className="text-xs font-semibold text-gray-400">{name}</span>
@@ -91,7 +91,7 @@ export function EnterpriseLanding() {
         </div>
 
         {/* ROI Metrics */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
           {[
             { value: '12%', label: 'Compliance Score Improvement', sub: 'Average across enterprise clients' },
             { value: '4.2 hrs', label: 'Saved per Week per Location', sub: 'Reduced manual compliance tasks' },

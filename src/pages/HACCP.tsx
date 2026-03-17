@@ -1344,7 +1344,7 @@ export function HACCP() {
                     <ChevronRight className="h-5 w-5 text-gray-400 flex-shrink-0 mt-1" />
                   </div>
 
-                  <div className="grid grid-cols-3 gap-3 mb-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
                     <div>
                       <p className="text-xs text-gray-500 text-center">CCPs</p>
                       <p className="text-lg font-bold text-[#1e4d6b] text-center">{plan.ccps.length}</p>

@@ -231,7 +231,7 @@ export default function InsuranceRiskShared() {
               >
                 {d.riskTier}
               </div>
-              <div className="grid grid-cols-3 gap-3 text-center">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
                 <div className="p-2 rounded-lg bg-gray-50">
                   <div className="text-lg font-bold" style={{ color: '#1e4d6b' }}>{d.industryPercentile}nd</div>
                   <div className="text-[10px] text-gray-500">Percentile</div>

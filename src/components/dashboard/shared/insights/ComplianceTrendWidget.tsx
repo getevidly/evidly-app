@@ -39,7 +39,7 @@ export function ComplianceTrendWidget({ trendData }: Props) {
       <div className="px-2 py-3">
         <OverallTrendChart data={filtered} />
       </div>
-      <div className="grid grid-cols-3 gap-px" style={{ borderTop: `1px solid ${CARD_BORDER}`, backgroundColor: CARD_BORDER }}>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-px" style={{ borderTop: `1px solid ${CARD_BORDER}`, backgroundColor: CARD_BORDER }}>
         {[
           { label: 'Current', value: analysis.currentValue },
           { label: 'Average', value: analysis.avgValue },

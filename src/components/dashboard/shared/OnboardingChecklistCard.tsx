@@ -78,7 +78,7 @@ function K2CReferralModal({
             <button
               type="button"
               onClick={onClose}
-              className="p-1 rounded hover:bg-black/5 transition-colors"
+              className="p-2.5 -m-1 rounded hover:bg-black/5 transition-colors"
               aria-label="Close"
             >
               <X size={16} style={{ color: '#9CA3AF' }} />
@@ -208,7 +208,7 @@ export function OnboardingChecklistCard() {
           <button
             type="button"
             onClick={dismiss}
-            className="p-1 rounded hover:bg-black/5 transition-colors"
+            className="p-2.5 -m-1 rounded hover:bg-black/5 transition-colors"
             aria-label="Dismiss"
           >
             <X size={14} style={{ color: '#9CA3AF' }} />
@@ -314,7 +314,7 @@ export function OnboardingChecklistCard() {
           <button
             type="button"
             onClick={dismiss}
-            className="p-1 rounded hover:bg-black/5 transition-colors"
+            className="p-2.5 -m-1 rounded hover:bg-black/5 transition-colors"
             aria-label="Dismiss setup wizard"
           >
             <X size={14} style={{ color: '#9CA3AF' }} />

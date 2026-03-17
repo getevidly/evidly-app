@@ -273,7 +273,7 @@ export default function AdminSecurity() {
       )}
 
       {/* KPI row */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <KpiTile label="MFA-Enforced Roles" value={`${mfaEnforcedRoles}/8`} />
         <KpiTile label="Active Sessions" value={activeSessions} />
         <KpiTile label="Strictest Idle Timeout" value={`${strictestIdle}m`} />

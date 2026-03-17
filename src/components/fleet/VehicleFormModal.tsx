@@ -57,7 +57,7 @@ export function VehicleFormModal({ onClose }: Props) {
             </select>
           </div>
 
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <Field label="Year" value={year} onChange={setYear} placeholder="2024" />
             <Field label="Make" value={make} onChange={setMake} placeholder="Ford" />
             <Field label="Model" value={model} onChange={setModel} placeholder="E-450" />

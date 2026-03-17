@@ -69,7 +69,7 @@ export function SignalAlertBanner() {
         <button
           type="button"
           onClick={dismissAll}
-          className="p-1 rounded-md transition-colors shrink-0"
+          className="p-2.5 -m-1 rounded-md transition-colors shrink-0"
           style={{ color: '#9CA3AF' }}
           onMouseEnter={e => {
             (e.currentTarget as HTMLElement).style.color = '#6B7280';

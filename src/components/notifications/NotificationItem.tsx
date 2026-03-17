@@ -103,25 +103,25 @@ export function NotificationItem({
               {isUnread && (
                 <button
                   onClick={() => onMarkAsRead(n.id)}
-                  className="p-1 rounded hover:bg-gray-200 transition-colors"
+                  className="p-2.5 -m-1 rounded-full hover:bg-gray-100 active:scale-95 transition-transform"
                   title="Mark as read"
                 >
-                  <Check className="h-3 w-3 text-gray-400" />
+                  <Check className="h-3.5 w-3.5 text-gray-400" />
                 </button>
               )}
               <button
                 onClick={() => onSnooze(n.id)}
-                className="p-1 rounded hover:bg-gray-200 transition-colors"
+                className="p-2.5 -m-1 rounded-full hover:bg-gray-100 active:scale-95 transition-transform"
                 title="Snooze 24h"
               >
-                <Clock className="h-3 w-3 text-gray-400" />
+                <Clock className="h-3.5 w-3.5 text-gray-400" />
               </button>
               <button
                 onClick={() => onDismiss(n.id)}
-                className="p-1 rounded hover:bg-gray-200 transition-colors"
+                className="p-2.5 -m-1 rounded-full hover:bg-gray-100 active:scale-95 transition-transform"
                 title="Dismiss"
               >
-                <X className="h-3 w-3 text-gray-400" />
+                <X className="h-3.5 w-3.5 text-gray-400" />
               </button>
             </div>
           </div>

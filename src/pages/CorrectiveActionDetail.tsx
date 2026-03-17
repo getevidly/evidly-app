@@ -125,6 +125,7 @@ export function CorrectiveActionDetail() {
       // Celebration on verified (final status)
       if (nextStatus === 'verified') {
         triggerConfetti();
+        navigator.vibrate?.([30, 20, 30]);
         checkMilestone('zero_open_cas');
       }
     });

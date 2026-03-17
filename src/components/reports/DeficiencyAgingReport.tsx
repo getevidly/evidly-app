@@ -29,7 +29,7 @@ export function DeficiencyAgingReport({ data }: DeficiencyAgingProps) {
   return (
     <div className="space-y-5">
       {/* Summary */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <KpiCard label="Total Open" value={String(deficiencies.length)} icon={AlertTriangle} iconColor="#DC2626" />
         <KpiCard label="Critical" value={String(critical)} icon={AlertTriangle} iconColor="#DC2626" />
         <KpiCard label="Major" value={String(major)} icon={AlertTriangle} iconColor="#D97706" />

@@ -1356,7 +1356,7 @@ function BrandingTab({ showToast }: { showToast: (msg: string) => void }) {
               {/* Mini Content */}
               <div className="flex-1 p-4 bg-gray-50">
                 <div className="h-3 w-24 rounded mb-3" style={{ backgroundColor: colors.primaryColor }} />
-                <div className="grid grid-cols-3 gap-2 mb-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3">
                   {[1, 2, 3].map(i => (
                     <div key={i} className="bg-white rounded-xl border border-gray-200 p-2">
                       <div className="h-2 w-10 rounded mb-1" style={{ backgroundColor: colors.accentColor }} />

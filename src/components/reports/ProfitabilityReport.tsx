@@ -25,7 +25,7 @@ export function ProfitabilityReport({ data }: ProfitabilityProps) {
   return (
     <div className="space-y-5">
       {/* Summary KPIs */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <KpiCard label="Total Jobs" value={String(jobs.length)} />
         <KpiCard label="Avg Margin" value={`${avgMargin.toFixed(1)}%`} color={avgMargin < MARGIN_THRESHOLD ? '#DC2626' : '#059669'} />
         <KpiCard label="Below 60%" value={String(flagged.length)} color={flagged.length > 0 ? '#DC2626' : '#059669'} />

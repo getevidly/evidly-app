@@ -41,6 +41,7 @@ export function TechnicianColumn({ technician, jobs }: TechnicianColumnProps) {
           <img
             src={technician.avatarUrl}
             alt={technician.name}
+            loading="lazy"
             className="w-7 h-7 rounded-full object-cover"
           />
         ) : (

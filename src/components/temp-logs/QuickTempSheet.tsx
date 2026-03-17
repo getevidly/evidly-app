@@ -59,6 +59,9 @@ export function QuickTempSheet({ open, onClose }: QuickTempSheetProps) {
       }
     }
 
+    // Haptic feedback on save
+    navigator.vibrate?.(50);
+
     // Milestone check
     checkMilestone('first_temp_log');
 
@@ -66,6 +69,7 @@ export function QuickTempSheet({ open, onClose }: QuickTempSheetProps) {
     const newStreak = incrementStreak('temp_log');
     if (STREAK_MILESTONES.includes(newStreak)) {
       triggerConfetti();
+      navigator.vibrate?.(200);
       setStreakMessage(`${newStreak}-day logging streak!`);
       setTimeout(() => {
         setStreakMessage(null);
@@ -83,7 +87,7 @@ export function QuickTempSheet({ open, onClose }: QuickTempSheetProps) {
       <div className="fixed inset-0 z-50 bg-black/40" onClick={onClose} />
 
       {/* Sheet */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-2xl shadow-2xl px-5 pb-8 pt-4 animate-slide-up">
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-2xl shadow-2xl px-5 pt-4 animate-slide-up pb-[calc(2rem+env(safe-area-inset-bottom))]">
         {/* Handle + close */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
@@ -128,6 +132,7 @@ export function QuickTempSheet({ open, onClose }: QuickTempSheetProps) {
           step="0.1"
           value={temperature}
           onChange={e => setTemperature(e.target.value)}
+          onFocus={e => { setTimeout(() => { e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 300); }}
           placeholder="°F"
           className="w-full border border-gray-300 rounded-lg text-center font-bold mb-4"
           style={{ fontSize: 24, height: 56 }}

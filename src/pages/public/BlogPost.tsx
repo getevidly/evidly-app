@@ -182,6 +182,7 @@ export function BlogPost() {
                 <img
                   src={urlFor(post.coverImage).width(960).auto('format').url()}
                   alt={post.coverImage.alt || post.title}
+                  loading="lazy"
                   className="w-full"
                 />
               </div>

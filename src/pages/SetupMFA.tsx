@@ -122,6 +122,7 @@ export function SetupMFA() {
                   <img
                     src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrUri)}`}
                     alt="MFA QR Code"
+                    loading="lazy"
                     style={{ width: 200, height: 200, margin: '0 auto', borderRadius: 8, border: '1px solid #E5E7EB' }}
                   />
                 </div>

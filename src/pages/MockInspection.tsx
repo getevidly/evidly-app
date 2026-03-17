@@ -605,7 +605,7 @@ export default function MockInspection() {
           <h2 className="text-lg font-bold mb-4" style={{ color: NAVY }}>Simulated Findings Summary</h2>
 
           {/* Severity counts */}
-          <div className="grid grid-cols-3 gap-3 mb-5">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
             <div className="text-center p-3 rounded-lg bg-red-50 border border-red-200">
               <p className="text-2xl font-bold text-red-700">{severityCounts.critical}</p>
               <p className="text-xs font-medium text-red-600">Critical</p>

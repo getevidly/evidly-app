@@ -134,7 +134,7 @@ export function JobFormModal({ job, onClose, onSave }: JobFormModalProps) {
           </div>
 
           {/* Date & Time */}
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <label className="flex items-center gap-1.5 text-xs font-semibold mb-1" style={{ color: NAVY }}>
                 <Calendar className="w-3.5 h-3.5" /> Date

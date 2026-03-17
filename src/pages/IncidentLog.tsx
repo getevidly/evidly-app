@@ -1190,7 +1190,7 @@ export function IncidentLog() {
                           {entry.photos && entry.photos.length > 0 && (
                             <div className="mt-2 flex gap-2">
                               {entry.photos.map(p => (
-                                <img key={p.id} src={p.dataUrl} alt="" className="w-12 h-12 rounded object-cover border" />
+                                <img key={p.id} src={p.dataUrl} alt="" loading="lazy" className="w-12 h-12 rounded object-cover border" />
                               ))}
                             </div>
                           )}

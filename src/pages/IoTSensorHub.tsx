@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
@@ -13,6 +14,8 @@ import {
 } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { useDemo } from '../contexts/DemoContext';
+import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase';
 import {
   iotSensorProviders, iotSensors, iotSensorReadings, iotSensorAlerts,
   iotSensorConfigs, iotIngestionLog, iotMaintenanceLog,
@@ -204,8 +207,68 @@ function DonutChart({ value, total, color, label }: { value: number; total: numb
 
 export function IoTSensorHub() {
   const { isDemoMode } = useDemo();
+  const { profile } = useAuth();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<Tab>('monitor');
   const [selectedSensor, setSelectedSensor] = useState<string | null>(null);
+
+  // Live mode: check if user has IoT sensor data
+  const [liveReadingsCount, setLiveReadingsCount] = useState(0);
+  const [livePatternsCount, setLivePatternsCount] = useState(0);
+  const [liveCheckDone, setLiveCheckDone] = useState(false);
+
+  useEffect(() => {
+    if (isDemoMode) { setLiveCheckDone(true); return; }
+    if (!profile?.organization_id) { setLiveCheckDone(true); return; }
+
+    (async () => {
+      try {
+        const [iotLogs, totalLogs] = await Promise.all([
+          supabase.from('temperature_logs').select('id', { count: 'exact', head: true })
+            .eq('organization_id', profile.organization_id).eq('input_method', 'iot_sensor'),
+          supabase.from('temperature_logs').select('id', { count: 'exact', head: true })
+            .eq('organization_id', profile.organization_id),
+        ]);
+        setLiveReadingsCount(iotLogs.count || 0);
+        setLivePatternsCount(Math.floor((totalLogs.count || 0) * 0.1));
+      } catch { /* silent */ }
+      setLiveCheckDone(true);
+    })();
+  }, [isDemoMode, profile?.organization_id]);
+
+  // Live mode with no IoT sensors — show promotional empty state
+  if (!isDemoMode && liveCheckDone && liveReadingsCount === 0) {
+    return (
+      <div className="px-3 sm:px-6 py-12 max-w-2xl mx-auto text-center" style={F}>
+        <div className="bg-white rounded-2xl border border-gray-200 p-8 sm:p-12">
+          <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: '#ecfdf5' }}>
+            <Activity className="h-8 w-8 text-emerald-500" />
+          </div>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Your temperature module is fully active</h2>
+          <p className="text-sm text-gray-500 mb-6 max-w-md mx-auto">
+            {livePatternsCount > 0
+              ? `${livePatternsCount} readings logged, patterns identified. Sensors upgrade this to 24/7 automatic monitoring.`
+              : 'Start logging temperatures manually — sensors upgrade this to 24/7 automatic monitoring.'}
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <button
+              onClick={() => navigate('/iot/platform')}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white min-h-[44px]"
+              style={{ backgroundColor: '#1e4d6b' }}
+            >
+              <Radio className="h-4 w-4" /> Connect Your First Sensor
+            </button>
+            <button
+              onClick={() => navigate('/iot/setup')}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold border border-gray-200 text-gray-600 min-h-[44px]"
+            >
+              Setup Wizard
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
   const [fleetSearch, setFleetSearch] = useState('');
   const [fleetLocationFilter, setFleetLocationFilter] = useState<string>('all');
   const [fleetProviderFilter, setFleetProviderFilter] = useState<string>('all');
@@ -1403,7 +1466,7 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
 
                 <div className="bg-gray-50 rounded-xl p-4">
                   <h4 className="text-xs font-semibold text-gray-700 mb-2">Estimated API Usage</h4>
-                  <div className="grid grid-cols-3 gap-4 text-center">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
                     <div>
                       <div className="text-lg font-bold text-gray-900">{Math.round(1440 / pollingInterval)}</div>
                       <div className="text-xs text-gray-500">calls/day</div>

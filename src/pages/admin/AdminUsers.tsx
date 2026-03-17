@@ -303,7 +303,7 @@ export default function AdminUsers() {
       </div>
 
       {/* KPI row */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <KpiTile label="Total Users" value={totalUsers} />
         <KpiTile label="Active" value={activeUsers} />
         <KpiTile label="Suspended" value={suspendedUsers} valueColor={suspendedUsers > 0 ? RED : undefined} />

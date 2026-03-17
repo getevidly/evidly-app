@@ -179,7 +179,7 @@ export default function AdminOrgs() {
       </div>
 
       {/* KPI row */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <KpiTile label="Total Orgs" value={totalOrgs} />
         <KpiTile label="Active" value={activeOrgs} />
         <KpiTile label="Founder" value={planCounts['founder'] || 0} />

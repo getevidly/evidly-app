@@ -289,7 +289,7 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
       {/* ── 9. FINANCIAL IMPACT ──────────────────────── */}
       <CollapsibleSection title="Financial Impact" icon={DollarSign}>
         {snapshot.financial_impact && (
-        <div className="grid grid-cols-3 gap-3 mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
           <div className="rounded-lg p-3 text-center" style={{ backgroundColor: '#fffbeb', border: '1px solid #fcd34d' }}>
             <div className="text-[10px] font-bold uppercase mb-1" style={{ color: '#92400e' }}>Risk Exposure</div>
             <div className="text-lg font-bold" style={{ color: '#d97706' }}>

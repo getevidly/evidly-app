@@ -104,7 +104,7 @@ export function DashboardToday() {
       </div>
 
       {/* Summary strip — centered */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {/* Tasks Today */}
         <button
           type="button"
@@ -249,7 +249,7 @@ export function DashboardToday() {
       )}
 
       {/* Quick links — centered, clickable, with colored icons and hover animations */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {([
           { label: 'Calendar', icon: CalendarDays, route: '/calendar', iconBg: '#eff6ff', iconColor: '#3b82f6' },
           { label: 'Temperature Readings', icon: Thermometer, route: '/temp-logs', iconBg: '#fef2f2', iconColor: '#ef4444' },

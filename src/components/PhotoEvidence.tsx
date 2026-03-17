@@ -365,7 +365,7 @@ export function PhotoEvidence({
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
         {photos.map(photo => (
           <div key={photo.id} style={{ position: 'relative', width: compact ? '64px' : '96px', height: compact ? '64px' : '96px', borderRadius: '8px', overflow: 'hidden', border: '2px solid #e5e7eb' }}>
-            <img src={photo.dataUrl} alt="Evidence" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <img src={photo.dataUrl} alt="Evidence" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             {/* Timestamp + location badge */}
             {!compact && (
               <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: 'rgba(0,0,0,0.6)', padding: '2px 4px' }}>

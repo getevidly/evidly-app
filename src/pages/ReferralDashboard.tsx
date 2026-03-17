@@ -504,7 +504,7 @@ export function ReferralDashboard() {
                   <p className="text-sm text-gray-600">{t('referral.k2cSubtitle')}</p>
                 </div>
               </div>
-              <div className="grid grid-cols-3 gap-4 mt-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
                 <div className="bg-white/80 rounded-lg p-3 text-center">
                   <div className="text-2xl font-bold text-red-600">${stats.k2cTotalDonated}</div>
                   <div className="text-xs text-gray-500">{t('referral.totalDonated')}</div>

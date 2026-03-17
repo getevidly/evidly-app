@@ -836,7 +836,7 @@ function SourceStatusView({ sourceStatus: rawStatus, insightCount, criticalCount
       )}
 
       {/* Stat tiles (always shown) */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         {[
           { label: 'Published Insights', value: String(insightCount), color: '#1e4d6b' },
           { label: 'Critical Alerts', value: String(criticalCount), color: '#dc2626' },

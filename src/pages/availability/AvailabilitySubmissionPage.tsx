@@ -116,7 +116,7 @@ export function AvailabilitySubmissionPage() {
       )}
 
       {/* Summary */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="rounded-lg p-3 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
           <p className="text-xs" style={{ color: TEXT_TERTIARY }}>Available Days</p>
           <p className="text-xl font-bold mt-0.5" style={{ color: '#16a34a' }}>{totalAvailable}</p>

@@ -63,6 +63,9 @@ export function TempLogQuick() {
       toast.success('Temperature logged successfully!');
     }
 
+    // Haptic feedback on save
+    navigator.vibrate?.(50);
+
     // Milestone check (first temp log)
     checkMilestone('first_temp_log');
 
@@ -70,6 +73,7 @@ export function TempLogQuick() {
     const newStreak = incrementStreak('temp_log');
     if (STREAK_MILESTONES.includes(newStreak)) {
       triggerConfetti();
+      navigator.vibrate?.(200);
       setStreakMessage(`${newStreak}-day logging streak!`);
       setTimeout(() => setStreakMessage(null), 3000);
     }
@@ -159,6 +163,7 @@ export function TempLogQuick() {
               step="0.1"
               value={temperature}
               onChange={e => setTemperature(e.target.value)}
+              onFocus={e => { setTimeout(() => { e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 300); }}
               placeholder="Enter temperature..."
               className={`w-full px-3 py-3 border rounded-lg text-lg font-semibold focus:ring-2 focus:ring-[#1e4d6b] focus:border-[#1e4d6b] ${
                 isInRange === false ? 'border-red-300 bg-red-50' : 'border-gray-300'
@@ -184,6 +189,7 @@ export function TempLogQuick() {
             <textarea
               value={notes}
               onChange={e => { setNotes(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('notes'); return s; }); }}
+              onFocus={e => { setTimeout(() => { e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 300); }}
               placeholder="Any observations..."
               rows={2}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1e4d6b] focus:border-[#1e4d6b]"

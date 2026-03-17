@@ -332,7 +332,7 @@ export function IncidentDetailPage() {
                 className="aspect-square rounded-lg overflow-hidden"
                 style={{ background: '#EEF1F7', border: `1px solid ${CARD_BORDER}` }}
               >
-                <img src={url} alt={`Incident photo ${idx + 1}`} className="w-full h-full object-cover" />
+                <img src={url} alt={`Incident photo ${idx + 1}`} loading="lazy" className="w-full h-full object-cover" />
               </div>
             ))}
           </div>

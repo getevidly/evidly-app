@@ -1,4 +1,12 @@
 import { defineConfig, devices } from '@playwright/test';
+import { resolve, dirname } from 'path';
+import { fileURLToPath } from 'url';
+import { config } from 'dotenv';
+
+// Load .env.test for E2E credentials (gitignored)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+config({ path: resolve(__dirname, '.env.test') });
 
 export default defineConfig({
   testDir: './e2e',

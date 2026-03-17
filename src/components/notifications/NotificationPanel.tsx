@@ -69,7 +69,7 @@ export function NotificationPanel({ isOpen, onClose }: NotificationPanelProps) {
   return (
     <>
       {/* Backdrop */}
-      <div className="fixed inset-0 bg-black/20 z-40" />
+      <div className="fixed inset-0 bg-black/20 z-40 animate-fade-in" />
 
       {/* Panel */}
       <div
@@ -104,7 +104,7 @@ export function NotificationPanel({ isOpen, onClose }: NotificationPanelProps) {
             )}
             <button
               onClick={onClose}
-              className="p-1 rounded hover:bg-gray-200 transition-colors"
+              className="p-2.5 -m-1 rounded-lg hover:bg-gray-200 transition-colors"
               aria-label="Close"
             >
               <X className="h-4 w-4 text-gray-500" />

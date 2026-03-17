@@ -114,7 +114,7 @@ export function ReScoreAlertsWidget({ navigate }: Props) {
               </div>
               <button
                 onClick={(e) => handleAcknowledge(alert.id, e)}
-                className="p-1 rounded hover:bg-white/50 flex-shrink-0"
+                className="p-2.5 -m-1 rounded hover:bg-white/50 flex-shrink-0"
                 title="Acknowledge"
               >
                 <Check className="h-3.5 w-3.5" style={{ color: color.text }} />

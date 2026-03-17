@@ -19,7 +19,7 @@ export function ComplianceStatusReport({ data }: ComplianceStatusProps) {
   return (
     <div className="space-y-5">
       {/* Summary */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <ScoreCard label="Total Locations" value={String(locations.length)} icon={Shield} iconColor="#1e4d6b" />
         <ScoreCard label="Compliant" value={String(locations.filter(l => (Number(l.score) || 0) >= 90).length)} icon={CheckCircle} iconColor="#059669" />
         <ScoreCard label="At Risk" value={String(locations.filter(l => { const s = Number(l.score) || 0; return s >= 70 && s < 90; }).length)} icon={AlertTriangle} iconColor="#D97706" />

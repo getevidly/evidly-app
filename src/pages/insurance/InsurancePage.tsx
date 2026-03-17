@@ -77,7 +77,7 @@ export function InsurancePage() {
 
       {/* Stats */}
       {isLoading ? (
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {Array.from({ length: 3 }).map((_, i) => (
             <div key={i} className="rounded-lg p-4 animate-pulse" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
               <div className="h-3 w-20 bg-gray-200 rounded mb-2 mx-auto" />
@@ -86,7 +86,7 @@ export function InsurancePage() {
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <StatCard icon={Shield} label="Active Policies" value={stats.active} color={NAVY} />
           <StatCard icon={Clock} label="Expiring in 30 Days" value={stats.expiringSoon} color="#dc2626" />
           <StatCard icon={DollarSign} label="Total Annual Premium" value={`$${stats.totalPremium.toLocaleString()}`} color="#16a34a" />

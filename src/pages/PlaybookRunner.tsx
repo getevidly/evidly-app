@@ -560,7 +560,7 @@ export function PlaybookRunner() {
             {signatureData && (
               <div style={{ marginTop: 20, padding: 16, borderRadius: 10, background: '#f9fafb', border: '1px solid #e5e7eb' }}>
                 <h4 style={{ fontSize: 13, fontWeight: 700, color: '#111827', margin: '0 0 8px' }}>Completion Signature</h4>
-                <img src={signatureData} alt="Signature" style={{ maxWidth: 300, border: '1px solid #d1d5db', borderRadius: 6 }} />
+                <img src={signatureData} alt="Signature" loading="lazy" style={{ maxWidth: 300, border: '1px solid #d1d5db', borderRadius: 6 }} />
               </div>
             )}
 
@@ -949,7 +949,7 @@ export function PlaybookRunner() {
                       Redo
                     </button>
                   </div>
-                  <img src={signatureData} alt="Signature" style={{ maxWidth: 200, border: '1px solid #d1d5db', borderRadius: 4 }} />
+                  <img src={signatureData} alt="Signature" loading="lazy" style={{ maxWidth: 200, border: '1px solid #d1d5db', borderRadius: 4 }} />
                 </div>
               )}
 

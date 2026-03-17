@@ -132,7 +132,7 @@ export function ReferralPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
                   <input type="text" value={formData.address} onChange={e => setFormData(d => ({ ...d, address: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent" />
                 </div>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
                     <input type="text" value={formData.city} onChange={e => setFormData(d => ({ ...d, city: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent" />

@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useKeyboardOpen } from '../../hooks/useKeyboardOpen';
 import {
   Thermometer,
   ClipboardList,
@@ -104,8 +105,9 @@ export function MobileTabBar() {
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const { userRole } = useRole();
   const { signOut } = useAuth();
+  const isKeyboardOpen = useKeyboardOpen();
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path + '/');
   const isKitchen = userRole === 'kitchen_staff';
 
   const mainTabs = getBottomNavItems(userRole);
@@ -209,8 +211,8 @@ export function MobileTabBar() {
         </div>
       )}
 
-      {/* Bottom tab bar — visible below lg (1024px) */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40 lg:hidden h-14 safe-area-bottom">
+      {/* Bottom tab bar — visible below lg (1024px), hidden when keyboard is open */}
+      <nav className={`fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40 lg:hidden h-14 safe-area-bottom ${isKeyboardOpen ? 'hidden' : ''}`}>
         <div className="grid grid-cols-5 h-full">
           {mainTabs.map((tab) => {
             const Icon = tab.icon;

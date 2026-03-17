@@ -69,6 +69,7 @@ export function ShiftHandoff() {
   const handleComplete = () => {
     guardAction('update', 'Shift Handoff', () => {
       triggerConfetti();
+      navigator.vibrate?.(50);
       setCompleted(true);
       toast.success('Shift handoff completed!');
     });
@@ -166,6 +167,7 @@ export function ShiftHandoff() {
         <textarea
           value={notes}
           onChange={e => setNotes(e.target.value)}
+          onFocus={e => { setTimeout(() => { e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 300); }}
           placeholder="Anything the next team should know..."
           rows={3}
           className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 resize-none focus:outline-none focus:border-[#1e4d6b]"

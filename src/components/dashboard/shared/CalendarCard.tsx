@@ -113,10 +113,10 @@ export function CalendarCard({ events, typeColors, typeLabels, navigate, tooltip
         </div>
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-gray-700">{formatMonthYear(viewYear, viewMonth, locale)}</span>
-          <button type="button" onClick={prevMonth} className="p-1 rounded hover:bg-gray-100 transition-colors">
+          <button type="button" onClick={prevMonth} className="p-2 -m-1 rounded-full hover:bg-gray-100 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center">
             <ChevronLeft size={16} className="text-gray-500" />
           </button>
-          <button type="button" onClick={nextMonth} className="p-1 rounded hover:bg-gray-100 transition-colors">
+          <button type="button" onClick={nextMonth} className="p-2 -m-1 rounded-full hover:bg-gray-100 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center">
             <ChevronRight size={16} className="text-gray-500" />
           </button>
         </div>

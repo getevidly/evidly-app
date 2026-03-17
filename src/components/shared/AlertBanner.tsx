@@ -80,7 +80,7 @@ export function AlertBanner({ alerts, onDismiss, navigate }: {
             <button
               type="button"
               onClick={() => onDismiss(alert.id)}
-              className="p-1 rounded hover:bg-black/5 shrink-0 transition-colors"
+              className="p-2.5 -m-1 rounded hover:bg-black/5 shrink-0 transition-colors"
             >
               <X size={14} className="text-gray-400" />
             </button>

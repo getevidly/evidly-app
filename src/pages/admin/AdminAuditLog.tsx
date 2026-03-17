@@ -242,7 +242,7 @@ export default function AdminAuditLog() {
       </div>
 
       {/* KPI row */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <KpiTile label="Total Events" value={totalEvents} />
         <KpiTile label="Failed Events" value={failedEvents} valueColor={failedEvents > 0 ? RED : undefined} />
         <KpiTile label="Unique Actors" value={uniqueActors} />

@@ -88,7 +88,7 @@ export function VendorContactActions({ vendorName, contactName, email, phone }: 
           <div className="bg-white rounded-xl p-6 max-w-md w-full shadow-sm border border-gray-200 animate-slide-up">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-900">Send SMS to {contactName}</h3>
-              <button onClick={() => setShowSmsModal(false)} className="p-1 hover:bg-gray-100 rounded-full">
+              <button onClick={() => setShowSmsModal(false)} className="p-2.5 -m-1 hover:bg-gray-100 rounded-full">
                 <X className="w-5 h-5 text-gray-400" />
               </button>
             </div>
@@ -122,7 +122,7 @@ export function VendorContactActions({ vendorName, contactName, email, phone }: 
           <div className="bg-white rounded-xl p-6 max-w-lg w-full shadow-sm border border-gray-200 animate-slide-up">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-900">Email {contactName}</h3>
-              <button onClick={() => setShowEmailModal(false)} className="p-1 hover:bg-gray-100 rounded-full">
+              <button onClick={() => setShowEmailModal(false)} className="p-2.5 -m-1 hover:bg-gray-100 rounded-full">
                 <X className="w-5 h-5 text-gray-400" />
               </button>
             </div>

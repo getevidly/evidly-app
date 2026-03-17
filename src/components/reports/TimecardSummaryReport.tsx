@@ -21,7 +21,7 @@ export function TimecardSummaryReport({ data }: TimecardSummaryProps) {
   return (
     <div className="space-y-5">
       {/* KPIs */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <KpiCard label="Employees" value={String(employees.length)} />
         <KpiCard label="Total Hours" value={totalHours.toFixed(1)} />
         <KpiCard label="Regular Hours" value={(totalHours - totalOT).toFixed(1)} />

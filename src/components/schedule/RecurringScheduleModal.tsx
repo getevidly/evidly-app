@@ -108,7 +108,7 @@ export function RecurringScheduleModal({ technicians, onClose }: RecurringSchedu
               <RotateCcw className="w-3.5 h-3.5" />
               Frequency
             </label>
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {FREQUENCIES.map(f => (
                 <button
                   key={f.value}

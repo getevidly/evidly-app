@@ -132,7 +132,7 @@ export function PayPeriods({ payPeriods, onClosePeriod, onExportPeriod, onMarkPa
                       >
                         <div className="flex items-center justify-between px-3 py-2 border-b" style={{ borderColor: '#E8EDF5' }}>
                           <span className="text-xs font-semibold" style={{ color: '#0B1628' }}>Export as</span>
-                          <button onClick={() => setExportMenuId(null)} className="p-0.5 rounded hover:bg-gray-100">
+                          <button onClick={() => setExportMenuId(null)} className="p-2 -m-1 rounded-full hover:bg-gray-100">
                             <X className="w-3 h-3" style={{ color: '#6B7F96' }} />
                           </button>
                         </div>

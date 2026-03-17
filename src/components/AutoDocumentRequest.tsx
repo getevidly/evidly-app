@@ -152,7 +152,7 @@ export function AutoDocumentRequest() {
           <div className="bg-white rounded-xl p-6 max-w-lg w-full shadow-sm border border-gray-200 animate-slide-up">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold text-gray-900">Auto-Request Settings</h3>
-              <button onClick={() => setShowSettings(false)} className="p-1 hover:bg-gray-100 rounded-full">
+              <button onClick={() => setShowSettings(false)} className="p-2.5 -m-1 hover:bg-gray-100 rounded-full">
                 <X className="w-5 h-5 text-gray-400" />
               </button>
             </div>
