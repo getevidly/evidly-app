@@ -451,6 +451,12 @@ const I: Record<string, NavItem> = {
     roles: [], description: 'Pre-demo control panel: configure prospect, launch emotional trigger flows, fire demo signals.',
   },
 
+  // ── Growth ──
+  adminTestimonials: {
+    id: 'admin-testimonials', label: 'Testimonials', path: '/admin/testimonials', icon: '💬',
+    roles: [], description: 'Manage operator testimonials displayed on ScoreTable county pages.',
+  },
+
   // ── Help ──
   help: {
     id: 'help', label: 'Help', path: '/help', icon: '❓',
@@ -517,7 +523,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('administration', 'Administration', '⚙️',
         'Administration', 'Equipment, Internet of Things sensors, integrations, locations, settings, team, vendors, and role permissions.',
-        [I.equipment, I.fleet, I.insurance, I.bonuses, I.performanceMetrics, I.myAvailability, I.teamAvailability, I.availabilityApprovals, I.clockReminders, I.timecardAlterations, I.integrations, I.iotSensors, I.locations, I.settings, I.rolesPermissions, I.team, I.timecards, I.employees, I.trainingRecords, I.trainingCatalog, I.vendors, I.emergencyInfo, I.demoLauncher],
+        [I.equipment, I.fleet, I.insurance, I.bonuses, I.performanceMetrics, I.myAvailability, I.teamAvailability, I.availabilityApprovals, I.clockReminders, I.timecardAlterations, I.integrations, I.iotSensors, I.locations, I.settings, I.rolesPermissions, I.team, I.timecards, I.employees, I.trainingRecords, I.trainingCatalog, I.vendors, I.emergencyInfo, I.demoLauncher, I.adminTestimonials],
         '/admin',
       ),
       // System section removed — admin tools accessed via AdminShell (/admin) outside demo mode.

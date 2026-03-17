@@ -522,29 +522,56 @@ function AnimatedCounter({ end, suffix = "", duration = 1800 }) {
 }
 
 // ─────────────────────────────────────────────
+// PLATFORM STATS HOOK (SOCIAL-PROOF-01)
+// ─────────────────────────────────────────────
+function usePlatformStats() {
+  const [stats, setStats] = useState({ kitchens: 300, jurisdictions: 62, tempLogs: 45000, checklistsCompleted: 12000 });
+  useEffect(() => {
+    const url = import.meta.env.VITE_SUPABASE_URL;
+    if (!url) return;
+    fetch(`${url}/functions/v1/platform-stats`)
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (d && d.kitchens) setStats(d); })
+      .catch(() => { /* keep fallback */ });
+  }, []);
+  return stats;
+}
+
+// ─────────────────────────────────────────────
 // TRUST BAR
 // ─────────────────────────────────────────────
 function TrustBar() {
+  const stats = usePlatformStats();
   return (
     <section style={{ background: "#283f6a", borderBottom: "1px solid rgba(255,255,255,0.06)", padding: "26px 24px" }}>
       <div style={{ maxWidth: 960, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center", gap: 36, flexWrap: "wrap" }}>
         {/* Animated stat counters */}
         <div style={{ textAlign: "center" }}>
           <div style={{ fontSize: "1.6rem", fontWeight: 500, color: C.gold, lineHeight: 1, fontFamily: FF_MONO, letterSpacing: "-0.02em" }}>
-            <AnimatedCounter end={300} suffix="+" />
+            <AnimatedCounter end={stats.kitchens} suffix="+" />
           </div>
-          <div style={{ fontSize: "0.66rem", color: "rgba(255,255,255,0.35)", marginTop: 4, fontFamily: FF_SANS, letterSpacing: "0.02em" }}>Commercial kitchens per year</div>
+          <div style={{ fontSize: "0.66rem", color: "rgba(255,255,255,0.35)", marginTop: 4, fontFamily: FF_SANS, letterSpacing: "0.02em" }}>Commercial kitchens</div>
         </div>
         <div style={{ width: 1, height: 36, background: "rgba(255,255,255,0.08)" }} />
         <div style={{ textAlign: "center" }}>
           <div style={{ fontSize: "1.6rem", fontWeight: 500, color: C.gold, lineHeight: 1, fontFamily: FF_MONO, letterSpacing: "-0.02em" }}>
-            <AnimatedCounter end={62} />
+            <AnimatedCounter end={stats.jurisdictions} />
           </div>
           <div style={{ fontSize: "0.66rem", color: "rgba(255,255,255,0.35)", marginTop: 4, fontFamily: FF_SANS, letterSpacing: "0.02em" }}>California jurisdictions</div>
         </div>
         <div style={{ width: 1, height: 36, background: "rgba(255,255,255,0.08)" }} />
         <div style={{ textAlign: "center" }}>
-          <div style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.38)", fontFamily: FF_SANS, letterSpacing: "0.02em" }}>Aramark · Cintas · Yosemite NPS</div>
+          <div style={{ fontSize: "1.6rem", fontWeight: 500, color: C.gold, lineHeight: 1, fontFamily: FF_MONO, letterSpacing: "-0.02em" }}>
+            <AnimatedCounter end={stats.tempLogs} suffix="+" />
+          </div>
+          <div style={{ fontSize: "0.66rem", color: "rgba(255,255,255,0.35)", marginTop: 4, fontFamily: FF_SANS, letterSpacing: "0.02em" }}>Temperature logs</div>
+        </div>
+        <div style={{ width: 1, height: 36, background: "rgba(255,255,255,0.08)" }} />
+        <div style={{ textAlign: "center" }}>
+          <div style={{ fontSize: "1.6rem", fontWeight: 500, color: C.gold, lineHeight: 1, fontFamily: FF_MONO, letterSpacing: "-0.02em" }}>
+            <AnimatedCounter end={stats.checklistsCompleted} suffix="+" />
+          </div>
+          <div style={{ fontSize: "0.66rem", color: "rgba(255,255,255,0.35)", marginTop: 4, fontFamily: FF_SANS, letterSpacing: "0.02em" }}>Checklists completed</div>
         </div>
         <div style={{ width: 1, height: 36, background: "rgba(255,255,255,0.08)" }} />
         <div style={{ textAlign: "center" }}>

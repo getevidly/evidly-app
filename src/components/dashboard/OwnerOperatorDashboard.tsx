@@ -27,7 +27,10 @@ import { StandingCardModal } from '../ambassador/StandingCardModal';
 import { MilestoneCelebrationModal } from '../ambassador/MilestoneCelebrationModal';
 import { useMilestoneCheck } from '../../hooks/useMilestoneCheck';
 import { demoStandingCard } from '../../data/ambassadorDemoData';
-import type { StandingCardData } from '../../lib/ambassadorSystem';
+import { MILESTONE_CONFIG, type StandingCardData } from '../../lib/ambassadorSystem';
+import { InspectionBadgeModal } from '../social-proof/InspectionBadgeModal';
+import { TestimonialCollectionModal } from '../social-proof/TestimonialCollectionModal';
+import type { InspectionBadgeData } from '../social-proof/InspectionBadge';
 import {
   ComplianceTrendWidget,
   TopRiskItemsWidget,
@@ -78,12 +81,32 @@ export default function OwnerOperatorDashboard() {
   const { isDemoMode, firstName: demoFirstName } = useDemo();
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [showStandingCard, setShowStandingCard] = useState(false);
+  const [showInspectionBadge, setShowInspectionBadge] = useState(false);
+  const [showTestimonialPrompt, setShowTestimonialPrompt] = useState(false);
   const { pendingMilestone, dismissMilestone } = useMilestoneCheck();
 
   // Standing card data: demo uses demoStandingCard, production would assemble from real data
   const standingCardData: StandingCardData = isDemoMode
     ? demoStandingCard
     : { orgName: profile?.full_name || 'My Kitchen', city: 'California', isAmbassador: false, daysActive: 0, tempLogs: 0, checklistsCompleted: 0, kecStatus: 'Not Started', documentsOnFile: 0, referralCode: '' };
+
+  // Inspection badge data (SOCIAL-PROOF-01)
+  const inspectionBadgeData: InspectionBadgeData = {
+    orgName: isDemoMode ? demoStandingCard.orgName : (profile?.full_name || 'My Kitchen'),
+    city: isDemoMode ? demoStandingCard.city : 'California',
+    inspectionDate: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+    referralCode: isDemoMode ? demoStandingCard.referralCode : '',
+  };
+
+  // Chain: milestone dismiss → if first_inspection_passed → InspectionBadge → Testimonial
+  const handleMilestoneDismiss = () => {
+    const key = pendingMilestone ? (Object.entries(MILESTONE_CONFIG).find(([, v]) => v === pendingMilestone)?.[0]) : null;
+    dismissMilestone();
+    if (key === 'first_inspection_passed') {
+      setShowInspectionBadge(true);
+    }
+  };
+
   const [activeTab, setActiveTab] = useState<'overview' | 'insights'>('overview');
   const { user, profile } = useAuth();
   const { userRole } = useRole();
@@ -453,7 +476,25 @@ export default function OwnerOperatorDashboard() {
 
       <MilestoneCelebrationModal
         milestone={pendingMilestone}
-        onDismiss={dismissMilestone}
+        onDismiss={handleMilestoneDismiss}
+      />
+
+      <InspectionBadgeModal
+        isOpen={showInspectionBadge}
+        onClose={() => { setShowInspectionBadge(false); setShowTestimonialPrompt(true); }}
+        data={inspectionBadgeData}
+      />
+
+      <TestimonialCollectionModal
+        isOpen={showTestimonialPrompt}
+        onClose={() => setShowTestimonialPrompt(false)}
+        userId={user?.id || ''}
+        orgId={profile?.org_id || ''}
+        authorName={profile?.full_name || ''}
+        roleTitle={userRole || ''}
+        orgName={isDemoMode ? demoStandingCard.orgName : (profile?.full_name || '')}
+        county={isDemoMode ? 'fresno' : ''}
+        city={isDemoMode ? demoStandingCard.city : ''}
       />
 
       </>}

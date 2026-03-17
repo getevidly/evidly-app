@@ -30,6 +30,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { TestimonialCarousel } from "../../components/social-proof/TestimonialCarousel";
 
 // ═══ PALETTE ═══
 const E={
@@ -759,6 +760,17 @@ export default function ScoreTableCountyPage({county: countyProp, cityName: _cn,
     </div>
   </section>
 
+  {/* ═══ TESTIMONIALS (SOCIAL-PROOF-01) ═══ */}
+  <section style={{padding:"64px 24px",background:E.w}}>
+    <div style={{maxWidth:720,margin:"0 auto"}}>
+      <div style={{textAlign:"center",marginBottom:32}}>
+        <SL t={"Operator feedback"}/>
+        <h2 style={{fontSize:"clamp(1.2rem,3.5vw,1.8rem)",fontWeight:800,color:E.navy,margin:0}}>What {_cn?_cn:c.name+" County"} operators say</h2>
+      </div>
+      <TestimonialCarousel county={c.name.toLowerCase()} colors={{navy:E.navy,gold:E.gold,cream:E.cream,border:E.g2,textPrimary:E.g8,textSecondary:E.g5}} />
+    </div>
+  </section>
+
   {/* ═══ FAQ ═══ */}
   <section id="faq" style={{padding:"64px 24px",background:E.cream}}>
     <div style={{maxWidth:720,margin:"0 auto"}}>
@@ -770,6 +782,43 @@ export default function ScoreTableCountyPage({county: countyProp, cityName: _cn,
             <span style={{color:S.grn,fontSize:"1.2rem",flexShrink:0,fontWeight:700}}>{faqOpen===i?"−":"+"}</span>
           </button>
           {faqOpen===i&&<p style={{fontSize:"0.85rem",color:E.g6,lineHeight:1.7,paddingBottom:18,margin:0}}>{item.a}</p>}
+        </div>
+      );})}
+    </div>
+  </section>
+
+  {/* ═══ COUNTY COVERAGE (SOCIAL-PROOF-01) ═══ */}
+  <section style={{padding:"64px 24px",background:E.w,borderTop:"1px solid "+E.g2}}>
+    <div style={{maxWidth:820,margin:"0 auto"}}>
+      <div style={{textAlign:"center",marginBottom:32}}>
+        <SL t={"Statewide coverage"}/>
+        <h2 style={{fontSize:"clamp(1.2rem,3.5vw,1.8rem)",fontWeight:800,color:E.navy,margin:"0 0 8px"}}>{CA_COUNTIES.length} California Counties. One Platform.</h2>
+        <p style={{fontSize:"0.88rem",color:E.g5,maxWidth:520,margin:"0 auto",lineHeight:1.7}}>EvidLY maps the exact inspection methodology for every county — so your score is always calculated the way your inspector calculates it.</p>
+      </div>
+      {[
+        {region:"Bay Area",counties:["Alameda","Contra Costa","Marin","Napa","San Francisco","San Mateo","Santa Clara","Santa Cruz","Solano","Sonoma"]},
+        {region:"Central Valley",counties:["Fresno","Kern","Kings","Madera","Mariposa","Merced","Sacramento","San Joaquin","Stanislaus","Tulare","Tuolumne","Yolo"]},
+        {region:"Southern California",counties:["Imperial","Los Angeles","Orange","Riverside","San Bernardino","San Diego","San Luis Obispo","Santa Barbara","Ventura"]},
+        {region:"Central Coast & Sierra",counties:["Alpine","Amador","Calaveras","El Dorado","Inyo","Mono","Monterey","Nevada","Placer","San Benito","Sierra","Sutter","Yuba"]},
+        {region:"Northern California",counties:["Butte","Colusa","Del Norte","Glenn","Humboldt","Lake","Lassen","Mendocino","Modoc","Plumas","Shasta","Siskiyou","Tehama","Trinity"]},
+      ].map(function(group){return(
+        <div key={group.region} style={{marginBottom:20}}>
+          <p style={{fontSize:"0.72rem",fontWeight:700,color:E.g4,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:8}}>{group.region}</p>
+          <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+            {group.counties.map(function(name){
+              var isCurrentCounty=name.toLowerCase()===c.name.toLowerCase();
+              var slug=name.toLowerCase().replace(/\s+/g,"-")+"-county";
+              return(
+                <a key={name} href={"/scoretable/"+slug} style={{
+                  display:"inline-block",padding:"5px 12px",borderRadius:100,fontSize:"0.74rem",fontWeight:isCurrentCounty?700:500,
+                  textDecoration:"none",cursor:"pointer",
+                  background:isCurrentCounty?"rgba(184,160,106,0.12)":E.cream,
+                  border:"1px solid "+(isCurrentCounty?E.gold:E.g2),
+                  color:isCurrentCounty?E.navy:E.g5,
+                }}>{name}</a>
+              );
+            })}
+          </div>
         </div>
       );})}
     </div>
