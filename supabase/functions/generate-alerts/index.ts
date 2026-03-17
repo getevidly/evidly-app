@@ -1,6 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { getCorsHeaders } from '../_shared/cors.ts';
+import { createOrgNotification } from '../_shared/notify.ts';
 
 // ── PREDICTIVE INTELLIGENCE — Phase Roadmap ──────────────────────────────────
 //
@@ -691,6 +692,57 @@ async function generatePredictiveScores(
   return { scored, errors };
 }
 
+// ── Notification Trigger for High/Critical Predictions ────────────────────────
+// After scoring, notify org members if any location is flagged high or critical.
+// Non-blocking — wrapped in try/catch. Uses dedup via sourceType + sourceId.
+
+async function notifyHighRiskPredictions(orgId: string): Promise<number> {
+  const supabase = getSupabase();
+
+  // Only notify for predictions scored in the last hour (freshly generated)
+  const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+
+  const { data: highRisk } = await supabase
+    .from("location_risk_predictions")
+    .select("id, location_id, risk_level, top_risk_reasons, failure_probability, locations(name)")
+    .eq("organization_id", orgId)
+    .in("risk_level", ["high", "critical"])
+    .gte("predicted_at", oneHourAgo);
+
+  if (!highRisk || highRisk.length === 0) return 0;
+
+  let notified = 0;
+  for (const pred of highRisk) {
+    const locationName =
+      (pred as Record<string, unknown>).locations &&
+      ((pred as Record<string, unknown>).locations as Record<string, unknown>).name
+        ? String(((pred as Record<string, unknown>).locations as Record<string, unknown>).name)
+        : "A location";
+
+    const topReason = pred.top_risk_reasons?.[0] || "Multiple risk indicators detected";
+    const isCritical = pred.risk_level === "critical";
+
+    await createOrgNotification({
+      supabase,
+      organizationId: orgId,
+      type: "predictive_risk_alert",
+      category: "safety",
+      title: `${locationName} flagged as ${pred.risk_level} risk`,
+      body: `${topReason} (${Math.round(pred.failure_probability * 100)}% failure probability)`,
+      actionUrl: "/insights/predictions",
+      actionLabel: "View Predictions",
+      priority: isCritical ? "critical" : "high",
+      severity: isCritical ? "urgent" : "advisory",
+      sourceType: "prediction",
+      sourceId: pred.id,
+      roleFilter: ["owner_operator", "executive", "compliance_manager", "kitchen_manager"],
+    });
+    notified++;
+  }
+
+  return notified;
+}
+
 // ── Main: Generate all alerts, deduplicate, insert ────────────────────────────
 
 async function generateAlerts(
@@ -777,7 +829,15 @@ Deno.serve(async (req: Request) => {
       console.error("[generate-alerts] Predictive scoring failed (non-blocking):", predErr);
     }
 
-    return new Response(JSON.stringify({ ...result, predictive }), {
+    // ── Notify for high/critical predictions (non-blocking) ──
+    let notified = 0;
+    try {
+      notified = await notifyHighRiskPredictions(organization_id);
+    } catch (notifyErr) {
+      console.error("[generate-alerts] Notification trigger failed (non-blocking):", notifyErr);
+    }
+
+    return new Response(JSON.stringify({ ...result, predictive, notified }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

@@ -184,6 +184,7 @@ const AdminAuditLog = lazy(() => import('./pages/admin/AdminAuditLog'));
 const AdminOrgs = lazy(() => import('./pages/admin/AdminOrgs'));
 const BusinessIntelligence = lazy(() => import('./pages/BusinessIntelligence').then(m => ({ default: m.BusinessIntelligence })));
 const ClientReports = lazy(() => import('./pages/ClientReports').then(m => ({ default: m.ClientReports })));
+const PredictiveAnalysis = lazy(() => import('./pages/PredictiveAnalysis'));
 const SharedReport = lazy(() => import('./pages/public/SharedReport').then(m => ({ default: m.SharedReport })));
 const AuthCallback = lazy(() => import('./pages/AuthCallback').then(m => ({ default: m.AuthCallback })));
 const ReferralDashboard = lazy(() => import('./pages/ReferralDashboard').then(m => ({ default: m.ReferralDashboard })));
@@ -781,6 +782,7 @@ function AppRoutes() {
           </Route>
           <Route path="/insights/intelligence" element={<BusinessIntelligence />} />
           <Route path="/insights/reports" element={<ClientReports />} />
+          <Route path="/insights/predictions" element={<PredictiveAnalysis />} />
           {/* Stub routes for upcoming features */}
           <Route path="/corrective-actions" element={<CorrectiveActions />} />
           <Route path="/corrective-actions/:actionId" element={<CorrectiveActionDetail />} />
