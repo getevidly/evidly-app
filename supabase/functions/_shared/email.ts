@@ -102,7 +102,15 @@ export function buildEmailHtml(params: EmailTemplateParams): string {
     ${footerNote}
   </div>
   <div style="background: #f8fafc; padding: 16px; text-align: center; font-size: 12px; color: #94a3b8;">
-    &copy; 2026 EvidLY &mdash; Lead with Confidence &mdash; Know Where You Stand
+    <p style="margin: 0 0 8px 0;">&copy; 2026 EvidLY &mdash; Lead with Confidence &mdash; Know Where You Stand</p>
+    <p style="margin: 0; font-size: 11px; color: #b0b8c4;">
+      <a href="https://app.getevidly.com/settings?tab=notifications" style="color: #94a3b8; text-decoration: underline;">Manage email preferences</a>
+      &nbsp;&bull;&nbsp;
+      <a href="https://app.getevidly.com/settings?tab=notifications&unsubscribe=true" style="color: #94a3b8; text-decoration: underline;">Unsubscribe</a>
+    </p>
+    <p style="margin: 4px 0 0 0; font-size: 10px; color: #b0b8c4;">
+      EvidLY &bull; Haggerty Holdings &bull; Los Angeles, CA
+    </p>
   </div>
 </div>`;
 }

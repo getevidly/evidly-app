@@ -38,9 +38,17 @@ Deno.serve(async (req: Request) => {
     }
 
     // Parse request body
-    const { priceId } = await req.json();
+    const { priceId, tier, locationCount } = await req.json();
     if (!priceId) {
       return new Response(JSON.stringify({ error: "priceId is required" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Reject enterprise-scale via checkout (must contact sales)
+    if (tier === "enterprise" || (locationCount && locationCount > 10)) {
+      return new Response(JSON.stringify({ error: "Contact sales for 11+ locations" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -82,6 +90,28 @@ Deno.serve(async (req: Request) => {
       });
     }
 
+    // Build line items — multi-location adds additional location line items
+    const params = new URLSearchParams();
+    params.set("customer", stripeCustomerId!);
+    params.set("mode", "subscription");
+    params.set("line_items[0][price]", priceId);
+    params.set("line_items[0][quantity]", "1");
+    params.set("subscription_data[trial_period_days]", "30");
+    params.set("subscription_data[metadata][supabase_user_id]", user.id);
+    params.set("subscription_data[metadata][tier]", tier || "founder_single");
+    params.set("success_url", `${appUrl}/settings?tab=billing&session_id={CHECKOUT_SESSION_ID}`);
+    params.set("cancel_url", `${appUrl}/settings?tab=billing`);
+    params.set("metadata[supabase_user_id]", user.id);
+
+    if (tier === "founder_multi" && locationCount && locationCount > 1) {
+      const additionalPriceId = Deno.env.get("STRIPE_FOUNDER_ADDITIONAL_PRICE_ID");
+      if (additionalPriceId) {
+        params.set("line_items[1][price]", additionalPriceId);
+        params.set("line_items[1][quantity]", String(locationCount - 1));
+      }
+      params.set("subscription_data[metadata][location_count]", String(locationCount));
+    }
+
     // Create Stripe Checkout Session
     const sessionRes = await fetch("https://api.stripe.com/v1/checkout/sessions", {
       method: "POST",
@@ -89,17 +119,7 @@ Deno.serve(async (req: Request) => {
         Authorization: `Bearer ${stripeSecretKey}`,
         "Content-Type": "application/x-www-form-urlencoded",
       },
-      body: new URLSearchParams({
-        customer: stripeCustomerId!,
-        mode: "subscription",
-        "line_items[0][price]": priceId,
-        "line_items[0][quantity]": "1",
-        "subscription_data[trial_period_days]": "30",
-        "subscription_data[metadata][supabase_user_id]": user.id,
-        success_url: `${appUrl}/settings?tab=billing&session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${appUrl}/settings?tab=billing`,
-        "metadata[supabase_user_id]": user.id,
-      }),
+      body: params,
     });
     const session = await sessionRes.json();
 

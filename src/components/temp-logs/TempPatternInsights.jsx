@@ -17,7 +17,7 @@ export function TempPatternInsights() {
       const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
 
       const { data: readings } = await supabase
-        .from('temp_check_completions')
+        .from('temperature_logs')
         .select('equipment_id, temperature, temp_pass, reading_time, log_type, shift')
         .gte('reading_time', thirtyDaysAgo)
         .order('reading_time', { ascending: true })

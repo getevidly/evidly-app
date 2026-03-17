@@ -18,55 +18,79 @@ export function getStripe(): Promise<Stripe | null> {
 export interface Plan {
   id: string;
   name: string;
-  price: string;
+  subtitle: string;
+  price: number | null;
+  additionalLocationPrice?: number;
+  priceLabel: string;
+  description: string;
+  locationRange: string;
   priceId: string | null;
   features: string[];
 }
 
+export const FOUNDER_PRICING_DEADLINE = new Date('2026-07-04T23:59:59-07:00');
+
 export const PLANS: Plan[] = [
   {
-    id: 'founder',
-    name: "Founder's Edition",
-    price: '$99/mo',
-    priceId: import.meta.env.VITE_STRIPE_FOUNDER_PRICE_ID || 'price_founder_monthly',
+    id: 'founder_single',
+    name: 'Founder',
+    subtitle: 'Single Location',
+    price: 99,
+    priceLabel: '$99/mo',
+    description: 'One location. Full platform access. Locked for life.',
+    locationRange: '1 location',
+    priceId: import.meta.env.VITE_STRIPE_FOUNDER_SINGLE_PRICE_ID || 'price_founder_single',
     features: [
-      'Up to 3 locations',
-      'All compliance features',
-      'AI Advisor',
-      'Priority support',
-      'Locked-in pricing forever',
+      'Full dual-pillar compliance intelligence',
+      'Jurisdiction Intelligence Engine (62 CA jurisdictions)',
+      'AI-powered HACCP plan generation',
+      'Real-time regulatory alerts',
+      'Self-inspection & mock inspection tools',
+      'Temperature logging with AI anomaly detection',
+      'Document management & vendor tracking',
+      'Team management with role-based access',
     ],
   },
   {
-    id: 'professional',
-    name: 'Professional',
-    price: '$149/mo',
-    priceId: 'price_professional_monthly',
+    id: 'founder_multi',
+    name: 'Founder',
+    subtitle: '2\u201310 Locations',
+    price: 99,
+    additionalLocationPrice: 49,
+    priceLabel: '$99/mo + $49/mo per additional location',
+    description: 'Multi-location operations. Same powerful platform across every kitchen.',
+    locationRange: '2\u201310 locations',
+    priceId: import.meta.env.VITE_STRIPE_FOUNDER_MULTI_PRICE_ID || 'price_founder_multi',
     features: [
-      'Up to 10 locations',
-      "Everything in Founder's",
-      'White-label reports',
-      'API access',
+      'Everything in Founder Single',
+      'Portfolio-wide risk dashboard',
+      'Cross-location benchmarking',
+      'Executive summary reports',
+      'Centralized vendor management',
     ],
   },
   {
     id: 'enterprise',
-    name: 'Enterprise',
-    price: 'Custom',
+    name: 'Custom',
+    subtitle: '11+ Locations',
+    price: null,
+    priceLabel: 'Contact Us',
+    description: 'Enterprise-scale operations with dedicated onboarding and support.',
+    locationRange: '11+ locations',
     priceId: null,
     features: [
-      'Unlimited locations',
-      'SSO/SCIM',
-      'Dedicated CSM',
+      'Everything in Founder Multi',
+      'Dedicated onboarding specialist',
       'Custom integrations',
-      'SLA guarantee',
+      'Priority support',
+      'Custom reporting',
     ],
   },
 ];
 
-export async function createCheckoutSession(priceId: string) {
+export async function createCheckoutSession(priceId: string, tier?: string, locationCount?: number) {
   const { data, error } = await supabase.functions.invoke('stripe-create-checkout', {
-    body: { priceId },
+    body: { priceId, tier, locationCount },
   });
   if (error) throw error;
   return data as { url: string };

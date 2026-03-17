@@ -495,7 +495,7 @@ export default function CountyLandingPage({county: countyProp, cityName: _cn, ci
             {["Scored against "+c.name+" County — not a generic checklist","Know where you stand before an inspector walks in","Every temp, checklist, and record in one place","Covers food safety and facility safety together","Your whole team, no extra cost","If it's not right in 45 days, you pay nothing"].map(function(f){return <div key={f} style={{display:"flex",gap:7,fontSize:"0.82rem",color:E.g6}}><span style={{color:E.gold,fontWeight:700}}>✓</span>{f}</div>;})}
           </div>
           <button onClick={function(){openM("signup");}} style={Object.assign({},bN,{padding:"12px 32px",fontSize:"0.9rem"})}>Reserve My Spot →</button>
-          <p style={{marginTop:10,fontSize:"0.76rem",color:E.g4}}>87 of 100 founder spots remaining</p>
+          <p style={{marginTop:10,fontSize:"0.76rem",color:E.g4}}>Founder pricing available through July 4, 2026</p>
         </div>
         <div style={{background:E.cream,borderRadius:16,padding:"32px 24px",border:"1px solid "+E.g2}}>
           <div style={{fontSize:"0.75rem",fontWeight:700,textTransform:"uppercase",color:E.navy,marginBottom:8,marginTop:4}}>11+ Locations</div>

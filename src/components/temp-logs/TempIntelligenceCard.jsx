@@ -19,7 +19,7 @@ export function TempIntelligenceCard() {
       const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
       const { data: readings } = await supabase
-        .from('temp_check_completions')
+        .from('temperature_logs')
         .select('equipment_id, temperature, temp_pass, reading_time, corrective_action, log_type')
         .gte('reading_time', yesterday)
         .order('reading_time', { ascending: false })

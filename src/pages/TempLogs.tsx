@@ -552,7 +552,7 @@ export function TempLogs() {
         const equipmentWithLastCheck = await Promise.all(
           equipmentData.map(async (eq) => {
             const { data: lastCheck } = await supabase
-              .from('temp_check_completions')
+              .from('temperature_logs')
               .select('temperature, reading_time, temp_pass')
               .eq('equipment_id', eq.id)
               .order('reading_time', { ascending: false })
@@ -593,9 +593,9 @@ export function TempLogs() {
 
   const fetchHistory = async () => {
     try {
-      // Query temp_check_completions table
+      // Query temperature_logs table
       const { data, error } = await supabase
-        .from('temp_check_completions')
+        .from('temperature_logs')
         .select(`
           id,
           equipment_id,
@@ -716,7 +716,7 @@ export function TempLogs() {
 
     const facilityId = (selectedEquipment as any).location_id;
     const logType = getLogType(selectedEquipment.equipment_type);
-    const { error } = await supabase.from('temp_check_completions').insert({
+    const { error } = await supabase.from('temperature_logs').insert({
       facility_id: facilityId,
       equipment_id: selectedEquipment.id,
       input_method: 'manual',
@@ -849,7 +849,7 @@ export function TempLogs() {
       };
     });
 
-    const { error } = await supabase.from('temp_check_completions').insert(insertData);
+    const { error } = await supabase.from('temperature_logs').insert(insertData);
 
     setLoading(false);
 

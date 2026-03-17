@@ -28,7 +28,7 @@ export function BillingPanel() {
 
     setLoading(plan.id);
     try {
-      const { url } = await createCheckoutSession(plan.priceId);
+      const { url } = await createCheckoutSession(plan.priceId, plan.id);
       if (url) {
         window.location.href = url;
       }
@@ -156,7 +156,7 @@ export function BillingPanel() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {PLANS.map((plan) => {
           const isCurrent = isCurrentPlan(plan);
-          const isPopular = plan.id === 'founder';
+          const isPopular = plan.id === 'founder_single';
           const isEnterprise = plan.id === 'enterprise';
           const isLoading = loading === plan.id;
 
@@ -181,8 +181,9 @@ export function BillingPanel() {
 
               <div className={isPopular ? 'mt-2' : ''}>
                 <h4 className="text-lg font-bold text-gray-900">{plan.name}</h4>
+                <p className="text-xs text-gray-500">{plan.subtitle}</p>
                 <div className="mt-2 mb-4">
-                  <span className="text-2xl font-bold text-gray-900">{plan.price}</span>
+                  <span className="text-2xl font-bold text-gray-900">{plan.priceLabel}</span>
                 </div>
 
                 {/* Features */}

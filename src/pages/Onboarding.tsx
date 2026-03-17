@@ -187,6 +187,23 @@ export function Onboarding() {
       await saveChecklistItems();
     }
 
+    if (currentStep === 8 && teamEmail && !isDemoMode) {
+      try {
+        const inviteUrl = `${window.location.origin}/signup?invited=true`;
+        await supabase.functions.invoke('send-team-invite', {
+          body: {
+            email: teamEmail,
+            inviteUrl,
+            role: 'kitchen_staff',
+            inviterName: profile?.full_name || 'Your manager',
+            organizationName: profile?.organization_name || 'your team',
+          },
+        });
+      } catch {
+        // Non-blocking — invite failure should not block onboarding
+      }
+    }
+
     if (currentStep < 10) {
       const nextStep = currentStep + 1;
       setCurrentStep(nextStep);

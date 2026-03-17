@@ -134,69 +134,49 @@ function Eyebrow({ children, light = false }) {
 // ─────────────────────────────────────────────
 // FOUNDER URGENCY COUNTDOWN
 // ─────────────────────────────────────────────
-function FounderUrgency({ spotsLeft = 47, totalSpots = 50, deadline = "2026-07-04", showSpots = false, showDate = true }) {
+function FounderUrgency({ deadline = "2026-07-04" }) {
   const [now, setNow] = useState(new Date());
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(t);
   }, []);
-  if (!showSpots && !showDate) return null;
-  const taken = totalSpots - spotsLeft;
-  const pct = Math.min(100, Math.round((taken / totalSpots) * 100));
   const end = new Date(deadline + "T23:59:59");
   const diff = Math.max(0, end - now);
   const dd = Math.floor(diff / 86400000);
   const hh = Math.floor((diff % 86400000) / 3600000);
   const mm = Math.floor((diff % 3600000) / 60000);
   const ss = Math.floor((diff % 60000) / 1000);
-  const urgent = spotsLeft <= 10 || dd <= 7;
   const expired = diff === 0;
-  const soldOut = spotsLeft <= 0;
-  const closed = expired || soldOut;
+  const urgent = dd <= 7;
   const accent = urgent ? "#ef4444" : C.gold;
   return (
     <div style={{ background: C.navy, borderRadius: 12, padding: "18px 22px", border: `1px solid ${urgent ? "rgba(239,68,68,0.35)" : "rgba(160,140,90,0.25)"}`, position: "relative", overflow: "hidden", marginBottom: 0 }}>
       <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg,transparent,${accent},transparent)` }} />
       <div style={{ fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", color: accent, marginBottom: 10, textAlign: "center", fontFamily: FF_SANS }}>
-        {soldOut ? "All Founder Spots Claimed" : expired ? "Founder Pricing Has Ended" : urgent ? "Almost Gone — Founder Pricing" : "Founder Pricing Window Open"}
+        {expired ? "Founder Pricing Has Ended" : urgent ? "Almost Gone — Founder Pricing" : "Founder Pricing Window Open"}
       </div>
-      {closed ? (
+      {expired ? (
         <p style={{ textAlign: "center", fontSize: "0.82rem", color: "rgba(255,255,255,0.45)", margin: 0 }}>
-          {soldOut ? `All ${totalSpots} founder spots are claimed.` : "This window has closed."}{" "}
-          <a href="mailto:founders@getevidly.com" style={{ color: C.gold }}>Contact us</a> with questions.
+          This window has closed.{" "}
+          <a href="mailto:founders@getevidly.com" style={{ color: C.gold }}>Contact us</a> for current rates.
         </p>
       ) : (
         <div style={{ display: "flex", gap: 20, justifyContent: "center", flexWrap: "wrap", alignItems: "center" }}>
-          {showSpots && (
-            <div style={{ textAlign: "center", minWidth: 180 }}>
-              <div style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.35)", marginBottom: 6, fontFamily: FF_SANS }}>Spots Remaining</div>
-              <div style={{ background: "rgba(255,255,255,0.08)", borderRadius: 6, height: 8, marginBottom: 6, overflow: "hidden" }}>
-                <div style={{ height: "100%", width: pct + "%", background: `linear-gradient(90deg,${C.gold},${accent})`, borderRadius: 6, transition: "width 0.5s" }} />
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.68rem", color: "rgba(255,255,255,0.3)", fontFamily: FF_SANS }}>
-                <span>{taken} of {totalSpots} claimed</span>
-                <span style={{ color: accent, fontWeight: 800 }}>{spotsLeft} left</span>
-              </div>
+          <div style={{ textAlign: "center" }}>
+            <div style={{ fontSize: "0.68rem", color: "rgba(255,255,255,0.35)", marginBottom: 6, fontFamily: FF_SANS }}>Expires July 4, 2026</div>
+            <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
+              {[[dd, "Days"], [hh, "Hrs"], [mm, "Min"], [ss, "Sec"]].map(([val, label]) => (
+                <div key={label} style={{ textAlign: "center" }}>
+                  <div style={{ fontWeight: 900, fontSize: "1.4rem", color: C.white, lineHeight: 1, fontVariantNumeric: "tabular-nums", minWidth: 34, fontFamily: FF_SANS }}>{String(val).padStart(2, "0")}</div>
+                  <div style={{ fontSize: "0.58rem", color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.1em", fontFamily: FF_SANS }}>{label}</div>
+                </div>
+              ))}
             </div>
-          )}
-          {showSpots && showDate && <div style={{ width: 1, height: 44, background: "rgba(255,255,255,0.1)" }} />}
-          {showDate && (
-            <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "0.68rem", color: "rgba(255,255,255,0.35)", marginBottom: 6, fontFamily: FF_SANS }}>Expires July 4, 2026</div>
-              <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
-                {[[dd, "Days"], [hh, "Hrs"], [mm, "Min"], [ss, "Sec"]].map(([val, label]) => (
-                  <div key={label} style={{ textAlign: "center" }}>
-                    <div style={{ fontWeight: 900, fontSize: "1.4rem", color: C.white, lineHeight: 1, fontVariantNumeric: "tabular-nums", minWidth: 34, fontFamily: FF_SANS }}>{String(val).padStart(2, "0")}</div>
-                    <div style={{ fontSize: "0.58rem", color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.1em", fontFamily: FF_SANS }}>{label}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          </div>
         </div>
       )}
       <p style={{ textAlign: "center", fontSize: "0.7rem", color: "rgba(255,255,255,0.22)", marginTop: 10, marginBottom: 0, fontFamily: FF_SANS }}>
-        $99/mo first location + $49/mo per additional (up to 10), locked for life. After July 4 or 50 founders — $199/mo + $99/mo per location.
+        $99/mo first location + $49/mo per additional (up to 10), locked for life. After July 4 — standard rates apply.
       </p>
     </div>
   );
