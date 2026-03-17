@@ -20,6 +20,7 @@
     "test:a11y": "playwright test e2e/accessibility/",
     "test:mobile": "playwright test e2e/responsive/",
     "test:ux": "playwright test e2e/ux/",
+    "test:admin": "playwright test e2e/admin/",
     "test:ui": "playwright test e2e/visual/ e2e/accessibility/ e2e/responsive/ e2e/ux/",
     "test:snapshots": "playwright test e2e/visual/ --update-snapshots"
   },
