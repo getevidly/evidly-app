@@ -652,7 +652,7 @@ export function Calendar() {
       // Query 6 tables in parallel
       const [tempRes, checklistRes, equipRes, docsRes, correctiveRes, customCalRes] = await Promise.all([
         supabase
-          .from('temperature_logs')
+          .from('temp_check_completions')
           .select('*, temperature_equipment(name)')
           .eq('facility_id', orgId)
           .gte('reading_time', startStr)

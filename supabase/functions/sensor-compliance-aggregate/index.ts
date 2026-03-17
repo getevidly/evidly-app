@@ -173,7 +173,7 @@ Deno.serve(async (req: Request) => {
 
       // Also count manual temperature logs for compliance
       const { data: manualLogs } = await supabase
-        .from("temperature_logs")
+        .from("temp_check_completions")
         .select("id, status")
         .eq("location_id", location.id)
         .gte("recorded_at", twentyFourHoursAgo);

@@ -73,7 +73,7 @@ export async function fetchComplianceScores(organizationId?: string): Promise<Co
   try {
     // Check if there is any real temp_log data for this org
     const { count: tempCount } = await supabase
-      .from('temperature_logs')
+      .from('temp_check_completions')
       .select('id', { count: 'exact', head: true })
       .eq('facility_id', organizationId);
 
@@ -182,7 +182,7 @@ export async function fetchTodaysProgress(organizationId?: string): Promise<Prog
     todayStart.setHours(0, 0, 0, 0);
 
     const { count: tempCount } = await supabase
-      .from('temperature_logs')
+      .from('temp_check_completions')
       .select('id', { count: 'exact', head: true })
       .eq('facility_id', organizationId)
       .gte('reading_time', todayStart.toISOString());
@@ -228,7 +228,7 @@ export async function fetchRecentActivity(organizationId?: string): Promise<Acti
 
   try {
     const { data: tempLogs } = await supabase
-      .from('temperature_logs')
+      .from('temp_check_completions')
       .select('id, equipment_id, temperature, temp_pass, reading_time, logged_by')
       .eq('facility_id', organizationId)
       .order('reading_time', { ascending: false })

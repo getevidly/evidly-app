@@ -18,12 +18,15 @@ import { DashboardSkeleton } from './shared/DashboardSkeleton';
 import { ConfidenceBanner } from './shared/ConfidenceBanner';
 import { TodaysOperations } from './shared/TodaysOperations';
 import { AttentionItemList } from './shared/AttentionItemList';
+import { DashboardGreeting } from './DashboardGreeting';
+import { useAuth } from '../../contexts/AuthContext';
 
 
 export default function ChefDashboard() {
   const navigate = useNavigate();
   const { userRole } = useRole();
   const { companyName, isDemoMode } = useDemo();
+  const { profile } = useAuth();
 
   const scheduleCalendarTooltip = useTooltip('scheduleCalendar', userRole);
 
@@ -65,6 +68,8 @@ export default function ChefDashboard() {
 
   return (
     <div className="space-y-6" style={FONT}>
+      <DashboardGreeting role="chef" firstName={profile?.first_name} />
+
       {/* 1. HERO */}
       <DashboardHero
         firstName={DEMO_ROLE_NAMES[userRole]?.firstName || 'Chef'}

@@ -15,7 +15,7 @@ export function useOfflineCache(orgId: string, locationId: string) {
       if (!navigator.onLine) return;
 
       const [tempLogs, checklists, equipment] = await Promise.all([
-        supabase.from('temperature_logs')
+        supabase.from('temp_check_completions')
           .select('*')
           .eq('org_id', orgId)
           .eq('location_id', locationId)

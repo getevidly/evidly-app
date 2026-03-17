@@ -59,7 +59,7 @@ Deno.serve(async (req: Request) => {
 
       // ═══ 1. TEMPERATURE PATTERN ANALYSIS ═══════════════════
       const { data: tempLogs } = await supabase
-        .from("temperature_logs")
+        .from("temp_check_completions")
         .select("id, unit_name, temperature, recorded_at, status, threshold_min, threshold_max")
         .eq("location_id", location.id)
         .gte("recorded_at", thirtyDaysAgo)
@@ -261,9 +261,9 @@ Deno.serve(async (req: Request) => {
         const weekStart = new Date(now.getTime() - 7 * 86400000).toISOString();
 
         const [tempCount, outOfRangeCount, checklistCount, incidentCount] = await Promise.all([
-          supabase.from("temperature_logs").select("id", { count: "exact", head: true })
+          supabase.from("temp_check_completions").select("id", { count: "exact", head: true })
             .eq("location_id", location.id).gte("recorded_at", weekStart),
-          supabase.from("temperature_logs").select("id", { count: "exact", head: true })
+          supabase.from("temp_check_completions").select("id", { count: "exact", head: true })
             .eq("location_id", location.id).gte("recorded_at", weekStart)
             .in("status", ["out_of_range", "critical"]),
           supabase.from("checklist_logs").select("id", { count: "exact", head: true })

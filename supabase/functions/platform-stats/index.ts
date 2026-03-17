@@ -34,7 +34,7 @@ Deno.serve(async (req: Request) => {
 
     const [orgsRes, tempRes, checklistRes] = await Promise.all([
       supabase.from('organizations').select('id', { count: 'exact', head: true }),
-      supabase.from('temperature_logs').select('id', { count: 'exact', head: true }),
+      supabase.from('temp_check_completions').select('id', { count: 'exact', head: true }),
       supabase.from('checklist_completions').select('id', { count: 'exact', head: true }),
     ]);
 

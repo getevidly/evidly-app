@@ -3,7 +3,9 @@ import { Mail, Phone, X } from 'lucide-react';
 import { FOUNDER } from '../lib/founderConfig';
 import { useDemo } from '../contexts/DemoContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useRole } from '../contexts/RoleContext';
 import { supabase } from '../lib/supabase';
+import { WELCOME_SUBTEXT } from '../config/emotionalCopy';
 
 interface WelcomeModalProps {
   firstName: string;

@@ -19,12 +19,15 @@ import { DashboardSkeleton } from './shared/DashboardSkeleton';
 import { ConfidenceBanner } from './shared/ConfidenceBanner';
 import { LocationStandingList } from './shared/LocationStandingList';
 import { AttentionItemList } from './shared/AttentionItemList';
+import { DashboardGreeting } from './DashboardGreeting';
+import { useAuth } from '../../contexts/AuthContext';
 
 
 export default function FacilitiesDashboardNew() {
   const navigate = useNavigate();
   const { userRole } = useRole();
   const { companyName, isDemoMode } = useDemo();
+  const { profile } = useAuth();
 
   const scheduleCalendarTooltip = useTooltip('scheduleCalendar', userRole);
 
@@ -63,6 +66,8 @@ export default function FacilitiesDashboardNew() {
 
   return (
     <div className="space-y-6" style={FONT}>
+      <DashboardGreeting role="facilities_manager" firstName={profile?.first_name} />
+
       {/* 1. HERO */}
       <DashboardHero
         orgName={companyName || DEMO_ORG.name}

@@ -42,6 +42,7 @@ import {
 } from './shared/insights';
 import { CATEGORY_ORG_TRENDS } from '../../data/trendDemoData';
 import { MetricCardRow } from './shared/MetricCardRow';
+import { DashboardGreeting } from './DashboardGreeting';
 
 
 // ================================================================
@@ -191,6 +192,11 @@ export default function OwnerOperatorDashboard() {
           <ErrorBanner message={error} onRetry={refresh} />
         </div>
       )}
+
+      {/* Role-aware greeting */}
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-5">
+        <DashboardGreeting role="owner_operator" firstName={profile?.first_name} />
+      </div>
 
       {/* Welcome greeting + date */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-5">

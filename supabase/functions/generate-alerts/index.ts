@@ -165,7 +165,7 @@ async function checkTempTrends(orgId: string): Promise<GeneratedAlert[]> {
   ).toISOString();
 
   const { data: logs } = await supabase
-    .from("temperature_logs")
+    .from("temp_logs")
     .select("id, equipment_id, temperature, reading_time, location_id")
     .eq("facility_id", orgId)
     .gte("reading_time", fourteenDaysAgo)
@@ -530,7 +530,7 @@ async function generatePredictiveScores(
 
       // ── Feature 2: Temperature pass rate (30d) ──────────────────
       const { data: tempLogs } = await supabase
-        .from("temperature_logs")
+        .from("temp_logs")
         .select("temp_pass")
         .eq("facility_id", orgId)
         .eq("location_id", loc.id)

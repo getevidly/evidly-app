@@ -97,7 +97,7 @@ Deno.serve(async (req: Request) => {
 
     // 3. Create temperature log entry
     const { data: tempLog, error: logErr } = await supabase
-      .from("temperature_logs")
+      .from("temp_check_completions")
       .insert({
         facility_id: sensor.organization_id,
         location_id: sensor.location_id,

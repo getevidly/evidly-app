@@ -70,7 +70,7 @@ function useReadinessPercent(): number {
         const [allEquip, withThresholds, logsCount] = await Promise.all([
           supabase.from('temperature_equipment').select('id', { count: 'exact' }).eq('organization_id', profile.organization_id),
           supabase.from('temperature_equipment').select('id', { count: 'exact' }).eq('organization_id', profile.organization_id).not('min_temp', 'is', null).not('max_temp', 'is', null),
-          supabase.from('temperature_logs').select('id', { count: 'exact' }).eq('organization_id', profile.organization_id),
+          supabase.from('temp_check_completions').select('id', { count: 'exact' }).eq('organization_id', profile.organization_id),
         ]);
 
         const eTotal = allEquip.count || 0;
@@ -109,7 +109,7 @@ export function SensorMonitorWidget({ locationFilter }: { locationFilter?: strin
       try {
         const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
         const { count } = await supabase
-          .from('temperature_logs')
+          .from('temp_check_completions')
           .select('id', { count: 'exact', head: true })
           .eq('organization_id', profile.organization_id)
           .eq('input_method', 'iot_sensor')

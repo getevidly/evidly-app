@@ -72,7 +72,7 @@ Deno.serve(async (req: Request) => {
       const [tempLogs, checklists, incidents, documents, insights] =
         await Promise.all([
           supabase
-            .from("temperature_logs")
+            .from("temp_check_completions")
             .select("location_id, status", { count: "exact" })
             .in("location_id", locationIds)
             .gte("recorded_at", periodStart.toISOString())

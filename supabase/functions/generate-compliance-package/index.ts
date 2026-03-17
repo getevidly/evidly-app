@@ -113,7 +113,7 @@ Deno.serve(async (req: Request) => {
     if (payload.include_temp_summary) {
       const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
       const { data: tempLogs } = await supabase
-        .from("temperature_logs")
+        .from("temp_check_completions")
         .select("*")
         .eq("facility_id", orgId)
         .gte("reading_time", thirtyDaysAgo.toISOString())

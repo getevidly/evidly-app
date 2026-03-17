@@ -74,7 +74,7 @@ Deno.serve(async (req: Request) => {
     if (location_id) {
       const [tempLogs, checklists, documents, vendors] = await Promise.all([
         supabase
-          .from("temperature_logs")
+          .from("temp_check_completions")
           .select("unit_name, temperature, recorded_at, status")
           .eq("location_id", location_id)
           .order("recorded_at", { ascending: false })

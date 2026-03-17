@@ -55,7 +55,7 @@ Deno.serve(async (req: Request) => {
 
       // ── Temperature Pattern Detection ────────────────────────
       const { data: tempLogs } = await supabase
-        .from("temperature_logs")
+        .from("temp_check_completions")
         .select("unit_name, temperature, recorded_at, status")
         .eq("location_id", location.id)
         .gte("recorded_at", sevenDaysAgo)

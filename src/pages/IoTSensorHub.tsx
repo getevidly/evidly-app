@@ -224,9 +224,9 @@ export function IoTSensorHub() {
     (async () => {
       try {
         const [iotLogs, totalLogs] = await Promise.all([
-          supabase.from('temperature_logs').select('id', { count: 'exact', head: true })
+          supabase.from('temp_check_completions').select('id', { count: 'exact', head: true })
             .eq('organization_id', profile.organization_id).eq('input_method', 'iot_sensor'),
-          supabase.from('temperature_logs').select('id', { count: 'exact', head: true })
+          supabase.from('temp_check_completions').select('id', { count: 'exact', head: true })
             .eq('organization_id', profile.organization_id),
         ]);
         setLiveReadingsCount(iotLogs.count || 0);

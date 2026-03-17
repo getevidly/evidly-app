@@ -531,7 +531,7 @@ function determineGrade(
 async function getComplianceData(supabase: any, locationId: string) {
   const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
-  const { data: tempLogs } = await supabase.from('temperature_logs').select('id, recorded_at, temperature, in_range').eq('location_id', locationId).gte('recorded_at', sevenDaysAgo).order('recorded_at', { ascending: false }).limit(50);
+  const { data: tempLogs } = await supabase.from('temp_check_completions').select('id, recorded_at, temperature, in_range').eq('location_id', locationId).gte('recorded_at', sevenDaysAgo).order('recorded_at', { ascending: false }).limit(50);
   const { data: checklists } = await supabase.from('checklist_completions').select('id, completed_at, checklist_type, all_items_passed').eq('location_id', locationId).gte('completed_at', sevenDaysAgo).order('completed_at', { ascending: false }).limit(50);
   const { data: documents } = await supabase.from('documents').select('id, document_type, expires_at, status').eq('location_id', locationId).eq('status', 'active');
   const { data: equipment } = await supabase.from('equipment').select('id, equipment_type, last_service_date, next_service_date, status').eq('location_id', locationId);

@@ -107,7 +107,7 @@ export function useFeatureCriteriaProgress(
             }
             case 'temp_log_completeness': {
               const thirtyDaysAgo = new Date(Date.now() - 30 * 86400000).toISOString();
-              const { count } = await supabase.from('temperature_logs').select('*', { count: 'exact', head: true }).gte('recorded_at', thirtyDaysAgo);
+              const { count } = await supabase.from('temp_check_completions').select('*', { count: 'exact', head: true }).gte('recorded_at', thirtyDaysAgo);
               // Rough compliance: expect ~2 logs per day for 30 days
               const expected = 60;
               current = Math.min(100, Math.round(((count || 0) / expected) * 100));

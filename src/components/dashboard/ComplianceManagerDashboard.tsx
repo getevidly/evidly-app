@@ -25,6 +25,8 @@ import { MetricCardRow } from './shared/MetricCardRow';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
 import type { ReadinessSignal } from '../../hooks/useDashboardStanding';
 import { BODY_TEXT } from './shared/constants';
+import { DashboardGreeting } from './DashboardGreeting';
+import { useAuth } from '../../contexts/AuthContext';
 
 
 function InspectionReadiness({ signals }: { signals: ReadinessSignal[] }) {
@@ -68,6 +70,7 @@ export default function ComplianceManagerDashboard() {
   const navigate = useNavigate();
   const { companyName, isDemoMode } = useDemo();
   const { userRole } = useRole();
+  const { profile } = useAuth();
 
   const scheduleCalendarTooltip = useTooltip('scheduleCalendar', userRole);
 
@@ -120,6 +123,10 @@ export default function ComplianceManagerDashboard() {
   return (
     <div style={{ ...FONT, backgroundColor: PAGE_BG, minHeight: '100vh', paddingBottom: 80 }}>
       <style>{KEYFRAMES}</style>
+
+      <div className="px-4 sm:px-6 pt-4">
+        <DashboardGreeting role="compliance_manager" firstName={profile?.first_name} />
+      </div>
 
       {/* 1. HERO + Jurisdiction Summary */}
       <div style={{ padding: '20px 24px 0' }}>

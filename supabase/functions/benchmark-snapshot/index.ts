@@ -102,7 +102,7 @@ Deno.serve(async (req: Request) => {
         // Fallback: compute from raw compliance data (pre-Phase 1 locations)
         const [tempResult, checklistResult, docResult] = await Promise.all([
           supabase
-            .from("temperature_logs")
+            .from("temp_check_completions")
             .select("status", { count: "exact" })
             .eq("location_id", loc.id)
             .gte(

@@ -58,7 +58,7 @@ Deno.serve(async (req: Request) => {
           .order("created_at", { ascending: false })
           .limit(5),
         supabase
-          .from("temperature_logs")
+          .from("temp_check_completions")
           .select("unit_name, temperature, status, recorded_at")
           .eq("location_id", location_id)
           .order("recorded_at", { ascending: false })

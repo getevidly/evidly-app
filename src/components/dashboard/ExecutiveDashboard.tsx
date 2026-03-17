@@ -18,12 +18,15 @@ import { AnnualVendorSpendWidget } from './VendorServiceWidgets';
 import { PortfolioExpenseSummary } from '../services/PortfolioExpenseSummary';
 import { PortfolioRiskCard } from './PortfolioRiskCard';
 import { MetricCardRow } from './shared/MetricCardRow';
+import { DashboardGreeting } from './DashboardGreeting';
+import { useAuth } from '../../contexts/AuthContext';
 
 
 export default function ExecutiveDashboard() {
   const navigate = useNavigate();
   const { companyName, isDemoMode } = useDemo();
   const { userRole } = useRole();
+  const { profile } = useAuth();
 
   const scheduleCalendarTooltip = useTooltip('scheduleCalendar', userRole);
 
@@ -65,6 +68,10 @@ export default function ExecutiveDashboard() {
   return (
     <div style={{ ...FONT, backgroundColor: PAGE_BG, minHeight: '100vh', paddingBottom: 80 }}>
       <style>{KEYFRAMES}</style>
+
+      <div className="px-4 sm:px-6 pt-4">
+        <DashboardGreeting role="executive" firstName={profile?.first_name} />
+      </div>
 
       {/* 1. HERO */}
       <DashboardHero

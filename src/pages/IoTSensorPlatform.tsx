@@ -43,8 +43,8 @@ function useValueStats(): ValueStats {
     (async () => {
       try {
         const [logsRes, violationsRes] = await Promise.all([
-          supabase.from('temperature_logs').select('reading_time', { count: 'exact' }).eq('organization_id', orgId),
-          supabase.from('temperature_logs').select('id', { count: 'exact' }).eq('organization_id', orgId).eq('temp_pass', false),
+          supabase.from('temp_check_completions').select('reading_time', { count: 'exact' }).eq('organization_id', orgId),
+          supabase.from('temp_check_completions').select('id', { count: 'exact' }).eq('organization_id', orgId).eq('temp_pass', false),
         ]);
 
         const totalReadings = logsRes.count || 0;
@@ -173,7 +173,7 @@ function useReadinessScore(): ReadinessData {
           supabase.from('temperature_equipment').select('id', { count: 'exact' }).eq('organization_id', orgId),
           supabase.from('temperature_equipment').select('id', { count: 'exact' }).eq('organization_id', orgId).not('min_temp', 'is', null).not('max_temp', 'is', null),
           supabase.from('equipment_qr_codes').select('id', { count: 'exact' }).eq('organization_id', orgId),
-          supabase.from('temperature_logs').select('id', { count: 'exact' }).eq('organization_id', orgId),
+          supabase.from('temp_check_completions').select('id', { count: 'exact' }).eq('organization_id', orgId),
         ]);
 
         const eTotal = allEquip.count || 0;
