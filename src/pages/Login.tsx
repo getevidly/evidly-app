@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Eye, EyeOff, Shield, CheckCircle2, Lock, MapPin } from 'lucide-react';
+import { Eye, EyeOff, MapPin } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { supabase } from '../lib/supabase';
 import ReCAPTCHA from 'react-google-recaptcha';
@@ -12,9 +12,9 @@ import { trackEvent } from '../utils/analytics';
 import { useCrispHide } from '../hooks/useCrisp';
 
 const TRUST_ITEMS = [
-  { Icon: Shield, text: '62 California Jurisdictions' },
-  { Icon: CheckCircle2, text: 'HACCP & CalCode Intelligence' },
-  { Icon: Lock, text: 'Enterprise-Grade Security' },
+  { value: '62', label: 'CA Jurisdictions' },
+  { value: 'Food Safety', label: 'Inspection' },
+  { value: 'Facility Safety', label: 'Inspection' },
 ];
 
 export function Login() {
@@ -147,14 +147,12 @@ export function Login() {
               California's compliance intelligence platform for commercial kitchens.
             </p>
 
-            {/* Trust items */}
-            <div className="space-y-5">
+            {/* Trust bar */}
+            <div className="flex gap-8">
               {TRUST_ITEMS.map((item) => (
-                <div key={item.text} className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
-                    <item.Icon size={20} className="text-[#A08C5A]" />
-                  </div>
-                  <span className="text-white/80 text-sm font-medium">{item.text}</span>
+                <div key={item.value}>
+                  <p className="text-2xl font-bold text-white">{item.value}</p>
+                  <p className="text-xs text-white/50 font-medium mt-0.5">{item.label}</p>
                 </div>
               ))}
             </div>
@@ -203,6 +201,16 @@ export function Login() {
                 </span>
               )}
             </div>
+          </div>
+
+          {/* Mobile trust bar (hidden on desktop) */}
+          <div className="lg:hidden flex justify-center gap-6 mb-6 pb-6 border-b border-gray-100">
+            {TRUST_ITEMS.map((item) => (
+              <div key={item.value} className="text-center">
+                <p className="text-base font-bold text-[#1E2D4D]">{item.value}</p>
+                <p className="text-[10px] text-gray-500 font-medium mt-0.5">{item.label}</p>
+              </div>
+            ))}
           </div>
 
           {/* Heading */}
