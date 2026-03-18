@@ -155,7 +155,7 @@ export function NotificationDropdown({ isOpen, onClose, demoMode = false }: Noti
     }
 
     const { data: todayLogs } = await supabase
-      .from('temp_check_completions')
+      .from('temperature_logs')
       .select('*')
       .eq('facility_id', orgId)
       .gte('reading_time', new Date(new Date().setHours(0, 0, 0, 0)).toISOString())
@@ -174,7 +174,7 @@ export function NotificationDropdown({ isOpen, onClose, demoMode = false }: Noti
     }
 
     const { data: recentCompletions } = await supabase
-      .from('temp_check_completions')
+      .from('temperature_logs')
       .select('*, user_profiles(full_name)')
       .eq('facility_id', orgId)
       .order('reading_time', { ascending: false })

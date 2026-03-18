@@ -173,10 +173,10 @@ Deno.serve(async (req: Request) => {
 
       // Also count manual temperature logs for compliance
       const { data: manualLogs } = await supabase
-        .from("temp_check_completions")
+        .from("temperature_logs")
         .select("id, status")
-        .eq("location_id", location.id)
-        .gte("recorded_at", twentyFourHoursAgo);
+        .eq("facility_id", location.id)
+        .gte("reading_time", twentyFourHoursAgo);
 
       if (manualLogs && manualLogs.length > 0) {
         const manualInRange = manualLogs.filter((l: Record<string, unknown>) => l.status === "in_range").length;

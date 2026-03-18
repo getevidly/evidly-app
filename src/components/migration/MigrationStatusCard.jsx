@@ -9,7 +9,7 @@ const PRIMARY = '#1e4d6b';
 
 /**
  * MigrationStatusCard — shows on dashboard for 30 days after a data import.
- * Checks for any temp_check_completions with input_method='imported'.
+ * Checks for any temperature_logs with input_method='imported'.
  */
 export function MigrationStatusCard() {
   const navigate = useNavigate();
@@ -43,7 +43,7 @@ export function MigrationStatusCard() {
     (async () => {
       try {
         const { data, count } = await supabase
-          .from('temp_check_completions')
+          .from('temperature_logs')
           .select('migrated_from, reading_time', { count: 'exact' })
           .eq('organization_id', profile.organization_id)
           .eq('input_method', 'imported')

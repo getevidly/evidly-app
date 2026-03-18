@@ -74,10 +74,10 @@ Deno.serve(async (req: Request) => {
     if (location_id) {
       const [tempLogs, checklists, documents, vendors] = await Promise.all([
         supabase
-          .from("temp_check_completions")
-          .select("unit_name, temperature, recorded_at, status")
-          .eq("location_id", location_id)
-          .order("recorded_at", { ascending: false })
+          .from("temperature_logs")
+          .select("unit_name, temperature, reading_time, status")
+          .eq("facility_id", location_id)
+          .order("reading_time", { ascending: false })
           .limit(20),
         supabase
           .from("checklists")
@@ -99,7 +99,7 @@ Deno.serve(async (req: Request) => {
 
       contextData = `\n\nREAL-TIME DATA (last fetched ${new Date().toISOString()}):\n`;
       if (tempLogs.data?.length) {
-        contextData += `\nRecent Temp Logs:\n${tempLogs.data.map((t: any) => `  - ${t.unit_name}: ${t.temperature}°F (${t.status}) at ${t.recorded_at}`).join("\n")}`;
+        contextData += `\nRecent Temp Logs:\n${tempLogs.data.map((t: any) => `  - ${t.unit_name}: ${t.temperature}°F (${t.status}) at ${t.reading_time}`).join("\n")}`;
       }
       if (checklists.data?.length) {
         contextData += `\nRecent Checklists:\n${checklists.data.map((c: any) => `  - ${c.name}: ${c.status}`).join("\n")}`;

@@ -275,7 +275,7 @@ serve(async (req: Request) => {
 
         // Derive operational metrics from compliance data
         const tempTotal = complianceData.tempLogs.length;
-        const tempInRange = complianceData.tempLogs.filter((t: any) => t.in_range).length;
+        const tempInRange = complianceData.tempLogs.filter((t: any) => t.temp_pass).length;
         const checkTotal = complianceData.checklists.length;
         const checkPassed = complianceData.checklists.filter((c: any) => c.all_items_passed).length;
         const docTotal = complianceData.documents.length;
@@ -531,7 +531,7 @@ function determineGrade(
 async function getComplianceData(supabase: any, locationId: string) {
   const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
-  const { data: tempLogs } = await supabase.from('temp_check_completions').select('id, recorded_at, temperature, in_range').eq('location_id', locationId).gte('recorded_at', sevenDaysAgo).order('recorded_at', { ascending: false }).limit(50);
+  const { data: tempLogs } = await supabase.from('temperature_logs').select('id, reading_time, temperature, temp_pass').eq('facility_id', locationId).gte('reading_time', sevenDaysAgo).order('reading_time', { ascending: false }).limit(50);
   const { data: checklists } = await supabase.from('checklist_completions').select('id, completed_at, checklist_type, all_items_passed').eq('location_id', locationId).gte('completed_at', sevenDaysAgo).order('completed_at', { ascending: false }).limit(50);
   const { data: documents } = await supabase.from('documents').select('id, document_type, expires_at, status').eq('location_id', locationId).eq('status', 'active');
   const { data: equipment } = await supabase.from('equipment').select('id, equipment_type, last_service_date, next_service_date, status').eq('location_id', locationId);
@@ -545,7 +545,7 @@ async function getComplianceData(supabase: any, locationId: string) {
     summary: {
       tempLogsLast7Days: (tempLogs || []).length,
       checklistsLast7Days: (checklists || []).length,
-      outOfRangeTemps: (tempLogs || []).filter((t: any) => !t.in_range).length,
+      outOfRangeTemps: (tempLogs || []).filter((t: any) => !t.temp_pass).length,
       expiredDocs: (documents || []).filter((d: any) => d.expires_at && new Date(d.expires_at) < new Date()).length,
       overdueEquipment: (equipment || []).filter((e: any) => e.next_service_date && new Date(e.next_service_date) < new Date()).length,
       expiredTraining: (training || []).filter((t: any) => t.expires_at && new Date(t.expires_at) < new Date()).length,
@@ -562,7 +562,7 @@ function checkComplianceStatus(calcodeItem: any, complianceData: any): string {
   switch (calcodeItem.evidly_module) {
     case 'temperatures': {
       if (complianceData.tempLogs.length === 0) return 'non_compliant';
-      const outOfRange = complianceData.tempLogs.filter((t: any) => !t.in_range);
+      const outOfRange = complianceData.tempLogs.filter((t: any) => !t.temp_pass);
       if (outOfRange.length > complianceData.tempLogs.length * 0.1) return 'non_compliant';
       return 'compliant';
     }
@@ -596,7 +596,7 @@ function checkIfCorrectedOnSite(calcodeItem: any, complianceData: any): boolean 
   switch (calcodeItem.evidly_module) {
     case 'temperatures': {
       const recentLogs = complianceData.tempLogs.slice(0, 5);
-      if (recentLogs.length > 0 && recentLogs[0].in_range) return true;
+      if (recentLogs.length > 0 && recentLogs[0].temp_pass) return true;
       return false;
     }
     case 'checklists': {

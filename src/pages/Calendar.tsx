@@ -654,7 +654,7 @@ export function Calendar() {
       // Query 6 tables in parallel
       const [tempRes, checklistRes, equipRes, docsRes, correctiveRes, customCalRes] = await Promise.all([
         supabase
-          .from('temp_check_completions')
+          .from('temperature_logs')
           .select('*, temperature_equipment(name)')
           .eq('facility_id', orgId)
           .gte('reading_time', startStr)
@@ -700,7 +700,7 @@ export function Calendar() {
           type: 'temp-check',
           date: formatDateKey(readingAt),
           time: readingAt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
-          location: locMap[t.location_id] || 'Unknown',
+          location: locMap[t.facility_id] || 'Unknown',
           description: `${t.temperature ?? t.temperature_value}° — ${(t.temp_pass ?? t.is_within_range) ? 'Within range' : 'OUT OF RANGE'}`,
         });
       }

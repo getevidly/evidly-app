@@ -55,11 +55,11 @@ Deno.serve(async (req: Request) => {
 
       // ── Temperature Pattern Detection ────────────────────────
       const { data: tempLogs } = await supabase
-        .from("temp_check_completions")
-        .select("unit_name, temperature, recorded_at, status")
-        .eq("location_id", location.id)
-        .gte("recorded_at", sevenDaysAgo)
-        .order("recorded_at", { ascending: false });
+        .from("temperature_logs")
+        .select("unit_name, temperature, reading_time, status")
+        .eq("facility_id", location.id)
+        .gte("reading_time", sevenDaysAgo)
+        .order("reading_time", { ascending: false });
 
       if (tempLogs?.length) {
         // Group by unit, count out-of-range readings
@@ -148,7 +148,7 @@ Deno.serve(async (req: Request) => {
       if (tempLogs) {
         // Count days with temp logs in the past 7 days
         const daysWithLogs = new Set(
-          tempLogs.map((t: any) => new Date(t.recorded_at).toISOString().split("T")[0])
+          tempLogs.map((t: any) => new Date(t.reading_time).toISOString().split("T")[0])
         );
         const missedDays = 7 - daysWithLogs.size;
 

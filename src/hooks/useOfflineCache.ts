@@ -15,12 +15,12 @@ export function useOfflineCache(orgId: string, locationId: string) {
       if (!navigator.onLine) return;
 
       const [tempLogs, checklists, equipment] = await Promise.all([
-        supabase.from('temp_check_completions')
+        supabase.from('temperature_logs')
           .select('*')
           .eq('org_id', orgId)
-          .eq('location_id', locationId)
-          .gte('logged_at', new Date(Date.now() - 7 * 86400000).toISOString())
-          .order('logged_at', { ascending: false }),
+          .eq('facility_id', locationId)
+          .gte('reading_time', new Date(Date.now() - 7 * 86400000).toISOString())
+          .order('reading_time', { ascending: false }),
         supabase.from('checklists')
           .select('*')
           .eq('org_id', orgId)

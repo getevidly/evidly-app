@@ -64,6 +64,7 @@ export interface EmailTemplateParams {
   ctaUrl?: string;
   urgencyBanner?: { text: string; color: string };
   footerNote?: string;
+  unsubscribeToken?: string;
 }
 
 /**
@@ -103,13 +104,16 @@ export function buildEmailHtml(params: EmailTemplateParams): string {
   </div>
   <div style="background: #f8fafc; padding: 16px; text-align: center; font-size: 12px; color: #94a3b8;">
     <p style="margin: 0 0 8px 0;">&copy; 2026 EvidLY &mdash; Lead with Confidence &mdash; Know Where You Stand</p>
-    <p style="margin: 0; font-size: 11px; color: #b0b8c4;">
-      <a href="https://app.getevidly.com/settings?tab=notifications" style="color: #94a3b8; text-decoration: underline;">Manage email preferences</a>
+    <p style="margin: 0 0 4px 0; font-size: 11px; color: #999;">
+      You're receiving this because you have an EvidLY account or submitted an operations check.
+    </p>
+    <p style="margin: 0; font-size: 11px; color: #999;">
+      <a href="https://app.getevidly.com/settings/notifications" style="color: #999; text-decoration: underline;">Manage email preferences</a>
       &nbsp;&bull;&nbsp;
-      <a href="https://app.getevidly.com/settings?tab=notifications&unsubscribe=true" style="color: #94a3b8; text-decoration: underline;">Unsubscribe</a>
+      <a href="${params.unsubscribeToken ? `https://app.getevidly.com/unsubscribe?token=${params.unsubscribeToken}` : 'https://app.getevidly.com/settings/notifications'}" style="color: #999; text-decoration: underline;">Unsubscribe</a>
     </p>
     <p style="margin: 4px 0 0 0; font-size: 10px; color: #b0b8c4;">
-      EvidLY &bull; Haggerty Holdings &bull; Los Angeles, CA
+      EvidLY LLC &bull; Merced County, CA
     </p>
   </div>
 </div>`;

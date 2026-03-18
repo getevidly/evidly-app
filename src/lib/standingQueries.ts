@@ -223,7 +223,7 @@ async function fetchLiveStandings(orgId: string): Promise<LocationStanding[]> {
   ] = await Promise.all([
     // Recent temp logs (last 4 hours, per location)
     supabase
-      .from('temp_check_completions')
+      .from('temperature_logs')
       .select('facility_id, temp_pass')
       .gte('reading_time', fourHoursAgo.toISOString()),
     // Today's checklist completions
@@ -494,7 +494,7 @@ async function fetchLiveReadiness(orgId: string, locationId?: string): Promise<R
 
   // Temp logs: check if any in last 4 hours
   let tempQuery = supabase
-    .from('temp_check_completions')
+    .from('temperature_logs')
     .select('id', { count: 'exact', head: true })
     .gte('reading_time', fourHoursAgo.toISOString());
   if (locationId) tempQuery = tempQuery.eq('facility_id', locationId);

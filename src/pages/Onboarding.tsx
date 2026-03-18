@@ -201,8 +201,9 @@ export function Onboarding() {
             organizationName: profile?.organization_name || 'your team',
           },
         });
+        toast.success('Team invite sent!');
       } catch {
-        // Non-blocking — invite failure should not block onboarding
+        toast.warning('Invite could not be sent — you can re-invite from the Team page.');
       }
     }
 

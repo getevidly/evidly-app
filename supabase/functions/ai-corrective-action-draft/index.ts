@@ -58,10 +58,10 @@ Deno.serve(async (req: Request) => {
           .order("created_at", { ascending: false })
           .limit(5),
         supabase
-          .from("temp_check_completions")
-          .select("unit_name, temperature, status, recorded_at")
-          .eq("location_id", location_id)
-          .order("recorded_at", { ascending: false })
+          .from("temperature_logs")
+          .select("unit_name, temperature, status, reading_time")
+          .eq("facility_id", location_id)
+          .order("reading_time", { ascending: false })
           .limit(10),
         supabase
           .from("checklists")

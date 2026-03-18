@@ -198,7 +198,7 @@ export function K12Compliance() {
 
       for (const loc of k12Locs) {
         const [tempRes, checkRes, docRes, certRes, inspRes] = await Promise.all([
-          supabase.from('temp_check_completions').select('id, temp_pass').eq('location_id', loc.id).gte('reading_time', thirtyDaysAgo),
+          supabase.from('temperature_logs').select('id, temp_pass').eq('facility_id', loc.id).gte('reading_time', thirtyDaysAgo),
           supabase.from('checklist_completions').select('id, status').eq('location_id', loc.id).gte('created_at', thirtyDaysAgo),
           supabase.from('documents').select('id, name, category, created_at').eq('location_id', loc.id).in('category', ['food_safety_plan', 'allergen_policy', 'haccp_plan']),
           supabase.from('employee_certifications').select('id, expiry_date').eq('location_id', loc.id),
