@@ -7,13 +7,16 @@ import './index.css';
 
 initSentry();
 
-// Force check for new service worker on every page load
+// Unregister all service workers — prevents stale cache serving
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.getRegistrations().then(registrations => {
-    registrations.forEach(registration => {
-      registration.update();
-    });
+    registrations.forEach(registration => registration.unregister());
   });
+  if ('caches' in window) {
+    caches.keys().then(cacheNames => {
+      cacheNames.forEach(cacheName => caches.delete(cacheName));
+    });
+  }
 }
 
 // Handle chunk loading errors after deploys (stale JS bundles)
