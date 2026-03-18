@@ -12,9 +12,9 @@ import { trackEvent } from '../utils/analytics';
 import { useCrispHide } from '../hooks/useCrisp';
 
 const TRUST_ITEMS = [
-  { value: '62', label: 'CA Jurisdictions' },
+  { value: '62', label: 'CA Counties/Cities' },
   { value: 'Food Safety', label: 'Inspection' },
-  { value: 'Facility Safety', label: 'Inspection' },
+  { value: 'Fire Safety', label: 'Inspection' },
 ];
 
 export function Login() {
