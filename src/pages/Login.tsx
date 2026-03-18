@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Shield, CheckCircle2, Lock, MapPin } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { supabase } from '../lib/supabase';
 import ReCAPTCHA from 'react-google-recaptcha';
@@ -10,6 +10,12 @@ import { SocialLoginButtons } from '../components/SocialLoginButtons';
 import { useBranding } from '../contexts/BrandingContext';
 import { trackEvent } from '../utils/analytics';
 import { useCrispHide } from '../hooks/useCrisp';
+
+const TRUST_ITEMS = [
+  { Icon: Shield, text: '62 California Jurisdictions' },
+  { Icon: CheckCircle2, text: 'HACCP & CalCode Intelligence' },
+  { Icon: Lock, text: 'Enterprise-Grade Security' },
+];
 
 export function Login() {
   useCrispHide();
@@ -20,6 +26,7 @@ export function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [detectedJurisdiction, setDetectedJurisdiction] = useState<string | null>(null);
   const { signIn, user } = useAuth();
   const navigate = useNavigate();
   const recaptchaRef = useRef<ReCAPTCHA>(null);
@@ -37,6 +44,30 @@ export function Login() {
       }
     }
   }, [user, navigate]);
+
+  // Jurisdiction detection via geolocation + Nominatim reverse geocode
+  useEffect(() => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`,
+            { headers: { 'User-Agent': 'EvidLY/1.0 (https://getevidly.com)' } }
+          );
+          if (!res.ok) return;
+          const data = await res.json();
+          const county = data.address?.county;
+          if (county && data.address?.state === 'California') {
+            setDetectedJurisdiction(county.replace(' County', ''));
+          }
+        } catch { /* silent fail */ }
+      },
+      () => { /* permission denied — silent */ },
+      { timeout: 5000, maximumAge: 300000 }
+    );
+  }, []);
 
   const recaptchaKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
   const captchaEnabled = false;
@@ -83,22 +114,83 @@ export function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-          <div className="flex justify-center mb-2">
-            <div className="flex items-center">
-              <div>
-                <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" width="56" height="56">
-                  <rect width="48" height="48" rx="10.5" fill="#1E2D4D"/>
-                  <circle cx="24" cy="24" r="3" fill="white"/>
-                  <circle cx="24" cy="13" r="3" fill="#A08C5A"/>
-                  <circle cx="34.5" cy="19" r="3" fill="#A08C5A"/>
-                  <circle cx="30.5" cy="31" r="3" fill="#A08C5A"/>
-                  <circle cx="17.5" cy="31" r="3" fill="#A08C5A"/>
-                  <circle cx="13.5" cy="19" r="3" fill="#A08C5A"/>
-                </svg>
+    <div className="min-h-screen flex">
+      {/* ── Left Panel — Navy brand panel (desktop only) ── */}
+      <div
+        className="hidden lg:flex lg:w-1/2 relative overflow-hidden"
+        style={{ background: 'linear-gradient(135deg, #1E2D4D 0%, #0B1628 100%)' }}
+      >
+        <div className="relative z-10 flex flex-col justify-between w-full p-12 xl:p-16">
+          {/* Top: Logo + messaging */}
+          <div>
+            <div className="flex items-center mb-16">
+              <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" width="48" height="48">
+                <rect width="48" height="48" rx="10.5" fill="rgba(255,255,255,0.1)"/>
+                <circle cx="24" cy="24" r="3" fill="white"/>
+                <circle cx="24" cy="13" r="3" fill="#A08C5A"/>
+                <circle cx="34.5" cy="19" r="3" fill="#A08C5A"/>
+                <circle cx="30.5" cy="31" r="3" fill="#A08C5A"/>
+                <circle cx="17.5" cy="31" r="3" fill="#A08C5A"/>
+                <circle cx="13.5" cy="19" r="3" fill="#A08C5A"/>
+              </svg>
+              <span className="ml-3 text-2xl font-bold">
+                <span className="text-[#A08C5A]">E</span>
+                <span className="text-white">vid</span>
+                <span className="text-[#A08C5A]">LY</span>
+              </span>
+            </div>
+
+            <h1 className="text-4xl xl:text-5xl font-bold text-white mb-4 leading-tight">
+              Lead with<br />Confidence
+            </h1>
+            <p className="text-lg text-white/60 mb-12 max-w-md">
+              California's compliance intelligence platform for commercial kitchens.
+            </p>
+
+            {/* Trust items */}
+            <div className="space-y-5">
+              {TRUST_ITEMS.map((item) => (
+                <div key={item.text} className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
+                    <item.Icon size={20} className="text-[#A08C5A]" />
+                  </div>
+                  <span className="text-white/80 text-sm font-medium">{item.text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Bottom: Detected jurisdiction */}
+          <div>
+            {detectedJurisdiction && (
+              <div className="flex items-center gap-2 text-white/40 text-sm">
+                <MapPin size={14} />
+                <span>Detected: {detectedJurisdiction} County, CA</span>
               </div>
+            )}
+          </div>
+        </div>
+
+        {/* Decorative elements */}
+        <div className="absolute -bottom-24 -right-24 w-64 h-64 rounded-full bg-[#A08C5A]/5" />
+        <div className="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-white/[0.02]" />
+      </div>
+
+      {/* ── Right Panel — Login form ── */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-8 bg-white">
+        <div className="max-w-md w-full">
+          {/* Mobile logo (hidden on desktop where left panel shows it) */}
+          <div className="lg:hidden flex justify-center mb-6">
+            <div className="flex items-center">
+              <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" width="56" height="56">
+                <rect width="48" height="48" rx="10.5" fill="#1E2D4D"/>
+                <circle cx="24" cy="24" r="3" fill="white"/>
+                <circle cx="24" cy="13" r="3" fill="#A08C5A"/>
+                <circle cx="34.5" cy="19" r="3" fill="#A08C5A"/>
+                <circle cx="30.5" cy="31" r="3" fill="#A08C5A"/>
+                <circle cx="17.5" cy="31" r="3" fill="#A08C5A"/>
+                <circle cx="13.5" cy="19" r="3" fill="#A08C5A"/>
+              </svg>
               {branding.brandName === 'EvidLY' ? (
                 <span className="ml-3 text-3xl font-bold">
                   <span style={{ color: '#A08C5A' }}>E</span>
@@ -113,18 +205,25 @@ export function Login() {
             </div>
           </div>
 
-          <p className="text-center text-lg font-semibold mb-2" style={{ color: branding.colors.primary }}>{branding.tagline}</p>
-          <h2 className="text-center text-xl font-bold text-gray-900 mb-6">{branding.loginWelcomeText ? 'Sign in to your account' : 'Sign in to your account'}</h2>
+          {/* Heading */}
+          <div className="mb-8">
+            <p className="text-center lg:text-left text-sm font-semibold mb-1" style={{ color: '#A08C5A' }}>
+              {branding.tagline}
+            </p>
+            <h2 className="text-center lg:text-left text-2xl font-bold text-gray-900">
+              Sign in to your account
+            </h2>
+          </div>
 
           {error && (
-            <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+            <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
               {error}
             </div>
           )}
 
           <SocialLoginButtons mode="login" />
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                 Email address
@@ -137,7 +236,7 @@ export function Login() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#d4af37] focus:border-[#d4af37]"
+                className="mt-1 block w-full px-3 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
               />
             </div>
 
@@ -154,7 +253,7 @@ export function Login() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#d4af37] focus:border-[#d4af37]"
+                  className="block w-full px-3 py-2.5 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
                 />
                 <button
                   type="button"
@@ -179,18 +278,16 @@ export function Login() {
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded"
+                  className="h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] border-gray-300 rounded"
                 />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
+                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-600">
                   Remember me
                 </label>
               </div>
 
-              <div className="text-sm">
-                <Link to="/forgot-password" className="font-medium" style={{ color: branding.colors.primary }}>
-                  Forgot password?
-                </Link>
-              </div>
+              <Link to="/forgot-password" className="text-sm font-medium text-[#1e4d6b] hover:text-[#2a6a8f]">
+                Forgot password?
+              </Link>
             </div>
 
             {captchaEnabled && (
@@ -207,10 +304,7 @@ export function Login() {
             <button
               type="submit"
               disabled={loading || (captchaEnabled && !captchaToken)}
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2"
-              style={{ backgroundColor: branding.colors.primary, '--tw-ring-color': branding.colors.primary } as React.CSSProperties}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = branding.colors.primaryLight)}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = branding.colors.primary)}
+              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-[#1E2D4D] hover:bg-[#2a3d5d] disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1E2D4D] transition-colors"
             >
               {loading ? 'Signing in...' : 'Sign in'}
             </button>
@@ -225,7 +319,7 @@ export function Login() {
               </div>
               <button
                 onClick={() => toast.info('SSO login is a demo placeholder. In production, this redirects to your identity provider.')}
-                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 border-2 rounded-md text-sm font-semibold transition-colors"
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 border-2 rounded-lg text-sm font-semibold transition-colors"
                 style={{ borderColor: branding.colors.primary, color: branding.colors.primary }}
               >
                 <EvidlyIcon size={16} />
@@ -242,27 +336,35 @@ export function Login() {
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               Don't have an account?{' '}
-              <Link to="/signup" className="font-medium" style={{ color: branding.colors.primary }}>
+              <Link to="/signup" className="font-semibold text-[#1e4d6b] hover:text-[#2a6a8f]">
                 Sign up
               </Link>
             </p>
           </div>
-        </div>
 
-        {/* Powered by EvidLY badge for white-label */}
-        {branding.poweredByVisible && (
-          <div className="mt-4 flex justify-center">
-            <a
-              href="https://evidly.com?ref=powered-by"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              <EvidlyIcon size={14} />
-              <span>Powered by <span className="font-semibold text-gray-500">EvidLY</span></span>
-            </a>
-          </div>
-        )}
+          {/* Powered by EvidLY badge for white-label */}
+          {branding.poweredByVisible && (
+            <div className="mt-6 flex justify-center">
+              <a
+                href="https://evidly.com?ref=powered-by"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <EvidlyIcon size={14} />
+                <span>Powered by <span className="font-semibold text-gray-500">EvidLY</span></span>
+              </a>
+            </div>
+          )}
+
+          {/* Mobile jurisdiction detection */}
+          {detectedJurisdiction && (
+            <div className="lg:hidden mt-6 flex items-center justify-center gap-2 text-gray-400 text-xs">
+              <MapPin size={12} />
+              <span>{detectedJurisdiction} County, CA</span>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
