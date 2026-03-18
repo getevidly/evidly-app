@@ -7,6 +7,15 @@ import './index.css';
 
 initSentry();
 
+// Force check for new service worker on every page load
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(registrations => {
+    registrations.forEach(registration => {
+      registration.update();
+    });
+  });
+}
+
 // Handle chunk loading errors after deploys (stale JS bundles)
 window.addEventListener('vite:preloadError', () => {
   window.location.reload();
