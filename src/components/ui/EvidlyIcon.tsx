@@ -1,9 +1,8 @@
 /**
- * BRANDING-UPDATE-1 — EvidLY Square Icon (inline SVG)
+ * ICON-NUCLEAR-FIX-01 — EvidLY Pentagon Dots Icon (inline SVG)
  *
- * Navy bg (#1a2d4a), gold border (#A08C5A), "ELY" in white,
- * gold underline, gold checkmark badge top-right.
- * viewBox 0 0 80 80.
+ * Navy rounded-rect bg (#1E2D4D), 5 gold dots (#A08C5A) in pentagon,
+ * 1 white center dot. viewBox 0 0 100 100.
  */
 
 import React from 'react';
@@ -16,44 +15,20 @@ interface EvidlyIconProps {
 export const EvidlyIcon: React.FC<EvidlyIconProps> = ({ size = 40, className }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 80 80"
+    viewBox="0 0 100 100"
     width={size}
     height={size}
+    fill="none"
     aria-label="EvidLY"
     className={className}
   >
-    {/* Navy background */}
-    <rect width="80" height="80" fill="#1a2d4a" rx="16" />
-    {/* Gold border rectangle */}
-    <rect x="16" y="16" width="48" height="48" rx="8" fill="none" stroke="#A08C5A" strokeWidth="2.5" />
-    {/* ELY text */}
-    <text
-      x="40"
-      y="46"
-      textAnchor="middle"
-      fontFamily="system-ui, -apple-system, 'Segoe UI', sans-serif"
-      fontSize="20"
-      fontWeight="900"
-      fill="white"
-      letterSpacing="-0.5"
-    >
-      ELY
-    </text>
-    {/* Gold underline */}
-    <line x1="28" y1="52" x2="52" y2="52" stroke="#A08C5A" strokeWidth="1.5" strokeLinecap="round" />
-    {/* Gold checkmark badge */}
-    <circle cx="58" cy="22" r="8" fill="#A08C5A" />
-    <text
-      x="58"
-      y="26"
-      textAnchor="middle"
-      fontFamily="system-ui, sans-serif"
-      fontSize="12"
-      fontWeight="900"
-      fill="white"
-    >
-      ✓
-    </text>
+    <rect width="100" height="100" rx="22" fill="#1E2D4D" />
+    <circle cx="50" cy="22" r="10" fill="#A08C5A" />
+    <circle cx="22" cy="42" r="10" fill="#A08C5A" />
+    <circle cx="78" cy="42" r="10" fill="#A08C5A" />
+    <circle cx="32" cy="74" r="10" fill="#A08C5A" />
+    <circle cx="68" cy="74" r="10" fill="#A08C5A" />
+    <circle cx="50" cy="50" r="8" fill="white" />
   </svg>
 );
 

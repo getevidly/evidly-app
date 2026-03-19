@@ -240,7 +240,11 @@
       "Bash(cmd.exe /c \"taskkill /PID 15196 /F && taskkill /PID 7792 /F\")",
       "Bash(cmd.exe /c \"taskkill /PID 15196 /F\")",
       "Bash(cmd.exe /c \"taskkill /PID 7792 /F\")",
-      "Bash(if not exist \"C:\\\\Users\\\\newpa\\\\OneDrive\\\\Desktop\\\\evidly-landing\\\\docs\" mkdir \"C:\\\\Users\\\\newpa\\\\OneDrive\\\\Desktop\\\\evidly-landing\\\\docs\")"
+      "Bash(if not exist \"C:\\\\Users\\\\newpa\\\\OneDrive\\\\Desktop\\\\evidly-landing\\\\docs\" mkdir \"C:\\\\Users\\\\newpa\\\\OneDrive\\\\Desktop\\\\evidly-landing\\\\docs\")",
+      "Bash(for fn in intel-crawl-recalls intel-crawl-environmental intel-aggregate-benchmarks intel-refresh-freshness calendly-webhook stripe-create-checkout stripe-webhook stripe-customer-portal send-onboarding-email hoodops-webhook)",
+      "Bash(do if [ -d \"C:/Users/newpa/Downloads/evidly-demo-final/evidly-app-main/supabase/functions/$fn\" ])",
+      "Bash(then echo \"$fn: EXISTS\")",
+      "Bash(else echo \"$fn: MISSING\")"
     ]
   }
 }
