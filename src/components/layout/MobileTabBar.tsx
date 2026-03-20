@@ -80,6 +80,7 @@ const PATH_ICON: Record<string, any> = {
   '/team': Users,
   '/dashboard/training': GraduationCap,
   '/vendors': Store,
+  '/vendors/review': FileText,
   '/marketplace': Store,
   '/help': HelpCircle,
   '/insurance-risk': Shield,

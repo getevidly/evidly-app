@@ -116,6 +116,7 @@ const Progress = lazy(() => import('./pages/Progress'));
 
 const NotFound = lazy(() => import('./pages/NotFound'));
 const TaskManager = lazy(() => import('./pages/TaskManager'));
+const VendorDocumentReview = lazy(() => import('./pages/VendorDocumentReview'));
 const CorrectiveActions = lazy(() => import('./pages/CorrectiveActions').then(m => ({ default: m.CorrectiveActions })));
 const CorrectiveActionDetail = lazy(() => import('./pages/CorrectiveActionDetail').then(m => ({ default: m.CorrectiveActionDetail })));
 const Deficiencies = lazy(() => import('./pages/Deficiencies').then(m => ({ default: m.Deficiencies })));
@@ -808,6 +809,7 @@ function AppRoutes() {
           <Route path="/insights/predictions" element={<PredictiveAnalysis />} />
           {/* Stub routes for upcoming features */}
           <Route path="/tasks" element={<TaskManager />} />
+          <Route path="/vendors/review" element={<VendorDocumentReview />} />
           <Route path="/corrective-actions" element={<CorrectiveActions />} />
           <Route path="/corrective-actions/:actionId" element={<CorrectiveActionDetail />} />
           <Route path="/voice-help" element={<VoiceHelp />} />

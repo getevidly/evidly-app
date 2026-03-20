@@ -182,6 +182,45 @@ Deno.serve(async (req: Request) => {
         .select()
         .single();
 
+      // ── Resolve expiry tracking if this upload was triggered by an expiry reminder
+      if (tokenRecord.expiry_tracking_id && vendorDocRecord?.id) {
+        try {
+          await supabase
+            .from("vendor_document_expiry_tracking")
+            .update({
+              resolved: true,
+              resolved_at: new Date().toISOString(),
+              replacement_document_id: vendorDocRecord.id,
+            })
+            .eq("id", tokenRecord.expiry_tracking_id);
+        } catch {
+          // Silent fail — tracking resolution is non-critical
+        }
+      }
+
+      // ── Fire-and-forget: trigger AI validation on uploaded document
+      if (vendorDocRecord?.id) {
+        try {
+          const validateUrl = `${supabaseUrl}/functions/v1/validate-vendor-document`;
+          const controller2 = new AbortController();
+          setTimeout(() => controller2.abort(), 5000);
+          fetch(validateUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${supabaseKey}`,
+            },
+            body: JSON.stringify({
+              vendor_document_id: vendorDocRecord.id,
+              organization_id: tokenRecord.organization_id,
+            }),
+            signal: controller2.signal,
+          }).catch(() => {}); // fire-and-forget
+        } catch {
+          // Silent fail
+        }
+      }
+
       // Fire-and-forget: notify compliance_manager + owner_operator users in org
       // FIX (2026-03-04): Was hardcoded to team@getevidly.com — now queries
       // user_profiles for the right roles and notifies each individually.

@@ -1217,6 +1217,13 @@ export function Vendors() {
             >
               Performance Scorecard
             </button>
+            <button
+              onClick={() => navigate('/vendors/review')}
+              className="px-6 py-3 font-medium whitespace-nowrap transition-colors text-gray-500 hover:text-gray-700 flex items-center gap-1.5"
+            >
+              Document Review
+              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#C49A2B]/10 text-[#C49A2B]">NEW</span>
+            </button>
           </div>
           <div className="flex items-center gap-2 self-start">
             <button
