@@ -221,6 +221,7 @@ const ScoreTableCityPage = lazy(() => import('./pages/public/ScoreTableCityPage'
 const BlogList = lazy(() => import('./pages/public/BlogList').then(m => ({ default: m.BlogList })));
 const BlogPost = lazy(() => import('./pages/public/BlogPost').then(m => ({ default: m.BlogPost })));
 const VendorServiceUpdate = lazy(() => import('./pages/VendorServiceUpdate').then(m => ({ default: m.VendorServiceUpdate })));
+const VendorScheduleResponse = lazy(() => import('./pages/VendorScheduleResponse').then(m => ({ default: m.VendorScheduleResponse })));
 const AssessmentLeads = lazy(() => import('./pages/admin/AssessmentLeads'));
 const InsuranceApiKeys = lazy(() => import('./pages/admin/InsuranceApiKeys'));
 const DemoGenerator = lazy(() => import('./pages/admin/DemoGenerator'));
@@ -578,6 +579,7 @@ function AppRoutes() {
         <Route path="/vendor/upload/:token" element={<Suspense fallback={<PageSkeleton />}><VendorSecureUpload /></Suspense>} />
           <Route path="/vendor/invite/:code" element={<Suspense fallback={<PageSkeleton />}><VendorInviteLanding /></Suspense>} />
         <Route path="/vendor-update/:token" element={<Suspense fallback={<PageSkeleton />}><VendorServiceUpdate /></Suspense>} />
+        <Route path="/vendor/schedule/:token" element={<Suspense fallback={<PageSkeleton />}><VendorScheduleResponse /></Suspense>} />
         <Route path="/support/survey/:token" element={<Suspense fallback={<PageSkeleton />}><SurveyPage /></Suspense>} />
 
         {/* City landing pages */}

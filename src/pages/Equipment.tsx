@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 import { format, formatDistanceToNow } from 'date-fns';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, ResponsiveContainer } from 'recharts';
 import { Breadcrumb } from '../components/Breadcrumb';
+import { RequestServiceModal } from '../components/services/RequestServiceModal';
 import { getScoreColor } from '../lib/complianceScoring';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
@@ -668,6 +669,7 @@ export function Equipment() {
   const [showForm, setShowForm] = useState(false);
   const [showQRLabel, setShowQRLabel] = useState(false);
   const [detailTab, setDetailTab] = useState<'overview' | 'warranty' | 'service' | 'schedule' | 'forecast' | 'costs' | 'vendors' | 'iot'>('overview');
+  const [showRequestService, setShowRequestService] = useState(false);
 
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
@@ -857,6 +859,12 @@ export function Equipment() {
               className="flex items-center gap-2 px-4 py-2 border border-[#1e4d6b] text-[#1e4d6b] rounded-lg hover:bg-[#eef4f8] text-sm font-medium"
             >
               <Upload className="h-4 w-4" /> Import
+            </button>
+            <button
+              onClick={() => setShowRequestService(true)}
+              className="flex items-center gap-2 px-4 py-2 border border-[#1e4d6b] text-[#1e4d6b] rounded-lg hover:bg-[#eef4f8] text-sm font-medium"
+            >
+              <Wrench className="h-4 w-4" /> Request Service
             </button>
             <button
               onClick={() => setShowForm(true)}
@@ -1888,6 +1896,13 @@ export function Equipment() {
       {showUpgrade && (
         <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
       )}
+
+      <RequestServiceModal
+        isOpen={showRequestService}
+        onClose={() => setShowRequestService(false)}
+        locationId={selectedId ? (equipment.find(e => e.id === selectedId)?.locationId || '') : ''}
+        organizationId={profile?.organization_id || ''}
+      />
     </>
   );
 }

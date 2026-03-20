@@ -935,6 +935,40 @@ export function Settings() {
               <p className="text-gray-600">{t('settings.integrationsDesc')}</p>
 
               <div className="space-y-4">
+                {/* Calendar Integration */}
+                <div className="border border-gray-200 rounded-lg p-4 sm:p-5">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 sm:gap-4">
+                      <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+                        <Globe className="h-6 w-6 text-blue-700" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-900">Calendar Integration</h4>
+                        <p className="text-sm text-gray-500">Add confirmed service events to your external calendar</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="p-3 rounded-lg bg-gray-50 border border-gray-100">
+                      <p className="text-sm font-medium text-gray-900">Google Calendar</p>
+                      <p className="text-xs text-gray-500 mt-1">Click "Add to Calendar" on confirmed service requests to open in Google Calendar.</p>
+                    </div>
+                    <div className="p-3 rounded-lg bg-gray-50 border border-gray-100">
+                      <p className="text-sm font-medium text-gray-900">Microsoft Outlook</p>
+                      <p className="text-xs text-gray-500 mt-1">Click "Add to Calendar" to open events in Outlook web calendar.</p>
+                    </div>
+                    <div className="p-3 rounded-lg bg-gray-50 border border-gray-100">
+                      <p className="text-sm font-medium text-gray-900">Apple Calendar</p>
+                      <p className="text-xs text-gray-500 mt-1">Download .ics files to import into Apple Calendar or any iCal app.</p>
+                    </div>
+                  </div>
+                  <div className="mt-3 p-3 rounded-lg" style={{ backgroundColor: '#eef4f8' }}>
+                    <p className="text-xs text-gray-600">
+                      Service events are automatically added to your EvidLY Calendar when confirmed. Use the calendar buttons on confirmed service requests to add them to your external calendar.
+                    </p>
+                  </div>
+                </div>
+
                 {/* Insurance Risk Score Sharing */}
                 <div className="border-2 rounded-lg p-4 sm:p-5" style={{ borderColor: '#1e4d6b' }}>
                   <div className="flex flex-wrap items-center justify-between gap-3">

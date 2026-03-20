@@ -9,7 +9,7 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { DollarSign, Calendar, ArrowRight, Wrench, Flame, Fan, Filter, Shield, ShieldAlert } from 'lucide-react';
+import { DollarSign, Calendar, ArrowRight, Wrench, Flame, Fan, Filter, Shield, ShieldAlert, Send } from 'lucide-react';
 import { NAVY, CARD_BORDER, CARD_SHADOW } from './shared/constants';
 import { SERVICE_TYPES, type ServiceTypeCode } from '../../constants/serviceTypes';
 import { useDemo } from '../../contexts/DemoContext';
@@ -264,16 +264,28 @@ export function ServicesDueSoonWidget({ services: externalServices }: ServicesDu
         </div>
       )}
 
-      {/* Footer CTA */}
+      {/* Footer CTAs */}
       {servicesDue.length > 0 && (
-        <button
-          type="button"
-          onClick={() => navigate('/vendors')}
-          className="w-full px-4 py-2.5 text-center text-xs font-semibold transition-colors hover:bg-gray-50"
-          style={{ color: NAVY, borderTop: '1px solid #F0F0F0' }}
-        >
-          View Full Schedule <ArrowRight size={12} className="inline ml-0.5" />
-        </button>
+        <div style={{ borderTop: '1px solid #F0F0F0' }}>
+          <div className="flex">
+            <button
+              type="button"
+              onClick={() => navigate('/vendors?tab=requests&action=new')}
+              className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs font-semibold transition-colors hover:bg-gray-50"
+              style={{ color: NAVY, borderRight: '1px solid #F0F0F0' }}
+            >
+              <Send size={11} /> Request Service
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate('/vendors')}
+              className="flex-1 px-4 py-2.5 text-center text-xs font-semibold transition-colors hover:bg-gray-50"
+              style={{ color: NAVY }}
+            >
+              View Full Schedule <ArrowRight size={12} className="inline ml-0.5" />
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

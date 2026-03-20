@@ -47,7 +47,7 @@ const ROLE_ACTIONS: Record<UserRole, QuickAction[]> = {
   facilities_manager: [
     { emoji: '🔥', label: 'Facility Safety', route: '/facility-safety', permission: 'bottom.facility-safety' },
     { emoji: '🔧', label: 'Equipment', route: '/equipment', permission: 'bottom.equipment' },
-    { emoji: '📅', label: 'Schedule', route: '/calendar', permission: 'bottom.schedule' },
+    { emoji: '📝', label: 'Request Svc', route: '/vendors?tab=requests', permission: 'bottom.schedule' },
     { emoji: '👷', label: 'Vendors', route: '/vendors', permission: 'bottom.vendors' },
     { emoji: '🔔', label: 'Alerts', route: '/analysis', permission: 'bottom.alerts' },
   ],

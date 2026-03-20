@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import {
   Plus, Building2, Mail, Phone, FileText, CheckCircle, AlertTriangle, Clock,
-  ChevronRight, ArrowLeft, MapPin, Calendar, Send, Upload, Download,
+  ChevronRight, ArrowLeft, MapPin, Calendar, CalendarDays, Send, Upload, Download,
   Bell, BellOff, ExternalLink, XCircle, Filter, CheckCircle2, TrendingUp,
   TrendingDown, Minus, Link2, Loader2, Wrench,
 } from 'lucide-react';
@@ -42,6 +42,11 @@ import {
 import { ServiceComplianceList } from '../components/services/ServiceComplianceList';
 import { ServiceExpenseTracker } from '../components/services/ServiceExpenseTracker';
 import { LogServiceModal } from '../components/services/LogServiceModal';
+import { useServiceRequests } from '../hooks/useServiceRequests';
+import { ReviewAlternativesModal } from '../components/services/ReviewAlternativesModal';
+import { RequestServiceModal } from '../components/services/RequestServiceModal';
+import { buildCalendarEvent, getGoogleCalendarUrl, getOutlookCalendarUrl, downloadIcsFile } from '../lib/calendarSync';
+import type { ServiceRequest } from '../types/serviceRequest';
 
 // ══════════════════════════════════════════════════════════════════════
 // VENDOR BUTTON BUG — ROOT CAUSE ANALYSIS (PROMPT #12, 2026-03-04)
@@ -206,6 +211,187 @@ const VENDOR_DOCUMENTS: Record<string, VendorDocument[]> = {
 // ── Performance scorecard data (uses enhanced data from vendorServiceWorkflowDemo) ─
 // ENHANCED_VENDOR_PERFORMANCE imported from vendorServiceWorkflowDemo.ts
 
+// ── Status colors for service requests ──────────────────────────────
+const SR_STATUS_BADGE: Record<string, { label: string; bg: string; text: string }> = {
+  pending_vendor: { label: 'Pending Vendor', bg: 'bg-yellow-100', text: 'text-yellow-700' },
+  vendor_selected: { label: 'Vendor Selected', bg: 'bg-blue-100', text: 'text-blue-700' },
+  vendor_proposed_alt: { label: 'Review Needed', bg: 'bg-orange-100', text: 'text-orange-700' },
+  pending_operator: { label: 'Your Review', bg: 'bg-orange-100', text: 'text-orange-700' },
+  confirmed: { label: 'Confirmed', bg: 'bg-green-100', text: 'text-green-700' },
+  canceled: { label: 'Canceled', bg: 'bg-gray-100', text: 'text-gray-500' },
+  expired: { label: 'Expired', bg: 'bg-red-100', text: 'text-red-600' },
+};
+
+const URGENCY_BADGE: Record<string, { label: string; bg: string; text: string } | null> = {
+  normal: null,
+  soon: { label: 'Soon', bg: 'bg-yellow-50', text: 'text-yellow-600' },
+  urgent: { label: 'Urgent', bg: 'bg-orange-50', text: 'text-orange-600' },
+  emergency: { label: 'Emergency', bg: 'bg-red-50', text: 'text-red-600' },
+};
+
+function ServiceRequestsTab({ organizationId, locationId }: { organizationId: string; locationId: string | null }) {
+  const [filter, setFilter] = useState('all');
+  const [reviewRequest, setReviewRequest] = useState<ServiceRequest | null>(null);
+  const [showRequestModal, setShowRequestModal] = useState(false);
+
+  const statusFilter = filter === 'all' ? 'all'
+    : filter === 'pending' ? 'pending_vendor'
+    : filter === 'review' ? 'vendor_proposed_alt'
+    : filter as any;
+  const { requests, loading, acceptAlternative, cancelRequest } = useServiceRequests(statusFilter === 'all' ? undefined : statusFilter);
+
+  const filtered = filter === 'all' ? requests
+    : filter === 'pending' ? requests.filter(r => r.status === 'pending_vendor' || r.status === 'pending_operator')
+    : filter === 'confirmed' ? requests.filter(r => r.status === 'confirmed')
+    : filter === 'review' ? requests.filter(r => r.status === 'vendor_proposed_alt')
+    : filter === 'canceled' ? requests.filter(r => r.status === 'canceled' || r.status === 'expired')
+    : requests;
+
+  const formatDate = (dateStr: string) => {
+    return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  };
+
+  return (
+    <div className="space-y-4">
+      {/* Filter bar */}
+      <div className="flex flex-wrap gap-2">
+        {[
+          { id: 'all', label: 'All' },
+          { id: 'pending', label: 'Pending' },
+          { id: 'confirmed', label: 'Confirmed' },
+          { id: 'review', label: 'Needs Review' },
+          { id: 'canceled', label: 'Canceled' },
+        ].map(f => (
+          <button
+            key={f.id}
+            onClick={() => setFilter(f.id)}
+            className={`px-3 py-1.5 text-sm rounded-full font-medium transition-colors ${
+              filter === f.id
+                ? 'bg-[#1e4d6b] text-white'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            {f.label}
+          </button>
+        ))}
+        <button
+          onClick={() => setShowRequestModal(true)}
+          className="ml-auto px-4 py-1.5 text-sm bg-[#1e4d6b] text-white rounded-full font-medium hover:bg-[#163a52] flex items-center gap-1.5"
+        >
+          <Send className="h-3.5 w-3.5" />
+          New Request
+        </button>
+      </div>
+
+      {/* Loading */}
+      {loading && (
+        <div className="py-12 text-center">
+          <Loader2 className="h-6 w-6 text-gray-400 animate-spin mx-auto mb-2" />
+          <p className="text-sm text-gray-500">Loading requests...</p>
+        </div>
+      )}
+
+      {/* Empty state */}
+      {!loading && filtered.length === 0 && (
+        <div className="py-12 text-center bg-white rounded-lg border border-gray-200">
+          <Send className="h-8 w-8 text-gray-300 mx-auto mb-3" />
+          <p className="text-gray-500 font-medium">No service requests yet</p>
+          <p className="text-sm text-gray-400 mt-1">Use "New Request" to request service from a vendor.</p>
+        </div>
+      )}
+
+      {/* Request cards */}
+      {!loading && filtered.map(req => {
+        const statusBadge = SR_STATUS_BADGE[req.status] || SR_STATUS_BADGE.pending_vendor;
+        const urgBadge = URGENCY_BADGE[req.urgency];
+
+        return (
+          <div key={req.id} className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-sm transition-shadow">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2 flex-wrap mb-1">
+                  <h4 className="font-semibold text-gray-900 text-sm">{req.vendor_name || 'Vendor'}</h4>
+                  <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${statusBadge.bg} ${statusBadge.text}`}>
+                    {statusBadge.label}
+                  </span>
+                  {urgBadge && (
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${urgBadge.bg} ${urgBadge.text}`}>
+                      {urgBadge.label}
+                    </span>
+                  )}
+                </div>
+                <p className="text-sm text-gray-600">{req.service_type}</p>
+                <div className="flex items-center gap-4 mt-2 text-xs text-gray-400">
+                  <span>Requested {formatDate(req.created_at)}</span>
+                  {req.confirmed_datetime && (
+                    <span className="text-green-600 font-medium">
+                      Confirmed: {formatDate(req.confirmed_datetime)}
+                    </span>
+                  )}
+                  {req.location_name && <span>{req.location_name}</span>}
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 flex-shrink-0">
+                {req.status === 'vendor_proposed_alt' && (
+                  <button
+                    onClick={() => setReviewRequest(req)}
+                    className="px-3 py-1.5 text-xs font-medium bg-orange-50 text-orange-700 rounded-lg hover:bg-orange-100 transition-colors"
+                  >
+                    Review Alternatives
+                  </button>
+                )}
+                {req.status === 'confirmed' && req.confirmed_datetime && (
+                  <button
+                    onClick={() => {
+                      const calEvent = buildCalendarEvent({
+                        serviceType: req.service_type,
+                        vendorName: req.vendor_name || 'Vendor',
+                        confirmedDatetime: req.confirmed_datetime!,
+                        locationName: req.location_name,
+                      });
+                      downloadIcsFile(calEvent);
+                    }}
+                    className="px-3 py-1.5 text-xs font-medium bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors flex items-center gap-1"
+                  >
+                    <CalendarDays className="h-3 w-3" />
+                    Calendar
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+
+      {/* Review Alternatives Modal */}
+      {reviewRequest && (
+        <ReviewAlternativesModal
+          isOpen={!!reviewRequest}
+          onClose={() => setReviewRequest(null)}
+          request={reviewRequest}
+          onAccept={async (id, slot) => {
+            await acceptAlternative(id, slot);
+            setReviewRequest(null);
+          }}
+          onDecline={async (id) => {
+            await cancelRequest(id);
+            setReviewRequest(null);
+          }}
+        />
+      )}
+
+      {/* Request Service Modal */}
+      <RequestServiceModal
+        isOpen={showRequestModal}
+        onClose={() => setShowRequestModal(false)}
+        locationId={locationId || ''}
+        organizationId={organizationId}
+      />
+    </div>
+  );
+}
+
 // ── Component ──────────────────────────────────────────────────────
 
 export function Vendors() {
@@ -213,7 +399,7 @@ export function Vendors() {
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedVendorId = searchParams.get('id');
 
-  const [activeTab, setActiveTab] = useState<'list' | 'scorecard' | 'services'>('list');
+  const [activeTab, setActiveTab] = useState<'list' | 'scorecard' | 'services' | 'requests'>('list');
   const [showLogService, setShowLogService] = useState(false);
   const [statusFilter, setStatusFilter] = useState('all');
   const [serviceFilter, setServiceFilter] = useState('all');
@@ -1218,6 +1404,14 @@ export function Vendors() {
               Performance Scorecard
             </button>
             <button
+              onClick={() => setActiveTab('requests')}
+              className={`px-6 py-3 font-medium whitespace-nowrap transition-colors ${
+                activeTab === 'requests' ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]' : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Requests
+            </button>
+            <button
               onClick={() => navigate('/vendors/review')}
               className="px-6 py-3 font-medium whitespace-nowrap transition-colors text-gray-500 hover:text-gray-700 flex items-center gap-1.5"
             >
@@ -1655,6 +1849,13 @@ export function Vendors() {
               })}
             </div>}
           </>
+        )}
+
+        {activeTab === 'requests' && (
+          <ServiceRequestsTab
+            organizationId={profile?.organization_id || ''}
+            locationId={null}
+          />
         )}
       </div>
 
