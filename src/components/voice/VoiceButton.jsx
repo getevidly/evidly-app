@@ -5,7 +5,7 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { VoiceIntroTooltip } from './VoiceIntroTooltip';
 
-const VOICE_ROLES = ['kitchen_staff', 'chef', 'kitchen_manager'];
+const VOICE_ROLES = ['kitchen_staff', 'chef', 'kitchen_manager', 'owner_operator'];
 
 export function VoiceButton({ orgId, locationId, size = 'lg' }) {
   const { profile } = useAuth();

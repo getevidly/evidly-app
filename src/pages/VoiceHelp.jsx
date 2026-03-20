@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { ArrowLeft, Mic, Thermometer, ClipboardList, AlertTriangle, ArrowRight } from 'lucide-react';
 
-const VOICE_ROLES = ['kitchen_staff', 'chef', 'kitchen_manager'];
+const VOICE_ROLES = ['kitchen_staff', 'chef', 'kitchen_manager', 'owner_operator'];
 
 const COMMANDS = [
   {

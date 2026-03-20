@@ -102,7 +102,7 @@ function getIconForPath(path: string): any {
   return PATH_ICON[path] || PATH_ICON[path.split('?')[0]] || HelpCircle;
 }
 
-const VOICE_ROLES = ['kitchen_staff', 'chef', 'kitchen_manager'];
+const VOICE_ROLES = ['kitchen_staff', 'chef', 'kitchen_manager', 'owner_operator'];
 
 export function MobileTabBar() {
   const location = useLocation();
