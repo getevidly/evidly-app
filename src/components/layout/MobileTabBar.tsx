@@ -102,6 +102,12 @@ const PATH_ICON: Record<string, any> = {
   '/tasks': ClipboardList,
   '/vendor-connect': Handshake,
   '/upgrade': Star,
+  '/insights/inspection-forecast': Calendar,
+  '/insights/violation-radar': Target,
+  '/insights/trajectory': TrendingUp,
+  '/insights/vendor-performance': Store,
+  '/insights/signals': AlertCircle,
+  '/insights/leaderboard': Users,
 };
 
 function getIconForPath(path: string): any {

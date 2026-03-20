@@ -592,6 +592,32 @@
 
 ---
 
+## Intelligence Superpowers (ProtectedLayout) — SUPERPOWERS-APP-01
+
+| Route | Component | Auth | Description |
+|-------|-----------|------|-------------|
+| `/insights/inspection-forecast` | `InspectionForecast.jsx` | Protected | SP1: Inspection window forecast based on jurisdiction frequency + last inspection date |
+| `/insights/violation-radar` | `ViolationRadar.jsx` | Protected | SP2: Ranked violation risk list from CAs, temp failures, expired docs, overdue services |
+| `/insights/trajectory` | `ComplianceTrajectory.jsx` | Protected | SP3: 90-day readiness history + 30/60/90 day linear projection (recharts) |
+| `/insights/vendor-performance` | `VendorPerformance.jsx` | Protected | SP4: Vendor grade cards (A-F) — timeliness, cert quality, COI, reliability |
+| `/insights/signals` | `JurisdictionSignals.jsx` | Protected | SP6: Real-time regulatory signal feed from intelligence_signals by county |
+| `/insights/leaderboard` | `TeamLeaderboard.jsx` | Protected | SP7: Staff leaderboard — checklists (40) + temp logs (35) + CA speed (25) |
+
+**SP5 (Shift Intelligence)** has no separate route — integrated into `/shift-handoff` via `ShiftSummaryCard`.
+
+### Role Access (Superpowers)
+
+| Route | Roles |
+|-------|-------|
+| `/insights/inspection-forecast` | owner_operator, executive, compliance_manager, kitchen_manager, chef, facilities_manager |
+| `/insights/violation-radar` | owner_operator, executive, compliance_manager, kitchen_manager, chef |
+| `/insights/trajectory` | owner_operator, executive, compliance_manager, kitchen_manager |
+| `/insights/vendor-performance` | owner_operator, executive, compliance_manager, facilities_manager |
+| `/insights/signals` | owner_operator, executive, compliance_manager |
+| `/insights/leaderboard` | owner_operator, executive, compliance_manager, kitchen_manager |
+
+---
+
 ## Reports & Analytics (ProtectedLayout)
 
 | Route | Component | Auth | Description |
@@ -839,8 +865,8 @@
 | Auth routes | 12 |
 | QR-protected routes | 2 |
 | Protected no-layout routes | ~25 |
-| Protected with layout (ProtectedLayout) | ~120 |
+| Protected with layout (ProtectedLayout) | ~126 |
 | Admin routes (RequireAdmin) | ~35 |
 | Sales-guarded admin routes | 10 |
 | Redirect aliases | ~22 |
-| **Total route declarations** | **~170** |
+| **Total route declarations** | **~176** |

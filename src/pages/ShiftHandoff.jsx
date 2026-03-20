@@ -17,6 +17,8 @@ import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { ShiftSummaryCard } from '../components/superpowers/ShiftSummaryCard';
+import { computeShiftSummary } from '../lib/shiftIntelligence';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -56,6 +58,19 @@ export function ShiftHandoff() {
     openItems: isDemoMode ? 0 : 0,
     allTempsInRange: true,
   }), [isDemoMode]);
+
+  // Shift intelligence summary
+  const shiftSummary = useMemo(() => {
+    const shiftName = getShiftName().toLowerCase();
+    return computeShiftSummary({
+      shift: shiftName === 'afternoon' ? 'midday' : shiftName,
+      checklistsCompleted: stats.checklistCount,
+      checklistsTotal: isDemoMode ? 2 : 0,
+      tempLogs: Array.from({ length: stats.tempCount }, () => ({ temp_pass: stats.allTempsInRange })),
+      correctiveActionsOpened: 0,
+      correctiveActionsResolved: stats.caResolved,
+    });
+  }, [stats, isDemoMode]);
 
   // Demo open items for next shift
   const openItems = useMemo(() => {
@@ -145,6 +160,9 @@ export function ShiftHandoff() {
           </div>
         )}
       </div>
+
+      {/* Shift Intelligence Summary */}
+      <ShiftSummaryCard summary={shiftSummary} />
 
       {/* Open items for next shift */}
       {openItems.length > 0 && (

@@ -242,6 +242,12 @@ const MFAChallenge = lazy(() => import('./pages/MFAChallenge').then(m => ({ defa
 const FoodSafetyHub = lazy(() => import('./pages/FoodSafetyHub').then(m => ({ default: m.FoodSafetyHub })));
 const ComplianceHub = lazy(() => import('./pages/ComplianceHub').then(m => ({ default: m.ComplianceHub })));
 const InsightsHub = lazy(() => import('./pages/InsightsHub').then(m => ({ default: m.InsightsHub })));
+const InspectionForecastPage = lazy(() => import('./pages/insights/InspectionForecast').then(m => ({ default: m.InspectionForecast })));
+const ViolationRadarPage = lazy(() => import('./pages/insights/ViolationRadar').then(m => ({ default: m.ViolationRadar })));
+const ComplianceTrajectoryPage = lazy(() => import('./pages/insights/ComplianceTrajectory').then(m => ({ default: m.ComplianceTrajectory })));
+const VendorPerformancePage = lazy(() => import('./pages/insights/VendorPerformance').then(m => ({ default: m.VendorPerformance })));
+const JurisdictionSignalsPage = lazy(() => import('./pages/insights/JurisdictionSignals').then(m => ({ default: m.JurisdictionSignals })));
+const TeamLeaderboardPage = lazy(() => import('./pages/insights/TeamLeaderboard').then(m => ({ default: m.TeamLeaderboard })));
 const ToolsHub = lazy(() => import('./pages/ToolsHub').then(m => ({ default: m.ToolsHub })));
 const AdminHub = lazy(() => import('./pages/AdminHub').then(m => ({ default: m.AdminHub })));
 const VendorSetup = lazy(() => import('./pages/VendorSetup').then(m => ({ default: m.VendorSetup })));
@@ -819,6 +825,12 @@ function AppRoutes() {
           <Route path="/insights/intelligence" element={<BusinessIntelligence />} />
           <Route path="/insights/reports" element={<ClientReports />} />
           <Route path="/insights/predictions" element={<PredictiveAnalysis />} />
+          <Route path="/insights/inspection-forecast" element={<InspectionForecastPage />} />
+          <Route path="/insights/violation-radar" element={<ViolationRadarPage />} />
+          <Route path="/insights/trajectory" element={<ComplianceTrajectoryPage />} />
+          <Route path="/insights/vendor-performance" element={<VendorPerformancePage />} />
+          <Route path="/insights/signals" element={<JurisdictionSignalsPage />} />
+          <Route path="/insights/leaderboard" element={<TeamLeaderboardPage />} />
           {/* Stub routes for upcoming features */}
           <Route path="/tasks" element={<TaskManager />} />
           <Route path="/vendors/review" element={<VendorDocumentReview />} />
