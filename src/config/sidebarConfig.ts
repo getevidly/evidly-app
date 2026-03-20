@@ -280,6 +280,12 @@ const I: Record<string, NavItem> = {
     roles: [], description: 'Quick access to roadside assistance, insurance, and company contacts.',
   },
 
+  // ── Voice ──
+  voiceHelp: {
+    id: 'voice-help', label: 'Voice Commands', path: '/voice-help', icon: '🎤',
+    roles: [], description: 'Reference guide for hands-free voice commands.',
+  },
+
   // ── Bonuses & Performance ──
   bonuses: {
     id: 'bonuses', label: 'Bonus Management', path: '/bonuses', icon: '💰',
@@ -562,8 +568,8 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         '/food-safety',
       ),
       section('tools', 'Tools', '🔧',
-        'Tools', 'Equipment diagnosis.',
-        [I.selfDiagnosis, I.emergencyInfo],
+        'Tools', 'Equipment diagnosis and voice commands.',
+        [I.selfDiagnosis, I.voiceHelp, I.emergencyInfo],
         '/tools',
       ),
       section('help', 'Help', '❓',
@@ -598,8 +604,8 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         '/insights',
       ),
       section('tools', 'Tools', '🔧',
-        'Tools', 'Equipment troubleshooting.',
-        [I.selfDiagnosis],
+        'Tools', 'Equipment troubleshooting and voice commands.',
+        [I.selfDiagnosis, I.voiceHelp],
         '/tools',
       ),
       section('safety', 'Safety', '🛡️',
@@ -648,8 +654,8 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         '/insights',
       ),
       section('tools', 'Tools', '🔧',
-        'Tools', 'Equipment troubleshooting.',
-        [I.selfDiagnosis],
+        'Tools', 'Equipment troubleshooting and voice commands.',
+        [I.selfDiagnosis, I.voiceHelp],
         '/tools',
       ),
       section('operations', 'Operations', '📦',

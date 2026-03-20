@@ -30,6 +30,7 @@ import {
   Sparkles,
   Recycle,
   School,
+  Mic,
 } from 'lucide-react';
 import { useRole } from '../../contexts/RoleContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -38,6 +39,7 @@ import {
   getBottomNavPaths,
 } from '../../config/navConfig';
 import { getRoleConfig } from '../../config/sidebarConfig';
+import { VoiceButton } from '../voice/VoiceButton';
 
 // ── Path → Lucide icon mapping for More drawer ──────────
 const PATH_ICON: Record<string, any> = {
@@ -93,22 +95,31 @@ const PATH_ICON: Record<string, any> = {
   '/k12': School,
   '/usda/production-records': School,
   '/copilot': Brain,
+  '/voice-help': Mic,
 };
 
 function getIconForPath(path: string): any {
   return PATH_ICON[path] || PATH_ICON[path.split('?')[0]] || HelpCircle;
 }
 
+const VOICE_ROLES = ['kitchen_staff', 'chef', 'kitchen_manager'];
+
 export function MobileTabBar() {
   const location = useLocation();
   const navigate = useNavigate();
   const [showMoreMenu, setShowMoreMenu] = useState(false);
-  const { userRole } = useRole();
-  const { signOut } = useAuth();
+  const { userRole, getAccessibleLocations } = useRole();
+  const { profile, signOut } = useAuth();
   const isKeyboardOpen = useKeyboardOpen();
 
   const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path + '/');
   const isKitchen = userRole === 'kitchen_staff';
+  const isVoiceRole = VOICE_ROLES.includes(userRole);
+
+  // Derive orgId + locationId for voice commands
+  const orgId = profile?.organization_id ?? '';
+  const firstLocation = getAccessibleLocations()[0];
+  const locationId = firstLocation?.locationId ?? '';
 
   const mainTabs = getBottomNavItems(userRole);
 
@@ -208,6 +219,14 @@ export function MobileTabBar() {
               Sign Out
             </button>
           </div>
+        </div>
+      )}
+
+      {/* Floating voice button — voice-eligible roles only, mobile only */}
+      {isVoiceRole && !isKeyboardOpen && (
+        <div className="fixed bottom-[60px] left-1/2 -translate-x-1/2 z-50 lg:hidden flex flex-col items-center">
+          <VoiceButton orgId={orgId} locationId={locationId} size="lg" />
+          <span className="text-[10px] text-[#A08C5A] mt-1 font-medium">Voice</span>
         </div>
       )}
 

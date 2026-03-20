@@ -138,6 +138,7 @@ const PlaybookTimeline = lazy(() => import('./pages/PlaybookTimeline').then(m =>
 const ImportData = lazy(() => import('./pages/ImportData').then(m => ({ default: m.ImportData })));
 const InspectorView = lazy(() => import('./pages/InspectorView').then(m => ({ default: m.InspectorView })));
 const ShiftHandoff = lazy(() => import('./pages/ShiftHandoff').then(m => ({ default: m.ShiftHandoff })));
+const VoiceHelp = lazy(() => import('./pages/VoiceHelp').then(m => ({ default: m.VoiceHelp })));
 const InspectorMode = lazy(() => import('./pages/InspectorMode').then(m => ({ default: m.InspectorMode })));
 const ServicesPage = lazy(() => import('./pages/ServicesPage'));
 const SelfAudit = lazy(() => import('./pages/SelfAudit').then(m => ({ default: m.SelfAudit })));
@@ -807,6 +808,7 @@ function AppRoutes() {
           {/* Stub routes for upcoming features */}
           <Route path="/corrective-actions" element={<CorrectiveActions />} />
           <Route path="/corrective-actions/:actionId" element={<CorrectiveActionDetail />} />
+          <Route path="/voice-help" element={<VoiceHelp />} />
           <Route path="/deficiencies" element={<Deficiencies />} />
           <Route path="/deficiencies/:deficiencyId" element={<DeficiencyDetail />} />
           {/* Blueprint route aliases — FIX-03 */}
