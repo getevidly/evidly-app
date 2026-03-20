@@ -244,7 +244,10 @@
       "Bash(for fn in intel-crawl-recalls intel-crawl-environmental intel-aggregate-benchmarks intel-refresh-freshness calendly-webhook stripe-create-checkout stripe-webhook stripe-customer-portal send-onboarding-email hoodops-webhook)",
       "Bash(do if [ -d \"C:/Users/newpa/Downloads/evidly-demo-final/evidly-app-main/supabase/functions/$fn\" ])",
       "Bash(then echo \"$fn: EXISTS\")",
-      "Bash(else echo \"$fn: MISSING\")"
+      "Bash(else echo \"$fn: MISSING\")",
+      "Bash(./node_modules/.bin/tsc:*)",
+      "Bash(node_modules/.bin/vite build:*)",
+      "Bash(./node_modules/.bin/vite build:*)"
     ]
   }
 }

@@ -31,6 +31,8 @@ import {
   Recycle,
   School,
   Mic,
+  Handshake,
+  Star,
 } from 'lucide-react';
 import { useRole } from '../../contexts/RoleContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -98,6 +100,8 @@ const PATH_ICON: Record<string, any> = {
   '/copilot': Brain,
   '/voice-help': Mic,
   '/tasks': ClipboardList,
+  '/vendor-connect': Handshake,
+  '/upgrade': Star,
 };
 
 function getIconForPath(path: string): any {

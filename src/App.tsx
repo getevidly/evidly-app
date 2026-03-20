@@ -222,6 +222,11 @@ const BlogList = lazy(() => import('./pages/public/BlogList').then(m => ({ defau
 const BlogPost = lazy(() => import('./pages/public/BlogPost').then(m => ({ default: m.BlogPost })));
 const VendorServiceUpdate = lazy(() => import('./pages/VendorServiceUpdate').then(m => ({ default: m.VendorServiceUpdate })));
 const VendorScheduleResponse = lazy(() => import('./pages/VendorScheduleResponse').then(m => ({ default: m.VendorScheduleResponse })));
+const VendorConnectPage = lazy(() => import('./pages/VendorConnect').then(m => ({ default: m.VendorConnect })));
+const VendorConnectApply = lazy(() => import('./pages/VendorConnectApply').then(m => ({ default: m.VendorConnectApply })));
+const VendorPartnerDashboard = lazy(() => import('./pages/VendorPartnerDashboard').then(m => ({ default: m.VendorPartnerDashboard })));
+const Upgrade = lazy(() => import('./pages/Upgrade').then(m => ({ default: m.Upgrade })));
+const AdminVendorConnect = lazy(() => import('./pages/admin/AdminVendorConnect').then(m => ({ default: m.AdminVendorConnect })));
 const AssessmentLeads = lazy(() => import('./pages/admin/AssessmentLeads'));
 const InsuranceApiKeys = lazy(() => import('./pages/admin/InsuranceApiKeys'));
 const DemoGenerator = lazy(() => import('./pages/admin/DemoGenerator'));
@@ -580,6 +585,7 @@ function AppRoutes() {
           <Route path="/vendor/invite/:code" element={<Suspense fallback={<PageSkeleton />}><VendorInviteLanding /></Suspense>} />
         <Route path="/vendor-update/:token" element={<Suspense fallback={<PageSkeleton />}><VendorServiceUpdate /></Suspense>} />
         <Route path="/vendor/schedule/:token" element={<Suspense fallback={<PageSkeleton />}><VendorScheduleResponse /></Suspense>} />
+        <Route path="/vendor-connect/apply" element={<Suspense fallback={<PageSkeleton />}><VendorConnectApply /></Suspense>} />
         <Route path="/support/survey/:token" element={<Suspense fallback={<PageSkeleton />}><SurveyPage /></Suspense>} />
 
         {/* City landing pages */}
@@ -594,6 +600,7 @@ function AppRoutes() {
 
         {/* Protected routes without shared layout */}
         <Route path="/vendor/dashboard" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><VendorDashboard /></Suspense></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/vendor/partner-dashboard" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><VendorPartnerDashboard /></Suspense></ErrorBoundary></ProtectedRoute>} />
         <Route path="/vendor/setup" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><VendorSetup /></Suspense></ErrorBoundary></ProtectedRoute>} />
         <Route path="/enterprise/admin" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><EnterpriseDashboard /></Suspense></ErrorBoundary></ProtectedRoute>} />
         <Route path="/enterprise/dashboard" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><EnterpriseExecutive /></Suspense></ErrorBoundary></ProtectedRoute>} />
@@ -624,6 +631,8 @@ function AppRoutes() {
           <Route path="/vendors" element={<Vendors />} />
           <Route path="/vendors/:vendorId" element={<VendorDetail />} />
           <Route path="/marketplace" element={<VendorMarketplace />} />
+          <Route path="/vendor-connect" element={<VendorConnectPage />} />
+          <Route path="/upgrade" element={<Upgrade />} />
           <Route path="/marketplace/vendor/:vendorSlug" element={<VendorProfile />} />
           <Route path="/marketplace/:vendorSlug" element={<VendorProfile />} />
           <Route path="/haccp" element={<HACCP />} />
@@ -804,6 +813,7 @@ function AppRoutes() {
           <Route path="/admin/verification" element={<VerificationReport />} />
           <Route path="/admin/system/edge-functions" element={<EdgeFunctions />} />
           <Route path="/admin/feature-flags" element={<FeatureFlags />} />
+          <Route path="/admin/vendor-connect" element={<AdminVendorConnect />} />
           <Route path="/admin/gtm" element={<SalesGuard><GtmDashboard /></SalesGuard>} />
           </Route>
           <Route path="/insights/intelligence" element={<BusinessIntelligence />} />

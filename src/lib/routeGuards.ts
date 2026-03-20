@@ -30,6 +30,10 @@ const ROUTE_ROLE_MAP: [string, UserRole[]][] = [
   // CIC/PSE Operator View
   ['/cic-pse',               ['owner_operator', 'executive', 'compliance_manager']],
 
+  // Vendor Connect
+  ['/vendor-connect',        ['owner_operator', 'executive', 'compliance_manager', 'facilities_manager']],
+  ['/admin/vendor-connect',  []],
+
   // Equipment / Facilities
   ['/equipment',             ['facilities_manager', 'owner_operator', 'executive', 'compliance_manager', 'kitchen_manager']],
   ['/incidents',             ['owner_operator', 'executive', 'compliance_manager', 'kitchen_manager', 'chef', 'facilities_manager', 'kitchen_staff']],

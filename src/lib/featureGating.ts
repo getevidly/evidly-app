@@ -1,4 +1,4 @@
-export type PlanTier = 'trial' | 'founder' | 'professional' | 'enterprise';
+export type PlanTier = 'trial' | 'founder' | 'professional' | 'enterprise' | 'cpp_free';
 
 export interface FeatureDefinition {
   id: string;
@@ -15,6 +15,7 @@ export interface FeatureDefinition {
 }
 
 const TIER_LEVEL: Record<PlanTier, number> = {
+  cpp_free: -1,
   trial: 0,
   founder: 1,
   professional: 2,

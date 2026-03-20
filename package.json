@@ -39,7 +39,7 @@
     "crisp-sdk-web": "^1.0.27",
     "date-fns": "^4.1.0",
     "dompurify": "^3.3.3",
-    "framer-motion": "^12.34.0",
+    "framer-motion": "^12.38.0",
     "html2canvas": "^1.4.1",
     "idb": "^8.0.1",
     "is-extglob": "^2.1.1",
