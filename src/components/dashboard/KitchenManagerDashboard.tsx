@@ -22,6 +22,8 @@ import type { ReadinessSignal } from '../../hooks/useDashboardStanding';
 import { BODY_TEXT } from './shared/constants';
 import { DashboardGreeting } from './DashboardGreeting';
 import { useAuth } from '../../contexts/AuthContext';
+import { TeamTaskStatus } from './shared/TeamTaskStatus';
+import { MyTasksToday } from './shared/MyTasksToday';
 
 
 // ── Inspection Readiness inline ─────────────────────────────
@@ -146,6 +148,10 @@ export default function KitchenManagerDashboard() {
         { label: 'Temps Logged', value: tempsLogged, onClick: () => navigate('/temp-logs') },
         { label: 'Team CAs', value: overdueCAs, color: overdueCAs > 0 ? '#dc2626' : undefined, onClick: overdueCAs > 0 ? () => navigate('/corrective-actions') : undefined },
       ]} />
+
+      {/* 3c. TASK ASSIGNMENT WIDGETS */}
+      <TeamTaskStatus />
+      <MyTasksToday />
 
       {/* 4. TODAY'S TASKS */}
       <TodaysOperations tasks={todaysTasks} navigate={navigate} />

@@ -86,6 +86,10 @@ const I: Record<string, NavItem> = {
     id: 'reporting', label: 'Reporting', path: '/reports', icon: '📊',
     roles: [], description: 'Export compliance summaries, inspection history, and documentation packages for auditors or clients.',
   },
+  taskManager: {
+    id: 'task-manager', label: 'Task Manager', path: '/tasks', icon: '📝', badge: 'NEW',
+    roles: [], description: 'Schedule, assign, and track recurring operational tasks with reminders and escalation.',
+  },
   correctiveActions: {
     id: 'corrective-actions', label: 'Corrective Actions', path: '/corrective-actions', icon: '🔧',
     roles: [], description: 'Track and resolve compliance violations with documented corrective action plans and follow-up verification.',
@@ -509,8 +513,8 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
     topLevelItems: [I.calendar],
     sections: [
       section('food-safety', 'Food Safety', '🍽️',
-        'Food Safety', 'Checklists, temperature monitoring, HACCP plans, corrective actions, and incident tracking.',
-        [I.checklists, I.temperatures, I.haccp, I.correctiveActions, I.foodSafetyOverview, I.incidents],
+        'Food Safety', 'Checklists, temperature monitoring, HACCP plans, corrective actions, task management, and incident tracking.',
+        [I.checklists, I.temperatures, I.haccp, I.correctiveActions, I.taskManager, I.foodSafetyOverview, I.incidents],
         '/food-safety',
       ),
       section('facility-safety', 'Facility Safety', '🔥',
@@ -563,8 +567,8 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
     },
     sections: [
       section('food-safety', 'Food Safety', '🍽️',
-        'Food Safety', 'Your assigned checklists and temperature logs.',
-        [I.checklists, I.temperatures],
+        'Food Safety', 'Your assigned checklists, temperature logs, and tasks.',
+        [I.checklists, I.temperatures, I.taskManager],
         '/food-safety',
       ),
       section('tools', 'Tools', '🔧',
@@ -591,7 +595,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
     sections: [
       section('food-safety', 'Food Safety', '🍽️',
         'Food Safety', 'Checklists, temperature logs, HACCP plans, corrective actions, and food safety overview.',
-        [I.checklists, I.temperatures, I.haccp, I.correctiveActions, I.foodSafetyOverview],
+        [I.checklists, I.temperatures, I.haccp, I.correctiveActions, I.taskManager, I.foodSafetyOverview],
         '/food-safety',
       ),
       section('facility-safety', 'Facility Safety', '🔥',
@@ -636,7 +640,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
     sections: [
       section('food-safety', 'Food Safety', '🍽️',
         'Food Safety', 'Checklists, temperature logs, HACCP plans, corrective actions, and food safety overview.',
-        [I.checklists, I.temperatures, I.haccp, I.correctiveActions, I.foodSafetyOverview],
+        [I.checklists, I.temperatures, I.haccp, I.correctiveActions, I.taskManager, I.foodSafetyOverview],
         '/food-safety',
       ),
       section('facility-safety', 'Facility Safety', '🔥',
@@ -689,8 +693,8 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
     topLevelItems: [I.calendar],
     sections: [
       section('food-safety', 'Food Safety', '🍽️',
-        'Food Safety', 'Checklists, temperature monitoring, HACCP plans, and corrective actions.',
-        [I.checklists, I.temperaturesViewOnly, I.haccp, I.correctiveActions],
+        'Food Safety', 'Checklists, temperature monitoring, HACCP plans, corrective actions, and task management.',
+        [I.checklists, I.temperaturesViewOnly, I.haccp, I.correctiveActions, I.taskManager],
         '/food-safety',
       ),
       section('facility-safety', 'Facility Safety', '🔥',
@@ -798,7 +802,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
     sections: [
       section('food-safety', 'Food Safety', '🍽️',
         'Food Safety', 'Checklists, temperature monitoring, HACCP plans, corrective actions, and food safety overview.',
-        [I.checklists, I.temperatures, I.haccp, I.correctiveActions, I.foodSafetyOverview],
+        [I.checklists, I.temperatures, I.haccp, I.correctiveActions, I.taskManager, I.foodSafetyOverview],
         '/food-safety',
       ),
       section('facility-safety', 'Facility Safety', '🔥',

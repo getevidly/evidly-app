@@ -27,6 +27,7 @@ import { useDashboardStanding } from '../../hooks/useDashboardStanding';
 import { DashboardSkeleton } from './shared/DashboardSkeleton';
 import { DashboardGreeting } from './DashboardGreeting';
 import { useAuth } from '../../contexts/AuthContext';
+import { MyTasksToday } from './shared/MyTasksToday';
 
 // --------------- Demo Data ---------------
 
@@ -213,6 +214,9 @@ export default function KitchenStaffTaskList() {
             headline={bannerHeadline}
             role="kitchen_staff"
           />
+
+          {/* Task Assignments (live mode only) */}
+          {!isDemoMode && <MyTasksToday />}
 
           {/* Staff Standing — progress ring */}
           <StaffStanding

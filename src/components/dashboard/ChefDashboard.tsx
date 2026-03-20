@@ -20,6 +20,7 @@ import { TodaysOperations } from './shared/TodaysOperations';
 import { AttentionItemList } from './shared/AttentionItemList';
 import { DashboardGreeting } from './DashboardGreeting';
 import { useAuth } from '../../contexts/AuthContext';
+import { MyTasksToday } from './shared/MyTasksToday';
 
 
 export default function ChefDashboard() {
@@ -93,6 +94,9 @@ export default function ChefDashboard() {
         { label: 'Cooling Active', value: 0 },
         { label: 'Excursions', value: tempExcursions, color: tempExcursions > 0 ? '#dc2626' : undefined, onClick: tempExcursions > 0 ? () => navigate('/temp-logs') : undefined },
       ]} />
+
+      {/* 3c. MY TASK ASSIGNMENTS */}
+      <MyTasksToday />
 
       {/* 4. TODAY'S TASKS */}
       <TodaysOperations tasks={todaysTasks} navigate={navigate} />

@@ -96,6 +96,7 @@ const PATH_ICON: Record<string, any> = {
   '/usda/production-records': School,
   '/copilot': Brain,
   '/voice-help': Mic,
+  '/tasks': ClipboardList,
 };
 
 function getIconForPath(path: string): any {

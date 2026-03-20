@@ -56,7 +56,7 @@ const ROLE_ACTIONS: Record<UserRole, QuickAction[]> = {
     { emoji: '🌡️', label: 'Temps', route: '/temp-logs', permission: 'bottom.temps' },
     { emoji: '📱', label: 'QR Scan', route: '/temp-logs/scan', permission: 'bottom.qr-scan' },
     { emoji: '👥', label: 'Team', route: '/team', permission: 'bottom.team' },
-    { emoji: '🏁', label: 'End Shift', route: '/shift-handoff', permission: 'bottom.incidents' },
+    { emoji: '📝', label: 'Assign', route: '/tasks?action=new', permission: 'bottom.assign-task' },
   ],
   kitchen_staff: [
     { emoji: '📋', label: 'Tasks', route: '/dashboard', permission: 'bottom.tasks' },
