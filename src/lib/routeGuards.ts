@@ -62,6 +62,7 @@ const ROUTE_ROLE_MAP: [string, UserRole[]][] = [
   ['/admin/api-keys',        []],
   ['/admin/demo-generator',  []],
   ['/admin/demo-pipeline',   []],
+  ['/admin/demo-tours',      []],
   ['/admin/demos',           []],
 
   ['/admin/',                ['owner_operator', 'executive']],
