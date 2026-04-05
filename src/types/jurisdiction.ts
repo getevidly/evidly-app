@@ -128,3 +128,21 @@ export interface LocationScore {
   federalFireOverlay: AuthorityScore | null;
   // NO combined/blended/overall score — these are independent authorities
 }
+
+// CASINO-JIE-01: Tribal jurisdiction configuration
+// Stored in jurisdictions table for governmental_level = 'tribal'
+export interface TribalJurisdictionConfig {
+  tribal_entity_name: string;
+  tribal_food_authority: string;         // e.g. "TEHO"
+  food_code_basis: string;               // e.g. "FDA Food Code 2022 (advisory)"
+  sovereignty_type: 'federally_recognized' | 'state_recognized';
+  nigc_overlay: boolean;                 // National Indian Gaming Commission
+  nigc_config?: {
+    gaming_floor_food: boolean;
+    banquet_operations: boolean;
+    employee_dining: boolean;
+  };
+}
+
+// Governmental level of a jurisdiction (NOT to be confused with jurisdiction_type which is pillar type)
+export type GovernmentalLevel = 'county' | 'city' | 'tribal' | 'federal';

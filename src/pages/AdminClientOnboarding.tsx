@@ -1,9 +1,27 @@
-import { useState } from 'react';
-import { Building2, MapPin, Users, Mail, Send } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Building2, MapPin, Users, Mail, Send, ShieldAlert } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import AdminBreadcrumb from '../components/admin/AdminBreadcrumb';
 import { useDemo } from '../contexts/DemoContext';
+
+// 7 CA tribal jurisdictions seeded by CASINO-JIE-01 migration
+const TRIBAL_OPTIONS = [
+  { label: 'Table Mountain Rancheria', county: 'Fresno' },
+  { label: 'Tachi-Yokut Tribe', county: 'Kings' },
+  { label: 'Santa Ynez Band of Chumash', county: 'Santa Barbara' },
+  { label: 'Morongo Band of Mission Indians', county: 'Riverside' },
+  { label: 'Agua Caliente Band of Cahuilla Indians', county: 'Riverside' },
+  { label: 'Pechanga Band of Luiseno Indians', county: 'Riverside' },
+  { label: 'San Manuel Band of Mission Indians', county: 'San Bernardino' },
+];
+
+const DEFAULT_OUTLET_NAMES = [
+  'Main Buffet', 'Steakhouse', 'Cafe', 'Sports Bar', 'Noodle Bar',
+  'Food Court - Station 1', 'Food Court - Station 2', 'Banquet Kitchen',
+  'Employee Dining', 'Pool Bar & Grill', 'VIP Lounge', 'Bakery',
+  'Sushi Bar', 'Pizza Station', 'Grab & Go',
+];
 
 export function AdminClientOnboarding() {
   const navigate = useNavigate();
@@ -19,6 +37,20 @@ export function AdminClientOnboarding() {
   const [ownerEmail, setOwnerEmail] = useState('');
   const [ownerPhone, setOwnerPhone] = useState('');
   const [locationCount, setLocationCount] = useState(1);
+
+  // Tribal casino fields
+  const [selectedTribe, setSelectedTribe] = useState('');
+  const [outletCount, setOutletCount] = useState(5);
+
+  const isTribal = industryType === 'tribal_casino';
+
+  // When tribal casino selected, default subtype
+  useEffect(() => {
+    if (isTribal) {
+      setIndustrySubtype('tribal-casino');
+      setLocationCount(1); // 1 property, multiple outlets
+    }
+  }, [isTribal]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,18 +69,75 @@ export function AdminClientOnboarding() {
     }
 
     try {
+      // For tribal, look up jurisdiction IDs
+      let tribalJurisdictionId: string | null = null;
+      let countyJurisdictionId: string | null = null;
+
+      if (isTribal && selectedTribe) {
+        const tribe = TRIBAL_OPTIONS.find(t => t.label === selectedTribe);
+        if (tribe) {
+          // Find tribal TEHO jurisdiction
+          const { data: tribalJ } = await supabase
+            .from('jurisdictions')
+            .select('id')
+            .eq('tribal_entity_name', selectedTribe)
+            .eq('governmental_level', 'tribal')
+            .maybeSingle();
+
+          tribalJurisdictionId = tribalJ?.id || null;
+
+          // Find county jurisdiction for fire safety
+          const { data: countyJ } = await supabase
+            .from('jurisdictions')
+            .select('id')
+            .eq('county', tribe.county)
+            .eq('governmental_level', 'county')
+            .is('city', null)
+            .maybeSingle();
+
+          countyJurisdictionId = countyJ?.id || null;
+        }
+      }
+
+      const orgInsert: Record<string, any> = {
+        name: orgName,
+        industry_type: industryType,
+        industry_subtype: industrySubtype,
+        planned_location_count: isTribal ? outletCount : locationCount,
+      };
+
+      if (isTribal) {
+        orgInsert.is_tribal = true;
+        orgInsert.food_safety_mode = 'advisory';
+        orgInsert.food_safety_authority = 'Tribal Environmental Health Office (TEHO)';
+        orgInsert.food_safety_advisory_text =
+          `Food safety compliance for this property is governed by the ` +
+          `${selectedTribe || 'Tribal'} Environmental Health Office (TEHO) under tribal sovereignty. ` +
+          `EvidLY tracks fire safety and operational compliance in full.`;
+        if (tribalJurisdictionId) orgInsert.tribal_jurisdiction_id = tribalJurisdictionId;
+        if (countyJurisdictionId) orgInsert.county_jurisdiction_id = countyJurisdictionId;
+      }
+
       const { data: orgData, error: orgError } = await supabase
         .from('organizations')
-        .insert({
-          name: orgName,
-          industry_type: industryType,
-          industry_subtype: industrySubtype,
-          planned_location_count: locationCount,
-        })
+        .insert(orgInsert)
         .select()
         .single();
 
       if (orgError) throw orgError;
+
+      // Create outlet locations for tribal casinos
+      if (isTribal && outletCount > 0) {
+        const outlets = [];
+        for (let i = 0; i < outletCount; i++) {
+          outlets.push({
+            organization_id: orgData.id,
+            name: DEFAULT_OUTLET_NAMES[i] || `Outlet ${i + 1}`,
+            status: 'active',
+          });
+        }
+        await supabase.from('locations').insert(outlets);
+      }
 
       const { data: { user: currentUser } } = await supabase.auth.getUser();
 
@@ -60,7 +149,7 @@ export function AdminClientOnboarding() {
         options: {
           data: {
             full_name: ownerName,
-            user_type: 'restaurant',
+            user_type: isTribal ? 'tribal_casino' : 'restaurant',
           }
         }
       });
@@ -90,6 +179,8 @@ export function AdminClientOnboarding() {
         setOwnerEmail('');
         setOwnerPhone('');
         setLocationCount(1);
+        setSelectedTribe('');
+        setOutletCount(5);
         setSuccess('');
       }, 5000);
     } catch (err: any) {
@@ -141,7 +232,7 @@ export function AdminClientOnboarding() {
                   value={orgName}
                   onChange={(e) => setOrgName(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
-                  placeholder="Main Street Restaurant Group"
+                  placeholder={isTribal ? 'Table Mountain Casino Resort' : 'Main Street Restaurant Group'}
                 />
               </div>
 
@@ -161,45 +252,111 @@ export function AdminClientOnboarding() {
                     <option value="Healthcare">Healthcare</option>
                     <option value="Education">Education</option>
                     <option value="Catering">Catering</option>
+                    <option value="tribal_casino">Tribal Casino (Indian Gaming)</option>
                   </select>
                 </div>
 
+                {!isTribal && (
+                  <div>
+                    <label htmlFor="industrySubtype" className="block text-sm font-medium text-gray-700 mb-1">
+                      Subtype
+                    </label>
+                    <select
+                      id="industrySubtype"
+                      value={industrySubtype}
+                      onChange={(e) => setIndustrySubtype(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                    >
+                      <option value="restaurant-full">Full-Service</option>
+                      <option value="restaurant-quick">Quick-Service</option>
+                      <option value="hotel">Hotel</option>
+                      <option value="healthcare">Healthcare/Senior Living</option>
+                      <option value="education">K-12 Education</option>
+                      <option value="catering">Catering</option>
+                    </select>
+                  </div>
+                )}
+
+                {isTribal && (
+                  <div>
+                    <label htmlFor="tribeName" className="block text-sm font-medium text-gray-700 mb-1">
+                      Tribe Name
+                    </label>
+                    <select
+                      id="tribeName"
+                      required
+                      value={selectedTribe}
+                      onChange={(e) => setSelectedTribe(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                    >
+                      <option value="">Select tribe...</option>
+                      {TRIBAL_OPTIONS.map(t => (
+                        <option key={t.label} value={t.label}>
+                          {t.label} ({t.county} County)
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+              </div>
+
+              {isTribal ? (
                 <div>
-                  <label htmlFor="industrySubtype" className="block text-sm font-medium text-gray-700 mb-1">
-                    Subtype
+                  <label htmlFor="outletCount" className="block text-sm font-medium text-gray-700 mb-1">
+                    <MapPin className="inline w-4 h-4 mr-1" />
+                    Food Outlets per Property
                   </label>
-                  <select
-                    id="industrySubtype"
-                    value={industrySubtype}
-                    onChange={(e) => setIndustrySubtype(e.target.value)}
+                  <input
+                    id="outletCount"
+                    type="number"
+                    min="1"
+                    max="15"
+                    required
+                    value={outletCount}
+                    onChange={(e) => setOutletCount(parseInt(e.target.value) || 5)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
-                  >
-                    <option value="restaurant-full">Full-Service</option>
-                    <option value="restaurant-quick">Quick-Service</option>
-                    <option value="hotel">Hotel</option>
-                    <option value="healthcare">Healthcare/Senior Living</option>
-                    <option value="education">K-12 Education</option>
-                    <option value="catering">Catering</option>
-                  </select>
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Typical casino properties have 5-15 food outlets (buffet, steakhouse, cafe, etc.)
+                  </p>
+                </div>
+              ) : (
+                <div>
+                  <label htmlFor="locationCount" className="block text-sm font-medium text-gray-700 mb-1">
+                    <MapPin className="inline w-4 h-4 mr-1" />
+                    Number of Locations
+                  </label>
+                  <input
+                    id="locationCount"
+                    type="number"
+                    min="1"
+                    required
+                    value={locationCount}
+                    onChange={(e) => setLocationCount(parseInt(e.target.value))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Tribal advisory mode info */}
+            {isTribal && (
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                <div className="flex items-start gap-2">
+                  <ShieldAlert className="w-5 h-5 text-amber-700 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-semibold text-amber-800 mb-1">
+                      Tribal Sovereignty — Advisory Food Safety Mode
+                    </p>
+                    <p className="text-sm text-amber-700">
+                      Food safety compliance is governed by the Tribal Environmental Health Office (TEHO)
+                      under tribal sovereignty. EvidLY will track fire safety and operational compliance in full.
+                      Food safety intelligence will be set to advisory mode.
+                    </p>
+                  </div>
                 </div>
               </div>
-
-              <div>
-                <label htmlFor="locationCount" className="block text-sm font-medium text-gray-700 mb-1">
-                  <MapPin className="inline w-4 h-4 mr-1" />
-                  Number of Locations
-                </label>
-                <input
-                  id="locationCount"
-                  type="number"
-                  min="1"
-                  required
-                  value={locationCount}
-                  onChange={(e) => setLocationCount(parseInt(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
-                />
-              </div>
-            </div>
+            )}
 
             <div className="bg-gray-50 rounded-lg p-6 space-y-4">
               <h3 className="font-semibold text-gray-900 flex items-center gap-2">

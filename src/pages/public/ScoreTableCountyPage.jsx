@@ -300,6 +300,17 @@ const COUNTY_DATA={
 const DEFAULT_COUNTY="merced";
 const FILTA_COUNTIES=["merced","fresno","stanislaus","san-joaquin","mariposa","madera"];
 
+// CASINO-JIE-01: Tribal jurisdiction slugs — show sovereignty message, not scoring page
+const TRIBAL_JURISDICTIONS={
+  "table-mountain-rancheria":{name:"Table Mountain Rancheria",county:"Fresno",teho:"Table Mountain Rancheria TEHO"},
+  "tachi-yokut-tribe":{name:"Tachi-Yokut Tribe",county:"Kings",teho:"Tachi-Yokut Tribe TEHO"},
+  "santa-ynez-chumash":{name:"Santa Ynez Band of Chumash",county:"Santa Barbara",teho:"Santa Ynez Band of Chumash TEHO"},
+  "morongo-band":{name:"Morongo Band of Mission Indians",county:"Riverside",teho:"Morongo Band of Mission Indians TEHO"},
+  "agua-caliente":{name:"Agua Caliente Band of Cahuilla Indians",county:"Riverside",teho:"Agua Caliente Band of Cahuilla Indians TEHO"},
+  "pechanga-band":{name:"Pechanga Band of Luiseno Indians",county:"Riverside",teho:"Pechanga Band of Luiseno Indians TEHO"},
+  "san-manuel-band":{name:"San Manuel Band of Mission Indians",county:"San Bernardino",teho:"San Manuel Band of Mission Indians TEHO"},
+};
+
 // ═══ COMPETITOR BLOCKING ═══
 var BD=["jolt.com","joltup.com","safetyculture.com","safetyculture.io","fooddocs.com","fooddocs.io","zenput.com","crunchtime.com","bluecart.com","marketman.com","restaurant365.com","toast.com","toasttab.com"];
 var BC=["jolt","safety culture","safetyculture","fooddocs","zenput","crunchtime","bluecart","marketman","toast pos","toasttab"];
@@ -339,6 +350,37 @@ function getGradeColor(c,result){
 export default function ScoreTableCountyPage({county: countyProp, cityName: _cn, citySlug: _cs}){
   var { slug } = useParams();
   var countyKey = countyProp || (slug ? slug.replace(/-county$/, "") : DEFAULT_COUNTY);
+
+  // CASINO-JIE-01: Tribal sovereignty check — no scoring page for tribal jurisdictions
+  var tribalSlug = slug ? slug.replace(/-county$/, "") : null;
+  var tribalJ = tribalSlug ? TRIBAL_JURISDICTIONS[tribalSlug] : null;
+  if (tribalJ) {
+    return (
+      <div style={{fontFamily:ff,color:E.g8,lineHeight:1.6,background:E.cream,minHeight:"100vh"}}>
+        <div style={{maxWidth:720,margin:"0 auto",padding:"80px 24px",textAlign:"center"}}>
+          <div style={{width:64,height:64,borderRadius:16,background:E.navy,display:"inline-flex",alignItems:"center",justifyContent:"center",marginBottom:24}}>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke={E.gold} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h1 style={{fontSize:"1.75rem",fontWeight:800,color:E.navy,marginBottom:12}}>Tribal Sovereign Jurisdiction</h1>
+          <p style={{fontSize:"1.05rem",color:E.g5,maxWidth:560,margin:"0 auto 24px"}}>
+            Food safety for <strong>{tribalJ.name}</strong> properties is governed under tribal sovereignty
+            by the <strong>{tribalJ.teho}</strong>. Tribal food safety is not publicly graded by county health departments.
+          </p>
+          <div style={{background:E.w,border:"1px solid "+E.g2,borderRadius:12,padding:24,textAlign:"left",maxWidth:480,margin:"0 auto 32px"}}>
+            <p style={{fontSize:"0.9rem",fontWeight:700,color:E.navy,marginBottom:8}}>Fire Safety — Fully Operational</p>
+            <p style={{fontSize:"0.85rem",color:E.g5,margin:0}}>
+              Fire safety compliance for properties in {tribalJ.county} County is enforced by the county Authority Having Jurisdiction (AHJ).
+              NFPA 96 hood cleaning, fire suppression, and fire alarm inspections follow county fire code.
+            </p>
+          </div>
+          <a href="/scoretable" style={{display:"inline-block",padding:"12px 28px",borderRadius:8,background:E.navy,color:E.w,fontWeight:700,fontSize:"0.9rem",textDecoration:"none"}}>
+            View California Counties
+          </a>
+        </div>
+      </div>
+    );
+  }
+
   var c=COUNTY_DATA[countyKey]||COUNTY_DATA[DEFAULT_COUNTY];
   var isFilta=FILTA_COUNTIES.includes(countyKey);
 
