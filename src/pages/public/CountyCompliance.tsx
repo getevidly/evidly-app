@@ -54,6 +54,12 @@ const GRADING_TYPE_LABELS: Record<string, string> = {
   pass_fail: 'Pass / Fail',
   report_only: 'Report Only (no public grade)',
   score_only: 'Score Only',
+  letter_grade_abc: 'Letter Grade (A/B/C)',
+  green_yellow_red: 'Color Placard (Green/Yellow/Red)',
+  numeric_score_no_letter: 'Numeric Score',
+  point_accumulation_tiered: 'Point Accumulation (Tiered)',
+  green_yellow_red_numeric: 'Color Placard with Numeric Score',
+  inspection_report: 'Inspection Report',
 };
 
 const SCORING_TYPE_LABELS: Record<string, string> = {
@@ -65,6 +71,12 @@ const SCORING_TYPE_LABELS: Record<string, string> = {
   violation_point_accumulation: 'Violation Point Accumulation',
   pass_fail: 'Pass / Fail',
   report_only: 'Report Only',
+  numeric_score: 'Numeric Score',
+  violation_report: 'Violation Report',
+  color_placard: 'Color Placard',
+  color_placard_and_numeric: 'Color Placard & Numeric Score',
+  inspection_report: 'Inspection Report',
+  point_accumulation: 'Point Accumulation',
 };
 
 const FIRE_AHJ_TYPE_LABELS: Record<string, string> = {
