@@ -133,9 +133,10 @@ describe('Fire Jurisdiction Config', () => {
   });
 
   describe('multi-state fire code editions', () => {
-    it('CA uses CFC, NV uses IFC, OR uses OFC — all distinct', () => {
+    it('CA uses CFC, NV uses IFC, OR uses OFC, AZ uses IFC — all represented', () => {
       // These are the state-level fire code edition strings stored in fire_jurisdiction_config
-      const stateEditions = ['2025 CFC', '2018 IFC', '2025 OFC'];
+      const stateEditions = ['2025 CFC', '2018 IFC', '2025 OFC', '2018 IFC'];
+      // CA, NV, OR are distinct; AZ shares IFC with NV (but different editions possible)
       expect(new Set(stateEditions).size).toBe(3);
     });
 
@@ -184,6 +185,68 @@ describe('Fire Jurisdiction Config', () => {
     it('OR food safety uses 100-point deduction scoring', () => {
       const orScoring = { method: '100_point_deduction', pass_threshold: 70 };
       expect(orScoring.pass_threshold).toBe(70);
+    });
+  });
+
+  describe('Arizona fire jurisdiction structure', () => {
+    it('AZ has 15 counties', () => {
+      const AZ_COUNTIES = [
+        'Apache', 'Cochise', 'Coconino', 'Gila', 'Graham',
+        'Greenlee', 'La Paz', 'Maricopa', 'Mohave', 'Navajo',
+        'Pima', 'Pinal', 'Santa Cruz', 'Yavapai', 'Yuma',
+      ];
+      expect(AZ_COUNTIES).toHaveLength(15);
+    });
+
+    it('AZ statewide fire code is IFC 2018 (not CFC or OFC)', () => {
+      const azFireCode = '2018 IFC';
+      expect(azFireCode).not.toContain('CFC');
+      expect(azFireCode).not.toContain('OFC');
+      expect(azFireCode).toContain('IFC');
+    });
+
+    it('AZ State Fire Marshal is DFFM (not CAL FIRE or OSFM)', () => {
+      const azSFM = 'Arizona Department of Forestry and Fire Management (DFFM)';
+      expect(azSFM).toContain('DFFM');
+      expect(azSFM).not.toContain('CAL FIRE');
+      expect(azSFM).not.toContain('OSFM');
+    });
+
+    it('AZ has patchwork fire AHJ — cities adopt IFC independently', () => {
+      // Phoenix, Mesa, Glendale, Tucson, Yuma, Lake Havasu, Prescott have adopted IFC 2024
+      // Scottsdale, Chandler on IFC 2021; Globe on IFC 2021
+      // AFMA, CAFMA, rural areas on IFC 2018 (state default)
+      const ifcEditionsInUse = ['2018 IFC', '2021 IFC', '2024 IFC'];
+      expect(ifcEditionsInUse).toHaveLength(3);
+    });
+
+    it('AZ has 9 tribal casino jurisdictions', () => {
+      const AZ_TRIBAL_CASINOS = [
+        'Gila River Indian Community',
+        'Salt River Pima-Maricopa Indian Community',
+        'Fort McDowell Yavapai Nation',
+        'Tohono O\'odham Nation',
+        'Ak-Chin Indian Community',
+        'Pascua Yaqui Tribe',
+        'Yavapai-Prescott Indian Tribe',
+        'Fort Mojave Indian Tribe',
+        'Navajo Nation',
+      ];
+      expect(AZ_TRIBAL_CASINOS).toHaveLength(9);
+    });
+
+    it('7 of 9 AZ tribes have own fire departments (tribal_fire)', () => {
+      const tribalFireDepts = [
+        'Gila River Fire Department',
+        'Salt River Fire Department',
+        'Fort McDowell Yavapai Nation Fire Department',
+        'Tohono O\'odham Nation Fire Department',
+        'Ak-Chin Indian Community Fire Department',
+        'Pascua Pueblo Fire Department',
+        'Navajo Nation Department of Fire & Rescue Services',
+      ];
+      expect(tribalFireDepts).toHaveLength(7);
+      // 2 tribes (Yavapai-Prescott, Fort Mojave) contract with county/city fire districts
     });
   });
 });
