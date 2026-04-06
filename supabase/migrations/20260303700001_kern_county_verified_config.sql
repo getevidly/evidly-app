@@ -64,7 +64,7 @@ UPDATE jurisdictions SET
     "grading_note": "Kern raised closure threshold to 75 (not 70). Borrowed/customized from LA + SBC grading systems. Industry advisory group involved in 2006 redesign.",
     "public_portal": "https://www.kernpublichealth.com/permitting-compliance/food"
   }'::jsonb,
-  scoring_methodology = 'Letter grade A/B/C. Start 100, deduct: Major=5pts, Minor/Risk=3pts, Non-critical=1pt. A=90-100 (pass), B=80-89 (warning), C=75-79 (fail), <75=closure/red. KERN SPECIFIC: Closure threshold 75 not 70. Risk-based inspections 1-3/yr. Grade posted at facility.',
+  scoring_methodology = 'Letter grade A / B / C. Start 100, deduct: Major=5pts, Minor/Risk=3pts, Non-critical=1pt. A=90-100 (pass), B=80-89 (warning), C=75-79 (fail), <75=closure/red. KERN SPECIFIC: Closure threshold 75 not 70. Risk-based inspections 1-3/yr. Grade posted at facility.',
 
   -- Verified thresholds (KERN SPECIFIC: closure at 75, not 70)
   pass_threshold = 90,
@@ -87,7 +87,7 @@ UPDATE jurisdictions SET
   population_rank = 14,
 
   -- Updated notes with verification info
-  notes = 'STANDARDIZED March 2026. Letter grade A/B/C + numeric score. HIGH transparency. ~3,500 facilities. Bakersfield area. Closure threshold 75 (not 70 — Kern County Code Ch 8.58). Safe Diner App. Risk-based inspections 1-3/yr. Rescore/contest available for B and C grades. Local authority: Kern County Code Ch 8.58, Bakersfield Municipal Code 8.04.030. Contact: (661) 862-8700, eh@co.kern.ca.us.'
+  notes = 'STANDARDIZED March 2026. Letter grade A / B / C + numeric score. HIGH transparency. ~3,500 facilities. Bakersfield area. Closure threshold 75 (not 70 — Kern County Code Ch 8.58). Safe Diner App. Risk-based inspections 1-3/yr. Rescore/contest available for B and C grades. Local authority: Kern County Code Ch 8.58, Bakersfield Municipal Code 8.04.030. Contact: (661) 862-8700, eh@co.kern.ca.us.'
 WHERE county = 'Kern'
   AND city IS NULL
   AND state = 'CA';

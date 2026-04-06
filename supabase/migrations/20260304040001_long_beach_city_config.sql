@@ -10,7 +10,7 @@
 -- KEY FACTS:
 --   INDEPENDENT CITY — LA County EHD has NO jurisdiction
 --   LA County permits NOT valid within Long Beach city limits
---   LETTER GRADE A/B/C + Score Card (<70)
+--   LETTER GRADE A / B / C + Score Card (<70)
 --   A=90-100 | B=80-89 | C=70-79 | Score Card=<70
 --   ~3,000–4,000 facilities
 --   Transparency: HIGH
@@ -51,7 +51,7 @@ UPDATE jurisdictions SET
     "food_safety_manager": { "required": true, "min_per_facility": 1, "exam_type": "ANSI_accredited" }
   }'::jsonb,
 
-  scoring_methodology = 'Letter Grade A/B/C + Score Card below 70. INDEPENDENT CITY — separate from LA County EHD. A=90-100, B=80-89, C=70-79, Score Card=<70 (numeric score posted). Risk-based frequency: high=2x/yr, medium=1x/yr, low=18mo.',
+  scoring_methodology = 'Letter Grade A / B / C + Score Card below 70. INDEPENDENT CITY — separate from LA County EHD. A=90-100, B=80-89, C=70-79, Score Card=<70 (numeric score posted). Risk-based frequency: high=2x/yr, medium=1x/yr, low=18mo.',
 
   pass_threshold = 90,
   warning_threshold = 80,
@@ -68,6 +68,6 @@ UPDATE jurisdictions SET
   facility_count = 3500,
   population_rank = 7,
 
-  notes = 'STANDARDIZED March 2026. LETTER GRADE A/B/C + Score Card. HIGH transparency. INDEPENDENT CITY — NOT under LA County EHD. Port of Long Beach, CSULB, Convention Center. Score Card = numeric score posted when <70.'
+  notes = 'STANDARDIZED March 2026. LETTER GRADE A / B / C + Score Card. HIGH transparency. INDEPENDENT CITY — NOT under LA County EHD. Port of Long Beach, CSULB, Convention Center. Score Card = numeric score posted when <70.'
 
 WHERE county = 'Los Angeles' AND city = 'Long Beach' AND state = 'CA';

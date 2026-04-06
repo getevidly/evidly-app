@@ -63,7 +63,7 @@ function getGapActionLabel(category: string): string {
 
 function getInspectionSystemBadge(type: InspectionSystem['type']): { label: string; color: string } {
   switch (type) {
-    case 'letter_grade': return { label: 'Letter Grade (A/B/C)', color: 'bg-blue-100 text-blue-700 border-blue-200' };
+    case 'letter_grade': return { label: 'Letter Grade (A / B / C)', color: 'bg-blue-100 text-blue-700 border-blue-200' };
     case 'color_placard': return { label: 'Color Placard', color: 'bg-green-100 text-green-700 border-green-200' };
     case 'pass_fail': return { label: 'Pass/Fail', color: 'bg-amber-100 text-amber-700 border-amber-200' };
     case 'standard': return { label: 'Standard Inspection', color: 'bg-gray-100 text-gray-700 border-gray-200' };

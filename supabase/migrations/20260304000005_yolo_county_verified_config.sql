@@ -10,7 +10,7 @@
 -- Regulatory:    CalCode
 -- Scoring:       Green/Yellow/Red placard (launched July 1, 2017)
 -- Grading:       green_yellow_red (no numeric score)
--- Transparency:  HIGH — GYR placard posted + QR code links to online database
+-- Transparency:  HIGH — Green / Yellow / Red placard posted + QR code links to online database
 -- Facilities:    ~700 fixed food facilities
 -- Fire AHJ:      Yolo County OES / city fire departments
 --
@@ -38,7 +38,7 @@
 --   3. Winters Express, July 2017 — GYR launch coverage
 --   4. West Sacramento News-Ledger, July 2024 — Food Safety Forum article
 --
--- CONFIDENCE: 95/100 — multiple independent sources confirm GYR placard, QR code,
+-- CONFIDENCE: 95/100 — multiple independent sources confirm Green / Yellow / Red placard, QR code,
 --   July 2017 launch date, and HIGH transparency. Exact facility count approximated.
 -- ════════════════════════════════════════════════════════════════════════
 
@@ -59,8 +59,8 @@ UPDATE jurisdictions SET
   fire_ahj_name          = 'Yolo County Office of Emergency Services / City fire departments (Davis, Woodland, West Sacramento)',
   fire_ahj_type          = 'mixed_county_city',
   has_local_amendments   = false,
-  scoring_methodology    = 'GYR placard based on major violation presence. Green=PASS (no more than 1 major violation). Yellow=CONDITIONAL PASS (1+ major violations, re-inspection within 3 business days). Red=CLOSED (imminent health hazard). QR code on placard links to online database. Launched July 1, 2017. NO numeric score. ~700 facilities.',
-  notes                  = 'STANDARDIZED March 2026. GYR placard launched July 1, 2017. Modeled after Sacramento County GYR system. QR code on placard. HIGH transparency. ~700 fixed facilities. Single EHD office in Woodland. CFOs and temp event booths exempt from placarding.',
+  scoring_methodology    = 'Green / Yellow / Red placard based on major violation presence. Green=PASS (no more than 1 major violation). Yellow=CONDITIONAL PASS (1+ major violations, re-inspection within 3 business days). Red=CLOSED (imminent health hazard). QR code on placard links to online database. Launched July 1, 2017. NO numeric score. ~700 facilities.',
+  notes                  = 'STANDARDIZED March 2026. Green / Yellow / Red placard launched July 1, 2017. Modeled after Sacramento County Green / Yellow / Red system. QR code on placard. HIGH transparency. ~700 fixed facilities. Single EHD office in Woodland. CFOs and temp event booths exempt from placarding.',
   data_source_url        = 'https://www.yolocounty.gov/government/general-government-departments/community-services/environmental-health-division',
   data_source_type       = 'html_searchable',
   data_source_tier       = 1,

@@ -44,7 +44,7 @@ UPDATE jurisdictions SET
     "placard_required": "all_retail_food",
     "report_online": true,
     "transparency_level": "high",
-    "transparency_note": "GYR placard posted at facility + inspection reports posted online. All retail food establishments required to post placard.",
+    "transparency_note": "Green / Yellow / Red placard posted at facility + inspection reports posted online. All retail food establishments required to post placard.",
     "grading_note": "GREEN/YELLOW/RED placard. Green=≤1 major corrected. Yellow=2+ majors corrected (reinspection typical). Red=imminent hazard uncorrectable. Note: adjacent Yuba County uses report-only system (no placard).",
     "violation_types": {
       "major": "Occurrences most likely to result in foodborne illness",
@@ -54,7 +54,7 @@ UPDATE jurisdictions SET
   }'::jsonb,
   scoring_methodology = 'GREEN/YELLOW/RED color-coded placard system. All retail food establishments required to post. GREEN = ≤1 major violation corrected during inspection. YELLOW = 2+ major violations corrected (reinspection typical). RED = imminent health hazard, cannot be corrected during inspection. Inspection reports also posted online. CalCode basis. Risk-based frequency.',
 
-  -- No numeric thresholds (GYR placard system)
+  -- No numeric thresholds (Green / Yellow / Red placard system)
   pass_threshold = NULL,
   warning_threshold = NULL,
   critical_threshold = NULL,

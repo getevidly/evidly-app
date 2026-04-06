@@ -31,7 +31,7 @@ UPDATE jurisdictions SET
   fire_ahj_type = 'mixed_county_city',
   has_local_amendments = false,
   scoring_methodology = 'Pass/fail inspection placard. NOT Green/Yellow/Red color-coded. Placard = dated pass card with inspector name, EHD website, EHD phone. Separate closure notice if facility fails. No numeric score or letter grade. Online results via VC Safe Diner, updated daily. Annual inspections minimum. ~5,000 facilities.',
-  notes = 'STANDARDIZED March 2026. Pass/fail placard — not GYR. MEDIUM-HIGH transparency. ~5,000 facilities. App: VC Safe Diner.'
+  notes = 'STANDARDIZED March 2026. Pass/fail placard — not Green / Yellow / Red. MEDIUM-HIGH transparency. ~5,000 facilities. App: VC Safe Diner.'
 WHERE county = 'Ventura' AND city IS NULL;
 
 -- Verify

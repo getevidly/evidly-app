@@ -179,7 +179,7 @@ INSERT INTO jurisdictions (
   'rating', 'letter_grade',
   '{
     "type": "letter_grade_voluntary",
-    "system": "Voluntary A/B/C/D letter grades",
+    "system": "Voluntary A / B / C / D letter grades",
     "levels": ["A", "B", "C", "D", "NP"],
     "delegation": "Own county authority (Board of Supervisors)",
     "fda_code_version": "2017",

@@ -38,7 +38,7 @@ const SCORING_LABELS: Record<string, string> = {
 };
 
 const GRADING_LABELS: Record<string, string> = {
-  letter_grade: 'Letter Grade (A/B/C)',
+  letter_grade: 'Letter Grade (A / B / C)',
   letter_grade_strict: 'Letter Grade - Strict (Only A passes)',
   color_placard: 'Color Placard (Green/Yellow/Red)',
   score_100: 'Numeric Score (0-100)',

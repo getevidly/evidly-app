@@ -365,7 +365,7 @@ export const ADDITIONAL_COUNTIES: JurisdictionProfile[] = [
     serviceFrequencies: [],
     inspectionSystem: {
       type: 'green_yellow_red_numeric',
-      details: 'DUAL: GYR placard + numeric score (0-100), both published. CRITICAL: SF uses High/Moderate/Low RISK TIERS — not CalCode Major/Minor. Agency is SFDPH (not a county EHD). Consolidated city-county. GREEN=90-100, YELLOW=70-89, RED=<70. SCORES portal for public access.',
+      details: 'DUAL: Green / Yellow / Red placard + numeric score (0-100), both published. CRITICAL: SF uses High/Moderate/Low RISK TIERS — not CalCode Major/Minor. Agency is SFDPH (not a county EHD). Consolidated city-county. GREEN=90-100, YELLOW=70-89, RED=<70. SCORES portal for public access.',
       grades: [
         { label: 'GREEN (PASS)', range: '90-100 — low violation burden' },
         { label: 'YELLOW (CONDITIONAL PASS)', range: '70-89 — violations corrected' },
@@ -388,7 +388,7 @@ export const ADDITIONAL_COUNTIES: JurisdictionProfile[] = [
     },
     specialRequirements: [
       'CONSOLIDATED city-county — SFDPH (not a standard county EHD)',
-      'GYR placard + numeric score BOTH published (HIGH transparency)',
+      'Green / Yellow / Red placard + numeric score BOTH published (HIGH transparency)',
       'Risk tiers: High / Moderate / Low (NOT Major/Minor)',
       'SF Health Code Article 22 supplements CalCode',
       'SCORES portal: public online access to inspection results',
@@ -411,7 +411,7 @@ export const ADDITIONAL_COUNTIES: JurisdictionProfile[] = [
     serviceFrequencies: [],
     inspectionSystem: {
       type: 'green_yellow_red_numeric',
-      details: 'DUAL: GYR placard + numeric score (0-100), both published. GREEN=90-100, YELLOW=70-89, RED=<70. Score: 100-pt deductive (Major=8pts, Moderate=3pts, Minor=2pts). Transparency: HIGH. SCCDineOut app + eservices.sccgov.org/facilityinspection. Program launched Oct 2014.',
+      details: 'DUAL: Green / Yellow / Red placard + numeric score (0-100), both published. GREEN=90-100, YELLOW=70-89, RED=<70. Score: 100-pt deductive (Major=8pts, Moderate=3pts, Minor=2pts). Transparency: HIGH. SCCDineOut app + eservices.sccgov.org/facilityinspection. Program launched Oct 2014.',
       grades: [
         { label: 'GREEN (PASS)', range: '90-100 — low violation burden' },
         { label: 'YELLOW (CONDITIONAL PASS)', range: '70-89 — violations corrected. Reinspection within 3 days.' },
@@ -432,7 +432,7 @@ export const ADDITIONAL_COUNTIES: JurisdictionProfile[] = [
       'Numeric score (100-pt deductive) published online — Major=8, Moderate=3, Minor=2',
       'SCCDineOut app and web portal for public access to inspection data',
       'Yellow placard triggers reinspection within 3 business days',
-      'Program launched October 1, 2014 (modeled on Sacramento GYR system)',
+      'Program launched October 1, 2014 (modeled on Sacramento Green / Yellow / Red system)',
     ],
   },
 

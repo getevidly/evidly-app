@@ -184,10 +184,10 @@ const COUNTY_DATA={
       {q:"What are the most common violations in LA County restaurant inspections?",a:"Temperature control failures, employee hygiene violations, vermin or pest evidence, improper food storage, equipment sanitation deficiencies, and handwashing station compliance are the most frequently cited violations across LA County's 55,000+ facilities."},
     ],
     metaTitle:"Los Angeles County Restaurant Inspection Grading | ScoreTable by EvidLY",
-    metaDesc:"LA County's 100-point grade card system explained. A/B/C grades must be posted publicly. Below 70 = closure. Full methodology and what 280 inspectors look for.",
+    metaDesc:"LA County's 100-point grade card system explained. A / B / C grades must be posted publicly. Below 70 = closure. Full methodology and what 280 inspectors look for.",
     keywords:"Los Angeles County restaurant inspection grade, LA County health inspection A B C score, how LA County grades restaurants, LACDPH food inspection methodology",
     h1:"How Los Angeles County Grades Restaurant Inspections",
-    heroSub:"100 points. A/B/C grade cards required in every window. 280 inspectors. 55,000 facilities. Here's exactly how LA County's inspection system works.",
+    heroSub:"100 points. A / B / C grade cards required in every window. 280 inspectors. 55,000 facilities. Here's exactly how LA County's inspection system works.",
     filta:false,
   },
   riverside:{

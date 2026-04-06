@@ -55,7 +55,7 @@ UPDATE jurisdictions SET
   hood_cleaning_default = 'semi_annual',
   confidence_score = 100,
   last_verified = '2026-03-12'::timestamptz,
-  notes = 'VERIFIED (2026-03-12). Confidence: 100/100. Letter grade A/B/C for 70%+, numerical cards below 70%. CRFC basis. Hood suppression: semi-annual per NFPA 96, UL-300 required.'
+  notes = 'VERIFIED (2026-03-12). Confidence: 100/100. Letter grade A / B / C for 70%+, numerical cards below 70%. CRFC basis. Hood suppression: semi-annual per NFPA 96, UL-300 required.'
 WHERE county = 'Los Angeles' AND city IS NULL AND state = 'CA';
 
 -- 2. SAN DIEGO COUNTY
@@ -81,7 +81,7 @@ UPDATE jurisdictions SET
   hood_cleaning_default = 'semi_annual',
   confidence_score = 90,
   last_verified = '2026-03-12'::timestamptz,
-  notes = 'VERIFIED (2026-03-12). Confidence: 90/100. Letter grade A/B/C. 100-pt deductive. SDFD serves City of SD; county fire authority serves unincorporated areas.'
+  notes = 'VERIFIED (2026-03-12). Confidence: 90/100. Letter grade A / B / C. 100-pt deductive. SDFD serves City of SD; county fire authority serves unincorporated areas.'
 WHERE county = 'San Diego' AND city IS NULL AND state = 'CA';
 
 -- 3. FRESNO COUNTY
@@ -285,7 +285,7 @@ UPDATE jurisdictions SET
   hood_cleaning_default = 'semi_annual',
   confidence_score = 85,
   last_verified = '2026-03-12'::timestamptz,
-  notes = 'VERIFIED (2026-03-12). Confidence: 85/100. Letter grade A/B/C, fail below 70. 100-pt deductive system. City FDs serve incorporated areas.'
+  notes = 'VERIFIED (2026-03-12). Confidence: 85/100. Letter grade A / B / C, fail below 70. 100-pt deductive system. City FDs serve incorporated areas.'
 WHERE county = 'San Bernardino' AND city IS NULL AND state = 'CA';
 
 -- ── Step 3: Mark migrations as applied in schema_migrations ──────────────

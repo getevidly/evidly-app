@@ -88,7 +88,7 @@ UPDATE jurisdictions SET
   population_rank = 2,
 
   -- Updated notes with verification info
-  notes = 'VERIFIED (2026-03-03). Confidence: HIGH (90/100). Second-largest CA jurisdiction. Letter grades A/B/C — NO Score Card tier (C covers 0-79). NO modifier deductions documented (no Cat#53, no +7 closure). 99%+ A-grade rate. Single authority model (simpler than LA County). Re-score: once/calendar year for B, mandatory 30-day correction for C. MEHKO exempt. Socrata open data API + mobile app (SD Food Info, iOS+Android). 95K+ inspection records. ~32K inspections/year. 18 cities + unincorporated areas. Contact: (858) 505-6900, dehinbox@sdcounty.ca.gov.'
+  notes = 'VERIFIED (2026-03-03). Confidence: HIGH (90/100). Second-largest CA jurisdiction. Letter grades A / B / C — NO Score Card tier (C covers 0-79). NO modifier deductions documented (no Cat#53, no +7 closure). 99%+ A-grade rate. Single authority model (simpler than LA County). Re-score: once/calendar year for B, mandatory 30-day correction for C. MEHKO exempt. Socrata open data API + mobile app (SD Food Info, iOS+Android). 95K+ inspection records. ~32K inspections/year. 18 cities + unincorporated areas. Contact: (858) 505-6900, dehinbox@sdcounty.ca.gov.'
 WHERE county = 'San Diego'
   AND city IS NULL
   AND state = 'CA';
