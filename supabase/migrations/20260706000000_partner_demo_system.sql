@@ -135,7 +135,7 @@ CREATE INDEX IF NOT EXISTS idx_temp_logs_partner_source
   ON temp_logs(organization_id) WHERE source = 'partner_demo';
 
 CREATE INDEX IF NOT EXISTS idx_checklist_completions_partner_source
-  ON checklist_completions(organization_id) WHERE source = 'partner_demo';
+  ON checklist_completions(location_id) WHERE source = 'partner_demo';
 
 CREATE INDEX IF NOT EXISTS idx_documents_partner_source
   ON documents(organization_id) WHERE source = 'partner_demo';
