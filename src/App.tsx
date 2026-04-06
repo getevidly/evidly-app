@@ -233,6 +233,10 @@ const DemoGenerator = lazy(() => import('./pages/admin/DemoGenerator'));
 const DemoLauncher = lazy(() => import('./pages/admin/DemoLauncher'));
 const DemoPipeline = lazy(() => import('./pages/admin/DemoPipeline'));
 const DemoTours = lazy(() => import('./pages/admin/DemoTours'));
+const PartnerDemos = lazy(() => import('./pages/admin/PartnerDemos'));
+const VendorDemoDashboard = lazy(() => import('./pages/partner/VendorDemoDashboard'));
+const AssociationDemoDashboard = lazy(() => import('./pages/partner/AssociationDemoDashboard'));
+const CarrierDemoDashboard = lazy(() => import('./pages/partner/CarrierDemoDashboard'));
 const GtmDashboard = lazy(() => import('./pages/admin/GtmDashboard'));
 const DemoDashboard = lazy(() => import('./pages/admin/DemoDashboard'));
 const DemoRequest = lazy(() => import('./pages/DemoRequest'));
@@ -779,6 +783,10 @@ function AppRoutes() {
           <Route path="/admin/demos" element={<Navigate to="/admin/demo-pipeline" replace />} />
           <Route path="/admin/demo-pipeline" element={<SalesGuard><DemoPipeline /></SalesGuard>} />
           <Route path="/admin/demo-tours" element={<SalesGuard><DemoTours /></SalesGuard>} />
+          <Route path="/admin/partner-demos" element={<SalesGuard><PartnerDemos /></SalesGuard>} />
+          <Route path="/partner/vendor-demo" element={<SalesGuard><VendorDemoDashboard /></SalesGuard>} />
+          <Route path="/partner/association-demo" element={<SalesGuard><AssociationDemoDashboard /></SalesGuard>} />
+          <Route path="/partner/carrier-demo" element={<SalesGuard><CarrierDemoDashboard /></SalesGuard>} />
           <Route path="/admin/kitchen-checkup" element={<SalesGuard><AssessmentLeads /></SalesGuard>} />
           <Route path="/admin/scoretable" element={<SalesGuard><AdminScoreTable /></SalesGuard>} />
           <Route path="/admin/testimonials" element={<SalesGuard><AdminTestimonials /></SalesGuard>} />

@@ -521,6 +521,10 @@ const I: Record<string, NavItem> = {
     id: 'demo-launcher', label: 'Demo Launcher', path: '/admin/demo-launcher', icon: '🚀',
     roles: [], description: 'Pre-demo control panel: configure prospect, launch emotional trigger flows, fire demo signals.',
   },
+  partnerDemos: {
+    id: 'partner-demos', label: 'Partner Demos', path: '/admin/partner-demos', icon: '🤝',
+    roles: [], description: 'Create and manage partner demo environments for vendor, association, carrier, and integration partners.',
+  },
 
   // ── Growth ──
   adminTestimonials: {
@@ -594,7 +598,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('administration', 'Administration', '⚙️',
         'Administration', 'Equipment, Internet of Things sensors, integrations, locations, settings, team, vendors, and role permissions.',
-        [I.equipment, I.fleet, I.insurance, I.bonuses, I.performanceMetrics, I.myAvailability, I.teamAvailability, I.availabilityApprovals, I.clockReminders, I.timecardAlterations, I.integrations, I.iotSensors, I.connectSensors, I.importData, I.locations, I.settings, I.rolesPermissions, I.team, I.timecards, I.employees, I.trainingRecords, I.trainingCatalog, I.vendors, I.vendorDocReview, I.emergencyInfo, I.demoLauncher, I.adminTestimonials],
+        [I.equipment, I.fleet, I.insurance, I.bonuses, I.performanceMetrics, I.myAvailability, I.teamAvailability, I.availabilityApprovals, I.clockReminders, I.timecardAlterations, I.integrations, I.iotSensors, I.connectSensors, I.importData, I.locations, I.settings, I.rolesPermissions, I.team, I.timecards, I.employees, I.trainingRecords, I.trainingCatalog, I.vendors, I.vendorDocReview, I.emergencyInfo, I.demoLauncher, I.partnerDemos, I.adminTestimonials],
         '/admin',
       ),
       // System section removed — admin tools accessed via AdminShell (/admin) outside demo mode.

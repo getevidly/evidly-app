@@ -55,20 +55,89 @@ Deno.serve(async (req: Request) => {
   }
 
   const tourId = body.tour_id as string | undefined;
+  const partnerDemoId = body.partner_demo_id as string | undefined;
   const cleaned: string[] = [];
 
   try {
+    // ── Helper: clean org data by source tag ──────────────
+    async function cleanOrgData(
+      orgId: string,
+      userId: string | null,
+      sourceTag: string,
+    ) {
+      const tablesToClean = [
+        "temp_logs",
+        "checklist_completions",
+        "corrective_actions",
+        "documents",
+        "equipment_service_records",
+        "insurance_risk_scores",
+        "sb1383_compliance",
+        "notifications",
+      ];
+
+      for (const table of tablesToClean) {
+        const { error } = await supabase
+          .from(table)
+          .delete()
+          .eq("organization_id", orgId)
+          .eq("source", sourceTag);
+
+        if (error) {
+          console.warn(`[cleanup] ${table} delete error:`, error.message);
+        }
+      }
+
+      // Delete source-tagged checklists
+      await supabase
+        .from("checklists")
+        .delete()
+        .eq("organization_id", orgId)
+        .eq("source", sourceTag);
+
+      // Delete source-tagged vendors
+      await supabase
+        .from("vendors")
+        .delete()
+        .eq("organization_id", orgId)
+        .eq("source", sourceTag);
+
+      // Delete locations
+      await supabase
+        .from("locations")
+        .delete()
+        .eq("organization_id", orgId);
+
+      // Delete user profile + auth user
+      if (userId) {
+        await supabase
+          .from("user_profiles")
+          .delete()
+          .eq("user_id", userId);
+
+        await supabase.auth.admin.deleteUser(userId).catch((err: Error) => {
+          console.warn(`[cleanup] Auth user delete failed:`, err.message);
+        });
+      }
+
+      // Delete organization
+      await supabase
+        .from("organizations")
+        .delete()
+        .eq("id", orgId);
+    }
+
+    // ── 1. Demo Tours cleanup (source = 'demo_template') ──
     let toursToClean: { id: string; demo_org_id: string; demo_user_id: string; business_name: string }[] = [];
 
     if (tourId) {
-      // Manual: clean specific tour
       const { data } = await supabase
         .from("demo_tours")
         .select("id, demo_org_id, demo_user_id, business_name")
         .eq("id", tourId)
         .single();
       if (data) toursToClean = [data];
-    } else {
+    } else if (!partnerDemoId) {
       // Scheduled: find tours past cleanup deadline
       const { data } = await supabase
         .from("demo_tours")
@@ -80,92 +149,63 @@ Deno.serve(async (req: Request) => {
 
     for (const tour of toursToClean) {
       try {
-        const orgId = tour.demo_org_id;
-        const userId = tour.demo_user_id;
-
-        if (!orgId) {
+        if (!tour.demo_org_id) {
           console.warn(`[cleanup] Tour ${tour.id} has no demo_org_id, skipping`);
           continue;
         }
 
-        // Delete all demo-template-sourced data for this org
-        const tablesToClean = [
-          "temp_logs",
-          "checklist_completions",
-          "corrective_actions",
-          "documents",
-          "equipment_service_records",
-          "insurance_risk_scores",
-          "sb1383_compliance",
-          "notifications",
-        ];
+        await cleanOrgData(tour.demo_org_id, tour.demo_user_id, "demo_template");
 
-        for (const table of tablesToClean) {
-          const { error } = await supabase
-            .from(table)
-            .delete()
-            .eq("organization_id", orgId)
-            .eq("source", "demo_template");
-
-          if (error) {
-            console.warn(`[cleanup] ${table} delete error:`, error.message);
-          }
-        }
-
-        // Delete demo checklists (source-tagged)
-        await supabase
-          .from("checklists")
-          .delete()
-          .eq("organization_id", orgId)
-          .eq("source", "demo_template");
-
-        // Delete demo vendors (source-tagged)
-        await supabase
-          .from("vendors")
-          .delete()
-          .eq("organization_id", orgId)
-          .eq("source", "demo_template");
-
-        // Delete locations
-        await supabase
-          .from("locations")
-          .delete()
-          .eq("organization_id", orgId);
-
-        // Delete user profile
-        if (userId) {
-          await supabase
-            .from("user_profiles")
-            .delete()
-            .eq("user_id", userId);
-
-          // Delete auth user
-          await supabase.auth.admin.deleteUser(userId).catch((err: Error) => {
-            console.warn(`[cleanup] Auth user delete failed:`, err.message);
-          });
-        }
-
-        // Delete organization
-        await supabase
-          .from("organizations")
-          .delete()
-          .eq("id", orgId);
-
-        // Mark tour as cleaned
         await supabase
           .from("demo_tours")
-          .update({
-            status: "cleaned",
-            cleaned_at: new Date().toISOString(),
-          })
+          .update({ status: "cleaned", cleaned_at: new Date().toISOString() })
           .eq("id", tour.id);
 
         cleaned.push(tour.business_name || tour.id);
-        console.log(
-          `[cleanup] Cleaned tour ${tour.id} for ${tour.business_name}`,
-        );
+        console.log(`[cleanup] Cleaned tour ${tour.id} for ${tour.business_name}`);
       } catch (err) {
         console.error(`[cleanup] Failed tour ${tour.id}:`, err);
+      }
+    }
+
+    // ── 2. Partner Demos cleanup (source = 'partner_demo') ──
+    let partnerDemosToClean: { id: string; demo_org_id: string; demo_user_id: string; partner_company: string }[] = [];
+
+    if (partnerDemoId) {
+      const { data } = await supabase
+        .from("partner_demos")
+        .select("id, demo_org_id, demo_user_id, partner_company")
+        .eq("id", partnerDemoId)
+        .single();
+      if (data) partnerDemosToClean = [data];
+    } else if (!tourId) {
+      // Scheduled: find partner demos past cleanup deadline
+      const { data } = await supabase
+        .from("partner_demos")
+        .select("id, demo_org_id, demo_user_id, partner_company")
+        .in("status", ["active", "completed", "expired"])
+        .lte("cleanup_scheduled_for", new Date().toISOString());
+      if (data) partnerDemosToClean = data;
+    }
+
+    for (const pd of partnerDemosToClean) {
+      try {
+        if (!pd.demo_org_id) {
+          console.warn(`[cleanup] Partner demo ${pd.id} has no demo_org_id, skipping`);
+          continue;
+        }
+
+        await cleanOrgData(pd.demo_org_id, pd.demo_user_id, "partner_demo");
+
+        await supabase
+          .from("partner_demos")
+          .update({ status: "cleaned", cleaned_at: new Date().toISOString() })
+          .eq("id", pd.id);
+
+        cleaned.push(pd.partner_company || pd.id);
+        console.log(`[cleanup] Cleaned partner demo ${pd.id} for ${pd.partner_company}`);
+      } catch (err) {
+        console.error(`[cleanup] Failed partner demo ${pd.id}:`, err);
       }
     }
 
