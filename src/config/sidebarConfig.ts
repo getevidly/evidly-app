@@ -221,7 +221,7 @@ const I: Record<string, NavItem> = {
   },
   inspectorArrival: {
     id: 'inspector-arrival', label: 'Inspector Arrival Mode', path: '/inspector-view', icon: '🏛️',
-    roles: [], description: 'Instant access mode when an inspector arrives — surfaces documents, recent logs, and compliance status.',
+    roles: [], description: 'Instant access mode when an inspector arrives — shows documents, recent logs, and compliance status.',
   },
   iotSensors: {
     id: 'iot-sensors', label: 'Manage Sensors', path: '/sensors', icon: '📡',

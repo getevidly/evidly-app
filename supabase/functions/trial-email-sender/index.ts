@@ -215,7 +215,7 @@ function series1(day: number, firstName: string, county: string): EmailContent |
           <li>CFPM certificate</li>
           <li>Food handler cards</li>
         </ul>
-        <p>EvidLY organizes them, tracks expiry dates, and surfaces the right document when your inspector asks for it.</p>
+        <p>EvidLY organizes them, tracks expiry dates, and brings you the right document when your inspector asks for it.</p>
         ${ARTHUR_SHORT}
       `,
       ctaText: "Upload a Document →",
@@ -420,7 +420,7 @@ function series2(day: number, firstName: string, county: string): EmailContent |
       bodyHtml: `
         <p>If you operate more than one location, EvidLY gives you something no other platform offers: a portfolio-level compliance view.</p>
         <p>Every location. Every jurisdiction. Every service gap. Every open corrective action. One dashboard.</p>
-        <p>Your worst-performing location surfaces automatically. Your PSE exposure across all locations, rolled up. Your annual service spend, by location and by service type.</p>
+        <p>Your worst-performing location shows up automatically. Your PSE exposure across all locations, rolled up. Your annual service spend, by location and by service type.</p>
         ${ARTHUR_SHORT}
       `,
       ctaText: "Add Your Locations →",
@@ -445,7 +445,7 @@ function series2(day: number, firstName: string, county: string): EmailContent |
       bodyHtml: `
         <p>Two days left in your trial. Here's what the next 90 days look like with EvidLY:</p>
         <p><strong>Days 1–30: Foundation</strong><br/>Your temp logs, checklists, and vendor records are documented. Your team knows their daily tasks. Your jurisdiction profile is mapped.</p>
-        <p><strong>Days 31–60: Optimization</strong><br/>Your AI Copilot surfaces patterns. Corrective actions close faster. Your compliance record builds depth.</p>
+        <p><strong>Days 31–60: Optimization</strong><br/>Your AI Copilot shows patterns. Corrective actions close faster. Your compliance record builds depth.</p>
         <p><strong>Days 61–90: Confidence</strong><br/>Your next inspection isn't a surprise. Your PSE gaps are closed. Your team leads without you managing every detail.</p>
         ${ARTHUR_SHORT}
       `,

@@ -21,7 +21,7 @@ export function CopilotInsights() {
       <div className="text-center py-16">
         <Sparkles className="h-12 w-12 mx-auto text-gray-300 mb-3" />
         <p className="text-gray-500 font-medium">No insights yet</p>
-        <p className="text-gray-400 text-sm mt-1">Your AI Copilot will surface signals as data is collected.</p>
+        <p className="text-gray-400 text-sm mt-1">Your AI Copilot will show signals as data is collected.</p>
         <button
           onClick={() => navigate('/ai-advisor')}
           className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white"

@@ -27,7 +27,7 @@ export function CopilotCard({ locationId }: CopilotCardProps) {
       <div className="text-center py-6">
         <Sparkles className="h-8 w-8 mx-auto text-gray-300 mb-2" />
         <p className="text-sm text-gray-500">No insights yet</p>
-        <p className="text-xs text-gray-400 mt-1">Your AI Copilot will surface signals as data is collected.</p>
+        <p className="text-xs text-gray-400 mt-1">Your AI Copilot will show signals as data is collected.</p>
       </div>
     </div>
   );

@@ -73,7 +73,7 @@ const timelineSteps = [
     day: 'Day 30',
     title: 'Patterns emerge',
     description:
-      'Temperature trends, equipment reliability, and staff compliance patterns surface. You see your kitchen clearly for the first time.',
+      'Temperature trends, equipment reliability, and staff compliance patterns emerge. You see your kitchen clearly for the first time.',
   },
   {
     day: 'Day 90',

@@ -483,7 +483,7 @@ export function BrandingSettings() {
       <div className="flex items-center justify-between bg-white rounded-xl border border-gray-200 p-6">
         <div>
           <p className="text-sm font-medium text-gray-700">Ready to apply changes?</p>
-          <p className="text-xs text-gray-500">Updates are applied live across sidebar, login, and all branded surfaces.</p>
+          <p className="text-xs text-gray-500">Updates are applied live across sidebar, login, and all branded pages.</p>
         </div>
         <button
           onClick={handleApply}

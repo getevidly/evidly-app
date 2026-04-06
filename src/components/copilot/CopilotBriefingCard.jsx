@@ -119,7 +119,7 @@ export function CopilotBriefingCard() {
           </div>
         </div>
         <p style={{ fontSize: 13, color: 'var(--text-secondary, #3D5068)', margin: '0 0 12px 0' }}>
-          No insights yet — your AI Copilot will surface signals as data is collected.
+          No insights yet — your AI Copilot will show signals as data is collected.
         </p>
         <button
           onClick={() => navigate('/ai-advisor')}

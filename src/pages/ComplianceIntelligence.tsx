@@ -1434,7 +1434,7 @@ function AnomalyTab() {
           <Radar className="h-5 w-5" style={{ color: '#1e4d6b' }} />
           <h2 className="text-base font-bold text-gray-900">Anomaly Detection Engine</h2>
         </div>
-        <p className="text-[11px] text-gray-500">Real-time statistical anomaly detection surfaces unusual patterns automatically. Detection runs hourly against rolling 30-day baseline.</p>
+        <p className="text-[11px] text-gray-500">Real-time statistical anomaly detection shows unusual patterns automatically. Detection runs hourly against rolling 30-day baseline.</p>
       </div>
 
       {/* Anomaly Summary */}

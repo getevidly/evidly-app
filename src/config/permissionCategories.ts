@@ -4,7 +4,7 @@
  * Groups granular permissions into module-based categories for the
  * Roles & Permissions management UI. Categories are derived dynamically
  * from the DEFAULT_PERMISSIONS map — new permissions added there will
- * surface automatically when they match a known prefix.
+ * appear automatically when they match a known prefix.
  *
  * To add a new module:
  *   1. Add a new entry to PERMISSION_CATEGORIES below
