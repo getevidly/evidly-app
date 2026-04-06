@@ -7,9 +7,9 @@
 -- ADHS delegates to all 15 county health departments.
 -- Maricopa operates under own Board of Supervisors authority.
 --
--- Statewide standard: E/S/N/U (12 of 15 counties).
--- Exceptions: Maricopa (voluntary A/B/C/D), Pima (5-tier),
---             Yavapai (own county code + E/S/N/U).
+-- Statewide standard: Excellent / Satisfactory / Needs Improvement / Unacceptable (12 of 15 counties).
+-- Exceptions: Maricopa (voluntary A/B/C/D letter grades), Pima (5-tier),
+--             Yavapai (own county code + Excellent / Satisfactory / Needs Improvement / Unacceptable).
 -- ================================================================
 
 -- Guard: skip entire INSERT if any AZ rows already exist.
@@ -32,7 +32,7 @@ INSERT INTO jurisdictions (
   'rating', 'esnu',
   '{
     "type": "esnu_standard",
-    "system": "ADHS statewide E/S/N/U",
+    "system": "ADHS statewide Excellent / Satisfactory / Needs Improvement / Unacceptable",
     "levels": ["Excellent", "Satisfactory", "Needs Improvement", "Unacceptable"],
     "delegation": "ADHS",
     "fda_code_version": "1999",
@@ -53,7 +53,7 @@ INSERT INTO jurisdictions (
   'rating', 'esnu',
   '{
     "type": "esnu_standard",
-    "system": "ADHS statewide E/S/N/U",
+    "system": "ADHS statewide Excellent / Satisfactory / Needs Improvement / Unacceptable",
     "levels": ["Excellent", "Satisfactory", "Needs Improvement", "Unacceptable"],
     "delegation": "ADHS",
     "fda_code_version": "2017",
@@ -74,7 +74,7 @@ INSERT INTO jurisdictions (
   'rating', 'esnu',
   '{
     "type": "esnu_standard",
-    "system": "ADHS statewide E/S/N/U",
+    "system": "ADHS statewide Excellent / Satisfactory / Needs Improvement / Unacceptable",
     "levels": ["Excellent", "Satisfactory", "Needs Improvement", "Unacceptable"],
     "delegation": "ADHS",
     "fda_code_version": "1999",
@@ -95,7 +95,7 @@ INSERT INTO jurisdictions (
   'rating', 'esnu',
   '{
     "type": "esnu_standard",
-    "system": "ADHS statewide E/S/N/U",
+    "system": "ADHS statewide Excellent / Satisfactory / Needs Improvement / Unacceptable",
     "levels": ["Excellent", "Satisfactory", "Needs Improvement", "Unacceptable"],
     "delegation": "ADHS",
     "fda_code_version": "2017",
@@ -116,7 +116,7 @@ INSERT INTO jurisdictions (
   'rating', 'esnu',
   '{
     "type": "esnu_standard",
-    "system": "ADHS statewide E/S/N/U",
+    "system": "ADHS statewide Excellent / Satisfactory / Needs Improvement / Unacceptable",
     "levels": ["Excellent", "Satisfactory", "Needs Improvement", "Unacceptable"],
     "delegation": "ADHS",
     "fda_code_version": "1999",
@@ -137,7 +137,7 @@ INSERT INTO jurisdictions (
   'rating', 'esnu',
   '{
     "type": "esnu_standard",
-    "system": "ADHS statewide E/S/N/U",
+    "system": "ADHS statewide Excellent / Satisfactory / Needs Improvement / Unacceptable",
     "levels": ["Excellent", "Satisfactory", "Needs Improvement", "Unacceptable"],
     "delegation": "ADHS",
     "fda_code_version": "1999",
@@ -158,7 +158,7 @@ INSERT INTO jurisdictions (
   'rating', 'esnu',
   '{
     "type": "esnu_standard",
-    "system": "ADHS statewide E/S/N/U",
+    "system": "ADHS statewide Excellent / Satisfactory / Needs Improvement / Unacceptable",
     "levels": ["Excellent", "Satisfactory", "Needs Improvement", "Unacceptable"],
     "delegation": "ADHS",
     "fda_code_version": "1999",
@@ -215,7 +215,7 @@ INSERT INTO jurisdictions (
   'rating', 'esnu',
   '{
     "type": "esnu_standard",
-    "system": "ADHS statewide E/S/N/U",
+    "system": "ADHS statewide Excellent / Satisfactory / Needs Improvement / Unacceptable",
     "levels": ["Excellent", "Satisfactory", "Needs Improvement", "Unacceptable"],
     "delegation": "ADHS",
     "fda_code_version": "2017",
@@ -236,7 +236,7 @@ INSERT INTO jurisdictions (
   'rating', 'esnu',
   '{
     "type": "esnu_standard",
-    "system": "ADHS statewide E/S/N/U",
+    "system": "ADHS statewide Excellent / Satisfactory / Needs Improvement / Unacceptable",
     "levels": ["Excellent", "Satisfactory", "Needs Improvement", "Unacceptable"],
     "delegation": "ADHS",
     "fda_code_version": "1999",
@@ -257,7 +257,7 @@ INSERT INTO jurisdictions (
   'rating', 'tiered',
   '{
     "type": "tiered_five_level",
-    "system": "5-tier: Excellent/Good/Satisfactory/NI/Probation",
+    "system": "5-tier: Excellent / Good / Satisfactory / Needs Improvement / Probation",
     "levels": ["Excellent", "Good", "Satisfactory", "Needs Improvement", "Probation"],
     "delegation": "ADHS",
     "fda_code_version": "2017",
@@ -278,7 +278,7 @@ INSERT INTO jurisdictions (
   'rating', 'esnu',
   '{
     "type": "esnu_standard",
-    "system": "ADHS statewide E/S/N/U",
+    "system": "ADHS statewide Excellent / Satisfactory / Needs Improvement / Unacceptable",
     "levels": ["Excellent", "Satisfactory", "Needs Improvement", "Unacceptable"],
     "delegation": "ADHS",
     "fda_code_version": "2017",
@@ -309,7 +309,7 @@ INSERT INTO jurisdictions (
   'rating', 'esnu',
   '{
     "type": "esnu_standard",
-    "system": "ADHS statewide E/S/N/U",
+    "system": "ADHS statewide Excellent / Satisfactory / Needs Improvement / Unacceptable",
     "levels": ["Excellent", "Satisfactory", "Needs Improvement", "Unacceptable"],
     "delegation": "ADHS",
     "fda_code_version": "1999",
@@ -330,7 +330,7 @@ INSERT INTO jurisdictions (
   'rating', 'esnu',
   '{
     "type": "esnu_county_code",
-    "system": "Own county health code + E/S/N/U + Golden Plate Award",
+    "system": "Own county health code + Excellent / Satisfactory / Needs Improvement / Unacceptable + Golden Plate Award",
     "levels": ["Excellent", "Satisfactory", "Needs Improvement", "Unacceptable"],
     "delegation": "Own county health code",
     "fda_code_version": "2009",
@@ -360,7 +360,7 @@ INSERT INTO jurisdictions (
   'rating', 'esnu',
   '{
     "type": "esnu_standard",
-    "system": "Point-based E/S/N/U",
+    "system": "Point-based Excellent / Satisfactory / Needs Improvement / Unacceptable",
     "levels": ["Excellent", "Satisfactory", "Needs Improvement", "Unacceptable"],
     "delegation": "ADHS",
     "fda_code_version": "2017",
