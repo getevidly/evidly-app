@@ -74,6 +74,7 @@ const FIRE_AHJ_TYPE_LABELS: Record<string, string> = {
   cal_fire_contract: 'CAL FIRE (Contract)',
   state_fire_marshal: 'State Fire Marshal',
   mixed: 'Mixed (Multiple AHJs)',
+  tribal_fire: 'Tribal Fire Department',
 };
 
 const TIER_LABELS: Record<number, string> = {

@@ -922,7 +922,7 @@ function LocDrawer({ loc, onClose, onRefresh }: { loc: Location; onClose: () => 
       }
       if (loc.county) {
         queries.push(
-          supabase.from('jurisdictions').select('name, county, scoring_method, grading_method, inspection_frequency, fire_ahj_name, fire_ahj_type')
+          supabase.from('jurisdictions').select('agency_name, county, scoring_type, grading_type, inspection_frequency, fire_ahj_name, fire_ahj_type')
             .eq('county', loc.county).maybeSingle(),
         );
       }
@@ -1007,10 +1007,10 @@ function LocDrawer({ loc, onClose, onRefresh }: { loc: Location; onClose: () => 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 <div>
                   <h4 style={{ fontSize: 12, fontWeight: 700, color: NAVY, marginBottom: 8 }}>Food Safety Jurisdiction</h4>
-                  <DetailRow label="Authority" value={jurisdiction.name} />
+                  <DetailRow label="Authority" value={jurisdiction.agency_name} />
                   <DetailRow label="County" value={jurisdiction.county} />
-                  <DetailRow label="Scoring Method" value={jurisdiction.scoring_method?.replace(/_/g, ' ')} />
-                  <DetailRow label="Grading Method" value={jurisdiction.grading_method?.replace(/_/g, ' ')} />
+                  <DetailRow label="Scoring Method" value={jurisdiction.scoring_type?.replace(/_/g, ' ')} />
+                  <DetailRow label="Grading Method" value={jurisdiction.grading_type?.replace(/_/g, ' ')} />
                   <DetailRow label="Inspection Frequency" value={jurisdiction.inspection_frequency} />
                 </div>
                 <div>

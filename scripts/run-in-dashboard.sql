@@ -47,7 +47,7 @@ UPDATE jurisdictions SET
     "verified_from": "LA County Code Title 8 §8.04.225"
   }'::jsonb,
   fire_ahj_name = 'Los Angeles County Fire Department',
-  fire_ahj_type = 'county_fd',
+  fire_ahj_type = 'county_fire',
   fire_code_edition = '2025 CFC',
   nfpa96_edition = '2024',
   has_local_amendments = true,
@@ -75,7 +75,7 @@ UPDATE jurisdictions SET
     "reinspection_trigger": "Major violations or score below 80"
   }'::jsonb,
   fire_ahj_name = 'San Diego County Fire Authority',
-  fire_ahj_type = 'county_fd',
+  fire_ahj_type = 'county_fire',
   fire_code_edition = '2025 CFC',
   nfpa96_edition = '2024',
   hood_cleaning_default = 'semi_annual',
@@ -102,7 +102,7 @@ UPDATE jurisdictions SET
   scoring_type = 'violation_report',
   grading_type = 'violation_report_only',
   fire_ahj_name = 'Fresno County Fire Protection District',
-  fire_ahj_type = 'county_fd',
+  fire_ahj_type = 'county_fire',
   fire_code_edition = '2025 CFC',
   nfpa96_edition = '2024',
   hood_cleaning_default = 'semi_annual',
@@ -125,7 +125,7 @@ UPDATE jurisdictions SET
     "inspection_frequency": "annual based on risk level"
   }'::jsonb,
   fire_ahj_name = 'Stanislaus County Fire Prevention Bureau',
-  fire_ahj_type = 'county_fd',
+  fire_ahj_type = 'county_fire',
   fire_code_edition = '2025 CFC',
   nfpa96_edition = '2024',
   hood_cleaning_default = 'semi_annual',
@@ -153,7 +153,7 @@ UPDATE jurisdictions SET
     "minor_violation_points": 2
   }'::jsonb,
   fire_ahj_name = 'Merced County Fire Department',
-  fire_ahj_type = 'county_fd',
+  fire_ahj_type = 'county_fire',
   fire_code_edition = '2025 CFC',
   nfpa96_edition = '2024',
   hood_cleaning_default = 'semi_annual',
@@ -201,7 +201,7 @@ UPDATE jurisdictions SET
     "risk_categories": ["High", "Medium", "Low"]
   }'::jsonb,
   fire_ahj_name = 'Alameda County Fire Department',
-  fire_ahj_type = 'county_fd',
+  fire_ahj_type = 'county_fire',
   fire_code_edition = '2025 CFC',
   nfpa96_edition = '2024',
   hood_cleaning_default = 'semi_annual',
@@ -227,7 +227,7 @@ UPDATE jurisdictions SET
     "inspection_frequency": "1-3 per year based on risk"
   }'::jsonb,
   fire_ahj_name = 'Santa Clara County Fire Marshal',
-  fire_ahj_type = 'county_fd',
+  fire_ahj_type = 'county_fire',
   fire_code_edition = '2025 CFC',
   nfpa96_edition = '2024',
   hood_cleaning_default = 'semi_annual',
@@ -254,7 +254,7 @@ UPDATE jurisdictions SET
     "inspection_frequency": "1-2 per year based on risk"
   }'::jsonb,
   fire_ahj_name = 'Riverside County Fire Department',
-  fire_ahj_type = 'county_fd',
+  fire_ahj_type = 'county_fire',
   fire_code_edition = '2025 CFC',
   nfpa96_edition = '2024',
   hood_cleaning_default = 'semi_annual',
@@ -280,7 +280,7 @@ UPDATE jurisdictions SET
     "closure_trigger": "below_70_or_imminent_hazard"
   }'::jsonb,
   fire_ahj_name = 'San Bernardino County Fire Department',
-  fire_ahj_type = 'county_fd',
+  fire_ahj_type = 'county_fire',
   fire_code_edition = '2025 CFC',
   nfpa96_edition = '2024',
   hood_cleaning_default = 'semi_annual',
