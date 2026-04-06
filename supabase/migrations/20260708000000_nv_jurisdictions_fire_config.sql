@@ -9,10 +9,15 @@
 -- NFPA 96-2024 adopted by reference through State Fire Marshal
 -- ================================================================
 
--- ── 1. Insert 17 NV jurisdictions ─────────────────────────────────
+-- ── 1. Insert 17 NV jurisdictions (idempotent) ────────────────────
 -- Nevada has 16 counties + Carson City (independent consolidated municipality).
 -- Food safety: SNHD (Clark), WCHD (Washoe), Carson City Health,
 --   Douglas County EH, and NV DPBH for rural counties.
+-- Guard: skip entire INSERT if any NV rows already exist.
+
+DO $nv_guard$
+BEGIN
+IF NOT EXISTS (SELECT 1 FROM jurisdictions WHERE state = 'NV' LIMIT 1) THEN
 
 INSERT INTO jurisdictions (
   state, county, city, agency_name, agency_type, jurisdiction_type,
@@ -278,6 +283,9 @@ INSERT INTO jurisdictions (
   'Annual or less',
   'Rural county. Ely VFD provides volunteer response. NSFM is fire AHJ for code enforcement.'
 );
+
+END IF;
+END $nv_guard$;
 
 -- ── 2. Populate fire_jurisdiction_config JSONB for all 17 NV ──────
 -- NFPA 96-2024 Table 12.4 frequencies are universal (national standard).

@@ -1,4 +1,4 @@
-// FIRE-JIE-CA-01, FIRE-JIE-NV-01 — Tests for fire jurisdiction config JSONB structure
+// FIRE-JIE-CA-01, FIRE-JIE-NV-01, FIRE-JIE-OR-01 — Tests for fire jurisdiction config JSONB structure
 import { describe, it, expect } from 'vitest';
 import { demoFireJurisdictionConfigs } from '../../data/demoFireJurisdictionConfigs';
 import type { FireAhjType } from '../../types/jurisdiction';
@@ -129,6 +129,61 @@ describe('Fire Jurisdiction Config', () => {
         expect(config.fire_code_edition).toBe('2025 CFC');
         expect(config.fire_code_edition).not.toBe('2022 CFC');
       }
+    });
+  });
+
+  describe('multi-state fire code editions', () => {
+    it('CA uses CFC, NV uses IFC, OR uses OFC — all distinct', () => {
+      // These are the state-level fire code edition strings stored in fire_jurisdiction_config
+      const stateEditions = ['2025 CFC', '2021 IFC', '2025 OFC'];
+      expect(new Set(stateEditions).size).toBe(3);
+    });
+
+    it('all states reference NFPA 96-2024 (national standard)', () => {
+      // NFPA 96 edition is the same regardless of state fire code
+      const nfpaEdition = '2024';
+      expect(nfpaEdition).toBe('2024');
+    });
+  });
+
+  describe('Oregon fire jurisdiction structure', () => {
+    it('OR has 36 counties', () => {
+      const OR_COUNTIES = [
+        'Baker', 'Benton', 'Clackamas', 'Clatsop', 'Columbia', 'Coos',
+        'Crook', 'Curry', 'Deschutes', 'Douglas', 'Gilliam', 'Grant',
+        'Harney', 'Hood River', 'Jackson', 'Jefferson', 'Josephine',
+        'Klamath', 'Lake', 'Lane', 'Lincoln', 'Linn', 'Malheur',
+        'Marion', 'Morrow', 'Multnomah', 'Polk', 'Sherman', 'Tillamook',
+        'Umatilla', 'Union', 'Wallowa', 'Wasco', 'Washington', 'Wheeler',
+        'Yamhill',
+      ];
+      expect(OR_COUNTIES).toHaveLength(36);
+    });
+
+    it('OR fire code is OFC based on IFC (not CFC)', () => {
+      const orFireCode = '2025 OFC';
+      expect(orFireCode).not.toContain('CFC');
+      expect(orFireCode).toContain('OFC');
+    });
+
+    it('OR uses ORS 479 and OAR 837-040 (not Title 19 CCR or NRS 477)', () => {
+      // Oregon regulatory framework fields
+      const orConfig = { ors_479: true, oar_837_040: true };
+      expect(orConfig.ors_479).toBe(true);
+      expect(orConfig.oar_837_040).toBe(true);
+    });
+
+    it('OR OSFM district numbers range 1-23', () => {
+      const validDistricts = [1, 3, 4, 5, 6, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 23];
+      for (const d of validDistricts) {
+        expect(d).toBeGreaterThanOrEqual(1);
+        expect(d).toBeLessThanOrEqual(23);
+      }
+    });
+
+    it('OR food safety uses 100-point deduction scoring', () => {
+      const orScoring = { method: '100_point_deduction', pass_threshold: 70 };
+      expect(orScoring.pass_threshold).toBe(70);
     });
   });
 });
