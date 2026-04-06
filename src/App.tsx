@@ -217,6 +217,8 @@ const ScoreTableWrapper = () => { const { slug } = useParams(); return <ScoreTab
 const KitchenCheckWrapper = () => { const { slug } = useParams(); return <KitchenCheckPage county={slug?.replace("-county", "")} />; };
 const CityPage = lazy(() => import('./pages/public/CityPage'));
 const ScoreTableCityPage = lazy(() => import('./pages/public/ScoreTableCityPage'));
+const ScoreTableWashington = lazy(() => import('./pages/public/ScoreTableWashington'));
+const ScoreTableWACounty = lazy(() => import('./pages/public/ScoreTableWACounty'));
 
 const BlogList = lazy(() => import('./pages/public/BlogList').then(m => ({ default: m.BlogList })));
 const BlogPost = lazy(() => import('./pages/public/BlogPost').then(m => ({ default: m.BlogPost })));
@@ -568,6 +570,8 @@ function AppRoutes() {
         <Route path="/compliance/california" element={<Suspense fallback={<PageSkeleton />}><CaliforniaCompliance /></Suspense>} />
         <Route path="/compliance/california/:countySlug" element={<Suspense fallback={<PageSkeleton />}><CountyCompliance /></Suspense>} />
         <Route path="/assessment" element={<Suspense fallback={<PageSkeleton />}><AssessmentTool /></Suspense>} />
+        <Route path="/scoretable/washington" element={<Suspense fallback={<PageSkeleton />}><ScoreTableWashington /></Suspense>} />
+        <Route path="/scoretable/washington/:countySlug" element={<Suspense fallback={<PageSkeleton />}><ScoreTableWACounty /></Suspense>} />
         <Route path="/scoretable/:slug" element={<Suspense fallback={<PageSkeleton />}><ScoreTableWrapper /></Suspense>} />
         <Route path="/scoretable/city/:citySlug" element={<Suspense fallback={<PageSkeleton />}><ScoreTableCityPage /></Suspense>} />
         <Route path="/kitchen-check/:slug" element={<Suspense fallback={<PageSkeleton />}><KitchenCheckWrapper /></Suspense>} />
