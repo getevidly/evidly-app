@@ -73,7 +73,7 @@ export interface FireJurisdictionConfig {
     cleaning_interval: string;   // "90_days"
     interceptor_type: string;    // "gravity"
   };
-  pse_safeguards: string[];     // ["hood_cleaning", "fire_suppression_system", "fire_extinguisher", "fire_alarm_monitoring"]
+  pse_safeguards: string[];     // ["hood_cleaning", "fire_suppression_system", "sprinklers", "fire_alarm_monitoring"]
   ahj_split_notes: string | null;   // Multi-AHJ areas (e.g. LA County city vs unincorporated)
   federal_overlay: {
     agency: string;      // "NPS" | "DOD"

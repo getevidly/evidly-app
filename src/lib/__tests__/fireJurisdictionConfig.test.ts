@@ -99,7 +99,7 @@ describe('Fire Jurisdiction Config', () => {
       expect(config.pse_safeguards).toHaveLength(4);
       expect(config.pse_safeguards).toContain('hood_cleaning');
       expect(config.pse_safeguards).toContain('fire_suppression_system');
-      expect(config.pse_safeguards).toContain('fire_extinguisher');
+      expect(config.pse_safeguards).toContain('sprinklers');
       expect(config.pse_safeguards).toContain('fire_alarm_monitoring');
     });
   });
@@ -135,7 +135,7 @@ describe('Fire Jurisdiction Config', () => {
   describe('multi-state fire code editions', () => {
     it('CA uses CFC, NV uses IFC, OR uses OFC — all distinct', () => {
       // These are the state-level fire code edition strings stored in fire_jurisdiction_config
-      const stateEditions = ['2025 CFC', '2021 IFC', '2025 OFC'];
+      const stateEditions = ['2025 CFC', '2018 IFC', '2025 OFC'];
       expect(new Set(stateEditions).size).toBe(3);
     });
 

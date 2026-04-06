@@ -51,7 +51,7 @@ const SHARED_EQUIPMENT = {
     cleaning_interval: '90_days',
     interceptor_type: 'gravity',
   },
-  pse_safeguards: ['hood_cleaning', 'fire_suppression_system', 'fire_extinguisher', 'fire_alarm_monitoring'],
+  pse_safeguards: ['hood_cleaning', 'fire_suppression_system', 'sprinklers', 'fire_alarm_monitoring'],
 } as const;
 
 // Downtown → Fresno (City of Fresno FD for city limits, Fresno County Fire for unincorporated)

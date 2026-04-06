@@ -134,7 +134,7 @@ describe('Partner Demo System', () => {
           p1_revenue: 78, p2_liability: 72, p3_cost: 68,
           p4_operational: 74, p5_workforce: 80, overall: 74,
           pse_verified: true,
-          pse_safeguards: { hood_cleaning: true, fire_suppression: true, fire_extinguisher: true, pest_control: false },
+          pse_safeguards: { hood_cleaning: true, fire_suppression: true, sprinklers: true, pest_control: false },
         }],
         risk_distribution: { low: 3, moderate: 5, high: 2 },
         pse_summary: { fully_verified: 7, partial: 3 },
