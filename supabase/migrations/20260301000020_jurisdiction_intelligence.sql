@@ -308,13 +308,13 @@ INSERT INTO jurisdictions (county, city, agency_name, scoring_type, grading_type
 ('Los Angeles', NULL, 'Los Angeles County Department of Public Health', 'weighted_deduction', 'letter_grade',
   '{"A": [90,100], "B": [80,89], "C": [70,79], "fail_below": 70}',
   90, 79, 69, 'api', 'https://data.lacounty.gov', 1, 88000, 1,
-  'Los Angeles County Fire Department', 'county_fd', true,
+  'Los Angeles County Fire Department', 'county_fire', true,
   'Largest dataset in CA. Socrata API. 5 years of data. Bulk CSV/JSON. LACoFD serves unincorporated + 60 contract cities. LAFD serves City of LA.'),
 
 ('San Francisco', NULL, 'San Francisco Department of Public Health', 'weighted_deduction', 'score_100',
   '{"pass_threshold": 70}',
   70, 79, 69, 'api', 'https://data.sfgov.org', 1, 7500, 4,
-  'San Francisco Fire Department', 'city_fd', true,
+  'San Francisco Fire Department', 'municipal_fire', true,
   'LIVES standard CSV. Score + violations. Well-structured. DataSF portal.'),
 
 ('Sonoma', NULL, 'Sonoma County Department of Health Services', 'weighted_deduction', 'score_100',
@@ -328,13 +328,13 @@ INSERT INTO jurisdictions (county, city, agency_name, scoring_type, grading_type
 ('Sacramento', NULL, 'Sacramento County Environmental Management Department', 'major_violation_count', 'color_placard',
   '{"green": {"max_majors": 1}, "yellow": {"max_majors": 3}, "red": {"min_majors": 4}}',
   NULL, NULL, NULL, 'mhd', 'https://inspections.myhealthdepartment.com/sacramento', 2, 8500, 6,
-  'Sacramento Fire Department / Sacramento Metro Fire', 'city_fd', false,
+  'Sacramento Fire Department / Sacramento Metro Fire', 'municipal_fire', false,
   'MHD template. Color placard system. Searchable by facility name, date, purpose.'),
 
 ('Orange', NULL, 'Orange County Health Care Agency', 'weighted_deduction', 'letter_grade',
   '{"A": [90,100], "B": [80,89], "C": [70,79], "fail_below": 70}',
   90, 79, 69, 'mhd', 'https://inspections.myhealthdepartment.com/orange', 2, 18000, 3,
-  'Orange County Fire Authority', 'county_fd', true,
+  'Orange County Fire Authority', 'county_fire', true,
   'MHD template. Major/Minor violations. Detailed reports. OCFA serves unincorporated + 23 contract cities.'),
 
 ('Yolo', NULL, 'Yolo County Health Department', 'weighted_deduction', 'report_only',
@@ -354,7 +354,7 @@ INSERT INTO jurisdictions (county, city, agency_name, scoring_type, grading_type
 ('San Diego', NULL, 'San Diego County Department of Environmental Health', 'weighted_deduction', 'letter_grade',
   '{"A": [90,100], "B": [80,89], "C": [70,79], "fail_below": 70}',
   90, 79, 69, 'portal', 'https://www.sandiegocounty.gov/deh/fhd/ffis', 3, 14000, 2,
-  'San Diego Fire-Rescue / San Diego County Fire Authority', 'city_fd', true,
+  'San Diego Fire-Rescue / San Diego County Fire Authority', 'municipal_fire', true,
   'Custom portal. Searchable by name/address. Grade + violations.'),
 
 ('Riverside', NULL, 'Riverside County Department of Environmental Health', 'weighted_deduction', 'letter_grade_strict',
@@ -366,19 +366,19 @@ INSERT INTO jurisdictions (county, city, agency_name, scoring_type, grading_type
 ('San Bernardino', NULL, 'San Bernardino County Department of Public Health', 'weighted_deduction', 'letter_grade',
   '{"A": [90,100], "B": [80,89], "C": [70,79], "fail_below": 70}',
   90, 79, 69, 'portal', 'https://www.sbcounty.gov', 3, 9000, 7,
-  'San Bernardino County Fire', 'county_fd', false,
+  'San Bernardino County Fire', 'county_fire', false,
   'Published LIVES feed to Yelp. Letter grades. 2 years data.'),
 
 ('Alameda', NULL, 'Alameda County Department of Environmental Health', 'weighted_deduction', 'score_100',
   '{"pass_threshold": 70}',
   70, 79, 69, 'portal', 'https://deh.acgov.org', 3, 8500, 8,
-  'Alameda County Fire / Oakland FD', 'county_fd', false,
+  'Alameda County Fire / Oakland FD', 'county_fire', false,
   '6 CDC major risk factors. 2-4 pts/major, 1 pt/minor. 26 pts max deduction.'),
 
 ('Santa Clara', NULL, 'Santa Clara County Department of Environmental Health', 'heavy_weighted', 'color_placard',
   '{"green": {"max_majors": 0}, "yellow": {"max_majors": 2}, "red": {"min_majors": 3}}',
   NULL, NULL, NULL, 'portal', 'https://www.sccgov.org', 3, 10000, 9,
-  'Santa Clara County Fire / San Jose FD', 'county_fd', true,
+  'Santa Clara County Fire / San Jose FD', 'county_fire', true,
   '8-point major violations. Color placard. Large market.'),
 
 ('Contra Costa', NULL, 'Contra Costa Health Services', 'major_violation_count', 'color_placard',
@@ -390,19 +390,19 @@ INSERT INTO jurisdictions (county, city, agency_name, scoring_type, grading_type
 ('Fresno', NULL, 'Fresno County Department of Public Health', 'weighted_deduction', 'letter_grade',
   '{"A": [90,100], "B": [80,89], "C": [70,79], "fail_below": 70}',
   90, 79, 69, 'portal', 'https://www.co.fresno.ca.us', 3, 4500, 10,
-  'Fresno Fire Department', 'city_fd', false,
+  'Fresno Fire Department', 'municipal_fire', false,
   'YOUR TERRITORY. Letter grade county. Key for Central Valley expansion. CAL FIRE FKU unit.'),
 
 ('Kern', NULL, 'Kern County Public Health Services Department', 'weighted_deduction', 'score_100',
   '{"pass_threshold": 70}',
   70, 79, 69, 'portal', 'https://kernpublichealth.com', 3, 4000, 12,
-  'Kern County Fire Department', 'county_fd', false,
+  'Kern County Fire Department', 'county_fire', false,
   'Score-based. Bakersfield metro. Contract county with CAL FIRE.'),
 
 ('Ventura', NULL, 'Ventura County Environmental Health Division', 'weighted_deduction', 'score_100',
   '{"pass_threshold": 70}',
   70, 79, 69, 'portal', 'https://vcrma.org', 3, 4500, 13,
-  'Ventura County Fire Department', 'county_fd', true,
+  'Ventura County Fire Department', 'county_fire', true,
   'Score + violations online. Contract county with CAL FIRE.'),
 
 ('San Mateo', NULL, 'San Mateo County Health Department', 'weighted_deduction', 'score_100',
@@ -418,12 +418,12 @@ INSERT INTO jurisdictions (county, city, agency_name, scoring_type, grading_type
 
 ('Stanislaus', NULL, 'Stanislaus County Health Services Agency', 'weighted_deduction', 'report_only',
   '{}', NULL, NULL, NULL, 'portal', 'https://schsa.org', 3, 2500, 17,
-  'Modesto FD / CAL FIRE', 'city_fd', false,
+  'Modesto FD / CAL FIRE', 'municipal_fire', false,
   'YOUR TERRITORY. Central Valley. Report-only.'),
 
 ('San Joaquin', NULL, 'San Joaquin County Public Health Services', 'weighted_deduction', 'report_only',
   '{}', NULL, NULL, NULL, 'portal', 'https://sjcphs.org', 3, 3500, 14,
-  'Stockton FD / CAL FIRE SKU', 'city_fd', false,
+  'Stockton FD / CAL FIRE SKU', 'municipal_fire', false,
   'YOUR TERRITORY. Stockton/Tracy/Manteca. Report-only.'),
 
 ('Tulare', NULL, 'Tulare County Health & Human Services Agency', 'weighted_deduction', 'report_only',
@@ -434,7 +434,7 @@ INSERT INTO jurisdictions (county, city, agency_name, scoring_type, grading_type
 ('Santa Barbara', NULL, 'Santa Barbara County Public Health Department', 'weighted_deduction', 'score_100',
   '{"pass_threshold": 70}',
   70, 79, 69, 'portal', 'https://sbcphd.org', 3, 2800, 23,
-  'Santa Barbara County Fire Department', 'county_fd', true,
+  'Santa Barbara County Fire Department', 'county_fire', true,
   'Score + violations. Contract county with CAL FIRE.'),
 
 ('Solano', NULL, 'Solano County Department of Resource Management', 'major_violation_count', 'color_placard',
@@ -452,7 +452,7 @@ INSERT INTO jurisdictions (county, city, agency_name, scoring_type, grading_type
 ('Marin', NULL, 'Marin County Community Development Agency', 'weighted_deduction', 'score_100',
   '{"pass_threshold": 70}',
   70, 79, 69, 'portal', 'https://www.marincounty.org', 3, 1800, 28,
-  'Marin County Fire Department', 'county_fd', true,
+  'Marin County Fire Department', 'county_fire', true,
   'Custom search portal + open data. Contract county with CAL FIRE.'),
 
 ('Santa Cruz', NULL, 'Santa Cruz County Health Services Agency', 'weighted_deduction', 'score_100',
@@ -488,23 +488,23 @@ INSERT INTO jurisdictions (county, city, agency_name, scoring_type, grading_type
 ('Los Angeles', 'Long Beach', 'City of Long Beach Health Department', 'weighted_deduction', 'letter_grade',
   '{"A": [90,100], "B": [80,89], "C": [70,79], "fail_below": 70}',
   90, 79, 69, 'portal', 'https://www.longbeach.gov/health', 3, 3000, 15,
-  'Long Beach Fire Department', 'city_fd', true,
+  'Long Beach Fire Department', 'municipal_fire', true,
   'Independent from LA County. Own inspection program.'),
 
 ('Los Angeles', 'Pasadena', 'City of Pasadena Public Health Department', 'weighted_deduction', 'score_100',
   '{"pass_threshold": 70}',
   70, 79, 69, 'portal', 'https://www.cityofpasadena.net', 3, 1200, 36,
-  'Pasadena Fire Department', 'city_fd', false,
+  'Pasadena Fire Department', 'municipal_fire', false,
   'Independent. Online database + public scoring placards.'),
 
 ('Alameda', 'Berkeley', 'City of Berkeley Environmental Health', 'weighted_deduction', 'report_only',
   '{}', NULL, NULL, NULL, 'portal', 'https://www.berkeleyca.gov', 3, 800, 42,
-  'Berkeley Fire Department', 'city_fd', false,
+  'Berkeley Fire Department', 'municipal_fire', false,
   'Independent but struggling. 29 inspection rate in 2023.'),
 
 ('Los Angeles', 'Vernon', 'City of Vernon Environmental Health', 'weighted_deduction', 'report_only',
   '{}', NULL, NULL, NULL, 'portal', 'https://www.vernon.ca.gov', 3, 100, 62,
-  'Vernon Fire Department', 'city_fd', false,
+  'Vernon Fire Department', 'municipal_fire', false,
   'Industrial city. Very few retail food. Mostly warehouses.'),
 
 -- ── TIER 4: Offline / FOIA (26 small/rural counties) ──

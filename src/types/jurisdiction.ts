@@ -26,15 +26,25 @@
 export type FireAhjType = 'municipal_fire' | 'county_fire' | 'fire_district' | 'cal_fire_contract' | 'state_fire_marshal' | 'mixed' | 'tribal_fire';
 
 // Fire AHJ jurisdiction configuration (fire_jurisdiction_config JSONB column)
-// Populated for all CA non-tribal jurisdictions. NFPA 96-2024 Table 12.4
+// Populated for CA, NV, OR, WA, AZ jurisdictions. NFPA 96-2024 Table 12.4
 // cleaning frequencies are universal; per-jurisdiction differences are
-// fire_ahj_name, fire_ahj_type, and ahj_split_notes.
+// fire_ahj_name, fire_ahj_type, enabling_statute, and ahj_split_notes.
 export interface FireJurisdictionConfig {
   fire_ahj_name: string;
   fire_ahj_type: FireAhjType;
-  fire_code_edition: string; // "2025 CFC" (California Fire Code based on IFC 2024)
+  fire_code_edition: string; // "2025 CFC" | "2021 IFC" | "2025 OFC" | "2018 IFC"
   nfpa_96_edition: string;   // "2024"
-  title_19_ccr: boolean;     // California Code of Regulations Title 19 applies
+  enabling_statute?: string; // Cross-state standardized: "California Fire Code (Title 24 Part 9), Title 19 CCR"
+  // State-specific booleans (kept for backward compatibility)
+  title_19_ccr?: boolean;    // CA: California Code of Regulations Title 19
+  nrs_477?: boolean;         // NV: Nevada Revised Statutes Chapter 477
+  ors_479?: boolean;         // OR: Oregon Revised Statutes Chapter 479
+  oar_837_040?: boolean;     // OR: Oregon Administrative Rules 837-040
+  rcw_19_27?: boolean;       // WA: Revised Code of Washington 19.27
+  wac_51_54a?: boolean;      // WA: Washington Administrative Code 51-54A
+  state_fire_marshal?: string; // "CAL FIRE OSFM" | "Nevada SFM Division" | "OSFM" | "WSP Fire Protection" | "DFFM"
+  has_local_fire_code_adoption?: boolean; // AZ: cities adopt IFC independently
+  local_fire_code_notes?: string;         // AZ: patchwork adoption details
   nfpa_96_table_12_4: {
     type_i_heavy_volume: string;    // "monthly"
     type_i_moderate_volume: string; // "quarterly"

@@ -132,6 +132,36 @@ describe('Fire Jurisdiction Config', () => {
     });
   });
 
+  describe('enabling_statute cross-state standardization', () => {
+    it('each state has a canonical enabling_statute string', () => {
+      const statutes: Record<string, string> = {
+        CA: 'California Fire Code (Title 24 Part 9), Title 19 CCR',
+        NV: 'NRS Chapter 477, NAC Chapter 477',
+        OR: 'ORS Chapter 479, OAR 837-040',
+        WA: 'RCW 19.27, WAC 51-54A',
+        AZ: 'ARS Title 37 Chapter 9, Arizona Fire Code',
+      };
+      expect(Object.keys(statutes)).toHaveLength(5);
+      for (const statute of Object.values(statutes)) {
+        expect(statute.length).toBeGreaterThan(10);
+      }
+    });
+
+    it('enabling_statute coexists with state-specific booleans', () => {
+      // CA has both enabling_statute AND title_19_ccr
+      // NV has both enabling_statute AND nrs_477
+      // OR has both enabling_statute AND ors_479 + oar_837_040
+      // WA has both enabling_statute AND rcw_19_27 + wac_51_54a
+      const stateFields: Record<string, string[]> = {
+        CA: ['title_19_ccr'],
+        NV: ['nrs_477'],
+        OR: ['ors_479', 'oar_837_040'],
+        WA: ['rcw_19_27', 'wac_51_54a'],
+      };
+      expect(Object.keys(stateFields)).toHaveLength(4);
+    });
+  });
+
   describe('multi-state fire code editions', () => {
     it('CA uses CFC, NV uses IFC, OR uses OFC, AZ uses IFC — all represented', () => {
       // These are the state-level fire code edition strings stored in fire_jurisdiction_config

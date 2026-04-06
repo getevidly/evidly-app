@@ -53,7 +53,7 @@ UPDATE jurisdictions SET
 
   -- Verified fire AHJ
   fire_ahj_name = 'Los Angeles County Fire Department',
-  fire_ahj_type = 'county_fd',
+  fire_ahj_type = 'county_fire',
   has_local_amendments = true,
   local_amendment_notes = 'LA County Code Title 8 - Consumer Protection, Business and Wage Regulations. Exceptions: Long Beach, Pasadena, Vernon have own health departments.',
 
