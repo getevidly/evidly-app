@@ -91,23 +91,24 @@ UPDATE jurisdictions SET
   ops_weight = 60,
   docs_weight = 40,
   grading_config = '{
-    "A": [90, 100],
-    "B": [80, 89],
-    "C": [70, 79],
-    "fail_below": 70,
-    "grade_posting": "posted_at_facility",
-    "inspection_frequency": "1-2 per year based on risk",
-    "major_violation_deduction": 4,
-    "minor_violation_deduction": 2
+    "letter_grade": false,
+    "numeric_score": false,
+    "method": "violation_report_only",
+    "violation_categories": ["major", "minor"],
+    "outcome": "pass_fail_reinspect",
+    "report_public": true,
+    "source": "Fresno County DEH — Grand Jury 2023-24 verified"
   }'::jsonb,
+  scoring_type = 'violation_report',
+  grading_type = 'violation_report_only',
   fire_ahj_name = 'Fresno County Fire Protection District',
   fire_ahj_type = 'county_fd',
   fire_code_edition = '2025 CFC',
   nfpa96_edition = '2024',
   hood_cleaning_default = 'semi_annual',
-  confidence_score = 75,
-  last_verified = '2026-03-12'::timestamptz,
-  notes = 'VERIFIED (2026-03-12). Confidence: 75/100. Letter grade system with 100-pt deductive. Major/minor violation classification. Fresno FD serves City of Fresno.'
+  confidence_score = 85,
+  last_verified = '2026-07-13'::timestamptz,
+  notes = 'VERIFIED (Grand Jury 2023-24). Pass/fail with major/minor violations. NO letter grade system. NO numeric score. Fresno FD serves City of Fresno.'
 WHERE county = 'Fresno' AND city IS NULL AND state = 'CA';
 
 -- 4. STANISLAUS COUNTY
@@ -175,14 +176,14 @@ UPDATE jurisdictions SET
     "reports_public": true,
     "inspection_frequency": "1-3 per year based on risk"
   }'::jsonb,
-  fire_ahj_name = 'Sacramento Fire Department',
-  fire_ahj_type = 'city_fd',
+  fire_ahj_name = 'Sacramento Metropolitan Fire District / Sacramento City Fire Department',
+  fire_ahj_type = 'mixed',
   fire_code_edition = '2025 CFC',
   nfpa96_edition = '2024',
   hood_cleaning_default = 'semi_annual',
   confidence_score = 85,
-  last_verified = '2026-03-12'::timestamptz,
-  notes = 'VERIFIED (2026-03-12). Confidence: 85/100. Color placard system (Green/Yellow/Red). MHD portal. Sacramento Metro Fire serves unincorporated areas.'
+  last_verified = '2026-07-13'::timestamptz,
+  notes = 'VERIFIED (2026-07-13). Confidence: 85/100. Color placard system (Green/Yellow/Red). MHD portal. Sacramento Metro Fire District covers unincorporated areas. Sacramento City Fire Department covers city limits. Mixed AHJ.'
 WHERE county = 'Sacramento' AND city IS NULL AND state = 'CA';
 
 -- 7. ALAMEDA COUNTY

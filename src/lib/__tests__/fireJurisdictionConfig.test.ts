@@ -4,13 +4,13 @@ import { demoFireJurisdictionConfigs } from '../../data/demoFireJurisdictionConf
 import type { FireAhjType } from '../../types/jurisdiction';
 
 const VALID_AHJ_TYPES: FireAhjType[] = [
-  'municipal_fire', 'county_fire', 'fire_district', 'cal_fire_contract', 'state_fire_marshal', 'mixed',
+  'municipal_fire', 'county_fire', 'fire_district', 'cal_fire_contract', 'state_fire_marshal', 'mixed', 'tribal_fire',
 ];
 
 describe('Fire Jurisdiction Config', () => {
   describe('FireAhjType normalization', () => {
-    it('defines exactly 6 normalized AHJ types', () => {
-      expect(VALID_AHJ_TYPES).toHaveLength(6);
+    it('defines exactly 7 normalized AHJ types', () => {
+      expect(VALID_AHJ_TYPES).toHaveLength(7);
     });
 
     it('does not include old un-normalized types', () => {
