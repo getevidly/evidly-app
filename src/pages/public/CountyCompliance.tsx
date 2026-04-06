@@ -72,6 +72,7 @@ const FIRE_AHJ_TYPE_LABELS: Record<string, string> = {
   county_fire: 'County Fire Department',
   fire_district: 'Fire Protection District',
   cal_fire_contract: 'CAL FIRE (Contract)',
+  state_fire_marshal: 'State Fire Marshal',
   mixed: 'Mixed (Multiple AHJs)',
 };
 

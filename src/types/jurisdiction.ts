@@ -22,8 +22,8 @@
 // TODO: Track CalCode 2026 legislative changes: SB 68 (allergen disclosure), AB 660 (date labels)
 // TODO: Verify FDA Food Code 2026 full revision when published (currently 2022 + 2024 Supplement)
 
-// Normalized fire AHJ types (FIRE-JIE-CA-01)
-export type FireAhjType = 'municipal_fire' | 'county_fire' | 'fire_district' | 'cal_fire_contract' | 'mixed';
+// Normalized fire AHJ types (FIRE-JIE-CA-01, FIRE-JIE-NV-01)
+export type FireAhjType = 'municipal_fire' | 'county_fire' | 'fire_district' | 'cal_fire_contract' | 'state_fire_marshal' | 'mixed';
 
 // Fire AHJ jurisdiction configuration (fire_jurisdiction_config JSONB column)
 // Populated for all CA non-tribal jurisdictions. NFPA 96-2024 Table 12.4

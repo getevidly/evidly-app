@@ -1,16 +1,16 @@
-// FIRE-JIE-CA-01 — Tests for fire jurisdiction config JSONB structure
+// FIRE-JIE-CA-01, FIRE-JIE-NV-01 — Tests for fire jurisdiction config JSONB structure
 import { describe, it, expect } from 'vitest';
 import { demoFireJurisdictionConfigs } from '../../data/demoFireJurisdictionConfigs';
 import type { FireAhjType } from '../../types/jurisdiction';
 
 const VALID_AHJ_TYPES: FireAhjType[] = [
-  'municipal_fire', 'county_fire', 'fire_district', 'cal_fire_contract', 'mixed',
+  'municipal_fire', 'county_fire', 'fire_district', 'cal_fire_contract', 'state_fire_marshal', 'mixed',
 ];
 
 describe('Fire Jurisdiction Config', () => {
   describe('FireAhjType normalization', () => {
-    it('defines exactly 5 normalized AHJ types', () => {
-      expect(VALID_AHJ_TYPES).toHaveLength(5);
+    it('defines exactly 6 normalized AHJ types', () => {
+      expect(VALID_AHJ_TYPES).toHaveLength(6);
     });
 
     it('does not include old un-normalized types', () => {
