@@ -213,12 +213,12 @@ const KitchenCheckPage = lazy(() => import('./pages/public/KitchenCheckPage'));
 const NewLandingPage = lazy(() => import('./pages/public/LandingPage'));
 const OperationsCheck = lazy(() => import('./pages/public/OperationsCheck'));
 const CountyWrapper = () => { const { slug } = useParams(); return <CountyLandingPage county={slug?.replace("-county", "")} />; };
-const ScoreTableWrapper = () => { const { slug } = useParams(); return <ScoreTableCountyPage county={slug?.replace("-county", "")} />; };
 const KitchenCheckWrapper = () => { const { slug } = useParams(); return <KitchenCheckPage county={slug?.replace("-county", "")} />; };
 const CityPage = lazy(() => import('./pages/public/CityPage'));
 const ScoreTableCityPage = lazy(() => import('./pages/public/ScoreTableCityPage'));
-const ScoreTableWashington = lazy(() => import('./pages/public/ScoreTableWashington'));
-const ScoreTableWACounty = lazy(() => import('./pages/public/ScoreTableWACounty'));
+const ScoreTableIndex = lazy(() => import('./pages/public/ScoreTableIndex'));
+const ScoreTableState = lazy(() => import('./pages/public/ScoreTableState'));
+const ScoreTableCountyDetail = lazy(() => import('./pages/public/ScoreTableCountyDetail'));
 
 const BlogList = lazy(() => import('./pages/public/BlogList').then(m => ({ default: m.BlogList })));
 const BlogPost = lazy(() => import('./pages/public/BlogPost').then(m => ({ default: m.BlogPost })));
@@ -570,10 +570,10 @@ function AppRoutes() {
         <Route path="/compliance/california" element={<Suspense fallback={<PageSkeleton />}><CaliforniaCompliance /></Suspense>} />
         <Route path="/compliance/california/:countySlug" element={<Suspense fallback={<PageSkeleton />}><CountyCompliance /></Suspense>} />
         <Route path="/assessment" element={<Suspense fallback={<PageSkeleton />}><AssessmentTool /></Suspense>} />
-        <Route path="/scoretable/washington" element={<Suspense fallback={<PageSkeleton />}><ScoreTableWashington /></Suspense>} />
-        <Route path="/scoretable/washington/:countySlug" element={<Suspense fallback={<PageSkeleton />}><ScoreTableWACounty /></Suspense>} />
-        <Route path="/scoretable/:slug" element={<Suspense fallback={<PageSkeleton />}><ScoreTableWrapper /></Suspense>} />
+        <Route path="/scoretable" element={<Suspense fallback={<PageSkeleton />}><ScoreTableIndex /></Suspense>} />
         <Route path="/scoretable/city/:citySlug" element={<Suspense fallback={<PageSkeleton />}><ScoreTableCityPage /></Suspense>} />
+        <Route path="/scoretable/:stateSlug" element={<Suspense fallback={<PageSkeleton />}><ScoreTableState /></Suspense>} />
+        <Route path="/scoretable/:stateSlug/:countySlug" element={<Suspense fallback={<PageSkeleton />}><ScoreTableCountyDetail /></Suspense>} />
         <Route path="/kitchen-check/:slug" element={<Suspense fallback={<PageSkeleton />}><KitchenCheckWrapper /></Suspense>} />
         <Route path="/kitchen-to-community" element={<Suspense fallback={<PageSkeleton />}><KitchenToCommunity /></Suspense>} />
         <Route path="/leaderboard-preview" element={<Suspense fallback={<PageSkeleton />}><LeaderboardPreview /></Suspense>} />
