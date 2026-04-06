@@ -112,7 +112,7 @@ export function HeroJurisdictionSummary({ jieScores, jurisdictions, navigate, us
             {(() => {
               const firstLoc = locations[0];
               const firstJur = firstLoc ? jurisdictions[firstLoc.id] : null;
-              return firstJur?.facilitySafety?.fire_jurisdiction_config?.fire_code_edition ?? '2022 CFC';
+              return firstJur?.facilitySafety?.fire_jurisdiction_config?.fire_code_edition ?? '2025 CFC';
             })()}
           </span>
         </div>
