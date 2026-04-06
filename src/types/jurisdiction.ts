@@ -22,49 +22,62 @@
 // TODO: Track CalCode 2026 legislative changes: SB 68 (allergen disclosure), AB 660 (date labels)
 // TODO: Verify FDA Food Code 2026 full revision when published (currently 2022 + 2024 Supplement)
 
-// Fire AHJ jurisdiction configuration (from fire_jurisdiction_config JSONB column)
+// Normalized fire AHJ types (FIRE-JIE-CA-01)
+export type FireAhjType = 'municipal_fire' | 'county_fire' | 'fire_district' | 'cal_fire_contract' | 'mixed';
+
+// Fire AHJ jurisdiction configuration (fire_jurisdiction_config JSONB column)
+// Populated for all CA non-tribal jurisdictions. NFPA 96-2024 Table 12.4
+// cleaning frequencies are universal; per-jurisdiction differences are
+// fire_ahj_name, fire_ahj_type, and ahj_split_notes.
 export interface FireJurisdictionConfig {
   fire_ahj_name: string;
-  fire_ahj_type: 'city_fire' | 'county_fire' | 'state_fire' | 'federal' | 'contract';
-  fire_code_edition: string; // e.g. "2022 CFC"
-  nfpa_96_cleaning_frequencies: {
-    type_i_hood: string;   // e.g. "monthly" | "quarterly"
-    type_ii_hood: string;  // e.g. "semi-annual" | "annual"
+  fire_ahj_type: FireAhjType;
+  fire_code_edition: string; // "2025 CFC" (California Fire Code based on IFC 2024)
+  nfpa_96_edition: string;   // "2024"
+  title_19_ccr: boolean;     // California Code of Regulations Title 19 applies
+  nfpa_96_table_12_4: {
+    type_i_heavy_volume: string;    // "monthly"
+    type_i_moderate_volume: string; // "quarterly"
+    type_i_low_volume: string;      // "semi_annual"
+    type_ii: string;                // "annual"
+    solid_fuel_cooking: string;     // "monthly"
+    source: string;                 // "NFPA 96-2024 Table 12.4"
   };
   hood_suppression: {
-    system_type: string;         // e.g. "UL-300 wet chemical"
-    inspection_interval: string; // e.g. "semi-annual"
-    standard: string;            // e.g. "NFPA 96 / UL-300"
+    system_type: string;         // "UL-300 wet chemical"
+    inspection_interval: string; // "semi_annual"
+    standard: string;            // "NFPA 96 / UL-300"
   };
   ansul_system: {
     required: boolean;
-    inspection_interval: string; // e.g. "semi-annual"
-    standard: string;            // e.g. "NFPA 17A"
+    inspection_interval: string; // "semi_annual"
+    standard: string;            // "NFPA 17A"
   };
   fire_extinguisher: {
-    types: string[];               // e.g. ["K-class", "ABC"]
-    inspection_interval: string;   // e.g. "annual"
-    hydrostatic_interval: string;  // e.g. "5-year" | "12-year"
+    types: string[];               // ["K-class", "ABC"]
+    inspection_interval: string;   // "annual"
+    hydrostatic_test: string;      // "6-year K-class / 12-year ABC"
   };
   fire_alarm: {
     required: boolean;
-    monitoring_type: string;     // e.g. "central station" | "local"
-    inspection_interval: string; // e.g. "annual"
+    monitoring_type: string;     // "central_station"
+    inspection_interval: string; // "annual"
   };
   sprinkler_system: {
     required: boolean;
-    inspection_interval: string; // e.g. "annual"
-    type: string;                // e.g. "wet" | "dry" | "pre-action"
+    inspection_interval: string; // "annual"
+    type: string;                // "wet"
   };
   grease_trap: {
     required: boolean;
-    cleaning_interval: string;   // e.g. "90 days"
-    interceptor_type: string;    // e.g. "gravity" | "hydromechanical"
+    cleaning_interval: string;   // "90_days"
+    interceptor_type: string;    // "gravity"
   };
+  pse_safeguards: string[];     // ["hood_cleaning", "fire_suppression_system", "fire_extinguisher", "fire_alarm_monitoring"]
   ahj_split_notes: string | null;   // Multi-AHJ areas (e.g. LA County city vs unincorporated)
   federal_overlay: {
-    agency: string;      // e.g. "NPS" | "DOD"
-    authority: string;   // e.g. "36 CFR §2.10"
+    agency: string;      // "NPS" | "DOD"
+    authority: string;   // "36 CFR §2.10"
     notes: string;
   } | null;
 }

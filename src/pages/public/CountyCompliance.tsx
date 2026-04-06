@@ -68,11 +68,11 @@ const SCORING_TYPE_LABELS: Record<string, string> = {
 };
 
 const FIRE_AHJ_TYPE_LABELS: Record<string, string> = {
+  municipal_fire: 'Municipal Fire Department',
   county_fire: 'County Fire Department',
-  city_fire: 'City Fire Department',
-  cal_fire: 'CAL FIRE',
   fire_district: 'Fire Protection District',
-  federal: 'Federal (NPS / Military)',
+  cal_fire_contract: 'CAL FIRE (Contract)',
+  mixed: 'Mixed (Multiple AHJs)',
 };
 
 const TIER_LABELS: Record<number, string> = {
