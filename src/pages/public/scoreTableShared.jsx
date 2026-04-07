@@ -52,6 +52,15 @@ export var dinp = { width: "100%", padding: "10px 12px", border: "1px solid " + 
 
 // ═══ UTILITY ═══
 export function toSlug(name) { return name.toLowerCase().replace(/\s+/g, "-"); }
+export function labelFallback(val) {
+  if (!val) return "";
+  return val.replace(/_/g, " ").replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+}
+
+export var NON_NUMERIC_GRADING_TYPES = [
+  "violation_report_only", "pass_fail", "inspection_report", "report_only",
+  "pass_conditional_closed", "advisory", "pass_fail_placard", "pass_reinspect",
+];
 
 // ═══ STATE MAP ═══
 export var STATE_MAP = {
@@ -65,21 +74,29 @@ export var STATE_MAP = {
 // ═══ LABEL MAPS ═══
 export var GRADING_TYPE_LABELS = {
   letter_grade: "Letter Grade (A / B / C)",
-  letter_grade_strict: "Letter Grade -- Strict (Only A passes)",
-  color_placard: "Color Placard (Green / Yellow / Red)",
-  score_100: "Numeric Score (0-100)",
-  score_negative: "Negative Scale (deductions from 0)",
-  pass_reinspect: "Pass / Reinspection Required",
-  three_tier_rating: "Three-Tier Rating",
-  pass_fail: "Pass / Fail",
-  report_only: "Report Only (no public grade)",
-  score_only: "Score Only",
+  letter_grade_strict: "Letter Grade — Strict (Only A passes)",
   letter_grade_abc: "Letter Grade (A/B/C)",
+  color_placard: "Color Placard (Green / Yellow / Red)",
   green_yellow_red: "Color Placard (Green/Yellow/Red)",
-  numeric_score_no_letter: "Numeric Score",
-  point_accumulation_tiered: "Point Accumulation (Tiered)",
   green_yellow_red_numeric: "Color Placard with Numeric Score",
+  score_100: "Numeric Score (0–100)",
+  numeric_score: "Numeric Score",
+  numeric_score_no_letter: "Numeric Score (no letter grade)",
+  score_negative: "Negative Scale (deductions from 0)",
+  score_only: "Score Only",
+  deduction_based: "Deduction-Based Scoring",
+  point_accumulation_tiered: "Point Accumulation (Tiered)",
+  three_tier_rating: "Three-Tier Rating",
+  tiered: "Tiered Rating",
+  esnu: "E / S / N / U Rating",
+  pass_fail: "Pass / Fail",
+  pass_fail_placard: "Pass / Fail with Placard",
+  pass_reinspect: "Pass / Reinspection Required",
+  pass_conditional_closed: "Pass / Conditional / Closed",
+  violation_report_only: "Violation Report Only",
+  report_only: "Report Only (no public grade)",
   inspection_report: "Inspection Report",
+  advisory: "Advisory",
 };
 
 export var SCORING_TYPE_LABELS = {
@@ -89,14 +106,20 @@ export var SCORING_TYPE_LABELS = {
   negative_scale: "Negative Scale",
   major_minor_reinspect: "Major/Minor with Reinspection",
   violation_point_accumulation: "Violation Point Accumulation",
+  point_deduction: "Point Deduction",
+  point_accumulation: "Point Accumulation",
   pass_fail: "Pass / Fail",
+  pass_fail_placard: "Pass / Fail with Placard",
+  pass_conditional_closed: "Pass / Conditional / Closed",
   report_only: "Report Only",
   numeric_score: "Numeric Score",
+  letter_grade: "Letter Grade",
+  rating: "Rating",
+  advisory: "Advisory",
   violation_report: "Violation Report",
   color_placard: "Color Placard",
   color_placard_and_numeric: "Color Placard & Numeric Score",
   inspection_report: "Inspection Report",
-  point_accumulation: "Point Accumulation",
 };
 
 export var FIRE_AHJ_TYPE_LABELS = {

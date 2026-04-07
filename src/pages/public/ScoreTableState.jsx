@@ -11,7 +11,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
 import {
-  E, S, ff, STATE_MAP, toSlug,
+  E, S, ff, STATE_MAP, toSlug, labelFallback,
   STGlobalStyle, STHeader, STBreadcrumb, STCtaForm, STCookieBanner, STFooter,
   STIcon, STLogo, Logo, bN, dinp, StatCard, TBadge,
   GRADING_TYPE_LABELS, FIRE_AHJ_TYPE_LABELS,
@@ -174,7 +174,7 @@ export default function ScoreTableState() {
                 return (
                   <Link key={slug} to={"/scoretable/" + stateSlug + "/" + slug} style={{ textDecoration: "none", background: E.cream, borderRadius: 10, padding: "16px", border: "1px solid " + E.g2, display: "block" }}>
                     <div style={{ fontSize: "0.84rem", fontWeight: 700, color: E.navy, marginBottom: 4 }}>{t.tribal_entity_name || t.county}</div>
-                    {t.fire_ahj_type && <div style={{ fontSize: "0.66rem", color: E.g4 }}>{FIRE_AHJ_TYPE_LABELS[t.fire_ahj_type] || t.fire_ahj_type}</div>}
+                    {t.fire_ahj_type && <div style={{ fontSize: "0.66rem", color: E.g4 }}>{FIRE_AHJ_TYPE_LABELS[t.fire_ahj_type] || labelFallback(t.fire_ahj_type)}</div>}
                     <div style={{ fontSize: "0.64rem", color: E.gold, marginTop: 4, fontWeight: 600 }}>Sovereign jurisdiction</div>
                   </Link>
                 );

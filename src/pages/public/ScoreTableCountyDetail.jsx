@@ -11,17 +11,15 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
 import {
-  E, S, ff, STATE_MAP, toSlug,
+  E, S, ff, STATE_MAP, toSlug, labelFallback, NON_NUMERIC_GRADING_TYPES,
   STGlobalStyle, STHeader, STBreadcrumb, STCtaForm, STCookieBanner, STFooter,
   STIcon, STLogo, Logo, bN, StatCard, TBadge, SL,
   GRADING_TYPE_LABELS, SCORING_TYPE_LABELS, FIRE_AHJ_TYPE_LABELS, PSE_LABELS, FREQ_LABELS,
 } from "./scoreTableShared";
 
 // ═══ Render grading_config details ═══
-function GradingDetails({ gc, gradingType }) {
+function GradingDetails({ gc, gradingType, showScoring }) {
   if (!gc) return null;
-  var scoringType = gc.scoring_type || "";
-  var display = gc.display || "";
   var sections = [];
 
   // Letter grades
@@ -71,11 +69,13 @@ function GradingDetails({ gc, gradingType }) {
     );
   }
 
-  // Key metrics
+  // Key metrics — only for numeric scoring systems
   var metrics = [];
-  if (gc.fail_below != null) metrics.push({ label: "Fail Below", value: gc.fail_below });
-  if (gc.passing_threshold != null) metrics.push({ label: "Pass Threshold", value: gc.passing_threshold });
-  if (gc.max_score != null) metrics.push({ label: "Max Score", value: gc.max_score });
+  if (showScoring !== false) {
+    if (gc.fail_below != null) metrics.push({ label: "Fail Below", value: gc.fail_below });
+    if (gc.passing_threshold != null) metrics.push({ label: "Pass Threshold", value: gc.passing_threshold });
+    if (gc.max_score != null) metrics.push({ label: "Max Score", value: gc.max_score });
+  }
   if (gc.grade_posting) metrics.push({ label: "Posting", value: gc.grade_posting.replace(/_/g, " ") });
   if (gc.inspection_frequency) metrics.push({ label: "Frequency", value: gc.inspection_frequency });
   if (gc.reports_public) metrics.push({ label: "Public Reports", value: "Yes" });
@@ -208,21 +208,33 @@ function FireDetails({ fc }) {
 function buildFaq(j, stateInfo, gc, fc) {
   var county = j.governmental_level === "tribal" ? (j.tribal_entity_name || j.county) : j.county + " County";
   var stateName = stateInfo.name;
+  var gradingLabel = GRADING_TYPE_LABELS[j.grading_type] || labelFallback(j.grading_type) || "inspection-based evaluation";
+  var isNonNumeric = NON_NUMERIC_GRADING_TYPES.includes(j.grading_type);
+  var fireCode = (fc && fc.fire_code_adopted) || j.fire_code_edition || stateInfo.fireCode;
   var faq = [];
 
   // Q1: Scoring system
-  var gradingLabel = GRADING_TYPE_LABELS[j.grading_type] || j.grading_type || "inspection-based evaluation";
-  faq.push({
-    q: "What is " + county + "'s restaurant inspection scoring system?",
-    a: county + ", " + stateName + " uses a " + gradingLabel + " system for food safety inspections. Enforcement is conducted by " + (j.agency_name || "the local health department") + " under " + stateInfo.regulatory + ".",
-  });
+  if (isNonNumeric) {
+    var systemDesc = j.grading_type === "pass_fail" || j.grading_type === "pass_fail_placard"
+      ? "a Pass / Fail system" : j.grading_type === "violation_report_only" || j.grading_type === "report_only"
+      ? "a violation report system (no public grade)" : "a " + gradingLabel + " system";
+    faq.push({
+      q: "What is " + county + "'s restaurant inspection scoring system?",
+      a: county + ", " + stateName + " uses " + systemDesc + " for food safety inspections. Inspections do not produce a numeric score. Enforcement is conducted by " + (j.agency_name || "the local health department") + " under " + stateInfo.regulatory + ".",
+    });
+  } else {
+    faq.push({
+      q: "What is " + county + "'s restaurant inspection scoring system?",
+      a: county + ", " + stateName + " uses a " + gradingLabel + " system for food safety inspections. Enforcement is conducted by " + (j.agency_name || "the local health department") + " under " + stateInfo.regulatory + ".",
+    });
+  }
 
   // Q2: Fire AHJ
   if (j.fire_ahj_name) {
-    var ahjLabel = FIRE_AHJ_TYPE_LABELS[j.fire_ahj_type] || j.fire_ahj_type || "";
+    var ahjLabel = FIRE_AHJ_TYPE_LABELS[j.fire_ahj_type] || labelFallback(j.fire_ahj_type);
     faq.push({
       q: "Who handles fire safety inspections for " + county + " commercial kitchens?",
-      a: "Fire safety for commercial kitchens in " + county + " is handled by " + j.fire_ahj_name + (ahjLabel ? " (" + ahjLabel + ")" : "") + ". The jurisdiction enforces " + (j.fire_code_edition || stateInfo.fireCode) + " with NFPA 96 standards for kitchen hood and duct cleaning.",
+      a: "Fire safety for commercial kitchens in " + county + " is handled by " + j.fire_ahj_name + (ahjLabel ? " (" + ahjLabel + ")" : "") + ". The jurisdiction enforces " + fireCode + " with NFPA 96 standards for kitchen hood and duct cleaning.",
     });
   }
 
@@ -235,8 +247,8 @@ function buildFaq(j, stateInfo, gc, fc) {
     });
   }
 
-  // Q4: Pass threshold
-  if (gc && (gc.fail_below != null || gc.passing_threshold != null)) {
+  // Q4: Pass threshold — only for numeric scoring systems
+  if (!isNonNumeric && gc && (gc.fail_below != null || gc.passing_threshold != null)) {
     var thresh = gc.fail_below || gc.passing_threshold;
     faq.push({
       q: "What score do you need to pass a " + county + " health inspection?",
@@ -312,9 +324,12 @@ export default function ScoreTableCountyDetail() {
   var fc = j.fire_jurisdiction_config || null;
   var isTribal = j.governmental_level === "tribal";
   var displayName = isTribal ? (j.tribal_entity_name || j.county) : j.county + " County";
-  var gradingLabel = GRADING_TYPE_LABELS[j.grading_type] || j.grading_type || "";
-  var scoringLabel = SCORING_TYPE_LABELS[j.scoring_type] || j.scoring_type || "";
-  var ahjTypeLabel = FIRE_AHJ_TYPE_LABELS[j.fire_ahj_type] || j.fire_ahj_type || "";
+  var gradingLabel = GRADING_TYPE_LABELS[j.grading_type] || labelFallback(j.grading_type);
+  var scoringLabel = SCORING_TYPE_LABELS[j.scoring_type] || labelFallback(j.scoring_type);
+  var ahjTypeLabel = FIRE_AHJ_TYPE_LABELS[j.fire_ahj_type] || labelFallback(j.fire_ahj_type);
+  var showScoring = !NON_NUMERIC_GRADING_TYPES.includes(j.grading_type);
+  var fireCodeDisplay = (fc && fc.fire_code_adopted) || j.fire_code_edition || stateInfo.fireCode;
+  var nfpa96Display = (fc && fc.nfpa_96_edition) || j.nfpa96_edition || "";
 
   var faq = buildFaq(j, stateInfo, gc, fc);
 
@@ -370,8 +385,8 @@ export default function ScoreTableCountyDetail() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))", gap: 12 }}>
             <StatCard label="Grading" value={gradingLabel || "—"} />
             <StatCard label="Fire AHJ" value={ahjTypeLabel || "—"} />
-            <StatCard label="Fire Code" value={j.fire_code_edition || stateInfo.fireCode} />
-            <StatCard label="NFPA 96" value={j.nfpa96_edition ? "NFPA 96-" + j.nfpa96_edition : "—"} />
+            <StatCard label="Fire Code" value={fireCodeDisplay} />
+            <StatCard label="NFPA 96" value={nfpa96Display ? "NFPA 96-" + nfpa96Display : "—"} />
           </div>
         </div>
       </section>
@@ -414,16 +429,25 @@ export default function ScoreTableCountyDetail() {
               </div>
             )}
 
-            {/* Scoring method */}
-            {scoringLabel && (
+            {/* Scoring method — only for numeric systems */}
+            {showScoring && scoringLabel && (
               <div style={{ marginBottom: 14 }}>
                 <SL>Scoring Method</SL>
                 <div style={{ fontSize: "0.84rem", color: E.g6 }}>{scoringLabel}</div>
               </div>
             )}
 
+            {/* Non-numeric system message */}
+            {!showScoring && (
+              <div style={{ marginBottom: 14, padding: "10px 14px", background: E.cream, borderRadius: 8, border: "1px solid " + E.g2 }}>
+                <div style={{ fontSize: "0.82rem", color: E.g5 }}>
+                  {gradingLabel} — no numeric score is assigned. Inspections result in a {j.grading_type === "pass_fail" || j.grading_type === "pass_fail_placard" ? "pass/fail determination" : j.grading_type === "violation_report_only" || j.grading_type === "report_only" ? "violation report" : "compliance determination"}.
+                </div>
+              </div>
+            )}
+
             {/* Grading config details */}
-            <GradingDetails gc={gc} gradingType={j.grading_type} />
+            <GradingDetails gc={gc} gradingType={j.grading_type} showScoring={showScoring} />
 
             {/* Regulatory basis */}
             <div style={{ marginTop: 14 }}>
@@ -449,18 +473,18 @@ export default function ScoreTableCountyDetail() {
             )}
 
             {/* Fire code */}
-            {j.fire_code_edition && (
+            {fireCodeDisplay && (
               <div style={{ marginBottom: 14 }}>
                 <SL>Fire Code Edition</SL>
-                <div style={{ fontSize: "0.84rem", color: E.g6 }}>{j.fire_code_edition}</div>
+                <div style={{ fontSize: "0.84rem", color: E.g6 }}>{fireCodeDisplay}</div>
               </div>
             )}
 
             {/* NFPA 96 */}
-            {j.nfpa96_edition && (
+            {nfpa96Display && (
               <div style={{ marginBottom: 14 }}>
                 <SL>NFPA 96 Edition</SL>
-                <div style={{ fontSize: "0.84rem", color: E.g6 }}>NFPA 96-{j.nfpa96_edition}</div>
+                <div style={{ fontSize: "0.84rem", color: E.g6 }}>NFPA 96-{nfpa96Display}</div>
               </div>
             )}
 
@@ -475,7 +499,16 @@ export default function ScoreTableCountyDetail() {
             {/* AHJ split notes (from fire_jurisdiction_config JSONB) */}
             {fc && fc.ahj_split_notes && (
               <div style={{ marginBottom: 14, padding: "10px 14px", background: E.bluePale, borderRadius: 8, border: "1px solid " + E.g3 }}>
+                <SL>AHJ Coverage Notes</SL>
                 <div style={{ fontSize: "0.78rem", color: E.g6 }}>{fc.ahj_split_notes}</div>
+              </div>
+            )}
+
+            {/* Local amendments */}
+            {fc && fc.has_local_amendments && fc.local_amendment_notes && (
+              <div style={{ marginBottom: 14, padding: "10px 14px", background: E.wrnBg, borderRadius: 8, border: "1px solid " + E.g3 }}>
+                <SL>Local Amendments</SL>
+                <div style={{ fontSize: "0.78rem", color: E.g6 }}>{fc.local_amendment_notes}</div>
               </div>
             )}
 
