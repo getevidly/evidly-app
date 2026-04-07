@@ -102,6 +102,7 @@ export var SCORING_TYPE_LABELS = {
 export var FIRE_AHJ_TYPE_LABELS = {
   municipal_fire: "Municipal Fire Department",
   county_fire: "County Fire Department",
+  county_fd: "County Fire Department",
   fire_district: "Fire Protection District",
   cal_fire_contract: "CAL FIRE (Contract)",
   state_fire_marshal: "State Fire Marshal",
@@ -112,6 +113,7 @@ export var FIRE_AHJ_TYPE_LABELS = {
 export var PSE_LABELS = {
   hood_cleaning: "Hood Cleaning",
   fire_suppression_system: "Fire Suppression System",
+  fire_extinguisher: "Fire Extinguisher",
   sprinklers: "Sprinkler System",
   fire_alarm_monitoring: "Fire Alarm Monitoring",
 };

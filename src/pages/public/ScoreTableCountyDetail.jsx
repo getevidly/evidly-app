@@ -472,10 +472,10 @@ export default function ScoreTableCountyDetail() {
               </div>
             )}
 
-            {/* AHJ split notes */}
-            {j.has_local_amendments && j.local_amendment_notes && (
+            {/* AHJ split notes (from fire_jurisdiction_config JSONB) */}
+            {fc && fc.ahj_split_notes && (
               <div style={{ marginBottom: 14, padding: "10px 14px", background: E.bluePale, borderRadius: 8, border: "1px solid " + E.g3 }}>
-                <div style={{ fontSize: "0.78rem", color: E.g6 }}>{j.local_amendment_notes}</div>
+                <div style={{ fontSize: "0.78rem", color: E.g6 }}>{fc.ahj_split_notes}</div>
               </div>
             )}
 
