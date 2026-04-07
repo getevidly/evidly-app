@@ -157,13 +157,13 @@ export function STHeader({ navLinks }) {
         <div style={{ display: "flex", alignItems: "center", gap: 14, marginRight: 28 }}>
           <STIcon sz={28} /><STLogo s="1rem" />
           <span style={{ color: E.g3, fontSize: "0.9rem" }}>|</span>
-          <a href="/" style={{ textDecoration: "none" }}><Logo s="0.9rem" /></a>
+          <a href="https://www.getevidly.com" style={{ textDecoration: "none" }}><Logo s="0.9rem" /></a>
         </div>
         <nav style={{ display: "flex", gap: 18, flex: 1 }}>
           {(navLinks || []).map(function (x) { return <a key={x[0]} href={x[1]} style={{ textDecoration: "none", color: E.g5, fontWeight: 500, fontSize: "0.8rem" }}>{x[0]}</a>; })}
         </nav>
         <div style={{ display: "flex", gap: 8 }}>
-          <a className="btn" href="https://www.getevidly.com" style={{ padding: "7px 14px", fontSize: "0.78rem", fontWeight: 700, textDecoration: "none", display: "inline-block", background: E.navy, color: E.w, borderRadius: 8, fontFamily: ff, cursor: "pointer" }}>Get EvidLY</a>
+          <a className="btn" href="https://calendly.com/founders-getevidly/guided-tour" style={{ padding: "7px 14px", fontSize: "0.78rem", fontWeight: 700, textDecoration: "none", display: "inline-block", background: E.navy, color: E.w, borderRadius: 8, fontFamily: ff, cursor: "pointer" }}>Get EvidLY</a>
         </div>
       </div>
     </header>
