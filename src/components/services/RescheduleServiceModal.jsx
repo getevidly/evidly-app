@@ -41,7 +41,7 @@ export function RescheduleServiceModal({
 
     try {
       if (isDemoMode) {
-        await new Promise(r => setTimeout(r, 000));
+        await new Promise(r => setTimeout(r, 1000));
         setSubmitted(true);
         setSubmitting(false);
         return;
