@@ -1,9 +1,13 @@
 // ═══════════════════════════════════════════════════════════
 // hoodops-webhook — HOODOPS-SERVICES-01 + AUDIT-FIX-07 / H-3, H-4
+//                   + RESCHEDULE-EVIDLY-01
 //
 // Receives webhook events from HoodOps platform:
 //   - service.completed → upsert vendor_service_records + upsert schedule
 //   - service.scheduled → upsert location_service_schedules
+//   - reschedule.confirmed → confirm pending reschedule + update schedule
+//   - reschedule.declined  → decline pending reschedule
+//   - reschedule.updated   → vendor proposes alternative date
 //
 // H-3: Idempotency via event_id (deterministic if not provided by HoodOps)
 // H-4: All calls logged to platform_audit_log
@@ -12,6 +16,7 @@
 
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { createOrgNotification } from "../_shared/notify.ts";
 
 const VALID_SERVICE_CODES = ["KEC", "FPM", "GFX", "RGC", "FS"];
 
@@ -226,6 +231,180 @@ Deno.serve(async (req: Request) => {
       await logAudit(true);
       return new Response(
         JSON.stringify({ ok: true, event: "service.scheduled", event_id: eventId, next_due: nextDue }),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    }
+
+    // ── RESCHEDULE-EVIDLY-01: Reschedule lifecycle events ──────
+
+    if (event === "reschedule.confirmed") {
+      // Find pending reschedule for this service at this location
+      const { data: pending, error: findErr } = await supabase
+        .from("service_reschedule_requests")
+        .select("id, requested_date, service_type_code")
+        .eq("organization_id", organization_id)
+        .eq("location_id", location_id)
+        .eq("service_type_code", service_type_code)
+        .eq("status", "pending")
+        .limit(1)
+        .maybeSingle();
+
+      if (findErr || !pending) {
+        await logAudit(false, findErr?.message || "No pending reschedule found");
+        return new Response(
+          JSON.stringify({ error: "No pending reschedule found" }),
+          { status: 404, headers: { "Content-Type": "application/json" } },
+        );
+      }
+
+      const confirmedDate = data.confirmed_date || pending.requested_date;
+
+      // Update reschedule request
+      await supabase
+        .from("service_reschedule_requests")
+        .update({
+          status: "confirmed",
+          confirmed_by: "webhook",
+          vendor_confirmed_date: confirmedDate,
+          vendor_response_notes: data.response_notes || null,
+        })
+        .eq("id", pending.id);
+
+      // Update the service schedule's next_due_date
+      await supabase
+        .from("location_service_schedules")
+        .update({
+          next_due_date: confirmedDate,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("organization_id", organization_id)
+        .eq("location_id", location_id)
+        .eq("service_type_code", service_type_code);
+
+      // Notification
+      await createOrgNotification({
+        supabase,
+        organizationId: organization_id,
+        type: "service_reschedule_confirmed",
+        category: "vendors",
+        title: `Service rescheduled — ${service_type_code} confirmed for ${confirmedDate}`,
+        body: `Vendor confirmed the reschedule for ${confirmedDate}.`,
+        actionUrl: "/services",
+        actionLabel: "View Services",
+        priority: "high",
+        severity: "info",
+        sourceType: "reschedule_request",
+        sourceId: pending.id,
+        roleFilter: ["owner_operator", "compliance_manager", "facilities_manager"],
+      }).catch(() => {});
+
+      await logAudit(true);
+      return new Response(
+        JSON.stringify({ ok: true, event: "reschedule.confirmed", reschedule_id: pending.id, confirmed_date: confirmedDate }),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    }
+
+    if (event === "reschedule.declined") {
+      const { data: pending, error: findErr } = await supabase
+        .from("service_reschedule_requests")
+        .select("id, service_type_code")
+        .eq("organization_id", organization_id)
+        .eq("location_id", location_id)
+        .eq("service_type_code", service_type_code)
+        .eq("status", "pending")
+        .limit(1)
+        .maybeSingle();
+
+      if (findErr || !pending) {
+        await logAudit(false, findErr?.message || "No pending reschedule found");
+        return new Response(
+          JSON.stringify({ error: "No pending reschedule found" }),
+          { status: 404, headers: { "Content-Type": "application/json" } },
+        );
+      }
+
+      await supabase
+        .from("service_reschedule_requests")
+        .update({
+          status: "declined",
+          vendor_response_notes: data.response_notes || null,
+        })
+        .eq("id", pending.id);
+
+      await createOrgNotification({
+        supabase,
+        organizationId: organization_id,
+        type: "service_reschedule_declined",
+        category: "vendors",
+        title: `Reschedule declined — ${service_type_code}`,
+        body: data.response_notes || "Vendor declined the reschedule request.",
+        actionUrl: "/services",
+        actionLabel: "View Services",
+        priority: "medium",
+        severity: "advisory",
+        sourceType: "reschedule_request",
+        sourceId: pending.id,
+        roleFilter: ["owner_operator", "compliance_manager", "facilities_manager"],
+      }).catch(() => {});
+
+      await logAudit(true);
+      return new Response(
+        JSON.stringify({ ok: true, event: "reschedule.declined", reschedule_id: pending.id }),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    }
+
+    if (event === "reschedule.updated") {
+      const { data: pending, error: findErr } = await supabase
+        .from("service_reschedule_requests")
+        .select("id, service_type_code")
+        .eq("organization_id", organization_id)
+        .eq("location_id", location_id)
+        .eq("service_type_code", service_type_code)
+        .eq("status", "pending")
+        .limit(1)
+        .maybeSingle();
+
+      if (findErr || !pending) {
+        await logAudit(false, findErr?.message || "No pending reschedule found");
+        return new Response(
+          JSON.stringify({ error: "No pending reschedule found" }),
+          { status: 404, headers: { "Content-Type": "application/json" } },
+        );
+      }
+
+      const proposedDate = data.proposed_date || null;
+
+      await supabase
+        .from("service_reschedule_requests")
+        .update({
+          vendor_confirmed_date: proposedDate,
+          vendor_response_notes: data.response_notes || null,
+        })
+        .eq("id", pending.id);
+
+      await createOrgNotification({
+        supabase,
+        organizationId: organization_id,
+        type: "service_reschedule_updated",
+        category: "vendors",
+        title: `Vendor proposed new date for ${service_type_code}`,
+        body: proposedDate
+          ? `Vendor proposed ${proposedDate} instead.`
+          : "Vendor sent updated information.",
+        actionUrl: "/services",
+        actionLabel: "View Services",
+        priority: "medium",
+        severity: "info",
+        sourceType: "reschedule_request",
+        sourceId: pending.id,
+        roleFilter: ["owner_operator", "compliance_manager", "facilities_manager"],
+      }).catch(() => {});
+
+      await logAudit(true);
+      return new Response(
+        JSON.stringify({ ok: true, event: "reschedule.updated", reschedule_id: pending.id, proposed_date: proposedDate }),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
     }
