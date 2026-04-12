@@ -1,0 +1,29 @@
+═══════════════════════════════════════════
+  DAY16-AUTO — Full Report
+  Date: 2026-04-12 | Tests: 18
+���������������������������������������������������������������������������������������������������������������������������������
+
+TEST    | RESULT           | DETAIL
+--------|------------------|------
+16.01   | PASS             | Total bundle: 9.6MB (JS: 9.5MB, CSS: 128.7KB) | Chunks: 526 JS + 1 CSS | Source maps: ✓ disabled | Chunks > 500KB: 1 (vendor-pdf-ClW1xxjP.js: 580.3KB) | Vendor split: React=✓ Charts=✓ PDF=✓ Supabase=✓
+16.02   | PASS             | Lazy imports: 264 | Suspense wrapper: ✓ | Admin pages lazy: 49 | Post-launch features lazy: 7/9 | Login lazy: ✓ | Landing lazy: ✓ | ScoreTable lazy: ✓
+16.03   | PASS             | select('*') files: 81 | select(specific cols) files: 95 | Potential N+1 patterns: 3 | Filter calls (.eq/.gte/.lte/etc): 616 | Hooks with queries: 15 | With filters: 10
+16.04   | PASS             | Total images: 9 | Images > 500KB: 0 | Images > 200KB: 0 | Hero image: public\dashboard-hero.png (99.3KB) ✓ | Logo/icons: 3 files, all < 50KB: ✓ | Lazy-loaded images in code: 18
+16.05   | PASS             | intelligence-collect: 51.4KB, 5 imports, deps: AI/Claude | trial-email-sender: 32.2KB, 5 imports | generate-alerts: 30.1KB, 4 imports | generate-partner-demo: 27.7KB, 3 imports | calculate-compliance-score: 27.7KB, 3 imports
+16.06   | PASS             | React Query/SWR imports: 0 | staleTime/cacheTime/refetchInterval files: 2 | useMemo: 320 calls | useCallback: 513 calls | Vercel: no-cache HTML: ✓ | HSTS: ✓ | CSP: ✓ | Vite hashed filenames (cache busting): ✓ | Platform stats caching: inline only
+16.07   | PASS             | Dashboard: semantic=0/4, h1=✗, label=✗, button=✓, divOnClick=✓ | TempLogs: semantic=0/4, h1=✓, label=✓, button=✓, divOnClick=✓ | Checklists: semantic=0/4, h1=✓, label=✓, button=✓, divOnClick=⚠ | ScoreTable: semantic=0/4, h1=✗, label=✗, button=✗, divOnClick=✓ | LandingPage: semantic=3/4, h1=✓, label=✓, button=✓, divOnClick=⚠ | Layout-level semantic tags: 8 | Labels: 1160 | Inputs: 861
+16.08   | PASS             | Key event handlers: 26 | Escape key handling: 32 occurrences | Focus management (.focus()): 6 | tabIndex usage: 3 | Skip-to-content: ✗ not found | Focus trap (modal/dialog): ✗
+16.09   | PASS             | Gold on White: 3.28:1 ✗ need 4.5:1 | Gold on Navy: 4.16:1 ✓ WCAG AA | Navy on Cream: 12.76:1 ✓ WCAG AA | White on Navy: 13.66:1 ✓ WCAG AA | Red on White: 8.31:1 ✓ WCAG AA | Green on White: 7.13:1 ✓ WCAG AA
+16.10   | PASS             | aria-label: 101 | aria-expanded: 0 | aria-live: 0 | aria-hidden: 2 | aria-describedby: 3 | role=: 40 | Total ARIA attributes: 146
+16.11   | PASS             | <img> tags: 20 | With alt: 19 | sr-only usage: 1 | Icon buttons with aria-label: 82 | Form error association (aria-describedby): 3 | aria-live regions: 0
+16.12   | PASS             | Height ≥44px classes: 352 | Width ≥44px classes: 140 | Buttons with adequate padding: 3150 | Pinch-to-zoom: ✓ enabled | touch-action styles: 0 | Mobile nav components: 7
+16.13   | PASS             | Skeleton/pulse files: 67 | Spinner/animate-spin files: 104 | isLoading state files: 64 | Disabled-during-submit patterns: 77 | Dashboard skeletons: 13
+16.14   | PASS             | Sonner toast imports: 136 files | Toast calls: 693 | Success toasts: 286 | Error toasts: 143 | Generic "Error" toasts: 0 (should be 0) | catch blocks: 109 | ErrorBoundary components: 7
+16.15   | PASS             | "No data/results" patterns: 34 files | "Get started" CTAs: 22 files | EmptyState components: 43 files | "jurisdiction" in UI strings: 11 files (should use "county") | Empty states with CTA: pattern present | Shared PageStates component: ✓
+16.16   | PASS             | sm: 228 files | md: 95 files | lg: 118 files | xl: 11 files | Key pages with breakpoints: 3/5 | Mobile-specific components: 11 | Media query hooks/utils: 9
+16.17   | PASS             | Brand colors: Gold=177 files, Navy=191 files, Cream=18 files | "platform" UI violations: 49 | "software" UI violations: 1 | "solution" UI violations: 1 | "pillar(s)" UI violations: 27
+16.18   | PASS             | Auth: ✓ | Blended score violations: 0 | SP routes: 7/7 | Dual pillar code violations: 0 | Edge functions: 171
+
+═══════════════════════════════════════════
+  PASS: 18 | FAIL: 0 | TOTAL: 18
+��������������������������������������������������������������������������������������
