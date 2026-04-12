@@ -84,7 +84,7 @@ export default function UserEmulation() {
     try {
       const [orgRes, userRes, auditRes] = await Promise.all([
         supabase.from('organizations').select('id, name, created_at').order('name'),
-        supabase.from('profiles').select('id, full_name, email, role, organization_id').order('full_name'),
+        supabase.from('user_profiles').select('id, full_name, email, role, organization_id').order('full_name'),
         supabase.from('emulation_audit_log').select('*').order('started_at', { ascending: false }).limit(20),
       ]);
       if (orgRes.data) setOrgs(orgRes.data);
