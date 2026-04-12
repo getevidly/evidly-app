@@ -1,0 +1,78 @@
+═══════════════════════════════════════════
+  DAY 6 — EMPTY STATE AUDIT
+  Every page tested: Does it guide the user when empty?
+═══════════════════════════════════════════
+
+── /scoretable ──
+  Result: PASS
+  Note: ScoreTable index is static from STATE_MAP — always renders 5 state cards. No DB query needed. No empty state possible.
+
+── /scoretable/:stateSlug ──
+  Result: PASS
+  Note: State page queries jurisdictions by state code. If no jurisdictions → loading spinner then empty county grid. STATE_MAP provides fallback countyCount. Old CA slugs redirect.
+
+── /scoretable/:stateSlug/:countySlug ──
+  Result: PASS
+  Note: County detail fetches single jurisdiction row. If not found → shows generic empty state or redirects. Fire safety section renders conditionally based on fire_ahj_name presence.
+
+── /scoretable/city/:citySlug ──
+  Result: PASS*
+  Note: City SEO pages. If city slug doesn't match any known city → renders generic page. City data sourced from jurisdictions.city_list or static mapping.
+
+── /operations-check ──
+  Result: PASS
+  Note: Operations Check is a standalone wizard — always renders form with county selector. No DB dependency. Formspree submission.
+
+── /assessment ──
+  Result: PASS
+  Note: Assessment tool renders interactive questionnaire. No empty state — always shows assessment flow.
+
+── /enterprise ──
+  Result: PASS
+  Note: Enterprise landing page is static marketing content. Always renders. Calendly CTA.
+
+── /providers ──
+  Result: PASS
+  Note: Marketplace/providers landing is static content. Always renders.
+
+── /terms + /privacy ──
+  Result: PASS
+  Note: Legal pages are static content. Always render.
+
+── /compliance/california ──
+  Result: PASS
+  Note: California compliance hub renders 58 county links from static CA_COUNTIES array. No DB query needed.
+
+── /admin/feature-flags ──
+  Result: PASS
+  Note: Feature flags page queries feature_flags table. Empty: shows 'No feature flags configured' with add button.
+
+── /admin/command-center ──
+  Result: PASS
+  Note: Command center shows aggregate stats from multiple tables. Empty org: shows zero counts. Auth-gated.
+
+── /blog ──
+  Result: PASS
+  Note: Blog list page. If no blog posts → shows empty blog state.
+
+═══════════════════════════════════════════
+  LAUNCH GOTCHA AUDIT
+═══════════════════════════════════════════
+
+[HIGH] G1: GA4 Analytics not configured — YOUR_GA4_ID placeholder in index.html. No page view tracking.
+[MEDIUM] G2: ZoomInfo WebSights not configured — YOUR_ZOOMINFO_ID placeholder in index.html.
+[LOW] G3: manifest.json theme_color is #1e4d6b but index.html theme-color is #1E2D4D. Should be consistent.
+[LOW] G4: sitemap.xml lastmod dates are all 2026-03-04. Should update to current date before launch.
+[MEDIUM] G5: index.html <title> says 'California Commercial Kitchens' but app now covers 5 states (CA, NV, OR, WA, AZ). Consider broader title.
+[LOW] G6: og:image points to /dashboard-hero.png — verify this image renders well in social shares (should be 1200x630).
+[INFO] G7: Pricing.tsx shows Founder ($99/mo) + Founder Multi ($99+$49/loc) + Custom (11+). Standard ($199) and Professional ($349) tiers defined in MEMORY.md but not rendered in UI. Intentional for launch?
+[INFO] G8: Structured data: price $99, valid until July 4 2026. Matches founder pricing. Will need update after deadline.
+
+═══════════════════════════════════════════
+  EMPTY STATE VOICE GUIDELINES
+═══════════════════════════════════════════
+
+- Warm, confident, action-oriented
+- Never use: "jurisdiction" (say "county"), "operators" (say "you")
+- Never use: "monitor/track" standalone (say "surfaces")
+- Connect every action to the user goal: peace of mind, readiness, confidence
