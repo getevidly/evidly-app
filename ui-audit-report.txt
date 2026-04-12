@@ -1,0 +1,626 @@
+═══════════════════════════════════════════════════════════════
+  UI POLISH AUDIT — FULL REPORT — EvidLY
+  Generated: 2026-04-12 by UI-POLISH-AUDIT
+  Auditor: Automated codebase analysis (333+ files reviewed)
+═══════════════════════════════════════════════════════════════
+
+══════════════════════════════════════��═══════════
+  SECTION 1 — DESIGN SYSTEM CONSISTENCY
+══════════════════════════════════════════════════
+
+── 1.01 COLOR PALETTE AUDIT ──────────────────────
+
+STATUS: TWO COMPETING PALETTES — CRITICAL ISSUE
+
+Primary brand navy documented as #1E2D4D.
+Actual dominant navy in codebase: #1e4d6b (3.5x more usage).
+
+| Color           | Hex       | Count  | Files | On-Brand? |
+|-----------------|-----------|--------|-------|-----------|
+| Navy (off-brand)| #1e4d6b   | 1,990  | 344   | NO — dominant but wrong |
+| Navy (brand)    | #1E2D4D   | 563    | 201   | YES — documented brand |
+| Gold (brand)    | #A08C5A   | 469    | 181   | YES |
+| Cream (brand)   | #FAF7F0   | 33     | 18    | YES — severely under-used |
+| Alt gold        | #d4af37   | 33     | 18    | VARIANT — partner pages |
+| Dark navy       | #0B1628   | ~5     | 1     | OK — AdminShell sidebar |
+| Bright gold     | #9A8450   | ~10    | 5     | OK — hover state for gold |
+| Off-brand blue  | #eef4f8   | ~5     | 1     | NO — EmptyState.tsx bg |
+| Off-brand gray  | #6B7F96   | ~10    | 1     | NO — PageStates.tsx text |
+
+Tailwind generic colors (heavily used, dilute brand):
+  text-gray-500:   dominant body text color
+  text-gray-900:   heading text (should be #1E2D4D)
+  bg-gray-50:      section backgrounds (should be #FAF7F0)
+  border-gray-200: card borders (acceptable)
+  border-gray-300: input borders (acceptable)
+
+Success/error/warning colors (no formal standard):
+  Green: #166534, text-green-600, text-green-700, bg-green-50
+  Red:   #991b1b, text-red-600, text-red-700, bg-red-50
+  Amber: text-amber-600, bg-amber-50, text-yellow-600, bg-yellow-50
+  Blue:  text-blue-600, bg-blue-50
+
+GRADE: C — Two navies is the #1 design issue. Cream barely adopted.
+
+── 1.02 TYPOGRAPHY HIERARCHY ─────────────────────
+
+STATUS: INCONSISTENT ±1 SIZE LEVEL
+
+| Level          | Expected        | Actual Variations              |
+|----------------|-----------------|--------------------------------|
+| Page title     | text-2xl bold   | text-xl, text-2xl, text-3xl    |
+| Section head   | text-lg semibold| text-lg, text-xl               |
+| Card title     | text-sm semibold| text-sm, text-base, text-lg    |
+| Body text      | text-sm         | text-sm (consistent)           |
+| Labels         | text-xs medium  | text-xs, text-sm               |
+| Helper text    | text-xs gray-500| text-xs, text-sm               |
+
+Arbitrary sizes found: text-[13px], text-[15px], text-[11px], text-[10px]
+Inline font sizes: fontSize: 14, 18, 40, 48 (in PageStates, NotFound)
+
+Font weight usage:
+  font-bold:     page titles, KPI numbers
+  font-semibold: section heads, card titles, buttons
+  font-medium:   labels, nav, secondary
+  font-normal:   body (default)
+
+GRADE: B- — Mostly consistent, but ±1 size drift and inline sizes hurt.
+
+── 1.03 SPACING SYSTEM ───────────────────────────
+
+STATUS: REASONABLY CONSISTENT
+
+Page padding:      p-4 md:p-6 (dominant) — some p-6, p-8
+Card padding:      p-4 / p-5 / p-6 (three values — should be one)
+Section gaps:      space-y-4 / space-y-6 (two values — acceptable)
+Form field gaps:   space-y-4 (consistent)
+Grid gaps:         gap-4 / gap-6 (two values — acceptable)
+
+Inline spacing violations:
+  NotFound.jsx:     padding: '80px 20px'
+  PageStates.tsx:   padding: '3rem 1.5rem'
+
+GRADE: B — Functional, but card padding should standardize to one value.
+
+── 1.04 BORDER RADIUS ───────────────────────────
+
+STATUS: MOSTLY CONSISTENT
+
+Cards:    rounded-xl (dominant), rounded-lg (older pages)
+Buttons:  rounded-lg (dominant), rounded-md (some)
+Inputs:   rounded-md (dominant), rounded-lg (some)
+Modals:   rounded-xl (consistent)
+Badges:   rounded-full (consistent)
+Inline:   borderRadius: 6 (PageStates.tsx)
+
+GRADE: B+ — Good. Minor rounded-lg vs rounded-xl drift on cards.
+
+── 1.05 SHADOW CONSISTENCY ───────────────────────
+
+STATUS: MIXED APPROACH
+
+Cards: Some use shadow-sm, some use border border-gray-200, some use both.
+Dashboard cards tend to be border-only. Feature pages tend to be shadow-sm.
+This creates visual inconsistency when pages are compared side by side.
+
+Modals: shadow-xl (consistent)
+Dropdowns: shadow-lg (consistent)
+
+GRADE: B- — Pick one approach for cards and standardize.
+
+── 1.06 BUTTON DESIGN SYSTEM ────────────────────
+
+STATUS: 3-4 COMPETING PATTERNS — HIGH PRIORITY
+
+Primary variants found:
+  1. bg-[#A08C5A] text-white rounded-lg (gold — used in EmptyState.jsx, CTAs)
+  2. bg-[#1e4d6b] text-white rounded-lg (off-brand navy — EmptyState.tsx, PageStates)
+  3. bg-[#1E2D4D] text-white rounded-lg (brand navy — some pages)
+  4. bg-blue-600 text-white rounded-lg (generic — some admin pages)
+
+Button heights: h-8, h-9, h-10, h-11, h-12, min-h-[44px], py-2, py-2.5, py-3
+Button font: text-sm font-medium (most), text-sm font-semibold (some)
+
+No shared Button component enforcing consistency.
+(src/components/ui/ has Card, Skeleton, etc. but no Button)
+
+GRADE: C — Needs a single Button component or documented standard.
+
+── 1.07 ICON CONSISTENCY ─────────────────────────
+
+STATUS: GOOD
+
+Library: lucide-react (dominant — 90%+)
+Secondary: Unicode emoji (EmptyState.jsx — intentional emotional design)
+           HTML entities (PageStates.tsx — should be Lucide icon)
+
+Sizes: w-4 h-4 (small), w-5 h-5 (standard), w-6 h-6 (large), w-8 h-8 (hero)
+Stroke: Default 2px (no customization)
+
+GRADE: A- — Single library, logical size scale. Minor emoji/entity usage.
+
+── 1.08 CARD PATTERNS ───────────────────────────
+
+STATUS: MOSTLY CONSISTENT
+
+Dominant: bg-white rounded-xl border border-gray-200 p-6
+Variants: p-4 (compact), shadow-sm (some), rounded-lg (older)
+Header: title left, action button right (consistent)
+
+GRADE: B — Good base pattern. Minor padding/radius/shadow drift.
+
+── 1.09 TABLE PATTERNS ──────────────────────────
+
+STATUS: CONSISTENT
+
+Header: bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wider
+Rows: border-b border-gray-200, hover:bg-gray-50
+Row padding: py-3 px-4 to py-4 px-6 (minor variation)
+No alternating rows (clean, modern)
+
+GRADE: A- — Professional table design. Minor padding variation.
+
+── 1.10 FORM PATTERNS ───────────────────────────
+
+STATUS: MOSTLY CONSISTENT
+
+Input: w-full px-3 py-2 border border-gray-300 rounded-md
+Focus: focus:ring-2 focus:ring-[#1e4d6b] (should be #1E2D4D)
+       Some use focus:ring-blue-500
+Labels: text-sm font-medium text-gray-700 mb-1 (consistent)
+Required: * after label (consistent)
+Errors: text-sm text-red-600 mt-1 (consistent)
+Submit: mixed — right-aligned OR full-width (no standard)
+
+GRADE: B — Good input styling. Focus ring color and submit position vary.
+
+══════════════════════════════════════════════════
+  SECTION 2 — PAGE-BY-PAGE VISUAL AUDIT
+══════════════════════════════════════════════════
+
+── 2.01 LOGIN PAGE ───────────────────────────────
+File: src/pages/Login.tsx
+
+ANALYSIS:
+  + Centered card layout with branded EvidLY logo
+  + Navy (#1E2D4D) + Gold (#A08C5A) branding in logo
+  + Social login buttons (Google) styled consistently
+  + reCAPTCHA positioned below submit button
+  + "Forgot password?" link visible
+  + Password visibility toggle
+  + Vendor redirect logic
+  + Demo mode support
+  - Uses #1e4d6b for some elements (off-brand)
+  - Could use cream background instead of white
+
+GRADE: B+ — Clean, professional login. Minor color inconsistency.
+
+── 2.02 DASHBOARDS ──────────────────────────────
+
+Owner/Operator (OwnerOperatorDashboard.tsx):
+  + KPI metric cards in grid layout
+  + Portfolio risk card with location breakdown
+  + Calendar card, intelligence feed widget
+  + Onboarding checklist for new users
+  + Skeleton loading states
+  - Uses both #1E2D4D and #1e4d6b
+GRADE: B
+
+Executive (ExecutiveDashboard.tsx):
+  + Multi-location metrics overview
+  + Trend analysis components
+  + Similar card grid to owner
+  + Skeleton loading
+GRADE: B
+
+Compliance Manager (ComplianceManagerDashboard.tsx):
+  + Deficiency tracking focus
+  + Compliance index display
+  + Corrective actions overview
+  + Skeleton loading
+GRADE: B
+
+Chef (ChefDashboard.tsx):
+  + Daily tasks focus
+  + Food safety quick actions
+  + HACCP references
+  + Skeleton loading
+GRADE: B
+
+Kitchen Manager (KitchenManagerDashboard.tsx):
+  + Shift operations view
+  + Equipment status
+  + Staff standing list
+  + Skeleton loading
+GRADE: B
+
+Facilities Manager (FacilitiesDashboardNew.tsx):
+  + Equipment focus
+  + PSE safeguards widget
+  + Maintenance tracking
+  + Skeleton loading
+GRADE: B
+
+Kitchen Staff (KitchenStaffTaskList.tsx):
+  + Task-only view (appropriate for role)
+  + Clean task cards with status
+  - More sparse than other dashboards
+  - Could benefit from a completion encouragement section
+GRADE: B-
+
+OVERALL DASHBOARDS GRADE: B — Consistent across roles, good skeleton loading.
+                             KPI numbers are scannable. Card grids aligned.
+
+── 2.03 TEMPERATURE LOGS ────────────────────────
+File: src/pages/TempLogs.tsx
+
+  + QR scan integration
+  + Equipment selector
+  + Shift tracking (morning/afternoon/evening)
+  + Out-of-range highlighting
+  + History list with readings
+  + CCP deviation recording
+  - Very long file (900+ lines) — busy interface
+  - Many controls compete for attention
+  - Could benefit from tabbed interface to reduce cognitive load
+
+GRADE: B- — Functional and comprehensive, but visually dense.
+
+── 2.04 CHECKLISTS ──────────────────────────────
+File: src/pages/Checklists.tsx
+
+  + 6 checklist types with clean selection
+  + Custom-styled checkboxes (not browser default)
+  + Progress tracking
+  + Notes field per item
+  + Authority source display (HACCP/CalCode)
+  + Template management
+  - Complex form structure
+
+GRADE: B — Clean checklist UI with professional authority references.
+
+── 2.05 DOCUMENTS ───────────────────────────────
+File: src/pages/Documents.tsx
+
+  + Smart upload modal with AI classification
+  + Document type icons
+  + Expiry date tracking with color coding
+  + AI analysis badges
+  + Cloud import support (Google Drive, OneDrive, Dropbox)
+  + Filter and search
+  - Many features packed into one page
+
+GRADE: B — Professional document management. AI features add value.
+
+── 2.06 VENDORS ─────────────────────────────────
+File: src/pages/Vendors.tsx
+
+  + Vendor list with status badges
+  + Service record tracking
+  + COI management
+  + Add/invite vendor modals
+  + Expense tracking
+  - Very long file (1400+ lines)
+  - Dense with multiple modals
+  - Could benefit from sub-pages instead of modals
+
+GRADE: B- — Comprehensive but visually dense.
+
+── 2.07 PSE / FACILITY SAFETY ──────────────────
+File: src/pages/CicPseView.tsx
+
+  + 4 safeguard cards (Hood, Suppression, Alarm, Sprinkler)
+  + Status indicators with On Track/Potential Gap
+  + NFPA references clean and tidy
+  + Risk pillars section
+  - CIC branding could be clearer
+
+GRADE: B — Clean safeguard display. NFPA references professional.
+
+── 2.08 SUPERPOWERS ─────────────────────────────
+
+InsightsHub (InsightsHub.tsx):
+  + Dynamic card grid from sidebar config
+  + Consistent card layout
+  + Demo guard active
+GRADE: B+
+
+SP1-SP7 pages (src/pages/insights/*.jsx):
+  + Consistent layout between all 7 pages
+  + useDemoGuard on all pages
+  + Charts and data viz consistent
+  + Card-based information display
+  - All show demo data — need clear "Demo Mode" indicator
+
+GRADE: B — Consistent and professional across all 7 superpowers.
+
+── 2.09 SCORETABLE PAGES ───────────────────────
+
+ScoreTable Landing:
+  + Navy background with gold accents — premium feel
+  + County cards in clean grid
+  + Search/filter functionality
+  + State selector
+  + 165 jurisdictions across 5 states
+GRADE: B+ — One of the best-looking pages in the app.
+
+County Detail:
+  + Comprehensive 6-section layout
+  + Food vs Fire safety visually separated
+  + FAQ section with JSON-LD
+  + Stat cards for key metrics
+  + Hazard notice conditional
+  - Dense content — could use more whitespace between sections
+
+GRADE: B — Comprehensive. Professional jurisdiction data display.
+
+── 2.10 LANDING PAGE ────────────────────────────
+File: src/pages/public/LandingPage.jsx
+
+  + Hero section with animated elements
+  + "Serving 300+ kitchens" social proof
+  + How It Works section
+  + Coverage section (5 states)
+  + Intelligence section
+  + Pricing section with Founder urgency countdown
+  + Enterprise callout
+  + Calendly integration
+  + Formspree lead capture
+  - No video embed (placeholder for future)
+  - No customer testimonials section (separate page exists)
+  - Pricing section could be cleaner (comparable to Stripe/Notion)
+  - Some sections feel dense
+
+GRADE: B — Good first impression. Professional enough for enterprise.
+           Not quite Stripe/Notion level but above average startup quality.
+
+── 2.11 ADMIN PAGES ─────────────────────────────
+
+Command Center:
+  + KPI tiles (clean StatCard component)
+  + Professional dark admin sidebar (#0B1628)
+  + AdminBreadcrumb navigation
+  + Data tables with metrics
+GRADE: B+
+
+Sales Pipeline:
+  + Stage-based filtering
+  + CRM-quality table layout
+  + Gold accent branding
+GRADE: B
+
+Feature Flags:
+  + Toggle interface
+  + Clean flag list with descriptions
+  + Plan-tier gating display
+GRADE: B
+
+Intelligence Admin:
+  + Signal management
+  + Source configuration
+  + Delivery pipeline visualization
+GRADE: B
+
+OVERALL ADMIN GRADE: B+ — Admin pages are clean and professional.
+                           AdminShell sidebar creates cohesive experience.
+
+── 2.12 SETTINGS PAGES ─────────────────────────
+
+BillingPage:
+  + Plan display with features
+  - OLD PRICING ($49/$149/$399) — needs update to Founder model
+  - Functional but could be more polished
+GRADE: C+ (due to outdated pricing)
+
+ProfileSettings/CompanyProfile:
+  + Clean form layout
+  + Proper field organization
+GRADE: B
+
+Team Settings:
+  + Team member list with roles
+  + Invite flow
+GRADE: B
+
+OVERALL SETTINGS GRADE: B- — Functional. BillingPage pricing is outdated.
+
+── 2.13 NOTIFICATIONS ──────────────────────────
+Files: src/components/notifications/NotificationPanel.tsx,
+       NotificationBell.tsx, NotificationItem.tsx, NotificationFilters.tsx
+
+  + Bell icon with unread count badge
+  + Panel with notification items
+  + Filter capabilities
+  + Notification items scannable
+  + Timestamps present
+  + Transition animations on panel open/close
+
+GRADE: B — Professional notification system.
+
+══════════════════════════════════════════════════
+  SECTION 3 — INTERACTIONS & ANIMATION
+══════════════════════════════════════════════════
+
+── 3.01 PAGE TRANSITIONS ────────────────────────
+  + PageTransition component exists (framer-motion, opacity + y slide)
+  + React.lazy with Suspense fallback in App.tsx
+  - PageTransition only used in 2 files (component + App.tsx import)
+  - Most pages load without transition animation
+  - Suspense fallback is adequate but could use branded loading
+GRADE: B- — Infrastructure exists but barely adopted.
+
+── 3.02 HOVER STATES ────────────────────────────
+  + 1,277 transition occurrences across 333 files — extensive
+  + hover:bg-*, hover:text-*, hover:shadow-* widely used
+  + Table rows: hover:bg-gray-50 (consistent)
+  + Cards: some have hover:-translate-y-0.5 hover:shadow-md (nice lift)
+  + Buttons: hover states present on most
+  - Some interactive elements without explicit hover (edge cases)
+GRADE: B+ — Good coverage. Hover lift on cards is professional touch.
+
+── 3.03 CLICK FEEDBACK ──────────────────────────
+  + active: states on some buttons
+  + disabled: states on form submit buttons
+  + Loading spinners on form submissions (isSubmitting patterns)
+  + Success toasts after actions
+  - Not all buttons have active/pressed state
+  - Some forms lack loading indicator during submission
+GRADE: B — Adequate. Room for improvement on universal loading states.
+
+── 3.04 MODAL ANIMATIONS ───────────────────────
+  + Modals use transition classes
+  + Backdrop fade-in present
+  + Modal scale/slide animations on some modals
+  - Not all modals have enter/exit animations
+GRADE: B — Most modals animate. Some may lack exit animation.
+
+── 3.05 TOAST NOTIFICATIONS ────────────────────
+  + Sonner toast library used
+  + Success, error, warning variants
+  + Positioned consistently
+  + Smooth slide animation
+  + Stacking handled
+GRADE: A- — Well-implemented toast system.
+
+══════════════════════════════════════════════════
+  SECTION 4 — PROFESSIONAL POLISH DETAILS
+══════════════════════════════════════════════════
+
+── 4.01 FAVICON & APP IDENTITY ──────────────────
+  + Favicon present in public/ directory
+  + manifest.json: "EvidLY" name, icons defined
+  - manifest.json theme_color: #1e4d6b (off-brand, should be #1E2D4D)
+  - index.html meta theme-color: #1E2D4D (correct)
+  - Mismatch between manifest and meta tag
+GRADE: B- — Favicon works, but manifest color mismatch.
+
+── 4.02 404 PAGE ────────────────────────────────
+File: src/pages/NotFound.jsx
+  + Uses brand navy #1E2D4D
+  + Links to dashboard
+  - Inline styles (not Tailwind)
+  - No illustration or graphic
+  - No EvidLY logo
+  - Minimal, basic feel
+  - No "Go to Login" for unauthenticated users
+GRADE: D — Needs redesign. Most basic 404 possible.
+
+── 4.03 LOADING SKELETONS ���─────────────────────
+Files: src/components/ui/Skeleton.tsx, components/LoadingSkeleton.tsx,
+       components/shared/PageStates.tsx, components/mobile/PageSkeleton.jsx
+
+  + 7 skeleton variants: Card, Table, Score, Chart, KPI, List, base
+  + animate-pulse used across 70+ files (287 occurrences)
+  + Dedicated DashboardSkeleton.tsx for dashboard loading
+  + Skeletons match content layout
+  + Professional pulse animation
+  - Some pages still use centered spinner instead of skeleton
+GRADE: A- ��� Excellent skeleton system. One of the app's strengths.
+
+── 4.04 MICRO-COPY QUALITY ─────────────────────
+  Button labels: Mixed — "Save", "Save Changes", "Submit", "Update", "Create"
+    Not fully standardized but contextually appropriate.
+
+  Empty states (shared/EmptyState.jsx): EXCELLENT
+    Emotional, role-aware copy. Examples:
+    - "Every log is a record that protects your team"
+    - "Consistent checklists are the difference between reactive and ready"
+    - "When an inspector walks in, you'll already know what they'll find"
+    Gold CTA buttons, warm tone. Best-in-class for a compliance app.
+
+  Error messages: Helpful — "Failed to load data" with retry button
+
+GRADE: B+ — Empty state copy is a standout. Button labels could standardize.
+
+── 4.05 DATA FORMATTING ────────────────────────
+  + toLocaleString / Intl.NumberFormat: 269 uses across 105 files
+  + Temperature: °F symbol used in display components
+  + Currency: $99/mo format used consistently in pricing
+  + Percentages: formatted with % symbol
+  - No central formatDate utility (dates formatted per-component)
+  - Some dates use different formats across pages
+GRADE: B — Good number formatting. Date formatting needs standardization.
+
+── 4.06 WHITESPACE MANAGEMENT ──────────────────
+  + Content area has max-width constraints
+  + Consistent padding from edges on most pages
+  + Mobile: adequate padding (p-4)
+  - Some feature pages (TempLogs, Vendors) feel cramped due to feature density
+  - Landing page sections could use more vertical breathing room
+GRADE: B — Adequate. Dense pages would benefit from more whitespace.
+
+── 4.07 VISUAL HIERARCHY ──────────────────────
+  + KPI numbers are large and scannable on dashboards
+  + Primary actions are visually prominent (gold or navy buttons)
+  + Secondary info uses lighter colors
+  + Badges and status indicators draw appropriate attention
+  - Some pages have too many elements at same visual weight
+  - Dense tables make it hard to find the important row
+GRADE: B — Good on dashboards. Feature pages could improve hierarchy.
+
+── 4.08 PRINT / EXPORT ────────────────────────
+  + 8 files with @media print styles
+  + Print-specific components: InspectionReadiness, AuditReport, HealthDeptReport
+  + PDF export utilities exist (pdfExport.ts, assessmentPdf.ts)
+  + HACCP deviation report has print formatting
+  - Most pages lack print styles
+  - No global print stylesheet
+GRADE: B- — Reports print well. Regular pages don't.
+
+══════════════════════════════════════════════════
+  SECTION 5 — OVERALL GRADES
+══════════════════════════════════════════════════
+
+| Area                    | Grade |
+|-------------------------|-------|
+| Color Palette           | C     |
+| Typography              | B-    |
+| Spacing                 | B     |
+| Border Radius           | B+    |
+| Shadows                 | B-    |
+| Buttons                 | C     |
+| Icons                   | A-    |
+| Cards                   | B     |
+| Tables                  | A-    |
+| Forms                   | B     |
+| Login                   | B+    |
+| Dashboards              | B     |
+| Feature Pages           | B-    |
+| Public Pages            | B+    |
+| Landing Page            | B     |
+| Admin Pages             | B+    |
+| Settings                | B-    |
+| Page Transitions        | B-    |
+| Hover States            | B+    |
+| Modals/Toasts           | B+    |
+| Skeletons               | A-    |
+| Empty States (copy)     | A-    |
+| Data Formatting         | B     |
+| 404 Page                | D     |
+|-------------------------|-------|
+| OVERALL                 | B-    |
+
+══════════════════════════════════════════════════
+  EXECUTIVE SUMMARY
+══════════════════════════════════════════════════
+
+EvidLY scores a solid B- overall — well above "indie project" but below
+"enterprise design team" polish. The app's strengths are its domain expertise,
+skeleton loading system, emotional empty state copy, and consistent table/icon
+patterns.
+
+The primary issues are:
+  1. TWO COMPETING NAVY COLORS (#1e4d6b vs #1E2D4D)
+  2. Brand cream (#FAF7F0) barely adopted
+  3. 3-4 primary button styles with no shared component
+  4. Basic 404 page
+
+These 4 issues account for most of the "looks like one developer" impression.
+Fixing them would lift the overall score to a B+, which is where enterprise
+SaaS products need to be for Aramark-level buyers.
+
+The good news: the underlying component patterns are solid. This is a
+unification and standardization task, not a redesign. The architecture
+supports a polished product — it just needs a focused design pass.
+
+═══════════════════════════════════════════════════════════════
