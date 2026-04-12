@@ -1,0 +1,81 @@
+═══════════════════════════════════════════════════════════════
+  PRODUCTION DEPLOY CHECKLIST — EvidLY
+  Generated: 2026-04-12 by DAY18-AUTO-TEST
+═══════════════════════════════════════════════════════════════
+
+── PRE-DEPLOYMENT ──────────────────────────────
+  [ ] All 18 Day 18 tests PASS
+  [ ] All 18 Day 17 tests PASS (committed e3910d5)
+  [ ] TypeScript: npx tsc --noEmit (0 errors)
+  [ ] Vitest: npx vitest run (294+ tests)
+  [ ] Production build: npx vite build (success)
+  [ ] Git: all changes committed to staging-mirror
+  [ ] Git: staging-mirror merged to main
+
+── VERCEL ENVIRONMENT VARIABLES ────────────────
+  [ ] VITE_SUPABASE_URL = https://irxgmhxhmxtzfwuieblc.supabase.co
+  [ ] VITE_SUPABASE_ANON_KEY = <production anon key>
+  [ ] VITE_APP_ENV = production
+  [ ] VITE_RECAPTCHA_SITE_KEY = <production reCAPTCHA key>
+  [ ] VITE_APP_URL = https://app.getevidly.com
+  [ ] VITE_STRIPE_PUBLISHABLE_KEY = <production Stripe key>
+  [ ] VITE_SENTRY_DSN = <production Sentry DSN>
+
+── SUPABASE EDGE FUNCTION SECRETS ──────────────
+  [ ] APP_URL = https://app.getevidly.com
+  [ ] RESEND_API_KEY = re_...
+  [ ] ANTHROPIC_API_KEY = sk-ant-...
+  [ ] STRIPE_SECRET_KEY = sk_live_...
+  [ ] STRIPE_WEBHOOK_SECRET = whsec_...
+  [ ] TWILIO_ACCOUNT_SID = AC...
+  [ ] TWILIO_AUTH_TOKEN = ...
+  [ ] TWILIO_FROM_NUMBER = +1...
+  [ ] INTELLIGENCE_WEBHOOK_SECRET = ...
+
+── DATABASE MIGRATION ──────────────────────────
+  [ ] Review production-migration.sql
+  [ ] Apply missing migrations to production DB
+  [ ] Verify table counts match testing DB
+  [ ] Verify RLS policies active
+  [ ] Apply seed data (feature flags, county configs, etc.)
+  [ ] Set up pg_cron jobs with production URLs
+  [ ] Verify pg_cron and pg_net extensions enabled
+
+── EDGE FUNCTION DEPLOYMENT ────────────────────
+  [ ] Deploy all 171 edge functions to production
+  [ ] Verify: supabase functions list
+  [ ] Test: assessment-notify (email to arthur@getevidly.com)
+  [ ] Test: send-welcome-email
+  [ ] Test: stripe-webhook (Stripe dashboard)
+  [ ] Test: intelligence-collect
+  [ ] Test: calculate-compliance-score
+
+── VERCEL DEPLOYMENT ───────────────────────────
+  [ ] npx vercel --prod
+  [ ] Verify: https://app.getevidly.com loads
+  [ ] Verify: Login page renders with reCAPTCHA
+  [ ] Verify: /operations-check accessible (public)
+  [ ] Verify: /scoretable/merced-county accessible
+  [ ] Verify: /admin/* returns 403 for non-admin
+  [ ] Verify: Security headers in browser DevTools
+  [ ] Verify: Sentry receiving events
+
+── POST-DEPLOYMENT VERIFICATION ────────────────
+  [ ] Log in as arthur@getevidly.com → admin dashboard
+  [ ] Navigate to /admin/command-center → KPI dashboard
+  [ ] Navigate to /admin/onboarding → create test org
+  [ ] Submit test Operations Check → email received
+  [ ] Verify feature flags: insurance_risk=disabled, predictive_alerts=disabled
+  [ ] Verify Stripe: checkout flow → portal redirect
+  [ ] Monitor Sentry for 30 minutes post-deploy
+  [ ] Monitor Supabase edge function logs for errors
+
+── OPEN ITEMS (NOT BLOCKING LAUNCH) ────────────
+  [ ] GA4 Measurement ID: configure in index.html
+  [ ] ZoomInfo WebSights: configure pixel ID
+  [ ] RB2B: add May 5 activation
+  [ ] HubSpot 24-week drip: future integration
+  [ ] Golden Table Awards branding: Q4 2026
+  [ ] ticket_sla trigger: manual setup in DB
+
+═══════════════════════════════════════════════════════════════
