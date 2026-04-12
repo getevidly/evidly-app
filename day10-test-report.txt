@@ -1,0 +1,36 @@
+═══════════════════════════════════════════
+  DAY10-AUTO — Full Report
+  Date: 2026-04-12 | Tests: 25
+═══════════════════════════════════════════
+
+TEST   | RESULT           | DETAIL
+-------|------------------|------
+10.01  | PASS             | Routes found: 8/8 | Missing: none
+10.02  | PASS             | Found: 8/8 | Missing: none
+10.03  | PASS             | Found: 11/11 | Missing: none
+10.04  | PASS             | Accessible: 9/9 | Failed: none
+10.05  | PASS             | TrainingHub useDemo/useDemoGuard: ✓ | Demo data import: ✓ (approved demo pattern) | CourseBuilder guard: ✓ | CertificateViewer guard: ✓
+10.06  | PASS             | Edge function: ✓ | SB 476 tab in TrainingHub: ✓ | DB reference: ✓ | STATUS: POST-LAUNCH — code exists, not customer-facing at launch
+10.07  | PASS             | Course validation: ✓ | Active check: ✓ | Duplicate prevention: ✓ | Status tracking: ✓ | STATUS: POST-LAUNCH
+10.08  | PASS             | AI Companion: ✓ | Quiz Generator: ✓ | Content Translate: ✓ | Uses Anthropic: ✓ | STATUS: POST-LAUNCH
+10.09  | PASS             | Found: 7/7 | Missing: none
+10.10  | PASS             | Weights: Fire=0.40:✓ Food=0.30:✓ Docs=0.20:✓ Ops=0.10:✓ | Dual pillar V2: ✓ Fire reads facilitySafety | Food separate: ✓ | Server categories separate: ✓
+10.11  | PASS             | X-API-Key auth: ✓ | Rate limit ref: ✓ | 401 unauthorized: ✓ | 403 forbidden: ✓ | Expiry check: ✓ | DB key lookup: ✓ | Admin API keys page: ✓ | Admin route: ✓
+10.12  | PASS             | Profiles: 3/3 | Standard: ✓ | Property-focused: ✓ | Food-safety-focused: ✓ | Validation: ✓ | Trend config: ✓
+10.13  | PASS             | InsuranceRisk demo guard: ✓ | InsuranceSettings demo guard: ✓ | useInsuranceRisk hook: ✓ | Route /insurance-risk: ✓ | Route /insurance-settings: ✓ | Shared view: ✓
+10.14  | PASS             | Routes: 5/5 | Missing routes: none | Pages: 5/5
+10.15  | PASS             | Found: 6/6 | Missing: none
+10.16  | PASS             | Mappings: 8/8 | Missing: none | Input validation: ✓ | Service role auth: ✓
+10.17  | PASS             | Activation ID input: ✓ | FoodItem model: ✓ | Disposition types (discard/salvage/donate): ✓ | Insurance deductible comparison: ✓ | DB table: ✓ | Value calculation: ✓ | STATUS: POST-LAUNCH
+10.18  | PASS             | Report types: 4/4 (full:✓ insurance:✓ health_dept:✓ legal:✓) | Activation lookup: ✓ | Template join: ✓ | Validation: ✓ | STATUS: POST-LAUNCH
+REG-10.TR| PASS             | Dashboard imports TrainingHub or training_courses: ✓ Clean separation
+REG-10.INS| PASS             | Client V2: Fire reads facilitySafety=✓, Fire reads foodSafety=✓ Clean | Server: NFPA refs=✓, FDA/food refs=✓
+REG-10.PB| PASS             | HoodOps references in playbook code: 0 | ✓ Clean
+REG-AUTH| PASS             | Access token obtained: ✓
+REG-ROUTES| PASS             | Total routes: 286 (expected ≥80)
+REG-EDGE| PASS             | Edge functions: 171 (expected ≥170)
+REG-DUAL| PASS             | Blended score violations: 0 | Food & Fire ALWAYS separate
+
+═══════════════════════════════════════════
+  PASS: 25 | FAIL: 0 | TOTAL: 25
+═══════════════════════════════════════════
