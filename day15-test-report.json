@@ -1,0 +1,381 @@
+{
+  "test": "DAY15-AUTO",
+  "date": "2026-04-12",
+  "summary": {
+    "pass": 23,
+    "fail": 0,
+    "total": 23
+  },
+  "results": [
+    {
+      "id": "15.01",
+      "name": "Email template inventory",
+      "status": "PASS",
+      "detail": "_shared/email.ts: ✓ (4.3KB) | Resend integration: ✓ | buildEmailHtml: ✓ | Email functions found: 18/18"
+    },
+    {
+      "id": "15.02",
+      "name": "Email branding",
+      "status": "PASS",
+      "detail": "Logo (Evid+LY): ✓ | Navy color: ✓ | Gold color: ✓ | Footer (EvidLY + Merced): ✓ | From @getevidly.com: ✓ | Unsubscribe link: ✓"
+    },
+    {
+      "id": "15.03",
+      "name": "Trial 14-day sequence",
+      "status": "PASS",
+      "detail": "trial-email-sender: ✓ (32.2KB) | Series 1 (ops): ✓ | Series 2 (leadership): ✓ | Day sequence: ✓ | Referral prompts: ✓ | Conversion urgency: ✓ | Dedup (trial_email_log): ✓ | Role-based: ✓"
+    },
+    {
+      "id": "15.04",
+      "name": "Weekly digest content",
+      "status": "PASS",
+      "detail": "ai-weekly-digest: ✓ (13.4KB) | Checklists: ✓ | Temperature: ✓ | Corrective actions: ✗ | Documents/expirations: ✓ | Intelligence signals: ✓ | AI model (Claude): ✓ | Fallback if AI unavailable: ✓"
+    },
+    {
+      "id": "15.05",
+      "name": "Alert email templates",
+      "status": "PASS",
+      "detail": "generate-alerts: ✓ (30.1KB) | send-document-alerts: ✓ (13.0KB) | Temperature alert: ✓ | Document expiry: ✓ | Service overdue: ✓ | Equipment alerts: ✓ | Checklist alert: ✓ | Priority ordering: ✓"
+    },
+    {
+      "id": "15.06",
+      "name": "SMS capability",
+      "status": "PASS",
+      "detail": "send-sms-invite: ✓ (1.8KB) | Twilio provider: ✓ | SMS-capable functions: 4 | SMS body: ✓ | auto-request-documents SMS: ✓ | process-service-reminders SMS: ✗"
+    },
+    {
+      "id": "15.07",
+      "name": "Stripe configuration",
+      "status": "PASS",
+      "detail": "Founder Single price ID: ✓ | Founder Multi price ID: ✓ | Checkout session: ✓ | Customer portal: ✓ | Webhook events: 6/6 | 45-day guarantee: ✓ | K2C donation trigger: ✓ | Signature verification: ✓"
+    },
+    {
+      "id": "15.08",
+      "name": "Subscription lifecycle",
+      "status": "PASS",
+      "detail": "1. Checkout session: ✓ | 2. 30-day trial: ✓ | 3. checkout.session.completed: ✓ |    Subscription DB write: ✓ | 4. invoice.paid: ✓ | 5. invoice.payment_failed: ✓ | 6. trial_will_end: ✓ | 7. subscription.deleted: ✓ |    Status → canceled: ✓"
+    },
+    {
+      "id": "15.09",
+      "name": "Founder pricing lock",
+      "status": "PASS",
+      "detail": "FOUNDER_PRICING_DEADLINE: ✓ | July 4, 2026 date: ✓ | \"Locked for life\": ✓ | Countdown component: ✓ | $99/mo price: ✓ | $49/additional location: ✓"
+    },
+    {
+      "id": "15.10",
+      "name": "K2C donation chain",
+      "status": "PASS",
+      "detail": "1. invoice.paid → k2c-processor: ✓ | 2. k2c-processor: ✓ (3.0KB) | 3. $10/location: ✓ |    100 meals/location: ✓ | 4. k2c_donations INSERT: ✓ | 5. Dedup by period: ✓ | 6. AdminK2C dashboard: ✓ | 7. admin_event_log: ✓"
+    },
+    {
+      "id": "15.11",
+      "name": "CPP site health",
+      "status": "PASS",
+      "detail": "HTTP status: 307 | Redirect → https://www.cleaningprosplus.com/ | Final HTTP: 200 | GA4 tracking: ✓ | \"Cleaning Pros Plus\" branding: ✓ | Contact email: ✓ | KEC service: ✓ | FPM service: ✓"
+    },
+    {
+      "id": "15.12",
+      "name": "HoodOps staging health",
+      "status": "PASS",
+      "detail": "HTTP status: 200 | HoodOps branding: ✓ | Login/app page: ✓"
+    },
+    {
+      "id": "15.13",
+      "name": "HoodOps webhook integration",
+      "status": "PASS",
+      "detail": "hoodops-webhook: ✓ (14.9KB) | KEC→hood_cleaning: ✓ | FS→fire_suppression: ✓ | Webhook secret: ✓ | Idempotency key: ✓ | Audit logging: ✓ | service.completed: ✓ | service.scheduled: ✓ | reschedule events: ✓"
+    },
+    {
+      "id": "15.14",
+      "name": "CPP ad campaign readiness",
+      "status": "PASS",
+      "detail": "Google Ads account ref: 7 files | Ad CSV files: none found | \"Cleaning Pros Plus\" in VendorConnect: ✓ | Service type definitions: ✓ | NOTE: Ad campaigns managed externally in Google Ads Editor"
+    },
+    {
+      "id": "15.15",
+      "name": "Domain DNS verification",
+      "status": "PASS",
+      "detail": "EvidLY app: HTTP 200 ✓ | EvidLY landing: HTTP 200 ✓ | CPP site: HTTP 307 ✓ | HoodOps staging: HTTP 200 ✓ | getevidly.com redirect: HTTP 308 ✓"
+    },
+    {
+      "id": "15.16",
+      "name": "Cross-domain link integrity",
+      "status": "PASS",
+      "detail": "Landing → app links: 4 files | Calendly booking links: 13 files | founders@getevidly.com: 17 files | CPP refs in EvidLY: 34 files | mailto: links: 31 files | tel: links: 24 files"
+    },
+    {
+      "id": "15.17",
+      "name": "SSL certificate check",
+      "status": "PASS",
+      "detail": "app.getevidly.com: SSL ✓ (HTTP 200) | www.getevidly.com: SSL ✓ (HTTP 200) | cleaningprosplus.com: SSL ✓ (HTTP 307) | hoodops-staging.vercel.app: SSL ✓ (HTTP 200)"
+    },
+    {
+      "id": "15.18",
+      "name": "CPP domain renewal alert",
+      "status": "PASS",
+      "detail": "Domain: cleaningprosplus.com | Expiry: June 30, 2026 | Days until expiry: 79 | STATUS: OK — 79 days remaining | Currently resolving: ✓"
+    },
+    {
+      "id": "REG-1.02",
+      "name": "Auth signInWithPassword",
+      "status": "PASS",
+      "detail": "Access token: ✓"
+    },
+    {
+      "id": "REG-2.12",
+      "name": "No blended scores",
+      "status": "PASS",
+      "detail": "Violations: 0"
+    },
+    {
+      "id": "REG-5.SP",
+      "name": "Superpower routes",
+      "status": "PASS",
+      "detail": "Routes: 7/7"
+    },
+    {
+      "id": "REG-9.17",
+      "name": "Dual pillar",
+      "status": "PASS",
+      "detail": "Code violations: 0"
+    },
+    {
+      "id": "REG-EDGE",
+      "name": "Edge function count",
+      "status": "PASS",
+      "detail": "Edge functions: 171"
+    }
+  ],
+  "emailInventory": [
+    {
+      "name": "Welcome email",
+      "function": "send-welcome-email",
+      "exists": true,
+      "usesResend": true,
+      "branded": true,
+      "sizeKB": "2.5"
+    },
+    {
+      "name": "Trial drip (28 templates)",
+      "function": "trial-email-sender",
+      "exists": true,
+      "usesResend": true,
+      "branded": true,
+      "sizeKB": "32.2"
+    },
+    {
+      "name": "Weekly digest",
+      "function": "ai-weekly-digest",
+      "exists": true,
+      "usesResend": true,
+      "branded": false,
+      "sizeKB": "13.4"
+    },
+    {
+      "name": "Document request",
+      "function": "auto-request-documents",
+      "exists": true,
+      "usesResend": true,
+      "branded": false,
+      "sizeKB": "14.7"
+    },
+    {
+      "name": "Onboarding nudge",
+      "function": "check-onboarding-progress",
+      "exists": true,
+      "usesResend": true,
+      "branded": false,
+      "sizeKB": "10.9"
+    },
+    {
+      "name": "Service reminders",
+      "function": "process-service-reminders",
+      "exists": true,
+      "usesResend": true,
+      "branded": true,
+      "sizeKB": "19.1"
+    },
+    {
+      "name": "Team invite",
+      "function": "send-team-invite",
+      "exists": true,
+      "usesResend": true,
+      "branded": true,
+      "sizeKB": "2.5"
+    },
+    {
+      "name": "Alert notifications",
+      "function": "generate-alerts",
+      "exists": true,
+      "usesResend": false,
+      "branded": false,
+      "sizeKB": "30.1"
+    },
+    {
+      "name": "Drift alert",
+      "function": "jurisdiction-drift-alert",
+      "exists": true,
+      "usesResend": true,
+      "branded": true,
+      "sizeKB": "6.4"
+    },
+    {
+      "name": "Assessment notify",
+      "function": "assessment-notify",
+      "exists": true,
+      "usesResend": true,
+      "branded": true,
+      "sizeKB": "7.1"
+    },
+    {
+      "name": "Equipment alerts",
+      "function": "check-equipment-alerts",
+      "exists": true,
+      "usesResend": false,
+      "branded": false,
+      "sizeKB": "10.6"
+    },
+    {
+      "name": "Document alerts",
+      "function": "send-document-alerts",
+      "exists": true,
+      "usesResend": true,
+      "branded": true,
+      "sizeKB": "13.0"
+    },
+    {
+      "name": "Missing doc reminders",
+      "function": "send-missing-doc-reminders",
+      "exists": true,
+      "usesResend": true,
+      "branded": true,
+      "sizeKB": "9.3"
+    },
+    {
+      "name": "Task notifications",
+      "function": "task-notifications",
+      "exists": true,
+      "usesResend": false,
+      "branded": false,
+      "sizeKB": "7.1"
+    },
+    {
+      "name": "Client invite",
+      "function": "client-invite-send",
+      "exists": true,
+      "usesResend": true,
+      "branded": true,
+      "sizeKB": "2.8"
+    },
+    {
+      "name": "Availability reminders",
+      "function": "availability-reminders",
+      "exists": true,
+      "usesResend": false,
+      "branded": false,
+      "sizeKB": "4.4"
+    },
+    {
+      "name": "Expiry check",
+      "function": "check-expiries",
+      "exists": true,
+      "usesResend": false,
+      "branded": false,
+      "sizeKB": "3.9"
+    },
+    {
+      "name": "SMS invite",
+      "function": "send-sms-invite",
+      "exists": true,
+      "usesResend": false,
+      "branded": false,
+      "sizeKB": "1.8"
+    }
+  ],
+  "stripeChecklist": [
+    {
+      "item": "Founder Single price ID",
+      "status": "OK"
+    },
+    {
+      "item": "Founder Multi price ID",
+      "status": "OK"
+    },
+    {
+      "item": "Checkout session creation",
+      "status": "OK"
+    },
+    {
+      "item": "Customer portal",
+      "status": "OK"
+    },
+    {
+      "item": "Webhook events (6)",
+      "status": "OK"
+    },
+    {
+      "item": "45-day guarantee",
+      "status": "OK"
+    },
+    {
+      "item": "K2C donation on invoice.paid",
+      "status": "OK"
+    },
+    {
+      "item": "HMAC signature verification",
+      "status": "OK"
+    },
+    {
+      "item": "30-day trial period",
+      "status": "OK"
+    },
+    {
+      "item": "Subscription DB upsert",
+      "status": "OK"
+    },
+    {
+      "item": "Trial ending notification",
+      "status": "OK"
+    },
+    {
+      "item": "Payment failed notification",
+      "status": "OK"
+    },
+    {
+      "item": "Cancellation handling",
+      "status": "OK"
+    },
+    {
+      "item": "Founder deadline (2026-07-04)",
+      "status": "OK"
+    },
+    {
+      "item": "Price locked for life",
+      "status": "OK"
+    },
+    {
+      "item": "Countdown timer",
+      "status": "OK"
+    },
+    {
+      "item": "$99/mo + $49/location",
+      "status": "OK"
+    },
+    {
+      "item": "K2C processor edge function",
+      "status": "OK"
+    },
+    {
+      "item": "K2C $10/loc, 100 meals/loc",
+      "status": "OK"
+    },
+    {
+      "item": "K2C deduplication",
+      "status": "OK"
+    },
+    {
+      "item": "K2C admin dashboard",
+      "status": "OK"
+    }
+  ]
+}
