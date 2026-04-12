@@ -31,11 +31,11 @@ export function DemoUpgradePrompt({ action, featureName, onClose, isOpen }: Demo
     <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4" data-demo-allow onClick={onClose}>
       <div className="absolute inset-0 bg-black/50" />
       <div
-        className="relative bg-white rounded-xl shadow-sm border border-gray-200 w-full max-w-md overflow-hidden"
+        className="relative bg-white rounded-xl border border-gray-200 w-full max-w-md overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="bg-[#1e4d6b] px-6 py-5 flex items-center justify-between">
+        <div className="bg-[#1E2D4D] px-6 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center">
               <Lock className="h-5 w-5 text-white" />
@@ -64,7 +64,7 @@ export function DemoUpgradePrompt({ action, featureName, onClose, isOpen }: Demo
           <div className="flex gap-3">
             <a
               href="/signup"
-              className="flex-1 py-2.5 px-4 bg-[#1e4d6b] hover:bg-[#163a52] text-white font-medium rounded-lg transition-colors text-sm text-center"
+              className="flex-1 py-2.5 px-4 bg-[#1E2D4D] hover:bg-[#162340] text-white font-medium rounded-lg transition-colors text-sm text-center"
             >
               Start Free Trial
             </a>

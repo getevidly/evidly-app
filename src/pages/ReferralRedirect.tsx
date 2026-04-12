@@ -43,7 +43,7 @@ export default function ReferralRedirect() {
       <div className="max-w-md w-full text-center">
         {/* Logo */}
         <div className="mb-8">
-          <div className="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center" style={{ backgroundColor: '#1e4d6b' }}>
+          <div className="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center" style={{ backgroundColor: '#1E2D4D' }}>
             {message.icon === 'heart' ? (
               <Heart className="h-8 w-8 text-white" />
             ) : (
@@ -55,25 +55,25 @@ export default function ReferralRedirect() {
         {/* Card */}
         <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
           <div className="w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
-            <CheckCircle className="h-6 w-6" style={{ color: '#1e4d6b' }} />
+            <CheckCircle className="h-6 w-6" style={{ color: '#1E2D4D' }} />
           </div>
 
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">{message.heading}</h1>
+          <h1 className="text-2xl font-bold text-[#1E2D4D] mb-2">{message.heading}</h1>
           <p className="text-gray-600 mb-6">{message.subtext}</p>
 
           {code && (
-            <div className="mb-6 px-4 py-2 bg-gray-50 rounded-lg inline-block">
+            <div className="mb-6 px-4 py-2 bg-[#FAF7F0] rounded-lg inline-block">
               <span className="text-xs text-gray-400 block">Referral Code</span>
-              <span className="text-sm font-mono font-bold" style={{ color: '#1e4d6b' }}>{code}</span>
+              <span className="text-sm font-mono font-bold" style={{ color: '#1E2D4D' }}>{code}</span>
             </div>
           )}
 
           <button
             onClick={() => navigate(`/signup?ref=${code}`)}
             className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-white font-semibold transition-colors cursor-pointer"
-            style={{ backgroundColor: '#1e4d6b' }}
+            style={{ backgroundColor: '#1E2D4D' }}
             onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
-            onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+            onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
           >
             Start Free Trial
             <ArrowRight className="h-4 w-4" />

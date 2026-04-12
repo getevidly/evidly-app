@@ -5,7 +5,7 @@ import {
 import { statusColor, statusLabel } from '../shared/FireStatusBars';
 import type { FacilityDetailData, ServiceHistoryEntry, DocumentEntry } from '../../data/facilityDetailDemoData';
 
-const NAVY = '#1e4d6b';
+const NAVY = '#1E2D4D';
 
 interface FacilityDetailModalProps {
   open: boolean;
@@ -22,7 +22,7 @@ function ResultBadge({ result }: { result: ServiceHistoryEntry['result'] }) {
     : { bg: '#eff6ff', color: '#2563eb', label: 'Completed' };
 
   return (
-    <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded" style={{ backgroundColor: cfg.bg, color: cfg.color }}>
+    <span className="text-xs font-semibold px-1.5 py-0.5 rounded" style={{ backgroundColor: cfg.bg, color: cfg.color }}>
       {cfg.label}
     </span>
   );
@@ -36,7 +36,7 @@ function DocStatusBadge({ status }: { status: DocumentEntry['status'] }) {
     : { bg: '#fef9c3', color: '#a16207', label: 'Missing' };
 
   return (
-    <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded" style={{ backgroundColor: cfg.bg, color: cfg.color }}>
+    <span className="text-xs font-semibold px-1.5 py-0.5 rounded" style={{ backgroundColor: cfg.bg, color: cfg.color }}>
       {cfg.label}
     </span>
   );
@@ -89,9 +89,9 @@ export function FacilityDetailModal({ open, onClose, data, onAction }: FacilityD
               <Shield size={18} style={{ color }} />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-gray-900">{data.fullName}</h3>
+              <h3 className="text-lg font-bold text-[#1E2D4D]">{data.fullName}</h3>
               <span
-                className="inline-block text-[11px] font-semibold px-2 py-0.5 rounded-full mt-0.5"
+                className="inline-block text-xs font-semibold px-2 py-0.5 rounded-full mt-0.5"
                 style={{ backgroundColor: `${color}18`, color }}
               >
                 {label}
@@ -114,14 +114,14 @@ export function FacilityDetailModal({ open, onClose, data, onAction }: FacilityD
             ) : (
               <div className="space-y-2">
                 {data.serviceHistory.map((entry, i) => (
-                  <div key={i} className="flex items-start justify-between py-2 px-3 rounded-lg bg-gray-50 text-sm">
+                  <div key={i} className="flex items-start justify-between py-2 px-3 rounded-lg bg-[#FAF7F0] text-sm">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-xs font-medium text-gray-500">{new Date(entry.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                         <ResultBadge result={entry.result} />
                       </div>
                       <p className="text-xs text-gray-700 mt-0.5">{entry.description}</p>
-                      <p className="text-[10px] text-gray-400 mt-0.5">
+                      <p className="text-xs text-gray-400 mt-0.5">
                         {entry.vendor}{entry.technician ? ` — ${entry.technician}` : ''}
                       </p>
                     </div>
@@ -139,7 +139,7 @@ export function FacilityDetailModal({ open, onClose, data, onAction }: FacilityD
             ) : (
               <div className="rounded-lg border border-gray-100 p-3 space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold text-gray-900">{data.vendor.name}</span>
+                  <span className="text-sm font-semibold text-[#1E2D4D]">{data.vendor.name}</span>
                   <StarRating rating={data.vendor.rating} />
                 </div>
                 {data.vendor.phone && (
@@ -165,7 +165,7 @@ export function FacilityDetailModal({ open, onClose, data, onAction }: FacilityD
           {/* Compliance Requirement */}
           <div>
             <SectionHeader icon={Shield} title="Compliance Requirement" />
-            <div className="rounded-lg bg-gray-50 p-3 space-y-1.5">
+            <div className="rounded-lg bg-[#FAF7F0] p-3 space-y-1.5">
               <div className="flex items-center gap-2 text-xs">
                 <span className="text-gray-400 w-20">Frequency:</span>
                 <span className="font-medium text-gray-700">{data.compliance.frequency}</span>
@@ -179,7 +179,7 @@ export function FacilityDetailModal({ open, onClose, data, onAction }: FacilityD
                 <span className="font-medium text-gray-700">{data.compliance.jurisdiction}</span>
               </div>
               {data.compliance.notes && (
-                <p className="text-[10px] text-gray-400 pt-1 border-t border-gray-100 mt-1">{data.compliance.notes}</p>
+                <p className="text-xs text-gray-400 pt-1 border-t border-gray-100 mt-1">{data.compliance.notes}</p>
               )}
             </div>
           </div>
@@ -192,10 +192,10 @@ export function FacilityDetailModal({ open, onClose, data, onAction }: FacilityD
             ) : (
               <div className="space-y-1.5">
                 {data.documents.map((doc, i) => (
-                  <div key={i} className="flex items-center justify-between py-2 px-3 rounded-lg bg-gray-50 text-xs">
+                  <div key={i} className="flex items-center justify-between py-2 px-3 rounded-lg bg-[#FAF7F0] text-xs">
                     <div className="min-w-0 flex-1">
                       <p className="font-medium text-gray-700 truncate">{doc.name}</p>
-                      <p className="text-[10px] text-gray-400">
+                      <p className="text-xs text-gray-400">
                         Uploaded {new Date(doc.uploadedDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                         {doc.expiryDate ? ` · Expires ${new Date(doc.expiryDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}` : ''}
                       </p>
@@ -215,7 +215,7 @@ export function FacilityDetailModal({ open, onClose, data, onAction }: FacilityD
             onClick={() => onAction('schedule', data.category)}
             className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold text-white transition-colors"
             style={{ backgroundColor: NAVY }}
-            onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#163a52')}
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#141E33')}
             onMouseLeave={e => (e.currentTarget.style.backgroundColor = NAVY)}
           >
             <CalendarDays size={13} />

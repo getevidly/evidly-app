@@ -101,12 +101,12 @@ export function ConfirmRoleChangeModal({
               onClose();
             }}
             className="px-4 py-2 text-sm font-medium text-white rounded-lg transition-colors"
-            style={{ backgroundColor: newValue ? '#1e4d6b' : '#dc2626' }}
+            style={{ backgroundColor: newValue ? '#1E2D4D' : '#dc2626' }}
             onMouseEnter={e =>
-              (e.currentTarget.style.backgroundColor = newValue ? '#2a6a8f' : '#b91c1c')
+              (e.currentTarget.style.backgroundColor = newValue ? '#2A3F6B' : '#b91c1c')
             }
             onMouseLeave={e =>
-              (e.currentTarget.style.backgroundColor = newValue ? '#1e4d6b' : '#dc2626')
+              (e.currentTarget.style.backgroundColor = newValue ? '#1E2D4D' : '#dc2626')
             }
           >
             {newValue ? 'Grant' : 'Revoke'} for {affectedUserCount} user

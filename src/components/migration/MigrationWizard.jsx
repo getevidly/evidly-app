@@ -4,7 +4,7 @@ import Papa from 'papaparse';
 import { useDemo } from '../../contexts/DemoContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 
-const PRIMARY = '#1e4d6b';
+const PRIMARY = '#1E2D4D';
 const GOLD = '#d4af37';
 const NAVY = '#1E2D4D';
 const MUTED_GOLD = '#A08C5A';
@@ -532,7 +532,7 @@ export function MigrationWizard() {
                     <div className="overflow-x-auto rounded-lg border border-gray-200">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="bg-gray-50">
+                          <tr className="bg-[#FAF7F0]">
                             {csvHeaders.map((h) => (
                               <th key={h} className="text-left px-3 py-2 text-xs font-semibold text-gray-600 whitespace-nowrap">
                                 {h}
@@ -542,7 +542,7 @@ export function MigrationWizard() {
                         </thead>
                         <tbody>
                           {previewRows.map((row, i) => (
-                            <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                            <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-[#FAF7F0]'}>
                               {csvHeaders.map((h) => (
                                 <td key={h} className="px-3 py-2 text-gray-700 whitespace-nowrap max-w-[200px] truncate">
                                   {row[h] || '\u2014'}
@@ -730,7 +730,7 @@ export function MigrationWizard() {
               <div className="rounded-lg border border-gray-200 overflow-hidden">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="bg-gray-50">
+                    <tr className="bg-[#FAF7F0]">
                       <th className="text-left px-4 py-2 text-xs font-semibold text-gray-600">Name</th>
                       <th className="text-left px-4 py-2 text-xs font-semibold text-gray-600">Type</th>
                       <th className="text-left px-4 py-2 text-xs font-semibold text-gray-600">Range</th>

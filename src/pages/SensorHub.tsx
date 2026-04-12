@@ -33,7 +33,7 @@ import { supabase } from '../lib/supabase';
  * ─────────────────────────────────────────────────────────── */
 
 const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
-const PRIMARY = '#1e4d6b';
+const PRIMARY = '#1E2D4D';
 const GOLD = '#d4af37';
 const LIGHT_BG = '#eef4f8';
 const BORDER = '#b8d4e8';
@@ -146,7 +146,7 @@ function signalBars(rssi: number) {
 function providerLogo(slug: string) {
   const p = iotSensorProviders.find(pr => pr.slug === slug);
   return p ? (
-    <span className="px-1.5 py-0.5 rounded text-[10px] font-bold" style={{ backgroundColor: p.color + '15', color: p.color }}>
+    <span className="px-1.5 py-0.5 rounded text-xs font-bold" style={{ backgroundColor: p.color + '15', color: p.color }}>
       {p.name}
     </span>
   ) : null;
@@ -301,7 +301,7 @@ function AddSensorModal({ open, onClose, onSave, isDemoMode }: AddSensorModalPro
         >
           <X className="w-5 h-5" />
         </button>
-        <h3 className="text-xl font-bold text-gray-900 mb-1 pr-8">Add Sensor</h3>
+        <h3 className="text-xl font-bold text-[#1E2D4D] mb-1 pr-8">Add Sensor</h3>
         <p className="text-sm text-gray-500 mb-5">Configure a new IoT sensor for monitoring.</p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -334,7 +334,7 @@ function AddSensorModal({ open, onClose, onSave, isDemoMode }: AddSensorModalPro
                     onClick={() => setSensorType(opt.value)}
                     className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg border-2 text-sm font-medium transition-all ${
                       selected
-                        ? 'border-[#1e4d6b] bg-[#eef4f8] text-[#1e4d6b]'
+                        ? 'border-[#1E2D4D] bg-[#eef4f8] text-[#1E2D4D]'
                         : 'border-gray-200 text-gray-600 hover:border-gray-300'
                     }`}
                   >
@@ -447,7 +447,7 @@ function AddSensorModal({ open, onClose, onSave, isDemoMode }: AddSensorModalPro
               disabled={!name.trim() || !locationId || saving}
               className="flex-1 px-4 py-3 text-sm font-bold text-white rounded-lg transition-colors disabled:opacity-40"
               style={{ backgroundColor: PRIMARY }}
-              onMouseEnter={e => { if (!saving) e.currentTarget.style.backgroundColor = '#2a6a8f'; }}
+              onMouseEnter={e => { if (!saving) e.currentTarget.style.backgroundColor = '#2A3F6B'; }}
               onMouseLeave={e => { e.currentTarget.style.backgroundColor = PRIMARY; }}
             >
               {saving ? 'Saving...' : 'Add Sensor'}
@@ -604,7 +604,7 @@ export function SensorHub() {
               <Radio className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Manage Sensors</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-[#1E2D4D]">Manage Sensors</h1>
               <p className="text-sm text-gray-500">Add, configure, and manage IoT sensors across your locations.</p>
             </div>
           </div>
@@ -612,7 +612,7 @@ export function SensorHub() {
             onClick={() => setShowAddModal(true)}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white transition-colors min-h-[44px]"
             style={{ backgroundColor: PRIMARY }}
-            onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#2A3F6B')}
             onMouseLeave={e => (e.currentTarget.style.backgroundColor = PRIMARY)}
           >
             <Plus className="h-4 w-4" /> Add Sensor
@@ -622,7 +622,7 @@ export function SensorHub() {
         {/* Empty state card */}
         <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
           <Radio className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">No Sensors Configured</h2>
+          <h2 className="text-lg font-semibold text-[#1E2D4D] mb-2">No Sensors Configured</h2>
           <p className="text-sm text-gray-500 max-w-md mx-auto mb-6">
             Add your first IoT sensor to start monitoring temperatures, humidity, and more across your locations.
           </p>
@@ -630,7 +630,7 @@ export function SensorHub() {
             onClick={() => setShowAddModal(true)}
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold text-white transition-colors"
             style={{ backgroundColor: PRIMARY }}
-            onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#2A3F6B')}
             onMouseLeave={e => (e.currentTarget.style.backgroundColor = PRIMARY)}
           >
             <Plus className="h-4 w-4" /> Add Your First Sensor
@@ -657,7 +657,7 @@ export function SensorHub() {
               <Radio className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Manage Sensors</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-[#1E2D4D]">Manage Sensors</h1>
               <p className="text-sm text-gray-500">Add, configure, and manage IoT sensors across your locations.</p>
             </div>
           </div>
@@ -666,7 +666,7 @@ export function SensorHub() {
           onClick={() => setShowAddModal(true)}
           className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white transition-colors min-h-[44px]"
           style={{ backgroundColor: PRIMARY }}
-          onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
+          onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#2A3F6B')}
           onMouseLeave={e => (e.currentTarget.style.backgroundColor = PRIMARY)}
         >
           <Plus className="h-4 w-4" /> Add Sensor
@@ -686,7 +686,7 @@ export function SensorHub() {
           to="/iot-monitoring"
           className="flex items-center gap-1 text-sm font-medium transition-colors"
           style={{ color: PRIMARY }}
-          onMouseEnter={e => (e.currentTarget.style.color = '#2a6a8f')}
+          onMouseEnter={e => (e.currentTarget.style.color = '#2A3F6B')}
           onMouseLeave={e => (e.currentTarget.style.color = PRIMARY)}
         >
           View Live IoT Dashboard <ArrowUpRight className="h-3.5 w-3.5" />
@@ -722,14 +722,14 @@ export function SensorHub() {
                   <m.icon className="h-4.5 w-4.5" style={{ color: m.color }} />
                 </div>
                 <div>
-                  <div className="text-sm font-bold text-gray-900">{m.title}</div>
+                  <div className="text-sm font-bold text-[#1E2D4D]">{m.title}</div>
                   <div className="text-xs text-gray-400">{m.count} ingestion events</div>
                 </div>
               </div>
               <p className="text-xs text-gray-500 mb-3 leading-relaxed">{m.desc}</p>
               <div className="flex flex-wrap gap-1">
                 {m.providers.map(p => (
-                  <span key={p} className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-gray-100 text-gray-600">{p}</span>
+                  <span key={p} className="px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">{p}</span>
                 ))}
               </div>
             </div>
@@ -747,13 +747,13 @@ export function SensorHub() {
               placeholder="Search sensors by name, zone, or MAC address..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#1e4d6b]"
+              className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#1E2D4D]"
             />
           </div>
           <select
             value={locationFilter}
             onChange={e => setLocationFilter(e.target.value)}
-            className="px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#1e4d6b]"
+            className="px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#1E2D4D]"
           >
             <option value="all">All Locations</option>
             {locations.map(l => <option key={l} value={l}>{l}</option>)}
@@ -761,7 +761,7 @@ export function SensorHub() {
           <select
             value={statusFilter}
             onChange={e => setStatusFilter(e.target.value)}
-            className="px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#1e4d6b]"
+            className="px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#1E2D4D]"
           >
             <option value="all">All Status</option>
             <option value="online">Online</option>
@@ -808,7 +808,7 @@ export function SensorHub() {
                           <Thermometer className="h-4 w-4" style={{ color: PRIMARY }} />
                         </div>
                         <div>
-                          <div className="text-sm font-semibold text-gray-900">{sensor.name}</div>
+                          <div className="text-sm font-semibold text-[#1E2D4D]">{sensor.name}</div>
                           <div className="text-xs text-gray-400">{sensor.locationName}</div>
                         </div>
                       </div>
@@ -874,14 +874,14 @@ export function SensorHub() {
       {/* Recent Ingestion Activity — demo only */}
       {isDemoMode && (
         <div className="mt-6 bg-white rounded-xl border border-gray-200 p-4">
-          <h3 className="text-sm font-bold text-gray-900 mb-3">Recent Ingestion Activity</h3>
+          <h3 className="text-sm font-bold text-[#1E2D4D] mb-3">Recent Ingestion Activity</h3>
           <div className="space-y-2">
             {iotIngestionLog.slice(0, 5).map(log => (
               <div key={log.id} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0 flex-wrap gap-2">
                 <div className="flex items-center gap-3">
                   <span className={`w-2 h-2 rounded-full ${log.status === 'success' ? 'bg-green-400' : log.status === 'partial' ? 'bg-yellow-400' : 'bg-red-400'}`} />
                   <span className="text-sm text-gray-700">{log.provider}</span>
-                  <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-500">
+                  <span className="px-1.5 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">
                     {log.method === 'api_pull' ? 'API Pull' : log.method === 'webhook' ? 'Webhook' : log.method === 'bluetooth' ? 'Bluetooth' : 'Manual'}
                   </span>
                 </div>

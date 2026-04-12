@@ -9,13 +9,13 @@ import { createReportPdf, drawReportHeader, drawSectionHeading, drawTable, saveR
 import { CARD_BG, CARD_BORDER, CARD_SHADOW, BODY_TEXT, MUTED } from '../dashboard/shared/constants';
 import type { ReportTypeConfig } from '../../config/reportConfig';
 
-const NAVY = '#1e4d6b';
+const NAVY = '#1E2D4D';
 
 function StatusBadge({ status }: { status: string }) {
   const isGood = status === 'Excellent' || status === 'Good';
   const isWarn = status === 'Needs Attention';
   return (
-    <span className="inline-block px-2 py-0.5 rounded text-[11px] font-semibold" style={{
+    <span className="inline-block px-2 py-0.5 rounded text-xs font-semibold" style={{
       backgroundColor: isGood ? '#f0fdf4' : isWarn ? '#fffbeb' : '#fef2f2',
       color: isGood ? '#166534' : isWarn ? '#92400e' : '#991b1b',
     }}>{status}</span>

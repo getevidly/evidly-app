@@ -182,7 +182,7 @@ export function TeamTimecards({ shifts, onApprove, onBulkApprove, onViewShift, u
                           className="p-1.5 rounded-lg hover:bg-blue-50 transition-colors"
                           title="View details"
                         >
-                          <Eye className="w-4 h-4" style={{ color: '#1e4d6b' }} />
+                          <Eye className="w-4 h-4" style={{ color: '#1E2D4D' }} />
                         </button>
                       </div>
                     </td>
@@ -206,7 +206,7 @@ export function TeamTimecards({ shifts, onApprove, onBulkApprove, onViewShift, u
       {isOwnerOrExec && (
         <div className="rounded-xl border" style={{ backgroundColor: '#FFFFFF', borderColor: '#D1D9E6', boxShadow: '0 1px 3px rgba(11,22,40,.06)' }}>
           <div className="flex items-center gap-2 px-5 py-3 border-b" style={{ borderColor: '#D1D9E6' }}>
-            <DollarSign className="w-4 h-4" style={{ color: '#1e4d6b' }} />
+            <DollarSign className="w-4 h-4" style={{ color: '#1E2D4D' }} />
             <h4 className="text-sm font-semibold" style={{ color: '#0B1628' }}>Profitability by Job</h4>
           </div>
           <div style={{ overflowX: 'auto' }}>

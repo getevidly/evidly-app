@@ -441,7 +441,7 @@ export function K2CInviteModal({
                     onClick={handleLoadTemplate}
                     style={{
                       padding: '6px 14px', borderRadius: '6px',
-                      border: 'none', backgroundColor: '#1e4d6b',
+                      border: 'none', backgroundColor: '#1E2D4D',
                       fontSize: '12px', fontWeight: 600, color: '#ffffff', cursor: 'pointer',
                     }}
                   >
@@ -517,7 +517,7 @@ export function K2CInviteModal({
               disabled={loading || !contactName.trim() || !businessName.trim() || !email.trim()}
               style={{
                 padding: '10px 24px', borderRadius: '8px',
-                border: 'none', backgroundColor: '#1e4d6b',
+                border: 'none', backgroundColor: '#1E2D4D',
                 fontSize: '14px', fontWeight: 600, color: '#ffffff',
                 cursor: loading ? 'wait' : 'pointer',
                 opacity: (!contactName.trim() || !businessName.trim() || !email.trim()) ? 0.5 : 1,

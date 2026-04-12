@@ -180,7 +180,7 @@ export function UserExceptionModal({
                       </div>
                       {existingExceptions.some(e => e.userId === member.id) && (
                         <span
-                          className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                          className="text-xs font-semibold px-2 py-0.5 rounded-full"
                           style={{ backgroundColor: 'rgba(160, 140, 90, 0.15)', color: '#A08C5A' }}
                         >
                           HAS OVERRIDES
@@ -328,7 +328,7 @@ function UserExceptionCategoryCard({
           </span>
           {overrideCount > 0 && (
             <span
-              className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full"
+              className="text-xs font-semibold px-1.5 py-0.5 rounded-full"
               style={{ backgroundColor: 'rgba(160, 140, 90, 0.15)', color: '#A08C5A' }}
             >
               {overrideCount} override{overrideCount > 1 ? 's' : ''}
@@ -387,7 +387,7 @@ function UserExceptionCategoryCard({
                   `}
                   style={{
                     backgroundColor: effectiveValue
-                      ? isOverridden ? '#A08C5A' : '#1e4d6b'
+                      ? isOverridden ? '#A08C5A' : '#1E2D4D'
                       : '#D1D9E6',
                   }}
                 >

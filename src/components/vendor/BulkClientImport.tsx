@@ -5,7 +5,7 @@ import Papa from 'papaparse';
 import { BULK_CSV_COLUMNS, generateCSVTemplate, type ClientInvitation } from '../../data/serviceProviderDemoData';
 
 // ── Brand colors ───────────────────────────────────────────────
-const NAVY = '#1e4d6b';
+const NAVY = '#1E2D4D';
 const NAVY_HOVER = '#163a52';
 const GOLD = '#d4af37';
 
@@ -347,7 +347,7 @@ export function BulkClientImport({ isOpen, onClose, onImportComplete, providerNa
                         {col.header}
                       </span>
                       {col.required && (
-                        <span className="text-red-500 text-[10px] font-semibold mt-0.5">REQUIRED</span>
+                        <span className="text-red-500 text-xs font-semibold mt-0.5">REQUIRED</span>
                       )}
                       <span style={{ color: '#3D5068' }}>{col.description}</span>
                     </div>

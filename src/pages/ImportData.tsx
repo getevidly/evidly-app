@@ -360,7 +360,7 @@ export function ImportData() {
               <span
                 className={`text-xs whitespace-nowrap ${
                   isCurrent
-                    ? 'text-[#1e4d6b] font-semibold'
+                    ? 'text-[#1E2D4D] font-semibold'
                     : 'text-gray-400'
                 }`}
               >
@@ -382,7 +382,7 @@ export function ImportData() {
 
     return (
       <div>
-        <h2 className="text-lg font-bold text-[#1e4d6b] mb-1">
+        <h2 className="text-lg font-bold text-[#1E2D4D] mb-1">
           What would you like to import?
         </h2>
         <p className="text-sm text-gray-500 mb-6">
@@ -406,9 +406,9 @@ export function ImportData() {
               >
                 <div className="flex items-center gap-3 mb-2">
                   <div className="h-10 w-10 rounded-lg bg-[#eef4f8] flex items-center justify-center">
-                    <Icon className="h-5 w-5 text-[#1e4d6b]" />
+                    <Icon className="h-5 w-5 text-[#1E2D4D]" />
                   </div>
-                  <h3 className="font-semibold text-[#1e4d6b]">{s.label}</h3>
+                  <h3 className="font-semibold text-[#1E2D4D]">{s.label}</h3>
                 </div>
                 <p className="text-sm text-gray-500 leading-relaxed">
                   {s.description}
@@ -429,7 +429,7 @@ export function ImportData() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-lg font-bold text-[#1e4d6b] mb-1">
+          <h2 className="text-lg font-bold text-[#1E2D4D] mb-1">
             Upload {schema?.label} Data
           </h2>
           <p className="text-sm text-gray-500">
@@ -439,7 +439,7 @@ export function ImportData() {
         </div>
         <button
           onClick={downloadTemplate}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#1e4d6b] bg-white border border-[#b8d4e8] rounded-xl hover:bg-[#eef4f8] transition-colors"
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#1E2D4D] bg-white border border-[#b8d4e8] rounded-xl hover:bg-[#eef4f8] transition-colors"
         >
           <Download className="w-4 h-4" />
           Download Template
@@ -449,7 +449,7 @@ export function ImportData() {
       {/* Required columns info */}
       {schema && (
         <div className="mb-6 p-4 bg-[#eef4f8] rounded-lg border border-[#b8d4e8]">
-          <p className="text-sm font-medium text-[#1e4d6b] mb-2">
+          <p className="text-sm font-medium text-[#1E2D4D] mb-2">
             Required columns:
           </p>
           <div className="flex flex-wrap gap-2">
@@ -458,7 +458,7 @@ export function ImportData() {
               .map((c) => (
                 <span
                   key={c.field}
-                  className="px-2 py-0.5 bg-white text-[#1e4d6b] text-xs font-medium rounded border border-[#b8d4e8]"
+                  className="px-2 py-0.5 bg-white text-[#1E2D4D] text-xs font-medium rounded border border-[#b8d4e8]"
                 >
                   {c.header}
                 </span>
@@ -511,7 +511,7 @@ export function ImportData() {
 
     return (
       <div>
-        <h2 className="text-lg font-bold text-[#1e4d6b] mb-1">
+        <h2 className="text-lg font-bold text-[#1E2D4D] mb-1">
           Preview &amp; Validate
         </h2>
         <p className="text-sm text-gray-500 mb-4">
@@ -519,7 +519,7 @@ export function ImportData() {
         </p>
 
         {/* Summary bar */}
-        <div className="flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-200 shadow-sm mb-4">
+        <div className="flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-200 mb-4">
           <span className="text-sm font-medium text-gray-700">
             {validation.total} rows:
           </span>
@@ -538,7 +538,7 @@ export function ImportData() {
         </div>
 
         {/* Table */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden mb-4">
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mb-4">
           <div className="overflow-x-auto max-h-[400px] overflow-y-auto">
             <table className="w-full text-sm">
               <thead className="bg-gray-50 sticky top-0 z-10">
@@ -639,7 +639,7 @@ export function ImportData() {
               type="checkbox"
               checked={skipErrors}
               onChange={(e) => setSkipErrors(e.target.checked)}
-              className="w-4 h-4 rounded border-gray-300 text-[#1e4d6b] focus:ring-[#1e4d6b]"
+              className="w-4 h-4 rounded border-gray-300 text-[#1E2D4D] focus:ring-[#1E2D4D]"
             />
             Skip rows with errors
           </label>
@@ -654,7 +654,7 @@ export function ImportData() {
             <button
               onClick={runImport}
               disabled={validCount === 0}
-              className="px-5 py-2 text-sm font-semibold text-white bg-[#1e4d6b] rounded-lg hover:bg-[#2a6a8f] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              className="px-5 py-2 text-sm font-semibold text-white bg-[#1E2D4D] rounded-lg hover:bg-[#162340] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Import{' '}
               {skipErrors
@@ -674,7 +674,7 @@ export function ImportData() {
 
   const renderStep4 = () => (
     <div>
-      <h2 className="text-lg font-bold text-[#1e4d6b] mb-1">
+      <h2 className="text-lg font-bold text-[#1E2D4D] mb-1">
         {importing ? 'Importing...' : 'Import Complete'}
       </h2>
 
@@ -697,11 +697,11 @@ export function ImportData() {
 
       {!importing && importResult && (
         <div className="mt-6">
-          <div className="p-6 bg-white rounded-xl border border-gray-200 shadow-sm text-center">
+          <div className="p-6 bg-white rounded-xl border border-gray-200 text-center">
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center">
               <CheckCircle2 className="w-8 h-8 text-green-600" />
             </div>
-            <h3 className="text-xl font-bold text-[#1e4d6b] mb-2">
+            <h3 className="text-xl font-bold text-[#1E2D4D] mb-2">
               {importResult.success} Records Imported
             </h3>
             {importResult.failed > 0 && (
@@ -741,7 +741,7 @@ export function ImportData() {
                   onClick={() =>
                     navigate(IMPORT_NAV_TARGETS[dataType] || '/settings')
                   }
-                  className="px-5 py-2 text-sm font-semibold text-white bg-[#1e4d6b] rounded-lg hover:bg-[#2a6a8f] transition-colors"
+                  className="px-5 py-2 text-sm font-semibold text-white bg-[#1E2D4D] rounded-lg hover:bg-[#162340] transition-colors"
                 >
                   View Imported Records
                 </button>
@@ -770,10 +770,10 @@ export function ImportData() {
         {/* Page header */}
         <div className="flex items-center gap-3 mb-6">
           <div className="h-10 w-10 rounded-lg bg-[#eef4f8] flex items-center justify-center">
-            <Upload className="h-5 w-5 text-[#1e4d6b]" />
+            <Upload className="h-5 w-5 text-[#1E2D4D]" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-[#1e4d6b]">
+            <h1 className="text-xl font-bold text-[#1E2D4D]">
               Bulk Data Import
             </h1>
             <p className="text-sm text-gray-500">
@@ -789,7 +789,7 @@ export function ImportData() {
         {step > 1 && step < 4 && (
           <button
             onClick={goBack}
-            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#1e4d6b] mb-4 transition-colors"
+            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#1E2D4D] mb-4 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back
@@ -798,7 +798,7 @@ export function ImportData() {
         {step === 4 && !importing && !importResult && (
           <button
             onClick={goBack}
-            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#1e4d6b] mb-4 transition-colors"
+            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#1E2D4D] mb-4 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back

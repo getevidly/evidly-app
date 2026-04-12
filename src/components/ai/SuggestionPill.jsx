@@ -44,7 +44,7 @@ export function SuggestionPill({
           className="flex items-start gap-2 mt-1.5 p-2.5 rounded-lg text-xs text-gray-700 max-w-full"
           style={{ backgroundColor: '#FAF7F0', border: '1px solid rgba(160, 140, 90, 0.3)' }}
         >
-          <span className="mt-0.5 shrink-0 text-[11px]" style={{ color: '#A08C5A' }}>&#10024;</span>
+          <span className="mt-0.5 shrink-0 text-xs" style={{ color: '#A08C5A' }}>&#10024;</span>
           <span className="flex-1 italic">{suggestion}</span>
           <div className="flex gap-1 shrink-0">
             <button
@@ -67,7 +67,7 @@ export function SuggestionPill({
       )}
 
       {isAIGenerated && !suggestion && (
-        <span className="text-[10px] mt-0.5 inline-block" style={{ color: '#A08C5A' }}>
+        <span className="text-xs mt-0.5 inline-block" style={{ color: '#A08C5A' }}>
           &#10024; AI assisted
         </span>
       )}

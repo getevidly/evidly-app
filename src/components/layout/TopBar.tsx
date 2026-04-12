@@ -151,7 +151,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
             </div>
             <DemoModeBadge />
             {userRole === 'platform_admin' && (
-              <span className="hidden sm:inline px-2 py-0.5 text-[10px] font-bold tracking-wider rounded bg-[#d4af37] text-[#1E2D4D] uppercase whitespace-nowrap flex-shrink-0">
+              <span className="hidden sm:inline px-2 py-0.5 text-xs font-bold tracking-wider rounded bg-[#d4af37] text-[#1E2D4D] uppercase whitespace-nowrap flex-shrink-0">
                 Platform Admin
               </span>
             )}
@@ -168,7 +168,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
             >
               <Search className="h-3.5 w-3.5" />
               <span className="text-xs">{t('topBar.search')}</span>
-              <kbd className="ml-1 px-1.5 py-0.5 text-[10px] font-medium bg-gray-100 border border-gray-300 rounded text-gray-500">
+              <kbd className="ml-1 px-1.5 py-0.5 text-xs font-medium bg-gray-100 border border-gray-300 rounded text-gray-500">
                 {navigator.platform?.includes('Mac') ? '⌘K' : 'Ctrl+K'}
               </kbd>
             </button>
@@ -210,7 +210,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                         }}
                         className={`block w-full text-left px-4 py-2 text-sm transition-colors duration-150 ${
                           !selectedLocation
-                            ? 'bg-[#eef4f8] text-[#1e4d6b] font-medium border-l-2 border-[#d4af37]'
+                            ? 'bg-[#eef4f8] text-[#1E2D4D] font-medium border-l-2 border-[#d4af37]'
                             : 'text-gray-700 hover:bg-gray-100'
                         }`}
                       >
@@ -225,7 +225,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                           }}
                           className={`block w-full text-left px-4 py-2 text-sm transition-colors duration-150 ${
                             selectedLocation === location.id
-                              ? 'bg-[#eef4f8] text-[#1e4d6b] font-medium border-l-2 border-[#d4af37]'
+                              ? 'bg-[#eef4f8] text-[#1E2D4D] font-medium border-l-2 border-[#d4af37]'
                               : 'text-gray-700 hover:bg-gray-100'
                           }`}
                         >
@@ -268,7 +268,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                         }}
                         className={`block w-full text-left px-4 py-2 text-sm transition-colors duration-150 ${
                           locale === loc
-                            ? 'bg-[#eef4f8] text-[#1e4d6b] font-medium border-l-2 border-[#d4af37]'
+                            ? 'bg-[#eef4f8] text-[#1E2D4D] font-medium border-l-2 border-[#d4af37]'
                             : 'text-gray-700 hover:bg-gray-100'
                         }`}
                       >
@@ -346,7 +346,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                         }}
                         className={`block w-full text-left px-4 py-2.5 transition-colors duration-150 ${
                           userRole === role
-                            ? 'bg-[#eef4f8] text-[#1e4d6b] border-l-2 border-[#d4af37]'
+                            ? 'bg-[#eef4f8] text-[#1E2D4D] border-l-2 border-[#d4af37]'
                             : 'text-gray-700 hover:bg-gray-100'
                         }`}
                         {...(isTestMode ? { 'data-testid': `role-option-${role}` } : {})}
@@ -455,14 +455,14 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
         <>
           <div className="fixed inset-0 bg-black bg-opacity-50 z-[60]" onClick={() => setShowChangePassword(false)} />
           <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-white rounded-xl border border-gray-200 w-full max-w-md" onClick={(e) => e.stopPropagation()}>
               <div className="p-6 border-b border-gray-200">
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-[#1e4d6b] flex items-center justify-center">
+                  <div className="h-10 w-10 rounded-lg bg-[#1E2D4D] flex items-center justify-center">
                     <Lock className="h-5 w-5 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-lg font-semibold text-gray-900">{t('topBar.changePassword')}</h2>
+                    <h2 className="text-lg font-semibold text-[#1E2D4D]">{t('topBar.changePassword')}</h2>
                     <p className="text-sm text-gray-500">{t('topBar.updateYourPassword')}</p>
                   </div>
                 </div>
@@ -475,7 +475,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                       type={showCurrentPw ? 'text' : 'password'}
                       value={pwForm.current}
                       onChange={(e) => setPwForm({ ...pwForm, current: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent pr-10"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent pr-10"
                       placeholder={t('topBar.enterCurrentPassword')}
                     />
                     <button type="button" onClick={() => setShowCurrentPw(!showCurrentPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
@@ -490,7 +490,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                       type={showNewPw ? 'text' : 'password'}
                       value={pwForm.newPw}
                       onChange={(e) => setPwForm({ ...pwForm, newPw: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent pr-10"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent pr-10"
                       placeholder={t('topBar.enterNewPassword')}
                     />
                     <button type="button" onClick={() => setShowNewPw(!showNewPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
@@ -504,7 +504,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                     type="password"
                     value={pwForm.confirm}
                     onChange={(e) => setPwForm({ ...pwForm, confirm: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
                     placeholder={t('topBar.reEnterNewPassword')}
                   />
                 </div>
@@ -525,7 +525,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                 <button
                   onClick={handleChangePassword}
                   className="px-4 py-2 text-sm font-medium text-white rounded-lg hover:opacity-90"
-                  style={{ backgroundColor: '#1e4d6b' }}
+                  style={{ backgroundColor: '#1E2D4D' }}
                 >
                   {t('topBar.updatePassword')}
                 </button>

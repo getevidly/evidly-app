@@ -35,7 +35,7 @@ function BadgeTierCard({ tier, isEarned, isCurrent, qualification, locationName 
       }}
     >
       {isCurrent && (
-        <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full text-[10px] font-bold text-white" style={{ backgroundColor: color }}>
+        <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full text-xs font-bold text-white" style={{ backgroundColor: color }}>
           CURRENT
         </div>
       )}
@@ -61,7 +61,7 @@ function BadgeTierCard({ tier, isEarned, isCurrent, qualification, locationName 
       </div>
 
       {/* Requirement */}
-      <p className="text-[11px] text-gray-400 text-center mb-3">{requirement}</p>
+      <p className="text-xs text-gray-400 text-center mb-3">{requirement}</p>
 
       {/* Earned: show details + actions */}
       {isEarned && isCurrent && (
@@ -76,13 +76,13 @@ function BadgeTierCard({ tier, isEarned, isCurrent, qualification, locationName 
           <div className="flex flex-wrap justify-center gap-1.5">
             <button
               onClick={() => toast.success('Badge image downloaded')}
-              className="flex items-center gap-1 px-2 py-1 text-[11px] font-medium rounded border border-gray-200 hover:bg-gray-50 text-gray-600"
+              className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded border border-gray-200 hover:bg-gray-50 text-gray-600"
             >
               <Download className="h-3 w-3" /> Download
             </button>
             <button
               onClick={() => toast.success('Certificate PDF generated')}
-              className="flex items-center gap-1 px-2 py-1 text-[11px] font-medium rounded border border-gray-200 hover:bg-gray-50 text-gray-600"
+              className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded border border-gray-200 hover:bg-gray-50 text-gray-600"
             >
               <Printer className="h-3 w-3" /> Certificate
             </button>
@@ -91,13 +91,13 @@ function BadgeTierCard({ tier, isEarned, isCurrent, qualification, locationName 
                 const post = generateSocialPost(tier, locationName, percentile);
                 navigator.clipboard.writeText(post).then(() => toast.success('Share text copied to clipboard'));
               }}
-              className="flex items-center gap-1 px-2 py-1 text-[11px] font-medium rounded border border-gray-200 hover:bg-gray-50 text-gray-600"
+              className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded border border-gray-200 hover:bg-gray-50 text-gray-600"
             >
               <Share2 className="h-3 w-3" /> Share
             </button>
             <button
               onClick={() => setShowQR(!showQR)}
-              className="flex items-center gap-1 px-2 py-1 text-[11px] font-medium rounded border border-gray-200 hover:bg-gray-50 text-gray-600"
+              className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded border border-gray-200 hover:bg-gray-50 text-gray-600"
             >
               <QrCode className="h-3 w-3" /> QR
             </button>
@@ -118,7 +118,7 @@ function BadgeTierCard({ tier, isEarned, isCurrent, qualification, locationName 
       {/* Not earned: show progress */}
       {!isEarned && tier === qualification.nextTier && (
         <div className="mt-2">
-          <div className="flex items-center justify-between text-[11px] text-gray-500 mb-1">
+          <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
             <span>Progress</span>
             <span>{qualification.progressToNext}%</span>
           </div>
@@ -144,11 +144,11 @@ export function BenchmarkBadge({ qualification, locationName }: BenchmarkBadgePr
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
+    <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
       <div className="flex items-center gap-3 mb-5">
         <EvidlyIcon size={20} />
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">Compliance Badges</h3>
+          <h3 className="text-lg font-semibold text-[#1E2D4D]">Compliance Badges</h3>
           <p className="text-xs text-gray-500">{locationName}</p>
         </div>
       </div>

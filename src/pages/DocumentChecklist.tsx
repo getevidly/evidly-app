@@ -222,14 +222,14 @@ export function DocumentChecklist() {
             <div className="flex gap-2 flex-shrink-0">
               <button
                 className="text-sm font-medium hover:underline"
-                style={{ color: '#1e4d6b' }}
+                style={{ color: '#1E2D4D' }}
                 onClick={() => toast.info('View Document (Demo)')}
               >
                 View
               </button>
               <button
                 className="text-sm font-medium hover:underline"
-                style={{ color: '#1e4d6b' }}
+                style={{ color: '#1E2D4D' }}
                 onClick={() => openUpload(doc)}
               >
                 Replace
@@ -242,7 +242,7 @@ export function DocumentChecklist() {
 
     // Pending state
     return (
-      <div key={doc.id} className="flex items-start gap-3 py-3 px-4 rounded-lg bg-white border border-gray-200">
+      <div key={doc.id} className="flex items-start gap-3 py-3 px-4 rounded-xl bg-white border border-gray-200">
         <Circle size={20} className="mt-0.5 flex-shrink-0 text-gray-300" />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
@@ -253,7 +253,7 @@ export function DocumentChecklist() {
               style={
                 doc.required
                   ? { backgroundColor: '#fef2f2', color: '#dc2626' }
-                  : { backgroundColor: '#eef4f8', color: '#1e4d6b' }
+                  : { backgroundColor: '#eef4f8', color: '#1E2D4D' }
               }
             >
               {doc.required ? 'Required' : 'Recommended'}
@@ -266,9 +266,9 @@ export function DocumentChecklist() {
           <div className="flex items-center gap-3 mt-2">
             <button
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium text-white transition-colors"
-              style={{ backgroundColor: '#1e4d6b' }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+              style={{ backgroundColor: '#1E2D4D' }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2A3F6B')}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
               onClick={() => guardAction('upload', 'Document Checklist', () => openUpload(doc))}
             >
               <Upload size={14} />
@@ -295,7 +295,7 @@ export function DocumentChecklist() {
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold" style={{ color: '#1e4d6b' }}>
+        <h1 className="text-2xl font-bold" style={{ color: '#1E2D4D' }}>
           Get Your Kitchen Compliance-Ready
         </h1>
         <p className="text-gray-600 mt-1">
@@ -342,10 +342,10 @@ export function DocumentChecklist() {
         style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}
       >
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium" style={{ color: '#1e4d6b' }}>
+          <span className="text-sm font-medium" style={{ color: '#1E2D4D' }}>
             {requiredComplete} of {requiredDocs.length} required documents uploaded
           </span>
-          <span className="text-sm font-bold" style={{ color: allRequiredDone ? '#16a34a' : '#1e4d6b' }}>
+          <span className="text-sm font-bold" style={{ color: allRequiredDone ? '#16a34a' : '#1E2D4D' }}>
             {progressPct}%
           </span>
         </div>
@@ -390,7 +390,7 @@ export function DocumentChecklist() {
             >
               <div className="flex items-center gap-2">
                 <span className="text-lg">{meta.icon}</span>
-                <span className="font-semibold" style={{ color: '#1e4d6b' }}>
+                <span className="font-semibold" style={{ color: '#1E2D4D' }}>
                   {meta.label}
                 </span>
                 <span className="text-sm text-gray-500">
@@ -398,9 +398,9 @@ export function DocumentChecklist() {
                 </span>
               </div>
               {expanded ? (
-                <ChevronDown size={18} style={{ color: '#1e4d6b' }} />
+                <ChevronDown size={18} style={{ color: '#1E2D4D' }} />
               ) : (
-                <ChevronRight size={18} style={{ color: '#1e4d6b' }} />
+                <ChevronRight size={18} style={{ color: '#1E2D4D' }} />
               )}
             </button>
 
@@ -443,7 +443,7 @@ export function DocumentChecklist() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 p-6 space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold" style={{ color: '#1e4d6b' }}>
+              <h2 className="text-lg font-semibold" style={{ color: '#1E2D4D' }}>
                 Not Applicable: {naModal.docName}
               </h2>
               <button
@@ -464,7 +464,7 @@ export function DocumentChecklist() {
                     name="na-reason"
                     checked={naModal.reason === opt}
                     onChange={() => setNaModal({ ...naModal, reason: opt })}
-                    className="accent-[#1e4d6b]"
+                    className="accent-[#1E2D4D]"
                   />
                   <span className="text-sm text-gray-700">{opt}</span>
                 </label>
@@ -493,9 +493,9 @@ export function DocumentChecklist() {
               </button>
               <button
                 className="px-4 py-2 rounded-md text-sm font-medium text-white transition-colors"
-                style={{ backgroundColor: '#1e4d6b' }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+                style={{ backgroundColor: '#1E2D4D' }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2A3F6B')}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
                 onClick={handleNaSave}
               >
                 Confirm Not Applicable

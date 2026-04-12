@@ -54,7 +54,7 @@ function BlogCard({ post }: { post: Post }) {
             {post.categories.map((cat) => (
               <span
                 key={cat}
-                className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-0.5 rounded-full bg-blue-50 text-[#1e4d6b]"
+                className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-0.5 rounded-full bg-blue-50 text-[#1E2D4D]"
               >
                 <Tag className="w-3 h-3" />
                 {cat}
@@ -64,7 +64,7 @@ function BlogCard({ post }: { post: Post }) {
         )}
 
         <h2
-          className="text-lg font-bold mb-2 group-hover:text-[#1e4d6b] transition-colors line-clamp-2"
+          className="text-lg font-bold mb-2 group-hover:text-[#1E2D4D] transition-colors line-clamp-2"
           style={{ color: NAVY }}
         >
           {post.title}

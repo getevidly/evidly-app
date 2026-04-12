@@ -17,6 +17,7 @@ import { useDemoGuard } from '../../hooks/useDemoGuard';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { StatCardRow } from '../../components/admin/StatCardRow';
 import { RefreshCw, Activity, Ticket, Radio, Zap } from 'lucide-react';
+import { usePageTitle } from '../../hooks/usePageTitle';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -95,6 +96,7 @@ export default function CommandCenter() {
   useDemoGuard();
   const { user } = useAuth();
   const { isDemoMode } = useDemo();
+  usePageTitle('Admin | Command Center');
 
   const [events, setEvents] = useState<EventRow[]>([]);
   const [sources, setSources] = useState<SourceRow[]>([]);

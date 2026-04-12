@@ -36,9 +36,9 @@ function formatCurrency(n: number): string {
 }
 
 function TrendArrow({ value }: { value: number }) {
-  if (Math.abs(value) < 0.1) return <span className="text-[11px] text-gray-400 flex items-center gap-0.5"><Minus className="h-3 w-3" /> 0.0</span>;
-  if (value > 0) return <span className="text-[11px] text-green-600 flex items-center gap-0.5 font-semibold"><ArrowUp className="h-3 w-3" /> +{value.toFixed(1)}</span>;
-  return <span className="text-[11px] text-red-500 flex items-center gap-0.5 font-semibold"><ArrowDown className="h-3 w-3" /> {value.toFixed(1)}</span>;
+  if (Math.abs(value) < 0.1) return <span className="text-xs text-gray-400 flex items-center gap-0.5"><Minus className="h-3 w-3" /> 0.0</span>;
+  if (value > 0) return <span className="text-xs text-green-600 flex items-center gap-0.5 font-semibold"><ArrowUp className="h-3 w-3" /> +{value.toFixed(1)}</span>;
+  return <span className="text-xs text-red-500 flex items-center gap-0.5 font-semibold"><ArrowDown className="h-3 w-3" /> {value.toFixed(1)}</span>;
 }
 
 function CollapsibleSection({ title, icon: Icon, children, defaultOpen = true }: {
@@ -95,7 +95,7 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
             { label: 'Food Safety', value: String(km.food_safety_score ?? '--'), trend: km.food_safety_trend ?? 0, color: '#16a34a' },
             { label: 'Facility Safety', value: String(km.facility_safety_score ?? '--'), trend: km.facility_safety_trend ?? 0, color: (km.facility_safety_trend ?? 0) >= 0 ? '#16a34a' : '#dc2626' },
             { label: 'Open Risk Items', value: String(km.open_risk_items ?? 0), trend: 0, color: '#d97706' },
-            { label: 'Intel Alerts (7d)', value: String(km.intelligence_alerts_7d ?? 0), trend: 0, color: '#1e4d6b' },
+            { label: 'Intel Alerts (7d)', value: String(km.intelligence_alerts_7d ?? 0), trend: 0, color: '#1E2D4D' },
             { label: 'Reg. Pipeline', value: String(km.regulatory_pipeline ?? 0), trend: 0, color: '#7c3aed' },
             { label: 'Financial Exposure', value: `${formatCurrency(fe.low ?? 0)}-${formatCurrency(fe.high ?? 0)}`, trend: 0, color: '#dc2626' },
           ];
@@ -103,7 +103,7 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
           <div key={m.label} className="rounded-xl p-3 text-center" style={{ backgroundColor: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
             <div className="text-xl font-bold" style={{ color: m.color }}>{m.value}</div>
             {m.trend !== 0 && <div className="flex justify-center mt-0.5"><TrendArrow value={m.trend} /></div>}
-            <div className="text-[10px] mt-1 font-medium" style={{ color: TEXT_TERTIARY }}>{m.label}</div>
+            <div className="text-xs mt-1 font-medium" style={{ color: TEXT_TERTIARY }}>{m.label}</div>
           </div>
         ))}
       </div>
@@ -114,7 +114,7 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
           <span className="px-2 py-0.5 rounded text-[9px] font-bold uppercase" style={{ backgroundColor: '#fef3c7', color: '#92400e' }}>Board Ready</span>
           <button
             onClick={() => { navigator.clipboard.writeText(snapshot.executive_summary); }}
-            className="flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded"
+            className="flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded"
             style={{ backgroundColor: PANEL_BG, color: MUTED }}
           >
             <Copy className="h-3 w-3" /> Copy
@@ -148,28 +148,28 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Threats */}
           <div className="rounded-lg p-3" style={{ backgroundColor: '#fef2f2', border: '1px solid #fca5a5' }}>
-            <h4 className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: '#991b1b' }}>
+            <h4 className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#991b1b' }}>
               <AlertTriangle className="h-3 w-3 inline mr-1" />Threats
             </h4>
             <ul className="space-y-2">
               {(snapshot.threats || []).map((t, i) => (
                 <li key={i}>
                   <div className="text-xs font-semibold" style={{ color: '#991b1b' }}>{t.title}</div>
-                  <div className="text-[11px]" style={{ color: '#7f1d1d' }}>{t.detail}</div>
+                  <div className="text-xs" style={{ color: '#7f1d1d' }}>{t.detail}</div>
                 </li>
               ))}
             </ul>
           </div>
           {/* Opportunities */}
           <div className="rounded-lg p-3" style={{ backgroundColor: '#f0fdf4', border: '1px solid #86efac' }}>
-            <h4 className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: '#166534' }}>
+            <h4 className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#166534' }}>
               <TrendingUp className="h-3 w-3 inline mr-1" />Opportunities
             </h4>
             <ul className="space-y-2">
               {(snapshot.opportunities || []).map((o, i) => (
                 <li key={i}>
                   <div className="text-xs font-semibold" style={{ color: '#166534' }}>{o.title}</div>
-                  <div className="text-[11px]" style={{ color: '#14532d' }}>{o.detail}</div>
+                  <div className="text-xs" style={{ color: '#14532d' }}>{o.detail}</div>
                 </li>
               ))}
             </ul>
@@ -205,7 +205,7 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
                       {ca.strength}
                     </span>
                   </td>
-                  <td className="px-3 py-2 font-medium" style={{ color: '#1e4d6b' }}>{ca.action}</td>
+                  <td className="px-3 py-2 font-medium" style={{ color: '#1E2D4D' }}>{ca.action}</td>
                 </tr>
               ))}
             </tbody>
@@ -217,11 +217,11 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
       <div className="rounded-lg p-3 mb-4" style={{ backgroundColor: '#fefdf5', borderLeft: `4px solid ${GOLD}`, border: `1px solid #f3e8c0`, borderLeftWidth: '4px' }}>
         <div className="flex items-center gap-1.5 mb-1">
           <MapPin className="h-3 w-3" style={{ color: GOLD }} />
-          <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: '#92400e' }}>
+          <span className="text-xs font-bold uppercase tracking-wider" style={{ color: '#92400e' }}>
             Industry Context: {DEMO_CLIENT_PROFILE.segment.replace(/_/g, ' ')}
           </span>
         </div>
-        <p className="text-[11px]" style={{ color: MUTED }}>
+        <p className="text-xs" style={{ color: MUTED }}>
           {DEMO_CLIENT_PROFILE.dual_jurisdiction
             ? `Dual NPS + county jurisdiction creates compounding correlation effects. External events affecting ${DEMO_CLIENT_PROFILE.primary_counties.map(c => c.charAt(0).toUpperCase() + c.slice(1)).join(', ')} counties trigger compliance requirements from both NPS and county authorities, doubling documentation burden during enforcement surges.`
             : `As a ${DEMO_CLIENT_PROFILE.segment.replace(/_/g, ' ')} operator across ${DEMO_CLIENT_PROFILE.total_locations} locations, external events in your coverage area have amplified impact due to the ${DEMO_CLIENT_PROFILE.industry_multiplier}x industry risk multiplier.`
@@ -242,15 +242,15 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
         <div className="flex items-center gap-4 mb-3">
           <div className="rounded-lg p-3 text-center flex-1" style={{ backgroundColor: '#fef2f2', border: '1px solid #fca5a5' }}>
             <div className="text-xl font-bold" style={{ color: '#991b1b' }}>{snapshot.competitor_landscape.closures ?? 0}</div>
-            <div className="text-[10px]" style={{ color: '#991b1b' }}>Closures</div>
+            <div className="text-xs" style={{ color: '#991b1b' }}>Closures</div>
           </div>
           <div className="rounded-lg p-3 text-center flex-1" style={{ backgroundColor: '#fffbeb', border: '1px solid #fcd34d' }}>
             <div className="text-xl font-bold" style={{ color: '#92400e' }}>{snapshot.competitor_landscape.failed_inspections ?? 0}</div>
-            <div className="text-[10px]" style={{ color: '#92400e' }}>Failed Inspections</div>
+            <div className="text-xs" style={{ color: '#92400e' }}>Failed Inspections</div>
           </div>
           <div className="rounded-lg p-3 text-center flex-1" style={{ backgroundColor: '#f0fdf4', border: '1px solid #86efac' }}>
             <div className="text-sm font-bold capitalize" style={{ color: '#166534' }}>{snapshot.competitor_landscape.position || 'N/A'}</div>
-            <div className="text-[10px]" style={{ color: '#166534' }}>Your Position</div>
+            <div className="text-xs" style={{ color: '#166534' }}>Your Position</div>
           </div>
         </div>
         <p className="text-xs" style={{ color: MUTED }}>{snapshot.competitor_landscape.summary || ''}</p>
@@ -264,9 +264,9 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
             <div key={i} className="rounded-lg p-3" style={{ backgroundColor: PANEL_BG, border: `1px solid ${BORDER_SUBTLE}` }}>
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs font-bold" style={{ color: BODY_TEXT }}>{rf.title}</span>
-                <span className="text-[10px] font-medium" style={{ color: TEXT_TERTIARY }}>{rf.compliance_deadline}</span>
+                <span className="text-xs font-medium" style={{ color: TEXT_TERTIARY }}>{rf.compliance_deadline}</span>
               </div>
-              <p className="text-[11px] mb-2" style={{ color: MUTED }}>{rf.summary}</p>
+              <p className="text-xs mb-2" style={{ color: MUTED }}>{rf.summary}</p>
               <div className="flex items-center gap-3">
                 <div className="flex-1">
                   <div className="flex items-center gap-1 mb-0.5">
@@ -277,7 +277,7 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
                     <div className="h-full rounded-full" style={{ width: `${rf.probability * 100}%`, backgroundColor: rf.probability >= 0.7 ? '#16a34a' : '#d97706' }} />
                   </div>
                 </div>
-                <span className="text-[10px] font-medium" style={{ color: MUTED }}>
+                <span className="text-xs font-medium" style={{ color: MUTED }}>
                   {formatCurrency(rf.estimated_cost_per_location.low)}–{formatCurrency(rf.estimated_cost_per_location.high)}/loc
                 </span>
               </div>
@@ -291,17 +291,17 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
         {snapshot.financial_impact && (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
           <div className="rounded-lg p-3 text-center" style={{ backgroundColor: '#fffbeb', border: '1px solid #fcd34d' }}>
-            <div className="text-[10px] font-bold uppercase mb-1" style={{ color: '#92400e' }}>Risk Exposure</div>
+            <div className="text-xs font-bold uppercase mb-1" style={{ color: '#92400e' }}>Risk Exposure</div>
             <div className="text-lg font-bold" style={{ color: '#d97706' }}>
               {formatCurrency(snapshot.financial_impact.risk_exposure?.low ?? 0)}–{formatCurrency(snapshot.financial_impact.risk_exposure?.high ?? 0)}
             </div>
           </div>
           <div className="rounded-lg p-3 text-center" style={{ backgroundColor: '#f0fdf4', border: '1px solid #86efac' }}>
-            <div className="text-[10px] font-bold uppercase mb-1" style={{ color: '#166534' }}>Compliance Savings</div>
+            <div className="text-xs font-bold uppercase mb-1" style={{ color: '#166534' }}>Compliance Savings</div>
             <div className="text-lg font-bold" style={{ color: '#16a34a' }}>{formatCurrency(snapshot.financial_impact.compliance_savings ?? 0)}</div>
           </div>
           <div className="rounded-lg p-3 text-center" style={{ backgroundColor: '#fefdf5', border: `1px solid ${GOLD}` }}>
-            <div className="text-[10px] font-bold uppercase mb-1" style={{ color: '#92400e' }}>ROI</div>
+            <div className="text-xs font-bold uppercase mb-1" style={{ color: '#92400e' }}>ROI</div>
             <div className="text-lg font-bold" style={{ color: GOLD }}>{snapshot.financial_impact.roi_ratio || 'N/A'}</div>
           </div>
         </div>
@@ -327,7 +327,7 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
             <div key={ip.id} className="rounded-lg p-3" style={{ backgroundColor: PANEL_BG, border: `1px solid ${BORDER_SUBTLE}` }}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-bold" style={{ color: BODY_TEXT }}>{ip.county} County</span>
-                <span className="flex items-center gap-0.5 text-[10px] font-medium" style={{ color: ip.trend === 'increasing' ? '#dc2626' : ip.trend === 'decreasing' ? '#16a34a' : TEXT_TERTIARY }}>
+                <span className="flex items-center gap-0.5 text-xs font-medium" style={{ color: ip.trend === 'increasing' ? '#dc2626' : ip.trend === 'decreasing' ? '#16a34a' : TEXT_TERTIARY }}>
                   {ip.trend === 'increasing' ? <ArrowUp className="h-3 w-3" /> : ip.trend === 'decreasing' ? <ArrowDown className="h-3 w-3" /> : <Minus className="h-3 w-3" />}
                   {ip.trend}
                 </span>
@@ -353,7 +353,7 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
                   <span key={fa} className="px-1.5 py-0.5 rounded text-[9px]" style={{ backgroundColor: CARD_BG, color: MUTED }}>{fa}</span>
                 ))}
               </div>
-              <p className="text-[10px] leading-snug" style={{ color: MUTED }}>{ip.recommendation}</p>
+              <p className="text-xs leading-snug" style={{ color: MUTED }}>{ip.recommendation}</p>
             </div>
           ))}
         </div>
@@ -365,11 +365,11 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
         <div className="rounded-lg p-2.5 mb-3" style={{ backgroundColor: PANEL_BG, border: `1px solid ${BORDER_SUBTLE}` }}>
           <div className="flex items-center gap-1.5 mb-1">
             <MapPin className="h-3 w-3" style={{ color: GOLD }} />
-            <span className="text-[10px] font-bold" style={{ color: MUTED }}>
+            <span className="text-xs font-bold" style={{ color: MUTED }}>
               Recommendations scoped to {DEMO_CLIENT_PROFILE.organization_name} — {DEMO_CLIENT_PROFILE.total_locations} locations across {DEMO_CLIENT_PROFILE.primary_counties.map(c => c.charAt(0).toUpperCase() + c.slice(1)).join(', ')} counties
             </span>
           </div>
-          <p className="text-[10px]" style={{ color: TEXT_TERTIARY }}>
+          <p className="text-xs" style={{ color: TEXT_TERTIARY }}>
             Peak season: {DEMO_CLIENT_PROFILE.peak_season_months.map(m => ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][m-1]).join(', ')} | Industry multiplier: {DEMO_CLIENT_PROFILE.industry_multiplier}x | Suppliers: {DEMO_CLIENT_PROFILE.key_suppliers.join(', ')}
           </p>
         </div>
@@ -379,7 +379,7 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
               <div className="flex items-center gap-2 mb-1">
                 <span
                   className="px-1.5 py-0.5 rounded text-[9px] font-bold"
-                  style={{ backgroundColor: sr.priority <= 2 ? '#dc2626' : sr.priority <= 3 ? '#d97706' : '#1e4d6b', color: '#fff' }}
+                  style={{ backgroundColor: sr.priority <= 2 ? '#dc2626' : sr.priority <= 3 ? '#d97706' : '#1E2D4D', color: '#fff' }}
                 >
                   P{sr.priority}
                 </span>
@@ -391,8 +391,8 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
                 </span>
               </div>
               <p className="text-xs font-bold mb-1" style={{ color: BODY_TEXT }}>{sr.recommendation}</p>
-              <p className="text-[11px] mb-1" style={{ color: MUTED }}>{sr.rationale}</p>
-              <p className="text-[10px] font-medium" style={{ color: '#16a34a' }}>{sr.estimated_impact}</p>
+              <p className="text-xs mb-1" style={{ color: MUTED }}>{sr.rationale}</p>
+              <p className="text-xs font-medium" style={{ color: '#16a34a' }}>{sr.estimated_impact}</p>
             </li>
           ))}
         </ol>
@@ -406,7 +406,7 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
               return <h4 key={i} className="text-xs font-bold uppercase tracking-wider mt-4 mb-2" style={{ color: MUTED }}>{line}</h4>;
             }
             if (line.startsWith('EVIDLY INTELLIGENCE') || line.startsWith('Pacific Coast')) {
-              return <p key={i} className="text-sm font-bold mb-1" style={{ color: '#1e4d6b' }}>{line}</p>;
+              return <p key={i} className="text-sm font-bold mb-1" style={{ color: '#1E2D4D' }}>{line}</p>;
             }
             if (line.match(/^\d\./)) {
               return <p key={i} className="text-xs mb-1 font-medium" style={{ color: BODY_TEXT }}>{line}</p>;
@@ -418,14 +418,14 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
 
       {/* ── Footer ────────────────────────────────────── */}
       <div className="rounded-xl p-4 mb-4" style={{ backgroundColor: PANEL_BG, border: `1px solid ${BORDER_SUBTLE}` }}>
-        <p className="text-[10px] text-center" style={{ color: TEXT_TERTIARY }}>
+        <p className="text-xs text-center" style={{ color: TEXT_TERTIARY }}>
           Generated by EvidLY Intelligence | {snapshot.generated_at ? new Date(snapshot.generated_at).toLocaleString() : 'Just now'} | Sourced from {snapshot.source_count ?? 0} monitored sources
         </p>
       </div>
 
       {/* Action buttons */}
       <div className="flex items-center gap-2 flex-wrap">
-        <button onClick={() => { /* PDF export — production: generate and download */ }} className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold text-white" style={{ backgroundColor: '#1e4d6b' }}>
+        <button onClick={() => { /* PDF export — production: generate and download */ }} className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold text-white" style={{ backgroundColor: '#1E2D4D' }}>
           <Download className="h-3.5 w-3.5" /> Export PDF
         </button>
         <button onClick={() => { /* Share — production: create shareable link */ }} className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold" style={{ backgroundColor: PANEL_BG, color: MUTED, border: `1px solid ${CARD_BORDER}` }}>

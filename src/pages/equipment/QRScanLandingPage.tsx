@@ -29,15 +29,15 @@ export function QRScanLandingPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <Loader2 className="w-8 h-8 animate-spin" style={{ color: '#1e4d6b' }} />
+      <div className="min-h-screen bg-[#FAF7F0] flex items-center justify-center p-4">
+        <Loader2 className="w-8 h-8 animate-spin" style={{ color: '#1E2D4D' }} />
       </div>
     );
   }
 
   if (!equipment) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-[#FAF7F0] flex items-center justify-center p-4">
         <div className="max-w-sm w-full bg-white rounded-2xl shadow-lg p-8 text-center">
           <QrCode className="w-16 h-16 mx-auto mb-4" style={{ color: TEXT_SEC }} />
           <h1 className="text-lg font-bold" style={{ color: NAVY }}>Equipment Not Found</h1>
@@ -56,7 +56,7 @@ export function QRScanLandingPage() {
     : null;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#FAF7F0] flex items-center justify-center p-4">
       <div className="max-w-sm w-full bg-white rounded-2xl shadow-lg overflow-hidden">
         {/* Header */}
         <div className="p-6 text-center" style={{ background: NAVY }}>
@@ -142,7 +142,7 @@ export function QRScanLandingPage() {
                 onChange={e => setIssueDescription(e.target.value)}
                 rows={3}
                 placeholder="What's wrong with this equipment?"
-                className="w-full px-3 py-2 text-sm rounded-lg border resize-none focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/30"
+                className="w-full px-3 py-2 text-sm rounded-lg border resize-none focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/30"
                 style={{ borderColor: BORDER, color: NAVY }}
               />
               <div className="flex gap-2">
@@ -176,10 +176,10 @@ export function QRScanLandingPage() {
 
         {/* Footer */}
         <div className="px-6 py-4 text-center" style={{ background: '#F9FAFB', borderTop: `1px solid ${BORDER}` }}>
-          <p className="text-[10px]" style={{ color: TEXT_SEC }}>
+          <p className="text-xs" style={{ color: TEXT_SEC }}>
             Equipment ID: {equipment.id}
           </p>
-          <p className="text-[10px] mt-1" style={{ color: TEXT_SEC }}>
+          <p className="text-xs mt-1" style={{ color: TEXT_SEC }}>
             Powered by <span style={{ color: GOLD, fontWeight: 700 }}>HoodOps</span>
           </p>
         </div>

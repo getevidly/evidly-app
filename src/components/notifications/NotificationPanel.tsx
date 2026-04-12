@@ -85,9 +85,9 @@ export function NotificationPanel({ isOpen, onClose }: NotificationPanelProps) {
         {/* Header */}
         <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between flex-shrink-0" style={{ backgroundColor: '#faf8f3' }}>
           <div className="flex items-center gap-2">
-            <h3 className="text-sm font-bold text-gray-900">Notifications</h3>
+            <h3 className="text-sm font-bold text-[#1E2D4D]">Notifications</h3>
             {unreadCount > 0 && (
-              <span className="px-1.5 py-0.5 rounded-full text-xs font-semibold" style={{ backgroundColor: '#1e4d6b', color: 'white' }}>
+              <span className="px-1.5 py-0.5 rounded-full text-xs font-semibold" style={{ backgroundColor: '#1E2D4D', color: 'white' }}>
                 {unreadCount} new
               </span>
             )}
@@ -97,7 +97,7 @@ export function NotificationPanel({ isOpen, onClose }: NotificationPanelProps) {
               <button
                 onClick={markAllAsRead}
                 className="text-xs font-medium flex items-center gap-1 hover:underline"
-                style={{ color: '#1e4d6b' }}
+                style={{ color: '#1E2D4D' }}
               >
                 <CheckCheck className="h-3 w-3" /> Mark all read
               </button>
@@ -144,11 +144,11 @@ export function NotificationPanel({ isOpen, onClose }: NotificationPanelProps) {
         </div>
 
         {/* Footer */}
-        <div className="px-4 py-2.5 border-t border-gray-100 bg-gray-50 flex-shrink-0">
+        <div className="px-4 py-2.5 border-t border-gray-100 bg-[#FAF7F0] flex-shrink-0">
           <button
             onClick={() => handleNavigate('/settings/notifications')}
             className="w-full text-center text-xs font-semibold hover:underline"
-            style={{ color: '#1e4d6b' }}
+            style={{ color: '#1E2D4D' }}
           >
             Notification Preferences
           </button>

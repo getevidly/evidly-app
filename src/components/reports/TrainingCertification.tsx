@@ -10,7 +10,7 @@ import { createReportPdf, drawReportHeader, drawSectionHeading, drawTable, saveR
 import { CARD_BG, CARD_BORDER, CARD_SHADOW, BODY_TEXT, MUTED } from '../dashboard/shared/constants';
 import type { ReportTypeConfig } from '../../config/reportConfig';
 
-function ProgressBar({ value, color = '#1e4d6b' }: { value: number; color?: string }) {
+function ProgressBar({ value, color = '#1E2D4D' }: { value: number; color?: string }) {
   return (
     <div className="flex items-center gap-2">
       <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ backgroundColor: '#e5e7eb' }}>
@@ -55,7 +55,7 @@ export default function TrainingCertification({ config }: { config: ReportTypeCo
         ].map(s => (
           <div key={s.label} className="rounded-xl p-4 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
             <p className="text-xl font-bold" style={{ color: s.color }}>{s.value}</p>
-            <p className="text-[11px] mt-1" style={{ color: MUTED }}>{s.label}</p>
+            <p className="text-xs mt-1" style={{ color: MUTED }}>{s.label}</p>
           </div>
         ))}
       </div>
@@ -84,7 +84,7 @@ export default function TrainingCertification({ config }: { config: ReportTypeCo
                     <td className="py-2 px-3 text-xs" style={{ color: MUTED }}>{e.locationName}</td>
                     <td className="py-2 px-3 text-xs" style={{ color: BODY_TEXT }}>{e.certifications.length}</td>
                     <td className="py-2 px-3">
-                      <span className="px-2 py-0.5 rounded text-[11px] font-semibold" style={{
+                      <span className="px-2 py-0.5 rounded text-xs font-semibold" style={{
                         backgroundColor: colors.bg,
                         color: colors.text,
                       }}>

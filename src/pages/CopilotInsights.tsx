@@ -14,7 +14,7 @@ export function CopilotInsights() {
           <Bot className="h-5 w-5" style={{ color: '#d4af37' }} />
         </div>
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Compliance Copilot</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-[#1E2D4D]">Compliance Copilot</h1>
           <p className="text-sm text-gray-500">Proactive insights from AI analysis of your compliance data</p>
         </div>
       </div>
@@ -25,7 +25,7 @@ export function CopilotInsights() {
         <button
           onClick={() => navigate('/ai-advisor')}
           className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white"
-          style={{ backgroundColor: '#1e4d6b' }}
+          style={{ backgroundColor: '#1E2D4D' }}
         >
           Ask EvidLY AI
           <ChevronRight className="h-4 w-4" />

@@ -342,7 +342,7 @@ export function SmartUploadModal({
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
           <div className="flex items-center gap-2">
             <Sparkles size={20} style={{ color: '#d4af37' }} />
-            <h2 className="text-lg font-semibold" style={{ color: '#1e4d6b' }}>
+            <h2 className="text-lg font-semibold" style={{ color: '#1E2D4D' }}>
               {presetDocLabel ? `Upload: ${presetDocLabel}` : 'Smart Document Upload'}
             </h2>
           </div>
@@ -361,7 +361,7 @@ export function SmartUploadModal({
           {files.length < maxFiles && (
             <div
               className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
-                isDragging ? 'border-[#1e4d6b] bg-[#eef4f8]' : 'border-[#b8d4e8] hover:border-gray-400'
+                isDragging ? 'border-[#1E2D4D] bg-[#eef4f8]' : 'border-[#b8d4e8] hover:border-gray-400'
               }`}
               onClick={() => fileInputRef.current?.click()}
               onDragOver={handleDragOver}
@@ -421,7 +421,7 @@ export function SmartUploadModal({
           {files.length > 1 && (
             <div
               className="text-sm rounded-lg p-3"
-              style={{ backgroundColor: '#eef4f8', color: '#1e4d6b' }}
+              style={{ backgroundColor: '#eef4f8', color: '#1E2D4D' }}
             >
               {classifyingFiles.length > 0 && (
                 <span>
@@ -448,12 +448,12 @@ export function SmartUploadModal({
           </button>
           <button
             className="px-5 py-2 rounded-md text-sm font-medium text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{ backgroundColor: canSave ? '#1e4d6b' : '#3D5068' }}
+            style={{ backgroundColor: canSave ? '#1E2D4D' : '#3D5068' }}
             onMouseEnter={(e) => {
-              if (canSave) e.currentTarget.style.backgroundColor = '#2a6a8f';
+              if (canSave) e.currentTarget.style.backgroundColor = '#2A3F6B';
             }}
             onMouseLeave={(e) => {
-              if (canSave) e.currentTarget.style.backgroundColor = '#1e4d6b';
+              if (canSave) e.currentTarget.style.backgroundColor = '#1E2D4D';
             }}
             disabled={!canSave}
             onClick={handleSave}
@@ -500,7 +500,7 @@ function FileClassificationCard({
     return (
       <div className="rounded-lg border border-gray-200 p-4">
         <div className="flex items-center gap-3">
-          <Loader2 size={18} className="animate-spin text-[#1e4d6b]" />
+          <Loader2 size={18} className="animate-spin text-[#1E2D4D]" />
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-gray-900 truncate">
               {entry.file.name}
@@ -512,7 +512,7 @@ function FileClassificationCard({
               className="h-full rounded-full animate-pulse"
               style={{
                 width: '60%',
-                background: 'linear-gradient(90deg, #1e4d6b, #d4af37)',
+                background: 'linear-gradient(90deg, #1E2D4D, #d4af37)',
               }}
             />
           </div>
@@ -572,7 +572,7 @@ function FileClassificationCard({
         {pillarMeta && pillarMeta.value !== 'unknown' && (
           <span
             className="text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0"
-            style={{ backgroundColor: '#eef4f8', color: '#1e4d6b' }}
+            style={{ backgroundColor: '#eef4f8', color: '#1E2D4D' }}
           >
             {pillarMeta.icon} {pillarMeta.label}
           </span>
@@ -600,7 +600,7 @@ function FileClassificationCard({
         <button
           className="flex items-center gap-1 px-4 pb-2 text-xs transition-colors"
           style={{ color: '#6b7280' }}
-          onMouseEnter={(e) => e.currentTarget.style.color = '#1e4d6b'}
+          onMouseEnter={(e) => e.currentTarget.style.color = '#1E2D4D'}
           onMouseLeave={(e) => e.currentTarget.style.color = '#6b7280'}
           onClick={onToggle}
         >
@@ -645,7 +645,7 @@ function FileClassificationCard({
                   Document Type
                 </label>
                 <select
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] bg-white"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] bg-white"
                   value={entry.overrides.documentType}
                   onChange={(e) => {
                     onUpdateOverride('documentType', e.target.value);
@@ -684,7 +684,7 @@ function FileClassificationCard({
                   Compliance Pillar
                 </label>
                 <select
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] bg-white"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] bg-white"
                   value={entry.overrides.pillar}
                   onChange={(e) => onUpdateOverride('pillar', e.target.value)}
                 >
@@ -705,7 +705,7 @@ function FileClassificationCard({
               </label>
               <input
                 type="text"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]"
                 placeholder="e.g. Acme Hood Cleaning"
                 value={entry.overrides.vendorName}
                 onChange={(e) => onUpdateOverride('vendorName', e.target.value)}
@@ -719,7 +719,7 @@ function FileClassificationCard({
               </label>
               <input
                 type="date"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]"
                 value={entry.overrides.serviceDate}
                 onChange={(e) => onUpdateOverride('serviceDate', e.target.value)}
               />
@@ -732,7 +732,7 @@ function FileClassificationCard({
               </label>
               <input
                 type="date"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]"
                 value={entry.overrides.expiryDate}
                 onChange={(e) => onUpdateOverride('expiryDate', e.target.value)}
               />
@@ -745,7 +745,7 @@ function FileClassificationCard({
               </label>
               <input
                 type="text"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]"
                 placeholder="Optional notes..."
                 value={entry.overrides.notes}
                 onChange={(e) => onUpdateOverride('notes', e.target.value)}

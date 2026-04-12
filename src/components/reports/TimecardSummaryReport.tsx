@@ -56,7 +56,7 @@ export function TimecardSummaryReport({ data }: TimecardSummaryProps) {
                   <td className="px-3 py-2" style={{ color: TEXT_TERTIARY }}>${Number(emp.estimatedCost || 0).toLocaleString()}</td>
                   <td className="px-3 py-2">
                     {hasOT && (
-                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: '#FFFBEB', color: '#D97706' }}>
+                      <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: '#FFFBEB', color: '#D97706' }}>
                         OT
                       </span>
                     )}

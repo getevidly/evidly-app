@@ -12,6 +12,7 @@ import { EquipmentFormModal } from '../../components/equipment/EquipmentFormModa
 import { BulkQRPrintModal } from '../../components/equipment/BulkQRPrintModal';
 import { NAVY, CARD_BG, CARD_BORDER, CARD_SHADOW, TEXT_TERTIARY, MUTED } from '../../components/dashboard/shared/constants';
 import { ErrorState } from '../../components/shared/PageStates';
+import { usePageTitle } from '../../hooks/usePageTitle';
 
 const CONDITION_OPTIONS: { value: EquipmentCondition | ''; label: string }[] = [
   { value: '', label: 'All Conditions' },
@@ -31,6 +32,7 @@ const STATUS_OPTIONS: { value: EquipmentStatus | ''; label: string }[] = [
 ];
 
 export function EquipmentPage() {
+  usePageTitle('Equipment');
   const [searchParams, setSearchParams] = useSearchParams();
   const view = (searchParams.get('view') as 'grid' | 'list') || 'grid';
   const typeFilter = searchParams.get('type') || '';
@@ -115,7 +117,7 @@ export function EquipmentPage() {
           <button
             onClick={() => setShowAddModal(true)}
             className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white rounded-lg transition-colors"
-            style={{ background: '#1e4d6b' }}
+            style={{ background: '#1E2D4D' }}
           >
             <Plus className="w-4 h-4" /> Add Equipment
           </button>
@@ -129,7 +131,7 @@ export function EquipmentPage() {
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <StatCard icon={Wrench} label="Total Equipment" value={stats.total} color="#1e4d6b" />
+          <StatCard icon={Wrench} label="Total Equipment" value={stats.total} color="#1E2D4D" />
           <StatCard icon={Clock} label="Due for Service" value={stats.dueForService} color="#D97706" />
           <StatCard icon={AlertTriangle} label="Overdue" value={stats.overdue} color="#DC2626" />
           <StatCard icon={AlertCircle} label="With Deficiencies" value={stats.withDeficiencies} color="#7C3AED" />
@@ -145,7 +147,7 @@ export function EquipmentPage() {
             onChange={e => setLocalSearch(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && handleSearch()}
             placeholder="Search equipment..."
-            className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/30"
+            className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/30"
             style={{ background: CARD_BG, borderColor: CARD_BORDER, color: NAVY }}
           />
         </div>
@@ -189,14 +191,14 @@ export function EquipmentPage() {
           <button
             onClick={() => setParam('view', 'grid')}
             className="px-3 py-2 transition-colors"
-            style={{ background: view === 'grid' ? '#1e4d6b' : CARD_BG, color: view === 'grid' ? 'white' : TEXT_TERTIARY }}
+            style={{ background: view === 'grid' ? '#1E2D4D' : CARD_BG, color: view === 'grid' ? 'white' : TEXT_TERTIARY }}
           >
             <LayoutGrid className="w-4 h-4" />
           </button>
           <button
             onClick={() => setParam('view', 'list')}
             className="px-3 py-2 transition-colors"
-            style={{ background: view === 'list' ? '#1e4d6b' : CARD_BG, color: view === 'list' ? 'white' : TEXT_TERTIARY }}
+            style={{ background: view === 'list' ? '#1E2D4D' : CARD_BG, color: view === 'list' ? 'white' : TEXT_TERTIARY }}
           >
             <List className="w-4 h-4" />
           </button>
@@ -230,7 +232,7 @@ export function EquipmentPage() {
             <button
               onClick={() => setShowAddModal(true)}
               className="mt-4 px-4 py-2 text-sm font-semibold text-white rounded-lg"
-              style={{ background: '#1e4d6b' }}
+              style={{ background: '#1E2D4D' }}
             >
               Add Equipment
             </button>

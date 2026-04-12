@@ -55,10 +55,10 @@ export function LiveActivityFeed() {
   }, [activities.length]);
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+    <div className="bg-white rounded-xl border border-gray-200">
       <div className="flex items-center justify-between p-4 border-b border-gray-100">
         <div className="flex items-center gap-2">
-          <h3 className="text-lg font-semibold text-gray-900">Activity Feed</h3>
+          <h3 className="text-lg font-semibold text-[#1E2D4D]">Activity Feed</h3>
           <div className="flex items-center gap-1.5 px-2 py-0.5 bg-green-50 rounded-full">
             <div className="w-2 h-2 rounded-full bg-green-500 animate-live-dot" />
             <span className="text-xs font-medium text-green-700">Live</span>
@@ -66,7 +66,7 @@ export function LiveActivityFeed() {
         </div>
         <button
           onClick={() => navigate('/alerts')}
-          className="text-sm font-medium text-[#1e4d6b] hover:text-[#2a6a8f] transition-colors"
+          className="text-sm font-medium text-[#1E2D4D] hover:text-[#2A3F6B] transition-colors"
         >
           View All →
         </button>
@@ -97,9 +97,9 @@ export function LiveActivityFeed() {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-sm font-semibold text-gray-900">{activity.user}</span>
+                  <span className="text-sm font-semibold text-[#1E2D4D]">{activity.user}</span>
                   {index === 0 && (
-                    <span className="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-[10px] font-bold rounded uppercase">New</span>
+                    <span className="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-xs font-bold rounded uppercase">New</span>
                   )}
                 </div>
                 <p className="text-sm text-gray-600 mt-0.5">{activity.action}</p>

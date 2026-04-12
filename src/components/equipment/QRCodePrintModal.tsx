@@ -101,12 +101,12 @@ export function QRCodePrintModal({ equipment, onClose }: QRCodePrintModalProps) 
                   onClick={() => setLayout(opt.key)}
                   className="p-3 rounded-lg border text-left transition-all"
                   style={{
-                    borderColor: layout === opt.key ? '#1e4d6b' : CARD_BORDER,
+                    borderColor: layout === opt.key ? '#1E2D4D' : CARD_BORDER,
                     background: layout === opt.key ? '#eef4f8' : CARD_BG,
                   }}
                 >
                   <p className="text-xs font-semibold" style={{ color: NAVY }}>{opt.label}</p>
-                  <p className="text-[10px] mt-0.5" style={{ color: TEXT_TERTIARY }}>{opt.desc}</p>
+                  <p className="text-xs mt-0.5" style={{ color: TEXT_TERTIARY }}>{opt.desc}</p>
                 </button>
               ))}
             </div>
@@ -132,7 +132,7 @@ export function QRCodePrintModal({ equipment, onClose }: QRCodePrintModalProps) 
           <button
             onClick={handlePrint}
             className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white rounded-lg"
-            style={{ background: '#1e4d6b' }}
+            style={{ background: '#1E2D4D' }}
           >
             <Printer className="w-4 h-4" /> Print
           </button>

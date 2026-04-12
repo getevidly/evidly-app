@@ -163,7 +163,7 @@ export function IncidentReportsPage() {
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <StatCard icon={ShieldAlert} label="Total Incidents (Quarter)" value={stats.total} color="#1e4d6b" />
+          <StatCard icon={ShieldAlert} label="Total Incidents (Quarter)" value={stats.total} color="#1E2D4D" />
           <StatCard icon={UserX} label="Injuries" value={stats.injuries} color="#DC2626" />
           <StatCard icon={Eye} label="Near Misses" value={stats.nearMisses} color="#D97706" />
           <StatCard icon={SearchIcon} label="Open Investigations" value={stats.openInvestigations} color="#7C3AED" />
@@ -274,7 +274,7 @@ export function IncidentReportsPage() {
                         <button
                           onClick={() => navigate(`/safety/incidents/${inc.id}`)}
                           className="text-xs font-medium px-3 py-1 rounded-md transition-colors"
-                          style={{ color: '#1e4d6b', background: '#1e4d6b12' }}
+                          style={{ color: '#1E2D4D', background: '#1E2D4D12' }}
                         >
                           View
                         </button>

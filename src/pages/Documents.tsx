@@ -26,6 +26,7 @@ import {
   DEMO_AI_ANALYSIS,
   documentNeedsAttention,
 } from '../data/documentAiDemoData';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 type ScanStatus = 'scanning' | 'available' | 'quarantined';
 
@@ -207,6 +208,7 @@ export function Documents() {
   const { t } = useTranslation();
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
+  usePageTitle('Documents');
   const [documents, setDocuments] = useState<Document[]>([]);
   const [sharedItems, setSharedItems] = useState<SharedItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -421,13 +423,13 @@ export function Documents() {
 
         <div className="flex justify-between items-center flex-wrap gap-2">
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t('pages.documents.documentation')}</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-[#1E2D4D]">{t('pages.documents.documentation')}</h1>
             <p className="text-sm text-gray-600 mt-1">{t('pages.documents.subtitle')}</p>
           </div>
           <div className="flex gap-2 flex-wrap">
             <button
               onClick={() => navigate('/import?type=documents')}
-              className="flex items-center space-x-2 px-4 py-2 min-h-[44px] border border-[#1e4d6b] text-[#1e4d6b] rounded-lg hover:bg-[#eef4f8] shadow-sm transition-colors duration-150"
+              className="flex items-center space-x-2 px-4 py-2 min-h-[44px] border border-[#1E2D4D] text-[#1E2D4D] rounded-lg hover:bg-[#eef4f8] shadow-sm transition-colors duration-150"
             >
               <Upload className="h-4 w-4" />
               <span>Import</span>
@@ -435,7 +437,7 @@ export function Documents() {
             {selectedDocs.length > 0 && activeTab === 'documents' && (
               <button
                 onClick={handleShareMultiple}
-                className="flex items-center space-x-2 px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg shadow-sm hover:bg-[#163a52] transition-colors duration-150"
+                className="flex items-center space-x-2 px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg shadow-sm hover:bg-[#162340] transition-colors duration-150"
               >
                 <Share2 className="h-5 w-5" />
                 <span>{t('pages.documents.shareSelected').replace('{{count}}', String(selectedDocs.length))}</span>
@@ -443,7 +445,7 @@ export function Documents() {
             )}
             <button
               onClick={() => setShowSmartUpload(true)}
-              className="flex items-center space-x-2 px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] shadow-sm transition-colors duration-150"
+              className="flex items-center space-x-2 px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] shadow-sm transition-colors duration-150"
             >
               <Plus className="h-5 w-5" />
               <span className="hidden sm:inline">{t('pages.documents.upload')}</span>
@@ -451,7 +453,7 @@ export function Documents() {
             </button>
             <button
               onClick={() => setShowPhotoCapture(!showPhotoCapture)}
-              className="flex items-center space-x-2 px-4 py-2 min-h-[44px] bg-white text-[#1e4d6b] border-2 border-[#1e4d6b] rounded-xl hover:bg-gray-50 shadow-sm transition-colors duration-150"
+              className="flex items-center space-x-2 px-4 py-2 min-h-[44px] bg-white text-[#1E2D4D] border-2 border-[#1E2D4D] rounded-xl hover:bg-gray-50 shadow-sm transition-colors duration-150"
             >
               <Camera className="h-5 w-5" />
               <span className="hidden sm:inline">{t('pages.documents.takePhoto')}</span>
@@ -462,7 +464,7 @@ export function Documents() {
 
         {/* Photo Capture Panel — documentMode auto-enhances for readability */}
         {showPhotoCapture && (
-          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5 border border-gray-200">
+          <div className="bg-white rounded-xl p-4 sm:p-5 border border-gray-200">
             <PhotoEvidence
               photos={docPhotos}
               onChange={setDocPhotos}
@@ -477,7 +479,7 @@ export function Documents() {
               <div className="mt-3 space-y-3">
                 <button
                   onClick={() => { toast.success('Document photo saved'); setShowPhotoCapture(false); setDocPhotos([]); }}
-                  className="px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium"
+                  className="px-4 py-2 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] text-sm font-medium"
                 >
                   {t('pages.documents.saveDocumentPhoto')}
                 </button>
@@ -489,12 +491,12 @@ export function Documents() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #1e4d6b' }}>
+          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #1E2D4D' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
-              <FileText className="h-4 w-4 text-[#1e4d6b]" />
+              <FileText className="h-4 w-4 text-[#1E2D4D]" />
               <span className="text-sm text-gray-500 font-medium">{t('pages.documents.totalDocuments')}</span>
             </div>
-            <div className="text-xl sm:text-3xl font-bold text-[#1e4d6b] text-center">{locationFilteredDocs.length}</div>
+            <div className="text-xl sm:text-3xl font-bold text-[#1E2D4D] text-center">{locationFilteredDocs.length}</div>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #16a34a' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
@@ -566,7 +568,7 @@ export function Documents() {
             onClick={() => setActiveTab('documents')}
             className={`px-6 py-3 font-medium text-sm whitespace-nowrap border-b-2 transition-colors ${
               activeTab === 'documents'
-                ? 'border-[#d4af37] text-[#1e4d6b]'
+                ? 'border-[#d4af37] text-[#1E2D4D]'
                 : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
             }`}
           >
@@ -576,7 +578,7 @@ export function Documents() {
             onClick={() => setActiveTab('shared')}
             className={`px-6 py-3 font-medium text-sm whitespace-nowrap border-b-2 transition-colors ${
               activeTab === 'shared'
-                ? 'border-[#d4af37] text-[#1e4d6b]'
+                ? 'border-[#d4af37] text-[#1E2D4D]'
                 : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
             }`}
           >
@@ -596,7 +598,7 @@ export function Documents() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   style={{ width: '100%', padding: '8px 12px 8px 36px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '14px', outline: 'none' }}
-                  onFocus={(e) => e.currentTarget.style.borderColor = '#1e4d6b'}
+                  onFocus={(e) => e.currentTarget.style.borderColor = '#1E2D4D'}
                   onBlur={(e) => e.currentTarget.style.borderColor = '#d1d5db'}
                 />
               </div>
@@ -616,7 +618,7 @@ export function Documents() {
               <button
                 onClick={() => setSelectedCategory('All')}
                 className={`px-4 py-2 rounded-lg text-sm whitespace-nowrap transition-colors duration-150 ${
-                  selectedCategory === 'All' ? 'bg-[#1e4d6b] text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                  selectedCategory === 'All' ? 'bg-[#1E2D4D] text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
                 }`}
               >
                 {t('pages.documents.all')} ({locationFilteredDocs.length})
@@ -628,7 +630,7 @@ export function Documents() {
                     key={cat}
                     onClick={() => setSelectedCategory(cat)}
                     className={`px-4 py-2 rounded-lg text-sm whitespace-nowrap transition-colors duration-150 ${
-                      selectedCategory === cat ? 'bg-[#1e4d6b] text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                      selectedCategory === cat ? 'bg-[#1E2D4D] text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
                     }`}
                   >
                     {categoryLabelMap[cat] || cat} {count > 0 ? `(${count})` : ''}
@@ -637,7 +639,7 @@ export function Documents() {
               })}
             </div>
 
-            <div className="bg-white shadow-sm border border-gray-200 rounded-xl overflow-hidden">
+            <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
               {loading ? (
                 <div className="p-12">
                   <div className="animate-pulse space-y-4">
@@ -680,7 +682,7 @@ export function Documents() {
                                 setSelectedDocs([]);
                               }
                             }}
-                            className="h-4 w-4 text-[#1e4d6b] focus:ring-[#1e4d6b] border-gray-300 rounded"
+                            className="h-4 w-4 text-[#1E2D4D] focus:ring-[#1E2D4D] border-gray-300 rounded"
                           />
                         </th>
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -730,7 +732,7 @@ export function Documents() {
                                 type="checkbox"
                                 checked={selectedDocs.includes(doc.id)}
                                 onChange={() => handleToggleDoc(doc.id)}
-                                className="h-4 w-4 text-[#1e4d6b] focus:ring-[#1e4d6b] border-gray-300 rounded"
+                                className="h-4 w-4 text-[#1E2D4D] focus:ring-[#1E2D4D] border-gray-300 rounded"
                               />
                             </td>
                             <td className="px-4 py-4">
@@ -749,8 +751,8 @@ export function Documents() {
                                     {doc.needs_attention && <NeedsAttentionBadge />}
                                     {doc.import_source && doc.import_source !== 'direct' && (
                                       <span
-                                        className="text-[10px] px-1.5 py-0.5 rounded font-medium"
-                                        style={{ backgroundColor: '#eef4f8', color: '#1e4d6b' }}
+                                        className="text-xs px-1.5 py-0.5 rounded font-medium"
+                                        style={{ backgroundColor: '#eef4f8', color: '#1E2D4D' }}
                                         title={`Imported from ${doc.import_source.replace('_', ' ')}`}
                                       >
                                         Cloud
@@ -759,7 +761,7 @@ export function Documents() {
                                   </div>
                                   {doc.provided_by && (
                                     <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '2px' }}>
-                                      {t('pages.documents.providedBy')} <span style={{ color: '#1e4d6b', fontWeight: 500 }}>{doc.provided_by}</span>
+                                      {t('pages.documents.providedBy')} <span style={{ color: '#1E2D4D', fontWeight: 500 }}>{doc.provided_by}</span>
                                     </div>
                                   )}
                                 </div>
@@ -769,7 +771,7 @@ export function Documents() {
                               {editingDocId === doc.id ? (
                                 <select
                                   autoFocus
-                                  className="border border-gray-300 rounded-md px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] bg-white"
+                                  className="border border-gray-300 rounded-md px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] bg-white"
                                   defaultValue={doc.category}
                                   onChange={(e) => handleCategoryChange(doc.id, e.target.value)}
                                   onBlur={() => setEditingDocId(null)}
@@ -797,7 +799,7 @@ export function Documents() {
                                   {doc.categorization_source === 'manual' && (
                                     <span
                                       title="Manually categorized"
-                                      className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium"
+                                      className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-xs font-medium"
                                       style={{ backgroundColor: '#fef3c7', color: '#92400e' }}
                                     >
                                       <Pencil size={9} />
@@ -827,7 +829,7 @@ export function Documents() {
                                 <button
                                   onClick={() => setEditingDocId(editingDocId === doc.id ? null : doc.id)}
                                   style={{ color: editingDocId === doc.id ? '#d4af37' : '#6b7280' }}
-                                  onMouseEnter={(e) => { if (editingDocId !== doc.id) e.currentTarget.style.color = '#1e4d6b'; }}
+                                  onMouseEnter={(e) => { if (editingDocId !== doc.id) e.currentTarget.style.color = '#1E2D4D'; }}
                                   onMouseLeave={(e) => { if (editingDocId !== doc.id) e.currentTarget.style.color = '#6b7280'; }}
                                   title="Edit category"
                                 >
@@ -835,9 +837,9 @@ export function Documents() {
                                 </button>
                                 <button
                                   onClick={() => handleShareDocument(doc.title)}
-                                  style={{ color: '#1e4d6b' }}
-                                  onMouseEnter={(e) => e.currentTarget.style.color = '#163a52'}
-                                  onMouseLeave={(e) => e.currentTarget.style.color = '#1e4d6b'}
+                                  style={{ color: '#1E2D4D' }}
+                                  onMouseEnter={(e) => e.currentTarget.style.color = '#141E33'}
+                                  onMouseLeave={(e) => e.currentTarget.style.color = '#1E2D4D'}
                                   title="Share document"
                                 >
                                   <Share2 className="h-4 w-4" />
@@ -845,7 +847,7 @@ export function Documents() {
                                 <button
                                   onClick={() => handleDownload(doc)}
                                   className="hover:opacity-70"
-                                  style={{ color: '#1e4d6b' }}
+                                  style={{ color: '#1E2D4D' }}
                                   title="Download"
                                 >
                                   <Download className="h-4 w-4" />
@@ -864,7 +866,7 @@ export function Documents() {
                           {hasAi && isExpanded && doc.ai_analysis && (
                             <tr>
                               <td colSpan={9} className="p-0">
-                                <div className="bg-gray-50 border-t border-b border-gray-100">
+                                <div className="bg-[#FAF7F0] border-t border-b border-gray-100">
                                   <AiAnalysisPanel
                                     analysis={doc.ai_analysis}
                                     isOpen={true}
@@ -886,7 +888,7 @@ export function Documents() {
         )}
 
         {activeTab === 'shared' && (
-          <div className="bg-white shadow-sm border border-gray-200 rounded-xl overflow-hidden">
+          <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
             {sharedItems.length === 0 ? (
               <EmptyState
                 icon={Share2}

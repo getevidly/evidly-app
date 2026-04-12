@@ -215,12 +215,12 @@ export function IntelligenceHub() {
         style={{ backgroundColor: CARD_BG, borderBottom: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}
       >
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#1e4d6b' }}>
+          <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#1E2D4D' }}>
             <Brain className="h-5 w-5 text-white" />
           </div>
           <div>
             <h1 className="font-bold text-lg" style={{ color: BODY_TEXT }}>Compliance Intelligence</h1>
-            <p className="text-[11px] mt-0.5" style={{ color: MUTED }}>Live industry alerts, recalls, and regulatory updates — updated daily.</p>
+            <p className="text-xs mt-0.5" style={{ color: MUTED }}>Live industry alerts, recalls, and regulatory updates — updated daily.</p>
             <div className="flex items-center gap-3 text-xs mt-0.5" style={{ color: TEXT_TERTIARY }}>
               <span className="flex items-center gap-1">
                 <span className="relative flex h-2 w-2">
@@ -287,11 +287,11 @@ export function IntelligenceHub() {
               <button
                 key={f.key}
                 onClick={() => { setFilter(f.key); if (f.key === 'recalls') setViewState('recalls'); else if (f.key === 'legislative') setViewState('legislative'); else setViewState(selectedInsightId ? 'insight' : 'sources'); }}
-                className="px-2.5 py-1 rounded-full text-[11px] font-medium transition-all whitespace-nowrap"
+                className="px-2.5 py-1 rounded-full text-xs font-medium transition-all whitespace-nowrap"
                 style={{
-                  backgroundColor: filter === f.key ? '#1e4d6b' : PANEL_BG,
+                  backgroundColor: filter === f.key ? '#1E2D4D' : PANEL_BG,
                   color: filter === f.key ? '#fff' : MUTED,
-                  border: `1px solid ${filter === f.key ? '#1e4d6b' : BORDER_SUBTLE}`,
+                  border: `1px solid ${filter === f.key ? '#1E2D4D' : BORDER_SUBTLE}`,
                 }}
               >
                 {f.emoji ? `${f.emoji} ` : ''}{f.label}
@@ -302,7 +302,7 @@ export function IntelligenceHub() {
           {/* Critical section (sticky at top if any) */}
           {criticalInsights.length > 0 && (
             <div className="border-b" style={{ backgroundColor: '#fef2f2', borderColor: '#fca5a5' }}>
-              <div className="px-3 py-2 text-[11px] font-bold uppercase tracking-wider" style={{ color: '#991b1b' }}>
+              <div className="px-3 py-2 text-xs font-bold uppercase tracking-wider" style={{ color: '#991b1b' }}>
                 <Siren className="h-3 w-3 inline mr-1" />
                 {criticalInsights.length} Critical Alert{criticalInsights.length > 1 ? 's' : ''} — Action Required
               </div>
@@ -473,15 +473,15 @@ function InsightCard({ insight, selected, onSelect }: { insight: IntelligenceIns
               </span>
             ))}
           </div>
-          <p className="text-[13px] font-semibold leading-tight line-clamp-2" style={{ color: BODY_TEXT }}>{insight.title}</p>
-          <p className="text-[11px] mt-1 line-clamp-1" style={{ color: TEXT_TERTIARY }}>{insight.headline}</p>
+          <p className="text-sm font-semibold leading-tight line-clamp-2" style={{ color: BODY_TEXT }}>{insight.title}</p>
+          <p className="text-xs mt-1 line-clamp-1" style={{ color: TEXT_TERTIARY }}>{insight.headline}</p>
           <div className="flex items-center gap-2 mt-1.5">
             {(insight.affected_counties || []).slice(0, 3).map(c => (
               <span key={c} className="px-1.5 py-0.5 rounded text-[9px]" style={{ backgroundColor: PANEL_BG, color: MUTED }}>
                 {c.charAt(0).toUpperCase() + c.slice(1)}
               </span>
             ))}
-            <span className="text-[10px] ml-auto" style={{ color: TEXT_TERTIARY }}>{timeAgo(insight.published_at)}</span>
+            <span className="text-xs ml-auto" style={{ color: TEXT_TERTIARY }}>{timeAgo(insight.published_at)}</span>
           </div>
         </div>
         <ChevronRight className="h-4 w-4 mt-1 shrink-0" style={{ color: TEXT_TERTIARY }} />
@@ -554,7 +554,7 @@ function InsightDetailView({
             {/* Affected Locations */}
             {(biz.affected_locations || []).length > 0 && (
               <div className="mb-3">
-                <h4 className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: TEXT_TERTIARY }}>
+                <h4 className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: TEXT_TERTIARY }}>
                   Your Affected Locations
                 </h4>
                 <div className="space-y-1.5">
@@ -582,7 +582,7 @@ function InsightDetailView({
                     {formatCurrency(biz.financial_impact_adjusted.low)} — {formatCurrency(biz.financial_impact_adjusted.high)}
                   </span>
                 </div>
-                <p className="text-[10px] mt-0.5" style={{ color: TEXT_TERTIARY }}>
+                <p className="text-xs mt-0.5" style={{ color: TEXT_TERTIARY }}>
                   {biz.financial_impact_adjusted.methodology}
                 </p>
               </div>
@@ -591,13 +591,13 @@ function InsightDetailView({
             {/* Personalized Actions */}
             {(biz.personalized_actions || []).length > 0 && (
               <div className="mb-3">
-                <h4 className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: TEXT_TERTIARY }}>
+                <h4 className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: TEXT_TERTIARY }}>
                   Recommended for Your Operations
                 </h4>
                 <ol className="space-y-1">
                   {(biz.personalized_actions || []).map((action, i) => (
                     <li key={i} className="flex items-start gap-2 text-xs" style={{ color: BODY_TEXT }}>
-                      <span className="text-[10px] font-bold mt-0.5 shrink-0" style={{ color: GOLD }}>{i + 1}.</span>
+                      <span className="text-xs font-bold mt-0.5 shrink-0" style={{ color: GOLD }}>{i + 1}.</span>
                       <span>{action}</span>
                     </li>
                   ))}
@@ -606,7 +606,7 @@ function InsightDetailView({
             )}
 
             {/* Industry Note */}
-            <p className="text-[11px] italic" style={{ color: MUTED }}>
+            <p className="text-xs italic" style={{ color: MUTED }}>
               {biz.industry_specific_note}
             </p>
           </div>
@@ -704,7 +704,7 @@ function InsightDetailView({
         <button
           onClick={() => navigate('/jurisdiction')}
           className="flex items-center gap-2 w-full rounded-lg px-4 py-3 mb-4 text-xs font-medium transition-colors hover:opacity-80"
-          style={{ backgroundColor: '#eef4f8', color: '#1e4d6b', border: '1px solid #b8d4e8' }}
+          style={{ backgroundColor: '#eef4f8', color: '#1E2D4D', border: '1px solid #b8d4e8' }}
         >
           <Scale className="h-3.5 w-3.5" />
           <span>See your jurisdiction's rules</span>
@@ -720,7 +720,7 @@ function InsightDetailView({
         <button onClick={onDismiss} className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors" style={{ backgroundColor: PANEL_BG, color: MUTED }}>
           <Trash2 className="h-3.5 w-3.5" /> Dismiss
         </button>
-        <button onClick={onCreateAction} className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-white" style={{ backgroundColor: '#1e4d6b' }}>
+        <button onClick={onCreateAction} className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-white bg-[#1E2D4D] hover:bg-[#162340] transition-colors min-h-[44px]">
           <Zap className="h-3.5 w-3.5" /> Create Corrective Action
         </button>
       </div>
@@ -767,18 +767,18 @@ function SourceStatusView({ sourceStatus: rawStatus, insightCount, criticalCount
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
             {[
               { label: 'Total Published', value: String(pipelineStats.total_live), color: MIDNIGHT_NAVY },
-              { label: 'Published This Week', value: String(pipelineStats.published_this_week), color: '#1e4d6b' },
+              { label: 'Published This Week', value: String(pipelineStats.published_this_week), color: '#1E2D4D' },
               { label: 'Pending Review', value: String(pipelineStats.pending), color: '#d97706' },
               { label: 'Active Sources', value: String(sourceStatus.length), color: '#16a34a' },
             ].map(tile => (
               <div key={tile.label} className="rounded-xl p-3 text-center" style={{ backgroundColor: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
                 <div className="text-xl font-bold" style={{ color: tile.color }}>{tile.value}</div>
-                <div className="text-[10px] mt-0.5" style={{ color: TEXT_TERTIARY }}>{tile.label}</div>
+                <div className="text-xs mt-0.5" style={{ color: TEXT_TERTIARY }}>{tile.label}</div>
               </div>
             ))}
           </div>
           {pipelineStats.last_pipeline_run && (
-            <p className="text-[10px] mb-4" style={{ color: TEXT_TERTIARY }}>
+            <p className="text-xs mb-4" style={{ color: TEXT_TERTIARY }}>
               Last pipeline run: {timeAgo(pipelineStats.last_pipeline_run)}
             </p>
           )}
@@ -822,7 +822,7 @@ function SourceStatusView({ sourceStatus: rawStatus, insightCount, criticalCount
                         className="h-full rounded-full"
                         style={{
                           width: `${Math.min(100, (item.count / Math.max(1, pipelineStats.total_live)) * 100)}%`,
-                          backgroundColor: '#1e4d6b',
+                          backgroundColor: '#1E2D4D',
                         }}
                       />
                     </div>
@@ -838,7 +838,7 @@ function SourceStatusView({ sourceStatus: rawStatus, insightCount, criticalCount
       {/* Stat tiles (always shown) */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         {[
-          { label: 'Published Insights', value: String(insightCount), color: '#1e4d6b' },
+          { label: 'Published Insights', value: String(insightCount), color: '#1E2D4D' },
           { label: 'Critical Alerts', value: String(criticalCount), color: '#dc2626' },
           { label: 'Sources Active', value: String(sourceStatus.length), color: '#16a34a' },
         ].map(tile => (
@@ -874,7 +874,7 @@ function SourceStatusView({ sourceStatus: rawStatus, insightCount, criticalCount
                     <td className="px-4 py-2.5 capitalize" style={{ color: MUTED }}>{src.type || 'unknown'}</td>
                     <td className="px-4 py-2.5 capitalize" style={{ color: MUTED }}>{(src.jurisdictions || []).slice(0, 3).join(', ')}{(src.jurisdictions || []).length > 3 ? ` +${(src.jurisdictions || []).length - 3}` : ''}</td>
                     <td className="px-4 py-2.5" style={{ color: MUTED }}>{timeAgo(src.last_checked_at)}</td>
-                    <td className="px-4 py-2.5 text-center font-semibold" style={{ color: src.new_events_this_week > 0 ? '#1e4d6b' : TEXT_TERTIARY }}>{src.new_events_this_week}</td>
+                    <td className="px-4 py-2.5 text-center font-semibold" style={{ color: src.new_events_this_week > 0 ? '#1E2D4D' : TEXT_TERTIARY }}>{src.new_events_this_week}</td>
                     <td className="px-4 py-2.5 text-center">
                       <span className={`inline-block w-2 h-2 rounded-full ${src.status === 'healthy' ? 'bg-green-500' : src.status === 'warning' ? 'bg-yellow-500' : 'bg-red-500'}`} />
                     </td>
@@ -918,7 +918,7 @@ function RecallDashboard({ recalls: rawRecalls }: { recalls: RecallAlert[] }) {
             {active.map(r => (
               <div key={r.id} className="rounded-xl p-4" style={{ backgroundColor: r.class === 'I' ? '#fef2f2' : '#fffbeb', border: `1px solid ${r.class === 'I' ? '#fca5a5' : '#fcd34d'}` }}>
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="px-2 py-0.5 rounded text-[10px] font-bold text-white" style={{ backgroundColor: r.class === 'I' ? '#dc2626' : '#d97706' }}>
+                  <span className="px-2 py-0.5 rounded text-xs font-bold text-white" style={{ backgroundColor: r.class === 'I' ? '#dc2626' : '#d97706' }}>
                     Class {r.class}
                   </span>
                   <span className="text-sm font-bold" style={{ color: BODY_TEXT }}>{r.product}</span>
@@ -933,7 +933,7 @@ function RecallDashboard({ recalls: rawRecalls }: { recalls: RecallAlert[] }) {
                 <button
                   onClick={() => setExpandedId(expandedId === r.id ? null : r.id)}
                   className="mt-3 flex items-center gap-1 text-xs font-semibold"
-                  style={{ color: '#1e4d6b' }}
+                  style={{ color: '#1E2D4D' }}
                 >
                   {expandedId === r.id ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
                   Check my inventory
@@ -945,7 +945,7 @@ function RecallDashboard({ recalls: rawRecalls }: { recalls: RecallAlert[] }) {
                       {(r.affected_counties || []).map(c => {
                         const loc = CLIENT_COUNTIES[c];
                         return (
-                          <span key={c} className="px-2 py-0.5 rounded text-[10px] font-medium" style={{ backgroundColor: loc ? '#fef2f2' : PANEL_BG, color: loc ? '#991b1b' : MUTED }}>
+                          <span key={c} className="px-2 py-0.5 rounded text-xs font-medium" style={{ backgroundColor: loc ? '#fef2f2' : PANEL_BG, color: loc ? '#991b1b' : MUTED }}>
                             {c.charAt(0).toUpperCase() + c.slice(1)}{loc ? ` (${loc})` : ''}
                           </span>
                         );
@@ -969,7 +969,7 @@ function RecallDashboard({ recalls: rawRecalls }: { recalls: RecallAlert[] }) {
                 <Check className="h-4 w-4 text-green-500 shrink-0" />
                 <div className="flex-1">
                   <p className="text-xs font-medium" style={{ color: BODY_TEXT }}>{r.product} — {r.brand}</p>
-                  <p className="text-[10px]" style={{ color: TEXT_TERTIARY }}>Resolved {r.resolved_date}</p>
+                  <p className="text-xs" style={{ color: TEXT_TERTIARY }}>Resolved {r.resolved_date}</p>
                 </div>
                 <span className="px-1.5 py-0.5 rounded text-[9px] font-bold" style={{ backgroundColor: '#f0fdf4', color: '#166534' }}>
                   Resolved
@@ -997,9 +997,9 @@ function LegislativeTracker({ items: rawItems, expandedId, onToggleExpand }: { i
           const colItems = items.filter(i => i.status === col.status);
           return (
             <div key={col.status} className="rounded-xl p-3" style={{ backgroundColor: PANEL_BG, border: `1px solid ${BORDER_SUBTLE}` }}>
-              <div className="text-[10px] font-bold uppercase tracking-wider mb-2 text-center" style={{ color: MUTED }}>{col.label}</div>
+              <div className="text-xs font-bold uppercase tracking-wider mb-2 text-center" style={{ color: MUTED }}>{col.label}</div>
               {colItems.length === 0 && (
-                <div className="text-center text-[10px] py-4" style={{ color: TEXT_TERTIARY }}>--</div>
+                <div className="text-center text-xs py-4" style={{ color: TEXT_TERTIARY }}>--</div>
               )}
               {colItems.map(item => (
                 <button
@@ -1008,8 +1008,8 @@ function LegislativeTracker({ items: rawItems, expandedId, onToggleExpand }: { i
                   className="w-full rounded-lg p-2.5 mb-2 text-left transition-all"
                   style={{ backgroundColor: CARD_BG, border: `1px solid ${expandedId === item.id ? GOLD : CARD_BORDER}`, boxShadow: CARD_SHADOW }}
                 >
-                  <div className="text-[10px] font-bold" style={{ color: '#1e4d6b' }}>{item.bill_number}</div>
-                  <div className="text-[10px] leading-tight mt-0.5 line-clamp-2" style={{ color: BODY_TEXT }}>{item.title}</div>
+                  <div className="text-xs font-bold" style={{ color: '#1E2D4D' }}>{item.bill_number}</div>
+                  <div className="text-xs leading-tight mt-0.5 line-clamp-2" style={{ color: BODY_TEXT }}>{item.title}</div>
                   {/* Probability bar */}
                   <div className="mt-1.5 flex items-center gap-1">
                     <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: PANEL_BG }}>
@@ -1031,7 +1031,7 @@ function LegislativeTracker({ items: rawItems, expandedId, onToggleExpand }: { i
         return (
           <div className="rounded-xl p-5" style={{ backgroundColor: CARD_BG, border: `1px solid ${GOLD}`, boxShadow: CARD_SHADOW }}>
             <div className="flex items-center gap-2 mb-3">
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold" style={{ backgroundColor: '#eff6ff', color: '#1E2D4D' }}>{item.bill_number}</span>
+              <span className="px-2 py-0.5 rounded text-xs font-bold" style={{ backgroundColor: '#eff6ff', color: '#1E2D4D' }}>{item.bill_number}</span>
               <h3 className="text-sm font-bold" style={{ color: BODY_TEXT }}>{item.title}</h3>
             </div>
             <p className="text-sm mb-3" style={{ color: MUTED }}>{item.summary}</p>
@@ -1042,7 +1042,7 @@ function LegislativeTracker({ items: rawItems, expandedId, onToggleExpand }: { i
             </div>
             {(item.auto_checklist_items || []).length > 0 && (
               <div>
-                <h4 className="text-[10px] font-bold uppercase tracking-wider mb-1.5" style={{ color: TEXT_TERTIARY }}>Preparation Checklist</h4>
+                <h4 className="text-xs font-bold uppercase tracking-wider mb-1.5" style={{ color: TEXT_TERTIARY }}>Preparation Checklist</h4>
                 <ul className="space-y-1">
                   {(item.auto_checklist_items || []).map((ci, idx) => (
                     <li key={idx} className="flex items-start gap-2 text-xs" style={{ color: BODY_TEXT }}>

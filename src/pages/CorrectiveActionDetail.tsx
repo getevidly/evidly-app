@@ -45,7 +45,7 @@ import {
 
 // ── Constants ────────────────────────────────────────────────
 
-const NAVY = '#1e4d6b';
+const NAVY = '#1E2D4D';
 
 const TIMELINE_STEPS: { key: CAStatus; label: string }[] = [
   { key: 'reported', label: 'Reported' },
@@ -239,28 +239,28 @@ export function CorrectiveActionDetail() {
       </button>
 
       {/* Header */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
+      <div className="bg-white rounded-xl border border-gray-200 p-6">
         <div className="flex flex-wrap items-center gap-2 mb-2">
-          <h1 className="text-lg font-bold text-gray-900">{item.title}</h1>
+          <h1 className="text-lg font-bold text-[#1E2D4D]">{item.title}</h1>
           <span
-            className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase"
+            className="text-xs font-bold px-2 py-0.5 rounded-full uppercase"
             style={{ color: sev.color, backgroundColor: sev.bg, border: `1px solid ${sev.border}` }}
           >
             {SEVERITY_LABELS[item.severity]}
           </span>
           <span
-            className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+            className="text-xs font-semibold px-2 py-0.5 rounded-full"
             style={{ color: stat.color, backgroundColor: stat.bg }}
           >
             {stat.label}
           </span>
           {overdue && (
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full text-red-700 bg-red-50 border border-red-200">
+            <span className="text-xs font-bold px-2 py-0.5 rounded-full text-red-700 bg-red-50 border border-red-200">
               OVERDUE
             </span>
           )}
           {resolveDays !== null && (
-            <span className="text-[10px] font-medium px-2 py-0.5 rounded-full text-green-700 bg-green-50 border border-green-200">
+            <span className="text-xs font-medium px-2 py-0.5 rounded-full text-green-700 bg-green-50 border border-green-200">
               Resolved in {resolveDays}d
             </span>
           )}
@@ -275,7 +275,7 @@ export function CorrectiveActionDetail() {
       </div>
 
       {/* Status Timeline */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
+      <div className="bg-white rounded-xl border border-gray-200 p-6">
         <h3 className="text-sm font-semibold text-gray-700 mb-4">Status Timeline</h3>
         <div className="flex items-center justify-between relative">
           {TIMELINE_STEPS.map((step, idx) => {
@@ -315,7 +315,7 @@ export function CorrectiveActionDetail() {
                 </div>
                 {/* Label */}
                 <span
-                  className={`text-[10px] mt-1.5 text-center ${isCurrent ? 'font-bold' : 'font-medium'}`}
+                  className={`text-xs mt-1.5 text-center ${isCurrent ? 'font-bold' : 'font-medium'}`}
                   style={{ color: isCurrent ? NAVY : isCompleted ? '#16a34a' : '#9ca3af' }}
                 >
                   {step.label}
@@ -331,22 +331,22 @@ export function CorrectiveActionDetail() {
       </div>
 
       {/* Assignment Section */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
+      <div className="bg-white rounded-xl border border-gray-200 p-6">
         <div className="flex items-center gap-2 mb-3">
           <User size={16} style={{ color: NAVY }} />
           <h3 className="text-sm font-semibold text-gray-700">Assignment</h3>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
-            <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wide mb-0.5">Assignee</p>
+            <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-0.5">Assignee</p>
             <p className="text-sm text-gray-700">{item.assignee || 'Unassigned'}</p>
           </div>
           <div>
-            <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wide mb-0.5">Assigned By</p>
+            <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-0.5">Assigned By</p>
             <p className="text-sm text-gray-700">{item.assigned_by || '\u2014'}</p>
           </div>
           <div>
-            <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wide mb-0.5">Assigned Date</p>
+            <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-0.5">Assigned Date</p>
             <p className="text-sm text-gray-700">{item.assignedAt ? formatDate(item.assignedAt) : '\u2014'}</p>
           </div>
         </div>
@@ -369,7 +369,7 @@ export function CorrectiveActionDetail() {
       </div>
 
       {/* Detail Grid */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
+      <div className="bg-white rounded-xl border border-gray-200 p-6">
         <h3 className="text-sm font-semibold text-gray-700 mb-3">Details</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <DetailField label="Category" value={CATEGORY_LABELS[item.category]} />
@@ -393,7 +393,7 @@ export function CorrectiveActionDetail() {
             <Sparkles size={16} className="text-amber-600" />
             <h3 className="text-sm font-semibold text-amber-800">AI-Suggested Resolution Plan</h3>
           </div>
-          <p className="text-[10px] text-amber-600 mb-3">AI-generated \u2014 review before saving</p>
+          <p className="text-xs text-amber-600 mb-3">AI-generated \u2014 review before saving</p>
           <p className="text-sm text-gray-700 bg-amber-50 rounded-lg p-3">{item.ai_draft}</p>
           {item.status === 'in_progress' && (
             <button
@@ -408,7 +408,7 @@ export function CorrectiveActionDetail() {
 
       {/* Resolution Note Section */}
       {['in_progress', 'resolved', 'verified'].includes(item.status) && (
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white rounded-xl border border-gray-200 p-6">
           <div className="flex items-center gap-2 mb-3">
             <FileText size={16} style={{ color: NAVY }} />
             <h3 className="text-sm font-semibold text-gray-700">Resolution Note</h3>
@@ -428,7 +428,7 @@ export function CorrectiveActionDetail() {
                 onChange={e => setResolutionNote(e.target.value)}
                 rows={3}
                 placeholder="Describe resolution actions taken..."
-                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1e4d6b] resize-none"
+                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E2D4D] resize-none"
               />
               <SuggestionPill
                 fieldLabel="Resolution Note"
@@ -445,7 +445,7 @@ export function CorrectiveActionDetail() {
 
       {/* Verification Note Section */}
       {['resolved', 'verified'].includes(item.status) && (
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white rounded-xl border border-gray-200 p-6">
           <div className="flex items-center gap-2 mb-3">
             <Shield size={16} style={{ color: NAVY }} />
             <h3 className="text-sm font-semibold text-gray-700">Verification</h3>
@@ -469,7 +469,7 @@ export function CorrectiveActionDetail() {
                 onChange={e => setVerificationNote(e.target.value)}
                 rows={3}
                 placeholder="Describe verification findings..."
-                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1e4d6b] resize-none"
+                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E2D4D] resize-none"
               />
               <SuggestionPill
                 fieldLabel="Verification Note"
@@ -485,7 +485,7 @@ export function CorrectiveActionDetail() {
       )}
 
       {/* Notes / Comments Section */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
+      <div className="bg-white rounded-xl border border-gray-200 p-6">
         <div className="flex items-center gap-2 mb-3">
           <MessageSquare size={16} style={{ color: NAVY }} />
           <h3 className="text-sm font-semibold text-gray-700">Notes & Comments</h3>
@@ -498,10 +498,10 @@ export function CorrectiveActionDetail() {
 
         <div className="space-y-3 mb-4">
           {item.notes.map((note, idx) => (
-            <div key={idx} className="bg-gray-50 rounded-lg p-3">
+            <div key={idx} className="bg-[#FAF7F0] rounded-lg p-3">
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-xs font-semibold text-gray-700">{note.author}</span>
-                <span className="text-[10px] text-gray-400">{formatTimestamp(note.timestamp)}</span>
+                <span className="text-xs text-gray-400">{formatTimestamp(note.timestamp)}</span>
               </div>
               <p className="text-sm text-gray-600">{note.text}</p>
             </div>
@@ -518,7 +518,7 @@ export function CorrectiveActionDetail() {
             fieldLabel="Add a note"
             formContext={{ title: item?.title, category: item?.category, severity: item?.severity }}
             entityType="corrective_action"
-            className="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1e4d6b]"
+            className="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E2D4D]"
           />
           <button
             onClick={handleAddNote}
@@ -532,7 +532,7 @@ export function CorrectiveActionDetail() {
       </div>
 
       {/* Attachments Section */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
+      <div className="bg-white rounded-xl border border-gray-200 p-6">
         <div className="flex items-center gap-2 mb-3">
           <Paperclip size={16} style={{ color: NAVY }} />
           <h3 className="text-sm font-semibold text-gray-700">Attachments</h3>
@@ -551,7 +551,7 @@ export function CorrectiveActionDetail() {
               >
                 <FileText size={14} className="text-gray-400 shrink-0" />
                 <span className="text-sm text-gray-700 flex-1">{att.name}</span>
-                <span className="text-[10px] text-gray-400 uppercase">{att.type.split('/').pop()}</span>
+                <span className="text-xs text-gray-400 uppercase">{att.type.split('/').pop()}</span>
               </button>
             ))}
           </div>
@@ -559,7 +559,7 @@ export function CorrectiveActionDetail() {
       </div>
 
       {/* Audit Trail */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
+      <div className="bg-white rounded-xl border border-gray-200 p-6">
         <div className="flex items-center gap-2 mb-3">
           <History size={16} style={{ color: NAVY }} />
           <h3 className="text-sm font-semibold text-gray-700">Audit Trail</h3>
@@ -591,9 +591,9 @@ export function CorrectiveActionDetail() {
                   <div className="flex-1 min-w-0">
                     <p className="text-xs text-gray-700">{actionText}</p>
                     {entry.detail && (
-                      <p className="text-[11px] text-gray-500 mt-0.5">{entry.detail}</p>
+                      <p className="text-xs text-gray-500 mt-0.5">{entry.detail}</p>
                     )}
-                    <p className="text-[10px] text-gray-400 mt-0.5">{entry.by} &middot; {formatTimestamp(entry.timestamp)}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">{entry.by} &middot; {formatTimestamp(entry.timestamp)}</p>
                   </div>
                 </div>
               );
@@ -648,7 +648,7 @@ export function CorrectiveActionDetail() {
 function DetailField({ label, value, full }: { label: string; value: string; full?: boolean }) {
   return (
     <div className={full ? 'col-span-1 sm:col-span-2' : ''}>
-      <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wide mb-0.5">{label}</p>
+      <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-0.5">{label}</p>
       <p className="text-sm text-gray-700">{value}</p>
     </div>
   );

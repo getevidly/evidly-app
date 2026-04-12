@@ -22,7 +22,7 @@ export function SkeletonCard() {
 export function SkeletonTable({ rows = 5 }: { rows?: number }) {
   return (
     <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-      <div className="flex gap-4 px-6 py-3 border-b bg-gray-50">
+      <div className="flex gap-4 px-6 py-3 border-b bg-[#FAF7F0]">
         <Skeleton className="h-4 w-24" />
         <Skeleton className="h-4 w-32" />
         <Skeleton className="h-4 w-20" />
@@ -60,7 +60,7 @@ export function SkeletonChart() {
 
 export function SkeletonKPI() {
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-5">
+    <div className="bg-white rounded-xl border border-gray-200 p-6">
       <Skeleton className="h-4 w-24 mb-3" />
       <Skeleton className="h-8 w-16 mb-2" />
       <Skeleton className="h-3 w-20" />

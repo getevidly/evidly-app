@@ -24,8 +24,8 @@ export function BenchmarkCategoryBreakdown({ locationId }: Props) {
   ];
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
-      <h3 className="text-lg font-semibold text-gray-900 mb-1">Category Breakdown</h3>
+    <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+      <h3 className="text-lg font-semibold text-[#1E2D4D] mb-1">Category Breakdown</h3>
       <p className="text-sm text-gray-500 mb-4">Compare your compliance domains against peers</p>
 
       <div className="overflow-x-auto">

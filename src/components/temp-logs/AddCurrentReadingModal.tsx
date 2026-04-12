@@ -78,7 +78,7 @@ export function AddCurrentReadingModal({ open, onClose, equipment, onSave }: Pro
             ))}
           </select>
           {selectedEq && (
-            <p className="mt-1.5 text-xs font-medium text-[#1e4d6b]">Safe range: {rangeLabel}</p>
+            <p className="mt-1.5 text-xs font-medium text-[#1E2D4D]">Safe range: {rangeLabel}</p>
           )}
         </FormField>
 

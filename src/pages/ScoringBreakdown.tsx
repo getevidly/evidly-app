@@ -12,6 +12,7 @@ import { locations } from '../data/demoData';
 import { JURISDICTION_DATABASE } from '../data/jurisdictionData';
 import { useDemo } from '../contexts/DemoContext';
 import { ErrorState } from '../components/shared/PageStates';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 // ── Location-to-override-key mapping ─────────────────────────
 
@@ -85,7 +86,7 @@ function CollapsibleSection({ title, icon, badge, defaultOpen = false, children 
       >
         <div className="flex items-center gap-3">
           {icon}
-          <span className="font-semibold text-gray-900">{title}</span>
+          <span className="font-semibold text-[#1E2D4D]">{title}</span>
           {badge}
         </div>
         {isOpen ? <ChevronUp className="w-5 h-5 text-gray-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
@@ -114,6 +115,7 @@ function StatusIcon({ status }: { status: string }) {
 export function ScoringBreakdown() {
   const navigate = useNavigate();
   const { isDemoMode } = useDemo();
+  usePageTitle('Scoring Breakdown');
   const [pageError, setPageError] = useState<string | null>(null);
   const params = new URLSearchParams(window.location.search);
   const locationParam = params.get('location') || 'downtown';
@@ -131,15 +133,15 @@ export function ScoringBreakdown() {
   if (!isDemoMode) {
     return (
       <div className="space-y-6">
-        <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
+        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
           <ClipboardCheck className="mx-auto h-12 w-12 text-gray-300 mb-4" />
           <h2 className="text-lg font-semibold text-gray-700 mb-2">No food safety data yet</h2>
           <p className="text-sm text-gray-500 mb-6">Add locations and complete checklists to see your food safety scoring breakdown.</p>
-          <button onClick={() => navigate('/org-hierarchy')} className="px-5 py-2.5 text-sm font-medium text-white rounded-lg mb-3" style={{ backgroundColor: '#1e4d6b' }}>
+          <button onClick={() => navigate('/org-hierarchy')} className="px-5 py-2.5 text-sm font-medium text-white rounded-lg mb-3" style={{ backgroundColor: '#1E2D4D' }}>
             Add Location
           </button>
           <br />
-          <button onClick={() => navigate('/dashboard')} className="text-sm font-medium text-[#1e4d6b] hover:underline">
+          <button onClick={() => navigate('/dashboard')} className="text-sm font-medium text-[#1E2D4D] hover:underline">
             Back to Dashboard
           </button>
         </div>
@@ -176,12 +178,12 @@ export function ScoringBreakdown() {
       <div>
         <button
           onClick={() => navigate(`/dashboard?location=${locationParam}`)}
-          className="flex items-center gap-1 text-sm font-medium text-[#1e4d6b] hover:text-[#163a52] transition-colors mb-2 min-h-[44px]"
+          className="flex items-center gap-1 text-sm font-medium text-[#1E2D4D] hover:text-[#141E33] transition-colors mb-2 min-h-[44px]"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Dashboard
         </button>
-        <h1 className="text-2xl font-bold text-gray-900">Food Safety Overview</h1>
+        <h1 className="text-2xl font-bold text-[#1E2D4D]">Food Safety Overview</h1>
         <p className="text-gray-500 text-sm mt-1">
           {selectedLocation.name} &mdash; {county}
         </p>
@@ -195,7 +197,7 @@ export function ScoringBreakdown() {
             onClick={() => navigate(`/scoring-breakdown?location=${loc.urlId}`)}
             className={`px-4 py-2 text-sm font-medium rounded-md transition-colors min-h-[44px] ${
               loc.urlId === locationParam
-                ? 'bg-white text-[#1e4d6b] shadow-sm'
+                ? 'bg-white text-[#1E2D4D] shadow-sm'
                 : 'text-gray-500 hover:text-gray-700'
             }`}
           >
@@ -206,7 +208,7 @@ export function ScoringBreakdown() {
 
       {/* ─── Section 1: Jurisdiction Status ─── */}
       <div className="space-y-3">
-        <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+        <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
           <EvidlyIcon size={20} />
           Jurisdiction Status
         </h2>
@@ -248,16 +250,16 @@ export function ScoringBreakdown() {
             {/* Details if available */}
             {gradeData.foodSafety.details && (
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="text-center p-3 rounded-lg bg-gray-50">
-                  <div className="text-lg font-bold text-gray-900">{gradeData.foodSafety.details.majorViolations}</div>
+                <div className="text-center p-3 rounded-lg bg-[#FAF7F0]">
+                  <div className="text-lg font-bold text-[#1E2D4D]">{gradeData.foodSafety.details.majorViolations}</div>
                   <div className="text-xs text-gray-500">Major Violations</div>
                 </div>
-                <div className="text-center p-3 rounded-lg bg-gray-50">
-                  <div className="text-lg font-bold text-gray-900">{gradeData.foodSafety.details.minorViolations}</div>
+                <div className="text-center p-3 rounded-lg bg-[#FAF7F0]">
+                  <div className="text-lg font-bold text-[#1E2D4D]">{gradeData.foodSafety.details.minorViolations}</div>
                   <div className="text-xs text-gray-500">Minor Violations</div>
                 </div>
-                <div className="text-center p-3 rounded-lg bg-gray-50">
-                  <div className="text-lg font-bold text-gray-900">{gradeData.foodSafety.details.uncorrectedMajors}</div>
+                <div className="text-center p-3 rounded-lg bg-[#FAF7F0]">
+                  <div className="text-lg font-bold text-[#1E2D4D]">{gradeData.foodSafety.details.uncorrectedMajors}</div>
                   <div className="text-xs text-gray-500">Uncorrected Majors</div>
                 </div>
               </div>
@@ -321,11 +323,11 @@ export function ScoringBreakdown() {
       {/* ─── Section 2: Operational Readiness ─── */}
       <div className="space-y-3">
         <div className="flex items-center gap-2">
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-            <ClipboardCheck className="w-5 h-5 text-[#1e4d6b]" />
+          <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
+            <ClipboardCheck className="w-5 h-5 text-[#1E2D4D]" />
             Operational Readiness
           </h2>
-          <span className="text-[10px] font-semibold text-[#1e4d6b] bg-[#eef4f8] border border-[#b8d4e8] px-2 py-0.5 rounded-full uppercase tracking-wider">
+          <span className="text-xs font-semibold text-[#1E2D4D] bg-[#eef4f8] border border-[#b8d4e8] px-2 py-0.5 rounded-full uppercase tracking-wider">
             EvidLY Internal
           </span>
         </div>
@@ -373,8 +375,8 @@ export function ScoringBreakdown() {
 
       {/* ─── Section 3: Jurisdiction Methodology ─── */}
       <div className="space-y-3">
-        <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-          <Info className="w-5 h-5 text-[#1e4d6b]" />
+        <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
+          <Info className="w-5 h-5 text-[#1E2D4D]" />
           Jurisdiction Methodology
         </h2>
         <p className="text-sm text-gray-500 -mt-1">How {jurisdictionInfo.name} grades food facilities.</p>
@@ -385,9 +387,9 @@ export function ScoringBreakdown() {
               <EvidlyIcon size={20} />
             </div>
             <div className="flex-1">
-              <div className="text-base font-bold text-gray-900">{jurisdictionInfo.name}</div>
+              <div className="text-base font-bold text-[#1E2D4D]">{jurisdictionInfo.name}</div>
               <div className="mt-1">
-                <span className="text-xs font-semibold text-[#1e4d6b] bg-[#eef4f8] border border-[#b8d4e8] px-2 py-0.5 rounded-full">
+                <span className="text-xs font-semibold text-[#1E2D4D] bg-[#eef4f8] border border-[#b8d4e8] px-2 py-0.5 rounded-full">
                   {jurisdictionInfo.system}
                 </span>
               </div>

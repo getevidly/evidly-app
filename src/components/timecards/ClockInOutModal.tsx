@@ -28,7 +28,7 @@ export function ClockInOutModal({ mode, currentDuration, onClose, onSubmit }: Cl
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: '#D1D9E6' }}>
           <div className="flex items-center gap-2">
-            <Clock className="w-5 h-5" style={{ color: '#1e4d6b' }} />
+            <Clock className="w-5 h-5" style={{ color: '#1E2D4D' }} />
             <h3 className="text-lg font-semibold" style={{ color: '#0B1628' }}>
               {mode === 'in' ? 'Clock In' : 'Clock Out'}
             </h3>

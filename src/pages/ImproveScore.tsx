@@ -113,7 +113,7 @@ export function ImproveScore() {
             <ArrowLeft className="h-5 w-5 text-gray-500" />
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Improve Your Score</h1>
+            <h1 className="text-2xl font-bold text-[#1E2D4D]">Improve Your Score</h1>
             <p className="text-sm text-gray-500">Complete assessments to see improvement recommendations.</p>
           </div>
         </div>
@@ -177,7 +177,7 @@ export function ImproveScore() {
             <ArrowLeft className="h-5 w-5 text-gray-500" />
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Improve My Score</h1>
+            <h1 className="text-2xl font-bold text-[#1E2D4D]">Improve My Score</h1>
             <p className="text-sm text-gray-500">Prioritized actions ranked by impact on your insurance risk score</p>
           </div>
         </div>
@@ -188,7 +188,7 @@ export function ImproveScore() {
         <button
           onClick={() => handleLocationChange('all')}
           className="px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap min-h-[44px]"
-          style={locationParam === 'all' ? { backgroundColor: '#1e4d6b', color: 'white' } : { backgroundColor: '#f3f4f6', color: '#374151' }}
+          style={locationParam === 'all' ? { backgroundColor: '#1E2D4D', color: 'white' } : { backgroundColor: '#f3f4f6', color: '#374151' }}
         >
           All Locations
         </button>
@@ -197,7 +197,7 @@ export function ImproveScore() {
             key={loc.urlId}
             onClick={() => handleLocationChange(loc.urlId)}
             className="px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap min-h-[44px]"
-            style={locationParam === loc.urlId ? { backgroundColor: '#1e4d6b', color: 'white' } : { backgroundColor: '#f3f4f6', color: '#374151' }}
+            style={locationParam === loc.urlId ? { backgroundColor: '#1E2D4D', color: 'white' } : { backgroundColor: '#f3f4f6', color: '#374151' }}
           >
             {loc.name}
           </button>
@@ -205,15 +205,15 @@ export function ImproveScore() {
       </div>
 
       {/* Score Projection Card */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
+      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 mb-6">
         <div className="flex flex-col md:flex-row items-center gap-6">
           {/* Current Score */}
           <div className="text-center">
-            <div className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold mb-1">Current Score</div>
+            <div className="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-1">Current Score</div>
             <div className="w-20 h-20 rounded-full flex items-center justify-center border-[3px] mx-auto" style={{ borderColor: tierInfo.color, backgroundColor: tierInfo.bg }}>
               <div className="text-2xl font-bold" style={{ color: tierInfo.color }}>{riskResult.overall}</div>
             </div>
-            <div className="text-[10px] font-bold mt-1.5 px-2 py-0.5 rounded-full inline-block" style={{ backgroundColor: tierInfo.bg, color: tierInfo.color, border: `1px solid ${tierInfo.color}` }}>
+            <div className="text-xs font-bold mt-1.5 px-2 py-0.5 rounded-full inline-block" style={{ backgroundColor: tierInfo.bg, color: tierInfo.color, border: `1px solid ${tierInfo.color}` }}>
               {riskResult.tier}
             </div>
           </div>
@@ -225,7 +225,7 @@ export function ImproveScore() {
 
           {/* Projected Score */}
           <div className="text-center">
-            <div className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold mb-1">
+            <div className="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-1">
               {completedGain > 0 ? 'Projected Score' : 'If All Addressed'}
             </div>
             <div className="w-20 h-20 rounded-full flex items-center justify-center border-[3px] mx-auto" style={{ borderColor: projectedTier.color, backgroundColor: projectedTier.bg }}>
@@ -233,7 +233,7 @@ export function ImproveScore() {
                 {completedGain > 0 ? projectedScore : Math.min(100, riskResult.overall + totalPotentialGain)}
               </div>
             </div>
-            <div className="text-[10px] font-bold mt-1.5 px-2 py-0.5 rounded-full inline-block" style={{ backgroundColor: projectedTier.bg, color: projectedTier.color, border: `1px solid ${projectedTier.color}` }}>
+            <div className="text-xs font-bold mt-1.5 px-2 py-0.5 rounded-full inline-block" style={{ backgroundColor: projectedTier.bg, color: projectedTier.color, border: `1px solid ${projectedTier.color}` }}>
               {completedGain > 0 ? projectedTier.tier : getInsuranceRiskTier(Math.min(100, riskResult.overall + totalPotentialGain)).tier}
             </div>
           </div>
@@ -241,17 +241,17 @@ export function ImproveScore() {
           {/* Summary Stats */}
           <div className="flex-1 ml-0 sm:ml-4">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="text-center p-3 rounded-lg bg-gray-50">
+              <div className="text-center p-3 rounded-lg bg-[#FAF7F0]">
                 <div className="text-lg font-bold text-green-600">+{totalPotentialGain}</div>
-                <div className="text-[10px] text-gray-400">Total Points Available</div>
+                <div className="text-xs text-gray-400">Total Points Available</div>
               </div>
-              <div className="text-center p-3 rounded-lg bg-gray-50">
-                <div className="text-lg font-bold text-gray-900">{riskResult.actionItems.length}</div>
-                <div className="text-[10px] text-gray-400">Actions to Address</div>
+              <div className="text-center p-3 rounded-lg bg-[#FAF7F0]">
+                <div className="text-lg font-bold text-[#1E2D4D]">{riskResult.actionItems.length}</div>
+                <div className="text-xs text-gray-400">Actions to Address</div>
               </div>
-              <div className="text-center p-3 rounded-lg bg-gray-50">
+              <div className="text-center p-3 rounded-lg bg-[#FAF7F0]">
                 <div className="text-lg font-bold" style={{ color: '#d4af37' }}>{completedActions.size}</div>
-                <div className="text-[10px] text-gray-400">Addressed This Session</div>
+                <div className="text-xs text-gray-400">Addressed This Session</div>
               </div>
             </div>
           </div>
@@ -267,15 +267,15 @@ export function ImproveScore() {
             <div
               key={group.name}
               onClick={() => setCategoryFilter(categoryFilter === group.name ? 'all' : group.name)}
-              className="bg-white rounded-xl shadow-sm border p-4 cursor-pointer transition-colors hover:bg-gray-50"
+              className="bg-white rounded-xl border p-4 cursor-pointer transition-colors hover:bg-gray-50"
               style={{ borderColor: categoryFilter === group.name ? color : '#e5e7eb' }}
             >
               <div className="flex items-center gap-2 mb-2">
                 <Icon className="h-4 w-4" style={{ color }} />
-                <span className="text-xs font-semibold text-gray-900 truncate">{group.name.replace(' & Compliance', '').replace(' Risk', '')}</span>
+                <span className="text-xs font-semibold text-[#1E2D4D] truncate">{group.name.replace(' & Compliance', '').replace(' Risk', '')}</span>
               </div>
               <div className="text-sm font-bold text-green-600">+{group.totalGain} pts</div>
-              <div className="text-[10px] text-gray-400">{group.items.length} action{group.items.length !== 1 ? 's' : ''}</div>
+              <div className="text-xs text-gray-400">{group.items.length} action{group.items.length !== 1 ? 's' : ''}</div>
             </div>
           );
         })}
@@ -299,7 +299,7 @@ export function ImproveScore() {
               key={f}
               onClick={() => setFilter(f)}
               className="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
-              style={filter === f ? { backgroundColor: '#1e4d6b', color: 'white' } : { backgroundColor: '#f3f4f6', color: '#6b7280' }}
+              style={filter === f ? { backgroundColor: '#1E2D4D', color: 'white' } : { backgroundColor: '#f3f4f6', color: '#6b7280' }}
             >
               {labels[f]} ({counts[f]})
             </button>
@@ -315,9 +315,9 @@ export function ImproveScore() {
       {/* Action Items List */}
       <div className="space-y-3 mb-6">
         {filteredItems.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 text-center">
+          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 text-center">
             <CheckCircle className="h-10 w-10 text-green-500 mx-auto mb-3" />
-            <p className="text-sm font-semibold text-gray-900">No actions match this filter</p>
+            <p className="text-sm font-semibold text-[#1E2D4D]">No actions match this filter</p>
             <p className="text-xs text-gray-500 mt-1">Try adjusting your filters or selecting a different location</p>
           </div>
         ) : (
@@ -331,7 +331,7 @@ export function ImproveScore() {
             return (
               <div
                 key={idx}
-                className={`bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-opacity ${isCompleted ? 'opacity-50' : ''}`}
+                className={`bg-white rounded-xl border border-gray-200 overflow-hidden transition-opacity ${isCompleted ? 'opacity-50' : ''}`}
               >
                 <div className="p-4">
                   <div className="flex items-start gap-4">
@@ -345,16 +345,16 @@ export function ImproveScore() {
                     {/* Content */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <span className="text-sm font-semibold text-gray-900">{item.title}</span>
+                        <span className="text-sm font-semibold text-[#1E2D4D]">{item.title}</span>
                         <PriorityBadge priority={item.priority} />
                         {isCompleted && (
-                          <span className="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full border border-green-200">ADDRESSED</span>
+                          <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full border border-green-200">ADDRESSED</span>
                         )}
                       </div>
 
                       <p className="text-xs text-gray-600 mb-2">{item.action}</p>
 
-                      <div className="flex items-center gap-4 text-[11px] text-gray-400 flex-wrap">
+                      <div className="flex items-center gap-4 text-xs text-gray-400 flex-wrap">
                         <span className="flex items-center gap-1">
                           <TrendingUp className="h-3 w-3 text-green-500" />
                           <span className="font-semibold text-green-600">+{item.potentialGain} points</span> potential gain
@@ -374,7 +374,7 @@ export function ImproveScore() {
                     {/* Point Impact */}
                     <div className="text-right flex-shrink-0">
                       <div className="text-lg font-bold text-green-600">+{item.potentialGain}</div>
-                      <div className="text-[10px] text-gray-400">points</div>
+                      <div className="text-xs text-gray-400">points</div>
                     </div>
                   </div>
 
@@ -385,7 +385,7 @@ export function ImproveScore() {
                         <button
                           onClick={(e) => { e.stopPropagation(); handleQuickAction(globalIdx, item); }}
                           className="px-3 py-1.5 rounded-lg text-xs font-medium text-white flex items-center gap-1.5 transition-colors hover:opacity-90 min-h-[44px]"
-                          style={{ backgroundColor: '#1e4d6b' }}
+                          style={{ backgroundColor: '#1E2D4D' }}
                         >
                           <QuickIcon className="h-3.5 w-3.5" />
                           {item.quickAction}
@@ -407,12 +407,12 @@ export function ImproveScore() {
       </div>
 
       {/* Bottom CTA */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
+      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 mb-6">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-3">
             <Zap className="h-5 w-5" style={{ color: '#d4af37' }} />
             <div>
-              <p className="text-sm font-semibold text-gray-900">
+              <p className="text-sm font-semibold text-[#1E2D4D]">
                 {completedActions.size > 0
                   ? `${completedActions.size} action${completedActions.size !== 1 ? 's' : ''} addressed — projected score: ${projectedScore}`
                   : 'Complete all actions to maximize your insurance risk score'}
@@ -425,7 +425,7 @@ export function ImproveScore() {
           <button
             onClick={() => navigate(`/insurance-risk?location=${locationParam}`)}
             className="px-4 py-2 rounded-lg text-sm font-medium text-white flex items-center gap-2 min-h-[44px]"
-            style={{ backgroundColor: '#1e4d6b' }}
+            style={{ backgroundColor: '#1E2D4D' }}
           >
             Back to Risk Score <ArrowRight className="h-4 w-4" />
           </button>

@@ -19,7 +19,7 @@ import { EmployeePerformance } from '../components/employees/EmployeePerformance
 import { EmployeeFormModal } from '../components/employees/EmployeeFormModal';
 import { CertificationFormModal } from '../components/employees/CertificationFormModal';
 
-const NAVY = '#1e4d6b';
+const NAVY = '#1E2D4D';
 const F: React.CSSProperties = { fontFamily: "'DM Sans', 'Inter', sans-serif" };
 
 type Tab = 'overview' | 'certifications' | 'timecards' | 'performance';
@@ -142,7 +142,7 @@ export function EmployeeDetail() {
                     </button>
                   )}
                   {employee.status === 'pending' && (
-                    <button onClick={() => { handleResendInvite(); setShowMoreMenu(false); }} className="w-full text-left flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-50" style={{ color: '#1e4d6b' }}>
+                    <button onClick={() => { handleResendInvite(); setShowMoreMenu(false); }} className="w-full text-left flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-50" style={{ color: '#1E2D4D' }}>
                       <Send className="w-4 h-4" /> Resend Invite
                     </button>
                   )}

@@ -20,6 +20,7 @@ import {
   ChevronUp,
 } from 'lucide-react';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
+import { usePageTitle } from '../../hooks/usePageTitle';
 
 const NAVY = '#0B1628';
 const BRAND = '#1E2D4D';
@@ -59,6 +60,7 @@ function AssessmentLeadsPage() {
   const { isEvidlyAdmin } = useAuth();
   const { isDemoMode } = useDemo();
   const { userRole } = useRole();
+  usePageTitle('Admin | Assessment Leads');
 
   const [leads, setLeads] = useState<AssessmentLeadRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -178,7 +180,7 @@ function AssessmentLeadsPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-4 bg-white rounded-lg p-1 shadow-sm border border-gray-200">
+      <div className="flex gap-1 mb-4 bg-white rounded-xl p-1 border border-gray-200">
         {(['leads', 'analytics'] as const).map(t => (
           <button
             key={t} onClick={() => setTab(t)}
@@ -201,7 +203,7 @@ function AssessmentLeadsPage() {
               <input
                 type="text" value={search} onChange={e => setSearch(e.target.value)}
                 placeholder="Search leads..." data-demo-allow
-                className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]"
               />
             </div>
             <select value={gradeFilter} onChange={e => setGradeFilter(e.target.value)}
@@ -233,7 +235,7 @@ function AssessmentLeadsPage() {
           ) : (
             <div className="space-y-2">
               {filtered.map(lead => (
-                <div key={lead.id} className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+                <div key={lead.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
                   {/* Row */}
                   <button
                     onClick={() => setExpandedId(expandedId === lead.id ? null : lead.id)}
@@ -263,7 +265,7 @@ function AssessmentLeadsPage() {
                         { label: 'Ops', val: lead.operational_risk },
                       ].map(r => (
                         <div key={r.label} className="text-center">
-                          <div className="text-[10px] text-gray-400">{r.label}</div>
+                          <div className="text-xs text-gray-400">{r.label}</div>
                           <div className="w-12 h-1.5 bg-gray-200 rounded-full overflow-hidden">
                             <div className="h-full rounded-full" style={{
                               width: `${r.val || 0}%`,
@@ -362,7 +364,7 @@ function AssessmentLeadsPage() {
       {tab === 'analytics' && (
         <div className="space-y-6">
           {/* Grade Distribution */}
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+          <div className="bg-white rounded-xl border border-gray-200 p-6">
             <h3 className="text-sm font-semibold uppercase tracking-wider mb-4" style={{ color: NAVY }}>Grade Distribution</h3>
             <div className="flex items-end gap-3 h-32">
               {['A', 'B', 'C', 'D', 'F'].map(g => {
@@ -384,7 +386,7 @@ function AssessmentLeadsPage() {
           </div>
 
           {/* Referral Sources */}
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+          <div className="bg-white rounded-xl border border-gray-200 p-6">
             <h3 className="text-sm font-semibold uppercase tracking-wider mb-4" style={{ color: NAVY }}>Referral Sources</h3>
             <div className="space-y-2">
               {Object.entries(
@@ -409,7 +411,7 @@ function AssessmentLeadsPage() {
           </div>
 
           {/* Top Risk Findings */}
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+          <div className="bg-white rounded-xl border border-gray-200 p-6">
             <h3 className="text-sm font-semibold uppercase tracking-wider mb-4" style={{ color: NAVY }}>Most Common Findings</h3>
             <div className="space-y-2">
               {Object.entries(

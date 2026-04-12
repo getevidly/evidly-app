@@ -75,7 +75,7 @@ export function CourseBuilder() {
     return (
       <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
         <button onClick={() => navigate('/training')}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#1e4d6b', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 16, padding: 0, fontFamily: "'DM Sans', sans-serif" }}>
+          style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#1E2D4D', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 16, padding: 0, fontFamily: "'DM Sans', sans-serif" }}>
           <ArrowLeft size={16} /> Back to Training
         </button>
         <h1 style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: '0 0 24px' }}>Course Builder</h1>
@@ -130,7 +130,7 @@ export function CourseBuilder() {
     <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
       {/* Header */}
       <button onClick={() => navigate('/training')}
-        style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#1e4d6b', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 16, padding: 0, fontFamily: "'DM Sans', sans-serif" }}>
+        style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#1E2D4D', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 16, padding: 0, fontFamily: "'DM Sans', sans-serif" }}>
         <ArrowLeft size={16} /> Back to Training
       </button>
 
@@ -154,13 +154,13 @@ export function CourseBuilder() {
             <button key={s.id} onClick={() => setStep(s.id)}
               style={{
                 flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '10px 8px', minHeight: 48,
-                borderRadius: 8, border: isCurrent ? '2px solid #1e4d6b' : '1px solid #e5e7eb',
+                borderRadius: 8, border: isCurrent ? '2px solid #1E2D4D' : '1px solid #e5e7eb',
                 background: isDone ? '#eef4f8' : isCurrent ? '#fff' : '#f9fafb',
-                color: isCurrent ? '#1e4d6b' : isDone ? '#1e4d6b' : '#9ca3af',
+                color: isCurrent ? '#1E2D4D' : isDone ? '#1E2D4D' : '#9ca3af',
                 fontSize: 13, fontWeight: isCurrent ? 700 : 500, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
               }}>
               <span style={{ width: 22, height: 22, borderRadius: 11, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                background: isDone ? '#1e4d6b' : isCurrent ? '#1e4d6b' : '#e5e7eb',
+                background: isDone ? '#1E2D4D' : isCurrent ? '#1E2D4D' : '#e5e7eb',
                 color: isDone || isCurrent ? '#fff' : '#9ca3af', fontSize: 12, fontWeight: 700, flexShrink: 0,
               }}>
                 {isDone ? '✓' : s.number}
@@ -217,7 +217,7 @@ export function CourseBuilder() {
               <div>
                 <label style={labelStyle}>Color Theme</label>
                 <div style={{ display: 'flex', gap: 8 }}>
-                  {['#15803d', '#1e4d6b', '#dc2626', '#7c3aed', '#d4af37', '#0369a1'].map(c => (
+                  {['#15803d', '#1E2D4D', '#dc2626', '#7c3aed', '#d4af37', '#0369a1'].map(c => (
                     <button key={c} onClick={() => setThumbnailColor(c)}
                       style={{ width: 36, height: 36, borderRadius: 8, background: c, border: thumbnailColor === c ? '3px solid #111827' : '2px solid #e5e7eb', cursor: 'pointer' }} />
                   ))}
@@ -233,18 +233,18 @@ export function CourseBuilder() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 8 }}>
               <h2 style={{ fontSize: 18, fontWeight: 700, color: '#111827', margin: 0 }}>Course Modules ({modules.length})</h2>
               <button onClick={addModule}
-                style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
+                style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 8, border: 'none', background: '#1E2D4D', color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
                 <Plus size={14} /> Add Module
               </button>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {modules.map((mod, idx) => (
-                <div key={mod.id} style={{ padding: 16, borderRadius: 10, border: activeModuleIdx === idx ? '2px solid #1e4d6b' : '1px solid #e5e7eb',
+                <div key={mod.id} style={{ padding: 16, borderRadius: 10, border: activeModuleIdx === idx ? '2px solid #1E2D4D' : '1px solid #e5e7eb',
                   background: activeModuleIdx === idx ? '#fafbfc' : '#fff', cursor: 'pointer' }}
                   onClick={() => setActiveModuleIdx(idx)}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
                     <GripVertical size={16} color="#9ca3af" />
-                    <span style={{ width: 24, height: 24, borderRadius: 12, background: '#eef4f8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: '#1e4d6b', flexShrink: 0 }}>{idx + 1}</span>
+                    <span style={{ width: 24, height: 24, borderRadius: 12, background: '#eef4f8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: '#1E2D4D', flexShrink: 0 }}>{idx + 1}</span>
                     <div style={{ flex: 1 }}>
                       <input value={mod.title} onChange={e => updateModule(idx, { title: e.target.value })}
                         placeholder={`Module ${idx + 1} title`}
@@ -289,7 +289,7 @@ export function CourseBuilder() {
               {modules[activeModuleIdx]?.lessons.map((lesson, lIdx) => (
                 <div key={lIdx} style={{ padding: 16, borderRadius: 10, border: '1px solid #e5e7eb' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: '#1e4d6b', background: '#eef4f8', padding: '2px 8px', borderRadius: 10 }}>Lesson {lIdx + 1}</span>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: '#1E2D4D', background: '#eef4f8', padding: '2px 8px', borderRadius: 10 }}>Lesson {lIdx + 1}</span>
                     <select value={lesson.type} onChange={e => {
                       const next = [...modules[activeModuleIdx].lessons];
                       next[lIdx] = { ...next[lIdx], type: e.target.value as 'text' | 'video' | 'interactive' };
@@ -362,7 +362,7 @@ export function CourseBuilder() {
               {modules[activeModuleIdx]?.questions.map((q, qIdx) => (
                 <div key={qIdx} style={{ padding: 16, borderRadius: 10, border: '1px solid #e5e7eb' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: '#1e4d6b' }}>Question {qIdx + 1}</span>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: '#1E2D4D' }}>Question {qIdx + 1}</span>
                     <button onClick={() => {
                       const next = modules[activeModuleIdx].questions.filter((_, i) => i !== qIdx);
                       updateModule(activeModuleIdx, { questions: next });
@@ -446,7 +446,7 @@ export function CourseBuilder() {
                 <label style={labelStyle}>Retakes</label>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0' }}>
                   <button onClick={() => setAllowRetakes(!allowRetakes)}
-                    style={{ width: 44, height: 24, borderRadius: 12, background: allowRetakes ? '#1e4d6b' : '#d1d5db', border: 'none', cursor: 'pointer', position: 'relative', transition: 'all 0.2s' }}>
+                    style={{ width: 44, height: 24, borderRadius: 12, background: allowRetakes ? '#1E2D4D' : '#d1d5db', border: 'none', cursor: 'pointer', position: 'relative', transition: 'all 0.2s' }}>
                     <div style={{ width: 18, height: 18, borderRadius: 9, background: '#fff', position: 'absolute', top: 3, left: allowRetakes ? 23 : 3, transition: 'left 0.2s' }} />
                   </button>
                   <span style={{ fontSize: 14, color: '#374151' }}>Allow unlimited retakes</span>
@@ -455,7 +455,7 @@ export function CourseBuilder() {
             </div>
             {/* Summary */}
             <div style={{ marginTop: 24, padding: 16, borderRadius: 10, background: '#eef4f8', border: '1px solid #b8d4e8' }}>
-              <div style={{ fontSize: 14, fontWeight: 700, color: '#1e4d6b', marginBottom: 8 }}>Course Summary</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: '#1E2D4D', marginBottom: 8 }}>Course Summary</div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12, fontSize: 13, color: '#374151' }}>
                 <div><strong>{modules.length}</strong> modules</div>
                 <div><strong>{modules.reduce((s, m) => s + m.lessons.length, 0)}</strong> lessons</div>
@@ -514,7 +514,7 @@ export function CourseBuilder() {
                 <CheckCircle2 size={16} /> Publish Course
               </button>
               <button onClick={() => toast.info('Preview as Student (Demo)')}
-                style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '12px 24px', borderRadius: 8, border: '1px solid #1e4d6b', background: '#fff', color: '#1e4d6b', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
+                style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '12px 24px', borderRadius: 8, border: '1px solid #1E2D4D', background: '#fff', color: '#1E2D4D', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
                 <Eye size={16} /> Preview as Student
               </button>
             </div>
@@ -533,7 +533,7 @@ export function CourseBuilder() {
         {stepIdx < STEPS.length - 1 && (
           <button onClick={goNext} disabled={!canNext()}
             style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 20px', borderRadius: 8, border: 'none',
-              background: canNext() ? '#1e4d6b' : '#d1d5db', color: '#fff', fontSize: 14, fontWeight: 600,
+              background: canNext() ? '#1E2D4D' : '#d1d5db', color: '#fff', fontSize: 14, fontWeight: 600,
               cursor: canNext() ? 'pointer' : 'not-allowed', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
             Next Step <ArrowRight size={14} />
           </button>

@@ -99,9 +99,9 @@ export function UserExceptionsTable({
           <button
             onClick={onAddException}
             className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium text-white rounded-lg transition-colors"
-            style={{ backgroundColor: '#1e4d6b' }}
-            onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
-            onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+            style={{ backgroundColor: '#1E2D4D' }}
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#2A3F6B')}
+            onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
           >
             <Plus className="w-4 h-4" />
             Add Exception
@@ -213,7 +213,7 @@ export function UserExceptionsTable({
                       <button
                         onClick={() => onEditUser(group.userId)}
                         className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1.5 rounded-lg border transition-colors hover:bg-gray-50"
-                        style={{ borderColor: 'var(--border)', color: '#1e4d6b' }}
+                        style={{ borderColor: 'var(--border)', color: '#1E2D4D' }}
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                         Edit

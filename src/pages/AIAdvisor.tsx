@@ -487,7 +487,7 @@ export function AIAdvisor() {
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'AI Advisor' }]} />
       <div style={{ ...F, display: 'flex', flexDirection: 'column', height: 'calc(100vh - 10rem)' }}>
         {/* HEADER */}
-        <div style={{ background: 'linear-gradient(135deg, #1e4d6b, #2a6a8f)', borderRadius: '12px', padding: '20px 24px', color: '#fff', marginBottom: '16px' }}>
+        <div style={{ background: 'linear-gradient(135deg, #1E2D4D, #2A3F6B)', borderRadius: '12px', padding: '20px 24px', color: '#fff', marginBottom: '16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <Brain style={{ width: '28px', height: '28px', color: '#d4af37' }} />
@@ -606,8 +606,8 @@ export function AIAdvisor() {
               {/* Inspection template selector */}
               {mode === 'inspection' && !activeConv && !inspectionTemplate && (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '20px' }}>
-                  <ClipboardList style={{ width: '48px', height: '48px', color: '#1e4d6b' }} />
-                  <h3 style={{ fontSize: '20px', fontWeight: 700, color: '#1e4d6b', margin: 0, ...F }}>Inspection Prep</h3>
+                  <ClipboardList style={{ width: '48px', height: '48px', color: '#1E2D4D' }} />
+                  <h3 style={{ fontSize: '20px', fontWeight: 700, color: '#1E2D4D', margin: 0, ...F }}>Inspection Prep</h3>
                   <p style={{ fontSize: '14px', color: '#6b7280', margin: 0, textAlign: 'center', maxWidth: '400px', ...F }}>
                     Run a mock inspection to test your readiness. Choose a template to begin.
                   </p>
@@ -621,11 +621,11 @@ export function AIAdvisor() {
                           background: '#fff', cursor: 'pointer', textAlign: 'center', minWidth: '160px',
                           ...F,
                         }}
-                        onMouseOver={(e) => { e.currentTarget.style.borderColor = '#1e4d6b'; e.currentTarget.style.background = '#eef4f8'; }}
+                        onMouseOver={(e) => { e.currentTarget.style.borderColor = '#1E2D4D'; e.currentTarget.style.background = '#eef4f8'; }}
                         onMouseOut={(e) => { e.currentTarget.style.borderColor = '#e5e7eb'; e.currentTarget.style.background = '#fff'; }}
                       >
                         <div style={{ fontSize: '28px', marginBottom: '8px' }}>{t.icon}</div>
-                        <div style={{ fontSize: '14px', fontWeight: 700, color: '#1e4d6b' }}>{t.label}</div>
+                        <div style={{ fontSize: '14px', fontWeight: 700, color: '#1E2D4D' }}>{t.label}</div>
                       </button>
                     ))}
                   </div>
@@ -635,8 +635,8 @@ export function AIAdvisor() {
               {/* Document upload area */}
               {mode === 'document' && !activeConv && (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '20px' }}>
-                  <FileSearch style={{ width: '48px', height: '48px', color: '#1e4d6b' }} />
-                  <h3 style={{ fontSize: '20px', fontWeight: 700, color: '#1e4d6b', margin: 0, ...F }}>Document Analysis</h3>
+                  <FileSearch style={{ width: '48px', height: '48px', color: '#1E2D4D' }} />
+                  <h3 style={{ fontSize: '20px', fontWeight: 700, color: '#1E2D4D', margin: 0, ...F }}>Document Analysis</h3>
                   <p style={{ fontSize: '14px', color: '#6b7280', margin: 0, textAlign: 'center', maxWidth: '400px', ...F }}>
                     Upload a compliance document for AI-powered analysis — inspection reports, vendor certificates, HACCP plans, temperature logs.
                   </p>
@@ -648,8 +648,8 @@ export function AIAdvisor() {
                       alignItems: 'center', gap: '10px', ...F,
                     }}
                   >
-                    <Upload style={{ width: '20px', height: '20px', color: '#1e4d6b' }} />
-                    <span style={{ fontSize: '14px', fontWeight: 600, color: '#1e4d6b' }}>Upload Document</span>
+                    <Upload style={{ width: '20px', height: '20px', color: '#1E2D4D' }} />
+                    <span style={{ fontSize: '14px', fontWeight: 600, color: '#1E2D4D' }}>Upload Document</span>
                   </button>
                   <div style={{ fontSize: '12px', color: 'var(--text-secondary, #3D5068)' }}>PDF, PNG, JPG, or TXT — Max 10MB</div>
                   <input
@@ -670,9 +670,9 @@ export function AIAdvisor() {
               {mode === 'chat' && messages.length === 0 && (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
                   <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: '#eef4f8', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
-                    <Brain style={{ width: '28px', height: '28px', color: '#1e4d6b' }} />
+                    <Brain style={{ width: '28px', height: '28px', color: '#1E2D4D' }} />
                   </div>
-                  <h3 style={{ fontSize: '20px', fontWeight: 700, color: '#1e4d6b', margin: '0 0 8px', ...F }}>How can I help you today?</h3>
+                  <h3 style={{ fontSize: '20px', fontWeight: 700, color: '#1E2D4D', margin: '0 0 8px', ...F }}>How can I help you today?</h3>
                   <p style={{ fontSize: '14px', color: '#6b7280', margin: '0 0 24px', ...F }}>Ask about compliance, food safety, or your data.</p>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px', maxWidth: '600px', width: '100%' }}>
                     {STARTER_CARDS.map((card, i) => (
@@ -684,7 +684,7 @@ export function AIAdvisor() {
                           border: '1px solid #e5e7eb', background: '#fff', cursor: 'pointer',
                           fontSize: '13px', color: '#374151', ...F,
                         }}
-                        onMouseOver={(e) => { e.currentTarget.style.borderColor = '#1e4d6b'; e.currentTarget.style.background = '#f0f7fb'; }}
+                        onMouseOver={(e) => { e.currentTarget.style.borderColor = '#1E2D4D'; e.currentTarget.style.background = '#f0f7fb'; }}
                         onMouseOut={(e) => { e.currentTarget.style.borderColor = '#e5e7eb'; e.currentTarget.style.background = '#fff'; }}
                       >
                         <span style={{ color: '#d4af37', marginRight: '6px' }}>✦</span>
@@ -699,7 +699,7 @@ export function AIAdvisor() {
               {messages.map((msg) => (
                 <div key={msg.id} style={{ display: 'flex', justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start', marginBottom: '16px' }}>
                   {msg.role === 'assistant' && (
-                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#1e4d6b', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '10px', flexShrink: 0, marginTop: '4px' }}>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#1E2D4D', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '10px', flexShrink: 0, marginTop: '4px' }}>
                       <Brain style={{ width: '16px', height: '16px', color: '#fff' }} />
                     </div>
                   )}
@@ -708,13 +708,13 @@ export function AIAdvisor() {
                       style={{
                         padding: '12px 16px', borderRadius: '16px',
                         ...(msg.role === 'user'
-                          ? { background: '#1e4d6b', color: '#fff', borderBottomRightRadius: '4px' }
+                          ? { background: '#1E2D4D', color: '#fff', borderBottomRightRadius: '4px' }
                           : { background: '#fff', color: '#1e3a5f', border: '1px solid #e5e7eb', borderBottomLeftRadius: '4px' }),
                       }}
                     >
                       {msg.role === 'assistant' && (
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', paddingBottom: '8px', borderBottom: '1px solid #f0f0f0' }}>
-                          <span style={{ fontSize: '11px', fontWeight: 700, color: '#1e4d6b' }}>EvidLY AI</span>
+                          <span style={{ fontSize: '11px', fontWeight: 700, color: '#1E2D4D' }}>EvidLY AI</span>
                           <span style={{ fontSize: '11px', color: 'var(--text-secondary, #3D5068)' }}>·</span>
                           <span style={{ fontSize: '11px', color: 'var(--text-secondary, #3D5068)' }}>{fmtTime(msg.timestamp)}</span>
                         </div>
@@ -758,10 +758,10 @@ export function AIAdvisor() {
                             onClick={() => sendMessage(s)}
                             style={{
                               padding: '5px 12px', borderRadius: '16px', border: '1px solid #d1d5db',
-                              background: '#fff', fontSize: '11px', fontWeight: 500, color: '#1e4d6b',
+                              background: '#fff', fontSize: '11px', fontWeight: 500, color: '#1E2D4D',
                               cursor: 'pointer', ...F,
                             }}
-                            onMouseOver={(e) => { e.currentTarget.style.background = '#eef4f8'; e.currentTarget.style.borderColor = '#1e4d6b'; }}
+                            onMouseOver={(e) => { e.currentTarget.style.background = '#eef4f8'; e.currentTarget.style.borderColor = '#1E2D4D'; }}
                             onMouseOut={(e) => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.borderColor = '#d1d5db'; }}
                           >
                             {s}
@@ -776,13 +776,13 @@ export function AIAdvisor() {
               {/* Typing indicator */}
               {isTyping && (
                 <div style={{ display: 'flex', marginBottom: '16px' }}>
-                  <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#1e4d6b', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '10px', flexShrink: 0 }}>
+                  <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#1E2D4D', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '10px', flexShrink: 0 }}>
                     <Brain style={{ width: '16px', height: '16px', color: '#fff' }} />
                   </div>
                   <div style={{ padding: '14px 18px', borderRadius: '16px', background: '#fff', border: '1px solid #e5e7eb', borderBottomLeftRadius: '4px' }}>
                     <div style={{ display: 'flex', gap: '5px' }}>
                       {[0, 150, 300].map((delay) => (
-                        <div key={delay} className="animate-bounce" style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#1e4d6b', animationDelay: `${delay}ms` }} />
+                        <div key={delay} className="animate-bounce" style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#1E2D4D', animationDelay: `${delay}ms` }} />
                       ))}
                     </div>
                   </div>
@@ -815,9 +815,9 @@ export function AIAdvisor() {
                       style={{
                         padding: '4px 12px', borderRadius: '16px', fontSize: '11px', fontWeight: 600,
                         cursor: 'pointer', transition: 'all 0.15s', ...F,
-                        border: selectedLocationId === loc.id ? '1.5px solid #1e4d6b' : '1px solid #d1d5db',
+                        border: selectedLocationId === loc.id ? '1.5px solid #1E2D4D' : '1px solid #d1d5db',
                         background: selectedLocationId === loc.id ? '#eef4f8' : '#fff',
-                        color: selectedLocationId === loc.id ? '#1e4d6b' : '#6b7280',
+                        color: selectedLocationId === loc.id ? '#1E2D4D' : '#6b7280',
                       }}
                     >
                       {loc.label}
@@ -922,7 +922,7 @@ export function AIAdvisor() {
                     flex: 1, padding: '11px 16px', borderRadius: '10px',
                     border: '1px solid #d1d5db', fontSize: '13px', outline: 'none', ...F,
                   }}
-                  onFocus={(e) => { e.currentTarget.style.borderColor = '#1e4d6b'; }}
+                  onFocus={(e) => { e.currentTarget.style.borderColor = '#1E2D4D'; }}
                   onBlur={(e) => { e.currentTarget.style.borderColor = '#d1d5db'; }}
                   disabled={isTyping}
                 />
@@ -931,7 +931,7 @@ export function AIAdvisor() {
                   disabled={!input.trim() || isTyping}
                   style={{
                     width: '42px', height: '42px', borderRadius: '10px', border: 'none',
-                    background: (!input.trim() || isTyping) ? '#cbd5e1' : '#1e4d6b',
+                    background: (!input.trim() || isTyping) ? '#cbd5e1' : '#1E2D4D',
                     color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
                     cursor: (!input.trim() || isTyping) ? 'default' : 'pointer',
                   }}
@@ -960,7 +960,7 @@ export function AIAdvisor() {
             <div style={{ width: '240px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '12px', overflowY: 'auto' }}>
               {/* Compliance Snapshot — Two Pillar */}
               <div style={{ background: '#fff', borderRadius: '12px', border: '1px solid #e5e7eb', padding: '16px' }}>
-                <div style={{ fontSize: '12px', fontWeight: 700, color: '#1e4d6b', marginBottom: '12px', ...F }}>Compliance Snapshot</div>
+                <div style={{ fontSize: '12px', fontWeight: 700, color: '#1E2D4D', marginBottom: '12px', ...F }}>Compliance Snapshot</div>
                 {(() => {
                   const avgFood = Math.round(context.locations.reduce((s, l) => s + l.foodSafety, 0) / context.locations.length);
                   const avgFac = Math.round(context.locations.reduce((s, l) => s + l.facilitySafety, 0) / context.locations.length);
@@ -995,9 +995,9 @@ export function AIAdvisor() {
               {/* Inspection Scorecard — only in inspection mode */}
               {mode === 'inspection' && activeConv && (
                 <div style={{ background: '#fff', borderRadius: '12px', border: '1px solid #e5e7eb', padding: '16px' }}>
-                  <div style={{ fontSize: '12px', fontWeight: 700, color: '#1e4d6b', marginBottom: '10px', ...F }}>Inspection Score</div>
+                  <div style={{ fontSize: '12px', fontWeight: 700, color: '#1E2D4D', marginBottom: '10px', ...F }}>Inspection Score</div>
                   {[
-                    { label: 'Asked', value: inspectionScore.asked, color: '#1e4d6b' },
+                    { label: 'Asked', value: inspectionScore.asked, color: '#1E2D4D' },
                     { label: 'Passed', value: inspectionScore.passed, color: '#22c55e' },
                     { label: 'Needs Improvement', value: inspectionScore.needsImprovement, color: '#d4af37' },
                     { label: 'Failed', value: inspectionScore.failed, color: '#dc2626' },
@@ -1012,7 +1012,7 @@ export function AIAdvisor() {
 
               {/* Recent Alerts */}
               <div style={{ background: '#fff', borderRadius: '12px', border: '1px solid #e5e7eb', padding: '16px' }}>
-                <div style={{ fontSize: '12px', fontWeight: 700, color: '#1e4d6b', marginBottom: '10px', ...F }}>Recent Alerts</div>
+                <div style={{ fontSize: '12px', fontWeight: 700, color: '#1E2D4D', marginBottom: '10px', ...F }}>Recent Alerts</div>
                 {context.recentAlerts.map((alert, i) => (
                   <div key={i} style={{ fontSize: '11px', color: '#dc2626', padding: '4px 0', borderTop: i > 0 ? '1px solid #f3f4f6' : 'none' }}>
                     ⚠ {alert}
@@ -1022,7 +1022,7 @@ export function AIAdvisor() {
 
               {/* Upcoming Deadlines */}
               <div style={{ background: '#fff', borderRadius: '12px', border: '1px solid #e5e7eb', padding: '16px' }}>
-                <div style={{ fontSize: '12px', fontWeight: 700, color: '#1e4d6b', marginBottom: '10px', ...F }}>Upcoming Deadlines</div>
+                <div style={{ fontSize: '12px', fontWeight: 700, color: '#1E2D4D', marginBottom: '10px', ...F }}>Upcoming Deadlines</div>
                 {context.upcomingDeadlines.map((d, i) => (
                   <div key={i} style={{ fontSize: '11px', color: '#6b7280', padding: '4px 0', borderTop: i > 0 ? '1px solid #f3f4f6' : 'none' }}>
                     📅 {d}
@@ -1042,7 +1042,7 @@ export function AIAdvisor() {
             <div style={{ background: '#fff', borderRadius: '16px', width: '100%', maxWidth: '560px', maxHeight: '80vh', overflow: 'auto', boxShadow: '0 20px 60px rgba(0,0,0,0.15)' }} onClick={(e) => e.stopPropagation()}>
               <div style={{ padding: '20px 24px', borderBottom: '1px solid #e5e7eb' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#1e4d6b', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#1E2D4D', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <CheckCircle2 style={{ width: '18px', height: '18px', color: '#fff' }} />
                   </div>
                   <div>
@@ -1103,7 +1103,7 @@ export function AIAdvisor() {
                       onClick={() => guardAction('save', 'Action Center', () => {
                         setActionSuccess(true);
                       })}
-                      style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', background: '#1e4d6b', fontSize: '13px', fontWeight: 600, color: '#fff', cursor: 'pointer', ...F }}
+                      style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', background: '#1E2D4D', fontSize: '13px', fontWeight: 600, color: '#fff', cursor: 'pointer', ...F }}
                     >
                       Add to Action Center
                     </button>
@@ -1120,7 +1120,7 @@ export function AIAdvisor() {
                   </p>
                   <button
                     onClick={() => setShowActionModal(false)}
-                    style={{ padding: '10px 24px', borderRadius: '8px', border: 'none', background: '#1e4d6b', fontSize: '13px', fontWeight: 600, color: '#fff', cursor: 'pointer', ...F }}
+                    style={{ padding: '10px 24px', borderRadius: '8px', border: 'none', background: '#1E2D4D', fontSize: '13px', fontWeight: 600, color: '#fff', cursor: 'pointer', ...F }}
                   >
                     Done
                   </button>

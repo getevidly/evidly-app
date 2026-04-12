@@ -163,7 +163,7 @@ export default function CarrierDemoDashboard() {
             <h3 className="text-sm font-semibold text-[#1E2D4D] mb-3">Safeguard Detail by Location</h3>
             <div className="space-y-2">
               {cicProfiles.map((profile, i) => (
-                <div key={profile.location_id || i} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                <div key={profile.location_id || i} className="flex items-center gap-3 p-3 bg-[#FAF7F0] rounded-lg">
                   <p className="text-sm font-medium text-[#1E2D4D] flex-1 truncate">{profile.location_name}</p>
                   <div className="flex items-center gap-2">
                     {Object.entries(profile.pse_safeguards || {}).map(([type, verified]) => (

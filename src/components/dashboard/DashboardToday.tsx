@@ -49,7 +49,7 @@ function TaskRow({ task, navigate }: { task: TaskItem; navigate: (path: string) 
         <p className="text-xs" style={{ color: '#6b7280' }}>{task.time}{task.reading ? ` · ${task.reading}` : ''}</p>
       </div>
       <span
-        className="text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0"
+        className="text-xs font-semibold px-2 py-0.5 rounded-full shrink-0"
         style={{ color: c.text, backgroundColor: `${c.dot}15` }}
       >
         {STATUS_LABELS[task.status]}

@@ -127,7 +127,7 @@ export function ServiceRecordDetail() {
   if (!record) {
     return (
       <div className="p-6" style={{ ...FONT, background: PAGE_BG, minHeight: '100vh' }}>
-        <button onClick={() => navigate('/services')} className="flex items-center gap-1 text-sm font-medium mb-4 hover:underline" style={{ color: '#1e4d6b' }}>
+        <button onClick={() => navigate('/services')} className="flex items-center gap-1 text-sm font-medium mb-4 hover:underline" style={{ color: '#1E2D4D' }}>
           <ArrowLeft className="w-4 h-4" /> Back to Services
         </button>
         <div className="rounded-xl border p-12 text-center" style={{ background: CARD_BG, borderColor: CARD_BORDER }}>
@@ -173,7 +173,7 @@ export function ServiceRecordDetail() {
       <button
         onClick={() => navigate('/services')}
         className="flex items-center gap-1 text-sm font-medium mb-4 hover:underline"
-        style={{ color: '#1e4d6b' }}
+        style={{ color: '#1E2D4D' }}
       >
         <ArrowLeft className="w-4 h-4" /> Back to Services
       </button>
@@ -238,7 +238,7 @@ export function ServiceRecordDetail() {
               {isActive && (
                 <div
                   className="absolute bottom-0 left-0 right-0 h-[2px] rounded-full"
-                  style={{ backgroundColor: '#1e4d6b' }}
+                  style={{ backgroundColor: '#1E2D4D' }}
                 />
               )}
             </button>
@@ -358,7 +358,7 @@ function PhotosTab({ beforePhotos, afterPhotos, showAddPhoto, setShowAddPhoto, o
           <button
             onClick={() => guardAction('upload', 'Photo Evidence', () => setShowAddPhoto('before'))}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg text-white transition-colors"
-            style={{ backgroundColor: '#1e4d6b' }}
+            style={{ backgroundColor: '#1E2D4D' }}
           >
             <Camera className="w-3.5 h-3.5" /> Add Photo
           </button>
@@ -384,7 +384,7 @@ function PhotosTab({ beforePhotos, afterPhotos, showAddPhoto, setShowAddPhoto, o
           <button
             onClick={() => guardAction('upload', 'Photo Evidence', () => setShowAddPhoto('after'))}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg text-white transition-colors"
-            style={{ backgroundColor: '#1e4d6b' }}
+            style={{ backgroundColor: '#1E2D4D' }}
           >
             <Camera className="w-3.5 h-3.5" /> Add Photo
           </button>

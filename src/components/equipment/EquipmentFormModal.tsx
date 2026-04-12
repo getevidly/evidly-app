@@ -115,7 +115,7 @@ export function EquipmentFormModal({ equipment, onClose }: EquipmentFormModalPro
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b flex-shrink-0" style={{ borderColor: CARD_BORDER }}>
           <div className="flex items-center gap-2">
-            <Wrench className="w-5 h-5" style={{ color: '#1e4d6b' }} />
+            <Wrench className="w-5 h-5" style={{ color: '#1E2D4D' }} />
             <h2 className="text-base font-bold" style={{ color: NAVY }}>
               {isEdit ? 'Edit Equipment' : 'Add Equipment'}
             </h2>
@@ -133,7 +133,7 @@ export function EquipmentFormModal({ equipment, onClose }: EquipmentFormModalPro
               value={locationId}
               onChange={e => setLocationId(e.target.value)}
               placeholder="Search for a location..."
-              className="w-full px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/30"
+              className="w-full px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/30"
               style={{ borderColor: errors.locationId ? '#DC2626' : CARD_BORDER, color: NAVY }}
             />
           </Field>
@@ -143,7 +143,7 @@ export function EquipmentFormModal({ equipment, onClose }: EquipmentFormModalPro
             <select
               value={equipmentType}
               onChange={e => setEquipmentType(e.target.value)}
-              className="w-full px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/30"
+              className="w-full px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/30"
               style={{ borderColor: errors.equipmentType ? '#DC2626' : CARD_BORDER, color: NAVY }}
             >
               <option value="">Select type...</option>
@@ -157,7 +157,7 @@ export function EquipmentFormModal({ equipment, onClose }: EquipmentFormModalPro
               value={name}
               onChange={e => setName(e.target.value)}
               placeholder="e.g., Main Kitchen Hood #1"
-              className="w-full px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/30"
+              className="w-full px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/30"
               style={{ borderColor: errors.name ? '#DC2626' : CARD_BORDER, color: NAVY }}
             />
           </Field>
@@ -236,7 +236,7 @@ export function EquipmentFormModal({ equipment, onClose }: EquipmentFormModalPro
             onClick={handleSave}
             disabled={saving}
             className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white rounded-lg transition-colors"
-            style={{ background: saving ? '#9CA3AF' : '#1e4d6b' }}
+            style={{ background: saving ? '#9CA3AF' : '#1E2D4D' }}
           >
             {saving && <Loader2 className="w-4 h-4 animate-spin" />}
             {saving ? 'Saving...' : isEdit ? 'Save Changes' : 'Add Equipment'}

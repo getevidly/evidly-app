@@ -53,7 +53,7 @@ export function RescheduleModal({ job, technicians, onClose, onSave }: Reschedul
           <p className="text-sm font-semibold" style={{ color: NAVY }}>{job.customerName}</p>
           <p className="text-xs" style={{ color: TEXT_TERTIARY }}>{job.locationName}</p>
           {job.serviceTypes.length > 0 && (
-            <p className="text-[10px] mt-0.5" style={{ color: MUTED }}>{job.serviceTypes.join(', ')}</p>
+            <p className="text-xs mt-0.5" style={{ color: MUTED }}>{job.serviceTypes.join(', ')}</p>
           )}
         </div>
 
@@ -138,7 +138,7 @@ export function RescheduleModal({ job, technicians, onClose, onSave }: Reschedul
             <button
               type="submit"
               className="px-4 py-2 text-xs font-semibold rounded-lg text-white"
-              style={{ background: '#1e4d6b' }}
+              style={{ background: '#1E2D4D' }}
             >
               Save Changes
             </button>

@@ -24,7 +24,7 @@ import {
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 
-const BRAND = '#1e4d6b';
+const BRAND = '#1E2D4D';
 const GOLD = '#A08C5A';
 const TEXT_SEC = '#3D5068';
 const TEXT_TERT = '#6B7F96';
@@ -377,7 +377,7 @@ export function SecuritySettings() {
             disabled={saving}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white transition-colors disabled:opacity-50"
             style={{ backgroundColor: BRAND }}
-            onMouseEnter={e => { if (!saving) e.currentTarget.style.backgroundColor = '#2a6a8f'; }}
+            onMouseEnter={e => { if (!saving) e.currentTarget.style.backgroundColor = '#2A3F6B'; }}
             onMouseLeave={e => e.currentTarget.style.backgroundColor = BRAND}
           >
             {saving ? <Loader2 size={15} className="animate-spin" /> : <Save size={15} />}
@@ -401,7 +401,7 @@ export function SecuritySettings() {
             disabled={verifying}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white transition-colors disabled:opacity-50"
             style={{ backgroundColor: BRAND }}
-            onMouseEnter={e => { if (!verifying) e.currentTarget.style.backgroundColor = '#2a6a8f'; }}
+            onMouseEnter={e => { if (!verifying) e.currentTarget.style.backgroundColor = '#2A3F6B'; }}
             onMouseLeave={e => e.currentTarget.style.backgroundColor = BRAND}
           >
             {verifying ? <Loader2 size={15} className="animate-spin" /> : <RefreshCw size={15} />}

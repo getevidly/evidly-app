@@ -197,7 +197,7 @@ export function Signup() {
   // ── Email sent confirmation ──
   if (emailSent) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col">
+      <div className="min-h-screen bg-[#FAF7F0] flex flex-col">
         {/* Navy top bar */}
         <div className="bg-[#1E2D4D] px-6 py-4">
           <div className="max-w-4xl mx-auto flex items-center">
@@ -219,17 +219,17 @@ export function Signup() {
         </div>
 
         <div className="flex-1 flex items-center justify-center p-6">
-          <div className="max-w-md w-full bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
+          <div className="max-w-md w-full bg-white rounded-xl border border-gray-200 p-8 text-center">
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Check className="h-8 w-8 text-green-600" />
             </div>
-            <h2 className="text-xl font-bold text-gray-900 mb-2">Check Your Email</h2>
+            <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Check Your Email</h2>
             <p className="text-gray-600 mb-4">
               We've sent a confirmation link to <strong>{email}</strong>. Click the link to verify your email and finish setting up your account.
             </p>
             <p className="text-sm text-gray-500">
               Didn't receive it? Check your spam folder or{' '}
-              <button onClick={() => setEmailSent(false)} className="text-[#1e4d6b] font-medium hover:underline">
+              <button onClick={() => setEmailSent(false)} className="text-[#1E2D4D] font-medium hover:underline">
                 try again
               </button>.
             </p>
@@ -240,7 +240,7 @@ export function Signup() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-[#FAF7F0] flex flex-col">
       {/* ── Navy top bar ── */}
       <div className="bg-[#1E2D4D] px-6 py-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
@@ -272,10 +272,10 @@ export function Signup() {
       {/* ── Main content ── */}
       <div className="flex-1 flex items-start justify-center px-4 sm:px-6 py-8">
         <div className="max-w-lg w-full">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+          <div className="bg-white rounded-xl border border-gray-200 p-8">
             <div className="mb-6">
               <p className="text-center text-sm font-semibold text-[#A08C5A] mb-1">Lead with Confidence</p>
-              <h2 className="text-center text-2xl font-bold text-gray-900">Create your account</h2>
+              <h2 className="text-center text-2xl font-bold text-[#1E2D4D]">Create your account</h2>
             </div>
 
             {error && (
@@ -597,7 +597,7 @@ export function Signup() {
                       href="https://getevidly.com/terms"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-medium text-[#1e4d6b] hover:text-[#2a6a8f]"
+                      className="font-medium text-[#1E2D4D] hover:text-[#2A3F6B]"
                     >
                       Terms of Service
                     </a>
@@ -606,7 +606,7 @@ export function Signup() {
                       href="https://getevidly.com/privacy"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-medium text-[#1e4d6b] hover:text-[#2a6a8f]"
+                      className="font-medium text-[#1E2D4D] hover:text-[#2A3F6B]"
                     >
                       Privacy Policy
                     </a>
@@ -626,7 +626,7 @@ export function Signup() {
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
                 Already have an account?{' '}
-                <Link to="/login" className="font-semibold text-[#1e4d6b] hover:text-[#2a6a8f]">
+                <Link to="/login" className="font-semibold text-[#1E2D4D] hover:text-[#2A3F6B]">
                   Sign in
                 </Link>
               </p>

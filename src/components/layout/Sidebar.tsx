@@ -515,7 +515,7 @@ export function Sidebar() {
           <button
             onClick={togglePresenterMode}
             className="mx-3 mb-2 px-2 py-1.5 rounded-md text-xs font-bold text-center transition-opacity hover:opacity-80 cursor-pointer"
-            style={{ backgroundColor: '#d4af37', color: '#1e4d6b' }}
+            style={{ backgroundColor: '#d4af37', color: '#1E2D4D' }}
             title="Click to deactivate presenter mode"
           >
             PRESENTER MODE
@@ -697,7 +697,7 @@ export function Sidebar() {
               href="https://evidly.com?ref=powered-by"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-[10px] text-gray-400 hover:text-gray-300 transition-colors"
+              className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-300 transition-colors"
             >
               <EvidlyIcon size={14} />
               <span>Powered by <span className="font-semibold text-gray-300">EvidLY</span></span>

@@ -13,7 +13,7 @@ import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { EmptyState } from '../components/shared/EmptyState';
 
 // ── Brand ─────────────────────────────────────────────────────────
-const NAVY = '#1e4d6b';
+const NAVY = '#1E2D4D';
 const GOLD = '#d4af37';
 const F: React.CSSProperties = { fontFamily: "'Inter', 'DM Sans', sans-serif" };
 
@@ -119,7 +119,7 @@ export function EquipmentDetail() {
         <div className="p-5 border-b border-gray-200" style={{ backgroundColor: '#eef4f8' }}>
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h1 className="text-xl font-bold text-gray-900">{equipment.name}</h1>
+              <h1 className="text-xl font-bold text-[#1E2D4D]">{equipment.name}</h1>
               <p className="text-sm text-gray-600 mt-0.5">{equipment.make} {equipment.model} · S/N: {equipment.serial}</p>
               <div className="flex gap-2 mt-3 flex-wrap">
                 <span style={badge(st.label, st.color, st.bg)}>{st.label}</span>
@@ -150,7 +150,7 @@ export function EquipmentDetail() {
               onClick={() => setActiveTab(tab.id)}
               className={`px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
                 activeTab === tab.id
-                  ? 'border-[#1e4d6b] text-[#1e4d6b]'
+                  ? 'border-[#1E2D4D] text-[#1E2D4D]'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
@@ -165,7 +165,7 @@ export function EquipmentDetail() {
           {activeTab === 'overview' && (<>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
-                <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">Equipment Info</h3>
+                <h3 className="text-sm font-semibold text-[#1E2D4D] uppercase tracking-wide">Equipment Info</h3>
                 <div className="space-y-2.5 text-sm">
                   <div className="flex items-center gap-2"><MapPin size={14} className="text-gray-400" /><span className="text-gray-600">{equipment.location}</span></div>
                   <div className="flex items-center gap-2"><Calendar size={14} className="text-gray-400" /><span className="text-gray-600">Installed {format(new Date(equipment.installDate), 'MMM d, yyyy')} · {ageLabel(equipment.installDate)}</span></div>
@@ -173,11 +173,11 @@ export function EquipmentDetail() {
                   <div className="flex items-center gap-2"><Truck size={14} className="text-gray-400" /><span className="text-gray-600">{equipment.linkedVendor}</span></div>
                 </div>
                 {equipment.notes && (
-                  <div className="mt-4 p-3 bg-gray-50 rounded-lg text-xs text-gray-600">{equipment.notes}</div>
+                  <div className="mt-4 p-3 bg-[#FAF7F0] rounded-lg text-xs text-gray-600">{equipment.notes}</div>
                 )}
               </div>
               <div className="space-y-4">
-                <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">Warranty</h3>
+                <h3 className="text-sm font-semibold text-[#1E2D4D] uppercase tracking-wide">Warranty</h3>
                 <div className="space-y-2.5 text-sm">
                   <div className="flex justify-between"><span className="text-gray-500">Provider</span><span className="text-gray-900 font-medium">{equipment.warrantyProvider}</span></div>
                   <div className="flex justify-between"><span className="text-gray-500">Terms</span><span className="text-gray-900">{equipment.warrantyTerms}</span></div>
@@ -193,7 +193,7 @@ export function EquipmentDetail() {
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
                     <QrCode size={16} style={{ color: NAVY }} />
-                    <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">QR Temperature Label</h3>
+                    <h3 className="text-sm font-semibold text-[#1E2D4D] uppercase tracking-wide">QR Temperature Label</h3>
                   </div>
                   <button
                     onClick={() => guardAction('print', 'Equipment', () => toast.info('Printing QR labels for all equipment'))}
@@ -223,7 +223,7 @@ export function EquipmentDetail() {
           {activeTab === 'service' && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-gray-900">Service History</h3>
+                <h3 className="text-sm font-semibold text-[#1E2D4D]">Service History</h3>
                 <div className="text-xs text-gray-500">Total cost: <strong className="text-gray-900">${totalServiceCost.toLocaleString()}</strong></div>
               </div>
               {equipment.serviceHistory.length === 0 ? (
@@ -260,7 +260,7 @@ export function EquipmentDetail() {
           {/* Schedule */}
           {activeTab === 'schedule' && (
             <div className="space-y-3">
-              <h3 className="text-sm font-semibold text-gray-900">Maintenance Schedule</h3>
+              <h3 className="text-sm font-semibold text-[#1E2D4D]">Maintenance Schedule</h3>
               {equipment.schedule.map((s, i) => {
                 const mi = maintenanceInfo(s.nextDue);
                 return (
@@ -279,22 +279,22 @@ export function EquipmentDetail() {
           {/* Lifecycle */}
           {activeTab === 'lifecycle' && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-gray-50 rounded-xl p-4 text-center">
+              <div className="bg-[#FAF7F0] rounded-xl p-4 text-center">
                 <DollarSign size={20} className="mx-auto mb-1 text-gray-400" />
-                <div className="text-lg font-bold text-gray-900">${equipment.purchasePrice.toLocaleString()}</div>
+                <div className="text-lg font-bold text-[#1E2D4D]">${equipment.purchasePrice.toLocaleString()}</div>
                 <div className="text-xs text-gray-500">Purchase Price</div>
               </div>
-              <div className="bg-gray-50 rounded-xl p-4 text-center">
+              <div className="bg-[#FAF7F0] rounded-xl p-4 text-center">
                 <TrendingUp size={20} className="mx-auto mb-1 text-gray-400" />
-                <div className="text-lg font-bold text-gray-900">${equipment.replacementCost.toLocaleString()}</div>
+                <div className="text-lg font-bold text-[#1E2D4D]">${equipment.replacementCost.toLocaleString()}</div>
                 <div className="text-xs text-gray-500">Replacement Cost</div>
               </div>
-              <div className="bg-gray-50 rounded-xl p-4 text-center">
+              <div className="bg-[#FAF7F0] rounded-xl p-4 text-center">
                 <Clock size={20} className="mx-auto mb-1 text-gray-400" />
-                <div className="text-lg font-bold text-gray-900">{equipment.usefulLifeYears} yrs</div>
+                <div className="text-lg font-bold text-[#1E2D4D]">{equipment.usefulLifeYears} yrs</div>
                 <div className="text-xs text-gray-500">Useful Life</div>
               </div>
-              <div className="md:col-span-3 bg-gray-50 rounded-xl p-4">
+              <div className="md:col-span-3 bg-[#FAF7F0] rounded-xl p-4">
                 <h4 className="text-sm font-semibold text-gray-700 mb-2">Total Maintenance Cost</h4>
                 <div className="text-2xl font-bold" style={{ color: NAVY }}>${totalServiceCost.toLocaleString()}</div>
                 <div className="text-xs text-gray-500 mt-1">across {equipment.serviceHistory.length} service records</div>

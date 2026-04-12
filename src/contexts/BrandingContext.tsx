@@ -49,9 +49,9 @@ export const DEFAULT_BRANDING: BrandingConfig = {
   tagline: 'Lead with Confidence',
   poweredByVisible: false,
   colors: {
-    primary: '#1e4d6b',
-    primaryLight: '#2a6a8f',
-    primaryDark: '#163a52',
+    primary: '#1E2D4D',
+    primaryLight: '#2A3F6B',
+    primaryDark: '#141E33',
     accent: '#d4af37',
     sidebarBg: '#0f1f35',
     sidebarText: '#ffffff',

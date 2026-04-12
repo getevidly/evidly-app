@@ -22,6 +22,7 @@ import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { useMobile } from '../hooks/useMobile';
 import { useRegulatoryChanges } from '../hooks/useRegulatoryChanges';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
@@ -43,6 +44,7 @@ export function Settings() {
   const { t, locale, setLocale } = useTranslation();
   const navigate = useNavigate();
   const { jurisdictions: monitoredJurisdictions, loading: jurisdictionsLoading } = useRegulatoryChanges();
+  usePageTitle('Settings');
   const canEditHours = userRole === 'executive' || userRole === 'owner_operator';
   const [activeTab, setActiveTab] = useState('profile');
   const [pwForm, setPwForm] = useState({ current: '', newPw: '', confirm: '' });
@@ -234,13 +236,13 @@ export function Settings() {
       <Breadcrumb items={[{ label: t('nav.dashboard'), href: '/dashboard' }, { label: t('settings.title') }]} />
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{t('settings.title')}</h1>
+          <h1 className="text-2xl font-bold text-[#1E2D4D]">{t('settings.title')}</h1>
           <p className="text-sm text-gray-600 mt-1">{t('settings.subtitle')}</p>
         </div>
       </div>
       <div className="flex flex-col lg:flex-row gap-6 mt-6">
         <div className="lg:w-64 flex-shrink-0">
-          <nav className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto lg:overflow-visible">
+          <nav className="bg-white rounded-xl border border-gray-200 overflow-x-auto lg:overflow-visible">
             <div className="flex lg:flex-col">
               {tabs.map((tab) => (
                 <button
@@ -248,7 +250,7 @@ export function Settings() {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center space-x-3 px-4 py-3 text-left transition-colors whitespace-nowrap min-h-[44px] ${
                     activeTab === tab.id
-                      ? 'bg-[#1e4d6b] text-white'
+                      ? 'bg-[#1E2D4D] text-white'
                       : 'text-gray-700 hover:bg-gray-50'
                   } lg:w-full`}
                 >
@@ -260,11 +262,11 @@ export function Settings() {
           </nav>
         </div>
 
-        <div className="flex-1 bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+        <div className="flex-1 bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
           {activeTab === 'profile' && (
             <div className="space-y-6">
               <div className="flex items-center gap-3">
-                <h3 className="text-xl font-bold text-gray-900">{t('settings.profileSettings')}</h3>
+                <h3 className="text-xl font-bold text-[#1E2D4D]">{t('settings.profileSettings')}</h3>
                 {isDemoMode && (
                   <span
                     style={{
@@ -297,7 +299,7 @@ export function Settings() {
                   defaultValue={isDemoMode ? ROLE_DEMO_PROFILES[userRole].email : (user?.email || '')}
                   key={`email-${isDemoMode ? userRole : user?.id || 'loading'}`}
                   disabled
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-[#FAF7F0] text-gray-500"
                 />
               </div>
               <div>
@@ -307,7 +309,7 @@ export function Settings() {
                   defaultValue={isDemoMode ? ROLE_DEMO_PROFILES[userRole].role : (profile?.role || '')}
                   key={`role-${isDemoMode ? userRole : profile?.id || 'loading'}`}
                   disabled
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-[#FAF7F0] text-gray-500"
                 />
               </div>
 
@@ -328,7 +330,7 @@ export function Settings() {
               </div>
 
               <div className="flex gap-3">
-                <button onClick={() => guardAction('settings', 'profile settings', () => toast.success('Profile saved'))} className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
+                <button onClick={() => guardAction('settings', 'profile settings', () => toast.success('Profile saved'))} className="px-6 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors duration-150">
                   {t('settings.saveChanges')}
                 </button>
                 <button onClick={() => setActiveTab('profile')} className="px-6 py-2 min-h-[44px] border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-150">
@@ -340,7 +342,7 @@ export function Settings() {
 
           {activeTab === 'organization' && (
             <div className="space-y-6">
-              <h3 className="text-xl font-bold text-gray-900">{t('settings.orgSettings')}</h3>
+              <h3 className="text-xl font-bold text-[#1E2D4D]">{t('settings.orgSettings')}</h3>
 
               {/* Logo Upload */}
               <div>
@@ -427,7 +429,7 @@ export function Settings() {
                   ].map((loc) => (
                     <div key={loc.name} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
                       <div className="flex items-center gap-3">
-                        <MapPin className="h-5 w-5 text-[#1e4d6b]" />
+                        <MapPin className="h-5 w-5 text-[#1E2D4D]" />
                         <div>
                           <div className="text-sm font-medium text-gray-900">{loc.name}</div>
                           <div className="text-xs text-gray-500">{loc.address}</div>
@@ -449,7 +451,7 @@ export function Settings() {
                 </button>
               </div>
 
-              <button onClick={() => guardAction('settings', 'organization settings', () => toast.success('Organization settings saved'))} className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
+              <button onClick={() => guardAction('settings', 'organization settings', () => toast.success('Organization settings saved'))} className="px-6 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors duration-150">
                 {t('settings.saveChanges')}
               </button>
             </div>
@@ -457,13 +459,13 @@ export function Settings() {
 
           {activeTab === 'notifications' && (
             <div className="space-y-6">
-              <h3 className="text-xl font-bold text-gray-900">{t('settings.notifPreferences')}</h3>
+              <h3 className="text-xl font-bold text-[#1E2D4D]">{t('settings.notifPreferences')}</h3>
 
               {/* TODO: Email/SMS notification templates should respect user language preference (Resend/Twilio) */}
 
               <div className="space-y-6">
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h4 className="font-semibold text-gray-900 mb-4">{t('settings.deliveryMethods')}</h4>
+                <div className="bg-[#FAF7F0] rounded-lg p-4">
+                  <h4 className="font-semibold text-[#1E2D4D] mb-4">{t('settings.deliveryMethods')}</h4>
                   <div className="space-y-3">
                     <label className="flex items-start space-x-3">
                       <input
@@ -492,8 +494,8 @@ export function Settings() {
                   </div>
                 </div>
 
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h4 className="font-semibold text-gray-900 mb-4">{t('settings.alertTypes')}</h4>
+                <div className="bg-[#FAF7F0] rounded-lg p-4">
+                  <h4 className="font-semibold text-[#1E2D4D] mb-4">{t('settings.alertTypes')}</h4>
                   <div className="space-y-3">
                     {alertTypes.map((item) => (
                       <label key={item.key} className="flex items-start space-x-3">
@@ -511,8 +513,8 @@ export function Settings() {
                   </div>
                 </div>
 
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h4 className="font-semibold text-gray-900 mb-4">{t('settings.quietHours')}</h4>
+                <div className="bg-[#FAF7F0] rounded-lg p-4">
+                  <h4 className="font-semibold text-[#1E2D4D] mb-4">{t('settings.quietHours')}</h4>
                   <p className="text-sm text-gray-600 mb-4">
                     {t('settings.quietHoursDesc')}
                   </p>
@@ -538,8 +540,8 @@ export function Settings() {
                   </div>
                 </div>
 
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h4 className="font-semibold text-gray-900 mb-4">{t('settings.reminderFrequency')}</h4>
+                <div className="bg-[#FAF7F0] rounded-lg p-4">
+                  <h4 className="font-semibold text-[#1E2D4D] mb-4">{t('settings.reminderFrequency')}</h4>
                   <div className="space-y-2">
                     <label className="flex items-center space-x-3">
                       <input
@@ -587,7 +589,7 @@ export function Settings() {
                 </div>
 
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <h4 className="font-semibold text-gray-900 mb-2">{t('settings.docExpirationAlerts')}</h4>
+                  <h4 className="font-semibold text-[#1E2D4D] mb-2">{t('settings.docExpirationAlerts')}</h4>
                   <p className="text-sm text-gray-600">
                     You will automatically receive alerts for expiring documents:
                   </p>
@@ -601,10 +603,10 @@ export function Settings() {
                 </div>
 
                 {/* Copilot Notification Preferences */}
-                <div className="bg-gray-50 rounded-lg p-4">
+                <div className="bg-[#FAF7F0] rounded-lg p-4">
                   <div className="flex items-center gap-2 mb-4">
                     <span className="text-lg">🤖</span>
-                    <h4 className="font-semibold text-gray-900">Copilot Notification Settings</h4>
+                    <h4 className="font-semibold text-[#1E2D4D]">Copilot Notification Settings</h4>
                   </div>
                   <p className="text-sm text-gray-600 mb-4">
                     Control how the AI Compliance Copilot notifies you about proactive insights, predictions, and recommendations.
@@ -675,7 +677,7 @@ export function Settings() {
               <button
                 onClick={saveNotificationSettings}
                 disabled={saving}
-                className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {saving ? t('common.saving') : t('settings.savePreferences')}
               </button>
@@ -689,12 +691,12 @@ export function Settings() {
           {activeTab === 'regulatory-monitoring' && (
             <div className="space-y-6">
               {/* TODO: i18n for regulatory monitoring section */}
-              <h3 className="text-xl font-bold text-gray-900">Regulatory Monitoring</h3>
+              <h3 className="text-xl font-bold text-[#1E2D4D]">Regulatory Monitoring</h3>
               <p className="text-sm text-gray-600">Configure how EvidLY monitors regulatory changes and notifies your team.</p>
 
               {/* Enable/disable toggle */}
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h4 className="font-semibold text-gray-900 mb-4">Monitoring Status</h4>
+              <div className="bg-[#FAF7F0] rounded-lg p-4">
+                <h4 className="font-semibold text-[#1E2D4D] mb-4">Monitoring Status</h4>
                 <label className="flex items-center justify-between gap-3">
                   <div>
                     <span className="text-sm font-medium text-gray-900">Enable Regulatory Alerts</span>
@@ -702,14 +704,14 @@ export function Settings() {
                   </div>
                   <div className="relative">
                     <input type="checkbox" defaultChecked className="sr-only peer" />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#d4af37] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1e4d6b]"></div>
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#d4af37] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1E2D4D]"></div>
                   </div>
                 </label>
               </div>
 
               {/* Notification preferences */}
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h4 className="font-semibold text-gray-900 mb-4">Alert Notifications</h4>
+              <div className="bg-[#FAF7F0] rounded-lg p-4">
+                <h4 className="font-semibold text-[#1E2D4D] mb-4">Alert Notifications</h4>
                 <div className="space-y-3">
                   <label className="flex items-start space-x-3">
                     <input type="checkbox" defaultChecked className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded mt-1" />
@@ -730,8 +732,8 @@ export function Settings() {
               </div>
 
               {/* Digest option */}
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h4 className="font-semibold text-gray-900 mb-4">Alert Delivery</h4>
+              <div className="bg-[#FAF7F0] rounded-lg p-4">
+                <h4 className="font-semibold text-[#1E2D4D] mb-4">Alert Delivery</h4>
                 <div className="space-y-2">
                   <label className="flex items-center space-x-3">
                     <input type="radio" name="reg-delivery" defaultChecked className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300" />
@@ -751,8 +753,8 @@ export function Settings() {
               </div>
 
               {/* Which roles receive alerts */}
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h4 className="font-semibold text-gray-900 mb-4">Email Alert Recipients</h4>
+              <div className="bg-[#FAF7F0] rounded-lg p-4">
+                <h4 className="font-semibold text-[#1E2D4D] mb-4">Email Alert Recipients</h4>
                 <p className="text-xs text-gray-500 mb-3">Select which roles receive email alerts for regulatory changes</p>
                 <div className="space-y-2">
                   <label className="flex items-center space-x-3">
@@ -771,8 +773,8 @@ export function Settings() {
               </div>
 
               {/* Monitored jurisdictions */}
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h4 className="font-semibold text-gray-900 mb-4">Monitored Jurisdictions</h4>
+              <div className="bg-[#FAF7F0] rounded-lg p-4">
+                <h4 className="font-semibold text-[#1E2D4D] mb-4">Monitored Jurisdictions</h4>
                 <p className="text-xs text-gray-500 mb-3">Auto-populated from your location addresses. Add custom jurisdictions if needed.</p>
                 <div className="space-y-2">
                   {jurisdictionsLoading ? (
@@ -790,7 +792,7 @@ export function Settings() {
                     ].map((j) => (
                       <div key={j.name} className="flex items-center justify-between py-2 px-3 border border-gray-200 rounded-xl bg-white">
                         <div className="flex items-center gap-2">
-                          <MapPin className="h-4 w-4 text-[#1e4d6b]" />
+                          <MapPin className="h-4 w-4 text-[#1E2D4D]" />
                           <span className="text-sm text-gray-700">{j.name}</span>
                         </div>
                         <span className="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">{j.type}</span>
@@ -806,7 +808,7 @@ export function Settings() {
                 </div>
               </div>
 
-              <button onClick={() => guardAction('settings', 'regulatory settings', () => toast.success('Regulatory monitoring preferences saved'))} className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
+              <button onClick={() => guardAction('settings', 'regulatory settings', () => toast.success('Regulatory monitoring preferences saved'))} className="px-6 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors duration-150">
                 {t('settings.saveChanges')}
               </button>
             </div>
@@ -821,15 +823,15 @@ export function Settings() {
             ];
             return (
             <div className="space-y-6">
-              <h3 className="text-xl font-bold text-gray-900">Jurisdiction Profile</h3>
+              <h3 className="text-xl font-bold text-[#1E2D4D]">Jurisdiction Profile</h3>
               <p className="text-sm text-gray-600">View and manage jurisdiction-specific compliance requirements for each location.</p>
 
               <div className="bg-[#eef4f8] border border-[#b8d4e8] rounded-lg p-4">
                 <div className="flex items-start gap-3">
-                  <Globe className="h-5 w-5 text-[#1e4d6b] mt-0.5 flex-shrink-0" />
+                  <Globe className="h-5 w-5 text-[#1E2D4D] mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="text-sm font-medium text-[#1e4d6b]">Hierarchical Jurisdiction Engine</p>
-                    <p className="text-xs text-[#1e4d6b]/80 mt-1">
+                    <p className="text-sm font-medium text-[#1E2D4D]">Hierarchical Jurisdiction Engine</p>
+                    <p className="text-xs text-[#1E2D4D]/80 mt-1">
                       EvidLY automatically merges compliance requirements from Federal (FDA), State (California CalCode),
                       County, and City jurisdictions — so each location gets the exact requirements that apply to them.
                     </p>
@@ -844,7 +846,7 @@ export function Settings() {
                   <div key={loc.name} className="border border-gray-200 rounded-xl p-4 bg-white">
                     <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                       <div>
-                        <h4 className="font-semibold text-gray-900">{loc.name}</h4>
+                        <h4 className="font-semibold text-[#1E2D4D]">{loc.name}</h4>
                         <p className="text-xs text-gray-500 mt-1">{loc.chain}</p>
                       </div>
                       <span className="px-2 py-0.5 text-xs rounded-full bg-green-50 text-green-700 border border-green-200 flex items-center gap-1">
@@ -857,7 +859,7 @@ export function Settings() {
                       <select
                         defaultValue={loc.detectedSlug}
                         onChange={() => toast.success(`Jurisdiction override saved for ${loc.name}`)}
-                        className="text-sm border border-gray-300 rounded-xl px-3 py-1.5 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
+                        className="text-sm border border-gray-300 rounded-xl px-3 py-1.5 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20 focus:border-[#1E2D4D]"
                       >
                         {availableCounties.map(c => (
                           <option key={c.slug} value={c.slug}>{c.name} ({c.systemType.replace('_', ' ')})</option>
@@ -881,7 +883,7 @@ export function Settings() {
                     type="checkbox"
                     defaultChecked={true}
                     onChange={() => toast.success('Dashboard display preference saved')}
-                    className="w-5 h-5 text-[#1e4d6b] border-gray-300 rounded focus:ring-[#1e4d6b]"
+                    className="w-5 h-5 text-[#1E2D4D] border-gray-300 rounded focus:ring-[#1E2D4D]"
                   />
                 </label>
 
@@ -896,7 +898,7 @@ export function Settings() {
                     type="checkbox"
                     defaultChecked={true}
                     onChange={() => toast.success('Report inclusion preference saved')}
-                    className="w-5 h-5 text-[#1e4d6b] border-gray-300 rounded focus:ring-[#1e4d6b]"
+                    className="w-5 h-5 text-[#1E2D4D] border-gray-300 rounded focus:ring-[#1E2D4D]"
                   />
                 </label>
               </div>
@@ -910,7 +912,7 @@ export function Settings() {
                   onChange={(e) => {
                     if (e.target.value) toast.success(`Manual jurisdiction set to ${e.target.value}`);
                   }}
-                  className="w-full text-sm border border-gray-300 rounded-xl px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
+                  className="w-full text-sm border border-gray-300 rounded-xl px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20 focus:border-[#1E2D4D]"
                 >
                   <option value="">Select a county scoring system...</option>
                   {availableCounties.map(c => (
@@ -921,7 +923,7 @@ export function Settings() {
 
               <button
                 onClick={() => navigate('/jurisdiction')}
-                className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150"
+                className="px-6 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors duration-150"
               >
                 View Full Jurisdiction Configuration →
               </button>
@@ -931,7 +933,7 @@ export function Settings() {
 
           {activeTab === 'integrations' && (
             <div className="space-y-6">
-              <h3 className="text-xl font-bold text-gray-900">{t('settings.integrationSettings')}</h3>
+              <h3 className="text-xl font-bold text-[#1E2D4D]">{t('settings.integrationSettings')}</h3>
               <p className="text-gray-600">{t('settings.integrationsDesc')}</p>
 
               <div className="space-y-4">
@@ -943,21 +945,21 @@ export function Settings() {
                         <Globe className="h-6 w-6 text-blue-700" />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-gray-900">Calendar Integration</h4>
+                        <h4 className="font-semibold text-[#1E2D4D]">Calendar Integration</h4>
                         <p className="text-sm text-gray-500">Add confirmed service events to your external calendar</p>
                       </div>
                     </div>
                   </div>
                   <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div className="p-3 rounded-lg bg-gray-50 border border-gray-100">
+                    <div className="p-3 rounded-lg bg-[#FAF7F0] border border-gray-100">
                       <p className="text-sm font-medium text-gray-900">Google Calendar</p>
                       <p className="text-xs text-gray-500 mt-1">Click "Add to Calendar" on confirmed service requests to open in Google Calendar.</p>
                     </div>
-                    <div className="p-3 rounded-lg bg-gray-50 border border-gray-100">
+                    <div className="p-3 rounded-lg bg-[#FAF7F0] border border-gray-100">
                       <p className="text-sm font-medium text-gray-900">Microsoft Outlook</p>
                       <p className="text-xs text-gray-500 mt-1">Click "Add to Calendar" to open events in Outlook web calendar.</p>
                     </div>
-                    <div className="p-3 rounded-lg bg-gray-50 border border-gray-100">
+                    <div className="p-3 rounded-lg bg-[#FAF7F0] border border-gray-100">
                       <p className="text-sm font-medium text-gray-900">Apple Calendar</p>
                       <p className="text-xs text-gray-500 mt-1">Download .ics files to import into Apple Calendar or any iCal app.</p>
                     </div>
@@ -970,14 +972,14 @@ export function Settings() {
                 </div>
 
                 {/* Insurance Risk Score Sharing */}
-                <div className="border-2 rounded-lg p-4 sm:p-5" style={{ borderColor: '#1e4d6b' }}>
+                <div className="border-2 rounded-lg p-4 sm:p-5" style={{ borderColor: '#1E2D4D' }}>
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="flex items-center gap-3 sm:gap-4">
-                      <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#1e4d6b' }}>
+                      <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#1E2D4D' }}>
                         <EvidlyIcon size={24} />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-gray-900">Insurance Risk Score Sharing</h4>
+                        <h4 className="font-semibold text-[#1E2D4D]">Insurance Risk Score Sharing</h4>
                         <p className="text-sm text-gray-500">Share your EvidLY risk score with insurance carriers via secure API</p>
                       </div>
                     </div>
@@ -1004,7 +1006,7 @@ export function Settings() {
                     <button
                       onClick={() => navigate('/insurance-settings')}
                       className="text-sm font-medium transition-colors hover:underline"
-                      style={{ color: '#1e4d6b' }}
+                      style={{ color: '#1E2D4D' }}
                     >
                       Manage Insurance Connections →
                     </button>
@@ -1019,7 +1021,7 @@ export function Settings() {
                         <span className="text-orange-600 font-bold text-lg">R365</span>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-gray-900">Restaurant365</h4>
+                        <h4 className="font-semibold text-[#1E2D4D]">Restaurant365</h4>
                         <p className="text-sm text-gray-500">Sync inventory, recipes, and financial data</p>
                       </div>
                     </div>
@@ -1044,7 +1046,7 @@ export function Settings() {
                         <span className="text-blue-700 font-bold text-sm">CINTAS</span>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-gray-900">Cintas</h4>
+                        <h4 className="font-semibold text-[#1E2D4D]">Cintas</h4>
                         <p className="text-sm text-gray-500">Fire protection, uniforms, and facility services</p>
                       </div>
                     </div>
@@ -1069,7 +1071,7 @@ export function Settings() {
                         <span className="text-green-700 font-bold text-sm">ECO</span>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-gray-900">Ecolab / EcoSure</h4>
+                        <h4 className="font-semibold text-[#1E2D4D]">Ecolab / EcoSure</h4>
                         <p className="text-sm text-gray-500">Food safety inspections and sanitation services</p>
                       </div>
                     </div>
@@ -1093,7 +1095,7 @@ export function Settings() {
                       <Plug className="h-6 w-6 text-gray-500" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900">{t('settings.apiAccess')}</h4>
+                      <h4 className="font-semibold text-[#1E2D4D]">{t('settings.apiAccess')}</h4>
                       <p className="text-sm text-gray-500">{t('settings.apiDesc')}</p>
                       <p className="text-xs text-gray-400 mt-1">{t('settings.enterprisePlan')}</p>
                     </div>
@@ -1107,7 +1109,7 @@ export function Settings() {
             <div className="space-y-6">
               {/* Security Navigation Cards */}
               <div>
-                <h3 className="text-xl font-bold text-gray-900" style={{ fontFamily: 'DM Sans, sans-serif' }}>Security & Access</h3>
+                <h3 className="text-xl font-bold text-[#1E2D4D]" style={{ fontFamily: 'DM Sans, sans-serif' }}>Security & Access</h3>
                 <p className="text-sm text-gray-600 mt-1">Manage access control, audit trails, and compliance reporting.</p>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
@@ -1140,16 +1142,16 @@ export function Settings() {
                   <button
                     key={card.title}
                     onClick={() => navigate(card.path)}
-                    className="flex flex-col items-start gap-3 p-5 bg-white border border-gray-200 rounded-lg text-left hover:shadow-md hover:border-[#1e4d6b]/30 transition-all duration-150 group"
+                    className="flex flex-col items-start gap-3 p-6 bg-white border border-gray-200 rounded-xl text-left hover:shadow-md hover:border-[#1E2D4D]/30 transition-all duration-150 group"
                   >
-                    <div className="p-2 rounded-lg bg-[#1e4d6b]/10 group-hover:bg-[#1e4d6b]/15 transition-colors">
-                      <card.icon className="h-5 w-5 text-[#1e4d6b]" />
+                    <div className="p-2 rounded-lg bg-[#1E2D4D]/10 group-hover:bg-[#1E2D4D]/15 transition-colors">
+                      <card.icon className="h-5 w-5 text-[#1E2D4D]" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-semibold text-gray-900" style={{ fontFamily: 'DM Sans, sans-serif' }}>{card.title}</h4>
+                      <h4 className="text-sm font-semibold text-[#1E2D4D]" style={{ fontFamily: 'DM Sans, sans-serif' }}>{card.title}</h4>
                       <p className="text-xs text-gray-500 mt-1">{card.description}</p>
                     </div>
-                    <span className="text-xs font-medium text-[#1e4d6b] group-hover:text-[#2a6a8f] transition-colors mt-auto">
+                    <span className="text-xs font-medium text-[#1E2D4D] group-hover:text-[#2A3F6B] transition-colors mt-auto">
                       Manage →
                     </span>
                   </button>
@@ -1157,7 +1159,7 @@ export function Settings() {
               </div>
 
               {/* Session Info */}
-              <div className="bg-white border border-gray-200 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
+              <div className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Clock className="h-4 w-4 text-gray-400" />
                   <span>Last login: {profile?.last_login_at ? new Date(profile.last_login_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }) : 'N/A'}</span>
@@ -1174,7 +1176,7 @@ export function Settings() {
               {/* Separator */}
               <hr className="border-gray-200" />
 
-              <h3 className="text-xl font-bold text-gray-900">{t('settings.securityChangePassword')}</h3>
+              <h3 className="text-xl font-bold text-[#1E2D4D]">{t('settings.securityChangePassword')}</h3>
               <p className="text-sm text-gray-600">{t('settings.securityDesc')}</p>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
@@ -1251,7 +1253,7 @@ export function Settings() {
                     }
                   });
                 }}
-                className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150"
+                className="px-6 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors duration-150"
               >
                 Update Password
               </button>
@@ -1261,7 +1263,7 @@ export function Settings() {
           {activeTab === 'operating-hours' && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-xl font-bold text-gray-900">{t('settings.hoursAndShifts')}</h3>
+                <h3 className="text-xl font-bold text-[#1E2D4D]">{t('settings.hoursAndShifts')}</h3>
                 <p className="text-sm text-gray-600 mt-1">{t('settings.hoursShiftsDesc')}</p>
                 {!canEditHours && (
                   <div className="mt-2 text-sm text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
@@ -1272,13 +1274,13 @@ export function Settings() {
 
               {/* Operating Hours */}
               <div>
-                <h4 className="font-semibold text-gray-900 mb-4">{t('settings.operatingHours')}</h4>
+                <h4 className="font-semibold text-[#1E2D4D] mb-4">{t('settings.operatingHours')}</h4>
                 <div className="space-y-4">
                   {locationHours.map((loc) => (
                     <div key={loc.locationName} className="border border-gray-200 rounded-lg p-4 sm:p-5">
                       <div className="flex items-center gap-2 mb-4">
-                        <MapPin className="h-5 w-5 text-[#1e4d6b]" />
-                        <span className="font-semibold text-gray-900">{loc.locationName}</span>
+                        <MapPin className="h-5 w-5 text-[#1E2D4D]" />
+                        <span className="font-semibold text-[#1E2D4D]">{loc.locationName}</span>
                       </div>
 
                       <div className="flex flex-wrap gap-3 mb-4">
@@ -1307,7 +1309,7 @@ export function Settings() {
                             value={loc.openTime}
                             disabled={!canEditHours}
                             onChange={(e) => updateLocationHours(loc.locationName, { openTime: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37] disabled:bg-gray-50 disabled:text-gray-500"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37] disabled:bg-[#FAF7F0] disabled:text-gray-500"
                           >
                             {generateOpeningTimes().map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                           </select>
@@ -1318,7 +1320,7 @@ export function Settings() {
                             value={loc.closeTime}
                             disabled={!canEditHours}
                             onChange={(e) => updateLocationHours(loc.locationName, { closeTime: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37] disabled:bg-gray-50 disabled:text-gray-500"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37] disabled:bg-[#FAF7F0] disabled:text-gray-500"
                           >
                             {generateClosingTimes().map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                           </select>
@@ -1335,21 +1337,21 @@ export function Settings() {
 
               {/* Shift Configuration */}
               <div>
-                <h4 className="font-semibold text-gray-900 mb-4">{t('settings.shiftConfiguration')}</h4>
+                <h4 className="font-semibold text-[#1E2D4D] mb-4">{t('settings.shiftConfiguration')}</h4>
                 <div className="space-y-4">
                   {locationHours.map((loc) => {
                     const locShifts = getShiftsForLocation(loc.locationName).filter(s => s.locationName === loc.locationName);
                     return (
                       <div key={loc.locationName} className="border border-gray-200 rounded-lg p-4 sm:p-5">
                         <div className="flex items-center gap-2 mb-4">
-                          <MapPin className="h-5 w-5 text-[#1e4d6b]" />
-                          <span className="font-semibold text-gray-900">{loc.locationName}</span>
+                          <MapPin className="h-5 w-5 text-[#1E2D4D]" />
+                          <span className="font-semibold text-[#1E2D4D]">{loc.locationName}</span>
                           <span className="text-xs text-gray-400 ml-auto">{locShifts.length} {locShifts.length !== 1 ? t('settings.shifts') : t('settings.shift')}</span>
                         </div>
 
                         <div className="space-y-3">
                           {locShifts.map((shift) => (
-                            <div key={shift.id} className="bg-gray-50 rounded-lg p-4">
+                            <div key={shift.id} className="bg-[#FAF7F0] rounded-lg p-4">
                               <div className="flex items-center gap-3 mb-3">
                                 <input
                                   type="text"
@@ -1427,7 +1429,7 @@ export function Settings() {
               </div>
 
               {canEditHours && (
-                <button onClick={() => guardAction('settings', 'operating hours', () => toast.success('Hours and shifts saved'))} className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
+                <button onClick={() => guardAction('settings', 'operating hours', () => toast.success('Hours and shifts saved'))} className="px-6 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors duration-150">
                   {t('settings.saveChanges')}
                 </button>
               )}
@@ -1436,13 +1438,13 @@ export function Settings() {
 
           {activeTab === 'privacy' && (
             <div className="space-y-6">
-              <h3 className="text-xl font-bold text-gray-900">Privacy & Benchmarking</h3>
+              <h3 className="text-xl font-bold text-[#1E2D4D]">Privacy & Benchmarking</h3>
               <p className="text-sm text-gray-600">Control how your anonymized data is used in the EvidLY Compliance Index.</p>
 
               <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-semibold text-gray-900 mb-1">Include my anonymized data in EvidLY Compliance Index</h4>
+                    <h4 className="font-semibold text-[#1E2D4D] mb-1">Include my anonymized data in EvidLY Compliance Index</h4>
                     <p className="text-sm text-gray-500 mb-3">
                       When enabled, your location scores are included in aggregate industry benchmarks. Your data is fully anonymized — no business names, addresses, or employee information is ever shared.
                     </p>
@@ -1492,8 +1494,8 @@ export function Settings() {
                 </div>
               )}
 
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h4 className="font-semibold text-gray-900 mb-2 text-sm">Data We Never Share</h4>
+              <div className="bg-[#FAF7F0] rounded-lg p-4">
+                <h4 className="font-semibold text-[#1E2D4D] mb-2 text-sm">Data We Never Share</h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-gray-600">
                   <div>• Business names or addresses</div>
                   <div>• Employee information</div>
@@ -1508,7 +1510,7 @@ export function Settings() {
               {userRole === 'owner_operator' && (
                 <>
                   <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: 24, marginTop: 8 }}>
-                    <h3 className="text-lg font-bold text-gray-900 mb-1">Visibility & Community</h3>
+                    <h3 className="text-lg font-bold text-[#1E2D4D] mb-1">Visibility & Community</h3>
                     <p className="text-sm text-gray-500 mb-4">Control your presence on the EvidLY community leaderboard.</p>
                   </div>
 
@@ -1518,15 +1520,15 @@ export function Settings() {
                         <Trophy className="h-5 w-5" style={{ color: '#A08C5A' }} />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-gray-900">Compliance Leaderboard</h4>
+                        <h4 className="font-semibold text-[#1E2D4D]">Compliance Leaderboard</h4>
                         <p className="text-sm text-gray-500">Showcase your kitchen's excellence to the EvidLY community.</p>
                       </div>
                     </div>
 
-                    <div className="flex items-start gap-3 mb-5 bg-gray-50 rounded-lg p-4">
+                    <div className="flex items-start gap-3 mb-5 bg-[#FAF7F0] rounded-lg p-4">
                       <Trophy className="h-5 w-5 flex-shrink-0 mt-0.5" style={{ color: '#A08C5A' }} />
                       <div>
-                        <p className="text-sm font-semibold text-gray-900 mb-2">Join the EvidLY Compliance Leaderboard</p>
+                        <p className="text-sm font-semibold text-[#1E2D4D] mb-2">Join the EvidLY Compliance Leaderboard</p>
                         <div className="space-y-2 text-xs text-gray-600">
                           <div className="flex items-start gap-2">
                             <span className="text-gray-400 mt-0.5">•</span>
@@ -1610,7 +1612,7 @@ export function Settings() {
 
                   {/* SB 1383 Enrollment */}
                   <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: 24, marginTop: 8 }}>
-                    <h3 className="text-lg font-bold text-gray-900 mb-1">California SB 1383 Compliance</h3>
+                    <h3 className="text-lg font-bold text-[#1E2D4D] mb-1">California SB 1383 Compliance</h3>
                     <p className="text-sm text-gray-500 mb-4">Organic waste diversion and food recovery tracking for California locations.</p>
                   </div>
 
@@ -1620,15 +1622,15 @@ export function Settings() {
                         <Recycle className="h-5 w-5" style={{ color: '#40916C' }} />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-gray-900">SB 1383 Food Recovery Tracking</h4>
+                        <h4 className="font-semibold text-[#1E2D4D]">SB 1383 Food Recovery Tracking</h4>
                         <p className="text-sm text-gray-500">Track organic waste diversion, food recovery agreements, and hauler records.</p>
                       </div>
                     </div>
 
-                    <div className="flex items-start gap-3 mb-5 bg-gray-50 rounded-lg p-4">
+                    <div className="flex items-start gap-3 mb-5 bg-[#FAF7F0] rounded-lg p-4">
                       <Recycle className="h-5 w-5 flex-shrink-0 mt-0.5" style={{ color: '#40916C' }} />
                       <div>
-                        <p className="text-sm font-semibold text-gray-900 mb-2">What SB 1383 tracking includes</p>
+                        <p className="text-sm font-semibold text-[#1E2D4D] mb-2">What SB 1383 tracking includes</p>
                         <div className="space-y-2 text-xs text-gray-600">
                           <div className="flex items-start gap-2">
                             <span className="text-gray-400 mt-0.5">•</span>
@@ -1705,7 +1707,7 @@ export function Settings() {
 
                   {/* K-12 Food Safety Enrollment */}
                   <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: 24, marginTop: 8 }}>
-                    <h3 className="text-lg font-bold text-gray-900 mb-1">K-12 Food Safety Module</h3>
+                    <h3 className="text-lg font-bold text-[#1E2D4D] mb-1">K-12 Food Safety Module</h3>
                     <p className="text-sm text-gray-500 mb-4">USDA and County EH audit readiness for K-12 food service programs.</p>
                   </div>
 
@@ -1715,15 +1717,15 @@ export function Settings() {
                         <School className="h-5 w-5" style={{ color: '#1D4ED8' }} />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-gray-900">K-12 Audit Readiness Dashboard</h4>
+                        <h4 className="font-semibold text-[#1E2D4D]">K-12 Audit Readiness Dashboard</h4>
                         <p className="text-sm text-gray-500">Organize records for USDA reviews and county health inspections.</p>
                       </div>
                     </div>
 
-                    <div className="flex items-start gap-3 mb-5 bg-gray-50 rounded-lg p-4">
+                    <div className="flex items-start gap-3 mb-5 bg-[#FAF7F0] rounded-lg p-4">
                       <School className="h-5 w-5 flex-shrink-0 mt-0.5" style={{ color: '#1D4ED8' }} />
                       <div>
-                        <p className="text-sm font-semibold text-gray-900 mb-2">What the K-12 module includes</p>
+                        <p className="text-sm font-semibold text-[#1E2D4D] mb-2">What the K-12 module includes</p>
                         <div className="space-y-2 text-xs text-gray-600">
                           <div className="flex items-start gap-2">
                             <span className="text-gray-400 mt-0.5">•</span>
@@ -1809,17 +1811,17 @@ export function Settings() {
 
           {activeTab === 'enterprise' && (
             <div className="space-y-6">
-              <h3 className="text-xl font-bold text-gray-900">Enterprise Administration</h3>
+              <h3 className="text-xl font-bold text-[#1E2D4D]">Enterprise Administration</h3>
               <p className="text-sm text-gray-600">Manage enterprise tenants, SSO configuration, and white-label branding.</p>
 
               {/* SSO Quick Status */}
               <div className="border border-gray-200 rounded-lg p-4 sm:p-5">
                 <div className="flex flex-wrap items-center gap-3 mb-3">
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
-                    <KeyRound className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+                    <KeyRound className="h-5 w-5" style={{ color: '#1E2D4D' }} />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">SSO Quick Status</h4>
+                    <h4 className="font-semibold text-[#1E2D4D]">SSO Quick Status</h4>
                     <p className="text-xs text-gray-500">Enterprise single sign-on configuration</p>
                   </div>
                   <div className="ml-auto">
@@ -1834,7 +1836,7 @@ export function Settings() {
                     { name: 'Compass Group', provider: 'OIDC via Azure AD', status: 'passed', color: '#003DA5' },
                     { name: 'Sodexo', provider: 'Not configured', status: 'pending', color: '#ED1C24' },
                   ].map(item => (
-                    <div key={item.name} className="flex items-center gap-3 p-2 rounded-lg bg-gray-50">
+                    <div key={item.name} className="flex items-center gap-3 p-2 rounded-lg bg-[#FAF7F0]">
                       <div className="w-6 h-6 rounded flex items-center justify-center text-white text-[9px] font-bold" style={{ backgroundColor: item.color }}>
                         {item.name[0]}
                       </div>
@@ -1846,7 +1848,7 @@ export function Settings() {
                     </div>
                   ))}
                 </div>
-                <button onClick={() => navigate('/enterprise/admin')} className="text-sm font-medium flex items-center gap-1 cursor-pointer" style={{ color: '#1e4d6b' }}>
+                <button onClick={() => navigate('/enterprise/admin')} className="text-sm font-medium flex items-center gap-1 cursor-pointer" style={{ color: '#1E2D4D' }}>
                   Configure SSO <ExternalLink className="h-3.5 w-3.5" />
                 </button>
               </div>
@@ -1855,10 +1857,10 @@ export function Settings() {
               <div className="border border-gray-200 rounded-lg p-4 sm:p-5">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
-                    <Layers className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+                    <Layers className="h-5 w-5" style={{ color: '#1E2D4D' }} />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">Tenant Branding</h4>
+                    <h4 className="font-semibold text-[#1E2D4D]">Tenant Branding</h4>
                     <p className="text-xs text-gray-500">White-label configuration for enterprise clients</p>
                   </div>
                 </div>
@@ -1868,26 +1870,26 @@ export function Settings() {
                     { name: 'Compass Compliance', colors: ['#003DA5', '#1B365D', '#FFB81C'] },
                     { name: 'Sodexo Safe Kitchen', colors: ['#ED1C24', '#231F20', '#00A0DF'] },
                   ].map(t => (
-                    <div key={t.name} className="p-3 rounded-lg bg-gray-50 text-center">
+                    <div key={t.name} className="p-3 rounded-lg bg-[#FAF7F0] text-center">
                       <div className="flex items-center justify-center gap-1 mb-2">
                         {t.colors.map((c, i) => (
                           <div key={i} className="w-5 h-5 rounded-full border border-gray-200" style={{ backgroundColor: c }} />
                         ))}
                       </div>
-                      <p className="text-[11px] font-medium text-gray-700">{t.name}</p>
+                      <p className="text-xs font-medium text-gray-700">{t.name}</p>
                     </div>
                   ))}
                 </div>
-                <button onClick={() => navigate('/enterprise/admin')} className="text-sm font-medium flex items-center gap-1 cursor-pointer" style={{ color: '#1e4d6b' }}>
+                <button onClick={() => navigate('/enterprise/admin')} className="text-sm font-medium flex items-center gap-1 cursor-pointer" style={{ color: '#1E2D4D' }}>
                   Manage Branding <ExternalLink className="h-3.5 w-3.5" />
                 </button>
               </div>
 
               {/* Enterprise Admin Portal Link */}
-              <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-lg p-4 sm:p-6 text-white">
+              <div className="bg-gradient-to-r from-[#1E2D4D] to-[#2c5f7f] rounded-lg p-4 sm:p-6 text-white">
                 <h4 className="text-lg font-semibold mb-2">Enterprise Admin Portal</h4>
                 <p className="text-gray-200 text-sm mb-4">Full enterprise management — tenants, hierarchy, SSO, SCIM provisioning, branding, user directory, and reports.</p>
-                <button onClick={() => navigate('/enterprise/admin')} className="px-4 py-2 rounded-xl bg-white text-[#1e4d6b] text-sm font-semibold hover:bg-gray-100 cursor-pointer transition-colors">
+                <button onClick={() => navigate('/enterprise/admin')} className="px-4 py-2 rounded-xl bg-white text-[#1E2D4D] text-sm font-semibold hover:bg-gray-100 cursor-pointer transition-colors">
                   Open Enterprise Admin
                 </button>
               </div>
@@ -1899,7 +1901,7 @@ export function Settings() {
                     <EvidlyIcon size={20} />
                   </div>
                   <div className="flex-1">
-                    <h4 className="font-semibold text-gray-900">SCIM 2.0 Provisioning</h4>
+                    <h4 className="font-semibold text-[#1E2D4D]">SCIM 2.0 Provisioning</h4>
                     <p className="text-xs text-gray-500">Automated user lifecycle management</p>
                   </div>
                   <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-200">
@@ -1912,17 +1914,17 @@ export function Settings() {
 
           {activeTab === 'sync' && (
             <div className="space-y-6">
-              <h3 className="text-xl font-bold text-gray-900">Sync & Offline</h3>
+              <h3 className="text-xl font-bold text-[#1E2D4D]">Sync & Offline</h3>
               <p className="text-sm text-gray-600">Manage offline data, sync status, and device registration for this browser.</p>
 
               {/* Install App */}
               <div className="border border-gray-200 rounded-lg p-4 sm:p-5">
                 <div className="flex flex-wrap items-center gap-3">
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: isStandalone ? '#dcfce7' : '#eef4f8' }}>
-                    {isStandalone ? <Check className="h-5 w-5 text-green-600" /> : <Download className="h-5 w-5" style={{ color: '#1e4d6b' }} />}
+                    {isStandalone ? <Check className="h-5 w-5 text-green-600" /> : <Download className="h-5 w-5" style={{ color: '#1E2D4D' }} />}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-semibold text-gray-900">Install App</h4>
+                    <h4 className="font-semibold text-[#1E2D4D]">Install App</h4>
                     <p className="text-xs text-gray-500">
                       {isStandalone
                         ? 'EvidLY is installed as an app on this device'
@@ -1937,7 +1939,7 @@ export function Settings() {
                     <button
                       onClick={handleInstallApp}
                       className="px-4 py-2 rounded-lg text-white text-sm font-semibold transition-colors flex items-center gap-2 cursor-pointer hover:opacity-90"
-                      style={{ backgroundColor: '#1e4d6b' }}
+                      style={{ backgroundColor: '#1E2D4D' }}
                     >
                       <Download className="h-4 w-4" />
                       Install
@@ -1953,7 +1955,7 @@ export function Settings() {
                     {isOnline ? <Wifi className="h-5 w-5 text-green-600" /> : <WifiOff className="h-5 w-5 text-red-600" />}
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">Connection Status</h4>
+                    <h4 className="font-semibold text-[#1E2D4D]">Connection Status</h4>
                     <div className="flex items-center gap-2 mt-0.5">
                       <span className={`inline-block w-2 h-2 rounded-full ${isOnline ? 'bg-green-500' : 'bg-red-500'}`} />
                       <span className={`text-sm font-medium ${isOnline ? 'text-green-700' : 'text-red-700'}`}>
@@ -1966,20 +1968,20 @@ export function Settings() {
                       syncStatus === 'idle' ? 'bg-green-50 text-green-700 border border-green-200' :
                       syncStatus === 'syncing' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
                       syncStatus === 'error' ? 'bg-red-50 text-red-700 border border-red-200' :
-                      'bg-gray-50 text-gray-700 border border-gray-200'
+                      'bg-[#FAF7F0] text-gray-700 border border-gray-200'
                     }`}>
                       {syncStatus === 'idle' ? 'Synced' : syncStatus === 'syncing' ? 'Syncing...' : syncStatus === 'error' ? 'Sync Error' : 'Offline'}
                     </span>
                   </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="bg-gray-50 rounded-lg p-3">
+                  <div className="bg-[#FAF7F0] rounded-lg p-3">
                     <p className="text-xs text-gray-500 mb-1">Last Sync</p>
                     <p className="text-sm font-medium text-gray-900">
                       {lastSyncTime ? lastSyncTime.toLocaleString() : 'Never'}
                     </p>
                   </div>
-                  <div className="bg-gray-50 rounded-lg p-3">
+                  <div className="bg-[#FAF7F0] rounded-lg p-3">
                     <p className="text-xs text-gray-500 mb-1">Pending Changes</p>
                     <p className="text-sm font-medium text-gray-900">
                       {pendingCount} {pendingCount === 1 ? 'action' : 'actions'}
@@ -1992,10 +1994,10 @@ export function Settings() {
               <div className="border border-gray-200 rounded-lg p-4 sm:p-5">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
-                    <RefreshCw className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+                    <RefreshCw className="h-5 w-5" style={{ color: '#1E2D4D' }} />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">Sync Actions</h4>
+                    <h4 className="font-semibold text-[#1E2D4D]">Sync Actions</h4>
                     <p className="text-xs text-gray-500">Manually trigger sync or clear offline data</p>
                   </div>
                 </div>
@@ -2004,7 +2006,7 @@ export function Settings() {
                     onClick={() => triggerSync()}
                     disabled={!isOnline || syncStatus === 'syncing'}
                     className="px-4 py-2 rounded-lg text-white text-sm font-semibold transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                    style={{ backgroundColor: '#1e4d6b' }}
+                    style={{ backgroundColor: '#1E2D4D' }}
                   >
                     <RefreshCw className={`h-4 w-4 ${syncStatus === 'syncing' ? 'animate-spin' : ''}`} />
                     {syncStatus === 'syncing' ? 'Syncing...' : 'Sync Now'}
@@ -2041,10 +2043,10 @@ export function Settings() {
               <div className="border border-gray-200 rounded-lg p-4 sm:p-5">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
-                    <Smartphone className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+                    <Smartphone className="h-5 w-5" style={{ color: '#1E2D4D' }} />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">Device Information</h4>
+                    <h4 className="font-semibold text-[#1E2D4D]">Device Information</h4>
                     <p className="text-xs text-gray-500">This device's sync registration details</p>
                   </div>
                 </div>
@@ -2076,10 +2078,10 @@ export function Settings() {
               <div className="border border-gray-200 rounded-lg p-4 sm:p-5">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
-                    <HardDrive className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+                    <HardDrive className="h-5 w-5" style={{ color: '#1E2D4D' }} />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">Storage Usage</h4>
+                    <h4 className="font-semibold text-[#1E2D4D]">Storage Usage</h4>
                     <p className="text-xs text-gray-500">Local storage used by offline data and cache</p>
                   </div>
                 </div>
@@ -2098,7 +2100,7 @@ export function Settings() {
                         className="h-2.5 rounded-full"
                         style={{
                           width: `${Math.min((storageEstimate.usage / storageEstimate.quota) * 100, 100).toFixed(1)}%`,
-                          backgroundColor: '#1e4d6b',
+                          backgroundColor: '#1E2D4D',
                           minWidth: '4px',
                         }}
                       />
@@ -2113,7 +2115,7 @@ export function Settings() {
                     { label: 'Offline Actions', value: `${pendingCount} pending`, icon: '📝' },
                     { label: 'Cached Photos', value: '0 photos', icon: '📷' },
                   ].map(item => (
-                    <div key={item.label} className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div key={item.label} className="bg-[#FAF7F0] rounded-lg p-3 text-center">
                       <span className="text-lg">{item.icon}</span>
                       <p className="text-xs text-gray-500 mt-1">{item.label}</p>
                       <p className="text-sm font-medium text-gray-900">{item.value}</p>

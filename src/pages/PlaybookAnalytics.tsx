@@ -36,7 +36,7 @@ import {
 } from '../data/demoData';
 
 const FONT = "'DM Sans', sans-serif";
-const PRIMARY = '#1e4d6b';
+const PRIMARY = '#1E2D4D';
 const GOLD = '#d4af37';
 const LIGHT_BG = '#eef4f8';
 

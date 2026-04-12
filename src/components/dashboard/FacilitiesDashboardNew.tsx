@@ -50,10 +50,10 @@ export default function FacilitiesDashboardNew() {
         <DashboardHero
           orgName={companyName || 'Your Organization'}
         />
-        <div className="bg-white rounded-lg p-4" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
           <div className="text-center py-8">
             <p className="text-sm font-medium text-gray-500">No facilities data yet. Add equipment and vendors to track maintenance.</p>
-            <button type="button" onClick={() => navigate('/equipment')} className="mt-3 text-sm font-semibold px-4 py-2 rounded-lg text-white" style={{ backgroundColor: '#1e4d6b' }}>
+            <button type="button" onClick={() => navigate('/equipment')} className="mt-3 text-sm font-semibold px-4 py-2 rounded-lg text-white" style={{ backgroundColor: '#1E2D4D' }}>
               Add Equipment
             </button>
           </div>

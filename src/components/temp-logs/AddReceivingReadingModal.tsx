@@ -101,7 +101,7 @@ export function AddReceivingReadingModal({ open, onClose, locationId, categoryCo
             ))}
           </select>
           {cfg && (
-            <div className={`mt-2 p-2.5 rounded-lg text-xs font-medium ${tempRequired ? 'bg-[#eef4f8] text-[#1e4d6b] border border-[#D1D9E6]' : 'bg-gray-50 text-gray-500 border border-gray-200'}`}>
+            <div className={`mt-2 p-2.5 rounded-lg text-xs font-medium ${tempRequired ? 'bg-[#eef4f8] text-[#1E2D4D] border border-[#D1D9E6]' : 'bg-[#FAF7F0] text-gray-500 border border-gray-200'}`}>
               {tempRequired ? `Required: Must be ≤${maxTemp}°F` : 'No temperature check required for this category'}
             </div>
           )}

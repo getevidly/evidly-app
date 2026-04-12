@@ -45,7 +45,7 @@ function SectionToggle({ label, enabled, onChange, locked }: { label: string; en
         checked={enabled}
         onChange={e => !locked && onChange(e.target.checked)}
         disabled={locked}
-        style={{ width: 16, height: 16, accentColor: '#1e4d6b' }}
+        style={{ width: 16, height: 16, accentColor: '#1E2D4D' }}
       />
       <span style={{ fontSize: 14, color: '#374151' }}>{label}</span>
       {locked && <Lock className="h-3.5 w-3.5 text-gray-400" />}
@@ -62,14 +62,14 @@ function CollapsibleSection({ title, icon, children, defaultOpen = false, badge 
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between px-4 sm:px-6 py-4 hover:bg-gray-50 transition-colors"
       >
         <div className="flex items-center gap-3">
           {icon}
-          <span className="font-semibold text-gray-900">{title}</span>
+          <span className="font-semibold text-[#1E2D4D]">{title}</span>
           {badge}
         </div>
         {open ? <ChevronUp className="h-5 w-5 text-gray-400" /> : <ChevronDown className="h-5 w-5 text-gray-400" />}
@@ -305,7 +305,7 @@ export function HealthDeptReport() {
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Health Department Report Generator</h1>
+            <h1 className="text-2xl font-bold text-[#1E2D4D]">Health Department Report Generator</h1>
             <p className="text-sm text-gray-600 mt-1">Generate inspection-ready compliance reports with county-specific formatting</p>
           </div>
         </div>
@@ -323,7 +323,7 @@ export function HealthDeptReport() {
               onClick={() => setActiveView(tab.id as any)}
               className={`flex items-center gap-2 px-5 py-3 min-h-[44px] font-medium text-sm whitespace-nowrap border-b-2 transition-colors ${
                 activeView === tab.id
-                  ? 'border-[#d4af37] text-[#1e4d6b]'
+                  ? 'border-[#d4af37] text-[#1E2D4D]'
                   : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
               }`}
             >
@@ -339,8 +339,8 @@ export function HealthDeptReport() {
             {/* Left: Config */}
             <div className="lg:col-span-2 space-y-6">
               {/* Location & Template */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 space-y-4">
-                <h3 className="font-semibold text-gray-900">Report Configuration</h3>
+              <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 space-y-4">
+                <h3 className="font-semibold text-[#1E2D4D]">Report Configuration</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
@@ -392,8 +392,8 @@ export function HealthDeptReport() {
               </div>
 
               {/* Section Toggles */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 space-y-4">
-                <h3 className="font-semibold text-gray-900">Report Sections</h3>
+              <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 space-y-4">
+                <h3 className="font-semibold text-[#1E2D4D]">Report Sections</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <SectionToggle label="Facility Information" enabled={sections.facilityInfo} onChange={() => toggleSection('facilityInfo')} />
                   <SectionToggle label="Food Safety Summary" enabled={sections.foodSafety} onChange={() => toggleSection('foodSafety')} locked={!isPaidTier} />
@@ -423,10 +423,10 @@ export function HealthDeptReport() {
 
               {/* Missing Document Alerts */}
               {missingDocs.length > 0 && (
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 space-y-4">
+                <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 space-y-4">
                   <div className="flex items-center gap-2">
                     <AlertTriangle className="h-5 w-5 text-[#d4af37]" />
-                    <h3 className="font-semibold text-gray-900">Missing Documentation Alerts</h3>
+                    <h3 className="font-semibold text-[#1E2D4D]">Missing Documentation Alerts</h3>
                     <CountBadge count={missingDocs.filter(d => d.severity === 'critical').length} color="red" />
                     <CountBadge count={missingDocs.filter(d => d.severity === 'warning').length} color="amber" />
                   </div>
@@ -461,7 +461,7 @@ export function HealthDeptReport() {
             {/* Right: Preview Card + Actions */}
             <div className="space-y-6">
               {/* Score Preview — per-pillar with correct frameworks */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 space-y-4">
+              <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 space-y-4">
                 <div style={{ fontSize: 13, fontWeight: 600, color: '#374151', textAlign: 'center' }}>Compliance Score</div>
                 {[
                   { label: 'Food Safety', framework: template.name, score: scores.foodSafety },
@@ -493,14 +493,14 @@ export function HealthDeptReport() {
               <button
                 onClick={handleGenerate}
                 disabled={generating}
-                className="w-full flex items-center justify-center gap-2 px-6 py-3 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors font-semibold disabled:opacity-60"
+                className="w-full flex items-center justify-center gap-2 px-6 py-3 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors font-semibold disabled:opacity-60"
               >
                 {generating ? <Loader2 className="h-5 w-5 animate-spin" /> : <FileText className="h-5 w-5" />}
                 {generating ? 'Generating...' : 'Generate Report'}
               </button>
 
               {/* Tier Toggle (for demo) */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+              <div className="bg-white rounded-xl border border-gray-200 p-4">
                 <label className="flex items-center gap-3 cursor-pointer">
                   <input
                     type="checkbox"
@@ -520,9 +520,9 @@ export function HealthDeptReport() {
               </div>
 
               {/* Auto Schedule Info */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 space-y-2">
+              <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-2">
                 <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-[#1e4d6b]" />
+                  <Clock className="h-4 w-4 text-[#1E2D4D]" />
                   <span style={{ fontSize: 14, fontWeight: 600, color: '#374151' }}>Auto-Scheduled Reports</span>
                 </div>
                 <div style={{ fontSize: 13, color: '#6b7280' }}>
@@ -531,15 +531,15 @@ export function HealthDeptReport() {
                 <div className="space-y-1">
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
                     <span style={{ color: '#374151' }}>Next Monthly Report</span>
-                    <span style={{ fontWeight: 600, color: '#1e4d6b' }}>Mar 1, 2026</span>
+                    <span style={{ fontWeight: 600, color: '#1E2D4D' }}>Mar 1, 2026</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
                     <span style={{ color: '#374151' }}>Next Quarterly Summary</span>
-                    <span style={{ fontWeight: 600, color: '#1e4d6b' }}>Apr 1, 2026</span>
+                    <span style={{ fontWeight: 600, color: '#1E2D4D' }}>Apr 1, 2026</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
                     <span style={{ color: '#374151' }}>Delivery Method</span>
-                    <span style={{ fontWeight: 600, color: '#1e4d6b' }}>Email (Resend)</span>
+                    <span style={{ fontWeight: 600, color: '#1E2D4D' }}>Email (Resend)</span>
                   </div>
                 </div>
               </div>
@@ -551,13 +551,13 @@ export function HealthDeptReport() {
         {activeView === 'preview' && (
           <>
             {!generatedReport ? (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-12 text-center">
+              <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-12 text-center">
                 <FileText className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">No Report Generated</h3>
+                <h3 className="text-lg font-semibold text-[#1E2D4D] mb-2">No Report Generated</h3>
                 <p className="text-gray-600 mb-4">Generate a report from the configuration tab first.</p>
                 <button
                   onClick={() => setActiveView('generate')}
-                  className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors text-sm font-medium"
+                  className="px-6 py-2 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors text-sm font-medium"
                 >
                   Go to Configuration
                 </button>
@@ -565,7 +565,7 @@ export function HealthDeptReport() {
             ) : (
               <div className="space-y-4">
                 {/* Action Bar */}
-                <div className="flex items-center justify-between flex-wrap gap-2 bg-white rounded-xl shadow-sm border border-gray-200 px-4 sm:px-6 py-3">
+                <div className="flex items-center justify-between flex-wrap gap-2 bg-white rounded-xl border border-gray-200 px-4 sm:px-6 py-3">
                   <div className="flex items-center gap-3">
                     <span style={{ fontSize: 14, color: '#6b7280' }}>
                       Generated {new Date(generatedReport.generatedAt).toLocaleString()} for{' '}
@@ -573,11 +573,11 @@ export function HealthDeptReport() {
                     </span>
                   </div>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <button onClick={handleDownloadPDF} disabled={pdfLoading} className="flex items-center gap-2 px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors text-sm font-medium disabled:opacity-60">
+                    <button onClick={handleDownloadPDF} disabled={pdfLoading} className="flex items-center gap-2 px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors text-sm font-medium disabled:opacity-60">
                       {pdfLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
                       {pdfLoading ? 'Generating PDF...' : 'Download PDF'}
                     </button>
-                    <button onClick={() => setShowShareModal(true)} className="flex items-center gap-2 px-4 py-2 min-h-[44px] bg-white text-[#1e4d6b] border border-[#1e4d6b] rounded-xl hover:bg-gray-50 transition-colors text-sm font-medium">
+                    <button onClick={() => setShowShareModal(true)} className="flex items-center gap-2 px-4 py-2 min-h-[44px] bg-white text-[#1E2D4D] border border-[#1E2D4D] rounded-xl hover:bg-gray-50 transition-colors text-sm font-medium">
                       <Share2 className="h-4 w-4" />
                       Share
                     </button>
@@ -591,7 +591,7 @@ export function HealthDeptReport() {
                 <div ref={reportRef}>
                 {/* Report Header */}
                 <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 text-center" style={{ borderTop: `4px solid ${template.getGradeColor(generatedReport.complianceScore.foodSafety)}` }}>
-                  <div style={{ fontSize: 20, fontWeight: 700, color: '#1e4d6b', marginBottom: 4 }}>Health Department Inspection Compliance Report</div>
+                  <div style={{ fontSize: 20, fontWeight: 700, color: '#1E2D4D', marginBottom: 4 }}>Health Department Inspection Compliance Report</div>
                   <div style={{ fontSize: 14, color: '#6b7280' }}>{template.name} — {template.gradingSystem}</div>
                   <div style={{ marginTop: 16, display: 'inline-flex', alignItems: 'center', gap: 16, padding: '12px 24px', borderRadius: 12, backgroundColor: '#f9fafb', border: '1px solid #e5e7eb' }}>
                     <div>
@@ -619,7 +619,7 @@ export function HealthDeptReport() {
 
                 {/* Section 1: Facility Info */}
                 {generatedReport.config.sections.facilityInfo && (
-                  <CollapsibleSection title="Facility Information" icon={<Building2 className="h-5 w-5 text-[#1e4d6b]" />} defaultOpen>
+                  <CollapsibleSection title="Facility Information" icon={<Building2 className="h-5 w-5 text-[#1E2D4D]" />} defaultOpen>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
                       {[
                         { label: 'Facility Name', value: generatedReport.facilityInfo.name },
@@ -691,7 +691,7 @@ export function HealthDeptReport() {
                 {generatedReport.config.sections.employeeCerts && (
                   <CollapsibleSection
                     title="Employee Certifications"
-                    icon={<Users className="h-5 w-5 text-[#1e4d6b]" />}
+                    icon={<Users className="h-5 w-5 text-[#1E2D4D]" />}
                     badge={<CountBadge count={generatedReport.employeeCerts.filter(c => c.status === 'expired').length} color="red" />}
                   >
                     <div className="overflow-x-auto mt-4">
@@ -736,7 +736,7 @@ export function HealthDeptReport() {
                 {generatedReport.config.sections.facilitySafety && (
                   <CollapsibleSection
                     title="Facility Safety & Equipment"
-                    icon={<Flame className="h-5 w-5 text-[#1e4d6b]" />}
+                    icon={<Flame className="h-5 w-5 text-[#1E2D4D]" />}
                     badge={<CountBadge count={generatedReport.facilitySafety.filter(f => f.status === 'overdue').length} color="red" />}
                   >
                     <div className="overflow-x-auto mt-4">
@@ -781,7 +781,7 @@ export function HealthDeptReport() {
                 {generatedReport.config.sections.vendorDocs && (
                   <CollapsibleSection
                     title="Vendor Documentation"
-                    icon={<Package className="h-5 w-5 text-[#1e4d6b]" />}
+                    icon={<Package className="h-5 w-5 text-[#1E2D4D]" />}
                     badge={<CountBadge count={generatedReport.vendorDocs.filter(v => v.status === 'expired' || v.status === 'missing').length} color="red" />}
                   >
                     <div className="overflow-x-auto mt-4">
@@ -828,14 +828,14 @@ export function HealthDeptReport() {
                 {generatedReport.config.sections.correctiveActions && (
                   <CollapsibleSection
                     title="Corrective Actions"
-                    icon={<AlertTriangle className="h-5 w-5 text-[#1e4d6b]" />}
+                    icon={<AlertTriangle className="h-5 w-5 text-[#1E2D4D]" />}
                     badge={<CountBadge count={generatedReport.correctiveActions.filter(a => a.status === 'open').length} color="red" />}
                   >
                     <div className="space-y-3 mt-4">
                       {generatedReport.correctiveActions.map((action) => (
                         <div key={action.id} style={{
                           padding: '12px 16px', borderRadius: 8, border: '1px solid #e5e7eb',
-                          borderLeft: `4px solid ${action.priority === 'critical' ? '#ef4444' : action.priority === 'high' ? '#f97316' : action.priority === 'medium' ? '#d4af37' : '#1e4d6b'}`,
+                          borderLeft: `4px solid ${action.priority === 'critical' ? '#ef4444' : action.priority === 'high' ? '#f97316' : action.priority === 'medium' ? '#d4af37' : '#1E2D4D'}`,
                         }}>
                           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4, flexWrap: 'wrap', gap: 4 }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
@@ -843,7 +843,7 @@ export function HealthDeptReport() {
                               <span style={{
                                 padding: '1px 8px', borderRadius: 10, fontSize: 11, fontWeight: 600, textTransform: 'uppercase',
                                 backgroundColor: action.priority === 'critical' ? '#fef2f2' : action.priority === 'high' ? '#fff7ed' : action.priority === 'medium' ? '#fffbeb' : '#eff6ff',
-                                color: action.priority === 'critical' ? '#ef4444' : action.priority === 'high' ? '#f97316' : action.priority === 'medium' ? '#d4af37' : '#1e4d6b',
+                                color: action.priority === 'critical' ? '#ef4444' : action.priority === 'high' ? '#f97316' : action.priority === 'medium' ? '#d4af37' : '#1E2D4D',
                               }}>
                                 {action.priority}
                               </span>
@@ -868,7 +868,7 @@ export function HealthDeptReport() {
 
                 {/* Section 7: Compliance Score & Trends */}
                 {generatedReport.config.sections.complianceScore && (
-                  <CollapsibleSection title="Compliance Score & Trend Analytics" icon={<TrendingUp className="h-5 w-5 text-[#1e4d6b]" />} defaultOpen>
+                  <CollapsibleSection title="Compliance Score & Trend Analytics" icon={<TrendingUp className="h-5 w-5 text-[#1E2D4D]" />} defaultOpen>
                     <div className="mt-4 space-y-6">
                       {/* Score Summary */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -935,12 +935,12 @@ export function HealthDeptReport() {
                 )}
 
                 {/* County-Specific Requirements */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
-                  <h3 className="font-semibold text-gray-900 mb-3">County-Specific Requirements — {template.name}</h3>
+                <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+                  <h3 className="font-semibold text-[#1E2D4D] mb-3">County-Specific Requirements — {template.name}</h3>
                   <ul className="space-y-2">
                     {template.specialRequirements.map((req, i) => (
                       <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 13, color: '#374151' }}>
-                        <StatusDot color="#1e4d6b" />
+                        <StatusDot color="#1E2D4D" />
                         <span style={{ paddingTop: 1 }}>{req}</span>
                       </li>
                     ))}
@@ -955,10 +955,10 @@ export function HealthDeptReport() {
         {/* ── Self-Audit Checklist Tab ────────────────── */}
         {activeView === 'self-audit' && (
           <div className="space-y-6">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
               <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
                 <div>
-                  <h3 className="font-semibold text-gray-900">Pre-Inspection Self-Inspection Checklist</h3>
+                  <h3 className="font-semibold text-[#1E2D4D]">Pre-Inspection Self-Inspection Checklist</h3>
                   <p className="text-sm text-gray-600 mt-1">Mock inspection based on county scoring — flags potential point deductions</p>
                 </div>
                 <select
@@ -1019,7 +1019,7 @@ export function HealthDeptReport() {
 
                 return Object.entries(grouped).map(([section, items]) => (
                   <div key={section} style={{ marginBottom: 24 }}>
-                    <h4 style={{ fontSize: 15, fontWeight: 600, color: '#1e4d6b', marginBottom: 8, paddingBottom: 4, borderBottom: '1px solid #e5e7eb' }}>
+                    <h4 style={{ fontSize: 15, fontWeight: 600, color: '#1E2D4D', marginBottom: 8, paddingBottom: 4, borderBottom: '1px solid #e5e7eb' }}>
                       {section}
                     </h4>
                     <div className="space-y-2">
@@ -1052,9 +1052,9 @@ export function HealthDeptReport() {
         {/* ── Report History Tab ──────────────────────── */}
         {activeView === 'history' && (
           <div className="space-y-6">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
               <div className="p-4 sm:p-6 pb-4">
-                <h3 className="font-semibold text-gray-900">Report History</h3>
+                <h3 className="font-semibold text-[#1E2D4D]">Report History</h3>
                 <p className="text-sm text-gray-600 mt-1">Previously generated reports and their status</p>
               </div>
               <div className="overflow-x-auto">
@@ -1084,7 +1084,7 @@ export function HealthDeptReport() {
                         <td className="px-6 py-4 text-center hidden sm:table-cell">
                           <span style={{
                             padding: '2px 8px', borderRadius: 10, fontSize: 12, fontWeight: 600,
-                            backgroundColor: '#eef4f8', color: '#1e4d6b',
+                            backgroundColor: '#eef4f8', color: '#1E2D4D',
                           }}>
                             {report.sections.length} sections
                           </span>
@@ -1093,14 +1093,14 @@ export function HealthDeptReport() {
                           <div className="flex items-center justify-center gap-2">
                             <button
                               onClick={() => toast.success(`Downloading report ${report.id}`)}
-                              className="text-[#1e4d6b] hover:text-[#163a52]"
+                              className="text-[#1E2D4D] hover:text-[#141E33]"
                               title="Download PDF"
                             >
                               <Download className="h-4 w-4" />
                             </button>
                             <button
                               onClick={() => toast.success(`Sharing report ${report.id}`)}
-                              className="text-[#1e4d6b] hover:text-[#163a52]"
+                              className="text-[#1E2D4D] hover:text-[#141E33]"
                               title="Share"
                             >
                               <Share2 className="h-4 w-4" />
@@ -1123,28 +1123,28 @@ export function HealthDeptReport() {
               <h3 style={{ fontSize: 18, fontWeight: 700, color: '#374151', marginBottom: 16 }}>Share Report</h3>
               <div className="space-y-3">
                 <button onClick={() => handleShare('link')} className="w-full flex items-center gap-3 p-3 min-h-[44px] rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors text-left">
-                  <Link2 className="h-5 w-5 text-[#1e4d6b]" />
+                  <Link2 className="h-5 w-5 text-[#1E2D4D]" />
                   <div>
                     <div style={{ fontSize: 14, fontWeight: 600, color: '#374151' }}>Create Shareable Link</div>
                     <div style={{ fontSize: 12, color: '#6b7280' }}>Link expires in 7 days</div>
                   </div>
                 </button>
                 <button onClick={() => handleShare('email-health-dept')} className="w-full flex items-center gap-3 p-3 min-h-[44px] rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors text-left">
-                  <Mail className="h-5 w-5 text-[#1e4d6b]" />
+                  <Mail className="h-5 w-5 text-[#1E2D4D]" />
                   <div>
                     <div style={{ fontSize: 14, fontWeight: 600, color: '#374151' }}>Email to Health Department</div>
                     <div style={{ fontSize: 12, color: '#6b7280' }}>Send directly to county health dept</div>
                   </div>
                 </button>
                 <button onClick={() => handleShare('email-insurance')} className="w-full flex items-center gap-3 p-3 min-h-[44px] rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors text-left">
-                  <Send className="h-5 w-5 text-[#1e4d6b]" />
+                  <Send className="h-5 w-5 text-[#1E2D4D]" />
                   <div>
                     <div style={{ fontSize: 14, fontWeight: 600, color: '#374151' }}>Share with Insurance Broker</div>
                     <div style={{ fontSize: 12, color: '#6b7280' }}>Send compliance proof to insurer</div>
                   </div>
                 </button>
                 <button onClick={() => handleShare('email-corporate')} className="w-full flex items-center gap-3 p-3 min-h-[44px] rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors text-left">
-                  <Building2 className="h-5 w-5 text-[#1e4d6b]" />
+                  <Building2 className="h-5 w-5 text-[#1E2D4D]" />
                   <div>
                     <div style={{ fontSize: 14, fontWeight: 600, color: '#374151' }}>Share with Corporate/Franchisor</div>
                     <div style={{ fontSize: 12, color: '#6b7280' }}>Send to franchise headquarters</div>

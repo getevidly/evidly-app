@@ -96,8 +96,8 @@ export function CalendarCard({ events, typeColors, typeLabels, navigate, tooltip
 
   return (
     <div
-      className="bg-white rounded-lg p-4"
-      style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.1)', fontFamily: 'Inter, sans-serif' }}
+      className="bg-white rounded-xl border border-gray-200 p-4"
+      style={{ fontFamily: 'Inter, sans-serif' }}
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
@@ -125,7 +125,7 @@ export function CalendarCard({ events, typeColors, typeLabels, navigate, tooltip
       {/* Weekday headers */}
       <div className="grid grid-cols-7 gap-0 mb-1">
         {(locale === 'es' ? WEEKDAY_LABELS_ES : WEEKDAY_LABELS_EN).map(d => (
-          <div key={d} className="text-center text-[10px] font-semibold text-gray-400 py-1">{d}</div>
+          <div key={d} className="text-center text-xs font-semibold text-gray-400 py-1">{d}</div>
         ))}
       </div>
 
@@ -149,10 +149,10 @@ export function CalendarCard({ events, typeColors, typeLabels, navigate, tooltip
             >
               <span
                 className={`text-xs font-medium leading-none ${
-                  isToday ? 'text-white' : isSelected ? 'text-[#1e4d6b]' : 'text-gray-700'
+                  isToday ? 'text-white' : isSelected ? 'text-[#1E2D4D]' : 'text-gray-700'
                 }`}
                 style={isToday ? {
-                  backgroundColor: '#1e4d6b',
+                  backgroundColor: '#1E2D4D',
                   borderRadius: '50%',
                   width: 20,
                   height: 20,
@@ -189,7 +189,7 @@ export function CalendarCard({ events, typeColors, typeLabels, navigate, tooltip
         {Object.keys(typeColors).map(type => (
           <div key={type} className="flex items-center gap-1">
             <span className="rounded-full" style={{ width: 6, height: 6, backgroundColor: typeColors[type] }} />
-            <span className="text-[10px] text-gray-500">{typeLabels[type] || type}</span>
+            <span className="text-xs text-gray-500">{typeLabels[type] || type}</span>
           </div>
         ))}
       </div>
@@ -197,7 +197,7 @@ export function CalendarCard({ events, typeColors, typeLabels, navigate, tooltip
       {/* Selected day events */}
       {selectedDay !== null && (
         <div className="mt-3 pt-3 border-t border-gray-100">
-          <p className="text-[11px] font-semibold text-gray-500 mb-2">
+          <p className="text-xs font-semibold text-gray-500 mb-2">
             {new Date(viewYear, viewMonth, selectedDay).toLocaleDateString(locale === 'es' ? 'es-ES' : 'en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
           </p>
           {selectedEvents.length === 0 ? (
@@ -213,11 +213,11 @@ export function CalendarCard({ events, typeColors, typeLabels, navigate, tooltip
                   style={{ borderLeft: `3px solid ${typeColors[evt.type] || '#6b7280'}` }}
                 >
                   <div className="flex-1 min-w-0">
-                    <p className="text-[13px] font-medium text-gray-800 truncate">{evt.title}</p>
-                    <p className="text-[11px] text-gray-500">{evt.location}</p>
+                    <p className="text-sm font-medium text-gray-800 truncate">{evt.title}</p>
+                    <p className="text-xs text-gray-500">{evt.location}</p>
                   </div>
                   <span
-                    className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0"
+                    className="text-xs font-bold px-1.5 py-0.5 rounded shrink-0"
                     style={{
                       backgroundColor: evt.priority === 'critical' ? '#fef2f2' : evt.priority === 'high' ? '#fef3c7' : '#f1f5f9',
                       color: evt.priority === 'critical' ? '#dc2626' : evt.priority === 'high' ? '#b45309' : '#6b7280',
@@ -237,7 +237,7 @@ export function CalendarCard({ events, typeColors, typeLabels, navigate, tooltip
         type="button"
         onClick={() => navigate('/calendar')}
         className="mt-3 w-full text-center text-xs font-medium py-2 rounded-lg hover:bg-gray-50 transition-colors"
-        style={{ color: '#1e4d6b' }}
+        style={{ color: '#1E2D4D' }}
       >
         {t('cards.viewFullCalendar')} &rarr;
       </button>

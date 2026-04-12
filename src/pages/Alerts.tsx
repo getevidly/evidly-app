@@ -11,6 +11,7 @@ import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 import { ErrorState, PageEmptyState } from '../components/shared/PageStates';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 interface Alert {
   id: string;
@@ -256,6 +257,7 @@ export function Alerts() {
   const { getAccessibleLocations } = useRole();
   const { isDemoMode } = useDemo();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  usePageTitle('Alerts');
   const alertAccessibleLocNames = getAccessibleLocations().map(l => l.locationName);
   const [pageError, setPageError] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'urgent' | 'upcoming' | 'resolved' | 'snoozed'>('all');
@@ -308,7 +310,7 @@ export function Alerts() {
       case 'medium':
         return <AlertTriangle className="h-5 w-5 text-yellow-500" />;
       default:
-        return <Info className="h-5 w-5 text-[#1e4d6b]" />;
+        return <Info className="h-5 w-5 text-[#1E2D4D]" />;
     }
   };
 
@@ -454,7 +456,7 @@ export function Alerts() {
     <>
       <Breadcrumb items={[{ label: t('nav.dashboard'), href: '/dashboard' }, { label: t('pages.alerts.title') }]} />
       <div className="space-y-6">
-        <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-xl p-4 sm:p-6 text-white">
+        <div className="bg-gradient-to-r from-[#1E2D4D] to-[#2c5f7f] rounded-xl p-4 sm:p-6 text-white">
           <div className="flex items-center space-x-3 mb-2">
             <Bell className="h-8 w-8 text-[#d4af37]" />
             <h2 className="text-xl sm:text-2xl font-bold">{t('pages.alerts.complianceAlerts')}</h2>
@@ -483,7 +485,7 @@ export function Alerts() {
           <button
             onClick={() => setFilter('all')}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              filter === 'all' ? 'bg-[#1e4d6b] text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+              filter === 'all' ? 'bg-[#1E2D4D] text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
             }`}
           >
             {t('pages.alerts.all')} ({activeCount})
@@ -499,7 +501,7 @@ export function Alerts() {
           <button
             onClick={() => setFilter('upcoming')}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              filter === 'upcoming' ? 'bg-[#1e4d6b] text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+              filter === 'upcoming' ? 'bg-[#1E2D4D] text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
             }`}
           >
             {t('pages.alerts.upcoming')}
@@ -565,7 +567,7 @@ export function Alerts() {
 
         <div className="space-y-4">
           {filteredAlerts.length === 0 ? (
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+            <div className="bg-white rounded-xl border border-gray-200">
               <PageEmptyState
                 icon={<CheckCircle2 className="h-12 w-12 text-green-500 mx-auto" />}
                 title={filter === 'resolved' ? t('pages.alerts.noResolvedAlerts') : t('pages.alerts.noMatchingAlerts')}
@@ -591,7 +593,7 @@ export function Alerts() {
                         <div className="flex-1">
                           <div className="flex items-center space-x-3 mb-1">
                             {getSeverityIcon(alertItem.severity)}
-                            <h3 className="text-lg font-semibold text-gray-900">{alertItem.title}</h3>
+                            <h3 className="text-lg font-semibold text-[#1E2D4D]">{alertItem.title}</h3>
                           </div>
                           <div className="flex items-center flex-wrap gap-x-4 gap-y-1 text-sm text-gray-500">
                             <span>{format(new Date(alertItem.created_at), 'MMM d, h:mm a')}</span>
@@ -645,7 +647,7 @@ export function Alerts() {
                   <div className="flex items-center space-x-2 pt-3 border-t flex-wrap gap-y-2">
                     <button
                       onClick={() => handleResolveClick(alertItem)}
-                      className="px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white text-sm rounded-lg hover:bg-[#163a52] transition-colors"
+                      className="px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white text-sm rounded-lg hover:bg-[#162340] transition-colors"
                     >
                       {t('pages.alerts.resolve')}
                     </button>
@@ -682,7 +684,7 @@ export function Alerts() {
                         <ChevronDown className="h-4 w-4" />
                       </button>
                       {openSnoozeDropdown === alertItem.id && (
-                        <div className="absolute left-0 bottom-full mb-2 bg-white shadow-sm rounded-xl border border-gray-200 py-2 z-20 min-w-[150px]">
+                        <div className="absolute left-0 bottom-full mb-2 bg-white rounded-xl border border-gray-200 py-2 z-20 min-w-[150px]">
                           <button
                             onClick={() => handleSnooze(alertItem.id, 7)}
                             className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
@@ -712,7 +714,7 @@ export function Alerts() {
                               />
                               <button
                                 onClick={() => handleCustomSnooze(alertItem.id)}
-                                className="w-full mt-2 px-2 py-1 bg-[#1e4d6b] text-white text-xs rounded hover:bg-[#163a52]"
+                                className="w-full mt-2 px-2 py-1 bg-[#1E2D4D] text-white text-xs rounded hover:bg-[#162340]"
                               >
                                 {t('pages.alerts.set')}
                               </button>
@@ -730,7 +732,7 @@ export function Alerts() {
                         <ChevronDown className="h-4 w-4" />
                       </button>
                       {openReassignDropdown === alertItem.id && (
-                        <div className="absolute left-0 bottom-full mb-2 bg-white shadow-sm rounded-xl border border-gray-200 py-2 z-20 min-w-[200px]">
+                        <div className="absolute left-0 bottom-full mb-2 bg-white rounded-xl border border-gray-200 py-2 z-20 min-w-[200px]">
                           {teamMembers.map((member) => (
                             <button
                               key={member.id}
@@ -815,7 +817,7 @@ export function Alerts() {
                   type="text"
                   value="Current User"
                   disabled
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-[#FAF7F0]"
                 />
               </div>
 
@@ -838,7 +840,7 @@ export function Alerts() {
                   type="text"
                   value={format(new Date(), 'MMM d, yyyy')}
                   disabled
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-[#FAF7F0]"
                 />
               </div>
             </div>
@@ -852,7 +854,7 @@ export function Alerts() {
               </button>
               <button
                 onClick={handleResolveSubmit}
-                className="flex-1 px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors"
+                className="flex-1 px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors"
               >
                 {t('pages.alerts.submitResolution')}
               </button>

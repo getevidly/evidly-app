@@ -112,13 +112,13 @@ export function TaskInstanceCard({ task, onStart, onComplete, onSkip }) {
           <div className="flex items-center gap-2 flex-wrap mb-1">
             <h3 className="text-sm font-semibold text-[var(--text-primary)] truncate">{task.title}</h3>
             <span
-              className="text-[10px] font-medium px-2 py-0.5 rounded-full"
+              className="text-xs font-medium px-2 py-0.5 rounded-full"
               style={{ backgroundColor: style.labelBg, color: style.labelColor }}
             >
               {style.label}
             </span>
             {task.status === 'escalated' && task.escalation_level > 0 && (
-              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-red-100 text-red-800">
+              <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-red-100 text-red-800">
                 Level {task.escalation_level}
               </span>
             )}

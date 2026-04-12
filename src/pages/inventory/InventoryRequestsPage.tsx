@@ -172,13 +172,13 @@ function RequestCard({ request }: { request: InventoryRequest }) {
         </div>
         <div className="flex items-center gap-2">
           <span
-            className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+            className="text-xs font-semibold px-2 py-0.5 rounded-full"
             style={{ background: priorityBadge.bg, color: priorityBadge.text }}
           >
             {priorityBadge.label}
           </span>
           <span
-            className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+            className="text-xs font-semibold px-2 py-0.5 rounded-full"
             style={{ background: statusBadge.bg, color: statusBadge.text }}
           >
             {statusBadge.label}

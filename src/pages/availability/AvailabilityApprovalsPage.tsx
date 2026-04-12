@@ -134,7 +134,7 @@ export function AvailabilityApprovalsPage() {
                     return (
                       <div
                         key={d}
-                        className="flex-1 text-center py-1.5 rounded text-[10px] font-medium"
+                        className="flex-1 text-center py-1.5 rounded text-xs font-medium"
                         style={{
                           background: isAvail ? '#dcfce7' : '#f3f4f6',
                           color: isAvail ? '#16a34a' : '#9ca3af',

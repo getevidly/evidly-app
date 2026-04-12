@@ -85,9 +85,9 @@ export function VendorContactActions({ vendorName, contactName, email, phone }: 
       {/* SMS Modal */}
       {showSmsModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl p-6 max-w-md w-full shadow-sm border border-gray-200 animate-slide-up">
+          <div className="bg-white rounded-xl p-6 max-w-md w-full border border-gray-200 animate-slide-up">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Send SMS to {contactName}</h3>
+              <h3 className="text-lg font-semibold text-[#1E2D4D]">Send SMS to {contactName}</h3>
               <button onClick={() => setShowSmsModal(false)} className="p-2.5 -m-1 hover:bg-gray-100 rounded-full">
                 <X className="w-5 h-5 text-gray-400" />
               </button>
@@ -96,7 +96,7 @@ export function VendorContactActions({ vendorName, contactName, email, phone }: 
             <textarea
               value={smsMessage}
               onChange={(e) => setSmsMessage(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent resize-none"
+              className="w-full p-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent resize-none"
               rows={4}
               maxLength={160}
             />
@@ -107,7 +107,7 @@ export function VendorContactActions({ vendorName, contactName, email, phone }: 
               <button onClick={() => setShowSmsModal(false)} className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg text-sm">
                 Cancel
               </button>
-              <button onClick={sendSms} className="flex items-center gap-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium">
+              <button onClick={sendSms} className="flex items-center gap-2 px-4 py-2.5 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors text-sm font-medium min-h-[44px]">
                 <Send className="w-4 h-4" />
                 Send SMS
               </button>
@@ -119,9 +119,9 @@ export function VendorContactActions({ vendorName, contactName, email, phone }: 
       {/* Email Modal */}
       {showEmailModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl p-6 max-w-lg w-full shadow-sm border border-gray-200 animate-slide-up">
+          <div className="bg-white rounded-xl p-6 max-w-lg w-full border border-gray-200 animate-slide-up">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Email {contactName}</h3>
+              <h3 className="text-lg font-semibold text-[#1E2D4D]">Email {contactName}</h3>
               <button onClick={() => setShowEmailModal(false)} className="p-2.5 -m-1 hover:bg-gray-100 rounded-full">
                 <X className="w-5 h-5 text-gray-400" />
               </button>
@@ -132,19 +132,19 @@ export function VendorContactActions({ vendorName, contactName, email, phone }: 
               value={emailSubject}
               onChange={(e) => setEmailSubject(e.target.value)}
               placeholder="Subject"
-              className="w-full p-3 border border-gray-300 rounded-lg text-sm mb-3 focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+              className="w-full p-3 border border-gray-300 rounded-lg text-sm mb-3 focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
             />
             <textarea
               value={emailBody}
               onChange={(e) => setEmailBody(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent resize-none"
+              className="w-full p-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent resize-none"
               rows={6}
             />
             <div className="flex gap-2 justify-end mt-4">
               <button onClick={() => setShowEmailModal(false)} className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg text-sm">
                 Cancel
               </button>
-              <button onClick={sendEmail} className="flex items-center gap-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium">
+              <button onClick={sendEmail} className="flex items-center gap-2 px-4 py-2.5 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors text-sm font-medium min-h-[44px]">
                 <Send className="w-4 h-4" />
                 Send Email
               </button>

@@ -200,9 +200,9 @@ export function AdminClientOnboarding() {
     <>
       <AdminBreadcrumb crumbs={[{ label: 'Client Onboarding' }]} />
       <div className="max-w-3xl mx-auto">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+        <div className="bg-white rounded-xl border border-gray-200 p-8">
           <div className="mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Create Client Organization</h2>
+            <h2 className="text-2xl font-bold text-[#1E2D4D] mb-2">Create Client Organization</h2>
             <p className="text-gray-600">
               Set up a new client organization with pre-populated data. The client will receive an email to claim their account.
             </p>
@@ -221,8 +221,8 @@ export function AdminClientOnboarding() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="bg-gray-50 rounded-lg p-6 space-y-4">
-              <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+            <div className="bg-[#FAF7F0] rounded-lg p-6 space-y-4">
+              <h3 className="font-semibold text-[#1E2D4D] flex items-center gap-2">
                 <Building2 className="w-5 h-5 text-[#d4af37]" />
                 Organization Details
               </h3>
@@ -364,8 +364,8 @@ export function AdminClientOnboarding() {
               </div>
             )}
 
-            <div className="bg-gray-50 rounded-lg p-6 space-y-4">
-              <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+            <div className="bg-[#FAF7F0] rounded-lg p-6 space-y-4">
+              <h3 className="font-semibold text-[#1E2D4D] flex items-center gap-2">
                 <Users className="w-5 h-5 text-[#d4af37]" />
                 Primary Contact / Owner
               </h3>
@@ -433,7 +433,7 @@ export function AdminClientOnboarding() {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 px-4 py-3 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="flex-1 px-4 py-3 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {loading ? (
                   'Creating...'

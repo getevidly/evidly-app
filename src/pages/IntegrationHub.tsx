@@ -15,7 +15,7 @@ import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { Breadcrumb } from '../components/Breadcrumb';
 
-const NAVY = '#1e4d6b';
+const NAVY = '#1E2D4D';
 const GOLD = '#d4af37';
 const MUTED_GOLD = '#A08C5A';
 
@@ -162,7 +162,7 @@ export function IntegrationHub() {
         <div
           className="rounded-xl p-6 mb-6"
           style={{
-            background: 'linear-gradient(135deg, #0B1628 0%, #1e4d6b 50%, #0B1628 100%)',
+            background: 'linear-gradient(135deg, #0B1628 0%, #1E2D4D 50%, #0B1628 100%)',
           }}
         >
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-5">
@@ -197,7 +197,7 @@ export function IntegrationHub() {
       {/* ── Header ── */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Integrations</h1>
+          <h1 className="text-2xl font-bold text-[#1E2D4D]">Integrations</h1>
           <p className="text-sm text-gray-600 mt-1">Connect EvidLY with the tools you already use</p>
         </div>
         <div className="flex gap-2">
@@ -225,7 +225,7 @@ export function IntegrationHub() {
       <div className="mb-8">
         <div className="flex items-center gap-2 mb-3">
           <Star className="h-4 w-4" style={{ color: GOLD }} />
-          <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wide">Featured Integrations</h2>
+          <h2 className="text-sm font-bold text-[#1E2D4D] uppercase tracking-wide">Featured Integrations</h2>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {featured.map(integration => {
@@ -236,19 +236,19 @@ export function IntegrationHub() {
                 className="bg-white rounded-xl border-2 border-gray-100 p-4 hover:border-[#d4af37] hover:shadow-md transition-all cursor-pointer group"
               >
                 <div className="flex items-start gap-3">
-                  <div className="text-2xl w-10 h-10 flex items-center justify-center rounded-lg bg-gray-50 group-hover:bg-amber-50 transition-colors">
+                  <div className="text-2xl w-10 h-10 flex items-center justify-center rounded-lg bg-[#FAF7F0] group-hover:bg-amber-50 transition-colors">
                     {LOGO_MAP[integration.slug] || '🔌'}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-gray-900 text-sm">{integration.name}</span>
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${s.bg} ${s.text}`}>{s.label}</span>
+                      <span className="font-semibold text-[#1E2D4D] text-sm">{integration.name}</span>
+                      <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${s.bg} ${s.text}`}>{s.label}</span>
                     </div>
                     <p className="text-xs text-gray-500 mt-1 line-clamp-2">{integration.description}</p>
                   </div>
                 </div>
                 <div className="mt-3 flex items-center justify-between">
-                  <span className="text-[10px] font-medium text-gray-400 uppercase">
+                  <span className="text-xs font-medium text-gray-400 uppercase">
                     {CATEGORIES.find(c => c.id === integration.category)?.label}
                   </span>
                   {integration.status === 'available' ? (
@@ -293,7 +293,7 @@ export function IntegrationHub() {
           >
             {cat.emoji && <span>{cat.emoji}</span>}
             {cat.label}
-            <span className="text-[10px] opacity-70">({categoryCounts[cat.id] || 0})</span>
+            <span className="text-xs opacity-70">({categoryCounts[cat.id] || 0})</span>
           </button>
         ))}
       </div>
@@ -308,13 +308,13 @@ export function IntegrationHub() {
               className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-shadow"
             >
               <div className="flex items-start gap-3">
-                <div className="text-2xl w-10 h-10 flex items-center justify-center rounded-lg bg-gray-50">
+                <div className="text-2xl w-10 h-10 flex items-center justify-center rounded-lg bg-[#FAF7F0]">
                   {LOGO_MAP[integration.slug] || '🔌'}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-semibold text-gray-900 text-sm">{integration.name}</span>
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${s.bg} ${s.text}`}>{s.label}</span>
+                    <span className="font-semibold text-[#1E2D4D] text-sm">{integration.name}</span>
+                    <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${s.bg} ${s.text}`}>{s.label}</span>
                     {integration.isFeatured && (
                       <Star className="h-3 w-3" style={{ color: GOLD }} fill={GOLD} />
                     )}
@@ -323,7 +323,7 @@ export function IntegrationHub() {
                 </div>
               </div>
               <div className="mt-3 flex items-center justify-between border-t border-gray-100 pt-3">
-                <span className="text-[10px] font-medium text-gray-400 uppercase">
+                <span className="text-xs font-medium text-gray-400 uppercase">
                   {CATEGORIES.find(c => c.id === integration.category)?.label}
                 </span>
                 {integration.status === 'available' ? (
@@ -365,8 +365,8 @@ export function IntegrationHub() {
       )}
 
       {/* ── CTA Section ── */}
-      <div className="bg-gray-50 rounded-xl border border-gray-200 p-6 text-center">
-        <h3 className="text-lg font-bold text-gray-900 mb-2">Don't see what you need?</h3>
+      <div className="bg-[#FAF7F0] rounded-xl border border-gray-200 p-6 text-center">
+        <h3 className="text-lg font-bold text-[#1E2D4D] mb-2">Don't see what you need?</h3>
         <p className="text-sm text-gray-600 mb-4">
           We're building new integrations every month. Let us know what tools you use and we'll prioritize accordingly.
         </p>
@@ -383,7 +383,7 @@ export function IntegrationHub() {
       {showRequestForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-auto max-w-md sm:w-full">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Request an Integration</h3>
+            <h3 className="text-xl font-bold text-[#1E2D4D] mb-4">Request an Integration</h3>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">

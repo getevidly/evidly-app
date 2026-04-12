@@ -38,8 +38,8 @@ export function OnboardingProgressWidget({
   return (
     <div className="rounded-xl border border-[#b8d4e8] bg-white p-5">
       <div className="flex items-center gap-2 mb-3">
-        <FileText className="h-5 w-5 text-[#1e4d6b]" />
-        <h3 className="font-semibold text-[#1e4d6b]">Onboarding Progress</h3>
+        <FileText className="h-5 w-5 text-[#1E2D4D]" />
+        <h3 className="font-semibold text-[#1E2D4D]">Onboarding Progress</h3>
       </div>
 
       <div className="flex items-center gap-3 mb-2">
@@ -65,9 +65,9 @@ export function OnboardingProgressWidget({
       <button
         onClick={() => navigate("/document-checklist")}
         className="text-sm font-medium text-white px-4 py-2 rounded-lg transition-colors"
-        style={{ backgroundColor: "#1e4d6b" }}
-        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#2a6a8f")}
-        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#1e4d6b")}
+        style={{ backgroundColor: "#1E2D4D" }}
+        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#2A3F6B")}
+        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#1E2D4D")}
       >
         Continue Setup &rarr;
       </button>

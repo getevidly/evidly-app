@@ -208,7 +208,7 @@ export function Login() {
             {TRUST_ITEMS.map((item) => (
               <div key={item.value} className="text-center">
                 <p className="text-base font-bold text-[#1E2D4D]">{item.value}</p>
-                <p className="text-[10px] text-gray-500 font-medium mt-0.5">{item.label}</p>
+                <p className="text-xs text-gray-500 font-medium mt-0.5">{item.label}</p>
               </div>
             ))}
           </div>
@@ -218,7 +218,7 @@ export function Login() {
             <p className="text-center lg:text-left text-sm font-semibold mb-1" style={{ color: '#A08C5A' }}>
               {branding.tagline}
             </p>
-            <h2 className="text-center lg:text-left text-2xl font-bold text-gray-900">
+            <h2 className="text-center lg:text-left text-2xl font-bold text-[#1E2D4D]">
               Sign in to your account
             </h2>
           </div>
@@ -293,7 +293,7 @@ export function Login() {
                 </label>
               </div>
 
-              <Link to="/forgot-password" className="text-sm font-medium text-[#1e4d6b] hover:text-[#2a6a8f]">
+              <Link to="/forgot-password" className="text-sm font-medium text-[#1E2D4D] hover:text-[#2A3F6B]">
                 Forgot password?
               </Link>
             </div>
@@ -344,7 +344,7 @@ export function Login() {
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               Don't have an account?{' '}
-              <Link to="/signup" className="font-semibold text-[#1e4d6b] hover:text-[#2a6a8f]">
+              <Link to="/signup" className="font-semibold text-[#1E2D4D] hover:text-[#2A3F6B]">
                 Sign up
               </Link>
             </p>

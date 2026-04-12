@@ -161,7 +161,7 @@ export default function AssociationDemoDashboard() {
               {members.map((member, i) => {
                 const score = 55 + Math.floor((i * 37 + 13) % 40);
                 return (
-                  <div key={member.id || i} className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
+                  <div key={member.id || i} className="flex items-center gap-4 p-3 bg-[#FAF7F0] rounded-lg">
                     <div className="flex-1">
                       <p className="text-sm font-medium text-[#1E2D4D]">{member.name}</p>
                       <p className="text-xs text-gray-500">{member.county} County</p>
@@ -194,7 +194,7 @@ export default function AssociationDemoDashboard() {
                 'Member Onboarding Playbook',
                 'K2C Impact Report Template',
               ].map(item => (
-                <div key={item} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-[#A08C5A]/10">
+                <div key={item} className="flex items-center gap-2 p-3 bg-white rounded-xl border border-[#A08C5A]/10">
                   <Building2 size={16} className="text-[#A08C5A]" />
                   <span className="text-sm text-[#1E2D4D]">{item}</span>
                   <ArrowRight size={14} className="ml-auto text-gray-400" />

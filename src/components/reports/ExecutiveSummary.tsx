@@ -11,14 +11,14 @@ import { createReportPdf, drawReportHeader, drawSectionHeading, drawTable, drawS
 import { CARD_BG, CARD_BORDER, CARD_SHADOW, BODY_TEXT, MUTED, TEXT_TERTIARY } from '../dashboard/shared/constants';
 import type { ReportTypeConfig } from '../../config/reportConfig';
 
-const NAVY = '#1e4d6b';
+const NAVY = '#1E2D4D';
 
 function StatusBadge({ status }: { status: string }) {
   const isGood = status === 'Excellent' || status === 'Good';
   const isWarn = status === 'Needs Attention';
   return (
     <span
-      className="inline-block px-2 py-0.5 rounded text-[11px] font-semibold"
+      className="inline-block px-2 py-0.5 rounded text-xs font-semibold"
       style={{
         backgroundColor: isGood ? '#f0fdf4' : isWarn ? '#fffbeb' : '#fef2f2',
         color: isGood ? '#166534' : isWarn ? '#92400e' : '#991b1b',
@@ -129,7 +129,7 @@ export default function ExecutiveSummary({ config }: { config: ReportTypeConfig 
             {data.topIssues.map((item, i) => (
               <li key={i} className="flex items-start gap-2 text-sm">
                 <span
-                  className="shrink-0 mt-0.5 px-1.5 py-0.5 rounded text-[10px] font-bold"
+                  className="shrink-0 mt-0.5 px-1.5 py-0.5 rounded text-xs font-bold"
                   style={{
                     backgroundColor: item.priority === 'HIGH' ? '#fef2f2' : item.priority === 'MEDIUM' ? '#fffbeb' : '#eff6ff',
                     color: item.priority === 'HIGH' ? '#ef4444' : item.priority === 'MEDIUM' ? '#d4af37' : NAVY,

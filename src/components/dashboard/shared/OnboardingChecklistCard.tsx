@@ -236,7 +236,7 @@ export function OnboardingChecklistCard() {
                   <button
                     type="button"
                     onClick={() => navigate(step.route)}
-                    className="flex items-center gap-1 px-2 py-1 rounded text-[11px] font-medium transition-colors hover:bg-gray-100"
+                    className="flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-colors hover:bg-gray-100"
                     style={{ color: '#6B7F96' }}
                   >
                     <Pencil size={10} />
@@ -378,7 +378,7 @@ export function OnboardingChecklistCard() {
                     <Lock size={9} color="#9CA3AF" />
                   ) : (
                     <span
-                      className="text-[10px] font-bold"
+                      className="text-xs font-bold"
                       style={{ color: isCurrent ? '#FFFFFF' : '#9CA3AF' }}
                     >
                       {i + 1}
@@ -423,14 +423,14 @@ export function OnboardingChecklistCard() {
                 <h4 className="text-sm font-semibold" style={{ color: MIDNIGHT_NAVY }}>
                   {currentStep.label}
                   {currentStep.completed && (
-                    <span className="ml-2 text-[11px] font-normal" style={{ color: GREEN }}>Done</span>
+                    <span className="ml-2 text-xs font-normal" style={{ color: GREEN }}>Done</span>
                   )}
                 </h4>
                 <p className="text-xs mt-1" style={{ color: '#3D5068' }}>
                   {currentStep.description}
                 </p>
                 {!currentStep.completed && (
-                  <p className="text-[11px] mt-1.5 italic" style={{ color: '#6B7F96' }}>
+                  <p className="text-xs mt-1.5 italic" style={{ color: '#6B7F96' }}>
                     {currentStep.hint}
                   </p>
                 )}
@@ -567,7 +567,7 @@ export function OnboardingChecklistCard() {
                 >
                   {step.label}
                   {isSkipped && (
-                    <span className="ml-1.5 text-[10px] font-normal" style={{ color: SKIPPED_COLOR }}>
+                    <span className="ml-1.5 text-xs font-normal" style={{ color: SKIPPED_COLOR }}>
                       (skipped)
                     </span>
                   )}
@@ -579,7 +579,7 @@ export function OnboardingChecklistCard() {
                     <button
                       type="button"
                       onClick={() => navigate(step.route)}
-                      className="flex items-center gap-1 px-2 py-1 rounded text-[11px] font-medium transition-colors hover:bg-gray-100 shrink-0"
+                      className="flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-colors hover:bg-gray-100 shrink-0"
                       style={{ color: '#6B7F96' }}
                     >
                       <Pencil size={10} />
@@ -590,7 +590,7 @@ export function OnboardingChecklistCard() {
                   <button
                     type="button"
                     onClick={() => { unskipStep(step.id); goToStep(i); }}
-                    className="px-2 py-1 rounded text-[11px] font-semibold transition-colors hover:bg-amber-50 shrink-0"
+                    className="px-2 py-1 rounded text-xs font-semibold transition-colors hover:bg-amber-50 shrink-0"
                     style={{ color: ACCENT_GOLD }}
                   >
                     Start

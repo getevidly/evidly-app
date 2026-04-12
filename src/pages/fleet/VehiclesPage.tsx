@@ -124,7 +124,7 @@ export function VehiclesPage() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search vehicles..."
-            className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/30"
+            className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/30"
             style={{ background: CARD_BG, borderColor: CARD_BORDER, color: NAVY }}
           />
         </div>

@@ -95,7 +95,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl p-4 sm:p-5 max-w-md w-full">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">My Profile</h2>
+          <h2 className="text-2xl font-bold text-[#1E2D4D]">My Profile</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600" aria-label="Close">
             <X className="h-6 w-6" />
           </button>
@@ -146,7 +146,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
           </div>
 
           <div className="border-t border-gray-200 pt-4">
-            <h3 className="text-sm font-semibold text-gray-900 mb-1 flex items-center gap-2">
+            <h3 className="text-sm font-semibold text-[#1E2D4D] mb-1 flex items-center gap-2">
               <Lock className="h-4 w-4" />
               Kiosk PIN (Optional)
             </h3>
@@ -225,7 +225,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
             <button
               type="submit"
               disabled={saveDisabled}
-              className="flex-1 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] disabled:opacity-50"
+              className="flex-1 px-4 py-2 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] disabled:opacity-50"
             >
               {loading ? 'Saving...' : 'Save Changes'}
             </button>

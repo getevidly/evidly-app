@@ -71,7 +71,7 @@ export function JobFormModal({ job, onClose, onSave }: JobFormModalProps) {
     });
   }
 
-  const inputClass = 'w-full px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-200';
+  const inputClass = 'w-full px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
@@ -242,7 +242,7 @@ export function JobFormModal({ job, onClose, onSave }: JobFormModalProps) {
             <button
               type="submit"
               className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold rounded-lg text-white transition-colors"
-              style={{ background: '#1e4d6b' }}
+              style={{ background: '#1E2D4D' }}
             >
               <Save className="w-3.5 h-3.5" />
               {isEdit ? 'Update Job' : 'Create Job'}

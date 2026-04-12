@@ -113,7 +113,7 @@ export function QuickActionsBar() {
               <span className="text-lg leading-none">{action.emoji}</span>
               <span
                 className="text-[9px] font-bold leading-tight"
-                style={{ color: isActive ? '#1e4d6b' : '#6b7280' }}
+                style={{ color: isActive ? '#1E2D4D' : '#6b7280' }}
               >
                 {action.label}
               </span>
@@ -146,14 +146,14 @@ export function QuickActionsBar() {
                   }
                 }}
                 className={`flex flex-col items-center justify-center gap-0.5 transition-colors ${
-                  isActive ? '' : 'active:bg-gray-50'
+                  isActive ? '' : 'active:bg-[#FAF7F0]'
                 }`}
                 style={isActive ? { backgroundColor: 'rgba(30,77,107,0.1)' } : undefined}
               >
                 <span className="text-base leading-none">{action.emoji}</span>
                 <span
                   className="text-[9px] font-bold"
-                  style={{ color: isActive ? '#1e4d6b' : '#6b7280' }}
+                  style={{ color: isActive ? '#1E2D4D' : '#6b7280' }}
                 >
                   {action.label}
                 </span>

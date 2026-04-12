@@ -202,10 +202,10 @@ export function DemoWizard() {
       <div className="max-w-2xl w-full">
         <div className="text-center mb-6">
           <span className="text-3xl font-bold">
-            <span className="text-[#1e4d6b]">Evid</span>
+            <span className="text-[#1E2D4D]">Evid</span>
             <span className="text-[#d4af37]">LY</span>
           </span>
-          <p className="text-[#1e4d6b] font-semibold mt-1">Interactive Demo</p>
+          <p className="text-[#1E2D4D] font-semibold mt-1">Interactive Demo</p>
         </div>
 
         <div className="flex items-center justify-center gap-1 mb-8">
@@ -213,7 +213,7 @@ export function DemoWizard() {
             <div key={i} className="flex items-center">
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
                 i < step ? 'bg-[#d4af37] text-white' :
-                i === step ? 'bg-[#1e4d6b] text-white' :
+                i === step ? 'bg-[#1E2D4D] text-white' :
                 'bg-gray-200 text-gray-400'
               }`}>
                 {i < step ? '✓' : i + 1}
@@ -225,10 +225,10 @@ export function DemoWizard() {
           ))}
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+        <div className="bg-white rounded-xl border border-gray-200 p-8">
           {step === 0 && (
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Let's personalize your demo</h2>
+              <h2 className="text-2xl font-bold text-[#1E2D4D] mb-2">Let's personalize your demo</h2>
               <p className="text-gray-500 mb-6">We'll set up a demo environment tailored to your business.</p>
               <div className="space-y-4">
                 <div>
@@ -258,7 +258,7 @@ export function DemoWizard() {
 
           {step === 1 && (
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Tell us about your business</h2>
+              <h2 className="text-2xl font-bold text-[#1E2D4D] mb-2">Tell us about your business</h2>
               <p className="text-gray-500 mb-6">This helps us show you the right compliance tools.</p>
               <div className="space-y-4">
                 <div>
@@ -287,7 +287,7 @@ export function DemoWizard() {
                 )}
                 {lead.industry && (
                   <div className="bg-blue-50 rounded-lg p-4 mt-4">
-                    <p className="text-sm font-medium text-[#1e4d6b] mb-2">Your compliance pillars:</p>
+                    <p className="text-sm font-medium text-[#1E2D4D] mb-2">Your compliance pillars:</p>
                     <div className="flex gap-4 text-sm">
                       <span><strong>Food Safety</strong></span>
                       <span><strong>Facility Safety</strong></span>
@@ -300,17 +300,17 @@ export function DemoWizard() {
 
           {step === 2 && (
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Set up your location</h2>
+              <h2 className="text-2xl font-bold text-[#1E2D4D] mb-2">Set up your location</h2>
               <p className="text-gray-500 mb-6">How many locations do you operate?</p>
               <div className="space-y-4">
                 <div className="flex gap-4">
                   <button onClick={() => setLead({ ...lead, locationType: 'single', locationCount: 1 })} className={`flex-1 p-6 rounded-xl border-2 text-center transition-all ${lead.locationType === 'single' ? 'border-[#d4af37] bg-[#d4af37]/5' : 'border-gray-200'}`}>
-                    <MapPin className="h-8 w-8 mx-auto mb-2 text-[#1e4d6b]" />
+                    <MapPin className="h-8 w-8 mx-auto mb-2 text-[#1E2D4D]" />
                     <div className="font-semibold">Single Location</div>
                     <div className="text-sm text-gray-500 mt-1">1 kitchen</div>
                   </button>
                   <button onClick={() => setLead({ ...lead, locationType: 'multi', locationCount: 3 })} className={`flex-1 p-6 rounded-xl border-2 text-center transition-all ${lead.locationType === 'multi' ? 'border-[#d4af37] bg-[#d4af37]/5' : 'border-gray-200'}`}>
-                    <Building2 className="h-8 w-8 mx-auto mb-2 text-[#1e4d6b]" />
+                    <Building2 className="h-8 w-8 mx-auto mb-2 text-[#1E2D4D]" />
                     <div className="font-semibold">Multi-Location</div>
                     <div className="text-sm text-gray-500 mt-1">2+ kitchens</div>
                   </button>
@@ -336,7 +336,7 @@ export function DemoWizard() {
 
           {step === 3 && (
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">When is your kitchen open?</h2>
+              <h2 className="text-2xl font-bold text-[#1E2D4D] mb-2">When is your kitchen open?</h2>
               <p className="text-gray-500 mb-6">Set your operating days and hours. We'll use this for scheduling and compliance tracking.</p>
               <div className="space-y-5">
                 {/* Day checkboxes */}
@@ -389,7 +389,7 @@ export function DemoWizard() {
 
                 {/* Summary line */}
                 <div className="bg-blue-50 rounded-lg p-3">
-                  <p className="text-sm text-[#1e4d6b]">
+                  <p className="text-sm text-[#1E2D4D]">
                     <strong>{lead.locationName || 'Your kitchen'}</strong> will be open {wizardDays.filter(Boolean).length} days/week, {formatTime24to12(wizardOpenTime)} – {formatTime24to12(wizardCloseTime)}
                   </p>
                 </div>
@@ -448,7 +448,7 @@ export function DemoWizard() {
 
           {step === 4 && (
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Log your first temperatures</h2>
+              <h2 className="text-2xl font-bold text-[#1E2D4D] mb-2">Log your first temperatures</h2>
               <p className="text-gray-500 mb-2">This is what your kitchen staff will do daily. Tap an equipment item and enter a reading.</p>
               <p className="text-sm text-[#d4af37] font-medium mb-6">Log at least 2 readings to continue</p>
               <div className="space-y-3">
@@ -471,18 +471,18 @@ export function DemoWizard() {
                 ))}
               </div>
               <div className="mt-4 bg-blue-50 rounded-lg p-4">
-                <p className="text-sm text-[#1e4d6b]"><strong>In the real app:</strong> Staff log temps from their phone. Out-of-range readings trigger instant alerts to managers. All readings are timestamped and stored for health inspections.</p>
+                <p className="text-sm text-[#1E2D4D]"><strong>In the real app:</strong> Staff log temps from their phone. Out-of-range readings trigger instant alerts to managers. All readings are timestamped and stored for health inspections.</p>
               </div>
             </div>
           )}
 
           {step === 5 && (
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Complete a checklist</h2>
+              <h2 className="text-2xl font-bold text-[#1E2D4D] mb-2">Complete a checklist</h2>
               <p className="text-gray-500 mb-2">Opening checklists ensure nothing gets missed. Check off items like your team would.</p>
               <p className="text-sm text-[#d4af37] font-medium mb-6">Complete at least 3 items to continue</p>
               <div className="rounded-xl border border-gray-200 overflow-hidden">
-                <div className="bg-[#1e4d6b] text-white px-4 py-3 flex justify-between items-center">
+                <div className="bg-[#1E2D4D] text-white px-4 py-3 flex justify-between items-center">
                   <span className="font-semibold">Opening Checklist - {lead.locationName || 'Your Location'}</span>
                   <span className="text-sm opacity-80">{checkedItems.size}/{CHECKLIST_ITEMS.length}</span>
                 </div>
@@ -499,7 +499,7 @@ export function DemoWizard() {
                 ))}
               </div>
               <div className="mt-4 bg-blue-50 rounded-lg p-4">
-                <p className="text-sm text-[#1e4d6b]"><strong>In the real app:</strong> Checklists are customizable per location, role, and shift. Managers see real-time completion rates and get alerts for missed items.</p>
+                <p className="text-sm text-[#1E2D4D]"><strong>In the real app:</strong> Checklists are customizable per location, role, and shift. Managers see real-time completion rates and get alerts for missed items.</p>
               </div>
             </div>
           )}
@@ -509,12 +509,12 @@ export function DemoWizard() {
               <div className="w-20 h-20 bg-gradient-to-br from-[#d4af37] to-[#b8941e] rounded-full flex items-center justify-center mx-auto mb-6">
                 <Sparkles className="h-10 w-10 text-white" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-3">Your demo is ready, {lead.name.split(' ')[0]}!</h2>
+              <h2 className="text-2xl font-bold text-[#1E2D4D] mb-3">Your demo is ready, {lead.name.split(' ')[0]}!</h2>
               <p className="text-gray-500 mb-8 max-w-md mx-auto">
                 We've built a personalized dashboard for <strong>{lead.orgName}</strong> with {lead.locationType === 'multi' ? `${lead.locationCount} locations` : `your ${lead.locationName} location`} and {selectedIndustry?.label || 'Restaurant'} compliance requirements.
               </p>
-              <div className="bg-gray-50 rounded-xl p-6 mb-8 text-left max-w-md mx-auto">
-                <h3 className="font-semibold mb-3 text-[#1e4d6b]">What you'll see:</h3>
+              <div className="bg-[#FAF7F0] rounded-xl p-6 mb-8 text-left max-w-md mx-auto">
+                <h3 className="font-semibold mb-3 text-[#1E2D4D]">What you'll see:</h3>
                 <div className="space-y-3 text-sm">
                   <div className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
@@ -534,7 +534,7 @@ export function DemoWizard() {
                   </div>
                 </div>
               </div>
-              <button onClick={handleFinish} className="inline-flex items-center gap-2 px-8 py-4 bg-[#1e4d6b] text-white font-bold rounded-xl hover:bg-[#2a6a8f] transition-all hover:-translate-y-0.5 hover:shadow-md text-lg">
+              <button onClick={handleFinish} className="inline-flex items-center gap-2 px-8 py-4 bg-[#1E2D4D] text-white font-bold rounded-xl hover:bg-[#162340] transition-all hover:-translate-y-0.5 hover:shadow-md text-lg min-h-[44px]">
                 Launch My Dashboard
                 <ArrowRight className="h-5 w-5" />
               </button>
@@ -558,7 +558,7 @@ export function DemoWizard() {
               </button>
               <div className="flex items-center gap-3">
                 <span className="text-sm text-gray-400">Step {step + 1} of 7</span>
-                <button onClick={() => { if (step === 0) saveLead(); setStep(step + 1); }} disabled={!canProceed()} className="flex items-center gap-2 px-6 py-3 bg-[#1e4d6b] text-white font-semibold rounded-xl hover:bg-[#2a6a8f] transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+                <button onClick={() => { if (step === 0) saveLead(); setStep(step + 1); }} disabled={!canProceed()} className="flex items-center gap-2 px-6 py-3 bg-[#1E2D4D] text-white font-semibold rounded-xl hover:bg-[#162340] transition-all disabled:opacity-40 disabled:cursor-not-allowed">
                   Continue
                   <ChevronRight className="h-5 w-5" />
                 </button>
@@ -569,7 +569,7 @@ export function DemoWizard() {
 
         <p className="text-center text-sm text-gray-400 mt-4">
           Already have an account?{' '}
-          <button onClick={() => navigate('/login')} className="text-[#1e4d6b] font-medium hover:underline">Sign in</button>
+          <button onClick={() => navigate('/login')} className="text-[#1E2D4D] font-medium hover:underline">Sign in</button>
         </p>
 
         {/* Staff login — subtle link for sales team */}
@@ -583,10 +583,10 @@ export function DemoWizard() {
             </button>
           </p>
         ) : (
-          <div className="mt-6 bg-white rounded-xl shadow-sm border border-gray-200 p-5 max-w-sm mx-auto">
+          <div className="mt-6 bg-white rounded-xl border border-gray-200 p-6 max-w-sm mx-auto">
             <div className="flex items-center gap-2 mb-4">
-              <LogIn className="h-4 w-4 text-[#1e4d6b]" />
-              <span className="text-sm font-semibold text-[#1e4d6b]">Staff Login</span>
+              <LogIn className="h-4 w-4 text-[#1E2D4D]" />
+              <span className="text-sm font-semibold text-[#1E2D4D]">Staff Login</span>
             </div>
             <div className="space-y-3">
               <input
@@ -595,7 +595,7 @@ export function DemoWizard() {
                 value={staffUser}
                 onChange={e => { setStaffUser(e.target.value); setStaffError(''); }}
                 onKeyDown={e => e.key === 'Enter' && handleStaffLogin()}
-                className="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                className="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
               />
               <input
                 type="password"
@@ -603,13 +603,13 @@ export function DemoWizard() {
                 value={staffPass}
                 onChange={e => { setStaffPass(e.target.value); setStaffError(''); }}
                 onKeyDown={e => e.key === 'Enter' && handleStaffLogin()}
-                className="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                className="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
               />
               {staffError && <p className="text-xs text-red-500">{staffError}</p>}
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleStaffLogin}
-                  className="flex-1 px-4 py-2 text-sm font-medium bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] transition-colors"
+                  className="flex-1 px-4 py-2 text-sm font-medium bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors"
                 >
                   Login
                 </button>

@@ -19,7 +19,7 @@ const gradeIcon = (grade: string) => {
 const gradeColor = (g: string) => g === 'Ready' ? '#166534' : g === 'Mostly Ready' ? '#92400e' : '#991b1b';
 const gradeBg = (g: string) => g === 'Ready' ? '#f0fdf4' : g === 'Mostly Ready' ? '#fffbeb' : '#fef2f2';
 
-function ProgressBar({ value, color = '#1e4d6b' }: { value: number; color?: string }) {
+function ProgressBar({ value, color = '#1E2D4D' }: { value: number; color?: string }) {
   return (
     <div className="flex items-center gap-2">
       <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ backgroundColor: '#e5e7eb' }}>
@@ -64,11 +64,11 @@ export default function InspectionReadiness({ config }: { config: ReportTypeConf
         <div className="ml-auto flex gap-6">
           <div className="text-center">
             <p className="text-lg font-bold" style={{ color: BODY_TEXT }}>{data.checklistAvg}%</p>
-            <p className="text-[11px]" style={{ color: MUTED }}>Checklist Completion</p>
+            <p className="text-xs" style={{ color: MUTED }}>Checklist Completion</p>
           </div>
           <div className="text-center">
             <p className="text-lg font-bold" style={{ color: BODY_TEXT }}>{data.tempAvg}%</p>
-            <p className="text-[11px]" style={{ color: MUTED }}>Temperature Reading Compliance</p>
+            <p className="text-xs" style={{ color: MUTED }}>Temperature Reading Compliance</p>
           </div>
         </div>
       </div>
@@ -99,7 +99,7 @@ export default function InspectionReadiness({ config }: { config: ReportTypeConf
               <XAxis dataKey="week" tick={{ fontSize: 11, fill: '#6B7F96' }} />
               <YAxis domain={[60, 100]} tick={{ fontSize: 11, fill: '#6B7F96' }} />
               <Tooltip />
-              <Line type="monotone" dataKey="compliance" name="Compliance %" stroke="#1e4d6b" strokeWidth={2} dot={false} />
+              <Line type="monotone" dataKey="compliance" name="Compliance %" stroke="#1E2D4D" strokeWidth={2} dot={false} />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -123,7 +123,7 @@ export default function InspectionReadiness({ config }: { config: ReportTypeConf
                   <td className="py-2 px-3" style={{ color: BODY_TEXT }}>{s.name}</td>
                   <td className="py-2 px-3 text-xs" style={{ color: MUTED }}>{s.location}</td>
                   <td className="py-2 px-3">
-                    <span className="px-2 py-0.5 rounded text-[11px] font-semibold" style={{
+                    <span className="px-2 py-0.5 rounded text-xs font-semibold" style={{
                       backgroundColor: s.status === 'Current' ? '#f0fdf4' : s.status === 'Coming Due' ? '#fffbeb' : '#fef2f2',
                       color: s.status === 'Current' ? '#166534' : s.status === 'Coming Due' ? '#92400e' : '#991b1b',
                     }}>{s.status}</span>

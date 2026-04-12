@@ -154,7 +154,7 @@ export default function JurisdictionIntelligence() {
             const pc = PILLAR_BADGE[item.pillar] || PILLAR_BADGE.both;
             const meta = jurisdictionMeta[item.jurisdiction_name] || jurisdictionMeta[item.jurisdiction_key];
             return (
-              <div key={item.id} className="bg-white rounded-lg border border-gray-200 p-5">
+              <div key={item.id} className="bg-white rounded-xl border border-gray-200 p-6">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex gap-2 mb-2 flex-wrap">
@@ -194,7 +194,7 @@ export default function JurisdictionIntelligence() {
                   {!item.published && (
                     <button
                       onClick={() => publishItem(item.id)}
-                      className="flex-shrink-0 px-4 py-2 bg-[#1E2D4D] text-white rounded-lg text-xs font-medium hover:bg-[#2a3f6b]"
+                      className="flex-shrink-0 px-4 py-2 bg-[#1E2D4D] text-white rounded-lg text-xs font-medium hover:bg-[#162340]"
                     >
                       Publish
                     </button>

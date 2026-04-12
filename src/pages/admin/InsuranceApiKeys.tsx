@@ -12,8 +12,9 @@ import { useDemoGuard } from '../../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../../components/DemoUpgradePrompt';
 import { EmptyState } from '../../components/EmptyState';
 import { supabase } from '../../lib/supabase';
+import { usePageTitle } from '../../hooks/usePageTitle';
 
-const NAVY = '#1e4d6b';
+const NAVY = '#1E2D4D';
 const GOLD = '#d4af37';
 
 // ── Types ──────────────────────────────────────────────────
@@ -92,6 +93,7 @@ const DEMO_REQUEST_LOG: RequestLogEntry[] = [
 export default function InsuranceApiKeys() {
   const { isDemoMode } = useDemo();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  usePageTitle('Admin | Insurance API Keys');
 
   const [keys, setKeys] = useState<ApiKey[]>([]);
   const [requestLog, setRequestLog] = useState<RequestLogEntry[]>([]);
@@ -252,12 +254,12 @@ export default function InsuranceApiKeys() {
           <ArrowLeft size={16} /> Back to API Keys
         </button>
 
-        <h1 className="text-xl font-bold text-gray-900 mb-4">API Request Log</h1>
+        <h1 className="text-xl font-bold text-[#1E2D4D] mb-4">API Request Log</h1>
 
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-gray-50 border-b border-gray-200">
+              <tr className="bg-[#FAF7F0] border-b border-gray-200">
                 <th className="text-left px-4 py-3 font-semibold text-gray-700">Endpoint</th>
                 <th className="text-center px-4 py-3 font-semibold text-gray-700">Method</th>
                 <th className="text-center px-4 py-3 font-semibold text-gray-700">Status</th>
@@ -273,7 +275,7 @@ export default function InsuranceApiKeys() {
                     <span className="px-2 py-0.5 rounded text-xs font-semibold bg-blue-50 text-blue-700">{r.method}</span>
                   </td>
                   <td className="px-4 py-3 text-center">
-                    <span className={`px-2 py-0.5 rounded text-xs font-semibold ${r.response_code < 300 ? 'bg-green-50 text-green-700' : r.response_code < 500 ? 'bg-red-50 text-red-700' : 'bg-gray-50 text-gray-700'}`}>
+                    <span className={`px-2 py-0.5 rounded text-xs font-semibold ${r.response_code < 300 ? 'bg-green-50 text-green-700' : r.response_code < 500 ? 'bg-red-50 text-red-700' : 'bg-[#FAF7F0] text-gray-700'}`}>
                       {r.response_code}
                     </span>
                   </td>
@@ -300,7 +302,7 @@ export default function InsuranceApiKeys() {
 
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">API Keys</h1>
+          <h1 className="text-2xl font-bold text-[#1E2D4D]">API Keys</h1>
           <p className="text-sm text-gray-600 mt-1">Create, manage, and monitor API keys for partner integrations</p>
         </div>
         <div className="flex gap-2">
@@ -358,7 +360,7 @@ export default function InsuranceApiKeys() {
             return (
               <div
                 key={key.id}
-                className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5"
+                className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5"
                 style={!key.is_active ? { opacity: 0.6 } : undefined}
               >
                 <div className="flex flex-col md:flex-row md:items-center gap-3">
@@ -368,14 +370,14 @@ export default function InsuranceApiKeys() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-semibold text-gray-900">{key.label}</span>
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 uppercase">{key.key_type}</span>
+                        <span className="font-semibold text-[#1E2D4D]">{key.label}</span>
+                        <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 uppercase">{key.key_type}</span>
                         {key.is_active ? (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-green-50 text-green-700">Active</span>
+                          <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-green-50 text-green-700">Active</span>
                         ) : isExpired ? (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">Expired</span>
+                          <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">Expired</span>
                         ) : (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-50 text-red-600">Revoked</span>
+                          <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-red-50 text-red-600">Revoked</span>
                         )}
                       </div>
                       <div className="flex items-center gap-3 text-xs text-gray-500 mt-1 flex-wrap">
@@ -427,8 +429,8 @@ export default function InsuranceApiKeys() {
       )}
 
       {/* API Documentation Reference */}
-      <div className="mt-8 bg-gray-50 rounded-xl border border-gray-200 p-5">
-        <h3 className="text-sm font-bold text-gray-900 mb-3">API Endpoints</h3>
+      <div className="mt-8 bg-[#FAF7F0] rounded-xl border border-gray-200 p-6">
+        <h3 className="text-sm font-bold text-[#1E2D4D] mb-3">API Endpoints</h3>
         <div className="space-y-2 font-mono text-xs">
           <div className="flex items-center gap-3">
             <span className="px-2 py-0.5 rounded bg-blue-100 text-blue-700 font-bold">GET</span>
@@ -455,7 +457,7 @@ export default function InsuranceApiKeys() {
       {showCreateForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-auto max-w-lg sm:w-full max-h-[90vh] overflow-y-auto">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Create API Key</h3>
+            <h3 className="text-xl font-bold text-[#1E2D4D] mb-4">Create API Key</h3>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">

@@ -36,9 +36,8 @@ export default function PillarCard({ pillar, score, opsScore, docsScore, onClick
     <button
       type="button"
       onClick={onClick}
-      className="w-full text-left bg-white rounded-lg p-4 transition-shadow duration-200 hover:shadow-md"
+      className="w-full text-left bg-white rounded-xl border border-gray-200 p-4 transition-shadow duration-200 hover:shadow-md"
       style={{
-        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
         cursor: onClick ? 'pointer' : 'default',
         fontFamily: 'Inter, sans-serif',
       }}
@@ -46,7 +45,7 @@ export default function PillarCard({ pillar, score, opsScore, docsScore, onClick
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <Icon size={18} style={{ color }} />
-          <span className="text-sm font-semibold text-gray-900">{label}</span>
+          <span className="text-sm font-semibold text-[#1E2D4D]">{label}</span>
         </div>
         <span className="text-lg font-bold" style={{ color }}>
           {score}

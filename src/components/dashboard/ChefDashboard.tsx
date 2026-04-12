@@ -53,10 +53,10 @@ export default function ChefDashboard() {
           firstName={DEMO_ROLE_NAMES[userRole]?.firstName || 'Chef'}
           orgName={companyName || 'Your Organization'}
         />
-        <div className="bg-white rounded-lg p-4" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
           <div className="text-center py-8">
             <p className="text-sm font-medium text-gray-500">No data yet. Set up your locations and team to see your kitchen dashboard.</p>
-            <button type="button" onClick={() => navigate('/checklists')} className="mt-3 text-sm font-semibold px-4 py-2 rounded-lg text-white" style={{ backgroundColor: '#1e4d6b' }}>
+            <button type="button" onClick={() => navigate('/checklists')} className="mt-3 text-sm font-semibold px-4 py-2 rounded-lg text-white" style={{ backgroundColor: '#1E2D4D' }}>
               Set Up Checklists
             </button>
           </div>
@@ -113,7 +113,7 @@ export default function ChefDashboard() {
       >
         <h3 className="text-sm font-semibold" style={{ color: BODY_TEXT }}>HACCP CCP Status</h3>
         <p className="text-[12px] text-gray-500 mt-1">No active CCPs for today</p>
-        <p className="text-[11px] font-semibold mt-2" style={{ color: NAVY }}>View HACCP plan &rarr;</p>
+        <p className="text-xs font-semibold mt-2" style={{ color: NAVY }}>View HACCP plan &rarr;</p>
       </button>
 
       {/* NFPA Monthly Reminder */}

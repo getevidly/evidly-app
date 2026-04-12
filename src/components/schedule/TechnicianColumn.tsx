@@ -46,8 +46,8 @@ export function TechnicianColumn({ technician, jobs }: TechnicianColumnProps) {
           />
         ) : (
           <div
-            className="w-7 h-7 rounded-full flex items-center justify-center text-white text-[10px] font-bold"
-            style={{ background: '#1e4d6b' }}
+            className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold"
+            style={{ background: '#1E2D4D' }}
           >
             {technician.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
           </div>
@@ -67,7 +67,7 @@ export function TechnicianColumn({ technician, jobs }: TechnicianColumnProps) {
       </div>
 
       {/* Stats row */}
-      <div className="flex items-center justify-center gap-3 text-[10px]" style={{ color: TEXT_TERTIARY }}>
+      <div className="flex items-center justify-center gap-3 text-xs" style={{ color: TEXT_TERTIARY }}>
         <span className="flex items-center gap-0.5">
           <Clock className="w-3 h-3" />
           {hours}h{mins > 0 ? ` ${mins}m` : ''}

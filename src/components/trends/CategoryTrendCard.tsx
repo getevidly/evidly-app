@@ -17,7 +17,7 @@ export function CategoryTrendCard({
   label,
   analysis,
   sparklineData,
-  color = '#1e4d6b',
+  color = '#1E2D4D',
   unit = '',
   invertDirection,
 }: Props) {
@@ -35,7 +35,7 @@ export function CategoryTrendCard({
   const displayDelta = invertDirection ? -analysis.periodDelta : analysis.periodDelta;
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
       <button
         onClick={() => setExpanded(!expanded)}
         className="w-full p-4 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"

@@ -21,7 +21,7 @@ export function InsuranceReadinessWidget({ locationId }: InsuranceReadinessWidge
   const tierInfo = getInsuranceRiskTier(riskData.overall);
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
+    <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
@@ -29,14 +29,14 @@ export function InsuranceReadinessWidget({ locationId }: InsuranceReadinessWidge
             <EvidlyIcon size={20} />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">Insurance Risk Score</h3>
+            <h3 className="text-lg font-semibold text-[#1E2D4D]">Insurance Risk Score</h3>
             <p className="text-xs text-gray-500">Designed to support carrier conversations</p>
           </div>
         </div>
         <button
           onClick={() => navigate(locationId === 'all' ? '/insurance-risk' : `/insurance-risk?location=${locationId}`)}
           className="text-sm font-medium flex items-center gap-1 hover:underline"
-          style={{ color: '#1e4d6b' }}
+          style={{ color: '#1E2D4D' }}
         >
           View Full Report <ArrowRight className="h-3.5 w-3.5" />
         </button>
@@ -53,7 +53,7 @@ export function InsuranceReadinessWidget({ locationId }: InsuranceReadinessWidge
             <div className="text-2xl font-bold" style={{ color: tierInfo.color }}>{riskData.overall}</div>
           </div>
           <div
-            className="mt-2 text-[10px] font-bold px-2 py-0.5 rounded-full inline-block"
+            className="mt-2 text-xs font-bold px-2 py-0.5 rounded-full inline-block"
             style={{ backgroundColor: tierInfo.bg, color: tierInfo.color, border: `1px solid ${tierInfo.color}` }}
           >
             {riskData.tier}
@@ -85,11 +85,11 @@ export function InsuranceReadinessWidget({ locationId }: InsuranceReadinessWidge
       {/* Action hint */}
       {riskData.actionItems.length > 0 && (
         <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
-          <span className="text-[11px] text-gray-400">{riskData.actionItems.length} improvement actions available</span>
+          <span className="text-xs text-gray-400">{riskData.actionItems.length} improvement actions available</span>
           <button
             onClick={() => navigate(locationId === 'all' ? '/insurance-risk' : `/insurance-risk?location=${locationId}`)}
-            className="text-[11px] font-medium flex items-center gap-1 hover:underline"
-            style={{ color: '#1e4d6b' }}
+            className="text-xs font-medium flex items-center gap-1 hover:underline"
+            style={{ color: '#1E2D4D' }}
           >
             View actions <ArrowRight className="h-3 w-3" />
           </button>

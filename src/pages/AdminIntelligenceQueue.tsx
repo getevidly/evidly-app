@@ -238,10 +238,10 @@ export function AdminIntelligenceQueue() {
       <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#eff6ff' }}>
-            <Brain className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+            <Brain className="h-5 w-5" style={{ color: '#1E2D4D' }} />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-gray-900">Intelligence Queue</h1>
+            <h1 className="text-lg font-bold text-[#1E2D4D]">Intelligence Queue</h1>
             <p className="text-xs text-gray-500">Review and publish intelligence insights from external sources</p>
           </div>
         </div>
@@ -278,7 +278,7 @@ export function AdminIntelligenceQueue() {
             onClick={() => { setActiveTab(tab.key); setExpandedId(null); setRejectingId(null); }}
             className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
               activeTab === tab.key
-                ? 'border-[#1e4d6b] text-[#1e4d6b]'
+                ? 'border-[#1E2D4D] text-[#1E2D4D]'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
@@ -320,7 +320,7 @@ export function AdminIntelligenceQueue() {
             const keyFindings = (insight.raw_source_data as any)?.key_findings as string[] | undefined;
 
             return (
-              <div key={insight.id} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+              <div key={insight.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
                 {/* Card Header */}
                 <div
                   className="p-4 cursor-pointer hover:bg-gray-50/50 transition-colors"
@@ -331,38 +331,38 @@ export function AdminIntelligenceQueue() {
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
                         {/* Impact badge */}
                         <span
-                          className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md"
+                          className="text-xs font-semibold px-1.5 py-0.5 rounded-md"
                           style={{ backgroundColor: impact.bg, color: impact.dot, border: `1px solid ${impact.border}` }}
                         >
                           {impact.label}
                         </span>
 
                         {/* Source badge */}
-                        <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-gray-100 text-gray-600">
+                        <span className="text-xs font-medium px-1.5 py-0.5 rounded-md bg-gray-100 text-gray-600">
                           {insight.source_id}
                         </span>
 
                         {/* Pillars */}
                         {insight.affected_pillars?.map(p => (
-                          <span key={p} className="text-[10px] px-1.5 py-0.5 rounded-md bg-blue-50 text-blue-600">
+                          <span key={p} className="text-xs px-1.5 py-0.5 rounded-md bg-blue-50 text-blue-600">
                             {p === 'food_safety' ? 'Food' : p === 'facility_safety' ? 'Fire' : p}
                           </span>
                         ))}
 
                         {/* Demo eligible flag */}
                         {insight.is_demo_eligible && (
-                          <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md" style={{ backgroundColor: '#fffbeb', color: '#d4af37', border: '1px solid #fde68a' }}>
+                          <span className="text-xs font-semibold px-1.5 py-0.5 rounded-md" style={{ backgroundColor: '#fffbeb', color: '#d4af37', border: '1px solid #fde68a' }}>
                             Demo{insight.demo_priority > 0 ? ` (${insight.demo_priority})` : ''}
                           </span>
                         )}
                       </div>
 
-                      <h3 className="text-sm font-semibold text-gray-900 truncate">{insight.title}</h3>
+                      <h3 className="text-sm font-semibold text-[#1E2D4D] truncate">{insight.title}</h3>
                       <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{insight.summary}</p>
                     </div>
 
                     <div className="flex items-center gap-2 shrink-0">
-                      <span className="text-[10px] text-gray-400 whitespace-nowrap">
+                      <span className="text-xs text-gray-400 whitespace-nowrap">
                         <Clock className="h-3 w-3 inline mr-0.5" />
                         {timeAgo(insight.created_at)}
                       </span>
@@ -377,7 +377,7 @@ export function AdminIntelligenceQueue() {
 
                 {/* Expanded Content */}
                 {isExpanded && (
-                  <div className="border-t border-gray-100 p-4 bg-gray-50">
+                  <div className="border-t border-gray-100 p-4 bg-[#FAF7F0]">
                     {/* Summary */}
                     <p className="text-sm text-gray-700 mb-3">{insight.summary}</p>
 
@@ -430,7 +430,7 @@ export function AdminIntelligenceQueue() {
                     )}
 
                     {/* Metadata row */}
-                    <div className="flex flex-wrap gap-3 text-[10px] text-gray-400 mb-3">
+                    <div className="flex flex-wrap gap-3 text-xs text-gray-400 mb-3">
                       <span>Source: {insight.source_name}</span>
                       <span>Signal: {insight.market_signal_strength}</span>
                       {insight.affected_counties?.length > 0 && (
@@ -447,7 +447,7 @@ export function AdminIntelligenceQueue() {
                     {insight.tags?.length > 0 && (
                       <div className="flex flex-wrap gap-1 mb-3">
                         {insight.tags.map(tag => (
-                          <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-500">
+                          <span key={tag} className="text-xs px-1.5 py-0.5 rounded bg-gray-100 text-gray-500">
                             {tag}
                           </span>
                         ))}

@@ -174,15 +174,15 @@ export function InviteAccept() {
   if (error && !invitation) {
     return (
       <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center px-4">
-        <div className="max-w-md w-full bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
+        <div className="max-w-md w-full bg-white rounded-xl border border-gray-200 p-8 text-center">
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <X className="w-8 h-8 text-red-600" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Invalid Invitation</h2>
+          <h2 className="text-2xl font-bold text-[#1E2D4D] mb-2">Invalid Invitation</h2>
           <p className="text-gray-600 mb-6">{error}</p>
           <a
             href="/"
-            className="inline-block px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] transition-colors"
+            className="inline-block px-6 py-2 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors"
           >
             Return to Home
           </a>
@@ -194,14 +194,14 @@ export function InviteAccept() {
   return (
     <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+        <div className="bg-white rounded-xl border border-gray-200 p-8">
           <div className="text-center mb-6">
             <div className="flex justify-center mb-4">
               <div className="p-3 bg-[#d4af37]/10 rounded-full">
                 <UserPlus className="w-8 h-8 text-[#d4af37]" />
               </div>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900">Join Your Team</h2>
+            <h2 className="text-2xl font-bold text-[#1E2D4D]">Join Your Team</h2>
             <p className="text-gray-600 mt-2">
               You've been invited to join <span className="font-semibold">{invitation?.organizations?.name}</span> as a <span className="font-semibold">{invitation?.role}</span>
             </p>
@@ -237,7 +237,7 @@ export function InviteAccept() {
                 type="email"
                 disabled
                 value={invitation?.email || ''}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-50 text-gray-500"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-[#FAF7F0] text-gray-500"
               />
             </div>
 
@@ -269,7 +269,7 @@ export function InviteAccept() {
             </div>
 
             {password && (
-              <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+              <div className="bg-[#FAF7F0] rounded-lg p-4 space-y-2">
                 <p className="text-sm font-medium text-gray-700">Password Requirements:</p>
                 <div className="space-y-1 text-sm">
                   <div className={`flex items-center gap-2 ${passwordRequirements.length ? 'text-green-600' : 'text-gray-500'}`}>
@@ -350,7 +350,7 @@ export function InviteAccept() {
             <button
               type="submit"
               disabled={submitting || !allRequirementsMet || !passwordsMatch || !captchaToken}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1e4d6b] hover:bg-[#2a6a8f] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1e4d6b] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1E2D4D] hover:bg-[#162340] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1E2D4D] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {submitting ? 'Creating Account...' : 'Accept Invitation & Join Team'}
             </button>

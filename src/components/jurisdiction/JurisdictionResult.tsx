@@ -116,7 +116,7 @@ function CompactResult({
     const placard = getPlacardColor(gradeDisplay);
     return (
       <span
-        className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold"
+        className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-semibold"
         style={{ backgroundColor: placard.bg, color: placard.text }}
       >
         <span className="w-2 h-2 rounded-full" style={{ backgroundColor: placard.dot }} />
@@ -130,7 +130,7 @@ function CompactResult({
     const lc = getLetterColor(gradeDisplay);
     return (
       <span
-        className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold"
+        className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold"
         style={{ backgroundColor: lc.bg, color: lc.text, border: `1px solid ${lc.border}` }}
       >
         {gradeDisplay}
@@ -143,7 +143,7 @@ function CompactResult({
     const tc = getTierColor(gradeDisplay);
     return (
       <span
-        className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold"
+        className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold"
         style={{ backgroundColor: tc.bg, color: tc.text }}
       >
         {gradeDisplay}
@@ -154,7 +154,7 @@ function CompactResult({
   // Default: status-colored pill
   return (
     <span
-      className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold"
+      className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold"
       style={{ backgroundColor: colors.bg, color: colors.text }}
     >
       {gradeDisplay}
@@ -328,7 +328,7 @@ function FallbackResult({ display, status }: { display: string; status: string }
   const colors = STATUS_COLORS[status as keyof typeof STATUS_COLORS] ?? STATUS_COLORS.unknown;
   return (
     <span
-      className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold"
+      className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold"
       style={{ backgroundColor: colors.bg, color: colors.text }}
     >
       {display}

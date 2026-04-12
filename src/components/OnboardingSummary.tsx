@@ -47,11 +47,11 @@ export function OnboardingSummary({ onClose }: { onClose?: () => void }) {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
       <div className="px-6 py-5 border-b border-gray-100" style={{ backgroundColor: '#eef4f8' }}>
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-bold text-gray-900">Getting Started with EvidLY</h2>
+            <h2 className="text-lg font-bold text-[#1E2D4D]">Getting Started with EvidLY</h2>
             <p className="text-sm text-gray-600 mt-1">Follow these steps to get your kitchen compliance-ready</p>
           </div>
           {onClose && (
@@ -95,7 +95,7 @@ export function OnboardingSummary({ onClose }: { onClose?: () => void }) {
               </div>
               <button
                 onClick={() => navigate(step.link)}
-                className="flex-shrink-0 text-[#1e4d6b] hover:text-[#2a6a8f] p-1"
+                className="flex-shrink-0 text-[#1E2D4D] hover:text-[#2A3F6B] p-1"
               >
                 <ChevronRight className="h-4 w-4" />
               </button>

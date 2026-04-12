@@ -89,7 +89,7 @@ export function DemoRequest() {
     }, 500);
   };
 
-  const inputClass = 'w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-[#1e4d6b] focus:ring-2 focus:ring-[#1e4d6b]/20 outline-none transition-colors text-sm';
+  const inputClass = 'w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-[#1E2D4D] focus:ring-2 focus:ring-[#1E2D4D]/20 outline-none transition-colors text-sm';
   const labelClass = 'block text-sm font-medium text-gray-700 mb-1';
 
   return (
@@ -120,7 +120,7 @@ export function DemoRequest() {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-200 shadow-sm">
+        <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-200">
           {/* Contact Info */}
           <div className="p-6 border-b border-gray-100">
             <div className="flex items-center gap-2 mb-4">
@@ -237,7 +237,7 @@ export function DemoRequest() {
               disabled={submitting}
               className="w-full sm:w-auto px-8 py-3 rounded-lg font-semibold text-white transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
               style={{ backgroundColor: NAVY }}
-              onMouseEnter={e => { if (!submitting) (e.target as HTMLButtonElement).style.backgroundColor = '#2a6a8f'; }}
+              onMouseEnter={e => { if (!submitting) (e.target as HTMLButtonElement).style.backgroundColor = '#2A3F6B'; }}
               onMouseLeave={e => (e.target as HTMLButtonElement).style.backgroundColor = NAVY}
             >
               {submitting ? (

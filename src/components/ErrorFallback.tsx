@@ -27,7 +27,7 @@ function PageFallback({ error, onRetry }: { error: Error | null; onRetry: () => 
         style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}
       >
         <AlertTriangle size={48} style={{ color: '#d4af37' }} className="mx-auto mb-4" />
-        <h2 className="text-xl font-semibold mb-2" style={{ color: '#1e4d6b' }}>
+        <h2 className="text-xl font-semibold mb-2" style={{ color: '#1E2D4D' }}>
           {t('errors.somethingWentWrong')}
         </h2>
         <p className="text-gray-600 mb-6">
@@ -47,9 +47,9 @@ function PageFallback({ error, onRetry }: { error: Error | null; onRetry: () => 
           <button
             onClick={() => navigate('/dashboard')}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium bg-transparent transition-colors cursor-pointer"
-            style={{ border: '1px solid #1e4d6b', color: '#1e4d6b' }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b', e.currentTarget.style.color = '#ffffff')}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent', e.currentTarget.style.color = '#1e4d6b')}
+            style={{ border: '1px solid #1E2D4D', color: '#1E2D4D' }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1E2D4D', e.currentTarget.style.color = '#ffffff')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent', e.currentTarget.style.color = '#1E2D4D')}
           >
             <Home size={16} />
             {t('errors.goToDashboard')}

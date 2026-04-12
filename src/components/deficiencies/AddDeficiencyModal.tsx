@@ -60,7 +60,7 @@ export function AddDeficiencyModal({ onClose, onSubmit }: AddDeficiencyModalProp
       >
         <div className="flex items-center justify-between px-6 py-4 border-b sticky top-0 bg-white z-10" style={{ borderColor: '#D1D9E6' }}>
           <div className="flex items-center gap-2">
-            <Plus className="w-5 h-5" style={{ color: '#1e4d6b' }} />
+            <Plus className="w-5 h-5" style={{ color: '#1E2D4D' }} />
             <h3 className="text-lg font-semibold" style={{ color: '#0B1628' }}>Add Deficiency</h3>
           </div>
           <button onClick={onClose} className="p-2.5 -m-1 rounded-lg hover:bg-gray-100 transition-colors" aria-label="Close">
@@ -189,7 +189,7 @@ export function AddDeficiencyModal({ onClose, onSubmit }: AddDeficiencyModalProp
             onClick={handleSubmit}
             disabled={!canSubmit}
             className="px-4 py-2 text-sm font-semibold rounded-lg text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{ backgroundColor: '#1e4d6b' }}
+            style={{ backgroundColor: '#1E2D4D' }}
           >
             Add Deficiency
           </button>

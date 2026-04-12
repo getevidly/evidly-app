@@ -108,14 +108,14 @@ export function AddCooldownReadingModal({ open, onClose, activeCooldowns, locati
         <button
           type="button"
           onClick={() => setMode('check')}
-          className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors ${mode === 'check' ? 'bg-white shadow-sm text-[#1e4d6b]' : 'text-gray-500 hover:text-gray-700'}`}
+          className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors ${mode === 'check' ? 'bg-white shadow-sm text-[#1E2D4D]' : 'text-gray-500 hover:text-gray-700'}`}
         >
           Log Check on Existing
         </button>
         <button
           type="button"
           onClick={() => setMode('new')}
-          className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors ${mode === 'new' ? 'bg-white shadow-sm text-[#1e4d6b]' : 'text-gray-500 hover:text-gray-700'}`}
+          className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors ${mode === 'new' ? 'bg-white shadow-sm text-[#1E2D4D]' : 'text-gray-500 hover:text-gray-700'}`}
         >
           New Cooldown
         </button>
@@ -196,7 +196,7 @@ export function AddCooldownReadingModal({ open, onClose, activeCooldowns, locati
 
             {stage && (
               <div className="p-3 rounded-lg bg-[#eef4f8] border border-[#D1D9E6]">
-                <p className="text-sm font-medium text-[#1e4d6b]">{stage}</p>
+                <p className="text-sm font-medium text-[#1E2D4D]">{stage}</p>
               </div>
             )}
 

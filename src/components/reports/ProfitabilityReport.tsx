@@ -67,7 +67,7 @@ export function ProfitabilityReport({ data }: ProfitabilityProps) {
                     {isFlagged && <AlertTriangle className="inline w-3.5 h-3.5 ml-1 text-red-500" />}
                   </td>
                   <td className="px-3 py-2">
-                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{
+                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{
                       background: isFlagged ? '#FEF2F2' : '#F0FFF4',
                       color: isFlagged ? '#DC2626' : '#059669',
                     }}>

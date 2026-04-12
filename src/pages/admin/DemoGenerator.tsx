@@ -322,7 +322,7 @@ export function DemoGenerator() {
 
           {/* Credentials display */}
           {credentials && (
-            <div className="bg-gray-50 rounded-lg border border-gray-200 p-4 mb-4 text-left">
+            <div className="bg-[#FAF7F0] rounded-lg border border-gray-200 p-4 mb-4 text-left">
               <h3 className="text-sm font-semibold mb-3" style={{ color: NAVY }}>Login Credentials</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex items-center justify-between">
@@ -575,7 +575,7 @@ export function DemoGenerator() {
             type="submit"
             className="px-8 py-3 rounded-lg font-semibold text-white transition-colors flex items-center gap-2"
             style={{ backgroundColor: NAVY }}
-            onMouseEnter={e => (e.target as HTMLButtonElement).style.backgroundColor = '#2a6a8f'}
+            onMouseEnter={e => (e.target as HTMLButtonElement).style.backgroundColor = '#2A3F6B'}
             onMouseLeave={e => (e.target as HTMLButtonElement).style.backgroundColor = NAVY}
           >
             <Sparkles className="w-4 h-4" />

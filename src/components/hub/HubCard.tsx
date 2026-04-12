@@ -35,7 +35,7 @@ export function HubCard({ item }: HubCardProps) {
       {/* Badge */}
       {item.badge && (
         <span
-          className="absolute top-3 right-3 text-[10px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wide"
+          className="absolute top-3 right-3 text-xs font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wide"
           style={{ backgroundColor: 'rgba(212, 175, 55, 0.15)', color: '#A08C5A' }}
         >
           {item.badge}
@@ -49,7 +49,7 @@ export function HubCard({ item }: HubCardProps) {
 
       {/* Label */}
       <h3
-        className="text-sm font-semibold mb-1.5 group-hover:text-[#1e4d6b] transition-colors"
+        className="text-sm font-semibold mb-1.5 group-hover:text-[#1E2D4D] transition-colors"
         style={{ color: 'var(--text-primary, #0B1628)' }}
       >
         {item.label}

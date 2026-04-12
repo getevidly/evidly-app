@@ -100,7 +100,7 @@ export function AdminVendorConnect() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Vendor Connect Management</h1>
+        <h1 className="text-2xl font-bold text-[#1E2D4D]">Vendor Connect Management</h1>
         <p className="text-sm text-gray-500 mt-1">Review applications, manage partners, track spots and leads.</p>
       </div>
 
@@ -123,7 +123,7 @@ export function AdminVendorConnect() {
               <Icon className="w-3.5 h-3.5" />
               {tab.label}
               {count > 0 && (
-                <span className="ml-1 px-1.5 py-0.5 rounded-full text-[10px] bg-red-100 text-red-700 font-semibold">{count}</span>
+                <span className="ml-1 px-1.5 py-0.5 rounded-full text-xs bg-red-100 text-red-700 font-semibold">{count}</span>
               )}
             </button>
           );
@@ -171,7 +171,7 @@ export function AdminVendorConnect() {
                             {(app.company_name || '?')[0]}
                           </div>
                           <div>
-                            <p className="text-sm font-semibold text-gray-900">{app.company_name}</p>
+                            <p className="text-sm font-semibold text-[#1E2D4D]">{app.company_name}</p>
                             <p className="text-xs text-gray-500">{app.contact_name} · {app.email}</p>
                           </div>
                         </div>
@@ -196,7 +196,7 @@ export function AdminVendorConnect() {
                             {app.referred_by && <div><span className="text-gray-500">Referred by:</span> <span className="text-gray-900 font-medium">{app.referred_by}</span></div>}
                           </div>
                           {app.why_apply && (
-                            <div className="bg-gray-50 rounded-lg p-3">
+                            <div className="bg-[#FAF7F0] rounded-lg p-3">
                               <p className="text-xs text-gray-500 font-medium mb-1">Why they want to join:</p>
                               <p className="text-xs text-gray-700">{app.why_apply}</p>
                             </div>
@@ -250,7 +250,7 @@ export function AdminVendorConnect() {
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <p className="text-sm font-semibold text-gray-900">{p.company_name}</p>
+                          <p className="text-sm font-semibold text-[#1E2D4D]">{p.company_name}</p>
                           <PartnerBadge tier={p.partner_tier} size="sm" />
                         </div>
                         <p className="text-xs text-gray-500">
@@ -262,11 +262,11 @@ export function AdminVendorConnect() {
                     <div className="flex items-center gap-4">
                       <div className="text-center">
                         <div className="text-sm font-bold" style={{ color: '#1E2D4D' }}>{p.performance_score || 0}</div>
-                        <div className="text-[10px] text-gray-400">Score</div>
+                        <div className="text-xs text-gray-400">Score</div>
                       </div>
                       <div className="text-center">
                         <div className="text-sm font-bold" style={{ color: '#1E2D4D' }}>{p.total_jobs_completed || 0}</div>
-                        <div className="text-[10px] text-gray-400">Jobs</div>
+                        <div className="text-xs text-gray-400">Jobs</div>
                       </div>
                       <span
                         className={`px-2 py-0.5 rounded-full text-xs font-semibold ${p.is_active ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-500'}`}

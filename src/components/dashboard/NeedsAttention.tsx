@@ -124,7 +124,7 @@ export default function NeedsAttention({ items, maxVisible = 5, showLocationPref
                 type="button"
                 onClick={() => navigate(item.actionRoute)}
                 className="text-xs font-medium shrink-0 px-2 py-1 rounded hover:bg-gray-50 transition-colors"
-                style={{ color: '#1e4d6b' }}
+                style={{ color: '#1E2D4D' }}
               >
                 {item.actionLabel} →
               </button>
@@ -138,7 +138,7 @@ export default function NeedsAttention({ items, maxVisible = 5, showLocationPref
           type="button"
           onClick={() => setExpanded(true)}
           className="text-xs font-medium mt-2 hover:underline"
-          style={{ color: '#1e4d6b' }}
+          style={{ color: '#1E2D4D' }}
         >
           View all alerts ({sorted.length})
         </button>

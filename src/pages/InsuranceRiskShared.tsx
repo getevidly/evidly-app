@@ -173,9 +173,9 @@ export default function InsuranceRiskShared() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#FAF7F0]">
       {/* Top Bar */}
-      <div className="bg-[#1e4d6b] text-white px-4 sm:px-8 py-4">
+      <div className="bg-[#1E2D4D] text-white px-4 sm:px-8 py-4">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <EvidlyIcon size={28} />
@@ -184,7 +184,7 @@ export default function InsuranceRiskShared() {
                 <span className="text-white">Evid</span>
                 <span style={{ color: '#d4af37' }}>LY</span>
               </span>
-              <p className="text-[10px] text-gray-300 -mt-0.5">Lead with Confidence</p>
+              <p className="text-xs text-gray-300 -mt-0.5">Lead with Confidence</p>
             </div>
           </div>
           <span className="text-xs text-gray-300 hidden sm:block">Insurance Risk Assessment</span>
@@ -195,12 +195,12 @@ export default function InsuranceRiskShared() {
       <div className="max-w-3xl mx-auto px-4 sm:px-8 py-8 space-y-6">
         {/* Title */}
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Insurance Risk Assessment</h1>
+          <h1 className="text-2xl font-bold text-[#1E2D4D]">Insurance Risk Assessment</h1>
           <p className="text-sm text-gray-500 mt-1">Powered by EvidLY</p>
         </div>
 
         {/* Location Info */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-2">
+        <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-2">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 text-sm">
             <div><span className="text-gray-500">Location:</span> <span className="font-medium text-gray-900">{d.locationName}</span></div>
             <div><span className="text-gray-500">Organization:</span> <span className="font-medium text-gray-900">{d.orgName}</span></div>
@@ -232,17 +232,17 @@ export default function InsuranceRiskShared() {
                 {d.riskTier}
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
-                <div className="p-2 rounded-lg bg-gray-50">
-                  <div className="text-lg font-bold" style={{ color: '#1e4d6b' }}>{d.industryPercentile}nd</div>
-                  <div className="text-[10px] text-gray-500">Percentile</div>
+                <div className="p-2 rounded-lg bg-[#FAF7F0]">
+                  <div className="text-lg font-bold" style={{ color: '#1E2D4D' }}>{d.industryPercentile}nd</div>
+                  <div className="text-xs text-gray-500">Percentile</div>
                 </div>
-                <div className="p-2 rounded-lg bg-gray-50">
+                <div className="p-2 rounded-lg bg-[#FAF7F0]">
                   <div className="text-lg font-bold text-green-600">{d.trendDelta}</div>
-                  <div className="text-[10px] text-gray-500">12mo Change</div>
+                  <div className="text-xs text-gray-500">12mo Change</div>
                 </div>
-                <div className="p-2 rounded-lg bg-gray-50">
-                  <div className="text-lg font-bold" style={{ color: '#1e4d6b' }}>{d.dataPoints.toLocaleString()}</div>
-                  <div className="text-[10px] text-gray-500">Data Points</div>
+                <div className="p-2 rounded-lg bg-[#FAF7F0]">
+                  <div className="text-lg font-bold" style={{ color: '#1E2D4D' }}>{d.dataPoints.toLocaleString()}</div>
+                  <div className="text-xs text-gray-500">Data Points</div>
                 </div>
               </div>
             </div>
@@ -254,13 +254,13 @@ export default function InsuranceRiskShared() {
           <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Factor Breakdown</h2>
           <div className="space-y-4">
             {d.factors.map(f => (
-              <div key={f.name} className="flex items-start gap-4 p-3 rounded-lg bg-gray-50">
+              <div key={f.name} className="flex items-start gap-4 p-3 rounded-lg bg-[#FAF7F0]">
                 <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: f.color + '15' }}>
                   <f.icon className="h-5 w-5" style={{ color: f.color }} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-semibold text-gray-900">{f.name}</span>
+                    <span className="text-sm font-semibold text-[#1E2D4D]">{f.name}</span>
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-medium text-gray-400">{f.weight}</span>
                       <span className="text-lg font-bold" style={{ color: f.score >= 90 ? '#22c55e' : f.score >= 75 ? '#eab308' : '#ef4444' }}>{f.score}</span>
@@ -268,7 +268,7 @@ export default function InsuranceRiskShared() {
                     </div>
                   </div>
                   <p className="text-xs text-gray-600">{f.detail}</p>
-                  <p className="text-[10px] text-gray-400 mt-1">{f.dataPoints.toLocaleString()} data points</p>
+                  <p className="text-xs text-gray-400 mt-1">{f.dataPoints.toLocaleString()} data points</p>
                 </div>
               </div>
             ))}
@@ -284,7 +284,7 @@ export default function InsuranceRiskShared() {
               return (
                 <g key={i}>
                   <line x1={40} x2={570} y1={y2} y2={y2} stroke="#f1f5f9" strokeWidth={1} />
-                  <text x={32} y={y2 + 4} textAnchor="end" className="text-[10px] fill-gray-400">{v}</text>
+                  <text x={32} y={y2 + 4} textAnchor="end" className="text-xs fill-gray-400">{v}</text>
                 </g>
               );
             })}
@@ -293,10 +293,10 @@ export default function InsuranceRiskShared() {
             ))}
             <path
               d={d.trendData.map((pt, i) => `${i === 0 ? 'M' : 'L'}${40 + (i / 11) * 530},${140 - ((pt.score - 55) / 50) * 120}`).join(' ')}
-              fill="none" stroke="#1e4d6b" strokeWidth={2.5}
+              fill="none" stroke="#1E2D4D" strokeWidth={2.5}
             />
             {d.trendData.map((pt, i) => (
-              <circle key={i} cx={40 + (i / 11) * 530} cy={140 - ((pt.score - 55) / 50) * 120} r={3.5} fill="#1e4d6b" stroke="#fff" strokeWidth={1.5} />
+              <circle key={i} cx={40 + (i / 11) * 530} cy={140 - ((pt.score - 55) / 50) * 120} r={3.5} fill="#1E2D4D" stroke="#fff" strokeWidth={1.5} />
             ))}
           </svg>
           <div className="flex items-center justify-center gap-1 mt-2 text-xs text-green-600 font-medium">
@@ -313,20 +313,20 @@ export default function InsuranceRiskShared() {
             Data includes temperature readings, daily checklists, incident reports, equipment service records, and document management. {/* demo */}
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4 text-center text-xs">
-            <div className="p-2 rounded-lg bg-gray-50">
-              <div className="font-semibold text-gray-900">{d.generatedAt}</div>
+            <div className="p-2 rounded-lg bg-[#FAF7F0]">
+              <div className="font-semibold text-[#1E2D4D]">{d.generatedAt}</div>
               <div className="text-gray-400">Generated</div>
             </div>
-            <div className="p-2 rounded-lg bg-gray-50">
-              <div className="font-semibold text-gray-900">{d.validUntil}</div>
+            <div className="p-2 rounded-lg bg-[#FAF7F0]">
+              <div className="font-semibold text-[#1E2D4D]">{d.validUntil}</div>
               <div className="text-gray-400">Valid Until</div>
             </div>
-            <div className="p-2 rounded-lg bg-gray-50">
-              <div className="font-semibold text-gray-900">{d.reportId}</div>
+            <div className="p-2 rounded-lg bg-[#FAF7F0]">
+              <div className="font-semibold text-[#1E2D4D]">{d.reportId}</div>
               <div className="text-gray-400">Report ID</div>
             </div>
-            <div className="p-2 rounded-lg bg-gray-50">
-              <div className="font-semibold text-gray-900">{d.dataPeriod}</div>
+            <div className="p-2 rounded-lg bg-[#FAF7F0]">
+              <div className="font-semibold text-[#1E2D4D]">{d.dataPeriod}</div>
               <div className="text-gray-400">Data Period</div>
             </div>
           </div>
@@ -334,7 +334,7 @@ export default function InsuranceRiskShared() {
             <button
               onClick={handleDownloadPDF}
               className="px-4 py-2 rounded-lg text-sm font-medium text-white flex items-center gap-2 min-h-[44px]"
-              style={{ backgroundColor: '#1e4d6b' }}
+              style={{ backgroundColor: '#1E2D4D' }}
             >
               <Download className="h-4 w-4" /> Download PDF Report
             </button>
@@ -343,7 +343,7 @@ export default function InsuranceRiskShared() {
 
         {/* For Insurance Professionals */}
         <div className="rounded-xl p-5" style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}>
-          <h3 className="text-sm font-bold text-gray-900 mb-2 flex items-center gap-2">
+          <h3 className="text-sm font-bold text-[#1E2D4D] mb-2 flex items-center gap-2">
             <EvidlyIcon size={16} />
             For Insurance Professionals
           </h3>
@@ -354,7 +354,7 @@ export default function InsuranceRiskShared() {
           <a
             href="mailto:partnerships@evidly.com"
             className="inline-flex items-center gap-2 text-sm font-medium hover:underline"
-            style={{ color: '#1e4d6b' }}
+            style={{ color: '#1E2D4D' }}
           >
             partnerships@evidly.com <ExternalLink className="h-3.5 w-3.5" />
           </a>

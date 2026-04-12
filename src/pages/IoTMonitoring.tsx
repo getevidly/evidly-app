@@ -17,6 +17,7 @@ import {
   iotSensorConfigs, iotIngestionLog, iotSparklines, iotComplianceImpact,
   type IoTSensor, type IoTSensorAlert, type IoTSensorReading,
 } from '../data/demoData';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 type Tab = 'dashboard' | 'sensors' | 'alerts' | 'settings';
 
@@ -55,7 +56,7 @@ function MiniSparkline({ sensorId }: { sensorId: string }) {
   return (
     <ResponsiveContainer width={100} height={32}>
       <LineChart data={data}>
-        <Line type="monotone" dataKey="temp" stroke="#1e4d6b" strokeWidth={1.5} dot={false} />
+        <Line type="monotone" dataKey="temp" stroke="#1E2D4D" strokeWidth={1.5} dot={false} />
       </LineChart>
     </ResponsiveContainer>
   );
@@ -67,6 +68,7 @@ export default function IoTMonitoring() {
   const [locationFilter, setLocationFilter] = useState('all');
   const [expandedSensor, setExpandedSensor] = useState<string | null>(null);
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  usePageTitle('IoT Monitoring');
   const [acknowledgedAlerts, setAcknowledgedAlerts] = useState<Set<string>>(
     new Set(iotSensorAlerts.filter(a => a.acknowledged).map(a => a.id))
   );
@@ -77,7 +79,7 @@ export default function IoTMonitoring() {
         <Breadcrumb items={[{ label: 'IoT Monitoring' }]} />
         <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
           <Radio className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">IoT Monitoring</h2>
+          <h2 className="text-lg font-semibold text-[#1E2D4D] mb-2">IoT Monitoring</h2>
           <p className="text-sm text-gray-500 max-w-md mx-auto">
             Connect sensors to monitor temperature and conditions in real time.
           </p>
@@ -118,8 +120,8 @@ export default function IoTMonitoring() {
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <Radio className="h-6 w-6 text-[#1e4d6b]" />
+          <h1 className="text-2xl font-bold text-[#1E2D4D] flex items-center gap-2">
+            <Radio className="h-6 w-6 text-[#1E2D4D]" />
             IoT Monitoring
           </h1>
           <p className="text-sm text-gray-500 mt-1">Real-time temperature monitoring from connected sensors</p>
@@ -135,7 +137,7 @@ export default function IoTMonitoring() {
           </select>
           <button
             onClick={() => guardAction('refresh', 'IoT Monitoring', () => toast.info('Refreshing sensor data'))}
-            className="px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors text-sm font-medium flex items-center gap-2"
+            className="px-4 py-2 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors text-sm font-medium flex items-center gap-2"
           >
             <RefreshCw className="h-4 w-4" />
             Refresh
@@ -154,7 +156,7 @@ export default function IoTMonitoring() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`px-4 py-2.5 font-medium whitespace-nowrap flex items-center gap-1.5 text-sm border-b-2 transition-colors ${
                   activeTab === tab.id
-                    ? 'border-[#d4af37] text-[#1e4d6b]'
+                    ? 'border-[#d4af37] text-[#1E2D4D]'
                     : 'border-transparent text-gray-600 hover:text-gray-900'
                 }`}
               >
@@ -178,16 +180,16 @@ export default function IoTMonitoring() {
         <div className="space-y-6">
           {/* Summary Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
+            <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <div className="w-8 h-8 rounded-lg bg-[#eef4f8] flex items-center justify-center">
-                  <Radio className="h-4 w-4 text-[#1e4d6b]" />
+                  <Radio className="h-4 w-4 text-[#1E2D4D]" />
                 </div>
                 <span className="text-sm font-medium text-gray-500">Total Sensors</span>
               </div>
-              <p className="text-2xl font-bold text-gray-900">{iotSensors.length}</p>
+              <p className="text-2xl font-bold text-[#1E2D4D]">{iotSensors.length}</p>
             </div>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
+            <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <div className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
                   <Wifi className="h-4 w-4 text-green-600" />
@@ -196,7 +198,7 @@ export default function IoTMonitoring() {
               </div>
               <p className="text-2xl font-bold text-green-700">{onlineCount}</p>
             </div>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
+            <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
                   <AlertTriangle className="h-4 w-4 text-amber-600" />
@@ -205,7 +207,7 @@ export default function IoTMonitoring() {
               </div>
               <p className="text-2xl font-bold text-amber-700">{warningCount}</p>
             </div>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
+            <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <div className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center">
                   <WifiOff className="h-4 w-4 text-red-600" />
@@ -249,10 +251,10 @@ export default function IoTMonitoring() {
                 : reading?.complianceStatus === 'warning' ? 'text-amber-700' : 'text-green-700';
 
               return (
-                <div key={sensor.id} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
+                <div key={sensor.id} className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-shadow">
                   <div className="flex items-start justify-between mb-3">
                     <div>
-                      <h3 className="text-sm font-bold text-gray-900">{sensor.name}</h3>
+                      <h3 className="text-sm font-bold text-[#1E2D4D]">{sensor.name}</h3>
                       <div className="flex items-center gap-1 mt-0.5">
                         <MapPin className="h-3 w-3 text-gray-400" />
                         <span className="text-xs text-gray-500">{sensor.locationName} — {sensor.zone}</span>
@@ -307,23 +309,23 @@ export default function IoTMonitoring() {
           </div>
 
           {/* Compliance Impact */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-            <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <div className="bg-white rounded-xl border border-gray-200 p-4">
+            <h3 className="text-lg font-bold text-[#1E2D4D] mb-4 flex items-center gap-2">
               <EvidlyIcon size={20} />
               IoT Compliance Impact
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {iotComplianceImpact.map(loc => (
                 <div key={loc.locationName} className="p-4 bg-[#eef4f8] rounded-lg border border-[#b8d4e8]">
-                  <h4 className="text-sm font-bold text-[#1e4d6b] mb-2">{loc.locationName}</h4>
+                  <h4 className="text-sm font-bold text-[#1E2D4D] mb-2">{loc.locationName}</h4>
                   <div className="space-y-1.5 text-xs">
                     <div className="flex justify-between">
                       <span className="text-gray-600">Compliance Rate</span>
-                      <span className="font-bold text-[#1e4d6b]">{loc.tempComplianceRate}%</span>
+                      <span className="font-bold text-[#1E2D4D]">{loc.tempComplianceRate}%</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Data Completeness</span>
-                      <span className="font-bold text-[#1e4d6b]">{loc.dataCompletenessScore}%</span>
+                      <span className="font-bold text-[#1E2D4D]">{loc.dataCompletenessScore}%</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Manual Log Reduction</span>
@@ -331,7 +333,7 @@ export default function IoTMonitoring() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Avg Response Time</span>
-                      <span className="font-bold text-[#1e4d6b]">{loc.avgResponseTimeMin} min</span>
+                      <span className="font-bold text-[#1E2D4D]">{loc.avgResponseTimeMin} min</span>
                     </div>
                   </div>
                 </div>
@@ -344,9 +346,9 @@ export default function IoTMonitoring() {
       {/* ── SENSORS TAB ── */}
       {activeTab === 'sensors' && (
         <div className="space-y-4">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div className="px-4 py-3 bg-gray-50 border-b border-gray-200">
-              <h3 className="text-sm font-bold text-gray-900">{filteredSensors.length} Sensor{filteredSensors.length !== 1 ? 's' : ''}</h3>
+          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+            <div className="px-4 py-3 bg-[#FAF7F0] border-b border-gray-200">
+              <h3 className="text-sm font-bold text-[#1E2D4D]">{filteredSensors.length} Sensor{filteredSensors.length !== 1 ? 's' : ''}</h3>
             </div>
             <div className="divide-y divide-gray-100">
               {filteredSensors.map(sensor => {
@@ -368,12 +370,12 @@ export default function IoTMonitoring() {
                           sensor.status === 'online' ? 'bg-green-500' : sensor.status === 'warning' ? 'bg-amber-500' : 'bg-red-500'
                         }`} />
                         <div className="text-left min-w-0">
-                          <p className="text-sm font-semibold text-gray-900 truncate">{sensor.name}</p>
+                          <p className="text-sm font-semibold text-[#1E2D4D] truncate">{sensor.name}</p>
                           <p className="text-xs text-gray-500 truncate">{sensor.locationName} — {sensor.zone}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-4 flex-shrink-0">
-                        <span className="text-lg font-bold text-gray-900">
+                        <span className="text-lg font-bold text-[#1E2D4D]">
                           {sensor.status === 'offline' ? '—' : `${sensor.currentTempF}°F`}
                         </span>
                         <BatteryIcon pct={sensor.batteryPct} />
@@ -385,7 +387,7 @@ export default function IoTMonitoring() {
                     </button>
 
                     {isExpanded && (
-                      <div className="px-4 pb-4 bg-gray-50 border-t border-gray-100">
+                      <div className="px-4 pb-4 bg-[#FAF7F0] border-t border-gray-100">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
                           {/* Details */}
                           <div className="space-y-2 text-xs">
@@ -428,7 +430,7 @@ export default function IoTMonitoring() {
                                     formatter={(v: number) => [`${v}°F`, 'Temperature']}
                                     labelFormatter={(l: string) => format(new Date(l), 'h:mm a')}
                                   />
-                                  <Line type="monotone" dataKey="temp" stroke="#1e4d6b" strokeWidth={2} dot={false} />
+                                  <Line type="monotone" dataKey="temp" stroke="#1E2D4D" strokeWidth={2} dot={false} />
                                 </LineChart>
                               </ResponsiveContainer>
                             </div>
@@ -448,7 +450,7 @@ export default function IoTMonitoring() {
                                 }`}>
                                   <p className="font-bold">{r.temperatureF}°F</p>
                                   <p className="text-gray-500 mt-0.5">{format(new Date(r.timestamp), 'h:mm a')}</p>
-                                  <span className={`mt-1 inline-block px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                                  <span className={`mt-1 inline-block px-1.5 py-0.5 rounded text-xs font-bold ${
                                     r.complianceStatus === 'violation' ? 'bg-red-100 text-red-700' :
                                     r.complianceStatus === 'warning' ? 'bg-amber-100 text-amber-700' :
                                     'bg-green-100 text-green-700'
@@ -469,18 +471,18 @@ export default function IoTMonitoring() {
           </div>
 
           {/* Provider Summary */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-            <h3 className="text-sm font-bold text-gray-900 mb-3">Connected Providers</h3>
+          <div className="bg-white rounded-xl border border-gray-200 p-4">
+            <h3 className="text-sm font-bold text-[#1E2D4D] mb-3">Connected Providers</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {iotSensorProviders.filter(p => p.status === 'connected').map(p => (
-                <div key={p.id} className="p-3 rounded-lg border border-gray-100 bg-gray-50">
+                <div key={p.id} className="p-3 rounded-lg border border-gray-100 bg-[#FAF7F0]">
                   <div className="flex items-center gap-2 mb-1">
                     <div className="w-2 h-2 rounded-full bg-green-500" />
                     <span className="text-xs font-bold" style={{ color: p.color }}>{p.name}</span>
                   </div>
                   <p className="text-xs text-gray-500">{p.sensorCount} sensor{p.sensorCount !== 1 ? 's' : ''}</p>
                   {p.lastSync && (
-                    <p className="text-[10px] text-gray-400 mt-0.5">
+                    <p className="text-xs text-gray-400 mt-0.5">
                       Synced {formatDistanceToNow(new Date(p.lastSync), { addSuffix: true })}
                     </p>
                   )}
@@ -495,7 +497,7 @@ export default function IoTMonitoring() {
       {activeTab === 'alerts' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-bold text-gray-900">
+            <h3 className="text-lg font-bold text-[#1E2D4D]">
               Sensor Alerts
               {unackedAlerts.length > 0 && (
                 <span className="ml-2 px-2 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-700">
@@ -525,7 +527,7 @@ export default function IoTMonitoring() {
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className={`text-sm font-bold ${style.text}`}>{alert.sensorName}</span>
                           <span className="text-xs text-gray-500">{alert.locationName}</span>
-                          <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold uppercase ${
+                          <span className={`px-1.5 py-0.5 rounded text-xs font-bold uppercase ${
                             alert.severity === 'critical' ? 'bg-red-200 text-red-800' :
                             alert.severity === 'warning' ? 'bg-amber-200 text-amber-800' :
                             'bg-blue-200 text-blue-800'
@@ -563,13 +565,13 @@ export default function IoTMonitoring() {
       {activeTab === 'settings' && (
         <div className="space-y-6">
           {/* Alert Thresholds */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Alert Thresholds</h3>
+          <div className="bg-white rounded-xl border border-gray-200 p-4">
+            <h3 className="text-lg font-bold text-[#1E2D4D] mb-4">Alert Thresholds</h3>
             <div className="space-y-3">
               {iotSensorConfigs.map(config => {
                 const provider = iotSensorProviders.find(p => p.slug === config.providerSlug);
                 return (
-                  <div key={config.providerSlug} className="p-4 bg-gray-50 rounded-lg border border-gray-100">
+                  <div key={config.providerSlug} className="p-4 bg-[#FAF7F0] rounded-lg border border-gray-100">
                     <div className="flex items-center justify-between mb-3">
                       <span className="text-sm font-bold" style={{ color: provider?.color }}>{provider?.name || config.providerSlug}</span>
                       <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
@@ -604,7 +606,7 @@ export default function IoTMonitoring() {
                     </div>
                     <div className="flex gap-2 mt-2">
                       {config.notificationChannels.map(ch => (
-                        <span key={ch} className="px-2 py-0.5 bg-white rounded text-[10px] font-medium text-gray-600 border border-gray-200 capitalize">
+                        <span key={ch} className="px-2 py-0.5 bg-white rounded text-xs font-medium text-gray-600 border border-gray-200 capitalize">
                           {ch}
                         </span>
                       ))}
@@ -615,15 +617,15 @@ export default function IoTMonitoring() {
             </div>
             <button
               onClick={() => guardAction('save', 'IoT Monitoring', () => toast.success('Threshold configuration saved'))}
-              className="mt-4 px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors text-sm font-medium"
+              className="mt-4 px-6 py-2 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors text-sm font-medium"
             >
               Save Thresholds
             </button>
           </div>
 
           {/* Ingestion Log */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Recent Data Ingestion</h3>
+          <div className="bg-white rounded-xl border border-gray-200 p-4">
+            <h3 className="text-lg font-bold text-[#1E2D4D] mb-4">Recent Data Ingestion</h3>
             <div className="overflow-x-auto">
               <table className="min-w-full text-xs">
                 <thead>
@@ -646,7 +648,7 @@ export default function IoTMonitoring() {
                       <td className="py-2 px-3 text-gray-600">{log.readingCount}</td>
                       <td className="py-2 px-3 text-gray-600">{format(new Date(log.timestamp), 'h:mm:ss a')}</td>
                       <td className="py-2 px-3">
-                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                        <span className={`px-1.5 py-0.5 rounded text-xs font-bold ${
                           log.status === 'success' ? 'bg-green-100 text-green-700' :
                           log.status === 'partial' ? 'bg-amber-100 text-amber-700' :
                           'bg-red-100 text-red-700'

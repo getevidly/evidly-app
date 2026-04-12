@@ -74,7 +74,7 @@ export function DemoConversionModal({ session, onClose, onConvert }: Props) {
             </ul>
           </div>
 
-          <p className="text-xs text-gray-500 bg-gray-50 rounded-lg p-3">
+          <p className="text-xs text-gray-500 bg-[#FAF7F0] rounded-lg p-3">
             The customer starts fresh with a clean slate and begins building real compliance history from day one.
           </p>
 
@@ -86,7 +86,7 @@ export function DemoConversionModal({ session, onClose, onConvert }: Props) {
                 <label
                   key={plan.value}
                   className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
-                    selectedPlan === plan.value ? 'border-[#1e4d6b] bg-[#1e4d6b]/5' : 'border-gray-200 hover:border-gray-300'
+                    selectedPlan === plan.value ? 'border-[#1E2D4D] bg-[#1E2D4D]/5' : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
                   <input
@@ -95,7 +95,7 @@ export function DemoConversionModal({ session, onClose, onConvert }: Props) {
                     value={plan.value}
                     checked={selectedPlan === plan.value}
                     onChange={() => setSelectedPlan(plan.value)}
-                    className="text-[#1e4d6b]"
+                    className="text-[#1E2D4D]"
                   />
                   <div className="flex-1">
                     <span className="text-sm font-medium">{plan.label}</span>

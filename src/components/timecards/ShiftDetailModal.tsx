@@ -50,7 +50,7 @@ export function ShiftDetailModal({ shift, onClose, onApprove, onReject, onFlag, 
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b sticky top-0 bg-white z-10" style={{ borderColor: '#D1D9E6' }}>
           <div className="flex items-center gap-2">
-            <Clock className="w-5 h-5" style={{ color: '#1e4d6b' }} />
+            <Clock className="w-5 h-5" style={{ color: '#1E2D4D' }} />
             <h3 className="text-lg font-semibold" style={{ color: '#0B1628' }}>Shift Details</h3>
           </div>
           <button onClick={onClose} className="p-2.5 -m-1 rounded-lg hover:bg-gray-100 transition-colors" aria-label="Close">
@@ -153,7 +153,7 @@ export function ShiftDetailModal({ shift, onClose, onApprove, onReject, onFlag, 
           {/* Verification Checklist (demo) */}
           <div className="rounded-lg border p-4" style={{ borderColor: '#D1D9E6' }}>
             <p className="text-sm font-semibold mb-2 flex items-center gap-1.5" style={{ color: '#0B1628' }}>
-              <Shield className="w-4 h-4" style={{ color: '#1e4d6b' }} /> Verification
+              <Shield className="w-4 h-4" style={{ color: '#1E2D4D' }} /> Verification
             </p>
             <div className="grid grid-cols-2 gap-2">
               {[

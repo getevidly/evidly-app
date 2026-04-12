@@ -35,7 +35,7 @@ import {
   type DefStatus,
 } from '../data/deficienciesDemoData';
 
-const NAVY = '#1e4d6b';
+const NAVY = '#1E2D4D';
 
 const SEVERITY_ICONS = {
   critical: AlertOctagon,

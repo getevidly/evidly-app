@@ -3,6 +3,7 @@ import { Heart, CalendarCheck, MapPin, Users, ArrowRight, Mail } from 'lucide-re
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -10,6 +11,7 @@ const WARM_BG = '#FDF6E3';
 
 export default function KitchenToCommunity() {
   const navigate = useNavigate();
+  usePageTitle('Kitchen to Community');
 
   return (
     <div className="min-h-screen bg-white">
@@ -148,14 +150,14 @@ export default function KitchenToCommunity() {
             <button
               onClick={() => navigate('/signup')}
               className="px-6 py-3 rounded-xl font-semibold text-white transition-colors hover:opacity-90 flex items-center justify-center gap-2"
-              style={{ backgroundColor: '#1e4d6b' }}
+              style={{ backgroundColor: '#1E2D4D' }}
             >
               Start your free trial <ArrowRight className="w-4 h-4" />
             </button>
             <button
               onClick={() => navigate('/demo')}
               className="px-6 py-3 rounded-xl font-semibold transition-colors border-2 flex items-center justify-center gap-2"
-              style={{ color: '#1e4d6b', borderColor: '#1e4d6b' }}
+              style={{ color: '#1E2D4D', borderColor: '#1E2D4D' }}
             >
               See the platform in action <ArrowRight className="w-4 h-4" />
             </button>

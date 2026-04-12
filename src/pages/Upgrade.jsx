@@ -90,7 +90,7 @@ export function Upgrade() {
           <div className="rounded-xl border border-gray-200 overflow-hidden">
             <div className="px-5 py-4 border-b border-gray-100">
               <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Current Plan</p>
-              <p className="text-lg font-bold text-gray-900 mt-1">CPP Free</p>
+              <p className="text-lg font-bold text-[#1E2D4D] mt-1">CPP Free</p>
               <p className="text-xs text-gray-500">Included with your CPP service</p>
             </div>
             <div className="px-5 py-4 space-y-3">
@@ -154,7 +154,7 @@ export function Upgrade() {
 
         {/* FAQ */}
         <div className="rounded-xl border border-gray-200 p-6 space-y-4">
-          <h2 className="text-sm font-semibold text-gray-900">Frequently Asked Questions</h2>
+          <h2 className="text-sm font-semibold text-[#1E2D4D]">Frequently Asked Questions</h2>
           <div>
             <p className="text-sm font-medium text-gray-800">What happens to my hood cleaning records?</p>
             <p className="text-xs text-gray-500 mt-1">

@@ -71,36 +71,36 @@ export function SignupLocations() {
               <div className="w-12 h-14">
                 <svg viewBox="0 0 56 65" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
                   <path d="M28 0L56 10V28C56 47.33 44.12 58.17 28 65C11.88 58.17 0 47.33 0 28V10L28 0Z" fill="#d4af37"/>
-                  <path d="M28 6L50 14V28C50 43.5 40.5 52.5 28 58C15.5 52.5 6 43.5 6 28V14L28 6Z" fill="#1e4d6b"/>
+                  <path d="M28 6L50 14V28C50 43.5 40.5 52.5 28 58C15.5 52.5 6 43.5 6 28V14L28 6Z" fill="#1E2D4D"/>
                   <path d="M22 32L26 36L34 26" stroke="#d4af37" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
               <span className="ml-3 text-3xl font-bold">
-                <span className="text-[#1e4d6b]">Evid</span>
+                <span className="text-[#1E2D4D]">Evid</span>
                 <span className="text-[#d4af37]">LY</span>
               </span>
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">How many locations will you be managing?</h1>
+          <h1 className="text-3xl font-bold text-[#1E2D4D] mb-2">How many locations will you be managing?</h1>
           <p className="text-lg text-gray-600">Choose the option that best fits your business</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <button
             onClick={() => setSelectedType('single')}
-            className={`relative bg-white rounded-xl p-8 shadow-sm border border-gray-200 hover:shadow-xl transition-all cursor-pointer ${
-              selectedType === 'single' ? 'ring-4 ring-[#1e4d6b] ring-opacity-50' : ''
+            className={`relative bg-white rounded-xl p-8 border border-gray-200 hover:shadow-xl transition-all cursor-pointer ${
+              selectedType === 'single' ? 'ring-4 ring-[#1E2D4D] ring-opacity-50' : ''
             } ${selectedType && selectedType !== 'single' ? 'opacity-40' : ''}`}
           >
             <div className="flex flex-col items-center text-center">
               <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                <Building className="h-10 w-10 text-[#1e4d6b]" />
+                <Building className="h-10 w-10 text-[#1E2D4D]" />
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Single Location</h3>
+              <h3 className="text-2xl font-bold text-[#1E2D4D] mb-2">Single Location</h3>
               <p className="text-gray-600">1 location, 1 address</p>
             </div>
             {selectedType === 'single' && (
-              <div className="absolute top-4 right-4 w-6 h-6 bg-[#1e4d6b] rounded-full flex items-center justify-center">
+              <div className="absolute top-4 right-4 w-6 h-6 bg-[#1E2D4D] rounded-full flex items-center justify-center">
                 <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
@@ -110,19 +110,19 @@ export function SignupLocations() {
 
           <button
             onClick={() => setSelectedType('multiple')}
-            className={`relative bg-white rounded-xl p-8 shadow-sm border border-gray-200 hover:shadow-xl transition-all cursor-pointer ${
-              selectedType === 'multiple' ? 'ring-4 ring-[#1e4d6b] ring-opacity-50' : ''
+            className={`relative bg-white rounded-xl p-8 border border-gray-200 hover:shadow-xl transition-all cursor-pointer ${
+              selectedType === 'multiple' ? 'ring-4 ring-[#1E2D4D] ring-opacity-50' : ''
             } ${selectedType && selectedType !== 'multiple' ? 'opacity-40' : ''}`}
           >
             <div className="flex flex-col items-center text-center">
               <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                <Building2 className="h-10 w-10 text-[#1e4d6b]" />
+                <Building2 className="h-10 w-10 text-[#1E2D4D]" />
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Multiple Locations</h3>
+              <h3 className="text-2xl font-bold text-[#1E2D4D] mb-2">Multiple Locations</h3>
               <p className="text-gray-600">2+ locations, multiple addresses</p>
             </div>
             {selectedType === 'multiple' && (
-              <div className="absolute top-4 right-4 w-6 h-6 bg-[#1e4d6b] rounded-full flex items-center justify-center">
+              <div className="absolute top-4 right-4 w-6 h-6 bg-[#1E2D4D] rounded-full flex items-center justify-center">
                 <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
@@ -132,19 +132,19 @@ export function SignupLocations() {
 
           <button
             onClick={() => setSelectedType('enterprise')}
-            className={`relative bg-white rounded-xl p-8 shadow-sm border border-gray-200 hover:shadow-xl transition-all cursor-pointer ${
-              selectedType === 'enterprise' ? 'ring-4 ring-[#1e4d6b] ring-opacity-50' : ''
+            className={`relative bg-white rounded-xl p-8 border border-gray-200 hover:shadow-xl transition-all cursor-pointer ${
+              selectedType === 'enterprise' ? 'ring-4 ring-[#1E2D4D] ring-opacity-50' : ''
             } ${selectedType && selectedType !== 'enterprise' ? 'opacity-40' : ''}`}
           >
             <div className="flex flex-col items-center text-center">
               <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                <Layers className="h-10 w-10 text-[#1e4d6b]" />
+                <Layers className="h-10 w-10 text-[#1E2D4D]" />
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Enterprise</h3>
+              <h3 className="text-2xl font-bold text-[#1E2D4D] mb-2">Enterprise</h3>
               <p className="text-gray-600">Large organizations with dedicated support</p>
             </div>
             {selectedType === 'enterprise' && (
-              <div className="absolute top-4 right-4 w-6 h-6 bg-[#1e4d6b] rounded-full flex items-center justify-center">
+              <div className="absolute top-4 right-4 w-6 h-6 bg-[#1E2D4D] rounded-full flex items-center justify-center">
                 <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
@@ -154,7 +154,7 @@ export function SignupLocations() {
         </div>
 
         {selectedType === 'multiple' && (
-          <div className="mb-8 bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+          <div className="mb-8 bg-white rounded-xl p-6 border border-gray-200">
             <label className="block text-center text-lg font-medium text-gray-900 mb-4">
               Number of Locations
             </label>
@@ -165,7 +165,7 @@ export function SignupLocations() {
               >
                 <Minus className="h-6 w-6 text-gray-700" />
               </button>
-              <div className="text-5xl font-bold text-[#1e4d6b] w-24 text-center">
+              <div className="text-5xl font-bold text-[#1E2D4D] w-24 text-center">
                 {locationCount}
               </div>
               <button
@@ -179,7 +179,7 @@ export function SignupLocations() {
         )}
 
         {selectedType === 'enterprise' && (
-          <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-xl p-8 text-white shadow-sm">
+          <div className="bg-gradient-to-r from-[#1E2D4D] to-[#2c5f7f] rounded-xl p-8 text-white shadow-sm">
             <h3 className="text-2xl font-bold mb-4">Enterprise Plan (11+ Locations)</h3>
             <p className="text-lg mb-6">
               For 11+ locations, we offer custom pricing with dedicated onboarding and a success manager.
@@ -200,17 +200,17 @@ export function SignupLocations() {
                 </div>
               </div>
             </div>
-            <button className="w-full py-4 bg-[#1e4d6b] text-white rounded-lg text-lg font-bold hover:bg-[#2a6a8f] active:bg-[#1e4d6b] transition-colors shadow-sm">
+            <button className="w-full py-4 bg-[#1E2D4D] text-white rounded-lg text-lg font-bold hover:bg-[#162340] active:bg-[#1E2D4D] transition-colors shadow-sm min-h-[44px]">
               Schedule a Demo
             </button>
           </div>
         )}
 
         {selectedType && selectedType !== 'enterprise' && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-8">
+          <div className="bg-white rounded-xl border border-gray-200 p-8 mb-8">
             <div className="mb-6">
               <div className="flex items-center justify-between mb-2">
-                <h2 className="text-2xl font-bold text-gray-900">Your Plan</h2>
+                <h2 className="text-2xl font-bold text-[#1E2D4D]">Your Plan</h2>
                 <div className="inline-flex items-center bg-[#d4af37] text-white px-4 py-2 rounded-full text-sm font-bold">
                   Founder Pricing — Locked Forever
                 </div>
@@ -248,7 +248,7 @@ export function SignupLocations() {
 
               <div className="space-y-2">
                 <div className="flex justify-between items-center text-lg">
-                  <span className="font-semibold text-gray-900">Monthly Total</span>
+                  <span className="font-semibold text-[#1E2D4D]">Monthly Total</span>
                   <span className="font-bold text-2xl text-[#d4af37]">${pricing.monthly}/mo</span>
                 </div>
                 <div className="flex justify-between items-center text-sm">
@@ -272,7 +272,7 @@ export function SignupLocations() {
                 onClick={() => setBillingPeriod('monthly')}
                 className={`px-6 py-2 rounded-lg font-medium transition-colors ${
                   billingPeriod === 'monthly'
-                    ? 'bg-[#1e4d6b] text-white'
+                    ? 'bg-[#1E2D4D] text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
@@ -282,7 +282,7 @@ export function SignupLocations() {
                 onClick={() => setBillingPeriod('annual')}
                 className={`px-6 py-2 rounded-lg font-medium transition-colors ${
                   billingPeriod === 'annual'
-                    ? 'bg-[#1e4d6b] text-white'
+                    ? 'bg-[#1E2D4D] text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
@@ -292,7 +292,7 @@ export function SignupLocations() {
 
             {billingPeriod === 'annual' && (
               <div className="text-center mb-6">
-                <div className="text-3xl font-bold text-gray-900 mb-2">
+                <div className="text-3xl font-bold text-[#1E2D4D] mb-2">
                   ${pricing.annual}/year
                 </div>
                 <div className="text-green-600 font-semibold text-lg">
@@ -333,7 +333,7 @@ export function SignupLocations() {
 
             <button
               onClick={handleContinue}
-              className="w-full py-4 bg-[#1e4d6b] text-white rounded-lg text-lg font-bold hover:bg-[#2a6a8f] active:bg-[#1e4d6b] transition-colors shadow-sm"
+              className="w-full py-4 bg-[#1E2D4D] text-white rounded-lg text-lg font-bold hover:bg-[#162340] active:bg-[#1E2D4D] transition-colors shadow-sm"
             >
               Continue to Checkout
             </button>

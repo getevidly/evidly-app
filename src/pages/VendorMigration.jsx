@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { MigrationWizard } from '../components/migration/MigrationWizard';
 
-const PRIMARY = '#1e4d6b';
+const PRIMARY = '#1E2D4D';
 const GOLD = '#d4af37';
 const NAVY = '#1E2D4D';
 const MUTED_GOLD = '#A08C5A';
@@ -171,7 +171,7 @@ export function VendorMigration() {
             {painCards.map((card) => (
               <div
                 key={card.title}
-                className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+                className="bg-white rounded-xl p-8 border border-gray-100 hover:shadow-md transition-shadow"
               >
                 <div
                   className="w-14 h-14 rounded-lg flex items-center justify-center mb-5"
@@ -214,7 +214,7 @@ export function VendorMigration() {
                 {transferRows.map((row, i) => (
                   <tr
                     key={row.item}
-                    className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
+                    className={i % 2 === 0 ? 'bg-white' : 'bg-[#FAF7F0]'}
                   >
                     <td className="px-6 py-4 font-medium text-gray-900">{row.item}</td>
                     <td className="px-6 py-4 text-center">

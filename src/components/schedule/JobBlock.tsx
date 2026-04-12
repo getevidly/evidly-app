@@ -40,7 +40,7 @@ export function JobBlock({ job, compact, onClick }: JobBlockProps) {
     <div
       ref={setNodeRef}
       style={{ ...style, background: colors.bg, borderColor: colors.border }}
-      className={`rounded-lg border px-2.5 py-2 cursor-pointer hover:shadow-sm transition-shadow ${compact ? 'text-[10px]' : 'text-xs'}`}
+      className={`rounded-xl border px-2.5 py-2 cursor-pointer transition-shadow ${compact ? 'text-xs' : 'text-xs'}`}
       onClick={() => onClick?.(job)}
       {...attributes}
       {...listeners}

@@ -103,12 +103,12 @@ export function EquipmentHealthWidget({ locationId }: Props) {
 
   if (data.total === 0) {
     return (
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
+      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
-            <Wrench className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+            <Wrench className="h-5 w-5" style={{ color: '#1E2D4D' }} />
           </div>
-          <h3 className="text-lg font-semibold text-gray-900">Equipment Health</h3>
+          <h3 className="text-lg font-semibold text-[#1E2D4D]">Equipment Health</h3>
         </div>
         <p className="text-sm text-gray-500 text-center py-4">No equipment registered. Add equipment to track maintenance.</p>
       </div>
@@ -116,22 +116,22 @@ export function EquipmentHealthWidget({ locationId }: Props) {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
+    <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
-            <Wrench className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+            <Wrench className="h-5 w-5" style={{ color: '#1E2D4D' }} />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">Equipment Health</h3>
+            <h3 className="text-lg font-semibold text-[#1E2D4D]">Equipment Health</h3>
             <p className="text-xs text-gray-500">{data.total} items tracked</p>
           </div>
         </div>
         <button
           onClick={() => navigate(locationId === 'all' ? '/equipment' : `/equipment?location=${locationId}`)}
           className="text-sm font-medium flex items-center gap-1 hover:underline"
-          style={{ color: '#1e4d6b' }}
+          style={{ color: '#1E2D4D' }}
         >
           View <ArrowRight className="h-3.5 w-3.5" />
         </button>
@@ -139,7 +139,7 @@ export function EquipmentHealthWidget({ locationId }: Props) {
 
       {/* Status summary row */}
       <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg mb-4" style={{ backgroundColor: '#eef4f8' }}>
-        <span className="text-sm font-semibold text-gray-900">{data.total} Total</span>
+        <span className="text-sm font-semibold text-[#1E2D4D]">{data.total} Total</span>
         <span className="text-gray-300">|</span>
         <span className="flex items-center gap-1 text-sm font-medium" style={{ color: '#16a34a' }}>
           {data.operational} OK
@@ -197,12 +197,12 @@ export function EquipmentHealthWidget({ locationId }: Props) {
         <div className="flex items-center gap-1.5 text-sm">
           <DollarSign className="h-4 w-4 text-gray-400" />
           <span className="text-gray-500">YTD Maintenance:</span>
-          <span className="font-semibold text-gray-900">${data.ytdSpend.toLocaleString()}</span>
+          <span className="font-semibold text-[#1E2D4D]">${data.ytdSpend.toLocaleString()}</span>
         </div>
         <div className="flex items-center gap-1.5 text-sm">
           <Calendar className="h-4 w-4 text-gray-400" />
           <span className="text-gray-500">Next service:</span>
-          <span className="font-semibold text-gray-900">{data.nextServiceDue}</span>
+          <span className="font-semibold text-[#1E2D4D]">{data.nextServiceDue}</span>
         </div>
       </div>
     </div>

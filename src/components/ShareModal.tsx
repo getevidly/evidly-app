@@ -65,15 +65,15 @@ export function ShareModal({ isOpen, onClose, preselectedDocuments = [], documen
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-        <div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onClick={onClose} />
+        <div className="fixed inset-0 transition-opacity bg-[#FAF7F0]0 bg-opacity-75" onClick={onClose} />
 
-        <div className="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-sm border border-gray-200 transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
+        <div className="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden border border-gray-200 transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
           {sent ? (
             <div className="p-8 text-center">
               <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
                 <CheckCircle className="h-10 w-10 text-green-600" />
               </div>
-              <h3 className="text-2xl font-semibold text-gray-900 mb-2">
+              <h3 className="text-2xl font-semibold text-[#1E2D4D] mb-2">
                 {documentType === 'document' ? 'Documents Shared!' : documentType === 'report' ? 'Report Shared!' : documentType === 'benchmark' ? 'Benchmark Shared!' : 'Compliance Report Shared!'}
               </h3>
               <p className="text-gray-600">
@@ -85,10 +85,10 @@ export function ShareModal({ isOpen, onClose, preselectedDocuments = [], documen
               <div className="bg-white px-6 pt-6 pb-4">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <div className="flex items-center justify-center h-10 w-10 rounded-full bg-[#1e4d6b] bg-opacity-10">
-                      <Mail className="h-5 w-5 text-[#1e4d6b]" />
+                    <div className="flex items-center justify-center h-10 w-10 rounded-full bg-[#1E2D4D] bg-opacity-10">
+                      <Mail className="h-5 w-5 text-[#1E2D4D]" />
                     </div>
-                    <h3 className="text-xl font-semibold text-gray-900">
+                    <h3 className="text-xl font-semibold text-[#1E2D4D]">
                       Share {documentType === 'document' ? 'Documents' : documentType === 'report' ? 'Report' : documentType === 'benchmark' ? 'Benchmark Report' : 'Compliance Report'}
                     </h3>
                   </div>
@@ -114,7 +114,7 @@ export function ShareModal({ isOpen, onClose, preselectedDocuments = [], documen
                     type="text"
                     value={recipientName}
                     onChange={(e) => setRecipientName(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
                     placeholder="Enter recipient name"
                   />
                 </div>
@@ -127,7 +127,7 @@ export function ShareModal({ isOpen, onClose, preselectedDocuments = [], documen
                     type="email"
                     value={recipientEmail}
                     onChange={(e) => setRecipientEmail(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
                     placeholder="recipient@example.com"
                     required
                   />
@@ -140,7 +140,7 @@ export function ShareModal({ isOpen, onClose, preselectedDocuments = [], documen
                   <select
                     value={recipientType}
                     onChange={(e) => setRecipientType(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
                   >
                     <option value="health-inspector">Health Inspector</option>
                     <option value="insurance">Insurance Company</option>
@@ -164,7 +164,7 @@ export function ShareModal({ isOpen, onClose, preselectedDocuments = [], documen
                             type="checkbox"
                             checked={selectedDocs.includes(doc)}
                             onChange={() => handleToggleDocument(doc)}
-                            className="h-4 w-4 text-[#1e4d6b] focus:ring-[#1e4d6b] border-gray-300 rounded"
+                            className="h-4 w-4 text-[#1E2D4D] focus:ring-[#1E2D4D] border-gray-300 rounded"
                           />
                           <div className="flex items-center gap-2 flex-1">
                             <FileText className="h-4 w-4 text-gray-400" />
@@ -179,15 +179,15 @@ export function ShareModal({ isOpen, onClose, preselectedDocuments = [], documen
                   </div>
                 )}
 
-                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-[#FAF7F0] rounded-lg">
                   <div>
                     <div className="text-sm font-medium text-gray-700">Include Compliance Score?</div>
                     <div className="text-xs text-gray-500">Attaches a compliance summary PDF</div>
                   </div>
                   <button
                     onClick={() => setIncludeCompliance(!includeCompliance)}
-                    className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:ring-offset-2 ${
-                      includeCompliance ? 'bg-[#1e4d6b]' : 'bg-gray-200'
+                    className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:ring-offset-2 ${
+                      includeCompliance ? 'bg-[#1E2D4D]' : 'bg-gray-200'
                     }`}
                   >
                     <span
@@ -214,14 +214,14 @@ export function ShareModal({ isOpen, onClose, preselectedDocuments = [], documen
                     value={message}
                     onChange={(e) => { setMessage(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('message'); return n; }); }}
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent resize-none"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent resize-none"
                     placeholder="Add a personal message..."
                   />
                   {aiFields.has('message') && <AIGeneratedIndicator />}
                 </div>
               </div>
 
-              <div className="bg-gray-50 px-6 py-4 flex justify-end gap-3">
+              <div className="bg-[#FAF7F0] px-6 py-4 flex justify-end gap-3">
                 <button
                   onClick={onClose}
                   disabled={sending}
@@ -232,7 +232,7 @@ export function ShareModal({ isOpen, onClose, preselectedDocuments = [], documen
                 <button
                   onClick={handleSend}
                   disabled={sending || !recipientEmail}
-                  className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  className="px-6 py-2 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                 >
                   {sending ? (
                     <>

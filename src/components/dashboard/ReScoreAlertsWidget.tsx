@@ -15,7 +15,7 @@ import {
   type ReScoreAlert,
 } from '../../data/rescoreAlertsDemoData';
 
-const NAVY = '#1e4d6b';
+const NAVY = '#1E2D4D';
 
 interface Props {
   navigate: (path: string) => void;
@@ -46,7 +46,7 @@ export function ReScoreAlertsWidget({ navigate }: Props) {
   })[0];
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
+    <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-3">
@@ -54,7 +54,7 @@ export function ReScoreAlertsWidget({ navigate }: Props) {
             <ShieldAlert className="h-5 w-5" style={{ color: counts.critical > 0 ? '#dc2626' : '#d97706' }} />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">Re-Score Alerts</h3>
+            <h3 className="text-lg font-semibold text-[#1E2D4D]">Re-Score Alerts</h3>
             <p className="text-xs text-gray-500">{total} active alert{total !== 1 ? 's' : ''}</p>
           </div>
         </div>
@@ -106,7 +106,7 @@ export function ReScoreAlertsWidget({ navigate }: Props) {
               <AlertTriangle className="h-3.5 w-3.5 flex-shrink-0 mt-0.5" style={{ color: color.text }} />
               <div className="flex-1 min-w-0">
                 <span className="font-medium leading-snug" style={{ color: color.text }}>{alert.message}</span>
-                <div className="flex items-center gap-2 mt-1 text-[10px]" style={{ color: color.text, opacity: 0.7 }}>
+                <div className="flex items-center gap-2 mt-1 text-xs" style={{ color: color.text, opacity: 0.7 }}>
                   <span>{alert.facilityName}</span>
                   <span>·</span>
                   <span>{getPillarLabel(alert.pillar)}</span>

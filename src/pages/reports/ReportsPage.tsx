@@ -9,6 +9,7 @@ import { REPORT_DEFINITIONS, CATEGORY_META, type ReportCategory } from '../../co
 import { useReportHistory, useScheduledReports, useFavoriteReports } from '../../hooks/api/useReports';
 import { NAVY, CARD_BG, CARD_BORDER, CARD_SHADOW, TEXT_TERTIARY, MUTED } from '../../components/dashboard/shared/constants';
 import { LoadingSkeleton, ErrorState } from '../../components/shared/PageStates';
+import { usePageTitle } from '../../hooks/usePageTitle';
 
 const TABS: { key: 'all' | ReportCategory; label: string }[] = [
   { key: 'all', label: 'All Reports' },
@@ -20,6 +21,7 @@ const TABS: { key: 'all' | ReportCategory; label: string }[] = [
 
 export function ReportsPage() {
   const navigate = useNavigate();
+  usePageTitle('Reports');
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab] = useState<'all' | ReportCategory>('all');
   const [myTab, setMyTab] = useState<'recent' | 'scheduled' | 'favorites'>('recent');
@@ -57,7 +59,7 @@ export function ReportsPage() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search reports..."
-            className="pl-9 pr-4 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/30"
+            className="pl-9 pr-4 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/30"
             style={{ background: CARD_BG, borderColor: CARD_BORDER, color: NAVY, width: 260 }}
           />
         </div>
@@ -107,10 +109,10 @@ export function ReportsPage() {
                   </div>
                   {isFav && <Star className="w-4 h-4 fill-amber-400 text-amber-400" />}
                 </div>
-                <p className="text-sm font-semibold mb-1 group-hover:text-[#1e4d6b]" style={{ color: NAVY }}>{report.title}</p>
+                <p className="text-sm font-semibold mb-1 group-hover:text-[#1E2D4D]" style={{ color: NAVY }}>{report.title}</p>
                 <p className="text-xs leading-relaxed" style={{ color: TEXT_TERTIARY }}>{report.description}</p>
                 <div className="mt-3">
-                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ color: cat.color, background: cat.bg }}>
+                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ color: cat.color, background: cat.bg }}>
                     {cat.label}
                   </span>
                 </div>
@@ -175,7 +177,7 @@ export function ReportsPage() {
                     <p className="text-sm font-medium" style={{ color: NAVY }}>{s.reportTitle}</p>
                     <p className="text-xs" style={{ color: TEXT_TERTIARY }}>{s.frequency} &middot; {s.format.toUpperCase()}</p>
                   </div>
-                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{
+                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{
                     color: s.isActive ? '#059669' : '#DC2626',
                     background: s.isActive ? '#F0FFF4' : '#FEF2F2',
                   }}>
@@ -208,7 +210,7 @@ export function ReportsPage() {
                       <Icon className="w-4 h-4" style={{ color: cat.color }} />
                       <span className="text-sm font-medium" style={{ color: NAVY }}>{def.title}</span>
                     </div>
-                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ color: cat.color, background: cat.bg }}>
+                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ color: cat.color, background: cat.bg }}>
                       {cat.label}
                     </span>
                   </button>
@@ -235,7 +237,7 @@ function EmptyMyReports({ icon, title, subtitle }: { icon: React.ReactNode; titl
 function StatusBadge({ status }: { status: string }) {
   const isOk = status === 'completed';
   return (
-    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{
+    <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{
       color: isOk ? '#059669' : status === 'generating' ? '#d97706' : '#DC2626',
       background: isOk ? '#F0FFF4' : status === 'generating' ? '#FFFBEB' : '#FEF2F2',
     }}>

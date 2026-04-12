@@ -33,7 +33,7 @@ export default function LocationCard({ locationId, locationName, score, onClick,
           width: 120,
           minHeight: 100,
           boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-          border: isSelected ? '2px solid #1e4d6b' : '2px solid transparent',
+          border: isSelected ? '2px solid #1E2D4D' : '2px solid transparent',
         }}
       >
         {/* QR share button */}
@@ -71,9 +71,9 @@ export default function LocationCard({ locationId, locationName, score, onClick,
       {showQrModal && (
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onClick={() => setShowQrModal(false)} />
+            <div className="fixed inset-0 transition-opacity bg-[#FAF7F0]0 bg-opacity-75" onClick={() => setShowQrModal(false)} />
 
-            <div className="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-sm border border-gray-200 transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full">
+            <div className="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden border border-gray-200 transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full">
               {/* Header */}
               <div style={{ background: '#1E2D4D' }} className="px-6 py-4">
                 <div className="flex items-center justify-between">
@@ -95,7 +95,7 @@ export default function LocationCard({ locationId, locationName, score, onClick,
 
               {/* QR Code */}
               <div className="px-6 py-6 flex flex-col items-center">
-                <div className="p-4 bg-white rounded-xl border border-gray-200 shadow-sm mb-4">
+                <div className="p-4 bg-white rounded-xl border border-gray-200 mb-4">
                   <QRCodeSVG
                     value={passportUrl}
                     size={200}
@@ -106,7 +106,7 @@ export default function LocationCard({ locationId, locationName, score, onClick,
                 <p className="text-xs text-gray-500 mb-4">Scan to view live compliance passport</p>
 
                 {/* Copyable URL */}
-                <div className="w-full flex items-center gap-2 p-2 bg-gray-50 rounded-lg border border-gray-200">
+                <div className="w-full flex items-center gap-2 p-2 bg-[#FAF7F0] rounded-lg border border-gray-200">
                   <input
                     type="text"
                     readOnly
@@ -128,7 +128,7 @@ export default function LocationCard({ locationId, locationName, score, onClick,
               </div>
 
               {/* Footer */}
-              <div className="bg-gray-50 px-6 py-3 flex justify-end">
+              <div className="bg-[#FAF7F0] px-6 py-3 flex justify-end">
                 <button
                   onClick={() => setShowQrModal(false)}
                   className="px-4 py-2 text-sm font-medium rounded-lg transition-colors"

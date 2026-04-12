@@ -55,7 +55,7 @@ export function ScheduleReportModal({ reportSlug, reportTitle, onClose, onSave, 
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b" style={{ borderColor: CARD_BORDER }}>
           <div className="flex items-center gap-2">
-            <CalendarClock className="w-5 h-5" style={{ color: '#1e4d6b' }} />
+            <CalendarClock className="w-5 h-5" style={{ color: '#1E2D4D' }} />
             <h2 className="text-base font-bold" style={{ color: NAVY }}>Schedule Report</h2>
           </div>
           <button onClick={onClose} className="p-2.5 -m-1 rounded hover:bg-gray-100" aria-label="Close"><X className="w-5 h-5" style={{ color: TEXT_TERTIARY }} /></button>
@@ -74,9 +74,9 @@ export function ScheduleReportModal({ reportSlug, reportTitle, onClose, onSave, 
                   onClick={() => setFrequency(f)}
                   className="px-3 py-1.5 text-xs font-semibold rounded-md border transition-colors capitalize"
                   style={{
-                    background: frequency === f ? '#1e4d6b' : CARD_BG,
+                    background: frequency === f ? '#1E2D4D' : CARD_BG,
                     color: frequency === f ? 'white' : NAVY,
-                    borderColor: frequency === f ? '#1e4d6b' : CARD_BORDER,
+                    borderColor: frequency === f ? '#1E2D4D' : CARD_BORDER,
                   }}
                 >
                   {f}
@@ -152,9 +152,9 @@ export function ScheduleReportModal({ reportSlug, reportTitle, onClose, onSave, 
                   onClick={() => setFormat(f)}
                   className="px-3 py-1.5 text-xs font-semibold rounded-md border transition-colors uppercase"
                   style={{
-                    background: format === f ? '#1e4d6b' : CARD_BG,
+                    background: format === f ? '#1E2D4D' : CARD_BG,
                     color: format === f ? 'white' : NAVY,
-                    borderColor: format === f ? '#1e4d6b' : CARD_BORDER,
+                    borderColor: format === f ? '#1E2D4D' : CARD_BORDER,
                   }}
                 >
                   {f}
@@ -173,7 +173,7 @@ export function ScheduleReportModal({ reportSlug, reportTitle, onClose, onSave, 
             onClick={handleSave}
             disabled={saving}
             className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white rounded-lg transition-colors"
-            style={{ background: saving ? '#9CA3AF' : '#1e4d6b' }}
+            style={{ background: saving ? '#9CA3AF' : '#1E2D4D' }}
           >
             {saving && <Loader2 className="w-4 h-4 animate-spin" />}
             {saving ? 'Saving...' : 'Schedule Report'}

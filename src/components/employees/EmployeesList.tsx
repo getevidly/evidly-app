@@ -50,7 +50,7 @@ export function EmployeesList({ employees, onSelect }: EmployeesListProps) {
       <div className="flex items-center gap-2 mb-4">
         <span className="text-xs" style={{ color: '#6B7F96' }}>Sort by:</span>
         {SORT_OPTIONS.map(o => (
-          <button key={o.value} onClick={() => setSortBy(o.value)} className="px-2.5 py-1 text-xs font-medium rounded-lg transition-colors" style={{ color: sortBy === o.value ? '#FFFFFF' : '#3D5068', backgroundColor: sortBy === o.value ? '#1e4d6b' : '#EEF1F7' }}>
+          <button key={o.value} onClick={() => setSortBy(o.value)} className="px-2.5 py-1 text-xs font-medium rounded-lg transition-colors" style={{ color: sortBy === o.value ? '#FFFFFF' : '#3D5068', backgroundColor: sortBy === o.value ? '#1E2D4D' : '#EEF1F7' }}>
             {o.label}
           </button>
         ))}
@@ -79,7 +79,7 @@ export function EmployeesList({ employees, onSelect }: EmployeesListProps) {
                   <p className="text-sm font-semibold truncate" style={{ color: '#0B1628' }}>{emp.name}</p>
                   <div className="flex items-center gap-1.5 mt-1">
                     <RoleBadge role={emp.role} />
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold" style={{ color: statCfg.color, backgroundColor: statCfg.bg }}>
+                    <span className="px-2 py-0.5 rounded-full text-xs font-semibold" style={{ color: statCfg.color, backgroundColor: statCfg.bg }}>
                       {statCfg.label}
                     </span>
                   </div>

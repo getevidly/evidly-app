@@ -32,7 +32,7 @@ import {
 } from '../data/serviceProviderDemoData';
 
 // ── Brand ──────────────────────────────────────────────────
-const NAVY = '#1e4d6b';
+const NAVY = '#1E2D4D';
 const NAVY_HOVER = '#163a52';
 const GOLD = '#d4af37';
 
@@ -217,7 +217,7 @@ export function VendorSetup() {
   };
 
   // ── Render helpers ───────────────────────────────────────
-  const inputClass = 'w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent';
+  const inputClass = 'w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent';
   const labelClass = 'block text-sm font-medium text-gray-700 mb-1';
 
   const renderStep1 = () => (
@@ -237,14 +237,14 @@ export function VendorSetup() {
             <label
               key={svc.id}
               className={`flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer transition-colors ${
-                selectedServices.includes(svc.id) ? 'border-[#1e4d6b] bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                selectedServices.includes(svc.id) ? 'border-[#1E2D4D] bg-blue-50' : 'border-gray-200 hover:border-gray-300'
               }`}
             >
               <input
                 type="checkbox"
                 checked={selectedServices.includes(svc.id)}
                 onChange={() => toggleService(svc.id)}
-                className="rounded text-[#1e4d6b] focus:ring-[#1e4d6b]"
+                className="rounded text-[#1E2D4D] focus:ring-[#1E2D4D]"
               />
               <span className="text-sm text-gray-700">{svc.label}</span>
             </label>
@@ -279,12 +279,12 @@ export function VendorSetup() {
       <p className="text-sm text-gray-500">These will be visible to your clients and automatically shared when you're added as a vendor on their account.</p>
 
       {/* IKECA */}
-      <div className="bg-gray-50 rounded-xl p-4 space-y-3">
-        <label className="text-sm font-semibold text-gray-900">IKECA Certified?</label>
+      <div className="bg-[#FAF7F0] rounded-xl p-4 space-y-3">
+        <label className="text-sm font-semibold text-[#1E2D4D]">IKECA Certified?</label>
         <div className="flex gap-4">
           {(['yes', 'no', 'pending'] as const).map(v => (
             <label key={v} className="flex items-center gap-2 cursor-pointer">
-              <input type="radio" name="ikeca" checked={ikecaCertified === v} onChange={() => setIkecaCertified(v)} className="text-[#1e4d6b] focus:ring-[#1e4d6b]" />
+              <input type="radio" name="ikeca" checked={ikecaCertified === v} onChange={() => setIkecaCertified(v)} className="text-[#1E2D4D] focus:ring-[#1E2D4D]" />
               <span className="text-sm text-gray-700 capitalize">{v}</span>
             </label>
           ))}
@@ -304,8 +304,8 @@ export function VendorSetup() {
       </div>
 
       {/* Contractor License */}
-      <div className="bg-gray-50 rounded-xl p-4 space-y-3">
-        <label className="text-sm font-semibold text-gray-900">Contractor License</label>
+      <div className="bg-[#FAF7F0] rounded-xl p-4 space-y-3">
+        <label className="text-sm font-semibold text-[#1E2D4D]">Contractor License</label>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
             <label className={labelClass}>License #</label>
@@ -324,11 +324,11 @@ export function VendorSetup() {
 
       {/* Additional Certs */}
       {additionalCerts.map((cert, i) => (
-        <div key={cert.id} className="bg-gray-50 rounded-xl p-4 space-y-3 relative">
+        <div key={cert.id} className="bg-[#FAF7F0] rounded-xl p-4 space-y-3 relative">
           <button type="button" onClick={() => setAdditionalCerts(prev => prev.filter((_, idx) => idx !== i))} className="absolute top-3 right-3 text-gray-400 hover:text-red-500">
             <X size={16} />
           </button>
-          <label className="text-sm font-semibold text-gray-900">Additional Certification</label>
+          <label className="text-sm font-semibold text-[#1E2D4D]">Additional Certification</label>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <label className={labelClass}>Name</label>
@@ -362,9 +362,9 @@ export function VendorSetup() {
       <p className="text-sm text-gray-500">Upload your current certificates of insurance. These will be automatically shared with all your clients. EvidLY will notify you AND your clients before they expire.</p>
 
       {insuranceDocs.map(doc => (
-        <div key={doc.id} className="bg-gray-50 rounded-xl p-4 space-y-3">
+        <div key={doc.id} className="bg-[#FAF7F0] rounded-xl p-4 space-y-3">
           <div className="flex items-center justify-between">
-            <label className="text-sm font-semibold text-gray-900">{doc.label}</label>
+            <label className="text-sm font-semibold text-[#1E2D4D]">{doc.label}</label>
             {doc.fileName && (
               <span className="flex items-center gap-1 text-xs text-green-700 bg-green-50 px-2 py-0.5 rounded-full">
                 <Check size={12} /> Uploaded
@@ -377,13 +377,13 @@ export function VendorSetup() {
             <button
               type="button"
               onClick={() => simulateUpload(doc.id)}
-              className="w-full border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center gap-2 hover:border-[#1e4d6b] hover:bg-blue-50/30 transition-colors"
+              className="w-full border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center gap-2 hover:border-[#1E2D4D] hover:bg-blue-50/30 transition-colors"
             >
               <Upload size={24} className="text-gray-400" />
               <span className="text-sm text-gray-500">Click to upload PDF or image</span>
             </button>
           ) : (
-            <div className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg border border-gray-200">
+            <div className="flex items-center gap-2 px-3 py-2 bg-white rounded-xl border border-gray-200">
               <FileText size={16} className="text-gray-400" />
               <span className="text-sm text-gray-700 flex-1">{doc.fileName}</span>
               <button type="button" onClick={() => updateInsurance(doc.id, 'fileName', '')} className="text-xs text-red-500 hover:underline">Remove</button>
@@ -425,13 +425,13 @@ export function VendorSetup() {
       <p className="text-sm text-gray-500">These defaults apply to all clients unless overridden per-client.</p>
 
       {/* Service frequencies */}
-      <div className="bg-gray-50 rounded-xl p-4 space-y-3">
-        <label className="text-sm font-semibold text-gray-900">Default Service Frequency</label>
+      <div className="bg-[#FAF7F0] rounded-xl p-4 space-y-3">
+        <label className="text-sm font-semibold text-[#1E2D4D]">Default Service Frequency</label>
         {serviceDefaults.map((sd, i) => (
           <div key={sd.serviceId} className="flex items-center justify-between gap-3">
             <span className="text-sm text-gray-700 flex-1">{sd.serviceName}</span>
             <select
-              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]"
+              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]"
               value={sd.frequency}
               onChange={e => {
                 const u = [...serviceDefaults];
@@ -451,10 +451,10 @@ export function VendorSetup() {
       </div>
 
       {/* Preferred window */}
-      <div className="bg-gray-50 rounded-xl p-4 space-y-3">
-        <label className="text-sm font-semibold text-gray-900">Preferred Service Window</label>
+      <div className="bg-[#FAF7F0] rounded-xl p-4 space-y-3">
+        <label className="text-sm font-semibold text-[#1E2D4D]">Preferred Service Window</label>
         <select
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]"
           value={preferredWindow}
           onChange={e => setPreferredWindow(e.target.value)}
         >
@@ -465,8 +465,8 @@ export function VendorSetup() {
       </div>
 
       {/* Report requirements */}
-      <div className="bg-gray-50 rounded-xl p-4 space-y-3">
-        <label className="text-sm font-semibold text-gray-900">Service Report Template</label>
+      <div className="bg-[#FAF7F0] rounded-xl p-4 space-y-3">
+        <label className="text-sm font-semibold text-[#1E2D4D]">Service Report Template</label>
         <div className="space-y-2">
           {SERVICE_REPORT_OPTIONS.map(opt => (
             <label key={opt.id} className="flex items-center gap-2 cursor-pointer">
@@ -476,7 +476,7 @@ export function VendorSetup() {
                 onChange={() => setReportRequirements(prev =>
                   prev.includes(opt.id) ? prev.filter(r => r !== opt.id) : [...prev, opt.id],
                 )}
-                className="rounded text-[#1e4d6b] focus:ring-[#1e4d6b]"
+                className="rounded text-[#1E2D4D] focus:ring-[#1E2D4D]"
               />
               <span className="text-sm text-gray-700">{opt.label}</span>
             </label>
@@ -491,7 +491,7 @@ export function VendorSetup() {
       <p className="text-sm text-gray-500">Add team members who will service clients and upload reports through EvidLY. You can always add more later.</p>
 
       {teamMembers.map((member, i) => (
-        <div key={member.id} className="bg-gray-50 rounded-xl p-4 relative">
+        <div key={member.id} className="bg-[#FAF7F0] rounded-xl p-4 relative">
           <button
             type="button"
             onClick={() => setTeamMembers(prev => prev.filter((_, idx) => idx !== i))}
@@ -530,7 +530,7 @@ export function VendorSetup() {
             <div>
               <label className={labelClass}>Role</label>
               <select
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]"
                 value={member.role}
                 onChange={e => {
                   const u = [...teamMembers];
@@ -581,7 +581,7 @@ export function VendorSetup() {
               </svg>
             </div>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Set Up Your Service Provider Profile</h1>
+          <h1 className="text-2xl font-bold text-[#1E2D4D]">Set Up Your Service Provider Profile</h1>
           <p className="text-sm text-gray-500 mt-1">Complete your profile so clients can find you and verify your credentials.</p>
         </div>
 
@@ -603,7 +603,7 @@ export function VendorSetup() {
                   >
                     {isComplete ? <Check size={18} /> : <Icon size={18} />}
                   </div>
-                  <span className={`text-[10px] mt-1 font-medium text-center w-16 ${isActive ? 'text-[#1e4d6b]' : 'text-gray-400'}`}>
+                  <span className={`text-xs mt-1 font-medium text-center w-16 ${isActive ? 'text-[#1E2D4D]' : 'text-gray-400'}`}>
                     {step.label}
                   </span>
                 </div>
@@ -616,8 +616,8 @@ export function VendorSetup() {
         </div>
 
         {/* Step Content Card */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8">
-          <h2 className="text-lg font-bold text-gray-900 mb-1">{STEPS[currentStep - 1].label}</h2>
+        <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8">
+          <h2 className="text-lg font-bold text-[#1E2D4D] mb-1">{STEPS[currentStep - 1].label}</h2>
           <div className="h-[2px] rounded-full mb-6" style={{ background: `linear-gradient(90deg, ${GOLD}, transparent)` }} />
           {stepRenderers[currentStep - 1]()}
         </div>

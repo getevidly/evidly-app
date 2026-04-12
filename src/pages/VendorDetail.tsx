@@ -143,7 +143,7 @@ export default function VendorDetail() {
   if (!isDemoMode) {
     return (
       <div className="p-8 text-center">
-        <h2 className="text-xl font-bold text-gray-900 mb-2">Vendor Details</h2>
+        <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Vendor Details</h2>
         <p className="text-gray-500">Select a vendor to view their details and documents.</p>
       </div>
     );
@@ -183,7 +183,7 @@ export default function VendorDetail() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20 md:pb-8">
+    <div className="min-h-screen bg-[#FAF7F0] pb-20 md:pb-8">
       <div className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
           <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Vendors', href: '/vendors' }, { label: vendor.companyName }]} />
@@ -196,7 +196,7 @@ export default function VendorDetail() {
           </button>
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900">{vendor.companyName}</h1>
+              <h1 className="text-2xl md:text-3xl font-bold text-[#1E2D4D]">{vendor.companyName}</h1>
               <p className="mt-1 text-sm text-gray-500">{vendor.serviceType}</p>
             </div>
             <div className="mt-4 md:mt-0">
@@ -223,7 +223,7 @@ export default function VendorDetail() {
                 onClick={() => setActiveTab(tab)}
                 className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm min-h-[44px] ${
                   activeTab === tab
-                    ? 'border-[#1e4d6b] text-[#1e4d6b]'
+                    ? 'border-[#1E2D4D] text-[#1E2D4D]'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
@@ -235,7 +235,7 @@ export default function VendorDetail() {
 
         {activeTab === 'overview' && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
               <h2 className="text-lg font-semibold mb-4">Contact Information</h2>
               <div className="space-y-3">
                 <div className="flex items-center text-gray-700">
@@ -253,7 +253,7 @@ export default function VendorDetail() {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
               <h2 className="text-lg font-semibold mb-4">Service Schedule</h2>
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -275,7 +275,7 @@ export default function VendorDetail() {
 
         {activeTab === 'documents' && (
           <div>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
+            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 mb-6">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
                 <div>
                   <h2 className="text-lg font-semibold">Required Documents</h2>
@@ -284,7 +284,7 @@ export default function VendorDetail() {
                 <div className="flex gap-2 mt-4 md:mt-0">
                   <button
                     onClick={() => setShowRequestModal(true)}
-                    className="flex items-center px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] min-h-[44px]"
+                    className="flex items-center px-4 py-2 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] min-h-[44px]"
                   >
                     <Send className="h-4 w-4 mr-2" />
                     Request Document
@@ -374,7 +374,7 @@ export default function VendorDetail() {
                       <button
                         onClick={() => guardAction('download', 'Vendor Documents', () => toast.info('Downloading ' + doc.name))}
                         className="flex items-center mt-2 md:mt-0 min-h-[44px] px-2 hover:opacity-70"
-                        style={{ color: '#1e4d6b' }}
+                        style={{ color: '#1E2D4D' }}
                       >
                         <Download className="h-4 w-4 mr-1" />
                         Download
@@ -388,7 +388,7 @@ export default function VendorDetail() {
         )}
 
         {activeTab === 'history' && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
             <h2 className="text-lg font-semibold mb-4">Service History</h2>
             <div className="space-y-6">
               <div className="border-l-2 border-gray-300 pl-4 pb-4">
@@ -404,7 +404,7 @@ export default function VendorDetail() {
         )}
 
         {activeTab === 'contact' && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
             <h2 className="text-lg font-semibold mb-4">Contact {vendor.contactName}</h2>
             <div className="space-y-4 mb-6">
               <div>
@@ -456,7 +456,7 @@ export default function VendorDetail() {
                   setShowRequestModal(false);
                   toast.success('Document request sent');
                 })}
-                className="px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] min-h-[44px]"
+                className="px-4 py-2 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] min-h-[44px]"
               >
                 Send Request
               </button>

@@ -57,7 +57,7 @@ export function DeficiencyAgingReport({ data }: DeficiencyAgingProps) {
                 return (
                   <tr key={sev} style={{ borderBottom: `1px solid ${CARD_BORDER}` }}>
                     <td className="px-3 py-2">
-                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full capitalize" style={{ background: sc.bg, color: sc.text }}>
+                      <span className="text-xs font-semibold px-2 py-0.5 rounded-full capitalize" style={{ background: sc.bg, color: sc.text }}>
                         {sev}
                       </span>
                     </td>
@@ -93,7 +93,7 @@ export function DeficiencyAgingReport({ data }: DeficiencyAgingProps) {
                   <td className="px-3 py-2 font-medium" style={{ color: NAVY }}>{String(def.title || '')}</td>
                   <td className="px-3 py-2" style={{ color: TEXT_TERTIARY }}>{String(def.location || '')}</td>
                   <td className="px-3 py-2">
-                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full capitalize" style={{ background: sc.bg, color: sc.text }}>
+                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full capitalize" style={{ background: sc.bg, color: sc.text }}>
                       {String(def.severity || '')}
                     </span>
                   </td>

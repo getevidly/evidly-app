@@ -139,7 +139,7 @@ export function RescheduleServiceModal({
               onClick={handleClose}
               style={{
                 padding: '10px 24px', borderRadius: 10,
-                background: '#1e4d6b', border: 'none',
+                background: '#1E2D4D', border: 'none',
                 fontSize: 13, fontWeight: 600, color: '#fff', cursor: 'pointer',
               }}
             >
@@ -196,7 +196,7 @@ export function RescheduleServiceModal({
                     onClick={() => setUrgency(opt.id)}
                     style={{
                       padding: '10px 8px', borderRadius: 10, textAlign: 'left',
-                      border: urgency === opt.id ? '2px solid #1e4d6b' : '2px solid #E5E7EB',
+                      border: urgency === opt.id ? '2px solid #1E2D4D' : '2px solid #E5E7EB',
                       background: urgency === opt.id ? '#eff6ff' : '#fff',
                       cursor: 'pointer',
                     }}
@@ -232,7 +232,7 @@ export function RescheduleServiceModal({
               disabled={submitting || !requestedDate}
               style={{
                 width: '100%', padding: '12px 0', borderRadius: 12,
-                background: submitting || !requestedDate ? '#9CA3AF' : '#1e4d6b',
+                background: submitting || !requestedDate ? '#9CA3AF' : '#1E2D4D',
                 border: 'none', fontSize: 13, fontWeight: 600, color: '#fff',
                 cursor: submitting || !requestedDate ? 'not-allowed' : 'pointer',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,

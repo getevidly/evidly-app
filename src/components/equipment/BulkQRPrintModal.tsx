@@ -94,7 +94,7 @@ export function BulkQRPrintModal({ items, onClose }: BulkQRPrintModalProps) {
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b flex-shrink-0" style={{ borderColor: CARD_BORDER }}>
           <div className="flex items-center gap-2">
-            <QrCode className="w-5 h-5" style={{ color: '#1e4d6b' }} />
+            <QrCode className="w-5 h-5" style={{ color: '#1E2D4D' }} />
             <h2 className="text-base font-bold" style={{ color: NAVY }}>Print QR Codes</h2>
           </div>
           <button onClick={onClose} className="p-2.5 -m-1 rounded hover:bg-gray-100" aria-label="Close"><X className="w-5 h-5" style={{ color: TEXT_TERTIARY }} /></button>
@@ -115,7 +115,7 @@ export function BulkQRPrintModal({ items, onClose }: BulkQRPrintModalProps) {
 
           {/* Select all */}
           <div className="flex items-center justify-between">
-            <button onClick={toggleAll} className="flex items-center gap-1.5 text-xs font-medium" style={{ color: '#1e4d6b' }}>
+            <button onClick={toggleAll} className="flex items-center gap-1.5 text-xs font-medium" style={{ color: '#1E2D4D' }}>
               <CheckSquare className="w-3.5 h-3.5" />
               {selected.size === filtered.length ? 'Deselect All' : 'Select All'}
             </button>
@@ -133,13 +133,13 @@ export function BulkQRPrintModal({ items, onClose }: BulkQRPrintModalProps) {
                   type="checkbox"
                   checked={selected.has(e.id)}
                   onChange={() => toggleItem(e.id)}
-                  style={{ accentColor: '#1e4d6b' }}
+                  style={{ accentColor: '#1E2D4D' }}
                 />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate" style={{ color: NAVY }}>{e.name}</p>
                   <p className="text-xs truncate" style={{ color: TEXT_TERTIARY }}>{e.locationName}</p>
                 </div>
-                <span className="text-[10px] font-mono" style={{ color: TEXT_TERTIARY }}>{e.qrCodeId}</span>
+                <span className="text-xs font-mono" style={{ color: TEXT_TERTIARY }}>{e.qrCodeId}</span>
               </label>
             ))}
           </div>
@@ -151,18 +151,18 @@ export function BulkQRPrintModal({ items, onClose }: BulkQRPrintModalProps) {
               <button
                 onClick={() => setLayout('labels')}
                 className="p-3 rounded-lg border text-left"
-                style={{ borderColor: layout === 'labels' ? '#1e4d6b' : CARD_BORDER, background: layout === 'labels' ? '#eef4f8' : CARD_BG }}
+                style={{ borderColor: layout === 'labels' ? '#1E2D4D' : CARD_BORDER, background: layout === 'labels' ? '#eef4f8' : CARD_BG }}
               >
                 <p className="text-xs font-semibold" style={{ color: NAVY }}>Label Sheet</p>
-                <p className="text-[10px]" style={{ color: TEXT_TERTIARY }}>3 columns, multiple per page</p>
+                <p className="text-xs" style={{ color: TEXT_TERTIARY }}>3 columns, multiple per page</p>
               </button>
               <button
                 onClick={() => setLayout('list')}
                 className="p-3 rounded-lg border text-left"
-                style={{ borderColor: layout === 'list' ? '#1e4d6b' : CARD_BORDER, background: layout === 'list' ? '#eef4f8' : CARD_BG }}
+                style={{ borderColor: layout === 'list' ? '#1E2D4D' : CARD_BORDER, background: layout === 'list' ? '#eef4f8' : CARD_BG }}
               >
                 <p className="text-xs font-semibold" style={{ color: NAVY }}>Full List</p>
-                <p className="text-[10px]" style={{ color: TEXT_TERTIARY }}>One per row, larger codes</p>
+                <p className="text-xs" style={{ color: TEXT_TERTIARY }}>One per row, larger codes</p>
               </button>
             </div>
           </div>
@@ -177,7 +177,7 @@ export function BulkQRPrintModal({ items, onClose }: BulkQRPrintModalProps) {
             onClick={handlePrint}
             disabled={selected.size === 0}
             className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white rounded-lg transition-colors"
-            style={{ background: selected.size === 0 ? '#9CA3AF' : '#1e4d6b' }}
+            style={{ background: selected.size === 0 ? '#9CA3AF' : '#1E2D4D' }}
           >
             <Printer className="w-4 h-4" /> Print {selected.size} QR Code{selected.size !== 1 ? 's' : ''}
           </button>

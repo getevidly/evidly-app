@@ -88,7 +88,7 @@ export function CompliancePackage() {
 
   return (
     <div>
-      <h3 className="text-lg font-semibold text-gray-900 mb-2">Compliance Package Builder</h3>
+      <h3 className="text-lg font-semibold text-[#1E2D4D] mb-2">Compliance Package Builder</h3>
       <p className="text-sm text-gray-500 mb-6">Generate a ready-to-share compliance package for inspectors, insurers, or landlords.</p>
 
       {/* Package type selector */}
@@ -102,12 +102,12 @@ export function CompliancePackage() {
               onClick={() => handleTypeChange(type)}
               className={`p-4 rounded-xl border-2 text-left transition-all ${
                 selectedType === type
-                  ? 'border-[#1e4d6b] bg-blue-50'
+                  ? 'border-[#1E2D4D] bg-blue-50'
                   : 'border-gray-200 hover:border-gray-300'
               }`}
             >
-              <Icon className={`w-6 h-6 mb-2 ${selectedType === type ? 'text-[#1e4d6b]' : 'text-gray-400'}`} />
-              <p className="text-sm font-semibold text-gray-900">{p.label}</p>
+              <Icon className={`w-6 h-6 mb-2 ${selectedType === type ? 'text-[#1E2D4D]' : 'text-gray-400'}`} />
+              <p className="text-sm font-semibold text-[#1E2D4D]">{p.label}</p>
               <p className="text-xs text-gray-500 mt-1 line-clamp-2">{p.description}</p>
             </button>
           );
@@ -115,9 +115,9 @@ export function CompliancePackage() {
       </div>
 
       {/* Document checklist */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5 mb-6">
+      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
-          <h4 className="font-semibold text-gray-900">Documents in Package</h4>
+          <h4 className="font-semibold text-[#1E2D4D]">Documents in Package</h4>
           <span className="text-sm text-gray-500">{includedDocs.length} documents</span>
         </div>
         {missingCount > 0 && (
@@ -132,7 +132,7 @@ export function CompliancePackage() {
               <label
                 key={doc.name}
                 className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-all ${
-                  isSelected ? 'border-[#1e4d6b] bg-blue-50/50' : 'border-gray-100 hover:bg-gray-50'
+                  isSelected ? 'border-[#1E2D4D] bg-blue-50/50' : 'border-gray-100 hover:bg-gray-50'
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -140,7 +140,7 @@ export function CompliancePackage() {
                     type="checkbox"
                     checked={isSelected}
                     onChange={() => toggleDoc(doc.name)}
-                    className="w-4 h-4 text-[#1e4d6b] rounded"
+                    className="w-4 h-4 text-[#1E2D4D] rounded"
                   />
                   <div>
                     <span className="text-sm font-medium text-gray-900">{doc.name}</span>
@@ -164,7 +164,7 @@ export function CompliancePackage() {
         <button
           onClick={generatePackage}
           disabled={generating || includedDocs.length === 0}
-          className="flex items-center gap-2 px-6 py-3 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors font-medium disabled:opacity-50"
+          className="flex items-center gap-2 px-6 py-3 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors font-medium disabled:opacity-50"
         >
           {generating ? (
             <>
@@ -187,7 +187,7 @@ export function CompliancePackage() {
           <>
             <button
               onClick={() => setShowShareModal(true)}
-              className="flex items-center gap-2 px-4 py-3 text-[#1e4d6b] border border-[#1e4d6b] rounded-lg hover:bg-blue-50 transition-colors font-medium"
+              className="flex items-center gap-2 px-4 py-3 text-[#1E2D4D] border border-[#1E2D4D] rounded-lg hover:bg-blue-50 transition-colors font-medium"
             >
               <Share2 className="w-4 h-4" />
               Share Link

@@ -36,7 +36,7 @@ export default function DemoExpired() {
         </p>
 
         {/* What's preserved */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5 mb-8 text-left">
+        <div className="bg-white rounded-xl border border-gray-200 p-6 mb-8 text-left">
           <h3 className="text-sm font-semibold mb-3" style={{ color: NAVY }}>
             Your data is still here:
           </h3>

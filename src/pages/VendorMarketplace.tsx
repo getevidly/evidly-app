@@ -311,7 +311,7 @@ function ProductionMarketplace() {
 
       <div className="p-4 sm:p-6">
         {/* Hero */}
-        <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-2xl p-6 sm:p-8 mb-6">
+        <div className="bg-gradient-to-r from-[#1E2D4D] to-[#2c5f7f] rounded-2xl p-6 sm:p-8 mb-6">
           <h1 className="text-2xl font-bold text-white">Vendor Marketplace</h1>
           <p className="text-sm text-white/80 mt-1">
             Find verified commercial kitchen service providers, invite new vendors, and manage approvals.
@@ -335,7 +335,7 @@ function ProductionMarketplace() {
                 className={`flex items-center gap-2 px-4 py-3 text-sm cursor-pointer transition-colors whitespace-nowrap min-h-[44px] ${
                   activeSection === sec.id ? 'border-b-2 font-semibold' : 'text-gray-500 hover:text-gray-700'
                 }`}
-                style={activeSection === sec.id ? { borderColor: '#d4af37', color: '#1e4d6b' } : undefined}
+                style={activeSection === sec.id ? { borderColor: '#d4af37', color: '#1E2D4D' } : undefined}
               >
                 <Icon className="h-4 w-4" />
                 {sec.label}
@@ -355,7 +355,7 @@ function ProductionMarketplace() {
                 placeholder="Search vendors..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full bg-white rounded-lg pl-10 pr-4 py-3 text-sm text-gray-900 placeholder-gray-400 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20"
+                className="w-full bg-white rounded-lg pl-10 pr-4 py-3 text-sm text-gray-900 placeholder-gray-400 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20"
               />
             </div>
 
@@ -375,7 +375,7 @@ function ProductionMarketplace() {
                   >
                     <div className="p-5">
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="font-semibold text-gray-900">{vendor.company_name}</span>
+                        <span className="font-semibold text-[#1E2D4D]">{vendor.company_name}</span>
                         <TierBadge tier={vendor.tier} />
                       </div>
                       {vendor.description && (
@@ -394,7 +394,7 @@ function ProductionMarketplace() {
                           </span>
                         )}
                       </div>
-                      <div className="flex items-center text-sm font-medium" style={{ color: '#1e4d6b' }}>
+                      <div className="flex items-center text-sm font-medium" style={{ color: '#1E2D4D' }}>
                         View Profile <ChevronRight className="h-4 w-4 ml-0.5" />
                       </div>
                     </div>
@@ -411,7 +411,7 @@ function ProductionMarketplace() {
                 <button
                   onClick={() => setActiveSection('invite')}
                   className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-medium"
-                  style={{ backgroundColor: '#1e4d6b' }}
+                  style={{ backgroundColor: '#1E2D4D' }}
                 >
                   <UserPlus className="h-4 w-4" /> Invite a Vendor
                 </button>
@@ -425,8 +425,8 @@ function ProductionMarketplace() {
           <div className="max-w-xl mx-auto">
             <div className="bg-white rounded-xl border border-gray-200 p-6">
               <div className="flex items-center gap-2 mb-1">
-                <UserPlus className="h-5 w-5" style={{ color: '#1e4d6b' }} />
-                <h2 className="text-lg font-bold text-gray-900">Invite a Vendor</h2>
+                <UserPlus className="h-5 w-5" style={{ color: '#1E2D4D' }} />
+                <h2 className="text-lg font-bold text-[#1E2D4D]">Invite a Vendor</h2>
               </div>
               <p className="text-sm text-gray-500 mb-6">
                 Invite a new service provider to join the EvidLY Marketplace. They will appear in the approval queue for review.
@@ -440,7 +440,7 @@ function ProductionMarketplace() {
                     value={inviteForm.companyName}
                     onChange={e => setInviteForm(prev => ({ ...prev, companyName: e.target.value }))}
                     placeholder="e.g., Hood Cleaning Vendor"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20"
                   />
                 </div>
                 <div>
@@ -450,7 +450,7 @@ function ProductionMarketplace() {
                     value={inviteForm.contactName}
                     onChange={e => setInviteForm(prev => ({ ...prev, contactName: e.target.value }))}
                     placeholder="Primary contact"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20"
                   />
                 </div>
                 <div>
@@ -460,7 +460,7 @@ function ProductionMarketplace() {
                     value={inviteForm.email}
                     onChange={e => setInviteForm(prev => ({ ...prev, email: e.target.value }))}
                     placeholder="vendor@example.com"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20"
                   />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -471,7 +471,7 @@ function ProductionMarketplace() {
                       value={inviteForm.phone}
                       onChange={e => setInviteForm(prev => ({ ...prev, phone: e.target.value }))}
                       placeholder="(555) 123-4567"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20"
                     />
                   </div>
                   <div>
@@ -481,7 +481,7 @@ function ProductionMarketplace() {
                       value={inviteForm.website}
                       onChange={e => setInviteForm(prev => ({ ...prev, website: e.target.value }))}
                       placeholder="https://..."
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20"
                     />
                   </div>
                 </div>
@@ -490,7 +490,7 @@ function ProductionMarketplace() {
                   <select
                     value={inviteForm.serviceCategory}
                     onChange={e => setInviteForm(prev => ({ ...prev, serviceCategory: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20"
                   >
                     <option value="">Select category...</option>
                     <option value="Facility Safety">Facility Safety</option>
@@ -506,7 +506,7 @@ function ProductionMarketplace() {
                     onChange={e => setInviteForm(prev => ({ ...prev, description: e.target.value }))}
                     placeholder="Brief description of services offered..."
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20"
                   />
                 </div>
               </div>
@@ -522,7 +522,7 @@ function ProductionMarketplace() {
                   onClick={handleInvite}
                   disabled={submitting}
                   className="flex items-center gap-2 px-5 py-2 rounded-lg text-white text-sm font-medium transition-colors min-h-[44px] disabled:opacity-50"
-                  style={{ backgroundColor: '#1e4d6b' }}
+                  style={{ backgroundColor: '#1E2D4D' }}
                 >
                   {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                   {submitting ? 'Sending...' : 'Send Invitation'}
@@ -536,8 +536,8 @@ function ProductionMarketplace() {
         {activeSection === 'queue' && isAdmin && (
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <Shield className="h-5 w-5" style={{ color: '#1e4d6b' }} />
-              <h2 className="text-lg font-bold text-gray-900">Approval Queue</h2>
+              <Shield className="h-5 w-5" style={{ color: '#1E2D4D' }} />
+              <h2 className="text-lg font-bold text-[#1E2D4D]">Approval Queue</h2>
             </div>
 
             {loading ? (
@@ -547,11 +547,11 @@ function ProductionMarketplace() {
             ) : pendingVendors.length > 0 ? (
               <div className="space-y-4">
                 {pendingVendors.map(vendor => (
-                  <div key={vendor.id} className="bg-white rounded-xl border border-gray-200 p-5">
+                  <div key={vendor.id} className="bg-white rounded-xl border border-gray-200 p-6">
                     <div className="flex items-start justify-between flex-wrap gap-4">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-semibold text-gray-900">{vendor.company_name}</h3>
+                          <h3 className="font-semibold text-[#1E2D4D]">{vendor.company_name}</h3>
                           <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
                             Pending
                           </span>
@@ -730,7 +730,7 @@ export function VendorMarketplace() {
         {/*  Hero Section                                             */}
         {/* -------------------------------------------------------- */}
         <div
-          className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-2xl p-8 mb-6"
+          className="bg-gradient-to-r from-[#1E2D4D] to-[#2c5f7f] rounded-2xl p-8 mb-6"
           style={{ fontFamily: "'DM Sans', sans-serif" }}
         >
           <h1 className="text-2xl font-bold text-white">Vendor Marketplace</h1>
@@ -773,7 +773,7 @@ export function VendorMarketplace() {
           <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 mb-6">
             <div className="flex items-center gap-2 mb-1">
               <Zap className="h-5 w-5 text-amber-600" />
-              <span className="font-semibold text-gray-900">
+              <span className="font-semibold text-[#1E2D4D]">
                 Recommended for You
               </span>
             </div>
@@ -797,7 +797,7 @@ export function VendorMarketplace() {
                   <p className="text-xs text-amber-700 mb-2">{reason}</p>
                   <StarRating rating={vendor.rating} count={vendor.reviewCount} />
                   <span
-                    className="text-xs font-medium text-[#1e4d6b] mt-2 inline-block hover:underline"
+                    className="text-xs font-medium text-[#1E2D4D] mt-2 inline-block hover:underline"
                   >
                     View Profile &rarr;
                   </span>
@@ -839,7 +839,7 @@ export function VendorMarketplace() {
                 >
                   <IconComponent className="h-5 w-5" />
                 </div>
-                <p className="font-semibold text-gray-900">{cat.name}</p>
+                <p className="font-semibold text-[#1E2D4D]">{cat.name}</p>
                 <p className="text-xs text-gray-500">
                   {cat.subcategories.length} subcategories
                 </p>
@@ -864,7 +864,7 @@ export function VendorMarketplace() {
               onChange={(e) =>
                 setSelectedSubcategory(e.target.value || null)
               }
-              className="rounded-xl border border-gray-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20"
+              className="rounded-xl border border-gray-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20"
             >
               <option value="">All Subcategories</option>
               {availableSubcategories.map((sub) => (
@@ -880,7 +880,7 @@ export function VendorMarketplace() {
               onChange={(e) =>
                 setTierFilter(e.target.value as MarketplaceTier | 'all')
               }
-              className="rounded-xl border border-gray-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20"
+              className="rounded-xl border border-gray-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20"
             >
               <option value="all">All Tiers</option>
               <option value="verified">Verified</option>
@@ -892,7 +892,7 @@ export function VendorMarketplace() {
             <select
               value={ratingFilter}
               onChange={(e) => setRatingFilter(Number(e.target.value))}
-              className="rounded-xl border border-gray-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20"
+              className="rounded-xl border border-gray-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20"
             >
               <option value={0}>Any Rating</option>
               <option value={4}>4+ Stars</option>
@@ -907,7 +907,7 @@ export function VendorMarketplace() {
                 placeholder="City or area..."
                 value={locationFilter}
                 onChange={(e) => setLocationFilter(e.target.value)}
-                className="rounded-xl border border-gray-200 pl-8 pr-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 w-36"
+                className="rounded-xl border border-gray-200 pl-8 pr-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20 w-36"
               />
             </div>
 
@@ -919,7 +919,7 @@ export function VendorMarketplace() {
                   e.target.value as 'rating' | 'response-time' | 'reviews',
                 )
               }
-              className="rounded-xl border border-gray-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20"
+              className="rounded-xl border border-gray-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20"
             >
               <option value="rating">Highest Rated</option>
               <option value="response-time">Fastest Response</option>
@@ -930,7 +930,7 @@ export function VendorMarketplace() {
             {hasActiveFilters && (
               <button
                 onClick={clearFilters}
-                className="text-sm text-[#1e4d6b] hover:underline ml-auto"
+                className="text-sm text-[#1E2D4D] hover:underline ml-auto"
               >
                 Clear Filters
               </button>
@@ -962,7 +962,7 @@ export function VendorMarketplace() {
                 <div className="p-5">
                   {/* Company name + tier */}
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="font-semibold text-gray-900">
+                    <span className="font-semibold text-[#1E2D4D]">
                       {vendor.companyName}
                     </span>
                     <TierBadge tier={vendor.tier} />
@@ -1013,7 +1013,7 @@ export function VendorMarketplace() {
                   </p>
 
                   {/* View Profile link */}
-                  <div className="flex items-center text-sm font-medium text-[#1e4d6b] hover:text-[#163a52]">
+                  <div className="flex items-center text-sm font-medium text-[#1E2D4D] hover:text-[#141E33]">
                     View Profile
                     <ChevronRight className="h-4 w-4 ml-0.5" />
                   </div>
@@ -1039,7 +1039,7 @@ export function VendorMarketplace() {
         {/* -------------------------------------------------------- */}
         {/*  Vendor Claim CTA                                        */}
         {/* -------------------------------------------------------- */}
-        <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-2xl p-6 sm:p-8 mt-8">
+        <div className="bg-gradient-to-r from-[#1E2D4D] to-[#2c5f7f] rounded-2xl p-6 sm:p-8 mt-8">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 mb-2">

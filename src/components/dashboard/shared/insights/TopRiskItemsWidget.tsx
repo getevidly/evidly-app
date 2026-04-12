@@ -76,17 +76,17 @@ export function TopRiskItemsWidget({ items }: Props) {
                   : <AlertCircle size={16} style={{ color: style.dot }} className="shrink-0" />
                 }
                 <div className="flex-1 min-w-0">
-                  <p className="text-[13px] font-semibold text-gray-800 truncate">{item.title}</p>
-                  <p className="text-[11px] text-gray-500">{item.location} &middot; {item.category}</p>
+                  <p className="text-sm font-semibold text-gray-800 truncate">{item.title}</p>
+                  <p className="text-xs text-gray-500">{item.location} &middot; {item.category}</p>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <span
-                    className="text-[10px] font-bold px-2 py-0.5 rounded"
+                    className="text-xs font-bold px-2 py-0.5 rounded"
                     style={{ backgroundColor: style.bg, color: style.text }}
                   >
                     {item.severity.charAt(0).toUpperCase() + item.severity.slice(1)}
                   </span>
-                  <span className={`text-[10px] font-medium ${isOverdue ? 'text-red-600' : 'text-gray-500'}`}>
+                  <span className={`text-xs font-medium ${isOverdue ? 'text-red-600' : 'text-gray-500'}`}>
                     {dueLabel}
                   </span>
                 </div>

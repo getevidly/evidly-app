@@ -25,7 +25,7 @@ const TIER_LABELS: Record<number, { label: string; description: string }> = {
 };
 
 const GRADING_BADGES: Record<string, { label: string; color: string; bg: string }> = {
-  letter_grade: { label: 'Letter Grade', color: '#1e4d6b', bg: '#e8f4fd' },
+  letter_grade: { label: 'Letter Grade', color: '#1E2D4D', bg: '#e8f4fd' },
   letter_grade_strict: { label: 'Letter Grade (Strict)', color: '#92400e', bg: '#fef3c7' },
   color_placard: { label: 'Color Placard', color: '#166534', bg: '#dcfce7' },
   score_100: { label: 'Score (0-100)', color: '#6b21a8', bg: '#f3e8ff' },
@@ -87,11 +87,11 @@ export function CaliforniaCompliance() {
         <meta property="og:url" content="https://evidly.com/compliance/california" />
       </Helmet>
 
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-[#FAF7F0]">
         {/* Header */}
         <header className="bg-white border-b border-gray-200">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <Link to="/" className="text-sm font-semibold tracking-wide" style={{ color: '#1e4d6b' }}>
+            <Link to="/" className="text-sm font-semibold tracking-wide" style={{ color: '#1E2D4D' }}>
               EvidLY
             </Link>
           </div>
@@ -107,7 +107,7 @@ export function CaliforniaCompliance() {
 
           {/* Page header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-3">
+            <h1 className="text-3xl font-bold text-[#1E2D4D] mb-3">
               California Food Safety Compliance by County
             </h1>
             <p className="text-lg text-gray-600 max-w-3xl">
@@ -146,7 +146,7 @@ export function CaliforniaCompliance() {
                 return (
                   <section key={tier}>
                     <div className="flex items-baseline gap-3 mb-4">
-                      <h2 className="text-xl font-semibold text-gray-900">{tierInfo.label}</h2>
+                      <h2 className="text-xl font-semibold text-[#1E2D4D]">{tierInfo.label}</h2>
                       <span className="text-sm text-gray-500">{tierInfo.description}</span>
                       <span className="text-sm text-gray-400">({items.length})</span>
                     </div>
@@ -157,14 +157,14 @@ export function CaliforniaCompliance() {
                           <Link
                             key={j.id}
                             to={`/compliance/california/${toSlug(j.county)}`}
-                            className="bg-white border border-gray-200 rounded-lg p-4 hover:border-gray-300 hover:shadow-sm transition-all group"
+                            className="bg-white border border-gray-200 rounded-xl p-4 hover:border-gray-300 transition-all group"
                           >
                             <div className="flex items-start justify-between mb-2">
-                              <h3 className="font-semibold text-gray-900 group-hover:text-[#1e4d6b] transition-colors">
+                              <h3 className="font-semibold text-[#1E2D4D] group-hover:text-[#1E2D4D] transition-colors">
                                 {j.county} County
                                 {j.city && <span className="text-sm font-normal text-gray-500 ml-1">({j.city})</span>}
                               </h3>
-                              <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-[#1e4d6b] mt-0.5 flex-shrink-0" />
+                              <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-[#1E2D4D] mt-0.5 flex-shrink-0" />
                             </div>
                             <p className="text-sm text-gray-600 mb-3 line-clamp-1">{j.agency_name}</p>
                             <div className="flex flex-wrap gap-2">
@@ -198,7 +198,7 @@ export function CaliforniaCompliance() {
           )}
 
           {/* CTA section */}
-          <div className="mt-16 rounded-xl p-8 text-center" style={{ backgroundColor: '#1e4d6b' }}>
+          <div className="mt-16 rounded-xl p-8 text-center" style={{ backgroundColor: '#1E2D4D' }}>
             <Shield className="w-10 h-10 mx-auto mb-3 text-white/80" />
             <h2 className="text-2xl font-bold text-white mb-2">
               Get compliance monitoring for your kitchen
@@ -218,7 +218,7 @@ export function CaliforniaCompliance() {
               <Link
                 to="/signup"
                 className="px-6 py-2.5 rounded-lg font-medium text-sm bg-white"
-                style={{ color: '#1e4d6b' }}
+                style={{ color: '#1E2D4D' }}
               >
                 Start Free Trial
               </Link>

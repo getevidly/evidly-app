@@ -167,15 +167,15 @@ function DashboardTab({ campaigns, touchpoints, pipeline, sessions }: {
       ]} />
 
       {/* Channel performance */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
-        <h3 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wide">Channel Performance (30d)</h3>
+      <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <h3 className="text-sm font-bold text-[#1E2D4D] mb-4 uppercase tracking-wide">Channel Performance (30d)</h3>
         {channelPerf.length === 0 ? (
           <p className="text-sm text-gray-400">No channel data yet.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-200">
+                <tr className="bg-[#FAF7F0] border-b border-gray-200">
                   <th className="text-left px-3 py-2 font-semibold text-gray-700">Channel</th>
                   <th className="text-right px-3 py-2 font-semibold text-gray-700">Touches</th>
                   <th className="text-right px-3 py-2 font-semibold text-gray-700">Tours</th>
@@ -202,8 +202,8 @@ function DashboardTab({ campaigns, touchpoints, pipeline, sessions }: {
       </div>
 
       {/* Top campaigns */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
-        <h3 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wide">Top Campaigns</h3>
+      <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <h3 className="text-sm font-bold text-[#1E2D4D] mb-4 uppercase tracking-wide">Top Campaigns</h3>
         {topCampaigns.length === 0 ? (
           <p className="text-sm text-gray-400">No campaigns created yet.</p>
         ) : (
@@ -211,9 +211,9 @@ function DashboardTab({ campaigns, touchpoints, pipeline, sessions }: {
             {topCampaigns.map(c => (
               <div key={c.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
                 <div>
-                  <span className="text-sm font-semibold text-gray-900">{c.name}</span>
-                  <span className="ml-2 text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 capitalize">{c.channel?.replace(/_/g, ' ')}</span>
-                  <span className={`ml-2 text-[10px] font-bold px-2 py-0.5 rounded-full ${c.status === 'active' ? 'bg-green-50 text-green-700' : c.status === 'paused' ? 'bg-yellow-50 text-yellow-700' : 'bg-gray-100 text-gray-500'}`}>{c.status}</span>
+                  <span className="text-sm font-semibold text-[#1E2D4D]">{c.name}</span>
+                  <span className="ml-2 text-xs font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 capitalize">{c.channel?.replace(/_/g, ' ')}</span>
+                  <span className={`ml-2 text-xs font-bold px-2 py-0.5 rounded-full ${c.status === 'active' ? 'bg-green-50 text-green-700' : c.status === 'paused' ? 'bg-yellow-50 text-yellow-700' : 'bg-gray-100 text-gray-500'}`}>{c.status}</span>
                 </div>
                 <div className="text-xs text-gray-500">
                   {c.touches} touches · {c.tours} tours
@@ -244,7 +244,7 @@ function CampaignsTab({ campaigns, touchpoints, pipeline, onRefresh }: {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-bold text-gray-900">{campaigns.length} Campaigns</h3>
+        <h3 className="text-sm font-bold text-[#1E2D4D]">{campaigns.length} Campaigns</h3>
         <button onClick={() => setShowCreate(true)}
           className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white rounded-lg" style={{ backgroundColor: NAVY }}>
           <Plus className="h-4 w-4" /> New Campaign
@@ -254,7 +254,7 @@ function CampaignsTab({ campaigns, touchpoints, pipeline, onRefresh }: {
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-gray-50 border-b border-gray-200">
+            <tr className="bg-[#FAF7F0] border-b border-gray-200">
               <th className="text-left px-4 py-3 font-semibold text-gray-700">Name</th>
               <th className="text-left px-4 py-3 font-semibold text-gray-700">Channel</th>
               <th className="text-center px-4 py-3 font-semibold text-gray-700">Status</th>
@@ -270,7 +270,7 @@ function CampaignsTab({ campaigns, touchpoints, pipeline, onRefresh }: {
                 <td className="px-4 py-3 font-medium text-gray-900">{c.name}</td>
                 <td className="px-4 py-3 capitalize text-gray-600">{c.channel?.replace(/_/g, ' ')}</td>
                 <td className="px-4 py-3 text-center">
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${c.status === 'active' ? 'bg-green-50 text-green-700' : c.status === 'paused' ? 'bg-yellow-50 text-yellow-700' : 'bg-gray-100 text-gray-500'}`}>{c.status}</span>
+                  <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${c.status === 'active' ? 'bg-green-50 text-green-700' : c.status === 'paused' ? 'bg-yellow-50 text-yellow-700' : 'bg-gray-100 text-gray-500'}`}>{c.status}</span>
                 </td>
                 <td className="px-4 py-3 text-xs text-gray-500">{formatDate(c.start_date)}</td>
                 <td className="px-4 py-3 text-xs text-gray-500">{formatDate(c.end_date)}</td>
@@ -337,7 +337,7 @@ function CampaignModal({ onClose, onSave }: { onClose: () => void; onSave: () =>
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] max-w-lg max-h-[90vh] overflow-y-auto">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">New Campaign</h3>
+        <h3 className="text-lg font-bold text-[#1E2D4D] mb-4">New Campaign</h3>
         <div className="space-y-4">
           <FormInput label="Campaign Name *" value={form.name} onChange={v => { setFieldErrors(p => ({ ...p, name: '' })); setForm(p => ({ ...p, name: v })); }} error={fieldErrors.name} />
           <FormSelect label="Channel" value={form.channel} onChange={handleChannelChange}
@@ -430,15 +430,15 @@ function AttributionTab({ campaigns, touchpoints, pipeline, sessions }: {
       </div>
 
       {/* Won deal attribution */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
-        <h3 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wide">Won Deal Attribution ({attrModel.replace('_', ' ')})</h3>
+      <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <h3 className="text-sm font-bold text-[#1E2D4D] mb-4 uppercase tracking-wide">Won Deal Attribution ({attrModel.replace('_', ' ')})</h3>
         {attributedDeals.length === 0 ? (
           <p className="text-sm text-gray-400">No won deals to attribute yet.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-200">
+                <tr className="bg-[#FAF7F0] border-b border-gray-200">
                   <th className="text-left px-3 py-2 font-semibold text-gray-700">Company</th>
                   <th className="text-right px-3 py-2 font-semibold text-gray-700">MRR</th>
                   <th className="text-left px-3 py-2 font-semibold text-gray-700">Campaign</th>
@@ -461,8 +461,8 @@ function AttributionTab({ campaigns, touchpoints, pipeline, sessions }: {
       </div>
 
       {/* Pipeline by source */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
-        <h3 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wide">Pipeline by Source</h3>
+      <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <h3 className="text-sm font-bold text-[#1E2D4D] mb-4 uppercase tracking-wide">Pipeline by Source</h3>
         {sourceBreakdown.length === 0 ? (
           <p className="text-sm text-gray-400">No pipeline data yet.</p>
         ) : (

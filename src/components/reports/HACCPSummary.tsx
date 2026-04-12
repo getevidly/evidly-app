@@ -9,7 +9,7 @@ import { createReportPdf, drawReportHeader, drawSectionHeading, drawTable, saveR
 import { CARD_BG, CARD_BORDER, CARD_SHADOW, BODY_TEXT, MUTED } from '../dashboard/shared/constants';
 import type { ReportTypeConfig } from '../../config/reportConfig';
 
-function ProgressBar({ value, color = '#1e4d6b' }: { value: number; color?: string }) {
+function ProgressBar({ value, color = '#1E2D4D' }: { value: number; color?: string }) {
   return (
     <div className="flex items-center gap-2">
       <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ backgroundColor: '#e5e7eb' }}>
@@ -48,15 +48,15 @@ export default function HACCPSummary({ config }: { config: ReportTypeConfig }) {
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
         <div className="rounded-xl p-4 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
           <p className="text-2xl font-bold" style={{ color: BODY_TEXT }}>{data.totalDeviations}</p>
-          <p className="text-[11px] mt-1" style={{ color: MUTED }}>Deviations</p>
+          <p className="text-xs mt-1" style={{ color: MUTED }}>Deviations</p>
         </div>
         <div className="rounded-xl p-4 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
           <p className="text-2xl font-bold" style={{ color: '#16a34a' }}>{data.resolvedRate}%</p>
-          <p className="text-[11px] mt-1" style={{ color: MUTED }}>Resolved</p>
+          <p className="text-xs mt-1" style={{ color: MUTED }}>Resolved</p>
         </div>
         <div className="rounded-xl p-4 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
           <p className="text-2xl font-bold" style={{ color: BODY_TEXT }}>{data.compliance.length}</p>
-          <p className="text-[11px] mt-1" style={{ color: MUTED }}>Locations Monitored</p>
+          <p className="text-xs mt-1" style={{ color: MUTED }}>Locations Monitored</p>
         </div>
       </div>
 
@@ -68,9 +68,9 @@ export default function HACCPSummary({ config }: { config: ReportTypeConfig }) {
             <div key={i}>
               <p className="text-sm font-medium mb-2" style={{ color: BODY_TEXT }}>{c.location}</p>
               <div className="space-y-1.5">
-                <div><span className="text-[11px]" style={{ color: MUTED }}>Monitoring</span><ProgressBar value={c.monitoring} color={c.monitoring >= 90 ? '#16a34a' : '#d97706'} /></div>
-                <div><span className="text-[11px]" style={{ color: MUTED }}>Records</span><ProgressBar value={c.records} color={c.records >= 90 ? '#16a34a' : '#d97706'} /></div>
-                <div><span className="text-[11px]" style={{ color: MUTED }}>Corrective Actions</span><ProgressBar value={c.corrective} color={c.corrective >= 90 ? '#16a34a' : '#d97706'} /></div>
+                <div><span className="text-xs" style={{ color: MUTED }}>Monitoring</span><ProgressBar value={c.monitoring} color={c.monitoring >= 90 ? '#16a34a' : '#d97706'} /></div>
+                <div><span className="text-xs" style={{ color: MUTED }}>Records</span><ProgressBar value={c.records} color={c.records >= 90 ? '#16a34a' : '#d97706'} /></div>
+                <div><span className="text-xs" style={{ color: MUTED }}>Corrective Actions</span><ProgressBar value={c.corrective} color={c.corrective >= 90 ? '#16a34a' : '#d97706'} /></div>
               </div>
             </div>
           ))}

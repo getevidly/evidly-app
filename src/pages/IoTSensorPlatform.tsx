@@ -10,7 +10,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 
 const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
-const PRIMARY = '#1e4d6b';
+const PRIMARY = '#1E2D4D';
 const GOLD = '#d4af37';
 const NAVY = '#1E2D4D';
 const MUTED_GOLD = '#A08C5A';
@@ -84,7 +84,7 @@ function CostCalculator() {
           <Calculator className="h-5 w-5 text-amber-600" />
         </div>
         <div>
-          <h3 className="text-lg font-bold text-gray-900">The Cost of Manual</h3>
+          <h3 className="text-lg font-bold text-[#1E2D4D]">The Cost of Manual</h3>
           <p className="text-sm text-gray-500">Your team spends more time than you think.</p>
         </div>
       </div>
@@ -93,17 +93,17 @@ function CostCalculator() {
         <div>
           <label className="block text-xs font-semibold text-gray-600 mb-1">Equipment units</label>
           <input type="number" value={units} onChange={e => setUnits(Math.max(1, +e.target.value || 1))}
-            className="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm font-medium focus:outline-none focus:border-[#1e4d6b]" />
+            className="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm font-medium focus:outline-none focus:border-[#1E2D4D]" />
         </div>
         <div>
           <label className="block text-xs font-semibold text-gray-600 mb-1">Checks per unit/day</label>
           <input type="number" value={checksPerDay} onChange={e => setChecksPerDay(Math.max(1, +e.target.value || 1))}
-            className="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm font-medium focus:outline-none focus:border-[#1e4d6b]" />
+            className="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm font-medium focus:outline-none focus:border-[#1E2D4D]" />
         </div>
         <div>
           <label className="block text-xs font-semibold text-gray-600 mb-1">Minutes per check</label>
           <input type="number" value={minsPerCheck} onChange={e => setMinsPerCheck(Math.max(1, +e.target.value || 1))}
-            className="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm font-medium focus:outline-none focus:border-[#1e4d6b]" />
+            className="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm font-medium focus:outline-none focus:border-[#1E2D4D]" />
         </div>
       </div>
 
@@ -261,7 +261,7 @@ export function IoTSensorPlatform() {
           Hardware-Agnostic Sensor Platform
         </div>
 
-        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3 leading-tight">
+        <h1 className="text-3xl sm:text-4xl font-bold text-[#1E2D4D] mb-3 leading-tight">
           Your kitchen is already protected.
         </h1>
         <p className="text-lg text-gray-500 max-w-2xl mx-auto mb-8">
@@ -292,7 +292,7 @@ export function IoTSensorPlatform() {
 
       {/* ── SECTION 2: THE VALUE YOU ALREADY HAVE ───────────── */}
       <section className="mb-12">
-        <h2 className="text-xl font-bold text-gray-900 mb-2 text-center">The value you've already built</h2>
+        <h2 className="text-xl font-bold text-[#1E2D4D] mb-2 text-center">The value you've already built</h2>
         <p className="text-sm text-gray-500 text-center mb-6 max-w-xl mx-auto">
           This is what sensors will automate — not replace. Your history, your patterns, your AI insights — they all transfer automatically when sensors take over.
         </p>
@@ -306,7 +306,7 @@ export function IoTSensorPlatform() {
           ].map(item => (
             <div key={item.label} className="bg-white rounded-xl border border-gray-200 p-4 text-center">
               <item.icon className="h-5 w-5 mx-auto mb-2" style={{ color: item.color }} />
-              <div className="text-2xl font-bold text-gray-900">{item.value}</div>
+              <div className="text-2xl font-bold text-[#1E2D4D]">{item.value}</div>
               <div className="text-xs text-gray-500 font-medium">{item.label}</div>
             </div>
           ))}
@@ -320,7 +320,7 @@ export function IoTSensorPlatform() {
 
       {/* ── SECTION 4: SUPPORTED DEVICE ECOSYSTEM ──────────── */}
       <section id="devices" className="mb-12">
-        <h2 className="text-xl font-bold text-gray-900 mb-2 text-center">
+        <h2 className="text-xl font-bold text-[#1E2D4D] mb-2 text-center">
           Works with the sensors you already own or can buy today
         </h2>
         <p className="text-sm text-gray-500 text-center mb-6">
@@ -329,19 +329,19 @@ export function IoTSensorPlatform() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {DEVICE_CATEGORIES.map(cat => (
-            <div key={cat.title} className="bg-white rounded-xl border border-gray-200 p-5">
+            <div key={cat.title} className="bg-white rounded-xl border border-gray-200 p-6">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: cat.color + '12' }}>
                   <cat.icon className="h-5 w-5" style={{ color: cat.color }} />
                 </div>
                 <div>
-                  <div className="text-sm font-bold text-gray-900">{cat.title}</div>
+                  <div className="text-sm font-bold text-[#1E2D4D]">{cat.title}</div>
                   <div className="text-xs text-gray-400">{cat.note}</div>
                 </div>
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {cat.brands.map(brand => (
-                  <span key={brand} className="px-2 py-1 rounded-md bg-gray-50 text-xs text-gray-600 font-medium">
+                  <span key={brand} className="px-2 py-1 rounded-md bg-[#FAF7F0] text-xs text-gray-600 font-medium">
                     {brand}
                   </span>
                 ))}
@@ -358,7 +358,7 @@ export function IoTSensorPlatform() {
 
       {/* ── SECTION 5: HOW EASY IS SETUP ───────────────────── */}
       <section className="mb-12">
-        <h2 className="text-xl font-bold text-gray-900 mb-6 text-center">Setup takes 15 minutes</h2>
+        <h2 className="text-xl font-bold text-[#1E2D4D] mb-6 text-center">Setup takes 15 minutes</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl mx-auto">
           {[
@@ -381,14 +381,14 @@ export function IoTSensorPlatform() {
               icon: Activity,
             },
           ].map(item => (
-            <div key={item.step} className="bg-white rounded-xl border border-gray-200 p-5 relative">
+            <div key={item.step} className="bg-white rounded-xl border border-gray-200 p-6 relative">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white" style={{ backgroundColor: PRIMARY }}>
                   {item.step}
                 </div>
                 <item.icon className="h-4 w-4 text-gray-400" />
               </div>
-              <h3 className="text-sm font-bold text-gray-900 mb-1">{item.title}</h3>
+              <h3 className="text-sm font-bold text-[#1E2D4D] mb-1">{item.title}</h3>
               <p className="text-xs text-gray-500">{item.desc}</p>
             </div>
           ))}
@@ -404,7 +404,7 @@ export function IoTSensorPlatform() {
         <div className="bg-white rounded-2xl border-2 p-6 sm:p-8" style={{ borderColor: readiness.score >= 80 ? '#22c55e' : readiness.score >= 50 ? GOLD : '#e5e7eb' }}>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
             <div>
-              <h2 className="text-xl font-bold text-gray-900">Your IoT Readiness Score</h2>
+              <h2 className="text-xl font-bold text-[#1E2D4D]">Your IoT Readiness Score</h2>
               <p className="text-sm text-gray-500">The more you log manually, the faster sensors deliver value on Day 1.</p>
             </div>
             <div className="text-center">
@@ -449,10 +449,10 @@ export function IoTSensorPlatform() {
                 done: readiness.qrPrinted > 0 && readiness.qrPrinted === readiness.qrTotal,
               },
             ].map(item => (
-              <div key={item.label} className="p-3 rounded-xl bg-gray-50 text-center">
+              <div key={item.label} className="p-3 rounded-xl bg-[#FAF7F0] text-center">
                 <CheckCircle className="h-4 w-4 mx-auto mb-1" style={{ color: item.done ? '#22c55e' : '#d1d5db' }} />
-                <div className="text-sm font-bold text-gray-900">{item.value}</div>
-                <div className="text-[10px] text-gray-500">{item.label}</div>
+                <div className="text-sm font-bold text-[#1E2D4D]">{item.value}</div>
+                <div className="text-xs text-gray-500">{item.label}</div>
               </div>
             ))}
           </div>
@@ -471,7 +471,7 @@ export function IoTSensorPlatform() {
 
       {/* ── SECTION 7: ZERO LOCK-IN GUARANTEE ──────────────── */}
       <section className="mb-8">
-        <h2 className="text-xl font-bold text-gray-900 mb-6 text-center">Zero lock-in guarantee</h2>
+        <h2 className="text-xl font-bold text-[#1E2D4D] mb-6 text-center">Zero lock-in guarantee</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[
@@ -491,11 +491,11 @@ export function IoTSensorPlatform() {
               icon: Zap,
             },
           ].map(item => (
-            <div key={item.title} className="bg-white rounded-xl border border-gray-200 p-5 text-center">
+            <div key={item.title} className="bg-white rounded-xl border border-gray-200 p-6 text-center">
               <div className="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-3" style={{ backgroundColor: PRIMARY + '10' }}>
                 <item.icon className="h-5 w-5" style={{ color: PRIMARY }} />
               </div>
-              <h3 className="text-sm font-bold text-gray-900 mb-2">{item.title}</h3>
+              <h3 className="text-sm font-bold text-[#1E2D4D] mb-2">{item.title}</h3>
               <p className="text-xs text-gray-500">{item.desc}</p>
             </div>
           ))}
@@ -508,7 +508,7 @@ export function IoTSensorPlatform() {
 
       {/* ── Bottom CTA ─────────────────────────────────────── */}
       <section className="text-center py-8 border-t border-gray-100">
-        <h2 className="text-xl font-bold text-gray-900 mb-2">Ready to connect your first sensor?</h2>
+        <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Ready to connect your first sensor?</h2>
         <p className="text-sm text-gray-500 mb-6">Your compliance history is waiting. Sensors make it automatic.</p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <button

@@ -26,12 +26,12 @@ export function BenchmarkFilters({ filters, onChange }: BenchmarkFiltersProps) {
   const belowMinimum = result.peerCount < 10;
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+    <div className="bg-white rounded-xl border border-gray-200 p-4">
       <div className="flex flex-wrap items-center gap-3">
         <select
           value={filters.vertical}
           onChange={e => onChange({ ...filters, vertical: e.target.value as BenchmarkVertical })}
-          className="text-sm border border-gray-300 rounded-xl px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
+          className="text-sm border border-gray-300 rounded-xl px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20 focus:border-[#1E2D4D]"
         >
           {VERTICAL_BENCHMARKS.map(v => (
             <option key={v.vertical} value={v.vertical}>{v.vertical}</option>
@@ -41,7 +41,7 @@ export function BenchmarkFilters({ filters, onChange }: BenchmarkFiltersProps) {
         <select
           value={filters.size}
           onChange={e => onChange({ ...filters, size: e.target.value as BenchmarkSize | '' })}
-          className="text-sm border border-gray-300 rounded-xl px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
+          className="text-sm border border-gray-300 rounded-xl px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20 focus:border-[#1E2D4D]"
         >
           <option value="">All Sizes</option>
           {SIZE_BENCHMARKS.map(s => (
@@ -52,7 +52,7 @@ export function BenchmarkFilters({ filters, onChange }: BenchmarkFiltersProps) {
         <select
           value={filters.county}
           onChange={e => onChange({ ...filters, county: e.target.value })}
-          className="text-sm border border-gray-300 rounded-xl px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
+          className="text-sm border border-gray-300 rounded-xl px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20 focus:border-[#1E2D4D]"
         >
           <option value="">All Counties (CA)</option>
           {counties.map(c => (
@@ -61,7 +61,7 @@ export function BenchmarkFilters({ filters, onChange }: BenchmarkFiltersProps) {
         </select>
 
         <div className="flex items-center gap-2 ml-auto">
-          <span className="text-xs font-medium px-2.5 py-1 rounded-full" style={{ backgroundColor: '#eef4f8', color: '#1e4d6b' }}>
+          <span className="text-xs font-medium px-2.5 py-1 rounded-full" style={{ backgroundColor: '#eef4f8', color: '#1E2D4D' }}>
             {result.peerCount.toLocaleString()} peers
           </span>
           <span className="text-xs text-gray-400">

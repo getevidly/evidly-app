@@ -145,7 +145,7 @@ export function RequestServiceModal({
       <div className="absolute inset-0 bg-black/50" onClick={handleClose} />
       <div className="relative bg-white rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
-          <h2 className="text-lg font-bold text-gray-900">Request Service</h2>
+          <h2 className="text-lg font-bold text-[#1E2D4D]">Request Service</h2>
           <button onClick={handleClose} className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100" aria-label="Close">
             <X className="w-5 h-5" />
           </button>
@@ -156,7 +156,7 @@ export function RequestServiceModal({
             <div className="w-14 h-14 rounded-full bg-green-50 flex items-center justify-center mx-auto mb-4">
               <Send className="w-7 h-7 text-green-500" />
             </div>
-            <h3 className="text-lg font-bold text-gray-900 mb-2">
+            <h3 className="text-lg font-bold text-[#1E2D4D] mb-2">
               {confirmedDatetime ? 'Service Confirmed!' : 'Request Submitted!'}
             </h3>
             <p className="text-gray-500 mb-4">
@@ -197,7 +197,7 @@ export function RequestServiceModal({
               </div>
             )}
 
-            <button onClick={handleClose} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg text-sm font-medium hover:bg-[#163a52]">
+            <button onClick={handleClose} className="px-6 py-2.5 bg-[#1E2D4D] text-white rounded-lg text-sm font-medium hover:bg-[#162340] transition-colors min-h-[44px]">
               Done
             </button>
           </div>
@@ -205,9 +205,9 @@ export function RequestServiceModal({
           <div className="p-6 space-y-5">
             {/* Vendor context */}
             {vendorName && (
-              <div className="bg-gray-50 rounded-lg p-3 flex items-center gap-2">
+              <div className="bg-[#FAF7F0] rounded-lg p-3 flex items-center gap-2">
                 <span className="text-sm text-gray-600">Requesting from:</span>
-                <span className="text-sm font-semibold text-gray-900">{vendorName}</span>
+                <span className="text-sm font-semibold text-[#1E2D4D]">{vendorName}</span>
               </div>
             )}
 
@@ -221,10 +221,10 @@ export function RequestServiceModal({
                     type="button"
                     onClick={() => toggleService(svc.id)}
                     className={`w-full flex items-start gap-3 p-3 rounded-xl border-2 text-left transition-colors ${
-                      selectedServices.includes(svc.id) ? 'border-[#1e4d6b] bg-blue-50/50' : 'border-gray-200 hover:border-gray-300'
+                      selectedServices.includes(svc.id) ? 'border-[#1E2D4D] bg-blue-50/50' : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
-                    <div className={`w-5 h-5 rounded-full border-2 mt-0.5 flex items-center justify-center ${selectedServices.includes(svc.id) ? 'border-[#1e4d6b] bg-[#1e4d6b]' : 'border-gray-300'}`}>
+                    <div className={`w-5 h-5 rounded-full border-2 mt-0.5 flex items-center justify-center ${selectedServices.includes(svc.id) ? 'border-[#1E2D4D] bg-[#1E2D4D]' : 'border-gray-300'}`}>
                       {selectedServices.includes(svc.id) && <div className="w-2 h-2 bg-white rounded-full" />}
                     </div>
                     <div>
@@ -246,7 +246,7 @@ export function RequestServiceModal({
                     type="button"
                     onClick={() => setUrgency(opt.id)}
                     className={`p-3 rounded-lg border-2 text-left transition-colors ${
-                      urgency === opt.id ? 'border-[#1e4d6b] bg-blue-50/50' : 'border-gray-200 hover:border-gray-300'
+                      urgency === opt.id ? 'border-[#1E2D4D] bg-blue-50/50' : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
                     <p className="font-medium text-gray-900 text-sm">{opt.label}</p>
@@ -275,7 +275,7 @@ export function RequestServiceModal({
                     onChange={e => setSlot1(e.target.value)}
                     min={new Date().toISOString().slice(0, 16)}
                     placeholder="Slot 1 (required)"
-                    className="w-full border border-gray-300 rounded-lg pl-10 pr-3 py-2 text-sm focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                    className="w-full border border-gray-300 rounded-lg pl-10 pr-3 py-2 text-sm focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
                   />
                 </div>
                 <div className="relative">
@@ -286,7 +286,7 @@ export function RequestServiceModal({
                     onChange={e => setSlot2(e.target.value)}
                     min={new Date().toISOString().slice(0, 16)}
                     placeholder="Slot 2 (optional)"
-                    className="w-full border border-gray-300 rounded-lg pl-10 pr-3 py-2 text-sm focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                    className="w-full border border-gray-300 rounded-lg pl-10 pr-3 py-2 text-sm focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
                   />
                 </div>
                 <div className="relative">
@@ -297,7 +297,7 @@ export function RequestServiceModal({
                     onChange={e => setSlot3(e.target.value)}
                     min={new Date().toISOString().slice(0, 16)}
                     placeholder="Slot 3 (optional)"
-                    className="w-full border border-gray-300 rounded-lg pl-10 pr-3 py-2 text-sm focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                    className="w-full border border-gray-300 rounded-lg pl-10 pr-3 py-2 text-sm focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
                   />
                 </div>
               </div>
@@ -310,7 +310,7 @@ export function RequestServiceModal({
                 rows={3}
                 value={notes}
                 onChange={e => setNotes(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent resize-none"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent resize-none"
                 placeholder="Any special requirements or access instructions..."
               />
             </div>
@@ -319,7 +319,7 @@ export function RequestServiceModal({
             <button
               onClick={handleSubmit}
               disabled={submitting || selectedServices.length === 0 || !slot1}
-              className="w-full bg-[#1e4d6b] text-white py-3 rounded-xl font-semibold hover:bg-[#163a52] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full bg-[#1E2D4D] text-white py-3 rounded-xl font-semibold hover:bg-[#162340] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {submitting ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" /> : <><Send className="w-4 h-4" /> Submit Request</>}
             </button>

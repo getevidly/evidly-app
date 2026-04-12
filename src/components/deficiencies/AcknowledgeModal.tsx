@@ -52,7 +52,7 @@ export function AcknowledgeModal({ deficiencyCode, deficiencyTitle, onClose, onS
                     value={m.value}
                     checked={method === m.value}
                     onChange={() => setMethod(m.value)}
-                    className="accent-[#1e4d6b]"
+                    className="accent-[#1E2D4D]"
                   />
                   <span className="text-sm" style={{ color: '#0B1628' }}>{m.label}</span>
                 </label>
@@ -84,7 +84,7 @@ export function AcknowledgeModal({ deficiencyCode, deficiencyTitle, onClose, onS
           <button
             onClick={() => onSubmit(method, notes.trim())}
             className="px-4 py-2 text-sm font-semibold rounded-lg text-white transition-colors"
-            style={{ backgroundColor: '#1e4d6b' }}
+            style={{ backgroundColor: '#1E2D4D' }}
           >
             Acknowledge
           </button>

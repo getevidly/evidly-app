@@ -46,7 +46,7 @@ export function ComplianceTrendWidget({ trendData }: Props) {
           { label: 'Range', value: `${analysis.minValue}–${analysis.maxValue}` },
         ].map(stat => (
           <div key={stat.label} className="px-3 py-2.5 text-center" style={{ backgroundColor: CARD_BG }}>
-            <p className="text-[10px] font-medium uppercase tracking-wider" style={{ color: '#6B7F96' }}>{stat.label}</p>
+            <p className="text-xs font-medium uppercase tracking-wider" style={{ color: '#6B7F96' }}>{stat.label}</p>
             <p className="text-sm font-bold" style={{ color: NAVY }}>{stat.value}</p>
           </div>
         ))}

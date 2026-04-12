@@ -13,12 +13,12 @@ export function DashboardSkeleton() {
         {/* Hero skeleton */}
         <div className="rounded-xl animate-pulse" style={{ background: '#263d56', height: 120 }} />
         {/* Banner skeleton */}
-        <div className="bg-white rounded-lg p-4 animate-pulse" style={{ border: '1px solid #e5e7eb' }}>
+        <div className="bg-white rounded-xl border border-gray-200 p-4 animate-pulse">
           <div className="w-40 h-3 bg-gray-200 rounded mb-2" />
           <div className="w-64 h-2 bg-gray-100 rounded" />
         </div>
         {/* Location list skeleton */}
-        <div className="bg-white rounded-lg animate-pulse" style={{ border: '1px solid #e5e7eb' }}>
+        <div className="bg-white rounded-xl border border-gray-200 animate-pulse">
           <div className="px-4 py-3" style={{ borderBottom: '1px solid #F0F0F0' }}>
             <div className="w-32 h-3 bg-gray-200 rounded" />
           </div>
@@ -33,7 +33,7 @@ export function DashboardSkeleton() {
           ))}
         </div>
         {/* Tasks skeleton */}
-        <div className="bg-white rounded-lg animate-pulse" style={{ border: '1px solid #e5e7eb' }}>
+        <div className="bg-white rounded-xl border border-gray-200 animate-pulse">
           <div className="px-4 py-3" style={{ borderBottom: '1px solid #F0F0F0' }}>
             <div className="w-28 h-3 bg-gray-200 rounded" />
           </div>

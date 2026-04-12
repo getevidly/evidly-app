@@ -40,7 +40,7 @@ export function EmployeeCertifications({ certifications, onAdd, onEdit, onDelete
           </select>
         </div>
         {canEdit && (
-          <button onClick={onAdd} className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-lg text-white hover:opacity-90" style={{ backgroundColor: '#1e4d6b' }}>
+          <button onClick={onAdd} className="flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold rounded-lg text-white bg-[#1E2D4D] hover:bg-[#162340] transition-colors min-h-[44px]">
             <Plus className="w-4 h-4" /> Add Certification
           </button>
         )}

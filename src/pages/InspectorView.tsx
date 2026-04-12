@@ -176,7 +176,7 @@ export function InspectorView() {
 
           {/* ── Scenario Selector (demo only) ──────────────────────── */}
           {isDemoMode && (
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 print:hidden">
+            <div className="bg-white rounded-xl border border-gray-200 p-4 print:hidden">
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
                 Scenario
               </p>
@@ -189,12 +189,12 @@ export function InspectorView() {
                       onClick={() => setScenario(key)}
                       className={`flex-1 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
                         scenario === key
-                          ? 'bg-[#1e4d6b] text-white'
+                          ? 'bg-[#1E2D4D] text-white'
                           : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                       }`}
                     >
                       <span className="font-bold">{key}:</span> {s.label}
-                      <span className="block text-[11px] mt-0.5 opacity-80">{s.description}</span>
+                      <span className="block text-xs mt-0.5 opacity-80">{s.description}</span>
                     </button>
                   );
                 })}
@@ -206,11 +206,11 @@ export function InspectorView() {
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-[#1e4d6b] flex items-center justify-center">
+                <div className="h-10 w-10 rounded-lg bg-[#1E2D4D] flex items-center justify-center">
                   <EvidlyIcon size={20} />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-[#1e4d6b]">
+                  <h1 className="text-2xl font-bold text-[#1E2D4D]">
                     Inspector Arrival Mode
                   </h1>
                   <p className="text-sm text-gray-500">
@@ -223,19 +223,19 @@ export function InspectorView() {
 
               <div className="flex items-center gap-2 print:hidden">
                 <button onClick={handlePrint}
-                  className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-[#1e4d6b] bg-white border border-gray-200 rounded-xl hover:bg-[#eef4f8] transition-colors">
+                  className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-[#1E2D4D] bg-white border border-gray-200 rounded-xl hover:bg-[#eef4f8] transition-colors">
                   <Printer className="h-4 w-4" /> Print
                 </button>
                 <button onClick={handleExportPdf}
-                  className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-[#1e4d6b] bg-white border border-gray-200 rounded-xl hover:bg-[#eef4f8] transition-colors">
+                  className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-[#1E2D4D] bg-white border border-gray-200 rounded-xl hover:bg-[#eef4f8] transition-colors">
                   <Download className="h-4 w-4" /> Export PDF
                 </button>
                 <button onClick={handleShare}
-                  className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-[#1e4d6b] bg-white border border-gray-200 rounded-xl hover:bg-[#eef4f8] transition-colors">
+                  className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-[#1E2D4D] bg-white border border-gray-200 rounded-xl hover:bg-[#eef4f8] transition-colors">
                   <Share2 className="h-4 w-4" /> Share
                 </button>
                 <button onClick={() => setShowCertPanel(true)}
-                  className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-white bg-[#1e4d6b] border border-[#1e4d6b] rounded-xl hover:bg-[#163a52] transition-colors">
+                  className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-white bg-[#1E2D4D] border border-[#1E2D4D] rounded-xl hover:bg-[#162340] transition-colors">
                   <GraduationCap className="h-4 w-4" /> Show Certs
                 </button>
               </div>
@@ -291,35 +291,35 @@ export function InspectorView() {
           </div>
 
           {/* ── Last Inspection Record ──────────────────────────────── */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-            <h3 className="text-sm font-bold text-[#1e4d6b] uppercase tracking-wide mb-3">
+          <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <h3 className="text-sm font-bold text-[#1E2D4D] uppercase tracking-wide mb-3">
               Last Inspection Record
             </h3>
             {data.lastInspection ? (
               <div className="space-y-3">
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   <div>
-                    <p className="text-[11px] text-gray-500 uppercase">Date</p>
+                    <p className="text-xs text-gray-500 uppercase">Date</p>
                     <p className="text-sm font-medium text-gray-900">{data.lastInspection.date}</p>
                   </div>
                   <div>
-                    <p className="text-[11px] text-gray-500 uppercase">Score</p>
+                    <p className="text-xs text-gray-500 uppercase">Score</p>
                     <p className={`text-sm font-bold ${data.lastInspection.score >= 90 ? 'text-emerald-700' : data.lastInspection.score >= 80 ? 'text-amber-700' : 'text-red-700'}`}>
                       {data.lastInspection.score}
                     </p>
                   </div>
                   <div>
-                    <p className="text-[11px] text-gray-500 uppercase">Inspector</p>
+                    <p className="text-xs text-gray-500 uppercase">Inspector</p>
                     <p className="text-sm font-medium text-gray-900">{data.lastInspection.inspectorName}</p>
                   </div>
                   <div>
-                    <p className="text-[11px] text-gray-500 uppercase">Agency</p>
+                    <p className="text-xs text-gray-500 uppercase">Agency</p>
                     <p className="text-sm text-gray-700">{data.lastInspection.agency}</p>
                   </div>
                 </div>
                 {data.lastInspection.topViolations.length > 0 && (
                   <div>
-                    <p className="text-[11px] text-gray-500 uppercase mb-1">Top Violations Cited</p>
+                    <p className="text-xs text-gray-500 uppercase mb-1">Top Violations Cited</p>
                     <ul className="space-y-1">
                       {data.lastInspection.topViolations.map((v, i) => (
                         <li key={i} className="text-xs text-red-700 flex items-start gap-1.5">
@@ -343,7 +343,7 @@ export function InspectorView() {
           {/* ── Status Cards Row ────────────────────────────────────── */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {/* Open Corrective Actions */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+            <div className="bg-white rounded-xl border border-gray-200 p-4">
               <div className="flex items-center gap-2 mb-2">
                 <AlertTriangle className="h-4 w-4 text-amber-500" />
                 <h4 className="text-xs font-bold text-gray-700 uppercase">Open Corrective Actions</h4>
@@ -368,7 +368,7 @@ export function InspectorView() {
             </div>
 
             {/* Overdue Equipment */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+            <div className="bg-white rounded-xl border border-gray-200 p-4">
               <div className="flex items-center gap-2 mb-2">
                 <Wrench className="h-4 w-4 text-gray-500" />
                 <h4 className="text-xs font-bold text-gray-700 uppercase">Overdue Equipment</h4>
@@ -390,7 +390,7 @@ export function InspectorView() {
             </div>
 
             {/* Active HACCP CCP Alerts */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+            <div className="bg-white rounded-xl border border-gray-200 p-4">
               <div className="flex items-center gap-2 mb-2">
                 <Thermometer className="h-4 w-4 text-red-500" />
                 <h4 className="text-xs font-bold text-gray-700 uppercase">HACCP CCP Alerts</h4>
@@ -415,7 +415,7 @@ export function InspectorView() {
 
           {/* ── Talk-Track Items ────────────────────────────────────── */}
           {talkTrack.length > 0 && (
-            <div className="bg-gradient-to-br from-[#1e4d6b] to-[#163a52] rounded-xl shadow-sm p-5 text-white">
+            <div className="bg-gradient-to-br from-[#1E2D4D] to-[#141E33] rounded-xl shadow-sm p-5 text-white">
               <div className="flex items-center gap-2 mb-3">
                 <MessageSquare className="h-4 w-4 text-[#d4af37]" />
                 <h3 className="text-sm font-bold uppercase tracking-wide">
@@ -444,16 +444,16 @@ export function InspectorView() {
 
                 return (
                   <div key={section.key}
-                    className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    className="bg-white rounded-xl border border-gray-200 overflow-hidden">
                     <button
                       onClick={() => toggle(section.key)}
                       className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-gray-50 transition-colors">
                       <div className="flex items-center gap-3">
                         <div className="h-9 w-9 rounded-lg bg-[#eef4f8] flex items-center justify-center flex-shrink-0">
-                          <SectionIcon className="h-5 w-5 text-[#1e4d6b]" />
+                          <SectionIcon className="h-5 w-5 text-[#1E2D4D]" />
                         </div>
                         <div>
-                          <span className="font-semibold text-[#1e4d6b]">{section.title}</span>
+                          <span className="font-semibold text-[#1E2D4D]">{section.title}</span>
                           <span className="ml-2 text-xs text-gray-400 font-normal">{section.calCode}</span>
                         </div>
                       </div>
@@ -485,7 +485,7 @@ export function InspectorView() {
                             </div>
                             <div className="min-w-0 flex-1 space-y-1.5">
                               <div className="flex flex-wrap items-center gap-2">
-                                <span className="inline-block text-[11px] font-mono text-gray-500 bg-gray-100 rounded px-1.5 py-0.5">
+                                <span className="inline-block text-xs font-mono text-gray-500 bg-gray-100 rounded px-1.5 py-0.5">
                                   {item.citation}
                                 </span>
                                 <span className="text-sm font-medium text-gray-900">{item.title}</span>
@@ -512,7 +512,7 @@ export function InspectorView() {
 
           {/* ── Footer ─────────────────────────────────────────────── */}
           <div className="space-y-3 pt-2">
-            <div className="rounded-xl bg-[#1e4d6b] text-white px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <div className="rounded-xl bg-[#1E2D4D] text-white px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <p className="font-semibold text-sm">
                 {metItems}/{totalItems} requirements met
               </p>
@@ -542,11 +542,11 @@ export function InspectorView() {
           <div className="bg-white rounded-2xl shadow-xl max-w-3xl w-full mx-4 max-h-[85vh] flex flex-col print:shadow-none print:rounded-none print:max-h-none">
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 print:border-b-2">
               <div className="flex items-center gap-2">
-                <GraduationCap className="h-5 w-5 text-[#1e4d6b]" />
-                <h2 className="text-lg font-bold text-[#1e4d6b]">Employee Certifications — Quick Pull</h2>
+                <GraduationCap className="h-5 w-5 text-[#1E2D4D]" />
+                <h2 className="text-lg font-bold text-[#1E2D4D]">Employee Certifications — Quick Pull</h2>
               </div>
               <div className="flex items-center gap-2 print:hidden">
-                <button onClick={() => window.print()} className="text-sm text-gray-500 hover:text-[#1e4d6b] px-2 py-1 rounded-lg border border-gray-200">
+                <button onClick={() => window.print()} className="text-sm text-gray-500 hover:text-[#1E2D4D] px-2 py-1 rounded-lg border border-gray-200">
                   <Printer className="h-4 w-4" />
                 </button>
                 <button onClick={() => setShowCertPanel(false)} className="text-gray-400 hover:text-gray-600 p-1 rounded-lg">
@@ -557,7 +557,7 @@ export function InspectorView() {
             <div className="overflow-y-auto px-6 py-4 space-y-5">
               {/* CFPM */}
               <div>
-                <h3 className="text-sm font-bold text-[#1e4d6b] uppercase tracking-wide mb-2">Certified Food Protection Managers (CFPM)</h3>
+                <h3 className="text-sm font-bold text-[#1E2D4D] uppercase tracking-wide mb-2">Certified Food Protection Managers (CFPM)</h3>
                 {data.certifications.cfpms.length > 0 ? (
                   <div className="rounded-lg border border-gray-200 overflow-hidden">
                     <table className="w-full text-sm">

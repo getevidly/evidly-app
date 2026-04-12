@@ -261,7 +261,7 @@ export default function AdminDashboard() {
             disabled={crawlRunning}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white transition-colors disabled:opacity-50"
             style={{ backgroundColor: BRAND }}
-            onMouseEnter={e => { if (!crawlRunning) e.currentTarget.style.backgroundColor = '#2a6a8f'; }}
+            onMouseEnter={e => { if (!crawlRunning) e.currentTarget.style.backgroundColor = '#2A3F6B'; }}
             onMouseLeave={e => e.currentTarget.style.backgroundColor = BRAND}
           >
             {crawlRunning ? <Loader2 size={15} className="animate-spin" /> : <Activity size={15} />}
@@ -406,7 +406,7 @@ function CommandCenterTab({ crawlStats, latestRun, orgCount, locCount, recentErr
 function MiniStat({ label, value, total, color }: { label: string; value: number; total?: number; color: string }) {
   return (
     <div className="rounded-lg p-3" style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
-      <p className="text-[11px] font-medium" style={{ color: TEXT_TERT }}>{label}</p>
+      <p className="text-xs font-medium" style={{ color: TEXT_TERT }}>{label}</p>
       <p className="text-xl font-bold" style={{ color }}>
         {value}{total !== undefined && <span className="text-sm font-normal" style={{ color: TEXT_TERT }}>/{total}</span>}
       </p>
@@ -540,7 +540,7 @@ function EventLogTab({ events }: { events: EventRow[] }) {
           <div key={e.id} className="flex items-start gap-2 text-xs py-1.5 px-2 rounded hover:bg-gray-50">
             <LevelBadge level={e.level} />
             <span className="flex-shrink-0" style={{ color: TEXT_TERT }}>{fmtDate(e.event_time)}</span>
-            {e.category && <span className="px-1.5 py-0.5 rounded text-[10px] font-medium" style={{ backgroundColor: '#f1f5f9', color: TEXT_SEC }}>{e.category}</span>}
+            {e.category && <span className="px-1.5 py-0.5 rounded text-xs font-medium" style={{ backgroundColor: '#f1f5f9', color: TEXT_SEC }}>{e.category}</span>}
             <span style={{ color: '#374151' }} className="break-all">{e.message}</span>
           </div>
         ))}
@@ -558,7 +558,7 @@ function LevelBadge({ level }: { level: string }) {
     DEBUG: { bg: '#f3f4f6', text: '#6b7280' },
   };
   const s = styles[level] || styles.DEBUG;
-  return <span className="px-1.5 py-0.5 rounded text-[10px] font-bold flex-shrink-0" style={{ backgroundColor: s.bg, color: s.text }}>{level}</span>;
+  return <span className="px-1.5 py-0.5 rounded text-xs font-bold flex-shrink-0" style={{ backgroundColor: s.bg, color: s.text }}>{level}</span>;
 }
 
 // ── API Keys ────────────────────────────────────────────────

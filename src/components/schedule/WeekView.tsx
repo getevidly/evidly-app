@@ -39,10 +39,10 @@ export function WeekView({ date, jobs, technicians, onJobClick }: WeekViewProps)
         <div className="grid grid-cols-7 border-b" style={{ borderColor: CARD_BORDER }}>
           {days.map(d => (
             <div key={d.toISOString()} className="px-2 py-3 text-center border-r last:border-r-0" style={{ borderColor: CARD_BORDER }}>
-              <p className="text-[10px] font-semibold uppercase" style={{ color: TEXT_TERTIARY }}>{format(d, 'EEE')}</p>
+              <p className="text-xs font-semibold uppercase" style={{ color: TEXT_TERTIARY }}>{format(d, 'EEE')}</p>
               <p className={`text-lg font-bold ${isToday(d) ? 'text-white' : ''}`} style={{
                 color: isToday(d) ? undefined : NAVY,
-                background: isToday(d) ? '#1e4d6b' : 'transparent',
+                background: isToday(d) ? '#1E2D4D' : 'transparent',
                 borderRadius: isToday(d) ? '50%' : undefined,
                 width: isToday(d) ? 32 : undefined,
                 height: isToday(d) ? 32 : undefined,
@@ -69,10 +69,10 @@ export function WeekView({ date, jobs, technicians, onJobClick }: WeekViewProps)
       <div className="grid grid-cols-7 border-b" style={{ borderColor: CARD_BORDER }}>
         {days.map(d => (
           <div key={d.toISOString()} className="px-2 py-3 text-center border-r last:border-r-0" style={{ borderColor: CARD_BORDER }}>
-            <p className="text-[10px] font-semibold uppercase" style={{ color: TEXT_TERTIARY }}>{format(d, 'EEE')}</p>
+            <p className="text-xs font-semibold uppercase" style={{ color: TEXT_TERTIARY }}>{format(d, 'EEE')}</p>
             <p className={`text-lg font-bold mt-0.5`} style={{
               color: isToday(d) ? 'white' : NAVY,
-              background: isToday(d) ? '#1e4d6b' : 'transparent',
+              background: isToday(d) ? '#1E2D4D' : 'transparent',
               borderRadius: '50%',
               width: 32, height: 32,
               display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
@@ -131,12 +131,12 @@ function WeekDayCell({ dayKey, jobs, overflow, isToday: today, isWeekend, onJobC
         <JobBlock key={job.id} job={job} compact onClick={onJobClick} />
       ))}
       {overflow > 0 && !isExpanded && (
-        <button onClick={onShowMore} className="w-full text-center text-[10px] font-semibold py-0.5 rounded hover:bg-gray-100" style={{ color: '#1e4d6b' }}>
+        <button onClick={onShowMore} className="w-full text-center text-xs font-semibold py-0.5 rounded hover:bg-gray-100" style={{ color: '#1E2D4D' }}>
           +{overflow} more
         </button>
       )}
       {isExpanded && overflow > 0 && (
-        <button onClick={onShowMore} className="w-full text-center text-[10px] font-semibold py-0.5 rounded hover:bg-gray-100" style={{ color: TEXT_TERTIARY }}>
+        <button onClick={onShowMore} className="w-full text-center text-xs font-semibold py-0.5 rounded hover:bg-gray-100" style={{ color: TEXT_TERTIARY }}>
           Show less
         </button>
       )}

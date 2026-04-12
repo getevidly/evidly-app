@@ -46,11 +46,11 @@ function InspectionReadiness({ signals }: { signals: ReadinessSignal[] }) {
                 : <AlertCircle size={16} className="text-red-500 shrink-0" />
               }
               <div className="flex-1 min-w-0">
-                <p className="text-[13px] font-medium" style={{ color: BODY_TEXT }}>{signal.label}</p>
-                <p className="text-[11px] text-gray-500">{signal.detail}</p>
+                <p className="text-sm font-medium" style={{ color: BODY_TEXT }}>{signal.label}</p>
+                <p className="text-xs text-gray-500">{signal.detail}</p>
               </div>
               <span
-                className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0"
+                className="text-xs font-bold px-1.5 py-0.5 rounded shrink-0"
                 style={{
                   backgroundColor: isCurrent ? '#dcfce7' : signal.status === 'overdue' ? '#fef2f2' : '#f3f4f6',
                   color: isCurrent ? '#16a34a' : signal.status === 'overdue' ? '#dc2626' : '#6b7280',
@@ -109,7 +109,7 @@ export default function ComplianceManagerDashboard() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-6">
           <div className="bg-white rounded-xl p-8 text-center" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
             <p className="text-sm font-medium text-gray-500">No compliance data yet. Add a location to begin compliance tracking.</p>
-            <button type="button" onClick={() => navigate('/locations')} className="mt-3 text-sm font-semibold px-4 py-2 rounded-lg text-white" style={{ backgroundColor: '#1e4d6b' }}>
+            <button type="button" onClick={() => navigate('/locations')} className="mt-3 text-sm font-semibold px-4 py-2 rounded-lg text-white" style={{ backgroundColor: '#1E2D4D' }}>
               Add Location
             </button>
           </div>

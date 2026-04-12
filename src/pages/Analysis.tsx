@@ -622,7 +622,7 @@ export function Analysis() {
             <ShieldAlert className="h-12 w-12 mx-auto mb-4" style={{ color: '#9ca3af' }} />
             <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#374151', marginBottom: '8px', ...F }}>No compliance analysis data yet</h2>
             <p style={{ fontSize: '14px', color: '#6b7280', marginBottom: '20px', ...F }}>Add a location to begin receiving predictive compliance alerts.</p>
-            <button onClick={() => navigate('/org-hierarchy')} style={{ padding: '10px 20px', fontSize: '14px', fontWeight: 600, color: 'white', backgroundColor: '#1e4d6b', border: 'none', borderRadius: '8px', cursor: 'pointer', ...F }}>
+            <button onClick={() => navigate('/org-hierarchy')} style={{ padding: '10px 20px', fontSize: '14px', fontWeight: 600, color: 'white', backgroundColor: '#1E2D4D', border: 'none', borderRadius: '8px', cursor: 'pointer', ...F }}>
               Add Location
             </button>
           </div>
@@ -663,7 +663,7 @@ export function Analysis() {
         {/* Loading spinner */}
         {loading && (
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '60px 0' }}>
-            <Loader2 className="h-8 w-8 animate-spin" style={{ color: '#1e4d6b' }} />
+            <Loader2 className="h-8 w-8 animate-spin" style={{ color: '#1E2D4D' }} />
             <span style={{ marginLeft: '12px', color: '#6b7280', fontSize: '14px', ...F }}>Loading alerts...</span>
           </div>
         )}
@@ -812,7 +812,7 @@ export function Analysis() {
                           </button>
 
                           {/* Create Action Item */}
-                          <button onClick={() => createActionItem(alert)} style={{ backgroundColor: '#1e4d6b', color: 'white', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 500, border: 'none', cursor: 'pointer', ...F }}>
+                          <button onClick={() => createActionItem(alert)} style={{ backgroundColor: '#1E2D4D', color: 'white', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 500, border: 'none', cursor: 'pointer', ...F }}>
                             Create Action Item
                           </button>
                         </div>
@@ -824,7 +824,7 @@ export function Analysis() {
             </div>
 
             {/* Score Projection */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6" style={{ marginBottom: '24px' }}>
+            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6" style={{ marginBottom: '24px' }}>
               <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#111827', marginBottom: '16px', ...F }}>Score Projection</h2>
               {scoreProjectionData.length > 0 ? (
                 <>
@@ -837,7 +837,7 @@ export function Analysis() {
                       <Legend />
                       <ReferenceLine y={90} stroke="#22c55e" strokeDasharray="3 3" label={{ value: 'Inspection Ready', position: 'right', fill: '#22c55e', fontSize: 11 }} />
                       <ReferenceLine y={70} stroke="#eab308" strokeDasharray="3 3" label={{ value: 'Needs Attention', position: 'right', fill: '#eab308', fontSize: 11 }} />
-                      <Line type="monotone" dataKey="actual" stroke="#1e4d6b" strokeWidth={2} dot={{ r: 3 }} name="Actual Score" connectNulls={false} />
+                      <Line type="monotone" dataKey="actual" stroke="#1E2D4D" strokeWidth={2} dot={{ r: 3 }} name="Actual Score" connectNulls={false} />
                       <Line type="monotone" dataKey="noAction" stroke="#ef4444" strokeWidth={2} strokeDasharray="6 4" dot={{ r: 3 }} name="No Action" connectNulls={false} />
                       <Line type="monotone" dataKey="recommended" stroke="#22c55e" strokeWidth={2} strokeDasharray="6 4" dot={{ r: 3 }} name="Recommended Actions" connectNulls={false} />
                     </LineChart>
@@ -863,7 +863,7 @@ export function Analysis() {
             </div>
 
             {/* Actions to Improve Score */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden" style={{ marginBottom: '24px' }}>
+            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden" style={{ marginBottom: '24px' }}>
               <div className="p-4 sm:p-6 pb-4">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                   <div>
@@ -910,14 +910,14 @@ export function Analysis() {
                         <td className="px-4 sm:px-6 py-4 whitespace-nowrap">{getPriorityBadge(action.priority)}</td>
                         <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">{action.action}</td>
                         <td className="hidden sm:table-cell px-4 sm:px-6 py-4 whitespace-nowrap">
-                          <span style={{ padding: '2px 10px', fontSize: '12px', fontWeight: 500, borderRadius: '9999px', backgroundColor: action.pillar === 'Food Safety' ? '#dbeafe' : action.pillar === 'Facility Safety' ? '#dcfce7' : '#fef3c7', color: action.pillar === 'Food Safety' ? '#1e4d6b' : action.pillar === 'Facility Safety' ? '#166534' : '#92400e' }}>
+                          <span style={{ padding: '2px 10px', fontSize: '12px', fontWeight: 500, borderRadius: '9999px', backgroundColor: action.pillar === 'Food Safety' ? '#dbeafe' : action.pillar === 'Facility Safety' ? '#dcfce7' : '#fef3c7', color: action.pillar === 'Food Safety' ? '#1E2D4D' : action.pillar === 'Facility Safety' ? '#166534' : '#92400e' }}>
                             {action.pillar}
                           </span>
                         </td>
-                        <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-semibold" style={{ color: '#1e4d6b' }}>+{action.pointImpact} pts</td>
+                        <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-semibold" style={{ color: '#1E2D4D' }}>+{action.pointImpact} pts</td>
                         <td className="hidden sm:table-cell px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-600">{action.location}</td>
                         <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
-                          <button onClick={() => navigate(action.link)} className="bg-[#1e4d6b] text-white text-xs font-medium px-3 py-1 rounded-lg hover:bg-[#163a52] transition-colors duration-150 flex items-center gap-1 min-h-[44px]">
+                          <button onClick={() => navigate(action.link)} className="bg-[#1E2D4D] text-white text-xs font-medium px-3 py-1 rounded-lg hover:bg-[#162340] transition-colors duration-150 flex items-center gap-1 min-h-[44px]">
                             Take Action <ArrowRight className="h-3 w-3" />
                           </button>
                         </td>
@@ -933,7 +933,7 @@ export function Analysis() {
               <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#111827', marginBottom: '16px', ...F }}>Compliance Trends</h2>
               {currentTrends.foodSafety.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4">
+                  <div className="bg-white rounded-xl border border-gray-200 p-3 sm:p-4">
                     <h3 className="text-sm font-semibold text-gray-700 mb-3">Food Safety</h3>
                     <ResponsiveContainer width="100%" height={150}>
                       <LineChart data={currentTrends.foodSafety}>
@@ -941,7 +941,7 @@ export function Analysis() {
                         <XAxis dataKey="week" tick={{ fontSize: 10 }} />
                         <YAxis domain={[0, 100]} tick={{ fontSize: 10 }} />
                         <Tooltip />
-                        <Line type="monotone" dataKey="score" stroke="#1e4d6b" strokeWidth={2} dot={{ r: 2 }} />
+                        <Line type="monotone" dataKey="score" stroke="#1E2D4D" strokeWidth={2} dot={{ r: 2 }} />
                       </LineChart>
                     </ResponsiveContainer>
                     <p className={`text-xs mt-2 flex items-center ${opEnd >= opStart ? 'text-green-600' : 'text-red-600'}`}>
@@ -949,7 +949,7 @@ export function Analysis() {
                       {opEnd >= opStart ? '+' : ''}{opEnd - opStart} points over 12 weeks
                     </p>
                   </div>
-                  <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4">
+                  <div className="bg-white rounded-xl border border-gray-200 p-3 sm:p-4">
                     <h3 className="text-sm font-semibold text-gray-700 mb-3">Facility Safety</h3>
                     <ResponsiveContainer width="100%" height={150}>
                       <LineChart data={currentTrends.facilitySafety}>
@@ -957,7 +957,7 @@ export function Analysis() {
                         <XAxis dataKey="week" tick={{ fontSize: 10 }} />
                         <YAxis domain={[0, 100]} tick={{ fontSize: 10 }} />
                         <Tooltip />
-                        <Line type="monotone" dataKey="score" stroke="#1e4d6b" strokeWidth={2} dot={{ r: 2 }} />
+                        <Line type="monotone" dataKey="score" stroke="#1E2D4D" strokeWidth={2} dot={{ r: 2 }} />
                       </LineChart>
                     </ResponsiveContainer>
                     <p className={`text-xs mt-2 flex items-center ${eqEnd >= eqStart ? 'text-green-600' : 'text-red-600'}`}>
@@ -967,7 +967,7 @@ export function Analysis() {
                   </div>
                 </div>
               ) : (
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6" style={{ textAlign: 'center' }}>
+                <div className="bg-white rounded-xl border border-gray-200 p-6" style={{ textAlign: 'center' }}>
                   <TrendingUp className="h-10 w-10 mx-auto mb-3" style={{ color: '#d1d5db' }} />
                   <p style={{ fontSize: '14px', fontWeight: 500, color: '#6b7280', marginBottom: '4px', ...F }}>Insufficient data</p>
                   <p style={{ fontSize: '13px', color: '#9ca3af', ...F }}>Compliance trends available after 30 days of activity</p>

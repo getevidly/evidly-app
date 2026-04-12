@@ -178,7 +178,7 @@ export function MobileTabBar() {
           style={{ maxHeight: '70vh' }}
         >
           <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-[#1e4d6b]">More Options</h3>
+            <h3 className="text-lg font-semibold text-[#1E2D4D]">More Options</h3>
             <button
               onClick={() => setShowMoreMenu(false)}
               className="p-2 hover:bg-gray-100 rounded-full min-h-[44px] min-w-[44px] flex items-center justify-center"
@@ -189,7 +189,7 @@ export function MobileTabBar() {
           <div className="p-4 overflow-y-auto" style={{ maxHeight: 'calc(70vh - 140px)' }}>
             {moreSections.map((sec) => (
               <div key={sec.id} className="mb-4">
-                <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2 px-1">
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 px-1">
                   {sec.label}
                 </p>
                 <div className="grid grid-cols-3 gap-2">
@@ -209,7 +209,7 @@ export function MobileTabBar() {
                           className={`h-5 w-5 mb-1.5 ${active ? 'text-[#d4af37]' : 'text-gray-400'}`}
                         />
                         <span
-                          className={`text-[10px] font-medium text-center leading-tight ${
+                          className={`text-xs font-medium text-center leading-tight ${
                             active ? 'text-[#d4af37]' : 'text-gray-500'
                           }`}
                         >
@@ -238,7 +238,7 @@ export function MobileTabBar() {
       {isVoiceRole && !isKeyboardOpen && (
         <div className="fixed bottom-[60px] left-1/2 -translate-x-1/2 z-50 lg:hidden flex flex-col items-center">
           <VoiceButton orgId={orgId} locationId={locationId} size="lg" />
-          <span className="text-[10px] text-[#A08C5A] mt-1 font-medium">Voice</span>
+          <span className="text-xs text-[#A08C5A] mt-1 font-medium">Voice</span>
         </div>
       )}
 
@@ -252,7 +252,7 @@ export function MobileTabBar() {
               <button
                 key={tab.path}
                 onClick={() => handleNavigation(tab.path)}
-                className={`flex flex-col items-center justify-center min-h-[44px] min-w-[44px] transition-colors duration-150 active:bg-gray-50 ${
+                className={`flex flex-col items-center justify-center min-h-[44px] min-w-[44px] transition-colors duration-150 active:bg-[#FAF7F0] ${
                   active ? 'bg-[#d4af37]/10' : ''
                 }`}
                 style={active ? { boxShadow: 'inset 0 2px 0 #d4af37' } : undefined}
@@ -261,7 +261,7 @@ export function MobileTabBar() {
                   className={`h-5 w-5 ${active ? 'text-[#d4af37]' : 'text-gray-400'}`}
                 />
                 <span
-                  className={`text-[10px] mt-0.5 ${active ? 'text-[#d4af37] font-semibold' : 'text-gray-500'}`}
+                  className={`text-xs mt-0.5 ${active ? 'text-[#d4af37] font-semibold' : 'text-gray-500'}`}
                 >
                   {tab.label}
                 </span>
@@ -272,13 +272,13 @@ export function MobileTabBar() {
           {!isKitchen && (
             <button
               onClick={() => setShowMoreMenu(!showMoreMenu)}
-              className={`flex flex-col items-center justify-center min-h-[44px] min-w-[44px] transition-colors duration-150 active:bg-gray-50 ${
+              className={`flex flex-col items-center justify-center min-h-[44px] min-w-[44px] transition-colors duration-150 active:bg-[#FAF7F0] ${
                 showMoreMenu ? 'bg-[#d4af37]/10' : ''
               }`}
               style={showMoreMenu ? { boxShadow: 'inset 0 2px 0 #d4af37' } : undefined}
             >
               <MoreHorizontal className={`h-5 w-5 ${showMoreMenu ? 'text-[#d4af37]' : 'text-gray-400'}`} />
-              <span className={`text-[10px] mt-0.5 ${showMoreMenu ? 'text-[#d4af37] font-semibold' : 'text-gray-500'}`}>More</span>
+              <span className={`text-xs mt-0.5 ${showMoreMenu ? 'text-[#d4af37] font-semibold' : 'text-gray-500'}`}>More</span>
             </button>
           )}
         </div>

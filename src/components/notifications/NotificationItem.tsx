@@ -67,7 +67,7 @@ export function NotificationItem({
                   style={{ backgroundColor: sev.dot }}
                 />
               )}
-              <span className={`text-sm truncate ${isUnread ? 'font-semibold text-gray-900' : 'font-medium text-gray-700'}`}>
+              <span className={`text-sm truncate ${isUnread ? 'font-semibold text-[#1E2D4D]' : 'font-medium text-gray-700'}`}>
                 {n.title}
               </span>
             </div>
@@ -93,7 +93,7 @@ export function NotificationItem({
               <button
                 onClick={(e) => { e.stopPropagation(); handleClick(); }}
                 className="text-xs font-medium flex items-center gap-0.5 hover:underline"
-                style={{ color: '#1e4d6b' }}
+                style={{ color: '#1E2D4D' }}
               >
                 {n.actionLabel} <ChevronRight className="h-3 w-3" />
               </button>

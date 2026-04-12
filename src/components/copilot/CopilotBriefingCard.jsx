@@ -126,7 +126,7 @@ export function CopilotBriefingCard() {
           style={{
             display: 'flex', alignItems: 'center', gap: 5,
             padding: '7px 14px', borderRadius: 8,
-            background: '#1e4d6b', border: 'none',
+            background: '#1E2D4D', border: 'none',
             fontSize: 12, fontWeight: 600, color: '#fff',
             cursor: 'pointer',
           }}
@@ -210,7 +210,7 @@ export function CopilotBriefingCard() {
           style={{
             display: 'flex', alignItems: 'center', gap: 5,
             padding: '7px 14px', borderRadius: 8,
-            background: '#1e4d6b', border: 'none',
+            background: '#1E2D4D', border: 'none',
             fontSize: 12, fontWeight: 600, color: '#fff',
             cursor: 'pointer',
           }}

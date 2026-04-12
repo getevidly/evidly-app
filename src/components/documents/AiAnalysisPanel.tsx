@@ -19,7 +19,7 @@ import {
 export function NeedsAttentionBadge() {
   return (
     <span
-      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold"
+      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold"
       style={{ backgroundColor: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca' }}
     >
       <AlertTriangle size={11} />
@@ -55,11 +55,11 @@ export function AiAnalysisPanel({ analysis, isOpen, onToggle }: AiAnalysisPanelP
         className="w-full flex items-center gap-2 px-4 py-2.5 text-left hover:bg-gray-50 transition-colors"
       >
         <Sparkles size={14} style={{ color: '#d4af37' }} />
-        <span className="text-xs font-medium" style={{ color: '#1e4d6b' }}>
+        <span className="text-xs font-medium" style={{ color: '#1E2D4D' }}>
           AI Analysis
         </span>
         <span
-          className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full"
+          className="text-xs font-semibold px-1.5 py-0.5 rounded-full"
           style={{ backgroundColor: `${confidenceColor}15`, color: confidenceColor }}
         >
           {confidenceLevel}
@@ -98,12 +98,12 @@ export function AiAnalysisPanel({ analysis, isOpen, onToggle }: AiAnalysisPanelP
             style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}
           >
             <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold" style={{ color: '#1e4d6b' }}>
+              <span className="text-xs font-semibold" style={{ color: '#1E2D4D' }}>
                 Document Classification
               </span>
               <span
-                className="text-[10px] px-2 py-0.5 rounded-full font-medium"
-                style={{ backgroundColor: '#eef4f8', color: '#1e4d6b' }}
+                className="text-xs px-2 py-0.5 rounded-full font-medium"
+                style={{ backgroundColor: '#eef4f8', color: '#1E2D4D' }}
               >
                 {analysis.document_type_label}
               </span>
@@ -175,7 +175,7 @@ export function AiAnalysisPanel({ analysis, isOpen, onToggle }: AiAnalysisPanelP
               <button
                 onClick={() => setShowAlerts(!showAlerts)}
                 className="flex items-center gap-1.5 text-xs font-medium hover:underline"
-                style={{ color: '#1e4d6b' }}
+                style={{ color: '#1E2D4D' }}
               >
                 <Bell size={12} />
                 Scheduled Expiration Alerts ({alerts.length})
@@ -186,7 +186,7 @@ export function AiAnalysisPanel({ analysis, isOpen, onToggle }: AiAnalysisPanelP
                   {alerts.map((alert, i) => (
                     <AlertRow key={i} alert={alert} />
                   ))}
-                  <p className="text-[10px] text-gray-400 mt-1">
+                  <p className="text-xs text-gray-400 mt-1">
                     Routed to: {alerts[0]?.roles.join(', ')}
                   </p>
                 </div>
@@ -197,12 +197,12 @@ export function AiAnalysisPanel({ analysis, isOpen, onToggle }: AiAnalysisPanelP
           {/* Confidence + timestamp */}
           <div className="flex items-center justify-between pt-1 border-t border-gray-100">
             <div className="flex items-center gap-2">
-              <span className="text-[11px] text-gray-500">Confidence:</span>
-              <span className="text-[11px] font-semibold" style={{ color: confidenceColor }}>
+              <span className="text-xs text-gray-500">Confidence:</span>
+              <span className="text-xs font-semibold" style={{ color: confidenceColor }}>
                 {confidenceLevel} ({Math.round(analysis.confidence * 100)}%)
               </span>
             </div>
-            <span className="text-[10px] text-gray-400">
+            <span className="text-xs text-gray-400">
               Based on analysis performed on {formatSafeDate(analysis.analyzed_at)}
             </span>
           </div>
@@ -231,7 +231,7 @@ function FieldRow({
     <div className="flex items-start gap-2">
       <Icon size={13} className="text-gray-400 mt-0.5 flex-shrink-0" />
       <div className="min-w-0">
-        <p className="text-[10px] text-gray-500 leading-tight">{label}</p>
+        <p className="text-xs text-gray-500 leading-tight">{label}</p>
         <p
           className="text-xs font-medium leading-tight truncate"
           style={{ color: valueColor || '#111827' }}
@@ -257,7 +257,7 @@ function AlertRow({ alert }: { alert: ExpirationAlert }) {
       <span className="text-gray-500 w-28 flex-shrink-0">{alert.label}</span>
       <span className="text-gray-700">{formatSafeDate(alert.alert_date)}</span>
       <span
-        className="ml-auto px-1.5 py-0.5 rounded text-[10px] font-semibold"
+        className="ml-auto px-1.5 py-0.5 rounded text-xs font-semibold"
         style={{ backgroundColor: s.bg, color: s.text }}
       >
         {s.label}

@@ -92,7 +92,7 @@ export function SchedulePage() {
               {showUnassigned ? <PanelRightClose className="w-4 h-4" /> : <PanelRightOpen className="w-4 h-4" />}
               Unassigned
               {unassignedJobs.length > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">
+                <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center">
                   {unassignedJobs.length}
                 </span>
               )}
@@ -100,7 +100,7 @@ export function SchedulePage() {
             <button
               onClick={() => alert('New job (demo)')}
               className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white rounded-lg"
-              style={{ background: '#1e4d6b' }}
+              style={{ background: '#1E2D4D' }}
             >
               <Plus className="w-4 h-4" /> New Job
             </button>
@@ -150,7 +150,7 @@ export function SchedulePage() {
                   onClick={() => setParam('view', v)}
                   className="px-3 py-1.5 text-xs font-semibold capitalize transition-colors"
                   style={{
-                    background: viewParam === v ? '#1e4d6b' : CARD_BG,
+                    background: viewParam === v ? '#1E2D4D' : CARD_BG,
                     color: viewParam === v ? 'white' : TEXT_TERTIARY,
                   }}
                 >

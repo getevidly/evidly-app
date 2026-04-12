@@ -47,6 +47,7 @@ import { ReviewAlternativesModal } from '../components/services/ReviewAlternativ
 import { RequestServiceModal } from '../components/services/RequestServiceModal';
 import { buildCalendarEvent, getGoogleCalendarUrl, getOutlookCalendarUrl, downloadIcsFile } from '../lib/calendarSync';
 import type { ServiceRequest } from '../types/serviceRequest';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 // ══════════════════════════════════════════════════════════════════════
 // VENDOR BUTTON BUG — ROOT CAUSE ANALYSIS (PROMPT #12, 2026-03-04)
@@ -267,7 +268,7 @@ function ServiceRequestsTab({ organizationId, locationId }: { organizationId: st
             onClick={() => setFilter(f.id)}
             className={`px-3 py-1.5 text-sm rounded-full font-medium transition-colors ${
               filter === f.id
-                ? 'bg-[#1e4d6b] text-white'
+                ? 'bg-[#1E2D4D] text-white'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
           >
@@ -276,7 +277,7 @@ function ServiceRequestsTab({ organizationId, locationId }: { organizationId: st
         ))}
         <button
           onClick={() => setShowRequestModal(true)}
-          className="ml-auto px-4 py-1.5 text-sm bg-[#1e4d6b] text-white rounded-full font-medium hover:bg-[#163a52] flex items-center gap-1.5"
+          className="ml-auto px-4 py-1.5 text-sm bg-[#1E2D4D] text-white rounded-full font-medium hover:bg-[#162340] flex items-center gap-1.5"
         >
           <Send className="h-3.5 w-3.5" />
           New Request
@@ -293,7 +294,7 @@ function ServiceRequestsTab({ organizationId, locationId }: { organizationId: st
 
       {/* Empty state */}
       {!loading && filtered.length === 0 && (
-        <div className="py-12 text-center bg-white rounded-lg border border-gray-200">
+        <div className="py-12 text-center bg-white rounded-xl border border-gray-200">
           <Send className="h-8 w-8 text-gray-300 mx-auto mb-3" />
           <p className="text-gray-500 font-medium">No service requests yet</p>
           <p className="text-sm text-gray-400 mt-1">Use "New Request" to request service from a vendor.</p>
@@ -306,11 +307,11 @@ function ServiceRequestsTab({ organizationId, locationId }: { organizationId: st
         const urgBadge = URGENCY_BADGE[req.urgency];
 
         return (
-          <div key={req.id} className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-sm transition-shadow">
+          <div key={req.id} className="bg-white rounded-xl border border-gray-200 p-4 transition-shadow">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 flex-wrap mb-1">
-                  <h4 className="font-semibold text-gray-900 text-sm">{req.vendor_name || 'Vendor'}</h4>
+                  <h4 className="font-semibold text-[#1E2D4D] text-sm">{req.vendor_name || 'Vendor'}</h4>
                   <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${statusBadge.bg} ${statusBadge.text}`}>
                     {statusBadge.label}
                   </span>
@@ -419,6 +420,7 @@ export function Vendors() {
   const { profile } = useAuth();
   const { isDemoMode, companyName } = useDemo();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  usePageTitle('Vendors');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [pageError, setPageError] = useState<string | null>(null);
@@ -626,20 +628,20 @@ export function Vendors() {
       <>
         <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Vendors', href: '/vendors' }, { label: selectedVendor.companyName }]} />
         <div className="space-y-6">
-          <button onClick={handleBack} className="flex items-center text-[#1e4d6b] hover:text-[#163a52] font-medium">
+          <button onClick={handleBack} className="flex items-center text-[#1E2D4D] hover:text-[#141E33] font-medium">
             <ArrowLeft className="h-5 w-5 mr-2" />
             Back to All Vendors
           </button>
 
           {/* Header */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
             <div className="flex flex-col md:flex-row md:items-start md:justify-between">
               <div className="flex items-start space-x-4">
                 <div className="p-3 bg-blue-100 rounded-lg">
-                  <Building2 className="h-8 w-8 text-[#1e4d6b]" />
+                  <Building2 className="h-8 w-8 text-[#1E2D4D]" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-900">{selectedVendor.companyName}</h1>
+                  <h1 className="text-2xl font-bold text-[#1E2D4D]">{selectedVendor.companyName}</h1>
                   <p className="text-sm text-gray-500 mt-0.5">{selectedVendor.serviceType}</p>
                   <div className="flex items-center space-x-2 mt-2">
                     <span className={`px-3 py-1 text-xs font-semibold rounded-full ${
@@ -704,7 +706,7 @@ export function Vendors() {
                 onClick={() => setDetailTab(tab)}
                 className={`px-5 py-3 font-medium whitespace-nowrap text-sm ${
                   detailTab === tab
-                    ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
+                    ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
@@ -716,7 +718,7 @@ export function Vendors() {
           {/* Overview Tab */}
           {detailTab === 'overview' && (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+              <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
                 <h2 className="text-lg font-semibold mb-4">Contact Information</h2>
                 <div className="space-y-3">
                   <div className="flex items-center text-gray-700">
@@ -742,7 +744,7 @@ export function Vendors() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+              <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
                 <h2 className="text-lg font-semibold mb-4">Service Schedule by Location</h2>
                 <div className="space-y-3">
                   {selectedVendor.locations.map((loc) => {
@@ -804,10 +806,10 @@ export function Vendors() {
                 const linkedEquipment = VENDOR_EQUIPMENT_MAP[vendorSlug] || [];
                 if (linkedEquipment.length === 0) return null;
                 return (
-                  <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+                  <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
                     <div className="flex items-center justify-between mb-4">
                       <h2 className="text-lg font-semibold">Linked Equipment ({linkedEquipment.length})</h2>
-                      <button onClick={() => navigate('/equipment')} className="text-xs text-[#1e4d6b] hover:underline flex items-center gap-1">
+                      <button onClick={() => navigate('/equipment')} className="text-xs text-[#1E2D4D] hover:underline flex items-center gap-1">
                         <Wrench className="h-3.5 w-3.5" /> View All Equipment
                       </button>
                     </div>
@@ -816,7 +818,7 @@ export function Vendors() {
                         <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer" onClick={() => navigate('/equipment')}>
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#eef4f8' }}>
-                              <Wrench className="h-4 w-4 text-[#1e4d6b]" />
+                              <Wrench className="h-4 w-4 text-[#1E2D4D]" />
                             </div>
                             <div>
                               <div className="font-medium text-sm text-gray-900">{eq.name}</div>
@@ -833,7 +835,7 @@ export function Vendors() {
 
               {/* Performance */}
               {selectedPerf && (
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 lg:col-span-2">
+                <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 lg:col-span-2">
                   <h2 className="text-lg font-semibold mb-4">Performance</h2>
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
                     <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: `4px solid ${getScoreBorder(selectedPerf.reliabilityScore)}` }}>
@@ -881,7 +883,7 @@ export function Vendors() {
 
           {/* Documents Tab */}
           {detailTab === 'documents' && (
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
                 <div>
                   <h2 className="text-lg font-semibold">Required Documents</h2>
@@ -903,7 +905,7 @@ export function Vendors() {
                       }
                       showToast('Document request sent to ' + selectedVendor.email);
                     }}
-                    className="flex items-center px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm"
+                    className="flex items-center px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] text-sm"
                   >
                     <Send className="h-4 w-4 mr-2" />
                     Request Document
@@ -919,7 +921,7 @@ export function Vendors() {
               </div>
 
               {showPhotoUpload && (
-                <div className="mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <div className="mb-4 p-4 bg-[#FAF7F0] rounded-lg border border-gray-200">
                   <PhotoEvidence
                     photos={vendorPhotos}
                     onChange={setVendorPhotos}
@@ -930,7 +932,7 @@ export function Vendors() {
                     <div className="mt-3 space-y-3">
                       <button
                         onClick={() => guardAction('edit', 'vendor records', () => { showToast('Photos saved for vendor record.'); setShowPhotoUpload(false); })}
-                        className="px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium"
+                        className="px-4 py-2 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] text-sm font-medium"
                       >
                         Save Photos
                       </button>
@@ -956,7 +958,7 @@ export function Vendors() {
                           {doc.expirationDate && <span className="text-xs text-gray-500">Exp: {format(new Date(doc.expirationDate), 'MMM d, yyyy')}</span>}
                           {doc.uploadDate && <span className="text-xs text-gray-500">Uploaded: {format(new Date(doc.uploadDate), 'MMM d, yyyy')}</span>}
                           {doc.autoRequestEnabled && isAutoEnabled && (
-                            <span className="text-xs text-[#1e4d6b] flex items-center">
+                            <span className="text-xs text-[#1E2D4D] flex items-center">
                               <Bell className="h-3 w-3 mr-0.5" />Auto-request on
                             </span>
                           )}
@@ -968,7 +970,7 @@ export function Vendors() {
                         <button
                           onClick={() => guardAction('download', 'vendor documents', () => showToast('Downloading ' + doc.name + '...'))}
                           className="flex items-center text-sm px-2 hover:opacity-70"
-                          style={{ color: '#1e4d6b' }}
+                          style={{ color: '#1E2D4D' }}
                         >
                           <Download className="h-4 w-4 mr-1" />
                           Download
@@ -990,7 +992,7 @@ export function Vendors() {
                             }
                             showToast('Document request sent to ' + selectedVendor.email);
                           }}
-                          className="flex items-center text-[#1e4d6b] hover:text-[#163a52] text-sm px-2"
+                          className="flex items-center text-[#1E2D4D] hover:text-[#141E33] text-sm px-2"
                         >
                           <Send className="h-4 w-4 mr-1" />
                           Request
@@ -1007,7 +1009,7 @@ export function Vendors() {
           {detailTab === 'automation' && (
             <div className="space-y-6">
               {/* Auto-Request Settings */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+              <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
                 <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
                   <div>
                     <h2 className="text-lg font-semibold">Document Automation Settings</h2>
@@ -1028,7 +1030,7 @@ export function Vendors() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                     <div className="border border-gray-200 rounded-lg p-4">
                       <div className="flex items-center space-x-2 mb-2">
-                        <Clock className="h-5 w-5 text-[#1e4d6b]" />
+                        <Clock className="h-5 w-5 text-[#1E2D4D]" />
                         <h3 className="font-medium text-gray-900">Expiring Document Alerts</h3>
                       </div>
                       <p className="text-sm text-gray-600">Auto-sends secure upload link when documents are within <strong>30 days</strong> of expiring</p>
@@ -1038,7 +1040,7 @@ export function Vendors() {
                     </div>
                     <div className="border border-gray-200 rounded-lg p-4">
                       <div className="flex items-center space-x-2 mb-2">
-                        <Calendar className="h-5 w-5 text-[#1e4d6b]" />
+                        <Calendar className="h-5 w-5 text-[#1E2D4D]" />
                         <h3 className="font-medium text-gray-900">Post-Service Document Request</h3>
                       </div>
                       <p className="text-sm text-gray-600">Auto-requests service documentation <strong>2 business days</strong> after service date with escalating reminders</p>
@@ -1064,7 +1066,7 @@ export function Vendors() {
                   : { label: 'In Progress', cls: 'bg-amber-100 text-amber-800' };
 
                 return (
-                  <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+                  <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
                     <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
                       <div>
                         <h2 className="text-lg font-semibold">Service Day Workflow — {wf.locationLabel}</h2>
@@ -1079,7 +1081,7 @@ export function Vendors() {
                         const dotColor =
                           step.status === 'completed' ? 'bg-green-500' :
                           step.status === 'sent' ? 'bg-blue-500' :
-                          step.status === 'vendor_responded' ? 'bg-[#1e4d6b]' :
+                          step.status === 'vendor_responded' ? 'bg-[#1E2D4D]' :
                           step.status === 'escalated' ? 'bg-red-500' :
                           step.status === 'failed' ? 'bg-red-400' :
                           'bg-gray-300';
@@ -1087,7 +1089,7 @@ export function Vendors() {
                         const badgeCls =
                           step.status === 'completed' ? 'bg-green-100 text-green-700' :
                           step.status === 'sent' ? 'bg-blue-100 text-blue-700' :
-                          step.status === 'vendor_responded' ? 'bg-[#eef4f8] text-[#1e4d6b]' :
+                          step.status === 'vendor_responded' ? 'bg-[#eef4f8] text-[#1E2D4D]' :
                           step.status === 'escalated' ? 'bg-red-100 text-red-700' :
                           step.status === 'failed' ? 'bg-red-100 text-red-600' :
                           'bg-gray-100 text-gray-600';
@@ -1113,7 +1115,7 @@ export function Vendors() {
                             </div>
                             <div className="pb-6 flex-1">
                               <div className="flex items-center space-x-2 flex-wrap gap-1">
-                                <span className="text-sm font-semibold text-gray-900">{step.label}</span>
+                                <span className="text-sm font-semibold text-[#1E2D4D]">{step.label}</span>
                                 <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${badgeCls}`}>{badgeLabel}</span>
                                 {step.escalation && (
                                   <span className="px-2 py-0.5 text-xs rounded-full font-medium bg-amber-100 text-amber-700">{step.escalation}</span>
@@ -1140,7 +1142,7 @@ export function Vendors() {
                     <div className="mt-4 pt-4 border-t border-gray-100">
                       <button
                         onClick={() => { /* Production: send secure service update link to vendor */ }}
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-[#1e4d6b] text-white text-sm font-medium rounded-lg hover:bg-[#163a52] transition-colors"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-[#1E2D4D] text-white text-sm font-medium rounded-lg hover:bg-[#162340] transition-colors"
                       >
                         <Send className="h-4 w-4" />
                         Send Service Update Link
@@ -1153,7 +1155,7 @@ export function Vendors() {
                       <div className={`mt-4 p-3 rounded-lg border ${
                         selectedVerification.verificationStatus === 'confirmed' ? 'bg-green-50 border-green-200' :
                         selectedVerification.verificationStatus === 'disputed' ? 'bg-red-50 border-red-200' :
-                        'bg-gray-50 border-gray-200'
+                        'bg-[#FAF7F0] border-gray-200'
                       }`}>
                         <div className="flex items-center gap-2 mb-1">
                           {selectedVerification.verificationStatus === 'confirmed' && <CheckCircle className="h-4 w-4 text-green-600" />}
@@ -1178,7 +1180,7 @@ export function Vendors() {
               })()}
 
               {!hasWorkflow && (
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 text-center text-gray-500">
+                <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 text-center text-gray-500">
                   <Calendar className="h-12 w-12 mx-auto text-gray-300 mb-3" />
                   <p className="font-medium">No active service workflows</p>
                   <p className="text-sm mt-1">Workflows will appear here when services are scheduled and reminders are sent.</p>
@@ -1190,23 +1192,23 @@ export function Vendors() {
           {/* Secure Upload Link Tab */}
           {detailTab === 'upload-link' && (
             <div className="space-y-6">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+              <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
                 <h2 className="text-lg font-semibold mb-2">Secure Upload Link</h2>
                 <p className="text-sm text-gray-600 mb-4">
                   Each vendor gets a unique, secure link to upload documents without needing an EvidLY account.
                 </p>
 
-                <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                <div className="bg-[#FAF7F0] rounded-lg p-4 mb-4">
                   <div className="flex items-center justify-between flex-wrap gap-2">
                     <div className="flex items-center space-x-2 min-w-0">
-                      <Link2 className="h-5 w-5 text-[#1e4d6b] flex-shrink-0" />
+                      <Link2 className="h-5 w-5 text-[#1E2D4D] flex-shrink-0" />
                       <code className="text-sm text-gray-700 bg-white px-3 py-1 rounded border break-all">
                         https://app.getevidly.com/vendor/upload/{selectedVendor.id}-{selectedVendor.companyName.toLowerCase().replace(/\s+/g, '-')}-abc123
                       </code>
                     </div>
                     <button
                       onClick={() => { navigator.clipboard.writeText(`https://app.getevidly.com/vendor/upload/${selectedVendor.id}`); showToast('Link copied to clipboard!'); }}
-                      className="flex items-center text-sm text-[#1e4d6b] hover:text-[#163a52] font-medium px-3 py-1"
+                      className="flex items-center text-sm text-[#1E2D4D] hover:text-[#141E33] font-medium px-3 py-1"
                     >
                       <ExternalLink className="h-4 w-4 mr-1" />
                       Copy Link
@@ -1230,7 +1232,7 @@ export function Vendors() {
                       }
                       showToast('Upload link sent to ' + selectedVendor.email);
                     }}
-                    className="flex items-center px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm"
+                    className="flex items-center px-4 py-2 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] text-sm"
                   >
                     <Send className="h-4 w-4 mr-2" />
                     Send Link to Vendor
@@ -1246,18 +1248,18 @@ export function Vendors() {
               </div>
 
               {/* Upload page preview */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+              <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
                 <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-4">Upload Page Preview</h3>
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-8">
                   <div className="max-w-md mx-auto text-center">
                     <EvidlyIcon size={40} className="mx-auto mb-3" />
                     <h4 className="text-xl font-bold mb-1">
-                      <span style={{ color: '#1e4d6b' }}>Evid</span>
+                      <span style={{ color: '#1E2D4D' }}>Evid</span>
                       <span style={{ color: '#d4af37' }}>LY</span>
                       <span className="text-gray-900"> Secure Upload</span>
                     </h4>
                     <p className="text-sm text-gray-500 mb-4">{companyName} has requested documents from {selectedVendor.companyName}</p>
-                    <div className="bg-gray-50 rounded-lg p-4 text-left mb-4">
+                    <div className="bg-[#FAF7F0] rounded-lg p-4 text-left mb-4">
                       <p className="text-xs font-medium text-gray-600 mb-2">Requested Documents:</p>
                       {selectedDocs.filter((d) => d.status === 'missing' || d.status === 'expired').map((doc, i) => (
                         <div key={i} className="flex items-center space-x-2 text-sm text-gray-700 mb-1">
@@ -1286,7 +1288,7 @@ export function Vendors() {
 
           {/* Contact Tab */}
           {detailTab === 'contact' && (
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
               <h2 className="text-lg font-semibold mb-4">Contact {selectedVendor.contactName}</h2>
               <div className="space-y-4 mb-6">
                 <div>
@@ -1349,7 +1351,7 @@ export function Vendors() {
       <div className="space-y-6">
         {/* Vendor Intelligence Signals */}
         {vendorSignals.length > 0 && (
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+          <div className="bg-white rounded-xl border border-gray-200 p-4">
             <div className="flex items-center gap-2 mb-3">
               <span style={{ fontSize: 16 }}>📡</span>
               <span className="text-sm font-bold" style={{ color: '#1E2D4D' }}>Vendor Intelligence</span>
@@ -1382,7 +1384,7 @@ export function Vendors() {
             <button
               onClick={() => setActiveTab('list')}
               className={`px-6 py-3 font-medium whitespace-nowrap transition-colors ${
-                activeTab === 'list' ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]' : 'text-gray-500 hover:text-gray-700'
+                activeTab === 'list' ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]' : 'text-gray-500 hover:text-gray-700'
               }`}
             >
               Vendor List
@@ -1390,7 +1392,7 @@ export function Vendors() {
             <button
               onClick={() => setActiveTab('services')}
               className={`px-6 py-3 font-medium whitespace-nowrap transition-colors ${
-                activeTab === 'services' ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]' : 'text-gray-500 hover:text-gray-700'
+                activeTab === 'services' ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]' : 'text-gray-500 hover:text-gray-700'
               }`}
             >
               Services
@@ -1398,7 +1400,7 @@ export function Vendors() {
             <button
               onClick={() => setActiveTab('scorecard')}
               className={`px-6 py-3 font-medium whitespace-nowrap transition-colors ${
-                activeTab === 'scorecard' ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]' : 'text-gray-500 hover:text-gray-700'
+                activeTab === 'scorecard' ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]' : 'text-gray-500 hover:text-gray-700'
               }`}
             >
               Performance Scorecard
@@ -1406,7 +1408,7 @@ export function Vendors() {
             <button
               onClick={() => setActiveTab('requests')}
               className={`px-6 py-3 font-medium whitespace-nowrap transition-colors ${
-                activeTab === 'requests' ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]' : 'text-gray-500 hover:text-gray-700'
+                activeTab === 'requests' ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]' : 'text-gray-500 hover:text-gray-700'
               }`}
             >
               Requests
@@ -1416,27 +1418,27 @@ export function Vendors() {
               className="px-6 py-3 font-medium whitespace-nowrap transition-colors text-gray-500 hover:text-gray-700 flex items-center gap-1.5"
             >
               Document Review
-              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#C49A2B]/10 text-[#C49A2B]">NEW</span>
+              <span className="text-xs font-bold px-1.5 py-0.5 rounded bg-[#C49A2B]/10 text-[#C49A2B]">NEW</span>
             </button>
           </div>
           <div className="flex items-center gap-2 self-start">
             <button
               onClick={() => navigate('/import?type=vendors')}
-              className="flex items-center space-x-2 px-4 py-2 border border-[#1e4d6b] text-[#1e4d6b] rounded-lg hover:bg-[#eef4f8] shadow-sm transition-colors duration-150"
+              className="flex items-center space-x-2 px-4 py-2 border border-[#1E2D4D] text-[#1E2D4D] rounded-lg hover:bg-[#eef4f8] shadow-sm transition-colors duration-150"
             >
               <Upload className="h-4 w-4" />
               <span>Import</span>
             </button>
             <button
               onClick={() => setShowInviteVendor(true)}
-              className="flex items-center space-x-2 px-4 py-2 border border-[#1e4d6b] text-[#1e4d6b] rounded-lg hover:bg-[#eef4f8] shadow-sm transition-colors duration-150"
+              className="flex items-center space-x-2 px-4 py-2 border border-[#1E2D4D] text-[#1E2D4D] rounded-lg hover:bg-[#eef4f8] shadow-sm transition-colors duration-150"
             >
               <Send className="h-4 w-4" />
               <span>Invite Vendor</span>
             </button>
             <button
               onClick={() => setShowAddVendorForm(true)}
-              className="flex items-center space-x-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] shadow-sm transition-colors duration-150"
+              className="flex items-center space-x-2 px-4 py-2 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] shadow-sm transition-colors duration-150"
             >
               <Plus className="h-5 w-5" />
               <span>Add Vendor</span>
@@ -1447,7 +1449,7 @@ export function Vendors() {
         {activeTab === 'list' && (
           <>
             {/* Filter Bar */}
-            <div data-demo-allow className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+            <div data-demo-allow className="bg-white rounded-xl border border-gray-200 p-4">
               <div className="flex items-center space-x-2 mb-3">
                 <Filter className="h-4 w-4 text-gray-500" />
                 <span className="text-sm font-medium text-gray-700">Filters</span>
@@ -1456,7 +1458,7 @@ export function Vendors() {
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]"
+                  className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]"
                 >
                   <option value="all">All Statuses</option>
                   <option value="current">Current</option>
@@ -1466,7 +1468,7 @@ export function Vendors() {
                 <select
                   value={serviceFilter}
                   onChange={(e) => setServiceFilter(e.target.value)}
-                  className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]"
+                  className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]"
                 >
                   <option value="all">All Service Types</option>
                   {SERVICE_TYPES.map((st) => (
@@ -1476,7 +1478,7 @@ export function Vendors() {
                 <select
                   value={locationFilter}
                   onChange={(e) => setLocationFilter(e.target.value)}
-                  className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]"
+                  className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]"
                 >
                   {showAllLocationsOption() && <option value="all">All Locations</option>}
                   {vendorAccessibleLocs.map((loc) => (
@@ -1486,7 +1488,7 @@ export function Vendors() {
                 {(statusFilter !== 'all' || serviceFilter !== 'all' || locationFilter !== 'all') && (
                   <button
                     onClick={() => { setStatusFilter('all'); setServiceFilter('all'); setLocationFilter('all'); }}
-                    className="text-sm text-[#1e4d6b] hover:text-[#163a52] font-medium px-2"
+                    className="text-sm text-[#1E2D4D] hover:text-[#141E33] font-medium px-2"
                   >
                     Clear Filters
                   </button>
@@ -1497,7 +1499,7 @@ export function Vendors() {
             {/* Loading state */}
             {loading && (
               <div className="flex items-center justify-center py-12">
-                <Loader2 className="h-8 w-8 animate-spin text-[#1e4d6b]" />
+                <Loader2 className="h-8 w-8 animate-spin text-[#1E2D4D]" />
                 <span className="ml-3 text-gray-600">Loading vendors...</span>
               </div>
             )}
@@ -1506,7 +1508,7 @@ export function Vendors() {
             {!loading && groupedVendors.length > 0 && groupedVendors.map((group) => (
               <div key={group.category.id} className="space-y-3">
                 <div className="flex items-center gap-2 pt-2">
-                  <Building2 className="h-4 w-4 text-[#1e4d6b]" />
+                  <Building2 className="h-4 w-4 text-[#1E2D4D]" />
                   <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">{group.category.name}</h3>
                   <span className="text-xs text-gray-400">({group.vendors.length})</span>
                   {(group.category.id === 'kitchen_exhaust' || group.category.id === 'fire_suppression') && (
@@ -1529,10 +1531,10 @@ export function Vendors() {
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center space-x-3">
                       <div className="p-2 bg-blue-100 rounded-lg">
-                        <Building2 className="h-5 w-5 text-[#1e4d6b]" />
+                        <Building2 className="h-5 w-5 text-[#1E2D4D]" />
                       </div>
                       <div>
-                        <h3 className="text-base font-semibold text-gray-900">{vendor.companyName}</h3>
+                        <h3 className="text-base font-semibold text-[#1E2D4D]">{vendor.companyName}</h3>
                         <span className="text-xs text-gray-500">{vendor.serviceType}</span>
                       </div>
                     </div>
@@ -1610,7 +1612,7 @@ export function Vendors() {
                   <div className="flex gap-2 pt-3 border-t border-gray-100">
                     <button
                       onClick={(e) => { e.stopPropagation(); showToast('Schedule service for ' + vendor.companyName); }}
-                      className="flex-1 flex items-center justify-center px-2 py-1.5 min-h-[44px] text-xs font-medium text-[#1e4d6b] rounded transition-colors"
+                      className="flex-1 flex items-center justify-center px-2 py-1.5 min-h-[44px] text-xs font-medium text-[#1E2D4D] rounded transition-colors"
                       style={{ backgroundColor: '#eef4f8' }}
                       onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#dde9f0')}
                       onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#eef4f8')}
@@ -1634,7 +1636,7 @@ export function Vendors() {
                         }
                         showToast('COI request sent to ' + vendor.email);
                       }}
-                      className="flex-1 flex items-center justify-center px-2 py-1.5 min-h-[44px] text-xs font-medium text-[#1e4d6b] rounded transition-colors"
+                      className="flex-1 flex items-center justify-center px-2 py-1.5 min-h-[44px] text-xs font-medium text-[#1E2D4D] rounded transition-colors"
                       style={{ backgroundColor: '#eef4f8' }}
                       onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#dde9f0')}
                       onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#eef4f8')}
@@ -1644,7 +1646,7 @@ export function Vendors() {
                     </button>
                     <button
                       onClick={(e) => { e.stopPropagation(); handleSelectVendor(vendor); setDetailTab('documents'); }}
-                      className="flex-1 flex items-center justify-center px-2 py-1.5 min-h-[44px] text-xs font-medium text-[#1e4d6b] rounded transition-colors"
+                      className="flex-1 flex items-center justify-center px-2 py-1.5 min-h-[44px] text-xs font-medium text-[#1E2D4D] rounded transition-colors"
                       style={{ backgroundColor: '#eef4f8' }}
                       onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#dde9f0')}
                       onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#eef4f8')}
@@ -1666,7 +1668,7 @@ export function Vendors() {
                 <MapPin className="h-10 w-10 mx-auto mb-3 text-gray-300" />
                 <p className="font-medium text-lg">Add a location to configure required vendor services.</p>
                 <p className="text-sm mt-1 mb-5">Once you add a location, EvidLY will identify required vendor services for your compliance needs.</p>
-                <button onClick={() => navigate('/org-hierarchy')} className="px-5 py-2.5 text-sm font-medium text-white rounded-lg" style={{ backgroundColor: '#1e4d6b' }}>
+                <button onClick={() => navigate('/org-hierarchy')} className="px-5 py-2.5 text-sm font-medium text-white rounded-lg" style={{ backgroundColor: '#1E2D4D' }}>
                   Add Location
                 </button>
               </div>
@@ -1684,14 +1686,14 @@ export function Vendors() {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-3">
                   {missingRequiredCategories.map((cat) => (
-                    <div key={cat.id} className="flex items-center justify-between bg-white rounded-lg border border-amber-200 p-3">
+                    <div key={cat.id} className="flex items-center justify-between bg-white rounded-xl border border-amber-200 p-3">
                       <div>
                         <p className="text-sm font-medium text-gray-900">{cat.name}</p>
-                        <span className="inline-block mt-1 text-[10px] px-2 py-0.5 rounded-full bg-red-100 text-red-800 font-semibold">Required</span>
+                        <span className="inline-block mt-1 text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-800 font-semibold">Required</span>
                       </div>
                       <button
                         onClick={() => setShowAddVendorForm(true)}
-                        className="text-xs text-[#1e4d6b] hover:underline font-medium whitespace-nowrap ml-2"
+                        className="text-xs text-[#1E2D4D] hover:underline font-medium whitespace-nowrap ml-2"
                       >
                         Add Vendor
                       </button>
@@ -1736,7 +1738,7 @@ export function Vendors() {
 
         {activeTab === 'scorecard' && (
           <>
-            <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-lg p-4 sm:p-6 text-white">
+            <div className="bg-gradient-to-r from-[#1E2D4D] to-[#2c5f7f] rounded-lg p-4 sm:p-6 text-white">
               <h3 className="text-xl sm:text-2xl font-bold mb-2">Vendor Performance Overview</h3>
               <p className="text-gray-200 mb-4">Track reliability, service quality, and document compliance</p>
               {isDemoMode && (
@@ -1772,10 +1774,10 @@ export function Vendors() {
                 const perf = ENHANCED_VENDOR_PERFORMANCE.find((p) => p.vendorId === vendor.id);
                 if (!perf) return null;
                 return (
-                  <div key={vendor.id} onClick={() => handleSelectVendor(vendor)} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 hover:shadow-md transition-shadow cursor-pointer">
+                  <div key={vendor.id} onClick={() => handleSelectVendor(vendor)} className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 hover:shadow-md transition-shadow cursor-pointer">
                     <div className="flex items-start justify-between mb-4">
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-900">{vendor.companyName}</h3>
+                        <h3 className="text-lg font-semibold text-[#1E2D4D]">{vendor.companyName}</h3>
                         <span className="text-sm text-gray-500">{vendor.serviceType}</span>
                       </div>
                       {perf.trend === 'improving' ? <TrendingUp className="h-5 w-5 text-green-600" /> :

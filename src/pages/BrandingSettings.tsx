@@ -20,7 +20,7 @@ const PRESET_CARDS = [
     key: 'evidly',
     label: 'EvidLY',
     desc: 'Default platform branding',
-    color: '#1e4d6b',
+    color: '#1E2D4D',
     accent: '#d4af37',
   },
   {
@@ -121,7 +121,7 @@ export function BrandingSettings() {
       {/* Page header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Branding & White-Label</h1>
+          <h1 className="text-2xl font-bold text-[#1E2D4D]">Branding & White-Label</h1>
           <p className="text-sm text-gray-500 mt-1">Customize your platform look, SSO, and feature visibility</p>
         </div>
         <button
@@ -135,8 +135,8 @@ export function BrandingSettings() {
       {/* Demo Brand Presets */}
       <div className="bg-white rounded-xl border border-gray-200 p-6">
         <div className="flex items-center gap-2 mb-4">
-          <Palette className="h-5 w-5 text-[#1e4d6b]" />
-          <h2 className="text-lg font-semibold text-gray-900">Demo Brand Presets</h2>
+          <Palette className="h-5 w-5 text-[#1E2D4D]" />
+          <h2 className="text-lg font-semibold text-[#1E2D4D]">Demo Brand Presets</h2>
         </div>
         <p className="text-sm text-gray-500 mb-4">
           Switch between preset brand themes to preview the white-label experience. Changes are applied live across the entire app.
@@ -163,7 +163,7 @@ export function BrandingSettings() {
                   </div>
                   <div className="w-4 h-4 rounded" style={{ backgroundColor: preset.accent }} />
                 </div>
-                <span className="text-sm font-semibold text-gray-900">{preset.label}</span>
+                <span className="text-sm font-semibold text-[#1E2D4D]">{preset.label}</span>
                 <span className="text-xs text-gray-500 mt-0.5">{preset.desc}</span>
               </button>
             );
@@ -176,7 +176,7 @@ export function BrandingSettings() {
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <div className="flex items-center gap-2 mb-4">
             <EvidlyIcon size={20} />
-            <h2 className="text-lg font-semibold text-gray-900">Brand Identity</h2>
+            <h2 className="text-lg font-semibold text-[#1E2D4D]">Brand Identity</h2>
           </div>
           <div className="space-y-4">
             <div>
@@ -185,7 +185,7 @@ export function BrandingSettings() {
                 type="text"
                 value={localBrandName}
                 onChange={e => setLocalBrandName(e.target.value)}
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1E2D4D]/20 focus:border-[#1E2D4D]"
               />
             </div>
             <div>
@@ -194,7 +194,7 @@ export function BrandingSettings() {
                 type="text"
                 value={localTagline}
                 onChange={e => setLocalTagline(e.target.value)}
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1E2D4D]/20 focus:border-[#1E2D4D]"
               />
             </div>
             <div>
@@ -203,7 +203,7 @@ export function BrandingSettings() {
                 type="text"
                 value={localWelcome}
                 onChange={e => setLocalWelcome(e.target.value)}
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1E2D4D]/20 focus:border-[#1E2D4D]"
               />
             </div>
             <div>
@@ -212,7 +212,7 @@ export function BrandingSettings() {
                 type="email"
                 value={localSupport}
                 onChange={e => setLocalSupport(e.target.value)}
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1E2D4D]/20 focus:border-[#1E2D4D]"
               />
             </div>
             <div className="flex items-center justify-between py-2">
@@ -237,8 +237,8 @@ export function BrandingSettings() {
         {/* Color Palette */}
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <div className="flex items-center gap-2 mb-4">
-            <Palette className="h-5 w-5 text-[#1e4d6b]" />
-            <h2 className="text-lg font-semibold text-gray-900">Color Palette</h2>
+            <Palette className="h-5 w-5 text-[#1E2D4D]" />
+            <h2 className="text-lg font-semibold text-[#1E2D4D]">Color Palette</h2>
           </div>
           <div className="grid grid-cols-2 gap-4">
             {colorFields.map(f => (
@@ -277,8 +277,8 @@ export function BrandingSettings() {
       {/* SSO / SAML Config */}
       <div className="bg-white rounded-xl border border-gray-200 p-6">
         <div className="flex items-center gap-2 mb-4">
-          <Lock className="h-5 w-5 text-[#1e4d6b]" />
-          <h2 className="text-lg font-semibold text-gray-900">SSO / SAML Configuration</h2>
+          <Lock className="h-5 w-5 text-[#1E2D4D]" />
+          <h2 className="text-lg font-semibold text-[#1E2D4D]">SSO / SAML Configuration</h2>
           {branding.sso.enabled && (
             <span className="ml-auto text-xs font-semibold px-2 py-0.5 rounded-full bg-green-100 text-green-700">Enabled</span>
           )}
@@ -289,7 +289,7 @@ export function BrandingSettings() {
             <select
               value={branding.sso.provider || ''}
               onChange={() => toast.info('SSO changes require admin approval')}
-              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg bg-gray-50"
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg bg-[#FAF7F0]"
             >
               <option value="">None</option>
               <option value="saml">SAML 2.0</option>
@@ -302,7 +302,7 @@ export function BrandingSettings() {
               type="text"
               readOnly
               value={branding.sso.entityId || '—'}
-              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg bg-gray-50 text-gray-500"
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg bg-[#FAF7F0] text-gray-500"
             />
           </div>
           <div>
@@ -311,7 +311,7 @@ export function BrandingSettings() {
               type="text"
               readOnly
               value={branding.sso.ssoUrl || '—'}
-              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg bg-gray-50 text-gray-500"
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg bg-[#FAF7F0] text-gray-500"
             />
           </div>
           <div className="flex items-center gap-3 py-2">
@@ -336,8 +336,8 @@ export function BrandingSettings() {
       {/* Custom Domain */}
       <div className="bg-white rounded-xl border border-gray-200 p-6">
         <div className="flex items-center gap-2 mb-4">
-          <Globe className="h-5 w-5 text-[#1e4d6b]" />
-          <h2 className="text-lg font-semibold text-gray-900">Custom Domain</h2>
+          <Globe className="h-5 w-5 text-[#1E2D4D]" />
+          <h2 className="text-lg font-semibold text-[#1E2D4D]">Custom Domain</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -347,12 +347,12 @@ export function BrandingSettings() {
               value={localDomain}
               onChange={e => setLocalDomain(e.target.value)}
               placeholder="compliance.yourdomain.com"
-              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1E2D4D]/20 focus:border-[#1E2D4D]"
             />
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">SSL Status</label>
-            <div className="flex items-center gap-2 px-3 py-2 text-sm border border-gray-200 rounded-lg bg-gray-50">
+            <div className="flex items-center gap-2 px-3 py-2 text-sm border border-gray-200 rounded-lg bg-[#FAF7F0]">
               {localDomain ? (
                 <>
                   <Lock className="h-3.5 w-3.5 text-green-500" />
@@ -376,11 +376,11 @@ export function BrandingSettings() {
       <div className="bg-white rounded-xl border border-gray-200 p-6">
         <div className="flex items-center gap-2 mb-4">
           {localFeatures.showMarketplace ? (
-            <Eye className="h-5 w-5 text-[#1e4d6b]" />
+            <Eye className="h-5 w-5 text-[#1E2D4D]" />
           ) : (
-            <EyeOff className="h-5 w-5 text-[#1e4d6b]" />
+            <EyeOff className="h-5 w-5 text-[#1E2D4D]" />
           )}
-          <h2 className="text-lg font-semibold text-gray-900">Feature Visibility</h2>
+          <h2 className="text-lg font-semibold text-[#1E2D4D]">Feature Visibility</h2>
         </div>
         <p className="text-sm text-gray-500 mb-4">
           Control which modules are visible to users in this branded instance.
@@ -409,7 +409,7 @@ export function BrandingSettings() {
 
       {/* Live Preview */}
       <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Live Preview</h2>
+        <h2 className="text-lg font-semibold text-[#1E2D4D] mb-4">Live Preview</h2>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Mini Sidebar Preview */}
           <div className="border border-gray-200 rounded-xl overflow-hidden">
@@ -426,7 +426,7 @@ export function BrandingSettings() {
                   {['Dashboard', 'Temperature Readings', 'Checklists', 'Vendors', 'Reports'].map((item, i) => (
                     <div key={item} className="flex items-center gap-2 px-2 py-1.5 rounded-md" style={i === 0 ? { backgroundColor: localColors.primary + '40' } : {}}>
                       <div className="w-3 h-3 rounded" style={{ backgroundColor: localColors.sidebarText + '40' }} />
-                      <span className="text-[10px]" style={{ color: i === 0 ? localColors.sidebarText : localColors.sidebarText + '99' }}>{item}</span>
+                      <span className="text-xs" style={{ color: i === 0 ? localColors.sidebarText : localColors.sidebarText + '99' }}>{item}</span>
                     </div>
                   ))}
                 </div>
@@ -434,11 +434,11 @@ export function BrandingSettings() {
                   <p className="text-[8px] mt-6" style={{ color: localColors.sidebarText + '66' }}>Powered by EvidLY</p>
                 )}
               </div>
-              <div className="flex-1 p-3 bg-gray-50">
+              <div className="flex-1 p-3 bg-[#FAF7F0]">
                 <div className="h-3 w-20 rounded mb-2" style={{ backgroundColor: localColors.primary }} />
                 <div className="grid grid-cols-2 gap-1.5 mb-2">
                   {[1, 2].map(i => (
-                    <div key={i} className="bg-white rounded-lg border border-gray-200 p-2">
+                    <div key={i} className="bg-white rounded-xl border border-gray-200 p-2">
                       <div className="h-2 w-8 rounded mb-1" style={{ backgroundColor: localColors.accent }} />
                       <div className="h-2 w-12 rounded bg-gray-200" />
                     </div>
@@ -462,11 +462,11 @@ export function BrandingSettings() {
               <div className="max-w-[200px] mx-auto space-y-2">
                 <div className="h-7 rounded border border-gray-200 bg-white" />
                 <div className="h-7 rounded border border-gray-200 bg-white" />
-                <div className="h-7 rounded text-white text-[10px] font-medium flex items-center justify-center" style={{ backgroundColor: localColors.primary }}>
+                <div className="h-7 rounded text-white text-xs font-medium flex items-center justify-center" style={{ backgroundColor: localColors.primary }}>
                   Sign In
                 </div>
                 {branding.sso.enabled && (
-                  <div className="h-7 rounded border-2 text-[10px] font-medium flex items-center justify-center" style={{ borderColor: localColors.primary, color: localColors.primary }}>
+                  <div className="h-7 rounded border-2 text-xs font-medium flex items-center justify-center" style={{ borderColor: localColors.primary, color: localColors.primary }}>
                     Sign in with SSO
                   </div>
                 )}
@@ -488,28 +488,28 @@ export function BrandingSettings() {
         <button
           onClick={handleApply}
           className="flex items-center gap-2 px-6 py-2.5 rounded-lg text-white text-sm font-semibold transition-colors shadow-sm"
-          style={{ backgroundColor: '#1e4d6b' }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+          style={{ backgroundColor: '#1E2D4D' }}
+          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2A3F6B')}
+          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
         >
           <Check className="h-4 w-4" /> Apply Branding
         </button>
       </div>
 
       {/* White-Label Tiers Info */}
-      <div className="bg-gradient-to-br from-[#1e4d6b]/5 to-[#d4af37]/5 rounded-xl border border-[#1e4d6b]/10 p-6">
-        <h3 className="text-sm font-semibold text-[#1e4d6b] mb-3">White-Label Tiers</h3>
+      <div className="bg-gradient-to-br from-[#1E2D4D]/5 to-[#d4af37]/5 rounded-xl border border-[#1E2D4D]/10 p-6">
+        <h3 className="text-sm font-semibold text-[#1E2D4D] mb-3">White-Label Tiers</h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
-            <p className="text-xs font-bold text-gray-900 mb-1">Basic</p>
+          <div className="bg-white rounded-xl border border-gray-200 p-4">
+            <p className="text-xs font-bold text-[#1E2D4D] mb-1">Basic</p>
             <ul className="text-xs text-gray-600 space-y-1">
               <li>Custom colors & logo</li>
               <li>Custom brand name</li>
               <li>"Powered by EvidLY" badge</li>
             </ul>
           </div>
-          <div className="bg-white rounded-lg border border-[#1e4d6b]/20 p-4 ring-1 ring-[#1e4d6b]/10">
-            <p className="text-xs font-bold text-[#1e4d6b] mb-1">Professional</p>
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/20 p-4 ring-1 ring-[#1E2D4D]/10">
+            <p className="text-xs font-bold text-[#1E2D4D] mb-1">Professional</p>
             <ul className="text-xs text-gray-600 space-y-1">
               <li>Everything in Basic</li>
               <li>Custom domain</li>
@@ -517,7 +517,7 @@ export function BrandingSettings() {
               <li>Feature visibility controls</li>
             </ul>
           </div>
-          <div className="bg-white rounded-lg border border-[#d4af37]/30 p-4 ring-1 ring-[#d4af37]/20">
+          <div className="bg-white rounded-xl border border-[#d4af37]/30 p-4 ring-1 ring-[#d4af37]/20">
             <p className="text-xs font-bold text-[#d4af37] mb-1">Enterprise</p>
             <ul className="text-xs text-gray-600 space-y-1">
               <li>Everything in Professional</li>

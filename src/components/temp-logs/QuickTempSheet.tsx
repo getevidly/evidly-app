@@ -91,7 +91,7 @@ export function QuickTempSheet({ open, onClose }: QuickTempSheetProps) {
         {/* Handle + close */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <Thermometer size={18} style={{ color: '#1e4d6b' }} />
+            <Thermometer size={18} style={{ color: '#1E2D4D' }} />
             <span className="text-sm font-bold" style={{ color: '#1E2D4D' }}>Quick Temp Log</span>
           </div>
           <button

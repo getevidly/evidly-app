@@ -102,7 +102,7 @@ export function VendorPartnerDashboard() {
   function EmptySection({ icon: Icon, title, subtitle }) {
     return (
       <div className="text-center py-12">
-        <div className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center mx-auto mb-3">
+        <div className="w-12 h-12 rounded-full bg-[#FAF7F0] flex items-center justify-center mx-auto mb-3">
           <Icon className="w-6 h-6 text-gray-300" />
         </div>
         <p className="text-sm font-medium text-gray-500">{title}</p>
@@ -152,7 +152,7 @@ export function VendorPartnerDashboard() {
                 <Icon className="w-3.5 h-3.5" />
                 {tab.label}
                 {tab.id === 'leads' && leads.filter(l => l.status === 'new').length > 0 && (
-                  <span className="ml-1 px-1.5 py-0.5 rounded-full text-[10px] bg-red-100 text-red-700 font-semibold">
+                  <span className="ml-1 px-1.5 py-0.5 rounded-full text-xs bg-red-100 text-red-700 font-semibold">
                     {leads.filter(l => l.status === 'new').length}
                   </span>
                 )}
@@ -180,7 +180,7 @@ export function VendorPartnerDashboard() {
                         <MapPin className="w-3 h-3" />
                         {partnerProfile.primary_county} County
                         {partnerProfile.is_founding_partner && (
-                          <span className="ml-2 px-2 py-0.5 rounded-full text-[10px] font-semibold" style={{ background: '#A08C5A', color: 'white' }}>
+                          <span className="ml-2 px-2 py-0.5 rounded-full text-xs font-semibold" style={{ background: '#A08C5A', color: 'white' }}>
                             Founding Partner
                           </span>
                         )}
@@ -250,7 +250,7 @@ export function VendorPartnerDashboard() {
                       <div key={lead.id} className="bg-white rounded-xl border border-gray-200 p-4">
                         <div className="flex items-start justify-between mb-2">
                           <div>
-                            <p className="text-sm font-semibold text-gray-900">
+                            <p className="text-sm font-semibold text-[#1E2D4D]">
                               {lead.operator_name || 'Operator'}
                             </p>
                             <p className="text-xs text-gray-500">
@@ -337,8 +337,8 @@ export function VendorPartnerDashboard() {
                       </div>
                       <p className="text-sm text-gray-500">Overall Performance Score</p>
                     </div>
-                    <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
-                      <h3 className="text-sm font-semibold text-gray-900">Score Breakdown</h3>
+                    <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+                      <h3 className="text-sm font-semibold text-[#1E2D4D]">Score Breakdown</h3>
                       {perfBreakdown.map((item, i) => (
                         <div key={i}>
                           <div className="flex items-center justify-between text-xs mb-1">

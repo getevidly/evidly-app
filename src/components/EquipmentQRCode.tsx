@@ -49,7 +49,7 @@ export function EquipmentQRCode({ equipmentId, equipmentName, locationName, size
             printWindow.document.close();
           }
         }}
-        className="mt-3 px-4 py-2 text-sm font-medium text-[#1e4d6b] border border-[#1e4d6b] rounded-lg hover:bg-[#eef4f8] transition-colors"
+        className="mt-3 px-4 py-2 text-sm font-medium text-[#1E2D4D] border border-[#1E2D4D] rounded-lg hover:bg-[#eef4f8] transition-colors"
       >
         Print QR Label
       </button>

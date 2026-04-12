@@ -62,13 +62,13 @@ export function VersionHistoryPanel({ documentId, documentType }: VersionHistory
                     v{ver.version} {isCurrent ? '(Current)' : ''}
                   </span>
                   <span
-                    className="text-[10px] font-medium px-1.5 py-0.5 rounded"
+                    className="text-xs font-medium px-1.5 py-0.5 rounded"
                     style={{ backgroundColor: statusCfg.bg, color: statusCfg.color }}
                   >
                     {statusCfg.label}
                   </span>
                 </div>
-                <div className="flex items-center gap-2 text-[11px] text-gray-500 mt-0.5 flex-wrap">
+                <div className="flex items-center gap-2 text-xs text-gray-500 mt-0.5 flex-wrap">
                   <span>{formatDate(ver.created_at)}</span>
                   {reviewer && <span>Reviewed by {reviewer}</span>}
                 </div>

@@ -201,7 +201,7 @@ function renderGradingConfig(config: Record<string, any>, gradingType: string) {
   // Fallback: show raw config
   if (Object.keys(config).length > 0) {
     return (
-      <pre className="text-xs text-gray-500 mt-2 bg-gray-50 p-2 rounded overflow-x-auto">
+      <pre className="text-xs text-gray-500 mt-2 bg-[#FAF7F0] p-2 rounded overflow-x-auto">
         {JSON.stringify(config, null, 2)}
       </pre>
     );
@@ -243,7 +243,7 @@ export function CountyCompliance() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#FAF7F0] flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
       </div>
     );
@@ -256,15 +256,15 @@ export function CountyCompliance() {
           <title>{countyName} County Food Safety — Not Yet Available | EvidLY</title>
           <meta name="robots" content="noindex" />
         </Helmet>
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-[#FAF7F0]">
           <header className="bg-white border-b border-gray-200">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-              <Link to="/" className="text-sm font-semibold tracking-wide" style={{ color: '#1e4d6b' }}>EvidLY</Link>
+              <Link to="/" className="text-sm font-semibold tracking-wide" style={{ color: '#1E2D4D' }}>EvidLY</Link>
             </div>
           </header>
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
             <AlertTriangle className="w-12 h-12 mx-auto mb-4 text-amber-500" />
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            <h1 className="text-2xl font-bold text-[#1E2D4D] mb-2">
               {countyName} County isn't covered yet
             </h1>
             <p className="text-gray-600 mb-6 max-w-md mx-auto">
@@ -274,7 +274,7 @@ export function CountyCompliance() {
               <Link to="/compliance/california" className="px-5 py-2 rounded-lg text-sm font-medium border border-gray-300 text-gray-700 hover:bg-gray-50">
                 Browse All Counties
               </Link>
-              <Link to="/signup" className="px-5 py-2 rounded-lg text-sm font-medium text-white" style={{ backgroundColor: '#1e4d6b' }}>
+              <Link to="/signup" className="px-5 py-2 rounded-lg text-sm font-medium text-white" style={{ backgroundColor: '#1E2D4D' }}>
                 Sign Up
               </Link>
             </div>
@@ -299,11 +299,11 @@ export function CountyCompliance() {
         <meta property="og:url" content={`https://evidly.com/compliance/california/${slug}`} />
       </Helmet>
 
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-[#FAF7F0]">
         {/* Header */}
         <header className="bg-white border-b border-gray-200">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <Link to="/" className="text-sm font-semibold tracking-wide" style={{ color: '#1e4d6b' }}>EvidLY</Link>
+            <Link to="/" className="text-sm font-semibold tracking-wide" style={{ color: '#1E2D4D' }}>EvidLY</Link>
           </div>
         </header>
 
@@ -321,7 +321,7 @@ export function CountyCompliance() {
           <div className="mb-8">
             <div className="flex items-start justify-between flex-wrap gap-3">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">
+                <h1 className="text-3xl font-bold text-[#1E2D4D]">
                   {j.county} County
                   {j.city && <span className="text-xl font-normal text-gray-500 ml-2">({j.city})</span>}
                 </h1>
@@ -343,9 +343,9 @@ export function CountyCompliance() {
 
           <div className="space-y-6">
             {/* Grading System */}
-            <section className="bg-white border border-gray-200 rounded-lg p-6">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2 mb-3">
-                <Shield className="w-5 h-5" style={{ color: '#1e4d6b' }} />
+            <section className="bg-white border border-gray-200 rounded-xl p-6">
+              <h2 className="text-lg font-semibold text-[#1E2D4D] flex items-center gap-2 mb-3">
+                <Shield className="w-5 h-5" style={{ color: '#1E2D4D' }} />
                 Grading System
               </h2>
               <p className="text-sm text-gray-700 font-medium">
@@ -355,8 +355,8 @@ export function CountyCompliance() {
             </section>
 
             {/* Scoring Methodology */}
-            <section className="bg-white border border-gray-200 rounded-lg p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-3">Scoring Methodology</h2>
+            <section className="bg-white border border-gray-200 rounded-xl p-6">
+              <h2 className="text-lg font-semibold text-[#1E2D4D] mb-3">Scoring Methodology</h2>
               <div className="grid sm:grid-cols-2 gap-4 text-sm">
                 <div>
                   <p className="text-gray-500">Method</p>
@@ -388,8 +388,8 @@ export function CountyCompliance() {
 
             {/* Facility Safety AHJ */}
             {j.fire_ahj_name && (
-              <section className="bg-white border border-gray-200 rounded-lg p-6">
-                <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2 mb-3">
+              <section className="bg-white border border-gray-200 rounded-xl p-6">
+                <h2 className="text-lg font-semibold text-[#1E2D4D] flex items-center gap-2 mb-3">
                   <Flame className="w-5 h-5 text-orange-500" />
                   Facility Safety Authority (AHJ)
                 </h2>
@@ -435,8 +435,8 @@ export function CountyCompliance() {
             )}
 
             {/* Data Freshness */}
-            <section className="bg-white border border-gray-200 rounded-lg p-6">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2 mb-3">
+            <section className="bg-white border border-gray-200 rounded-xl p-6">
+              <h2 className="text-lg font-semibold text-[#1E2D4D] flex items-center gap-2 mb-3">
                 <Database className="w-5 h-5 text-gray-500" />
                 Data Information
               </h2>
@@ -483,7 +483,7 @@ export function CountyCompliance() {
           </div>
 
           {/* CTA */}
-          <div className="mt-12 rounded-xl p-8 text-center" style={{ backgroundColor: '#1e4d6b' }}>
+          <div className="mt-12 rounded-xl p-8 text-center" style={{ backgroundColor: '#1E2D4D' }}>
             <Shield className="w-10 h-10 mx-auto mb-3 text-white/80" />
             <h2 className="text-xl font-bold text-white mb-2">
               Stay compliant in {j.county} County
@@ -503,7 +503,7 @@ export function CountyCompliance() {
               <Link
                 to="/signup"
                 className="px-6 py-2.5 rounded-lg font-medium text-sm bg-white"
-                style={{ color: '#1e4d6b' }}
+                style={{ color: '#1E2D4D' }}
               >
                 Start Free Trial
               </Link>

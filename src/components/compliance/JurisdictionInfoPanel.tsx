@@ -225,7 +225,7 @@ export const JurisdictionInfoPanel: React.FC<JurisdictionInfoPanelProps> = ({
     }}>
       {/* Header */}
       <div style={{ marginBottom: '16px' }}>
-        <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 600, color: '#1e4d6b' }}>
+        <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 600, color: '#1E2D4D' }}>
           Your Jurisdiction
         </h3>
         <p style={{ margin: '4px 0 0', fontSize: '0.95rem', color: '#424242' }}>

@@ -45,7 +45,7 @@ export default function PassportDemo() {
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="bg-[#1e4d6b] text-white py-6 px-6">
+      <header className="bg-[#1E2D4D] text-white py-6 px-6">
         <div className="max-w-4xl mx-auto flex items-center gap-3">
           <EvidlyIcon size={40} />
           <div>
@@ -57,7 +57,7 @@ export default function PassportDemo() {
 
       <main className="max-w-4xl mx-auto px-6 py-12">
         <div className="mb-12">
-          <h2 className="font-['Outfit'] text-3xl font-bold text-[#1e4d6b] mb-2">
+          <h2 className="font-['Outfit'] text-3xl font-bold text-[#1E2D4D] mb-2">
             {companyName} — Location 1
           </h2>
           {isDemoMode && <p className="text-gray-600 text-lg mb-1">1245 Fulton Street, Fresno, CA 93721</p>}
@@ -77,7 +77,7 @@ export default function PassportDemo() {
                     strokeLinecap="round" />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <div className="text-4xl font-bold text-[#1e4d6b]">{complianceData.foodSafety}</div>
+                  <div className="text-4xl font-bold text-[#1E2D4D]">{complianceData.foodSafety}</div>
                 </div>
               </div>
               <div className="text-sm font-medium text-gray-600 mt-2">Food Safety</div>
@@ -93,7 +93,7 @@ export default function PassportDemo() {
                     strokeLinecap="round" />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <div className="text-4xl font-bold text-[#1e4d6b]">{complianceData.facilitySafety}</div>
+                  <div className="text-4xl font-bold text-[#1E2D4D]">{complianceData.facilitySafety}</div>
                 </div>
               </div>
               <div className="text-sm font-medium text-gray-600 mt-2">Facility Safety</div>
@@ -102,14 +102,14 @@ export default function PassportDemo() {
         </div>
 
         <div className="mb-12">
-          <h3 className="font-['Outfit'] text-2xl font-bold text-[#1e4d6b] mb-6">
+          <h3 className="font-['Outfit'] text-2xl font-bold text-[#1E2D4D] mb-6">
             Compliance Breakdown
           </h3>
           <div className="space-y-6">
             <div>
               <div className="flex justify-between items-center mb-2">
                 <span className="font-semibold text-gray-700">Food Safety</span>
-                <span className="font-bold text-[#1e4d6b]">{complianceData.foodSafety}</span>
+                <span className="font-bold text-[#1E2D4D]">{complianceData.foodSafety}</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-3">
                 <div
@@ -122,7 +122,7 @@ export default function PassportDemo() {
             <div>
               <div className="flex justify-between items-center mb-2">
                 <span className="font-semibold text-gray-700">Facility Safety</span>
-                <span className="font-bold text-[#1e4d6b]">{complianceData.facilitySafety}</span>
+                <span className="font-bold text-[#1E2D4D]">{complianceData.facilitySafety}</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-3">
                 <div
@@ -136,7 +136,7 @@ export default function PassportDemo() {
         </div>
 
         <div className="mb-12">
-          <h3 className="font-['Outfit'] text-2xl font-bold text-[#1e4d6b] mb-6">
+          <h3 className="font-['Outfit'] text-2xl font-bold text-[#1E2D4D] mb-6">
             Recent Compliance Activity
           </h3>
           <div className="space-y-4">
@@ -162,7 +162,7 @@ export default function PassportDemo() {
         </div>
       </main>
 
-      <footer className="bg-gray-50 border-t border-gray-200 py-8 px-6 mt-16">
+      <footer className="bg-[#FAF7F0] border-t border-gray-200 py-8 px-6 mt-16">
         <div className="max-w-4xl mx-auto text-center">
           <p className="text-gray-600 font-medium mb-2">
             Powered by EvidLY — Lead with Confidence
@@ -171,7 +171,7 @@ export default function PassportDemo() {
             href="https://getevidly.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[#1e4d6b] hover:text-[#1e4d6b] font-semibold transition-colors"
+            className="text-[#1E2D4D] hover:text-[#1E2D4D] font-semibold transition-colors"
           >
             Learn more at getevidly.com
           </a>

@@ -22,8 +22,8 @@ export function NotificationFilters({ filter, onFilterChange, notifications }: N
         onClick={() => onFilterChange('all')}
         className="px-3 py-2 text-xs font-medium transition-colors whitespace-nowrap"
         style={{
-          color: filter === 'all' ? '#1e4d6b' : '#6b7280',
-          borderBottom: filter === 'all' ? '2px solid #1e4d6b' : '2px solid transparent',
+          color: filter === 'all' ? '#1E2D4D' : '#6b7280',
+          borderBottom: filter === 'all' ? '2px solid #1E2D4D' : '2px solid transparent',
         }}
       >
         All ({allCount})

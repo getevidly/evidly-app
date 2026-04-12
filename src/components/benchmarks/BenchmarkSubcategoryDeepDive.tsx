@@ -13,7 +13,7 @@ function SubcategoryBar({ label, pillar, yourScore, verticalAvg }: {
   const delta = yourScore - verticalAvg;
   const isAbove = delta >= 0;
   const pillarColors: Record<string, string> = {
-    Operational: '#1e4d6b',
+    Operational: '#1E2D4D',
     Equipment: '#d4af37',
     Documentation: '#6366f1',
   };
@@ -23,7 +23,7 @@ function SubcategoryBar({ label, pillar, yourScore, verticalAvg }: {
       <div className="flex items-center justify-between mb-1.5">
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-gray-900">{label}</span>
-          <span className="text-[10px] px-1.5 py-0.5 rounded font-medium" style={{
+          <span className="text-xs px-1.5 py-0.5 rounded font-medium" style={{
             backgroundColor: pillarColors[pillar] + '15',
             color: pillarColors[pillar],
           }}>{pillar}</span>
@@ -43,7 +43,7 @@ function SubcategoryBar({ label, pillar, yourScore, verticalAvg }: {
           className="absolute top-0 left-0 h-full rounded-full transition-all duration-500"
           style={{
             width: `${yourScore}%`,
-            backgroundColor: isAbove ? '#1e4d6b' : '#f59e0b',
+            backgroundColor: isAbove ? '#1E2D4D' : '#f59e0b',
           }}
         />
         {/* Vertical avg marker */}
@@ -56,7 +56,7 @@ function SubcategoryBar({ label, pillar, yourScore, verticalAvg }: {
         />
       </div>
       <div className="flex items-center justify-end mt-1">
-        <span className="text-[10px] text-gray-400">Vertical avg: {verticalAvg}%</span>
+        <span className="text-xs text-gray-400">Vertical avg: {verticalAvg}%</span>
       </div>
     </div>
   );
@@ -66,12 +66,12 @@ export function BenchmarkSubcategoryDeepDive({ locationId }: Props) {
   const locScores = LOCATION_SUBCATEGORY_SCORES[locationId] || LOCATION_SUBCATEGORY_SCORES['downtown'];
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
-      <h3 className="text-lg font-semibold text-gray-900 mb-1">Subcategory Deep Dive</h3>
+    <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+      <h3 className="text-lg font-semibold text-[#1E2D4D] mb-1">Subcategory Deep Dive</h3>
       <p className="text-sm text-gray-500 mb-2">Your performance in 8 specific compliance areas vs vertical average</p>
-      <div className="flex items-center gap-4 mb-4 text-[10px] text-gray-400">
+      <div className="flex items-center gap-4 mb-4 text-xs text-gray-400">
         <span className="flex items-center gap-1">
-          <span className="inline-block w-3 h-1.5 rounded-full" style={{ backgroundColor: '#1e4d6b' }} /> Your score
+          <span className="inline-block w-3 h-1.5 rounded-full" style={{ backgroundColor: '#1E2D4D' }} /> Your score
         </span>
         <span className="flex items-center gap-1">
           <span className="inline-block w-0.5 h-3 rounded-full" style={{ backgroundColor: '#ef4444' }} /> Vertical avg

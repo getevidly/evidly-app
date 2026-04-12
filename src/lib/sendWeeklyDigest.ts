@@ -88,7 +88,7 @@ export function generateDigestHtml(data: DigestData, dashboardUrl: string = 'htt
     .map(
       (loc) => `
       <tr>
-        <td style="padding:10px 12px;border-bottom:1px solid #e5e7eb;font-weight:600;color:#1e4d6b;">${loc.name}</td>
+        <td style="padding:10px 12px;border-bottom:1px solid #e5e7eb;font-weight:600;color:#1E2D4D;">${loc.name}</td>
         <td style="padding:10px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
           <span style="display:inline-block;background:${statusColor(loc.status)};color:#fff;border-radius:20px;padding:2px 10px;font-size:13px;font-weight:700;">${loc.foodSafety}</span>
         </td>
@@ -157,7 +157,7 @@ export function generateDigestHtml(data: DigestData, dashboardUrl: string = 'htt
 <table role="presentation" width="640" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
 
 <!-- HEADER -->
-<tr><td style="background:#1e4d6b;padding:28px 32px;">
+<tr><td style="background:#1E2D4D;padding:28px 32px;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
   <tr>
     <td><span style="color:#d4af37;font-size:28px;font-weight:800;">&#9989;</span></td>
@@ -172,7 +172,7 @@ export function generateDigestHtml(data: DigestData, dashboardUrl: string = 'htt
 
 <!-- TITLE -->
 <tr><td style="padding:24px 32px 8px;">
-  <div style="font-size:20px;font-weight:700;color:#1e4d6b;">Weekly Compliance Digest</div>
+  <div style="font-size:20px;font-weight:700;color:#1E2D4D;">Weekly Compliance Digest</div>
   <div style="font-size:14px;color:#6b7280;margin-top:4px;">${data.orgName} &mdash; ${data.weekStart} to ${data.weekEnd}</div>
 </td></tr>
 
@@ -182,18 +182,18 @@ export function generateDigestHtml(data: DigestData, dashboardUrl: string = 'htt
   <tr>
     <td style="padding:20px 24px;text-align:center;width:120px;">
       <div style="width:80px;height:80px;border-radius:50%;border:5px solid ${data.foodSafetyScore >= 90 ? '#22c55e' : data.foodSafetyScore >= 70 ? '#eab308' : '#ef4444'};display:inline-block;line-height:70px;text-align:center;">
-        <span style="font-size:28px;font-weight:800;color:#1e4d6b;">${data.foodSafetyScore}</span>
+        <span style="font-size:28px;font-weight:800;color:#1E2D4D;">${data.foodSafetyScore}</span>
       </div>
       <div style="font-size:11px;color:#6b7280;margin-top:4px;">Food Safety</div>
     </td>
     <td style="padding:20px 24px;text-align:center;width:120px;">
       <div style="width:80px;height:80px;border-radius:50%;border:5px solid ${data.facilitySafetyScore >= 90 ? '#22c55e' : data.facilitySafetyScore >= 70 ? '#eab308' : '#ef4444'};display:inline-block;line-height:70px;text-align:center;">
-        <span style="font-size:28px;font-weight:800;color:#1e4d6b;">${data.facilitySafetyScore}</span>
+        <span style="font-size:28px;font-weight:800;color:#1E2D4D;">${data.facilitySafetyScore}</span>
       </div>
       <div style="font-size:11px;color:#6b7280;margin-top:4px;">Facility Safety</div>
     </td>
     <td style="padding:20px 24px;">
-      <div style="font-size:16px;font-weight:600;color:#1e4d6b;">Compliance Scores</div>
+      <div style="font-size:16px;font-weight:600;color:#1E2D4D;">Compliance Scores</div>
       <div style="font-size:14px;color:#6b7280;margin-top:4px;">vs last week: ${trendArrow(data.scoreTrend)}</div>
     </td>
   </tr>
@@ -202,7 +202,7 @@ export function generateDigestHtml(data: DigestData, dashboardUrl: string = 'htt
 
 <!-- LOCATION SCORES -->
 <tr><td style="padding:16px 32px;">
-  <div style="font-size:16px;font-weight:700;color:#1e4d6b;margin-bottom:12px;">Location Scores</div>
+  <div style="font-size:16px;font-weight:700;color:#1E2D4D;margin-bottom:12px;">Location Scores</div>
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;">
   <tr style="background:#f8fafc;">
     <th style="padding:10px 12px;text-align:left;font-size:12px;color:#6b7280;font-weight:600;">Location</th>
@@ -242,9 +242,9 @@ export function generateDigestHtml(data: DigestData, dashboardUrl: string = 'htt
   <tr>
     <td width="48%" valign="top" style="padding-right:12px;">
       <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:16px;">
-        <div style="font-size:14px;font-weight:700;color:#1e4d6b;margin-bottom:12px;">&#127777; Temperature Readings</div>
+        <div style="font-size:14px;font-weight:700;color:#1E2D4D;margin-bottom:12px;">&#127777; Temperature Readings</div>
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-          <tr><td style="font-size:13px;color:#6b7280;padding:4px 0;">Total Checks</td><td style="font-size:15px;font-weight:700;color:#1e4d6b;text-align:right;">${data.tempStats.total}</td></tr>
+          <tr><td style="font-size:13px;color:#6b7280;padding:4px 0;">Total Checks</td><td style="font-size:15px;font-weight:700;color:#1E2D4D;text-align:right;">${data.tempStats.total}</td></tr>
           <tr><td style="font-size:13px;color:#6b7280;padding:4px 0;">On-Time Rate</td><td style="font-size:15px;font-weight:700;color:${data.tempStats.onTimePercent >= 95 ? '#22c55e' : '#d4af37'};text-align:right;">${data.tempStats.onTimePercent}%</td></tr>
           <tr><td style="font-size:13px;color:#6b7280;padding:4px 0;">Out of Range</td><td style="font-size:15px;font-weight:700;color:${data.tempStats.outOfRange > 0 ? '#dc2626' : '#22c55e'};text-align:right;">${data.tempStats.outOfRange}</td></tr>
           <tr><td style="font-size:13px;color:#6b7280;padding:4px 0;">Week-over-Week</td><td style="font-size:13px;text-align:right;">${trendArrow(data.tempStats.weekOverWeek)}</td></tr>
@@ -253,9 +253,9 @@ export function generateDigestHtml(data: DigestData, dashboardUrl: string = 'htt
     </td>
     <td width="48%" valign="top" style="padding-left:12px;">
       <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:16px;">
-        <div style="font-size:14px;font-weight:700;color:#1e4d6b;margin-bottom:12px;">&#9745; Checklists</div>
+        <div style="font-size:14px;font-weight:700;color:#1E2D4D;margin-bottom:12px;">&#9745; Checklists</div>
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-          <tr><td style="font-size:13px;color:#6b7280;padding:4px 0;">Completed</td><td style="font-size:15px;font-weight:700;color:#1e4d6b;text-align:right;">${data.checklistStats.completed}/${data.checklistStats.required}</td></tr>
+          <tr><td style="font-size:13px;color:#6b7280;padding:4px 0;">Completed</td><td style="font-size:15px;font-weight:700;color:#1E2D4D;text-align:right;">${data.checklistStats.completed}/${data.checklistStats.required}</td></tr>
           <tr><td style="font-size:13px;color:#6b7280;padding:4px 0;">Completion Rate</td><td style="font-size:15px;font-weight:700;color:${data.checklistStats.percent >= 95 ? '#22c55e' : '#d4af37'};text-align:right;">${data.checklistStats.percent}%</td></tr>
           <tr><td style="font-size:13px;color:#6b7280;padding:4px 0;">Week-over-Week</td><td style="font-size:13px;text-align:right;">${trendArrow(data.checklistStats.weekOverWeek)}</td></tr>
         </table>
@@ -284,7 +284,7 @@ ${data.missedItems.length > 0 ? `
 <!-- ACTION ITEMS -->
 ${data.actionItems.length > 0 ? `
 <tr><td style="padding:16px 32px;">
-  <div style="font-size:16px;font-weight:700;color:#1e4d6b;margin-bottom:12px;">Action Items</div>
+  <div style="font-size:16px;font-weight:700;color:#1E2D4D;margin-bottom:12px;">Action Items</div>
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;">
   <tr style="background:#f8fafc;">
     <th style="padding:10px 12px;text-align:left;font-size:12px;color:#6b7280;font-weight:600;">Item</th>
@@ -298,7 +298,7 @@ ${data.actionItems.length > 0 ? `
 <!-- VENDOR UPDATES -->
 ${data.vendorUpdates.length > 0 ? `
 <tr><td style="padding:16px 32px;">
-  <div style="font-size:16px;font-weight:700;color:#1e4d6b;margin-bottom:12px;">Vendor Service Updates</div>
+  <div style="font-size:16px;font-weight:700;color:#1E2D4D;margin-bottom:12px;">Vendor Service Updates</div>
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;">
   <tr style="background:#f8fafc;">
     <th style="padding:10px 12px;text-align:left;font-size:12px;color:#6b7280;font-weight:600;">Service</th>
@@ -313,17 +313,17 @@ ${data.vendorUpdates.length > 0 ? `
 
 <!-- CTA -->
 <tr><td style="padding:24px 32px;" align="center">
-  <a href="${dashboardUrl}" style="display:inline-block;background:#1e4d6b;color:#ffffff;text-decoration:none;padding:14px 40px;border-radius:8px;font-size:15px;font-weight:700;">View Full Dashboard</a>
+  <a href="${dashboardUrl}" style="display:inline-block;background:#1E2D4D;color:#ffffff;text-decoration:none;padding:14px 40px;border-radius:8px;font-size:15px;font-weight:700;">View Full Dashboard</a>
 </td></tr>
 
 <!-- FOOTER -->
 <tr><td style="background:#f8fafc;padding:24px 32px;border-top:1px solid #e5e7eb;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
   <tr><td align="center">
-    <div style="font-size:16px;font-weight:800;color:#1e4d6b;">Evid<span style="color:#d4af37;">LY</span></div>
+    <div style="font-size:16px;font-weight:800;color:#1E2D4D;">Evid<span style="color:#d4af37;">LY</span></div>
     <div style="font-size:11px;color:#94a3b8;margin-top:4px;">Lead with Confidence</div>
     <div style="margin-top:12px;font-size:12px;color:#94a3b8;">
-      <a href="${dashboardUrl}/weekly-digest" style="color:#1e4d6b;text-decoration:underline;">Manage Preferences</a>
+      <a href="${dashboardUrl}/weekly-digest" style="color:#1E2D4D;text-decoration:underline;">Manage Preferences</a>
       &nbsp;&bull;&nbsp;
       <a href="${dashboardUrl}/weekly-digest" style="color:#94a3b8;text-decoration:underline;">Unsubscribe</a>
     </div>

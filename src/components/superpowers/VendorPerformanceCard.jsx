@@ -65,7 +65,7 @@ export function VendorPerformanceCard({ scores }) {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-[#0B1628]">{vendor.vendorName}</p>
-                    <p className="text-[11px] text-[#6B7F96]">{vendor.serviceCount} service record{vendor.serviceCount !== 1 ? 's' : ''}</p>
+                    <p className="text-xs text-[#6B7F96]">{vendor.serviceCount} service record{vendor.serviceCount !== 1 ? 's' : ''}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-1.5">
@@ -82,14 +82,14 @@ export function VendorPerformanceCard({ scores }) {
                   const pct = (value / cat.max) * 100;
                   return (
                     <div key={cat.key} className="flex items-center gap-2">
-                      <span className="text-[10px] text-[#6B7F96] w-16 truncate">{cat.label}</span>
+                      <span className="text-xs text-[#6B7F96] w-16 truncate">{cat.label}</span>
                       <div className="flex-1 h-1.5 bg-[#EEF1F7] rounded-full overflow-hidden">
                         <div
                           className={`h-full rounded-full ${pct >= 80 ? 'bg-[#166534]' : pct >= 50 ? 'bg-[#A08C5A]' : 'bg-[#991B1B]'}`}
                           style={{ width: `${pct}%` }}
                         />
                       </div>
-                      <span className="text-[10px] text-[#3D5068] w-10 text-right">{value}/{cat.max}</span>
+                      <span className="text-xs text-[#3D5068] w-10 text-right">{value}/{cat.max}</span>
                     </div>
                   );
                 })}
@@ -99,7 +99,7 @@ export function VendorPerformanceCard({ scores }) {
         })}
       </div>
 
-      <p className="text-[10px] text-[#6B7F96] border-t border-[#E8EDF5] pt-3">
+      <p className="text-xs text-[#6B7F96] border-t border-[#E8EDF5] pt-3">
         Vendor scores are based on service records and documentation on file. Scores are advisory and may not reflect overall vendor quality.
       </p>
     </div>

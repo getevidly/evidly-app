@@ -946,7 +946,7 @@ export function Calendar() {
                     </div>
                     <div style={{
                       fontSize: '18px', fontWeight: 700,
-                      color: isToday ? '#1e4d6b' : '#111827',
+                      color: isToday ? '#1E2D4D' : '#111827',
                       width: '32px', height: '32px', borderRadius: '50%',
                       display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
                       backgroundColor: isToday ? 'transparent' : 'transparent',
@@ -1029,7 +1029,7 @@ export function Calendar() {
                         fontWeight: isToday ? 700 : 500,
                         fontFamily: "'DM Sans', sans-serif",
                         color: isToday ? 'white' : '#374151',
-                        backgroundColor: isToday ? '#1e4d6b' : 'transparent',
+                        backgroundColor: isToday ? '#1E2D4D' : 'transparent',
                       }}>
                         {day.getDate()}
                       </span>
@@ -1082,7 +1082,7 @@ export function Calendar() {
                   backgroundColor: isToday ? '#fef3c7' : '#f9fafb',
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontSize: '13px', fontWeight: 700, color: isToday ? '#1e4d6b' : '#374151' }}>
+                    <span style={{ fontSize: '13px', fontWeight: 700, color: isToday ? '#1E2D4D' : '#374151' }}>
                       {DAYS[day.getDay()]}
                     </span>
                     <span style={{ fontSize: '13px', fontWeight: 600, color: isToday ? '#92400e' : '#6b7280' }}>
@@ -1092,7 +1092,7 @@ export function Calendar() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                     {dayEvents.length > 0 && (
                       <span style={{
-                        fontSize: '11px', fontWeight: 700, color: '#1e4d6b',
+                        fontSize: '11px', fontWeight: 700, color: '#1E2D4D',
                         backgroundColor: '#e0f2fe', padding: '2px 8px', borderRadius: '10px',
                       }}>
                         {dayEvents.length}
@@ -1164,7 +1164,7 @@ export function Calendar() {
                   <div style={{
                     fontSize: '20px',
                     fontWeight: 700,
-                    color: isToday ? '#1e4d6b' : '#111827',
+                    color: isToday ? '#1E2D4D' : '#111827',
                     width: '36px',
                     height: '36px',
                     borderRadius: '50%',
@@ -1275,7 +1275,7 @@ export function Calendar() {
       <div style={{ border: '1px solid #e5e7eb', borderRadius: '12px', overflow: 'hidden' }}>
         {/* Header */}
         <div style={{ padding: '16px 20px', backgroundColor: '#f9fafb', borderBottom: '1px solid #e5e7eb', textAlign: 'center', fontFamily: "'DM Sans', sans-serif" }}>
-          <div style={{ fontSize: '14px', fontWeight: 700, color: '#1e4d6b' }}>
+          <div style={{ fontSize: '14px', fontWeight: 700, color: '#1E2D4D' }}>
             {DAYS[currentDate.getDay()]}, {MONTHS[currentDate.getMonth()]} {currentDate.getDate()}
           </div>
           <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '2px' }}>
@@ -1514,7 +1514,7 @@ export function Calendar() {
                 onClick={() => setSelectedEvent(null)}
                 style={{
                   flex: 1, padding: '10px', borderRadius: '8px',
-                  border: 'none', backgroundColor: '#1e4d6b',
+                  border: 'none', backgroundColor: '#1E2D4D',
                   fontWeight: 600, fontSize: '13px', color: 'white',
                   cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
                 }}
@@ -1556,7 +1556,7 @@ export function Calendar() {
           <button
             onClick={() => navigate('/facility-safety')}
             className="flex items-center gap-1 text-sm font-medium mb-3 hover:underline"
-            style={{ color: '#1e4d6b' }}
+            style={{ color: '#1E2D4D' }}
           >
             <ChevronLeft size={14} />
             Back to Facility Safety
@@ -1567,7 +1567,7 @@ export function Calendar() {
       <div style={{ maxWidth: '1400px', margin: '0 auto', fontFamily: "'DM Sans', sans-serif" }} className="px-3 sm:px-6">
         {/* Page Header */}
         <div style={{ marginBottom: '24px' }}>
-          <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#1e4d6b', margin: '0 0 4px 0', fontFamily: "'DM Sans', sans-serif" }}>{tr('pages.calendar.title')}</h1>
+          <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#1E2D4D', margin: '0 0 4px 0', fontFamily: "'DM Sans', sans-serif" }}>{tr('pages.calendar.title')}</h1>
           <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>{tr('pages.calendar.subtitle')}</p>
         </div>
 
@@ -1631,14 +1631,14 @@ export function Calendar() {
                 onClick={openCreateForm}
                 style={{
                   padding: '8px 16px', borderRadius: '8px',
-                  border: 'none', backgroundColor: '#1e4d6b',
+                  border: 'none', backgroundColor: '#1E2D4D',
                   fontWeight: 700, fontSize: '13px', color: 'white',
                   cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
                   display: 'flex', alignItems: 'center', gap: '6px',
                   transition: 'background-color 0.15s',
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#2a6a8f'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#1e4d6b'; }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#2A3F6B'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#1E2D4D'; }}
               >
                 <Plus size={16} /> Add Event
               </button>
@@ -1652,7 +1652,7 @@ export function Calendar() {
                     style={{
                       padding: '8px 12px', fontSize: '13px', fontWeight: 600,
                       fontFamily: "'DM Sans', sans-serif", border: 'none', cursor: 'pointer',
-                      backgroundColor: view === v ? '#1e4d6b' : 'white',
+                      backgroundColor: view === v ? '#1E2D4D' : 'white',
                       color: view === v ? 'white' : '#4b5563',
                       borderRight: v !== 'month' ? '1px solid #e5e7eb' : 'none',
                       transition: 'all 0.15s',
@@ -1717,7 +1717,7 @@ export function Calendar() {
             <div style={{
               display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px',
               padding: '8px 14px', borderRadius: '8px', backgroundColor: '#eef4f8',
-              border: '1px solid #b8d4e8', fontSize: '13px', color: '#1e4d6b',
+              border: '1px solid #b8d4e8', fontSize: '13px', color: '#1E2D4D',
               fontFamily: "'DM Sans', sans-serif", fontWeight: 500, flexWrap: 'wrap',
             }}>
               <Clock size={14} />
@@ -1732,7 +1732,7 @@ export function Calendar() {
           <div style={{ flex: 1, minWidth: 0 }}>
             {loading ? (
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '48px 0' }}>
-                <Loader2 className="h-8 w-8 animate-spin" style={{ color: '#1e4d6b' }} />
+                <Loader2 className="h-8 w-8 animate-spin" style={{ color: '#1E2D4D' }} />
               </div>
             ) : (
               <>
@@ -1905,7 +1905,7 @@ export function Calendar() {
               </h3>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                 {[
-                  { label: tr('pages.calendar.totalEvents'), value: filteredEvents.filter(e => { const dd = new Date(e.date + 'T12:00:00'); return dd.getMonth() === today.getMonth() && dd.getFullYear() === today.getFullYear(); }).length, color: '#1e4d6b' },
+                  { label: tr('pages.calendar.totalEvents'), value: filteredEvents.filter(e => { const dd = new Date(e.date + 'T12:00:00'); return dd.getMonth() === today.getMonth() && dd.getFullYear() === today.getFullYear(); }).length, color: '#1E2D4D' },
                   { label: tr('pages.calendar.inspections'), value: filteredEvents.filter(e => { const dd = new Date(e.date + 'T12:00:00'); return e.type === 'inspection' && dd.getMonth() === today.getMonth() && dd.getFullYear() === today.getFullYear(); }).length, color: '#ea580c' },
                   { label: tr('pages.calendar.vendorVisits'), value: filteredEvents.filter(e => { const dd = new Date(e.date + 'T12:00:00'); return e.type === 'vendor' && dd.getMonth() === today.getMonth() && dd.getFullYear() === today.getFullYear(); }).length, color: '#7c3aed' },
                   { label: tr('pages.calendar.meetings'), value: filteredEvents.filter(e => { const dd = new Date(e.date + 'T12:00:00'); return e.type === 'meeting' && dd.getMonth() === today.getMonth() && dd.getFullYear() === today.getFullYear(); }).length, color: '#0891b2' },
@@ -2008,7 +2008,7 @@ export function Calendar() {
               }}
             >
               {/* Header bar */}
-              <div style={{ height: '6px', backgroundColor: '#1e4d6b' }} />
+              <div style={{ height: '6px', backgroundColor: '#1E2D4D' }} />
               <div style={{ padding: '24px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                   <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#111827', margin: 0 }}>
@@ -2042,7 +2042,7 @@ export function Calendar() {
                         fontFamily: "'DM Sans', sans-serif", outline: 'none',
                         boxSizing: 'border-box',
                       }}
-                      onFocus={(e) => { e.currentTarget.style.borderColor = '#1e4d6b'; }}
+                      onFocus={(e) => { e.currentTarget.style.borderColor = '#1E2D4D'; }}
                       onBlur={(e) => { e.currentTarget.style.borderColor = '#e5e7eb'; }}
                     />
                   </div>
@@ -2092,7 +2092,7 @@ export function Calendar() {
                         fontFamily: "'DM Sans', sans-serif", outline: 'none',
                         boxSizing: 'border-box',
                       }}
-                      onFocus={(e) => { e.currentTarget.style.borderColor = '#1e4d6b'; }}
+                      onFocus={(e) => { e.currentTarget.style.borderColor = '#1E2D4D'; }}
                       onBlur={(e) => { e.currentTarget.style.borderColor = '#e5e7eb'; }}
                     />
                   </div>
@@ -2208,7 +2208,7 @@ export function Calendar() {
                               style={{
                                 padding: '8px 12px', borderRadius: '6px', border: 'none',
                                 backgroundColor: showVendorChange ? '#fef2f2' : 'transparent',
-                                color: showVendorChange ? '#dc2626' : '#1e4d6b',
+                                color: showVendorChange ? '#dc2626' : '#1E2D4D',
                                 fontSize: '13px', fontWeight: 600, cursor: 'pointer',
                                 fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap',
                               }}
@@ -2350,7 +2350,7 @@ export function Calendar() {
                                 }}
                                 style={{
                                   flex: 1, padding: '8px', borderRadius: '6px', border: 'none',
-                                  backgroundColor: (!vendorChangeForm.newVendorId || !vendorChangeForm.reason) ? '#d1d5db' : '#1e4d6b',
+                                  backgroundColor: (!vendorChangeForm.newVendorId || !vendorChangeForm.reason) ? '#d1d5db' : '#1E2D4D',
                                   color: 'white', fontWeight: 600, fontSize: '12px',
                                   cursor: (!vendorChangeForm.newVendorId || !vendorChangeForm.reason) ? 'not-allowed' : 'pointer',
                                   fontFamily: "'DM Sans', sans-serif",
@@ -2407,7 +2407,7 @@ export function Calendar() {
                         fontFamily: "'DM Sans', sans-serif", outline: 'none',
                         resize: 'vertical', boxSizing: 'border-box',
                       }}
-                      onFocus={(e) => { e.currentTarget.style.borderColor = '#1e4d6b'; }}
+                      onFocus={(e) => { e.currentTarget.style.borderColor = '#1E2D4D'; }}
                       onBlur={(e) => { e.currentTarget.style.borderColor = '#e5e7eb'; }}
                     />
                     {aiFields.has('eventDescription') && <AIGeneratedIndicator />}
@@ -2587,7 +2587,7 @@ export function Calendar() {
                     style={{
                       flex: 1, padding: '10px', borderRadius: '8px',
                       border: 'none',
-                      backgroundColor: (!eventForm.title.trim() || !eventForm.date || (frequencyWarning?.show && (!freqReductionAck || !freqReductionReason || !freqReductionDetails.trim()))) ? '#9ca3af' : '#1e4d6b',
+                      backgroundColor: (!eventForm.title.trim() || !eventForm.date || (frequencyWarning?.show && (!freqReductionAck || !freqReductionReason || !freqReductionDetails.trim()))) ? '#9ca3af' : '#1E2D4D',
                       fontWeight: 600, fontSize: '13px', color: 'white',
                       cursor: (!eventForm.title.trim() || !eventForm.date || (frequencyWarning?.show && (!freqReductionAck || !freqReductionReason || !freqReductionDetails.trim()))) ? 'not-allowed' : 'pointer',
                       fontFamily: "'DM Sans', sans-serif",

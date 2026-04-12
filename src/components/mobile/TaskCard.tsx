@@ -42,14 +42,14 @@ export function TaskCard({ task, isCompleted, onToggle }: TaskCardProps) {
           {task.subtitle}
         </p>
         <div className="flex items-center gap-2 mt-1">
-          <span className="text-[11px] text-[#6B7280]">{task.time}</span>
+          <span className="text-xs text-[#6B7280]">{task.time}</span>
           {task.status === 'due' && !isCompleted && (
-            <span className="text-[10px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-[#DC2626] text-white">
+            <span className="text-xs font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-[#DC2626] text-white">
               Due Now
             </span>
           )}
           {task.status === 'upcoming' && !isCompleted && (
-            <span className="text-[10px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-[#16A34A]/10 text-[#16A34A]">
+            <span className="text-xs font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-[#16A34A]/10 text-[#16A34A]">
               Upcoming
             </span>
           )}

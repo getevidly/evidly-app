@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { lookupJurisdiction, linkJurisdictionToLocation } from '../utils/jurisdictionLookup';
 import { GhostInput } from '../components/ai/GhostInput';
 import { useCrispHide } from '../hooks/useCrisp';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 const steps = [
   { id: 1, name: 'Welcome', icon: () => <EvidlyIcon size={20} /> },
@@ -27,6 +28,7 @@ const steps = [
 
 export function Onboarding() {
   useCrispHide();
+  usePageTitle('Get Started');
   const [currentStep, setCurrentStep] = useState(1);
   const [locationName, setLocationName] = useState('');
   const [locationAddress, setLocationAddress] = useState('');
@@ -236,7 +238,7 @@ export function Onboarding() {
         return (
           <div className="text-center">
             <EvidlyIcon size={96} className="mx-auto mb-6" />
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Welcome to EvidLY</h2>
+            <h2 className="text-3xl font-bold text-[#1E2D4D] mb-4">Welcome to EvidLY</h2>
             <p className="text-lg text-gray-600 mb-8">
               Let's get your food safety compliance system set up. This will only take a few minutes.
             </p>
@@ -246,7 +248,7 @@ export function Onboarding() {
       case 2:
         return (
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Organization Details</h2>
+            <h2 className="text-2xl font-bold text-[#1E2D4D] mb-4">Organization Details</h2>
             <p className="text-gray-600 mb-6">Your organization is already set up. Let's continue with your locations.</p>
           </div>
         );
@@ -254,7 +256,7 @@ export function Onboarding() {
       case 3:
         return (
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Add Your First Location</h2>
+            <h2 className="text-2xl font-bold text-[#1E2D4D] mb-4">Add Your First Location</h2>
             <p className="text-gray-600 mb-6">Add a restaurant, kitchen, or facility to get started.</p>
             <div className="space-y-4">
               <div>
@@ -287,7 +289,7 @@ export function Onboarding() {
       case 4:
         return (
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Configure Shifts</h2>
+            <h2 className="text-2xl font-bold text-[#1E2D4D] mb-4">Configure Shifts</h2>
             <p className="text-gray-600 mb-6">
               Set your operating hours and shift changeover time. This determines when temperature checks and tasks are assigned.
             </p>
@@ -342,8 +344,8 @@ export function Onboarding() {
                 </select>
               </div>
 
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h3 className="text-sm font-semibold text-gray-900 mb-3">Shift Preview</h3>
+              <div className="bg-[#FAF7F0] rounded-lg p-4">
+                <h3 className="text-sm font-semibold text-[#1E2D4D] mb-3">Shift Preview</h3>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-md">
                     <span className="font-medium text-gray-900">Morning Shift</span>
@@ -386,7 +388,7 @@ export function Onboarding() {
 
         return (
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">{stepTitles[currentStep]}</h2>
+            <h2 className="text-2xl font-bold text-[#1E2D4D] mb-2">{stepTitles[currentStep]}</h2>
             {industryType && (
               <p className="text-sm text-[#d4af37] font-medium mb-4">
                 {industryType} Template
@@ -396,8 +398,8 @@ export function Onboarding() {
 
             <div className="space-y-6 max-h-[400px] overflow-y-auto">
               {displayCategories.map(category => (
-                <div key={category} className="bg-gray-50 rounded-lg p-4">
-                  <h3 className="font-semibold text-gray-900 mb-3">{getCategoryLabel(category)}</h3>
+                <div key={category} className="bg-[#FAF7F0] rounded-lg p-4">
+                  <h3 className="font-semibold text-[#1E2D4D] mb-3">{getCategoryLabel(category)}</h3>
                   <div className="space-y-2">
                     {groupedItems[category].map((item, index) => {
                       const globalIndex = templateItems.findIndex(t => t.name === item.name && t.category === item.category);
@@ -415,7 +417,7 @@ export function Onboarding() {
                           <span className={`flex-1 ${!item.required ? 'text-gray-500' : 'text-gray-900'}`}>
                             {item.name}
                             {item.custom && (
-                              <span className="ml-2 text-xs px-2 py-0.5 rounded" style={{ backgroundColor: '#eef4f8', color: '#1e4d6b' }}>
+                              <span className="ml-2 text-xs px-2 py-0.5 rounded" style={{ backgroundColor: '#eef4f8', color: '#1E2D4D' }}>
                                 Custom
                               </span>
                             )}
@@ -467,7 +469,7 @@ export function Onboarding() {
       case 8:
         return (
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Invite Team Members</h2>
+            <h2 className="text-2xl font-bold text-[#1E2D4D] mb-4">Invite Team Members</h2>
             <p className="text-gray-600 mb-6">Add your team to collaborate on compliance tasks.</p>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -480,7 +482,7 @@ export function Onboarding() {
                     value={teamEmail}
                     onChange={(e) => setTeamEmail(e.target.value)}
                     placeholder="email@example.com"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]"
                   />
                 </div>
                 <div>
@@ -492,7 +494,7 @@ export function Onboarding() {
                     value={teamPhone}
                     onChange={(e) => setTeamPhone(e.target.value)}
                     placeholder="+1 (555) 000-0000"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]"
                   />
                 </div>
               </div>
@@ -507,7 +509,7 @@ export function Onboarding() {
                     onClick={() => setInviteMethod('sms')}
                     className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                       inviteMethod === 'sms'
-                        ? 'bg-[#1e4d6b] text-white'
+                        ? 'bg-[#1E2D4D] text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
@@ -518,7 +520,7 @@ export function Onboarding() {
                     onClick={() => setInviteMethod('email')}
                     className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                       inviteMethod === 'email'
-                        ? 'bg-[#1e4d6b] text-white'
+                        ? 'bg-[#1E2D4D] text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
@@ -529,7 +531,7 @@ export function Onboarding() {
                     onClick={() => setInviteMethod('both')}
                     className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                       inviteMethod === 'both'
-                        ? 'bg-[#1e4d6b] text-white'
+                        ? 'bg-[#1E2D4D] text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
@@ -548,12 +550,12 @@ export function Onboarding() {
       case 9:
         return (
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Print QR Codes</h2>
+            <h2 className="text-2xl font-bold text-[#1E2D4D] mb-4">Print QR Codes</h2>
             <p className="text-gray-600 mb-6">Generate QR codes for equipment and locations for easy mobile access.</p>
             <div className="bg-white p-4 sm:p-5 rounded-xl border border-gray-300 text-center">
               <QrCode className="h-32 w-32 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-600 mb-4">Your QR codes will be generated after setup</p>
-              <button onClick={() => toast.info('QR codes generated after setup is complete')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-md hover:bg-[#2a6a8f]">
+              <button onClick={() => toast.info('QR codes generated after setup is complete')} className="px-6 py-2 bg-[#1E2D4D] text-white rounded-md hover:bg-[#162340]">
                 Preview QR Codes
               </button>
             </div>
@@ -564,7 +566,7 @@ export function Onboarding() {
         return (
           <div className="text-center">
             <PartyPopper className="h-24 w-24 text-[#d4af37] mx-auto mb-6" />
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">You're All Set!</h2>
+            <h2 className="text-3xl font-bold text-[#1E2D4D] mb-4">You're All Set!</h2>
             <p className="text-lg text-gray-600 mb-8">
               Your EvidLY account is ready. Start logging temperatures, completing checklists, and staying compliant.
             </p>
@@ -613,13 +615,13 @@ export function Onboarding() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-6">{renderStepContent()}</div>
+        <div className="bg-white rounded-xl border border-gray-200 p-8 mb-6">{renderStepContent()}</div>
 
         <div className="flex justify-between">
           {currentStep !== 4 ? (
             <button
               onClick={handleSkip}
-              className="px-6 py-2 border-2 border-[#1e4d6b] text-[#1e4d6b] rounded-md hover:bg-gray-50 bg-white"
+              className="px-6 py-2 border-2 border-[#1E2D4D] text-[#1E2D4D] rounded-md hover:bg-gray-50 bg-white"
             >
               Skip
             </button>
@@ -631,8 +633,8 @@ export function Onboarding() {
             disabled={currentStep === 3 && !locationName}
             className={`px-8 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed shadow-sm ${
               currentStep === 10
-                ? 'bg-[#1e4d6b] text-white hover:bg-[#2a6a8f] font-bold'
-                : 'bg-[#1e4d6b] text-white hover:bg-[#2a6a8f]'
+                ? 'bg-[#1E2D4D] text-white hover:bg-[#162340] font-bold'
+                : 'bg-[#1E2D4D] text-white hover:bg-[#162340]'
             }`}
           >
             {currentStep === 10 ? 'Get Started' : 'Next'}

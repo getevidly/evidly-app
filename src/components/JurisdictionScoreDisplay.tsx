@@ -9,7 +9,7 @@ interface JurisdictionScoreDisplayProps {
 export function JurisdictionScoreDisplay({ result }: JurisdictionScoreDisplayProps) {
   if (result.systemType === 'none') {
     return (
-      <div className="flex flex-col items-center justify-center p-6 bg-gray-50 rounded-xl border border-gray-200 min-h-[200px]">
+      <div className="flex flex-col items-center justify-center p-6 bg-[#FAF7F0] rounded-xl border border-gray-200 min-h-[200px]">
         <EvidlyIcon size={40} className="mb-3" />
         <div className="text-sm font-medium text-gray-500">Non-CA Location</div>
         <div className="text-xs text-gray-400 mt-1 text-center max-w-[180px]">

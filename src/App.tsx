@@ -639,6 +639,7 @@ function AppRoutes() {
           <Route path="/insights" element={<InsightsHub />} />
           <Route path="/tools" element={<ToolsHub />} />
           <Route path="/admin" element={<AdminRoute />} />
+          <Route path="/admin/onboarding" element={<AdminClientOnboarding />} />
           <Route path="/temp-logs" element={<TempLogs />} />
           <Route path="/iot-monitoring" element={<IoTMonitoring />} />
           <Route path="/checklists" element={<Checklists />} />
@@ -729,7 +730,6 @@ function AppRoutes() {
 
           {/* Admin routes — RequireAdmin enforces platform_admin access */}
           <Route element={<RequireAdmin />}>
-          <Route path="/admin/onboarding" element={<AdminClientOnboarding />} />
           <Route path="/admin/onboard-client" element={<Navigate to="/admin/onboarding" replace />} />
           <Route path="/admin/usage-analytics" element={<UsageAnalytics />} />
           <Route path="/iot-platform" element={<IoTSensorPlatform />} />

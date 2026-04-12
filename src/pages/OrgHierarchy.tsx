@@ -125,7 +125,7 @@ function StatusBadge({ status }: { status: string }) {
     'Unsatisfactory':  'bg-red-50 text-red-700 border-red-300',
   };
   return (
-    <span className={`text-[10px] px-1.5 py-0.5 rounded border ${styles[status] ?? 'bg-gray-100 text-gray-600 border-gray-300'}`}>
+    <span className={`text-xs px-1.5 py-0.5 rounded border ${styles[status] ?? 'bg-gray-100 text-gray-600 border-gray-300'}`}>
       {status}
     </span>
   );
@@ -133,7 +133,7 @@ function StatusBadge({ status }: { status: string }) {
 
 function FireVerdictBadge({ verdict }: { verdict: 'Pass' | 'Fail' }) {
   return (
-    <span className={`text-[10px] px-1.5 py-0.5 rounded border ${
+    <span className={`text-xs px-1.5 py-0.5 rounded border ${
       verdict === 'Pass'
         ? 'bg-green-50 text-green-700 border-green-300'
         : 'bg-red-50 text-red-700 border-red-300'
@@ -173,7 +173,7 @@ function TreeNodeRow({ node, depth = 0, selectedId, onSelect }: {
 
         <div className="flex-1 min-w-0 flex items-center gap-2">
           <span className="text-sm font-medium text-gray-900 truncate">{node.name}</span>
-          <span className="text-[10px] text-gray-400 flex-shrink-0">{node.code}</span>
+          <span className="text-xs text-gray-400 flex-shrink-0">{node.code}</span>
         </div>
 
         <div className="flex items-center gap-2 flex-shrink-0">
@@ -217,7 +217,7 @@ function FireEquipmentBar({ label, pass }: { label: string; pass: boolean }) {
           style={{ width: pass ? '100%' : '30%' }}
         />
       </div>
-      <span className={`text-[10px] ${pass ? 'text-green-600' : 'text-red-600'}`}>
+      <span className={`text-xs ${pass ? 'text-green-600' : 'text-red-600'}`}>
         {pass ? 'Current' : 'Overdue'}
       </span>
     </div>
@@ -234,14 +234,14 @@ function LocationDetail({ node }: { node: OrgTreeNode }) {
     <div className="space-y-5">
       {/* Header */}
       <div>
-        <h2 className="text-gray-900 font-bold text-xl">{node.name}</h2>
+        <h2 className="text-[#1E2D4D] font-bold text-xl">{node.name}</h2>
         <p className="text-gray-500 text-sm">{node.code} &middot; Location</p>
       </div>
 
       {/* Food Safety */}
       <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-2" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
         <div className="flex items-center gap-2 mb-1">
-          <span className="text-sm font-semibold text-gray-900">🍽 Food Safety</span>
+          <span className="text-sm font-semibold text-[#1E2D4D]">🍽 Food Safety</span>
         </div>
         <p className="text-gray-500 text-xs">{node.foodSafetyJurisdiction}</p>
         <div className="flex items-center gap-3">
@@ -266,11 +266,11 @@ function LocationDetail({ node }: { node: OrgTreeNode }) {
       {/* Facility Safety */}
       <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-3" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
         <div className="flex items-center gap-2 mb-1">
-          <span className="text-sm font-semibold text-gray-900">🔥 Facility Safety</span>
+          <span className="text-sm font-semibold text-[#1E2D4D]">🔥 Facility Safety</span>
         </div>
         <div className="flex items-center justify-between">
           <p className="text-gray-500 text-xs">{node.facilitySafetyAhj}</p>
-          <p className="text-gray-400 text-[10px]">NFPA 96</p>
+          <p className="text-gray-400 text-xs">NFPA 96</p>
         </div>
         <div className="space-y-2">
           <FireEquipmentBar label="Permit" pass={equip.permit} />
@@ -285,7 +285,7 @@ function LocationDetail({ node }: { node: OrgTreeNode }) {
       <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-2" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
         <div className="flex items-center gap-2 mb-1">
           <AlertTriangle className="h-4 w-4 text-amber-500" />
-          <span className="text-sm font-semibold text-gray-900">Open Items</span>
+          <span className="text-sm font-semibold text-[#1E2D4D]">Open Items</span>
         </div>
         <p className="text-gray-500 text-xs">{node.openItems} item{node.openItems !== 1 ? 's' : ''} requiring attention</p>
         {items.length > 0 && (
@@ -316,19 +316,19 @@ function RegionDetail({ node }: { node: OrgTreeNode }) {
     <div className="space-y-5">
       {/* Header */}
       <div>
-        <h2 className="text-gray-900 font-bold text-xl">{node.name}</h2>
+        <h2 className="text-[#1E2D4D] font-bold text-xl">{node.name}</h2>
         <p className="text-gray-500 text-sm">{node.code} &middot; {node.type === 'corporate' ? 'Corporate' : 'Region'} &middot; {node.locationCount} location{node.locationCount !== 1 ? 's' : ''}</p>
       </div>
 
       {/* Location list */}
       <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-2" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
-        <h3 className="text-sm font-semibold text-gray-900 mb-3">Locations</h3>
+        <h3 className="text-sm font-semibold text-[#1E2D4D] mb-3">Locations</h3>
         <div className="space-y-2">
           {locations.map(loc => (
-            <div key={loc.id} className="flex items-center justify-between py-2 px-3 rounded-lg bg-gray-50">
+            <div key={loc.id} className="flex items-center justify-between py-2 px-3 rounded-lg bg-[#FAF7F0]">
               <div className="flex items-center gap-2 min-w-0">
                 <span className="text-sm text-gray-900 truncate">{loc.name}</span>
-                <span className="text-[10px] text-gray-400">{loc.code}</span>
+                <span className="text-xs text-gray-400">{loc.code}</span>
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
                 {loc.foodSafetyStatus && <StatusBadge status={loc.foodSafetyStatus} />}
@@ -360,7 +360,7 @@ function RegionDetail({ node }: { node: OrgTreeNode }) {
       <div className="rounded-lg border border-gray-200 bg-white p-4" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
         <div className="flex items-center gap-2 mb-2">
           <AlertTriangle className="h-4 w-4 text-amber-500" />
-          <span className="text-sm font-semibold text-gray-900">Open Items</span>
+          <span className="text-sm font-semibold text-[#1E2D4D]">Open Items</span>
         </div>
         <p className="text-gray-500 text-xs">{node.openItems} total items requiring attention across {node.locationCount} location{node.locationCount !== 1 ? 's' : ''}</p>
       </div>
@@ -474,20 +474,20 @@ export function OrgHierarchy() {
       {/* Page Header */}
       <div className="flex items-center justify-between flex-wrap gap-2 mb-5">
         <div>
-          <h1 className="text-gray-900 font-bold text-2xl">Locations</h1>
+          <h1 className="text-[#1E2D4D] font-bold text-2xl">Locations</h1>
           <p className="text-gray-500 text-sm mt-1">Compliance status across your locations</p>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#1e4d6b] text-sm font-medium text-white hover:bg-[#163a52] transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#1E2D4D] text-sm font-medium text-white hover:bg-[#162340] transition-colors cursor-pointer"
           >
             <Plus className="h-4 w-4" />
             Add Location
           </button>
           <button
             onClick={() => navigate('/import?type=locations')}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-[#1e4d6b] text-sm font-medium text-[#1e4d6b] hover:bg-[#eef4f8] transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-[#1E2D4D] text-sm font-medium text-[#1E2D4D] hover:bg-[#eef4f8] transition-colors cursor-pointer"
           >
             <Upload className="h-4 w-4" />
             Import
@@ -506,11 +506,11 @@ export function OrgHierarchy() {
       {!isDemoMode ? (
         <div className="rounded-xl border border-gray-200 bg-white p-12 flex flex-col items-center justify-center text-center" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
           <MapPin className="h-12 w-12 text-gray-300 mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">No locations added yet</h3>
+          <h3 className="text-lg font-semibold text-[#1E2D4D] mb-2">No locations added yet</h3>
           <p className="text-sm text-gray-500 max-w-md mb-4">Add your first location to get started.</p>
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-[#1e4d6b] text-sm font-medium text-white hover:bg-[#163a52] transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-[#1E2D4D] text-sm font-medium text-white hover:bg-[#162340] transition-colors cursor-pointer"
           >
             <Plus className="h-4 w-4" />
             Add Location
@@ -532,7 +532,7 @@ export function OrgHierarchy() {
         {/* Left column — Tree */}
         <div className="min-h-[400px]">
           <div className="rounded-xl border border-gray-200 bg-white p-4 h-full" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
-            <h3 className="text-sm font-semibold text-gray-900 mb-3">Organization Tree</h3>
+            <h3 className="text-sm font-semibold text-[#1E2D4D] mb-3">Organization Tree</h3>
             <div className="space-y-0.5">
               <TreeNodeRow node={orgTreeState} selectedId={selectedId} onSelect={handleSelect} />
             </div>

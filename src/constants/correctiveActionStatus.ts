@@ -73,7 +73,7 @@ export const CA_STATUSES: CAStatusConfig[] = [
   {
     key: 'verified',
     label: 'Verified',
-    color: '#1e4d6b',
+    color: '#1E2D4D',
     bg: '#eef4f8',
     nextStatus: null,
     nextLabel: null,
@@ -92,7 +92,7 @@ export const CA_STATUS_ORDER: Record<CAStatus, number> = {
 
 export type CASeverity = 'critical' | 'high' | 'medium' | 'low';
 
-const NAVY = '#1e4d6b';
+const NAVY = '#1E2D4D';
 
 export const SEVERITY_CONFIG: Record<CASeverity, { label: string; color: string; bg: string; border: string }> = {
   critical: { label: 'Critical', color: '#991b1b', bg: '#fef2f2', border: '#fecaca' },

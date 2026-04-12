@@ -22,7 +22,7 @@ export default function DemoBookingBanner() {
           <X className="w-4 h-4" />
         </button>
 
-        <h3 className="text-base font-bold mb-1 pr-6" style={{ color: '#1e4d6b' }}>
+        <h3 className="text-base font-bold mb-1 pr-6" style={{ color: '#1E2D4D' }}>
           Like what you see?
         </h3>
         <p className="text-sm text-gray-600 mb-3">

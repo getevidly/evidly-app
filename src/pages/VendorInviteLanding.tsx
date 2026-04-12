@@ -10,7 +10,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { CheckCircle, Shield, Calendar, FileText, BarChart3 } from 'lucide-react';
 
-const NAVY = '#1e4d6b';
+const NAVY = '#1E2D4D';
 const GOLD = '#d4af37';
 
 // Demo provider lookup — in production this would be an API call
@@ -79,7 +79,7 @@ export function VendorInviteLanding() {
             Invited by {provider.name}
           </div>
 
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+          <h1 className="text-3xl sm:text-4xl font-bold text-[#1E2D4D] mb-4">
             Join EvidLY — the compliance<br />platform for commercial kitchens
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -95,7 +95,7 @@ export function VendorInviteLanding() {
             onClick={() => navigate(`/signup?invite=${code}`)}
             className="px-8 py-3 text-white font-semibold rounded-lg text-lg shadow-lg transition-colors"
             style={{ backgroundColor: NAVY }}
-            onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#163a52')}
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#141E33')}
             onMouseLeave={e => (e.currentTarget.style.backgroundColor = NAVY)}
           >
             Sign Up Free
@@ -104,7 +104,7 @@ export function VendorInviteLanding() {
         </div>
 
         {/* Services from provider */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8 mb-10">
+        <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8 mb-10">
           <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">
             Services {provider.name} provides you:
           </h2>
@@ -119,15 +119,15 @@ export function VendorInviteLanding() {
         </div>
 
         {/* Benefits */}
-        <h2 className="text-xl font-bold text-gray-900 text-center mb-6">What you get with EvidLY</h2>
+        <h2 className="text-xl font-bold text-[#1E2D4D] text-center mb-6">What you get with EvidLY</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-12">
           {BENEFITS.map(b => (
-            <div key={b.title} className="bg-white rounded-xl border border-gray-200 p-5 flex gap-4">
+            <div key={b.title} className="bg-white rounded-xl border border-gray-200 p-6 flex gap-4">
               <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: '#eef4f8' }}>
                 <b.icon size={20} style={{ color: NAVY }} />
               </div>
               <div>
-                <h3 className="text-sm font-semibold text-gray-900 mb-1">{b.title}</h3>
+                <h3 className="text-sm font-semibold text-[#1E2D4D] mb-1">{b.title}</h3>
                 <p className="text-xs text-gray-500">{b.description}</p>
               </div>
             </div>
@@ -135,8 +135,8 @@ export function VendorInviteLanding() {
         </div>
 
         {/* Bottom CTA */}
-        <div className="text-center bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-          <h2 className="text-lg font-bold text-gray-900 mb-2">Ready to get started?</h2>
+        <div className="text-center bg-white rounded-xl border border-gray-200 p-8">
+          <h2 className="text-lg font-bold text-[#1E2D4D] mb-2">Ready to get started?</h2>
           <p className="text-sm text-gray-500 mb-4">
             Your compliance records, vendor management, and facility safety — all in one place.
           </p>
@@ -144,7 +144,7 @@ export function VendorInviteLanding() {
             onClick={() => navigate(`/signup?invite=${code}`)}
             className="px-8 py-3 text-white font-semibold rounded-lg shadow transition-colors"
             style={{ backgroundColor: NAVY }}
-            onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#163a52')}
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#141E33')}
             onMouseLeave={e => (e.currentTarget.style.backgroundColor = NAVY)}
           >
             Sign Up Free

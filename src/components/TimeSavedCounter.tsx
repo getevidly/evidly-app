@@ -67,7 +67,7 @@ export function TimeSavedCounter({ hoursSaved, moneySaved, logsCompleted, docsSt
           <div
             key={stat.label}
             onClick={() => navigate(stat.link)}
-            className="bg-white rounded-xl border border-gray-200 p-5 animate-slide-up"
+            className="bg-white rounded-xl border border-gray-200 p-6 animate-slide-up"
             style={{
               animationDelay: `${index * 150}ms`,
               animationFillMode: 'both',

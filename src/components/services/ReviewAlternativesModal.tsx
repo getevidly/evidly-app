@@ -75,7 +75,7 @@ export function ReviewAlternativesModal({
         <div className="absolute inset-0 bg-black/50" onClick={onClose} />
         <div className="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-8 text-center">
           <CheckCircle className="w-14 h-14 text-green-500 mx-auto mb-4" />
-          <h3 className="text-lg font-bold text-gray-900 mb-2">Date Confirmed!</h3>
+          <h3 className="text-lg font-bold text-[#1E2D4D] mb-2">Date Confirmed!</h3>
           <p className="text-sm text-gray-600 mb-6">
             {request.service_type} with {request.vendor_name} confirmed for {formatDate(confirmedDatetime)} at {formatTime(confirmedDatetime)}.
           </p>
@@ -113,7 +113,7 @@ export function ReviewAlternativesModal({
 
           <button
             onClick={onClose}
-            className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg text-sm font-medium hover:bg-[#163a52]"
+            className="px-6 py-2 bg-[#1E2D4D] text-white rounded-lg text-sm font-medium hover:bg-[#162340]"
           >
             Done
           </button>
@@ -127,7 +127,7 @@ export function ReviewAlternativesModal({
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
       <div className="relative bg-white rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
-          <h2 className="text-lg font-bold text-gray-900">Review Alternative Dates</h2>
+          <h2 className="text-lg font-bold text-[#1E2D4D]">Review Alternative Dates</h2>
           <button onClick={onClose} className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100" aria-label="Close">
             <X className="w-5 h-5" />
           </button>
@@ -155,12 +155,12 @@ export function ReviewAlternativesModal({
                   onClick={() => setSelectedSlot(slot)}
                   className={`w-full flex items-center gap-3 p-4 rounded-lg border-2 text-left transition-colors ${
                     selectedSlot === slot
-                      ? 'border-[#1e4d6b] bg-blue-50/50'
+                      ? 'border-[#1E2D4D] bg-blue-50/50'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
                   <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                    selectedSlot === slot ? 'border-[#1e4d6b] bg-[#1e4d6b]' : 'border-gray-300'
+                    selectedSlot === slot ? 'border-[#1E2D4D] bg-[#1E2D4D]' : 'border-gray-300'
                   }`}>
                     {selectedSlot === slot && <div className="w-2 h-2 bg-white rounded-full" />}
                   </div>
@@ -186,7 +186,7 @@ export function ReviewAlternativesModal({
             <button
               onClick={handleAccept}
               disabled={!selectedSlot || submitting}
-              className="flex items-center justify-center gap-2 flex-1 px-4 py-2.5 bg-[#1e4d6b] text-white font-semibold rounded-lg hover:bg-[#163a52] transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center justify-center gap-2 flex-1 px-4 py-2.5 bg-[#1E2D4D] text-white font-semibold rounded-lg hover:bg-[#162340] transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {submitting ? (
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" />

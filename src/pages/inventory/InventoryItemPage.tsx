@@ -256,7 +256,7 @@ export function InventoryItemPage() {
                       </td>
                       <td className="px-4 py-3">
                         <span
-                          className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                          className="text-xs font-semibold px-2 py-0.5 rounded-full"
                           style={{ color: typeInfo.color, background: `${typeInfo.color}14` }}
                         >
                           {typeInfo.label}

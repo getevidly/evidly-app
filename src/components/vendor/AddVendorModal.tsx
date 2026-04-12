@@ -34,7 +34,7 @@ interface AddVendorModalProps {
 
 // ── Component ──────────────────────────────────────────────────────
 
-const PRIMARY = '#1e4d6b';
+const PRIMARY = '#1E2D4D';
 
 export function AddVendorModal({
   isOpen,
@@ -157,7 +157,7 @@ export function AddVendorModal({
       <div className="fixed inset-0 bg-black/50 z-50" onClick={handleClose} />
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div
-          className="bg-white rounded-xl shadow-sm border border-gray-200 w-[95vw] sm:w-full max-w-lg max-h-[90vh] overflow-y-auto"
+          className="bg-white rounded-xl border border-gray-200 w-[95vw] sm:w-full max-w-lg max-h-[90vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
@@ -165,10 +165,10 @@ export function AddVendorModal({
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <div className="p-2 bg-[#eef4f8] rounded-lg">
-                  <Plus className="h-5 w-5 text-[#1e4d6b]" />
+                  <Plus className="h-5 w-5 text-[#1E2D4D]" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-gray-900">Add Vendor</h3>
+                  <h3 className="text-lg font-bold text-[#1E2D4D]">Add Vendor</h3>
                   <p className="text-sm text-gray-500">Enter vendor details to create a record</p>
                 </div>
               </div>
@@ -188,7 +188,7 @@ export function AddVendorModal({
                 value={form.companyName}
                 onChange={(e) => setForm(prev => ({ ...prev, companyName: e.target.value }))}
                 placeholder="e.g., Acme Hood Cleaning"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
               />
             </div>
 
@@ -201,7 +201,7 @@ export function AddVendorModal({
                   const val = e.target.value;
                   setForm(prev => ({ ...prev, categories: val ? [val] : [] }));
                 }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent bg-white"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent bg-white"
               >
                 <option value="">Select a type...</option>
                 {VENDOR_CATEGORIES.map((cat) => (
@@ -219,7 +219,7 @@ export function AddVendorModal({
                 value={form.contactName}
                 onChange={(e) => setForm(prev => ({ ...prev, contactName: e.target.value }))}
                 placeholder="e.g., John Smith"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
               />
             </div>
 
@@ -232,7 +232,7 @@ export function AddVendorModal({
                   value={form.contactEmail}
                   onChange={(e) => setForm(prev => ({ ...prev, contactEmail: e.target.value }))}
                   placeholder="vendor@example.com"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
                 />
               </div>
               <div>
@@ -242,7 +242,7 @@ export function AddVendorModal({
                   value={form.contactPhone}
                   onChange={(e) => setForm(prev => ({ ...prev, contactPhone: e.target.value }))}
                   placeholder="(555) 123-4567"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
                 />
               </div>
             </div>
@@ -251,7 +251,7 @@ export function AddVendorModal({
             {accessibleLocations.length > 0 && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Location Assignment</label>
-                <div className="bg-gray-50 rounded-lg p-3 space-y-2">
+                <div className="bg-[#FAF7F0] rounded-lg p-3 space-y-2">
                   {accessibleLocations.map((loc) => (
                     <label key={loc.locationId} className="flex items-center gap-2 cursor-pointer">
                       <input
@@ -265,7 +265,7 @@ export function AddVendorModal({
                               : [...prev.locationIds, loc.locationId],
                           }));
                         }}
-                        className="w-4 h-4 rounded border-gray-300 text-[#1e4d6b] focus:ring-[#1e4d6b]"
+                        className="w-4 h-4 rounded border-gray-300 text-[#1E2D4D] focus:ring-[#1E2D4D]"
                       />
                       <span className="text-sm text-gray-700">{loc.locationName}</span>
                     </label>
@@ -282,12 +282,12 @@ export function AddVendorModal({
                 value={form.licenseCertNumber}
                 onChange={(e) => setForm(prev => ({ ...prev, licenseCertNumber: e.target.value }))}
                 placeholder="e.g., LIC-2026-12345"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
               />
             </div>
 
             {/* Insurance COI toggle */}
-            <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+            <div className="flex items-center justify-between bg-[#FAF7F0] rounded-lg p-3">
               <div>
                 <p className="text-sm font-medium text-gray-700">Insurance COI on File</p>
                 <p className="text-xs text-gray-500">Certificate of Insurance has been received</p>
@@ -296,7 +296,7 @@ export function AddVendorModal({
                 type="button"
                 onClick={() => setForm(prev => ({ ...prev, hasInsuranceCOI: !prev.hasInsuranceCOI }))}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  form.hasInsuranceCOI ? 'bg-[#1e4d6b]' : 'bg-gray-300'
+                  form.hasInsuranceCOI ? 'bg-[#1E2D4D]' : 'bg-gray-300'
                 }`}
               >
                 <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
@@ -321,14 +321,14 @@ export function AddVendorModal({
                 onChange={(e) => { setForm(prev => ({ ...prev, notes: e.target.value })); setAiFields(prev => { const s = new Set(prev); s.delete('vendorNotes'); return s; }); }}
                 placeholder="Any additional details..."
                 rows={2}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent resize-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent resize-none"
               />
               {aiFields.has('vendorNotes') && <AIGeneratedIndicator />}
             </div>
 
             {/* Info box */}
             <div className="bg-[#eef4f8] rounded-lg p-3 border border-[#b8d4e8]">
-              <p className="text-xs text-[#1e4d6b]">
+              <p className="text-xs text-[#1E2D4D]">
                 <strong>What happens next:</strong> The vendor record is created immediately and appears in your vendor list. You can send them an invite separately to connect their account.
               </p>
             </div>
@@ -347,7 +347,7 @@ export function AddVendorModal({
               disabled={submitting}
               className="px-4 py-2 text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
               style={{ backgroundColor: PRIMARY }}
-              onMouseEnter={e => { if (!submitting) e.currentTarget.style.backgroundColor = '#163a52'; }}
+              onMouseEnter={e => { if (!submitting) e.currentTarget.style.backgroundColor = '#141E33'; }}
               onMouseLeave={e => { e.currentTarget.style.backgroundColor = PRIMARY; }}
             >
               {submitting ? 'Adding...' : 'Add Vendor'}

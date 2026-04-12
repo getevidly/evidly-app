@@ -12,8 +12,9 @@ import {
 import { EmployeesList } from '../components/employees/EmployeesList';
 import { InviteEmployeeModal } from '../components/employees/InviteEmployeeModal';
 import { ErrorState } from '../components/shared/PageStates';
+import { usePageTitle } from '../hooks/usePageTitle';
 
-const NAVY = '#1e4d6b';
+const NAVY = '#1E2D4D';
 const F: React.CSSProperties = { fontFamily: "'DM Sans', 'Inter', sans-serif" };
 
 const ROLE_OPTIONS: { value: EmployeeRole | 'all'; label: string }[] = [
@@ -36,6 +37,7 @@ export function Employees() {
   const navigate = useNavigate();
   const { userRole } = useRole();
   const isAdmin = ['owner_operator', 'platform_admin', 'executive'].includes(userRole);
+  usePageTitle('Team');
 
   const [pageError, setPageError] = useState<string | null>(null);
   const [employees, setEmployees] = useState<Employee[]>(() => {

@@ -162,7 +162,7 @@ export function QuickSwitcher() {
             onKeyDown={handleKeyDown}
           />
           <div className="flex items-center gap-2 ml-2">
-            <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-medium text-gray-400 bg-gray-100 rounded border border-gray-200">ESC</kbd>
+            <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-xs font-medium text-gray-400 bg-gray-100 rounded border border-gray-200">ESC</kbd>
             <button onClick={() => setOpen(false)} className="sm:hidden">
               <X className="h-4 w-4 text-gray-400" />
             </button>
@@ -177,7 +177,7 @@ export function QuickSwitcher() {
 
           {locationResults.length > 0 && (
             <>
-              <div className="px-4 py-1.5 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Locations</div>
+              <div className="px-4 py-1.5 text-xs font-semibold text-gray-400 uppercase tracking-wider">Locations</div>
               {locationResults.map((item, i) => {
                 const globalIndex = filtered.indexOf(item);
                 const scoreGrade = item.score ? getGrade(item.score) : null;
@@ -189,7 +189,7 @@ export function QuickSwitcher() {
                       globalIndex === selectedIndex ? 'bg-[#eef4f8]' : 'hover:bg-gray-50'
                     }`}
                   >
-                    <MapPin className="h-4 w-4 mr-3 flex-shrink-0" style={{ color: '#1e4d6b' }} />
+                    <MapPin className="h-4 w-4 mr-3 flex-shrink-0" style={{ color: '#1E2D4D' }} />
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium text-gray-900 truncate">{item.label}</div>
                       {item.sublabel && <div className="text-xs text-gray-400 truncate">{item.sublabel}</div>}
@@ -214,7 +214,7 @@ export function QuickSwitcher() {
 
           {pageResults.length > 0 && (
             <>
-              <div className="px-4 py-1.5 text-[10px] font-semibold text-gray-400 uppercase tracking-wider mt-1">Pages</div>
+              <div className="px-4 py-1.5 text-xs font-semibold text-gray-400 uppercase tracking-wider mt-1">Pages</div>
               {pageResults.map((item) => {
                 const globalIndex = filtered.indexOf(item);
                 const Icon = item.icon;
@@ -236,7 +236,7 @@ export function QuickSwitcher() {
         </div>
 
         {/* Footer hints */}
-        <div className="hidden sm:flex items-center justify-between px-4 py-2 bg-gray-50 border-t border-gray-100 text-[10px] text-gray-400">
+        <div className="hidden sm:flex items-center justify-between px-4 py-2 bg-[#FAF7F0] border-t border-gray-100 text-xs text-gray-400">
           <div className="flex items-center gap-3">
             <span><kbd className="px-1 py-0.5 bg-white border border-gray-200 rounded text-[9px]">&uarr;</kbd> <kbd className="px-1 py-0.5 bg-white border border-gray-200 rounded text-[9px]">&darr;</kbd> Navigate</span>
             <span><kbd className="px-1 py-0.5 bg-white border border-gray-200 rounded text-[9px]">Enter</kbd> Select</span>

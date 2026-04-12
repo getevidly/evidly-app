@@ -55,7 +55,7 @@ export function UnassignedPanel({ jobs, onClose, onJobClick }: UnassignedPanelPr
       <div className="flex items-center justify-between px-4 py-3 border-b" style={{ borderColor: CARD_BORDER }}>
         <div>
           <h3 className="text-sm font-bold" style={{ color: NAVY }}>Unassigned Jobs</h3>
-          <p className="text-[10px] mt-0.5" style={{ color: TEXT_TERTIARY }}>
+          <p className="text-xs mt-0.5" style={{ color: TEXT_TERTIARY }}>
             {jobs.length} job{jobs.length !== 1 ? 's' : ''} pending assignment
           </p>
         </div>
@@ -79,7 +79,7 @@ export function UnassignedPanel({ jobs, onClose, onJobClick }: UnassignedPanelPr
         </div>
         <button
           onClick={nextSort}
-          className="flex items-center gap-1.5 text-[10px] font-semibold hover:bg-gray-50 px-2 py-1 rounded"
+          className="flex items-center gap-1.5 text-xs font-semibold hover:bg-gray-50 px-2 py-1 rounded"
           style={{ color: TEXT_TERTIARY }}
         >
           <ArrowUpDown className="w-3 h-3" />
@@ -94,7 +94,7 @@ export function UnassignedPanel({ jobs, onClose, onJobClick }: UnassignedPanelPr
             <p className="text-xs font-medium" style={{ color: NAVY }}>
               {jobs.length === 0 ? 'No unassigned jobs' : 'No matches'}
             </p>
-            <p className="text-[10px] mt-1" style={{ color: MUTED }}>
+            <p className="text-xs mt-1" style={{ color: MUTED }}>
               {jobs.length === 0
                 ? 'All jobs have been assigned to technicians.'
                 : 'Try a different search term.'}
@@ -126,7 +126,7 @@ function DraggableUnassignedJob({ job, onClick }: { job: ScheduledJob; onClick?:
     <div
       ref={setNodeRef}
       style={{ ...style, borderColor: CARD_BORDER }}
-      className="rounded-lg border p-2.5 cursor-grab active:cursor-grabbing hover:shadow-sm transition-shadow bg-white"
+      className="rounded-xl border p-2.5 cursor-grab active:cursor-grabbing transition-shadow bg-white"
       onClick={() => onClick?.(job)}
       {...attributes}
       {...listeners}
@@ -135,14 +135,14 @@ function DraggableUnassignedJob({ job, onClick }: { job: ScheduledJob; onClick?:
         <GripVertical className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" style={{ color: CARD_BORDER }} />
         <div className="min-w-0 flex-1">
           <p className="text-xs font-semibold truncate" style={{ color: NAVY }}>{job.customerName}</p>
-          <p className="text-[10px] truncate" style={{ color: TEXT_TERTIARY }}>{job.locationName}</p>
+          <p className="text-xs truncate" style={{ color: TEXT_TERTIARY }}>{job.locationName}</p>
           <div className="flex items-center gap-2 mt-1">
-            <span className="text-[10px] font-medium" style={{ color: TEXT_TERTIARY }}>
+            <span className="text-xs font-medium" style={{ color: TEXT_TERTIARY }}>
               {job.date} · {job.startTime}–{job.endTime}
             </span>
           </div>
           {job.serviceTypes.length > 0 && (
-            <p className="text-[10px] mt-0.5 truncate" style={{ color: TEXT_TERTIARY }}>
+            <p className="text-xs mt-0.5 truncate" style={{ color: TEXT_TERTIARY }}>
               {job.serviceTypes.join(', ')}
             </p>
           )}

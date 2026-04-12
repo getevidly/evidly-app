@@ -43,17 +43,17 @@ export function AttentionItemList({ items }: AttentionItemListProps) {
               <Icon size={16} className="shrink-0 mt-0.5" style={{ color: iconColor }} />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
-                  <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded"
+                  <span className="text-xs font-bold uppercase px-1.5 py-0.5 rounded"
                     style={{ backgroundColor: iconColor, color: '#FFFFFF' }}>
                     {item.severity}
                   </span>
                   {item.locationName && (
-                    <span className="text-[11px] font-medium" style={{ color: '#6B7F96' }}>
+                    <span className="text-xs font-medium" style={{ color: '#6B7F96' }}>
                       {item.locationName}
                     </span>
                   )}
                 </div>
-                <p className="text-[13px]" style={{ color: labelColor }}>
+                <p className="text-sm" style={{ color: labelColor }}>
                   {item.description}
                 </p>
               </div>

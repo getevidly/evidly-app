@@ -28,7 +28,7 @@ export function PayPeriods({ payPeriods, onClosePeriod, onExportPeriod, onMarkPa
           <button
             onClick={onCreatePeriod}
             className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-lg text-white transition-colors hover:opacity-90"
-            style={{ backgroundColor: '#1e4d6b' }}
+            style={{ backgroundColor: '#1E2D4D' }}
           >
             <Plus className="w-4 h-4" />
             Create Pay Period
@@ -54,7 +54,7 @@ export function PayPeriods({ payPeriods, onClosePeriod, onExportPeriod, onMarkPa
                 {/* Left: date range + status */}
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-lg" style={{ backgroundColor: '#EEF1F7' }}>
-                    <Calendar className="w-5 h-5" style={{ color: '#1e4d6b' }} />
+                    <Calendar className="w-5 h-5" style={{ color: '#1E2D4D' }} />
                   </div>
                   <div>
                     <p className="text-sm font-semibold" style={{ color: '#0B1628' }}>

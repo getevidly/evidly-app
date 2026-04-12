@@ -13,7 +13,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useRole, type UserRole } from '../../contexts/RoleContext';
 import { supabase } from '../../lib/supabase';
 
-const BRAND = '#1e4d6b';
+const BRAND = '#1E2D4D';
 const F = { fontFamily: "'DM Sans', 'Inter', system-ui, sans-serif" };
 
 const ROLE_LABELS: Record<string, string> = {
@@ -29,7 +29,7 @@ const ROLE_LABELS: Record<string, string> = {
 
 const ROLE_COLORS: Record<string, string> = {
   platform_admin: '#7c3aed',
-  owner_operator: '#1e4d6b',
+  owner_operator: '#1E2D4D',
   executive: '#0d9488',
   compliance_manager: '#2563eb',
   chef: '#d97706',

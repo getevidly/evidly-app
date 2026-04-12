@@ -57,8 +57,8 @@ function ErrorBanner({ message, onRetry }: { message: string; onRetry: () => voi
     >
       <AlertTriangle size={18} className="text-red-500 shrink-0" />
       <div className="flex-1 min-w-0">
-        <p className="text-[13px] font-semibold text-red-800">Dashboard data could not be loaded</p>
-        <p className="text-[11px] text-red-600">{message}</p>
+        <p className="text-sm font-semibold text-red-800">Dashboard data could not be loaded</p>
+        <p className="text-xs text-red-600">{message}</p>
       </div>
       <button
         type="button"
@@ -263,7 +263,7 @@ export default function OwnerOperatorDashboard() {
                 onClick={() => setActiveTab(tab)}
                 className="flex-1 py-1.5 text-xs font-semibold rounded-md transition-all"
                 style={{
-                  backgroundColor: activeTab === tab ? '#1e4d6b' : 'transparent',
+                  backgroundColor: activeTab === tab ? '#1E2D4D' : 'transparent',
                   color: activeTab === tab ? '#ffffff' : '#3D5068',
                 }}
               >

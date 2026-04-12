@@ -125,7 +125,7 @@ export function MyTimecard({ shifts, employeeId, employeeName, onClockIn, onCloc
                   >
                     <td className="px-4 py-2.5" style={{ color: '#0B1628' }}>
                       <span className="font-medium">{DAY_LABELS[idx]}</span>
-                      {isToday && <span className="ml-1.5 text-xs font-semibold px-1.5 py-0.5 rounded" style={{ color: '#1e4d6b', backgroundColor: '#dbeafe' }}>Today</span>}
+                      {isToday && <span className="ml-1.5 text-xs font-semibold px-1.5 py-0.5 rounded" style={{ color: '#1E2D4D', backgroundColor: '#dbeafe' }}>Today</span>}
                     </td>
                     <td className="px-4 py-2.5" style={{ color: '#3D5068' }}>{isFuture ? '—' : shift?.clockIn || '—'}</td>
                     <td className="px-4 py-2.5" style={{ color: '#3D5068' }}>{isFuture ? '—' : shift?.clockOut || (shift?.clockIn ? 'Active' : '—')}</td>
@@ -173,7 +173,7 @@ export function MyTimecard({ shifts, employeeId, employeeName, onClockIn, onCloc
         onClick={onSubmitTimecard}
         disabled={!allComplete}
         className="w-full flex items-center justify-center gap-2 px-5 py-3 text-sm font-semibold rounded-xl text-white transition-colors disabled:opacity-50"
-        style={{ backgroundColor: '#1e4d6b' }}
+        style={{ backgroundColor: '#1E2D4D' }}
       >
         <Send className="w-4 h-4" />
         Submit Timecard

@@ -159,7 +159,7 @@ export function VendorConnectApply() {
             <div className="w-16 h-16 rounded-full bg-green-50 flex items-center justify-center mx-auto mb-4">
               <CheckCircle className="w-8 h-8 text-green-500" />
             </div>
-            <h2 className="text-lg font-bold text-gray-900 mb-2">Application Received</h2>
+            <h2 className="text-lg font-bold text-[#1E2D4D] mb-2">Application Received</h2>
             <p className="text-sm text-gray-500 max-w-sm mx-auto">
               Thank you for your interest in Vendor Connect. CPP will review your application within 3 business days.
               You'll receive an email at <strong>{email}</strong> with the outcome.
@@ -168,8 +168,8 @@ export function VendorConnectApply() {
         ) : (
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Company Info */}
-            <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
-              <h2 className="text-sm font-semibold text-gray-900">Company Information</h2>
+            <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+              <h2 className="text-sm font-semibold text-[#1E2D4D]">Company Information</h2>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-medium text-gray-600 mb-1">Company Name *</label>
@@ -207,8 +207,8 @@ export function VendorConnectApply() {
             </div>
 
             {/* Services */}
-            <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
-              <h2 className="text-sm font-semibold text-gray-900">Services Offered *</h2>
+            <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+              <h2 className="text-sm font-semibold text-[#1E2D4D]">Services Offered *</h2>
               <div className="space-y-2">
                 {SERVICE_OPTIONS.map(svc => (
                   <button
@@ -230,8 +230,8 @@ export function VendorConnectApply() {
             </div>
 
             {/* Counties */}
-            <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
-              <h2 className="text-sm font-semibold text-gray-900">Counties Served *</h2>
+            <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+              <h2 className="text-sm font-semibold text-[#1E2D4D]">Counties Served *</h2>
               <div className="flex flex-wrap gap-2">
                 {CA_COUNTIES.map(county => (
                   <button
@@ -273,8 +273,8 @@ export function VendorConnectApply() {
             )}
 
             {/* Qualifications */}
-            <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
-              <h2 className="text-sm font-semibold text-gray-900">Qualifications</h2>
+            <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+              <h2 className="text-sm font-semibold text-[#1E2D4D]">Qualifications</h2>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-medium text-gray-600 mb-1">Years in Business</label>
@@ -315,8 +315,8 @@ export function VendorConnectApply() {
             </div>
 
             {/* Why Apply */}
-            <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
-              <h2 className="text-sm font-semibold text-gray-900">Why do you want to join Vendor Connect?</h2>
+            <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+              <h2 className="text-sm font-semibold text-[#1E2D4D]">Why do you want to join Vendor Connect?</h2>
               <textarea
                 rows={4}
                 value={whyApply}

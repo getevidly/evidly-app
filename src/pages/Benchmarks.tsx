@@ -22,6 +22,7 @@ import {
   SIZE_BENCHMARKS,
   type MonthlyTrend,
 } from '../data/benchmarkDemoData';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 // ── Badge tiers (UI-only) ──────────────────────────────────────────
 
@@ -69,7 +70,7 @@ function MiniTrendChart({ data }: { data: MonthlyTrend[] }) {
     <svg viewBox={`0 0 ${w} ${h}`} className="w-full" style={{ maxHeight: 200 }}>
       {/* Y-axis labels */}
       {[min, min + (max - min) / 2, max].map((v, i) => (
-        <text key={i} x={pad - 8} y={toY(Math.round(v)) + 4} textAnchor="end" className="text-[10px] fill-gray-400">{Math.round(v)}</text>
+        <text key={i} x={pad - 8} y={toY(Math.round(v)) + 4} textAnchor="end" className="text-xs fill-gray-400">{Math.round(v)}</text>
       ))}
       {/* Grid lines */}
       {[0, 0.25, 0.5, 0.75, 1].map((f, i) => (
@@ -109,6 +110,7 @@ export function Benchmarks() {
   const { userRole } = useRole();
   const { isDemoMode } = useDemo();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  usePageTitle('Benchmarks');
   const reportRef = useRef<HTMLDivElement>(null);
   const [pdfLoading, setPdfLoading] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
@@ -196,8 +198,8 @@ export function Benchmarks() {
         {/* Header */}
         <div className="flex items-start justify-between flex-wrap gap-2">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-              <BarChart3 className="h-7 w-7" style={{ color: '#1e4d6b' }} />
+            <h1 className="text-2xl font-bold text-[#1E2D4D] flex items-center gap-2">
+              <BarChart3 className="h-7 w-7" style={{ color: '#1E2D4D' }} />
               Compliance Benchmarks
             </h1>
             <p className="text-sm text-gray-600 mt-1">See how you compare against {benchmark.industryComparison.sampleSize.toLocaleString()}+ commercial kitchens on EvidLY</p>
@@ -213,7 +215,7 @@ export function Benchmarks() {
               onClick={handleDownloadPDF}
               disabled={pdfLoading}
               className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg text-white min-h-[44px] disabled:opacity-60"
-              style={{ backgroundColor: '#1e4d6b' }}
+              style={{ backgroundColor: '#1E2D4D' }}
             >
               {pdfLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />} {pdfLoading ? 'Generating...' : 'Export PDF'}
             </button>
@@ -224,7 +226,7 @@ export function Benchmarks() {
         {!isDemoMode && (
           <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
             <BarChart3 className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-            <h2 className="text-lg font-semibold text-gray-900 mb-2">Benchmarks Coming Soon</h2>
+            <h2 className="text-lg font-semibold text-[#1E2D4D] mb-2">Benchmarks Coming Soon</h2>
             <p className="text-sm text-gray-500 max-w-md mx-auto">
               As more kitchens join EvidLY, your compliance benchmarks will become available.
               Continue logging your operations to be ready when benchmarks launch.
@@ -266,7 +268,7 @@ export function Benchmarks() {
         {/* ── Section 1: Overall Ranking ── */}
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <div className="px-4 sm:px-6 py-4 border-b border-gray-100 flex items-center justify-between cursor-pointer" onClick={() => toggleSection('overall')}>
-            <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+            <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
               <Trophy className="h-5 w-5" style={{ color: '#d4af37' }} />
               Overall Ranking
             </h2>
@@ -279,7 +281,7 @@ export function Benchmarks() {
             {/* Jurisdiction difficulty context */}
             {jurisdictionDifficulty.difficultyIndex > 0.5 && (
               <div className="mb-4 p-3 rounded-lg text-xs flex items-start gap-2" style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}>
-                <Info className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" style={{ color: '#1e4d6b' }} />
+                <Info className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" style={{ color: '#1E2D4D' }} />
                 <span className="text-gray-700">
                   <strong>{jurisdictionDifficulty.countyName}</strong>: {jurisdictionDifficulty.explanation}{' '}
                   Your adjusted percentile accounts for this (+{jurisdictionDifficulty.adjustedPercentile - jurisdictionDifficulty.rawPercentile} pts).
@@ -292,7 +294,7 @@ export function Benchmarks() {
                 <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">vs Industry Average</div>
                 <div className="flex items-end justify-center gap-3">
                   <div>
-                    <div className="text-xl sm:text-3xl font-bold" style={{ color: '#1e4d6b' }}>{yourScore}</div>
+                    <div className="text-xl sm:text-3xl font-bold" style={{ color: '#1E2D4D' }}>{yourScore}</div>
                     <div className="text-xs text-gray-500">Your Score</div>
                   </div>
                   <div className="text-gray-300 text-lg pb-1">vs</div>
@@ -308,7 +310,7 @@ export function Benchmarks() {
                 <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">vs {filters.vertical} Average</div>
                 <div className="flex items-end justify-center gap-3">
                   <div>
-                    <div className="text-xl sm:text-3xl font-bold" style={{ color: '#1e4d6b' }}>{yourScore}</div>
+                    <div className="text-xl sm:text-3xl font-bold" style={{ color: '#1E2D4D' }}>{yourScore}</div>
                     <div className="text-xs text-gray-500">Your Score</div>
                   </div>
                   <div className="text-gray-300 text-lg pb-1">vs</div>
@@ -324,7 +326,7 @@ export function Benchmarks() {
                 <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">vs {filters.county} Peers</div>
                 <div className="flex items-end justify-center gap-3">
                   <div>
-                    <div className="text-xl sm:text-3xl font-bold" style={{ color: '#1e4d6b' }}>{yourScore}</div>
+                    <div className="text-xl sm:text-3xl font-bold" style={{ color: '#1E2D4D' }}>{yourScore}</div>
                     <div className="text-xs text-gray-500">Your Score</div>
                   </div>
                   <div className="text-gray-300 text-lg pb-1">vs</div>
@@ -342,8 +344,8 @@ export function Benchmarks() {
         {/* ── Section 2: Category Breakdown ── */}
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <div className="px-4 sm:px-6 py-4 border-b border-gray-100">
-            <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-              <BarChart3 className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+            <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
+              <BarChart3 className="h-5 w-5" style={{ color: '#1E2D4D' }} />
               Category Breakdown
             </h2>
           </div>
@@ -363,7 +365,7 @@ export function Benchmarks() {
                   {pillarBenchmarks.map((pb) => (
                     <tr key={pb.pillar}>
                       <td className="py-3 pr-4 text-sm text-gray-900">{pb.pillar}</td>
-                      <td className="py-3 px-2 text-center text-sm font-bold" style={{ color: '#1e4d6b' }}>{pb.yourScore}</td>
+                      <td className="py-3 px-2 text-center text-sm font-bold" style={{ color: '#1E2D4D' }}>{pb.yourScore}</td>
                       <td className="py-3 px-2 text-center text-sm text-gray-600 hidden sm:table-cell">{pb.peerMean}</td>
                       <td className="py-3 px-2 text-center"><PercentileBadge pct={pb.percentile} /></td>
                       <td className="py-3 pl-4 hidden sm:table-cell">
@@ -371,9 +373,9 @@ export function Benchmarks() {
                       </td>
                     </tr>
                   ))}
-                  <tr className="bg-gray-50 font-semibold">
+                  <tr className="bg-[#FAF7F0] font-semibold">
                     <td className="py-3 pr-4 text-sm text-gray-900">Overall</td>
-                    <td className="py-3 px-2 text-center text-sm font-bold" style={{ color: '#1e4d6b' }}>{yourScore}</td>
+                    <td className="py-3 px-2 text-center text-sm font-bold" style={{ color: '#1E2D4D' }}>{yourScore}</td>
                     <td className="py-3 px-2 text-center text-sm text-gray-600 hidden sm:table-cell">{benchmark.verticalComparison.peerMean}</td>
                     <td className="py-3 px-2 text-center"><PercentileBadge pct={benchmark.verticalComparison.percentile} /></td>
                     <td className="py-3 pl-4 hidden sm:table-cell">
@@ -390,8 +392,8 @@ export function Benchmarks() {
         <FeatureGate flagKey="industry-benchmarks">
           <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             <div className="px-4 sm:px-6 py-4 border-b border-gray-100">
-              <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                <Target className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+              <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
+                <Target className="h-5 w-5" style={{ color: '#1E2D4D' }} />
                 Subcategory Deep Dive
               </h2>
             </div>
@@ -400,7 +402,7 @@ export function Benchmarks() {
                 {subcategoryBenchmarks.map((item) => (
                   <div key={item.key} className="flex items-center gap-4">
                     <div className="w-52 text-sm text-gray-700">{item.label}</div>
-                    <ScoreBar value={item.yourScore} color="#1e4d6b" />
+                    <ScoreBar value={item.yourScore} color="#1E2D4D" />
                     <div className="w-20 text-xs text-gray-500 text-right">Avg: {item.peerMean}%</div>
                     <PercentileBadge pct={item.percentile} />
                   </div>
@@ -415,7 +417,7 @@ export function Benchmarks() {
           {/* Lead */}
           <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             <div className="px-4 sm:px-6 py-4 border-b border-gray-100" style={{ backgroundColor: '#f0fdf4' }}>
-              <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+              <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
                 <TrendingUp className="h-5 w-5 text-green-600" />
                 Where You Lead
               </h2>
@@ -428,7 +430,7 @@ export function Benchmarks() {
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-0.5">
-                      <span className="text-sm font-semibold text-gray-900">{item.label}</span>
+                      <span className="text-sm font-semibold text-[#1E2D4D]">{item.label}</span>
                       <PercentileBadge pct={item.percentile} />
                     </div>
                     <p className="text-xs text-gray-600">
@@ -443,7 +445,7 @@ export function Benchmarks() {
           {/* Lag */}
           <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             <div className="px-4 sm:px-6 py-4 border-b border-gray-100" style={{ backgroundColor: '#fef2f2' }}>
-              <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+              <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
                 <TrendingDown className="h-5 w-5 text-red-500" />
                 Where You Lag
               </h2>
@@ -457,7 +459,7 @@ export function Benchmarks() {
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-0.5">
-                        <span className="text-sm font-semibold text-gray-900">{item.label}</span>
+                        <span className="text-sm font-semibold text-[#1E2D4D]">{item.label}</span>
                         <PercentileBadge pct={item.percentile} />
                       </div>
                       <p className="text-xs text-gray-600 mb-2">
@@ -465,8 +467,8 @@ export function Benchmarks() {
                       </p>
                       {leadLag.recommendations[item.key] && (
                         <div className="flex items-start gap-2 p-2 rounded-md" style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}>
-                          <Brain className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" style={{ color: '#1e4d6b' }} />
-                          <p className="text-xs font-medium" style={{ color: '#1e4d6b' }}>{leadLag.recommendations[item.key]}</p>
+                          <Brain className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" style={{ color: '#1E2D4D' }} />
+                          <p className="text-xs font-medium" style={{ color: '#1E2D4D' }}>{leadLag.recommendations[item.key]}</p>
                         </div>
                       )}
                     </div>
@@ -480,8 +482,8 @@ export function Benchmarks() {
         {/* ── Section 5: Trend Analysis ── */}
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <div className="px-4 sm:px-6 py-4 border-b border-gray-100">
-            <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-              <TrendingUp className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+            <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
+              <TrendingUp className="h-5 w-5" style={{ color: '#1E2D4D' }} />
               12-Month Trend Analysis
             </h2>
           </div>
@@ -493,7 +495,7 @@ export function Benchmarks() {
             </div>
             <MiniTrendChart data={trendData} />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-              <div className="p-3 rounded-lg bg-gray-50 text-center">
+              <div className="p-3 rounded-lg bg-[#FAF7F0] text-center">
                 <div className="text-xs text-gray-500 mb-1">Q4 vs Q3 Change</div>
                 <div className="text-lg font-bold text-green-600">
                   {(() => {
@@ -505,13 +507,13 @@ export function Benchmarks() {
                   })()}
                 </div>
               </div>
-              <div className="p-3 rounded-lg bg-gray-50 text-center">
+              <div className="p-3 rounded-lg bg-[#FAF7F0] text-center">
                 <div className="text-xs text-gray-500 mb-1">Current Rank</div>
                 <div className="text-sm font-semibold text-gray-800">#{benchmark.industryComparison.rank} of {benchmark.industryComparison.totalPeers.toLocaleString()}</div>
               </div>
-              <div className="p-3 rounded-lg bg-gray-50 text-center">
+              <div className="p-3 rounded-lg bg-[#FAF7F0] text-center">
                 <div className="text-xs text-gray-500 mb-1">Size Comparison</div>
-                <div className="text-lg font-bold" style={{ color: '#1e4d6b' }}>{benchmark.sizeComparison.percentile}th <span className="text-xs font-normal text-gray-500">percentile ({SIZE_BENCHMARKS.find(s => s.size === filters.size)?.label ?? filters.size})</span></div>
+                <div className="text-lg font-bold" style={{ color: '#1E2D4D' }}>{benchmark.sizeComparison.percentile}th <span className="text-xs font-normal text-gray-500">percentile ({SIZE_BENCHMARKS.find(s => s.size === filters.size)?.label ?? filters.size})</span></div>
               </div>
             </div>
           </div>
@@ -520,8 +522,8 @@ export function Benchmarks() {
         {/* ── Multi-Location Internal Leaderboard ── */}
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <div className="px-4 sm:px-6 py-4 border-b border-gray-100">
-            <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-              <Building2 className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+            <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
+              <Building2 className="h-5 w-5" style={{ color: '#1E2D4D' }} />
               Multi-Location Leaderboard
             </h2>
             <p className="text-xs text-gray-500 mt-1">Rank your locations against each other and industry peers</p>
@@ -543,13 +545,13 @@ export function Benchmarks() {
                   {locationRankings.map((loc, i) => (
                     <tr key={loc.locationId} className={i === 0 ? 'bg-green-50/30' : i === locationRankings.length - 1 ? 'bg-red-50/30' : ''}>
                       <td className="py-3 text-sm font-bold text-gray-500">{i + 1}</td>
-                      <td className="py-3 text-sm font-semibold text-gray-900 flex items-center gap-2">
+                      <td className="py-3 text-sm font-semibold text-[#1E2D4D] flex items-center gap-2">
                         <MapPin className="h-3.5 w-3.5 text-gray-400" />
                         {loc.name}
                         {i === 0 && <span className="text-xs text-green-600 font-medium">Best</span>}
                         {i === locationRankings.length - 1 && <span className="text-xs text-red-500 font-medium">Needs Attention</span>}
                       </td>
-                      <td className="py-3 text-center text-sm font-bold" style={{ color: '#1e4d6b' }}>{loc.foodSafety}</td>
+                      <td className="py-3 text-center text-sm font-bold" style={{ color: '#1E2D4D' }}>{loc.foodSafety}</td>
                       <td className="py-3 text-center text-sm text-gray-600">{loc.facilitySafety}</td>
                       <td className="py-3 text-center"><PercentileBadge pct={loc.industryPercentile} /></td>
                       <td className="py-3 text-center hidden sm:table-cell">
@@ -570,8 +572,8 @@ export function Benchmarks() {
             {/* Cross-Location Patterns */}
             {locationRankings.length > 1 && (
               <div className="mt-6 p-4 rounded-lg" style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}>
-                <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
-                  <Brain className="h-4 w-4" style={{ color: '#1e4d6b' }} />
+                <h3 className="text-sm font-bold text-[#1E2D4D] mb-3 flex items-center gap-2">
+                  <Brain className="h-4 w-4" style={{ color: '#1E2D4D' }} />
                   Cross-Location Patterns
                 </h3>
                 <div className="space-y-2 text-xs text-gray-700">
@@ -594,7 +596,7 @@ export function Benchmarks() {
         {/* ── Shareable Badges & Certificates ── */}
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <div className="px-4 sm:px-6 py-4 border-b border-gray-100">
-            <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+            <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
               <Award className="h-5 w-5" style={{ color: '#d4af37' }} />
               Shareable Badges & Certificates
             </h2>
@@ -618,7 +620,7 @@ export function Benchmarks() {
                     </div>
                   )}
                   <badge.icon className="h-10 w-10 mx-auto mb-3" style={{ color: badge.color }} />
-                  <h3 className="text-sm font-bold text-gray-900 mb-1">{badge.label}</h3>
+                  <h3 className="text-sm font-bold text-[#1E2D4D] mb-1">{badge.label}</h3>
                   <p className="text-xs text-gray-500 mb-3">{badge.desc}</p>
                   {badge.qualified ? (
                     <div className="space-y-2">
@@ -645,7 +647,7 @@ export function Benchmarks() {
             {/* Share CTA */}
             <div className="mt-6 p-4 rounded-lg border border-gray-200 flex items-center justify-between flex-wrap gap-2">
               <div>
-                <h3 className="text-sm font-bold text-gray-900">Share your achievements</h3>
+                <h3 className="text-sm font-bold text-[#1E2D4D]">Share your achievements</h3>
                 <p className="text-xs text-gray-500 mt-0.5">Pre-written posts for LinkedIn, Facebook, and more. Include in insurance apps, franchise evaluations, and RFPs.</p>
               </div>
               <div className="flex items-center gap-2">
@@ -666,7 +668,7 @@ export function Benchmarks() {
         {/* ── EvidLY Compliance Index (Quarterly Public Report) ── */}
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <div className="px-4 sm:px-6 py-4 border-b border-gray-100" style={{ backgroundColor: '#fdf8e8' }}>
-            <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+            <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
               <BarChart3 className="h-5 w-5" style={{ color: '#d4af37' }} />
               EvidLY Compliance Index — Q4 2025
             </h2>
@@ -674,36 +676,36 @@ export function Benchmarks() {
           </div>
           <div className="p-4 sm:p-6">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-              <div className="text-center p-3 rounded-lg bg-gray-50">
+              <div className="text-center p-3 rounded-lg bg-[#FAF7F0]">
                 <div className="text-2xl font-bold text-gray-800">{benchmark.industryComparison.peerMean}</div>
                 <div className="text-xs text-gray-500">Industry Avg Score</div>
               </div>
-              <div className="text-center p-3 rounded-lg bg-gray-50">
+              <div className="text-center p-3 rounded-lg bg-[#FAF7F0]">
                 <div className="text-2xl font-bold text-green-600">+2</div>
                 <div className="text-xs text-gray-500">vs Q3 2025</div>
               </div>
-              <div className="text-center p-3 rounded-lg bg-gray-50">
+              <div className="text-center p-3 rounded-lg bg-[#FAF7F0]">
                 <div className="text-2xl font-bold text-gray-800">{benchmark.industryComparison.sampleSize.toLocaleString()}</div>
                 <div className="text-xs text-gray-500">Kitchens Sampled</div>
               </div>
-              <div className="text-center p-3 rounded-lg bg-gray-50">
+              <div className="text-center p-3 rounded-lg bg-[#FAF7F0]">
                 <div className="text-2xl font-bold text-gray-800">14</div>
                 <div className="text-xs text-gray-500">Counties Covered</div>
               </div>
             </div>
 
             <div className="space-y-3 mb-6">
-              <h3 className="text-sm font-bold text-gray-900">Score by Vertical</h3>
+              <h3 className="text-sm font-bold text-[#1E2D4D]">Score by Vertical</h3>
               {VERTICAL_BENCHMARKS.map((v) => (
                 <div key={v.vertical} className="flex items-center gap-3">
                   <div className="w-32 text-xs text-gray-600">{v.vertical}</div>
-                  <ScoreBar value={v.avgScore} color="#1e4d6b" />
+                  <ScoreBar value={v.avgScore} color="#1E2D4D" />
                 </div>
               ))}
             </div>
 
             <div className="space-y-2 mb-6">
-              <h3 className="text-sm font-bold text-gray-900">Top Compliance Gaps (Industry-Wide)</h3>
+              <h3 className="text-sm font-bold text-[#1E2D4D]">Top Compliance Gaps (Industry-Wide)</h3>
               {[
                 'Vendor document expiration management (38% of kitchens have at least 1 expired vendor cert)',
                 'Cooling log completion (only 62% completion rate industry-wide)',
@@ -717,12 +719,12 @@ export function Benchmarks() {
               ))}
             </div>
 
-            <div className="flex items-center justify-between p-3 rounded-lg border border-gray-200 bg-gray-50 flex-wrap gap-2">
+            <div className="flex items-center justify-between p-3 rounded-lg border border-gray-200 bg-[#FAF7F0] flex-wrap gap-2">
               <div className="text-sm">
-                <span className="font-semibold text-gray-900">Full Q4 2025 Report</span>
+                <span className="font-semibold text-[#1E2D4D]">Full Q4 2025 Report</span>
                 <span className="text-gray-500 ml-2 text-xs">Published Jan 15, 2026 — 10 sections, all 14 counties</span>
               </div>
-              <button onClick={() => navigate('/compliance-index')} className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg text-white min-h-[44px]" style={{ backgroundColor: '#1e4d6b' }}>
+              <button onClick={() => navigate('/compliance-index')} className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg text-white min-h-[44px]" style={{ backgroundColor: '#1E2D4D' }}>
                 <ArrowRight className="h-3.5 w-3.5" /> View Full Report
               </button>
             </div>
@@ -731,10 +733,10 @@ export function Benchmarks() {
 
         {/* Network Effect CTA */}
         <div className="rounded-xl p-4 sm:p-6 text-center" style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}>
-          <Users className="h-8 w-8 mx-auto mb-2" style={{ color: '#1e4d6b' }} />
-          <h3 className="text-lg font-bold text-gray-900 mb-1">Based on data from {benchmark.industryComparison.sampleSize.toLocaleString()}+ commercial kitchens</h3>
+          <Users className="h-8 w-8 mx-auto mb-2" style={{ color: '#1E2D4D' }} />
+          <h3 className="text-lg font-bold text-[#1E2D4D] mb-1">Based on data from {benchmark.industryComparison.sampleSize.toLocaleString()}+ commercial kitchens</h3>
           <p className="text-sm text-gray-600 mb-3">The more kitchens on EvidLY, the more accurate your benchmarks become. Share with peers to strengthen the network.</p>
-          <button onClick={() => toast.success('Referral link copied')} className="px-4 py-2 rounded-lg text-sm font-bold text-white min-h-[44px]" style={{ backgroundColor: '#1e4d6b' }}>
+          <button onClick={() => toast.success('Referral link copied')} className="px-4 py-2 rounded-lg text-sm font-bold text-white min-h-[44px]" style={{ backgroundColor: '#1E2D4D' }}>
             Invite a Peer Kitchen
           </button>
         </div>

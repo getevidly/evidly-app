@@ -12,7 +12,7 @@ import { useVendorServiceRecords } from '../../hooks/useVendorServiceRecords';
 import { SAMPLE_PSE_SAFEGUARDS } from '../../data/workforceRiskDemoData';
 
 // ── Brand ─────────────────────────────────────────────────────
-const NAVY = '#1e4d6b';
+const NAVY = '#1E2D4D';
 const GOLD = '#d4af37';
 const BORDER = '#b8d4e8';
 

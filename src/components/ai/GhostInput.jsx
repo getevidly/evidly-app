@@ -54,7 +54,7 @@ export function GhostInput({
         {...props}
       />
       {suggestion && !value && (
-        <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-300 pointer-events-none select-none">
+        <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-300 pointer-events-none select-none">
           Tab ↹
         </span>
       )}

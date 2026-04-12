@@ -288,7 +288,7 @@ export function LogServiceModal({ isOpen, onClose, locationId, onSuccess }) {
                 disabled={saving}
                 style={{
                   padding: '8px 20px', borderRadius: 8,
-                  border: 'none', background: '#1e4d6b',
+                  border: 'none', background: '#1E2D4D',
                   fontSize: 13, fontWeight: 600, color: '#fff', cursor: 'pointer',
                   opacity: saving ? 0.7 : 1,
                   display: 'flex', alignItems: 'center', gap: 6,

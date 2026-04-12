@@ -253,7 +253,7 @@ export function ClientInviteModal({
         <div
           style={{
             padding: '20px 24px',
-            background: '#1e4d6b',
+            background: '#1E2D4D',
             borderRadius: '16px 16px 0 0',
             display: 'flex',
             alignItems: 'center',
@@ -423,7 +423,7 @@ export function ClientInviteModal({
                       padding: '6px 14px',
                       borderRadius: '6px',
                       border: 'none',
-                      backgroundColor: '#1e4d6b',
+                      backgroundColor: '#1E2D4D',
                       fontSize: '12px',
                       fontWeight: 600,
                       color: '#ffffff',
@@ -465,7 +465,7 @@ export function ClientInviteModal({
                       type="checkbox"
                       checked={selectedServices.includes(serviceId)}
                       onChange={() => handleServiceToggle(serviceId)}
-                      style={{ accentColor: '#1e4d6b', width: '16px', height: '16px' }}
+                      style={{ accentColor: '#1E2D4D', width: '16px', height: '16px' }}
                     />
                     {SERVICE_LABELS[serviceId] || serviceId}
                   </label>
@@ -574,7 +574,7 @@ export function ClientInviteModal({
                 padding: '10px 24px',
                 borderRadius: '8px',
                 border: 'none',
-                backgroundColor: '#1e4d6b',
+                backgroundColor: '#1E2D4D',
                 fontSize: '14px',
                 fontWeight: 600,
                 color: '#ffffff',

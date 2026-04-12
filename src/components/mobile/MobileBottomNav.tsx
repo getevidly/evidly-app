@@ -38,7 +38,7 @@ export function MobileBottomNav({ tabs, onMorePress }: MobileBottomNavProps) {
                 {tab.icon}
               </span>
               <span
-                className={`text-[10px] font-semibold ${
+                className={`text-xs font-semibold ${
                   isActive ? 'text-[#1E2D4D]' : 'text-[#6B7280]'
                 }`}
               >

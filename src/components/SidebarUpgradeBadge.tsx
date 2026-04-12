@@ -35,11 +35,11 @@ export function SidebarUpgradeBadge() {
       <button
         onClick={handleClick}
         className="w-full py-2 px-3 rounded-md text-xs font-bold transition-colors hover:brightness-110"
-        style={{ backgroundColor: '#d4af37', color: '#1e4d6b' }}
+        style={{ backgroundColor: '#d4af37', color: '#1E2D4D' }}
       >
         Start Free Trial
       </button>
-      <p className="text-[10px] text-gray-400 text-center mt-1.5">Limited time offer</p>
+      <p className="text-xs text-gray-400 text-center mt-1.5">Limited time offer</p>
     </div>
   );
 }

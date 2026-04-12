@@ -91,7 +91,7 @@ export function DocumentScanAnimation({ onComplete }: DocumentScanAnimationProps
                   )}
                   <span className="text-sm font-medium text-gray-700">{field.label}:</span>
                 </div>
-                <span className="text-sm text-gray-900 font-semibold">{field.value}</span>
+                <span className="text-sm text-[#1E2D4D] font-semibold">{field.value}</span>
               </div>
             ))}
           </div>

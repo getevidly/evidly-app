@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { FeatureGate } from '../components/feature-flags/FeatureGate';
 import { ErrorState } from '../components/shared/PageStates';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 interface LeaderboardEntry {
   id: string;
@@ -81,6 +82,7 @@ export function Leaderboard() {
   const [loading, setLoading] = useState(true);
   const [pageError, setPageError] = useState<string | null>(null);
   const [industryFilter, setIndustryFilter] = useState('All');
+  usePageTitle('Leaderboard');
 
   useEffect(() => {
     fetchLeaderboard();
@@ -345,13 +347,13 @@ export function Leaderboard() {
             ].map(badge => (
               <div key={badge.title} style={{
                 background: badge.earned ? 'linear-gradient(135deg, #f0f7fc 0%, #e1eef6 100%)' : '#f9fafb',
-                border: badge.earned ? '2px solid #1e4d6b' : '2px solid #e5e7eb',
+                border: badge.earned ? '2px solid #1E2D4D' : '2px solid #e5e7eb',
                 borderRadius: 12, padding: 24, textAlign: 'center',
                 opacity: badge.earned ? 1 : 0.6,
               }}>
                 <div style={{
                   width: 56, height: 56, borderRadius: '50%',
-                  background: badge.earned ? '#1e4d6b' : '#d1d5db',
+                  background: badge.earned ? '#1E2D4D' : '#d1d5db',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px',
                 }}>
                   {badge.icon}
@@ -360,7 +362,7 @@ export function Leaderboard() {
                 <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8 }}>{badge.desc}</p>
                 <span style={{
                   fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 4,
-                  color: badge.earned ? '#1e4d6b' : '#6b7280',
+                  color: badge.earned ? '#1E2D4D' : '#6b7280',
                   backgroundColor: badge.earned ? '#dbeafe' : '#e5e7eb',
                 }}>
                   {badge.earned ? 'EARNED' : 'LOCKED'}

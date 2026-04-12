@@ -28,6 +28,7 @@ import { useRole } from '../contexts/RoleContext';
 import { useTooltip } from '../hooks/useTooltip';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 import DOMPurify from 'dompurify';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -659,6 +660,7 @@ export function Equipment() {
   const ttEquipmentTotal = useTooltip('equipmentTotal', userRole);
   const ttEquipmentWarranty = useTooltip('equipmentWarranty', userRole);
   const ttEquipmentOverdue = useTooltip('equipmentOverdue', userRole);
+  usePageTitle('Equipment');
   const [locationFilter, setLocationFilter] = useState('all');
   const [pillarFilter, setPillarFilter] = useState<'all' | 'facility_safety' | 'food_safety'>(() =>
     categoryParam ? 'facility_safety' : 'all'
@@ -822,7 +824,7 @@ export function Equipment() {
         <button
           onClick={() => navigate('/facility-safety')}
           className="flex items-center gap-1 text-sm font-medium mb-3 hover:underline"
-          style={{ color: '#1e4d6b' }}
+          style={{ color: '#1E2D4D' }}
         >
           <ChevronDown size={14} className="rotate-90" />
           Back to Facility Safety
@@ -833,7 +835,7 @@ export function Equipment() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">{t('pages.equipment.lifecycleTitle')}</h1>
+            <h1 className="text-2xl font-bold text-[#1E2D4D]">{t('pages.equipment.lifecycleTitle')}</h1>
             <p className="text-sm text-gray-600 mt-1">{t('pages.equipment.lifecycleSubtitle')}</p>
           </div>
           <div data-demo-allow className="flex flex-wrap gap-3">
@@ -856,19 +858,19 @@ export function Equipment() {
             </select>
             <button
               onClick={() => navigate('/import?type=equipment')}
-              className="flex items-center gap-2 px-4 py-2 border border-[#1e4d6b] text-[#1e4d6b] rounded-lg hover:bg-[#eef4f8] text-sm font-medium"
+              className="flex items-center gap-2 px-4 py-2 border border-[#1E2D4D] text-[#1E2D4D] rounded-lg hover:bg-[#eef4f8] text-sm font-medium"
             >
               <Upload className="h-4 w-4" /> Import
             </button>
             <button
               onClick={() => setShowRequestService(true)}
-              className="flex items-center gap-2 px-4 py-2 border border-[#1e4d6b] text-[#1e4d6b] rounded-lg hover:bg-[#eef4f8] text-sm font-medium"
+              className="flex items-center gap-2 px-4 py-2 border border-[#1E2D4D] text-[#1E2D4D] rounded-lg hover:bg-[#eef4f8] text-sm font-medium"
             >
               <Wrench className="h-4 w-4" /> Request Service
             </button>
             <button
               onClick={() => setShowForm(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium"
+              className="flex items-center gap-2 px-4 py-2 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] text-sm font-medium"
             >
               <Plus className="h-4 w-4" /> {t('pages.equipment.addEquipment')}
             </button>
@@ -877,24 +879,24 @@ export function Equipment() {
 
         {/* KPI Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
-            <div className="flex items-center justify-center gap-2 mb-2"><Package className="h-5 w-5 text-[#1e4d6b]" /><span className="text-xs text-gray-500 uppercase font-semibold">{t('pages.equipment.totalEquipment')} <InfoTooltip content={ttEquipmentTotal} /></span></div>
-            <div className="text-xl sm:text-3xl font-bold text-[#1e4d6b]">{kpis.total}</div>
+          <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
+            <div className="flex items-center justify-center gap-2 mb-2"><Package className="h-5 w-5 text-[#1E2D4D]" /><span className="text-xs text-gray-500 uppercase font-semibold">{t('pages.equipment.totalEquipment')} <InfoTooltip content={ttEquipmentTotal} /></span></div>
+            <div className="text-xl sm:text-3xl font-bold text-[#1E2D4D]">{kpis.total}</div>
             <div className="text-xs text-gray-400 mt-1">{locations.length > 0 ? `${t('pages.equipment.across')} ${locationFilter === 'all' ? `${locations.length} ${t('pages.equipment.locations')}` : `1 ${t('pages.equipment.location')}`}` : ''}</div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
+          <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
             <div className="flex items-center justify-center gap-2 mb-2"><EvidlyIcon size={20} /><span className="text-xs text-gray-500 uppercase font-semibold">{t('pages.equipment.warrantyExpiring')} <InfoTooltip content={ttEquipmentWarranty} /></span></div>
             <div className="text-xl sm:text-3xl font-bold text-[#d97706]">{kpis.warrantyExpiring}</div>
             <div className="text-xs text-gray-400 mt-1">{t('pages.equipment.within90Days')}</div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
+          <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
             <div className="flex items-center justify-center gap-2 mb-2"><AlertTriangle className="h-5 w-5 text-[#dc2626]" /><span className="text-xs text-gray-500 uppercase font-semibold">{t('pages.equipment.maintenanceOverdue')} <InfoTooltip content={ttEquipmentOverdue} /></span></div>
             <div className="text-xl sm:text-3xl font-bold text-[#dc2626]">{kpis.maintenanceOverdue}</div>
             <div className="text-xs text-gray-400 mt-1">{t('pages.equipment.needsImmediateAttention')}</div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
-            <div className="flex items-center justify-center gap-2 mb-2"><Clock className="h-5 w-5 text-[#1e4d6b]" /><span className="text-xs text-gray-500 uppercase font-semibold">{t('pages.equipment.avgEquipmentAge')}</span></div>
-            <div className="text-xl sm:text-3xl font-bold text-[#1e4d6b]">{kpis.avgAge}</div>
+          <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
+            <div className="flex items-center justify-center gap-2 mb-2"><Clock className="h-5 w-5 text-[#1E2D4D]" /><span className="text-xs text-gray-500 uppercase font-semibold">{t('pages.equipment.avgEquipmentAge')}</span></div>
+            <div className="text-xl sm:text-3xl font-bold text-[#1E2D4D]">{kpis.avgAge}</div>
             <div className="text-xs text-gray-400 mt-1">{t('pages.equipment.years')}</div>
           </div>
         </div>
@@ -919,7 +921,7 @@ export function Equipment() {
         {/* Loading Spinner */}
         {loading && (
           <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-[#1e4d6b]" />
+            <Loader2 className="h-8 w-8 animate-spin text-[#1E2D4D]" />
           </div>
         )}
 
@@ -929,7 +931,7 @@ export function Equipment() {
             <Package className="h-10 w-10 mx-auto mb-3 text-gray-300" />
             <p className="font-medium text-lg">Add your first location to begin tracking equipment.</p>
             <p className="text-sm mt-1 mb-5">Once you add a location, you can register and track equipment lifecycle data here.</p>
-            <button onClick={() => navigate('/org-hierarchy')} className="px-5 py-2.5 text-sm font-medium text-white rounded-lg" style={{ backgroundColor: '#1e4d6b' }}>
+            <button onClick={() => navigate('/org-hierarchy')} className="px-5 py-2.5 text-sm font-medium text-white rounded-lg" style={{ backgroundColor: '#1E2D4D' }}>
               Add Location
             </button>
           </div>
@@ -947,11 +949,11 @@ export function Equipment() {
                 <div
                   key={eq.id}
                   onClick={() => handleSelectEquipment(eq.id)}
-                  className={`bg-white rounded-xl shadow-sm border border-gray-200 p-4 cursor-pointer transition-all hover:shadow-md ${isSelected ? 'ring-2 ring-[#1e4d6b]' : ''}`}
+                  className={`bg-white rounded-xl border border-gray-200 p-4 cursor-pointer transition-all hover:shadow-md ${isSelected ? 'ring-2 ring-[#1E2D4D]' : ''}`}
                 >
                   <div className="flex items-start justify-between mb-2">
                     <div>
-                      <h3 className="font-bold text-gray-900 text-sm">{eq.name}</h3>
+                      <h3 className="font-bold text-[#1E2D4D] text-sm">{eq.name}</h3>
                       <p className="text-xs text-gray-500">{eq.make} {eq.model}</p>
                     </div>
                     <div className="flex items-center gap-1.5">
@@ -990,7 +992,7 @@ export function Equipment() {
 
         {/* Equipment List — Table View */}
         {!loading && viewMode === 'table' && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
+          <div className="bg-white rounded-xl border border-gray-200 overflow-x-auto">
             <table className="w-full">
               <thead><tr>
                 <th style={thStyle}>{t('pages.equipment.title')}</th><th style={thStyle}>{t('pages.equipment.type')}</th><th style={thStyle} className="hidden sm:table-cell">{t('pages.equipment.location')}</th>
@@ -1024,18 +1026,18 @@ export function Equipment() {
         )}
 
         {filtered.length === 0 && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center text-gray-400">
+          <div className="bg-white rounded-xl border border-gray-200 p-12 text-center text-gray-400">
             {t('pages.equipment.noMatch')}
           </div>
         )}
 
         {/* ── Detail Panel ─────────────────────────────────────────── */}
         {selected && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             {/* Detail header */}
             <div className="p-4 sm:p-5 border-b border-gray-200 flex items-start justify-between gap-2" style={{ backgroundColor: '#eef4f8' }}>
               <div>
-                <h2 className="text-lg font-bold text-gray-900">{selected.name}</h2>
+                <h2 className="text-lg font-bold text-[#1E2D4D]">{selected.name}</h2>
                 <p className="text-sm text-gray-600">{selected.make} {selected.model} · S/N: {selected.serial}</p>
                 <div className="flex gap-3 mt-2 flex-wrap">
                   {(() => { const ss = statusStyle(selected.status); return <span style={badge(ss.label, ss.color, ss.bg)}>{ss.label}</span>; })()}
@@ -1076,7 +1078,7 @@ export function Equipment() {
                   key={tab}
                   onClick={() => setDetailTab(tab as typeof detailTab)}
                   className={`px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
-                    detailTab === tab ? 'border-[#1e4d6b] text-[#1e4d6b]' : 'border-transparent text-gray-500 hover:text-gray-700'
+                    detailTab === tab ? 'border-[#1E2D4D] text-[#1E2D4D]' : 'border-transparent text-gray-500 hover:text-gray-700'
                   }`}
                 >
                   {label}
@@ -1100,7 +1102,7 @@ export function Equipment() {
                       <div><span className="text-gray-400 block text-xs">{t('pages.equipment.age')}</span><span className="font-medium">{ageLabel(selected.installDate)}</span></div>
                       <div><span className="text-gray-400 block text-xs">{t('pages.equipment.purchasePrice')}</span><span className="font-medium">{currency(selected.purchasePrice)}</span></div>
                       <div><span className="text-gray-400 block text-xs">{t('pages.equipment.maintenanceInterval')}</span><span className="font-medium">{selected.maintenanceInterval}</span></div>
-                      <div><span className="text-gray-400 block text-xs">{t('pages.equipment.linkedVendor')}</span><span className="font-medium text-[#1e4d6b]">{selected.linkedVendor}</span></div>
+                      <div><span className="text-gray-400 block text-xs">{t('pages.equipment.linkedVendor')}</span><span className="font-medium text-[#1E2D4D]">{selected.linkedVendor}</span></div>
                     </div>
                   </div>
                   <div className="space-y-4">
@@ -1121,7 +1123,7 @@ export function Equipment() {
                     {selected.notes && (
                       <div>
                         <h4 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">{t('pages.equipment.notesLabel')}</h4>
-                        <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">{selected.notes}</p>
+                        <p className="text-sm text-gray-600 bg-[#FAF7F0] p-3 rounded-lg">{selected.notes}</p>
                       </div>
                     )}
                     {equipmentPhotos.length > 0 && (
@@ -1168,7 +1170,7 @@ export function Equipment() {
                           <div><span className="text-gray-400 text-xs block">{t('pages.equipment.provider')}</span><span className="font-medium">{selected.warrantyProvider}</span></div>
                           <div><span className="text-gray-400 text-xs block">{t('pages.equipment.terms')}</span><span className="font-medium">{selected.warrantyTerms}</span></div>
                           {selected.warrantyContact && (
-                            <div><span className="text-gray-400 text-xs block">{t('pages.equipment.contact')}</span><span className="font-medium text-[#1e4d6b]">{selected.warrantyContact}</span></div>
+                            <div><span className="text-gray-400 text-xs block">{t('pages.equipment.contact')}</span><span className="font-medium text-[#1E2D4D]">{selected.warrantyContact}</span></div>
                           )}
                         </div>
                       </div>
@@ -1228,7 +1230,7 @@ export function Equipment() {
                     {selected.serviceHistory.map((rec, i) => (
                       <div key={i} className="flex gap-4 py-3 border-b border-gray-100 last:border-0">
                         <div className="flex flex-col items-center">
-                          <div className="w-3 h-3 rounded-full bg-[#1e4d6b] mt-1" />
+                          <div className="w-3 h-3 rounded-full bg-[#1E2D4D] mt-1" />
                           {i < selected.serviceHistory.length - 1 && <div className="w-0.5 flex-1 bg-gray-200 mt-1" />}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -1237,7 +1239,7 @@ export function Equipment() {
                               <div className="font-medium text-sm text-gray-900">{rec.type}</div>
                               <div className="text-xs text-gray-500">{rec.vendor} · {format(new Date(rec.date), 'MMM d, yyyy')}</div>
                             </div>
-                            <span className="text-sm font-semibold" style={{ color: rec.cost > 0 ? '#1e4d6b' : '#16a34a' }}>
+                            <span className="text-sm font-semibold" style={{ color: rec.cost > 0 ? '#1E2D4D' : '#16a34a' }}>
                               {rec.cost > 0 ? currency(rec.cost) : 'Warranty'}
                             </span>
                           </div>
@@ -1272,9 +1274,9 @@ export function Equipment() {
                               <button
                                 onClick={() => toast.success(`✓ ${s.task} logged for ${selected.name} — ${format(new Date(), 'MMM d, yyyy h:mm a')}`)}
                                 className="px-2.5 py-1 text-xs font-semibold rounded-md transition-colors"
-                                style={{ backgroundColor: '#1e4d6b', color: 'white' }}
-                                onMouseEnter={e => { (e.target as HTMLElement).style.backgroundColor = '#2a6a8f'; }}
-                                onMouseLeave={e => { (e.target as HTMLElement).style.backgroundColor = '#1e4d6b'; }}
+                                style={{ backgroundColor: '#1E2D4D', color: 'white' }}
+                                onMouseEnter={e => { (e.target as HTMLElement).style.backgroundColor = '#2A3F6B'; }}
+                                onMouseLeave={e => { (e.target as HTMLElement).style.backgroundColor = '#1E2D4D'; }}
                               >
                                 {s.task.toLowerCase().includes('clean') ? 'Log Cleaning' : 'Log'}
                               </button>
@@ -1325,20 +1327,20 @@ export function Equipment() {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                       <div className="p-3 rounded-lg border border-gray-200">
                         <div className="text-xs text-gray-400">{t('pages.equipment.purchasePrice')}</div>
-                        <div className="text-lg font-bold text-gray-900">{currency(selected.purchasePrice)}</div>
+                        <div className="text-lg font-bold text-[#1E2D4D]">{currency(selected.purchasePrice)}</div>
                       </div>
                       <div className="p-3 rounded-lg border border-gray-200">
                         <div className="text-xs text-gray-400">{t('pages.equipment.bookValue')}</div>
-                        <div className="text-lg font-bold text-[#1e4d6b]">{currency(bv)}</div>
-                        <div className="text-[10px] text-gray-400">{t('pages.equipment.straightLineDepreciation')}</div>
+                        <div className="text-lg font-bold text-[#1E2D4D]">{currency(bv)}</div>
+                        <div className="text-xs text-gray-400">{t('pages.equipment.straightLineDepreciation')}</div>
                       </div>
                       <div className="p-3 rounded-lg border border-gray-200">
                         <div className="text-xs text-gray-400">{t('pages.equipment.totalMaintenance')}</div>
-                        <div className="text-lg font-bold text-gray-900">{currency(totalSpend)}</div>
+                        <div className="text-lg font-bold text-[#1E2D4D]">{currency(totalSpend)}</div>
                       </div>
                       <div className="p-3 rounded-lg border border-gray-200">
                         <div className="text-xs text-gray-400">{t('pages.equipment.totalCostOwnership')}</div>
-                        <div className="text-lg font-bold text-gray-900">{currency(selected.purchasePrice + totalSpend)}</div>
+                        <div className="text-lg font-bold text-[#1E2D4D]">{currency(selected.purchasePrice + totalSpend)}</div>
                       </div>
                     </div>
 
@@ -1346,7 +1348,7 @@ export function Equipment() {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                       <div className="p-3 rounded-lg border border-gray-200">
                         <div className="text-xs text-gray-400">{t('pages.equipment.currentAge')}</div>
-                        <div className="text-lg font-bold text-gray-900">{ageLabel(selected.installDate)}</div>
+                        <div className="text-lg font-bold text-[#1E2D4D]">{ageLabel(selected.installDate)}</div>
                       </div>
                       <div className="p-3 rounded-lg border border-gray-200">
                         <div className="text-xs text-gray-400">{t('pages.equipment.remainingLife')}</div>
@@ -1354,7 +1356,7 @@ export function Equipment() {
                       </div>
                       <div className="p-3 rounded-lg border border-gray-200">
                         <div className="text-xs text-gray-400">{t('pages.equipment.replacementCost')}</div>
-                        <div className="text-lg font-bold text-gray-900">{currency(selected.replacementCost)}</div>
+                        <div className="text-lg font-bold text-[#1E2D4D]">{currency(selected.replacementCost)}</div>
                       </div>
                       <div className="p-3 rounded-lg border border-gray-200">
                         <div className="text-xs text-gray-400">{t('pages.equipment.maintenanceTrend')}</div>
@@ -1376,9 +1378,9 @@ export function Equipment() {
                             const h = Math.max(4, (y.cost / maxCost) * 80);
                             return (
                               <div key={i} className="flex flex-col items-center flex-1">
-                                <span className="text-[10px] font-bold text-gray-600 mb-1">{currency(y.cost)}</span>
-                                <div className="w-full rounded-t" style={{ height: `${h}px`, backgroundColor: y.cost === Math.max(...ac.map(a => a.cost)) && trend === 'increasing' ? '#dc2626' : '#1e4d6b' }} />
-                                <span className="text-[10px] text-gray-400 mt-1">{y.year}</span>
+                                <span className="text-xs font-bold text-gray-600 mb-1">{currency(y.cost)}</span>
+                                <div className="w-full rounded-t" style={{ height: `${h}px`, backgroundColor: y.cost === Math.max(...ac.map(a => a.cost)) && trend === 'increasing' ? '#dc2626' : '#1E2D4D' }} />
+                                <span className="text-xs text-gray-400 mt-1">{y.year}</span>
                               </div>
                             );
                           })}
@@ -1424,15 +1426,15 @@ export function Equipment() {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                       <div className="p-3 rounded-lg border border-gray-200">
                         <div className="text-xs text-gray-400">{t('pages.equipment.purchasePrice')}</div>
-                        <div className="text-lg font-bold text-gray-900">{currency(selected.purchasePrice)}</div>
+                        <div className="text-lg font-bold text-[#1E2D4D]">{currency(selected.purchasePrice)}</div>
                       </div>
                       <div className="p-3 rounded-lg border border-gray-200">
                         <div className="text-xs text-gray-400">{t('pages.equipment.totalMaintenanceSpend')}</div>
-                        <div className="text-lg font-bold text-[#1e4d6b]">{currency(totalSpend)}</div>
+                        <div className="text-lg font-bold text-[#1E2D4D]">{currency(totalSpend)}</div>
                       </div>
                       <div className="p-3 rounded-lg border border-gray-200">
                         <div className="text-xs text-gray-400">{t('pages.equipment.totalCostOwnership')}</div>
-                        <div className="text-lg font-bold text-gray-900">{currency(selected.purchasePrice + totalSpend)}</div>
+                        <div className="text-lg font-bold text-[#1E2D4D]">{currency(selected.purchasePrice + totalSpend)}</div>
                       </div>
                       <div className="p-3 rounded-lg border border-gray-200">
                         <div className="text-xs text-gray-400">{t('pages.equipment.warrantyServices')}</div>
@@ -1451,7 +1453,7 @@ export function Equipment() {
                             <td style={tdStyle}>{format(new Date(r.date), 'MMM d, yyyy')}</td>
                             <td style={{ ...tdStyle, fontWeight: 500 }}>{r.type}</td>
                             <td style={tdStyle}>{r.vendor}</td>
-                            <td style={{ ...tdStyle, fontWeight: 600, color: r.cost > 0 ? '#1e4d6b' : '#16a34a' }}>
+                            <td style={{ ...tdStyle, fontWeight: 600, color: r.cost > 0 ? '#1E2D4D' : '#16a34a' }}>
                               {r.cost > 0 ? currency(r.cost) : 'Warranty'}
                             </td>
                           </tr>
@@ -1472,7 +1474,7 @@ export function Equipment() {
                       <h4 className="text-sm font-bold text-gray-700">{vendors.length} Linked Vendor{vendors.length !== 1 ? 's' : ''}</h4>
                       <button
                         onClick={() => guardAction('edit', 'vendor links', () => showToast('Vendor link saved.'))}
-                        className="flex items-center gap-1 text-xs font-medium text-[#1e4d6b] hover:text-[#163a52]"
+                        className="flex items-center gap-1 text-xs font-medium text-[#1E2D4D] hover:text-[#141E33]"
                       >
                         <Plus className="h-3.5 w-3.5" /> {t('pages.equipment.linkVendor')}
                       </button>
@@ -1482,12 +1484,12 @@ export function Equipment() {
                         <div key={i} className="p-4 rounded-lg border border-gray-200 flex items-start justify-between gap-3">
                           <div className="flex items-start gap-3">
                             <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#eef4f8' }}>
-                              <Wrench className="h-5 w-5 text-[#1e4d6b]" />
+                              <Wrench className="h-5 w-5 text-[#1E2D4D]" />
                             </div>
                             <div>
                               <div className="font-medium text-sm text-gray-900">{v.vendor}</div>
                               <div className="text-xs text-gray-500">{v.serviceType}</div>
-                              {v.isPrimary && <span style={badge(t('pages.equipment.primary'), '#1e4d6b', '#eef4f8')}>{t('pages.equipment.primary')}</span>}
+                              {v.isPrimary && <span style={badge(t('pages.equipment.primary'), '#1E2D4D', '#eef4f8')}>{t('pages.equipment.primary')}</span>}
                               {(() => {
                                 const lastSvc = selected.serviceHistory.find(s => s.vendor === v.vendor);
                                 return lastSvc ? (
@@ -1499,7 +1501,7 @@ export function Equipment() {
                           <div className="flex gap-2">
                             <button
                               onClick={() => { window.location.href = `/vendors?id=${encodeURIComponent(v.vendor.toLowerCase().replace(/\s+/g, '-'))}`; }}
-                              className="text-xs text-[#1e4d6b] hover:underline"
+                              className="text-xs text-[#1E2D4D] hover:underline"
                             >
                               {t('pages.equipment.viewVendor')}
                             </button>
@@ -1511,7 +1513,7 @@ export function Equipment() {
                       <div className="p-3 rounded-lg bg-blue-50 border border-blue-200">
                         <div className="flex items-center gap-2">
                           <EvidlyIcon size={16} />
-                          <span className="text-sm font-medium text-[#1e4d6b]">Warranty Provider: {selected.warrantyProvider}</span>
+                          <span className="text-sm font-medium text-[#1E2D4D]">Warranty Provider: {selected.warrantyProvider}</span>
                         </div>
                         {selected.warrantyContact && (
                           <div className="text-xs text-gray-500 mt-1 ml-6">{selected.warrantyContact}</div>
@@ -1563,11 +1565,11 @@ export function Equipment() {
                     {/* Sensor Header */}
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="p-2.5 rounded-lg" style={{ backgroundColor: (provider?.color || '#1e4d6b') + '15' }}>
-                          <Radio className="h-5 w-5" style={{ color: provider?.color || '#1e4d6b' }} />
+                        <div className="p-2.5 rounded-lg" style={{ backgroundColor: (provider?.color || '#1E2D4D') + '15' }}>
+                          <Radio className="h-5 w-5" style={{ color: provider?.color || '#1E2D4D' }} />
                         </div>
                         <div>
-                          <h4 className="text-sm font-semibold text-gray-900">{sensor.name}</h4>
+                          <h4 className="text-sm font-semibold text-[#1E2D4D]">{sensor.name}</h4>
                           <p className="text-xs text-gray-500">{provider?.name || sensor.providerSlug} &middot; {sensor.macAddress}</p>
                         </div>
                       </div>
@@ -1581,24 +1583,24 @@ export function Equipment() {
 
                     {/* Current Reading + Stats */}
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                      <div className="bg-gray-50 rounded-lg p-3">
+                      <div className="bg-[#FAF7F0] rounded-lg p-3">
                         <p className="text-xs text-gray-500 mb-1">{t('pages.equipment.current')}</p>
                         <p className={`text-2xl font-bold ${inRange ? 'text-gray-900' : 'text-red-600'}`}>{sensor.currentTempF}°F</p>
                         <p className="text-xs mt-0.5">{inRange ? <span className="text-green-600">{t('pages.equipment.inRange')}</span> : <span className="text-red-600">{t('pages.equipment.outOfRange')}</span>}</p>
                       </div>
-                      <div className="bg-gray-50 rounded-lg p-3">
+                      <div className="bg-[#FAF7F0] rounded-lg p-3">
                         <p className="text-xs text-gray-500 mb-1">{t('pages.equipment.range')}</p>
-                        <p className="text-lg font-semibold text-gray-900">{thMin}–{thMax}°F</p>
+                        <p className="text-lg font-semibold text-[#1E2D4D]">{thMin}–{thMax}°F</p>
                         <p className="text-xs text-gray-400 mt-0.5">{t('pages.equipment.threshold')}</p>
                       </div>
-                      <div className="bg-gray-50 rounded-lg p-3">
+                      <div className="bg-[#FAF7F0] rounded-lg p-3">
                         <p className="text-xs text-gray-500 mb-1">{t('pages.equipment.today')}</p>
-                        <p className="text-lg font-semibold text-gray-900">{todayReadings}</p>
+                        <p className="text-lg font-semibold text-[#1E2D4D]">{todayReadings}</p>
                         <p className="text-xs text-gray-400 mt-0.5">{outOfRange > 0 ? <span className="text-amber-600">{outOfRange} {t('pages.equipment.outOfRange').toLowerCase()}</span> : <span className="text-green-600">{t('pages.equipment.allInRange')}</span>}</p>
                       </div>
-                      <div className="bg-gray-50 rounded-lg p-3">
+                      <div className="bg-[#FAF7F0] rounded-lg p-3">
                         <p className="text-xs text-gray-500 mb-1">{t('pages.equipment.lastSeen')}</p>
-                        <p className="text-sm font-semibold text-gray-900">{lastSeen}</p>
+                        <p className="text-sm font-semibold text-[#1E2D4D]">{lastSeen}</p>
                         <div className="flex items-center gap-2 mt-1">
                           <span className="text-xs text-gray-400 flex items-center gap-0.5"><Battery className="h-3 w-3" /> {sensor.batteryPct}%</span>
                           <span className="text-xs text-gray-400 flex items-center gap-0.5"><Signal className="h-3 w-3" /> {sensor.signalRssi}dBm</span>
@@ -1659,7 +1661,7 @@ export function Equipment() {
 
                     {/* Actions */}
                     <div className="flex flex-wrap gap-2">
-                      <button onClick={() => toast.info('Opening sensor detail page...')} className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-[#1e4d6b] bg-[#eef4f8] rounded-lg hover:bg-[#d9e8f0]">
+                      <button onClick={() => toast.info('Opening sensor detail page...')} className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-[#1E2D4D] bg-[#eef4f8] rounded-lg hover:bg-[#d9e8f0]">
                         <Wifi className="h-3.5 w-3.5" /> {t('pages.equipment.viewFullHistory')}
                       </button>
                       <button onClick={() => toast.info('CSV export started...')} className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200">
@@ -1679,9 +1681,9 @@ export function Equipment() {
         {/* ── Add / Edit Equipment Modal ─────────────────────────── */}
         {showForm && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setShowForm(false)}>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-[95vw] sm:w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4" onClick={e => e.stopPropagation()}>
+            <div className="bg-white rounded-xl border border-gray-200 w-[95vw] sm:w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4" onClick={e => e.stopPropagation()}>
               <div className="p-5 border-b border-gray-200 flex items-center justify-between">
-                <h2 className="text-lg font-bold text-gray-900">{t('pages.equipment.addEquipment')}</h2>
+                <h2 className="text-lg font-bold text-[#1E2D4D]">{t('pages.equipment.addEquipment')}</h2>
                 <button onClick={() => setShowForm(false)} className="p-1 rounded hover:bg-gray-100"><X className="h-5 w-5 text-gray-400" /></button>
               </div>
               <form id="equipment-form" className="p-5 space-y-4" onSubmit={e => e.preventDefault()}>
@@ -1821,7 +1823,7 @@ export function Equipment() {
                       showToast('Equipment saved successfully.');
                       setShowForm(false);
                     })}
-                    className="flex-1 px-4 py-2.5 bg-[#1e4d6b] text-white rounded-lg font-medium hover:bg-[#163a52] text-sm"
+                    className="flex-1 px-4 py-2.5 bg-[#1E2D4D] text-white rounded-lg font-medium hover:bg-[#162340] text-sm"
                   >
                     {t('pages.equipment.saveEquipment')}
                   </button>
@@ -1857,14 +1859,14 @@ export function Equipment() {
               level="M"
               className="mx-auto"
             />
-            <h3 className="text-sm font-bold text-gray-900 mt-3">{selected.name}</h3>
+            <h3 className="text-sm font-bold text-[#1E2D4D] mt-3">{selected.name}</h3>
             <p className="text-xs text-gray-500 mt-0.5">ID: {selected.id}</p>
             {selected.type && (
               <p className="text-xs text-gray-500 mt-0.5">
                 Required: {selected.type.toLowerCase().includes('freezer') ? '≤0°F' : selected.type.toLowerCase().includes('hot') ? '≥135°F' : '≤41°F'}
               </p>
             )}
-            <p className="text-[10px] text-gray-400 mt-1">CalCode §113996</p>
+            <p className="text-xs text-gray-400 mt-1">CalCode §113996</p>
             <div className="flex gap-2 mt-4">
               <button
                 onClick={() => {
@@ -1877,7 +1879,7 @@ export function Equipment() {
                   printWindow.document.close();
                 }}
                 className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-white text-xs font-semibold rounded-lg transition-colors"
-                style={{ backgroundColor: '#1e4d6b' }}
+                style={{ backgroundColor: '#1E2D4D' }}
               >
                 <Printer className="h-3.5 w-3.5" />
                 {t('pages.equipment.printLabel')}

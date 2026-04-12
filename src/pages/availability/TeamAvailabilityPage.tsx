@@ -130,7 +130,7 @@ export function TeamAvailabilityPage() {
                 {DAY_SHORT.map((d, i) => (
                   <th key={d} className="text-center px-2 py-3 font-semibold" style={{ color: NAVY }}>
                     <div>{d}</div>
-                    <div className="text-[10px] font-normal" style={{ color: TEXT_TERTIARY }}>
+                    <div className="text-xs font-normal" style={{ color: TEXT_TERTIARY }}>
                       {formatDate(adjustedDates[i])}
                     </div>
                   </th>

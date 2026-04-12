@@ -212,7 +212,7 @@ function AhjCard({ label, grade, summary, authority, status, lastInspectionDate,
         <div className="flex-1">
           {/* AHJ label (Primary / Federal Overlay) */}
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded uppercase tracking-wider"
+            <span className="text-xs font-semibold px-1.5 py-0.5 rounded uppercase tracking-wider"
               style={{
                 color: isFederal ? '#92400e' : NAVY,
                 backgroundColor: isFederal ? '#fef3c7' : '#F0F3F7',
@@ -304,7 +304,7 @@ function PillarPanel({
         <h2 className="text-lg font-bold" style={{ color: NAVY }}>{label}</h2>
         {hasMultiAhj && (
           <span
-            className="text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1"
+            className="text-xs font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1"
             style={{ color: '#92400e', backgroundColor: '#fef3c7', border: '1px solid #fbbf24' }}
           >
             <Shield className="w-3 h-3" />
@@ -322,7 +322,7 @@ function PillarPanel({
               Jurisdiction Status
             </h3>
             {hasMultiAhj && (
-              <span className="text-[10px] text-gray-400">
+              <span className="text-xs text-gray-400">
                 Resolved: {resolvedStatus === 'passing' ? 'Passing' : resolvedStatus === 'at_risk' ? 'At Risk' : 'Failing'}
               </span>
             )}
@@ -353,7 +353,7 @@ function PillarPanel({
               )}
             </div>
           ) : (
-            <div className="rounded-lg p-4 border border-gray-200 bg-gray-50">
+            <div className="rounded-lg p-4 border border-gray-200 bg-[#FAF7F0]">
               <div className="flex items-start gap-3">
                 <Info className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
                 <div>
@@ -384,7 +384,7 @@ function PillarPanel({
               EvidLY Score
             </h3>
             <span
-              className="text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider border"
+              className="text-xs font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider border"
               style={{ color: NAVY, backgroundColor: '#F0F3F7', borderColor: '#D1D9E6' }}
             >
               EvidLY Internal
@@ -403,14 +403,14 @@ function PillarPanel({
 
             {/* Sub-scores */}
             <div className="grid grid-cols-2 gap-3 pt-2">
-              <div className="bg-gray-50 rounded-lg p-3">
+              <div className="bg-[#FAF7F0] rounded-lg p-3">
                 <div className="text-xs text-gray-500 mb-1">Operations</div>
                 <div className="text-lg font-bold" style={{ color: opsColor }}>
                   {scoreDisplay(opsScore)}
                 </div>
                 {opsScore != null && opsScore > 0 && <ProgressBar value={opsScore} color={opsColor} />}
               </div>
-              <div className="bg-gray-50 rounded-lg p-3">
+              <div className="bg-[#FAF7F0] rounded-lg p-3">
                 <div className="text-xs text-gray-500 mb-1">Documentation</div>
                 <div className="text-lg font-bold" style={{ color: docsColor }}>
                   {scoreDisplay(docsScore)}
@@ -488,7 +488,7 @@ export function ComplianceOverview() {
   if (!isDemoMode) {
     return (
       <div className="space-y-6">
-        <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
+        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
           <ClipboardCheck className="mx-auto h-12 w-12 text-gray-300 mb-4" />
           <h2 className="text-lg font-semibold text-gray-700 mb-2">No compliance data yet</h2>
           <p className="text-sm text-gray-500 mb-6">
@@ -752,7 +752,7 @@ export function ComplianceOverview() {
 function CorrectiveActionsSummary({ locationId, navigate }: { locationId: string; navigate: (p: string) => void }) {
   // No seeded data — in production, this queries Supabase for open CAs
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+    <div className="bg-white rounded-xl border border-gray-200 p-6">
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-semibold text-gray-800">Open Corrective Actions</h3>
       </div>

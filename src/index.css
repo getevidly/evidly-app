@@ -7,9 +7,9 @@
 
 :root {
   --color-white: #FFFFFF;
-  --color-blue: #1e4d6b;
-  --color-blue-light: #2a6a8a;
-  --color-blue-dark: #163a52;
+  --color-blue: #1E2D4D;
+  --color-blue-light: #2A3F6B;
+  --color-blue-dark: #141E33;
   --color-gold: #c9a227;
   --color-gold-light: #d4af37;
   --color-gold-dark: #a68a1f;
@@ -26,7 +26,7 @@
   --color-text-light: #666666;
 
   /* ── MAIN CONTENT BACKGROUNDS ── */
-  --bg-main:        #F4F6FA;
+  --bg-main:        #FAF7F0;
   --bg-card:        #FFFFFF;
   --bg-panel:       #EEF1F7;
   --bg-input:       #F8F9FC;
@@ -372,5 +372,47 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* ── Print Styles ──────────────────────────────────────────── */
+
+@media print {
+  nav,
+  .sidebar,
+  .mobile-bar,
+  .mobile-tab-bar,
+  #crisp-chatbox,
+  [data-demo-banner],
+  [data-quick-actions],
+  [data-ai-chat],
+  button[aria-label="Open chat"],
+  .quick-actions-bar {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 12pt;
+    line-height: 1.5;
+  }
+
+  .lg\:pl-60 {
+    padding-left: 0 !important;
+  }
+
+  main {
+    padding-bottom: 0 !important;
+  }
+
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #666;
+  }
+
+  .no-print {
+    display: none !important;
   }
 }

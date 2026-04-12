@@ -195,7 +195,7 @@ export function AddLocationModal({ open, onClose, onSave, existingCodes = [] }: 
                 onClick={() => toggleDay(i)}
                 className={`w-10 h-10 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
                   days[i]
-                    ? 'bg-[#1e4d6b] text-white'
+                    ? 'bg-[#1E2D4D] text-white'
                     : 'bg-gray-100 text-gray-500 border border-gray-300 hover:bg-gray-200'
                 }`}
               >

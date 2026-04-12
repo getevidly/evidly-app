@@ -282,13 +282,13 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className={`bg-white rounded-xl shadow-sm border border-gray-200 w-full ${isBulk ? 'max-w-lg' : 'max-w-md'} max-h-[90vh] overflow-y-auto`}>
+      <div className={`bg-white rounded-xl border border-gray-200 w-full ${isBulk ? 'max-w-lg' : 'max-w-md'} max-h-[90vh] overflow-y-auto`}>
         <div className="flex items-center justify-between p-6 border-b border-gray-200 sticky top-0 bg-white rounded-t-xl z-10">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-[#d4af37]/10 rounded-lg">
               {isBulk ? <Users className="w-6 h-6 text-[#d4af37]" /> : <UserPlus className="w-6 h-6 text-[#d4af37]" />}
             </div>
-            <h2 className="text-xl font-bold text-gray-900">
+            <h2 className="text-xl font-bold text-[#1E2D4D]">
               {isBulk ? 'Invite Multiple Members' : 'Invite Team Member'}
             </h2>
           </div>
@@ -320,7 +320,7 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
                   onChange={(e) => setBulkEmails(e.target.value)}
                   placeholder={"john@example.com, jane@example.com\nor one per line"}
                   rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent resize-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent resize-none"
                 />
                 {bulkEmailCount > 0 && (
                   <p className="text-xs text-gray-500 mt-1">{bulkEmailCount} email{bulkEmailCount !== 1 ? 's' : ''} detected</p>
@@ -339,7 +339,7 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
                           type="checkbox"
                           checked={selectedLocations.includes(loc.locationId)}
                           onChange={() => toggleLocation(loc.locationId)}
-                          className="w-4 h-4 rounded border-gray-300 text-[#1e4d6b] focus:ring-[#1e4d6b]"
+                          className="w-4 h-4 rounded border-gray-300 text-[#1E2D4D] focus:ring-[#1E2D4D]"
                         />
                         <span className="text-sm text-gray-700">{loc.locationName}</span>
                       </label>
@@ -361,7 +361,7 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="e.g., Maria Garcia"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
                 />
               </div>
 
@@ -379,7 +379,7 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="email@example.com"
-                      className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                      className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
                     />
                   </div>
                 </div>
@@ -396,7 +396,7 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="(555) 000-0000"
-                      className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                      className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
                     />
                   </div>
                 </div>
@@ -409,14 +409,14 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
                     <MapPin className="w-3.5 h-3.5 inline mr-1 text-gray-400" />
                     Assign to Locations
                   </label>
-                  <div className="space-y-2 bg-gray-50 rounded-lg p-3">
+                  <div className="space-y-2 bg-[#FAF7F0] rounded-lg p-3">
                     {locations.map(loc => (
                       <label key={loc.locationId} className="flex items-center gap-2 cursor-pointer">
                         <input
                           type="checkbox"
                           checked={selectedLocations.includes(loc.locationId)}
                           onChange={() => toggleLocation(loc.locationId)}
-                          className="w-4 h-4 rounded border-gray-300 text-[#1e4d6b] focus:ring-[#1e4d6b]"
+                          className="w-4 h-4 rounded border-gray-300 text-[#1E2D4D] focus:ring-[#1E2D4D]"
                         />
                         <span className="text-sm text-gray-700">{loc.locationName}</span>
                       </label>
@@ -436,7 +436,7 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
               id="role"
               value={role}
               onChange={(e) => setRole(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
             >
               {ROLE_OPTIONS.map(opt => (
                 <option key={opt.value} value={opt.value}>
@@ -459,14 +459,14 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
             <button
               type="button"
               onClick={handleClose}
-              className="flex-1 px-4 py-2 border-2 border-[#1e4d6b] text-[#1e4d6b] rounded-xl hover:bg-gray-50 transition-colors bg-white"
+              className="flex-1 px-4 py-2 border-2 border-[#1E2D4D] text-[#1E2D4D] rounded-xl hover:bg-gray-50 transition-colors bg-white"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading || (isBulk && bulkEmailCount === 0)}
-              className="flex-1 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+              className="flex-1 px-4 py-2 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
             >
               {loading
                 ? 'Sending...'

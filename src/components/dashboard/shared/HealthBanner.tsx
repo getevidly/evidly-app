@@ -60,10 +60,10 @@ export function HealthBanner({ status, scope, message }: HealthBannerProps) {
     >
       <Icon size={18} className="shrink-0" style={{ color: config.iconColor }} />
       <div className="flex-1 min-w-0">
-        <p className="text-[13px] font-semibold" style={{ color: config.textColor }}>
+        <p className="text-sm font-semibold" style={{ color: config.textColor }}>
           {scope}
         </p>
-        <p className="text-[11px]" style={{ color: config.subTextColor }}>
+        <p className="text-xs" style={{ color: config.subTextColor }}>
           {message}
         </p>
       </div>

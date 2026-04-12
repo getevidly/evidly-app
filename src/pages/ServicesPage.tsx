@@ -168,11 +168,11 @@ export default function ServicesPage() {
   if (!isDemoMode) {
     return (
       <div className="p-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Vendor Services</h1>
+        <h1 className="text-2xl font-bold text-[#1E2D4D] mb-2">Vendor Services</h1>
         <p className="text-sm text-gray-500 mb-6">Track and manage vendor service schedules across your locations.</p>
         <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
           <FileText className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">No Service Records Yet</h2>
+          <h2 className="text-lg font-semibold text-[#1E2D4D] mb-2">No Service Records Yet</h2>
           <p className="text-sm text-gray-500 max-w-md mx-auto">
             Add vendors and log service visits to track your maintenance schedules.
           </p>
@@ -246,7 +246,7 @@ export default function ServicesPage() {
           </div>
           <button
             onClick={() => setShowLogService(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium transition-colors self-start"
+            className="flex items-center gap-2 px-4 py-2 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] text-sm font-medium transition-colors self-start"
           >
             <Plus className="h-4 w-4" />
             Log Service
@@ -263,19 +263,19 @@ export default function ServicesPage() {
               return (
                 <div
                   key={rs.category.id}
-                  className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-sm transition-shadow"
+                  className="bg-white rounded-xl border border-gray-200 p-4 transition-shadow"
                 >
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <p className="text-sm font-semibold text-gray-900 truncate">{rs.serviceName}</p>
-                        <span className="flex-shrink-0 text-[10px] px-1.5 py-0.5 rounded-full bg-red-100 text-red-800 font-semibold">Required</span>
+                        <p className="text-sm font-semibold text-[#1E2D4D] truncate">{rs.serviceName}</p>
+                        <span className="flex-shrink-0 text-xs px-1.5 py-0.5 rounded-full bg-red-100 text-red-800 font-semibold">Required</span>
                       </div>
                       <p className="text-xs text-gray-500 mt-0.5 truncate">
                         {rs.vendorName || 'No vendor assigned'}
                       </p>
                     </div>
-                    <span className={`flex-shrink-0 flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${badge.bg} ${badge.text}`}>
+                    <span className={`flex-shrink-0 flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${badge.bg} ${badge.text}`}>
                       <BadgeIcon className={`h-3 w-3 ${badge.iconColor}`} />
                       {badge.label}
                     </span>
@@ -298,7 +298,7 @@ export default function ServicesPage() {
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
           <div className="flex items-center gap-2 mb-3">
             <Filter className="h-4 w-4 text-gray-500" />
             <span className="text-sm font-medium text-gray-700">Filters</span>
@@ -307,7 +307,7 @@ export default function ServicesPage() {
             <select
               value={locationFilter}
               onChange={(e) => setLocationFilter(e.target.value)}
-              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]"
+              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]"
             >
               {showAllLocationsOption() && <option value="all">All Locations</option>}
               {accessibleLocs.map((loc) => (
@@ -317,7 +317,7 @@ export default function ServicesPage() {
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]"
+              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]"
             >
               <option value="all">All Categories</option>
               {VENDOR_CATEGORIES.map((cat) => (
@@ -327,7 +327,7 @@ export default function ServicesPage() {
             {(locationFilter !== 'all' || categoryFilter !== 'all') && (
               <button
                 onClick={() => { setLocationFilter('all'); setCategoryFilter('all'); }}
-                className="text-sm text-[#1e4d6b] hover:text-[#163a52] font-medium px-2"
+                className="text-sm text-[#1E2D4D] hover:text-[#141E33] font-medium px-2"
               >
                 Clear Filters
               </button>
@@ -345,12 +345,12 @@ export default function ServicesPage() {
               <p className="text-xs text-gray-400 mt-1">Log a service to see records here.</p>
             </div>
           ) : (
-            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
               {/* Desktop table */}
               <div className="hidden md:block overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-gray-200 bg-gray-50">
+                    <tr className="border-b border-gray-200 bg-[#FAF7F0]">
                       <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Date</th>
                       <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Service</th>
                       <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Vendor</th>
@@ -373,7 +373,7 @@ export default function ServicesPage() {
                           <td className="px-4 py-3">
                             <span className="text-gray-900">{record.serviceName}</span>
                             {required && (
-                              <span className="ml-1.5 text-[10px] px-1.5 py-0.5 rounded-full bg-red-100 text-red-800 font-semibold">Required</span>
+                              <span className="ml-1.5 text-xs px-1.5 py-0.5 rounded-full bg-red-100 text-red-800 font-semibold">Required</span>
                             )}
                           </td>
                           <td className="px-4 py-3 text-gray-700">{record.vendorName}</td>
@@ -428,10 +428,10 @@ export default function ServicesPage() {
                     <div key={record.id} className="p-4 space-y-2 cursor-pointer hover:bg-gray-50 transition-colors" onClick={() => navigate(`/services/${record.id}`)}>
                       <div className="flex items-start justify-between">
                         <div>
-                          <p className="text-sm font-semibold text-gray-900">
+                          <p className="text-sm font-semibold text-[#1E2D4D]">
                             {record.serviceName}
                             {required && (
-                              <span className="ml-1.5 text-[10px] px-1.5 py-0.5 rounded-full bg-red-100 text-red-800 font-semibold">Required</span>
+                              <span className="ml-1.5 text-xs px-1.5 py-0.5 rounded-full bg-red-100 text-red-800 font-semibold">Required</span>
                             )}
                           </p>
                           <p className="text-xs text-gray-500">{record.vendorName}</p>
@@ -485,17 +485,17 @@ export default function ServicesPage() {
           <div className="fixed inset-0 bg-black/50 z-50" onClick={() => setShowLogService(false)} />
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div
-              className="bg-white rounded-xl shadow-sm border border-gray-200 w-[95vw] sm:w-full max-w-lg max-h-[85vh] overflow-y-auto"
+              className="bg-white rounded-xl border border-gray-200 w-[95vw] sm:w-full max-w-lg max-h-[85vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="p-4 sm:p-6 border-b border-gray-200">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-[#eef4f8] rounded-lg">
-                      <Plus className="h-5 w-5 text-[#1e4d6b]" />
+                      <Plus className="h-5 w-5 text-[#1E2D4D]" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-bold text-gray-900">Log a Service</h3>
+                      <h3 className="text-lg font-bold text-[#1E2D4D]">Log a Service</h3>
                       <p className="text-sm text-gray-500">Record a completed vendor service</p>
                     </div>
                   </div>
@@ -511,7 +511,7 @@ export default function ServicesPage() {
                   <select
                     value={logForm.locationId}
                     onChange={(e) => setLogForm({ ...logForm, locationId: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
                   >
                     <option value="">Select location...</option>
                     {accessibleLocs.map((loc) => (
@@ -533,7 +533,7 @@ export default function ServicesPage() {
                       }
                       setLogForm({ ...logForm, categoryId: catId, serviceId: '', vendorName: '' });
                     }}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
                   >
                     <option value="">Select category...</option>
                     {VENDOR_CATEGORIES.map((cat) => {
@@ -555,7 +555,7 @@ export default function ServicesPage() {
                     <select
                       value={logForm.serviceId}
                       onChange={(e) => setLogForm({ ...logForm, serviceId: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
                     >
                       <option value="">Select service...</option>
                       {selectedCategoryServices.map((svc) => (
@@ -574,7 +574,7 @@ export default function ServicesPage() {
                     <select
                       value={logForm.vendorName}
                       onChange={(e) => setLogForm({ ...logForm, vendorName: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
                     >
                       <option value="">Select vendor...</option>
                       {selectedCategoryVendors.map((v) => (
@@ -591,7 +591,7 @@ export default function ServicesPage() {
                     type="date"
                     value={logForm.serviceDate}
                     onChange={(e) => setLogForm({ ...logForm, serviceDate: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
                   />
                 </div>
 
@@ -603,7 +603,7 @@ export default function ServicesPage() {
                     value={logForm.technicianName}
                     onChange={(e) => setLogForm({ ...logForm, technicianName: e.target.value })}
                     placeholder="e.g., John Smith"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
                   />
                 </div>
 
@@ -614,7 +614,7 @@ export default function ServicesPage() {
                     type="date"
                     value={logForm.nextServiceDate}
                     onChange={(e) => setLogForm({ ...logForm, nextServiceDate: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
                   />
                 </div>
 
@@ -634,7 +634,7 @@ export default function ServicesPage() {
                     onChange={(e) => { setLogForm({ ...logForm, notes: e.target.value }); setAiFields(prev => { const n = new Set(prev); n.delete('notes'); return n; }); }}
                     placeholder="Service details, observations, follow-up items..."
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent resize-none"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent resize-none"
                   />
                   {aiFields.has('notes') && <AIGeneratedIndicator />}
                 </div>
@@ -649,7 +649,7 @@ export default function ServicesPage() {
                 </button>
                 <button
                   onClick={handleLogServiceSubmit}
-                  className="px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium"
+                  className="px-4 py-2 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] text-sm font-medium"
                 >
                   Log Service
                 </button>

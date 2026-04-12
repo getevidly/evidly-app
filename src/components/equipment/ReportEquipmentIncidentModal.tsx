@@ -46,7 +46,7 @@ export function ReportEquipmentIncidentModal({ isOpen, onClose }: ReportEquipmen
 
   // ── Shared input styles ────────────────────────────────────
   const inputClass =
-    'w-full px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/30';
+    'w-full px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/30';
   const inputStyle = { background: CARD_BG, borderColor: CARD_BORDER, color: NAVY };
   const labelStyle = { color: NAVY };
 
@@ -90,8 +90,8 @@ export function ReportEquipmentIncidentModal({ isOpen, onClose }: ReportEquipmen
                   onClick={() => setIncidentType(t.value)}
                   className="px-3 py-2 text-sm rounded-lg border font-medium transition-colors"
                   style={{
-                    borderColor: incidentType === t.value ? '#1e4d6b' : CARD_BORDER,
-                    background: incidentType === t.value ? '#1e4d6b0D' : CARD_BG,
+                    borderColor: incidentType === t.value ? '#1E2D4D' : CARD_BORDER,
+                    background: incidentType === t.value ? '#1E2D4D0D' : CARD_BG,
                     color: incidentType === t.value ? NAVY : TEXT_TERTIARY,
                   }}
                 >
@@ -212,7 +212,7 @@ export function ReportEquipmentIncidentModal({ isOpen, onClose }: ReportEquipmen
               type="submit"
               disabled={!canSubmit}
               className="px-4 py-2 text-sm font-semibold text-white rounded-lg transition-colors disabled:opacity-50"
-              style={{ background: '#1e4d6b' }}
+              style={{ background: '#1E2D4D' }}
             >
               Submit Report
             </button>

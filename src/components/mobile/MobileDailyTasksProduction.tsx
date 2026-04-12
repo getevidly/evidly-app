@@ -59,7 +59,7 @@ export function MobileDailyTasksProduction() {
             <p className="text-[16px] font-semibold text-[#1E2D4D] mb-2">
               Add your first location to get started
             </p>
-            <p className="text-[13px] text-[#6B7280] leading-snug">
+            <p className="text-sm text-[#6B7280] leading-snug">
               Your daily tasks will appear here once your kitchen is set up.
             </p>
           </div>

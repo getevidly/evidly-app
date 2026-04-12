@@ -19,6 +19,7 @@ import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistB
 import { ErrorState, PageEmptyState } from '../components/shared/PageStates';
 import { getJurisdictionForLocation } from '../data/jurisdictionChecklistData';
 import { addPendingAction } from '../lib/offlineDb';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 interface ChecklistTemplate {
   id: string;
@@ -56,7 +57,7 @@ const AUTHORITY_LABELS: Record<string, { label: string; color: string; bg: strin
   nfpa_96: { label: 'NFPA 96', color: '#b91c1c', bg: '#fef2f2' },
   nfpa_10: { label: 'NFPA 10', color: '#b91c1c', bg: '#fef2f2' },
   cfc: { label: 'NFPA 96', color: '#c2410c', bg: '#fff7ed' },
-  evidly_best_practice: { label: 'Best Practice', color: '#1e4d6b', bg: '#eef4f8' },
+  evidly_best_practice: { label: 'Best Practice', color: '#1E2D4D', bg: '#eef4f8' },
 };
 
 interface ChecklistCompletion {
@@ -589,7 +590,7 @@ function HACCPSummaryCard({ isDemoMode }: { isDemoMode: boolean }) {
         style={{ borderBottom: '1px solid #F0F0F0' }}
       >
         <div className="flex items-center gap-2">
-          <Shield size={16} style={{ color: '#1e4d6b' }} />
+          <Shield size={16} style={{ color: '#1E2D4D' }} />
           <h3 className="text-sm font-semibold" style={{ color: '#0B1628' }}>
             HACCP Control Points
           </h3>
@@ -612,7 +613,7 @@ function HACCPSummaryCard({ isDemoMode }: { isDemoMode: boolean }) {
                   ? <AlertTriangle size={14} className="text-red-500 shrink-0" />
                   : <CheckCircle size={14} className="text-green-500 shrink-0" />
                 }
-                <span className={`text-[13px] ${isDev ? 'font-semibold text-red-700' : 'text-gray-800'}`}>
+                <span className={`text-sm ${isDev ? 'font-semibold text-red-700' : 'text-gray-800'}`}>
                   {ccp.name}
                 </span>
               </div>
@@ -622,7 +623,7 @@ function HACCPSummaryCard({ isDemoMode }: { isDemoMode: boolean }) {
                   {isDev ? 'DEVIATION' : 'IN LIMIT'}
                 </span>
                 {isDev && (
-                  <span className="text-[11px] text-gray-500 whitespace-nowrap">
+                  <span className="text-xs text-gray-500 whitespace-nowrap">
                     {ccp.locationName && <>{ccp.locationName} · </>}
                     {ccp.deviationTime && <>{ccp.deviationTime} · </>}
                     {ccp.caCreated
@@ -657,7 +658,7 @@ function HACCPSummaryCard({ isDemoMode }: { isDemoMode: boolean }) {
           type="button"
           onClick={() => nav('/haccp')}
           className="text-xs font-semibold transition-colors hover:underline"
-          style={{ color: '#1e4d6b' }}
+          style={{ color: '#1E2D4D' }}
         >
           View &rarr;
         </button>
@@ -671,6 +672,7 @@ export function Checklists() {
   const { isDemoMode } = useDemo();
   const { t } = useTranslation();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  usePageTitle('Checklists');
   const [searchParams] = useSearchParams();
   const locationParam = searchParams.get('location') || '';
   // Enforcement emphasis data is demo-only; production operators get jurisdiction from DB
@@ -1361,19 +1363,19 @@ export function Checklists() {
       {item.authority_source && (() => {
         const auth = AUTHORITY_LABELS[item.authority_source!];
         return auth ? (
-          <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded"
+          <span className="text-xs font-semibold px-1.5 py-0.5 rounded"
             style={{ color: auth.color, backgroundColor: auth.bg }}>
             {auth.label}{item.authority_section ? ` ${item.authority_section}` : ''}
           </span>
         ) : null;
       })()}
       {item.haccp_ccp && (
-        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-amber-100 text-amber-800">
+        <span className="text-xs font-semibold px-1.5 py-0.5 rounded bg-amber-100 text-amber-800">
           {item.haccp_ccp}
         </span>
       )}
       {item.is_critical && (
-        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-red-100 text-red-700">Critical</span>
+        <span className="text-xs font-semibold px-1.5 py-0.5 rounded bg-red-100 text-red-700">Critical</span>
       )}
     </span>
   );
@@ -1632,17 +1634,17 @@ export function Checklists() {
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: t('checklists.title') }]} />
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{t('checklists.title')}</h1>
+          <h1 className="text-2xl font-bold text-[#1E2D4D]">{t('checklists.title')}</h1>
           <p className="text-sm text-gray-600 mt-1">{t('checklists.subtitle')}</p>
         </div>
 
         {/* Jurisdiction Header */}
         {jurisdictionConfig && (
           <div className="flex items-start gap-3 px-4 py-3 rounded-lg bg-[#eef4f8] border border-[#b8d4e8]">
-            <Building2 size={18} className="text-[#1e4d6b] mt-0.5 shrink-0" />
+            <Building2 size={18} className="text-[#1E2D4D] mt-0.5 shrink-0" />
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                <span className="text-sm font-semibold text-[#1e4d6b]">{jurisdictionConfig.ehdName}</span>
+                <span className="text-sm font-semibold text-[#1E2D4D]">{jurisdictionConfig.ehdName}</span>
                 <span className="text-xs text-gray-400">·</span>
                 <span className="text-xs text-gray-600">{jurisdictionConfig.foodCodeVersion}</span>
               </div>
@@ -1652,7 +1654,7 @@ export function Checklists() {
                   .map(f => (
                     <span
                       key={f.codeSection}
-                      className="text-[10px] font-semibold px-1.5 py-0.5 rounded"
+                      className="text-xs font-semibold px-1.5 py-0.5 rounded"
                       style={{ color: '#0369a1', backgroundColor: '#e0f2fe' }}
                     >
                       {f.description} ({f.codeSection})
@@ -1669,7 +1671,7 @@ export function Checklists() {
             onClick={() => setActiveView('today')}
             className={`px-4 py-2 font-medium whitespace-nowrap ${
               activeView === 'today'
-                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
+                ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -1679,7 +1681,7 @@ export function Checklists() {
             onClick={() => setActiveView('templates')}
             className={`px-4 py-2 font-medium whitespace-nowrap ${
               activeView === 'templates'
-                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
+                ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -1689,7 +1691,7 @@ export function Checklists() {
             onClick={() => setActiveView('history')}
             className={`px-4 py-2 font-medium whitespace-nowrap ${
               activeView === 'history'
-                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
+                ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -1704,7 +1706,7 @@ export function Checklists() {
             {ccpMappingResults.length > 0 && (
               <div className="bg-[#eef4f8] border border-[#b8d4e8] rounded-xl p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-sm font-bold text-[#1e4d6b] flex items-center gap-1.5">
+                  <h3 className="text-sm font-bold text-[#1E2D4D] flex items-center gap-1.5">
                     <EvidlyIcon size={14} /> HACCP Logs Auto-Populated
                   </h3>
                   <button onClick={() => setCcpMappingResults([])} className="text-gray-400 hover:text-gray-600"><X size={16} /></button>
@@ -1715,7 +1717,7 @@ export function Checklists() {
                       {r.pass
                         ? <CheckCircle size={14} className="text-green-600 shrink-0" />
                         : <AlertTriangle size={14} className="text-red-600 shrink-0" />}
-                      <span className="font-semibold text-[#1e4d6b]">{r.ccp}</span>
+                      <span className="font-semibold text-[#1E2D4D]">{r.ccp}</span>
                       <span className="text-gray-600">
                         {r.value}°F — {r.pass ? 'Within limit' : <span className="text-red-600 font-semibold">OUT OF LIMIT</span>}
                         {r.limit && <span className="text-gray-400 ml-1">({r.limit})</span>}
@@ -1727,7 +1729,7 @@ export function Checklists() {
             )}
 
             <div className="flex justify-between items-center flex-wrap gap-2">
-              <h2 className="text-xl font-bold text-gray-900">{t('checklists.todaysChecklists')}</h2>
+              <h2 className="text-xl font-bold text-[#1E2D4D]">{t('checklists.todaysChecklists')}</h2>
               <span className="text-sm text-gray-500">{format(new Date(), 'EEEE, MMMM d, yyyy')}</span>
             </div>
 
@@ -1752,7 +1754,7 @@ export function Checklists() {
                 return (
                   <div
                     key={cl.id}
-                    className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 cursor-pointer transition-all hover:shadow-md hover:border-gray-300"
+                    className="bg-white rounded-xl border border-gray-200 p-6 cursor-pointer transition-all hover:shadow-md hover:border-gray-300"
                     onClick={() => {
                       // Find a matching template from user templates or demo items map
                       const match = templates.find(t => t.name === cl.name);
@@ -1775,7 +1777,7 @@ export function Checklists() {
                           {cl.status === 'complete' ? <Check className={`h-6 w-6 ${iconColor}`} /> : <CheckSquare className={`h-6 w-6 ${iconColor}`} />}
                         </div>
                         <div>
-                          <h3 className="text-lg font-semibold text-gray-900">{templateNameMap[cl.name] || cl.name}</h3>
+                          <h3 className="text-lg font-semibold text-[#1E2D4D]">{templateNameMap[cl.name] || cl.name}</h3>
                           <p className="text-sm text-gray-500">{cl.location}</p>
                         </div>
                       </div>
@@ -1830,7 +1832,7 @@ export function Checklists() {
                               }
                             }
                           }}
-                          className="px-4 py-2 bg-[#1e4d6b] text-white text-sm rounded-lg hover:bg-[#163a52] transition-colors font-medium"
+                          className="px-4 py-2 bg-[#1E2D4D] text-white text-sm rounded-lg hover:bg-[#162340] transition-colors font-medium"
                         >
                           {cl.status === 'in_progress' ? t('common.continue') : t('common.start')}
                         </button>
@@ -1847,10 +1849,10 @@ export function Checklists() {
         {activeView === 'templates' && (
           <div className="space-y-6">
             <div className="flex justify-between items-center flex-wrap gap-2">
-              <h2 className="text-xl font-bold text-gray-900">{t('checklists.checklistTemplates')}</h2>
+              <h2 className="text-xl font-bold text-[#1E2D4D]">{t('checklists.checklistTemplates')}</h2>
               <button
                 onClick={() => setShowTemplateModal(true)}
-                className="flex items-center space-x-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors font-medium shadow-sm"
+                className="flex items-center space-x-2 px-4 py-2 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors font-medium shadow-sm"
               >
                 <Plus className="h-5 w-5" />
                 <span>{t('checklists.newTemplate')}</span>
@@ -1859,17 +1861,17 @@ export function Checklists() {
 
             {TEMPLATE_CATEGORIES.map((cat) => (
               <div key={cat.category}>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center space-x-2">
-                  <CheckSquare className="h-5 w-5 text-[#1e4d6b]" />
+                <h3 className="text-lg font-semibold text-[#1E2D4D] mb-4 flex items-center space-x-2">
+                  <CheckSquare className="h-5 w-5 text-[#1E2D4D]" />
                   <span>{categoryMap[cat.category] || cat.category}</span>
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {cat.templates.map((tmpl) => {
                     const roleBg = tmpl.role === 'Manager' ? 'bg-purple-100 text-purple-700' : tmpl.role === 'Facilities' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700';
                     return (
-                      <div key={tmpl.key} className="bg-white rounded-xl shadow-sm p-5 border border-gray-200 hover:border-[#1e4d6b] transition-colors">
+                      <div key={tmpl.key} className="bg-white rounded-xl p-6 border border-gray-200 hover:border-[#1E2D4D] transition-colors">
                         <div className="flex items-start justify-between mb-3">
-                          <h4 className="font-semibold text-gray-900 text-base">{templateNameMap[tmpl.name] || tmpl.name}</h4>
+                          <h4 className="font-semibold text-[#1E2D4D] text-base">{templateNameMap[tmpl.name] || tmpl.name}</h4>
                           <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${roleBg}`}>{roleMap[tmpl.role] || tmpl.role}</span>
                         </div>
                         <div className="flex items-center space-x-3 text-sm text-gray-500 mb-4">
@@ -1912,7 +1914,7 @@ export function Checklists() {
                           <button
                             onClick={() => createPrebuiltTemplate(tmpl.key as keyof typeof PREBUILT_TEMPLATES)}
                             disabled={loading}
-                            className="w-full px-4 py-2 border-2 border-[#1e4d6b] text-[#1e4d6b] rounded-lg hover:bg-[#1e4d6b] hover:text-white transition-colors font-medium text-sm disabled:opacity-50"
+                            className="w-full px-4 py-2 border-2 border-[#1E2D4D] text-[#1E2D4D] rounded-lg hover:bg-[#1E2D4D] hover:text-white transition-colors font-medium text-sm disabled:opacity-50"
                           >
                             {t('checklists.useTemplate')}
                           </button>
@@ -1931,7 +1933,7 @@ export function Checklists() {
                                 const ccpItem = ccpItems.find(item => getItemDef(item).haccp_ccp === ccp);
                                 const def = ccpItem ? getItemDef(ccpItem) : null;
                                 return (
-                                  <span key={ccp} className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-md bg-amber-50 text-amber-800 border border-amber-200" title={def?.haccp_critical_limit || ''}>
+                                  <span key={ccp} className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-md bg-amber-50 text-amber-800 border border-amber-200" title={def?.haccp_critical_limit || ''}>
                                     <Shield size={10} />
                                     {ccp}
                                     {def?.haccp_critical_limit && <span className="text-amber-600 font-normal ml-0.5">{def.haccp_critical_limit}</span>}
@@ -1945,7 +1947,7 @@ export function Checklists() {
                         {tmpl.key === 'cooling_log' && (() => {
                           const isActive = new Date() >= new Date('2026-04-01');
                           return (
-                            <div className={`mt-2 text-[11px] rounded-lg px-3 py-2 ${isActive ? 'bg-red-50 border border-red-200 text-red-800' : 'bg-amber-50 border border-amber-200 text-amber-800'}`}>
+                            <div className={`mt-2 text-xs rounded-lg px-3 py-2 ${isActive ? 'bg-red-50 border border-red-200 text-red-800' : 'bg-amber-50 border border-amber-200 text-amber-800'}`}>
                               <span className="font-bold">{isActive ? 'NOW IN EFFECT' : 'Effective Apr 1, 2026'}:</span>{' '}
                               CA Stage 1 — cooling clock starts at actual cooked temp, not 135°F. Stricter than FDA rule.
                               {isActive && <span className="font-semibold"> This template reflects the CA requirement.</span>}
@@ -1962,8 +1964,8 @@ export function Checklists() {
             {/* Custom Templates */}
             {templates.length > 0 && (
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Your Templates</h3>
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden overflow-x-auto">
+                <h3 className="text-lg font-semibold text-[#1E2D4D] mb-4">Your Templates</h3>
+                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden overflow-x-auto">
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                       <tr>
@@ -1987,7 +1989,7 @@ export function Checklists() {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <div className="flex items-center justify-end gap-2">
-                              <button onClick={() => handleStartChecklist(template)} className="text-[#1e4d6b] hover:text-[#163a52]" title="Start checklist">
+                              <button onClick={() => handleStartChecklist(template)} className="text-[#1E2D4D] hover:text-[#141E33]" title="Start checklist">
                                 <Play className="h-4 w-4" />
                               </button>
                               <button onClick={() => handleEditTemplate(template)} className="text-gray-500 hover:text-gray-700" title="Edit template">
@@ -2040,7 +2042,7 @@ export function Checklists() {
           return (
           <div className="space-y-4">
             <div className="flex flex-wrap items-end justify-between gap-4">
-              <h2 className="text-xl font-bold text-gray-900">{t('checklists.checklistHistory')} — {rangeLabel}</h2>
+              <h2 className="text-xl font-bold text-[#1E2D4D]">{t('checklists.checklistHistory')} — {rangeLabel}</h2>
               <div data-demo-allow className="flex flex-wrap items-end gap-3">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
@@ -2074,7 +2076,7 @@ export function Checklists() {
 
             <div className="text-sm text-gray-500">{filteredEntries.length} {t('checklists.entries')}</div>
 
-            <div className="bg-white shadow-sm border border-gray-200 rounded-xl overflow-hidden overflow-x-auto">
+            <div className="bg-white border border-gray-200 rounded-xl overflow-hidden overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
@@ -2208,7 +2210,7 @@ export function Checklists() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">{t('checklists.checklistItems')}</label>
                 <div className="space-y-2 mb-3">
                   {items.map((item, index) => (
-                    <div key={index} className="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg">
+                    <div key={index} className="flex items-center space-x-2 p-3 bg-[#FAF7F0] rounded-lg">
                       <span className="text-sm text-gray-900 flex-1">{item.title}</span>
                       <span className="text-xs text-gray-500 capitalize">{item.type.replace('_', ' ')}</span>
                       <button
@@ -2255,14 +2257,14 @@ export function Checklists() {
                 <button
                   type="button"
                   onClick={() => setShowTemplateModal(false)}
-                  className="px-6 py-3 border-2 border-[#1e4d6b] rounded-xl text-lg font-medium text-[#1e4d6b] hover:bg-gray-50 transition-colors bg-white min-h-[44px]"
+                  className="px-6 py-3 border-2 border-[#1E2D4D] rounded-xl text-lg font-medium text-[#1E2D4D] hover:bg-gray-50 transition-colors bg-white min-h-[44px]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-6 py-3 bg-[#1e4d6b] text-white rounded-lg text-lg font-bold hover:bg-[#163a52] transition-colors disabled:opacity-50 shadow-sm min-h-[44px]"
+                  className="px-6 py-3 bg-[#1E2D4D] text-white rounded-lg text-lg font-bold hover:bg-[#162340] transition-colors disabled:opacity-50 shadow-sm min-h-[44px]"
                 >
                   {loading ? t('checklists.creating') : t('checklists.createTemplate')}
                 </button>
@@ -2277,7 +2279,7 @@ export function Checklists() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
           <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div className="mb-6">
-              <h3 className="text-2xl font-bold text-gray-900">{templateNameMap[selectedTemplate.name] || selectedTemplate.name}</h3>
+              <h3 className="text-2xl font-bold text-[#1E2D4D]">{templateNameMap[selectedTemplate.name] || selectedTemplate.name}</h3>
               <div className="mt-2">
                 <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
                   <span>{t('checklists.progress')}</span>
@@ -2296,7 +2298,7 @@ export function Checklists() {
               {templateItems.map((item, index) => (
                 <div key={item.id} className="p-4 border border-gray-200 rounded-lg">
                   <div className="flex items-start space-x-3 mb-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-[#1e4d6b] text-white rounded-full flex items-center justify-center font-bold">
+                    <div className="flex-shrink-0 w-8 h-8 bg-[#1E2D4D] text-white rounded-full flex items-center justify-center font-bold">
                       {index + 1}
                     </div>
                     <div className="flex-1">{renderItemInput(item)}</div>
@@ -2309,14 +2311,14 @@ export function Checklists() {
               <button
                 type="button"
                 onClick={() => setShowCompleteModal(false)}
-                className="px-6 py-3 border-2 border-[#1e4d6b] rounded-xl text-lg font-medium text-[#1e4d6b] hover:bg-gray-50 transition-colors bg-white min-h-[44px]"
+                className="px-6 py-3 border-2 border-[#1E2D4D] rounded-xl text-lg font-medium text-[#1E2D4D] hover:bg-gray-50 transition-colors bg-white min-h-[44px]"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSubmitCompletion}
                 disabled={loading || currentProgress < 100}
-                className="px-6 py-3 bg-[#1e4d6b] text-white rounded-lg text-lg font-bold hover:bg-[#163a52] transition-colors disabled:opacity-50 shadow-sm min-h-[44px]"
+                className="px-6 py-3 bg-[#1E2D4D] text-white rounded-lg text-lg font-bold hover:bg-[#162340] transition-colors disabled:opacity-50 shadow-sm min-h-[44px]"
               >
                 {loading ? t('common.submitting') : t('checklists.submitChecklist')}
               </button>

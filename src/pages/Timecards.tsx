@@ -15,7 +15,7 @@ import { PayPeriods } from '../components/timecards/PayPeriods';
 import { ClockInOutModal } from '../components/timecards/ClockInOutModal';
 import { ShiftDetailModal } from '../components/timecards/ShiftDetailModal';
 
-const NAVY = '#1e4d6b';
+const NAVY = '#1E2D4D';
 const F: React.CSSProperties = { fontFamily: "'DM Sans', 'Inter', sans-serif" };
 
 type Tab = 'my' | 'team' | 'periods';

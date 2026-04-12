@@ -18,22 +18,22 @@ export function BenchmarkWidget({ locationId }: BenchmarkWidgetProps) {
   const qChange = comparison.quarterlyChange;
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 mt-4">
+    <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 mt-4">
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
-            <Target className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+            <Target className="h-5 w-5" style={{ color: '#1E2D4D' }} />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">Industry Benchmark</h3>
+            <h3 className="text-lg font-semibold text-[#1E2D4D]">Industry Benchmark</h3>
             <p className="text-xs text-gray-500">How you compare to {percentile.totalPeers.toLocaleString()} peers</p>
           </div>
         </div>
         <button
           onClick={() => navigate(locationId === 'all' ? '/benchmarks' : `/benchmarks?location=${locationId}`)}
           className="text-sm font-medium flex items-center gap-1 hover:underline"
-          style={{ color: '#1e4d6b' }}
+          style={{ color: '#1E2D4D' }}
         >
           View Full Report <ArrowRight className="h-3.5 w-3.5" />
         </button>
@@ -42,7 +42,7 @@ export function BenchmarkWidget({ locationId }: BenchmarkWidgetProps) {
       {/* Score comparison bar */}
       <div className="mb-4">
         <div className="flex items-center justify-between text-sm mb-2">
-          <span className="font-semibold text-gray-900">Your Score: {percentile.score}</span>
+          <span className="font-semibold text-[#1E2D4D]">Your Score: {percentile.score}</span>
           <span className="text-gray-500">Industry Avg: {comparison.industryAvg}</span>
         </div>
         <div className="relative h-3 bg-gray-100 rounded-full overflow-hidden">
@@ -61,8 +61,8 @@ export function BenchmarkWidget({ locationId }: BenchmarkWidgetProps) {
           />
         </div>
         <div className="flex items-center justify-between mt-1">
-          <span className="text-[10px] text-gray-400">0</span>
-          <span className="text-[10px] text-gray-400">100</span>
+          <span className="text-xs text-gray-400">0</span>
+          <span className="text-xs text-gray-400">100</span>
         </div>
       </div>
 
@@ -135,14 +135,14 @@ export function BenchmarkWidget({ locationId }: BenchmarkWidgetProps) {
           <button
             onClick={() => navigate(locationId === 'all' ? '/benchmarks' : `/benchmarks?location=${locationId}`)}
             className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors"
-            style={{ backgroundColor: '#1e4d6b', color: 'white' }}
+            style={{ backgroundColor: '#1E2D4D', color: 'white' }}
           >
             Full Report
           </button>
           <button
             onClick={() => toast.info("Share from the full Benchmarks page")}
             className="px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors hover:bg-gray-50"
-            style={{ borderColor: '#1e4d6b', color: '#1e4d6b' }}
+            style={{ borderColor: '#1E2D4D', color: '#1E2D4D' }}
           >
             Share Ranking
           </button>

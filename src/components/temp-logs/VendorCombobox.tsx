@@ -159,7 +159,7 @@ export function VendorCombobox({ value, onChange, locationId, className }: Props
             {/* Custom vendors section */}
             {filteredCustom.length > 0 && (
               <div>
-                <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-gray-400 bg-gray-50 border-b border-gray-100">
+                <div className="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-gray-400 bg-[#FAF7F0] border-b border-gray-100">
                   Recent / Custom
                 </div>
                 {filteredCustom.map(v => (
@@ -168,11 +168,11 @@ export function VendorCombobox({ value, onChange, locationId, className }: Props
                     type="button"
                     onClick={() => handleSelect(v.name)}
                     className={`w-full text-left px-4 py-2.5 text-sm hover:bg-[#eef4f8] transition-colors flex items-center justify-between ${
-                      value === v.name ? 'bg-[#eef4f8] font-semibold text-[#1e4d6b]' : 'text-gray-700'
+                      value === v.name ? 'bg-[#eef4f8] font-semibold text-[#1E2D4D]' : 'text-gray-700'
                     }`}
                   >
                     {v.name}
-                    {value === v.name && <span className="text-[#1e4d6b] text-xs">&#10003;</span>}
+                    {value === v.name && <span className="text-[#1E2D4D] text-xs">&#10003;</span>}
                   </button>
                 ))}
               </div>
@@ -181,7 +181,7 @@ export function VendorCombobox({ value, onChange, locationId, className }: Props
             {/* Seed vendors by category */}
             {filteredSeedByCategory.map(group => (
               <div key={group.category}>
-                <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-gray-400 bg-gray-50 border-b border-gray-100">
+                <div className="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-gray-400 bg-[#FAF7F0] border-b border-gray-100">
                   {group.label}
                 </div>
                 {group.vendors.map(name => (
@@ -190,11 +190,11 @@ export function VendorCombobox({ value, onChange, locationId, className }: Props
                     type="button"
                     onClick={() => handleSelect(name)}
                     className={`w-full text-left px-4 py-2.5 text-sm hover:bg-[#eef4f8] transition-colors flex items-center justify-between ${
-                      value === name ? 'bg-[#eef4f8] font-semibold text-[#1e4d6b]' : 'text-gray-700'
+                      value === name ? 'bg-[#eef4f8] font-semibold text-[#1E2D4D]' : 'text-gray-700'
                     }`}
                   >
                     {name}
-                    {value === name && <span className="text-[#1e4d6b] text-xs">&#10003;</span>}
+                    {value === name && <span className="text-[#1E2D4D] text-xs">&#10003;</span>}
                   </button>
                 ))}
               </div>
@@ -228,7 +228,7 @@ export function VendorCombobox({ value, onChange, locationId, className }: Props
                   type="button"
                   onClick={handleAddCustom}
                   disabled={!newVendorName.trim()}
-                  className="px-3 py-2 text-sm font-semibold text-white bg-[#1e4d6b] rounded-lg hover:bg-[#163a52] transition-colors disabled:opacity-40"
+                  className="px-3 py-2 text-sm font-semibold text-white bg-[#1E2D4D] rounded-lg hover:bg-[#162340] transition-colors disabled:opacity-40"
                 >
                   Add
                 </button>
@@ -244,7 +244,7 @@ export function VendorCombobox({ value, onChange, locationId, className }: Props
               <button
                 type="button"
                 onClick={() => setShowAddForm(true)}
-                className="w-full flex items-center gap-2 px-4 py-3 text-sm font-medium text-[#1e4d6b] hover:bg-[#eef4f8] transition-colors"
+                className="w-full flex items-center gap-2 px-4 py-3 text-sm font-medium text-[#1E2D4D] hover:bg-[#eef4f8] transition-colors"
               >
                 <Plus className="h-4 w-4" />
                 Add Custom Vendor

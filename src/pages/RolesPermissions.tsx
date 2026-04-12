@@ -276,7 +276,7 @@ function RolesPermissionsInner() {
                       >
                         <span>{formatRoleName(role)}</span>
                         {role === selectedRole && (
-                          <span className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: 'rgba(30, 77, 107, 0.1)', color: '#1e4d6b' }}>
+                          <span className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: 'rgba(30, 77, 107, 0.1)', color: '#1E2D4D' }}>
                             Selected
                           </span>
                         )}

@@ -126,11 +126,11 @@ export function TempLogScan() {
   if (state === 'success' && matched) {
     return (
       <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 max-w-sm w-full text-center">
+        <div className="bg-white rounded-xl border border-gray-200 p-8 max-w-sm w-full text-center">
           <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Temperature Logged!</h2>
+          <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Temperature Logged!</h2>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium mb-3"
-            style={{ backgroundColor: '#eef4f8', color: '#1e4d6b' }}>
+            style={{ backgroundColor: '#eef4f8', color: '#1E2D4D' }}>
             <QrCode className="h-3 w-3" />
             Logged via QR Scan
           </div>
@@ -145,7 +145,7 @@ export function TempLogScan() {
           <div className="space-y-2">
             <button
               onClick={handleReset}
-              className="w-full px-4 py-3 bg-[#1e4d6b] text-white font-semibold rounded-lg hover:bg-[#163a52] transition-colors"
+              className="w-full px-4 py-3 bg-[#1E2D4D] text-white font-semibold rounded-lg hover:bg-[#162340] transition-colors"
             >
               Scan Another QR Code
             </button>
@@ -167,7 +167,7 @@ export function TempLogScan() {
       <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center p-4">
         <div className="bg-white rounded-xl shadow-sm border-2 border-green-400 p-8 max-w-sm w-full text-center animate-pulse">
           <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-3" />
-          <h2 className="text-lg font-bold text-gray-900 mb-1">Equipment Found!</h2>
+          <h2 className="text-lg font-bold text-[#1E2D4D] mb-1">Equipment Found!</h2>
           <p className="text-sm text-gray-600">{matched.name}</p>
           <p className="text-xs text-gray-400">{matched.location}</p>
         </div>
@@ -179,8 +179,8 @@ export function TempLogScan() {
   if (state === 'entry' && matched) {
     return (
       <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-full max-w-sm overflow-hidden">
-          <div className="px-6 py-4" style={{ backgroundColor: '#1e4d6b' }}>
+        <div className="bg-white rounded-xl border border-gray-200 w-full max-w-sm overflow-hidden">
+          <div className="px-6 py-4" style={{ backgroundColor: '#1E2D4D' }}>
             <div className="flex items-center gap-3">
               <QrCode className="h-7 w-7 text-[#d4af37]" />
               <div>
@@ -193,7 +193,7 @@ export function TempLogScan() {
           <form onSubmit={handleSubmit} className="p-6 space-y-4">
             <div className="bg-[#eef4f8] rounded-lg p-3 text-center">
               <p className="text-xs text-gray-500 mb-1">Required: {matched.thresholdLabel} ({matched.ccp})</p>
-              <p className="text-lg font-bold" style={{ color: '#1e4d6b' }}>
+              <p className="text-lg font-bold" style={{ color: '#1E2D4D' }}>
                 {matched.type === 'Freezer' ? `${matched.maxTemp}°F or below` : `${matched.minTemp}°F – ${matched.maxTemp}°F`}
               </p>
             </div>
@@ -207,7 +207,7 @@ export function TempLogScan() {
                 value={temperature}
                 onChange={e => setTemperature(e.target.value)}
                 placeholder="Enter reading..."
-                className={`w-full px-4 py-4 border rounded-lg text-2xl font-bold text-center focus:ring-2 focus:ring-[#1e4d6b] focus:border-[#1e4d6b] ${
+                className={`w-full px-4 py-4 border rounded-lg text-2xl font-bold text-center focus:ring-2 focus:ring-[#1E2D4D] focus:border-[#1E2D4D] ${
                   isInRange === false ? 'border-red-300 bg-red-50' : 'border-gray-300'
                 }`}
                 style={{ fontSize: 16 }}
@@ -249,7 +249,7 @@ export function TempLogScan() {
                 />
                 {aiFields.has('correctiveAction') && <AIGeneratedIndicator />}
                 {!correctiveAction.trim() && (
-                  <p className="text-[10px] text-red-600 mt-1">Required — cannot submit without corrective action</p>
+                  <p className="text-xs text-red-600 mt-1">Required — cannot submit without corrective action</p>
                 )}
               </div>
             )}
@@ -269,7 +269,7 @@ export function TempLogScan() {
                 onChange={e => { setNotes(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('notes'); return s; }); }}
                 placeholder="Any observations..."
                 rows={2}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1e4d6b] focus:border-[#1e4d6b]"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1E2D4D] focus:border-[#1E2D4D]"
               />
               {aiFields.has('notes') && <AIGeneratedIndicator />}
             </div>
@@ -284,7 +284,7 @@ export function TempLogScan() {
               </button>
               <button
                 type="submit"
-                className="flex-1 px-4 py-3 bg-[#1e4d6b] text-white font-semibold rounded-lg hover:bg-[#163a52] transition-colors text-sm"
+                className="flex-1 px-4 py-3 bg-[#1E2D4D] text-white font-semibold rounded-lg hover:bg-[#162340] transition-colors text-sm"
               >
                 Save Temperature Reading
               </button>
@@ -299,16 +299,16 @@ export function TempLogScan() {
   if (!isMobile && !isDemoMode) {
     return (
       <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-full max-w-sm p-8 text-center">
-          <QrCode className="h-16 w-16 mx-auto mb-4" style={{ color: '#1e4d6b' }} />
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Mobile Device Required</h2>
+        <div className="bg-white rounded-xl border border-gray-200 w-full max-w-sm p-8 text-center">
+          <QrCode className="h-16 w-16 mx-auto mb-4" style={{ color: '#1E2D4D' }} />
+          <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Mobile Device Required</h2>
           <p className="text-sm text-gray-600 mb-6">
             QR code scanning requires a mobile device with a camera. Open this page on your phone or tablet to scan equipment QR codes.
           </p>
           <button
             onClick={() => navigate('/temp-logs')}
             className="w-full px-4 py-3 text-white font-semibold rounded-lg hover:opacity-90 transition-opacity"
-            style={{ backgroundColor: '#1e4d6b' }}
+            style={{ backgroundColor: '#1E2D4D' }}
           >
             Back to Temperature Logs
           </button>
@@ -320,8 +320,8 @@ export function TempLogScan() {
   // ── Scanner screen (default) ──
   return (
     <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-full max-w-sm overflow-hidden">
-        <div className="px-6 py-5" style={{ backgroundColor: '#1e4d6b' }}>
+      <div className="bg-white rounded-xl border border-gray-200 w-full max-w-sm overflow-hidden">
+        <div className="px-6 py-5" style={{ backgroundColor: '#1E2D4D' }}>
           <div className="flex items-center gap-3">
             <QrCode className="h-8 w-8 text-[#d4af37]" />
             <div>
@@ -377,12 +377,12 @@ export function TempLogScan() {
                 value={manualInput}
                 onChange={e => setManualInput(e.target.value)}
                 placeholder="EVIDLY-EQ-..."
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-xs font-mono focus:ring-2 focus:ring-[#1e4d6b] focus:border-[#1e4d6b]"
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-xs font-mono focus:ring-2 focus:ring-[#1E2D4D] focus:border-[#1E2D4D]"
                 onKeyDown={e => e.key === 'Enter' && handleManualLookup()}
               />
               <button
                 onClick={handleManualLookup}
-                className="px-3 py-2 bg-[#1e4d6b] text-white text-xs font-medium rounded-lg hover:bg-[#163a52] transition-colors"
+                className="px-3 py-2 bg-[#1E2D4D] text-white text-xs font-medium rounded-lg hover:bg-[#162340] transition-colors"
               >
                 Look Up
               </button>

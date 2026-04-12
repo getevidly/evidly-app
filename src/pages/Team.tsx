@@ -14,6 +14,7 @@ import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { useEmulation } from '../contexts/EmulationContext';
 import type { UserRole } from '../contexts/RoleContext';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 interface TeamMember {
   id: string;
@@ -202,6 +203,7 @@ export function Team() {
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const { isDemoMode } = useDemo();
   const { isEmulating, startEmulation, isOperationBlocked, showBlockedModal } = useEmulation();
+  usePageTitle('Team');
   const [showEmulationDemoModal, setShowEmulationDemoModal] = useState(false);
 
   useEffect(() => {
@@ -371,8 +373,8 @@ export function Team() {
 
   const getRoleBadge = (role: string) => {
     const badges = {
-      admin: { label: 'Owner', color: 'bg-[#d4af37] text-[#1e4d6b]' },
-      manager: { label: 'Manager', color: 'bg-[#eef4f8] text-[#1e4d6b]' },
+      admin: { label: 'Owner', color: 'bg-[#d4af37] text-[#1E2D4D]' },
+      manager: { label: 'Manager', color: 'bg-[#eef4f8] text-[#1E2D4D]' },
       staff: { label: 'Staff', color: 'bg-gray-100 text-gray-800' },
     };
     const badge = badges[role as keyof typeof badges] || badges.staff;
@@ -398,18 +400,18 @@ export function Team() {
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Team' }]} />
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Team Management</h1>
+          <h1 className="text-2xl font-bold text-[#1E2D4D]">Team Management</h1>
           <p className="text-sm text-gray-600 mt-1">Manage team members and permissions</p>
         </div>
 
         {/* Summary Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #1e4d6b' }}>
+          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #1E2D4D' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
-              <Users className="h-4 w-4 text-[#1e4d6b]" />
+              <Users className="h-4 w-4 text-[#1E2D4D]" />
               <span className="text-sm text-gray-500 font-medium">Team Members</span>
             </div>
-            <div className="text-xl sm:text-3xl font-bold text-[#1e4d6b] text-center">{filteredMembers.length}</div>
+            <div className="text-xl sm:text-3xl font-bold text-[#1E2D4D] text-center">{filteredMembers.length}</div>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #16a34a' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
@@ -432,12 +434,12 @@ export function Team() {
               {filteredMembers.reduce((sum, m) => sum + (m.certifications?.length || 0), 0)}
             </div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #1e4d6b' }}>
+          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #1E2D4D' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
-              <TrendingUp className="h-4 w-4 text-[#1e4d6b]" />
+              <TrendingUp className="h-4 w-4 text-[#1E2D4D]" />
               <span className="text-sm text-gray-500 font-medium">Training Progress</span>
             </div>
-            <div className="text-xl sm:text-3xl font-bold text-[#1e4d6b] text-center">
+            <div className="text-xl sm:text-3xl font-bold text-[#1E2D4D] text-center">
               {filteredMembers.length > 0 ? Math.round(filteredMembers.reduce((sum, m) => sum + ((m.training_completed || 0) / (m.training_total || 1) * 100), 0) / filteredMembers.length) : 0}%
             </div>
           </div>
@@ -481,14 +483,14 @@ export function Team() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => guardAction('invite', 'team management', () => setShowInviteModal(true))}
-                  className="flex items-center space-x-2 px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] shadow-sm transition-colors duration-150"
+                  className="flex items-center space-x-2 px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] shadow-sm transition-colors duration-150"
                 >
                   <Plus className="h-5 w-5" />
                   <span>Invite Member</span>
                 </button>
                 <button
                   onClick={() => guardAction('bulk-invite', 'team management', () => setShowBulkInviteModal(true))}
-                  className="flex items-center space-x-2 px-4 py-2 min-h-[44px] border-2 border-[#1e4d6b] text-[#1e4d6b] rounded-lg hover:bg-gray-50 transition-colors duration-150"
+                  className="flex items-center space-x-2 px-4 py-2 min-h-[44px] border-2 border-[#1E2D4D] text-[#1E2D4D] rounded-lg hover:bg-gray-50 transition-colors duration-150"
                 >
                   <Users className="h-5 w-5" />
                   <span>Invite Multiple</span>
@@ -500,7 +502,7 @@ export function Team() {
 
         {invitations.length > 0 && (
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 sm:p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-[#1E2D4D] mb-4 flex items-center gap-2">
               <Clock className="w-5 h-5 text-blue-600" />
               Invitations
             </h3>
@@ -582,10 +584,10 @@ export function Team() {
 
         {/* Temporary Coverage Assignments */}
         {canAssignTempCoverage() && (
-          <div className="bg-white shadow-sm border border-gray-200 rounded-xl p-4 sm:p-6">
+          <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-6">
             <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
-              <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-[#1e4d6b]" />
+              <h3 className="text-lg font-semibold text-[#1E2D4D] flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-[#1E2D4D]" />
                 Temporary Coverage Assignments
               </h3>
             </div>
@@ -608,7 +610,7 @@ export function Team() {
                   return (
                     <div key={assignment.id} className="flex flex-wrap items-center justify-between gap-2 p-4 border border-gray-200 rounded-lg">
                       <div className="flex items-center gap-3 flex-1">
-                        <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-semibold" style={{ backgroundColor: '#1e4d6b' }}>
+                        <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-semibold" style={{ backgroundColor: '#1E2D4D' }}>
                           {assignment.userName.split(' ').map(n => n[0]).join('')}
                         </div>
                         <div>
@@ -706,7 +708,7 @@ export function Team() {
                     });
                     setTempForm({ userId: '', userName: '', locationId: '', locationName: '', startDate: '', endDate: '' });
                   }}
-                  className="px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150 text-sm font-medium whitespace-nowrap"
+                  className="px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors duration-150 text-sm font-medium whitespace-nowrap"
                 >
                   Grant Access
                 </button>
@@ -716,7 +718,7 @@ export function Team() {
         )}
 
         {/* Team Members Table */}
-        <div className="bg-white shadow-sm border border-gray-200 rounded-xl overflow-hidden">
+        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
@@ -744,7 +746,7 @@ export function Team() {
                     <tr key={member.id} className="hover:bg-gray-50">
                       <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <div className="h-10 w-10 rounded-full bg-[#1e4d6b] flex items-center justify-center text-white font-medium flex-shrink-0">
+                          <div className="h-10 w-10 rounded-full bg-[#1E2D4D] flex items-center justify-center text-white font-medium flex-shrink-0">
                             {member.full_name.charAt(0)}
                           </div>
                           <div className="ml-4">
@@ -769,7 +771,7 @@ export function Team() {
                           <div
                             className="flex items-center gap-1 cursor-pointer hover:underline"
                             onClick={(e) => { e.stopPropagation(); const idx = DEMO_MEMBERS.findIndex(m => m.id === member.id); if (idx >= 0) navigate(`/training/employee/${idx + 1}`); }}
-                            style={{ color: '#1e4d6b' }}
+                            style={{ color: '#1E2D4D' }}
                           >
                             <span className="font-medium">{certCount}</span>
                             {expiringSoon > 0 && (
@@ -818,7 +820,7 @@ export function Team() {
                             <MoreVertical className="h-5 w-5 text-gray-500" />
                           </button>
                           {openActionMenu === member.id && (
-                            <div className="absolute right-0 top-full mt-1 w-48 bg-white rounded-xl shadow-sm border border-gray-200 py-1 z-20">
+                            <div className="absolute right-0 top-full mt-1 w-48 bg-white rounded-xl border border-gray-200 py-1 z-20">
                               <button
                                 onMouseDown={(e) => e.preventDefault()}
                                 onClick={() => { setOpenActionMenu(null); viewMemberDetails(member); }}
@@ -902,11 +904,11 @@ export function Team() {
           <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-start mb-6 flex-wrap gap-2">
               <div className="flex items-center gap-3 sm:gap-4">
-                <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-[#1e4d6b] flex items-center justify-center text-white text-xl sm:text-2xl font-medium flex-shrink-0">
+                <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-[#1E2D4D] flex items-center justify-center text-white text-xl sm:text-2xl font-medium flex-shrink-0">
                   {selectedMember.full_name.charAt(0)}
                 </div>
                 <div>
-                  <h3 className="text-lg sm:text-2xl font-bold text-gray-900">{selectedMember.full_name}</h3>
+                  <h3 className="text-lg sm:text-2xl font-bold text-[#1E2D4D]">{selectedMember.full_name}</h3>
                   <div className="flex items-center gap-2 mt-1">
                     {getRoleBadge(selectedMember.role)}
                     {selectedMember.location && (
@@ -927,8 +929,8 @@ export function Team() {
             </div>
 
             {/* Contact Info */}
-            <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-              <h4 className="font-semibold text-gray-900 mb-3">Contact Information</h4>
+            <div className="mb-6 p-4 bg-[#FAF7F0] rounded-lg">
+              <h4 className="font-semibold text-[#1E2D4D] mb-3">Contact Information</h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <p className="text-sm text-gray-600">
                   <span className="font-medium">Email:</span> {selectedMember.email}
@@ -959,7 +961,7 @@ export function Team() {
                     setShowDetailsModal(false);
                     guardAction('edit', 'team management', () => { setResetMember(selectedMember); setShowResetModal(true); });
                   }}
-                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#1e4d6b] bg-[#eef4f8] hover:bg-[#dce8f0] rounded-lg transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#1E2D4D] bg-[#eef4f8] hover:bg-[#dce8f0] rounded-lg transition-colors"
                 >
                   <KeyRound className="h-4 w-4" />
                   Reset Password
@@ -969,22 +971,22 @@ export function Team() {
 
             {/* Performance Metrics */}
             {selectedMember.temp_logs_completed !== undefined && (
-              <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-                <h4 className="font-semibold text-gray-900 flex items-center gap-2 mb-3">
-                  <TrendingUp className="h-5 w-5 text-[#1e4d6b]" />
+              <div className="mb-6 p-4 bg-[#FAF7F0] rounded-lg">
+                <h4 className="font-semibold text-[#1E2D4D] flex items-center gap-2 mb-3">
+                  <TrendingUp className="h-5 w-5 text-[#1E2D4D]" />
                   Activity Metrics
                 </h4>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-[#1e4d6b]">{selectedMember.temp_logs_completed || 0}</div>
+                    <div className="text-2xl font-bold text-[#1E2D4D]">{selectedMember.temp_logs_completed || 0}</div>
                     <div className="text-xs text-gray-500">Temperature Readings</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-[#1e4d6b]">{selectedMember.checklists_completed || 0}</div>
+                    <div className="text-2xl font-bold text-[#1E2D4D]">{selectedMember.checklists_completed || 0}</div>
                     <div className="text-xs text-gray-500">Checklists</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-[#1e4d6b]">
+                    <div className="text-2xl font-bold text-[#1E2D4D]">
                       {selectedMember.training_completed || 0}/{selectedMember.training_total || 0}
                     </div>
                     <div className="text-xs text-gray-500">Training</div>
@@ -996,7 +998,7 @@ export function Team() {
             {/* Certifications */}
             <div className="mb-6">
               <div className="flex items-center justify-between mb-3">
-                <h4 className="font-semibold text-gray-900 flex items-center gap-2">
+                <h4 className="font-semibold text-[#1E2D4D] flex items-center gap-2">
                   <Award className="h-5 w-5 text-[#d4af37]" />
                   Certifications
                 </h4>
@@ -1055,7 +1057,7 @@ export function Team() {
                       navigate(`/training/employee/${idx + 1}`);
                     }
                   }}
-                  className="mt-3 flex items-center gap-1.5 text-sm font-semibold text-[#1e4d6b] hover:text-[#163a52] transition-colors"
+                  className="mt-3 flex items-center gap-1.5 text-sm font-semibold text-[#1E2D4D] hover:text-[#141E33] transition-colors"
                 >
                   <GraduationCap className="h-4 w-4" />
                   View Training Profile
@@ -1065,31 +1067,31 @@ export function Team() {
 
             {/* Activity Log */}
             <div>
-              <h4 className="font-semibold text-gray-900 flex items-center gap-2 mb-3">
+              <h4 className="font-semibold text-[#1E2D4D] flex items-center gap-2 mb-3">
                 <Activity className="h-5 w-5 text-gray-600" />
                 Recent Activity
               </h4>
               {isDemoMode && selectedMember.temp_logs_completed ? (
                 <div className="space-y-2 text-sm">
-                  <div className="flex items-center gap-3 p-2 bg-gray-50 rounded">
+                  <div className="flex items-center gap-3 p-2 bg-[#FAF7F0] rounded">
                     <span className="text-gray-400 text-xs w-16">Today</span>
                     <span className="text-gray-700">Completed temperature log — Walk-in Cooler</span>
                   </div>
-                  <div className="flex items-center gap-3 p-2 bg-gray-50 rounded">
+                  <div className="flex items-center gap-3 p-2 bg-[#FAF7F0] rounded">
                     <span className="text-gray-400 text-xs w-16">Today</span>
                     <span className="text-gray-700">Completed opening checklist</span>
                   </div>
-                  <div className="flex items-center gap-3 p-2 bg-gray-50 rounded">
+                  <div className="flex items-center gap-3 p-2 bg-[#FAF7F0] rounded">
                     <span className="text-gray-400 text-xs w-16">Yesterday</span>
                     <span className="text-gray-700">Uploaded vendor certificate</span>
                   </div>
-                  <div className="flex items-center gap-3 p-2 bg-gray-50 rounded">
+                  <div className="flex items-center gap-3 p-2 bg-[#FAF7F0] rounded">
                     <span className="text-gray-400 text-xs w-16">2d ago</span>
                     <span className="text-gray-700">Resolved alert: Equipment maintenance</span>
                   </div>
                 </div>
               ) : (
-                <div className="text-sm text-gray-500 italic p-4 bg-gray-50 rounded-lg">
+                <div className="text-sm text-gray-500 italic p-4 bg-[#FAF7F0] rounded-lg">
                   Activity Log
                 </div>
               )}
@@ -1106,12 +1108,12 @@ export function Team() {
               <div className="h-10 w-10 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
                 <KeyRound className="h-5 w-5 text-amber-600" />
               </div>
-              <h3 className="text-lg font-bold text-gray-900">Reset Password</h3>
+              <h3 className="text-lg font-bold text-[#1E2D4D]">Reset Password</h3>
             </div>
             <p className="text-sm text-gray-600 mb-1">
               Send a password reset email to:
             </p>
-            <div className="bg-gray-50 rounded-lg p-3 mb-4">
+            <div className="bg-[#FAF7F0] rounded-lg p-3 mb-4">
               <p className="font-medium text-gray-900">{resetMember.full_name}</p>
               <p className="text-sm text-gray-500">{resetMember.email}</p>
             </div>
@@ -1129,7 +1131,7 @@ export function Team() {
               <button
                 onClick={() => handleResetPassword(resetMember)}
                 disabled={resetLoading}
-                className="px-4 py-2 text-sm font-medium text-white bg-[#1e4d6b] hover:bg-[#2a6a8f] rounded-lg transition-colors disabled:opacity-50"
+                className="px-4 py-2 text-sm font-medium text-white bg-[#1E2D4D] hover:bg-[#162340] rounded-lg transition-colors disabled:opacity-50"
               >
                 {resetLoading ? 'Sending...' : 'Send Reset Email'}
               </button>
@@ -1167,7 +1169,7 @@ export function Team() {
               <div className="h-10 w-10 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
                 <ShieldAlert className="h-5 w-5 text-amber-600" />
               </div>
-              <h3 className="text-lg font-bold text-gray-900">Emulation Not Available</h3>
+              <h3 className="text-lg font-bold text-[#1E2D4D]">Emulation Not Available</h3>
             </div>
             <p className="text-sm text-gray-600 mb-6">
               User emulation is not available in demo mode. In a live environment, platform admins can emulate any user to see the app from their perspective while maintaining full audit logging.
@@ -1175,7 +1177,7 @@ export function Team() {
             <div className="flex justify-end">
               <button
                 onClick={() => setShowEmulationDemoModal(false)}
-                className="px-4 py-2 text-sm font-medium text-white bg-[#1e4d6b] hover:bg-[#2a6a8f] rounded-lg transition-colors"
+                className="px-4 py-2 text-sm font-medium text-white bg-[#1E2D4D] hover:bg-[#162340] rounded-lg transition-colors"
               >
                 Understood
               </button>

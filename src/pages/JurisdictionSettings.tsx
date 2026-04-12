@@ -33,6 +33,7 @@ import {
 import { CALIFORNIA_STATE_LAWS } from '../lib/californiaLaws';
 import { JURISDICTION_DATABASE, type JurisdictionScore } from '../data/jurisdictionData';
 import { getCountyProfile, extractCountySlug } from '../lib/jurisdictionScoring';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 // ── Helper functions ────────────────────────────────────────────
 
@@ -85,7 +86,7 @@ function getBillBadgeColor(status: CaliforniaStateLaw['status']): string {
     case 'effective': return 'bg-green-50 text-green-700 border-green-200';
     case 'upcoming': return 'bg-amber-50 text-amber-700 border-amber-200';
     case 'phased': return 'bg-blue-50 text-blue-700 border-blue-200';
-    default: return 'bg-gray-50 text-gray-700 border-gray-200';
+    default: return 'bg-[#FAF7F0] text-gray-700 border-gray-200';
   }
 }
 
@@ -169,7 +170,7 @@ function ExpandableDescription({ text }: { text: string }) {
       </p>
       <button
         onClick={() => setExpanded(!expanded)}
-        className="text-xs font-medium text-[#1e4d6b] hover:text-[#2a6a8f] mt-0.5"
+        className="text-xs font-medium text-[#1E2D4D] hover:text-[#2A3F6B] mt-0.5"
       >
         {expanded ? 'Show less' : 'Show more'}
       </button>
@@ -199,7 +200,7 @@ function CollapsibleSection({
         onClick={() => setOpen(!open)}
         className="w-full flex items-center gap-3 px-3 sm:px-6 py-3 text-left hover:bg-gray-50 transition-colors"
       >
-        <span className="text-[#1e4d6b]">{icon}</span>
+        <span className="text-[#1E2D4D]">{icon}</span>
         <span className="text-sm font-semibold text-gray-800 flex-1">{title}</span>
         {badge}
         {open ? (
@@ -306,9 +307,9 @@ function AddLocationDialog({
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-[95vw] sm:w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-xl border border-gray-200 w-[95vw] sm:w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div className="p-4 sm:p-6 border-b border-gray-100">
-          <h2 className="text-lg font-bold text-gray-900">Add Location</h2>
+          <h2 className="text-lg font-bold text-[#1E2D4D]">Add Location</h2>
           <p className="text-sm text-gray-500 mt-1">
             Select your jurisdiction to auto-configure compliance requirements
           </p>
@@ -322,7 +323,7 @@ function AddLocationDialog({
               value={name}
               onChange={e => setName(e.target.value)}
               placeholder="e.g., Location 1" // demo
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20 focus:border-[#1E2D4D]"
             />
           </div>
           <div>
@@ -332,7 +333,7 @@ function AddLocationDialog({
               value={address}
               onChange={e => setAddress(e.target.value)}
               placeholder="e.g., 123 Main Street"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20 focus:border-[#1E2D4D]"
             />
           </div>
 
@@ -344,11 +345,11 @@ function AddLocationDialog({
             {selectedCounty ? (
               <div className="flex items-center gap-2">
                 <div
-                  className="flex-1 flex items-center gap-2 px-3 py-2 border border-[#1e4d6b] rounded-lg bg-[#eef4f8] cursor-pointer"
+                  className="flex-1 flex items-center gap-2 px-3 py-2 border border-[#1E2D4D] rounded-lg bg-[#eef4f8] cursor-pointer"
                   onClick={() => { setSelectedCounty(''); setShowDropdown(true); }}
                 >
-                  <MapPin className="w-3.5 h-3.5 text-[#1e4d6b]" />
-                  <span className="text-sm font-medium text-[#1e4d6b]">{selectedCounty} County, CA</span>
+                  <MapPin className="w-3.5 h-3.5 text-[#1E2D4D]" />
+                  <span className="text-sm font-medium text-[#1E2D4D]">{selectedCounty} County, CA</span>
                   <button
                     type="button"
                     onClick={(e) => { e.stopPropagation(); setSelectedCounty(''); setIncludeNPS(false); }}
@@ -368,12 +369,12 @@ function AddLocationDialog({
                     onChange={e => { setJurisdictionSearch(e.target.value); setShowDropdown(true); }}
                     onFocus={() => setShowDropdown(true)}
                     placeholder="Search jurisdictions (e.g., Merced, Fresno...)"
-                    className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
+                    className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20 focus:border-[#1E2D4D]"
                   />
                 </div>
 
                 {showDropdown && (
-                  <div className="absolute z-10 w-full mt-1 bg-white rounded-lg border border-gray-200 shadow-lg max-h-56 overflow-y-auto">
+                  <div className="absolute z-10 w-full mt-1 bg-white rounded-xl border border-gray-200 shadow-lg max-h-56 overflow-y-auto">
                     {filteredOptions.length > 0 ? (
                       filteredOptions.map(opt => (
                         <button
@@ -383,14 +384,14 @@ function AddLocationDialog({
                           className="w-full text-left px-3 py-2.5 hover:bg-[#eef4f8] transition-colors border-b border-gray-50 last:border-b-0"
                         >
                           <div className="flex items-center gap-2">
-                            <MapPin className="w-3.5 h-3.5 text-[#1e4d6b] flex-shrink-0" />
+                            <MapPin className="w-3.5 h-3.5 text-[#1E2D4D] flex-shrink-0" />
                             <span className="text-sm font-medium text-gray-900">{opt.county} County</span>
                             <span className="text-xs text-gray-400 ml-auto">{opt.state}</span>
                           </div>
                           <div className="ml-[22px] mt-0.5 flex items-center gap-2">
                             <span className="text-xs text-gray-500">{opt.gradingScale}</span>
                             {opt.isDualJurisdiction && (
-                              <span className="px-1.5 py-0.5 text-[10px] font-medium rounded bg-amber-100 text-amber-700">
+                              <span className="px-1.5 py-0.5 text-xs font-medium rounded bg-amber-100 text-amber-700">
                                 Dual Jurisdiction
                               </span>
                             )}
@@ -402,13 +403,13 @@ function AddLocationDialog({
                         <p className="text-sm text-gray-500">No matching jurisdictions found</p>
                       </div>
                     )}
-                    <div className="px-3 py-2 border-t border-gray-100 bg-gray-50">
+                    <div className="px-3 py-2 border-t border-gray-100 bg-[#FAF7F0]">
                       <p className="text-xs text-gray-400">
                         Don't see your jurisdiction?{' '}
                         <button
                           type="button"
                           onClick={() => { setShowDropdown(false); guardAction('add', 'Jurisdiction Settings', () => toast.info('Request Jurisdiction (Demo) — Contact support@evidly.com for priority onboarding.')); }}
-                          className="text-[#1e4d6b] font-medium hover:underline"
+                          className="text-[#1E2D4D] font-medium hover:underline"
                         >
                           Request it here
                         </button>
@@ -472,7 +473,7 @@ function AddLocationDialog({
               <select
                 value={state}
                 onChange={e => setState(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b] bg-white"
+                className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20 focus:border-[#1E2D4D] bg-white"
               >
                 <option value="">Select State...</option>
                 <option value="CA">California</option>
@@ -492,7 +493,7 @@ function AddLocationDialog({
                 value={zip}
                 onChange={e => setZip(e.target.value)}
                 placeholder="93721"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20 focus:border-[#1E2D4D]"
               />
             </div>
           </div>
@@ -501,7 +502,7 @@ function AddLocationDialog({
             onClick={handleDetect}
             disabled={detecting || !selectedCounty}
             className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{ backgroundColor: '#1e4d6b' }}
+            style={{ backgroundColor: '#1E2D4D' }}
           >
             {detecting ? (
               <>
@@ -519,14 +520,14 @@ function AddLocationDialog({
           {/* Detection Results */}
           {detected && (
             <div className="mt-4 space-y-3">
-              <div className={`p-4 rounded-lg border ${detected.isCaliforniaLocation ? 'border-green-200 bg-green-50' : 'border-gray-200 bg-gray-50'}`}>
+              <div className={`p-4 rounded-lg border ${detected.isCaliforniaLocation ? 'border-green-200 bg-green-50' : 'border-gray-200 bg-[#FAF7F0]'}`}>
                 <div className="flex items-center gap-2 mb-2">
                   {detected.isCaliforniaLocation ? (
                     <CheckCircle2 className="w-5 h-5 text-green-600" />
                   ) : (
                     <AlertTriangle className="w-5 h-5 text-amber-500" />
                   )}
-                  <span className="text-sm font-bold text-gray-900">
+                  <span className="text-sm font-bold text-[#1E2D4D]">
                     {detected.isCaliforniaLocation ? 'California Location Detected' : 'Non-California Location'}
                   </span>
                   <span className="ml-auto text-xs text-gray-500">
@@ -538,7 +539,7 @@ function AddLocationDialog({
                   <>
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-xs text-gray-500">Jurisdiction chain:</span>
-                      <span className="text-xs font-medium text-[#1e4d6b]">
+                      <span className="text-xs font-medium text-[#1E2D4D]">
                         {detected.jurisdictionChain.map(id => {
                           const j = getJurisdiction(id);
                           return j?.name || id;
@@ -605,7 +606,7 @@ function AddLocationDialog({
             onClick={handleAdd}
             disabled={!detected || !selectedCounty}
             className="px-4 py-2 text-sm font-medium text-white rounded-lg disabled:opacity-50"
-            style={{ backgroundColor: '#1e4d6b' }}
+            style={{ backgroundColor: '#1E2D4D' }}
           >
             Add Location
           </button>
@@ -637,7 +638,7 @@ function RegulationToggle({
         ? regulation.isActive
           ? 'border-green-200 bg-green-50/50'
           : 'border-amber-200 bg-amber-50/50'
-        : 'border-gray-200 bg-gray-50 opacity-60'
+        : 'border-gray-200 bg-[#FAF7F0] opacity-60'
     }`}>
       <button
         onClick={onToggle}
@@ -691,6 +692,7 @@ export function JurisdictionSettings() {
   const navigate = useNavigate();
   const { isDemoMode } = useDemo();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  usePageTitle('Jurisdiction Settings');
   const [expandedLocation, setExpandedLocation] = useState<string | null>(null);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [addedLocations, setAddedLocations] = useState<LocationJurisdictionConfig[]>([]);
@@ -786,9 +788,9 @@ export function JurisdictionSettings() {
       <div className="mt-4 mb-6 flex items-start justify-between flex-wrap gap-2">
         <div>
           <div className="flex items-center gap-2.5">
-            <BookOpen className="w-6 h-6 text-[#1e4d6b]" />
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Know Your Inspector</h1>
-            <span className="px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider" style={{ backgroundColor: '#eef4f8', color: '#1e4d6b', border: '1px solid #b8d4e8' }}>
+            <BookOpen className="w-6 h-6 text-[#1E2D4D]" />
+            <h1 className="text-xl sm:text-2xl font-bold text-[#1E2D4D]">Know Your Inspector</h1>
+            <span className="px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider" style={{ backgroundColor: '#eef4f8', color: '#1E2D4D', border: '1px solid #b8d4e8' }}>
               Reference
             </span>
           </div>
@@ -799,9 +801,9 @@ export function JurisdictionSettings() {
         <button
           onClick={() => setShowAddDialog(true)}
           className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white rounded-lg min-h-[44px]"
-          style={{ backgroundColor: '#1e4d6b' }}
-          onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
-          onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+          style={{ backgroundColor: '#1E2D4D' }}
+          onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#2A3F6B')}
+          onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
         >
           <Plus className="w-4 h-4" />
           Add Location
@@ -811,9 +813,9 @@ export function JurisdictionSettings() {
       {/* Auto-Detection Explainer */}
       <div className="bg-[#eef4f8] rounded-lg p-4 border border-[#b8d4e8] mb-6">
         <div className="flex items-start gap-3">
-          <Zap className="w-5 h-5 text-[#1e4d6b] mt-0.5 flex-shrink-0" />
+          <Zap className="w-5 h-5 text-[#1E2D4D] mt-0.5 flex-shrink-0" />
           <div>
-            <p className="text-sm font-semibold text-gray-900">Jurisdiction Auto-Detection</p>
+            <p className="text-sm font-semibold text-[#1E2D4D]">Jurisdiction Auto-Detection</p>
             <p className="text-sm text-gray-700 mt-0.5">
               When a location is added with a California address or zip code (900xx–961xx), EvidLY automatically
               layers <strong>Federal (FDA/NFPA 2025/OSHA)</strong> + <strong>California state</strong> + <strong>county-specific</strong> requirements.
@@ -824,11 +826,11 @@ export function JurisdictionSettings() {
       </div>
 
       {/* Key California Regulations Summary */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 mb-6 overflow-hidden">
+      <div className="bg-white rounded-xl border border-gray-100 mb-6 overflow-hidden">
         <div className="p-4 sm:p-5 border-b border-gray-100">
           <div className="flex items-center gap-2">
             <EvidlyIcon size={20} />
-            <h2 className="text-base sm:text-lg font-bold text-gray-900">California Regulations — Auto-Applied</h2>
+            <h2 className="text-base sm:text-lg font-bold text-[#1E2D4D]">California Regulations — Auto-Applied</h2>
           </div>
           <p className="text-sm text-gray-500 mt-1">
             These regulations are automatically applied to all California locations
@@ -918,11 +920,11 @@ export function JurisdictionSettings() {
 
       {/* Added Locations (from Add Location dialog) */}
       {addedLocations.map(config => (
-        <div key={config.locationId} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-4">
+        <div key={config.locationId} className="bg-white rounded-xl border border-gray-100 overflow-hidden mb-4">
           <div className="p-4 sm:p-6">
             <div className="flex items-center gap-2 mb-2">
-              <MapPin className="w-5 h-5 text-[#1e4d6b]" />
-              <span className="text-lg font-semibold text-gray-900">{config.locationName}</span>
+              <MapPin className="w-5 h-5 text-[#1E2D4D]" />
+              <span className="text-lg font-semibold text-[#1E2D4D]">{config.locationName}</span>
               <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-100 text-blue-700">
                 New
               </span>
@@ -930,7 +932,7 @@ export function JurisdictionSettings() {
             <p className="text-sm text-gray-500 ml-7">
               {config.address}{config.address && ', '}{config.city}{config.city && ', '}{config.state} {config.zip}
             </p>
-            <p className="text-xs text-[#1e4d6b] mt-1 ml-7">
+            <p className="text-xs text-[#1E2D4D] mt-1 ml-7">
               {config.jurisdictionChain.map(id => {
                 const j = getJurisdiction(id);
                 return j?.name || id;
@@ -973,18 +975,18 @@ export function JurisdictionSettings() {
 
       {/* Empty state — live mode with no locations configured */}
       {!isDemoMode && locationProfiles.length === 0 && addedLocations.length === 0 && (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center mb-6">
+        <div className="bg-white rounded-xl border border-gray-100 p-8 text-center mb-6">
           <BookOpen className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-1">Add your first location to configure jurisdiction-specific compliance requirements.</h3>
+          <h3 className="text-lg font-semibold text-[#1E2D4D] mb-1">Add your first location to configure jurisdiction-specific compliance requirements.</h3>
           <p className="text-sm text-gray-500 mb-4">
             Once you add a location, EvidLY will auto-detect your county and layer the relevant federal, state, and local requirements.
           </p>
           <button
             onClick={() => setShowAddDialog(true)}
             className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white rounded-lg"
-            style={{ backgroundColor: '#1e4d6b' }}
-            onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
-            onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+            style={{ backgroundColor: '#1E2D4D' }}
+            onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#2A3F6B')}
+            onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
           >
             <Plus className="w-4 h-4" />
             Add Your First Location
@@ -1006,28 +1008,28 @@ export function JurisdictionSettings() {
         return (
           <div
             key={location.locationName}
-            className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-4"
+            className="bg-white rounded-xl border border-gray-100 overflow-hidden mb-4"
           >
             {/* Card Header */}
             <div className="p-4 sm:p-6 flex items-center justify-between">
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <MapPin className="w-5 h-5 text-[#1e4d6b]" />
-                  <span className="text-lg font-semibold text-gray-900">
+                  <MapPin className="w-5 h-5 text-[#1E2D4D]" />
+                  <span className="text-lg font-semibold text-[#1E2D4D]">
                     {location.locationName}
                   </span>
                 </div>
                 <p className="text-sm text-gray-500 mt-1 ml-7">
                   {location.address}, {location.city}, {location.state} {location.zip}
                 </p>
-                <p className="text-xs text-[#1e4d6b] mt-1 ml-7">
+                <p className="text-xs text-[#1E2D4D] mt-1 ml-7">
                   {profile.jurisdictionChainNames.join(' → ')}
                 </p>
                 <div className="flex items-center gap-2 mt-2 ml-7">
                   <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-700">
                     Auto-configured
                   </span>
-                  <span className="px-2 py-0.5 text-xs rounded-full bg-[#eef4f8] text-[#1e4d6b] border border-[#b8d4e8]">
+                  <span className="px-2 py-0.5 text-xs rounded-full bg-[#eef4f8] text-[#1E2D4D] border border-[#b8d4e8]">
                     CA detected via zip
                   </span>
                 </div>
@@ -1098,7 +1100,7 @@ export function JurisdictionSettings() {
                         </thead>
                         <tbody>
                           {profile.temperatureThresholds.map((t, i) => (
-                            <tr key={`thresh-${i}`} className={i % 2 === 1 ? 'bg-gray-50' : ''}>
+                            <tr key={`thresh-${i}`} className={i % 2 === 1 ? 'bg-[#FAF7F0]' : ''}>
                               <td className="py-2 pr-4 font-medium text-gray-700">{t.type}</td>
                               <td className="py-2 pr-4 text-gray-600">
                                 {t.tempF}&deg;F {t.type.toLowerCase().includes('cold') ? 'max' : 'min'}
@@ -1111,7 +1113,7 @@ export function JurisdictionSettings() {
                               key={`cook-${i}`}
                               className={
                                 (profile.temperatureThresholds.length + i) % 2 === 1
-                                  ? 'bg-gray-50'
+                                  ? 'bg-[#FAF7F0]'
                                   : ''
                               }
                             >
@@ -1143,7 +1145,7 @@ export function JurisdictionSettings() {
                         </thead>
                         <tbody>
                           {profile.coolingRequirements.map((cr, i) => (
-                            <tr key={`cool-${i}`} className={i % 2 === 1 ? 'bg-gray-50' : ''}>
+                            <tr key={`cool-${i}`} className={i % 2 === 1 ? 'bg-[#FAF7F0]' : ''}>
                               <td className="py-2 pr-4 font-medium text-gray-700">{cr.stage}</td>
                               <td className="py-2 pr-4 text-gray-600">
                                 {cr.fromTempF}&deg;F &rarr; {cr.toTempF}&deg;F in {cr.maxHours} hours
@@ -1165,11 +1167,11 @@ export function JurisdictionSettings() {
                   {locationGaps && (
                     <p className="text-sm text-gray-600 mb-3">
                       You have{' '}
-                      <span className="font-semibold text-gray-900">
+                      <span className="font-semibold text-[#1E2D4D]">
                         {locationGaps.totalCompliant}
                       </span>{' '}
                       of{' '}
-                      <span className="font-semibold text-gray-900">
+                      <span className="font-semibold text-[#1E2D4D]">
                         {locationGaps.totalRequired}
                       </span>{' '}
                       required documents on file
@@ -1218,7 +1220,7 @@ export function JurisdictionSettings() {
                           </thead>
                           <tbody>
                             {profile.certifications.map((cert, i) => (
-                              <tr key={i} className={i % 2 === 1 ? 'bg-gray-50' : ''}>
+                              <tr key={i} className={i % 2 === 1 ? 'bg-[#FAF7F0]' : ''}>
                                 <td className="py-2 pr-4 font-medium text-gray-700">
                                   {cert.type}
                                 </td>
@@ -1331,7 +1333,7 @@ export function JurisdictionSettings() {
                                 </thead>
                                 <tbody>
                                   {inspectionSystem.grades.map((grade, i) => (
-                                    <tr key={i} className={i % 2 === 1 ? 'bg-gray-50' : ''}>
+                                    <tr key={i} className={i % 2 === 1 ? 'bg-[#FAF7F0]' : ''}>
                                       <td className="py-2 pr-4 font-medium text-gray-700">{grade.label}</td>
                                       <td className="py-2 text-gray-600">{grade.range}</td>
                                     </tr>
@@ -1360,7 +1362,7 @@ export function JurisdictionSettings() {
                                   { label: 'Minor violation', pts: scoringProfile.deductions.minor },
                                   { label: 'Good retail practice', pts: scoringProfile.deductions.good_practice },
                                 ].map((row, i) => (
-                                  <tr key={i} className={i % 2 === 1 ? 'bg-gray-50' : ''}>
+                                  <tr key={i} className={i % 2 === 1 ? 'bg-[#FAF7F0]' : ''}>
                                     <td className="py-2 pr-4 font-medium text-gray-700">{row.label}</td>
                                     <td className="py-2 text-gray-600">{row.pts > 0 ? `−${row.pts} pts` : '—'}</td>
                                   </tr>
@@ -1430,7 +1432,7 @@ export function JurisdictionSettings() {
 
                           {/* D) Transparency Notes */}
                           {jData.food?.transparencyNotes && (
-                            <div className="p-3 rounded-lg bg-gray-50 border border-gray-200">
+                            <div className="p-3 rounded-lg bg-[#FAF7F0] border border-gray-200">
                               <p className="text-xs text-gray-600">
                                 <strong>Transparency:</strong> {jData.food.transparencyNotes}
                               </p>
@@ -1473,7 +1475,7 @@ export function JurisdictionSettings() {
                         </thead>
                         <tbody>
                           {profile.serviceFrequencies.map((svc, i) => (
-                            <tr key={i} className={i % 2 === 1 ? 'bg-gray-50' : ''}>
+                            <tr key={i} className={i % 2 === 1 ? 'bg-[#FAF7F0]' : ''}>
                               <td className="py-2 pr-4 font-medium text-gray-700">{svc.service}</td>
                               <td className="py-2 pr-4 text-gray-600">{svc.frequencyLabel}</td>
                               <td className="py-2 pr-4 text-gray-500 text-xs">
@@ -1515,7 +1517,7 @@ export function JurisdictionSettings() {
                                 {posting.languages.map(lang => (
                                   <span
                                     key={lang}
-                                    className="px-2 py-0.5 text-xs rounded-full bg-[#eef4f8] text-[#1e4d6b] border border-[#b8d4e8]"
+                                    className="px-2 py-0.5 text-xs rounded-full bg-[#eef4f8] text-[#1E2D4D] border border-[#b8d4e8]"
                                   >
                                     {lang}
                                   </span>
@@ -1556,14 +1558,14 @@ export function JurisdictionSettings() {
                 >
                   {profile.healthDepartment ? (
                     <div className="space-y-3 text-sm">
-                      <p className="font-semibold text-gray-900">
+                      <p className="font-semibold text-[#1E2D4D]">
                         {profile.healthDepartment.name}
                       </p>
                       <div className="flex items-center gap-2">
                         <Phone className="w-4 h-4 text-gray-400" />
                         <a
                           href={`tel:${profile.healthDepartment.phone}`}
-                          className="text-[#1e4d6b] hover:underline"
+                          className="text-[#1E2D4D] hover:underline"
                         >
                           {profile.healthDepartment.phone}
                         </a>
@@ -1574,7 +1576,7 @@ export function JurisdictionSettings() {
                           href={profile.healthDepartment.website}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[#1e4d6b] hover:underline"
+                          className="text-[#1E2D4D] hover:underline"
                         >
                           {profile.healthDepartment.website}
                         </a>
@@ -1612,13 +1614,13 @@ export function JurisdictionSettings() {
                       return (
                         <div
                           key={law.id}
-                          className="p-3 rounded-lg border border-gray-200 bg-gray-50"
+                          className="p-3 rounded-lg border border-gray-200 bg-[#FAF7F0]"
                         >
                           <div className="flex items-start gap-2 flex-wrap">
                             <span className={`inline-flex items-center px-2 py-0.5 text-xs font-semibold rounded border ${billColor}`}>
                               {law.billNumber}
                             </span>
-                            <span className="text-sm font-semibold text-gray-900 flex-1">
+                            <span className="text-sm font-semibold text-[#1E2D4D] flex-1">
                               {law.name}
                             </span>
                             <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full ${statusBadge.color}`}>
@@ -1648,9 +1650,9 @@ export function JurisdictionSettings() {
                   {minimumWage ? (
                     <div className="space-y-4">
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <div className="p-3 rounded-lg border border-gray-200 bg-gray-50">
+                        <div className="p-3 rounded-lg border border-gray-200 bg-[#FAF7F0]">
                           <p className="text-xs text-gray-500 uppercase tracking-wide font-semibold">General Rate</p>
-                          <p className="text-2xl font-bold text-gray-900 mt-1">
+                          <p className="text-2xl font-bold text-[#1E2D4D] mt-1">
                             ${minimumWage.general.toFixed(2)}
                             <span className="text-sm font-normal text-gray-500">/hr</span>
                           </p>
@@ -1699,7 +1701,7 @@ export function JurisdictionSettings() {
                 </CollapsibleSection>
 
                 {/* Override Controls */}
-                <div className="px-3 sm:px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between flex-wrap gap-3">
+                <div className="px-3 sm:px-6 py-4 bg-[#FAF7F0] border-t border-gray-100 flex items-center justify-between flex-wrap gap-3">
                   <div className="flex items-center gap-3">
                     <button
                       onClick={() =>
@@ -1720,7 +1722,7 @@ export function JurisdictionSettings() {
                   {LOCATION_URL_ID[location.locationName] && (
                     <button
                       onClick={() => navigate(`/scoring-breakdown?location=${LOCATION_URL_ID[location.locationName]}`)}
-                      className="text-xs font-medium text-[#1e4d6b] hover:text-[#163a52] flex items-center gap-1 transition-colors"
+                      className="text-xs font-medium text-[#1E2D4D] hover:text-[#141E33] flex items-center gap-1 transition-colors"
                     >
                       View scoring breakdown
                       <ArrowRight className="w-3 h-3" />
@@ -1735,7 +1737,7 @@ export function JurisdictionSettings() {
 
       {/* Compliance Gap Analysis Section */}
       <div className="mt-8">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">Compliance Gap Analysis</h2>
+        <h2 className="text-xl font-bold text-[#1E2D4D] mb-4">Compliance Gap Analysis</h2>
 
         {complianceGaps.map(locationGap => {
           const pct = Math.round(
@@ -1746,11 +1748,11 @@ export function JurisdictionSettings() {
           return (
             <div
               key={locationGap.locationName}
-              className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 mb-4"
+              className="bg-white rounded-xl border border-gray-100 p-4 sm:p-6 mb-4"
             >
               {/* Summary */}
               <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
-                <h3 className="text-sm font-semibold text-gray-900">
+                <h3 className="text-sm font-semibold text-[#1E2D4D]">
                   {locationGap.locationName}
                 </h3>
                 <span className="text-sm font-bold text-gray-700">
@@ -1770,7 +1772,7 @@ export function JurisdictionSettings() {
                   {locationGap.gaps.map((gap, i) => (
                     <div
                       key={i}
-                      className="flex items-center gap-3 py-2 px-3 rounded-lg bg-gray-50"
+                      className="flex items-center gap-3 py-2 px-3 rounded-lg bg-[#FAF7F0]"
                     >
                       {getStatusIcon(gap.status)}
                       <div className="flex-1 min-w-0">
@@ -1779,7 +1781,7 @@ export function JurisdictionSettings() {
                       </div>
                       <button
                         onClick={() => guardAction('action', 'Jurisdiction Settings', () => toast.info(`${gap.action || 'Action'} (Demo)`))}
-                        className="px-3 py-1 text-xs font-medium text-[#1e4d6b] border border-[#b8d4e8] rounded-lg hover:bg-[#eef4f8] whitespace-nowrap"
+                        className="px-3 py-1 text-xs font-medium text-[#1E2D4D] border border-[#b8d4e8] rounded-lg hover:bg-[#eef4f8] whitespace-nowrap"
                       >
                         {getGapActionLabel(gap.category)}
                       </button>
@@ -1802,7 +1804,7 @@ export function JurisdictionSettings() {
       {/* Upcoming Regulatory Changes Timeline */}
       {upcomingLaws.length > 0 && (
         <div className="mt-8">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Upcoming Regulatory Changes</h2>
+          <h2 className="text-xl font-bold text-[#1E2D4D] mb-4">Upcoming Regulatory Changes</h2>
 
           <div className="space-y-3">
             {upcomingLaws.map((law) => {
@@ -1830,7 +1832,7 @@ export function JurisdictionSettings() {
                         <span className={`text-xs font-semibold ${urgencyText}`}>
                           {law.billNumber}
                         </span>
-                        <span className="text-sm font-semibold text-gray-900">{law.name}</span>
+                        <span className="text-sm font-semibold text-[#1E2D4D]">{law.name}</span>
                       </div>
                       <p className="text-sm text-gray-600 mt-1 line-clamp-2">
                         {law.description}
@@ -1839,9 +1841,9 @@ export function JurisdictionSettings() {
                     <button
                       onClick={() => guardAction('plan', 'Jurisdiction Settings', () => toast.info(`Compliance Plan for ${law.billNumber} (Demo)`))}
                       className="px-3 py-1.5 text-xs font-medium text-white rounded-lg whitespace-nowrap"
-                      style={{ backgroundColor: '#1e4d6b' }}
-                      onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
-                      onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+                      style={{ backgroundColor: '#1E2D4D' }}
+                      onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#2A3F6B')}
+                      onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
                     >
                       Prepare Now
                     </button>
@@ -1852,8 +1854,8 @@ export function JurisdictionSettings() {
           </div>
 
           {/* Key Upcoming Dates Summary */}
-          <div className="mt-4 p-4 bg-white rounded-xl shadow-sm border border-gray-100">
-            <h3 className="text-sm font-semibold text-gray-900 mb-3">Key Upcoming Dates</h3>
+          <div className="mt-4 p-4 bg-white rounded-xl border border-gray-100">
+            <h3 className="text-sm font-semibold text-[#1E2D4D] mb-3">Key Upcoming Dates</h3>
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
               <div className="p-3 rounded-lg border border-red-200 bg-red-50">
                 <p className="text-xs font-semibold text-red-700">Apr 1, 2026</p>

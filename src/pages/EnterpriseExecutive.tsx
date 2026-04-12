@@ -207,17 +207,17 @@ export function EnterpriseExecutive() {
             </div>
             <div>
               <h1 className="text-white font-bold text-base">{tenant.branding.logoText}</h1>
-              <p className="text-white/60 text-[10px]">Enterprise Compliance Dashboard</p>
+              <p className="text-white/60 text-xs">Enterprise Compliance Dashboard</p>
             </div>
           </div>
           <div className="flex items-center gap-4">
             <div className="hidden sm:block text-right">
               <p className="text-white text-xs font-medium">Jennifer Martinez</p>
-              <p className="text-white/60 text-[10px]">VP Operations</p>
+              <p className="text-white/60 text-xs">VP Operations</p>
             </div>
             <button
               onClick={() => navigate('/enterprise/admin')}
-              className="flex items-center gap-1 text-white/70 hover:text-white text-[11px] transition-colors cursor-pointer"
+              className="flex items-center gap-1 text-white/70 hover:text-white text-xs transition-colors cursor-pointer"
             >
               Admin Portal <ExternalLink className="h-3 w-3" />
             </button>
@@ -229,7 +229,7 @@ export function EnterpriseExecutive() {
 
         {/* ── B. Drill-Down Breadcrumb ──────────────────────── */}
         {drillDownNodeId && breadcrumb.length > 0 && (
-          <div className="flex items-center gap-1.5 text-xs bg-white rounded-xl px-4 py-2 shadow-sm border border-gray-100 flex-wrap">
+          <div className="flex items-center gap-1.5 text-xs bg-white rounded-xl px-4 py-2 border border-gray-100 flex-wrap">
             <button onClick={() => setDrillDownNodeId(null)} className="text-gray-400 hover:text-gray-700 font-medium cursor-pointer">Corporate</button>
             {breadcrumb.slice(1).map((node, i) => (
               <span key={node.id} className="flex items-center gap-1.5">
@@ -252,8 +252,8 @@ export function EnterpriseExecutive() {
         <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
           <div className="flex items-center gap-2 mb-4">
             <EvidlyIcon size={20} />
-            <h2 className="text-base font-bold text-gray-900">Executive Summary</h2>
-            <span className="text-[10px] text-gray-400 ml-auto">Powered by {dataPointsThisMonth.toLocaleString()} compliance data points this month</span>
+            <h2 className="text-base font-bold text-[#1E2D4D]">Executive Summary</h2>
+            <span className="text-xs text-gray-400 ml-auto">Powered by {dataPointsThisMonth.toLocaleString()} compliance data points this month</span>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
             {[
@@ -266,10 +266,10 @@ export function EnterpriseExecutive() {
               { label: 'Critical', value: `${locationsCritical} (<60)`, icon: AlertTriangle, alert: locationsCritical > 0 },
               { label: 'Alerts', value: String(alerts.filter(a => !a.acknowledged).length), icon: AlertTriangle, alert: alerts.filter(a => !a.acknowledged && a.severity === 'critical').length > 0 },
             ].map(s => (
-              <div key={s.label} className={`rounded-xl border p-3 text-center ${(s as any).alert ? 'border-red-200 bg-red-50' : (s as any).highlight ? 'border-blue-200 bg-blue-50/50' : 'border-gray-200 bg-gray-50'}`}>
+              <div key={s.label} className={`rounded-xl border p-3 text-center ${(s as any).alert ? 'border-red-200 bg-red-50' : (s as any).highlight ? 'border-blue-200 bg-blue-50/50' : 'border-gray-200 bg-[#FAF7F0]'}`}>
                 <div className="flex items-center justify-center gap-1.5 mb-1">
-                  <s.icon className="h-3.5 w-3.5" style={{ color: (s as any).alert ? '#ef4444' : '#1e4d6b' }} />
-                  <span className="text-[10px] text-gray-500">{s.label}</span>
+                  <s.icon className="h-3.5 w-3.5" style={{ color: (s as any).alert ? '#ef4444' : '#1E2D4D' }} />
+                  <span className="text-xs text-gray-500">{s.label}</span>
                 </div>
                 <p className={`text-lg font-bold ${(s as any).alert ? 'text-red-600' : 'text-gray-900'}`}>{s.value}</p>
               </div>
@@ -279,8 +279,8 @@ export function EnterpriseExecutive() {
             <div className="flex items-center gap-2">
               <ScoreCircle score={foodSafetyScore} size={52} />
               <div>
-                <p className="text-xs font-semibold text-gray-900">{drillDownNodeId ? activeNode.name : 'EvidLY Demo Org'}</p>
-                <p className="text-[10px] text-gray-500">Food Safety Score</p>
+                <p className="text-xs font-semibold text-[#1E2D4D]">{drillDownNodeId ? activeNode.name : 'EvidLY Demo Org'}</p>
+                <p className="text-xs text-gray-500">Food Safety Score</p>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4 text-center">
@@ -288,13 +288,13 @@ export function EnterpriseExecutive() {
                 <p className="text-sm font-bold" style={{ color: scoreColor(drillDownNodeId ? activeNode.foodSafety : latestTrend.foodSafety) }}>
                   {drillDownNodeId ? activeNode.foodSafety : latestTrend.foodSafety}%
                 </p>
-                <p className="text-[10px] text-gray-400">Food Safety</p>
+                <p className="text-xs text-gray-400">Food Safety</p>
               </div>
               <div>
                 <p className="text-sm font-bold" style={{ color: scoreColor(drillDownNodeId ? activeNode.facilitySafety : latestTrend.facilitySafety) }}>
                   {drillDownNodeId ? activeNode.facilitySafety : latestTrend.facilitySafety}%
                 </p>
-                <p className="text-[10px] text-gray-400">Facility Safety</p>
+                <p className="text-xs text-gray-400">Facility Safety</p>
               </div>
             </div>
           </div>
@@ -305,8 +305,8 @@ export function EnterpriseExecutive() {
           {/* Critical Alerts */}
           <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold text-gray-900">Critical Alerts</h3>
-              <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-red-50 text-red-700 border border-red-200">
+              <h3 className="text-sm font-semibold text-[#1E2D4D]">Critical Alerts</h3>
+              <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-red-50 text-red-700 border border-red-200">
                 {alerts.filter(a => !a.acknowledged).length} active
               </span>
             </div>
@@ -317,15 +317,15 @@ export function EnterpriseExecutive() {
                     <AlertTriangle className={`h-3.5 w-3.5 mt-0.5 flex-shrink-0 ${a.severity === 'critical' ? 'text-red-500' : a.severity === 'warning' ? 'text-amber-500' : 'text-blue-500'}`} />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5 mb-0.5">
-                        <span className={`text-[10px] font-semibold ${a.severity === 'critical' ? 'text-red-700' : a.severity === 'warning' ? 'text-amber-700' : 'text-blue-700'}`}>
+                        <span className={`text-xs font-semibold ${a.severity === 'critical' ? 'text-red-700' : a.severity === 'warning' ? 'text-amber-700' : 'text-blue-700'}`}>
                           {a.severity.toUpperCase()}
                         </span>
-                        <span className="text-[10px] text-gray-400">· {a.category}</span>
+                        <span className="text-xs text-gray-400">· {a.category}</span>
                       </div>
                       <p className="text-xs text-gray-700">{a.message}</p>
-                      <p className="text-[10px] text-gray-400 mt-1">{a.nodeName} ({a.nodeCode}) · {formatTime(a.detectedAt)}</p>
+                      <p className="text-xs text-gray-400 mt-1">{a.nodeName} ({a.nodeCode}) · {formatTime(a.detectedAt)}</p>
                     </div>
-                    <button onClick={() => showToast('Alert acknowledged')} className="text-[10px] font-medium px-2 py-0.5 rounded border border-gray-200 hover:bg-white cursor-pointer text-gray-500">
+                    <button onClick={() => showToast('Alert acknowledged')} className="text-xs font-medium px-2 py-0.5 rounded border border-gray-200 hover:bg-white cursor-pointer text-gray-500">
                       Ack
                     </button>
                   </div>
@@ -341,11 +341,11 @@ export function EnterpriseExecutive() {
         {/* ── E. Hierarchy Scorecard Table ──────────────────── */}
         <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-            <h3 className="text-sm font-semibold text-gray-900">
+            <h3 className="text-sm font-semibold text-[#1E2D4D]">
               {drillDownNodeId ? `${activeNode.name} — Scorecard` : 'Organization Scorecard — EvidLY Demo Org'}
             </h3>
             {drillDownNodeId && (
-              <button onClick={() => setDrillDownNodeId(null)} className="text-[11px] text-gray-500 hover:text-gray-700 cursor-pointer">
+              <button onClick={() => setDrillDownNodeId(null)} className="text-xs text-gray-500 hover:text-gray-700 cursor-pointer">
                 View All Business Units
               </button>
             )}
@@ -353,7 +353,7 @@ export function EnterpriseExecutive() {
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-200">
+                <tr className="bg-[#FAF7F0] border-b border-gray-200">
                   <th className="text-left px-3 py-2 font-medium text-gray-600">{drillDownNodeId ? 'Unit' : 'Business Unit'}</th>
                   <th className="text-center px-3 py-2 font-medium text-gray-600">Locations</th>
                   <th className="text-center px-3 py-2 font-medium text-gray-600">Avg Score</th>
@@ -383,17 +383,17 @@ export function EnterpriseExecutive() {
                     </td>
                     <td className="px-3 py-2.5 text-center hidden sm:table-cell">
                       {row.criticalItems > 0 ? (
-                        <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-red-50 text-red-700 border border-red-200">{row.criticalItems} critical</span>
+                        <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-red-50 text-red-700 border border-red-200">{row.criticalItems} critical</span>
                       ) : row.avgScore < 89 ? (
-                        <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-amber-50 text-amber-700 border border-amber-200">Review</span>
+                        <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-amber-50 text-amber-700 border border-amber-200">Review</span>
                       ) : (
-                        <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-green-50 text-green-700 border border-green-200">On Track</span>
+                        <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-green-50 text-green-700 border border-green-200">On Track</span>
                       )}
                     </td>
                   </tr>
                 ))}
                 {/* Corporate total footer */}
-                <tr className="bg-gray-50 font-semibold">
+                <tr className="bg-[#FAF7F0] font-semibold">
                   <td className="px-3 py-2.5 text-gray-900">{drillDownNodeId ? activeNode.name + ' Total' : 'Corporate Total'}</td>
                   <td className="px-3 py-2.5 text-center text-gray-700">{totalLocations.toLocaleString()}</td>
                   <td className="px-3 py-2.5 text-center">
@@ -411,17 +411,17 @@ export function EnterpriseExecutive() {
         {/* ── F. Trend Analytics ────────────────────────────── */}
         <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <div className="flex items-center justify-between mb-1 flex-wrap gap-2">
-            <h3 className="text-sm font-semibold text-gray-900">12-Month Compliance Trend</h3>
+            <h3 className="text-sm font-semibold text-[#1E2D4D]">12-Month Compliance Trend</h3>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 font-medium">
+              <span className="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 font-medium">
                 Predict Q2: {(predictedScores.reduce((s, p) => s + p.predictedNextQuarter, 0) / predictedScores.length).toFixed(1)}%
               </span>
-              <span className="text-[10px] text-gray-400">
+              <span className="text-xs text-gray-400">
                 ({predictedScores.every(p => p.confidence === 'high') ? 'high' : 'medium'} confidence)
               </span>
             </div>
           </div>
-          <p className="text-[10px] text-gray-400 mb-4">
+          <p className="text-xs text-gray-400 mb-4">
             {drillDownNodeId ? activeNode.name : 'EvidLY Demo Org'} — Toggle business units to compare
             {regulatoryOverlays.length > 0 && ' · Dashed lines = regulatory changes'}
           </p>
@@ -468,7 +468,7 @@ export function EnterpriseExecutive() {
 
           {/* BU Toggle checkboxes */}
           <div className="flex flex-wrap items-center gap-3 mt-3 pt-3 border-t border-gray-100">
-            <span className="text-[10px] text-gray-400 font-medium">Compare:</span>
+            <span className="text-xs text-gray-400 font-medium">Compare:</span>
             {Object.entries(BU_LINE_LABELS).filter(([k]) => k !== 'compositeScore').map(([key, label]) => (
               <label key={key} className="flex items-center gap-1.5 cursor-pointer">
                 <input
@@ -478,7 +478,7 @@ export function EnterpriseExecutive() {
                   className="w-3 h-3 rounded"
                   style={{ accentColor: BU_LINE_COLORS[key] }}
                 />
-                <span className="text-[10px] text-gray-600">{label}</span>
+                <span className="text-xs text-gray-600">{label}</span>
                 <div className="w-3 h-0.5 rounded" style={{ backgroundColor: BU_LINE_COLORS[key] }} />
               </label>
             ))}
@@ -487,11 +487,11 @@ export function EnterpriseExecutive() {
           {/* Regulatory events legend */}
           {regulatoryOverlays.length > 0 && (
             <div className="flex flex-wrap items-center gap-4 mt-2">
-              <span className="text-[10px] text-gray-400 font-medium">Regulatory:</span>
+              <span className="text-xs text-gray-400 font-medium">Regulatory:</span>
               {regulatoryOverlays.map(r => (
                 <div key={r.label} className="flex items-center gap-1.5" title={r.description}>
                   <div className="w-2 h-2 rounded-full" style={{ backgroundColor: r.color }} />
-                  <span className="text-[10px] text-gray-500">{r.month}: {r.label}</span>
+                  <span className="text-xs text-gray-500">{r.month}: {r.label}</span>
                 </div>
               ))}
             </div>
@@ -499,11 +499,11 @@ export function EnterpriseExecutive() {
 
           {/* Predicted scores table */}
           <div className="mt-4 pt-3 border-t border-gray-100">
-            <h4 className="text-[11px] font-semibold text-gray-700 mb-2">Next Quarter Predictions</h4>
+            <h4 className="text-xs font-semibold text-gray-700 mb-2">Next Quarter Predictions</h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-2">
               {predictedScores.map(p => (
-                <div key={p.businessUnit} className="rounded-lg border border-gray-100 p-2 bg-gray-50">
-                  <p className="text-[10px] text-gray-500 truncate">{p.businessUnit}</p>
+                <div key={p.businessUnit} className="rounded-lg border border-gray-100 p-2 bg-[#FAF7F0]">
+                  <p className="text-xs text-gray-500 truncate">{p.businessUnit}</p>
                   <div className="flex items-center justify-between mt-1">
                     <span className="text-xs font-bold" style={{ color: scoreColor(p.predictedNextQuarter) }}>
                       {p.predictedNextQuarter}%
@@ -527,7 +527,7 @@ export function EnterpriseExecutive() {
             {tenant.poweredByText.replace('EvidLY', '').trim()}{' '}
             <span style={{ color: '#d4af37', fontWeight: 600 }}>EvidLY</span>
           </p>
-          <p className="text-[10px] text-gray-300 mt-0.5">
+          <p className="text-xs text-gray-300 mt-0.5">
             compliance.cleaningprosplus.com — EvidLY Demo Org
           </p>
         </footer>

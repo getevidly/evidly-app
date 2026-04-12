@@ -98,7 +98,7 @@ export function AvailabilityEditor({ technician, weekStart, onClose }: Availabil
               key={slot.date}
               className="flex items-center gap-3 p-2.5 rounded-lg border transition-colors"
               style={{
-                borderColor: slot.available ? '#1e4d6b40' : CARD_BORDER,
+                borderColor: slot.available ? '#1E2D4D40' : CARD_BORDER,
                 background: slot.available ? '#F0F7FF' : '#F9FAFB',
                 opacity: slot.available ? 1 : 0.6,
               }}
@@ -109,8 +109,8 @@ export function AvailabilityEditor({ technician, weekStart, onClose }: Availabil
                 onClick={() => updateSlot(idx, { available: !slot.available })}
                 className="w-5 h-5 rounded border flex items-center justify-center flex-shrink-0"
                 style={{
-                  borderColor: slot.available ? '#1e4d6b' : CARD_BORDER,
-                  background: slot.available ? '#1e4d6b' : 'white',
+                  borderColor: slot.available ? '#1E2D4D' : CARD_BORDER,
+                  background: slot.available ? '#1E2D4D' : 'white',
                 }}
               >
                 {slot.available && <Check className="w-3 h-3 text-white" />}
@@ -128,20 +128,20 @@ export function AvailabilityEditor({ technician, weekStart, onClose }: Availabil
                     type="time"
                     value={slot.startTime}
                     onChange={e => updateSlot(idx, { startTime: e.target.value })}
-                    className="px-2 py-1 text-[10px] rounded border w-20"
+                    className="px-2 py-1 text-xs rounded border w-20"
                     style={{ borderColor: CARD_BORDER, color: NAVY }}
                   />
-                  <span className="text-[10px]" style={{ color: TEXT_TERTIARY }}>to</span>
+                  <span className="text-xs" style={{ color: TEXT_TERTIARY }}>to</span>
                   <input
                     type="time"
                     value={slot.endTime}
                     onChange={e => updateSlot(idx, { endTime: e.target.value })}
-                    className="px-2 py-1 text-[10px] rounded border w-20"
+                    className="px-2 py-1 text-xs rounded border w-20"
                     style={{ borderColor: CARD_BORDER, color: NAVY }}
                   />
                 </div>
               ) : (
-                <span className="text-[10px] font-medium" style={{ color: MUTED }}>Day off</span>
+                <span className="text-xs font-medium" style={{ color: MUTED }}>Day off</span>
               )}
             </div>
           ))}
@@ -159,7 +159,7 @@ export function AvailabilityEditor({ technician, weekStart, onClose }: Availabil
           <button
             onClick={handleSave}
             className="px-4 py-2 text-xs font-semibold rounded-lg text-white"
-            style={{ background: '#1e4d6b' }}
+            style={{ background: '#1E2D4D' }}
           >
             Save Availability
           </button>

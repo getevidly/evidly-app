@@ -23,7 +23,7 @@ export function DemoCTABar() {
         <div className="flex gap-2 w-full sm:w-auto justify-center sm:justify-end">
           <button
             onClick={() => navigate(isAuthenticatedDemo ? '/pricing' : '/signup')}
-            className="px-4 py-2 text-sm font-semibold text-[#1e4d6b] rounded-lg transition-colors hover:opacity-90"
+            className="px-4 py-2 text-sm font-semibold text-[#1E2D4D] rounded-lg transition-colors hover:opacity-90"
             style={{ backgroundColor: '#d4af37' }}
           >
             {isAuthenticatedDemo ? 'Upgrade to Full Account' : 'Start Free Trial'}

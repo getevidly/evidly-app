@@ -257,7 +257,7 @@ export function AutoBreadcrumb() {
   return <BreadcrumbNav items={items} />;
 }
 
-const NAVY = '#1e4d6b';
+const NAVY = '#1E2D4D';
 
 function DashboardBreadcrumbWithTabs({ search }: { search: string }) {
   const params = new URLSearchParams(search);
@@ -324,7 +324,7 @@ function BreadcrumbNav({ items }: { items: BreadcrumbItem[] }) {
               to={item.href}
               className="flex items-center gap-1 cursor-pointer hover:underline transition-colors"
               style={{ fontSize: '0.875rem', color: '#6B7280' }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#1e4d6b'; }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#1E2D4D'; }}
               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#6B7280'; }}
             >
               {i === 0 && <Home style={{ width: 16, height: 16 }} />}

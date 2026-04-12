@@ -56,7 +56,7 @@ const STAFF_CALENDAR_EVENTS: CalendarEvent[] = (() => {
 })();
 
 const STAFF_CALENDAR_COLORS: Record<string, string> = {
-  checklist: '#1e4d6b',
+  checklist: '#1E2D4D',
   temp_check: '#d97706',
 };
 
@@ -276,15 +276,13 @@ export default function KitchenStaffTaskList() {
 
             {todoTasks.length === 0 ? (
               <div
-                className="bg-white rounded-lg p-6 text-center"
-                style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}
+                className="bg-white rounded-xl border border-gray-200 p-6 text-center"
               >
                 <p className="text-lg font-semibold text-gray-700">{s.allDone}</p>
               </div>
             ) : (
               <div
-                className="bg-white rounded-lg overflow-hidden divide-y divide-gray-100"
-                style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}
+                className="bg-white rounded-xl border border-gray-200 overflow-hidden divide-y divide-gray-100"
               >
                 {todoTasks.map((task) => (
                   <div
@@ -307,7 +305,7 @@ export default function KitchenStaffTaskList() {
                           onClick={() => navigate('/temp-logs')}
                           className="flex items-center justify-center gap-2 rounded-lg text-white font-semibold transition-opacity hover:opacity-90 active:opacity-80"
                           style={{
-                            backgroundColor: '#1e4d6b',
+                            backgroundColor: '#1E2D4D',
                             height: 44,
                             paddingLeft: 16,
                             paddingRight: 16,
@@ -394,7 +392,7 @@ export default function KitchenStaffTaskList() {
               onClick={() => navigate('/temp-logs')}
               className="w-full flex items-center justify-center gap-3 rounded-lg text-white font-bold transition-opacity hover:opacity-90 active:opacity-80"
               style={{
-                backgroundColor: '#1e4d6b',
+                backgroundColor: '#1E2D4D',
                 height: 56,
                 fontSize: 16,
               }}
@@ -433,7 +431,7 @@ export default function KitchenStaffTaskList() {
             <button
               type="button"
               onClick={() => setLocale('en' as Locale)}
-              className={`text-sm px-1 ${locale === 'en' ? 'font-bold text-gray-900 underline' : 'text-gray-400'}`}
+              className={`text-sm px-1 ${locale === 'en' ? 'font-bold text-[#1E2D4D] underline' : 'text-gray-400'}`}
             >
               EN
             </button>
@@ -441,7 +439,7 @@ export default function KitchenStaffTaskList() {
             <button
               type="button"
               onClick={() => setLocale('es' as Locale)}
-              className={`text-sm px-1 ${locale === 'es' ? 'font-bold text-gray-900 underline' : 'text-gray-400'}`}
+              className={`text-sm px-1 ${locale === 'es' ? 'font-bold text-[#1E2D4D] underline' : 'text-gray-400'}`}
             >
               ES
             </button>

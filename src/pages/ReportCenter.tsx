@@ -27,7 +27,7 @@ export function ReportCenter() {
       <div className="p-6" style={F}>
         <div className="mt-8 flex flex-col items-center justify-center py-12">
           <ShieldX className="h-16 w-16 text-gray-400 mb-4" />
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Reports Not Available</h2>
+          <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Reports Not Available</h2>
           <p className="text-gray-600 text-center max-w-md">
             Reports are available to managers and above. Contact your manager for access.
           </p>

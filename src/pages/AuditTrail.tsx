@@ -359,11 +359,11 @@ const SectionHeader = memo(function SectionHeader({ id, icon: Icon, title, count
   return (
     <button
       onClick={() => onToggle(id)}
-      className="w-full flex items-center justify-between px-4 py-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
+      className="w-full flex items-center justify-between px-4 py-3 rounded-lg bg-[#FAF7F0] hover:bg-gray-100 transition-colors"
     >
       <div className="flex items-center gap-2">
-        <Icon className="h-4 w-4" style={{ color: '#1e4d6b' }} />
-        <span className="font-semibold text-gray-900 text-sm">{title}</span>
+        <Icon className="h-4 w-4" style={{ color: '#1E2D4D' }} />
+        <span className="font-semibold text-[#1E2D4D] text-sm">{title}</span>
         {count !== undefined && (
           <span className="text-xs text-gray-500 bg-gray-200 rounded-full px-2 py-0.5">{count}</span>
         )}
@@ -696,7 +696,7 @@ export function AuditTrail() {
         {/* Header */}
         <div className="no-print flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Inspection Trail & Chain of Custody</h1>
+            <h1 className="text-2xl font-bold text-[#1E2D4D]">Inspection Trail & Chain of Custody</h1>
             <p className="text-sm text-gray-600 mt-1">Tamper-evident compliance records with full chain of custody</p>
           </div>
           {!generated && (
@@ -712,9 +712,9 @@ export function AuditTrail() {
 
         {/* Report History Panel */}
         {showHistory && !generated && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 no-print">
-            <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <History className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 no-print">
+            <h2 className="text-lg font-bold text-[#1E2D4D] mb-4 flex items-center gap-2">
+              <History className="h-5 w-5" style={{ color: '#1E2D4D' }} />
               Report History
             </h2>
             {history.length === 0 ? (
@@ -725,7 +725,7 @@ export function AuditTrail() {
                   <div key={h.id} className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 rounded-lg border border-gray-100 hover:bg-gray-50">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="font-mono text-sm font-semibold" style={{ color: '#1e4d6b' }}>{h.reportNumber}</span>
+                        <span className="font-mono text-sm font-semibold" style={{ color: '#1E2D4D' }}>{h.reportNumber}</span>
                         <span style={badge(
                           h.status === 'shared' ? 'Shared' : h.status === 'expired' ? 'Expired' : 'Completed',
                           h.status === 'shared' ? '#2563eb' : h.status === 'expired' ? '#dc2626' : '#16a34a',
@@ -768,8 +768,8 @@ export function AuditTrail() {
 
         {/* Configuration Panel */}
         {!generated && (
-          <div data-demo-allow className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 space-y-6 no-print">
-            <h2 className="text-lg font-bold text-gray-900">Report Configuration</h2>
+          <div data-demo-allow className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 space-y-6 no-print">
+            <h2 className="text-lg font-bold text-[#1E2D4D]">Report Configuration</h2>
 
             {/* Date + Location row */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -816,12 +816,12 @@ export function AuditTrail() {
                       key={m.id}
                       onClick={() => toggleModule(m.id)}
                       className={`flex items-start gap-3 px-3 py-2.5 rounded-lg border text-left transition-colors ${
-                        m.enabled ? 'border-[#1e4d6b] bg-blue-50' : 'border-gray-200 bg-gray-50'
+                        m.enabled ? 'border-[#1E2D4D] bg-blue-50' : 'border-gray-200 bg-[#FAF7F0]'
                       }`}
                     >
-                      <Icon className={`h-4 w-4 mt-0.5 flex-shrink-0 ${m.enabled ? 'text-[#1e4d6b]' : 'text-gray-400'}`} />
+                      <Icon className={`h-4 w-4 mt-0.5 flex-shrink-0 ${m.enabled ? 'text-[#1E2D4D]' : 'text-gray-400'}`} />
                       <div>
-                        <span className={`text-sm font-medium ${m.enabled ? 'text-[#1e4d6b]' : 'text-gray-400'}`}>{m.label}</span>
+                        <span className={`text-sm font-medium ${m.enabled ? 'text-[#1E2D4D]' : 'text-gray-400'}`}>{m.label}</span>
                         <p className="text-xs text-gray-400 mt-0.5">{m.description}</p>
                       </div>
                     </button>
@@ -832,9 +832,9 @@ export function AuditTrail() {
 
             {/* Tamper-evident info */}
             <div className="flex items-start gap-3 px-4 py-3 rounded-lg" style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}>
-              <Lock className="h-5 w-5 flex-shrink-0 mt-0.5" style={{ color: '#1e4d6b' }} />
+              <Lock className="h-5 w-5 flex-shrink-0 mt-0.5" style={{ color: '#1E2D4D' }} />
               <div>
-                <p className="text-sm font-medium" style={{ color: '#1e4d6b' }}>Tamper-Evident Report</p>
+                <p className="text-sm font-medium" style={{ color: '#1E2D4D' }}>Tamper-Evident Report</p>
                 <p className="text-xs text-gray-600 mt-0.5">
                   Each report receives a SHA-256 cryptographic hash computed from all included data.
                   Any modification to the report content will produce a different hash, ensuring integrity.
@@ -844,7 +844,7 @@ export function AuditTrail() {
 
             <button
               onClick={handleGenerate}
-              className="w-full md:w-auto px-8 py-3 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg font-bold text-lg hover:bg-[#163a52] shadow-sm transition-colors"
+              className="w-full md:w-auto px-8 py-3 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg font-bold text-lg hover:bg-[#162340] shadow-sm transition-colors"
             >
               Generate Inspection Trail Report
             </button>
@@ -855,8 +855,8 @@ export function AuditTrail() {
         {generated && reportData && summary && (
           <>
             {/* Action bar */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 flex flex-wrap gap-3 items-center justify-between no-print">
-              <button onClick={handleBack} className="flex items-center gap-1 text-sm text-[#1e4d6b] hover:underline font-medium">
+            <div className="bg-white rounded-xl border border-gray-200 p-4 flex flex-wrap gap-3 items-center justify-between no-print">
+              <button onClick={handleBack} className="flex items-center gap-1 text-sm text-[#1E2D4D] hover:underline font-medium">
                 ← Back to Configuration
               </button>
               <div className="flex gap-2 flex-wrap">
@@ -864,7 +864,7 @@ export function AuditTrail() {
                   {verifying ? <Loader2 className="h-4 w-4 animate-spin" /> : <EvidlyIcon size={16} />}
                   {verifying ? 'Verifying...' : 'Verify Integrity'}
                 </button>
-                <button onClick={handleDownloadPDF} disabled={pdfLoading} className="flex items-center gap-2 px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium disabled:opacity-60">
+                <button onClick={handleDownloadPDF} disabled={pdfLoading} className="flex items-center gap-2 px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] text-sm font-medium disabled:opacity-60">
                   {pdfLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
                   {pdfLoading ? 'Generating...' : 'Download PDF'}
                 </button>
@@ -901,7 +901,7 @@ export function AuditTrail() {
             {/* Printable Report */}
             <div ref={reportRef} className="print-report space-y-6">
               {/* Report Header */}
-              <div className="bg-[#1e4d6b] rounded-xl p-4 sm:p-6 text-white">
+              <div className="bg-[#1E2D4D] rounded-xl p-4 sm:p-6 text-white">
                 <div className="flex items-center gap-3 mb-4">
                   <EvidlyIcon size={32} />
                   <div>
@@ -940,9 +940,9 @@ export function AuditTrail() {
               </div>
 
               {/* Executive Summary */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 report-section">
-                <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+              <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 report-section">
+                <h3 className="text-lg font-bold text-[#1E2D4D] mb-4 flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5" style={{ color: '#1E2D4D' }} />
                   Executive Summary
                 </h3>
 
@@ -985,14 +985,14 @@ export function AuditTrail() {
                   )}
                   {summary.totalEquipment > 0 && (
                     <div className="text-center p-3 rounded-lg" style={{ backgroundColor: '#eef4f8' }}>
-                      <p className="text-2xl font-bold" style={{ color: '#1e4d6b' }}>{summary.totalEquipment}</p>
+                      <p className="text-2xl font-bold" style={{ color: '#1E2D4D' }}>{summary.totalEquipment}</p>
                       <p className="text-xs text-gray-500 mt-1">Equipment</p>
                       <p className="text-xs text-gray-400">tracked</p>
                     </div>
                   )}
                   {summary.totalVendors > 0 && (
                     <div className="text-center p-3 rounded-lg" style={{ backgroundColor: '#eef4f8' }}>
-                      <p className="text-2xl font-bold" style={{ color: '#1e4d6b' }}>{summary.totalVendors}</p>
+                      <p className="text-2xl font-bold" style={{ color: '#1E2D4D' }}>{summary.totalVendors}</p>
                       <p className="text-xs text-gray-500 mt-1">Vendor Records</p>
                       <p className="text-xs text-gray-400">in period</p>
                     </div>
@@ -1013,7 +1013,7 @@ export function AuditTrail() {
                           </div>
                         </div>
                         <div>
-                          <p className="text-sm font-semibold text-gray-900">{cs.location}</p>
+                          <p className="text-sm font-semibold text-[#1E2D4D]">{cs.location}</p>
                           <div className="flex gap-2 text-xs text-gray-500">
                             <span>Food: {cs.foodSafety}</span>
                             <span>Facility: {cs.facilitySafety}</span>
@@ -1027,7 +1027,7 @@ export function AuditTrail() {
 
               {/* Temperature Logs */}
               {moduleEnabled('temp_logs') && reportData.tempLogs.length > 0 && (
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden report-section">
+                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden report-section">
                   <SectionHeader id="temp_logs" icon={Thermometer} title="Temperature Logs" count={reportData.tempLogs.length} expanded={!!expandedSections['temp_logs']} onToggle={toggleExpand} />
                   {expandedSections['temp_logs'] && (
                     <div className="overflow-x-auto">
@@ -1073,7 +1073,7 @@ export function AuditTrail() {
 
               {/* Checklists */}
               {moduleEnabled('checklists') && reportData.checklists.length > 0 && (
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden report-section">
+                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden report-section">
                   <SectionHeader id="checklists" icon={CheckSquare} title="Checklist Completions" count={reportData.checklists.length} expanded={!!expandedSections['checklists']} onToggle={toggleExpand} />
                   {expandedSections['checklists'] && (
                     <div className="overflow-x-auto">
@@ -1117,7 +1117,7 @@ export function AuditTrail() {
 
               {/* Incidents */}
               {moduleEnabled('incidents') && reportData.incidents.length > 0 && (
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden report-section">
+                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden report-section">
                   <SectionHeader id="incidents" icon={AlertTriangle} title="Incidents & Corrective Actions" count={reportData.incidents.length} expanded={!!expandedSections['incidents']} onToggle={toggleExpand} />
                   {expandedSections['incidents'] && (
                     <div className="overflow-x-auto">
@@ -1156,7 +1156,7 @@ export function AuditTrail() {
 
               {/* Equipment */}
               {moduleEnabled('equipment') && reportData.equipment.length > 0 && (
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden report-section">
+                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden report-section">
                   <SectionHeader id="equipment" icon={Wrench} title="Equipment Status" count={reportData.equipment.length} expanded={!!expandedSections['equipment']} onToggle={toggleExpand} />
                   {expandedSections['equipment'] && (
                     <div className="overflow-x-auto">
@@ -1193,7 +1193,7 @@ export function AuditTrail() {
 
               {/* Vendor Services */}
               {moduleEnabled('vendors') && reportData.vendors.length > 0 && (
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden report-section">
+                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden report-section">
                   <SectionHeader id="vendors" icon={Truck} title="Vendor Service Records" count={reportData.vendors.length} expanded={!!expandedSections['vendors']} onToggle={toggleExpand} />
                   {expandedSections['vendors'] && (
                     <div className="overflow-x-auto">
@@ -1230,7 +1230,7 @@ export function AuditTrail() {
 
               {/* Documents */}
               {moduleEnabled('documents') && reportData.documents.length > 0 && (
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden report-section">
+                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden report-section">
                   <SectionHeader id="documents" icon={FileText} title="Document Registry" count={reportData.documents.length} expanded={!!expandedSections['documents']} onToggle={toggleExpand} />
                   {expandedSections['documents'] && (
                     <div className="overflow-x-auto">
@@ -1267,7 +1267,7 @@ export function AuditTrail() {
 
               {/* Compliance Scores */}
               {moduleEnabled('compliance') && reportData.complianceScores.length > 0 && (
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden report-section">
+                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden report-section">
                   <SectionHeader id="compliance" icon={EvidlyIcon as any} title="Compliance Scores" count={reportData.complianceScores.length} expanded={!!expandedSections['compliance']} onToggle={toggleExpand} />
                   {expandedSections['compliance'] && (
                     <div className="overflow-x-auto">
@@ -1308,7 +1308,7 @@ export function AuditTrail() {
 
               {/* Audit Activity */}
               {moduleEnabled('audit_activity') && reportData.auditActivity.length > 0 && (
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden report-section">
+                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden report-section">
                   <SectionHeader id="audit_activity" icon={ClipboardList} title="Inspection Activity Log" count={reportData.auditActivity.length} expanded={!!expandedSections['audit_activity']} onToggle={toggleExpand} />
                   {expandedSections['audit_activity'] && (
                     <div className="overflow-x-auto">
@@ -1345,7 +1345,7 @@ export function AuditTrail() {
               )}
 
               {/* Chain of Custody Certification */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden report-section">
+              <div className="bg-white rounded-xl border border-gray-200 overflow-hidden report-section">
                 <SectionHeader id="chain_of_custody" icon={Lock} title="Chain of Custody Certification" expanded={!!expandedSections['chain_of_custody']} onToggle={toggleExpand} />
                 {expandedSections['chain_of_custody'] && (
                   <div className="p-4 sm:p-6 space-y-4">
@@ -1355,13 +1355,13 @@ export function AuditTrail() {
                         <div key={i} className="flex gap-4 pb-6 last:pb-0">
                           {/* Timeline line */}
                           <div className="flex flex-col items-center">
-                            <div className="w-3 h-3 rounded-full bg-[#1e4d6b] flex-shrink-0 mt-1.5" />
+                            <div className="w-3 h-3 rounded-full bg-[#1E2D4D] flex-shrink-0 mt-1.5" />
                             {i < custodyChain.length - 1 && <div className="w-0.5 flex-1 bg-gray-200 mt-1" />}
                           </div>
                           {/* Content */}
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
-                              <span className="text-sm font-semibold text-gray-900">{entry.action}</span>
+                              <span className="text-sm font-semibold text-[#1E2D4D]">{entry.action}</span>
                               <span className="text-xs text-gray-400">{entry.timestamp}</span>
                             </div>
                             <p className="text-sm text-gray-600 mt-0.5">{entry.detail}</p>
@@ -1375,11 +1375,11 @@ export function AuditTrail() {
                     </div>
 
                     {/* Certification statement */}
-                    <div className="mt-6 p-4 rounded-lg border-2 border-[#1e4d6b] bg-[#eef4f8]">
+                    <div className="mt-6 p-4 rounded-lg border-2 border-[#1E2D4D] bg-[#eef4f8]">
                       <div className="flex items-start gap-3">
                         <EvidlyIcon size={24} className="flex-shrink-0 mt-0.5" />
                         <div>
-                          <h4 className="font-bold" style={{ color: '#1e4d6b' }}>Chain of Custody Certification</h4>
+                          <h4 className="font-bold" style={{ color: '#1E2D4D' }}>Chain of Custody Certification</h4>
                           <p className="text-sm text-gray-700 mt-1">
                             I hereby certify that this report ({reportNumber}) accurately represents the compliance data
                             collected by the EvidLY platform during the period {dateRangeLabel}. All data points were

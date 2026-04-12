@@ -73,7 +73,7 @@ function BlurPreview({ feature, currentTier, children }: PremiumFeaturePreviewPr
           >
             <Lock size={22} color="#fff" />
           </div>
-          <h3 style={{ color: '#1e4d6b', fontSize: 18, fontWeight: 700, margin: '0 0 8px' }}>
+          <h3 style={{ color: '#1E2D4D', fontSize: 18, fontWeight: 700, margin: '0 0 8px' }}>
             {feature.name}
           </h3>
           <p style={{ color: '#6B7F96', fontSize: 14, margin: '0 0 20px', lineHeight: 1.5 }}>
@@ -156,17 +156,17 @@ function InsuranceRiskScoreSample() {
           flexShrink: 0,
         }}
       >
-        <span style={{ fontSize: 28, fontWeight: 800, color: '#1e4d6b' }}>B+</span>
+        <span style={{ fontSize: 28, fontWeight: 800, color: '#1E2D4D' }}>B+</span>
       </div>
       <div style={{ flex: 1, minWidth: 180 }}>
-        <p style={{ margin: '0 0 12px', fontWeight: 600, color: '#1e4d6b', fontSize: 14 }}>
+        <p style={{ margin: '0 0 12px', fontWeight: 600, color: '#1E2D4D', fontSize: 14 }}>
           Risk Assessment: Medium
         </p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {factors.map((f) => (
             <div key={f.label} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <span style={{ fontSize: 12, color: 'var(--text-secondary, #3D5068)', width: 160, flexShrink: 0 }}>{f.label}</span>
-              <ProgressBar value={f.value} color="#1e4d6b" />
+              <ProgressBar value={f.value} color="#1E2D4D" />
             </div>
           ))}
         </div>
@@ -194,7 +194,7 @@ function DefaultSample() {
             textAlign: 'center',
           }}
         >
-          <p style={{ margin: 0, fontSize: 22, fontWeight: 700, color: '#1e4d6b' }}>{s.value}</p>
+          <p style={{ margin: 0, fontSize: 22, fontWeight: 700, color: '#1E2D4D' }}>{s.value}</p>
           <p style={{ margin: '4px 0 0', fontSize: 12, color: '#6B7F96' }}>{s.label}</p>
         </div>
       ))}
@@ -226,8 +226,8 @@ function SampleDataPreview({ feature, currentTier }: PremiumFeaturePreviewProps)
     >
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
-        <BarChart3 size={20} color="#1e4d6b" />
-        <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#1e4d6b' }}>{feature.name}</h3>
+        <BarChart3 size={20} color="#1E2D4D" />
+        <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#1E2D4D' }}>{feature.name}</h3>
         <span
           style={{
             marginLeft: 'auto',
@@ -313,7 +313,7 @@ function LockedPreview({ feature, currentTier }: PremiumFeaturePreviewProps) {
           width: 52,
           height: 52,
           borderRadius: '50%',
-          background: '#1e4d6b',
+          background: '#1E2D4D',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -322,7 +322,7 @@ function LockedPreview({ feature, currentTier }: PremiumFeaturePreviewProps) {
       >
         <Lock size={24} color="#fff" />
       </div>
-      <h3 style={{ color: '#1e4d6b', fontSize: 18, fontWeight: 700, margin: '0 0 8px' }}>
+      <h3 style={{ color: '#1E2D4D', fontSize: 18, fontWeight: 700, margin: '0 0 8px' }}>
         {feature.name}
       </h3>
       <p style={{ color: 'var(--text-secondary, #3D5068)', fontSize: 14, margin: '0 0 16px', lineHeight: 1.5 }}>
@@ -338,8 +338,8 @@ function LockedPreview({ feature, currentTier }: PremiumFeaturePreviewProps) {
             display: 'inline-flex',
             alignItems: 'center',
             gap: 8,
-            border: '2px solid #1e4d6b',
-            color: '#1e4d6b',
+            border: '2px solid #1E2D4D',
+            color: '#1E2D4D',
             background: 'transparent',
             borderRadius: 8,
             padding: '10px 24px',

@@ -88,7 +88,7 @@ const RECORD_TYPE_ICONS: Record<RecordType, typeof Thermometer> = {
 };
 
 const LOCATION_BADGE: Record<LocationName, { bg: string; text: string }> = {
-  'Location 1':  { bg: '#eef4f8', text: '#1e4d6b' }, // demo
+  'Location 1':  { bg: '#eef4f8', text: '#1E2D4D' }, // demo
   'Location 2':  { bg: '#fef3c7', text: '#92400e' }, // demo
   'Location 3': { bg: '#dcfce7', text: '#166534' }, // demo
 };
@@ -153,7 +153,7 @@ function CategoryBadge({ recordType, small = false }: { recordType: RecordType; 
   const style = RECORD_TYPE_STYLES[recordType];
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-full font-semibold ${small ? 'px-1.5 py-0.5 text-[9px]' : 'px-2 py-0.5 text-[10px]'}`}
+      className={`inline-flex items-center gap-1 rounded-full font-semibold ${small ? 'px-1.5 py-0.5 text-[9px]' : 'px-2 py-0.5 text-xs'}`}
       style={{ backgroundColor: style.badgeBg, color: style.badgeText }}
     >
       <Icon className={small ? 'h-2.5 w-2.5' : 'h-3 w-3'} />
@@ -424,11 +424,11 @@ export function PhotoEvidencePage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg bg-[#1e4d6b] flex items-center justify-center">
+            <div className="h-10 w-10 rounded-lg bg-[#1E2D4D] flex items-center justify-center">
               <Camera className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-900">Photo Evidence</h1>
+              <h1 className="text-xl font-bold text-[#1E2D4D]">Photo Evidence</h1>
               <p className="text-sm text-gray-500">
                 {stats.total} photo{stats.total !== 1 ? 's' : ''} across all locations
               </p>
@@ -440,7 +440,7 @@ export function PhotoEvidencePage() {
               <button
                 onClick={() => setViewMode('list')}
                 className={`p-1.5 rounded-md transition-colors ${
-                  viewMode === 'list' ? 'bg-white shadow-sm text-[#1e4d6b]' : 'text-gray-400 hover:text-gray-600'
+                  viewMode === 'list' ? 'bg-white shadow-sm text-[#1E2D4D]' : 'text-gray-400 hover:text-gray-600'
                 }`}
                 title="List view"
               >
@@ -449,7 +449,7 @@ export function PhotoEvidencePage() {
               <button
                 onClick={() => setViewMode('grid')}
                 className={`p-1.5 rounded-md transition-colors ${
-                  viewMode === 'grid' ? 'bg-white shadow-sm text-[#1e4d6b]' : 'text-gray-400 hover:text-gray-600'
+                  viewMode === 'grid' ? 'bg-white shadow-sm text-[#1E2D4D]' : 'text-gray-400 hover:text-gray-600'
                 }`}
                 title="Grid view"
               >
@@ -464,16 +464,16 @@ export function PhotoEvidencePage() {
                 placeholder="Search photos..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/30 focus:border-[#1e4d6b] w-full sm:w-56"
+                className="pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/30 focus:border-[#1E2D4D] w-full sm:w-56"
               />
             </div>
           </div>
         </div>
 
         {/* Filter Bar */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <div className="flex items-center gap-2 mb-3">
-            <Filter className="h-4 w-4 text-[#1e4d6b]" />
+            <Filter className="h-4 w-4 text-[#1E2D4D]" />
             <span className="text-sm font-semibold text-gray-700">Filters</span>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -483,7 +483,7 @@ export function PhotoEvidencePage() {
                 <select
                   value={locationFilter}
                   onChange={(e) => setLocationFilter(e.target.value as LocationName | 'all')}
-                  className="w-full appearance-none pl-3 pr-8 py-2 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/30 focus:border-[#1e4d6b]"
+                  className="w-full appearance-none pl-3 pr-8 py-2 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/30 focus:border-[#1E2D4D]"
                 >
                   <option value="all">All Locations</option>
                   {LOCATIONS.map(loc => (
@@ -499,7 +499,7 @@ export function PhotoEvidencePage() {
                 <select
                   value={typeFilter}
                   onChange={(e) => setTypeFilter(e.target.value as RecordType | 'all')}
-                  className="w-full appearance-none pl-3 pr-8 py-2 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/30 focus:border-[#1e4d6b]"
+                  className="w-full appearance-none pl-3 pr-8 py-2 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/30 focus:border-[#1E2D4D]"
                 >
                   <option value="all">All Types</option>
                   {RECORD_TYPES.map(rt => (
@@ -515,7 +515,7 @@ export function PhotoEvidencePage() {
                 <select
                   value={dateRange}
                   onChange={(e) => setDateRange(e.target.value as DateRange)}
-                  className="w-full appearance-none pl-3 pr-8 py-2 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/30 focus:border-[#1e4d6b]"
+                  className="w-full appearance-none pl-3 pr-8 py-2 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/30 focus:border-[#1E2D4D]"
                 >
                   {DATE_RANGES.map(dr => (
                     <option key={dr.value} value={dr.value}>{dr.label}</option>
@@ -529,33 +529,33 @@ export function PhotoEvidencePage() {
 
         {/* Stats Row */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-gray-200 p-4">
             <div className="flex items-center gap-2 mb-1">
-              <Image className="h-4 w-4 text-[#1e4d6b]" />
+              <Image className="h-4 w-4 text-[#1E2D4D]" />
               <span className="text-xs font-medium text-gray-500">Total Photos</span>
             </div>
-            <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+            <p className="text-2xl font-bold text-[#1E2D4D]">{stats.total}</p>
           </div>
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-gray-200 p-4">
             <div className="flex items-center gap-2 mb-1">
-              <MapPin className="h-4 w-4 text-[#1e4d6b]" />
+              <MapPin className="h-4 w-4 text-[#1E2D4D]" />
               <span className="text-xs font-medium text-gray-500">Geotagged</span>
             </div>
-            <p className="text-2xl font-bold text-gray-900">{stats.geoPercent}%</p>
+            <p className="text-2xl font-bold text-[#1E2D4D]">{stats.geoPercent}%</p>
           </div>
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-gray-200 p-4">
             <div className="flex items-center gap-2 mb-1">
-              <Calendar className="h-4 w-4 text-[#1e4d6b]" />
+              <Calendar className="h-4 w-4 text-[#1E2D4D]" />
               <span className="text-xs font-medium text-gray-500">This Week</span>
             </div>
-            <p className="text-2xl font-bold text-gray-900">{stats.thisWeek}</p>
+            <p className="text-2xl font-bold text-[#1E2D4D]">{stats.thisWeek}</p>
           </div>
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-gray-200 p-4">
             <div className="flex items-center gap-2 mb-1">
               <CheckCircle className="h-4 w-4 text-emerald-500" />
               <span className="text-xs font-medium text-gray-500">Verified</span>
             </div>
-            <p className="text-2xl font-bold text-gray-900">{stats.verified}</p>
+            <p className="text-2xl font-bold text-[#1E2D4D]">{stats.verified}</p>
           </div>
         </div>
 
@@ -575,7 +575,7 @@ export function PhotoEvidencePage() {
                     setDateRange('30');
                     setSearchQuery('');
                   }}
-                  className="text-xs text-[#1e4d6b] hover:underline font-medium"
+                  className="text-xs text-[#1E2D4D] hover:underline font-medium"
                 >
                   Clear Filters
                 </button>
@@ -592,7 +592,7 @@ export function PhotoEvidencePage() {
                     {group.label}
                   </span>
                   <div className="flex-1 border-t border-gray-100" />
-                  <span className="text-[10px] text-gray-400">{group.photos.length}</span>
+                  <span className="text-xs text-gray-400">{group.photos.length}</span>
                 </div>
 
                 {/* List view */}
@@ -605,11 +605,11 @@ export function PhotoEvidencePage() {
                           key={photo.id}
                           type="button"
                           onClick={() => setSelectedIndex(getFlatIndex(photo))}
-                          className="w-full flex items-center gap-4 p-4 bg-white rounded-lg border border-gray-100 hover:border-gray-200 hover:shadow-sm transition-all text-left"
+                          className="w-full flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-200 hover:border-gray-300 transition-all text-left"
                         >
                           <IconThumbnail recordType={photo.recordType} size={64} />
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-semibold text-gray-900 truncate">{photo.title}</p>
+                            <p className="text-sm font-semibold text-[#1E2D4D] truncate">{photo.title}</p>
                             <p className="text-xs text-gray-500 mt-0.5">{photo.subtitle}</p>
                             <div className="flex items-center gap-2 mt-2 flex-wrap">
                               <CategoryBadge recordType={photo.recordType} small />
@@ -622,9 +622,9 @@ export function PhotoEvidencePage() {
                             </div>
                           </div>
                           <div className="flex flex-col items-end gap-1 flex-shrink-0">
-                            <span className="text-[10px] text-gray-400">{photo.displayTime}</span>
+                            <span className="text-xs text-gray-400">{photo.displayTime}</span>
                             {photo.verified && (
-                              <span className="inline-flex items-center gap-0.5 text-[10px] text-emerald-600 font-medium">
+                              <span className="inline-flex items-center gap-0.5 text-xs text-emerald-600 font-medium">
                                 <CheckCircle className="h-3 w-3" />
                                 Verified
                               </span>
@@ -642,7 +642,7 @@ export function PhotoEvidencePage() {
                         key={photo.id}
                         type="button"
                         onClick={() => setSelectedIndex(getFlatIndex(photo))}
-                        className="bg-white rounded-lg border border-gray-100 hover:border-gray-200 hover:shadow-sm transition-all overflow-hidden text-left"
+                        className="bg-white rounded-xl border border-gray-200 hover:border-gray-300 transition-all overflow-hidden text-left"
                       >
                         <div
                           className="aspect-square flex items-center justify-center"
@@ -654,13 +654,13 @@ export function PhotoEvidencePage() {
                           })()}
                         </div>
                         <div className="p-3">
-                          <p className="text-xs font-semibold text-gray-900 truncate">{photo.title}</p>
-                          <p className="text-[10px] text-gray-500 truncate mt-0.5">{photo.subtitle}</p>
+                          <p className="text-xs font-semibold text-[#1E2D4D] truncate">{photo.title}</p>
+                          <p className="text-xs text-gray-500 truncate mt-0.5">{photo.subtitle}</p>
                           <div className="flex items-center gap-1 mt-2">
                             <CategoryBadge recordType={photo.recordType} small />
                           </div>
                           <div className="flex items-center justify-between mt-1.5">
-                            <span className="text-[10px] text-gray-400 truncate">{photo.displayTime}</span>
+                            <span className="text-xs text-gray-400 truncate">{photo.displayTime}</span>
                             {photo.verified && <CheckCircle className="h-3 w-3 text-emerald-500 flex-shrink-0" />}
                           </div>
                         </div>
@@ -673,9 +673,9 @@ export function PhotoEvidencePage() {
           </div>
         ) : (
           /* Empty state */
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-10 flex flex-col items-center justify-center text-center">
+          <div className="bg-white rounded-xl border border-gray-200 p-10 flex flex-col items-center justify-center text-center">
             <div className="h-16 w-16 rounded-full bg-[#eef4f8] flex items-center justify-center mb-4">
-              <Camera className="h-8 w-8 text-[#1e4d6b]/40" />
+              <Camera className="h-8 w-8 text-[#1E2D4D]/40" />
             </div>
             <h3 className="text-lg font-semibold text-gray-700 mb-1">No photos found</h3>
             <p className="text-sm text-gray-500 max-w-sm">
@@ -691,7 +691,7 @@ export function PhotoEvidencePage() {
                 setDateRange('all');
                 setSearchQuery('');
               }}
-              className="mt-4 px-4 py-2 text-sm font-medium text-[#1e4d6b] bg-[#eef4f8] hover:bg-[#dce9f1] rounded-lg transition-colors"
+              className="mt-4 px-4 py-2 text-sm font-medium text-[#1E2D4D] bg-[#eef4f8] hover:bg-[#dce9f1] rounded-lg transition-colors"
             >
               Clear All Filters
             </button>
@@ -756,7 +756,7 @@ export function PhotoEvidencePage() {
               <div className="p-5 space-y-4">
                 {/* Title */}
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900">{selected.title}</h3>
+                  <h3 className="text-lg font-semibold text-[#1E2D4D]">{selected.title}</h3>
                   <p className="text-sm text-gray-500 mt-0.5">{selected.subtitle}</p>
                 </div>
 
@@ -769,7 +769,7 @@ export function PhotoEvidencePage() {
                 <div className="flex flex-wrap items-center gap-2">
                   <CategoryBadge recordType={selected.recordType} />
                   <span
-                    className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold"
+                    className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold"
                     style={{
                       backgroundColor: LOCATION_BADGE[selected.location].bg,
                       color: LOCATION_BADGE[selected.location].text,
@@ -778,7 +778,7 @@ export function PhotoEvidencePage() {
                     {selected.location}
                   </span>
                   {selected.verified && (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700">
                       <CheckCircle className="h-3 w-3" />
                       Verified
                     </span>
@@ -788,12 +788,12 @@ export function PhotoEvidencePage() {
                 {/* Metadata */}
                 <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500">
                   <div className="flex items-center gap-1.5">
-                    <Clock className="h-3.5 w-3.5 text-[#1e4d6b]" />
+                    <Clock className="h-3.5 w-3.5 text-[#1E2D4D]" />
                     {selected.displayTime}
                   </div>
                   {selected.lat !== null && selected.lng !== null && (
                     <div className="flex items-center gap-1.5">
-                      <MapPin className="h-3.5 w-3.5 text-[#1e4d6b]" />
+                      <MapPin className="h-3.5 w-3.5 text-[#1E2D4D]" />
                       {selected.address}
                     </div>
                   )}
@@ -803,7 +803,7 @@ export function PhotoEvidencePage() {
                 <div className="flex items-center gap-2 pt-2 border-t border-gray-100">
                   <button
                     onClick={() => handleDownload(selected)}
-                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-[#1e4d6b] bg-[#eef4f8] hover:bg-[#dce9f1] rounded-lg transition-colors"
+                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-[#1E2D4D] bg-[#eef4f8] hover:bg-[#dce9f1] rounded-lg transition-colors"
                   >
                     <Download className="h-3.5 w-3.5" />
                     Download
@@ -815,7 +815,7 @@ export function PhotoEvidencePage() {
                     <Printer className="h-3.5 w-3.5" />
                     Print
                   </button>
-                  <span className="ml-auto text-[11px] text-gray-400">
+                  <span className="ml-auto text-xs text-gray-400">
                     {selectedIndex + 1} / {filteredPhotos.length}
                   </span>
                 </div>
@@ -823,7 +823,7 @@ export function PhotoEvidencePage() {
             </div>
 
             {/* Navigation hint */}
-            <p className="mt-3 text-[11px] text-white/40 text-center">
+            <p className="mt-3 text-xs text-white/40 text-center">
               Swipe or use arrow keys to navigate
             </p>
           </div>

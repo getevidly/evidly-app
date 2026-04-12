@@ -138,7 +138,7 @@ export function AIChatPanel({ hidden = false }: { hidden?: boolean }) {
         {/* Header */}
         <div
           className="flex items-center justify-between px-4 py-3 flex-shrink-0"
-          style={{ backgroundColor: '#1e4d6b' }}
+          style={{ backgroundColor: '#1E2D4D' }}
         >
           <div className="flex items-center gap-2">
             <Brain className="h-5 w-5 text-white" />
@@ -169,7 +169,7 @@ export function AIChatPanel({ hidden = false }: { hidden?: boolean }) {
                   <button
                     key={qp.label}
                     onClick={() => sendMessage(qp.query)}
-                    className="px-3 py-1.5 rounded-full text-xs font-medium border transition-colors hover:border-[#1e4d6b] hover:bg-[#eef4f8]"
+                    className="px-3 py-1.5 rounded-full text-xs font-medium border transition-colors hover:border-[#1E2D4D] hover:bg-[#eef4f8]"
                     style={{ borderColor: '#d1d5db', color: '#374151' }}
                   >
                     {qp.label}
@@ -184,7 +184,7 @@ export function AIChatPanel({ hidden = false }: { hidden?: boolean }) {
               <div
                 className={`max-w-[85%] rounded-xl px-3 py-2 text-sm ${
                   msg.role === 'user'
-                    ? 'bg-[#1e4d6b] text-white'
+                    ? 'bg-[#1E2D4D] text-white'
                     : 'bg-white border border-gray-200 text-gray-800'
                 }`}
               >
@@ -202,7 +202,7 @@ export function AIChatPanel({ hidden = false }: { hidden?: boolean }) {
                       <button
                         key={i}
                         onClick={() => sendMessage(s)}
-                        className="px-2 py-1 rounded-md text-xs border border-gray-200 hover:bg-gray-50 text-gray-600 hover:text-[#1e4d6b] transition-colors"
+                        className="px-2 py-1 rounded-md text-xs border border-gray-200 hover:bg-gray-50 text-gray-600 hover:text-[#1E2D4D] transition-colors"
                       >
                         {s}
                       </button>
@@ -241,7 +241,7 @@ export function AIChatPanel({ hidden = false }: { hidden?: boolean }) {
               onClick={() => sendMessage(input)}
               disabled={!input.trim() || isTyping}
               className="px-3 py-2 rounded-lg text-white text-sm font-medium disabled:opacity-40 transition-colors"
-              style={{ backgroundColor: '#1e4d6b' }}
+              style={{ backgroundColor: '#1E2D4D' }}
             >
               <Send className="h-4 w-4" />
             </button>

@@ -135,7 +135,7 @@ export const BADGE_LEVEL_COLORS: Record<BadgeLevel, { bg: string; border: string
   bronze: { bg: '#fef3e2', border: '#d97706', text: '#92400e' },
   silver: { bg: '#f3f4f6', border: '#9ca3af', text: '#4b5563' },
   gold: { bg: '#fefce8', border: '#d4af37', text: '#854d0e' },
-  platinum: { bg: '#eef4f8', border: '#1e4d6b', text: '#1e4d6b' },
+  platinum: { bg: '#eef4f8', border: '#1E2D4D', text: '#1E2D4D' },
 };
 
 /**

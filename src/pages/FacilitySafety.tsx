@@ -22,10 +22,11 @@ import { getCleaningFrequency, getFrequencyLabel, COOKING_TYPE_OPTIONS, type Coo
 import { InfoTooltip } from '../components/ui/InfoTooltip';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 import { ErrorState } from '../components/shared/PageStates';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 // ── Brand ─────────────────────────────────────────────────────────
-const NAVY = '#1e4d6b';
-const NAVY_HOVER = '#163a52';
+const NAVY = '#1E2D4D';
+const NAVY_HOVER = '#141E33';
 const GOLD = '#d4af37';
 const LIGHT_BLUE_BG = '#eef4f8';
 const BORDER = '#b8d4e8';
@@ -41,7 +42,7 @@ const AUTHORITY_LABELS: Record<string, { label: string; color: string; bg: strin
   nfpa_101:  { label: 'NFPA 101',         color: '#1d4ed8', bg: '#eff6ff' },
   cfc:       { label: 'CFC / IFC',        color: '#7c3aed', bg: '#f5f3ff' },
   calfire:   { label: 'CalFire Title 19',  color: '#c2410c', bg: '#fff7ed' },
-  evidly_best_practice: { label: 'EvidLY Best Practice', color: '#1e4d6b', bg: '#eef4f8' },
+  evidly_best_practice: { label: 'EvidLY Best Practice', color: '#1E2D4D', bg: '#eef4f8' },
 };
 
 // ── Types ─────────────────────────────────────────────────────────
@@ -146,6 +147,7 @@ export function FacilitySafety() {
   const { t } = useTranslation();
   const { isDemoMode } = useDemo();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  usePageTitle('Facility Safety');
   const [pageError, setPageError] = useState<string | null>(null);
 
   if (pageError) {
@@ -244,7 +246,7 @@ export function FacilitySafety() {
             <Flame size={22} color="#dc2626" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900">{t('pages.facilitySafety.checklist')}<InfoTooltip content="Track fire suppression, hood cleaning, pest control, grease trap, and other facility safety compliance." /></h1>
+            <h1 className="text-xl font-bold text-[#1E2D4D]">{t('pages.facilitySafety.checklist')}<InfoTooltip content="Track fire suppression, hood cleaning, pest control, grease trap, and other facility safety compliance." /></h1>
             <p className="text-sm text-gray-500">
               {ahjLabel ? `${ahjLabel} — ` : ''}
               {codeLabel ? `${codeLabel} · ` : ''}NFPA 96 · NFPA 10 · NFPA 17A · NFPA 101
@@ -276,7 +278,7 @@ export function FacilitySafety() {
           <Flame size={32} className="mx-auto mb-3 text-gray-300" />
           <p className="font-medium text-lg">Add a location to begin facility safety tracking.</p>
           <p className="text-sm mt-1 mb-5">Once you add a location, your facility safety checklists and status will appear here.</p>
-          <button onClick={() => navigate('/org-hierarchy')} className="px-5 py-2.5 text-sm font-medium text-white rounded-lg" style={{ backgroundColor: '#1e4d6b' }}>
+          <button onClick={() => navigate('/org-hierarchy')} className="px-5 py-2.5 text-sm font-medium text-white rounded-lg" style={{ backgroundColor: '#1E2D4D' }}>
             Add Location
           </button>
         </div>
@@ -316,7 +318,7 @@ export function FacilitySafety() {
                 <div className="h-10 w-px bg-gray-300" />
                 <div className="flex gap-6 text-sm">
                   <div className="text-center">
-                    <div className="text-lg font-semibold text-gray-900">{completedCount}/{items.length}</div>
+                    <div className="text-lg font-semibold text-[#1E2D4D]">{completedCount}/{items.length}</div>
                     <div className="text-xs text-gray-500">{t('pages.facilitySafety.completed')}</div>
                   </div>
                   <div className="text-center">
@@ -431,17 +433,17 @@ export function FacilitySafety() {
                   {/* Content */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-sm font-semibold text-gray-900">{item.title}</span>
+                      <span className="text-sm font-semibold text-[#1E2D4D]">{item.title}</span>
                       {/* Authority badge — annotated with AHJ when config available */}
                       <span
-                        className="text-[10px] font-semibold px-1.5 py-0.5 rounded"
+                        className="text-xs font-semibold px-1.5 py-0.5 rounded"
                         style={{ color: auth.color, backgroundColor: auth.bg }}
                         title={ahjLabel ? `Authority: ${ahjLabel}` : undefined}
                       >
                         {auth.label}{item.authoritySection ? ` ${item.authoritySection}` : ''}{codeLabel && (item.authoritySource === 'cfc' || item.authoritySource === 'nfpa_96') ? ` (${codeLabel})` : ''}
                       </span>
                       {needsCorrectiveAction && (
-                        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-red-100 text-red-700">
+                        <span className="text-xs font-semibold px-1.5 py-0.5 rounded bg-red-100 text-red-700">
                           {t('pages.facilitySafety.correctiveActionRequired')}
                         </span>
                       )}
@@ -517,7 +519,7 @@ export function FacilitySafety() {
                 <div className="border-t border-gray-100 px-4 pb-4 pt-3 ml-10">
                   <div className="grid gap-3">
                     {/* Authority note */}
-                    <div className="flex items-start gap-2 text-xs text-gray-500 bg-gray-50 rounded-lg p-2.5">
+                    <div className="flex items-start gap-2 text-xs text-gray-500 bg-[#FAF7F0] rounded-lg p-2.5">
                       <EvidlyIcon size={13} className="mt-0.5 flex-shrink-0" />
                       <span>{item.authorityNote}</span>
                     </div>
@@ -539,7 +541,7 @@ export function FacilitySafety() {
                         placeholder={t('pages.facilitySafety.optionalNotes')}
                         rows={2}
                         disabled={submitted}
-                        className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200 resize-none"
+                        className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20 resize-none"
                       />
                       {aiFields.has(`notes_${item.id}`) && <AIGeneratedIndicator />}
                     </div>
@@ -666,7 +668,7 @@ export function FacilitySafety() {
                     <div className="text-xs text-gray-500">{svc.vendor} · {svc.freq}</div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded" style={{ color: '#b91c1c', backgroundColor: '#fef2f2' }}>
+                    <span className="text-xs font-semibold px-1.5 py-0.5 rounded" style={{ color: '#b91c1c', backgroundColor: '#fef2f2' }}>
                       {svc.authority}
                     </span>
                     <button

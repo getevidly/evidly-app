@@ -244,10 +244,10 @@ export function NotificationDropdown({ isOpen, onClose, demoMode = false }: Noti
   return (
     <div
       ref={dropdownRef}
-      className="absolute right-0 mt-2 w-96 bg-white rounded-xl shadow-sm border border-gray-200 z-50 animate-slide-down"
+      className="absolute right-0 mt-2 w-96 bg-white rounded-xl border border-gray-200 z-50 animate-slide-down"
     >
       <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-        <h3 className="font-semibold text-gray-900">Notifications</h3>
+        <h3 className="font-semibold text-[#1E2D4D]">Notifications</h3>
         <button onClick={onClose} className="p-2.5 -m-1 hover:bg-gray-100 rounded transition-colors" aria-label="Close">
           <X className="w-4 h-4 text-gray-500" />
         </button>
@@ -300,7 +300,7 @@ export function NotificationDropdown({ isOpen, onClose, demoMode = false }: Noti
             onClick={() => {
               navigate('/alerts');
             }}
-            className="w-full text-center text-sm font-medium text-[#1e4d6b] hover:text-[#2a6a8f] transition-colors"
+            className="w-full text-center text-sm font-medium text-[#1E2D4D] hover:text-[#2A3F6B] transition-colors"
           >
             View All Notifications
           </button>

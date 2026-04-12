@@ -15,7 +15,7 @@ import type { TrainingEmployeeCert } from '../../data/trainingRecordsDemoData';
 import { GhostInput } from '../ai/GhostInput';
 import { SuggestionPill } from '../ai/SuggestionPill';
 
-const NAVY = '#1e4d6b';
+const NAVY = '#1E2D4D';
 
 const CERT_TYPES = [
   { value: 'food_handler', label: 'Food Handler Card' },
@@ -149,7 +149,7 @@ export function AddCertificationModal({ isOpen, onClose, employeeId, employeeNam
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Award size={20} color={NAVY} />
-            <h3 className="text-lg font-bold text-gray-900">
+            <h3 className="text-lg font-bold text-[#1E2D4D]">
               {existingCert ? 'Edit Certification' : 'Add Certification'}
             </h3>
           </div>

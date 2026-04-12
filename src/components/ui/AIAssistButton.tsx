@@ -55,7 +55,7 @@ export function AIAssistButton({ fieldLabel, context, currentValue, onGenerated 
 
   if (error) {
     return (
-      <span className="text-[11px] text-gray-400 italic">AI unavailable</span>
+      <span className="text-xs text-gray-400 italic">AI unavailable</span>
     );
   }
 
@@ -114,7 +114,7 @@ export function AIAssistButton({ fieldLabel, context, currentValue, onGenerated 
 /** Indicator shown below a field after AI generation */
 export function AIGeneratedIndicator() {
   return (
-    <p className="text-[11px] mt-1" style={{ color: '#9CA3AF' }}>
+    <p className="text-xs mt-1" style={{ color: '#9CA3AF' }}>
       &#10024; AI-generated &mdash; review and edit as needed
     </p>
   );

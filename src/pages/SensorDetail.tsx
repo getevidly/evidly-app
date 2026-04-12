@@ -18,7 +18,7 @@ import { useDemo } from '../contexts/DemoContext';
 import { EmptyState } from '../components/shared/EmptyState';
 
 const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
-const PRIMARY = '#1e4d6b';
+const PRIMARY = '#1E2D4D';
 const GOLD = '#d4af37';
 const LIGHT_BG = '#eef4f8';
 const BORDER = '#b8d4e8';
@@ -256,7 +256,7 @@ export function SensorDetail() {
         </button>
         <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
           <Thermometer className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">Sensor Not Found</h2>
+          <h2 className="text-lg font-semibold text-[#1E2D4D] mb-2">Sensor Not Found</h2>
           <p className="text-sm text-gray-500 max-w-md mx-auto">
             This sensor is not configured yet.
           </p>
@@ -293,7 +293,7 @@ export function SensorDetail() {
             <Thermometer className="h-6 w-6" style={{ color: compliance.color }} />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900">{sensor.name}</h1>
+            <h1 className="text-xl font-bold text-[#1E2D4D]">{sensor.name}</h1>
             <div className="flex items-center gap-2 mt-1">
               <span className="text-sm text-gray-500">{sensor.locationName}</span>
               <span className="text-gray-300">&middot;</span>
@@ -301,7 +301,7 @@ export function SensorDetail() {
               {provider && (
                 <>
                   <span className="text-gray-300">&middot;</span>
-                  <span className="px-1.5 py-0.5 rounded text-[10px] font-bold" style={{ backgroundColor: provider.color + '15', color: provider.color }}>{provider.name}</span>
+                  <span className="px-1.5 py-0.5 rounded text-xs font-bold" style={{ backgroundColor: provider.color + '15', color: provider.color }}>{provider.name}</span>
                 </>
               )}
             </div>
@@ -419,7 +419,7 @@ export function SensorDetail() {
       {/* Temperature Chart */}
       <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 mb-6">
         <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
-          <h3 className="text-sm font-bold text-gray-900">Temperature History</h3>
+          <h3 className="text-sm font-bold text-[#1E2D4D]">Temperature History</h3>
           <div className="flex items-center gap-1 p-0.5 rounded-lg bg-gray-100">
             {(['24h', '7d', '30d'] as const).map(r => (
               <button
@@ -450,7 +450,7 @@ export function SensorDetail() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Device Info */}
         <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
-          <h3 className="text-sm font-bold text-gray-900 mb-4">Device Information</h3>
+          <h3 className="text-sm font-bold text-[#1E2D4D] mb-4">Device Information</h3>
           <div className="space-y-3">
             {[
               { label: 'Brand', value: provider?.name || '—' },
@@ -474,7 +474,7 @@ export function SensorDetail() {
         {/* Maintenance Log */}
         <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
           <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
-            <h3 className="text-sm font-bold text-gray-900">Maintenance Log</h3>
+            <h3 className="text-sm font-bold text-[#1E2D4D]">Maintenance Log</h3>
             <button onClick={() => guardAction('create', 'Sensor Maintenance', () => toast.info('Add maintenance entry — demo mode'))} className="flex items-center gap-1 text-xs font-medium hover:text-gray-700" style={{ color: PRIMARY }}>
               <Wrench className="h-3.5 w-3.5" /> Add Entry
             </button>
@@ -485,17 +485,17 @@ export function SensorDetail() {
                 const Icon = maintenanceIcon(entry.type);
                 const badge = maintenanceBadge(entry.type);
                 return (
-                  <div key={entry.id} className="flex gap-3 p-3 rounded-lg bg-gray-50">
+                  <div key={entry.id} className="flex gap-3 p-3 rounded-lg bg-[#FAF7F0]">
                     <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: badge.bg }}>
                       <Icon className="h-3.5 w-3.5" style={{ color: badge.text }} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-0.5">
-                        <span className="px-1.5 py-0.5 rounded text-[10px] font-medium" style={{ backgroundColor: badge.bg, color: badge.text }}>{badge.label}</span>
+                        <span className="px-1.5 py-0.5 rounded text-xs font-medium" style={{ backgroundColor: badge.bg, color: badge.text }}>{badge.label}</span>
                         <span className="text-xs text-gray-400">{formatDate(entry.date)}</span>
                       </div>
                       <div className="text-xs text-gray-700">{entry.description}</div>
-                      <div className="text-[10px] text-gray-400 mt-0.5">By {entry.performedBy}</div>
+                      <div className="text-xs text-gray-400 mt-0.5">By {entry.performedBy}</div>
                     </div>
                   </div>
                 );
@@ -509,17 +509,17 @@ export function SensorDetail() {
 
       {/* Recent Readings Table */}
       <div className="mt-6 bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
-        <h3 className="text-sm font-bold text-gray-900 mb-4">Recent Readings</h3>
+        <h3 className="text-sm font-bold text-[#1E2D4D] mb-4">Recent Readings</h3>
         <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr className="border-b border-gray-100">
-              <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wide pb-2">Timestamp</th>
-              <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wide pb-2">Temperature</th>
-              <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wide pb-2 hidden sm:table-cell">Humidity</th>
-              <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wide pb-2 hidden sm:table-cell">Quality</th>
-              <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wide pb-2">Compliance</th>
-              <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wide pb-2 hidden sm:table-cell">Battery</th>
+              <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide pb-2">Timestamp</th>
+              <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide pb-2">Temperature</th>
+              <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide pb-2 hidden sm:table-cell">Humidity</th>
+              <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide pb-2 hidden sm:table-cell">Quality</th>
+              <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide pb-2">Compliance</th>
+              <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide pb-2 hidden sm:table-cell">Battery</th>
             </tr>
           </thead>
           <tbody>
@@ -533,7 +533,7 @@ export function SensorDetail() {
                   <td className="py-2.5 text-xs font-bold" style={{ color: comp.color }}>{r.temperatureF}°F</td>
                   <td className="py-2.5 text-xs text-gray-600 hidden sm:table-cell">{r.humidityPct !== null ? `${r.humidityPct}%` : '—'}</td>
                   <td className="py-2.5 hidden sm:table-cell">
-                    <span className="px-1.5 py-0.5 rounded text-[10px] font-medium" style={{
+                    <span className="px-1.5 py-0.5 rounded text-xs font-medium" style={{
                       backgroundColor: r.quality === 'good' ? '#ecfdf5' : r.quality === 'suspect' ? '#fffbeb' : '#fef2f2',
                       color: r.quality === 'good' ? '#059669' : r.quality === 'suspect' ? '#d97706' : '#ef4444',
                     }}>
@@ -541,7 +541,7 @@ export function SensorDetail() {
                     </span>
                   </td>
                   <td className="py-2.5">
-                    <span className="px-1.5 py-0.5 rounded text-[10px] font-medium" style={{ backgroundColor: comp.bg, color: comp.color }}>
+                    <span className="px-1.5 py-0.5 rounded text-xs font-medium" style={{ backgroundColor: comp.bg, color: comp.color }}>
                       {r.complianceStatus === 'in_range' ? 'In Range' : r.complianceStatus === 'warning' ? 'Warning' : 'Violation'}
                     </span>
                   </td>

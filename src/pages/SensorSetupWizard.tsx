@@ -13,7 +13,7 @@ import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { supabase } from '../lib/supabase';
 
 const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
-const PRIMARY = '#1e4d6b';
+const PRIMARY = '#1E2D4D';
 const GOLD = '#d4af37';
 const LIGHT_BG = '#eef4f8';
 
@@ -164,7 +164,7 @@ export function SensorSetupWizard() {
           <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: '#ecfdf5' }}>
             <Check className="h-8 w-8 text-green-600" />
           </div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Your sensor is live!</h2>
+          <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Your sensor is live!</h2>
           <p className="text-sm text-gray-500 mb-2">
             <strong>{sensorLabel}</strong> is now connected to <strong>{selectedEquipObj?.name}</strong>.
           </p>
@@ -225,7 +225,7 @@ export function SensorSetupWizard() {
         {/* ── Step 1: Choose Equipment ─────────────────────── */}
         {step === 1 && (
           <div>
-            <h2 className="text-lg font-bold text-gray-900 mb-1">Choose Equipment</h2>
+            <h2 className="text-lg font-bold text-[#1E2D4D] mb-1">Choose Equipment</h2>
             <p className="text-sm text-gray-500 mb-6">Select the equipment you want to pair with a sensor.</p>
 
             {loadingEquipment ? (
@@ -256,7 +256,7 @@ export function SensorSetupWizard() {
                         <Thermometer className="h-5 w-5" style={{ color: selected ? 'white' : '#9ca3af' }} />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="text-sm font-bold text-gray-900">{eq.name}</div>
+                        <div className="text-sm font-bold text-[#1E2D4D]">{eq.name}</div>
                         <div className="text-xs text-gray-400">
                           {eq.equipment_type.replace(/_/g, ' ')}
                           {eq.last_check_count > 0 && <> &middot; {eq.last_check_count} manual checks today</>}
@@ -274,7 +274,7 @@ export function SensorSetupWizard() {
         {/* ── Step 2: Choose Sensor Type ───────────────────── */}
         {step === 2 && (
           <div>
-            <h2 className="text-lg font-bold text-gray-900 mb-1">Choose Sensor Type</h2>
+            <h2 className="text-lg font-bold text-[#1E2D4D] mb-1">Choose Sensor Type</h2>
             <p className="text-sm text-gray-500 mb-6">How does your sensor connect to the network?</p>
 
             <div className="space-y-3">
@@ -295,9 +295,9 @@ export function SensorSetupWizard() {
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-gray-900">{st.label}</span>
+                        <span className="text-sm font-bold text-[#1E2D4D]">{st.label}</span>
                         {st.recommended && (
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ backgroundColor: GOLD + '20', color: GOLD }}>
+                          <span className="px-2 py-0.5 rounded-full text-xs font-bold" style={{ backgroundColor: GOLD + '20', color: GOLD }}>
                             RECOMMENDED
                           </span>
                         )}
@@ -315,7 +315,7 @@ export function SensorSetupWizard() {
         {/* ── Step 3: Connection Setup ─────────────────────── */}
         {step === 3 && (
           <div>
-            <h2 className="text-lg font-bold text-gray-900 mb-1">Connection Setup</h2>
+            <h2 className="text-lg font-bold text-[#1E2D4D] mb-1">Connection Setup</h2>
 
             {sensorType === 'wifi' ? (
               <>
@@ -329,7 +329,7 @@ export function SensorSetupWizard() {
                       type="text"
                       value={webhookUrl}
                       readOnly
-                      className="flex-1 px-3 py-2.5 rounded-lg border border-gray-200 text-sm font-mono bg-gray-50 text-gray-600 truncate"
+                      className="flex-1 px-3 py-2.5 rounded-lg border border-gray-200 text-sm font-mono bg-[#FAF7F0] text-gray-600 truncate"
                     />
                     <button onClick={handleCopyWebhook} className="flex items-center gap-1 px-3 py-2.5 rounded-lg text-sm font-medium border border-gray-200 hover:bg-gray-50 flex-shrink-0">
                       <Copy className="h-3.5 w-3.5" /> Copy
@@ -353,7 +353,7 @@ export function SensorSetupWizard() {
                 {/* Test Connection */}
                 <div className="flex items-center gap-3">
                   {testStatus === 'idle' && (
-                    <button onClick={handleTestConnection} className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white" style={{ backgroundColor: PRIMARY }}>
+                    <button onClick={handleTestConnection} className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-[#1E2D4D] hover:bg-[#162340] transition-colors min-h-[44px]">
                       <Zap className="h-4 w-4" /> Test Connection
                     </button>
                   )}
@@ -381,7 +381,7 @@ export function SensorSetupWizard() {
             ) : sensorType === 'bluetooth' ? (
               <div className="py-8 text-center">
                 <Bluetooth className="h-12 w-12 mx-auto mb-3 text-purple-400" />
-                <h3 className="text-sm font-bold text-gray-900 mb-2">Bluetooth Pairing</h3>
+                <h3 className="text-sm font-bold text-[#1E2D4D] mb-2">Bluetooth Pairing</h3>
                 <p className="text-sm text-gray-500 max-w-md mx-auto mb-4">
                   Open the EvidLY mobile app and hold your Bluetooth sensor nearby to pair. The sensor will appear automatically.
                 </p>
@@ -392,7 +392,7 @@ export function SensorSetupWizard() {
             ) : sensorType === 'lorawan' ? (
               <div className="py-8 text-center">
                 <Radio className="h-12 w-12 mx-auto mb-3 text-green-400" />
-                <h3 className="text-sm font-bold text-gray-900 mb-2">LoRaWAN Enterprise Setup</h3>
+                <h3 className="text-sm font-bold text-[#1E2D4D] mb-2">LoRaWAN Enterprise Setup</h3>
                 <p className="text-sm text-gray-500 max-w-md mx-auto mb-4">
                   LoRaWAN sensors require gateway configuration and network server setup. Our team will help you configure your deployment.
                 </p>
@@ -413,7 +413,7 @@ export function SensorSetupWizard() {
                       type="text"
                       value={`evidly/${profile?.organization_id || '<org_id>'}/${selectedEquipment}/temperature`}
                       readOnly
-                      className="flex-1 px-3 py-2.5 rounded-lg border border-gray-200 text-sm font-mono bg-gray-50 text-gray-600 truncate"
+                      className="flex-1 px-3 py-2.5 rounded-lg border border-gray-200 text-sm font-mono bg-[#FAF7F0] text-gray-600 truncate"
                     />
                     <button onClick={() => { navigator.clipboard.writeText(`evidly/${profile?.organization_id}/${selectedEquipment}/temperature`); toast.success('Topic copied'); }} className="flex items-center gap-1 px-3 py-2.5 rounded-lg text-sm font-medium border border-gray-200 hover:bg-gray-50 flex-shrink-0">
                       <Copy className="h-3.5 w-3.5" /> Copy
@@ -436,7 +436,7 @@ export function SensorSetupWizard() {
         {/* ── Step 4: Alert Configuration ──────────────────── */}
         {step === 4 && (
           <div>
-            <h2 className="text-lg font-bold text-gray-900 mb-1">Alert Configuration</h2>
+            <h2 className="text-lg font-bold text-[#1E2D4D] mb-1">Alert Configuration</h2>
             <p className="text-sm text-gray-500 mb-6">Configure when and how you get notified about temperature issues.</p>
 
             {/* Alert Threshold */}
@@ -530,7 +530,7 @@ export function SensorSetupWizard() {
         {/* ── Step 5: Name & Confirm ───────────────────────── */}
         {step === 5 && (
           <div>
-            <h2 className="text-lg font-bold text-gray-900 mb-1">Name Your Sensor</h2>
+            <h2 className="text-lg font-bold text-[#1E2D4D] mb-1">Name Your Sensor</h2>
             <p className="text-sm text-gray-500 mb-6">Give this sensor a descriptive label so your team knows where it is.</p>
 
             <div className="mb-6">
@@ -540,7 +540,7 @@ export function SensorSetupWizard() {
                 value={sensorLabel}
                 onChange={e => setSensorLabel(e.target.value)}
                 placeholder="e.g., Walk-in Cooler #1 — North Wall Sensor"
-                className="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#1e4d6b]"
+                className="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#1E2D4D]"
               />
             </div>
 

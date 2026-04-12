@@ -38,12 +38,12 @@ export function SignalAlertBanner() {
         />
         <div className="flex-1 min-w-0">
           <p
-            className="text-[13px] font-semibold truncate"
+            className="text-sm font-semibold truncate"
             style={{ color: first.priority === 'critical' ? '#991B1B' : '#92400E' }}
           >
             New Intelligence Signal{count > 1 ? `s (${count})` : ''}
           </p>
-          <p className="text-[13px] text-gray-600 truncate mt-0.5">
+          <p className="text-sm text-gray-600 truncate mt-0.5">
             {first.title}
           </p>
         </div>

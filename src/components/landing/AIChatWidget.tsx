@@ -130,7 +130,7 @@ export default function AIChatWidget() {
         <button
           onClick={() => { trackEvent('chat_widget_open', { page: 'landing' }); setIsOpen(true); }}
           className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white hover:scale-110 transition-transform"
-          style={{ backgroundColor: '#1e4d6b' }}
+          style={{ backgroundColor: '#1E2D4D' }}
           aria-label="Open compliance chat"
         >
           <MessageCircle className="w-6 h-6" />
@@ -143,7 +143,7 @@ export default function AIChatWidget() {
           {/* Header */}
           <div
             className="px-4 py-3 flex items-center justify-between text-white flex-shrink-0"
-            style={{ backgroundColor: '#1e4d6b' }}
+            style={{ backgroundColor: '#1E2D4D' }}
           >
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-sm">
@@ -179,7 +179,7 @@ export default function AIChatWidget() {
                     <button
                       onClick={() => navigate('/demo')}
                       className="block mt-2 text-sm font-medium hover:underline bg-transparent border-none cursor-pointer p-0"
-                      style={{ color: '#1e4d6b' }}
+                      style={{ color: '#1E2D4D' }}
                     >
                       Try the interactive demo &rarr;
                     </button>
@@ -190,7 +190,7 @@ export default function AIChatWidget() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="block mt-2 text-sm font-medium hover:underline"
-                      style={{ color: '#1e4d6b' }}
+                      style={{ color: '#1E2D4D' }}
                     >
                       Book a live walkthrough &rarr;
                     </a>
@@ -199,7 +199,7 @@ export default function AIChatWidget() {
                     <button
                       onClick={() => navigate('/signup')}
                       className="block mt-2 text-sm font-medium hover:underline bg-transparent border-none cursor-pointer p-0"
-                      style={{ color: '#1e4d6b' }}
+                      style={{ color: '#1E2D4D' }}
                     >
                       Sign up for full access &rarr;
                     </button>
@@ -229,7 +229,7 @@ export default function AIChatWidget() {
                   key={i}
                   onClick={() => handleSend(q)}
                   className="text-xs px-3 py-1.5 rounded-full border transition-colors bg-transparent cursor-pointer"
-                  style={{ borderColor: '#b8d4e8', color: '#1e4d6b' }}
+                  style={{ borderColor: '#b8d4e8', color: '#1E2D4D' }}
                   onMouseEnter={e => {
                     (e.target as HTMLElement).style.backgroundColor = '#eef4f8';
                   }}
@@ -253,7 +253,7 @@ export default function AIChatWidget() {
                   onChange={e => setInput(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && handleSend()}
                   placeholder="Ask about compliance..."
-                  className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#b8d4e8] focus:border-[#1e4d6b]"
+                  className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#b8d4e8] focus:border-[#1E2D4D]"
                 />
                 <button
                   onClick={() => handleSend()}
@@ -270,7 +270,7 @@ export default function AIChatWidget() {
                 <button
                   onClick={() => navigate('/signup')}
                   className="font-medium bg-transparent border-none cursor-pointer p-0 underline"
-                  style={{ color: '#1e4d6b' }}
+                  style={{ color: '#1E2D4D' }}
                 >
                   Sign up
                 </button>{' '}

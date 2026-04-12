@@ -467,7 +467,7 @@ function SequencesTab({ sequences, setSequences, isDemoMode, onRefresh }: {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-bold text-gray-900">{sequences.length} Steps</h3>
+        <h3 className="text-sm font-bold text-[#1E2D4D]">{sequences.length} Steps</h3>
         <button onClick={() => setShowAddForm(!showAddForm)}
           className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white rounded-lg"
           style={{ backgroundColor: NAVY }}>
@@ -480,7 +480,7 @@ function SequencesTab({ sequences, setSequences, isDemoMode, onRefresh }: {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-gray-50 border-b border-gray-200">
+              <tr className="bg-[#FAF7F0] border-b border-gray-200">
                 <th className="text-center px-3 py-3 font-semibold text-gray-700 w-16">Step</th>
                 <th className="text-center px-3 py-3 font-semibold text-gray-700 w-20">Day</th>
                 <th className="text-left px-3 py-3 font-semibold text-gray-700">Subject</th>
@@ -498,7 +498,7 @@ function SequencesTab({ sequences, setSequences, isDemoMode, onRefresh }: {
                   <td className="px-3 py-3 text-center">
                     <button
                       onClick={() => handleToggleStatus(seq)}
-                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold"
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold"
                       style={{
                         background: seq.status === 'active' ? '#D1FAE5' : '#FEF3C7',
                         color: seq.status === 'active' ? '#065F46' : '#92400E',
@@ -636,10 +636,10 @@ function EditorTab({ sequences, setSequences, isDemoMode }: {
         </div>
 
         <p className="text-xs" style={{ color: TEXT_SEC }}>
-          Available tokens: <code className="bg-gray-100 px-1 py-0.5 rounded text-[11px]">{'{{first_name}}'}</code>,{' '}
-          <code className="bg-gray-100 px-1 py-0.5 rounded text-[11px]">{'{{org_name}}'}</code>,{' '}
-          <code className="bg-gray-100 px-1 py-0.5 rounded text-[11px]">{'{{days_remaining}}'}</code>,{' '}
-          <code className="bg-gray-100 px-1 py-0.5 rounded text-[11px]">{'{{login_url}}'}</code>
+          Available tokens: <code className="bg-gray-100 px-1 py-0.5 rounded text-xs">{'{{first_name}}'}</code>,{' '}
+          <code className="bg-gray-100 px-1 py-0.5 rounded text-xs">{'{{org_name}}'}</code>,{' '}
+          <code className="bg-gray-100 px-1 py-0.5 rounded text-xs">{'{{days_remaining}}'}</code>,{' '}
+          <code className="bg-gray-100 px-1 py-0.5 rounded text-xs">{'{{login_url}}'}</code>
         </p>
 
         <button onClick={handleSave} disabled={saving}
@@ -701,7 +701,7 @@ function VendorPipelineTab({ vendors, setVendors, isDemoMode, onRefresh }: {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-sm font-bold text-gray-900">{vendors.length} Vendors</h3>
+      <h3 className="text-sm font-bold text-[#1E2D4D]">{vendors.length} Vendors</h3>
 
       {/* Stage columns */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6 gap-4">
@@ -713,7 +713,7 @@ function VendorPipelineTab({ vendors, setVendors, isDemoMode, onRefresh }: {
                 <span className="text-xs font-bold uppercase tracking-wide" style={{ color: NAVY }}>
                   {STAGE_LABELS[stage]}
                 </span>
-                <span className="text-[10px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded-full font-bold">
+                <span className="text-xs bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded-full font-bold">
                   {stageVendors.length}
                 </span>
               </div>
@@ -722,9 +722,9 @@ function VendorPipelineTab({ vendors, setVendors, isDemoMode, onRefresh }: {
                   const typeStyle = SERVICE_TYPE_COLORS[vendor.type] || { bg: '#F3F4F6', color: '#6B7280', label: vendor.type };
                   const isExpanded = expandedNotes === vendor.id;
                   return (
-                    <div key={vendor.id} className="bg-white rounded-lg border border-gray-200 p-3 hover:shadow-md transition-shadow">
+                    <div key={vendor.id} className="bg-white rounded-xl border border-gray-200 p-3 transition-shadow">
                       <div className="font-semibold text-sm text-gray-900 mb-1">{vendor.name}</div>
-                      <span className="inline-block text-[10px] font-bold px-2 py-0.5 rounded-full mb-2"
+                      <span className="inline-block text-xs font-bold px-2 py-0.5 rounded-full mb-2"
                         style={{ background: typeStyle.bg, color: typeStyle.color }}>
                         {typeStyle.label}
                       </span>
@@ -765,7 +765,7 @@ function VendorPipelineTab({ vendors, setVendors, isDemoMode, onRefresh }: {
                           {vendor.notes.length > 80 && (
                             <button
                               onClick={() => setExpandedNotes(isExpanded ? null : vendor.id)}
-                              className="text-[10px] font-medium mt-0.5"
+                              className="text-xs font-medium mt-0.5"
                               style={{ color: GOLD }}>
                               {isExpanded ? 'Show less' : 'Show more'}
                             </button>
@@ -776,7 +776,7 @@ function VendorPipelineTab({ vendors, setVendors, isDemoMode, onRefresh }: {
                   );
                 })}
                 {stageVendors.length === 0 && (
-                  <div className="text-xs text-gray-400 text-center py-6 bg-gray-50 rounded-lg">
+                  <div className="text-xs text-gray-400 text-center py-6 bg-[#FAF7F0] rounded-lg">
                     No vendors
                   </div>
                 )}
@@ -851,7 +851,7 @@ function NotificationsTab({ notifications, isDemoMode }: {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-gray-50 border-b border-gray-200">
+              <tr className="bg-[#FAF7F0] border-b border-gray-200">
                 <th className="text-left px-4 py-3 font-semibold text-gray-700">Vendor Name</th>
                 <th className="text-left px-4 py-3 font-semibold text-gray-700">Document Type</th>
                 <th className="text-left px-4 py-3 font-semibold text-gray-700">Sent At</th>
@@ -868,7 +868,7 @@ function NotificationsTab({ notifications, isDemoMode }: {
                     <td className="px-4 py-3 text-gray-600">{n.documentType}</td>
                     <td className="px-4 py-3 text-xs text-gray-500">{formatDateTime(n.sentAt)}</td>
                     <td className="px-4 py-3 text-center">
-                      <span className="inline-block text-[10px] font-bold px-2.5 py-0.5 rounded-full"
+                      <span className="inline-block text-xs font-bold px-2.5 py-0.5 rounded-full"
                         style={{ background: statusStyle.bg, color: statusStyle.color }}>
                         {statusStyle.label}
                       </span>
@@ -904,7 +904,7 @@ function ReferralsTab({ referrals, isDemoMode }: {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-bold text-gray-900">{referrals.length} Referral Codes</h3>
+        <h3 className="text-sm font-bold text-[#1E2D4D]">{referrals.length} Referral Codes</h3>
         <div className="flex items-center gap-4 text-xs" style={{ color: TEXT_SEC }}>
           <span>Total Uses: <strong style={{ color: NAVY }}>{totalUses}</strong></span>
           <span>Total Revenue: <strong style={{ color: NAVY }}>${totalRevenue.toLocaleString()}</strong></span>
@@ -915,7 +915,7 @@ function ReferralsTab({ referrals, isDemoMode }: {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-gray-50 border-b border-gray-200">
+              <tr className="bg-[#FAF7F0] border-b border-gray-200">
                 <th className="text-left px-4 py-3 font-semibold text-gray-700">Code</th>
                 <th className="text-center px-4 py-3 font-semibold text-gray-700">Type</th>
                 <th className="text-left px-4 py-3 font-semibold text-gray-700">Created By</th>
@@ -934,7 +934,7 @@ function ReferralsTab({ referrals, isDemoMode }: {
                       </code>
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <span className="inline-block text-[10px] font-bold px-2.5 py-0.5 rounded-full"
+                      <span className="inline-block text-xs font-bold px-2.5 py-0.5 rounded-full"
                         style={{ background: typeStyle.bg, color: typeStyle.color }}>
                         {typeStyle.label}
                       </span>

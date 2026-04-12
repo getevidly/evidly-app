@@ -20,6 +20,7 @@ import { WelcomeModal } from '../components/WelcomeModal';
 import { PushOptInBanner } from '../components/PushOptInBanner';
 import { ErrorState } from '../components/shared/PageStates';
 import { X } from 'lucide-react';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 // ── Dashboard ────────────────────────────────────────────
 // Role visibility for above-fold items is now handled inside each
@@ -132,6 +133,7 @@ export function Dashboard() {
   const { userRole } = useRole();
   const { user, profile } = useAuth();
   const { isDemoMode, firstName: demoFirstName } = useDemo();
+  usePageTitle('Dashboard');
   const [searchParams] = useSearchParams();
   const tab = searchParams.get('tab') || 'overview';
   const [pageError, setPageError] = useState<string | null>(null);

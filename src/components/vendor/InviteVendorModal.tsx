@@ -21,7 +21,7 @@ interface InviteVendorModalProps {
 
 // ── Component ──────────────────────────────────────────────────────
 
-const PRIMARY = '#1e4d6b';
+const PRIMARY = '#1E2D4D';
 
 export function InviteVendorModal({
   isOpen,
@@ -109,7 +109,7 @@ export function InviteVendorModal({
       <div className="fixed inset-0 bg-black/50 z-50" onClick={handleClose} />
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div
-          className="bg-white rounded-xl shadow-sm border border-gray-200 w-[95vw] sm:w-full max-w-md max-h-[90vh] overflow-y-auto"
+          className="bg-white rounded-xl border border-gray-200 w-[95vw] sm:w-full max-w-md max-h-[90vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
@@ -117,10 +117,10 @@ export function InviteVendorModal({
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <div className="p-2 bg-[#eef4f8] rounded-lg">
-                  <Send className="h-5 w-5 text-[#1e4d6b]" />
+                  <Send className="h-5 w-5 text-[#1E2D4D]" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-gray-900">Invite Vendor</h3>
+                  <h3 className="text-lg font-bold text-[#1E2D4D]">Invite Vendor</h3>
                   <p className="text-sm text-gray-500">Send a branded invite to join EvidLY</p>
                 </div>
               </div>
@@ -140,7 +140,7 @@ export function InviteVendorModal({
                 value={form.email}
                 onChange={(e) => setForm(prev => ({ ...prev, email: e.target.value }))}
                 placeholder="vendor@example.com"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
               />
             </div>
 
@@ -152,7 +152,7 @@ export function InviteVendorModal({
                 value={form.vendorName}
                 onChange={(e) => setForm(prev => ({ ...prev, vendorName: e.target.value }))}
                 placeholder="e.g., Acme Hood Cleaning"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
               />
             </div>
 
@@ -163,7 +163,7 @@ export function InviteVendorModal({
                 type="text"
                 value="Vendor"
                 readOnly
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-500 cursor-not-allowed"
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-[#FAF7F0] text-gray-500 cursor-not-allowed"
               />
               <p className="text-xs text-gray-400 mt-1">Vendor role is pre-configured for service providers</p>
             </div>
@@ -175,7 +175,7 @@ export function InviteVendorModal({
                   <MapPin className="h-3.5 w-3.5 inline mr-1" />
                   Location Assignment
                 </label>
-                <div className="bg-gray-50 rounded-lg p-3 space-y-2">
+                <div className="bg-[#FAF7F0] rounded-lg p-3 space-y-2">
                   {accessibleLocations.map((loc) => (
                     <label key={loc.locationId} className="flex items-center gap-2 cursor-pointer">
                       <input
@@ -189,7 +189,7 @@ export function InviteVendorModal({
                               : [...prev.locationIds, loc.locationId],
                           }));
                         }}
-                        className="w-4 h-4 rounded border-gray-300 text-[#1e4d6b] focus:ring-[#1e4d6b]"
+                        className="w-4 h-4 rounded border-gray-300 text-[#1E2D4D] focus:ring-[#1E2D4D]"
                       />
                       <span className="text-sm text-gray-700">{loc.locationName}</span>
                     </label>
@@ -200,7 +200,7 @@ export function InviteVendorModal({
 
             {/* Info box */}
             <div className="bg-[#eef4f8] rounded-lg p-3 border border-[#b8d4e8]">
-              <p className="text-xs text-[#1e4d6b]">
+              <p className="text-xs text-[#1E2D4D]">
                 <strong>What happens next:</strong> The vendor will receive a branded email invitation with a secure link to create their EvidLY account. They will be pre-configured with the Vendor role and associated with the selected location(s).
               </p>
             </div>
@@ -219,7 +219,7 @@ export function InviteVendorModal({
               disabled={submitting}
               className="flex items-center gap-2 px-4 py-2 text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
               style={{ backgroundColor: PRIMARY }}
-              onMouseEnter={e => { if (!submitting) e.currentTarget.style.backgroundColor = '#163a52'; }}
+              onMouseEnter={e => { if (!submitting) e.currentTarget.style.backgroundColor = '#141E33'; }}
               onMouseLeave={e => { e.currentTarget.style.backgroundColor = PRIMARY; }}
             >
               <Send className="h-4 w-4" />

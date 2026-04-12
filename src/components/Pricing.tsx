@@ -24,14 +24,14 @@ function DeadlineCountdown() {
   if (expired) {
     return (
       <div className="bg-gradient-to-r from-[#d4af37]/10 to-[#d4af37]/5 border border-[#d4af37]/30 rounded-xl p-4 text-center">
-        <span className="text-sm font-bold text-[#1e4d6b]">Founder pricing has ended. Contact us for current rates.</span>
+        <span className="text-sm font-bold text-[#1E2D4D]">Founder pricing has ended. Contact us for current rates.</span>
       </div>
     );
   }
 
   return (
     <div className="bg-gradient-to-r from-[#d4af37]/10 to-[#d4af37]/5 border border-[#d4af37]/30 rounded-xl p-4">
-      <p className="text-sm font-bold text-[#1e4d6b] text-center mb-3">
+      <p className="text-sm font-bold text-[#1E2D4D] text-center mb-3">
         Founder pricing locks in forever &mdash; offer ends July 4, 2026
       </p>
       <div className="flex gap-3 justify-center">
@@ -42,10 +42,10 @@ function DeadlineCountdown() {
           [ss, 'Sec'],
         ].map(([val, label]) => (
           <div key={label as string} className="text-center">
-            <div className="text-2xl font-black text-[#1e4d6b] tabular-nums leading-none min-w-[36px]">
+            <div className="text-2xl font-black text-[#1E2D4D] tabular-nums leading-none min-w-[36px]">
               {String(val).padStart(2, '0')}
             </div>
-            <div className="text-[10px] text-gray-500 uppercase tracking-wider mt-1">{label as string}</div>
+            <div className="text-xs text-gray-500 uppercase tracking-wider mt-1">{label as string}</div>
           </div>
         ))}
       </div>
@@ -107,7 +107,7 @@ export default function Pricing() {
           <span className="inline-block text-sm font-bold text-[#d4af37] uppercase tracking-wider mb-4">
             Pricing
           </span>
-          <h2 className="font-['Outfit'] text-4xl md:text-5xl font-bold text-[#1e4d6b] tracking-tight">
+          <h2 className="font-['Outfit'] text-4xl md:text-5xl font-bold text-[#1E2D4D] tracking-tight">
             Lock in founder pricing today
           </h2>
           <p className="text-gray-600 mt-3 max-w-lg mx-auto">
@@ -119,7 +119,7 @@ export default function Pricing() {
         <div className="max-w-3xl mx-auto mb-10 rounded-2xl p-6 text-center" style={{ backgroundColor: '#eef4f8', border: '2px solid #b8d4e8' }}>
           <div className="flex items-center justify-center gap-3 mb-3">
             <EvidlyIcon size={28} />
-            <h3 className="text-xl font-bold" style={{ color: '#1e4d6b' }}>Risk-Free Guarantee</h3>
+            <h3 className="text-xl font-bold" style={{ color: '#1E2D4D' }}>Risk-Free Guarantee</h3>
           </div>
           <p className="text-gray-700 max-w-xl mx-auto leading-relaxed">
             Try EvidLY <strong>free for 30 days</strong> with full access to every feature.
@@ -137,7 +137,7 @@ export default function Pricing() {
           <div className="relative">
             <div className="bg-white rounded-xl p-5 sm:p-8 relative border-4 border-[#d4af37] shadow-sm shadow-[#d4af37]/20 h-full flex flex-col">
               <div className="absolute -top-4 left-1/2 -translate-x-1/2 flex gap-2">
-                <span className="px-4 py-2 bg-[#d4af37] text-[#1e4d6b] text-sm font-bold rounded-full uppercase tracking-wider shadow-sm">
+                <span className="px-4 py-2 bg-[#d4af37] text-[#1E2D4D] text-sm font-bold rounded-full uppercase tracking-wider shadow-sm">
                   Best Value
                 </span>
                 <span className="px-4 py-2 bg-[#16a34a] text-white text-sm font-bold rounded-full uppercase tracking-wider shadow-sm">
@@ -153,12 +153,12 @@ export default function Pricing() {
                 <div className="text-sm font-bold text-[#d4af37] uppercase tracking-wider mb-1">
                   {founderSingle.name}
                 </div>
-                <div className="text-sm font-semibold text-[#1e4d6b]">{founderSingle.subtitle} &mdash; Price Locked Forever</div>
+                <div className="text-sm font-semibold text-[#1E2D4D]">{founderSingle.subtitle} &mdash; Price Locked Forever</div>
               </div>
 
               <div className="mb-4">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-4xl sm:text-6xl font-extrabold text-[#1e4d6b]">
+                  <span className="text-4xl sm:text-6xl font-extrabold text-[#1E2D4D]">
                     ${billingCycle === 'monthly' ? founderSingle.monthlyPrice : founderSingle.annualPrice}
                   </span>
                   <span className="text-lg sm:text-xl text-gray-600">/{billingCycle === 'monthly' ? 'month' : 'year'}</span>
@@ -178,7 +178,7 @@ export default function Pricing() {
                   onClick={() => setBillingCycle('monthly')}
                   className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${
                     billingCycle === 'monthly'
-                      ? 'bg-white text-[#1e4d6b] shadow-sm'
+                      ? 'bg-white text-[#1E2D4D] shadow-sm'
                       : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
@@ -188,7 +188,7 @@ export default function Pricing() {
                   onClick={() => setBillingCycle('annual')}
                   className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${
                     billingCycle === 'annual'
-                      ? 'bg-white text-[#1e4d6b] shadow-sm'
+                      ? 'bg-white text-[#1E2D4D] shadow-sm'
                       : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
@@ -208,7 +208,7 @@ export default function Pricing() {
               <div>
                 <button
                   onClick={() => { trackEvent('cta_click', { cta: 'pricing_founder_single', page: 'landing', billing: billingCycle }); navigate('/signup'); }}
-                  className="w-full py-4 px-6 rounded-xl font-semibold text-base transition-all bg-[#1e4d6b] text-white hover:bg-[#163a52] shadow-sm hover:shadow-xl transform hover:-translate-y-0.5"
+                  className="w-full py-4 px-6 rounded-xl font-semibold text-base transition-all bg-[#1E2D4D] text-white hover:bg-[#162340] shadow-sm hover:shadow-xl transform hover:-translate-y-0.5"
                 >
                   Start Free Trial
                 </button>
@@ -219,17 +219,17 @@ export default function Pricing() {
 
           {/* Founder Multi Card */}
           <div className="relative">
-            <div className="bg-white rounded-xl p-5 sm:p-8 relative border-2 border-[#1e4d6b] shadow-sm h-full flex flex-col">
+            <div className="bg-white rounded-xl p-5 sm:p-8 relative border-2 border-[#1E2D4D] shadow-sm h-full flex flex-col">
               <div className="mb-6 pt-2">
                 <div className="text-sm font-bold text-[#d4af37] uppercase tracking-wider mb-1">
                   {founderMulti.name}
                 </div>
-                <div className="text-sm font-semibold text-[#1e4d6b]">{founderMulti.subtitle}</div>
+                <div className="text-sm font-semibold text-[#1E2D4D]">{founderMulti.subtitle}</div>
               </div>
 
               <div className="mb-4">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-4xl sm:text-5xl font-extrabold text-[#1e4d6b]">
+                  <span className="text-4xl sm:text-5xl font-extrabold text-[#1E2D4D]">
                     ${founderMulti.basePrice}
                   </span>
                   <span className="text-lg text-gray-600">/mo base</span>
@@ -242,7 +242,7 @@ export default function Pricing() {
               <ul className="space-y-3 mb-8 flex-grow">
                 {founderMulti.features.map((feature, idx) => (
                   <li key={idx} className="flex items-start gap-3 text-gray-700">
-                    <Check className="w-5 h-5 text-[#1e4d6b] flex-shrink-0 mt-0.5" strokeWidth={3} />
+                    <Check className="w-5 h-5 text-[#1E2D4D] flex-shrink-0 mt-0.5" strokeWidth={3} />
                     <span>{feature}</span>
                   </li>
                 ))}
@@ -251,7 +251,7 @@ export default function Pricing() {
               <div>
                 <button
                   onClick={() => { trackEvent('cta_click', { cta: 'pricing_founder_multi', page: 'landing', billing: billingCycle }); navigate('/signup'); }}
-                  className="w-full py-4 px-6 rounded-xl font-semibold text-base transition-all bg-[#1e4d6b] text-white hover:bg-[#163a52] shadow-sm hover:shadow-xl transform hover:-translate-y-0.5"
+                  className="w-full py-4 px-6 rounded-xl font-semibold text-base transition-all bg-[#1E2D4D] text-white hover:bg-[#162340] shadow-sm hover:shadow-xl transform hover:-translate-y-0.5"
                 >
                   Start Free Trial
                 </button>
@@ -263,21 +263,21 @@ export default function Pricing() {
           {/* Enterprise/Custom Card */}
           <div id="contact" className="bg-white rounded-xl p-5 sm:p-8 border-2 border-gray-200 shadow-sm h-full flex flex-col">
             <div className="mb-6 pt-2">
-              <div className="text-xl font-bold text-[#1e4d6b] mb-1">
+              <div className="text-xl font-bold text-[#1E2D4D] mb-1">
                 {enterprise.name}
               </div>
               <div className="text-base text-gray-600">{enterprise.subtitle}</div>
             </div>
 
             <div className="mb-8">
-              <div className="text-4xl font-extrabold text-[#1e4d6b] mb-2">Custom</div>
+              <div className="text-4xl font-extrabold text-[#1E2D4D] mb-2">Custom</div>
               <div className="text-gray-600">Tailored to your needs</div>
             </div>
 
             <ul className="space-y-3 mb-8 flex-grow">
               {enterprise.features.map((feature, idx) => (
                 <li key={idx} className="flex items-start gap-3 text-gray-700">
-                  <Check className="w-5 h-5 text-[#1e4d6b] flex-shrink-0 mt-0.5" strokeWidth={3} />
+                  <Check className="w-5 h-5 text-[#1E2D4D] flex-shrink-0 mt-0.5" strokeWidth={3} />
                   <span>{feature}</span>
                 </li>
               ))}
@@ -289,21 +289,21 @@ export default function Pricing() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => trackEvent('cta_click', { cta: 'pricing_enterprise_calendly', page: 'landing' })}
-                className="block w-full py-4 px-6 rounded-xl font-semibold text-base transition-all bg-white text-[#1e4d6b] border-2 border-[#1e4d6b] hover:bg-[#1e4d6b] hover:text-white shadow-sm hover:shadow-md text-center"
+                className="block w-full py-4 px-6 rounded-xl font-semibold text-base transition-all bg-white text-[#1E2D4D] border-2 border-[#1E2D4D] hover:bg-[#1E2D4D] hover:text-white shadow-sm hover:shadow-md text-center"
               >
                 Schedule a Call
               </a>
               <div className="space-y-2">
                 <a
                   href="mailto:founders@getevidly.com"
-                  className="flex items-center justify-center gap-2 text-sm text-gray-600 hover:text-[#1e4d6b] transition-colors"
+                  className="flex items-center justify-center gap-2 text-sm text-gray-600 hover:text-[#1E2D4D] transition-colors"
                 >
                   <Mail className="w-4 h-4" />
                   founders@getevidly.com
                 </a>
                 <a
                   href="tel:+18553843591"
-                  className="flex items-center justify-center gap-2 text-sm text-gray-600 hover:text-[#1e4d6b] transition-colors"
+                  className="flex items-center justify-center gap-2 text-sm text-gray-600 hover:text-[#1E2D4D] transition-colors"
                 >
                   <Phone className="w-4 h-4" />
                   (855) EVIDLY1

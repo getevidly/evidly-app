@@ -28,6 +28,7 @@ import {
   DEMO_SIGNALS,
 } from '../components/shared/intelligence-formats';
 import type { BISignal, RiskPlan, FormatTab } from '../components/shared/intelligence-formats';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 const TABS: { key: FormatTab; label: string; icon: typeof BarChart3 }[] = [
   { key: 'executive', label: 'Executive Summary', icon: BarChart3 },
@@ -47,6 +48,7 @@ export function BusinessIntelligence() {
   const { isDemoMode } = useDemo();
   const { user, profile } = useAuth();
   const { guardAction, showUpgrade, upgradeAction, upgradeFeature, setShowUpgrade } = useDemoGuard();
+  usePageTitle('Business Intelligence');
 
   const [searchParams, setSearchParams] = useSearchParams();
   const location = searchParams.get('location') || 'all';

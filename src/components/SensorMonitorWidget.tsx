@@ -12,7 +12,7 @@ import { useDemo } from '../contexts/DemoContext';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 
-const PRIMARY = '#1e4d6b';
+const PRIMARY = '#1E2D4D';
 const GOLD = '#d4af37';
 
 function statusDot(s: IoTSensor['status']) {
@@ -137,18 +137,18 @@ export function SensorMonitorWidget({ locationFilter }: { locationFilter?: strin
   // ── No sensors: Promotional "Sensor Ready" state ──────
   if (!hasSensors) {
     return (
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+      <div className="bg-white rounded-xl border border-gray-200" style={{ fontFamily: "'DM Sans', sans-serif" }}>
         <div className="px-5 pt-4 pb-3">
           <div className="flex items-center gap-2">
             <Radio className="h-4 w-4" style={{ color: PRIMARY }} />
-            <span className="text-sm font-bold text-gray-900">24/7 Monitoring Ready</span>
+            <span className="text-sm font-bold text-[#1E2D4D]">24/7 Monitoring Ready</span>
           </div>
         </div>
 
         <div className="px-5 pb-5">
           <div className="p-4 rounded-xl text-center" style={{ backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0' }}>
             <Activity className="h-8 w-8 mx-auto mb-2 text-emerald-500" />
-            <div className="text-sm font-bold text-gray-900 mb-1">Sensor Ready</div>
+            <div className="text-sm font-bold text-[#1E2D4D] mb-1">Sensor Ready</div>
             <div className="text-xs text-gray-500 mb-3">
               Your temperature module is active. Sensors upgrade this to automatic 24/7 monitoring.
             </div>
@@ -190,14 +190,14 @@ export function SensorMonitorWidget({ locationFilter }: { locationFilter?: strin
   const activeAlerts = isDemoMode ? iotSensorAlerts.filter(a => !a.acknowledged).length : 0;
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+    <div className="bg-white rounded-xl border border-gray-200" style={{ fontFamily: "'DM Sans', sans-serif" }}>
       {/* Header */}
       <div className="flex items-center justify-between px-5 pt-4 pb-3">
         <div className="flex items-center gap-2">
           <Radio className="h-4 w-4" style={{ color: PRIMARY }} />
-          <span className="text-sm font-bold text-gray-900">Live Sensor Monitor</span>
+          <span className="text-sm font-bold text-[#1E2D4D]">Live Sensor Monitor</span>
           {activeAlerts > 0 && (
-            <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-600">{activeAlerts}</span>
+            <span className="px-1.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-600">{activeAlerts}</span>
           )}
         </div>
         <button onClick={() => navigate('/iot/hub')} className="text-xs font-medium hover:underline flex items-center gap-0.5" style={{ color: PRIMARY }}>

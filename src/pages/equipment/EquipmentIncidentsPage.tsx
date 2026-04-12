@@ -118,7 +118,7 @@ export function EquipmentIncidentsPage() {
         <button
           onClick={() => setShowReportModal(true)}
           className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white rounded-lg transition-colors"
-          style={{ background: '#1e4d6b' }}
+          style={{ background: '#1E2D4D' }}
         >
           Report Incident
         </button>
@@ -131,7 +131,7 @@ export function EquipmentIncidentsPage() {
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <StatCard icon={AlertTriangle} label="Total Incidents" value={stats.total} color="#1e4d6b" />
+          <StatCard icon={AlertTriangle} label="Total Incidents" value={stats.total} color="#1E2D4D" />
           <StatCard icon={DollarSign} label="Damage" value={stats.damage} color="#DC2626" />
           <StatCard icon={PackageX} label="Loss" value={stats.loss} color="#D97706" />
           <StatCard icon={Clock} label="Pending Resolution" value={stats.pending} color="#7C3AED" />
@@ -232,7 +232,7 @@ export function EquipmentIncidentsPage() {
                           <button
                             onClick={() => alert('Resolve incident flow coming soon.')}
                             className="text-xs font-medium px-3 py-1 rounded-md transition-colors"
-                            style={{ color: '#1e4d6b', background: '#1e4d6b12' }}
+                            style={{ color: '#1E2D4D', background: '#1E2D4D12' }}
                           >
                             Resolve
                           </button>

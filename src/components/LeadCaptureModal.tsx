@@ -47,9 +47,9 @@ export function LeadCaptureModal({ isOpen, onClose }: LeadCaptureModalProps) {
     <>
       <div className="fixed inset-0 bg-black/50 z-[80]" onClick={onClose} />
       <div className="fixed inset-0 z-[90] flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-full max-w-md overflow-hidden" onClick={(e) => e.stopPropagation()}>
+        <div className="bg-white rounded-xl border border-gray-200 w-full max-w-md overflow-hidden" onClick={(e) => e.stopPropagation()}>
           {/* Header */}
-          <div className="bg-[#1e4d6b] px-6 py-5 flex items-center justify-between">
+          <div className="bg-[#1E2D4D] px-6 py-5 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <EvidlyIcon size={28} />
               <div>
@@ -67,7 +67,7 @@ export function LeadCaptureModal({ isOpen, onClose }: LeadCaptureModalProps) {
           {/* Form */}
           <form onSubmit={handleSubmit} className="p-6 space-y-4">
             <div>
-              <h2 className="text-lg font-bold text-gray-900 mb-1">See it in action</h2>
+              <h2 className="text-lg font-bold text-[#1E2D4D] mb-1">See it in action</h2>
               <p className="text-sm text-gray-500">We'll personalize the demo for your business.</p>
             </div>
 

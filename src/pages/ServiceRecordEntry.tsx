@@ -9,8 +9,8 @@ import { GhostInput } from '../components/ai/GhostInput';
 import { useDemo } from '../contexts/DemoContext';
 
 // ── Brand ─────────────────────────────────────────────────────────
-const NAVY = '#1e4d6b';
-const NAVY_HOVER = '#163a52';
+const NAVY = '#1E2D4D';
+const NAVY_HOVER = '#141E33';
 const GOLD = '#d4af37';
 const F: React.CSSProperties = { fontFamily: "'Inter', 'DM Sans', sans-serif" };
 
@@ -167,7 +167,7 @@ export function ServiceRecordEntry() {
 
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-xl font-bold text-gray-900">Record Service</h1>
+        <h1 className="text-xl font-bold text-[#1E2D4D]">Record Service</h1>
         {equipment && (
           <p className="text-sm text-gray-500 mt-1">
             {equipment.name} · {equipment.type} · {equipment.location}
@@ -356,7 +356,7 @@ export function ServiceRecordEntry() {
         </div>
 
         {/* Submit footer */}
-        <div className="border-t border-gray-200 p-5 bg-gray-50 flex items-center justify-between">
+        <div className="border-t border-gray-200 p-5 bg-[#FAF7F0] flex items-center justify-between">
           <button
             type="button"
             onClick={() => navigate(equipmentId ? `/equipment/${equipmentId}` : '/equipment')}

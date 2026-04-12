@@ -66,8 +66,8 @@ import {
 // ── Constants ────────────────────────────────────────────────
 
 const MIDNIGHT_NAVY = '#0B1628';
-const BRAND_BLUE = '#1e4d6b';
-const BRAND_BLUE_HOVER = '#2a6a8f';
+const BRAND_BLUE = '#1E2D4D';
+const BRAND_BLUE_HOVER = '#2A3F6B';
 const BRAND_GOLD = '#A08C5A';
 const PAGE_BG = '#F4F6FA';
 const CARD_BG = '#FFFFFF';
@@ -412,7 +412,7 @@ function RfpCard({ item, onSelect, onAction }: {
             <span className="text-lg font-bold leading-none" style={{ color: tier.text }}>
               {cls.relevance_score}
             </span>
-            <span className="text-[10px]" style={{ color: tier.text }}>{tier.label}</span>
+            <span className="text-xs" style={{ color: tier.text }}>{tier.label}</span>
           </div>
         )}
         <div className="min-w-0 flex-1">
@@ -422,7 +422,7 @@ function RfpCard({ item, onSelect, onAction }: {
           <div className="flex items-center gap-2 flex-wrap text-xs" style={{ color: TEXT_SECONDARY }}>
             <span>{item.issuing_entity}</span>
             <span
-              className="px-1.5 py-0.5 rounded text-[10px] font-medium"
+              className="px-1.5 py-0.5 rounded text-xs font-medium"
               style={{ background: `${BRAND_BLUE}12`, color: BRAND_BLUE }}
             >
               {ENTITY_LABELS[item.entity_type] ?? item.entity_type}
@@ -444,7 +444,7 @@ function RfpCard({ item, onSelect, onAction }: {
           {cls.matched_modules.map(mod => (
             <span
               key={mod}
-              className="px-2 py-0.5 rounded-full text-[10px] font-medium"
+              className="px-2 py-0.5 rounded-full text-xs font-medium"
               style={{ background: `${BRAND_GOLD}18`, color: BRAND_GOLD }}
             >
               {MODULE_LABELS[mod] ?? mod}
@@ -616,7 +616,7 @@ function RfpTableView({ items, onSelect, onAction }: {
                 <td className="px-4 py-3 text-xs" style={{ color: TEXT_SECONDARY }}>
                   <span className="block truncate max-w-[140px]">{item.issuing_entity}</span>
                   <span
-                    className="inline-block px-1.5 py-0.5 rounded text-[10px] mt-0.5"
+                    className="inline-block px-1.5 py-0.5 rounded text-xs mt-0.5"
                     style={{ background: `${BRAND_BLUE}12`, color: BRAND_BLUE }}
                   >
                     {ENTITY_LABELS[item.entity_type] ?? item.entity_type}
@@ -628,12 +628,12 @@ function RfpTableView({ items, onSelect, onAction }: {
                 <td className="px-4 py-3">
                   <div className="flex flex-wrap gap-1 max-w-[160px]">
                     {(cls?.matched_modules ?? []).slice(0, 3).map(mod => (
-                      <span key={mod} className="px-1.5 py-0.5 rounded text-[10px]" style={{ background: `${BRAND_GOLD}18`, color: BRAND_GOLD }}>
+                      <span key={mod} className="px-1.5 py-0.5 rounded text-xs" style={{ background: `${BRAND_GOLD}18`, color: BRAND_GOLD }}>
                         {MODULE_LABELS[mod] ?? mod}
                       </span>
                     ))}
                     {(cls?.matched_modules?.length ?? 0) > 3 && (
-                      <span className="text-[10px]" style={{ color: TEXT_TERTIARY }}>+{cls!.matched_modules.length - 3}</span>
+                      <span className="text-xs" style={{ color: TEXT_TERTIARY }}>+{cls!.matched_modules.length - 3}</span>
                     )}
                   </div>
                 </td>
@@ -805,7 +805,7 @@ function DetailPanel({ item, onClose, onAction }: {
               <h4 className="text-xs font-semibold mb-1" style={{ color: TEXT_PRIMARY }}>Matched Keywords</h4>
               <div className="flex flex-wrap gap-1">
                 {cls.matched_keywords.map(kw => (
-                  <span key={kw} className="px-2 py-0.5 rounded text-[10px] border" style={{ borderColor: CARD_BORDER, color: TEXT_SECONDARY }}>
+                  <span key={kw} className="px-2 py-0.5 rounded text-xs border" style={{ borderColor: CARD_BORDER, color: TEXT_SECONDARY }}>
                     {kw}
                   </span>
                 ))}
@@ -842,7 +842,7 @@ function DetailPanel({ item, onClose, onAction }: {
                     <div>
                       <span className="font-medium capitalize" style={{ color: TEXT_PRIMARY }}>{act.action}</span>
                       {act.notes && <span style={{ color: TEXT_SECONDARY }}> — {act.notes}</span>}
-                      <span className="block text-[10px]" style={{ color: TEXT_TERTIARY }}>
+                      <span className="block text-xs" style={{ color: TEXT_TERTIARY }}>
                         {formatDateShort(act.created_at)} by {act.created_by ?? 'admin'}
                       </span>
                     </div>
@@ -1083,7 +1083,7 @@ function KeywordCloud({ listings }: { listings: RfpListingWithDetails[] }) {
             }}
           >
             {word}
-            <span className="ml-1 text-[10px]" style={{ color: TEXT_TERTIARY }}>{count}</span>
+            <span className="ml-1 text-xs" style={{ color: TEXT_TERTIARY }}>{count}</span>
           </span>
         );
       })}
@@ -1151,7 +1151,7 @@ function SourcesTab({ sources }: { sources: RfpSource[] }) {
                 </td>
                 <td className="px-4 py-3">
                   <span className="font-medium block" style={{ color: TEXT_PRIMARY }}>{src.name}</span>
-                  <a href={src.url} target="_blank" rel="noopener noreferrer" className="text-[10px] hover:underline" style={{ color: BRAND_BLUE }}>
+                  <a href={src.url} target="_blank" rel="noopener noreferrer" className="text-xs hover:underline" style={{ color: BRAND_BLUE }}>
                     {src.url}
                   </a>
                 </td>

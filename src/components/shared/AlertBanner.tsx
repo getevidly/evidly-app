@@ -60,11 +60,11 @@ export function AlertBanner({ alerts, onDismiss, navigate }: {
           >
             <Icon size={18} className={`${config.iconClass} shrink-0`} />
             <div className="flex-1 min-w-0">
-              <p className="text-[13px] font-semibold" style={{ color: config.textColor }}>
+              <p className="text-sm font-semibold" style={{ color: config.textColor }}>
                 {alert.message}
               </p>
               {(alert.location || alert.pillar) && (
-                <p className="text-[11px] text-gray-500">
+                <p className="text-xs text-gray-500">
                   {[alert.location, alert.pillar].filter(Boolean).join(' · ')}
                 </p>
               )}

@@ -141,10 +141,10 @@ export function VendorConnect() {
           <div className="text-center py-12 text-gray-400 text-sm">Loading partners...</div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-16 border border-gray-200 rounded-xl">
-            <div className="w-14 h-14 rounded-full bg-gray-50 flex items-center justify-center mx-auto mb-4 text-2xl">
+            <div className="w-14 h-14 rounded-full bg-[#FAF7F0] flex items-center justify-center mx-auto mb-4 text-2xl">
               🤝
             </div>
-            <h3 className="text-sm font-semibold text-gray-900 mb-2">No Vendor Connect partners yet</h3>
+            <h3 className="text-sm font-semibold text-[#1E2D4D] mb-2">No Vendor Connect partners yet</h3>
             <p className="text-xs text-gray-500 max-w-sm mx-auto mb-4">
               {isDemoMode
                 ? 'Vendor Connect partners appear here when CPP-vetted vendors join the program.'
@@ -190,7 +190,7 @@ export function VendorConnect() {
                         </div>
                       )}
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-sm font-bold text-gray-900 truncate">{partner.company_name}</h3>
+                        <h3 className="text-sm font-bold text-[#1E2D4D] truncate">{partner.company_name}</h3>
                         <PartnerBadge tier={partner.partner_tier} size="sm" />
                       </div>
                       {partner.performance_score != null && (
@@ -201,7 +201,7 @@ export function VendorConnect() {
                           >
                             {Math.round(partner.performance_score)}
                           </div>
-                          <div className="text-[10px] text-gray-400 uppercase">Score</div>
+                          <div className="text-xs text-gray-400 uppercase">Score</div>
                         </div>
                       )}
                     </div>
@@ -214,13 +214,13 @@ export function VendorConnect() {
                       {(partner.service_types || []).map(st => (
                         <span
                           key={st}
-                          className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-blue-50 text-blue-700"
+                          className="text-xs px-2 py-0.5 rounded-full font-medium bg-blue-50 text-blue-700"
                         >
                           {st.replace(/_/g, ' ')}
                         </span>
                       ))}
                       {partner.ikeca_certified && (
-                        <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-green-50 text-green-700">
+                        <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-green-50 text-green-700">
                           IKECA
                         </span>
                       )}
@@ -231,7 +231,7 @@ export function VendorConnect() {
                         <MapPin className="w-3 h-3" />
                         <span>{partner.primary_county} County</span>
                         {spotInfo && (
-                          <span className="ml-2 text-[10px] font-medium" style={{ color: '#A08C5A' }}>
+                          <span className="ml-2 text-xs font-medium" style={{ color: '#A08C5A' }}>
                             {spotInfo.remaining} of {spotInfo.max} spots remaining
                           </span>
                         )}

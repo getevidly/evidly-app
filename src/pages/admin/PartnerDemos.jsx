@@ -134,7 +134,7 @@ function StatusBadge({ status }) {
     active: 'bg-green-100 text-green-800',
     completed: 'bg-gray-100 text-gray-700',
     expired: 'bg-red-100 text-red-700',
-    cleaned: 'bg-gray-50 text-gray-400',
+    cleaned: 'bg-[#FAF7F0] text-gray-400',
   };
   return (
     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${colors[status] || colors.pending}`}>
@@ -373,7 +373,7 @@ export default function PartnerDemos() {
         {[
           { label: 'Active', count: activeDemos.length, color: 'text-green-700', bg: 'bg-green-50' },
           { label: 'Completed', count: completedDemos.filter(d => d.status === 'completed').length, color: 'text-blue-700', bg: 'bg-blue-50' },
-          { label: 'Cleaned', count: completedDemos.filter(d => d.status === 'cleaned').length, color: 'text-gray-500', bg: 'bg-gray-50' },
+          { label: 'Cleaned', count: completedDemos.filter(d => d.status === 'cleaned').length, color: 'text-gray-500', bg: 'bg-[#FAF7F0]' },
           { label: 'Total', count: demos.length, color: 'text-[#A08C5A]', bg: 'bg-[#FAF7F0]' },
         ].map(s => (
           <div key={s.label} className={`${s.bg} rounded-xl p-4`}>
@@ -595,7 +595,7 @@ export default function PartnerDemos() {
 
                   {/* Submit */}
                   <button onClick={handleCreateDemo} disabled={creating}
-                    className="w-full py-3 bg-[#1E2D4D] text-white rounded-xl text-sm font-semibold hover:bg-[#162240] disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                    className="w-full py-3 bg-[#1E2D4D] text-white rounded-xl text-sm font-semibold hover:bg-[#162340] disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
                     {creating ? (
                       <span className="flex items-center justify-center gap-2">
                         <RefreshCw size={14} className="animate-spin" /> Generating Partner Demo...
@@ -623,7 +623,7 @@ export default function PartnerDemos() {
               <p className="font-medium">No active partner demos</p>
               <p className="text-sm mt-1">Create a new partner demo to get started</p>
               <button onClick={() => setActiveTab('create')}
-                className="mt-3 px-4 py-2 bg-[#1E2D4D] text-white rounded-lg text-sm hover:bg-[#162240] transition-colors">
+                className="mt-3 px-4 py-2 bg-[#1E2D4D] text-white rounded-lg text-sm hover:bg-[#162340] transition-colors">
                 <Plus size={14} className="inline mr-1" /> Create Demo
               </button>
             </div>
@@ -635,7 +635,7 @@ export default function PartnerDemos() {
               <div key={demo.id} className="bg-white border border-gray-200 rounded-xl p-5">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg ${typeConfig?.bg || 'bg-gray-50'}`}>
+                    <div className={`p-2 rounded-lg ${typeConfig?.bg || 'bg-[#FAF7F0]'}`}>
                       <TypeIcon size={20} className={typeConfig?.color || 'text-gray-700'} />
                     </div>
                     <div>

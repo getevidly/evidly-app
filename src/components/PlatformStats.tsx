@@ -103,7 +103,7 @@ export default function PlatformStats() {
   ];
 
   return (
-    <section ref={sectionRef} className="py-20 px-6 bg-[#1e4d6b]">
+    <section ref={sectionRef} className="py-20 px-6 bg-[#1E2D4D]">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="font-['Outfit'] text-4xl font-bold text-white mb-4">

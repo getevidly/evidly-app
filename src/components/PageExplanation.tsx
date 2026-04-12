@@ -51,7 +51,7 @@ export function PageExplanation() {
   return (
     <div className="mb-4">
       <div className="flex items-start gap-3 px-4 py-3 rounded-lg max-w-2xl" style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}>
-        <Info className="h-4 w-4 text-[#1e4d6b] flex-shrink-0 mt-0.5" />
+        <Info className="h-4 w-4 text-[#1E2D4D] flex-shrink-0 mt-0.5" />
         <p className="text-sm text-gray-700 flex-1">{explanation}</p>
         <button
           onClick={() => setShow(false)}

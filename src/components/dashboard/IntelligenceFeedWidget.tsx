@@ -343,13 +343,13 @@ export function IntelligenceFeedWidget() {
             <span className="text-sm font-semibold" style={{ color: NAVY }}>Business Intelligence</span>
           </div>
           <div className="flex items-center gap-1">
-            <span className="text-[11px] font-medium" style={{ color: GOLD }}>View all</span>
+            <span className="text-xs font-medium" style={{ color: GOLD }}>View all</span>
             <ChevronRight size={14} style={{ color: GOLD }} />
           </div>
         </button>
         <div className="px-4 py-5 text-center">
           <Zap size={20} className="mx-auto mb-2" style={{ color: '#D1D5DB' }} />
-          <p className="text-[13px] font-medium mb-1" style={{ color: NAVY }}>
+          <p className="text-sm font-medium mb-1" style={{ color: NAVY }}>
             Your intelligence feed is active
           </p>
           <p className="text-xs mb-3" style={{ color: MUTED, maxWidth: 320, margin: '0 auto 12px' }}>
@@ -381,13 +381,13 @@ export function IntelligenceFeedWidget() {
           <Zap size={14} style={{ color: GOLD }} />
           <span className="text-sm font-semibold" style={{ color: NAVY }}>Business Intelligence</span>
           {criticalCount > 0 && (
-            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded" style={{ background: '#FEF2F2', color: '#DC2626' }}>
+            <span className="text-xs font-bold px-1.5 py-0.5 rounded" style={{ background: '#FEF2F2', color: '#DC2626' }}>
               {criticalCount} critical
             </span>
           )}
         </div>
         <div className="flex items-center gap-1">
-          <span className="text-[11px] font-medium" style={{ color: GOLD }}>View all</span>
+          <span className="text-xs font-medium" style={{ color: GOLD }}>View all</span>
           <ChevronRight size={14} style={{ color: GOLD }} />
         </div>
       </button>
@@ -423,12 +423,12 @@ export function IntelligenceFeedWidget() {
                       {item.category.replace(/_/g, ' ')}
                     </span>
                   )}
-                  <span className="text-[10px]" style={{ color: MUTED }}>{timeAgo(item.created_at)}</span>
+                  <span className="text-xs" style={{ color: MUTED }}>{timeAgo(item.created_at)}</span>
                 </div>
                 {/* Title */}
-                <p className="text-[13px] font-semibold" style={{ color: isActioned ? MUTED : NAVY }}>{item.title}</p>
+                <p className="text-sm font-semibold" style={{ color: isActioned ? MUTED : NAVY }}>{item.title}</p>
                 {/* Summary */}
-                <p className="text-[11px] mt-0.5" style={{ color: MUTED, lineHeight: 1.5 }}>{item.summary}</p>
+                <p className="text-xs mt-0.5" style={{ color: MUTED, lineHeight: 1.5 }}>{item.summary}</p>
                 {/* Risk dimensions */}
                 {!isActioned && renderRiskDims(item)}
                 {/* Opportunity dimensions */}
@@ -437,7 +437,7 @@ export function IntelligenceFeedWidget() {
                 {item.recommended_action && !isActioned && (
                   <div className="mt-1.5 flex items-start gap-1.5">
                     <AlertTriangle size={10} className="shrink-0 mt-0.5" style={{ color: dotColor }} />
-                    <span className="text-[10px] font-medium" style={{ color: NAVY }}>
+                    <span className="text-xs font-medium" style={{ color: NAVY }}>
                       {item.recommended_action}
                     </span>
                   </div>

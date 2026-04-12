@@ -21,7 +21,7 @@ export function DemoBanner() {
         <button
           onClick={() => navigate('/signup')}
           className="inline-flex items-center gap-1 px-3 py-1 rounded-md text-xs sm:text-sm font-bold transition-colors hover:bg-gray-100"
-          style={{ backgroundColor: 'white', color: '#1e4d6b' }}
+          style={{ backgroundColor: 'white', color: '#1E2D4D' }}
         >
           Start Free Trial
           <ArrowRight className="h-3.5 w-3.5" />
@@ -48,7 +48,7 @@ export function DemoBanner() {
         <button
           onClick={() => navigate('/pricing')}
           className="inline-flex items-center gap-1 px-3 py-1 rounded-md text-xs sm:text-sm font-bold transition-colors hover:bg-gray-100"
-          style={{ backgroundColor: 'white', color: '#1e4d6b' }}
+          style={{ backgroundColor: 'white', color: '#1E2D4D' }}
         >
           Upgrade to Full Account
           <ArrowRight className="h-3.5 w-3.5" />

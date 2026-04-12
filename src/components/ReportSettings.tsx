@@ -188,7 +188,7 @@ export function ReportSettings() {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">Automated Reports</h3>
+        <h3 className="text-lg font-semibold text-[#1E2D4D] mb-2">Automated Reports</h3>
         <p className="text-sm text-gray-600">
           Choose which reports you'd like to receive automatically. We'll deliver them straight to your inbox.
         </p>
@@ -215,9 +215,9 @@ export function ReportSettings() {
                 />
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <h4 className="font-semibold text-gray-900">{report.name}</h4>
+                    <h4 className="font-semibold text-[#1E2D4D]">{report.name}</h4>
                     {report.recommended && (
-                      <span className="text-xs bg-[#d4af37] text-[#1e4d6b] px-2 py-0.5 rounded font-semibold">
+                      <span className="text-xs bg-[#d4af37] text-[#1E2D4D] px-2 py-0.5 rounded font-semibold">
                         Recommended
                       </span>
                     )}
@@ -236,7 +236,7 @@ export function ReportSettings() {
                             onClick={() => updateSubscription(report.type, 'delivery_method', 'email')}
                             className={`flex-1 px-3 py-2 text-sm rounded-lg flex items-center justify-center gap-2 transition-colors ${
                               sub?.delivery_method === 'email'
-                                ? 'bg-[#1e4d6b] text-white'
+                                ? 'bg-[#1E2D4D] text-white'
                                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                             }`}
                           >
@@ -248,7 +248,7 @@ export function ReportSettings() {
                             onClick={() => updateSubscription(report.type, 'delivery_method', 'sms')}
                             className={`flex-1 px-3 py-2 text-sm rounded-lg flex items-center justify-center gap-2 transition-colors ${
                               sub?.delivery_method === 'sms'
-                                ? 'bg-[#1e4d6b] text-white'
+                                ? 'bg-[#1E2D4D] text-white'
                                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                             }`}
                           >
@@ -304,7 +304,7 @@ export function ReportSettings() {
         <button
           onClick={saveSubscriptions}
           disabled={saving}
-          className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
+          className="px-6 py-2 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
         >
           {saving ? 'Saving...' : 'Save Report Settings'}
         </button>

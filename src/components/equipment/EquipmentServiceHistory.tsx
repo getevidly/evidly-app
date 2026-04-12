@@ -123,7 +123,7 @@ export function EquipmentServiceHistory({ equipmentId }: EquipmentServiceHistory
                 {/* Timeline dot — color-coded by service type */}
                 {(() => {
                   const stCode = (record as any).serviceTypeCode as ServiceTypeCode;
-                  const stColor = stCode && SERVICE_TYPES[stCode] ? SERVICE_TYPES[stCode].color : '#1e4d6b';
+                  const stColor = stCode && SERVICE_TYPES[stCode] ? SERVICE_TYPES[stCode].color : '#1E2D4D';
                   return <div className="absolute left-3.5 top-4 w-3 h-3 rounded-full border-2" style={{ background: CARD_BG, borderColor: stColor }} />;
                 })()}
 
@@ -150,11 +150,11 @@ export function EquipmentServiceHistory({ equipmentId }: EquipmentServiceHistory
                     <div className="flex items-center gap-3">
                       {/* Condition change */}
                       <div className="flex items-center gap-1">
-                        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded capitalize" style={{ background: beforeStyle.bg, color: beforeStyle.text }}>
+                        <span className="text-xs font-semibold px-1.5 py-0.5 rounded capitalize" style={{ background: beforeStyle.bg, color: beforeStyle.text }}>
                           {record.conditionBefore}
                         </span>
                         <span className="text-xs" style={{ color: TEXT_TERTIARY }}>&rarr;</span>
-                        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded capitalize" style={{ background: afterStyle.bg, color: afterStyle.text }}>
+                        <span className="text-xs font-semibold px-1.5 py-0.5 rounded capitalize" style={{ background: afterStyle.bg, color: afterStyle.text }}>
                           {record.conditionAfter}
                         </span>
                       </div>
@@ -183,7 +183,7 @@ export function EquipmentServiceHistory({ equipmentId }: EquipmentServiceHistory
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center gap-1 text-xs hover:underline"
-                          style={{ color: '#1e4d6b' }}
+                          style={{ color: '#1E2D4D' }}
                         >
                           <ExternalLink className="w-3 h-3" /> View Certificate (from HoodOps)
                         </a>

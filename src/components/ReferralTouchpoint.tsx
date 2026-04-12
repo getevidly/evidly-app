@@ -23,7 +23,7 @@ const VARIANTS: Record<TouchpointVariant, { icon: typeof Gift; title: string; me
     title: 'Score improved!',
     message: "Your compliance score went up. Tell a fellow kitchen manager about EvidLY — you'll both benefit.",
     cta: 'Invite a Peer',
-    color: '#1e4d6b',
+    color: '#1E2D4D',
   },
   k2c_impact: {
     icon: Heart,
@@ -76,7 +76,7 @@ export function ReferralTouchpoint() {
             <Icon className="h-5 w-5" style={{ color: v.color }} />
           </div>
           <div className="flex-1 pr-4">
-            <h4 className="text-sm font-semibold text-gray-900 mb-0.5">{v.title}</h4>
+            <h4 className="text-sm font-semibold text-[#1E2D4D] mb-0.5">{v.title}</h4>
             <p className="text-xs text-gray-500 mb-3">{v.message}</p>
             <button
               onClick={() => {

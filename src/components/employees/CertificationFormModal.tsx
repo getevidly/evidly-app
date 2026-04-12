@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { X, Save, Upload } from 'lucide-react';
 import { CERT_TYPES, type EmployeeCert } from '../../data/employeesDemoData';
 
-const NAVY = '#1e4d6b';
+const NAVY = '#1E2D4D';
 
 interface CertificationFormModalProps {
   existing?: EmployeeCert | null;
@@ -89,7 +89,7 @@ export function CertificationFormModal({ existing, onClose, onSave }: Certificat
         {/* Footer */}
         <div className="flex items-center justify-end gap-3 px-6 py-4 border-t" style={{ borderColor: '#D1D9E6' }}>
           <button onClick={onClose} className="px-4 py-2 text-sm font-medium rounded-lg border hover:bg-gray-50" style={{ borderColor: '#D1D9E6', color: '#3D5068' }}>Cancel</button>
-          <button onClick={handleSubmit} className="flex items-center gap-1.5 px-5 py-2 text-sm font-semibold rounded-lg text-white hover:opacity-90" style={{ backgroundColor: NAVY }}>
+          <button onClick={handleSubmit} className="flex items-center gap-1.5 px-5 py-2.5 text-sm font-semibold rounded-lg text-white bg-[#1E2D4D] hover:bg-[#162340] transition-colors min-h-[44px]">
             <Save className="w-4 h-4" /> {existing ? 'Update' : 'Add'} Certification
           </button>
         </div>

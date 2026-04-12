@@ -10,7 +10,7 @@ import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { RoleGuard } from '../components/auth/RoleGuard';
 import type { PSESafeguard } from '../data/workforceRiskDemoData';
 
-const NAVY = '#1e4d6b';
+const NAVY = '#1E2D4D';
 const GOLD = '#d4af37';
 const MUTED_GOLD = '#A08C5A';
 const TEXT_SEC = '#6B7F96';

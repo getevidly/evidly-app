@@ -22,7 +22,7 @@ export function ReportGeneratorPage() {
     return (
       <div className="text-center py-20">
         <p className="text-sm font-medium" style={{ color: NAVY }}>Report not found</p>
-        <button onClick={() => navigate('/reports')} className="mt-3 text-sm text-[#1e4d6b] hover:underline">Back to Reports</button>
+        <button onClick={() => navigate('/reports')} className="mt-3 text-sm text-[#1E2D4D] hover:underline">Back to Reports</button>
       </div>
     );
   }
@@ -49,7 +49,7 @@ export function ReportGeneratorPage() {
     <div className="space-y-6">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm" style={{ color: TEXT_TERTIARY }}>
-        <Link to="/reports" className="hover:text-[#1e4d6b] flex items-center gap-1">
+        <Link to="/reports" className="hover:text-[#1E2D4D] flex items-center gap-1">
           <ArrowLeft className="w-4 h-4" /> Reports
         </Link>
         <span>/</span>
@@ -64,7 +64,7 @@ export function ReportGeneratorPage() {
         <div className="flex-1">
           <h1 className="text-xl font-bold" style={{ color: NAVY }}>{report.title}</h1>
           <p className="text-sm mt-0.5" style={{ color: MUTED }}>{report.description}</p>
-          <span className="inline-block mt-2 text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ color: cat.color, background: cat.bg }}>
+          <span className="inline-block mt-2 text-xs font-semibold px-2 py-0.5 rounded-full" style={{ color: cat.color, background: cat.bg }}>
             {cat.label}
           </span>
         </div>
@@ -91,7 +91,7 @@ export function ReportGeneratorPage() {
                         <Calendar className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5" style={{ color: TEXT_TERTIARY }} />
                         <input
                           type="date"
-                          className="w-full pl-8 pr-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/30"
+                          className="w-full pl-8 pr-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/30"
                           style={{ borderColor: CARD_BORDER, color: NAVY }}
                           onChange={e => updateParam(p.key, { ...(params[p.key] as Record<string, string> || {}), start: e.target.value })}
                         />
@@ -101,7 +101,7 @@ export function ReportGeneratorPage() {
                         <Calendar className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5" style={{ color: TEXT_TERTIARY }} />
                         <input
                           type="date"
-                          className="w-full pl-8 pr-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/30"
+                          className="w-full pl-8 pr-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/30"
                           style={{ borderColor: CARD_BORDER, color: NAVY }}
                           onChange={e => updateParam(p.key, { ...(params[p.key] as Record<string, string> || {}), end: e.target.value })}
                         />
@@ -111,7 +111,7 @@ export function ReportGeneratorPage() {
 
                   {p.type === 'select' && (
                     <select
-                      className="w-full px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/30"
+                      className="w-full px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/30"
                       style={{ borderColor: CARD_BORDER, color: NAVY }}
                       onChange={e => updateParam(p.key, e.target.value)}
                     >
@@ -121,7 +121,7 @@ export function ReportGeneratorPage() {
 
                   {(p.type === 'multiSelect' || p.type === 'status') && (
                     <select
-                      className="w-full px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/30"
+                      className="w-full px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/30"
                       style={{ borderColor: CARD_BORDER, color: NAVY }}
                       onChange={e => updateParam(p.key, [e.target.value])}
                     >
@@ -138,7 +138,7 @@ export function ReportGeneratorPage() {
               onClick={handleGenerate}
               disabled={generating}
               className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-white transition-colors"
-              style={{ background: generating ? '#9CA3AF' : '#1e4d6b' }}
+              style={{ background: generating ? '#9CA3AF' : '#1E2D4D' }}
             >
               {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
               {generating ? 'Generating...' : 'Generate Report'}

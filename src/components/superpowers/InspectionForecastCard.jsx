@@ -56,16 +56,16 @@ export function InspectionForecastCard({ forecast }) {
         <div className="flex items-center gap-3">
           <div className="text-center">
             <p className="text-sm font-semibold text-[#0B1628]">{earliestStr}</p>
-            <p className="text-[10px] text-[#6B7F96]">Earliest</p>
+            <p className="text-xs text-[#6B7F96]">Earliest</p>
           </div>
           <div className="flex-1 h-px bg-[#D1D9E6] relative">
             <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-center">
-              <span className="text-[10px] text-[#6B7F96] bg-[#F4F6FA] px-2">to</span>
+              <span className="text-xs text-[#6B7F96] bg-[#F4F6FA] px-2">to</span>
             </div>
           </div>
           <div className="text-center">
             <p className="text-sm font-semibold text-[#0B1628]">{latestStr}</p>
-            <p className="text-[10px] text-[#6B7F96]">Latest</p>
+            <p className="text-xs text-[#6B7F96]">Latest</p>
           </div>
         </div>
         {forecast.daysUntilEarliest > 0 && (
@@ -96,7 +96,7 @@ export function InspectionForecastCard({ forecast }) {
               <div className="mt-0.5">{IMPACT_ICONS[factor.impact]}</div>
               <div>
                 <p className="text-xs font-medium text-[#0B1628]">{factor.label}</p>
-                <p className="text-[11px] text-[#6B7F96]">{factor.detail}</p>
+                <p className="text-xs text-[#6B7F96]">{factor.detail}</p>
               </div>
             </div>
           ))}
@@ -104,7 +104,7 @@ export function InspectionForecastCard({ forecast }) {
       )}
 
       {/* Advisory Disclaimer */}
-      <p className="text-[10px] text-[#6B7F96] border-t border-[#E8EDF5] pt-3">
+      <p className="text-xs text-[#6B7F96] border-t border-[#E8EDF5] pt-3">
         This forecast is advisory only — based on historical patterns and jurisdiction frequency data. Actual inspection timing is determined solely by your local health authority.
       </p>
     </div>

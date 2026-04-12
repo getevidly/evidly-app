@@ -320,7 +320,7 @@ export default function DemoLauncher() {
           </p>
           <button
             onClick={resetForm}
-            className="px-4 py-2 bg-[#1E2D4D] text-white rounded-lg text-sm"
+            className="px-4 py-2.5 bg-[#1E2D4D] text-white rounded-lg text-sm font-medium hover:bg-[#162340] transition-colors min-h-[44px]"
           >
             Launch Another
           </button>
@@ -378,7 +378,7 @@ export default function DemoLauncher() {
             <label className="block text-xs font-semibold text-gray-700 mb-2">
               Counties {form.counties.length > 0 && <span className="text-[#A08C5A] ml-1">({form.counties.length} selected)</span>}
             </label>
-            <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-2 border rounded-lg bg-gray-50">
+            <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-2 border rounded-lg bg-[#FAF7F0]">
               {CA_COUNTIES.map(county => (
                 <button
                   key={county}
@@ -413,7 +413,7 @@ export default function DemoLauncher() {
             onClick={handleLaunch}
             disabled={!form.prospectName || !form.company || loading}
             className="w-full py-3 bg-[#1E2D4D] text-white rounded-lg font-medium text-sm
-                       disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#2a3f6b]"
+                       disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#162340]"
           >
             {loading ? 'Launching...' : 'Launch Personalized Demo'}
           </button>

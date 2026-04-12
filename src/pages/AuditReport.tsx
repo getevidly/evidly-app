@@ -567,14 +567,14 @@ export function AuditReport() {
       <div className="space-y-6">
         {/* Header — no-print on config panel */}
         <div className="no-print">
-          <h1 className="text-2xl font-bold text-gray-900">Inspection Trail Report</h1>
+          <h1 className="text-2xl font-bold text-[#1E2D4D]">Inspection Trail Report</h1>
           <p className="text-sm text-gray-600 mt-1">One-click compliance documentation for inspectors and auditors</p>
         </div>
 
         {/* Configuration Panel */}
         {!generated && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 space-y-6 no-print">
-            <h2 className="text-lg font-bold text-gray-900">Report Configuration</h2>
+          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 space-y-6 no-print">
+            <h2 className="text-lg font-bold text-[#1E2D4D]">Report Configuration</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Date Range */}
@@ -633,7 +633,7 @@ export function AuditReport() {
                 <button
                   onClick={() => setIncludePhotos(!includePhotos)}
                   className={`w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg border-2 text-sm font-medium transition-colors ${
-                    includePhotos ? 'border-[#1e4d6b] bg-blue-50 text-[#1e4d6b]' : 'border-gray-300 text-gray-500'
+                    includePhotos ? 'border-[#1E2D4D] bg-blue-50 text-[#1E2D4D]' : 'border-gray-300 text-gray-500'
                   }`}
                 >
                   {includePhotos ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
@@ -654,7 +654,7 @@ export function AuditReport() {
                         key={s.id}
                         onClick={() => toggleSection(s.id)}
                         className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium transition-colors ${
-                          s.enabled ? 'border-[#1e4d6b] bg-blue-50 text-[#1e4d6b]' : 'border-gray-200 text-gray-400 bg-gray-50'
+                          s.enabled ? 'border-[#1E2D4D] bg-blue-50 text-[#1E2D4D]' : 'border-gray-200 text-gray-400 bg-[#FAF7F0]'
                         }`}
                       >
                         <Icon className="h-4 w-4" />
@@ -668,7 +668,7 @@ export function AuditReport() {
 
             <button
               onClick={() => setGenerated(true)}
-              className="w-full md:w-auto px-8 py-3 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg font-bold text-lg hover:bg-[#163a52] shadow-sm transition-colors"
+              className="w-full md:w-auto px-8 py-3 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg font-bold text-lg hover:bg-[#162340] shadow-sm transition-colors"
             >
               Generate Report
             </button>
@@ -679,15 +679,15 @@ export function AuditReport() {
         {generated && reportData && summary && (
           <>
             {/* Action bar */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 flex flex-wrap gap-3 items-center justify-between no-print">
+            <div className="bg-white rounded-xl border border-gray-200 p-4 flex flex-wrap gap-3 items-center justify-between no-print">
               <button
                 onClick={() => setGenerated(false)}
-                className="flex items-center gap-1 text-sm text-[#1e4d6b] hover:underline font-medium"
+                className="flex items-center gap-1 text-sm text-[#1E2D4D] hover:underline font-medium"
               >
                 ← Back to Configuration
               </button>
               <div className="flex gap-2 flex-wrap">
-                <button onClick={handleDownloadPDF} disabled={pdfLoading} className="flex items-center gap-2 px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium disabled:opacity-60">
+                <button onClick={handleDownloadPDF} disabled={pdfLoading} className="flex items-center gap-2 px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] text-sm font-medium disabled:opacity-60">
                   {pdfLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
                   {pdfLoading ? 'Generating...' : 'Download PDF'}
                 </button>
@@ -706,7 +706,7 @@ export function AuditReport() {
             {/* Printable Report */}
             <div ref={reportRef} className="print-report space-y-6">
               {/* Report Header */}
-              <div className="bg-[#1e4d6b] rounded-xl p-4 sm:p-6 text-white" style={{ pageBreakAfter: 'avoid' }}>
+              <div className="bg-[#1E2D4D] rounded-xl p-4 sm:p-6 text-white" style={{ pageBreakAfter: 'avoid' }}>
                 <div className="flex items-center gap-3 mb-4">
                   <EvidlyIcon size={32} />
                   <span className="text-2xl font-bold">
@@ -736,8 +736,8 @@ export function AuditReport() {
               </div>
 
               {/* Table of Contents */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 no-print">
-                <h3 className="text-lg font-bold text-gray-900 mb-3">Table of Contents</h3>
+              <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 no-print">
+                <h3 className="text-lg font-bold text-[#1E2D4D] mb-3">Table of Contents</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
                   {sections.filter(s => s.enabled).map((s, idx) => {
                     const Icon = s.icon;
@@ -748,7 +748,7 @@ export function AuditReport() {
                         className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 text-sm text-gray-700 font-medium"
                       >
                         <span className="text-xs text-gray-400 font-mono w-4">{idx + 1}.</span>
-                        <Icon className="h-4 w-4 text-[#1e4d6b]" />
+                        <Icon className="h-4 w-4 text-[#1E2D4D]" />
                         {s.label}
                       </a>
                     );
@@ -758,11 +758,11 @@ export function AuditReport() {
 
               {/* ─── Section: Executive Summary ────────────────────────────── */}
               {sectionEnabled('summary') && (
-                <div id="section-summary" className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 report-section">
+                <div id="section-summary" className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 report-section">
                   <button onClick={() => toggleExpand('summary')} className="flex items-center gap-2 w-full text-left no-print">
                     {expandedSections.summary ? <ChevronDown className="h-5 w-5 text-gray-400" /> : <ChevronRight className="h-5 w-5 text-gray-400" />}
                     <EvidlyIcon size={20} />
-                    <h3 className="text-lg font-bold text-gray-900 flex-1">Executive Summary</h3>
+                    <h3 className="text-lg font-bold text-[#1E2D4D] flex-1">Executive Summary</h3>
                   </button>
                   {expandedSections.summary && (
                     <div className="mt-4">
@@ -774,7 +774,7 @@ export function AuditReport() {
                             <circle cx="50" cy="50" r="42" fill="none" stroke={getScoreColor(summary.complianceScore)} strokeWidth="8" strokeDasharray={`${summary.complianceScore * 2.64} 264`} strokeLinecap="round" />
                           </svg>
                           <div className="absolute inset-0 flex items-center justify-center">
-                            <span className="text-2xl font-bold text-gray-900">{summary.complianceScore}</span>
+                            <span className="text-2xl font-bold text-[#1E2D4D]">{summary.complianceScore}</span>
                           </div>
                         </div>
                         <div>
@@ -789,24 +789,24 @@ export function AuditReport() {
                       {/* KPI grid */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                         <div className="p-3 rounded-lg border border-gray-200 text-center">
-                          <div className="text-2xl font-bold text-[#1e4d6b]">{summary.totalTemps.toLocaleString()}</div>
+                          <div className="text-2xl font-bold text-[#1E2D4D]">{summary.totalTemps.toLocaleString()}</div>
                           <div className="text-xs text-gray-500">Temperature Readings</div>
                           <div className="text-xs font-semibold text-green-600 mt-1">{summary.tempPassRate}% pass rate</div>
                         </div>
                         <div className="p-3 rounded-lg border border-gray-200 text-center">
-                          <div className="text-2xl font-bold text-[#1e4d6b]">{summary.totalChecklists}</div>
+                          <div className="text-2xl font-bold text-[#1E2D4D]">{summary.totalChecklists}</div>
                           <div className="text-xs text-gray-500">Checklists Completed</div>
                           <div className="text-xs font-semibold text-green-600 mt-1">{summary.avgScore}% avg score</div>
                         </div>
                         <div className="p-3 rounded-lg border border-gray-200 text-center">
-                          <div className="text-2xl font-bold text-[#1e4d6b]">{summary.totalIncidents}</div>
+                          <div className="text-2xl font-bold text-[#1E2D4D]">{summary.totalIncidents}</div>
                           <div className="text-xs text-gray-500">Incidents Logged</div>
                           <div className="text-xs font-semibold mt-1" style={{ color: summary.openIncidents > 0 ? '#d97706' : '#16a34a' }}>
                             {summary.resolvedIncidents} resolved, {summary.openIncidents} open
                           </div>
                         </div>
                         <div className="p-3 rounded-lg border border-gray-200 text-center">
-                          <div className="text-2xl font-bold text-[#1e4d6b]">{summary.totalDocs}</div>
+                          <div className="text-2xl font-bold text-[#1E2D4D]">{summary.totalDocs}</div>
                           <div className="text-xs text-gray-500">Documents on File</div>
                           <div className="text-xs font-semibold mt-1" style={{ color: summary.expiredDocs > 0 ? '#dc2626' : '#16a34a' }}>
                             {summary.currentDocs} current, {summary.expiredDocs} expired
@@ -827,7 +827,7 @@ export function AuditReport() {
                                     <circle cx="50" cy="50" r="42" fill="none" stroke={getScoreColor(ls.score)} strokeWidth="10" strokeDasharray={`${ls.score * 2.64} 264`} strokeLinecap="round" />
                                   </svg>
                                   <div className="absolute inset-0 flex items-center justify-center">
-                                    <span className="text-sm font-bold text-gray-900">{ls.score}</span>
+                                    <span className="text-sm font-bold text-[#1E2D4D]">{ls.score}</span>
                                   </div>
                                 </div>
                                 <div>
@@ -848,11 +848,11 @@ export function AuditReport() {
 
               {/* ─── Section: Temperature Logs ─────────────────────────────── */}
               {sectionEnabled('temp_logs') && (
-                <div id="section-temp_logs" className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 report-section">
+                <div id="section-temp_logs" className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 report-section">
                   <button onClick={() => toggleExpand('temp_logs')} className="flex items-center gap-2 w-full text-left no-print">
                     {expandedSections.temp_logs ? <ChevronDown className="h-5 w-5 text-gray-400" /> : <ChevronRight className="h-5 w-5 text-gray-400" />}
-                    <Thermometer className="h-5 w-5 text-[#1e4d6b]" />
-                    <h3 className="text-lg font-bold text-gray-900 flex-1">Temperature Logs</h3>
+                    <Thermometer className="h-5 w-5 text-[#1E2D4D]" />
+                    <h3 className="text-lg font-bold text-[#1E2D4D] flex-1">Temperature Logs</h3>
                     <span className="text-sm text-gray-400">{reportData.tempLogs.length} records</span>
                   </button>
                   {expandedSections.temp_logs && (
@@ -860,7 +860,7 @@ export function AuditReport() {
                       <div className="flex gap-4 mb-4 text-sm flex-wrap">
                         <span className="px-2 py-1 bg-green-50 text-green-700 rounded font-medium">{summary.passTemps} Pass</span>
                         <span className="px-2 py-1 bg-red-50 text-red-700 rounded font-medium">{summary.totalTemps - summary.passTemps} Fail</span>
-                        <span className="px-2 py-1 bg-gray-50 text-gray-700 rounded font-medium">{summary.tempPassRate}% pass rate</span>
+                        <span className="px-2 py-1 bg-[#FAF7F0] text-gray-700 rounded font-medium">{summary.tempPassRate}% pass rate</span>
                         {includePhotos && <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded font-medium">Photo evidence attached for failures</span>}
                       </div>
                       <div className="overflow-x-auto">
@@ -901,11 +901,11 @@ export function AuditReport() {
 
               {/* ─── Section: Checklists ────────────────────────────────────── */}
               {sectionEnabled('checklists') && (
-                <div id="section-checklists" className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 report-section">
+                <div id="section-checklists" className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 report-section">
                   <button onClick={() => toggleExpand('checklists')} className="flex items-center gap-2 w-full text-left no-print">
                     {expandedSections.checklists ? <ChevronDown className="h-5 w-5 text-gray-400" /> : <ChevronRight className="h-5 w-5 text-gray-400" />}
-                    <CheckSquare className="h-5 w-5 text-[#1e4d6b]" />
-                    <h3 className="text-lg font-bold text-gray-900 flex-1">Checklist Completions</h3>
+                    <CheckSquare className="h-5 w-5 text-[#1E2D4D]" />
+                    <h3 className="text-lg font-bold text-[#1E2D4D] flex-1">Checklist Completions</h3>
                     <span className="text-sm text-gray-400">{reportData.checklists.length} records</span>
                   </button>
                   {expandedSections.checklists && (
@@ -952,11 +952,11 @@ export function AuditReport() {
 
               {/* ─── Section: Incidents ──────────────────────────────────────── */}
               {sectionEnabled('incidents') && (
-                <div id="section-incidents" className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 report-section">
+                <div id="section-incidents" className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 report-section">
                   <button onClick={() => toggleExpand('incidents')} className="flex items-center gap-2 w-full text-left no-print">
                     {expandedSections.incidents ? <ChevronDown className="h-5 w-5 text-gray-400" /> : <ChevronRight className="h-5 w-5 text-gray-400" />}
-                    <AlertTriangle className="h-5 w-5 text-[#1e4d6b]" />
-                    <h3 className="text-lg font-bold text-gray-900 flex-1">Corrective Actions / Incidents</h3>
+                    <AlertTriangle className="h-5 w-5 text-[#1E2D4D]" />
+                    <h3 className="text-lg font-bold text-[#1E2D4D] flex-1">Corrective Actions / Incidents</h3>
                     <span className="text-sm text-gray-400">{reportData.incidents.length} records</span>
                   </button>
                   {expandedSections.incidents && (
@@ -1003,11 +1003,11 @@ export function AuditReport() {
 
               {/* ─── Section: Vendor Services ───────────────────────────────── */}
               {sectionEnabled('vendors') && (
-                <div id="section-vendors" className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 report-section">
+                <div id="section-vendors" className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 report-section">
                   <button onClick={() => toggleExpand('vendors')} className="flex items-center gap-2 w-full text-left no-print">
                     {expandedSections.vendors ? <ChevronDown className="h-5 w-5 text-gray-400" /> : <ChevronRight className="h-5 w-5 text-gray-400" />}
-                    <Truck className="h-5 w-5 text-[#1e4d6b]" />
-                    <h3 className="text-lg font-bold text-gray-900 flex-1">Vendor Services</h3>
+                    <Truck className="h-5 w-5 text-[#1E2D4D]" />
+                    <h3 className="text-lg font-bold text-[#1E2D4D] flex-1">Vendor Services</h3>
                     <span className="text-sm text-gray-400">{reportData.vendors.length} records</span>
                   </button>
                   {expandedSections.vendors && (
@@ -1048,11 +1048,11 @@ export function AuditReport() {
 
               {/* ─── Section: Documents ──────────────────────────────────────── */}
               {sectionEnabled('documents') && (
-                <div id="section-documents" className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 report-section">
+                <div id="section-documents" className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 report-section">
                   <button onClick={() => toggleExpand('documents')} className="flex items-center gap-2 w-full text-left no-print">
                     {expandedSections.documents ? <ChevronDown className="h-5 w-5 text-gray-400" /> : <ChevronRight className="h-5 w-5 text-gray-400" />}
-                    <FileText className="h-5 w-5 text-[#1e4d6b]" />
-                    <h3 className="text-lg font-bold text-gray-900 flex-1">Documents</h3>
+                    <FileText className="h-5 w-5 text-[#1E2D4D]" />
+                    <h3 className="text-lg font-bold text-[#1E2D4D] flex-1">Documents</h3>
                     <span className="text-sm text-gray-400">{reportData.documents.length} records</span>
                   </button>
                   {expandedSections.documents && (
@@ -1090,11 +1090,11 @@ export function AuditReport() {
 
               {/* ─── Section: Equipment Status ──────────────────────────────── */}
               {sectionEnabled('equipment') && (
-                <div id="section-equipment" className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 report-section">
+                <div id="section-equipment" className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 report-section">
                   <button onClick={() => toggleExpand('equipment')} className="flex items-center gap-2 w-full text-left no-print">
                     {expandedSections.equipment ? <ChevronDown className="h-5 w-5 text-gray-400" /> : <ChevronRight className="h-5 w-5 text-gray-400" />}
-                    <Wrench className="h-5 w-5 text-[#1e4d6b]" />
-                    <h3 className="text-lg font-bold text-gray-900 flex-1">Equipment Status</h3>
+                    <Wrench className="h-5 w-5 text-[#1E2D4D]" />
+                    <h3 className="text-lg font-bold text-[#1E2D4D] flex-1">Equipment Status</h3>
                     <span className="text-sm text-gray-400">{reportData.equipment.length} items</span>
                   </button>
                   {expandedSections.equipment && (
@@ -1131,18 +1131,18 @@ export function AuditReport() {
 
               {/* ─── Section: Chain of Custody / Audit Log ──────────────────── */}
               {sectionEnabled('audit_log') && (
-                <div id="section-audit_log" className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 report-section">
+                <div id="section-audit_log" className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 report-section">
                   <button onClick={() => toggleExpand('audit_log')} className="flex items-center gap-2 w-full text-left no-print">
                     {expandedSections.audit_log ? <ChevronDown className="h-5 w-5 text-gray-400" /> : <ChevronRight className="h-5 w-5 text-gray-400" />}
-                    <ClipboardList className="h-5 w-5 text-[#1e4d6b]" />
-                    <h3 className="text-lg font-bold text-gray-900 flex-1">Chain of Custody — Inspection Log</h3>
+                    <ClipboardList className="h-5 w-5 text-[#1E2D4D]" />
+                    <h3 className="text-lg font-bold text-[#1E2D4D] flex-1">Chain of Custody — Inspection Log</h3>
                     <span className="text-sm text-gray-400">{reportData.auditLog.length} entries</span>
                   </button>
                   {expandedSections.audit_log && (
                     <div className="mt-4">
                       <div className="flex gap-4 mb-4 text-sm flex-wrap">
                         <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded font-medium">{summary.totalAuditEntries} Total Actions</span>
-                        <span className="px-2 py-1 bg-gray-50 text-gray-700 rounded font-medium">{USERS.length} Active Users</span>
+                        <span className="px-2 py-1 bg-[#FAF7F0] text-gray-700 rounded font-medium">{USERS.length} Active Users</span>
                       </div>
                       <div className="overflow-x-auto">
                         <table className="w-full">
@@ -1172,7 +1172,7 @@ export function AuditReport() {
               )}
 
               {/* Report Footer */}
-              <div className="bg-gray-50 rounded-xl p-4 text-center text-xs text-gray-400 border border-gray-200">
+              <div className="bg-[#FAF7F0] rounded-xl p-4 text-center text-xs text-gray-400 border border-gray-200">
                 <p>This report was generated by <strong>EvidLY</strong> — Lead with Confidence</p>
                 <p className="mt-1">Report ID: RPT-{Date.now().toString(36).toUpperCase()} • Generated: {generatedAt}</p>
                 <p className="mt-1">This document is an accurate representation of compliance data as of the generation date.</p>

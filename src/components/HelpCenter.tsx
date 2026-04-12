@@ -46,15 +46,15 @@ export function HelpCenter({ inline = false }: HelpCenterProps) {
       <div className={inline ? '' : 'max-w-3xl mx-auto'}>
         <button
           onClick={() => setSelectedArticle(null)}
-          className="flex items-center gap-1 text-sm text-[#1e4d6b] hover:text-[#163a52] mb-4 font-medium"
+          className="flex items-center gap-1 text-sm text-[#1E2D4D] hover:text-[#141E33] mb-4 font-medium"
         >
           ← Back to Help Center
         </button>
         <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
-          <span className="inline-block px-2.5 py-1 bg-blue-50 text-[#1e4d6b] text-xs font-medium rounded-full mb-3">{selectedArticle.category}</span>
-          <h2 className="text-xl font-bold text-gray-900 mb-4">{selectedArticle.title}</h2>
+          <span className="inline-block px-2.5 py-1 bg-blue-50 text-[#1E2D4D] text-xs font-medium rounded-full mb-3">{selectedArticle.category}</span>
+          <h2 className="text-xl font-bold text-[#1E2D4D] mb-4">{selectedArticle.title}</h2>
           <p className="text-gray-600 leading-relaxed">{selectedArticle.summary}</p>
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <div className="mt-6 p-4 bg-[#FAF7F0] rounded-lg border border-gray-200">
             <p className="text-sm text-gray-500">Full article content will be loaded from the knowledge base. In the meantime, try the AI Advisor for instant answers.</p>
           </div>
         </div>
@@ -66,7 +66,7 @@ export function HelpCenter({ inline = false }: HelpCenterProps) {
     <div className={inline ? '' : 'max-w-3xl mx-auto'}>
       {/* Header */}
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Help Center</h2>
+        <h2 className="text-2xl font-bold text-[#1E2D4D] mb-2">Help Center</h2>
         <p className="text-gray-500">Find answers, learn features, and get the most out of EvidLY.</p>
       </div>
 
@@ -78,30 +78,30 @@ export function HelpCenter({ inline = false }: HelpCenterProps) {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search help articles..."
-          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
         />
       </div>
 
       {/* Quick actions */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
-        <button className="flex items-center gap-3 p-4 bg-white border border-gray-200 rounded-xl hover:border-[#1e4d6b] hover:bg-blue-50/50 transition-all text-left">
-          <MessageSquare className="w-8 h-8 text-[#1e4d6b]" />
+        <button className="flex items-center gap-3 p-4 bg-white border border-gray-200 rounded-xl hover:border-[#1E2D4D] hover:bg-blue-50/50 transition-all text-left">
+          <MessageSquare className="w-8 h-8 text-[#1E2D4D]" />
           <div>
-            <p className="text-sm font-semibold text-gray-900">AI Advisor</p>
+            <p className="text-sm font-semibold text-[#1E2D4D]">AI Advisor</p>
             <p className="text-xs text-gray-500">Ask any compliance question</p>
           </div>
         </button>
-        <button className="flex items-center gap-3 p-4 bg-white border border-gray-200 rounded-xl hover:border-[#1e4d6b] hover:bg-blue-50/50 transition-all text-left">
-          <Mail className="w-8 h-8 text-[#1e4d6b]" />
+        <button className="flex items-center gap-3 p-4 bg-white border border-gray-200 rounded-xl hover:border-[#1E2D4D] hover:bg-blue-50/50 transition-all text-left">
+          <Mail className="w-8 h-8 text-[#1E2D4D]" />
           <div>
-            <p className="text-sm font-semibold text-gray-900">Email Support</p>
+            <p className="text-sm font-semibold text-[#1E2D4D]">Email Support</p>
             <p className="text-xs text-gray-500">support@getevidly.com</p>
           </div>
         </button>
-        <button className="flex items-center gap-3 p-4 bg-white border border-gray-200 rounded-xl hover:border-[#1e4d6b] hover:bg-blue-50/50 transition-all text-left">
-          <Phone className="w-8 h-8 text-[#1e4d6b]" />
+        <button className="flex items-center gap-3 p-4 bg-white border border-gray-200 rounded-xl hover:border-[#1E2D4D] hover:bg-blue-50/50 transition-all text-left">
+          <Phone className="w-8 h-8 text-[#1E2D4D]" />
           <div>
-            <p className="text-sm font-semibold text-gray-900">Call Us</p>
+            <p className="text-sm font-semibold text-[#1E2D4D]">Call Us</p>
             <p className="text-xs text-gray-500">(844) 493-3159</p>
           </div>
         </button>
@@ -115,7 +115,7 @@ export function HelpCenter({ inline = false }: HelpCenterProps) {
             onClick={() => setSelectedCategory(cat)}
             className={`px-3 py-1.5 text-sm font-medium rounded-full whitespace-nowrap transition-colors ${
               selectedCategory === cat
-                ? 'bg-[#1e4d6b] text-white'
+                ? 'bg-[#1E2D4D] text-white'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
           >
@@ -130,12 +130,12 @@ export function HelpCenter({ inline = false }: HelpCenterProps) {
           <div
             key={article.id}
             onClick={() => setSelectedArticle(article)}
-            className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-xl hover:border-[#1e4d6b] hover:bg-blue-50/30 cursor-pointer transition-all"
+            className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-xl hover:border-[#1E2D4D] hover:bg-blue-50/30 cursor-pointer transition-all"
           >
             <div className="flex items-start gap-3">
               <BookOpen className="w-5 h-5 text-gray-400 mt-0.5 flex-shrink-0" />
               <div>
-                <p className="text-sm font-semibold text-gray-900">{article.title}</p>
+                <p className="text-sm font-semibold text-[#1E2D4D]">{article.title}</p>
                 <p className="text-xs text-gray-500 mt-1">{article.summary}</p>
               </div>
             </div>

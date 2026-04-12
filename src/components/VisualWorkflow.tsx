@@ -41,7 +41,7 @@ const steps = [
     icon: QrCode,
     title: 'Inspection Ready',
     description: 'Inspector scans your QR passport. Everything verified in seconds.',
-    color: '#1e4d6b',
+    color: '#1E2D4D',
     bg: '#f0f7ff',
   },
 ];
@@ -49,7 +49,7 @@ const steps = [
 export function VisualWorkflow() {
   return (
     <div>
-      <h3 className="text-lg font-semibold text-gray-900 mb-2">How EvidLY Works</h3>
+      <h3 className="text-lg font-semibold text-[#1E2D4D] mb-2">How EvidLY Works</h3>
       <p className="text-sm text-gray-500 mb-6">From daily operations to inspection-ready — all automated.</p>
 
       {/* Desktop flow */}
@@ -65,7 +65,7 @@ export function VisualWorkflow() {
                 >
                   <Icon className="w-7 h-7" style={{ color: step.color }} />
                 </div>
-                <p className="text-sm font-semibold text-gray-900 mb-1">{step.title}</p>
+                <p className="text-sm font-semibold text-[#1E2D4D] mb-1">{step.title}</p>
                 <p className="text-xs text-gray-500 leading-relaxed">{step.description}</p>
               </div>
               {index < steps.length - 1 && (
@@ -98,7 +98,7 @@ export function VisualWorkflow() {
                 )}
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-900">{step.title}</p>
+                <p className="text-sm font-semibold text-[#1E2D4D]">{step.title}</p>
                 <p className="text-xs text-gray-500 mt-1">{step.description}</p>
               </div>
             </div>

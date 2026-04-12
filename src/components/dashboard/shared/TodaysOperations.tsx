@@ -30,7 +30,7 @@ export function TodaysOperations({ tasks, navigate, maxVisible = 6 }: TodaysOper
       <div>
         {tasks.length === 0 && (
           <div className="px-4 py-6 text-center">
-            <p className="text-[13px] font-medium" style={{ color: BODY_TEXT, margin: '0 0 4px' }}>
+            <p className="text-sm font-medium" style={{ color: BODY_TEXT, margin: '0 0 4px' }}>
               No operations logged today yet
             </p>
             <p className="text-xs" style={{ color: '#6B7F96', margin: 0, maxWidth: 340, marginLeft: 'auto', marginRight: 'auto' }}>
@@ -57,12 +57,12 @@ export function TodaysOperations({ tasks, navigate, maxVisible = 6 }: TodaysOper
               {task.status === 'pending' && <span className="shrink-0 w-4 h-4 rounded-full border-2 border-gray-300" />}
               {isOverdue && <AlertCircle size={16} className="text-red-500 shrink-0" />}
               <div className="flex-1 min-w-0">
-                <p className={`text-[13px] ${isDone ? 'text-gray-400 line-through' : 'text-gray-800'}`}>
+                <p className={`text-sm ${isDone ? 'text-gray-400 line-through' : 'text-gray-800'}`}>
                   {task.label}
                 </p>
               </div>
               <div className="text-right shrink-0">
-                <p className={`text-[11px] ${isOverdue ? 'text-red-600 font-semibold' : 'text-gray-400'}`}>
+                <p className={`text-xs ${isOverdue ? 'text-red-600 font-semibold' : 'text-gray-400'}`}>
                   {task.time}
                 </p>
               </div>

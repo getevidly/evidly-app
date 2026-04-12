@@ -142,7 +142,7 @@ export function ServiceComplianceList({ onLogService }) {
               display: 'flex', alignItems: 'center', gap: 4,
               padding: '4px 10px', borderRadius: 8,
               background: 'none', border: '1px solid #D1D9E6',
-              fontSize: 11, fontWeight: 600, color: '#1e4d6b',
+              fontSize: 11, fontWeight: 600, color: '#1E2D4D',
               cursor: 'pointer',
             }}
           >
@@ -202,7 +202,7 @@ export function ServiceComplianceList({ onLogService }) {
             style={{
               display: 'flex', alignItems: 'center', gap: 5,
               padding: '7px 14px', borderRadius: 8,
-              background: '#1e4d6b', border: 'none',
+              background: '#1E2D4D', border: 'none',
               fontSize: 12, fontWeight: 600, color: '#fff', cursor: 'pointer',
             }}
           >

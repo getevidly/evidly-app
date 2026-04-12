@@ -158,7 +158,7 @@ export function FacilitiesDashboard() {
       case 'on_track': return 'bg-green-50 border-green-200';
       case 'due_soon': return 'bg-yellow-50 border-yellow-200';
       case 'overdue': return 'bg-red-50 border-red-200';
-      default: return 'bg-gray-50 border-gray-200';
+      default: return 'bg-[#FAF7F0] border-gray-200';
     }
   };
 
@@ -202,8 +202,8 @@ export function FacilitiesDashboard() {
         {/* K2C Widget */}
         <K2CWidget onInviteClick={() => setShowInviteModal(true)} />
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">Equipment Status</h2>
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+          <h2 className="text-xl font-bold text-[#1E2D4D] mb-6">Equipment Status</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {equipmentSystems.map((equipment) => {
               const Icon = equipment.icon;
@@ -217,7 +217,7 @@ export function FacilitiesDashboard() {
                       <Icon className="h-6 w-6" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-bold text-gray-900 text-lg">{equipment.name}</h3>
+                      <h3 className="font-bold text-[#1E2D4D] text-lg">{equipment.name}</h3>
                       <p className="text-xs text-gray-600 mt-1">{equipment.vendor}</p>
                     </div>
                   </div>
@@ -240,7 +240,7 @@ export function FacilitiesDashboard() {
                     {equipment.status !== 'on_track' && (
                       <button
                         onClick={() => navigate('/vendors')}
-                        className="text-xs px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium min-h-[44px]"
+                        className="text-xs px-3 py-1.5 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors font-medium min-h-[44px]"
                       >
                         {equipment.status === 'overdue' ? 'Schedule Now' : 'Schedule Service'}
                       </button>
@@ -270,10 +270,10 @@ export function FacilitiesDashboard() {
                   {vendorActions.map((action) => (
                     <div
                       key={action.id}
-                      className="flex items-center justify-between flex-wrap gap-2 bg-white rounded-xl p-4 shadow-sm border border-gray-200"
+                      className="flex items-center justify-between flex-wrap gap-2 bg-white rounded-xl p-4 border border-gray-200"
                     >
                       <div className="flex-1">
-                        <div className="font-semibold text-gray-900">{action.vendor}</div>
+                        <div className="font-semibold text-[#1E2D4D]">{action.vendor}</div>
                         <div className="text-sm text-gray-600 mt-1">{action.message}</div>
                       </div>
                       <button
@@ -281,7 +281,7 @@ export function FacilitiesDashboard() {
                         className={`ml-4 px-4 py-2 rounded-lg font-medium text-sm transition-colors min-h-[44px] ${
                           action.priority === 'high'
                             ? 'bg-red-600 text-white hover:bg-red-700'
-                            : 'bg-blue-600 text-white hover:bg-blue-700'
+                            : 'bg-[#1E2D4D] text-white hover:bg-[#162340]'
                         }`}
                       >
                         View
@@ -294,8 +294,8 @@ export function FacilitiesDashboard() {
           </div>
         )}
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
-          <h3 className="text-lg font-bold text-gray-900 mb-4">Documents to Review</h3>
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+          <h3 className="text-lg font-bold text-[#1E2D4D] mb-4">Documents to Review</h3>
           <div className="space-y-3">
             {documents.map((doc) => (
               <div
@@ -321,7 +321,7 @@ export function FacilitiesDashboard() {
           </div>
           <button
             onClick={() => navigate('/documents')}
-            className="w-full mt-4 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium min-h-[44px]"
+            className="w-full mt-4 px-4 py-3 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors font-medium min-h-[44px]"
           >
             Upload Document
           </button>
@@ -330,29 +330,29 @@ export function FacilitiesDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <button
             onClick={() => navigate('/vendors')}
-            className="bg-white rounded-xl shadow-sm border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
+            className="bg-white rounded-xl border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
             style={{ minHeight: '120px' }}
           >
             <FileCheck className="h-12 w-12 text-blue-600 mx-auto mb-3 group-hover:scale-110 transition-transform" />
-            <div className="text-lg font-bold text-gray-900">View Vendors</div>
+            <div className="text-lg font-bold text-[#1E2D4D]">View Vendors</div>
           </button>
 
           <button
             onClick={() => navigate('/documents')}
-            className="bg-white rounded-xl shadow-sm border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
+            className="bg-white rounded-xl border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
             style={{ minHeight: '120px' }}
           >
             <FileText className="h-12 w-12 text-blue-600 mx-auto mb-3 group-hover:scale-110 transition-transform" />
-            <div className="text-lg font-bold text-gray-900">Upload Document</div>
+            <div className="text-lg font-bold text-[#1E2D4D]">Upload Document</div>
           </button>
 
           <button
             onClick={() => navigate('/alerts')}
-            className="bg-white rounded-xl shadow-sm border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
+            className="bg-white rounded-xl border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
             style={{ minHeight: '120px' }}
           >
             <AlertTriangle className="h-12 w-12 text-blue-600 mx-auto mb-3 group-hover:scale-110 transition-transform" />
-            <div className="text-lg font-bold text-gray-900">View Alerts</div>
+            <div className="text-lg font-bold text-[#1E2D4D]">View Alerts</div>
           </button>
         </div>
       </div>

@@ -168,7 +168,7 @@ export function IncidentDetailPage() {
           <button
             onClick={() => navigate('/safety/incidents')}
             className="mt-4 px-4 py-2 text-sm font-semibold text-white rounded-lg"
-            style={{ background: '#1e4d6b' }}
+            style={{ background: '#1E2D4D' }}
           >
             Back to Incidents
           </button>
@@ -374,20 +374,20 @@ export function IncidentDetailPage() {
                   {idx > 0 && (
                     <div
                       className="absolute left-0 right-1/2 top-1/2 h-0.5 -translate-y-1/2"
-                      style={{ background: idx <= currentStepIdx ? '#1e4d6b' : CARD_BORDER }}
+                      style={{ background: idx <= currentStepIdx ? '#1E2D4D' : CARD_BORDER }}
                     />
                   )}
                   {idx < TIMELINE_STEPS.length - 1 && (
                     <div
                       className="absolute left-1/2 right-0 top-1/2 h-0.5 -translate-y-1/2"
-                      style={{ background: idx < currentStepIdx ? '#1e4d6b' : CARD_BORDER }}
+                      style={{ background: idx < currentStepIdx ? '#1E2D4D' : CARD_BORDER }}
                     />
                   )}
                   <div
                     className="relative z-10 w-8 h-8 rounded-full flex items-center justify-center mx-auto"
                     style={{
-                      background: isComplete ? '#1e4d6b' : CARD_BG,
-                      border: `2px solid ${isComplete ? '#1e4d6b' : CARD_BORDER}`,
+                      background: isComplete ? '#1E2D4D' : CARD_BG,
+                      border: `2px solid ${isComplete ? '#1E2D4D' : CARD_BORDER}`,
                     }}
                   >
                     {isComplete && (
@@ -413,7 +413,7 @@ export function IncidentDetailPage() {
           <button
             onClick={() => alert('Begin investigation flow coming soon.')}
             className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white rounded-lg transition-colors"
-            style={{ background: '#1e4d6b' }}
+            style={{ background: '#1E2D4D' }}
           >
             <Search className="w-4 h-4" />
             Begin Investigation

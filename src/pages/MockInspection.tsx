@@ -54,7 +54,7 @@ interface QuestionAnswer {
 // Constants
 // ---------------------------------------------------------------------------
 
-const NAVY = '#1e4d6b';
+const NAVY = '#1E2D4D';
 const GOLD = '#d4af37';
 
 /** Estimate likely outcome based on severity counts (NOT a score). */
@@ -369,7 +369,7 @@ export default function MockInspection() {
         <div className="bg-white rounded-xl border border-[#b8d4e8] p-4 sm:p-5">
           <div className="flex items-center gap-2 mb-3">
             <History className="h-5 w-5 text-gray-500" />
-            <h3 className="text-sm font-bold text-gray-900">Past Mock Inspections</h3>
+            <h3 className="text-sm font-bold text-[#1E2D4D]">Past Mock Inspections</h3>
           </div>
           <p style={{ fontSize: 13, color: '#6B7F96', textAlign: 'center', margin: '8px 0', padding: '8px 0' }}>
             No past sessions yet. Complete your first mock inspection above to see your history here.
@@ -380,13 +380,13 @@ export default function MockInspection() {
         <div className="bg-white rounded-xl border border-[#b8d4e8] p-4 sm:p-5">
           <div className="flex items-center gap-2 mb-3">
             <History className="h-5 w-5 text-gray-500" />
-            <h3 className="text-sm font-bold text-gray-900">Past Mock Inspections</h3>
+            <h3 className="text-sm font-bold text-[#1E2D4D]">Past Mock Inspections</h3>
           </div>
           <div className="space-y-2">
             {pastSessions.map(session => {
               const diffInfo = DIFFICULTY_INFO[session.difficulty as MockDifficulty] || DIFFICULTY_INFO.routine;
               return (
-                <div key={session.id} className="flex items-center justify-between p-3 rounded-lg bg-gray-50 border border-gray-200">
+                <div key={session.id} className="flex items-center justify-between p-3 rounded-lg bg-[#FAF7F0] border border-gray-200">
                   <div>
                     <span className="text-sm font-medium text-gray-900">
                       {format(new Date(session.date), 'MMM d, yyyy')}
@@ -470,7 +470,7 @@ export default function MockInspection() {
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-xs text-gray-500">{q.citation}</span>
                 <span
-                  className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                  className="text-xs font-semibold px-2 py-0.5 rounded-full"
                   style={{
                     backgroundColor: q.category === 'food_safety' ? '#f0fdf4' : '#fef2f2',
                     color: q.category === 'food_safety' ? '#166534' : '#991b1b',
@@ -479,7 +479,7 @@ export default function MockInspection() {
                   {q.category === 'food_safety' ? 'Food Safety' : 'Facility Safety'}
                 </span>
                 <span
-                  className="text-[10px] font-semibold px-2 py-0.5 rounded-full border"
+                  className="text-xs font-semibold px-2 py-0.5 rounded-full border"
                   style={{
                     color: q.severity === 'critical' ? '#991b1b' : q.severity === 'major' ? '#92400e' : '#6b7280',
                     backgroundColor: q.severity === 'critical' ? '#fef2f2' : q.severity === 'major' ? '#fffbeb' : '#f3f4f6',
@@ -543,7 +543,7 @@ export default function MockInspection() {
                 onChange={e => setNotes(currentIdx, e.target.value)}
                 placeholder="Document the issue..."
                 rows={2}
-                className="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/30 focus:border-[#1e4d6b] resize-none"
+                className="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/30 focus:border-[#1E2D4D] resize-none"
               />
               <SuggestionPill
                 fieldLabel="Question Notes"
@@ -560,7 +560,7 @@ export default function MockInspection() {
           <button
             onClick={() => setCurrentIdx(p => Math.max(0, p - 1))}
             disabled={currentIdx === 0}
-            className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-medium text-[#1e4d6b] bg-[#eef4f8] hover:bg-[#d9e8f0] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-medium text-[#1E2D4D] bg-[#eef4f8] hover:bg-[#d9e8f0] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             style={{ minHeight: 44 }}
           >
             <ChevronLeft className="h-4 w-4" />
@@ -646,7 +646,7 @@ export default function MockInspection() {
         {/* Violations */}
         {violations.length > 0 && (
           <div className="bg-white rounded-xl border border-[#b8d4e8] p-5">
-            <h3 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <h3 className="text-sm font-bold text-[#1E2D4D] mb-4 flex items-center gap-2">
               <AlertTriangle className="h-4 w-4 text-red-500" />
               What the Inspector Found ({violations.length})
             </h3>
@@ -659,7 +659,7 @@ export default function MockInspection() {
                   minor: 'border-l-yellow-500',
                 };
                 return (
-                  <div key={q.id} className={`border-l-4 ${sevColors[q.severity]} bg-gray-50 rounded-r-lg p-3`}>
+                  <div key={q.id} className={`border-l-4 ${sevColors[q.severity]} bg-[#FAF7F0] rounded-r-lg p-3`}>
                     <div className="flex items-start justify-between gap-2">
                       <div>
                         <p className="text-sm font-medium text-gray-900">{q.violationType}</p>
@@ -685,7 +685,7 @@ export default function MockInspection() {
         {/* Passes */}
         {passes.length > 0 && (
           <div className="bg-white rounded-xl border border-[#b8d4e8] p-5">
-            <h3 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <h3 className="text-sm font-bold text-[#1E2D4D] mb-4 flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-green-500" />
               What You Passed ({passes.length})
             </h3>

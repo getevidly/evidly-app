@@ -166,12 +166,12 @@ export function ClientReports() {
             >
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-lg">{card.icon}</span>
-                <span className="text-[13px] font-bold" style={{ color: NAVY }}>{card.title}</span>
+                <span className="text-sm font-bold" style={{ color: NAVY }}>{card.title}</span>
               </div>
-              <p className="text-[11px] leading-relaxed mb-2" style={{ color: TEXT_SEC, lineHeight: 1.5 }}>
+              <p className="text-xs leading-relaxed mb-2" style={{ color: TEXT_SEC, lineHeight: 1.5 }}>
                 {card.description}
               </p>
-              <span className="text-[11px] font-semibold" style={{ color: count > 0 ? card.color : TEXT_MUTED }}>
+              <span className="text-xs font-semibold" style={{ color: count > 0 ? card.color : TEXT_MUTED }}>
                 {count} report{count !== 1 ? 's' : ''} available
               </span>
             </button>
@@ -225,8 +225,8 @@ export function ClientReports() {
                 >
                   <span className="text-xl">{card?.icon || '📋'}</span>
                   <div className="flex-1 min-w-0">
-                    <div className="text-[13px] font-semibold" style={{ color: NAVY }}>{report.title}</div>
-                    <div className="text-[11px] mt-0.5" style={{ color: TEXT_MUTED }}>
+                    <div className="text-sm font-semibold" style={{ color: NAVY }}>{report.title}</div>
+                    <div className="text-xs mt-0.5" style={{ color: TEXT_MUTED }}>
                       {report.period_start && report.period_end
                         ? `${new Date(report.period_start).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – ${new Date(report.period_end).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`
                         : new Date(report.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
@@ -234,7 +234,7 @@ export function ClientReports() {
                   </div>
                   <div className="flex items-center gap-3">
                     <span
-                      className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                      className="text-xs font-bold px-2 py-0.5 rounded-full"
                       style={{
                         background: report.status === 'published' ? '#EFF6FF' : '#ECFDF5',
                         color: report.status === 'published' ? '#2563EB' : '#059669',

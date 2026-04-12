@@ -64,7 +64,7 @@ export function AutoDocumentRequest() {
         <div className="flex items-center gap-3">
           <div className={`w-3 h-3 rounded-full ${settings.autoRequestEnabled ? 'bg-green-500 animate-live-dot' : 'bg-gray-300'}`} />
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">Auto Document Requests</h3>
+            <h3 className="text-lg font-semibold text-[#1E2D4D]">Auto Document Requests</h3>
             <p className="text-sm text-gray-500">
               {settings.autoRequestEnabled
                 ? `Automatically requests documents ${settings.daysBefore} days before expiration`
@@ -110,7 +110,7 @@ export function AutoDocumentRequest() {
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <table className="w-full">
           <thead>
-            <tr className="bg-gray-50 border-b border-gray-200">
+            <tr className="bg-[#FAF7F0] border-b border-gray-200">
               <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Vendor</th>
               <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Document</th>
               <th className="text-center px-4 py-3 text-xs font-medium text-gray-500 uppercase">Status</th>
@@ -133,7 +133,7 @@ export function AutoDocumentRequest() {
                 <td className="px-4 py-3 text-sm text-gray-500 text-center">{req.reminderCount}</td>
                 <td className="px-4 py-3 text-center">
                   {req.secureLink ? (
-                    <button className="text-[#1e4d6b] hover:text-[#163a52]" title="Copy secure link">
+                    <button className="text-[#1E2D4D] hover:text-[#141E33]" title="Copy secure link">
                       <Link2 className="w-4 h-4" />
                     </button>
                   ) : (
@@ -149,9 +149,9 @@ export function AutoDocumentRequest() {
       {/* Settings Modal */}
       {showSettings && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl p-6 max-w-lg w-full shadow-sm border border-gray-200 animate-slide-up">
+          <div className="bg-white rounded-xl p-6 max-w-lg w-full border border-gray-200 animate-slide-up">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-gray-900">Auto-Request Settings</h3>
+              <h3 className="text-lg font-semibold text-[#1E2D4D]">Auto-Request Settings</h3>
               <button onClick={() => setShowSettings(false)} className="p-2.5 -m-1 hover:bg-gray-100 rounded-full">
                 <X className="w-5 h-5 text-gray-400" />
               </button>
@@ -165,7 +165,7 @@ export function AutoDocumentRequest() {
                 </div>
                 <button
                   onClick={() => setSettings({ ...settings, autoRequestEnabled: !settings.autoRequestEnabled })}
-                  className={`relative w-12 h-6 rounded-full transition-colors ${settings.autoRequestEnabled ? 'bg-[#1e4d6b]' : 'bg-gray-300'}`}
+                  className={`relative w-12 h-6 rounded-full transition-colors ${settings.autoRequestEnabled ? 'bg-[#1E2D4D]' : 'bg-gray-300'}`}
                 >
                   <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${settings.autoRequestEnabled ? 'translate-x-6' : 'translate-x-0.5'}`} />
                 </button>
@@ -198,7 +198,7 @@ export function AutoDocumentRequest() {
                         type="checkbox"
                         checked={(settings as any)[r.key]}
                         onChange={(e) => setSettings({ ...settings, [r.key]: e.target.checked })}
-                        className="w-4 h-4 text-[#1e4d6b] rounded"
+                        className="w-4 h-4 text-[#1E2D4D] rounded"
                       />
                       {r.label}
                     </label>
@@ -237,7 +237,7 @@ export function AutoDocumentRequest() {
               <button onClick={() => setShowSettings(false)} className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg text-sm">
                 Cancel
               </button>
-              <button onClick={() => setShowSettings(false)} className="px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium">
+              <button onClick={() => setShowSettings(false)} className="px-4 py-2 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] text-sm font-medium">
                 Save Settings
               </button>
             </div>

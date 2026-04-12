@@ -30,6 +30,7 @@ import { dispatchTempViolationSignal } from '../lib/tempSignalDispatch';
 import { TempIntelligenceCard } from '../components/temp-logs/TempIntelligenceCard';
 import { TempPatternInsights } from '../components/temp-logs/TempPatternInsights';
 import { HACCPDeviationReport } from '../components/temp-logs/HACCPDeviationReport';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 interface TemperatureEquipment {
   id: string;
@@ -139,6 +140,7 @@ export function TempLogs() {
   const { isDemoMode } = useDemo();
   const { t } = useTranslation();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  usePageTitle('Temperature Logs');
   const [equipment, setEquipment] = useState<TemperatureEquipment[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [history, setHistory] = useState<TempCheckCompletion[]>([]);
@@ -1646,7 +1648,7 @@ export function TempLogs() {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-3 flex-wrap">
-              <h1 className="text-2xl font-bold text-gray-900">{t('tempLogs.title')}</h1>
+              <h1 className="text-2xl font-bold text-[#1E2D4D]">{t('tempLogs.title')}</h1>
               {/* Sensor Ready badge — shows when user has equipment but no active IoT sensors */}
               {isDemoMode && equipment.length > 0 && (
                 <button
@@ -1663,7 +1665,7 @@ export function TempLogs() {
           <button
             onClick={() => navigate('/temp-logs/scan')}
             className="flex items-center gap-2 px-4 py-2.5 text-white text-sm font-semibold rounded-lg hover:opacity-90 transition-opacity"
-            style={{ backgroundColor: '#1e4d6b' }}
+            style={{ backgroundColor: '#1E2D4D' }}
           >
             <QrCode className="h-4 w-4" />
             Scan QR Code
@@ -1679,7 +1681,7 @@ export function TempLogs() {
             onClick={() => setActiveTab('equipment')}
             className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap ${
               activeTab === 'equipment'
-                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
+                ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -1689,7 +1691,7 @@ export function TempLogs() {
             onClick={() => setActiveTab('receiving')}
             className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap ${
               activeTab === 'receiving'
-                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
+                ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -1699,7 +1701,7 @@ export function TempLogs() {
             onClick={() => setActiveTab('holding')}
             className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap flex items-center gap-1.5 ${
               activeTab === 'holding'
-                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
+                ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -1710,7 +1712,7 @@ export function TempLogs() {
             onClick={() => setActiveTab('cooldown')}
             className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap ${
               activeTab === 'cooldown'
-                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
+                ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -1720,7 +1722,7 @@ export function TempLogs() {
             onClick={() => setActiveTab('iot')}
             className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap flex items-center gap-1.5 ${
               activeTab === 'iot'
-                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
+                ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -1731,7 +1733,7 @@ export function TempLogs() {
             onClick={() => setActiveTab('analytics')}
             className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap flex items-center gap-1.5 ${
               activeTab === 'analytics'
-                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
+                ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -1742,7 +1744,7 @@ export function TempLogs() {
             onClick={() => setActiveTab('history')}
             className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap ${
               activeTab === 'history'
-                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
+                ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -1754,11 +1756,11 @@ export function TempLogs() {
         {activeTab === 'equipment' && (
           <div className="space-y-6">
             <div className="flex items-center gap-1">
-              <h2 className="text-lg font-bold text-gray-900">Current Readings</h2>
+              <h2 className="text-lg font-bold text-[#1E2D4D]">Current Readings</h2>
               <InfoTooltip content="Most recent temperature readings from all sources — manual entries and IoT sensors." />
             </div>
             {/* Filters Section */}
-            <div data-demo-allow className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+            <div data-demo-allow className="bg-white rounded-xl border border-gray-200 p-4">
               <div className="flex flex-wrap gap-4 items-end">
                 <div className="flex-1 min-w-0 sm:min-w-[200px]">
                   <label className="block text-sm font-medium text-gray-700 mb-2">{t('common.location')}</label>
@@ -1789,14 +1791,14 @@ export function TempLogs() {
 
                 <button
                   onClick={() => setShowAddCurrentModal(true)}
-                  className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors font-medium shadow-sm flex items-center space-x-2"
+                  className="px-6 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors font-medium shadow-sm flex items-center space-x-2"
                 >
                   <Pencil className="h-4 w-4" />
                   <span>Add Reading</span>
                 </button>
                 <button
                   onClick={handleOpenBatchLog}
-                  className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors font-medium shadow-sm flex items-center space-x-2"
+                  className="px-6 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors font-medium shadow-sm flex items-center space-x-2"
                 >
                   <Plus className="h-5 w-5" />
                   <span>{t('tempLogs.batchLog')}</span>
@@ -1806,10 +1808,10 @@ export function TempLogs() {
 
             {/* Logging Progress */}
             {isDemoMode && (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+              <div className="bg-white rounded-xl border border-gray-200 p-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium text-gray-700">Today's Progress</span>
-                  <span className="text-sm font-bold text-[#1e4d6b]">{getLoggedTodayCount()} of {getStorageEquipmentCount()} logged</span>
+                  <span className="text-sm font-bold text-[#1E2D4D]">{getLoggedTodayCount()} of {getStorageEquipmentCount()} logged</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2.5">
                   <div
@@ -1837,7 +1839,7 @@ export function TempLogs() {
               {getSortedEquipment().map((eq) => {
                 const eqState = getEquipmentState(eq);
                 return (
-                <div key={eq.id} className={`bg-white rounded-xl shadow-sm border border-gray-200 p-6 ${
+                <div key={eq.id} className={`bg-white rounded-xl border border-gray-200 p-6 ${
                   eqState === 'logged' ? 'border-2 border-green-300' :
                   eqState === 'outOfRange' ? 'border-2 border-red-300' :
                   'border-2 border-amber-300'
@@ -1848,7 +1850,7 @@ export function TempLogs() {
                         {getEquipmentIcon(eq.equipment_type)}
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-900">{eq.name}</h3>
+                        <h3 className="text-lg font-semibold text-[#1E2D4D]">{eq.name}</h3>
                         <p className="text-sm text-gray-500 capitalize">{eq.equipment_type.replace('_', ' ')}</p>
                         {eq.location && <p className="text-xs text-gray-400">{eq.location}</p>}
                       </div>
@@ -1857,7 +1859,7 @@ export function TempLogs() {
 
                   {eq.last_check && (
                     <div className="mb-3">
-                      <div className="text-3xl font-bold text-gray-900 text-center">
+                      <div className="text-3xl font-bold text-[#1E2D4D] text-center">
                         {eq.last_check.temperature_value}°{eq.unit}
                       </div>
                       <p className="text-xs text-gray-500">
@@ -1884,7 +1886,7 @@ export function TempLogs() {
                     className={`w-full px-4 py-2 min-h-[44px] text-white rounded-lg transition-colors font-medium shadow-sm ${
                       eqState === 'outOfRange' ? 'bg-red-600 hover:bg-red-700' :
                       eqState === 'pending' ? 'bg-amber-500 hover:bg-amber-600' :
-                      'bg-[#1e4d6b] hover:bg-[#163a52]'
+                      'bg-[#1E2D4D] hover:bg-[#162340]'
                     }`}
                   >
                     {eqState === 'outOfRange' ? t('tempLogs.logTempNowWarning') :
@@ -1910,20 +1912,20 @@ export function TempLogs() {
 
         {/* Receiving Tab */}
         {activeTab === 'receiving' && (
-          <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-8">
+          <div className="max-w-2xl mx-auto bg-white rounded-xl border border-gray-200 p-4 sm:p-8">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-3">
                 <div className="p-3 rounded-lg" style={{ backgroundColor: '#E8EAF6' }}>
-                  <Package className="h-6 w-6" style={{ color: '#1e4d6b' }} />
+                  <Package className="h-6 w-6" style={{ color: '#1E2D4D' }} />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900">{t('tempLogs.logReceivingTemp')}</h2>
+                  <h2 className="text-2xl font-bold text-[#1E2D4D]">{t('tempLogs.logReceivingTemp')}</h2>
                   <p className="text-sm text-gray-600">Record temperatures for incoming deliveries</p>
                 </div>
               </div>
               <button
                 onClick={() => setShowAddReceivingModal(true)}
-                className="px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors font-medium shadow-sm flex items-center space-x-2"
+                className="px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors font-medium shadow-sm flex items-center space-x-2"
               >
                 <Pencil className="h-4 w-4" />
                 <span>Add Reading</span>
@@ -1950,12 +1952,12 @@ export function TempLogs() {
                   if (!cfg) return null;
                   return cfg.tempRequired ? (
                     <div className="mt-2 p-3 rounded-lg" style={{ backgroundColor: '#eef4f8', border: '1px solid #D1D9E6' }}>
-                      <p className="text-sm font-medium" style={{ color: '#1e4d6b' }}>
+                      <p className="text-sm font-medium" style={{ color: '#1E2D4D' }}>
                         Required: Must be ≤{cfg.maxTemp}°F
                       </p>
                     </div>
                   ) : (
-                    <div className="mt-2 p-3 rounded-lg bg-gray-50 border border-gray-200">
+                    <div className="mt-2 p-3 rounded-lg bg-[#FAF7F0] border border-gray-200">
                       <p className="text-sm font-medium text-gray-500">
                         No temperature check required for this category
                       </p>
@@ -1971,7 +1973,7 @@ export function TempLogs() {
               </div>
 
               {/* Current Item Form */}
-              <form onSubmit={handleSubmitReceiving} className="space-y-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <form onSubmit={handleSubmitReceiving} className="space-y-4 p-4 bg-[#FAF7F0] rounded-lg border border-gray-200">
                 <h3 className="font-medium text-gray-900">{t('tempLogs.addItem')}</h3>
 
                 <div>
@@ -2033,9 +2035,9 @@ export function TempLogs() {
                 <button
                   type="submit"
                   className="w-full px-4 py-3 text-white rounded-lg transition-colors font-medium"
-                  style={{ backgroundColor: '#1e4d6b' }}
+                  style={{ backgroundColor: '#1E2D4D' }}
                   onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#0D1652')}
-                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
                 >
                   {t('tempLogs.addItem')}
                 </button>
@@ -2114,7 +2116,7 @@ export function TempLogs() {
                       <button
                         onClick={handleCcpSave}
                         className="flex-1 px-4 py-3 text-white rounded-lg font-bold hover:opacity-90 transition-colors"
-                        style={{ backgroundColor: '#1e4d6b' }}
+                        style={{ backgroundColor: '#1E2D4D' }}
                       >
                         Save with Corrective Action
                       </button>
@@ -2128,7 +2130,7 @@ export function TempLogs() {
                 <div className="space-y-2">
                   <h3 className="font-medium text-gray-900">{t('tempLogs.itemsAdded')} ({receivingItems.length})</h3>
                   {receivingItems.map((item, idx) => (
-                    <div key={idx} className={`p-3 rounded-lg border ${item.ccpDeviation ? 'bg-red-50 border-red-200' : 'bg-gray-50 border-gray-200'}`}>
+                    <div key={idx} className={`p-3 rounded-lg border ${item.ccpDeviation ? 'bg-red-50 border-red-200' : 'bg-[#FAF7F0] border-gray-200'}`}>
                       <div className="flex items-center justify-between">
                         <div>
                           <p className="font-medium text-gray-900">{item.itemDescription}</p>
@@ -2136,7 +2138,7 @@ export function TempLogs() {
                         </div>
                         <div className="flex items-center gap-2">
                           {item.ccpDeviation && (
-                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-red-200 text-red-800">CCP-04</span>
+                            <span className="px-2 py-0.5 rounded text-xs font-bold bg-red-200 text-red-800">CCP-04</span>
                           )}
                           <span className={`px-3 py-1 rounded-full text-sm font-medium ${
                             item.isPass ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
@@ -2201,8 +2203,8 @@ export function TempLogs() {
               {/* Summary Card */}
               {receivingItems.length > 0 && vendorName && (
                 <div className="p-4 rounded-lg" style={{ backgroundColor: '#eef4f8', border: '2px solid #b8d4e8' }}>
-                  <h3 className="font-bold text-lg mb-2" style={{ color: '#1e4d6b' }}>{t('tempLogs.summary')}</h3>
-                  <p style={{ color: '#2a6a8f' }}>
+                  <h3 className="font-bold text-lg mb-2" style={{ color: '#1E2D4D' }}>{t('tempLogs.summary')}</h3>
+                  <p style={{ color: '#2A3F6B' }}>
                     {receivingItems.length} items from {vendorName} - {' '}
                     {receivingItems.every(i => i.isPass)
                       ? <span className="font-bold text-green-700">{t('tempLogs.allPass')}</span>
@@ -2216,7 +2218,7 @@ export function TempLogs() {
               <button
                 onClick={handleFinalizeReceiving}
                 disabled={loading || receivingItems.length === 0}
-                className="w-full px-6 py-4 bg-[#1e4d6b] text-white rounded-lg text-lg font-bold hover:bg-[#163a52] transition-colors disabled:opacity-50 shadow-sm"
+                className="w-full px-6 py-4 bg-[#1E2D4D] text-white rounded-lg text-lg font-bold hover:bg-[#162340] transition-colors disabled:opacity-50 shadow-sm"
               >
                 {loading ? t('common.saving') : t('tempLogs.saveReceivingLog')}
               </button>
@@ -2228,7 +2230,7 @@ export function TempLogs() {
         {activeTab === 'history' && (
           <div className="space-y-4">
             {/* Filters Bar */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+            <div className="bg-white rounded-xl border border-gray-200 p-4">
               <div className="flex flex-wrap gap-4 items-end">
                 <div className="flex-1 min-w-0 sm:min-w-[200px]">
                   <label className="block text-sm font-medium text-gray-700 mb-2">{t('tempLogs.dateRange')}</label>
@@ -2328,7 +2330,7 @@ export function TempLogs() {
                     onClick={() => setHistoryView('table')}
                     className={`px-4 py-2 min-h-[44px] rounded-lg font-medium ${
                       historyView === 'table'
-                        ? 'bg-[#1e4d6b] text-white'
+                        ? 'bg-[#1E2D4D] text-white'
                         : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                     }`}
                   >
@@ -2338,7 +2340,7 @@ export function TempLogs() {
                     onClick={() => setHistoryView('chart')}
                     className={`px-4 py-2 min-h-[44px] rounded-lg font-medium ${
                       historyView === 'chart'
-                        ? 'bg-[#1e4d6b] text-white'
+                        ? 'bg-[#1E2D4D] text-white'
                         : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                     }`}
                   >
@@ -2348,7 +2350,7 @@ export function TempLogs() {
 
                 <button
                   onClick={() => guardAction('export', 'temperature logs', () => exportToCSV())}
-                  className="px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors font-medium flex items-center space-x-2"
+                  className="px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors font-medium flex items-center space-x-2"
                 >
                   <Download className="h-4 w-4" />
                   <span>{t('tempLogs.exportCsv')}</span>
@@ -2358,9 +2360,9 @@ export function TempLogs() {
 
             {/* Table View */}
             {historyView === 'table' && (
-              <div className="bg-white shadow-sm border border-gray-200 rounded-xl overflow-hidden">
+              <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
                 <div className="flex justify-between items-center p-4 border-b border-gray-200">
-                  <h2 className="text-xl font-bold text-gray-900">Temperature History</h2>
+                  <h2 className="text-xl font-bold text-[#1E2D4D]">Temperature History</h2>
                   <button
                     onClick={() => setShowHistoryDetails(!showHistoryDetails)}
                     className="flex items-center space-x-2 text-sm text-gray-600 hover:text-gray-900"
@@ -2445,7 +2447,7 @@ export function TempLogs() {
                               <span className="text-sm font-medium text-gray-900">{log.equipment_name}</span>
                             </div>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-[#1E2D4D]">
                             {log.temperature_value}°F
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
@@ -2463,7 +2465,7 @@ export function TempLogs() {
                             {(() => {
                               const m = log.input_method || 'manual';
                               const cfg = m === 'qr_scan'
-                                ? { icon: QrCode, label: 'QR Scan', bg: '#eef4f8', fg: '#1e4d6b' }
+                                ? { icon: QrCode, label: 'QR Scan', bg: '#eef4f8', fg: '#1E2D4D' }
                                 : m === 'iot_sensor'
                                 ? { icon: Wifi, label: 'IoT', bg: '#ecfdf5', fg: '#065f46' }
                                 : { icon: Pencil, label: 'Manual', bg: '#f3f4f6', fg: '#4b5563' };
@@ -2511,7 +2513,7 @@ export function TempLogs() {
                                   <button
                                     onClick={() => { setHaccpViolation(log); setShowHACCPReport(true); }}
                                     className="px-3 py-1.5 text-xs font-semibold rounded-lg text-white hover:opacity-90 transition-opacity"
-                                    style={{ backgroundColor: '#1e4d6b' }}
+                                    style={{ backgroundColor: '#1E2D4D' }}
                                   >
                                     Generate HACCP Report
                                   </button>
@@ -2543,8 +2545,8 @@ export function TempLogs() {
               const selectedEq = historyEquipment !== 'all' ? equipment.find(e => e.id === historyEquipment) : null;
 
               return (
-                <div className="bg-white shadow-sm border border-gray-200 rounded-xl p-6">
-                  <h2 className="text-xl font-bold text-gray-900 mb-6">Temperature Trends</h2>
+                <div className="bg-white border border-gray-200 rounded-xl p-6">
+                  <h2 className="text-xl font-bold text-[#1E2D4D] mb-6">Temperature Trends</h2>
                   {chartData.length > 0 ? (
                     <ResponsiveContainer width="100%" height={300}>
                       <LineChart data={chartData}>
@@ -2589,18 +2591,18 @@ export function TempLogs() {
         {activeTab === 'cooldown' && (
           <div className="space-y-6">
             <div className="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3">
-              <h2 className="text-2xl font-bold text-gray-900">{t('tempLogs.cooldownTracker')}</h2>
+              <h2 className="text-2xl font-bold text-[#1E2D4D]">{t('tempLogs.cooldownTracker')}</h2>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setShowAddCooldownModal(true)}
-                  className="px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors font-medium shadow-sm flex items-center space-x-2"
+                  className="px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors font-medium shadow-sm flex items-center space-x-2"
                 >
                   <Pencil className="h-4 w-4" />
                   <span>Add Reading</span>
                 </button>
                 <button
                   onClick={() => setShowStartCooldown(true)}
-                  className="px-6 py-3 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors font-medium shadow-sm flex items-center space-x-2"
+                  className="px-6 py-3 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors font-medium shadow-sm flex items-center space-x-2"
                 >
                   <Play className="h-5 w-5" />
                   <span>{t('tempLogs.startCooldown')}</span>
@@ -2609,9 +2611,9 @@ export function TempLogs() {
             </div>
 
             {/* Cooling Standards Reference */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
               <div className="px-6 py-4 bg-[#eef4f8] border-b border-[#b8d4e8]">
-                <h3 className="text-lg font-bold text-[#1e4d6b]">Cooling Standards Reference</h3>
+                <h3 className="text-lg font-bold text-[#1E2D4D]">Cooling Standards Reference</h3>
                 <p className="text-xs text-gray-500 mt-0.5">Both standards must be met for California locations</p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-200">
@@ -2625,14 +2627,14 @@ export function TempLogs() {
                     <div className="flex items-start gap-2">
                       <span className="mt-0.5 w-5 h-5 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
                       <div>
-                        <p className="text-sm font-semibold text-gray-900">135°F → 70°F within 2 hours</p>
+                        <p className="text-sm font-semibold text-[#1E2D4D]">135°F → 70°F within 2 hours</p>
                         <p className="text-xs text-gray-500">Clock starts at 135°F (not cooked temp)</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-2">
                       <span className="mt-0.5 w-5 h-5 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
                       <div>
-                        <p className="text-sm font-semibold text-gray-900">70°F → 41°F within 4 hours</p>
+                        <p className="text-sm font-semibold text-[#1E2D4D]">70°F → 41°F within 4 hours</p>
                         <p className="text-xs text-gray-500">6 hours total from 135°F</p>
                       </div>
                     </div>
@@ -2648,14 +2650,14 @@ export function TempLogs() {
                     <div className="flex items-start gap-2">
                       <span className="mt-0.5 w-5 h-5 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
                       <div>
-                        <p className="text-sm font-semibold text-gray-900">Cooked temp → 70°F within 2 hours</p>
+                        <p className="text-sm font-semibold text-[#1E2D4D]">Cooked temp → 70°F within 2 hours</p>
                         <p className="text-xs text-red-600 font-medium">Clock starts at actual cooked temperature (stricter)</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-2">
                       <span className="mt-0.5 w-5 h-5 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
                       <div>
-                        <p className="text-sm font-semibold text-gray-900">70°F → 41°F within 4 hours</p>
+                        <p className="text-sm font-semibold text-[#1E2D4D]">70°F → 41°F within 4 hours</p>
                         <p className="text-xs text-gray-500">6 hours total from start of cooling</p>
                       </div>
                     </div>
@@ -2669,7 +2671,7 @@ export function TempLogs() {
 
             {/* Active Cooldowns */}
             <div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">{t('tempLogs.activeCooldowns')}</h3>
+              <h3 className="text-xl font-bold text-[#1E2D4D] mb-4">{t('tempLogs.activeCooldowns')}</h3>
               {cooldowns.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {cooldowns.map(cooldown => {
@@ -2683,13 +2685,13 @@ export function TempLogs() {
                     const timerBg = countdown.color === 'red' ? 'bg-red-900' : countdown.color === 'amber' ? 'bg-amber-800' : 'bg-gray-800';
                     const timerBorder = countdown.color === 'red' ? 'border-red-500' : countdown.color === 'amber' ? 'border-amber-500' : 'border-green-500';
                     const timerText = countdown.color === 'red' ? 'text-red-400' : countdown.color === 'amber' ? 'text-amber-400' : 'text-green-400';
-                    const borderColor = countdown.color === 'red' ? '#dc2626' : countdown.color === 'amber' ? '#f59e0b' : '#1e4d6b';
+                    const borderColor = countdown.color === 'red' ? '#dc2626' : countdown.color === 'amber' ? '#f59e0b' : '#1E2D4D';
 
                     return (
                       <div key={cooldown.id} className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ border: `2px solid ${borderColor}` }}>
                         <div className="flex justify-between items-start mb-3">
                           <div>
-                            <h4 className="text-lg font-bold text-gray-900">{cooldown.itemName} — Cooling in Progress</h4>
+                            <h4 className="text-lg font-bold text-[#1E2D4D]">{cooldown.itemName} — Cooling in Progress</h4>
                             <p className="text-sm text-gray-600">{cooldown.location}</p>
                           </div>
                           <span className={`px-2 py-1 rounded-full text-xs font-bold shrink-0 ${
@@ -2737,7 +2739,7 @@ export function TempLogs() {
                         <div className="flex items-center justify-between mb-3">
                           <div>
                             <p className="text-xs text-gray-500">Current</p>
-                            <p className="text-2xl font-bold text-gray-900">{currentTemp}°F</p>
+                            <p className="text-2xl font-bold text-[#1E2D4D]">{currentTemp}°F</p>
                           </div>
                           <p className="text-xs text-gray-400">logged {lastCheckAgo}</p>
                         </div>
@@ -2749,7 +2751,7 @@ export function TempLogs() {
                               className="h-2.5 rounded-full transition-all"
                               style={{
                                 width: `${progress.progress}%`,
-                                backgroundColor: countdown.color === 'red' ? '#dc2626' : countdown.color === 'amber' ? '#f59e0b' : '#1e4d6b',
+                                backgroundColor: countdown.color === 'red' ? '#dc2626' : countdown.color === 'amber' ? '#f59e0b' : '#1E2D4D',
                               }}
                             />
                           </div>
@@ -2765,7 +2767,7 @@ export function TempLogs() {
                             }))}>
                               <XAxis dataKey="time" fontSize={10} />
                               <YAxis fontSize={10} />
-                              <Line type="monotone" dataKey="temp" stroke="#1e4d6b" strokeWidth={2} dot={{ r: 3 }} />
+                              <Line type="monotone" dataKey="temp" stroke="#1E2D4D" strokeWidth={2} dot={{ r: 3 }} />
                               <ReferenceLine y={70} stroke="orange" strokeDasharray="3 3" />
                               <ReferenceLine y={41} stroke="#22c55e" strokeDasharray="3 3" />
                             </LineChart>
@@ -2779,7 +2781,7 @@ export function TempLogs() {
                               setShowCooldownCheckModal(true);
                               setCooldownCheckTime(format(new Date(), "yyyy-MM-dd'T'HH:mm"));
                             }}
-                            className="px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150 font-medium"
+                            className="px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors duration-150 font-medium"
                           >
                             + Log Temperature Now
                           </button>
@@ -2795,7 +2797,7 @@ export function TempLogs() {
                   })}
                 </div>
               ) : (
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
+                <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
                   <Clock className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                   <p className="text-gray-500">No active cooldowns</p>
                 </div>
@@ -2804,8 +2806,8 @@ export function TempLogs() {
 
             {/* Completed Cooldowns */}
             <div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">{t('tempLogs.completedCooldowns')}</h3>
-              <div className="bg-white shadow-sm border border-gray-200 rounded-xl overflow-hidden">
+              <h3 className="text-xl font-bold text-[#1E2D4D] mb-4">{t('tempLogs.completedCooldowns')}</h3>
+              <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
                 <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
@@ -2875,8 +2877,8 @@ export function TempLogs() {
               description="Connect your first IoT sensor to start monitoring temperatures in real time."
             />
             {/* Supported Sensors CTA — informational, shown in all modes */}
-            <div className="bg-gradient-to-br from-[#1e4d6b]/5 to-[#d4af37]/5 rounded-xl border border-[#1e4d6b]/10 p-5">
-              <h3 className="text-sm font-semibold text-[#1e4d6b] mb-2">Supported IoT Sensors</h3>
+            <div className="bg-gradient-to-br from-[#1E2D4D]/5 to-[#d4af37]/5 rounded-xl border border-[#1E2D4D]/10 p-5">
+              <h3 className="text-sm font-semibold text-[#1E2D4D] mb-2">Supported IoT Sensors</h3>
               <p className="text-xs text-gray-600 mb-3">Connect any of these sensors to auto-fill your temperature log. Zero manual entry.</p>
               <div className="flex flex-wrap gap-2">
                 {iotSensorProviders.filter(p => ['tempstick', 'sensorpush', 'compliancemate', 'cooper_atkins', 'monnit', 'testo'].includes(p.slug)).slice(0, 6).map(p => (
@@ -2965,15 +2967,15 @@ export function TempLogs() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="bg-white rounded-xl border border-gray-200 p-4 flex items-center gap-3">
                   <div className="p-2.5 rounded-lg bg-green-100"><Wifi className="h-5 w-5 text-green-600" /></div>
-                  <div><p className="text-2xl font-bold text-gray-900">{onlineCount}</p><p className="text-xs text-gray-500">Online Sensors</p></div>
+                  <div><p className="text-2xl font-bold text-[#1E2D4D]">{onlineCount}</p><p className="text-xs text-gray-500">Online Sensors</p></div>
                 </div>
                 <div className="bg-white rounded-xl border border-gray-200 p-4 flex items-center gap-3">
                   <div className="p-2.5 rounded-lg bg-amber-100"><AlertTriangle className="h-5 w-5 text-amber-600" /></div>
-                  <div><p className="text-2xl font-bold text-gray-900">{warningCount}</p><p className="text-xs text-gray-500">Warnings</p></div>
+                  <div><p className="text-2xl font-bold text-[#1E2D4D]">{warningCount}</p><p className="text-xs text-gray-500">Warnings</p></div>
                 </div>
                 <div className="bg-white rounded-xl border border-gray-200 p-4 flex items-center gap-3">
                   <div className="p-2.5 rounded-lg bg-red-100"><WifiOff className="h-5 w-5 text-red-600" /></div>
-                  <div><p className="text-2xl font-bold text-gray-900">{offlineCount}</p><p className="text-xs text-gray-500">Disconnected</p></div>
+                  <div><p className="text-2xl font-bold text-[#1E2D4D]">{offlineCount}</p><p className="text-xs text-gray-500">Disconnected</p></div>
                 </div>
               </div>
 
@@ -2994,12 +2996,12 @@ export function TempLogs() {
                       {/* Header */}
                       <div className="flex items-start justify-between mb-3">
                         <div className="min-w-0">
-                          <h4 className="text-sm font-semibold text-gray-900 truncate">{sensor.name}</h4>
+                          <h4 className="text-sm font-semibold text-[#1E2D4D] truncate">{sensor.name}</h4>
                           <p className="text-xs text-gray-500">{sensor.locationName} &middot; {sensor.zone}</p>
                         </div>
                         <div className="flex items-center gap-1.5 flex-shrink-0">
                           <div className="w-2 h-2 rounded-full" style={{ backgroundColor: getStatusColor(sensor.status) }} />
-                          <span className="text-[10px] font-medium" style={{ color: getStatusColor(sensor.status) }}>
+                          <span className="text-xs font-medium" style={{ color: getStatusColor(sensor.status) }}>
                             {getStatusLabel(sensor.status)}
                           </span>
                         </div>
@@ -3057,13 +3059,13 @@ export function TempLogs() {
               {/* Combined Readings Log */}
               <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
                 <div className="px-5 py-4 border-b border-gray-200">
-                  <h3 className="text-sm font-semibold text-gray-900">Combined Readings Log</h3>
+                  <h3 className="text-sm font-semibold text-[#1E2D4D]">Combined Readings Log</h3>
                   <p className="text-xs text-gray-500">IoT sensor and manual readings in one timeline</p>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="bg-gray-50">
+                      <tr className="bg-[#FAF7F0]">
                         <th className="px-4 py-2.5 text-left text-xs font-semibold text-gray-600">Time</th>
                         <th className="px-4 py-2.5 text-left text-xs font-semibold text-gray-600">Equipment</th>
                         <th className="px-4 py-2.5 text-right text-xs font-semibold text-gray-600">Temp</th>
@@ -3105,8 +3107,8 @@ export function TempLogs() {
               </div>
 
               {/* Supported Sensors CTA */}
-              <div className="bg-gradient-to-br from-[#1e4d6b]/5 to-[#d4af37]/5 rounded-xl border border-[#1e4d6b]/10 p-5">
-                <h3 className="text-sm font-semibold text-[#1e4d6b] mb-2">Supported IoT Sensors</h3>
+              <div className="bg-gradient-to-br from-[#1E2D4D]/5 to-[#d4af37]/5 rounded-xl border border-[#1E2D4D]/10 p-5">
+                <h3 className="text-sm font-semibold text-[#1E2D4D] mb-2">Supported IoT Sensors</h3>
                 <p className="text-xs text-gray-600 mb-3">Connect any of these sensors to auto-fill your temperature log. Zero manual entry.</p>
                 <div className="flex flex-wrap gap-2">
                   {iotSensorProviders.filter(p => p.status !== 'available' || p.sensorCount > 0 || ['tempstick', 'sensorpush', 'compliancemate'].includes(p.slug)).slice(0, 6).map(p => (
@@ -3136,16 +3138,16 @@ export function TempLogs() {
 
           return (
           <div className="space-y-4">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+            <div className="bg-white rounded-xl border border-gray-200 p-4">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h2 className="text-lg font-bold text-gray-900">Hot/Cold Holding Status</h2>
+                  <h2 className="text-lg font-bold text-[#1E2D4D]">Hot/Cold Holding Status</h2>
                   <p className="text-xs text-gray-500 mt-0.5">CalCode §113996 — Temperature holding compliance</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setShowAddHoldingModal(true)}
-                    className="px-4 py-2 min-h-[36px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors font-medium shadow-sm flex items-center space-x-2 text-sm"
+                    className="px-4 py-2 min-h-[36px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors font-medium shadow-sm flex items-center space-x-2 text-sm"
                   >
                     <Pencil className="h-3.5 w-3.5" />
                     <span>Add Reading</span>
@@ -3164,7 +3166,7 @@ export function TempLogs() {
                       <Thermometer className="h-4 w-4 text-blue-600" />
                     </div>
                     <div>
-                      <h3 className="text-sm font-semibold text-gray-900">Cold Holding</h3>
+                      <h3 className="text-sm font-semibold text-[#1E2D4D]">Cold Holding</h3>
                       <p className="text-xs text-gray-500">Must remain ≤ 41°F — check every 4 hours</p>
                     </div>
                   </div>
@@ -3175,16 +3177,16 @@ export function TempLogs() {
                       const isOverdue = lastCheckAge > TEMP_CHECK_INTERVALS.HOT_HOLDING_OVERDUE_MINUTES;
                       const isDueSoon = lastCheckAge > (TEMP_CHECK_INTERVALS.HOT_HOLDING_OVERDUE_MINUTES - 30) && lastCheckAge <= TEMP_CHECK_INTERVALS.HOT_HOLDING_OVERDUE_MINUTES;
                       return (
-                        <div key={eq.id} className={`py-2 px-3 bg-white rounded-lg border ${isOverdue ? 'border-red-300 bg-red-50/30' : isDueSoon ? 'border-amber-300 bg-amber-50/30' : !inRange ? 'border-red-300' : 'border-gray-100'}`}>
+                        <div key={eq.id} className={`py-2 px-3 bg-white rounded-xl border ${isOverdue ? 'border-red-300 bg-red-50/30' : isDueSoon ? 'border-amber-300 bg-amber-50/30' : !inRange ? 'border-red-300' : 'border-gray-100'}`}>
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2 min-w-0">
                               {inRange && !isOverdue ? <Check className="h-4 w-4 text-green-500 shrink-0" /> : <AlertTriangle className="h-4 w-4 text-red-500 shrink-0" />}
                               <span className="text-sm text-gray-900 truncate">{eq.name}</span>
                               {isOverdue && (
-                                <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 shrink-0">CHECK OVERDUE</span>
+                                <span className="px-1.5 py-0.5 rounded text-xs font-bold bg-red-100 text-red-700 shrink-0">CHECK OVERDUE</span>
                               )}
                               {isDueSoon && (
-                                <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700 shrink-0">DUE SOON</span>
+                                <span className="px-1.5 py-0.5 rounded text-xs font-bold bg-amber-100 text-amber-700 shrink-0">DUE SOON</span>
                               )}
                             </div>
                             <div className="flex items-center gap-2 shrink-0">
@@ -3198,14 +3200,14 @@ export function TempLogs() {
                               </div>
                               <button
                                 onClick={() => handleLogTemp(eq)}
-                                className="ml-1 px-2 py-1 text-xs font-semibold rounded-md bg-[#1e4d6b] text-white hover:bg-[#163a52] transition-colors whitespace-nowrap"
+                                className="ml-1 px-2 py-1 text-xs font-semibold rounded-md bg-[#1E2D4D] text-white hover:bg-[#162340] transition-colors whitespace-nowrap"
                               >
                                 + Log
                               </button>
                             </div>
                           </div>
                           {eq.last_check?.recorded_by_name === 'IoT Sensor' && (
-                            <div className="mt-1 flex items-center gap-1 text-[10px] text-blue-600">
+                            <div className="mt-1 flex items-center gap-1 text-xs text-blue-600">
                               <Radio className="h-3 w-3" /> IoT sensor reading
                             </div>
                           )}
@@ -3225,7 +3227,7 @@ export function TempLogs() {
                       <Thermometer className="h-4 w-4 text-orange-600" />
                     </div>
                     <div>
-                      <h3 className="text-sm font-semibold text-gray-900">Hot Holding</h3>
+                      <h3 className="text-sm font-semibold text-[#1E2D4D]">Hot Holding</h3>
                       <p className="text-xs text-gray-500">Must remain ≥ 135°F — check every 4 hours</p>
                     </div>
                   </div>
@@ -3236,16 +3238,16 @@ export function TempLogs() {
                       const isOverdue = lastCheckAge > TEMP_CHECK_INTERVALS.HOT_HOLDING_OVERDUE_MINUTES;
                       const isDueSoon = lastCheckAge > (TEMP_CHECK_INTERVALS.HOT_HOLDING_OVERDUE_MINUTES - 30) && lastCheckAge <= TEMP_CHECK_INTERVALS.HOT_HOLDING_OVERDUE_MINUTES;
                       return (
-                        <div key={eq.id} className={`py-2 px-3 bg-white rounded-lg border ${isOverdue ? 'border-red-300 bg-red-50/30' : isDueSoon ? 'border-amber-300 bg-amber-50/30' : !inRange ? 'border-red-300' : 'border-gray-100'}`}>
+                        <div key={eq.id} className={`py-2 px-3 bg-white rounded-xl border ${isOverdue ? 'border-red-300 bg-red-50/30' : isDueSoon ? 'border-amber-300 bg-amber-50/30' : !inRange ? 'border-red-300' : 'border-gray-100'}`}>
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2 min-w-0">
                               {inRange && !isOverdue ? <Check className="h-4 w-4 text-green-500 shrink-0" /> : <AlertTriangle className="h-4 w-4 text-red-500 shrink-0" />}
                               <span className="text-sm text-gray-900 truncate">{eq.name}</span>
                               {isOverdue && (
-                                <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 shrink-0">CHECK OVERDUE</span>
+                                <span className="px-1.5 py-0.5 rounded text-xs font-bold bg-red-100 text-red-700 shrink-0">CHECK OVERDUE</span>
                               )}
                               {isDueSoon && (
-                                <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700 shrink-0">DUE SOON</span>
+                                <span className="px-1.5 py-0.5 rounded text-xs font-bold bg-amber-100 text-amber-700 shrink-0">DUE SOON</span>
                               )}
                             </div>
                             <div className="flex items-center gap-2 shrink-0">
@@ -3259,14 +3261,14 @@ export function TempLogs() {
                               </div>
                               <button
                                 onClick={() => handleLogTemp(eq)}
-                                className="ml-1 px-2 py-1 text-xs font-semibold rounded-md bg-[#1e4d6b] text-white hover:bg-[#163a52] transition-colors whitespace-nowrap"
+                                className="ml-1 px-2 py-1 text-xs font-semibold rounded-md bg-[#1E2D4D] text-white hover:bg-[#162340] transition-colors whitespace-nowrap"
                               >
                                 + Log
                               </button>
                             </div>
                           </div>
                           {eq.last_check?.recorded_by_name === 'IoT Sensor' && (
-                            <div className="mt-1 flex items-center gap-1 text-[10px] text-blue-600">
+                            <div className="mt-1 flex items-center gap-1 text-xs text-blue-600">
                               <Radio className="h-3 w-3" /> IoT sensor reading
                             </div>
                           )}
@@ -3282,8 +3284,8 @@ export function TempLogs() {
             </div>
 
             {/* Compliance Reference */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-              <h3 className="text-sm font-semibold text-gray-900 mb-2">Regulatory Reference</h3>
+            <div className="bg-white rounded-xl border border-gray-200 p-4">
+              <h3 className="text-sm font-semibold text-[#1E2D4D] mb-2">Regulatory Reference</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-gray-600">
                 <div className="p-3 bg-blue-50 rounded-lg border border-blue-100">
                   <span className="font-semibold text-blue-800">CalCode §113996(a)</span> — Cold potentially hazardous food shall be held at 41°F or below
@@ -3309,7 +3311,7 @@ export function TempLogs() {
 
           const methodData = [
             { name: 'Manual', value: manualCount, color: '#6b7280' },
-            { name: 'QR Scan', value: qrCount, color: '#1e4d6b' },
+            { name: 'QR Scan', value: qrCount, color: '#1E2D4D' },
             { name: 'IoT Sensor', value: iotCount, color: '#059669' },
           ].filter(d => d.value > 0);
 
@@ -3355,21 +3357,21 @@ export function TempLogs() {
             <div className="space-y-4">
               {/* Summary Cards */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
-                  <p className="text-2xl font-bold" style={{ color: '#1e4d6b' }}>{totalCount.toLocaleString()}</p>
+                <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
+                  <p className="text-2xl font-bold" style={{ color: '#1E2D4D' }}>{totalCount.toLocaleString()}</p>
                   <p className="text-xs text-gray-500 mt-1">Total Readings</p>
                 </div>
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
+                <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
                   <p className={`text-2xl font-bold ${complianceRate >= 95 ? 'text-green-600' : complianceRate >= 85 ? 'text-yellow-600' : 'text-red-600'}`}>
                     {complianceRate}%
                   </p>
                   <p className="text-xs text-gray-500 mt-1">Compliance Rate</p>
                 </div>
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
-                  <p className="text-2xl font-bold text-gray-900">{manualCount}</p>
+                <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
+                  <p className="text-2xl font-bold text-[#1E2D4D]">{manualCount}</p>
                   <p className="text-xs text-gray-500 mt-1">Manual Entries</p>
                 </div>
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
+                <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
                   <p className="text-2xl font-bold" style={{ color: '#059669' }}>{iotCount + qrCount}</p>
                   <p className="text-xs text-gray-500 mt-1">QR + IoT Entries</p>
                 </div>
@@ -3377,8 +3379,8 @@ export function TempLogs() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Method Breakdown */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-                  <h3 className="text-sm font-semibold text-gray-900 mb-4">Input Method Breakdown</h3>
+                <div className="bg-white rounded-xl border border-gray-200 p-4">
+                  <h3 className="text-sm font-semibold text-[#1E2D4D] mb-4">Input Method Breakdown</h3>
                   <div className="h-48">
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
@@ -3402,8 +3404,8 @@ export function TempLogs() {
                 </div>
 
                 {/* Weekly Compliance Trend */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-                  <h3 className="text-sm font-semibold text-gray-900 mb-4">Weekly Compliance Rate</h3>
+                <div className="bg-white rounded-xl border border-gray-200 p-4">
+                  <h3 className="text-sm font-semibold text-[#1E2D4D] mb-4">Weekly Compliance Rate</h3>
                   <div className="h-48">
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart data={weeklyData}>
@@ -3412,7 +3414,7 @@ export function TempLogs() {
                         <YAxis domain={[80, 100]} tick={{ fontSize: 11 }} />
                         <Tooltip formatter={(v: number) => `${v}%`} />
                         <ReferenceLine y={95} stroke="#d4af37" strokeDasharray="5 5" label={{ value: 'Target 95%', fill: '#d4af37', fontSize: 10 }} />
-                        <Line type="monotone" dataKey="rate" stroke="#1e4d6b" strokeWidth={2} dot={{ r: 4 }} />
+                        <Line type="monotone" dataKey="rate" stroke="#1E2D4D" strokeWidth={2} dot={{ r: 4 }} />
                       </LineChart>
                     </ResponsiveContainer>
                   </div>
@@ -3421,8 +3423,8 @@ export function TempLogs() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Equipment Compliance */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-                  <h3 className="text-sm font-semibold text-gray-900 mb-4">Equipment Compliance</h3>
+                <div className="bg-white rounded-xl border border-gray-200 p-4">
+                  <h3 className="text-sm font-semibold text-[#1E2D4D] mb-4">Equipment Compliance</h3>
                   <div className="h-56">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={eqComplianceData} layout="vertical">
@@ -3430,15 +3432,15 @@ export function TempLogs() {
                         <XAxis type="number" domain={[80, 100]} tick={{ fontSize: 10 }} />
                         <YAxis type="category" dataKey="name" width={100} tick={{ fontSize: 10 }} />
                         <Tooltip formatter={(v: number) => `${v}%`} />
-                        <Bar dataKey="rate" fill="#1e4d6b" radius={[0, 4, 4, 0]} />
+                        <Bar dataKey="rate" fill="#1E2D4D" radius={[0, 4, 4, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
                 </div>
 
                 {/* Time of Day Distribution */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-                  <h3 className="text-sm font-semibold text-gray-900 mb-4">Time of Day Distribution</h3>
+                <div className="bg-white rounded-xl border border-gray-200 p-4">
+                  <h3 className="text-sm font-semibold text-[#1E2D4D] mb-4">Time of Day Distribution</h3>
                   <div className="h-56">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={timeData}>
@@ -3590,14 +3592,14 @@ export function TempLogs() {
                 <button
                   type="button"
                   onClick={() => setShowLogModal(false)}
-                  className="px-6 py-4 border-2 border-[#1e4d6b] rounded-xl text-lg font-medium text-[#1e4d6b] hover:bg-gray-50 transition-colors bg-white"
+                  className="px-6 py-4 border-2 border-[#1E2D4D] rounded-xl text-lg font-medium text-[#1E2D4D] hover:bg-gray-50 transition-colors bg-white"
                 >
                   {t('common.cancel')}
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-6 py-4 bg-[#1e4d6b] text-white rounded-lg text-lg font-bold hover:bg-[#163a52] transition-colors disabled:opacity-50 shadow-sm"
+                  className="px-6 py-4 bg-[#1E2D4D] text-white rounded-lg text-lg font-bold hover:bg-[#162340] transition-colors disabled:opacity-50 shadow-sm"
                 >
                   {loading ? t('common.saving') : t('common.save')}
                 </button>
@@ -3637,14 +3639,14 @@ export function TempLogs() {
 
                 return (
                   <div key={entry.equipment_id} className={`p-4 border-2 rounded-lg ${
-                    entry.skipped ? 'bg-gray-50 border-gray-300' :
+                    entry.skipped ? 'bg-[#FAF7F0] border-gray-300' :
                     entry.temperature && !isValid ? 'bg-red-50 border-red-300' :
                     entry.temperature && isValid ? 'bg-green-50 border-green-300' :
                     'border-gray-300'
                   }`}>
                     <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2">
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-bold text-gray-900">{entry.equipment_name}</h4>
+                        <h4 className="font-bold text-[#1E2D4D]">{entry.equipment_name}</h4>
                         <p className="text-sm text-gray-600">
                           {entry.min_temp === -Infinity
                             ? `Must remain: ${entry.max_temp}°F or below`
@@ -3677,7 +3679,7 @@ export function TempLogs() {
                         onClick={() => handleBatchSkip(entry.equipment_id)}
                         className={`ml-0 sm:ml-4 px-4 py-2 min-h-[44px] rounded-lg font-medium ${
                           entry.skipped
-                            ? 'bg-[#1e4d6b] text-white hover:bg-[#163a52]'
+                            ? 'bg-[#1E2D4D] text-white hover:bg-[#162340]'
                             : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                         }`}
                       >
@@ -3693,14 +3695,14 @@ export function TempLogs() {
               <button
                 type="button"
                 onClick={() => setShowBatchModal(false)}
-                className="px-6 py-4 border-2 border-[#1e4d6b] rounded-xl text-lg font-medium text-[#1e4d6b] hover:bg-gray-50 transition-colors bg-white"
+                className="px-6 py-4 border-2 border-[#1E2D4D] rounded-xl text-lg font-medium text-[#1E2D4D] hover:bg-gray-50 transition-colors bg-white"
               >
                 {t('common.cancel')}
               </button>
               <button
                 onClick={handleSubmitBatch}
                 disabled={loading || !selectedUser}
-                className="px-6 py-4 bg-[#1e4d6b] text-white rounded-lg text-lg font-bold hover:bg-[#163a52] transition-colors disabled:opacity-50 shadow-sm"
+                className="px-6 py-4 bg-[#1E2D4D] text-white rounded-lg text-lg font-bold hover:bg-[#162340] transition-colors disabled:opacity-50 shadow-sm"
               >
                 {loading ? t('common.saving') : t('tempLogs.saveAll')}
               </button>
@@ -3789,13 +3791,13 @@ export function TempLogs() {
                 <button
                   type="button"
                   onClick={() => setShowStartCooldown(false)}
-                  className="px-6 py-3 border-2 border-[#1e4d6b] rounded-lg font-medium text-[#1e4d6b] hover:bg-gray-50 transition-colors"
+                  className="px-6 py-3 border-2 border-[#1E2D4D] rounded-lg font-medium text-[#1E2D4D] hover:bg-gray-50 transition-colors"
                 >
                   {t('common.cancel')}
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-3 bg-[#1e4d6b] text-white rounded-lg font-bold hover:bg-[#163a52] transition-colors"
+                  className="px-6 py-3 bg-[#1E2D4D] text-white rounded-lg font-bold hover:bg-[#162340] transition-colors"
                 >
                   Start
                 </button>
@@ -3850,13 +3852,13 @@ export function TempLogs() {
                     setShowCooldownCheckModal(false);
                     setSelectedCooldown(null);
                   }}
-                  className="px-6 py-3 border-2 border-[#1e4d6b] rounded-lg font-medium text-[#1e4d6b] hover:bg-gray-50 transition-colors"
+                  className="px-6 py-3 border-2 border-[#1E2D4D] rounded-lg font-medium text-[#1E2D4D] hover:bg-gray-50 transition-colors"
                 >
                   {t('common.cancel')}
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-3 bg-[#1e4d6b] text-white rounded-lg font-bold hover:bg-[#163a52] transition-colors"
+                  className="px-6 py-3 bg-[#1E2D4D] text-white rounded-lg font-bold hover:bg-[#162340] transition-colors"
                 >
                   Save Check
                 </button>

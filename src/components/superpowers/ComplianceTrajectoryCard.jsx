@@ -146,15 +146,15 @@ export function ComplianceTrajectoryCard({ snapshots }) {
       <div className="flex items-center gap-4 mb-3">
         <div className="flex items-center gap-1.5">
           <div className="w-4 h-0.5 bg-[#1E2D4D]" />
-          <span className="text-[10px] text-[#6B7F96]">Historical</span>
+          <span className="text-xs text-[#6B7F96]">Historical</span>
         </div>
         <div className="flex items-center gap-1.5">
           <div className="w-4 h-0.5 bg-[#A08C5A]" style={{ borderTop: '2px dashed #A08C5A', height: 0 }} />
-          <span className="text-[10px] text-[#6B7F96]">Projected</span>
+          <span className="text-xs text-[#6B7F96]">Projected</span>
         </div>
       </div>
 
-      <p className="text-[10px] text-[#6B7F96] border-t border-[#E8EDF5] pt-3">
+      <p className="text-xs text-[#6B7F96] border-t border-[#E8EDF5] pt-3">
         Projected trajectory is based on historical readiness patterns and may not reflect future compliance outcomes. Actual scores depend on operational performance.
       </p>
     </div>

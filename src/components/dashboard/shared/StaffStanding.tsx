@@ -46,7 +46,7 @@ export function StaffStanding({ totalTasks, completedTasks, overdueTasks }: Staf
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <span className="text-lg font-bold" style={{ color: BODY_TEXT }}>{completedTasks}/{totalTasks}</span>
-              <span className="text-[10px] text-gray-500">tasks</span>
+              <span className="text-xs text-gray-500">tasks</span>
             </div>
           </div>
 

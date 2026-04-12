@@ -11,7 +11,7 @@ export default function WebinarSection() {
         <span className="inline-block text-sm font-bold uppercase tracking-wider mb-4" style={{ color: '#d4af37' }}>
           Live Walkthrough
         </span>
-        <h2 className="font-['Outfit'] text-3xl sm:text-4xl font-bold mb-4" style={{ color: '#1e4d6b' }}>
+        <h2 className="font-['Outfit'] text-3xl sm:text-4xl font-bold mb-4" style={{ color: '#1E2D4D' }}>
           See EvidLY in Action
         </h2>
         <p className="text-lg text-gray-600 leading-relaxed mb-8 max-w-2xl mx-auto">
@@ -39,7 +39,7 @@ export default function WebinarSection() {
           <button
             onClick={() => navigate('/demo')}
             className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-base transition-all hover:-translate-y-0.5 border-2 min-h-[44px] bg-white"
-            style={{ color: '#1e4d6b', borderColor: '#1e4d6b' }}
+            style={{ color: '#1E2D4D', borderColor: '#1E2D4D' }}
           >
             Try the Demo Now &rarr;
           </button>

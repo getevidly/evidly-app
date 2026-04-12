@@ -50,9 +50,9 @@ export function KitchenDashboard() {
 
         <MigrationStatusCard />
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
           <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
-            <h2 className="text-xl font-bold text-gray-900">My Tasks Today</h2>
+            <h2 className="text-xl font-bold text-[#1E2D4D]">My Tasks Today</h2>
             <div className="text-sm font-medium text-gray-600">
               {completedCount} of {totalCount} complete ({progressPercentage}%)
             </div>
@@ -60,7 +60,7 @@ export function KitchenDashboard() {
 
           <div className="w-full bg-gray-200 rounded-full h-3 mb-6">
             <div
-              className="h-3 rounded-full bg-blue-600 transition-all duration-500"
+              className="h-3 rounded-full bg-[#1E2D4D] transition-all duration-500"
               style={{ width: `${progressPercentage}%` }}
             />
           </div>
@@ -72,7 +72,7 @@ export function KitchenDashboard() {
                 onClick={() => navigate(task.link)}
                 className={`flex items-center justify-between p-4 rounded-lg border-2 cursor-pointer transition-all ${
                   task.completed
-                    ? 'bg-gray-50 border-gray-200'
+                    ? 'bg-[#FAF7F0] border-gray-200'
                     : task.overdue
                     ? 'bg-red-50 border-red-300 hover:bg-red-100'
                     : 'bg-white border-gray-200 hover:border-blue-300 hover:bg-blue-50'
@@ -133,29 +133,29 @@ export function KitchenDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <button
             onClick={() => navigate('/temp-logs')}
-            className="bg-white rounded-xl shadow-sm border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
+            className="bg-white rounded-xl border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
             style={{ minHeight: '120px' }}
           >
             <Thermometer className="h-12 w-12 text-blue-600 mx-auto mb-3 group-hover:scale-110 transition-transform" />
-            <div className="text-lg font-bold text-gray-900">Log Temperature</div>
+            <div className="text-lg font-bold text-[#1E2D4D]">Log Temperature</div>
           </button>
 
           <button
             onClick={() => navigate('/checklists')}
-            className="bg-white rounded-xl shadow-sm border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
+            className="bg-white rounded-xl border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
             style={{ minHeight: '120px' }}
           >
             <ClipboardCheck className="h-12 w-12 text-blue-600 mx-auto mb-3 group-hover:scale-110 transition-transform" />
-            <div className="text-lg font-bold text-gray-900">Start Checklist</div>
+            <div className="text-lg font-bold text-[#1E2D4D]">Start Checklist</div>
           </button>
 
           <button
             onClick={() => navigate('/temp-logs?tab=receiving')}
-            className="bg-white rounded-xl shadow-sm border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
+            className="bg-white rounded-xl border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
             style={{ minHeight: '120px' }}
           >
             <Truck className="h-12 w-12 text-blue-600 mx-auto mb-3 group-hover:scale-110 transition-transform" />
-            <div className="text-lg font-bold text-gray-900">Log Receiving</div>
+            <div className="text-lg font-bold text-[#1E2D4D]">Log Receiving</div>
           </button>
         </div>
 

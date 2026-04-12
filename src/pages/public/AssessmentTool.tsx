@@ -19,7 +19,7 @@ import { supabase } from '../../lib/supabase';
 
 const NAVY = '#0B1628';
 const GOLD = '#A08C5A';
-const BRAND = '#1e4d6b';
+const BRAND = '#1E2D4D';
 
 // ── Gauge Component ───────────────────────────────────────────────────────────
 
@@ -225,7 +225,7 @@ export function AssessmentTool() {
   // ── Render ────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#FAF7F0]">
       {/* Header */}
       <header className="border-b border-gray-200 bg-white">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
@@ -240,7 +240,7 @@ export function AssessmentTool() {
 
         {/* ── PHASE: LEAD CAPTURE ──────────────────────────────── */}
         {phase === 'lead' && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8">
+          <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8">
             <div className="text-center mb-8">
               <h1 className="text-2xl sm:text-3xl font-bold mb-2" style={{ color: NAVY }}>
                 Free Compliance Risk Assessment
@@ -258,7 +258,7 @@ export function AssessmentTool() {
                 <input
                   type="text" value={leadData.businessName} data-demo-allow
                   onChange={e => setLeadData(p => ({ ...p, businessName: e.target.value }))}
-                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${leadErrors.businessName ? 'border-red-400' : 'border-gray-300'}`}
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] ${leadErrors.businessName ? 'border-red-400' : 'border-gray-300'}`}
                   placeholder="e.g. Joe's Kitchen"
                 />
                 {leadErrors.businessName && <p className="text-xs text-red-500 mt-1">{leadErrors.businessName}</p>}
@@ -270,7 +270,7 @@ export function AssessmentTool() {
                 <input
                   type="text" value={leadData.contactName} data-demo-allow
                   onChange={e => setLeadData(p => ({ ...p, contactName: e.target.value }))}
-                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${leadErrors.contactName ? 'border-red-400' : 'border-gray-300'}`}
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] ${leadErrors.contactName ? 'border-red-400' : 'border-gray-300'}`}
                   placeholder="Your full name"
                 />
                 {leadErrors.contactName && <p className="text-xs text-red-500 mt-1">{leadErrors.contactName}</p>}
@@ -282,7 +282,7 @@ export function AssessmentTool() {
                 <input
                   type="email" value={leadData.email} data-demo-allow
                   onChange={e => setLeadData(p => ({ ...p, email: e.target.value }))}
-                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${leadErrors.email ? 'border-red-400' : 'border-gray-300'}`}
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] ${leadErrors.email ? 'border-red-400' : 'border-gray-300'}`}
                   placeholder="you@company.com"
                 />
                 {leadErrors.email && <p className="text-xs text-red-500 mt-1">{leadErrors.email}</p>}
@@ -294,7 +294,7 @@ export function AssessmentTool() {
                 <input
                   type="tel" value={leadData.phone} data-demo-allow
                   onChange={e => setLeadData(p => ({ ...p, phone: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]"
                   placeholder="(555) 555-5555"
                 />
               </div>
@@ -306,7 +306,7 @@ export function AssessmentTool() {
                   <input
                     type="text" value={leadData.city} data-demo-allow
                     onChange={e => setLeadData(p => ({ ...p, city: e.target.value }))}
-                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${leadErrors.city ? 'border-red-400' : 'border-gray-300'}`}
+                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] ${leadErrors.city ? 'border-red-400' : 'border-gray-300'}`}
                     placeholder="City"
                   />
                   {leadErrors.city && <p className="text-xs text-red-500 mt-1">{leadErrors.city}</p>}
@@ -316,7 +316,7 @@ export function AssessmentTool() {
                   <input
                     type="text" value={leadData.zipCode} data-demo-allow
                     onChange={e => setLeadData(p => ({ ...p, zipCode: e.target.value }))}
-                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${leadErrors.zipCode ? 'border-red-400' : 'border-gray-300'}`}
+                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] ${leadErrors.zipCode ? 'border-red-400' : 'border-gray-300'}`}
                     placeholder="90210"
                   />
                   {leadErrors.zipCode && <p className="text-xs text-red-500 mt-1">{leadErrors.zipCode}</p>}
@@ -329,7 +329,7 @@ export function AssessmentTool() {
                 <select
                   value={leadData.referralSource} data-demo-allow
                   onChange={e => setLeadData(p => ({ ...p, referralSource: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] bg-white"
                 >
                   <option value="">Select...</option>
                   <option value="google">Google search</option>
@@ -346,7 +346,7 @@ export function AssessmentTool() {
                 onClick={handleLeadSubmit} data-demo-allow
                 className="w-full py-3 text-white font-semibold rounded-lg transition-colors"
                 style={{ backgroundColor: BRAND }}
-                onMouseOver={e => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
+                onMouseOver={e => (e.currentTarget.style.backgroundColor = '#2A3F6B')}
                 onMouseOut={e => (e.currentTarget.style.backgroundColor = BRAND)}
               >
                 Start Assessment
@@ -361,7 +361,7 @@ export function AssessmentTool() {
 
         {/* ── PHASE: QUESTIONS ─────────────────────────────────── */}
         {phase === 'questions' && currentQuestion && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8">
+          <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8">
             {/* Progress bar */}
             <div className="mb-6">
               <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
@@ -447,7 +447,7 @@ export function AssessmentTool() {
         {phase === 'results' && scores && (
           <div>
             {/* Tab bar */}
-            <div className="flex gap-1 mb-6 bg-white rounded-lg p-1 shadow-sm border border-gray-200">
+            <div className="flex gap-1 mb-6 bg-white rounded-xl p-1 border border-gray-200">
               {(['diagnosis', 'prognosis', 'recommendations'] as const).map(tab => (
                 <button
                   key={tab}
@@ -467,7 +467,7 @@ export function AssessmentTool() {
 
             {/* ── TAB: DIAGNOSIS ─────────────────────────────── */}
             {resultsTab === 'diagnosis' && (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8">
+              <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8">
                 <h2 className="text-xl font-bold mb-1" style={{ color: NAVY }}>Compliance Assessment Results</h2>
                 <p className="text-sm text-gray-500 mb-6">Prepared for {leadData.businessName}</p>
 
@@ -529,7 +529,7 @@ export function AssessmentTool() {
 
             {/* ── TAB: PROGNOSIS ─────────────────────────────── */}
             {resultsTab === 'prognosis' && (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8">
+              <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8">
                 <h2 className="text-xl font-bold mb-1" style={{ color: NAVY }}>How These Gaps Impact Your Business</h2>
                 <p className="text-sm text-gray-500 mb-6">Four risk dimensions scored 0–100 (higher = more risk)</p>
 
@@ -579,7 +579,7 @@ export function AssessmentTool() {
             {resultsTab === 'recommendations' && (
               <div className="space-y-6">
                 {scores.facilitySafety > 20 && (
-                  <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                  <div className="bg-white rounded-xl border border-gray-200 p-6">
                     <h3 className="text-lg font-bold mb-3" style={{ color: NAVY }}>Cleaning Pros Plus Can Help</h3>
                     <ul className="space-y-2 text-sm text-gray-600 mb-4">
                       <li>• Hood cleaning service (scheduled per NFPA 96)</li>
@@ -599,7 +599,7 @@ export function AssessmentTool() {
                 )}
 
                 {(scores.foodSafety > 20 || scores.documentation > 20) && (
-                  <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                  <div className="bg-white rounded-xl border border-gray-200 p-6">
                     <h3 className="text-lg font-bold mb-3" style={{ color: NAVY }}>EvidLY Can Help</h3>
                     <ul className="space-y-2 text-sm text-gray-600 mb-4">
                       <li>• Real-time compliance dashboard with 4 risk scores</li>
@@ -628,7 +628,7 @@ export function AssessmentTool() {
                 )}
 
                 {/* PDF Download */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 text-center">
+                <div className="bg-white rounded-xl border border-gray-200 p-6 text-center">
                   <h3 className="text-lg font-bold mb-2" style={{ color: NAVY }}>Download Your Report</h3>
                   <p className="text-sm text-gray-500 mb-4">
                     Get a branded 2-page PDF with your Diagnosis and Business Impact Analysis.

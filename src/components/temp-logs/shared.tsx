@@ -24,7 +24,7 @@ export function ModalShell({ open, onClose, title, subtitle, children }: ModalSh
         >
           <X className="w-5 h-5" />
         </button>
-        <h3 className="text-xl font-bold text-gray-900 mb-1 pr-8">{title}</h3>
+        <h3 className="text-xl font-bold text-[#1E2D4D] mb-1 pr-8">{title}</h3>
         {subtitle && <p className="text-sm text-gray-500 mb-5">{subtitle}</p>}
         {!subtitle && <div className="mb-5" />}
         {children}
@@ -136,5 +136,5 @@ export function formatDateTimeLocal(date: Date): string {
 }
 
 export const INPUT_CLASS = 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]';
-export const BTN_PRIMARY = 'flex-1 px-6 py-3 bg-[#1e4d6b] text-white rounded-lg font-semibold hover:bg-[#163a52] transition-colors min-h-[44px]';
+export const BTN_PRIMARY = 'flex-1 px-6 py-3 bg-[#1E2D4D] text-white rounded-lg font-semibold hover:bg-[#162340] transition-colors min-h-[44px]';
 export const BTN_CANCEL = 'flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors min-h-[44px]';

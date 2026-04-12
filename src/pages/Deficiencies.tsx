@@ -28,8 +28,9 @@ import {
   type DefSeverity,
   type DefStatus,
 } from '../data/deficienciesDemoData';
+import { usePageTitle } from '../hooks/usePageTitle';
 
-const NAVY = '#1e4d6b';
+const NAVY = '#1E2D4D';
 
 const SEVERITY_ICONS = {
   critical: AlertOctagon,
@@ -49,6 +50,7 @@ export function Deficiencies() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { isDemoMode } = useDemo();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  usePageTitle('Deficiencies');
 
   const statusFilter = (searchParams.get('status') || 'all') as DefStatus | 'all';
   const severityFilter = (searchParams.get('severity') || 'all') as DefSeverity | 'all';

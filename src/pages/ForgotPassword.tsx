@@ -36,18 +36,18 @@ export function ForgotPassword() {
   return (
     <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+        <div className="bg-white rounded-xl border border-gray-200 p-8">
           <div className="flex justify-center mb-2">
             <div className="flex items-center">
               <div className="w-12 h-14">
                 <svg viewBox="0 0 56 65" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
                   <path d="M28 0L56 10V28C56 47.33 44.12 58.17 28 65C11.88 58.17 0 47.33 0 28V10L28 0Z" fill="#d4af37"/>
-                  <path d="M28 6L50 14V28C50 43.5 40.5 52.5 28 58C15.5 52.5 6 43.5 6 28V14L28 6Z" fill="#1e4d6b"/>
+                  <path d="M28 6L50 14V28C50 43.5 40.5 52.5 28 58C15.5 52.5 6 43.5 6 28V14L28 6Z" fill="#1E2D4D"/>
                   <path d="M22 32L26 36L34 26" stroke="#d4af37" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
               <span className="ml-3 text-3xl font-bold">
-                <span className="text-[#1e4d6b]">Evid</span>
+                <span className="text-[#1E2D4D]">Evid</span>
                 <span className="text-[#d4af37]">LY</span>
               </span>
             </div>
@@ -56,7 +56,7 @@ export function ForgotPassword() {
           {sent ? (
             <div className="text-center py-6">
               <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-              <h2 className="text-xl font-bold text-gray-900 mb-2">Check Your Email</h2>
+              <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Check Your Email</h2>
               <p className="text-gray-600 mb-6">
                 We've sent a password reset link to <strong>{email}</strong>. Click the link in the email to set a new password.
               </p>
@@ -65,14 +65,14 @@ export function ForgotPassword() {
               </p>
               <button
                 onClick={() => { setSent(false); setEmail(''); }}
-                className="text-sm font-medium text-[#1e4d6b] hover:text-[#1e4d6b]"
+                className="text-sm font-medium text-[#1E2D4D] hover:text-[#1E2D4D]"
               >
                 Try a different email
               </button>
             </div>
           ) : (
             <>
-              <h2 className="text-center text-xl font-bold text-gray-900 mb-2 mt-4">Reset Your Password</h2>
+              <h2 className="text-center text-xl font-bold text-[#1E2D4D] mb-2 mt-4">Reset Your Password</h2>
               <p className="text-center text-sm text-gray-600 mb-6">
                 Enter your email address and we'll send you a link to reset your password.
               </p>
@@ -105,7 +105,7 @@ export function ForgotPassword() {
                 <button
                   type="submit"
                   disabled={loading || !email}
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1e4d6b] hover:bg-[#2a6a8f] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1e4d6b] disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1E2D4D] hover:bg-[#162340] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1E2D4D] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? 'Sending...' : 'Send Reset Link'}
                 </button>
@@ -114,7 +114,7 @@ export function ForgotPassword() {
           )}
 
           <div className="mt-6 text-center">
-            <Link to="/login" className="flex items-center justify-center text-sm font-medium text-[#1e4d6b] hover:text-[#1e4d6b]">
+            <Link to="/login" className="flex items-center justify-center text-sm font-medium text-[#1E2D4D] hover:text-[#1E2D4D]">
               <ArrowLeft className="h-4 w-4 mr-1" />
               Back to sign in
             </Link>

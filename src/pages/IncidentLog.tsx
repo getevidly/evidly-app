@@ -20,6 +20,7 @@ import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { EmptyState } from '../components/EmptyState';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 import { GhostInput } from '../components/ai/GhostInput';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -407,6 +408,7 @@ export function IncidentLog() {
   const { userRole, getAccessibleLocations } = useRole();
   const { t } = useTranslation();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  usePageTitle('Incident Log');
   const canVerify = userRole === 'executive' || userRole === 'owner_operator';
 
   // ── Lookup maps for module-level data arrays ──────────────────
@@ -982,14 +984,14 @@ export function IncidentLog() {
           <div>
             <button
               onClick={() => setSelectedIncident(null)}
-              className="flex items-center gap-1 text-sm text-[#1e4d6b] hover:underline mb-3 min-h-[44px]"
+              className="flex items-center gap-1 text-sm text-[#1E2D4D] hover:underline mb-3 min-h-[44px]"
             >
               <ArrowLeft className="h-4 w-4" /> {t('incidents.backToIncidentLog')}
             </button>
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
               <div>
                 <div className="flex items-center gap-3 mb-1">
-                  <h1 className="text-2xl font-bold text-gray-900">{inc.id}</h1>
+                  <h1 className="text-2xl font-bold text-[#1E2D4D]">{inc.id}</h1>
                   <SeverityBadge severity={inc.severity} />
                   <StatusBadge status={inc.status} />
                   {overdue && (
@@ -1004,7 +1006,7 @@ export function IncidentLog() {
                 {(inc.status === 'assigned' || inc.status === 'reported') && (
                   <button
                     onClick={() => setShowActionForm(true)}
-                    className="px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium"
+                    className="px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] text-sm font-medium"
                   >
                     {t('incidents.takeAction')}
                   </button>
@@ -1041,7 +1043,7 @@ export function IncidentLog() {
             {/* Left column — details & timeline */}
             <div className="lg:col-span-2 space-y-6">
               {/* Info card */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 space-y-4">
+              <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                   <div>
                     <span className="text-gray-500 block">{t('common.type')}</span>
@@ -1119,7 +1121,7 @@ export function IncidentLog() {
                         showToast(`Corrective action ${caId} created from incident ${inc.id}`);
                       });
                     }}
-                    className="flex items-center gap-2 text-sm font-medium text-[#1e4d6b] hover:underline"
+                    className="flex items-center gap-2 text-sm font-medium text-[#1E2D4D] hover:underline"
                   >
                     <ClipboardList className="h-4 w-4" />
                     Create Corrective Action from this Incident
@@ -1152,7 +1154,7 @@ export function IncidentLog() {
                 {resTime && (
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Clock className="h-4 w-4 text-[#d4af37]" />
-                    {t('incidents.resolvedIn')} <span className="font-semibold text-gray-900">{resTime}</span>
+                    {t('incidents.resolvedIn')} <span className="font-semibold text-[#1E2D4D]">{resTime}</span>
                   </div>
                 )}
                 {inc.verifiedBy && (
@@ -1166,8 +1168,8 @@ export function IncidentLog() {
               </div>
 
               {/* Timeline */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">{t('incidents.timeline')}</h3>
+              <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+                <h3 className="text-lg font-bold text-[#1E2D4D] mb-4">{t('incidents.timeline')}</h3>
                 <div className="relative pl-6">
                   <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-gray-200" />
                   {inc.timeline.map((entry, idx) => {
@@ -1203,8 +1205,8 @@ export function IncidentLog() {
               </div>
 
               {/* Comments */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">{t('incidents.comments')}</h3>
+              <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+                <h3 className="text-lg font-bold text-[#1E2D4D] mb-4">{t('incidents.comments')}</h3>
                 {inc.comments.length === 0 && (
                   <p className="text-sm text-gray-400">{t('incidents.noComments')}</p>
                 )}
@@ -1230,7 +1232,7 @@ export function IncidentLog() {
                   <button
                     onClick={handleAddComment}
                     disabled={!commentText.trim()}
-                    className="px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium disabled:opacity-40"
+                    className="px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] text-sm font-medium disabled:opacity-40"
                   >
                     {t('common.post')}
                   </button>
@@ -1242,8 +1244,8 @@ export function IncidentLog() {
             <div className="space-y-6">
               {/* Before / After Photo Evidence — side by side */}
               {(inc.photos.length > 0 || inc.resolutionPhotos.length > 0) && (
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
-                  <h3 className="text-lg font-bold text-gray-900 mb-3">{t('common.photoEvidence')}</h3>
+                <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+                  <h3 className="text-lg font-bold text-[#1E2D4D] mb-3">{t('common.photoEvidence')}</h3>
                   <div className={`grid gap-4 ${inc.photos.length > 0 && inc.resolutionPhotos.length > 0 ? 'sm:grid-cols-2' : 'grid-cols-1'}`}>
                     {inc.photos.length > 0 && (
                       <div className={inc.resolutionPhotos.length > 0 ? 'sm:border-r sm:border-gray-200 sm:pr-3' : ''}>
@@ -1262,8 +1264,8 @@ export function IncidentLog() {
               )}
 
               {/* Quick Stats */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
-                <h3 className="font-semibold text-gray-900 mb-3">{t('incidents.details')}</h3>
+              <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+                <h3 className="font-semibold text-[#1E2D4D] mb-3">{t('incidents.details')}</h3>
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-500">{t('incidents.incidentId')}</span>
@@ -1290,7 +1292,7 @@ export function IncidentLog() {
                   {resTime && (
                     <div className="flex justify-between">
                       <span className="text-gray-500">{t('incidents.resolutionTime')}</span>
-                      <span className="font-semibold text-[#1e4d6b]">{resTime}</span>
+                      <span className="font-semibold text-[#1E2D4D]">{resTime}</span>
                     </div>
                   )}
                   {inc.regulatoryReportRequired && (
@@ -1304,7 +1306,7 @@ export function IncidentLog() {
                   {inc.linkedCorrectiveActionId && (
                     <div className="flex justify-between">
                       <span className="text-gray-500">Corrective Action</span>
-                      <span className="font-medium text-[#1e4d6b]">{inc.linkedCorrectiveActionId}</span>
+                      <span className="font-medium text-[#1E2D4D]">{inc.linkedCorrectiveActionId}</span>
                     </div>
                   )}
                 </div>
@@ -1326,7 +1328,7 @@ export function IncidentLog() {
         {showActionForm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-auto max-w-lg sm:w-full max-h-[90vh] overflow-y-auto">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">{t('incidents.takeCorrectiveAction')}</h3>
+              <h3 className="text-xl font-bold text-[#1E2D4D] mb-4">{t('incidents.takeCorrectiveAction')}</h3>
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">{t('incidents.quickActions')}</label>
@@ -1340,8 +1342,8 @@ export function IncidentLog() {
                         )}
                         className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                           actionChips.includes(chip)
-                            ? 'bg-[#1e4d6b] text-white border-[#1e4d6b]'
-                            : 'bg-white text-gray-700 border-gray-300 hover:border-[#1e4d6b]'
+                            ? 'bg-[#1E2D4D] text-white border-[#1E2D4D]'
+                            : 'bg-white text-gray-700 border-gray-300 hover:border-[#1E2D4D]'
                         }`}
                       >
                         {actionChipLabels[chip] || chip}
@@ -1403,7 +1405,7 @@ export function IncidentLog() {
                   <button
                     onClick={handleTakeAction}
                     disabled={!actionText.trim()}
-                    className="flex-1 px-4 py-2.5 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg text-sm font-bold hover:bg-[#163a52] disabled:opacity-40"
+                    className="flex-1 px-4 py-2.5 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg text-sm font-bold hover:bg-[#162340] disabled:opacity-40"
                   >
                     {t('incidents.submitAction')}
                   </button>
@@ -1417,7 +1419,7 @@ export function IncidentLog() {
         {showResolveForm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-auto max-w-lg sm:w-full max-h-[90vh] overflow-y-auto">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">{t('incidents.resolveIncident')}</h3>
+              <h3 className="text-xl font-bold text-[#1E2D4D] mb-4">{t('incidents.resolveIncident')}</h3>
               <div className="space-y-4">
                 <div>
                   <div className="flex items-center justify-between mb-2">
@@ -1507,7 +1509,7 @@ export function IncidentLog() {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-auto max-w-lg sm:w-full max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
-          <h3 className="text-xl font-bold text-gray-900">{t('incidents.reportNewIncident')}</h3>
+          <h3 className="text-xl font-bold text-[#1E2D4D]">{t('incidents.reportNewIncident')}</h3>
           <button
             onClick={handleAiDraft}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
@@ -1631,7 +1633,7 @@ export function IncidentLog() {
             <button
               onClick={handleCreateIncident}
               disabled={!newTitle.trim() || !newDescription.trim()}
-              className="flex-1 px-4 py-2.5 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg text-sm font-bold hover:bg-[#163a52] disabled:opacity-40"
+              className="flex-1 px-4 py-2.5 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg text-sm font-bold hover:bg-[#162340] disabled:opacity-40"
             >
               {t('incidents.reportIncident')}
             </button>
@@ -1648,7 +1650,7 @@ export function IncidentLog() {
       <div className="space-y-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">{t('incidents.title')}</h1>
+            <h1 className="text-2xl font-bold text-[#1E2D4D]">{t('incidents.title')}</h1>
             <p className="text-sm text-gray-600 mt-1">{t('incidents.subtitle')}</p>
           </div>
           <div className="flex gap-2">
@@ -1661,7 +1663,7 @@ export function IncidentLog() {
             </button>
             <button
               onClick={() => setShowCreateForm(true)}
-              className="flex items-center gap-2 px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium shadow-sm"
+              className="flex items-center gap-2 px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] text-sm font-medium shadow-sm"
             >
               <Plus className="h-4 w-4" />
               {t('incidents.reportIncident')}
@@ -1702,7 +1704,7 @@ export function IncidentLog() {
         </div>
 
         {/* Filters */}
-        <div data-demo-allow className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+        <div data-demo-allow className="bg-white rounded-xl border border-gray-200 p-4">
           <div className="flex flex-wrap gap-3 items-center">
             <Filter className="h-4 w-4 text-gray-400" />
             <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
@@ -1745,7 +1747,7 @@ export function IncidentLog() {
         {/* Loading Spinner */}
         {loading && (
           <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-[#1e4d6b]" />
+            <Loader2 className="h-8 w-8 animate-spin text-[#1E2D4D]" />
           </div>
         )}
 
@@ -1760,7 +1762,7 @@ export function IncidentLog() {
               <div
                 key={inc.id}
                 onClick={() => setSelectedIncident(inc)}
-                className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 hover:shadow-md transition-shadow cursor-pointer"
+                className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 hover:shadow-md transition-shadow cursor-pointer"
                 style={overdue ? { borderLeft: '4px solid #dc2626' } : { borderLeft: '4px solid transparent' }}
               >
                 <div className="flex flex-col md:flex-row md:items-center gap-3">
@@ -1790,7 +1792,7 @@ export function IncidentLog() {
                           </span>
                         )}
                       </div>
-                      <h3 className="font-semibold text-gray-900 mt-1 truncate">{inc.title}</h3>
+                      <h3 className="font-semibold text-[#1E2D4D] mt-1 truncate">{inc.title}</h3>
                       <div className="flex items-center gap-3 text-xs text-gray-500 mt-1 flex-wrap">
                         <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{inc.location}</span>
                         <span className="flex items-center gap-1"><User className="h-3 w-3" />{inc.assignedTo}</span>

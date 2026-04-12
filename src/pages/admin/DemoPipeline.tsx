@@ -45,12 +45,12 @@ function StatusBadge({ status, expiresAt }: { status: string; expiresAt?: string
     ready: 'bg-green-50 text-green-700 border-green-200',
     active: isExpiringSoon ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-green-50 text-green-700 border-green-200',
     converted: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    expired: 'bg-gray-50 text-gray-500 border-gray-200',
+    expired: 'bg-[#FAF7F0] text-gray-500 border-gray-200',
     generating: 'bg-blue-50 text-blue-700 border-blue-200',
   };
   const label = isExpiringSoon ? 'Expiring Soon' : status.charAt(0).toUpperCase() + status.slice(1);
   return (
-    <span className={`text-xs font-medium px-2 py-0.5 rounded-full border ${colors[status] || 'bg-gray-50 text-gray-500 border-gray-200'}`}>
+    <span className={`text-xs font-medium px-2 py-0.5 rounded-full border ${colors[status] || 'bg-[#FAF7F0] text-gray-500 border-gray-200'}`}>
       {label}
     </span>
   );
@@ -60,7 +60,7 @@ function DemoCard({ session, onAction }: { session: DemoSession; onAction: (acti
   const remaining = daysUntil(session.expires_at);
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4 hover:border-gray-300 transition-colors">
+    <div className="bg-white rounded-xl border border-gray-200 p-4 hover:border-gray-300 transition-colors">
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1 min-w-0">
@@ -426,12 +426,12 @@ export function DemoPipeline() {
       {/* Cards */}
       <div className="space-y-3">
         {loading ? (
-          <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
+          <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
             <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-400 mx-auto mb-2" />
             <p className="text-sm text-gray-500">Loading demo pipeline...</p>
           </div>
         ) : filtered.length === 0 ? (
-          <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
+          <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
             <p className="text-sm text-gray-500">No demos in this stage.</p>
           </div>
         ) : (

@@ -89,7 +89,7 @@ export default function VendorDemoDashboard() {
             <h2 className="text-lg font-semibold text-[#1E2D4D] mb-4">Your Clients</h2>
             <div className="space-y-3">
               {clients.map((client, i) => (
-                <div key={client.id || i} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div key={client.id || i} className="flex items-center justify-between p-3 bg-[#FAF7F0] rounded-lg">
                   <div>
                     <p className="font-medium text-[#1E2D4D]">{client.name}</p>
                     <p className="text-xs text-gray-500">{client.county} County</p>
@@ -145,7 +145,7 @@ export default function VendorDemoDashboard() {
             <h2 className="text-lg font-semibold text-[#1E2D4D] mb-4">Upcoming Service Dates</h2>
             <div className="space-y-2">
               {clients.slice(0, 3).map((client, i) => (
-                <div key={client.id || i} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div key={client.id || i} className="flex items-center justify-between p-3 bg-[#FAF7F0] rounded-lg">
                   <div className="flex items-center gap-3">
                     <Clock size={16} className="text-gray-400" />
                     <div>

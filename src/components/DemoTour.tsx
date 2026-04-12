@@ -168,7 +168,7 @@ export function DemoTour() {
       <>
         <div className="fixed inset-0 z-[99990] bg-black/60 flex items-center justify-center">
           <div
-            className="bg-white rounded-xl shadow-sm border border-gray-200 w-full max-w-md mx-4 overflow-hidden"
+            className="bg-white rounded-xl border border-gray-200 w-full max-w-md mx-4 overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-8 text-center">
@@ -205,7 +205,7 @@ export function DemoTour() {
                     <Sparkles className="w-4 h-4" />
                     {getScoreLabel(animatedScore)}
                   </div>
-                  <h2 className="text-xl font-bold text-gray-900 mb-2">
+                  <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">
                     {companyName} is Inspection Ready!
                   </h2>
                   <p className="text-sm text-gray-500 mb-6 max-w-sm mx-auto">
@@ -222,7 +222,7 @@ export function DemoTour() {
                       key={i}
                       className="absolute w-2 h-2 rounded-full"
                       style={{
-                        backgroundColor: i % 2 === 0 ? '#d4af37' : '#1e4d6b',
+                        backgroundColor: i % 2 === 0 ? '#d4af37' : '#1E2D4D',
                         top: `${15 + Math.random() * 70}%`,
                         left: `${10 + Math.random() * 80}%`,
                         animation: `sparkle ${1 + Math.random()}s ease-in-out ${Math.random() * 0.5}s infinite`,
@@ -235,7 +235,7 @@ export function DemoTour() {
               <button
                 onClick={completeTour}
                 className="px-8 py-3 text-sm font-bold text-white rounded-xl hover:opacity-90 transition-all hover:-translate-y-0.5 hover:shadow-md"
-                style={{ backgroundColor: '#1e4d6b' }}
+                style={{ backgroundColor: '#1E2D4D' }}
               >
                 Start Exploring
               </button>
@@ -287,13 +287,13 @@ export function DemoTour() {
 
       {/* Tooltip */}
       <div
-        className="fixed z-[99999] w-[360px] bg-white rounded-xl shadow-sm border border-gray-200"
+        className="fixed z-[99999] w-[360px] bg-white rounded-xl border border-gray-200"
         style={{ top: tooltipPosition.top, left: tooltipPosition.left }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-5">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-lg font-bold text-gray-900">{step?.title}</h3>
+            <h3 className="text-lg font-bold text-[#1E2D4D]">{step?.title}</h3>
             <button onClick={completeTour} className="p-2.5 -m-1 hover:bg-gray-100 rounded-full transition-colors" aria-label="Close">
               <X className="w-4 h-4 text-gray-400" />
             </button>
@@ -301,7 +301,7 @@ export function DemoTour() {
           <p className="text-sm text-gray-600 leading-relaxed">{step?.content}</p>
         </div>
 
-        <div className="flex items-center justify-between px-5 py-3 bg-gray-50 rounded-b-xl border-t border-gray-100">
+        <div className="flex items-center justify-between px-5 py-3 bg-[#FAF7F0] rounded-b-xl border-t border-gray-100">
           <div className="flex items-center gap-3">
             {/* Progress dots */}
             <div className="flex items-center gap-1.5">
@@ -309,7 +309,7 @@ export function DemoTour() {
                 <div
                   key={i}
                   className={`w-2 h-2 rounded-full transition-all ${
-                    i === tourStep ? 'bg-[#1e4d6b] w-4' :
+                    i === tourStep ? 'bg-[#1E2D4D] w-4' :
                     i < tourStep ? 'bg-[#d4af37]' : 'bg-gray-300'
                   }`}
                 />
@@ -331,7 +331,7 @@ export function DemoTour() {
             )}
             <button
               onClick={next}
-              className="flex items-center gap-1 px-4 py-1.5 text-sm font-medium text-white bg-[#1e4d6b] rounded-lg hover:bg-[#163a52] transition-colors"
+              className="flex items-center gap-1 px-4 py-1.5 text-sm font-medium text-white bg-[#1E2D4D] rounded-lg hover:bg-[#162340] transition-colors"
             >
               {tourStep === TOUR_STEPS.length - 2 ? 'See Your Score' : 'Next'}
               <ChevronRight className="w-4 h-4" />

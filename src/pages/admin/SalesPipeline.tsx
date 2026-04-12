@@ -16,8 +16,9 @@ import {
   ChevronRight, LayoutGrid, Table2, X, Calendar,
   MessageSquare, Award, AlertTriangle,
 } from 'lucide-react';
+import { usePageTitle } from '../../hooks/usePageTitle';
 
-const NAVY = '#1e4d6b';
+const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
 const DARK = '#1E2D4D';
 
@@ -42,6 +43,7 @@ function formatDate(d: string | null): string {
 export default function SalesPipeline() {
   useDemoGuard();
   const { isDemoMode } = useDemo();
+  usePageTitle('Admin | Sales Pipeline');
   const [pipeline, setPipeline] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
@@ -153,11 +155,11 @@ export default function SalesPipeline() {
         </div>
         <div className="flex items-center gap-2">
           <button onClick={() => setViewMode('kanban')}
-            className={`p-2 rounded-lg border ${viewMode === 'kanban' ? 'border-[#1e4d6b] bg-blue-50' : 'border-gray-200'}`}>
+            className={`p-2 rounded-lg border ${viewMode === 'kanban' ? 'border-[#1E2D4D] bg-blue-50' : 'border-gray-200'}`}>
             <LayoutGrid className="h-4 w-4" style={{ color: viewMode === 'kanban' ? NAVY : '#9ca3af' }} />
           </button>
           <button onClick={() => setViewMode('table')}
-            className={`p-2 rounded-lg border ${viewMode === 'table' ? 'border-[#1e4d6b] bg-blue-50' : 'border-gray-200'}`}>
+            className={`p-2 rounded-lg border ${viewMode === 'table' ? 'border-[#1E2D4D] bg-blue-50' : 'border-gray-200'}`}>
             <Table2 className="h-4 w-4" style={{ color: viewMode === 'table' ? NAVY : '#9ca3af' }} />
           </button>
         </div>
@@ -183,8 +185,8 @@ export default function SalesPipeline() {
 
       {/* Win/Loss analysis */}
       {lostReasons.length > 0 && (
-        <div className="bg-white rounded-xl border border-gray-200 p-5 mt-6">
-          <h3 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wide">Lost Reasons</h3>
+        <div className="bg-white rounded-xl border border-gray-200 p-6 mt-6">
+          <h3 className="text-sm font-bold text-[#1E2D4D] mb-4 uppercase tracking-wide">Lost Reasons</h3>
           <div className="space-y-2">
             {lostReasons.map(([reason, count]) => (
               <div key={reason} className="flex items-center gap-3">
@@ -228,12 +230,12 @@ function KanbanView({ pipeline, onStageChange, onSelect, onNotes, onCloseDate }:
                 <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: STAGE_COLORS[stage] || '#6b7280' }} />
                 <span className="text-xs font-bold text-gray-700 uppercase">{STAGE_LABELS[stage]}</span>
               </div>
-              <span className="text-[10px] text-gray-400">{deals.length} · {formatCents(stageMRR)}</span>
+              <span className="text-xs text-gray-400">{deals.length} · {formatCents(stageMRR)}</span>
             </div>
-            <div className="bg-gray-50 rounded-xl p-2 min-h-[200px] space-y-2">
+            <div className="bg-[#FAF7F0] rounded-xl p-2 min-h-[200px] space-y-2">
               {deals.map(deal => (
                 <div key={deal.id} onClick={() => onSelect(deal)}
-                  className="bg-white rounded-lg border border-gray-200 p-3 cursor-pointer hover:shadow-md transition-shadow">
+                  className="bg-white rounded-xl border border-gray-200 p-3 cursor-pointer hover:shadow-md transition-shadow">
                   <div className="font-semibold text-sm text-gray-900 mb-1">{deal.org_name}</div>
                   <div className="text-xs text-gray-500">{deal.contact_name || '—'}{deal.contact_title ? ` · ${deal.contact_title}` : ''}</div>
                   <div className="flex items-center gap-2 mt-2 text-xs text-gray-400">
@@ -242,7 +244,7 @@ function KanbanView({ pipeline, onStageChange, onSelect, onNotes, onCloseDate }:
                   </div>
                   <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-100">
                     <span className="text-xs font-bold" style={{ color: DARK }}>{formatCents(deal.estimated_mrr_cents || 0)}/mo</span>
-                    <span className="text-[10px] text-gray-400">{deal.probability_pct || 0}%</span>
+                    <span className="text-xs text-gray-400">{deal.probability_pct || 0}%</span>
                   </div>
                   {/* Quick stage buttons */}
                   <div className="flex gap-1 mt-2">
@@ -250,7 +252,7 @@ function KanbanView({ pipeline, onStageChange, onSelect, onNotes, onCloseDate }:
                       <>
                         {columns.indexOf(stage) < columns.length - 2 && (
                           <button onClick={e => { e.stopPropagation(); onStageChange(deal.id, columns[columns.indexOf(stage) + 1]); }}
-                            className="text-[10px] px-2 py-0.5 border border-gray-200 rounded hover:bg-gray-50 flex items-center gap-0.5">
+                            className="text-xs px-2 py-0.5 border border-gray-200 rounded hover:bg-gray-50 flex items-center gap-0.5">
                             <ChevronRight className="h-3 w-3" /> Next
                           </button>
                         )}
@@ -281,7 +283,7 @@ function TableView({ pipeline, onStageChange, onNotes, onCloseDate }: {
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-gray-50 border-b border-gray-200">
+            <tr className="bg-[#FAF7F0] border-b border-gray-200">
               <th className="text-left px-3 py-2 font-semibold text-gray-700">Company</th>
               <th className="text-left px-3 py-2 font-semibold text-gray-700">Contact</th>
               <th className="text-left px-3 py-2 font-semibold text-gray-700">Segment</th>
@@ -352,7 +354,7 @@ function DealPanel({ deal, onClose, onStageChange, onNotes, onCloseDate, onRefre
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end sm:items-center justify-center z-50">
       <div className="bg-white rounded-t-xl sm:rounded-xl w-full sm:max-w-md max-h-[80vh] overflow-y-auto p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-bold text-gray-900">{deal.org_name}</h3>
+          <h3 className="text-lg font-bold text-[#1E2D4D]">{deal.org_name}</h3>
           <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded" aria-label="Close"><X className="h-5 w-5 text-gray-400" /></button>
         </div>
 

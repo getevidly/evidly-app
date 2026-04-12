@@ -244,16 +244,16 @@ export function ServicesDueSoonWidget({ services: externalServices }: ServicesDu
                     return <IconComp size={14} style={{ color: iconColor, flexShrink: 0 }} />;
                   })()}
                   <div className="min-w-0">
-                    <p className="text-[13px] font-medium text-gray-800 truncate">
+                    <p className="text-sm font-medium text-gray-800 truncate">
                       {s.service_type}
                     </p>
-                    <p className="text-[11px] text-gray-500 truncate">
+                    <p className="text-xs text-gray-500 truncate">
                       {s.vendor_name} · {s.location_name}
                     </p>
                   </div>
                 </div>
                 <span
-                  className="text-[11px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0 ml-2"
+                  className="text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0 ml-2"
                   style={{ background: colors.bg, color: colors.text }}
                 >
                   {status.label}

@@ -7,9 +7,9 @@ interface Props {
   color?: string;
 }
 
-export function TrendSummaryCard({ label, analysis, color = '#1e4d6b' }: Props) {
+export function TrendSummaryCard({ label, analysis, color = '#1E2D4D' }: Props) {
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+    <div className="bg-white rounded-xl border border-gray-200 p-4">
       <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">{label}</p>
       <div className="flex items-end gap-3">
         <span className="text-3xl font-bold" style={{ color }}>{analysis.currentValue}</span>

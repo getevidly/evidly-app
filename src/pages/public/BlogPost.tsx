@@ -89,7 +89,7 @@ export function BlogPost() {
           </p>
           <Link
             to="/blog"
-            className="inline-flex items-center gap-2 text-[#1e4d6b] hover:text-[#2a6a8f] font-medium"
+            className="inline-flex items-center gap-2 text-[#1E2D4D] hover:text-[#2A3F6B] font-medium"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Blog
@@ -130,7 +130,7 @@ export function BlogPost() {
             <nav className="mb-6">
               <Link
                 to="/blog"
-                className="inline-flex items-center gap-1.5 text-sm text-[#1e4d6b] hover:text-[#2a6a8f] font-medium"
+                className="inline-flex items-center gap-1.5 text-sm text-[#1E2D4D] hover:text-[#2A3F6B] font-medium"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Back to Blog
@@ -167,7 +167,7 @@ export function BlogPost() {
                 {post.categories.map((cat) => (
                   <span
                     key={cat}
-                    className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full bg-blue-50 text-[#1e4d6b]"
+                    className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full bg-blue-50 text-[#1E2D4D]"
                   >
                     <Tag className="w-3 h-3" />
                     {cat}

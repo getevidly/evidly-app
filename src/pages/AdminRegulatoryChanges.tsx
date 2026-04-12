@@ -277,16 +277,16 @@ export function AdminRegulatoryChanges() {
             <Scale className="h-5 w-5" style={{ color: '#d4af37' }} />
           </div>
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Regulatory Change Management</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-[#1E2D4D]">Regulatory Change Management</h1>
             <p className="text-sm text-gray-500">Admin — Add, review, and publish regulatory changes for customers</p>
           </div>
         </div>
         <button
           onClick={() => setShowAddForm(!showAddForm)}
           className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white transition-colors"
-          style={{ backgroundColor: '#1e4d6b' }}
-          onMouseOver={e => (e.currentTarget.style.backgroundColor = '#163a52')}
-          onMouseOut={e => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+          style={{ backgroundColor: '#1E2D4D' }}
+          onMouseOver={e => (e.currentTarget.style.backgroundColor = '#141E33')}
+          onMouseOut={e => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
         >
           <Plus className="h-4 w-4" />
           Add New Change
@@ -314,8 +314,8 @@ export function AdminRegulatoryChanges() {
 
       {/* Add New Change Form */}
       {showAddForm && (
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Add Regulatory Change</h3>
+        <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+          <h3 className="text-lg font-semibold text-[#1E2D4D] mb-4">Add Regulatory Change</h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             <div>
@@ -428,7 +428,7 @@ export function AdminRegulatoryChanges() {
                 const isEditing = editingId === change.id;
 
                 return (
-                  <div key={change.id} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                  <div key={change.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
                     <div className="p-4">
                       <div className="flex items-start gap-3">
                         <div className="mt-0.5 flex-shrink-0">
@@ -436,15 +436,15 @@ export function AdminRegulatoryChanges() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex flex-wrap items-center gap-2 mb-1">
-                            <span className="text-sm font-semibold text-gray-900">{change.title}</span>
+                            <span className="text-sm font-semibold text-[#1E2D4D]">{change.title}</span>
                             <span
-                              className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md"
+                              className="text-xs font-semibold px-1.5 py-0.5 rounded-md"
                               style={{ backgroundColor: impact.bg, color: impact.dot, border: `1px solid ${impact.border}` }}
                             >
                               {impact.label}
                             </span>
                             {change.aiGenerated && (
-                              <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md bg-purple-50 text-purple-600 border border-purple-200">
+                              <span className="text-xs font-semibold px-1.5 py-0.5 rounded-md bg-purple-50 text-purple-600 border border-purple-200">
                                 AI Generated
                               </span>
                             )}
@@ -520,7 +520,7 @@ export function AdminRegulatoryChanges() {
                                 <button
                                   onClick={() => handleSaveEdit(change.id)}
                                   className="px-3 py-1.5 text-xs font-semibold rounded-lg text-white"
-                                  style={{ backgroundColor: '#1e4d6b' }}
+                                  style={{ backgroundColor: '#1E2D4D' }}
                                 >
                                   Save Changes
                                 </button>
@@ -546,7 +546,7 @@ export function AdminRegulatoryChanges() {
                           {change.affectedPillars.length > 0 && (
                             <div className="flex flex-wrap gap-1.5 mb-3">
                               {change.affectedPillars.map(p => (
-                                <span key={p} className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
+                                <span key={p} className="text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
                                   {p.replace(/_/g, ' ')}
                                 </span>
                               ))}
@@ -609,7 +609,7 @@ export function AdminRegulatoryChanges() {
                 const isExpanded = expandedId === change.id;
 
                 return (
-                  <div key={change.id} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                  <div key={change.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
                     <div
                       className="p-4 cursor-pointer hover:bg-gray-50 transition-colors"
                       onClick={() => setExpandedId(isExpanded ? null : change.id)}
@@ -618,9 +618,9 @@ export function AdminRegulatoryChanges() {
                         <CheckCircle2 className="h-4.5 w-4.5 mt-0.5 flex-shrink-0 text-green-500" />
                         <div className="flex-1 min-w-0">
                           <div className="flex flex-wrap items-center gap-2 mb-1">
-                            <span className="text-sm font-semibold text-gray-900">{change.title}</span>
+                            <span className="text-sm font-semibold text-[#1E2D4D]">{change.title}</span>
                             <span
-                              className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md"
+                              className="text-xs font-semibold px-1.5 py-0.5 rounded-md"
                               style={{ backgroundColor: impact.bg, color: impact.dot, border: `1px solid ${impact.border}` }}
                             >
                               {impact.label}
@@ -640,7 +640,7 @@ export function AdminRegulatoryChanges() {
                       </div>
                     </div>
                     {isExpanded && (
-                      <div className="border-t border-gray-100 p-4 bg-gray-50">
+                      <div className="border-t border-gray-100 p-4 bg-[#FAF7F0]">
                         <p className="text-sm text-gray-700 mb-2">{change.summary}</p>
                         <p className="text-sm text-gray-600 mb-3">
                           <span className="font-medium">Operator action: </span>

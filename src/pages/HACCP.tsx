@@ -16,6 +16,7 @@ import { toast } from 'sonner';
 import { getJurisdictionForLocation } from '../data/jurisdictionChecklistData';
 import { exportHACCPPlanPdf } from '../lib/haccpPdf';
 import type { ParsedCCP } from '../lib/haccpParser';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -371,6 +372,7 @@ export function HACCP() {
   const urlLocation = searchParams.get('location') || '';
   const [selectedLocation, setSelectedLocation] = useState(urlLocation || 'all');
   const { getAccessibleLocations, userRole } = useRole();
+  usePageTitle('HACCP Plans');
   const ttActivePlans = useTooltip('haccpActivePlans', userRole);
   const ttOverallCompliance = useTooltip('haccpOverallCompliance', userRole);
   const ttCCPsInCompliance = useTooltip('haccpCCPsInCompliance', userRole);
@@ -1011,8 +1013,8 @@ export function HACCP() {
           {/* Header */}
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <Shield className="h-5 w-5" style={{ color: '#1e4d6b' }} />
-              <h1 className="text-2xl font-bold text-gray-900">HACCP Status</h1>
+              <Shield className="h-5 w-5" style={{ color: '#1E2D4D' }} />
+              <h1 className="text-2xl font-bold text-[#1E2D4D]">HACCP Status</h1>
             </div>
             <p className="text-sm text-gray-500">
               {haccpAccessibleLocs.length > 1 ? 'All Locations' : haccpAccessibleLocs[0]?.locationName} — {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
@@ -1021,9 +1023,9 @@ export function HACCP() {
 
           {/* Summary stats */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="bg-white rounded-xl shadow-sm p-5 text-center" style={{ borderLeft: '4px solid #1e4d6b' }}>
+            <div className="bg-white rounded-xl shadow-sm p-5 text-center" style={{ borderLeft: '4px solid #1E2D4D' }}>
               <p className="text-sm text-gray-500 font-medium mb-1">Active CCPs</p>
-              <p className="text-2xl font-bold" style={{ color: '#1e4d6b' }}>{allPlans.flatMap(p => p.ccps).length}</p>
+              <p className="text-2xl font-bold" style={{ color: '#1E2D4D' }}>{allPlans.flatMap(p => p.ccps).length}</p>
             </div>
             <div className="bg-white rounded-xl shadow-sm p-5 text-center" style={{ borderLeft: `4px solid ${totalDeviations > 0 ? '#DC2626' : '#22c55e'}` }}>
               <p className="text-sm text-gray-500 font-medium mb-1">Deviations</p>
@@ -1053,7 +1055,7 @@ export function HACCP() {
                       <AlertTriangle className="h-5 w-5 shrink-0" style={{ color: '#DC2626' }} />
                     )}
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold text-gray-900">{loc.locationName}</p>
+                      <p className="text-sm font-semibold text-[#1E2D4D]">{loc.locationName}</p>
                       <p className="text-xs text-gray-500">
                         {loc.allClear
                           ? 'All CCPs in limit'
@@ -1066,9 +1068,9 @@ export function HACCP() {
                     type="button"
                     onClick={() => navigate(`/haccp?location=${loc.locationUrlId}`)}
                     className="text-xs font-semibold px-3 py-1.5 rounded-md shrink-0 transition-colors"
-                    style={{ backgroundColor: '#1e4d6b', color: '#fff' }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = '#2a6a8f'; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = '#1e4d6b'; }}
+                    style={{ backgroundColor: '#1E2D4D', color: '#fff' }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = '#2A3F6B'; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = '#1E2D4D'; }}
                   >
                     View Details
                   </button>
@@ -1092,12 +1094,12 @@ export function HACCP() {
                       <div key={ca.id} className="px-5 py-4">
                         <div className="flex items-start justify-between gap-3">
                           <div className="min-w-0">
-                            <p className="text-sm font-semibold text-gray-900">{ca.ccpNumber}: {ca.ccpHazard.split(' (')[0]}</p>
+                            <p className="text-sm font-semibold text-[#1E2D4D]">{ca.ccpNumber}: {ca.ccpHazard.split(' (')[0]}</p>
                             <p className="text-xs text-gray-500 mt-0.5">{locName} — {ca.deviation}</p>
-                            <p className="text-xs mt-1" style={{ color: '#1e4d6b' }}>Action: {ca.actionTaken.substring(0, 120)}{ca.actionTaken.length > 120 ? '...' : ''}</p>
+                            <p className="text-xs mt-1" style={{ color: '#1E2D4D' }}>Action: {ca.actionTaken.substring(0, 120)}{ca.actionTaken.length > 120 ? '...' : ''}</p>
                           </div>
                           <span
-                            className="text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0"
+                            className="text-xs font-semibold px-2 py-0.5 rounded-full shrink-0"
                             style={{
                               backgroundColor: ca.status === 'open' ? '#fef2f2' : '#fef9c3',
                               color: ca.status === 'open' ? '#991b1b' : '#854d0e',
@@ -1120,9 +1122,9 @@ export function HACCP() {
               <button
                 onClick={handleExportInspectorPackage}
                 className="inline-flex items-center px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors"
-                style={{ backgroundColor: '#1e4d6b' }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+                style={{ backgroundColor: '#1E2D4D' }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2A3F6B')}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
               >
                 <Download className="h-4 w-4 mr-2" />
                 Export Inspector Package
@@ -1141,7 +1143,7 @@ export function HACCP() {
         {/* Header */}
         <div className="flex items-start justify-between flex-wrap gap-2">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">HACCP Management</h1>
+            <h1 className="text-2xl font-bold text-[#1E2D4D]">HACCP Management</h1>
             <p className="text-sm text-gray-600 mt-1">
               Roll-up view — data pulled from Temperature Logs and Checklists
             </p>
@@ -1149,10 +1151,10 @@ export function HACCP() {
           {/* Jurisdiction Header */}
           {jurisdictionConfig && (
             <div className="flex items-start gap-3 px-4 py-3 rounded-lg bg-[#eef4f8] border border-[#b8d4e8] w-full order-last">
-              <Building2 size={18} className="text-[#1e4d6b] mt-0.5 shrink-0" />
+              <Building2 size={18} className="text-[#1E2D4D] mt-0.5 shrink-0" />
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                  <span className="text-sm font-semibold text-[#1e4d6b]">{jurisdictionConfig.ehdName}</span>
+                  <span className="text-sm font-semibold text-[#1E2D4D]">{jurisdictionConfig.ehdName}</span>
                   <span className="text-xs text-gray-400">·</span>
                   <span className="text-xs text-gray-600">{jurisdictionConfig.foodCodeVersion}</span>
                 </div>
@@ -1162,7 +1164,7 @@ export function HACCP() {
                     .map(f => (
                       <span
                         key={f.codeSection}
-                        className="text-[10px] font-semibold px-1.5 py-0.5 rounded"
+                        className="text-xs font-semibold px-1.5 py-0.5 rounded"
                         style={{ color: '#0369a1', backgroundColor: '#e0f2fe' }}
                       >
                         {f.description} ({f.codeSection})
@@ -1187,9 +1189,9 @@ export function HACCP() {
               <button
                 onClick={handleExportInspectorPackage}
                 className="inline-flex items-center px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors"
-                style={{ backgroundColor: '#1e4d6b' }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+                style={{ backgroundColor: '#1E2D4D' }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2A3F6B')}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
               >
                 <Download className="h-4 w-4 mr-2" />
                 Export Inspector Package
@@ -1211,12 +1213,12 @@ export function HACCP() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #1e4d6b' }}>
+          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #1E2D4D' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <EvidlyIcon size={16} />
               <span className="text-sm text-gray-500 font-medium">Active Plans<InfoTooltip content={ttActivePlans} /></span>
             </div>
-            <p className="text-xl sm:text-3xl font-bold text-[#1e4d6b] text-center">{filteredPlans.length}</p>
+            <p className="text-xl sm:text-3xl font-bold text-[#1E2D4D] text-center">{filteredPlans.length}</p>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: `4px solid ${overallCompliance >= 90 ? '#22c55e' : overallCompliance >= 75 ? '#eab308' : overallCompliance >= 60 ? '#f59e0b' : '#ef4444'}` }}>
             <div className="flex items-center justify-center gap-2 mb-2">
@@ -1249,7 +1251,7 @@ export function HACCP() {
             onClick={() => { setActiveTab('plans'); setSelectedPlan(null); }}
             className={`px-6 py-3 font-medium whitespace-nowrap ${
               activeTab === 'plans'
-                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
+                ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -1259,7 +1261,7 @@ export function HACCP() {
             onClick={() => setActiveTab('monitoring')}
             className={`px-6 py-3 font-medium whitespace-nowrap ${
               activeTab === 'monitoring'
-                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
+                ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -1269,7 +1271,7 @@ export function HACCP() {
             onClick={() => setActiveTab('corrective')}
             className={`px-6 py-3 font-medium flex items-center space-x-2 whitespace-nowrap ${
               activeTab === 'corrective'
-                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
+                ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -1282,7 +1284,7 @@ export function HACCP() {
             onClick={() => setActiveTab('template')}
             className={`px-6 py-3 font-medium flex items-center space-x-2 whitespace-nowrap ${
               activeTab === 'template'
-                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
+                ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -1293,7 +1295,7 @@ export function HACCP() {
             onClick={() => setActiveTab('ai-create')}
             className={`px-6 py-3 font-medium flex items-center space-x-2 whitespace-nowrap ${
               activeTab === 'ai-create'
-                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
+                ? 'border-b-2 border-[#d4af37] text-[#1E2D4D]'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -1305,7 +1307,7 @@ export function HACCP() {
         {/* Loading state */}
         {loading && (
           <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-[#1e4d6b]" />
+            <Loader2 className="h-8 w-8 animate-spin text-[#1E2D4D]" />
             <span className="ml-3 text-gray-600">Loading HACCP data...</span>
           </div>
         )}
@@ -1340,7 +1342,7 @@ export function HACCP() {
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div>
-                      <h3 className="text-lg font-bold text-gray-900">{plan.name}</h3>
+                      <h3 className="text-lg font-bold text-[#1E2D4D]">{plan.name}</h3>
                       <p className="text-sm text-gray-600 mt-0.5">{plan.description}</p>
                     </div>
                     <ChevronRight className="h-5 w-5 text-gray-400 flex-shrink-0 mt-1" />
@@ -1349,7 +1351,7 @@ export function HACCP() {
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
                     <div>
                       <p className="text-xs text-gray-500 text-center">CCPs</p>
-                      <p className="text-lg font-bold text-[#1e4d6b] text-center">{plan.ccps.length}</p>
+                      <p className="text-lg font-bold text-[#1E2D4D] text-center">{plan.ccps.length}</p>
                     </div>
                     <div>
                       <p className="text-xs text-gray-500 text-center">Compliance</p>
@@ -1398,7 +1400,7 @@ export function HACCP() {
                     {planStatus === 'review' && ['owner_operator', 'executive'].includes(userRole) && (
                       <button
                         onClick={(e) => { e.stopPropagation(); handleMarkReviewed(plan.id); }}
-                        className="mt-2 text-xs font-medium text-[#1e4d6b] hover:text-[#2a6a8f] underline"
+                        className="mt-2 text-xs font-medium text-[#1E2D4D] hover:text-[#2A3F6B] underline"
                       >
                         Mark as Reviewed
                       </button>
@@ -1417,7 +1419,7 @@ export function HACCP() {
             <div className="flex items-center space-x-2 text-sm mb-4">
               <span
                 onClick={() => setSelectedPlan(null)}
-                className="text-[#1e4d6b] hover:text-[#163a52] cursor-pointer font-medium"
+                className="text-[#1E2D4D] hover:text-[#141E33] cursor-pointer font-medium"
               >
                 HACCP Plans
               </span>
@@ -1425,10 +1427,10 @@ export function HACCP() {
               <span className="text-gray-600">{selectedPlan.name}</span>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
+            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 mb-6">
               <div className="flex items-start justify-between flex-wrap gap-2 mb-4">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900">{selectedPlan.name}</h2>
+                  <h2 className="text-2xl font-bold text-[#1E2D4D]">{selectedPlan.name}</h2>
                   <p className="text-gray-600 mt-1">{selectedPlan.description}</p>
                   <p className="text-xs text-gray-400 mt-1">Last reviewed: {new Date(selectedPlan.lastReviewed).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
                 </div>
@@ -1455,9 +1457,9 @@ export function HACCP() {
                       toast.success('PDF downloaded');
                     }}
                     className="inline-flex items-center px-3 py-1.5 rounded-lg text-white text-xs font-medium transition-colors"
-                    style={{ backgroundColor: '#1e4d6b' }}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+                    style={{ backgroundColor: '#1E2D4D' }}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2A3F6B')}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
                   >
                     <Download className="h-3.5 w-3.5 mr-1.5" />
                     Export PDF
@@ -1472,7 +1474,7 @@ export function HACCP() {
               </div>
             </div>
 
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Critical Control Points</h3>
+            <h3 className="text-lg font-semibold text-[#1E2D4D] mb-4">Critical Control Points</h3>
             <div className="space-y-4">
               {selectedPlan.ccps.map((ccp) => (
                 <div
@@ -1485,7 +1487,7 @@ export function HACCP() {
                         {ccp.isWithinLimit ? <CheckCircle className="h-5 w-5" /> : <XCircle className="h-5 w-5" />}
                       </div>
                       <div>
-                        <h4 className="text-lg font-semibold text-gray-900">{ccp.ccpNumber}: {ccp.hazard}</h4>
+                        <h4 className="text-lg font-semibold text-[#1E2D4D]">{ccp.ccpNumber}: {ccp.hazard}</h4>
                         {ccp.equipmentName && (
                           <p className="text-sm text-gray-500">Source: {ccp.equipmentName} (Temperature Log)</p>
                         )}
@@ -1559,7 +1561,7 @@ export function HACCP() {
                     <div className="flex items-start justify-between flex-wrap gap-2 mb-3">
                       <div>
                         <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">{plan.name}</p>
-                        <h4 className="text-sm font-bold text-gray-900 mt-0.5">{ccp.ccpNumber}: {ccp.hazard}</h4>
+                        <h4 className="text-sm font-bold text-[#1E2D4D] mt-0.5">{ccp.ccpNumber}: {ccp.hazard}</h4>
                       </div>
                       {ccp.isWithinLimit ? (
                         <CheckCircle className="h-6 w-6 text-green-500 flex-shrink-0" />
@@ -1569,7 +1571,7 @@ export function HACCP() {
                     </div>
 
                     {/* Reading */}
-                    <div className="bg-gray-50 rounded-lg p-3 mb-3">
+                    <div className="bg-[#FAF7F0] rounded-lg p-3 mb-3">
                       <div className="flex items-center justify-between">
                         <div>
                           <p className="text-xs text-gray-500">Last Reading</p>
@@ -1659,7 +1661,7 @@ export function HACCP() {
                         <div className="flex items-start space-x-3">
                           <AlertTriangle className="h-6 w-6 text-red-600 mt-0.5 flex-shrink-0" />
                           <div>
-                            <h4 className="font-semibold text-gray-900">{action.planName} — {action.ccpNumber}</h4>
+                            <h4 className="font-semibold text-[#1E2D4D]">{action.planName} — {action.ccpNumber}</h4>
                             <p className="text-sm text-gray-600">{action.ccpHazard}</p>
                             <p className="text-xs text-gray-400 mt-0.5">{getRelativeTime(action.createdAt)} · Source: {action.source}</p>
                           </div>
@@ -1670,7 +1672,7 @@ export function HACCP() {
                       </div>
 
                       {/* Workflow Progress */}
-                      <div className="mb-4 bg-gray-50 rounded-lg p-3 overflow-x-auto">
+                      <div className="mb-4 bg-[#FAF7F0] rounded-lg p-3 overflow-x-auto">
                         <div className="flex items-center justify-between min-w-[320px]">
                           {workflowSteps.map((step, i) => (
                             <div key={step} className="flex items-center" style={{ flex: i < workflowSteps.length - 1 ? 1 : 'none' }}>
@@ -1678,7 +1680,7 @@ export function HACCP() {
                                 <div
                                   className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
                                     i < currentStep ? 'bg-green-500 text-white' :
-                                    i === currentStep ? 'bg-[#1e4d6b] text-white' :
+                                    i === currentStep ? 'bg-[#1E2D4D] text-white' :
                                     'bg-gray-300 text-gray-500'
                                   }`}
                                 >
@@ -1699,11 +1701,11 @@ export function HACCP() {
                           <p className="text-xs font-medium text-red-700">Deviation</p>
                           <p className="text-red-900 mt-1">{action.deviation}</p>
                         </div>
-                        <div className="bg-gray-50 rounded-lg p-3">
+                        <div className="bg-[#FAF7F0] rounded-lg p-3">
                           <p className="text-xs font-medium text-gray-600">Critical Limit</p>
                           <p className="text-gray-900 mt-1">{action.criticalLimit}</p>
                         </div>
-                        <div className="bg-gray-50 rounded-lg p-3">
+                        <div className="bg-[#FAF7F0] rounded-lg p-3">
                           <p className="text-xs font-medium text-gray-600">Recorded Value</p>
                           <p className="text-red-700 font-semibold mt-1">{action.recordedValue}</p>
                         </div>
@@ -1718,9 +1720,9 @@ export function HACCP() {
                         <button
                           onClick={() => handleVerifyAction(action.id)}
                           className="mt-3 inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium text-white transition-colors"
-                          style={{ backgroundColor: '#1e4d6b' }}
-                          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
-                          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+                          style={{ backgroundColor: '#1E2D4D' }}
+                          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2A3F6B')}
+                          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
                         >
                           <CheckCircle className="h-3 w-3 mr-1" /> Mark Verified
                         </button>
@@ -1739,15 +1741,15 @@ export function HACCP() {
                   <button
                     onClick={() => setShowNewCAForm(true)}
                     className="inline-flex items-center px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors"
-                    style={{ backgroundColor: '#1e4d6b' }}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+                    style={{ backgroundColor: '#1E2D4D' }}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2A3F6B')}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
                   >
                     <Plus className="h-4 w-4 mr-2" /> New Corrective Action
                   </button>
                 ) : (
-                  <div className="bg-white rounded-xl shadow-sm p-5 border border-gray-200">
-                    <h4 className="font-semibold text-gray-900 mb-3">New Corrective Action</h4>
+                  <div className="bg-white rounded-xl p-6 border border-gray-200">
+                    <h4 className="font-semibold text-[#1E2D4D] mb-3">New Corrective Action</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
                       <div>
                         <label className="block text-xs font-medium text-gray-600 mb-1">Plan Name</label>
@@ -1825,9 +1827,9 @@ export function HACCP() {
                           toast.success('Corrective action created');
                         }}
                         className="px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors"
-                        style={{ backgroundColor: '#1e4d6b' }}
-                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
-                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+                        style={{ backgroundColor: '#1E2D4D' }}
+                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2A3F6B')}
+                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
                       >
                         Save
                       </button>
@@ -1852,7 +1854,7 @@ export function HACCP() {
                       <div className="flex items-start space-x-3">
                         <CheckCircle className="h-6 w-6 text-green-600 mt-0.5 flex-shrink-0" />
                         <div>
-                          <h4 className="font-semibold text-gray-900">{action.planName} — {action.ccpNumber}</h4>
+                          <h4 className="font-semibold text-[#1E2D4D]">{action.planName} — {action.ccpNumber}</h4>
                           <p className="text-sm text-gray-600">{action.ccpHazard}</p>
                           <p className="text-xs text-gray-400 mt-0.5">{getRelativeTime(action.createdAt)} · Source: {action.source}</p>
                         </div>
@@ -1863,15 +1865,15 @@ export function HACCP() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm mb-3">
-                      <div className="bg-gray-50 rounded-lg p-3">
+                      <div className="bg-[#FAF7F0] rounded-lg p-3">
                         <p className="text-xs font-medium text-gray-600">Deviation</p>
                         <p className="text-gray-900 mt-1">{action.deviation}</p>
                       </div>
-                      <div className="bg-gray-50 rounded-lg p-3">
+                      <div className="bg-[#FAF7F0] rounded-lg p-3">
                         <p className="text-xs font-medium text-gray-600">Critical Limit</p>
                         <p className="text-gray-900 mt-1">{action.criticalLimit}</p>
                       </div>
-                      <div className="bg-gray-50 rounded-lg p-3">
+                      <div className="bg-[#FAF7F0] rounded-lg p-3">
                         <p className="text-xs font-medium text-gray-600">Recorded Value</p>
                         <p className="text-gray-900 mt-1">{action.recordedValue}</p>
                       </div>
@@ -1949,7 +1951,7 @@ export function HACCP() {
                   }
                 }}
                 className="inline-flex items-center px-4 py-2 rounded-lg border-2 text-sm font-medium transition-colors"
-                style={{ borderColor: '#1e4d6b', color: '#1e4d6b' }}
+                style={{ borderColor: '#1E2D4D', color: '#1E2D4D' }}
               >
                 <Activity className="h-4 w-4 mr-2" />
                 Auto-Generate from Checklists
@@ -1968,7 +1970,7 @@ export function HACCP() {
                           step.id === wizardStepNum ? 'text-white' :
                           'bg-gray-300 text-gray-500'
                         }`}
-                        style={step.id === wizardStepNum ? { backgroundColor: '#1e4d6b' } : undefined}
+                        style={step.id === wizardStepNum ? { backgroundColor: '#1E2D4D' } : undefined}
                         onClick={() => setWizardStep(step.id)}
                       >
                         {step.id < wizardStepNum ? '✓' : step.id}
@@ -1984,12 +1986,12 @@ export function HACCP() {
             </div>
 
             {/* Step Content */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
 
               {/* Step 1: Product Info */}
               {wizardStepNum === 1 && (
                 <div className="space-y-4">
-                  <h3 className="text-lg font-bold text-gray-900">Describe the Food Product</h3>
+                  <h3 className="text-lg font-bold text-[#1E2D4D]">Describe the Food Product</h3>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Product Name *</label>
                     <input type="text" value={tplProductName} onChange={(e) => setTplProductName(e.target.value)} placeholder="e.g., Grilled Chicken Sandwich" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
@@ -2025,7 +2027,7 @@ export function HACCP() {
               {/* Step 2: Ingredients */}
               {wizardStepNum === 2 && (
                 <div className="space-y-4">
-                  <h3 className="text-lg font-bold text-gray-900">Ingredients and Materials</h3>
+                  <h3 className="text-lg font-bold text-[#1E2D4D]">Ingredients and Materials</h3>
                   <div>
                     <div className="flex items-center justify-between mb-1">
                       <label className="text-sm font-medium text-gray-700">Raw Materials</label>
@@ -2071,7 +2073,7 @@ export function HACCP() {
               {/* Step 3: Intended Use */}
               {wizardStepNum === 3 && (
                 <div className="space-y-4">
-                  <h3 className="text-lg font-bold text-gray-900">Intended Use and Consumers</h3>
+                  <h3 className="text-lg font-bold text-[#1E2D4D]">Intended Use and Consumers</h3>
                   <div>
                     <div className="flex items-center justify-between mb-1">
                       <label className="text-sm font-medium text-gray-700">Intended Use</label>
@@ -2117,7 +2119,7 @@ export function HACCP() {
               {/* Step 4: Flow Diagram */}
               {wizardStepNum === 4 && (
                 <div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">Process Flow Diagram</h3>
+                  <h3 className="text-lg font-bold text-[#1E2D4D] mb-2">Process Flow Diagram</h3>
                   <p className="text-sm text-gray-600 mb-4">Define the process steps from receiving raw materials through to serving the final product.</p>
                   <div className="space-y-2">
                     {tplFlowSteps.map((step, idx) => (
@@ -2130,7 +2132,7 @@ export function HACCP() {
                       </div>
                     ))}
                   </div>
-                  <button onClick={addFlowStep} className="mt-3 inline-flex items-center text-sm font-medium" style={{ color: '#1e4d6b' }}>
+                  <button onClick={addFlowStep} className="mt-3 inline-flex items-center text-sm font-medium" style={{ color: '#1E2D4D' }}>
                     <Plus className="h-4 w-4 mr-1" /> Add Step
                   </button>
                 </div>
@@ -2139,11 +2141,11 @@ export function HACCP() {
               {/* Step 5: Hazard Analysis */}
               {wizardStepNum === 5 && (
                 <div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">Hazard Analysis</h3>
+                  <h3 className="text-lg font-bold text-[#1E2D4D] mb-2">Hazard Analysis</h3>
                   <p className="text-sm text-gray-600 mb-4">Identify all potential biological, chemical, and physical hazards.</p>
                   <div className="space-y-4">
                     {tplHazards.map((hazard, idx) => (
-                      <div key={idx} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                      <div key={idx} className="bg-[#FAF7F0] rounded-lg p-4 border border-gray-200">
                         <div className="flex items-center justify-between mb-3">
                           <span className="text-sm font-semibold text-gray-700">Hazard #{idx + 1}</span>
                           {tplHazards.length > 1 && (
@@ -2199,7 +2201,7 @@ export function HACCP() {
                       </div>
                     ))}
                   </div>
-                  <button onClick={addHazardRow} className="mt-3 inline-flex items-center text-sm font-medium" style={{ color: '#1e4d6b' }}>
+                  <button onClick={addHazardRow} className="mt-3 inline-flex items-center text-sm font-medium" style={{ color: '#1E2D4D' }}>
                     <Plus className="h-4 w-4 mr-1" /> Add Hazard
                   </button>
                 </div>
@@ -2208,13 +2210,13 @@ export function HACCP() {
               {/* Step 6: CCPs */}
               {wizardStepNum === 6 && (
                 <div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">Critical Control Points *</h3>
+                  <h3 className="text-lg font-bold text-[#1E2D4D] mb-2">Critical Control Points *</h3>
                   <p className="text-sm text-gray-600 mb-4">At least one CCP is required. Define monitoring, limits, and corrective actions for each.</p>
                   <div className="space-y-4">
                     {tplCCPs.map((ccp, idx) => (
-                      <div key={idx} className="rounded-lg border-2 border-[#1e4d6b]/20 overflow-hidden">
+                      <div key={idx} className="rounded-lg border-2 border-[#1E2D4D]/20 overflow-hidden">
                         <div className="px-4 py-3 flex items-center justify-between" style={{ backgroundColor: '#eef4f8' }}>
-                          <span className="text-sm font-bold" style={{ color: '#1e4d6b' }}>{ccp.ccpNum || `CCP-${idx + 1}`}</span>
+                          <span className="text-sm font-bold" style={{ color: '#1E2D4D' }}>{ccp.ccpNum || `CCP-${idx + 1}`}</span>
                           {tplCCPs.length > 1 && (
                             <button onClick={() => removeCCPRow(idx)} className="p-1 text-red-400 hover:text-red-600 hover:bg-red-100 rounded"><Trash2 className="h-4 w-4" /></button>
                           )}
@@ -2285,7 +2287,7 @@ export function HACCP() {
                       </div>
                     ))}
                   </div>
-                  <button onClick={addCCPRow} className="mt-3 inline-flex items-center text-sm font-medium" style={{ color: '#1e4d6b' }}>
+                  <button onClick={addCCPRow} className="mt-3 inline-flex items-center text-sm font-medium" style={{ color: '#1E2D4D' }}>
                     <Plus className="h-4 w-4 mr-1" /> Add Critical Control Point
                   </button>
                 </div>
@@ -2294,27 +2296,27 @@ export function HACCP() {
               {/* Step 7: Review & Save */}
               {wizardStepNum === 7 && (
                 <div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-4">Review & Save</h3>
+                  <h3 className="text-lg font-bold text-[#1E2D4D] mb-4">Review & Save</h3>
                   <div className="space-y-3 text-sm">
-                    <div className="bg-gray-50 rounded-lg p-4">
+                    <div className="bg-[#FAF7F0] rounded-lg p-4">
                       <p className="font-semibold text-gray-700">Product</p>
                       <p className="text-gray-900">{tplProductName || '(not set)'}</p>
                       {tplProductDesc && <p className="text-gray-600 mt-1">{tplProductDesc}</p>}
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-4">
+                    <div className="bg-[#FAF7F0] rounded-lg p-4">
                       <p className="font-semibold text-gray-700">Flow Diagram</p>
                       <p className="text-gray-900">{tplFlowSteps.filter(s => s.trim()).join(' → ') || '(not set)'}</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-4">
+                    <div className="bg-[#FAF7F0] rounded-lg p-4">
                       <p className="font-semibold text-gray-700">Hazards</p>
                       <p className="text-gray-900">{tplHazards.filter(h => h.type).length} hazard(s) identified</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-4">
+                    <div className="bg-[#FAF7F0] rounded-lg p-4">
                       <p className="font-semibold text-gray-700">Critical Control Points</p>
                       <p className="text-gray-900">{tplCCPs.length} CCP(s): {tplCCPs.map(c => c.ccpNum).join(', ')}</p>
                     </div>
                     {tplCriticalLimits.filter(l => l.limitDesc.trim()).length > 0 && (
-                      <div className="bg-gray-50 rounded-lg p-4">
+                      <div className="bg-[#FAF7F0] rounded-lg p-4">
                         <p className="font-semibold text-gray-700">Critical Limits</p>
                         {tplCriticalLimits.filter(l => l.limitDesc.trim()).map((l, i) => (
                           <p key={i} className="text-gray-900">{l.ccpNum}: {l.limitDesc}</p>
@@ -2332,7 +2334,7 @@ export function HACCP() {
                 onClick={() => wizardStepNum > 1 && setWizardStep(wizardStepNum - 1)}
                 disabled={wizardStepNum === 1}
                 className="px-5 py-2.5 rounded-lg border-2 text-sm font-medium transition-colors disabled:opacity-40"
-                style={{ borderColor: '#1e4d6b', color: '#1e4d6b' }}
+                style={{ borderColor: '#1E2D4D', color: '#1E2D4D' }}
               >
                 Previous
               </button>
@@ -2346,9 +2348,9 @@ export function HACCP() {
                     setWizardStep(wizardStepNum + 1);
                   }}
                   className="px-5 py-2.5 rounded-lg text-white text-sm font-medium transition-colors"
-                  style={{ backgroundColor: '#1e4d6b' }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
-                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+                  style={{ backgroundColor: '#1E2D4D' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2A3F6B')}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
                 >
                   Next
                 </button>
@@ -2356,9 +2358,9 @@ export function HACCP() {
                 <button
                   onClick={handleTemplateSave}
                   className="inline-flex items-center px-6 py-2.5 rounded-lg text-white text-sm font-medium transition-colors"
-                  style={{ backgroundColor: '#1e4d6b' }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
-                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+                  style={{ backgroundColor: '#1E2D4D' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2A3F6B')}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
                 >
                   <Save className="h-4 w-4 mr-2" />
                   Save HACCP Plan

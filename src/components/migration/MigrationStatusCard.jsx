@@ -5,7 +5,7 @@ import { useDemo } from '../../contexts/DemoContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
 
-const PRIMARY = '#1e4d6b';
+const PRIMARY = '#1E2D4D';
 
 /**
  * MigrationStatusCard — shows on dashboard for 30 days after a data import.
@@ -91,7 +91,7 @@ export function MigrationStatusCard() {
           <Upload className="h-4 w-4 text-emerald-600" />
         </div>
         <div className="flex-1 min-w-0">
-          <div className="text-sm font-semibold text-gray-900">
+          <div className="text-sm font-semibold text-[#1E2D4D]">
             {migrationData.count.toLocaleString()} records imported from {migrationData.platform}
           </div>
           <div className="text-xs text-gray-500 mt-0.5">
