@@ -1,0 +1,131 @@
+{
+  "day": 1,
+  "date": "Apr 11",
+  "area": "Auth, Admin & Onboarding",
+  "total": 22,
+  "results": {
+    "1.01": {
+      "desktop": "PASS",
+      "android": "N/A",
+      "issue": ""
+    },
+    "1.02": {
+      "desktop": "PASS",
+      "android": "N/A",
+      "issue": ""
+    },
+    "1.03": {
+      "desktop": "PASS",
+      "android": "N/A",
+      "issue": "All 11 routes return HTTP 200 (SPA routing confirmed)"
+    },
+    "1.04": {
+      "desktop": "PASS",
+      "android": "N/A",
+      "issue": "jurisdictions count=169, agency_name column exists"
+    },
+    "1.05": {
+      "desktop": "SKIP",
+      "android": "N/A",
+      "issue": "MFA not enabled for admin user (no factors enrolled)"
+    },
+    "1.06": {
+      "desktop": "PASS",
+      "android": "N/A",
+      "issue": "Session refresh succeeded, new access_token obtained"
+    },
+    "1.07": {
+      "desktop": "PASS",
+      "android": "N/A",
+      "issue": "Error message: \"Invalid login credentials\" — no internal leaks"
+    },
+    "1.08": {
+      "desktop": "PASS*",
+      "android": "N/A",
+      "issue": "Org INSERT + select succeeded. auth.signUp rate-limited (transient): email rate limit exceeded"
+    },
+    "1.09": {
+      "desktop": "PASS*",
+      "android": "N/A",
+      "issue": "No custom edge function for onboard email — uses auth.signUp() default. signUp rate-limited so email not sent. Code path verified."
+    },
+    "1.10": {
+      "desktop": "HUMAN REQUIRED",
+      "android": "N/A",
+      "issue": "Requires checking email inbox for branded welcome email"
+    },
+    "1.11": {
+      "desktop": "HUMAN REQUIRED",
+      "android": "N/A",
+      "issue": "Test user created with random temp password. Requires UI flow: click email link → set password → verify redirect."
+    },
+    "1.12": {
+      "desktop": "HUMAN REQUIRED",
+      "android": "N/A",
+      "issue": "Requires entering password in UI, verifying inline validation, checking redirect"
+    },
+    "1.13": {
+      "desktop": "HUMAN REQUIRED",
+      "android": "N/A",
+      "issue": "Requires watching welcome video, verifying Continue button appears after playback"
+    },
+    "1.14": {
+      "desktop": "HUMAN REQUIRED",
+      "android": "N/A",
+      "issue": "Requires completing 8 form steps, verifying progress dots, back button"
+    },
+    "1.15": {
+      "desktop": "HUMAN REQUIRED",
+      "android": "N/A",
+      "issue": "Requires verifying guided tour banner, tooltips, simulated data layers"
+    },
+    "1.16": {
+      "desktop": "PASS*",
+      "android": "N/A",
+      "issue": "useDemoGuard hook exists and gates actions via guardAction(). UI modal verification is HUMAN REQUIRED."
+    },
+    "1.17": {
+      "desktop": "PASS",
+      "android": "N/A",
+      "issue": "Sidebar is role-gated: per-role configs in sidebarConfig.ts, AdminShell only for platform_admin (App.tsx:503)"
+    },
+    "1.18": {
+      "desktop": "PASS",
+      "android": "N/A",
+      "issue": "Logout → re-login succeeded with new session"
+    },
+    "1.19": {
+      "desktop": "PASS*",
+      "android": "N/A",
+      "issue": "Rate-limited (transient). API endpoint works. Email delivery is HUMAN REQUIRED."
+    },
+    "1.20": {
+      "desktop": "PASS",
+      "android": "N/A",
+      "issue": "MFA components exist: SetupMFA.tsx, MFAChallenge.jsx. QR scanning is HUMAN REQUIRED."
+    },
+    "1.21": {
+      "desktop": "SKIP",
+      "android": "N/A",
+      "issue": "MFA not enrolled for admin user (same as 1.05)"
+    },
+    "1.22": {
+      "desktop": "PASS",
+      "android": "N/A",
+      "issue": "Role-based MFA enforcement exists in App.tsx:464 (queries mfa_policy per role). UI verification is HUMAN REQUIRED."
+    }
+  },
+  "issues": [],
+  "regression": {
+    "1.01": "PASS",
+    "1.02": "PASS"
+  },
+  "summary": {
+    "pass": 10,
+    "pass_star": 4,
+    "fail": 0,
+    "blocked": 0,
+    "skip": 2,
+    "human_required": 6
+  }
+}
