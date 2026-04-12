@@ -1,126 +1,90 @@
-═══════════════════════════════════════════════════════════════
-  COMPETITIVE SCORECARD — EvidLY vs Best-in-Class SaaS
-  Generated: 2026-04-12 by UI-POLISH-AUDIT
-═══════════════════════════════════════════════════════════════
+COMPETITIVE SCORECARD — EvidLY vs Best-in-Class SaaS (Post UI-ELEVATION)
+Generated: 2026-04-12
 
-CATEGORY            | EvidLY | Linear | Stripe | Notion | GRADE
---------------------|--------|--------|--------|--------|------
-Typography          |  6/10  |  9/10  |  9/10  |  9/10  |  B-
-Spacing discipline  |  6/10  |  9/10  |  9/10  |  8/10  |  B-
-Color restraint     |  5/10  |  9/10  |  9/10  |  8/10  |  C+
-Component consistency| 5/10  |  9/10  |  9/10  |  9/10  |  C+
-Animation smoothness|  7/10  |  8/10  |  7/10  |  8/10  |  B
-Skeleton loaders    |  8/10  |  9/10  |  8/10  |  8/10  |  A-
-Overall "feel"      |  6/10  |  9/10  |  9/10  |  9/10  |  B-
+Compared against: Linear, Notion, Vercel Dashboard, Stripe Dashboard
 
-OVERALL EVIDLY SCORE: 6.1 / 10 — SOLID B-TIER
+================================================================
+SCORING (1-10 per category)
+================================================================
 
-═══════════════════════════════════════════════════════════════
-  ANALYSIS
-═══════════════════════════════════════════════════════════════
+Category                    Linear  Notion  Vercel  Stripe  EvidLY  Notes
+--------------------------  ------  ------  ------  ------  ------  -----
+Typography Discipline         9.5     9.0    9.0     9.5     7.5   ~500 inline fontSize instances, text-xs/sm overused
+Spacing Consistency           9.5     9.0    9.5     9.5     7.0   py-2 dominance, gap-2 everywhere, inline padding
+Color Restraint               9.0     8.5    9.5     9.0     7.5   1,836 generic grays, 778 non-brand button colors
+Component Uniformity          9.5     9.0    9.5     9.0     6.5   No shared Button, 626 rounded-lg vs 319 rounded-xl
+Animation Smoothness          9.0     8.0    8.5     8.0     8.0   20+ keyframes, page-enter, gold-shimmer — good
+Data Density vs Whitespace    8.0     8.5    8.0     9.0     7.0   Tight spacing (py-2/gap-2), compact but cramped
+Professional "Feel"           9.5     9.0    9.5     9.5     8.0   Brand strong, navy/gold/cream polished, admin weaker
+Focus & Keyboard Nav          8.5     8.0    8.5     9.0     8.0   Gold focus rings, good aria-, missing aria-live
+Mobile Responsiveness         8.0     9.0    8.5     8.5     8.0   Safe areas, MobileTabBar, responsive breakpoints
+Loading States                8.5     8.0    9.0     9.0     7.5   Good skeleton pattern, missing on some pages
 
-STRENGTHS (what EvidLY does well):
-  + Skeleton loaders: 7 variants (Card, Table, Score, Chart, KPI, List, Page)
-    Used across 70+ files — better than most startups
-  + Page transitions: framer-motion PageTransition component exists
-  + Lucide React icons: single icon library, consistent sizing
-  + Table pattern: header bg-gray-50 + uppercase tracking is professional
-  + Card pattern: rounded-xl + border-gray-200 is clean and modern
-  + Role-specific dashboards: 8 variants with appropriate content
-  + Empty states: emotional, role-aware copy (EmptyState.jsx is excellent)
-  + Print styles: 8 files with @media print rules
-  + Number formatting: toLocaleString used across 105+ files
-  + Transition CSS: 1,277 occurrences — extensive hover/transition coverage
-  + Branded NotFound: 404 page uses brand navy, links to dashboard
+--------------------------  ------  ------  ------  ------  ------
+OVERALL AVERAGE               8.9     8.6    9.1     9.0     7.5
 
-WEAKNESSES (what drags the score down):
+================================================================
+KEY GAPS TO CLOSE (EvidLY → 9.0+)
+================================================================
 
-  1. TWO COMPETING NAVIES (Critical)
-     #1e4d6b (1,990 uses) vs #1E2D4D (563 uses)
-     The "wrong" navy is used 3.5x more than the brand navy.
-     This creates a subtle but pervasive inconsistency.
-     Linear uses ONE blue. Stripe uses ONE blue. EvidLY uses TWO.
+GAP 1: Typography (+2.0 points needed)
+  Problem:  500 inline fontSize, no type scale enforcement
+  Fix:      Migrate all inline fontSize to Tailwind text-* classes
+            Add text-[8px], text-[9px] to config if needed
+            Enforce text-xs/sm/base/lg scale globally
 
-  2. CREAM UNDER-ADOPTION (High)
-     #FAF7F0 only used 33 times in 18 files.
-     Most backgrounds use generic bg-gray-50 or bg-white.
-     The cream gives EvidLY its warmth and premium feel.
-     Without it, pages look like generic Tailwind templates.
+GAP 2: Component Uniformity (+3.0 points needed)
+  Problem:  No shared Button component, 626 rounded-lg vs 319 rounded-xl
+  Fix:      Create <Button> with primary/secondary/danger/ghost variants
+            Standardize all cards to rounded-xl
+            Standardize all inputs to consistent height (min-h-[44px])
 
-  3. MULTIPLE BUTTON STYLES (High)
-     Gold primary, navy primary, blue primary — no single standard.
-     Linear has ONE button style. Stripe has ONE. EvidLY has 3-4.
-     Some buttons use inline styles, others use Tailwind.
+GAP 3: Color Restraint (+1.5 points needed)
+  Problem:  1,836 generic grays, 778 non-brand button colors, #d4af37 mismatch
+  Fix:      Convert remaining gray-* to navy opacity scale
+            Replace #d4af37 with #A08C5A
+            Replace bg-blue-600 etc. with bg-[#1E2D4D]
 
-  4. INLINE STYLES vs TAILWIND (Medium)
-     PageStates.tsx, NotFound.jsx, EmptyState.tsx all use inline styles.
-     This creates maintenance issues and inconsistency.
-     Professional codebases pick ONE approach.
+GAP 4: Spacing (+2.5 points needed)
+  Problem:  py-2 dominance (659 uses), inline padding '16px 20px'
+  Fix:      Increase standard spacing: py-3 for list items, p-6 for cards
+            Replace inline padding with Tailwind classes
+            Increase gap values where UI feels cramped
 
-  5. THREE EmptyState COMPONENTS (Medium)
-     components/EmptyState.tsx — uses #1e4d6b, Lucide icons
-     components/shared/EmptyState.jsx — uses #1E2D4D + gold CTA, emoji icons
-     components/shared/PageStates.tsx — uses #1e4d6b, inline styles
-     Should be ONE component.
+GAP 5: Professional Feel (+1.5 points needed)
+  Problem:  Admin pages less polished, modals have no animation
+  Fix:      Add modal entrance/exit animations
+            Unify admin page layout shell
+            Add loading skeletons to all admin pages
 
-  6. HEADING HIERARCHY DRIFT (Medium)
-     Page titles: text-xl / text-2xl / text-3xl (varies by page)
-     Card titles: text-sm / text-base / text-lg (varies by page)
-     Linear's heading scale is military-precise. EvidLY drifts ±1 size.
+================================================================
+ARAMARK VP TRUST TEST
+================================================================
 
-  7. CARD PADDING INCONSISTENCY (Low)
-     p-4, p-5, p-6 used interchangeably on cards.
-     Stripe uses ONE padding for all cards. EvidLY uses 3.
+"Would an Aramark VP paying $99/mo trust their compliance to this screen?"
 
-═══════════════════════════════════════════════════════════════
-  PAGE-BY-PAGE SCORES (First 5-Second Impression)
-═══════════════════════════════════════════════════════════════
+Page                          Score   Notes
+----------------------------  -----   -----
+Login / Signup                 9/10   Excellent — professional, branded
+Dashboard (Overview)           8/10   Good — role-specific, KPI cards
+Dashboard (Today)              8/10   Good — task-focused, actionable
+Facility Safety                9/10   Excellent — authority sources clear
+Scoring Breakdown              8/10   Good — jurisdiction data, status colors
+Temperature Logs               7/10   Decent — needs loading polish
+Compliance Index               8/10   Good — organized, professional
+InsightsHub                    8/10   Good — clean hub layout
+Equipment                      6/10   Needs work — inline styles, weak empty states
+Vendor Detail                  5/10   Poor — heavy inline styles, demo data mixing
+Analysis                       6/10   Needs work — hardcoded demo data in render
+Admin Command Center           7/10   Functional but could be polished
+ScoreTable (public)            9/10   Excellent — SEO, schema, professional
+Landing Page                   9/10   Excellent — professional, great CTAs
+404 Page                       9/10   Excellent — on-brand, helpful
+Settings                       8/10   Good — clean tabs, organized
+Team Management                7/10   Decent — could use polish
 
-PAGE                        | SCORE | NOTES
-----------------------------|-------|------
-Login                       |  8/10 | Clean, branded, gold EvidLY logo, reCAPTCHA, social login
-Landing (LandingPage.jsx)   |  7/10 | Good hero, pricing section, but dense in places
-ScoreTable Landing          |  8/10 | Navy bg + gold accents, professional grid
-ScoreTable County Detail    |  7/10 | Comprehensive but dense — could use more whitespace
-Operations Check (IRR)      |  7/10 | Clean form progression, dual pillar clear
-Dashboard (Owner/Operator)  |  7/10 | Good KPI layout, cards aligned, needs tighter spacing
-Dashboard (Executive)       |  7/10 | Similar to owner — consistent but could be sharper
-Dashboard (Kitchen Staff)   |  6/10 | Task list only — functional but sparse
-Temperature Logs            |  6/10 | Functional but busy — many controls compete for attention
-Checklists                  |  7/10 | Clean checklist UI, progress tracking
-Documents                   |  7/10 | Upload + list, AI badges, expiry color-coding
-Vendors                     |  6/10 | Dense, many modals — could be cleaner
-PSE / Facility Safety       |  7/10 | 4 safeguard cards clean, NFPA references tidy
-Superpowers (InsightsHub)   |  7/10 | Card grid from sidebar config, consistent
-SP1-SP7 pages               |  7/10 | Consistent layout between pages, demo guard works
-Settings                    |  6/10 | Functional but cramped — BillingPage has old pricing
-Admin Command Center        |  7/10 | KPI tiles clean, admin sidebar professional
-Admin Sales Pipeline        |  7/10 | CRM-like table, stage filters
-Admin Feature Flags         |  7/10 | Toggle interface clean
-Corrective Actions          |  7/10 | Status workflow clear, severity color-coded
-NotFound (404)              |  5/10 | Minimal — no illustration, inline styles, basic
+OVERALL TRUST SCORE: 7.8/10
 
-AVERAGE: 6.8/10
-
-═══════════════════════════════════════════════════════════════
-  WOULD AN ARAMARK VP TRUST THIS?
-═══════════════════════════════════════════════════════════════
-
-ANSWER: Yes, with caveats.
-
-The app looks professional enough for enterprise evaluation. The dual-pillar
-separation, ScoreTable coverage, and intelligence pipeline demonstrate real
-domain expertise that enterprise buyers value more than pixel-perfect design.
-
-HOWEVER, a senior design director would flag:
-  1. The two-navy issue makes pages feel slightly "off" without knowing why
-  2. Generic Tailwind grays (gray-50, gray-500) dilute the premium brand feel
-  3. The cream (#FAF7F0) is what makes EvidLY look expensive — it's barely used
-  4. Button inconsistency suggests "one developer, not a design team"
-  5. The NotFound page looks like it was written in 5 minutes
-
-The good news: these are all fixable with a focused 2-week design pass.
-The domain expertise, data architecture, and feature depth are the real
-differentiators — and those are excellent.
-
-═══════════════════════════════════════════════════════════════
+To reach 9.0+: Fix inline styles in Vendor/Equipment/Analysis pages,
+add shared Button component, convert remaining grays, add modal animations,
+increase spacing for breathing room.

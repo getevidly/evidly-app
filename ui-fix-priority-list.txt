@@ -1,204 +1,124 @@
-═══════════════════════════════════════════════════════════════
-  UI FIX PRIORITY LIST — EvidLY
-  Generated: 2026-04-12 by UI-POLISH-AUDIT
-═══════════════════════════════════════════════════════════════
+UI FIX PRIORITY LIST — EvidLY (Post UI-ELEVATION)
+Generated: 2026-04-12
 
-══ CRITICAL (looks broken — fix before first enterprise demo) ══
+================================================================
+CRITICAL (Looks broken / violates rules) — 8 items
+Fix before ANY demo or Aramark pitch
+================================================================
 
-1. TWO COMPETING NAVY COLORS
-   Issue: #1e4d6b (1,990 uses / 344 files) vs #1E2D4D (563 uses / 201 files)
-   Impact: Subtle inconsistency across entire app — pages don't match
-   Fix: Define a CSS variable --color-navy in index.css or tailwind.config.
-        DECIDE: either #1E2D4D or #1e4d6b is the brand navy, then search-replace.
-        Recommendation: Keep #1E2D4D as brand per CLAUDE.md, bulk replace #1e4d6b.
-        Files: 344 files need updating (use replace_all across codebase)
-        Tailwind config: Add navy: '#1E2D4D' to theme.extend.colors
+C01. Gold color mismatch: #d4af37 vs #A08C5A
+     Files: 27 instances across spinners, SVGs, animations
+     Fix: Replace all #d4af37 with #A08C5A
+     Script: content.replace(/#d4af37/gi, '#A08C5A')
 
-2. THREE COMPETING EmptyState COMPONENTS
-   Issue: 3 different empty state components with different styling
-   Files:
-     - src/components/EmptyState.tsx (Lucide icons, #1e4d6b, Tailwind)
-     - src/components/shared/EmptyState.jsx (emoji, #1E2D4D + gold CTA, Tailwind)
-     - src/components/shared/PageStates.tsx (HTML entity, #1e4d6b, inline styles)
-   Fix: Consolidate into ONE component. Keep shared/EmptyState.jsx pattern
-        (brand colors + gold CTA + emotional copy). Delete other two.
-        Update all imports across ~20 files.
+C02. ZERO FAKE DATA violation: Analysis.tsx DEMO_ALERTS array
+     File: src/pages/Analysis.tsx lines 48-200
+     Fix: Remove hardcoded DEMO_ALERTS, use empty state when no data
 
-3. INLINE STYLES IN SHARED COMPONENTS
-   Issue: PageStates.tsx and NotFound.jsx use inline styles instead of Tailwind
-   Files:
-     - src/components/shared/PageStates.tsx (lines 34-61, 78-105)
-     - src/pages/NotFound.jsx (lines 5-14)
-   Fix: Convert to Tailwind classes:
-     PageStates ErrorState: style={{ textAlign: 'center'... }} →
-       className="text-center py-12 px-6"
-     PageStates button: style={{ background: '#1e4d6b'... }} →
-       className="bg-[#1E2D4D] text-white rounded-md px-5 py-2 text-sm"
-     NotFound: Convert all inline styles to Tailwind
+C03. VendorDetail.tsx inline styles explosion
+     File: src/pages/VendorDetail.tsx lines 308-315
+     Fix: Replace style={{ backgroundColor: ... }} with Tailwind classes
 
-══ HIGH (looks amateur — fix Week 1) ══════════════════════════
+C04. Modals have NO entrance animation (jarring UX)
+     Files: 71 modal components
+     Fix: Add animate-fade-in to backdrop, animate-slide-up to content
 
-4. CREAM (#FAF7F0) BARELY USED
-   Issue: Brand cream used only 33 times / 18 files. Most backgrounds use
-          generic bg-gray-50 instead of bg-[#FAF7F0]
-   Impact: App looks like a generic Tailwind template instead of premium brand
-   Fix: Add cream to Tailwind config: cream: '#FAF7F0'
-        Replace bg-gray-50 with bg-cream on:
-          - Page backgrounds (Layout.tsx content area)
-          - Section backgrounds in dashboards
-          - Card group backgrounds
-        Don't replace ALL bg-gray-50 — some are correct (table headers, etc.)
-   Priority files: Layout.tsx, all dashboard components, Settings.tsx
+C05. 778 non-brand button colors (bg-blue-600, bg-indigo-600, etc.)
+     Files: Scattered across demo, vendor, admin pages
+     Fix: Replace with bg-[#1E2D4D] or bg-[#A08C5A]
 
-5. 3-4 COMPETING PRIMARY BUTTON STYLES
-   Issue: Primary buttons use gold, navy (#1e4d6b), navy (#1E2D4D), or blue-600
-   Files: Across 100+ files
-   Fix: Standardize on ONE primary button pattern:
-        RECOMMENDED: bg-[#1E2D4D] text-white rounded-lg px-4 py-2.5
-                     text-sm font-medium hover:bg-[#162340] transition-colors
-        Secondary: Gold accent buttons for special CTAs only
-        Create a Button variant component or document the exact classes
-   Critical files to fix first:
-     - src/components/shared/PageStates.tsx (inline navy button)
-     - Any file using bg-blue-600 for primary action
+C06. No shared Button component
+     Impact: 475+ files with raw <button> inline classes
+     Fix: Create src/components/ui/Button.tsx with variants
 
-6. BUTTON HEIGHT INCONSISTENCY
-   Issue: Buttons vary: h-9, h-10, h-11, h-12, min-h-[44px], py-2, py-2.5, py-3
-   Fix: Standardize button heights:
-        sm: h-8 text-xs
-        md: h-10 text-sm (default)
-        lg: h-12 text-base
-        All buttons: min-h-[44px] for mobile touch targets
+C07. ~500 inline fontSize instances bypass design system
+     Files: KpiTile.tsx, StatCard.tsx, SignalCard.tsx, OrgCombobox.tsx
+     Fix: Migrate to Tailwind text-* classes
 
-7. NOTFOUND (404) PAGE LOOKS BASIC
-   File: src/pages/NotFound.jsx
-   Issue: Inline styles, no illustration, no brand warmth, minimal content
-   Fix: Rewrite with Tailwind, add EvidLY logo, warm copy,
-        add "Go to Dashboard" and "Go to Login" links,
-        consider a subtle illustration or brand graphic
+C08. rounded-lg (626) dominates over rounded-xl (319) for cards
+     Fix: Bulk replace rounded-lg to rounded-xl on card containers
+     Exclude: buttons (rounded-lg correct), inputs (rounded-lg correct)
 
-8. PAGE TITLE NOT UPDATING
-   Issue: Only 6 files update document.title — most pages show generic "EvidLY"
-   Fix: Add useEffect with document.title to each major page, or create
-        a usePageTitle hook: usePageTitle('Dashboard') → "EvidLY | Dashboard"
-   Priority pages: Dashboard, TempLogs, Checklists, Documents, Vendors,
-                   Settings, all Admin pages, all Superpower pages
+================================================================
+HIGH (Looks amateur) — 10 items
+Fix Week 1
+================================================================
 
-9. FOCUS RING COLOR MISMATCH
-   Issue: Some inputs use focus:ring-[#1e4d6b], others use focus:ring-blue-500
-   Fix: Standardize all focus rings to focus:ring-[#1E2D4D]
-        or add ring color to Tailwind config and use focus:ring-navy
+H01. 1,836 remaining generic gray-* Tailwind classes
+     Fix: Convert gray-50 to cream, gray-100 to navy/5, gray-900 to navy
+     Priority: gray-50 (497), gray-100 (455), gray-900 (329)
 
-══ MEDIUM (inconsistent — fix Week 2) ═════════════════════════
+H02. ~180 inline borderRadius values (8px, 10px, 6px)
+     Fix: Replace with Tailwind rounded-* equivalents
 
-10. HEADING SIZE INCONSISTENCY
-    Issue: Page titles vary text-xl / text-2xl / text-3xl across pages
-    Fix: Standardize:
-         Page title: text-2xl font-bold text-[#1E2D4D]
-         Section heading: text-lg font-semibold text-[#1E2D4D]
-         Card title: text-sm font-semibold text-gray-900
-    Files to check: Every page component's first h1/h2
+H03. ~139 inline boxShadow values
+     Fix: Replace with shadow-card, shadow-card-hover, shadow-elevated
 
-11. CARD PADDING INCONSISTENCY
-    Issue: Cards use p-4, p-5, or p-6 interchangeably
-    Fix: Standardize on p-6 for full cards, p-4 for compact/list cards
-    Files: Dashboard cards, feature page cards, admin cards
+H04. ~200 inline padding values (padding: '16px 20px')
+     Fix: Replace with Tailwind p-5 or px-5 py-4
 
-12. CARD SHADOW vs BORDER INCONSISTENCY
-    Issue: Some cards use shadow-sm, others use border border-gray-200, some both
-    Fix: Pick ONE pattern:
-         RECOMMENDED: border border-gray-200 (no shadow) for flat modern look
-         OR: shadow-sm (no border) for elevated look
-         Don't mix on same page
+H05. Press feedback missing on ~386 buttons
+     Only 89/475 have active:scale-[0.98]
+     Fix: Add active:scale-[0.98] to all clickable buttons
 
-13. CARD RADIUS INCONSISTENCY
-    Issue: Most cards rounded-xl, some older pages use rounded-lg
-    Fix: Standardize all cards to rounded-xl
-    Search: rounded-lg on card containers, update to rounded-xl
+H06. Touch targets missing on ~200 buttons
+     Only 272/475 have min-h-[44px]
+     Fix: Add min-h-[44px] to all primary/secondary buttons
 
-14. ARBITRARY FONT SIZES
-    Issue: text-[13px], text-[15px], text-[11px], text-[10px] found in files
-    Fix: Replace with Tailwind scale:
-         text-[10px] → text-[0.625rem] or text-xs
-         text-[11px] → text-xs
-         text-[13px] → text-xs or text-sm
-         text-[15px] → text-sm or text-base
+H07. Table row hover too subtle (2% opacity)
+     File: src/index.css .table-row-hover
+     Fix: Increase to hover:bg-[#1E2D4D]/[0.04]
 
-15. GENERIC GRAY TEXT COLORS
-    Issue: text-gray-500, text-gray-600, text-gray-700, text-gray-900 used
-           instead of brand-aligned colors
-    Fix: For headings/important text: use text-[#1E2D4D]
-         For body text: text-gray-700 is acceptable
-         For muted text: text-gray-500 is acceptable
-         For labels: text-gray-700 is acceptable
-    Low priority — functional but not branded
+H08. No sticky table headers
+     Files: 31 table components
+     Fix: Add sticky top-0 z-10 bg-white to thead
 
-16. FORM SUBMIT BUTTON POSITION
-    Issue: Some forms have right-aligned submit, others full-width
-    Fix: Standardize:
-         Modals: full-width submit button at bottom
-         Page forms: right-aligned submit button
-         Document this in a style guide
+H09. Sidebar has no mobile slide animation
+     File: src/components/layout/Sidebar.tsx
+     Fix: Add slide-in-left transition for mobile menu
 
-17. PageTransition BARELY ADOPTED
-    Issue: framer-motion PageTransition exists but only used in App.tsx (Suspense fallback)
-    Fix: Wrap each lazy-loaded page in PageTransition for smooth route changes
-         Or remove framer-motion dependency if not worth the bundle cost
+H10. Admin pages lack unified layout shell
+     Files: src/pages/admin/ (50 pages)
+     Fix: Create AdminPageLayout with consistent header/breadcrumb
 
-══ LOW (polish opportunities — fix Week 3+) ════════════════════
+================================================================
+MEDIUM (Inconsistent) — 12 items
+Fix Week 2
+================================================================
 
-18. GOLD ON WHITE CONTRAST (Accessibility)
-    Issue: #A08C5A on white has ~3.5:1 contrast (below WCAG AA 4.5:1)
-    Fix: Use gold for borders/accents only, not text on white backgrounds
-         For gold text: use on navy backgrounds where contrast is excellent
-         For CTAs on white: use navy bg instead of gold bg
+M01. py-2 overuse (659 instances) — UI feels cramped
+M02. gap-1/gap-2 overuse (641 of 748 total)
+M03. Admin inline style constants duplicated (NAVY, GOLD, TEXT_SEC)
+M04. Emoji used as icons (10 instances)
+M05. WelcomeModal off-brand colors (#eef4f8, #b8d4e8)
+M06. K12Compliance off-brand colors (#1D4ED8, #059669, #7C3AED)
+M07. DeficiencyDetail inline green/gray colors
+M08. Form input heights inconsistent (py-1.5, py-2, py-3)
+M09. Form label styles use inline color (#0B1628)
+M10. Some badges use inline borderRadius: 10 instead of rounded-full
+M11. Missing aria-live on notification/toast regions
+M12. Leading/line-height inconsistent (~50 inline uses)
 
-19. EMOJI vs ICON INCONSISTENCY IN EMPTY STATES
-    Issue: shared/EmptyState.jsx uses emoji, EmptyState.tsx uses Lucide icons
-    Fix: After consolidating to one EmptyState, pick one approach
-         RECOMMENDED: Lucide icons (more professional) with optional emoji override
+================================================================
+LOW (Polish opportunity) — 8 items
+Fix Week 3+
+================================================================
 
-20. NO SHARED DATE FORMAT UTILITY
-    Issue: Dates formatted differently across pages (some use toLocaleDateString,
-           some use manual formatting, some use libraries)
-    Fix: Create formatDate, formatDateTime, formatRelativeTime utilities
-         Standardize: "Apr 12, 2026" for dates, "5m ago" for relative
+L01. StatCard duplicated in ui/ and admin/
+L02. HoverCard uses JS hover state instead of CSS :hover
+L03. Modal close-on-backdrop-click not implemented
+L04. Page exit animation missing
+L05. Stagger animation underused (.stagger-children)
+L06. No chart color standardization
+L07. console.log/warn remaining (~53 calls)
+L08. Long text lacks line-clamp truncation in some cards
 
-21. TEMPERATURE DISPLAY INCONSISTENCY
-    Issue: Some display "41°F", others "41 F", others just "41"
-    Fix: Create formatTemp(value) → "41°F" utility, use everywhere
+================================================================
+SUMMARY
+================================================================
 
-22. PRINT STYLES INCOMPLETE
-    Issue: Only 8 files have @media print — most pages will print poorly
-    Fix: Add global print styles in index.css:
-         @media print { nav, .sidebar, .mobile-bar { display: none; } }
-         Add page-specific print styles for reports and audit pages
-
-23. COOKIE CONSENT STYLING
-    File: src/components/CookieConsent.tsx
-    Check: Ensure it matches brand colors and doesn't look like a template
-
-24. LOADING SPINNER vs SKELETON
-    Issue: Some pages use centered spinners, others use skeleton loaders
-    Fix: Prefer skeleton loaders for data loading (already have 7 variants)
-         Use spinners only for action loading (form submit, file upload)
-
-═══════════════════════════════════════════════════════════════
-  SUMMARY
-═══════════════════════════════════════════════════════════════
-
-  CRITICAL:  3 items  (two-navy, 3 empty states, inline styles)
-  HIGH:      6 items  (cream adoption, button styles, heights, 404, titles, focus ring)
-  MEDIUM:    8 items  (headings, card padding/shadow/radius, fonts, grays, forms, transitions)
-  LOW:       7 items  (contrast, emoji, dates, temps, print, cookie, spinners)
-  TOTAL:    24 items
-
-  ESTIMATED EFFORT:
-    Critical:  2-3 days (bulk replace + component consolidation)
-    High:      3-4 days (button system + 404 + page titles + cream adoption)
-    Medium:    3-4 days (heading standardization + card cleanup)
-    Low:       2-3 days (utilities + accessibility + print)
-
-  TOTAL: ~12 days of focused design work
-
-═══════════════════════════════════════════════════════════════
+  CRITICAL:   8 items
+  HIGH:      10 items
+  MEDIUM:    12 items
+  LOW:        8 items
+  TOTAL:     38 items

@@ -1,275 +1,102 @@
-═══════════════════════════════════════════════════════════════
-  DESIGN SYSTEM INVENTORY — EvidLY
-  Generated: 2026-04-12 by UI-POLISH-AUDIT
-═══════════════════════════════════════════════════════════════
+DESIGN SYSTEM INVENTORY — EvidLY App (Post UI-ELEVATION)
+Generated: 2026-04-12
+Scope: src/ (378+ source files)
 
-── COLORS ─────────────────────────────────────────────────────
+================================================================
+1. COLORS
+================================================================
 
-BRAND COLORS (documented):
-  Navy:    #1E2D4D    563 occurrences / 201 files   (SECONDARY usage)
-  Gold:    #A08C5A    469 occurrences / 181 files   (well-adopted)
-  Cream:   #FAF7F0     33 occurrences /  18 files   (UNDER-USED)
-  White:   #FFFFFF     (via Tailwind bg-white, text-white — pervasive)
+1.1 BRAND COLORS (On-Brand)
+  Navy #1E2D4D         116+ files   PRIMARY
+  Navy Light #2A3F6B    15+ files   Hover/active
+  Navy Dark #141E33     10+ files   Deep navy
+  Gold #A08C5A          50+ files   ACCENT
+  Gold Light #C4AE7A     8+ files   Hover
+  Gold Dark #7A6840      5  files   Subtle
+  Cream #FAF7F0         25+ files   Backgrounds
 
-ACTUAL DOMINANT NAVY:
-  #1e4d6b             1990 occurrences / 344 files   (PRIMARY usage — 3.5x brand navy)
-  NOTE: #1e4d6b is NOT the documented brand navy. It's a lighter, more teal-ish navy.
-        This color dominates the codebase but #1E2D4D is the brand standard.
+  MISMATCH: #d4af37     27 instances — different gold in spinners/SVGs
 
-OFF-BRAND / VARIANT COLORS:
-  #d4af37  (bright gold)      33 occurrences / 18 files  — used in partner/demo pages
-  #9A8450  (dark gold hover)  included in EmptyState.jsx
-  #0B1628  (dark navy)        AdminShell sidebar bg
-  #eef4f8  (ice blue bg)      EmptyState.tsx icon circle
-  #6B7F96  (blue-gray)        PageStates.tsx body text
-  #E8EDF4  (light blue-gray)  PageStates.tsx skeleton bg
+1.2 NAVY OPACITY SCALE (Applied in UI-ELEVATION)
+  text-[#1E2D4D]/30   Placeholder/disabled
+  text-[#1E2D4D]/50   Muted text
+  text-[#1E2D4D]/70   Secondary text
+  text-[#1E2D4D]/80   Body/labels
+  border-[#1E2D4D]/10 Dividers
+  border-[#1E2D4D]/15 Input borders
+  bg-[#1E2D4D]/5      Subtle fills
+  bg-[#1E2D4D]/8      Skeleton/dividers
+  divide-[#1E2D4D]/10 Divide lines
 
-STATUS COLORS:
-  Success green:  mixed — #166534 (brand), text-green-600, text-green-700, bg-green-50
-  Error red:      mixed — #991b1b (brand), text-red-600, text-red-700, bg-red-50
-  Warning:        mixed — text-amber-600, text-yellow-600, bg-amber-50, bg-yellow-50
-  Info blue:      text-blue-600, bg-blue-50
+1.3 STATUS COLORS (Correct)
+  Green/Emerald  1,082 uses   Pass/compliant
+  Red              677 uses   Fail/critical
+  Amber/Yellow     854 uses   Warning
+  Blue             615 uses   Info
+  Purple            64 uses   Special
 
-TAILWIND GENERIC COLORS (off-brand, heavily used):
-  text-gray-500    (most common body text — should be brand navy or specific gray)
-  text-gray-600    (secondary text)
-  text-gray-700    (label text)
-  text-gray-900    (heading text — should be #1E2D4D)
-  bg-gray-50       (section backgrounds — should be #FAF7F0 cream)
-  bg-gray-100      (alternate bg)
-  bg-gray-200      (skeleton pulse bg)
-  border-gray-200  (most common border — generic)
-  border-gray-300  (input borders)
+1.4 REMAINING GENERIC GRAYS (~1,836 instances)
+  gray-50: 497 | gray-100: 455 | gray-900: 329 | gray-300: 243
+  gray-800: 83 | gray-700: 66 | gray-600: 64 | gray-200: 59 | gray-400: 20
+  slate-*: 150+
 
-VERDICT: Two competing navy palettes. Brand cream (#FAF7F0) barely used.
-         Generic Tailwind grays dominate instead of brand colors.
+1.5 CSS VARIABLES (index.css)
+  --bg-main: #FAF7F0 | --bg-card: #FFFFFF | --bg-panel: #EEF1F7
+  --border: #D1D9E6 | --text-primary: #0B1628 | --text-secondary: #3D5068
 
-── TYPOGRAPHY ─────────────────────────────────────────────────
+1.6 OFF-BRAND ONE-OFFS (~30-50)
+  #eef4f8 (WelcomeModal) | #f0fdf4 (DeficiencyDetail)
+  #1D4ED8 (K12) | #059669 (K12) | #7C3AED (K12)
 
-HEADING SCALE (inconsistent):
-  Page titles:    text-2xl font-bold      (most common)
-                  text-3xl font-bold      (Landing, some admin)
-                  text-xl font-bold       (some feature pages)
-  Section heads:  text-lg font-semibold   (most common)
-                  text-xl font-semibold   (some pages)
-  Card titles:    text-sm font-semibold   (most common)
-                  text-base font-semibold (some cards)
-                  text-lg font-semibold   (dashboard cards)
-  Body text:      text-sm                 (dominant — 14px)
-  Labels:         text-xs font-medium     (form labels)
-                  text-sm font-medium     (alternate labels)
-  Helper text:    text-xs text-gray-500
-                  text-sm text-gray-500
+================================================================
+2. TYPOGRAPHY
+================================================================
 
-ARBITRARY SIZES FOUND:
-  text-[13px], text-[15px], text-[11px], text-[10px]
-  fontSize: 14, fontSize: 18, fontSize: 48 (inline styles)
+  text-xs: 1,097 | text-sm: 1,061 | text-base: 44 | text-lg: 126
+  text-xl: 27 | text-2xl: 27 | text-3xl: 11 | text-4xl: 16
 
-FONT WEIGHTS:
-  font-bold:      page titles, KPI numbers
-  font-semibold:  section heads, card titles, buttons
-  font-medium:    labels, nav items, secondary buttons
-  font-normal:    body text (default)
+  Inline fontSize: ~500 instances (13px:83, 12px:75, 11px:72, 10px:58)
+  font-semibold: 685 | font-medium: 655 | font-bold: 331
+  tracking-tight: 87 | tracking-wider: 54
 
-LINE HEIGHT:
-  leading-relaxed  (some body sections)
-  leading-tight    (some headings)
-  Mostly default (no explicit leading- class)
+================================================================
+3. SPACING
+================================================================
 
-VERDICT: Heading hierarchy varies ±1 size level across pages.
-         Dashboard cards use text-lg, feature pages use text-sm for same role.
-         Inline font-size styles conflict with Tailwind scale.
+  py-2: 659 (dominant) | gap-2: 375 | gap-1: 266
+  Card padding: inline '16px 20px' (~200 instances)
 
-── SPACING ────────────────────────────────────────────────────
+================================================================
+4. BORDER RADIUS
+================================================================
 
-PAGE PADDING:
-  Most pages:     p-4 md:p-6         (dominant pattern)
-  Some pages:     p-6                 (admin)
-  Some pages:     p-8                 (landing sections)
-  Some pages:     px-4 py-6           (mixed)
-  Inline:         padding: '80px 20px' (NotFound.jsx)
-                  padding: '3rem 1.5rem' (PageStates.tsx)
+  rounded-lg: 626 (DOMINANT — should reduce)
+  rounded-xl: 319 (TARGET for cards)
+  rounded-full: 278 (badges)
+  Inline borderRadius: ~180 instances (8px:67, 10px:34, 6px:31)
 
-CARD PADDING:
-  p-4              (most feature cards)
-  p-5              (some KPI cards)
-  p-6              (dashboard cards, admin cards)
+================================================================
+5. SHADOWS
+================================================================
 
-SECTION GAPS:
-  space-y-4        (most common)
-  space-y-6        (dashboard sections)
-  gap-4            (grid layouts)
-  gap-6            (some grids)
-  gap-3            (tight lists)
+  Tailwind: shadow-xl:35, shadow-sm:35, shadow:18, shadow-lg:14, shadow-md:13
+  Inline boxShadow: 139 instances
+  Custom: shadow-card, shadow-card-hover, shadow-elevated (tailwind.config.js)
 
-FORM FIELD GAPS:
-  space-y-4        (most forms)
-  space-y-3        (compact forms)
-  gap-4            (grid-based forms)
+================================================================
+6. BUTTONS
+================================================================
 
-VERDICT: Spacing is reasonably consistent (±1 Tailwind step).
-         Inline styles in PageStates.tsx and NotFound.jsx break the pattern.
-         Cards vary p-4/p-5/p-6 — should standardize on one.
+  475+ files with <button> | No shared Button component
+  Primary: bg-[#1E2D4D] (~623) | Gold: bg-[#A08C5A] (~40)
+  Touch targets (min-h-[44px]): 272/475 (57%)
+  Press feedback (active:scale): 89/475 (19%)
+  Non-brand colors remaining: 778 instances
 
-── BORDER RADIUS ──────────────────────────────────────────────
-
-CARDS:
-  rounded-xl       (dominant — good)
-  rounded-lg       (some older cards)
-  rounded-2xl      (landing page cards)
-
-BUTTONS:
-  rounded-lg       (dominant — good)
-  rounded-md       (some secondary buttons)
-  borderRadius: 6  (inline in PageStates.tsx)
-
-INPUTS:
-  rounded-md       (most inputs)
-  rounded-lg       (some inputs)
-
-MODALS:
-  rounded-xl       (consistent)
-  rounded-2xl      (some modals)
-
-BADGES/PILLS:
-  rounded-full     (consistent — good)
-
-VERDICT: Generally consistent. Cards are rounded-xl, buttons rounded-lg.
-         Minor variations: rounded-lg vs rounded-xl on cards in older pages.
-
-── SHADOWS ────────────────────────────────────────────────────
-
-CARDS:
-  shadow-sm        (most cards)
-  shadow-md        (some cards, hover states)
-  shadow-lg        (elevated cards)
-  No shadow        (some cards use border only — border border-gray-200)
-
-MODALS:
-  shadow-xl        (most modals)
-  shadow-2xl       (some modals)
-
-DROPDOWNS:
-  shadow-lg        (consistent)
-
-BUTTONS:
-  hover:shadow-md  (some primary buttons)
-
-VERDICT: Mixed — some cards have shadow-sm, others have no shadow (border only).
-         Dashboard cards tend to use border, feature pages use shadow.
-         Should standardize: either border OR shadow, not mixed.
-
-── BUTTONS ────────────────────────────────────────────────────
-
-PRIMARY BUTTON PATTERNS (3+ variants found):
-  1. Gold bg:    bg-[#A08C5A] text-white rounded-lg hover:bg-[#9A8450]
-  2. Navy bg:    bg-[#1e4d6b] text-white rounded-lg (inline style)
-  3. Navy bg:    bg-[#1E2D4D] text-white rounded-lg
-  4. Tailwind:   bg-blue-600 text-white (some admin pages)
-
-SECONDARY BUTTON:
-  border border-gray-300 text-gray-700 rounded-lg
-  bg-gray-100 text-gray-700 rounded-lg (variant)
-
-DESTRUCTIVE:
-  bg-red-600 text-white rounded-lg
-  text-red-600 (text-only variant)
-
-GHOST:
-  text-gray-600 hover:bg-gray-100
-  text-[#1e4d6b] hover:underline
-
-BUTTON HEIGHTS (inconsistent):
-  h-9, h-10, h-11, h-12, min-h-[44px], py-2, py-2.5, py-3
-  padding: '8px 20px' (inline in PageStates.tsx)
-
-BUTTON FONT:
-  text-sm font-medium (most common)
-  text-sm font-semibold (some)
-  text-base (some larger CTAs)
-
-VERDICT: 3-4 competing primary button styles. No single shared Button component
-         enforced across pages. Heights vary. Gold vs Navy primary unclear.
-
-── ICONS ──────────────────────────────────────────────────────
-
-PRIMARY LIBRARY:
-  lucide-react     (dominant — 90%+ of icons)
-
-SECONDARY:
-  Unicode emoji    (EmptyState.jsx uses emoji: 🌡️, ✓, 📄, 📋, 📡, 🔥, 🔧)
-  HTML entities    (⚠ in PageStates.tsx)
-
-ICON SIZES:
-  w-4 h-4          (inline, small UI)
-  w-5 h-5          (buttons, nav items — most common)
-  w-6 h-6          (larger UI elements)
-  w-8 h-8          (empty states, hero elements)
-  w-3 h-3          (tiny indicators)
-
-STROKE WIDTH:
-  Default (2)      (no customization found)
-
-VERDICT: Good — Lucide React is consistent. Emoji usage in EmptyState.jsx
-         is a stylistic choice (acceptable for emotional empty states).
-         Icon sizes follow a logical scale.
-
-── CARDS ──────────────────────────────────────────────────────
-
-DOMINANT PATTERN:
-  bg-white rounded-xl border border-gray-200 p-6
-
-VARIATIONS:
-  bg-white rounded-xl shadow-sm p-4          (some feature cards)
-  bg-white rounded-lg border border-gray-200 p-4  (older cards)
-  bg-white rounded-xl p-6                    (no border, no shadow)
-  Cards with colored left border:            border-l-4 border-[#A08C5A]
-
-VERDICT: Mostly consistent. The bg-white rounded-xl border border-gray-200 p-6
-         pattern dominates. Some older pages use rounded-lg or shadow instead of border.
-
-── TABLES ─────────────────────────────────────────────────────
-
-HEADER:
-  bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wider
-  (consistent across most tables)
-
-ROWS:
-  hover:bg-gray-50 (most tables)
-  border-b border-gray-200 (row separators)
-  py-3 px-4 to py-4 px-6 (padding varies)
-
-ALTERNATING ROWS:
-  Not used — consistent white bg with hover
-
-VERDICT: Tables are reasonably consistent. Header pattern is well-established.
-         Row padding varies slightly between pages.
-
-── FORMS ──────────────────────────────────────────────────────
-
-INPUT PATTERN:
-  w-full px-3 py-2 border border-gray-300 rounded-md
-  focus:ring-2 focus:ring-[#1e4d6b] focus:border-[#1e4d6b]
-  (OR focus:ring-blue-500 on some pages)
-
-LABELS:
-  text-sm font-medium text-gray-700 mb-1
-  (consistent)
-
-REQUIRED:
-  * after label (most common)
-  No "Required" text used
-
-ERROR MESSAGES:
-  text-sm text-red-600 mt-1
-  (consistent)
-
-SUBMIT BUTTONS:
-  Right-aligned (some forms)
-  Full-width (other forms — especially modals)
-  No standard position
-
-VERDICT: Form inputs are reasonably consistent. Focus ring color varies
-         between #1e4d6b and blue-500. Submit button position not standardized.
-
-═══════════════════════════════════════════════════════════════
+================================================================
+7. ICONS — lucide-react 100% (461 files), w-5 h-5 most common
+8. MODALS — 71 custom, no animation, bg-black/50 backdrop
+9. TABLES — 31 components, no sticky headers, subtle hover
+10. TOASTS — sonner, 613 calls, top-right, 4000ms, 12px radius
+11. ANIMATIONS — 20+ @keyframes, page-enter, stagger-children, skeleton
+12. ACCESSIBILITY — 100+ aria-label, prefers-reduced-motion, safe areas
