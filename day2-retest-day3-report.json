@@ -1,0 +1,171 @@
+{
+  "date": "Apr 11",
+  "day2_reverify": {
+    "area": "Day 2 Re-verification (post TESTING-DB-FIX-01)",
+    "tests_rerun": [
+      "2.03",
+      "2.04",
+      "2.05",
+      "2.06",
+      "2.07",
+      "2.08",
+      "2.09",
+      "2.11"
+    ],
+    "results": {
+      "2.03": {
+        "desktop": "PASS",
+        "android": "N/A",
+        "issue": "Route /temp-logs OK. temperature_logs has facility_id, temperature, temp_pass, equipment_id, input_method. Schema verified."
+      },
+      "2.04": {
+        "desktop": "PASS",
+        "android": "N/A",
+        "issue": "Route OK. 7 templates, 26 items. Enhanced columns verified (pillar, category, authority_source, authority_section). completions table: exists."
+      },
+      "2.05": {
+        "desktop": "PASS",
+        "android": "N/A",
+        "issue": "Route /documents OK. documents table has title (not name), category, organization_id, status. Schema verified."
+      },
+      "2.06": {
+        "desktop": "PASS",
+        "android": "N/A",
+        "issue": "Route /incidents OK. incidents table verified (title, severity, status, type, reported_by). incident_timeline: exists. incident_comments: exists."
+      },
+      "2.07": {
+        "desktop": "PASS",
+        "android": "N/A",
+        "issue": "jurisdictions table verified (agency_name, fire_ahj_name, scoring_type, grading_type). 0 locations, 0 linked to jurisdictions."
+      },
+      "2.08": {
+        "desktop": "PASS",
+        "android": "N/A",
+        "issue": "location_service_schedules verified. 0 schedules, 5 service types. Columns OK: service_type_code, frequency, next_due_date. service_type_definitions: exists."
+      },
+      "2.09": {
+        "desktop": "PASS",
+        "android": "N/A",
+        "issue": "Route /jurisdiction OK. Sample: Apache. Populated: agency_name, scoring_type, grading_type. Schema uses agency_name + fire_ahj_name (correct)."
+      },
+      "2.11": {
+        "desktop": "PASS",
+        "android": "N/A",
+        "issue": "5 jurisdictions with fire_ahj_name. 5 have fire_jurisdiction_config JSONB. Correct column verified."
+      }
+    },
+    "summary": {
+      "pass": 8,
+      "pass_star": 0,
+      "fail": 0
+    }
+  },
+  "day3": {
+    "area": "Food Safety, Fire Safety & Checklists",
+    "total": 13,
+    "results": {
+      "3.01": {
+        "desktop": "PASS",
+        "android": "N/A",
+        "issue": "Route /food-safety OK. FoodSafetyHub is a category landing page — builds cards from sidebarConfig. Uses useDemoGuard()."
+      },
+      "3.02": {
+        "desktop": "PASS",
+        "android": "N/A",
+        "issue": "Route OK. temperature_equipment: exists (0 records). temperature_logs: 0 records. All 9 key columns verified. Uses useDemoGuard()."
+      },
+      "3.03": {
+        "desktop": "PASS",
+        "android": "N/A",
+        "issue": "Route OK. 7 templates (4 food, 3 fire). Types: opening, fire_daily, receiving, mid_shift, closing, fire_weekly, fire_monthly. Uses useDemoGuard()."
+      },
+      "3.04": {
+        "desktop": "PASS",
+        "android": "N/A",
+        "issue": "26 items. Authority sources: calcode, cfc, nfpa_96, evidly_best_practice. Categories: employee_health, sanitation, temperature, storage, extinguisher, hood_system, egress, suppression, general, equipment. 1 critical, 5 temperature type."
+      },
+      "3.05": {
+        "desktop": "PASS",
+        "android": "N/A",
+        "issue": "Route OK. corrective_actions table: exists (0 records). Uses useDemoGuard(). Page is demo-only with localStorage state."
+      },
+      "3.06": {
+        "desktop": "PASS",
+        "android": "N/A",
+        "issue": "Route /facility-safety OK. FacilitySafety page uses useDemoGuard(). Fire safety checklists (daily/weekly/monthly), NFPA compliance, hood system checks. Demo-only with localStorage."
+      },
+      "3.07": {
+        "desktop": "PASS",
+        "android": "N/A",
+        "issue": "incidents: 26 columns verified. RLS select: OK. incident_timeline: 7 cols OK. incident_comments: 4 cols OK."
+      },
+      "3.08": {
+        "desktop": "PASS",
+        "android": "N/A",
+        "issue": "Route /self-audit OK. self_inspection_sessions table: exists. Uses useDemoGuard(). Multi-section inspection walkthrough with jurisdiction-specific scoring."
+      },
+      "3.09": {
+        "desktop": "PASS",
+        "android": "N/A",
+        "issue": "Route OK. documents: 0 records. Core cols (title, category, status, file_url, scan_status) verified. AI analysis cols: OK. Uses useDemoGuard()."
+      },
+      "3.10": {
+        "desktop": "PASS",
+        "android": "N/A",
+        "issue": "5 service types: FPM, FS, GFX, KEC, RGC. 5 with NFPA citations. PSE backbone verified."
+      },
+      "3.11": {
+        "desktop": "PASS*",
+        "android": "N/A",
+        "issue": "receiving_temp_logs: exists. cooldown_temp_checks: exists. haccp_monitoring_logs: exists. These are used by TempLogs.tsx for specialized logging."
+      },
+      "3.12": {
+        "desktop": "PASS",
+        "android": "N/A",
+        "issue": "checklist_template_completions: exists. checklist_responses: exists. alerts: exists. Full checklist workflow tables verified."
+      },
+      "3.13": {
+        "desktop": "PASS",
+        "android": "N/A",
+        "issue": "Dual-pillar separation confirmed in templates. Food (4): Opening Checklist — Food Safety, Receiving Checklist, Mid-Shift Checklist, Closing Checklist — Food Safety. Fire (3): Opening Checklist — Fire Safety, Fire Safety Weekly Checklist, Fire Safety Monthly Checklist. Pillars are independent."
+      }
+    },
+    "summary": {
+      "pass": 12,
+      "pass_star": 1,
+      "fail": 0
+    }
+  },
+  "issues": [],
+  "regression": {
+    "1.01": {
+      "result": "PASS",
+      "issue": ""
+    },
+    "1.02": {
+      "result": "PASS",
+      "issue": "Session obtained"
+    },
+    "1.03": {
+      "result": "PASS",
+      "issue": "All 11 routes OK"
+    },
+    "1.06": {
+      "result": "PASS",
+      "issue": "Session refresh OK"
+    },
+    "1.17": {
+      "result": "PASS",
+      "issue": "Sidebar role-gating verified in sidebarConfig.ts"
+    },
+    "2.01": {
+      "result": "PASS",
+      "issue": "Dashboard OK"
+    },
+    "2.12": {
+      "result": "PASS",
+      "issue": "Dual-pillar: pillars independent, no aggregate score"
+    }
+  },
+  "regression_status": "ALL PASS"
+}

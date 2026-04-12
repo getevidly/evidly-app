@@ -289,6 +289,38 @@ END $$;
 -- STATUS: NO DB CHANGE — code is working as designed
 -- ────────────────────────────────────────────────────────────
 
+-- ────────────────────────────────────────────────────────────
+-- Issue 8 (Day 3 discovery): documents table missing 18 columns
+-- from migrations 20260304100001, 20260304020010, 20260311000000
+-- Testing DB only had 15 cols (base 14 + coi_warning_sent_at)
+-- Added: ai_document_type, ai_document_type_label, ai_issue_date,
+--        ai_expiration_date, ai_issuing_agency, ai_inspector_name,
+--        ai_score_grade, ai_violations, ai_compliance_status,
+--        ai_confidence, ai_analyzed_at, needs_attention,
+--        import_source, original_filename, imported_at,
+--        scan_status, categorization_source, manual_category_override
+-- ────────────────────────────────────────────────────────────
+
+ALTER TABLE documents
+  ADD COLUMN IF NOT EXISTS ai_document_type TEXT,
+  ADD COLUMN IF NOT EXISTS ai_document_type_label TEXT,
+  ADD COLUMN IF NOT EXISTS ai_issue_date DATE,
+  ADD COLUMN IF NOT EXISTS ai_expiration_date DATE,
+  ADD COLUMN IF NOT EXISTS ai_issuing_agency TEXT,
+  ADD COLUMN IF NOT EXISTS ai_inspector_name TEXT,
+  ADD COLUMN IF NOT EXISTS ai_score_grade TEXT,
+  ADD COLUMN IF NOT EXISTS ai_violations TEXT[],
+  ADD COLUMN IF NOT EXISTS ai_compliance_status TEXT,
+  ADD COLUMN IF NOT EXISTS ai_confidence NUMERIC(3,2),
+  ADD COLUMN IF NOT EXISTS ai_analyzed_at TIMESTAMPTZ,
+  ADD COLUMN IF NOT EXISTS needs_attention BOOLEAN DEFAULT false,
+  ADD COLUMN IF NOT EXISTS import_source TEXT DEFAULT 'direct',
+  ADD COLUMN IF NOT EXISTS original_filename TEXT,
+  ADD COLUMN IF NOT EXISTS imported_at TIMESTAMPTZ,
+  ADD COLUMN IF NOT EXISTS scan_status TEXT DEFAULT 'available',
+  ADD COLUMN IF NOT EXISTS categorization_source TEXT DEFAULT 'ai',
+  ADD COLUMN IF NOT EXISTS manual_category_override BOOLEAN DEFAULT false;
+
 -- ═══════════════════════════════════════════════════════════
 -- VERIFICATION QUERIES (run after applying)
 -- ═══════════════════════════════════════════════════════════
