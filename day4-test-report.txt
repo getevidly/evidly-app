@@ -11,7 +11,7 @@ TEST   | RESULT           | ISSUE
 4.04   | PASS             | Sprinkler record: insert OK, RLS OK, cleanup done. safeguard_type=sprinklers.
 4.05   | PASS             | Fire alarm record: insert OK, RLS OK, cleanup done. safeguard_type=fire_alarm.
 4.06   | PASS             | Overdue detection: client-side in usePSESchedules (diffDays < 0). Insert + cleanup OK. PSECoverageRiskWidget renders only when overdue items exist. No server-side alert generation.
-4.07   | PASS             | Route OK. documents insert+readback+cleanup OK. Storage bucket: NOT FOUND. AI analysis via SmartUploadModal. scan_status, ai_document_type, ai_confidence cols verified.
+4.07   | PASS             | Route OK. documents insert+readback+cleanup OK. Storage bucket: EXISTS + writable. AI analysis via SmartUploadModal. scan_status, ai_document_type, ai_confidence cols verified.
 4.08   | PASS             | Document categories are hardcoded (not from DB). Known: health_permit, fire_inspection, insurance_cert, business_license, training_cert, haccp_plan, food_handler_card, vendor_coi, other. DB documents with categories: none (empty table).
 4.09   | PASS             | Expiry tracking: expiration_date column OK. Inserted doc expiring tomorrow, readback OK, cleanup done. getDocStatus() returns "expiring" for ≤30 days. No server-side alert — display only.
 4.10   | PASS             | Route /vendor-connect OK. vendor_connect_profiles: exists. vendor_connect_spots: exists. Page skips fetch in demo mode. EvidLY-branded marketplace.

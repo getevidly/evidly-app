@@ -37,7 +37,7 @@
     "4.07": {
       "desktop": "PASS",
       "android": "N/A",
-      "issue": "Route OK. documents insert+readback+cleanup OK. Storage bucket: NOT FOUND. AI analysis via SmartUploadModal. scan_status, ai_document_type, ai_confidence cols verified."
+      "issue": "Route OK. documents insert+readback+cleanup OK. Storage bucket: EXISTS + writable. AI analysis via SmartUploadModal. scan_status, ai_document_type, ai_confidence cols verified."
     },
     "4.08": {
       "desktop": "PASS",

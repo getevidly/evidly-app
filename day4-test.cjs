@@ -208,27 +208,39 @@ async function run() {
     const docRoute = await fetch(`${PREVIEW_URL}/documents`);
     const routeOk = docRoute.status === 200;
     const docCheck = await colCheck('documents', ['id', 'title', 'category', 'organization_id', 'file_url', 'status', 'expiration_date', 'scan_status', 'ai_document_type', 'ai_confidence']);
-    // Check storage bucket
-    const { data: buckets, error: bErr } = await supabase.storage.listBuckets();
-    const docBucket = (buckets || []).find(b => b.name === 'documents');
+    // Check storage bucket via RPC (listBuckets needs service_role, so query storage.buckets directly)
+    const { data: bucketRow } = await supabase.rpc('check_bucket_exists', { bucket_name: 'documents' }).maybeSingle();
+    // Fallback: try listBuckets, then try a test upload to confirm bucket works
+    const { data: buckets } = await supabase.storage.listBuckets();
+    const docBucketApi = (buckets || []).find(b => b.name === 'documents');
+    // Direct upload test: create a tiny test file, upload, then delete
+    let bucketWritable = false;
+    const testPath = `_test_${Date.now()}.txt`;
+    const testBlob = new Blob(['test'], { type: 'text/plain' });
+    const { error: upErr } = await supabase.storage.from('documents').upload(testPath, testBlob);
+    if (!upErr) {
+      bucketWritable = true;
+      await supabase.storage.from('documents').remove([testPath]);
+    }
+    const bucketStatus = bucketWritable ? 'EXISTS + writable' : (docBucketApi ? 'exists (list OK)' : 'NOT FOUND via API (may need RLS policy on storage)');
     if (!routeOk) {
       log('4.07', 'FAIL', `/documents returned HTTP ${docRoute.status}`);
     } else if (!docCheck.ok) {
       log('4.07', 'FAIL', `documents schema error: ${docCheck.err}`);
     } else if (!orgId) {
-      log('4.07', 'PASS*', `Route OK. documents schema: 10 key cols verified. Storage bucket 'documents': ${docBucket ? 'exists' : 'NOT FOUND'}. No org for insert test.`);
+      log('4.07', 'PASS*', `Route OK. documents schema: 10 key cols verified. Storage bucket: ${bucketStatus}. No org for insert test.`);
     } else {
-      // Insert test document
+      // Insert test document row
       const { data: ins, error: insErr } = await supabase.from('documents').insert({
         organization_id: orgId, title: 'TEST Health Permit',
         category: 'health_permit', file_url: 'https://example.com/test.pdf',
         status: 'active', expiration_date: '2027-01-01',
       }).select('id').single();
       if (insErr) {
-        log('4.07', 'PASS*', `Route OK. Schema verified. Insert error: ${insErr.message}. Storage: ${docBucket ? 'exists' : 'NOT FOUND'}.`);
+        log('4.07', 'PASS*', `Route OK. Schema verified. Insert error: ${insErr.message}. Storage bucket: ${bucketStatus}.`);
       } else {
         await supabase.from('documents').delete().eq('id', ins.id);
-        log('4.07', 'PASS', `Route OK. documents insert+readback+cleanup OK. Storage bucket: ${docBucket ? 'exists' : 'NOT FOUND'}. AI analysis via SmartUploadModal. scan_status, ai_document_type, ai_confidence cols verified.`);
+        log('4.07', 'PASS', `Route OK. documents insert+readback+cleanup OK. Storage bucket: ${bucketStatus}. AI analysis via SmartUploadModal. scan_status, ai_document_type, ai_confidence cols verified.`);
       }
     }
     auditEmptyState('/documents', true, 'Empty state shows "No documents uploaded yet" with upload button CTA. Demo mode shows 30 sample documents with AI analysis.');
