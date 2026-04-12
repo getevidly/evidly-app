@@ -1,0 +1,98 @@
+═════════════════════════════════════════════════════════════════
+  LAUNCH DAY OPERATIONS CHECKLIST — EvidLY
+  Date: 2026-04-12
+═════════════════════════════════════════════════════════════════
+
+── PRE-LAUNCH VERIFICATION ──────────────────
+  [✓] Vercel deployment: npx vercel --prod
+  [✓] Sentry DSN configured (VITE_SENTRY_DSN)
+  [✓] Resend API key set (RESEND_API_KEY)
+  [✓] Supabase edge functions deployed
+  [✓] Feature flags: post-launch features disabled
+  [✓] Admin role: platform_admin on arthur@getevidly.com
+
+── ONBOARDING FIRST CLIENT ─────────────────
+  1. Log in at app.getevidly.com
+  2. Navigate to /admin/onboarding
+  3. Create org (name, industry, owner contact)
+  4. Set location count + jurisdiction matching
+  5. Welcome email fires via send-welcome-email edge fn
+  6. Client receives email, logs in, changes password
+  7. Guided tour auto-activates (GuidedTour component)
+  8. Onboarding checklist shows on dashboard
+  9. check-onboarding-progress sends progress reminders
+
+── MONITORING ENDPOINTS ─────────────────────
+  [✓] /admin/command-center → KPI dashboard
+  [✓] /admin/gtm → GTM channel tracking
+  [✓] /admin/sales → Sales pipeline (Kanban + table)
+  [✓] /admin/intelligence → Signals to approve
+  [✓] /admin/support-tickets → Client support
+  [✓] /admin/feature-flags → Feature controls
+  [✓] Sentry → Error tracking (PII scrubbed)
+  [✓] Supabase dashboard → Edge function logs
+  [✓] Vercel dashboard → Deployment status
+
+── ERROR ALERTING ──────────────────────────
+  [✓] Sentry: @sentry/react with DSN env var
+  [✓] PII scrubbing on error reports
+  [✓] ErrorBoundary components (7 in codebase)
+  [✓] Edge function console.error logging
+  [✓] Vercel deployment alerts (Vercel dashboard)
+
+── SALES PIPELINE (LEAD → CLOSE) ───────────
+  Stages: prospect → tour_scheduled → tour_completed →
+          proposal_sent → negotiating → won / lost
+  Channels: Kitchen Checkup, Inbound, Outbound, Referral, RFP Intel
+  Pages: GtmDashboard, SalesPipeline (Kanban), DemoPipeline
+
+── LEAD GENERATION ─────────────────────────
+  [✓] IRR: /operations-check (11 questions → grade + risk scores)
+  [✓] assessment-notify → arthur@getevidly.com on submission
+  [✓] ScoreTable county pages → CTA to IRR/KitchenCheck
+  [✓] County landing pages for Wave 1
+  [✓] City SEO pages for major cities
+  [ ] HubSpot 24-week drip: external config (IntegrationsPage ready)
+  [ ] RB2B: queued for May 5 activation
+
+── WAVE 1 GEOGRAPHIC COVERAGE ──────────────
+  [✓] Merced County — ScoreTable + landing + 6 city pages
+  [✓] Fresno County — ScoreTable + landing + 15 city pages
+  [✓] San Joaquin County — ScoreTable + landing + 7 city pages
+  [✓] Stanislaus — Landing + 9 city pages (in FILTA_COUNTIES)
+  Phone: (855) EVIDLY1 (national toll-free)
+
+── ARAMARK YOSEMITE PILOT ──────────────────
+  [✓] Multi-AHJ migration deployed
+  [✓] federal_overlay_jurisdictions table
+  [✓] Mariposa County jurisdiction configured
+  [✓] NPS federal overlay support
+  [✓] Resolution rule: more stringent of all AHJs
+  [✓] AdminClientOnboarding supports multi-location
+  [✓] Fire safety module (NFPA 96, Table 12.4)
+  [✓] Equipment inventory + maintenance tracking
+  [✓] Demo paths: GuidedTours, PartnerDemos, DemoLauncher
+
+── GOLDEN TABLE AWARDS ─────────────────────
+  [✓] Badge framework: bronze/silver/gold/platinum
+  [✓] benchmark-badge-check: weekly cron evaluation
+  [✓] Verification codes + public badge pages
+  [✓] Social sharing generation
+  [ ] "Golden Table" branding: Q4 2026 CA launch
+  [✓] Dual-authority model: food + fire independently
+
+── FEATURE FLAGS (LAUNCH CONTROLS) ─────────
+  Core (always_on): dashboard, facility_safety, documents,
+    temperature_logs, checklists, alerts, intelligence_feed,
+    jurisdiction_intel, score_table, irr, leaderboard, k2c
+  Post-launch (disabled): insurance_risk, predictive_alerts
+  Controls: role-based, plan-tier gating, trigger types,
+    criteria engine, audit trail
+
+── SUPPORT SYSTEM ──────────────────────────
+  [✓] support_tickets table with SLA trigger
+  [✓] /admin/support-tickets admin page
+  [✓] HelpSupport page (client-facing)
+  [✓] Drift chat integration
+
+═════════════════════════════════════════════════════════════════

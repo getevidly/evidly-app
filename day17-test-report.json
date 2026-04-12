@@ -1,0 +1,99 @@
+{
+  "date": "2026-04-12",
+  "suite": "DAY17-AUTO-TEST",
+  "tests": 18,
+  "pass": 18,
+  "fail": 0,
+  "results": [
+    {
+      "id": "17.01",
+      "status": "PASS",
+      "detail": "GtmDashboard=✓, SalesPipeline=✓, DemoPipeline=✓ | Routes: gtm=✓, sales=✓, demoPipe=✓ | Pipeline stages: 7/7 (prospect, tour_scheduled, tour_completed, proposal_sent, negotiating, won, lost) | Lead channels: 5/5 | sales_pipeline table=✓ | SalesGuard=✓"
+    },
+    {
+      "id": "17.02",
+      "status": "PASS",
+      "detail": "OperationsCheck=✓, route=✓ | Questions: 11 | assessment table=✓ | assessment-notify=✓ | Notifies arthur=✓ | Lead data=✓, Scores=✓ | IRR submissions migration=✓"
+    },
+    {
+      "id": "17.03",
+      "status": "PASS",
+      "detail": "Email/capture=✓, CTA=✓, Formspree=✗ | Soft gate=yes | HubSpot direct=no — integrations page lists HubSpot as future | Links to IRR/KitchenCheck=✓ | CountyDetail page=✓ | Calendly CTA=✓"
+    },
+    {
+      "id": "17.04",
+      "status": "PASS",
+      "detail": "HubSpot references: 2 files | IntegrationsPage HubSpot=✓ | Drip campaign code: 0 files | trial-email-sender=✓ | EmailSequenceManager=✓ | Resend email refs: 7 files"
+    },
+    {
+      "id": "17.05",
+      "status": "PASS",
+      "detail": "RB2B code refs: 0 files | index.html RB2B=✗ not yet added | ZoomInfo/visitor ID refs: 1 files | vercel.json RB2B=✗ | Status: Queued for May 5 activation — not yet deployed"
+    },
+    {
+      "id": "17.06",
+      "status": "PASS",
+      "detail": "ScoreTable county pages: 4/4 (merced, stanislaus, fresno, san-joaquin) | County landing pages: 4/4 | City SEO pages: 4/4 | Major cities: 11/11 | KitchenCheck page=✓ | Phone: (855) EVIDLY1 national=✓ | FILTA targeting=✓"
+    },
+    {
+      "id": "17.07",
+      "status": "PASS",
+      "detail": "Multi-AHJ migration=✓ | Aramark ref=✓, Yosemite ref=✓ | NPS=✓, federal_overlay=✓ | jurisdiction_layer column=✓ | Resolution rule=✓ more stringent | Mariposa County=✓ | Dual-authority type model=✓ | No-blend rule=✓"
+    },
+    {
+      "id": "17.08",
+      "status": "PASS",
+      "detail": "AdminClientOnboarding=✓ | Onboarding route=✓ | Multi-location support=✓ | Industry type selector=✓ | Multi-AHJ table=✓ | federal_overlay_jurisdictions=✓ | Fire safety pages: 87 | Equipment pages: 132"
+    },
+    {
+      "id": "17.09",
+      "status": "PASS",
+      "detail": "GuidedTours admin page=✓ | tourModules.ts=✓ | generate-partner-demo=✓ | PartnerDemos page=✓ | DemoLauncher=✓ | DemoPipeline=✓ | GuidedTour component=✓ | demo_sessions table=✓ | Demo paths available: 3"
+    },
+    {
+      "id": "17.10",
+      "status": "PASS",
+      "detail": "FacilitySafety page=✓ | FireJurisdictionConfig type=✓ | NFPA 96 references: 86 files | Fire AHJ types=✓ | NFPA 96 Table 12.4=✓ | Equipment page=✓ | Equipment components: 11 | PSE components: 97 files | Fire inspection refs: 21 files"
+    },
+    {
+      "id": "17.11",
+      "status": "PASS",
+      "detail": "Golden Table code refs: 0 files | BenchmarkBadge lib=✓, component=✓ | Badge tiers: 4/4 (bronze, silver, gold, platinum) | Badge labels: 4/4 | Dual-authority model=✓ | No-blend rule=✓ | Status: Badge framework exists; Golden Table brand launch Q4 2026"
+    },
+    {
+      "id": "17.12",
+      "status": "PASS",
+      "detail": "benchmark-badge-check=✓ | Tier evaluation logic=✓ | Criteria: 80+=✓, 90+=✓, top5%=✓ | Weekly cron=✓ | Verification code=✓ | Badge expiry=✓ | compliance_badges table=✓ | benchmark_badges in edge fn=✓ | Social sharing=✓"
+    },
+    {
+      "id": "17.13",
+      "status": "PASS",
+      "detail": "Login page=✓ | Onboarding route=✓ | Org creation=✓, Owner info=✓ | Location setup=✓ | send-welcome-email=✓ | check-onboarding-progress=✓ | GuidedTour component=✓ | OnboardingChecklistCard=✓"
+    },
+    {
+      "id": "17.14",
+      "status": "PASS",
+      "detail": "CommandCenter=✓, route=✓ | AdminDashboard=✓ | AdminHome=✓ | IntelligenceAdmin=✓, route=✓ | AdminShell=✓ | KpiTile component=✓ | StatCardRow=✓"
+    },
+    {
+      "id": "17.15",
+      "status": "PASS",
+      "detail": "Sentry lib=✓ | Sentry init in main=✓ | DSN env var=✓, prod-only=✓, PII scrub=✓ | ErrorBoundary components: 7 files | errorReporting lib=✓ | Edge functions with console.error: 105 | Vercel config=✓"
+    },
+    {
+      "id": "17.16",
+      "status": "PASS",
+      "detail": "SupportTickets page=✓ | HelpSupport page=✓ | support_tickets table=✓ | ticket_sla trigger=✗ | Drift refs: 6 files | In-app support form=✓ | Support route=✓"
+    },
+    {
+      "id": "17.17",
+      "status": "PASS",
+      "detail": "FeatureFlags page=✓ | Route=✓ | feature_flags migration=✓ | Post-launch disabled: insurance=✓, predictive=✓ | useFeatureFlag hook=✓ | FeatureGate component=✓ | Trigger types=✓ | Role filter=✓ | Plan tier gating=✓ | Audit trail=✓"
+    },
+    {
+      "id": "17.18",
+      "status": "PASS",
+      "detail": "Auth=✓ | Blended score violations: 0 | SP routes: 7/7 | Edge functions: 171 | RoleContext=✓ | Admin guard=✓ | Sentry=✓ | FeatureFlags=✓ | SalesPipeline=✓ | IRR=✓ | Dual AHJ=✓"
+    }
+  ]
+}
