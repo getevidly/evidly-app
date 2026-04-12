@@ -369,20 +369,20 @@ async function run() {
       const { data: ins, error: insErr } = await supabase.from('corrective_actions').insert({
         organization_id: orgId, title: 'TEST CA - Temp Deviation',
         description: 'Walk-in cooler above 41F', category: 'food_safety',
-        severity: 'high', status: 'reported', source_type: 'manual',
+        severity: 'high', status: 'created', source_type: 'manual',
       }).select('id').single();
       if (insErr) {
         log('4.14', 'PASS*', `Route OK. Schema verified. Insert error: ${insErr.message}. Page is demo-only (localStorage state).`);
       } else {
         // Update to in_progress
         const { error: upErr1 } = await supabase.from('corrective_actions').update({ status: 'in_progress' }).eq('id', ins.id);
-        // Update to resolved
+        // Update to completed
         const { error: upErr2 } = await supabase.from('corrective_actions').update({
-          status: 'resolved', completed_at: new Date().toISOString(),
+          status: 'completed', completed_at: new Date().toISOString(),
           corrective_steps: 'Adjusted thermostat, verified temp after 30 min',
         }).eq('id', ins.id);
         await supabase.from('corrective_actions').delete().eq('id', ins.id);
-        const lifecycle = !upErr1 && !upErr2 ? 'full lifecycle OK (reported→in_progress→resolved)' : `lifecycle errors: ${upErr1?.message || ''} ${upErr2?.message || ''}`;
+        const lifecycle = !upErr1 && !upErr2 ? 'full lifecycle OK (created→in_progress→completed)' : `lifecycle errors: ${upErr1?.message || ''} ${upErr2?.message || ''}`;
         log('4.14', 'PASS', `Route OK. CA insert + ${lifecycle}. Cleanup done. Page UI is demo-only but DB table supports full workflow.`);
       }
     }

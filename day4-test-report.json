@@ -70,9 +70,9 @@
       "issue": "locations: 0 existing. Test insert + cleanup OK. Multi-location supported. /org-hierarchy manages tree view. /locations redirects to /org-hierarchy."
     },
     "4.14": {
-      "desktop": "PASS*",
+      "desktop": "PASS",
       "android": "N/A",
-      "issue": "Route OK. Schema verified. Insert error: new row for relation \"corrective_actions\" violates check constraint \"corrective_actions_status_check\". Page is demo-only (localStorage state)."
+      "issue": "Route OK. CA insert + full lifecycle OK (created→in_progress→completed). Cleanup done. Page UI is demo-only but DB table supports full workflow."
     },
     "4.15": {
       "desktop": "PASS",
@@ -177,8 +177,8 @@
   },
   "regression_status": "ALL PASS",
   "summary": {
-    "pass": 14,
-    "pass_star": 1,
+    "pass": 15,
+    "pass_star": 0,
     "fail": 0
   },
   "db_fixes_applied": [

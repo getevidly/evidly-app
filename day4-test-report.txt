@@ -18,10 +18,10 @@ TEST   | RESULT           | ISSUE
 4.11   | PASS             | Route /vendors OK. Vendor insert + readback + cleanup OK. RLS allows CRUD. Cols: name, contact_name, email, phone, category, status.
 4.12   | PASS             | Vendor service dates tracked in: location_service_schedules (vendor_name, next_due_date: OK), vendor_service_records (service_date, next_due_date: OK). Overdue flagged client-side via getServiceStatus().
 4.13   | PASS             | locations: 0 existing. Test insert + cleanup OK. Multi-location supported. /org-hierarchy manages tree view. /locations redirects to /org-hierarchy.
-4.14   | PASS*            | Route OK. Schema verified. Insert error: new row for relation "corrective_actions" violates check constraint "corrective_actions_status_check". Page is demo-only (localStorage state).
+4.14   | PASS             | Route OK. CA insert + full lifecycle OK (created→in_progress→completed). Cleanup done. Page UI is demo-only but DB table supports full workflow.
 4.15   | PASS             | Route /operations-check OK. 11 questions: 6 food safety + 5 fire/facility. Dual pillar: food_safety_score + facility_safety_score (separate). posture: categorical (critical/high/moderate/strong). NO blended score. Public route (no auth required). RLS: public insert, service_role read.
 
-Day 4: 14 PASS | 1 PASS* | 0 FAIL
+Day 4: 15 PASS | 0 PASS* | 0 FAIL
 
 ═══════════════════════════════════════════
   EMPTY STATE AUDIT
@@ -63,7 +63,7 @@ REGRESSION: ALL PASS
   SUMMARY
 ═══════════════════════════════════════════
 
-Day 4:      14 PASS | 1 PASS* | 0 FAIL (15 tests)
+Day 4:      15 PASS | 0 PASS* | 0 FAIL (15 tests)
 Regression: 10/10 PASS
 Issues:     0
 
