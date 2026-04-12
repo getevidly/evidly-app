@@ -1,0 +1,53 @@
+═══════════════════════════════════════════════════════════════
+  POST-LAUNCH ROADMAP — EvidLY
+  Generated: 2026-04-12 by DAY19-FINAL
+═══════════════════════════════════════════════════════════════
+
+WEEK 1 (May 5-9): LAUNCH & STABILIZE
+  [ ] Monitor Sentry for production errors
+  [ ] First client onboarding via /admin/onboarding
+  [ ] RB2B activation (visitor identification)
+  [ ] GA4 Measurement ID: replace YOUR_GA4_ID with G-BW4VZSHE11
+  [ ] ZoomInfo pixel: configure real ID
+  [ ] Fix any launch-day issues
+  [ ] BillingPage: update from starter/pro/enterprise to Founder model
+  [ ] manifest.json: theme_color #1e4d6b → #1E2D4D
+  [ ] Sitemap: update lastmod dates
+  [ ] console.log cleanup (11 statements in 7 files)
+
+WEEK 2 (May 12-16): BRAND & ACCESSIBILITY
+  [ ] Brand terms cleanup: "platform" → "EvidLY" (49+ files)
+  [ ] Brand terms cleanup: "pillar" → "Food Safety"/"Facility Safety"
+  [ ] "jurisdiction" → "county"/"department" in UI strings
+  [ ] Gold-on-White contrast fix (#A08C5A → darker gold)
+  [ ] Skip-to-content link addition
+  [ ] aria-expanded, aria-live additions
+  [ ] Focus trap in modals
+
+WEEK 3 (May 19-23): PERFORMANCE
+  [ ] select('*') → specific columns (81 files)
+  [ ] N+1 query pattern fixes (3 patterns)
+  [ ] React Query caching layer
+  [ ] HubSpot 24-week drip activation
+  [ ] Stanislaus county COUNTY_DATA frontend completion
+
+WEEK 4 (May 26-30): FEATURE EXPANSION
+  [ ] Feature flag enablement planning
+  [ ] Training/LMS soft launch (select clients)
+  [ ] Insurance risk module soft launch
+  [ ] Wave 2 geographic expansion planning (LA/SD)
+  [ ] MFA enrollment (when Arthur enables)
+  [ ] AI voice transcription: enable via feature flag
+  [ ] AI photo analysis: enable via feature flag
+
+Q3 2026:
+  [ ] Wave 2 launch (Los Angeles, San Diego)
+  [ ] Enterprise features soft launch
+  [ ] IoT/sensor integration pilot
+
+Q4 2026:
+  [ ] Golden Table Awards branding launch
+  [ ] Full California coverage
+  [ ] Multi-state expansion
+
+══════════════════════════════════════════════════════════════��
