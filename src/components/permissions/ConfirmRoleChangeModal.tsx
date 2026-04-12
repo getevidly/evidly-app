@@ -42,7 +42,7 @@ export function ConfirmRoleChangeModal({
         <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: 'var(--border)' }}>
           <div className="flex items-center gap-2">
             <AlertTriangle className="w-5 h-5 text-amber-500" />
-            <h3 className="text-lg font-semibold" style={{ color: '#1E2D4D' }}>
+            <h3 className="text-lg font-semibold tracking-tight" style={{ color: '#1E2D4D' }}>
               Confirm Permission Change
             </h3>
           </div>

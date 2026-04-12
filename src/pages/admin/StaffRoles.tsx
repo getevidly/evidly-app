@@ -313,7 +313,7 @@ export default function StaffRoles() {
       <AdminBreadcrumb crumbs={[{ label: 'Staff & Roles' }]} />
 
       <div>
-        <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Staff & Roles</h1>
+        <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Staff & Roles</h1>
         <p style={{ fontSize: 13, color: TEXT_SEC, marginTop: 4 }}>
           Manage EvidLY internal staff accounts and role-based permissions.
         </p>

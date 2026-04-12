@@ -149,7 +149,7 @@ export function FacilitiesDashboard() {
       case 'on_track': return 'text-green-600';
       case 'due_soon': return 'text-yellow-600';
       case 'overdue': return 'text-red-600';
-      default: return 'text-gray-600';
+      default: return 'text-[#1E2D4D]/70';
     }
   };
 
@@ -158,7 +158,7 @@ export function FacilitiesDashboard() {
       case 'on_track': return 'bg-green-50 border-green-200';
       case 'due_soon': return 'bg-yellow-50 border-yellow-200';
       case 'overdue': return 'bg-red-50 border-red-200';
-      default: return 'bg-[#FAF7F0] border-gray-200';
+      default: return 'bg-[#FAF7F0] border-[#1E2D4D]/10';
     }
   };
 
@@ -176,7 +176,7 @@ export function FacilitiesDashboard() {
       case 'current': return 'text-green-600';
       case 'expiring': return 'text-yellow-600';
       case 'expired': return 'text-red-600';
-      default: return 'text-gray-600';
+      default: return 'text-[#1E2D4D]/70';
     }
   };
 
@@ -195,14 +195,14 @@ export function FacilitiesDashboard() {
     <>
       <div className="space-y-6">
         <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg p-4 sm:p-6 text-white">
-          <h1 className="text-2xl font-bold mb-1">{greeting}, {firstName}!</h1>
+          <h1 className="text-2xl font-bold tracking-tight mb-1">{greeting}, {firstName}!</h1>
           <p className="text-blue-100">Today is {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
         </div>
 
         {/* K2C Widget */}
         <K2CWidget onInviteClick={() => setShowInviteModal(true)} />
 
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6">
           <h2 className="text-xl font-bold text-[#1E2D4D] mb-6">Equipment Status</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {equipmentSystems.map((equipment) => {
@@ -218,17 +218,17 @@ export function FacilitiesDashboard() {
                     </div>
                     <div className="flex-1">
                       <h3 className="font-bold text-[#1E2D4D] text-lg">{equipment.name}</h3>
-                      <p className="text-xs text-gray-600 mt-1">{equipment.vendor}</p>
+                      <p className="text-xs text-[#1E2D4D]/70 mt-1">{equipment.vendor}</p>
                     </div>
                   </div>
 
                   <div className="space-y-2 text-sm mb-4">
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Last Service:</span>
+                      <span className="text-[#1E2D4D]/70">Last Service:</span>
                       <span className="font-medium text-gray-900">{equipment.lastService}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Next Due:</span>
+                      <span className="text-[#1E2D4D]/70">Next Due:</span>
                       <span className="font-medium text-gray-900">{equipment.nextDue}</span>
                     </div>
                   </div>
@@ -240,7 +240,7 @@ export function FacilitiesDashboard() {
                     {equipment.status !== 'on_track' && (
                       <button
                         onClick={() => navigate('/vendors')}
-                        className="text-xs px-3 py-1.5 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors font-medium min-h-[44px]"
+                        className="text-xs px-3 py-1.5 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] font-medium min-h-[44px]"
                       >
                         {equipment.status === 'overdue' ? 'Schedule Now' : 'Schedule Service'}
                       </button>
@@ -270,11 +270,11 @@ export function FacilitiesDashboard() {
                   {vendorActions.map((action) => (
                     <div
                       key={action.id}
-                      className="flex items-center justify-between flex-wrap gap-2 bg-white rounded-xl p-4 border border-gray-200"
+                      className="flex items-center justify-between flex-wrap gap-2 bg-white rounded-xl p-4 border border-[#1E2D4D]/10"
                     >
                       <div className="flex-1">
                         <div className="font-semibold text-[#1E2D4D]">{action.vendor}</div>
-                        <div className="text-sm text-gray-600 mt-1">{action.message}</div>
+                        <div className="text-sm text-[#1E2D4D]/70 mt-1">{action.message}</div>
                       </div>
                       <button
                         onClick={() => navigate(action.link)}
@@ -294,34 +294,34 @@ export function FacilitiesDashboard() {
           </div>
         )}
 
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6">
           <h3 className="text-lg font-bold text-[#1E2D4D] mb-4">Documents to Review</h3>
           <div className="space-y-3">
             {documents.map((doc) => (
               <div
                 key={doc.id}
                 onClick={() => navigate(doc.link)}
-                className="flex items-center justify-between p-4 rounded-lg border-2 border-gray-200 hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-all"
+                className="flex items-center justify-between p-4 rounded-lg border-2 border-[#1E2D4D]/10 hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-all"
               >
                 <div className="flex items-center space-x-3 flex-1">
                   <FileText className={`h-5 w-5 ${getDocumentStatusColor(doc.status)}`} />
                   <div className="flex-1">
                     <div className="font-medium text-gray-900">{doc.name}</div>
                     {doc.expiryDate && (
-                      <div className="text-sm text-gray-600">Expires: {doc.expiryDate}</div>
+                      <div className="text-sm text-[#1E2D4D]/70">Expires: {doc.expiryDate}</div>
                     )}
                   </div>
                   <span className={`text-sm font-semibold uppercase ${getDocumentStatusColor(doc.status)}`}>
                     {getDocumentStatusLabel(doc.status)}
                   </span>
                 </div>
-                <ChevronRight className="h-5 w-5 text-gray-400 ml-3" />
+                <ChevronRight className="h-5 w-5 text-[#1E2D4D]/30 ml-3" />
               </div>
             ))}
           </div>
           <button
             onClick={() => navigate('/documents')}
-            className="w-full mt-4 px-4 py-3 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors font-medium min-h-[44px]"
+            className="w-full mt-4 px-4 py-3 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] font-medium min-h-[44px]"
           >
             Upload Document
           </button>
@@ -330,7 +330,7 @@ export function FacilitiesDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <button
             onClick={() => navigate('/vendors')}
-            className="bg-white rounded-xl border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
+            className="bg-white rounded-xl border-2 border-[#1E2D4D]/10 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
             style={{ minHeight: '120px' }}
           >
             <FileCheck className="h-12 w-12 text-blue-600 mx-auto mb-3 group-hover:scale-110 transition-transform" />
@@ -339,7 +339,7 @@ export function FacilitiesDashboard() {
 
           <button
             onClick={() => navigate('/documents')}
-            className="bg-white rounded-xl border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
+            className="bg-white rounded-xl border-2 border-[#1E2D4D]/10 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
             style={{ minHeight: '120px' }}
           >
             <FileText className="h-12 w-12 text-blue-600 mx-auto mb-3 group-hover:scale-110 transition-transform" />
@@ -348,7 +348,7 @@ export function FacilitiesDashboard() {
 
           <button
             onClick={() => navigate('/alerts')}
-            className="bg-white rounded-xl border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
+            className="bg-white rounded-xl border-2 border-[#1E2D4D]/10 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
             style={{ minHeight: '120px' }}
           >
             <AlertTriangle className="h-12 w-12 text-blue-600 mx-auto mb-3 group-hover:scale-110 transition-transform" />

@@ -139,7 +139,7 @@ export default function AIChatWidget() {
 
       {/* Chat panel */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 z-50 w-[360px] max-w-[calc(100vw-2rem)] max-h-[520px] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200">
+        <div className="fixed bottom-6 right-6 z-50 w-[360px] max-w-[calc(100vw-2rem)] max-h-[520px] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-[#1E2D4D]/10">
           {/* Header */}
           <div
             className="px-4 py-3 flex items-center justify-between text-white flex-shrink-0"
@@ -171,7 +171,7 @@ export default function AIChatWidget() {
                   className={`max-w-[85%] px-3 py-2 rounded-xl text-sm leading-relaxed ${
                     msg.role === 'user'
                       ? 'bg-[#eef4f8] text-gray-800'
-                      : 'bg-gray-100 text-gray-700'
+                      : 'bg-gray-100 text-[#1E2D4D]/80'
                   }`}
                 >
                   {msg.content}
@@ -209,7 +209,7 @@ export default function AIChatWidget() {
             ))}
             {loading && (
               <div className="flex justify-start">
-                <div className="bg-gray-100 px-3 py-2 rounded-xl text-sm text-gray-400">
+                <div className="bg-[#1E2D4D]/5 px-3 py-2 rounded-xl text-sm text-[#1E2D4D]/30">
                   <span className="inline-flex gap-1">
                     <span className="animate-bounce" style={{ animationDelay: '0ms' }}>.</span>
                     <span className="animate-bounce" style={{ animationDelay: '150ms' }}>.</span>
@@ -253,7 +253,7 @@ export default function AIChatWidget() {
                   onChange={e => setInput(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && handleSend()}
                   placeholder="Ask about compliance..."
-                  className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#b8d4e8] focus:border-[#1E2D4D]"
+                  className="flex-1 px-3 py-2 border border-[#1E2D4D]/10 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#b8d4e8] focus:border-[#1E2D4D]"
                 />
                 <button
                   onClick={() => handleSend()}
@@ -265,7 +265,7 @@ export default function AIChatWidget() {
                 </button>
               </div>
             ) : (
-              <p className="text-xs text-gray-500 text-center py-2">
+              <p className="text-xs text-[#1E2D4D]/50 text-center py-2">
                 You've reached the chat limit.{' '}
                 <button
                   onClick={() => navigate('/signup')}

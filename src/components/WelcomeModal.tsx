@@ -46,7 +46,7 @@ export function WelcomeModal({ firstName, onDismiss }: WelcomeModalProps) {
       <div data-testid="welcome-modal" className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <button
           onClick={handleGetStarted}
-          className="absolute top-4 right-4 p-1 text-gray-400 hover:text-gray-600 transition-colors z-10"
+          className="absolute top-4 right-4 p-1 text-[#1E2D4D]/30 hover:text-gray-600 transition-colors z-10"
           aria-label="Close"
         >
           <X className="h-5 w-5" />
@@ -64,13 +64,13 @@ export function WelcomeModal({ firstName, onDismiss }: WelcomeModalProps) {
           <h2 className="text-2xl sm:text-[28px] font-bold text-[#1E2D4D] leading-tight">
             Your kitchen. Your standards.<br />Always protected.
           </h2>
-          <p className="text-sm text-gray-600 mt-2 leading-relaxed">
+          <p className="text-sm text-[#1E2D4D]/70 mt-2 leading-relaxed">
             {roleSubtext}
           </p>
         </div>
 
         {/* Body */}
-        <div className="px-6 sm:px-10 pb-6 text-sm leading-relaxed text-gray-700">
+        <div className="px-6 sm:px-10 pb-6 text-sm leading-relaxed text-[#1E2D4D]/80">
           <p className="mb-4">
             I'm {FOUNDER.name}, the founder of EvidLY. I built this platform because I've spent 3 years
             servicing over 90 commercial kitchens and saw the same problem everywhere: compliance runs on
@@ -98,11 +98,11 @@ export function WelcomeModal({ firstName, onDismiss }: WelcomeModalProps) {
                   <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[#1E2D4D] text-white text-xs font-bold flex items-center justify-center mt-0.5">
                     {i + 1}
                   </span>
-                  <span className="text-sm text-gray-700">{step}</span>
+                  <span className="text-sm text-[#1E2D4D]/80">{step}</span>
                 </div>
               ))}
             </div>
-            <p className="text-sm text-gray-600 mt-3">
+            <p className="text-sm text-[#1E2D4D]/70 mt-3">
               You'll see your compliance score climb in real time.
             </p>
           </div>
@@ -122,13 +122,13 @@ export function WelcomeModal({ firstName, onDismiss }: WelcomeModalProps) {
             </a>
           </div>
 
-          <p className="text-sm text-gray-600 mb-1">
+          <p className="text-sm text-[#1E2D4D]/70 mb-1">
             Welcome aboard. Let's simplify compliance together.
           </p>
           <p className="text-sm font-semibold text-[#1E2D4D]">
             — {FOUNDER.name}
           </p>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-[#1E2D4D]/50">
             {FOUNDER.title}
           </p>
         </div>

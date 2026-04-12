@@ -33,8 +33,8 @@ export function EquipmentDocuments({ equipmentId }: EquipmentDocumentsProps) {
       <div className="space-y-3">
         {Array.from({ length: 3 }).map((_, i) => (
           <div key={i} className="rounded-xl p-4 animate-pulse" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
-            <div className="h-4 w-48 bg-gray-200 rounded mb-2" />
-            <div className="h-3 w-32 bg-gray-200 rounded" />
+            <div className="h-4 w-48 bg-[#1E2D4D]/8 rounded mb-2" />
+            <div className="h-3 w-32 bg-[#1E2D4D]/8 rounded" />
           </div>
         ))}
       </div>

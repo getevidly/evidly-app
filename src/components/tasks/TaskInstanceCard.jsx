@@ -118,7 +118,7 @@ export function TaskInstanceCard({ task, onStart, onComplete, onSkip }) {
               {style.label}
             </span>
             {task.status === 'escalated' && task.escalation_level > 0 && (
-              <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-red-100 text-red-800">
+              <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-red-50 text-red-700">
                 Level {task.escalation_level}
               </span>
             )}
@@ -180,7 +180,7 @@ export function TaskInstanceCard({ task, onStart, onComplete, onSkip }) {
             value={note}
             onChange={(e) => setNote(e.target.value)}
             placeholder="Add a note..."
-            className="flex-1 text-sm px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[#1E2D4D]"
+            className="flex-1 text-sm px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
             onKeyDown={(e) => { if (e.key === 'Enter') handleComplete(); }}
           />
           <button

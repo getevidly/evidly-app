@@ -47,23 +47,23 @@ export function OnboardingSummary({ onClose }: { onClose?: () => void }) {
   };
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
       <div className="px-6 py-5 border-b border-gray-100" style={{ backgroundColor: '#eef4f8' }}>
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-bold text-[#1E2D4D]">Getting Started with EvidLY</h2>
-            <p className="text-sm text-gray-600 mt-1">Follow these steps to get your kitchen compliance-ready</p>
+            <p className="text-sm text-[#1E2D4D]/70 mt-1">Follow these steps to get your kitchen compliance-ready</p>
           </div>
           {onClose && (
-            <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-sm">Dismiss</button>
+            <button onClick={onClose} className="text-[#1E2D4D]/30 hover:text-gray-600 text-sm">Dismiss</button>
           )}
         </div>
         <div className="mt-3">
           <div className="flex items-center justify-between text-sm mb-1">
-            <span className="font-medium text-gray-700">{progress}% complete</span>
-            <span className="text-gray-500">{completed.length}/{STEPS.length} steps</span>
+            <span className="font-medium text-[#1E2D4D]/80">{progress}% complete</span>
+            <span className="text-[#1E2D4D]/50">{completed.length}/{STEPS.length} steps</span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className="w-full bg-[#1E2D4D]/8 rounded-full h-2">
             <div
               className="h-2 rounded-full transition-all duration-500"
               style={{ width: `${progress}%`, backgroundColor: progress === 100 ? '#22c55e' : '#d4af37' }}
@@ -72,7 +72,7 @@ export function OnboardingSummary({ onClose }: { onClose?: () => void }) {
         </div>
       </div>
 
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-[#1E2D4D]/5">
         {STEPS.map((step, i) => {
           const done = completed.includes(step.id);
           return (
@@ -88,10 +88,10 @@ export function OnboardingSummary({ onClose }: { onClose?: () => void }) {
                 )}
               </button>
               <div className="flex-1 min-w-0">
-                <p className={`text-sm font-medium ${done ? 'text-gray-400 line-through' : 'text-gray-900'}`}>
+                <p className={`text-sm font-medium ${done ? 'text-[#1E2D4D]/30 line-through' : 'text-gray-900'}`}>
                   {i + 1}. {step.title}
                 </p>
-                <p className="text-xs text-gray-500 mt-0.5">{step.description}</p>
+                <p className="text-xs text-[#1E2D4D]/50 mt-0.5">{step.description}</p>
               </div>
               <button
                 onClick={() => navigate(step.link)}

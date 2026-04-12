@@ -294,11 +294,11 @@ export function IntelligenceFeedWidget() {
         {[1, 2].map(i => (
           <div key={i} className="px-4 py-3 animate-pulse" style={{ borderBottom: '1px solid #F0F0F0' }}>
             <div className="flex items-center gap-2 mb-2">
-              <div className="h-3 w-12 bg-gray-200 rounded" />
-              <div className="h-3 w-16 bg-gray-200 rounded" />
+              <div className="h-3 w-12 bg-[#1E2D4D]/8 rounded" />
+              <div className="h-3 w-16 bg-[#1E2D4D]/8 rounded" />
             </div>
-            <div className="h-4 w-3/4 bg-gray-200 rounded mb-1" />
-            <div className="h-3 w-full bg-gray-100 rounded" />
+            <div className="h-4 w-3/4 bg-[#1E2D4D]/8 rounded mb-1" />
+            <div className="h-3 w-full bg-[#1E2D4D]/5 rounded" />
           </div>
         ))}
       </div>

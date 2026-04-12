@@ -29,12 +29,12 @@ export function MarketplaceLanding() {
             <EvidlyIcon size={40} />
           </div>
           <div className="flex items-center justify-center gap-2 mb-1">
-            <span className="text-2xl font-bold text-[#1E2D4D]">Evid</span>
-            <span className="text-2xl font-bold" style={{ color: '#d4af37' }}>LY</span>
+            <span className="text-2xl font-bold tracking-tight text-[#1E2D4D]">Evid</span>
+            <span className="text-2xl font-bold tracking-tight" style={{ color: '#d4af37' }}>LY</span>
           </div>
-          <p className="text-sm font-medium text-gray-500 mb-6">Certified Provider Network</p>
-          <h1 className="text-3xl font-bold text-[#1E2D4D] mb-3">Join the EvidLY Certified Provider Network</h1>
-          <p className="text-lg text-gray-600 max-w-xl mx-auto">
+          <p className="text-sm font-medium text-[#1E2D4D]/50 mb-6">Certified Provider Network</p>
+          <h1 className="text-3xl font-bold tracking-tight text-[#1E2D4D] mb-3">Join the EvidLY Certified Provider Network</h1>
+          <p className="text-lg text-[#1E2D4D]/70 max-w-xl mx-auto">
             Connect with 150+ commercial kitchens in your area. Get verified, receive leads, and grow your business.
           </p>
         </div>
@@ -48,7 +48,7 @@ export function MarketplaceLanding() {
               { step: 2, icon: () => <EvidlyIcon size={24} />, title: 'Get EvidLY Verified', desc: 'Upload your credentials. Our team verifies your insurance, licenses, and certifications within 24 hours.' },
               { step: 3, icon: TrendingUp, title: 'Receive Qualified Leads', desc: 'Operators in your area find you through our marketplace. Accept quotes, schedule services, grow your business.' },
             ].map(item => (
-              <div key={item.step} className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 text-center">
+              <div key={item.step} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5 text-center">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center mx-auto mb-3 text-white text-sm font-bold" style={{ backgroundColor: '#1E2D4D' }}>
                   {item.step}
                 </div>
@@ -56,14 +56,14 @@ export function MarketplaceLanding() {
                   <item.icon className="h-6 w-6" style={{ color: '#1E2D4D' }} />
                 </div>
                 <h3 className="text-sm font-semibold text-[#1E2D4D] mb-2">{item.title}</h3>
-                <p className="text-xs text-gray-500 leading-relaxed">{item.desc}</p>
+                <p className="text-xs text-[#1E2D4D]/50 leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
         </div>
 
         {/* Service Categories */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 mb-8">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5 mb-8">
           <h2 className="text-xl font-bold text-[#1E2D4D] mb-6">Categories We Serve</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
@@ -81,7 +81,7 @@ export function MarketplaceLanding() {
                 </div>
                 <div className="flex flex-wrap gap-1.5 ml-12">
                   {cat.subs.map(sub => (
-                    <span key={sub} className="px-2 py-0.5 text-xs rounded-full text-gray-600" style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}>
+                    <span key={sub} className="px-2 py-0.5 text-xs rounded-full text-[#1E2D4D]/70" style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}>
                       {sub}
                     </span>
                   ))}
@@ -118,7 +118,7 @@ export function MarketplaceLanding() {
                 features: ['Top 10% vendors for 6+ months', 'Top search placement', 'Featured in AI recommendations', 'EvidLY Preferred badge', 'Co-marketing opportunities'],
               },
             ].map(t => (
-              <div key={t.tier} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+              <div key={t.tier} className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
                 <div className="h-1.5" style={{ backgroundColor: t.accent }} />
                 <div className="p-6 text-center">
                   <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style={{ backgroundColor: '#eef4f8' }}>
@@ -129,7 +129,7 @@ export function MarketplaceLanding() {
                     {t.features.map((f, i) => (
                       <div key={i} className="flex items-start gap-2">
                         <div className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ backgroundColor: t.accent }} />
-                        <span className="text-xs text-gray-600">{f}</span>
+                        <span className="text-xs text-[#1E2D4D]/70">{f}</span>
                       </div>
                     ))}
                   </div>
@@ -140,7 +140,7 @@ export function MarketplaceLanding() {
         </div>
 
         {/* Benefits Grid */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 mb-8">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5 mb-8">
           <h2 className="text-xl font-bold text-[#1E2D4D] mb-6">Why Vendors Choose EvidLY</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
@@ -157,7 +157,7 @@ export function MarketplaceLanding() {
                 </div>
                 <div>
                   <h3 className="text-sm font-semibold text-[#1E2D4D]">{item.title}</h3>
-                  <p className="text-xs text-gray-500 mt-1">{item.desc}</p>
+                  <p className="text-xs text-[#1E2D4D]/50 mt-1">{item.desc}</p>
                 </div>
               </div>
             ))}
@@ -166,7 +166,7 @@ export function MarketplaceLanding() {
 
         {/* Social Proof */}
         <div className="text-center mb-10">
-          <p className="text-sm text-gray-500 font-medium">
+          <p className="text-sm text-[#1E2D4D]/50 font-medium">
             Trusted by <span className="font-bold text-[#1E2D4D]">150+ commercial kitchens</span> across California's Central Valley
           </p>
         </div>
@@ -193,14 +193,14 @@ export function MarketplaceLanding() {
               >
                 Find a Vendor
               </button>
-              <p className="text-xs text-gray-400 mt-1">Requires an operator account</p>
+              <p className="text-xs text-[#1E2D4D]/30 mt-1">Requires an operator account</p>
             </div>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="pt-6 border-t border-gray-200 text-center">
-          <p className="text-xs text-gray-400">
+        <div className="pt-6 border-t border-[#1E2D4D]/10 text-center">
+          <p className="text-xs text-[#1E2D4D]/30">
             Powered by{' '}
             <span
               className="font-semibold cursor-pointer hover:underline"

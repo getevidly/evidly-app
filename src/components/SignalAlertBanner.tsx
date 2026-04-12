@@ -43,7 +43,7 @@ export function SignalAlertBanner() {
           >
             New Intelligence Signal{count > 1 ? `s (${count})` : ''}
           </p>
-          <p className="text-sm text-gray-600 truncate mt-0.5">
+          <p className="text-sm text-[#1E2D4D]/70 truncate mt-0.5">
             {first.title}
           </p>
         </div>

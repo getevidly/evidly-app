@@ -47,7 +47,7 @@ function InspectionReadiness({ signals }: { signals: ReadinessSignal[] }) {
               }
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium" style={{ color: BODY_TEXT }}>{signal.label}</p>
-                <p className="text-xs text-gray-500">{signal.detail}</p>
+                <p className="text-xs text-[#1E2D4D]/50">{signal.detail}</p>
               </div>
               <span
                 className="text-xs font-bold px-1.5 py-0.5 rounded shrink-0"
@@ -108,7 +108,7 @@ export default function ComplianceManagerDashboard() {
         </div>
         <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-6">
           <div className="bg-white rounded-xl p-8 text-center" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
-            <p className="text-sm font-medium text-gray-500">No compliance data yet. Add a location to begin compliance tracking.</p>
+            <p className="text-sm font-medium text-[#1E2D4D]/50">No compliance data yet. Add a location to begin compliance tracking.</p>
             <button type="button" onClick={() => navigate('/locations')} className="mt-3 text-sm font-semibold px-4 py-2 rounded-lg text-white" style={{ backgroundColor: '#1E2D4D' }}>
               Add Location
             </button>

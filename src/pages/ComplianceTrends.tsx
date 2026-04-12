@@ -44,7 +44,7 @@ export function ComplianceTrends() {
           </div>
           <div>
             <h1 className="text-xl font-bold text-[#1E2D4D]">Compliance Trends</h1>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-[#1E2D4D]/50">
               Track compliance trajectory across locations and categories
             </p>
           </div>
@@ -59,16 +59,16 @@ export function ComplianceTrends() {
       {/* Loading state */}
       {loading && (
         <div className="flex justify-center py-12">
-          <div className="h-8 w-8 border-2 border-gray-300 border-t-[#1E2D4D] rounded-full animate-spin" />
+          <div className="h-8 w-8 border-2 border-[#1E2D4D]/15 border-t-[#1E2D4D] rounded-full animate-spin" />
         </div>
       )}
 
       {/* Empty state — no data for the selected period */}
       {!loading && chartData.length === 0 && (
-        <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8 text-center">
           <TrendingUp className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-          <p className="text-sm font-medium text-gray-700">No compliance data for this period</p>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-sm font-medium text-[#1E2D4D]/80">No compliance data for this period</p>
+          <p className="text-xs text-[#1E2D4D]/50 mt-1">
             Score snapshots will appear here as compliance data is recorded.
           </p>
         </div>
@@ -84,9 +84,9 @@ export function ComplianceTrends() {
           </div>
 
           {/* Overall Trend Chart */}
-          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
-            <h3 className="text-lg font-semibold text-[#1E2D4D] mb-1">Compliance Score Trajectory</h3>
-            <p className="text-sm text-gray-500 mb-4">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
+            <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-1">Compliance Score Trajectory</h3>
+            <p className="text-sm text-[#1E2D4D]/50 mb-4">
               Overall, Food Safety, and Facility Safety scores over the selected period
             </p>
             <OverallTrendChart data={chartData} />
@@ -94,8 +94,8 @@ export function ComplianceTrends() {
 
           {/* Category Breakdown */}
           <div>
-            <h3 className="text-lg font-semibold text-[#1E2D4D] mb-1">Category Breakdown</h3>
-            <p className="text-sm text-gray-500 mb-4">
+            <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-1">Category Breakdown</h3>
+            <p className="text-sm text-[#1E2D4D]/50 mb-4">
               Per-category trend analysis — click to expand for details
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">

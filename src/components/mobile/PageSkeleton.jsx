@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { LOADING_MESSAGES } from '../../config/emotionalCopy';
 
 export function SkeletonBlock({ className }) {
-  return <div className={`animate-pulse bg-gray-200 rounded-lg ${className}`} />;
+  return <div className={`animate-pulse bg-[#1E2D4D]/8 rounded-lg ${className}`} />;
 }
 
 export function PageSkeleton({ role }) {
@@ -20,7 +20,7 @@ export function PageSkeleton({ role }) {
   return (
     <div className="space-y-4 p-4">
       {role && (
-        <p className="text-xs text-gray-500 text-center animate-pulse">
+        <p className="text-xs text-[#1E2D4D]/50 text-center animate-pulse">
           {messages[msgIndex]}
         </p>
       )}

@@ -32,7 +32,7 @@ export function FlagServiceModal({ serviceName, vendorName, onClose, onSubmit }:
         <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: '#D1D9E6' }}>
           <div className="flex items-center gap-2">
             <Flag className="w-5 h-5 text-red-500" />
-            <h3 className="text-lg font-semibold" style={{ color: '#0B1628' }}>Flag Service Record</h3>
+            <h3 className="text-lg font-semibold tracking-tight" style={{ color: '#0B1628' }}>Flag Service Record</h3>
           </div>
           <button onClick={onClose} className="p-2.5 -m-1 rounded-lg hover:bg-gray-100 transition-colors" aria-label="Close">
             <X className="w-5 h-5" style={{ color: '#6B7F96' }} />
@@ -53,7 +53,7 @@ export function FlagServiceModal({ serviceName, vendorName, onClose, onSubmit }:
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+              className="w-full px-3 py-2 border rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
               style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
             >
               <option value="">Select a category...</option>
@@ -72,7 +72,7 @@ export function FlagServiceModal({ serviceName, vendorName, onClose, onSubmit }:
               onChange={(e) => setReason(e.target.value)}
               rows={4}
               placeholder="Describe the issue with this service record..."
-              className="w-full px-3 py-2 border rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+              className="w-full px-3 py-2 border rounded-lg text-sm resize-none focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
               style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
             />
           </div>

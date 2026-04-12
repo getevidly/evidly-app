@@ -66,7 +66,7 @@ export function FireStatusBars({
               className="h-1.5 rounded-full"
               style={{ width: 28, backgroundColor: statusColor(item.status) }}
             />
-            <span className="text-xs text-gray-500">{item.label}</span>
+            <span className="text-xs text-[#1E2D4D]/50">{item.label}</span>
           </div>
         ))}
       </div>
@@ -90,8 +90,8 @@ export function FireStatusBars({
               className="h-2 rounded-full mb-1.5 mx-auto"
               style={{ backgroundColor: barColor, width: '80%' }}
             />
-            <p className="text-xs font-medium text-gray-700">{item.label}</p>
-            <p className="text-xs text-gray-400">{label}</p>
+            <p className="text-xs font-medium text-[#1E2D4D]/80">{item.label}</p>
+            <p className="text-xs text-[#1E2D4D]/30">{label}</p>
             {clickable && (
               <ChevronRight size={10} className="absolute bottom-1.5 right-1.5 text-gray-300" />
             )}

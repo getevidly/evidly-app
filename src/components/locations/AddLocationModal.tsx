@@ -186,7 +186,7 @@ export function AddLocationModal({ open, onClose, onSave, existingCodes = [] }: 
 
         {/* Operating Days */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Operating Days</label>
+          <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">Operating Days</label>
           <div className="flex gap-1.5">
             {DAY_LABELS.map((label, i) => (
               <button
@@ -196,7 +196,7 @@ export function AddLocationModal({ open, onClose, onSave, existingCodes = [] }: 
                 className={`w-10 h-10 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
                   days[i]
                     ? 'bg-[#1E2D4D] text-white'
-                    : 'bg-gray-100 text-gray-500 border border-gray-300 hover:bg-gray-200'
+                    : 'bg-gray-100 text-[#1E2D4D]/50 border border-[#1E2D4D]/15 hover:bg-gray-200'
                 }`}
               >
                 {label}

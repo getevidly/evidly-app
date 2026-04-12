@@ -71,7 +71,7 @@ function K2CReferralModal({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Heart size={20} style={{ color: '#e11d48' }} />
-              <h3 className="text-lg font-semibold" style={{ color: MIDNIGHT_NAVY }}>
+              <h3 className="text-lg font-semibold tracking-tight" style={{ color: MIDNIGHT_NAVY }}>
                 Kitchen to Community
               </h3>
             </div>

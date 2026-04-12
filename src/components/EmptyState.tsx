@@ -16,8 +16,8 @@ export function EmptyState({ icon: Icon, title, description, action }: EmptyStat
       <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4 bg-[#FAF7F0]">
         <Icon className="w-8 h-8 text-[#1E2D4D]" />
       </div>
-      <h3 className="text-lg font-semibold text-[#1E2D4D] mb-2">{title}</h3>
-      <p className="text-sm text-gray-500 max-w-md mb-6 leading-relaxed">{description}</p>
+      <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-2">{title}</h3>
+      <p className="text-sm text-[#1E2D4D]/50 max-w-md mb-6 leading-relaxed">{description}</p>
       {action && (
         <button
           onClick={action.onClick}

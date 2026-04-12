@@ -236,7 +236,7 @@ export function BulkClientImport({ isOpen, onClose, onImportComplete, providerNa
         {/* ── Header ───────────────────────────────────────── */}
         <div className="px-6 pt-5 pb-4 flex items-center justify-between" style={{ backgroundColor: NAVY }}>
           <div>
-            <h2 className="text-lg font-semibold text-white">Bulk Invite Clients</h2>
+            <h2 className="text-lg font-semibold tracking-tight text-white">Bulk Invite Clients</h2>
             <p className="text-sm text-white/70 mt-0.5">{providerName}</p>
           </div>
           <button
@@ -486,7 +486,7 @@ export function BulkClientImport({ isOpen, onClose, onImportComplete, providerNa
                   >
                     <CheckCircle size={32} style={{ color: '#16A34A' }} />
                   </div>
-                  <p className="text-lg font-semibold" style={{ color: '#0B1628' }}>
+                  <p className="text-lg font-semibold tracking-tight" style={{ color: '#0B1628' }}>
                     All {validRows.length} invitations sent!
                   </p>
                   <p className="text-sm" style={{ color: '#6B7F96' }}>

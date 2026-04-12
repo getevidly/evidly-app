@@ -46,7 +46,7 @@ export function ReScoreAlertsWidget({ navigate }: Props) {
   })[0];
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+    <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-3">
@@ -54,8 +54,8 @@ export function ReScoreAlertsWidget({ navigate }: Props) {
             <ShieldAlert className="h-5 w-5" style={{ color: counts.critical > 0 ? '#dc2626' : '#d97706' }} />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-[#1E2D4D]">Re-Score Alerts</h3>
-            <p className="text-xs text-gray-500">{total} active alert{total !== 1 ? 's' : ''}</p>
+            <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">Re-Score Alerts</h3>
+            <p className="text-xs text-[#1E2D4D]/50">{total} active alert{total !== 1 ? 's' : ''}</p>
           </div>
         </div>
         <button

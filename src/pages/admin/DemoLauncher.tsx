@@ -191,13 +191,13 @@ export default function DemoLauncher() {
     <div className="p-8 max-w-3xl">
       <AdminBreadcrumb crumbs={[{ label: 'Demo Launcher' }]} />
 
-      <h1 className="text-2xl font-bold text-[#1E2D4D] mb-1 mt-4">Demo Launcher</h1>
-      <p className="text-sm text-gray-500 mb-6">
+      <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D] mb-1 mt-4">Demo Launcher</h1>
+      <p className="text-sm text-[#1E2D4D]/50 mb-6">
         Prepare your demo in 60 seconds. Configure the prospect, then use the 3 flows below.
       </p>
 
       {/* ── 3 EMOTIONAL TRIGGER FLOWS ── */}
-      <div className="bg-white border border-gray-200 rounded-xl p-5 mb-6">
+      <div className="bg-white border border-[#1E2D4D]/10 rounded-xl p-5 mb-6">
         <h2 className="text-xs font-bold uppercase tracking-wider mb-4" style={{ color: GOLD }}>
           3 Demo Flows
         </h2>
@@ -212,7 +212,7 @@ export default function DemoLauncher() {
               <p className="text-sm font-semibold" style={{ color: NAVY }}>
                 Flow 1: "I didn't know that"
               </p>
-              <p className="text-xs text-gray-500 mt-0.5">
+              <p className="text-xs text-[#1E2D4D]/50 mt-0.5">
                 Show how their inspector actually scores kitchens in their county.
               </p>
             </div>
@@ -234,7 +234,7 @@ export default function DemoLauncher() {
               <p className="text-sm font-semibold" style={{ color: NAVY }}>
                 Flow 2: "It caught something"
               </p>
-              <p className="text-xs text-gray-500 mt-0.5">
+              <p className="text-xs text-[#1E2D4D]/50 mt-0.5">
                 Fire a live signal — the bell badge updates in real time.
               </p>
             </div>
@@ -266,7 +266,7 @@ export default function DemoLauncher() {
               <p className="text-sm font-semibold" style={{ color: NAVY }}>
                 Flow 3: "I look good"
               </p>
-              <p className="text-xs text-gray-500 mt-0.5">
+              <p className="text-xs text-[#1E2D4D]/50 mt-0.5">
                 Show the full compliance record — documents, reports, export.
               </p>
             </div>
@@ -291,7 +291,7 @@ export default function DemoLauncher() {
       </div>
 
       {/* ── QUICK LINKS ── */}
-      <div className="bg-white border border-gray-200 rounded-xl p-5 mb-6">
+      <div className="bg-white border border-[#1E2D4D]/10 rounded-xl p-5 mb-6">
         <h2 className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: GOLD }}>
           Quick Links
         </h2>
@@ -310,27 +310,27 @@ export default function DemoLauncher() {
       </div>
 
       {/* ── PROSPECT CONFIG ── */}
-      <h2 className="text-sm font-semibold text-gray-700 mb-3">Prospect Setup (Optional)</h2>
+      <h2 className="text-sm font-semibold text-[#1E2D4D]/80 mb-3">Prospect Setup (Optional)</h2>
 
       {launched ? (
         <div className="bg-green-50 border border-green-200 rounded-xl p-6 text-center">
-          <h2 className="text-lg font-semibold text-green-800 mb-1">Demo Launched</h2>
+          <h2 className="text-lg font-semibold tracking-tight text-green-800 mb-1">Demo Launched</h2>
           <p className="text-sm text-green-600 mb-4">
             Personalized demo for {form.prospectName} at {form.company} is now open.
           </p>
           <button
             onClick={resetForm}
-            className="px-4 py-2.5 bg-[#1E2D4D] text-white rounded-lg text-sm font-medium hover:bg-[#162340] transition-colors min-h-[44px]"
+            className="px-4 py-2.5 bg-[#1E2D4D] text-white rounded-lg text-sm font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]"
           >
             Launch Another
           </button>
         </div>
       ) : (
-        <div className="bg-white border border-gray-200 rounded-xl p-6 space-y-5">
+        <div className="bg-white border border-[#1E2D4D]/10 rounded-xl p-6 space-y-5">
           {/* Prospect info */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Prospect Name *</label>
+              <label className="block text-xs font-semibold text-[#1E2D4D]/80 mb-1">Prospect Name *</label>
               <input
                 value={form.prospectName}
                 onChange={e => setForm(f => ({ ...f, prospectName: e.target.value }))}
@@ -339,7 +339,7 @@ export default function DemoLauncher() {
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Company *</label>
+              <label className="block text-xs font-semibold text-[#1E2D4D]/80 mb-1">Company *</label>
               <input
                 value={form.company}
                 onChange={e => setForm(f => ({ ...f, company: e.target.value }))}
@@ -351,7 +351,7 @@ export default function DemoLauncher() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Industry</label>
+              <label className="block text-xs font-semibold text-[#1E2D4D]/80 mb-1">Industry</label>
               <select
                 value={form.industry}
                 onChange={e => setForm(f => ({ ...f, industry: e.target.value }))}
@@ -362,7 +362,7 @@ export default function DemoLauncher() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Number of Locations</label>
+              <label className="block text-xs font-semibold text-[#1E2D4D]/80 mb-1">Number of Locations</label>
               <input
                 type="number"
                 value={form.locationCount}
@@ -375,7 +375,7 @@ export default function DemoLauncher() {
 
           {/* County selector */}
           <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-2">
+            <label className="block text-xs font-semibold text-[#1E2D4D]/80 mb-2">
               Counties {form.counties.length > 0 && <span className="text-[#A08C5A] ml-1">({form.counties.length} selected)</span>}
             </label>
             <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-2 border rounded-lg bg-[#FAF7F0]">
@@ -387,7 +387,7 @@ export default function DemoLauncher() {
                   className={`px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${
                     form.counties.includes(county)
                       ? 'bg-[#1E2D4D] text-white'
-                      : 'bg-white border border-gray-200 text-gray-600 hover:border-gray-400'
+                      : 'bg-white border border-[#1E2D4D]/10 text-[#1E2D4D]/70 hover:border-gray-400'
                   }`}
                 >
                   {county}
@@ -398,7 +398,7 @@ export default function DemoLauncher() {
 
           {/* Notes */}
           <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1">Notes (optional)</label>
+            <label className="block text-xs font-semibold text-[#1E2D4D]/80 mb-1">Notes (optional)</label>
             <textarea
               value={form.notes}
               onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
@@ -422,7 +422,7 @@ export default function DemoLauncher() {
 
       {/* Recent sessions */}
       <div className="mt-8">
-        <h2 className="text-sm font-semibold text-gray-700 mb-3">Recent Demo Sessions</h2>
+        <h2 className="text-sm font-semibold text-[#1E2D4D]/80 mb-3">Recent Demo Sessions</h2>
         {loadError ? (
           <div style={{ textAlign: 'center', padding: '3rem' }}>
             <p style={{ color: '#6B7F96' }}>Failed to load data.</p>
@@ -431,7 +431,7 @@ export default function DemoLauncher() {
             </button>
           </div>
         ) : sessions.length === 0 ? (
-          <div className="text-center py-8 text-gray-400 text-sm">
+          <div className="text-center py-8 text-[#1E2D4D]/30 text-sm">
             No demo sessions yet. Launch your first demo above.
           </div>
         ) : (
@@ -440,11 +440,11 @@ export default function DemoLauncher() {
               <div key={s.id} className="border rounded-lg p-3 text-sm flex items-center justify-between">
                 <div>
                   <p className="font-medium text-[#1E2D4D]">{s.prospect_name} — {s.company}</p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-[#1E2D4D]/50">
                     {s.counties?.join(', ')} · {s.industry} · {s.location_count ?? '?'} locations
                   </p>
                 </div>
-                <div className="text-xs text-gray-400">{new Date(s.launched_at).toLocaleDateString()}</div>
+                <div className="text-xs text-[#1E2D4D]/30">{new Date(s.launched_at).toLocaleDateString()}</div>
               </div>
             ))}
           </div>

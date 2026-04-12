@@ -44,7 +44,7 @@ export default function LocationCard({ locationId, locationName, score, onClick,
           title="Share Passport"
           style={{ lineHeight: 0 }}
         >
-          <QrCode className="w-3.5 h-3.5 text-gray-400 hover:text-[#1E2D4D]" />
+          <QrCode className="w-3.5 h-3.5 text-[#1E2D4D]/30 hover:text-[#1E2D4D]" />
         </button>
 
         {/* Main card content (clickable) */}
@@ -54,7 +54,7 @@ export default function LocationCard({ locationId, locationName, score, onClick,
           className="flex flex-col items-center justify-center w-full cursor-pointer bg-transparent border-none"
           title={locationName}
         >
-          <span className="text-xs font-medium text-gray-700 text-center leading-tight mb-2 w-full truncate">
+          <span className="text-xs font-medium text-[#1E2D4D]/80 text-center leading-tight mb-2 w-full truncate">
             {locationName}
           </span>
           <span className="text-xl font-bold" style={{ color }}>
@@ -73,12 +73,12 @@ export default function LocationCard({ locationId, locationName, score, onClick,
           <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div className="fixed inset-0 transition-opacity bg-[#FAF7F0]0 bg-opacity-75" onClick={() => setShowQrModal(false)} />
 
-            <div className="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden border border-gray-200 transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full">
+            <div className="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden border border-[#1E2D4D]/10 transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full">
               {/* Header */}
               <div style={{ background: '#1E2D4D' }} className="px-6 py-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-lg font-semibold text-white">{locationName}</h3>
+                    <h3 className="text-lg font-semibold tracking-tight text-white">{locationName}</h3>
                     <div className="flex items-center gap-2 mt-1">
                       <span className="text-sm text-gray-300">Compliance Score:</span>
                       <span className="text-sm font-bold" style={{ color: getReadinessColor(score) }}>{score}</span>
@@ -86,7 +86,7 @@ export default function LocationCard({ locationId, locationName, score, onClick,
                   </div>
                   <button
                     onClick={() => setShowQrModal(false)}
-                    className="text-gray-400 hover:text-white transition-colors"
+                    className="text-[#1E2D4D]/30 hover:text-white transition-colors"
                   >
                     <X className="h-5 w-5" />
                   </button>
@@ -95,7 +95,7 @@ export default function LocationCard({ locationId, locationName, score, onClick,
 
               {/* QR Code */}
               <div className="px-6 py-6 flex flex-col items-center">
-                <div className="p-4 bg-white rounded-xl border border-gray-200 mb-4">
+                <div className="p-4 bg-white rounded-xl border border-[#1E2D4D]/10 mb-4">
                   <QRCodeSVG
                     value={passportUrl}
                     size={200}
@@ -103,15 +103,15 @@ export default function LocationCard({ locationId, locationName, score, onClick,
                     fgColor="#1E2D4D"
                   />
                 </div>
-                <p className="text-xs text-gray-500 mb-4">Scan to view live compliance passport</p>
+                <p className="text-xs text-[#1E2D4D]/50 mb-4">Scan to view live compliance passport</p>
 
                 {/* Copyable URL */}
-                <div className="w-full flex items-center gap-2 p-2 bg-[#FAF7F0] rounded-lg border border-gray-200">
+                <div className="w-full flex items-center gap-2 p-2 bg-[#FAF7F0] rounded-lg border border-[#1E2D4D]/10">
                   <input
                     type="text"
                     readOnly
                     value={passportUrl}
-                    className="flex-1 text-xs text-gray-600 bg-transparent border-none outline-none truncate"
+                    className="flex-1 text-xs text-[#1E2D4D]/70 bg-transparent border-none outline-none truncate"
                   />
                   <button
                     onClick={handleCopy}

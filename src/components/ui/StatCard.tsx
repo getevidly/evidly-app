@@ -18,7 +18,7 @@ export function StatCard({ label, value, valueColor = 'default', icon }: StatCar
   return (
     <div className="bg-stone-100 rounded-lg p-4 text-center">
       {icon && <div className="flex justify-center mb-2">{icon}</div>}
-      <p className="text-xs text-gray-500 mb-1">{label}</p>
+      <p className="text-xs text-[#1E2D4D]/50 mb-1">{label}</p>
       <p className={`text-2xl font-medium ${colorClasses[valueColor]}`}>{value}</p>
     </div>
   );

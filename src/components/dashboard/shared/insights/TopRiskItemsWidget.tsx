@@ -53,7 +53,7 @@ export function TopRiskItemsWidget({ items }: Props) {
       </div>
       {sorted.length === 0 ? (
         <div className="px-4 py-6 text-center">
-          <p className="text-sm text-gray-500">No open risk items</p>
+          <p className="text-sm text-[#1E2D4D]/50">No open risk items</p>
         </div>
       ) : (
         <div>
@@ -77,7 +77,7 @@ export function TopRiskItemsWidget({ items }: Props) {
                 }
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-gray-800 truncate">{item.title}</p>
-                  <p className="text-xs text-gray-500">{item.location} &middot; {item.category}</p>
+                  <p className="text-xs text-[#1E2D4D]/50">{item.location} &middot; {item.category}</p>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <span
@@ -86,7 +86,7 @@ export function TopRiskItemsWidget({ items }: Props) {
                   >
                     {item.severity.charAt(0).toUpperCase() + item.severity.slice(1)}
                   </span>
-                  <span className={`text-xs font-medium ${isOverdue ? 'text-red-600' : 'text-gray-500'}`}>
+                  <span className={`text-xs font-medium ${isOverdue ? 'text-red-600' : 'text-[#1E2D4D]/50'}`}>
                     {dueLabel}
                   </span>
                 </div>

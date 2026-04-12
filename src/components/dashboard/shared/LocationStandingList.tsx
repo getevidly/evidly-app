@@ -106,7 +106,7 @@ export function LocationStandingList({ standings, navigate }: LocationStandingLi
               </div>
               {/* Authority attribution line */}
               {s.foodAuthority && (
-                <div className="mt-1 text-xs text-gray-400 truncate">
+                <div className="mt-1 text-xs text-[#1E2D4D]/30 truncate">
                   {s.foodAuthority}{s.facilityAuthority ? ` · ${s.facilityAuthority}` : ''}
                 </div>
               )}

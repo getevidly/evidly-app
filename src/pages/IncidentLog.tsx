@@ -991,7 +991,7 @@ export function IncidentLog() {
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
               <div>
                 <div className="flex items-center gap-3 mb-1">
-                  <h1 className="text-2xl font-bold text-[#1E2D4D]">{inc.id}</h1>
+                  <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">{inc.id}</h1>
                   <SeverityBadge severity={inc.severity} />
                   <StatusBadge status={inc.status} />
                   {overdue && (
@@ -1000,7 +1000,7 @@ export function IncidentLog() {
                     </span>
                   )}
                 </div>
-                <h2 className="text-lg text-gray-700">{inc.title}</h2>
+                <h2 className="text-lg text-[#1E2D4D]/80">{inc.title}</h2>
               </div>
               <div className="flex gap-2 flex-wrap">
                 {(inc.status === 'assigned' || inc.status === 'reported') && (
@@ -1029,7 +1029,7 @@ export function IncidentLog() {
                     </button>
                     <button
                       onClick={() => handleVerify(false)}
-                      className="px-4 py-2 min-h-[44px] bg-red-100 text-red-700 rounded-lg hover:bg-red-200 text-sm font-medium"
+                      className="px-4 py-2 min-h-[44px] bg-red-50 text-red-700 rounded-lg hover:bg-red-200 text-sm font-medium"
                     >
                       <span className="flex items-center gap-1"><XCircle className="h-4 w-4" /> {t('incidents.reject')}</span>
                     </button>
@@ -1043,27 +1043,27 @@ export function IncidentLog() {
             {/* Left column — details & timeline */}
             <div className="lg:col-span-2 space-y-6">
               {/* Info card */}
-              <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 space-y-4">
+              <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5 space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                   <div>
-                    <span className="text-gray-500 block">{t('common.type')}</span>
+                    <span className="text-[#1E2D4D]/50 block">{t('common.type')}</span>
                     <span className="font-medium text-gray-900">{typeLabels[INCIDENT_TYPES.find(tp => tp.value === inc.type)?.label || ''] || INCIDENT_TYPES.find(tp => tp.value === inc.type)?.label}</span>
                   </div>
                   <div>
-                    <span className="text-gray-500 block">{t('common.location')}</span>
+                    <span className="text-[#1E2D4D]/50 block">{t('common.location')}</span>
                     <span className="font-medium text-gray-900 flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{inc.location}</span>
                   </div>
                   <div>
-                    <span className="text-gray-500 block">{t('common.assignedTo')}</span>
+                    <span className="text-[#1E2D4D]/50 block">{t('common.assignedTo')}</span>
                     <span className="font-medium text-gray-900 flex items-center gap-1"><User className="h-3.5 w-3.5" />{inc.assignedTo}</span>
                   </div>
                   <div>
-                    <span className="text-gray-500 block">{t('incidents.reported')}</span>
+                    <span className="text-[#1E2D4D]/50 block">{t('incidents.reported')}</span>
                     <span className="font-medium text-gray-900">{formatDistanceToNow(new Date(inc.createdAt), { addSuffix: true })}</span>
                   </div>
                 </div>
                 <div>
-                  <span className="text-gray-500 text-sm block mb-1">{t('common.description')}</span>
+                  <span className="text-[#1E2D4D]/50 text-sm block mb-1">{t('common.description')}</span>
                   <p className="text-gray-800">{inc.description}</p>
                 </div>
                 {inc.sourceLabel && (
@@ -1129,7 +1129,7 @@ export function IncidentLog() {
                 )}
                 {inc.correctiveAction && (
                   <div>
-                    <span className="text-gray-500 text-sm block mb-1">{t('common.correctiveAction')}</span>
+                    <span className="text-[#1E2D4D]/50 text-sm block mb-1">{t('common.correctiveAction')}</span>
                     <p className="text-gray-800">{inc.correctiveAction}</p>
                     {inc.actionChips && inc.actionChips.length > 0 && (
                       <div className="flex flex-wrap gap-1 mt-2">
@@ -1152,7 +1152,7 @@ export function IncidentLog() {
                   </div>
                 )}
                 {resTime && (
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <div className="flex items-center gap-2 text-sm text-[#1E2D4D]/70">
                     <Clock className="h-4 w-4 text-[#d4af37]" />
                     {t('incidents.resolvedIn')} <span className="font-semibold text-[#1E2D4D]">{resTime}</span>
                   </div>
@@ -1168,10 +1168,10 @@ export function IncidentLog() {
               </div>
 
               {/* Timeline */}
-              <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+              <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
                 <h3 className="text-lg font-bold text-[#1E2D4D] mb-4">{t('incidents.timeline')}</h3>
                 <div className="relative pl-6">
-                  <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-gray-200" />
+                  <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-[#1E2D4D]/8" />
                   {inc.timeline.map((entry, idx) => {
                     const statusConf = STATUS_CONFIG[entry.status];
                     return (
@@ -1186,7 +1186,7 @@ export function IncidentLog() {
                         </div>
                         <div className="ml-2">
                           <p className="text-sm font-medium text-gray-900">{entry.action}</p>
-                          <div className="flex items-center gap-3 text-xs text-gray-500 mt-1">
+                          <div className="flex items-center gap-3 text-xs text-[#1E2D4D]/50 mt-1">
                             <span className="flex items-center gap-1"><User className="h-3 w-3" />{entry.user}</span>
                             <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{format(new Date(entry.timestamp), 'MMM d, h:mm a')}</span>
                           </div>
@@ -1205,16 +1205,16 @@ export function IncidentLog() {
               </div>
 
               {/* Comments */}
-              <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+              <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
                 <h3 className="text-lg font-bold text-[#1E2D4D] mb-4">{t('incidents.comments')}</h3>
                 {inc.comments.length === 0 && (
-                  <p className="text-sm text-gray-400">{t('incidents.noComments')}</p>
+                  <p className="text-sm text-[#1E2D4D]/30">{t('incidents.noComments')}</p>
                 )}
                 <div className="space-y-3 mb-4">
                   {inc.comments.map(c => (
                     <div key={c.id} className="border border-gray-100 rounded-lg p-3">
-                      <div className="flex items-center gap-2 text-xs text-gray-500 mb-1">
-                        <span className="font-semibold text-gray-700">{c.user}</span>
+                      <div className="flex items-center gap-2 text-xs text-[#1E2D4D]/50 mb-1">
+                        <span className="font-semibold text-[#1E2D4D]/80">{c.user}</span>
                         <span>{formatDistanceToNow(new Date(c.timestamp), { addSuffix: true })}</span>
                       </div>
                       <p className="text-sm text-gray-800">{c.text}</p>
@@ -1226,7 +1226,7 @@ export function IncidentLog() {
                     value={commentText}
                     onChange={e => setCommentText(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && handleAddComment()}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                    className="flex-1 px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
                     placeholder={t('incidents.addComment')}
                   />
                   <button
@@ -1244,11 +1244,11 @@ export function IncidentLog() {
             <div className="space-y-6">
               {/* Before / After Photo Evidence — side by side */}
               {(inc.photos.length > 0 || inc.resolutionPhotos.length > 0) && (
-                <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+                <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
                   <h3 className="text-lg font-bold text-[#1E2D4D] mb-3">{t('common.photoEvidence')}</h3>
                   <div className={`grid gap-4 ${inc.photos.length > 0 && inc.resolutionPhotos.length > 0 ? 'sm:grid-cols-2' : 'grid-cols-1'}`}>
                     {inc.photos.length > 0 && (
-                      <div className={inc.resolutionPhotos.length > 0 ? 'sm:border-r sm:border-gray-200 sm:pr-3' : ''}>
+                      <div className={inc.resolutionPhotos.length > 0 ? 'sm:border-r sm:border-[#1E2D4D]/10 sm:pr-3' : ''}>
                         <span className="text-xs font-semibold uppercase mb-2 block" style={{ color: '#ef4444' }}>{t('incidents.beforeIncident')}</span>
                         <PhotoGallery photos={inc.photos} title="Incident Photos" />
                       </div>
@@ -1264,40 +1264,40 @@ export function IncidentLog() {
               )}
 
               {/* Quick Stats */}
-              <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+              <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
                 <h3 className="font-semibold text-[#1E2D4D] mb-3">{t('incidents.details')}</h3>
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-gray-500">{t('incidents.incidentId')}</span>
+                    <span className="text-[#1E2D4D]/50">{t('incidents.incidentId')}</span>
                     <span className="font-mono font-medium text-gray-900">{inc.id}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-500">{t('common.reportedBy')}</span>
+                    <span className="text-[#1E2D4D]/50">{t('common.reportedBy')}</span>
                     <span className="font-medium text-gray-900">{inc.reportedBy}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-500">{t('incidents.created')}</span>
+                    <span className="text-[#1E2D4D]/50">{t('incidents.created')}</span>
                     <span className="font-medium text-gray-900">{format(new Date(inc.createdAt), 'MMM d, h:mm a')}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-500">{t('common.lastUpdated')}</span>
+                    <span className="text-[#1E2D4D]/50">{t('common.lastUpdated')}</span>
                     <span className="font-medium text-gray-900">{format(new Date(inc.updatedAt), 'MMM d, h:mm a')}</span>
                   </div>
                   {inc.rootCause && (
                     <div className="flex justify-between">
-                      <span className="text-gray-500">{t('incidents.rootCause')}</span>
+                      <span className="text-[#1E2D4D]/50">{t('incidents.rootCause')}</span>
                       <span className="font-medium text-gray-900 capitalize">{rootCauseLabels[inc.rootCause.charAt(0).toUpperCase() + inc.rootCause.slice(1)] || inc.rootCause}</span>
                     </div>
                   )}
                   {resTime && (
                     <div className="flex justify-between">
-                      <span className="text-gray-500">{t('incidents.resolutionTime')}</span>
+                      <span className="text-[#1E2D4D]/50">{t('incidents.resolutionTime')}</span>
                       <span className="font-semibold text-[#1E2D4D]">{resTime}</span>
                     </div>
                   )}
                   {inc.regulatoryReportRequired && (
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Regulatory Report</span>
+                      <span className="text-[#1E2D4D]/50">Regulatory Report</span>
                       <span className={`font-medium ${inc.regulatoryReportFiledAt ? 'text-green-600' : 'text-red-600'}`}>
                         {inc.regulatoryReportFiledAt ? 'Filed' : 'Required'}
                       </span>
@@ -1305,7 +1305,7 @@ export function IncidentLog() {
                   )}
                   {inc.linkedCorrectiveActionId && (
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Corrective Action</span>
+                      <span className="text-[#1E2D4D]/50">Corrective Action</span>
                       <span className="font-medium text-[#1E2D4D]">{inc.linkedCorrectiveActionId}</span>
                     </div>
                   )}
@@ -1315,7 +1315,7 @@ export function IncidentLog() {
               {/* Export */}
               <button
                 onClick={() => guardAction('export', 'incident reports', () => showToast('PDF export generated for incident ' + inc.id))} // demo
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] border-2 border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] border-2 border-[#1E2D4D]/10 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-gray-50"
               >
                 <Download className="h-4 w-4" />
                 {t('incidents.exportToPdf')}
@@ -1331,7 +1331,7 @@ export function IncidentLog() {
               <h3 className="text-xl font-bold text-[#1E2D4D] mb-4">{t('incidents.takeCorrectiveAction')}</h3>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('incidents.quickActions')}</label>
+                  <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('incidents.quickActions')}</label>
                   <div className="flex flex-wrap gap-2">
                     {ACTION_CHIPS.map(chip => (
                       <button
@@ -1343,7 +1343,7 @@ export function IncidentLog() {
                         className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                           actionChips.includes(chip)
                             ? 'bg-[#1E2D4D] text-white border-[#1E2D4D]'
-                            : 'bg-white text-gray-700 border-gray-300 hover:border-[#1E2D4D]'
+                            : 'bg-white text-[#1E2D4D]/80 border-[#1E2D4D]/15 hover:border-[#1E2D4D]'
                         }`}
                       >
                         {actionChipLabels[chip] || chip}
@@ -1353,7 +1353,7 @@ export function IncidentLog() {
                 </div>
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <label className="text-sm font-medium text-gray-700">
+                    <label className="text-sm font-medium text-[#1E2D4D]/80">
                       {t('incidents.whatActionTaken')}
                     </label>
                     <AIAssistButton
@@ -1367,17 +1367,17 @@ export function IncidentLog() {
                     value={actionText}
                     onChange={e => { setActionText(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('actionText'); return s; }); }}
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
                     placeholder="Describe the corrective action taken..."
                   />
                   {aiFields.has('actionText') && <AIGeneratedIndicator />}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('incidents.estimatedCompletion')}</label>
+                  <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('incidents.estimatedCompletion')}</label>
                   <select
                     value={estimatedCompletion}
                     onChange={e => setEstimatedCompletion(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
                   >
                     <option value="">Select estimate...</option>
                     <option value="30 minutes">{t('incidents.time30min')}</option>
@@ -1398,7 +1398,7 @@ export function IncidentLog() {
                 <div className="flex gap-3">
                   <button
                     onClick={() => { setShowActionForm(false); setActionText(''); setActionChips([]); setActionPhotos([]); setEstimatedCompletion(''); }}
-                    className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+                    className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-gray-50"
                   >
                     {t('common.cancel')}
                   </button>
@@ -1423,7 +1423,7 @@ export function IncidentLog() {
               <div className="space-y-4">
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <label className="text-sm font-medium text-gray-700">
+                    <label className="text-sm font-medium text-[#1E2D4D]/80">
                       {t('incidents.resolutionSummary')}
                     </label>
                     <AIAssistButton
@@ -1437,17 +1437,17 @@ export function IncidentLog() {
                     value={resolutionSummary}
                     onChange={e => { setResolutionSummary(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('resolutionSummary'); return s; }); }}
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
                     placeholder="Summarize how the incident was resolved..."
                   />
                   {aiFields.has('resolutionSummary') && <AIGeneratedIndicator />}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('incidents.rootCause')}</label>
+                  <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('incidents.rootCause')}</label>
                   <select
                     value={rootCause}
                     onChange={e => setRootCause(e.target.value as RootCause)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
                   >
                     {ROOT_CAUSES.map(rc => (
                       <option key={rc.value} value={rc.value}>{rootCauseLabels[rc.label] || rc.label}</option>
@@ -1463,12 +1463,12 @@ export function IncidentLog() {
                   highlightText={t('incidents.showTheFix')}
                 />
                 {resolutionPhotos.length === 0 && (
-                  <label className="flex items-center gap-2 text-xs text-gray-500 cursor-pointer">
+                  <label className="flex items-center gap-2 text-xs text-[#1E2D4D]/50 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={managerPhotoOverride}
                       onChange={(e) => setManagerPhotoOverride(e.target.checked)}
-                      className="h-3.5 w-3.5 rounded border-gray-300 text-[#d4af37] focus:ring-[#d4af37]"
+                      className="h-3.5 w-3.5 rounded border-[#1E2D4D]/15 text-[#d4af37] focus:ring-[#d4af37]"
                     />
                     {t('incidents.managerOverride')}
                   </label>
@@ -1476,7 +1476,7 @@ export function IncidentLog() {
                 <div className="flex gap-3">
                   <button
                     onClick={() => { setShowResolveForm(false); setResolutionSummary(''); setRootCause('unknown'); setResolutionPhotos([]); setManagerPhotoOverride(false); }}
-                    className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+                    className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-gray-50"
                   >
                     {t('common.cancel')}
                   </button>
@@ -1527,11 +1527,11 @@ export function IncidentLog() {
         )}
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">{t('incidents.incidentType')}</label>
+            <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('incidents.incidentType')}</label>
             <select
               value={newType}
               onChange={e => setNewType(e.target.value as IncidentType)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
             >
               {INCIDENT_TYPES.map(tp => (
                 <option key={tp.value} value={tp.value}>{typeLabels[tp.label] || tp.label}</option>
@@ -1539,7 +1539,7 @@ export function IncidentLog() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">{t('incidents.severity')}</label>
+            <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('incidents.severity')}</label>
             <div className="flex gap-2">
               {SEVERITIES.map(s => (
                 <button
@@ -1559,11 +1559,11 @@ export function IncidentLog() {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">{t('common.location')}</label>
+            <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('common.location')}</label>
             <select
               value={newLocation}
               onChange={e => setNewLocation(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
             >
               {locationOptions.map(l => (
                 <option key={l} value={l}>{l}</option>
@@ -1571,13 +1571,13 @@ export function IncidentLog() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">
               {t('incidents.titleField')} <span className="text-red-600">*</span>
             </label>
             <GhostInput
               value={newTitle}
               onChange={e => setNewTitle(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
               placeholder={t('incidents.titlePlaceholder')}
               fieldLabel="Incident Title"
               formContext={{ incidentType: newType || '', severity: newSeverity || '' }}
@@ -1586,7 +1586,7 @@ export function IncidentLog() {
           </div>
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-sm font-medium text-gray-700">
+              <label className="text-sm font-medium text-[#1E2D4D]/80">
                 {t('incidents.descriptionField')} <span className="text-red-600">*</span>
               </label>
               <AIAssistButton
@@ -1600,7 +1600,7 @@ export function IncidentLog() {
               value={newDescription}
               onChange={e => { setNewDescription(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('newDescription'); return s; }); }}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
               placeholder={t('incidents.descriptionPlaceholder')}
             />
             {aiFields.has('newDescription') && <AIGeneratedIndicator />}
@@ -1611,22 +1611,22 @@ export function IncidentLog() {
             label={t('incidents.photoOfIncident')}
           />
           {/* Regulatory report flag */}
-          <label className="flex items-start gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+          <label className="flex items-start gap-3 p-3 border border-[#1E2D4D]/10 rounded-lg cursor-pointer hover:bg-gray-50">
             <input
               type="checkbox"
               checked={newRegulatoryRequired}
               onChange={e => setNewRegulatoryRequired(e.target.checked)}
-              className="mt-0.5 h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-500"
+              className="mt-0.5 h-4 w-4 rounded border-[#1E2D4D]/15 text-red-600 focus:ring-red-500"
             />
             <div>
-              <span className="text-sm font-medium text-gray-700">Requires regulatory report</span>
-              <p className="text-xs text-gray-500 mt-0.5">Check if this incident requires notification to health department or AHJ</p>
+              <span className="text-sm font-medium text-[#1E2D4D]/80">Requires regulatory report</span>
+              <p className="text-xs text-[#1E2D4D]/50 mt-0.5">Check if this incident requires notification to health department or AHJ</p>
             </div>
           </label>
           <div className="flex gap-3">
             <button
               onClick={() => { setShowCreateForm(false); setNewTitle(''); setNewDescription(''); setNewPhotos([]); setAiDraftApplied(false); setNewRegulatoryRequired(false); }}
-              className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+              className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-gray-50"
             >
               {t('common.cancel')}
             </button>
@@ -1650,13 +1650,13 @@ export function IncidentLog() {
       <div className="space-y-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold text-[#1E2D4D]">{t('incidents.title')}</h1>
-            <p className="text-sm text-gray-600 mt-1">{t('incidents.subtitle')}</p>
+            <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">{t('incidents.title')}</h1>
+            <p className="text-sm text-[#1E2D4D]/70 mt-1">{t('incidents.subtitle')}</p>
           </div>
           <div className="flex gap-2">
             <button
               onClick={() => guardAction('export', 'incident reports', () => showToast('PDF export of all incidents generated.'))} // demo
-              className="flex items-center gap-2 px-4 py-2 min-h-[44px] border-2 border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+              className="flex items-center gap-2 px-4 py-2 min-h-[44px] border-2 border-[#1E2D4D]/10 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-gray-50"
             >
               <Download className="h-4 w-4" />
               {t('common.export')}
@@ -1676,66 +1676,66 @@ export function IncidentLog() {
           <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #dc2626' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <AlertTriangle className="h-4 w-4 text-red-600" />
-              <span className="text-sm text-gray-500 font-medium">{t('incidents.openIncidents')}</span>
+              <span className="text-sm text-[#1E2D4D]/50 font-medium">{t('incidents.openIncidents')}</span>
             </div>
-            <div className="text-xl sm:text-3xl font-bold text-red-600 text-center">{openIncidents}</div>
+            <div className="text-xl sm:text-3xl font-bold tracking-tight text-red-600 text-center">{openIncidents}</div>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #d4af37' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <Clock className="h-4 w-4 text-[#d4af37]" />
-              <span className="text-sm text-gray-500 font-medium">{t('incidents.avgResolution')}</span>
+              <span className="text-sm text-[#1E2D4D]/50 font-medium">{t('incidents.avgResolution')}</span>
             </div>
-            <div className="text-xl sm:text-3xl font-bold text-[#d4af37] text-center">{avgResolutionHours}h</div>
+            <div className="text-xl sm:text-3xl font-bold tracking-tight text-[#d4af37] text-center">{avgResolutionHours}h</div>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #16a34a' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <CheckCircle2 className="h-4 w-4 text-green-600" />
-              <span className="text-sm text-gray-500 font-medium">{t('incidents.resolvedThisWeek')}</span>
+              <span className="text-sm text-[#1E2D4D]/50 font-medium">{t('incidents.resolvedThisWeek')}</span>
             </div>
-            <div className="text-xl sm:text-3xl font-bold text-green-600 text-center">{resolvedThisWeek}</div>
+            <div className="text-xl sm:text-3xl font-bold tracking-tight text-green-600 text-center">{resolvedThisWeek}</div>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: `4px solid ${overdueCount > 0 ? '#dc2626' : '#6b7280'}` }}>
             <div className="flex items-center justify-center gap-2 mb-2">
-              <XCircle className={`h-4 w-4 ${overdueCount > 0 ? 'text-red-600' : 'text-gray-400'}`} />
-              <span className="text-sm text-gray-500 font-medium">{t('incidents.overdueMore24h')}</span>
+              <XCircle className={`h-4 w-4 ${overdueCount > 0 ? 'text-red-600' : 'text-[#1E2D4D]/30'}`} />
+              <span className="text-sm text-[#1E2D4D]/50 font-medium">{t('incidents.overdueMore24h')}</span>
             </div>
-            <div className={`text-xl sm:text-3xl font-bold text-center ${overdueCount > 0 ? 'text-red-600' : 'text-gray-400'}`}>{overdueCount}</div>
+            <div className={`text-xl sm:text-3xl font-bold tracking-tight text-center ${overdueCount > 0 ? 'text-red-600' : 'text-[#1E2D4D]/30'}`}>{overdueCount}</div>
           </div>
         </div>
 
         {/* Filters */}
-        <div data-demo-allow className="bg-white rounded-xl border border-gray-200 p-4">
+        <div data-demo-allow className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
           <div className="flex flex-wrap gap-3 items-center">
-            <Filter className="h-4 w-4 text-gray-400" />
-            <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
+            <Filter className="h-4 w-4 text-[#1E2D4D]/30" />
+            <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]">
               <option value="all">{t('incidents.allStatus')}</option>
               {Object.entries(STATUS_CONFIG).map(([key, val]) => (
                 <option key={key} value={key}>{statusLabels[val.label] || val.label}</option>
               ))}
             </select>
-            <select value={severityFilter} onChange={e => setSeverityFilter(e.target.value)} className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
+            <select value={severityFilter} onChange={e => setSeverityFilter(e.target.value)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]">
               <option value="all">{t('incidents.allSeverity')}</option>
               {SEVERITIES.map(s => <option key={s.value} value={s.value}>{severityLabels[s.label] || s.label}</option>)}
             </select>
-            <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)} className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
+            <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]">
               <option value="all">{t('incidents.allTypes')}</option>
               {INCIDENT_TYPES.map(tp => <option key={tp.value} value={tp.value}>{typeLabels[tp.label] || tp.label}</option>)}
             </select>
-            <select value={locationFilter} onChange={e => setLocationFilter(e.target.value)} className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
+            <select value={locationFilter} onChange={e => setLocationFilter(e.target.value)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]">
               <option value="all">{t('common.allLocations')}</option>
               {locationOptions.map(l => <option key={l} value={l}>{l}</option>)}
             </select>
-            <select value={assigneeFilter} onChange={e => setAssigneeFilter(e.target.value)} className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
+            <select value={assigneeFilter} onChange={e => setAssigneeFilter(e.target.value)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]">
               <option value="all">{t('incidents.allAssignees')}</option>
               {TEAM_MEMBERS.map(m => <option key={m} value={m}>{m}</option>)}
             </select>
-            <select value={dateRange} onChange={e => setDateRange(e.target.value as any)} className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
+            <select value={dateRange} onChange={e => setDateRange(e.target.value as any)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]">
               <option value="all">{t('incidents.allTime')}</option>
               <option value="24h">{t('incidents.last24Hours')}</option>
               <option value="7d">{t('incidents.last7Days')}</option>
               <option value="30d">{t('incidents.last30Days')}</option>
             </select>
-            <select value={sortBy} onChange={e => setSortBy(e.target.value as any)} className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
+            <select value={sortBy} onChange={e => setSortBy(e.target.value as any)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]">
               <option value="newest">{t('incidents.newestFirst')}</option>
               <option value="oldest">{t('incidents.oldestFirst')}</option>
               <option value="severity">{t('incidents.bySeverity')}</option>
@@ -1762,7 +1762,7 @@ export function IncidentLog() {
               <div
                 key={inc.id}
                 onClick={() => setSelectedIncident(inc)}
-                className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 hover:shadow-md transition-shadow cursor-pointer"
+                className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5 hover:shadow-md transition-shadow cursor-pointer"
                 style={overdue ? { borderLeft: '4px solid #dc2626' } : { borderLeft: '4px solid transparent' }}
               >
                 <div className="flex flex-col md:flex-row md:items-center gap-3">
@@ -1772,7 +1772,7 @@ export function IncidentLog() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-xs font-mono text-gray-400">{inc.id}</span>
+                        <span className="text-xs font-mono text-[#1E2D4D]/30">{inc.id}</span>
                         <SeverityBadge severity={inc.severity} />
                         <StatusBadge status={inc.status} />
                         {overdue && (
@@ -1786,14 +1786,14 @@ export function IncidentLog() {
                           </span>
                         )}
                         {inc.photos.length > 0 && (
-                          <span className="flex items-center gap-0.5 text-gray-400">
+                          <span className="flex items-center gap-0.5 text-[#1E2D4D]/30">
                             <Camera className="h-3 w-3" />
                             <span style={{ fontSize: '10px' }}>{inc.photos.length}</span>
                           </span>
                         )}
                       </div>
                       <h3 className="font-semibold text-[#1E2D4D] mt-1 truncate">{inc.title}</h3>
-                      <div className="flex items-center gap-3 text-xs text-gray-500 mt-1 flex-wrap">
+                      <div className="flex items-center gap-3 text-xs text-[#1E2D4D]/50 mt-1 flex-wrap">
                         <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{inc.location}</span>
                         <span className="flex items-center gap-1"><User className="h-3 w-3" />{inc.assignedTo}</span>
                         <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{formatDistanceToNow(new Date(inc.createdAt), { addSuffix: true })}</span>
@@ -1802,7 +1802,7 @@ export function IncidentLog() {
                   </div>
                   <div className="flex items-center gap-3">
                     {resTime && (
-                      <span className="text-xs text-gray-500 whitespace-nowrap">{t('incidents.resolvedIn')} {resTime}</span>
+                      <span className="text-xs text-[#1E2D4D]/50 whitespace-nowrap">{t('incidents.resolvedIn')} {resTime}</span>
                     )}
                     <ChevronRight className="h-5 w-5 text-gray-300" />
                   </div>

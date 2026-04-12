@@ -163,7 +163,7 @@ export function Timecards() {
       <div className="mb-6">
         <div className="flex items-center gap-2.5 mb-1">
           <Clock className="w-6 h-6" style={{ color: NAVY }} />
-          <h1 className="text-xl lg:text-2xl font-bold" style={{ color: '#0B1628' }}>HoodOps Timecards</h1>
+          <h1 className="text-xl lg:text-2xl font-bold tracking-tight" style={{ color: '#0B1628' }}>HoodOps Timecards</h1>
         </div>
         <p className="text-sm" style={{ color: '#6B7F96' }}>
           Clock in/out, review shifts, and manage pay periods

@@ -43,22 +43,22 @@ export function KitchenDashboard() {
     <>
       <div className="space-y-6">
         <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg p-4 sm:p-6 text-white">
-          <h1 className="text-2xl font-bold mb-1">{greeting}, {firstName}!</h1>
+          <h1 className="text-2xl font-bold tracking-tight mb-1">{greeting}, {firstName}!</h1>
           <p className="text-blue-100">Today is {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
           <p className="text-blue-100 text-sm mt-1">Shift: 6:00 AM - 2:00 PM</p>
         </div>
 
         <MigrationStatusCard />
 
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6">
           <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
             <h2 className="text-xl font-bold text-[#1E2D4D]">My Tasks Today</h2>
-            <div className="text-sm font-medium text-gray-600">
+            <div className="text-sm font-medium text-[#1E2D4D]/70">
               {completedCount} of {totalCount} complete ({progressPercentage}%)
             </div>
           </div>
 
-          <div className="w-full bg-gray-200 rounded-full h-3 mb-6">
+          <div className="w-full bg-[#1E2D4D]/8 rounded-full h-3 mb-6">
             <div
               className="h-3 rounded-full bg-[#1E2D4D] transition-all duration-500"
               style={{ width: `${progressPercentage}%` }}
@@ -72,14 +72,14 @@ export function KitchenDashboard() {
                 onClick={() => navigate(task.link)}
                 className={`flex items-center justify-between p-4 rounded-lg border-2 cursor-pointer transition-all ${
                   task.completed
-                    ? 'bg-[#FAF7F0] border-gray-200'
+                    ? 'bg-[#FAF7F0] border-[#1E2D4D]/10'
                     : task.overdue
                     ? 'bg-red-50 border-red-300 hover:bg-red-100'
-                    : 'bg-white border-gray-200 hover:border-blue-300 hover:bg-blue-50'
+                    : 'bg-white border-[#1E2D4D]/10 hover:border-blue-300 hover:bg-blue-50'
                 }`}
               >
                 <div className="flex items-center space-x-4 flex-1">
-                  <div className={`flex-shrink-0 ${task.completed ? 'text-green-600' : task.overdue ? 'text-red-600' : 'text-gray-400'}`}>
+                  <div className={`flex-shrink-0 ${task.completed ? 'text-green-600' : task.overdue ? 'text-red-600' : 'text-[#1E2D4D]/30'}`}>
                     {task.completed ? (
                       <CheckCircle className="h-6 w-6" />
                     ) : (
@@ -87,7 +87,7 @@ export function KitchenDashboard() {
                     )}
                   </div>
                   <div className="flex-1">
-                    <div className={`font-medium ${task.completed ? 'text-gray-500 line-through' : task.overdue ? 'text-red-900' : 'text-gray-900'}`}>
+                    <div className={`font-medium ${task.completed ? 'text-[#1E2D4D]/50 line-through' : task.overdue ? 'text-red-900' : 'text-gray-900'}`}>
                       {task.time} — {task.label}
                     </div>
                     {task.overdue && !task.completed && (
@@ -97,7 +97,7 @@ export function KitchenDashboard() {
                     )}
                   </div>
                 </div>
-                <ChevronRight className="h-5 w-5 text-gray-400" />
+                <ChevronRight className="h-5 w-5 text-[#1E2D4D]/30" />
               </div>
             ))}
           </div>
@@ -114,7 +114,7 @@ export function KitchenDashboard() {
                     <div key={item.id} className="flex items-center justify-between bg-white rounded-xl p-3">
                       <div>
                         <div className="font-medium text-gray-900">{item.label}</div>
-                        <div className="text-sm text-gray-600">Scheduled: {item.time} • {item.minutesLate || 120} minutes late</div>
+                        <div className="text-sm text-[#1E2D4D]/70">Scheduled: {item.time} • {item.minutesLate || 120} minutes late</div>
                       </div>
                       <button
                         onClick={() => navigate(item.link)}
@@ -133,7 +133,7 @@ export function KitchenDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <button
             onClick={() => navigate('/temp-logs')}
-            className="bg-white rounded-xl border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
+            className="bg-white rounded-xl border-2 border-[#1E2D4D]/10 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
             style={{ minHeight: '120px' }}
           >
             <Thermometer className="h-12 w-12 text-blue-600 mx-auto mb-3 group-hover:scale-110 transition-transform" />
@@ -142,7 +142,7 @@ export function KitchenDashboard() {
 
           <button
             onClick={() => navigate('/checklists')}
-            className="bg-white rounded-xl border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
+            className="bg-white rounded-xl border-2 border-[#1E2D4D]/10 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
             style={{ minHeight: '120px' }}
           >
             <ClipboardCheck className="h-12 w-12 text-blue-600 mx-auto mb-3 group-hover:scale-110 transition-transform" />
@@ -151,7 +151,7 @@ export function KitchenDashboard() {
 
           <button
             onClick={() => navigate('/temp-logs?tab=receiving')}
-            className="bg-white rounded-xl border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
+            className="bg-white rounded-xl border-2 border-[#1E2D4D]/10 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
             style={{ minHeight: '120px' }}
           >
             <Truck className="h-12 w-12 text-blue-600 mx-auto mb-3 group-hover:scale-110 transition-transform" />

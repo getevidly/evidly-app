@@ -75,7 +75,7 @@ export function MobileMoreMenu({ isOpen, onClose }: MobileMoreMenuProps) {
         >
           <span className="text-lg w-7 text-center">🏠</span>
           <span className="flex-1 text-left text-[14px] font-semibold text-[#1E2D4D]">Dashboard</span>
-          <ChevronRight className="h-4 w-4 text-gray-400 flex-shrink-0" />
+          <ChevronRight className="h-4 w-4 text-[#1E2D4D]/30 flex-shrink-0" />
         </button>
 
         {/* Top-level items */}
@@ -87,7 +87,7 @@ export function MobileMoreMenu({ isOpen, onClose }: MobileMoreMenuProps) {
           >
             <span className="text-lg w-7 text-center">{item.icon}</span>
             <span className="flex-1 text-left text-[14px] font-semibold text-[#1E2D4D]">{item.label}</span>
-            <ChevronRight className="h-4 w-4 text-gray-400 flex-shrink-0" />
+            <ChevronRight className="h-4 w-4 text-[#1E2D4D]/30 flex-shrink-0" />
           </button>
         ))}
 
@@ -97,7 +97,7 @@ export function MobileMoreMenu({ isOpen, onClose }: MobileMoreMenuProps) {
             {/* Section header */}
             <button
               onClick={() => section.path ? handleNav(section.path) : undefined}
-              className={`w-full flex items-center gap-2 px-4 py-2 ${section.path ? 'cursor-pointer active:bg-gray-100' : 'cursor-default'}`}
+              className={`w-full flex items-center gap-2 px-4 py-2 ${section.path ? 'cursor-pointer active:bg-[#1E2D4D]/5' : 'cursor-default'}`}
             >
               <span className="text-sm">{section.icon}</span>
               <span className="text-xs font-bold uppercase tracking-[1px] text-[#6B7280]">
@@ -119,7 +119,7 @@ export function MobileMoreMenu({ isOpen, onClose }: MobileMoreMenuProps) {
                     {item.badge}
                   </span>
                 )}
-                <ChevronRight className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                <ChevronRight className="h-4 w-4 text-[#1E2D4D]/30 flex-shrink-0" />
               </button>
             ))}
           </div>

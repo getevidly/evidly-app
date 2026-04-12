@@ -121,7 +121,7 @@ export function AddCurrentReadingModal({ open, onClose, equipment, onSave }: Pro
 
         <div>
           <div className="flex items-center justify-between mb-2">
-            <label className="text-sm font-medium text-gray-700">Notes</label>
+            <label className="text-sm font-medium text-[#1E2D4D]/80">Notes</label>
             <AIAssistButton
               fieldLabel="Notes"
               context={{ equipmentName: selectedEq?.name || '', temperature }}

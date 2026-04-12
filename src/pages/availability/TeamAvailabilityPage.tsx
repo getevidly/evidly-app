@@ -67,7 +67,7 @@ export function TeamAvailabilityPage() {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <Users className="w-6 h-6" style={{ color: NAVY }} />
-            <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Team Availability</h1>
+            <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Team Availability</h1>
           </div>
           <p className="text-sm" style={{ color: TEXT_TERTIARY }}>View and manage team availability submissions.</p>
         </div>
@@ -111,7 +111,7 @@ export function TeamAvailabilityPage() {
       {isLoading ? (
         <div className="space-y-3">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="h-14 bg-gray-200 rounded-lg animate-pulse" />
+            <div key={i} className="h-14 bg-[#1E2D4D]/8 rounded-lg animate-pulse" />
           ))}
         </div>
       ) : filtered.length === 0 ? (

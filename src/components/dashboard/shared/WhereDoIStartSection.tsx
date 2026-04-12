@@ -103,7 +103,7 @@ export function WhereDoIStartSection({ items, staggerOffset = 0, tooltipContent 
                   </span>
                 </div>
                 {item.detail && (
-                  <p className="text-xs text-gray-500 mt-0.5 truncate">{item.detail}</p>
+                  <p className="text-xs text-[#1E2D4D]/50 mt-0.5 truncate">{item.detail}</p>
                 )}
               </div>
               <span

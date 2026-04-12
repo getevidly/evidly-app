@@ -96,13 +96,13 @@ export function CalendarCard({ events, typeColors, typeLabels, navigate, tooltip
 
   return (
     <div
-      className="bg-white rounded-xl border border-gray-200 p-4"
+      className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4"
       style={{ fontFamily: 'Inter, sans-serif' }}
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <CalendarDays size={16} className="text-gray-400" />
+          <CalendarDays size={16} className="text-[#1E2D4D]/30" />
           <h3
             className="text-xs font-semibold uppercase"
             style={{ letterSpacing: '0.1em', color: '#6b7280', fontFamily: 'Inter, sans-serif' }}
@@ -112,12 +112,12 @@ export function CalendarCard({ events, typeColors, typeLabels, navigate, tooltip
           {tooltipContent && <SectionTooltip content={tooltipContent} />}
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-gray-700">{formatMonthYear(viewYear, viewMonth, locale)}</span>
+          <span className="text-sm font-medium text-[#1E2D4D]/80">{formatMonthYear(viewYear, viewMonth, locale)}</span>
           <button type="button" onClick={prevMonth} className="p-2 -m-1 rounded-full hover:bg-gray-100 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center">
-            <ChevronLeft size={16} className="text-gray-500" />
+            <ChevronLeft size={16} className="text-[#1E2D4D]/50" />
           </button>
           <button type="button" onClick={nextMonth} className="p-2 -m-1 rounded-full hover:bg-gray-100 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center">
-            <ChevronRight size={16} className="text-gray-500" />
+            <ChevronRight size={16} className="text-[#1E2D4D]/50" />
           </button>
         </div>
       </div>
@@ -125,7 +125,7 @@ export function CalendarCard({ events, typeColors, typeLabels, navigate, tooltip
       {/* Weekday headers */}
       <div className="grid grid-cols-7 gap-0 mb-1">
         {(locale === 'es' ? WEEKDAY_LABELS_ES : WEEKDAY_LABELS_EN).map(d => (
-          <div key={d} className="text-center text-xs font-semibold text-gray-400 py-1">{d}</div>
+          <div key={d} className="text-center text-xs font-semibold text-[#1E2D4D]/30 py-1">{d}</div>
         ))}
       </div>
 
@@ -149,7 +149,7 @@ export function CalendarCard({ events, typeColors, typeLabels, navigate, tooltip
             >
               <span
                 className={`text-xs font-medium leading-none ${
-                  isToday ? 'text-white' : isSelected ? 'text-[#1E2D4D]' : 'text-gray-700'
+                  isToday ? 'text-white' : isSelected ? 'text-[#1E2D4D]' : 'text-[#1E2D4D]/80'
                 }`}
                 style={isToday ? {
                   backgroundColor: '#1E2D4D',
@@ -189,7 +189,7 @@ export function CalendarCard({ events, typeColors, typeLabels, navigate, tooltip
         {Object.keys(typeColors).map(type => (
           <div key={type} className="flex items-center gap-1">
             <span className="rounded-full" style={{ width: 6, height: 6, backgroundColor: typeColors[type] }} />
-            <span className="text-xs text-gray-500">{typeLabels[type] || type}</span>
+            <span className="text-xs text-[#1E2D4D]/50">{typeLabels[type] || type}</span>
           </div>
         ))}
       </div>
@@ -197,11 +197,11 @@ export function CalendarCard({ events, typeColors, typeLabels, navigate, tooltip
       {/* Selected day events */}
       {selectedDay !== null && (
         <div className="mt-3 pt-3 border-t border-gray-100">
-          <p className="text-xs font-semibold text-gray-500 mb-2">
+          <p className="text-xs font-semibold text-[#1E2D4D]/50 mb-2">
             {new Date(viewYear, viewMonth, selectedDay).toLocaleDateString(locale === 'es' ? 'es-ES' : 'en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
           </p>
           {selectedEvents.length === 0 ? (
-            <p className="text-xs text-gray-400">{t('cards.noEventsScheduled')}</p>
+            <p className="text-xs text-[#1E2D4D]/30">{t('cards.noEventsScheduled')}</p>
           ) : (
             <div className="space-y-1.5">
               {selectedEvents.map((evt, i) => (
@@ -214,7 +214,7 @@ export function CalendarCard({ events, typeColors, typeLabels, navigate, tooltip
                 >
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-gray-800 truncate">{evt.title}</p>
-                    <p className="text-xs text-gray-500">{evt.location}</p>
+                    <p className="text-xs text-[#1E2D4D]/50">{evt.location}</p>
                   </div>
                   <span
                     className="text-xs font-bold px-1.5 py-0.5 rounded shrink-0"

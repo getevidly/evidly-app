@@ -217,8 +217,8 @@ export function VendorSetup() {
   };
 
   // ── Render helpers ───────────────────────────────────────
-  const inputClass = 'w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent';
-  const labelClass = 'block text-sm font-medium text-gray-700 mb-1';
+  const inputClass = 'w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent';
+  const labelClass = 'block text-sm font-medium text-[#1E2D4D]/80 mb-1';
 
   const renderStep1 = () => (
     <div className="space-y-5">
@@ -237,16 +237,16 @@ export function VendorSetup() {
             <label
               key={svc.id}
               className={`flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer transition-colors ${
-                selectedServices.includes(svc.id) ? 'border-[#1E2D4D] bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                selectedServices.includes(svc.id) ? 'border-[#1E2D4D] bg-blue-50' : 'border-[#1E2D4D]/10 hover:border-gray-300'
               }`}
             >
               <input
                 type="checkbox"
                 checked={selectedServices.includes(svc.id)}
                 onChange={() => toggleService(svc.id)}
-                className="rounded text-[#1E2D4D] focus:ring-[#1E2D4D]"
+                className="rounded text-[#1E2D4D] focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
               />
-              <span className="text-sm text-gray-700">{svc.label}</span>
+              <span className="text-sm text-[#1E2D4D]/80">{svc.label}</span>
             </label>
           ))}
         </div>
@@ -276,7 +276,7 @@ export function VendorSetup() {
 
   const renderStep2 = () => (
     <div className="space-y-6">
-      <p className="text-sm text-gray-500">These will be visible to your clients and automatically shared when you're added as a vendor on their account.</p>
+      <p className="text-sm text-[#1E2D4D]/50">These will be visible to your clients and automatically shared when you're added as a vendor on their account.</p>
 
       {/* IKECA */}
       <div className="bg-[#FAF7F0] rounded-xl p-4 space-y-3">
@@ -284,8 +284,8 @@ export function VendorSetup() {
         <div className="flex gap-4">
           {(['yes', 'no', 'pending'] as const).map(v => (
             <label key={v} className="flex items-center gap-2 cursor-pointer">
-              <input type="radio" name="ikeca" checked={ikecaCertified === v} onChange={() => setIkecaCertified(v)} className="text-[#1E2D4D] focus:ring-[#1E2D4D]" />
-              <span className="text-sm text-gray-700 capitalize">{v}</span>
+              <input type="radio" name="ikeca" checked={ikecaCertified === v} onChange={() => setIkecaCertified(v)} className="text-[#1E2D4D] focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2" />
+              <span className="text-sm text-[#1E2D4D]/80 capitalize">{v}</span>
             </label>
           ))}
         </div>
@@ -325,7 +325,7 @@ export function VendorSetup() {
       {/* Additional Certs */}
       {additionalCerts.map((cert, i) => (
         <div key={cert.id} className="bg-[#FAF7F0] rounded-xl p-4 space-y-3 relative">
-          <button type="button" onClick={() => setAdditionalCerts(prev => prev.filter((_, idx) => idx !== i))} className="absolute top-3 right-3 text-gray-400 hover:text-red-500">
+          <button type="button" onClick={() => setAdditionalCerts(prev => prev.filter((_, idx) => idx !== i))} className="absolute top-3 right-3 text-[#1E2D4D]/30 hover:text-red-500">
             <X size={16} />
           </button>
           <label className="text-sm font-semibold text-[#1E2D4D]">Additional Certification</label>
@@ -359,7 +359,7 @@ export function VendorSetup() {
 
   const renderStep3 = () => (
     <div className="space-y-5">
-      <p className="text-sm text-gray-500">Upload your current certificates of insurance. These will be automatically shared with all your clients. EvidLY will notify you AND your clients before they expire.</p>
+      <p className="text-sm text-[#1E2D4D]/50">Upload your current certificates of insurance. These will be automatically shared with all your clients. EvidLY will notify you AND your clients before they expire.</p>
 
       {insuranceDocs.map(doc => (
         <div key={doc.id} className="bg-[#FAF7F0] rounded-xl p-4 space-y-3">
@@ -377,15 +377,15 @@ export function VendorSetup() {
             <button
               type="button"
               onClick={() => simulateUpload(doc.id)}
-              className="w-full border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center gap-2 hover:border-[#1E2D4D] hover:bg-blue-50/30 transition-colors"
+              className="w-full border-2 border-dashed border-[#1E2D4D]/15 rounded-lg p-6 flex flex-col items-center gap-2 hover:border-[#1E2D4D] hover:bg-blue-50/30 transition-colors"
             >
-              <Upload size={24} className="text-gray-400" />
-              <span className="text-sm text-gray-500">Click to upload PDF or image</span>
+              <Upload size={24} className="text-[#1E2D4D]/30" />
+              <span className="text-sm text-[#1E2D4D]/50">Click to upload PDF or image</span>
             </button>
           ) : (
-            <div className="flex items-center gap-2 px-3 py-2 bg-white rounded-xl border border-gray-200">
-              <FileText size={16} className="text-gray-400" />
-              <span className="text-sm text-gray-700 flex-1">{doc.fileName}</span>
+            <div className="flex items-center gap-2 px-3 py-2 bg-white rounded-xl border border-[#1E2D4D]/10">
+              <FileText size={16} className="text-[#1E2D4D]/30" />
+              <span className="text-sm text-[#1E2D4D]/80 flex-1">{doc.fileName}</span>
               <button type="button" onClick={() => updateInsurance(doc.id, 'fileName', '')} className="text-xs text-red-500 hover:underline">Remove</button>
             </div>
           )}
@@ -405,7 +405,7 @@ export function VendorSetup() {
               <div>
                 <label className={labelClass}>Coverage Amount</label>
                 <div className="relative">
-                  <span className="absolute left-3 top-2 text-gray-400 text-sm">$</span>
+                  <span className="absolute left-3 top-2 text-[#1E2D4D]/30 text-sm">$</span>
                   <input className={`${inputClass} pl-7`} value={doc.coverageAmount} onChange={e => updateInsurance(doc.id, 'coverageAmount', e.target.value)} />
                 </div>
               </div>
@@ -422,16 +422,16 @@ export function VendorSetup() {
 
   const renderStep4 = () => (
     <div className="space-y-5">
-      <p className="text-sm text-gray-500">These defaults apply to all clients unless overridden per-client.</p>
+      <p className="text-sm text-[#1E2D4D]/50">These defaults apply to all clients unless overridden per-client.</p>
 
       {/* Service frequencies */}
       <div className="bg-[#FAF7F0] rounded-xl p-4 space-y-3">
         <label className="text-sm font-semibold text-[#1E2D4D]">Default Service Frequency</label>
         {serviceDefaults.map((sd, i) => (
           <div key={sd.serviceId} className="flex items-center justify-between gap-3">
-            <span className="text-sm text-gray-700 flex-1">{sd.serviceName}</span>
+            <span className="text-sm text-[#1E2D4D]/80 flex-1">{sd.serviceName}</span>
             <select
-              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]"
+              className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
               value={sd.frequency}
               onChange={e => {
                 const u = [...serviceDefaults];
@@ -446,7 +446,7 @@ export function VendorSetup() {
           </div>
         ))}
         {serviceDefaults.length === 0 && (
-          <p className="text-sm text-gray-400 italic">No services selected. Go back to step 1 to choose services.</p>
+          <p className="text-sm text-[#1E2D4D]/30 italic">No services selected. Go back to step 1 to choose services.</p>
         )}
       </div>
 
@@ -454,7 +454,7 @@ export function VendorSetup() {
       <div className="bg-[#FAF7F0] rounded-xl p-4 space-y-3">
         <label className="text-sm font-semibold text-[#1E2D4D]">Preferred Service Window</label>
         <select
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]"
+          className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
           value={preferredWindow}
           onChange={e => setPreferredWindow(e.target.value)}
         >
@@ -476,9 +476,9 @@ export function VendorSetup() {
                 onChange={() => setReportRequirements(prev =>
                   prev.includes(opt.id) ? prev.filter(r => r !== opt.id) : [...prev, opt.id],
                 )}
-                className="rounded text-[#1E2D4D] focus:ring-[#1E2D4D]"
+                className="rounded text-[#1E2D4D] focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
               />
-              <span className="text-sm text-gray-700">{opt.label}</span>
+              <span className="text-sm text-[#1E2D4D]/80">{opt.label}</span>
             </label>
           ))}
         </div>
@@ -488,14 +488,14 @@ export function VendorSetup() {
 
   const renderStep5 = () => (
     <div className="space-y-5">
-      <p className="text-sm text-gray-500">Add team members who will service clients and upload reports through EvidLY. You can always add more later.</p>
+      <p className="text-sm text-[#1E2D4D]/50">Add team members who will service clients and upload reports through EvidLY. You can always add more later.</p>
 
       {teamMembers.map((member, i) => (
         <div key={member.id} className="bg-[#FAF7F0] rounded-xl p-4 relative">
           <button
             type="button"
             onClick={() => setTeamMembers(prev => prev.filter((_, idx) => idx !== i))}
-            className="absolute top-3 right-3 text-gray-400 hover:text-red-500"
+            className="absolute top-3 right-3 text-[#1E2D4D]/30 hover:text-red-500"
           >
             <X size={16} />
           </button>
@@ -530,7 +530,7 @@ export function VendorSetup() {
             <div>
               <label className={labelClass}>Role</label>
               <select
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]"
+                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
                 value={member.role}
                 onChange={e => {
                   const u = [...teamMembers];
@@ -557,7 +557,7 @@ export function VendorSetup() {
       </button>
 
       {teamMembers.length === 0 && (
-        <div className="text-center py-8 text-gray-400">
+        <div className="text-center py-8 text-[#1E2D4D]/30">
           <Users size={32} className="mx-auto mb-2" />
           <p className="text-sm">No team members added yet. You can skip this step and add them later.</p>
         </div>
@@ -581,8 +581,8 @@ export function VendorSetup() {
               </svg>
             </div>
           </div>
-          <h1 className="text-2xl font-bold text-[#1E2D4D]">Set Up Your Service Provider Profile</h1>
-          <p className="text-sm text-gray-500 mt-1">Complete your profile so clients can find you and verify your credentials.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">Set Up Your Service Provider Profile</h1>
+          <p className="text-sm text-[#1E2D4D]/50 mt-1">Complete your profile so clients can find you and verify your credentials.</p>
         </div>
 
         {/* Step Progress */}
@@ -597,18 +597,18 @@ export function VendorSetup() {
                   <div
                     className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${
                       isComplete ? 'bg-green-500 text-white'
-                        : isActive ? 'text-white' : 'bg-gray-200 text-gray-500'
+                        : isActive ? 'text-white' : 'bg-gray-200 text-[#1E2D4D]/50'
                     }`}
                     style={isActive ? { backgroundColor: NAVY } : undefined}
                   >
                     {isComplete ? <Check size={18} /> : <Icon size={18} />}
                   </div>
-                  <span className={`text-xs mt-1 font-medium text-center w-16 ${isActive ? 'text-[#1E2D4D]' : 'text-gray-400'}`}>
+                  <span className={`text-xs mt-1 font-medium text-center w-16 ${isActive ? 'text-[#1E2D4D]' : 'text-[#1E2D4D]/30'}`}>
                     {step.label}
                   </span>
                 </div>
                 {i < STEPS.length - 1 && (
-                  <div className={`w-8 sm:w-12 h-0.5 mx-1 mt-[-12px] ${isComplete ? 'bg-green-500' : 'bg-gray-200'}`} />
+                  <div className={`w-8 sm:w-12 h-0.5 mx-1 mt-[-12px] ${isComplete ? 'bg-green-500' : 'bg-[#1E2D4D]/8'}`} />
                 )}
               </div>
             );
@@ -616,7 +616,7 @@ export function VendorSetup() {
         </div>
 
         {/* Step Content Card */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 sm:p-8">
           <h2 className="text-lg font-bold text-[#1E2D4D] mb-1">{STEPS[currentStep - 1].label}</h2>
           <div className="h-[2px] rounded-full mb-6" style={{ background: `linear-gradient(90deg, ${GOLD}, transparent)` }} />
           {stepRenderers[currentStep - 1]()}
@@ -629,7 +629,7 @@ export function VendorSetup() {
               <button
                 type="button"
                 onClick={handleBack}
-                className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
+                className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-[#1E2D4D]/70 hover:text-gray-900 transition-colors"
               >
                 <ChevronLeft size={16} /> Back
               </button>
@@ -640,7 +640,7 @@ export function VendorSetup() {
               <button
                 type="button"
                 onClick={handleSkip}
-                className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors"
+                className="px-4 py-2 text-sm font-medium text-[#1E2D4D]/50 hover:text-gray-700 transition-colors"
               >
                 {currentStep === 5 ? 'Skip & Finish' : 'Skip'}
               </button>

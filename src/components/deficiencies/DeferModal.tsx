@@ -22,7 +22,7 @@ export function DeferModal({ deficiencyCode, deficiencyTitle, onClose, onSubmit 
         <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: '#D1D9E6' }}>
           <div className="flex items-center gap-2">
             <Clock className="w-5 h-5" style={{ color: '#6b7280' }} />
-            <h3 className="text-lg font-semibold" style={{ color: '#0B1628' }}>Defer Deficiency</h3>
+            <h3 className="text-lg font-semibold tracking-tight" style={{ color: '#0B1628' }}>Defer Deficiency</h3>
           </div>
           <button onClick={onClose} className="p-2.5 -m-1 rounded-lg hover:bg-gray-100 transition-colors" aria-label="Close">
             <X className="w-5 h-5" style={{ color: '#6B7F96' }} />
@@ -43,7 +43,7 @@ export function DeferModal({ deficiencyCode, deficiencyTitle, onClose, onSubmit 
               onChange={(e) => setReason(e.target.value)}
               rows={3}
               placeholder="Explain why this deficiency is being deferred..."
-              className="w-full px-3 py-2 border rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+              className="w-full px-3 py-2 border rounded-lg text-sm resize-none focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
               style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
             />
           </div>
@@ -56,7 +56,7 @@ export function DeferModal({ deficiencyCode, deficiencyTitle, onClose, onSubmit 
               type="date"
               value={deferUntil}
               onChange={(e) => setDeferUntil(e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+              className="w-full px-3 py-2 border rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
               style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
             />
           </div>

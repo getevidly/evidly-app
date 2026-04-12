@@ -250,7 +250,7 @@ export default function RemoteConnect() {
     <div className="space-y-6">
       <AdminBreadcrumb crumbs={[{ label: 'Remote Connect' }]} />
       <div>
-        <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Remote Connect</h1>
+        <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Remote Connect</h1>
         <p style={{ fontSize: 13, color: TEXT_SEC, marginTop: 4 }}>
           Initiate and manage remote support sessions with customers.
         </p>

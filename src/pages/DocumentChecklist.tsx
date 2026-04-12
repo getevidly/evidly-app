@@ -203,19 +203,19 @@ export function DocumentChecklist() {
             <div className="flex items-center gap-2 flex-wrap">
               <span className="font-medium text-gray-900">{doc.name}</span>
               {entry.status === 'not_applicable' && (
-                <span className="text-xs px-2 py-0.5 rounded-full bg-gray-200 text-gray-600">
+                <span className="text-xs px-2 py-0.5 rounded-full bg-gray-200 text-[#1E2D4D]/70">
                   N/A
                 </span>
               )}
             </div>
             {entry.uploadedAt && (
-              <p className="text-sm text-gray-500 mt-0.5">
+              <p className="text-sm text-[#1E2D4D]/50 mt-0.5">
                 Uploaded {entry.uploadedAt}
                 {entry.expiresAt && <span> &middot; Expires {entry.expiresAt}</span>}
               </p>
             )}
             {entry.status === 'not_applicable' && entry.reason && (
-              <p className="text-sm text-gray-500 mt-0.5">{entry.reason}</p>
+              <p className="text-sm text-[#1E2D4D]/50 mt-0.5">{entry.reason}</p>
             )}
           </div>
           {entry.status === 'uploaded' && (
@@ -242,7 +242,7 @@ export function DocumentChecklist() {
 
     // Pending state
     return (
-      <div key={doc.id} className="flex items-start gap-3 py-3 px-4 rounded-xl bg-white border border-gray-200">
+      <div key={doc.id} className="flex items-start gap-3 py-3 px-4 rounded-xl bg-white border border-[#1E2D4D]/10">
         <Circle size={20} className="mt-0.5 flex-shrink-0 text-gray-300" />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
@@ -259,8 +259,8 @@ export function DocumentChecklist() {
               {doc.required ? 'Required' : 'Recommended'}
             </span>
           </div>
-          <p className="text-sm text-gray-500 mt-1">{doc.helpText}</p>
-          <p className="text-xs text-gray-400 mt-0.5">
+          <p className="text-sm text-[#1E2D4D]/50 mt-1">{doc.helpText}</p>
+          <p className="text-xs text-[#1E2D4D]/30 mt-0.5">
             Provided by: {doc.whoProvides} &middot; Renewal: {doc.renewalFrequency}
           </p>
           <div className="flex items-center gap-3 mt-2">
@@ -276,7 +276,7 @@ export function DocumentChecklist() {
             </button>
             {CONDITIONAL_IDS.has(doc.id) && (
               <button
-                className="text-sm text-gray-500 hover:text-gray-700 underline"
+                className="text-sm text-[#1E2D4D]/50 hover:text-gray-700 underline"
                 onClick={() => guardAction('edit', 'Document Checklist', () => openNaModal(doc))}
               >
                 Not Applicable
@@ -295,10 +295,10 @@ export function DocumentChecklist() {
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold" style={{ color: '#1E2D4D' }}>
+        <h1 className="text-2xl font-bold tracking-tight" style={{ color: '#1E2D4D' }}>
           Get Your Kitchen Compliance-Ready
         </h1>
-        <p className="text-gray-600 mt-1">
+        <p className="text-[#1E2D4D]/70 mt-1">
           Upload your compliance documents to build a complete digital file. Required items are
           marked with a red star.
         </p>
@@ -393,7 +393,7 @@ export function DocumentChecklist() {
                 <span className="font-semibold" style={{ color: '#1E2D4D' }}>
                   {meta.label}
                 </span>
-                <span className="text-sm text-gray-500">
+                <span className="text-sm text-[#1E2D4D]/50">
                   {done} of {total}
                 </span>
               </div>
@@ -406,7 +406,7 @@ export function DocumentChecklist() {
 
             {/* Items */}
             {expanded && (
-              <div className="divide-y divide-gray-100 bg-white">
+              <div className="divide-y divide-[#1E2D4D]/5 bg-white">
                 {docs.map((doc) => (
                   <div key={doc.id} className="px-2 py-1">
                     {renderDocItem(doc)}
@@ -443,18 +443,18 @@ export function DocumentChecklist() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 p-6 space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold" style={{ color: '#1E2D4D' }}>
+              <h2 className="text-lg font-semibold tracking-tight" style={{ color: '#1E2D4D' }}>
                 Not Applicable: {naModal.docName}
               </h2>
               <button
                 className="p-1 rounded hover:bg-gray-100"
                 onClick={() => setNaModal(null)}
               >
-                <X size={18} className="text-gray-500" />
+                <X size={18} className="text-[#1E2D4D]/50" />
               </button>
             </div>
 
-            <p className="text-sm text-gray-600">Why is this document not applicable?</p>
+            <p className="text-sm text-[#1E2D4D]/70">Why is this document not applicable?</p>
 
             <div className="space-y-2">
               {["We don't need this", "Health department doesn't require", 'Other'].map((opt) => (
@@ -466,7 +466,7 @@ export function DocumentChecklist() {
                     onChange={() => setNaModal({ ...naModal, reason: opt })}
                     className="accent-[#1E2D4D]"
                   />
-                  <span className="text-sm text-gray-700">{opt}</span>
+                  <span className="text-sm text-[#1E2D4D]/80">{opt}</span>
                 </label>
               ))}
             </div>
@@ -474,7 +474,7 @@ export function DocumentChecklist() {
             {naModal.reason === 'Other' && (
               <GhostInput
                 type="text"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2"
+                className="w-full border border-[#1E2D4D]/15 rounded-md px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
                 placeholder="Please explain..."
                 value={naModal.customReason}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNaModal({ ...naModal, customReason: e.target.value })}
@@ -486,7 +486,7 @@ export function DocumentChecklist() {
 
             <div className="flex justify-end gap-3 pt-2">
               <button
-                className="px-4 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors"
+                className="px-4 py-2 rounded-md text-sm font-medium text-[#1E2D4D]/70 hover:bg-gray-100 transition-colors"
                 onClick={() => setNaModal(null)}
               >
                 Cancel

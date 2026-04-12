@@ -143,7 +143,7 @@ export function ClientReports() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Reports</h1>
+        <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Reports</h1>
         <p className="mt-1 text-sm" style={{ color: TEXT_SEC }}>
           Compliance, insurance, and operational reports generated for your organization.
         </p>

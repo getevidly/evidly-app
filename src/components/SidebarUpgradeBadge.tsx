@@ -39,7 +39,7 @@ export function SidebarUpgradeBadge() {
       >
         Start Free Trial
       </button>
-      <p className="text-xs text-gray-400 text-center mt-1.5">Limited time offer</p>
+      <p className="text-xs text-[#1E2D4D]/30 text-center mt-1.5">Limited time offer</p>
     </div>
   );
 }

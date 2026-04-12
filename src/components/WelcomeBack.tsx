@@ -60,17 +60,17 @@ export function WelcomeBack({ userName, lastLoginAt, isDemoMode }: WelcomeBackPr
       </div>
 
       {lastLoginText && (
-        <p className="text-sm text-gray-500 mt-1">{lastLoginText}</p>
+        <p className="text-sm text-[#1E2D4D]/50 mt-1">{lastLoginText}</p>
       )}
 
       {priorities.length > 0 ? (
         <div className="mt-3">
-          <p className="text-sm font-semibold text-gray-600 mb-1.5">
+          <p className="text-sm font-semibold text-[#1E2D4D]/70 mb-1.5">
             {t('hero.todaysPriorities')}
           </p>
           <div className="space-y-1">
             {priorities.map((p, i) => (
-              <div key={i} className="text-sm text-gray-700">
+              <div key={i} className="text-sm text-[#1E2D4D]/80">
                 {p.icon} {p.text}
               </div>
             ))}

@@ -18,11 +18,11 @@ export function BenchmarkTrendAnalysis({ locationId }: Props) {
   const quarterlyDelta = currentQAvg - prevQAvg;
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+    <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-lg font-semibold text-[#1E2D4D]">Trend Analysis</h3>
-          <p className="text-sm text-gray-500">Your score vs industry benchmarks over time</p>
+          <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">Trend Analysis</h3>
+          <p className="text-sm text-[#1E2D4D]/50">Your score vs industry benchmarks over time</p>
         </div>
         <div className="flex items-center gap-1">
           {([3, 6, 12] as const).map(m => (
@@ -62,15 +62,15 @@ export function BenchmarkTrendAnalysis({ locationId }: Props) {
       {/* Quarterly summary */}
       <div className="mt-4 flex items-center gap-6 text-sm">
         <div>
-          <span className="text-gray-500">Current quarter avg: </span>
+          <span className="text-[#1E2D4D]/50">Current quarter avg: </span>
           <span className="font-bold text-[#1E2D4D]">{currentQAvg}</span>
         </div>
         <div>
-          <span className="text-gray-500">Previous quarter avg: </span>
+          <span className="text-[#1E2D4D]/50">Previous quarter avg: </span>
           <span className="font-bold text-[#1E2D4D]">{prevQAvg}</span>
         </div>
         <div>
-          <span className="text-gray-500">Change: </span>
+          <span className="text-[#1E2D4D]/50">Change: </span>
           <span className="font-bold" style={{ color: quarterlyDelta >= 0 ? '#16a34a' : '#dc2626' }}>
             {quarterlyDelta >= 0 ? '+' : ''}{quarterlyDelta} pts
           </span>

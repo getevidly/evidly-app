@@ -103,20 +103,20 @@ export function EquipmentHealthWidget({ locationId }: Props) {
 
   if (data.total === 0) {
     return (
-      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
             <Wrench className="h-5 w-5" style={{ color: '#1E2D4D' }} />
           </div>
-          <h3 className="text-lg font-semibold text-[#1E2D4D]">Equipment Health</h3>
+          <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">Equipment Health</h3>
         </div>
-        <p className="text-sm text-gray-500 text-center py-4">No equipment registered. Add equipment to track maintenance.</p>
+        <p className="text-sm text-[#1E2D4D]/50 text-center py-4">No equipment registered. Add equipment to track maintenance.</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+    <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
@@ -124,8 +124,8 @@ export function EquipmentHealthWidget({ locationId }: Props) {
             <Wrench className="h-5 w-5" style={{ color: '#1E2D4D' }} />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-[#1E2D4D]">Equipment Health</h3>
-            <p className="text-xs text-gray-500">{data.total} items tracked</p>
+            <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">Equipment Health</h3>
+            <p className="text-xs text-[#1E2D4D]/50">{data.total} items tracked</p>
           </div>
         </div>
         <button
@@ -165,12 +165,12 @@ export function EquipmentHealthWidget({ locationId }: Props) {
       {/* Warranty summary */}
       <div className="flex items-center gap-2 mb-4">
         <EvidlyIcon size={14} className="flex-shrink-0" />
-        <span className="text-xs text-gray-500">Warranty:</span>
+        <span className="text-xs text-[#1E2D4D]/50">Warranty:</span>
         <span className="text-xs font-medium" style={{ color: '#16a34a' }}>{data.warrantyActive} active</span>
         {data.warrantyExpiringSoon > 0 && (
           <span className="text-xs font-medium" style={{ color: '#d97706' }}>{data.warrantyExpiringSoon} expiring</span>
         )}
-        <span className="text-xs font-medium text-gray-400">{data.warrantyExpired} expired</span>
+        <span className="text-xs font-medium text-[#1E2D4D]/30">{data.warrantyExpired} expired</span>
       </div>
 
       {/* Alerts */}
@@ -195,13 +195,13 @@ export function EquipmentHealthWidget({ locationId }: Props) {
       {/* Footer stats */}
       <div className="flex items-center justify-between pt-3 border-t border-gray-100">
         <div className="flex items-center gap-1.5 text-sm">
-          <DollarSign className="h-4 w-4 text-gray-400" />
-          <span className="text-gray-500">YTD Maintenance:</span>
+          <DollarSign className="h-4 w-4 text-[#1E2D4D]/30" />
+          <span className="text-[#1E2D4D]/50">YTD Maintenance:</span>
           <span className="font-semibold text-[#1E2D4D]">${data.ytdSpend.toLocaleString()}</span>
         </div>
         <div className="flex items-center gap-1.5 text-sm">
-          <Calendar className="h-4 w-4 text-gray-400" />
-          <span className="text-gray-500">Next service:</span>
+          <Calendar className="h-4 w-4 text-[#1E2D4D]/30" />
+          <span className="text-[#1E2D4D]/50">Next service:</span>
           <span className="font-semibold text-[#1E2D4D]">{data.nextServiceDue}</span>
         </div>
       </div>

@@ -337,7 +337,7 @@ export function CloudImportPicker({ onFilesImported, disabled }: CloudImportPick
 
   return (
     <div className="space-y-2">
-      <p className="text-xs font-medium text-gray-500 flex items-center gap-1.5">
+      <p className="text-xs font-medium text-[#1E2D4D]/50 flex items-center gap-1.5">
         <Cloud size={13} />
         Import from Cloud
       </p>

@@ -10,11 +10,11 @@ import { AlertTriangle } from 'lucide-react';
 
 export function LoadingSkeleton({ rows = 5 }: { rows?: number }) {
   return (
-    <div className="space-y-4 p-6">
+    <div className="space-y-4 p-6 animate-fade-in">
       {[...Array(rows)].map((_, i) => (
         <div
           key={i}
-          className="rounded-lg animate-pulse bg-gray-200"
+          className="skeleton"
           style={{ height: i === 0 ? 96 : 72 }}
         />
       ))}
@@ -39,7 +39,7 @@ export function ErrorState({
       <h3 className="font-medium mb-1.5 text-[#1E2D4D]">
         Failed to load data
       </h3>
-      <p className="text-gray-500 text-sm mb-4">
+      <p className="text-[#1E2D4D]/50 text-sm mb-4">
         {typeof error === 'string'
           ? error
           : error?.message || 'Something went wrong'}
@@ -47,7 +47,7 @@ export function ErrorState({
       {onRetry && (
         <button
           onClick={onRetry}
-          className="bg-[#1E2D4D] text-white rounded-lg px-5 py-2.5 text-sm font-medium hover:bg-[#162340] transition-colors min-h-[44px]"
+          className="bg-[#1E2D4D] text-white rounded-lg px-5 py-2.5 text-sm font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]"
         >
           Try again
         </button>
@@ -72,20 +72,20 @@ export function PageEmptyState({
   return (
     <div className="text-center py-12 px-6">
       {icon && (
-        <div className="mb-3 text-gray-400">{icon}</div>
+        <div className="mb-3 text-[#1E2D4D]/30">{icon}</div>
       )}
       <h3 className="font-medium mb-1.5 text-[#1E2D4D]">
         {title}
       </h3>
       {description && (
-        <p className="text-gray-500 text-sm mb-4">
+        <p className="text-[#1E2D4D]/50 text-sm mb-4">
           {description}
         </p>
       )}
       {action && (
         <button
           onClick={action.onClick}
-          className="bg-[#1E2D4D] text-white rounded-lg px-5 py-2.5 text-sm font-medium hover:bg-[#162340] transition-colors min-h-[44px]"
+          className="bg-[#1E2D4D] text-white rounded-lg px-5 py-2.5 text-sm font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]"
         >
           {action.label}
         </button>

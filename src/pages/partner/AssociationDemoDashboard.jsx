@@ -49,17 +49,17 @@ export default function AssociationDemoDashboard() {
         { label: 'Association Dashboard' },
       ]} />
 
-      <h1 className="text-2xl font-bold text-[#1E2D4D] mb-1">
+      <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D] mb-1">
         Association Partner Dashboard
       </h1>
-      <p className="text-sm text-gray-500 mb-6">
+      <p className="text-sm text-[#1E2D4D]/50 mb-6">
         {demo?.partner_company || 'Association Partner'} — Member Compliance & Community Impact
       </p>
 
-      {loading && <p className="text-gray-400 text-sm">Loading association demo...</p>}
+      {loading && <p className="text-[#1E2D4D]/30 text-sm">Loading association demo...</p>}
 
       {!loading && !demo && (
-        <div className="text-center py-12 text-gray-400">
+        <div className="text-center py-12 text-[#1E2D4D]/30">
           <Users size={40} className="mx-auto mb-3 opacity-40" />
           <p className="font-medium">No active association demo found</p>
           <p className="text-sm mt-1">Create an association partner demo first</p>
@@ -78,18 +78,18 @@ export default function AssociationDemoDashboard() {
             ].map(s => (
               <div key={s.label} className={`${s.bg} rounded-xl p-4`}>
                 <s.icon size={20} className={`${s.color} mb-2`} />
-                <p className="text-xs text-gray-500 uppercase tracking-wider">{s.label}</p>
-                <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
+                <p className="text-xs text-[#1E2D4D]/50 uppercase tracking-wider">{s.label}</p>
+                <p className={`text-2xl font-bold tracking-tight ${s.color}`}>{s.value}</p>
               </div>
             ))}
           </div>
 
           {/* Member Coverage */}
-          <div className="bg-white border border-gray-200 rounded-xl p-6">
-            <h2 className="text-lg font-semibold text-[#1E2D4D] mb-4">Member Coverage by County</h2>
+          <div className="bg-white border border-[#1E2D4D]/10 rounded-xl p-6">
+            <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-4">Member Coverage by County</h2>
             <div className="grid grid-cols-2 gap-3">
               {Object.entries(countyCoverage).map(([county, memberNames]) => (
-                <div key={county} className="border border-gray-200 rounded-lg p-4">
+                <div key={county} className="border border-[#1E2D4D]/10 rounded-lg p-4">
                   <div className="flex items-center gap-2 mb-2">
                     <MapPin size={16} className="text-[#A08C5A]" />
                     <p className="font-medium text-[#1E2D4D]">{county} County</p>
@@ -99,7 +99,7 @@ export default function AssociationDemoDashboard() {
                   </div>
                   <div className="space-y-1">
                     {memberNames.map((name, i) => (
-                      <p key={i} className="text-sm text-gray-600 pl-6">{name}</p>
+                      <p key={i} className="text-sm text-[#1E2D4D]/70 pl-6">{name}</p>
                     ))}
                   </div>
                 </div>
@@ -108,8 +108,8 @@ export default function AssociationDemoDashboard() {
           </div>
 
           {/* Member Adoption Pipeline */}
-          <div className="bg-white border border-gray-200 rounded-xl p-6">
-            <h2 className="text-lg font-semibold text-[#1E2D4D] mb-4">Member Adoption Pipeline</h2>
+          <div className="bg-white border border-[#1E2D4D]/10 rounded-xl p-6">
+            <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-4">Member Adoption Pipeline</h2>
             <div className="grid grid-cols-3 gap-4">
               {[
                 { label: 'Onboarded', value: pipeline.onboarded || 0, color: 'text-green-700', bg: 'bg-green-50' },
@@ -117,13 +117,13 @@ export default function AssociationDemoDashboard() {
                 { label: 'Invited', value: pipeline.invited || 0, color: 'text-[#A08C5A]', bg: 'bg-[#FAF7F0]' },
               ].map(stage => (
                 <div key={stage.label} className={`${stage.bg} rounded-xl p-4 text-center`}>
-                  <p className={`text-3xl font-bold ${stage.color}`}>{stage.value}</p>
-                  <p className="text-xs text-gray-500 mt-1">{stage.label}</p>
+                  <p className={`text-3xl font-bold tracking-tight ${stage.color}`}>{stage.value}</p>
+                  <p className="text-xs text-[#1E2D4D]/50 mt-1">{stage.label}</p>
                 </div>
               ))}
             </div>
             {/* Pipeline bar */}
-            <div className="mt-4 h-3 bg-gray-100 rounded-full overflow-hidden flex">
+            <div className="mt-4 h-3 bg-[#1E2D4D]/5 rounded-full overflow-hidden flex">
               <div className="h-full bg-green-500" style={{ width: `${(pipeline.onboarded / (config.member_count || 10)) * 100}%` }} />
               <div className="h-full bg-blue-400" style={{ width: `${(pipeline.in_progress / (config.member_count || 10)) * 100}%` }} />
               <div className="h-full bg-[#A08C5A]" style={{ width: `${(pipeline.invited / (config.member_count || 10)) * 100}%` }} />
@@ -134,29 +134,29 @@ export default function AssociationDemoDashboard() {
           <div className="bg-red-50 border border-red-200 rounded-xl p-6">
             <div className="flex items-center gap-2 mb-3">
               <Heart size={20} className="text-red-700" />
-              <h2 className="text-lg font-semibold text-red-900">Kitchen to Community Impact</h2>
+              <h2 className="text-lg font-semibold tracking-tight text-red-900">Kitchen to Community Impact</h2>
             </div>
             <div className="grid grid-cols-3 gap-6 text-center">
               <div>
-                <p className="text-3xl font-bold text-red-800">${config.k2c_monthly || 0}</p>
+                <p className="text-3xl font-bold tracking-tight text-red-800">${config.k2c_monthly || 0}</p>
                 <p className="text-xs text-red-600 mt-1">Monthly Donation</p>
-                <p className="text-xs text-gray-500 mt-0.5">{config.member_count || 0} members x $10/mo</p>
+                <p className="text-xs text-[#1E2D4D]/50 mt-0.5">{config.member_count || 0} members x $10/mo</p>
               </div>
               <div>
-                <p className="text-3xl font-bold text-red-800">${config.k2c_annual || 0}</p>
+                <p className="text-3xl font-bold tracking-tight text-red-800">${config.k2c_annual || 0}</p>
                 <p className="text-xs text-red-600 mt-1">Annual Impact</p>
               </div>
               <div>
-                <p className="text-3xl font-bold text-red-800">{config.k2c_meals_per_month || 0}</p>
+                <p className="text-3xl font-bold tracking-tight text-red-800">{config.k2c_meals_per_month || 0}</p>
                 <p className="text-xs text-red-600 mt-1">Meals/Month</p>
-                <p className="text-xs text-gray-500 mt-0.5">via No Kid Hungry</p>
+                <p className="text-xs text-[#1E2D4D]/50 mt-0.5">via No Kid Hungry</p>
               </div>
             </div>
           </div>
 
           {/* Member Compliance Distribution */}
-          <div className="bg-white border border-gray-200 rounded-xl p-6">
-            <h2 className="text-lg font-semibold text-[#1E2D4D] mb-4">Member Compliance Distribution</h2>
+          <div className="bg-white border border-[#1E2D4D]/10 rounded-xl p-6">
+            <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-4">Member Compliance Distribution</h2>
             <div className="space-y-3">
               {members.map((member, i) => {
                 const score = 55 + Math.floor((i * 37 + 13) % 40);
@@ -164,9 +164,9 @@ export default function AssociationDemoDashboard() {
                   <div key={member.id || i} className="flex items-center gap-4 p-3 bg-[#FAF7F0] rounded-lg">
                     <div className="flex-1">
                       <p className="text-sm font-medium text-[#1E2D4D]">{member.name}</p>
-                      <p className="text-xs text-gray-500">{member.county} County</p>
+                      <p className="text-xs text-[#1E2D4D]/50">{member.county} County</p>
                     </div>
-                    <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="w-32 h-2 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
                       <div
                         className={`h-full rounded-full ${score >= 80 ? 'bg-green-500' : score >= 60 ? 'bg-[#A08C5A]' : 'bg-red-500'}`}
                         style={{ width: `${score}%` }}
@@ -183,8 +183,8 @@ export default function AssociationDemoDashboard() {
 
           {/* Endorsed Partner Resources placeholder */}
           <div className="bg-[#FAF7F0] border border-[#A08C5A]/20 rounded-xl p-6">
-            <h2 className="text-lg font-semibold text-[#1E2D4D] mb-2">Endorsed Partner Resources</h2>
-            <p className="text-sm text-gray-500 mb-4">
+            <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-2">Endorsed Partner Resources</h2>
+            <p className="text-sm text-[#1E2D4D]/50 mb-4">
               Co-branded materials and resources for your association members
             </p>
             <div className="grid grid-cols-2 gap-3">
@@ -197,7 +197,7 @@ export default function AssociationDemoDashboard() {
                 <div key={item} className="flex items-center gap-2 p-3 bg-white rounded-xl border border-[#A08C5A]/10">
                   <Building2 size={16} className="text-[#A08C5A]" />
                   <span className="text-sm text-[#1E2D4D]">{item}</span>
-                  <ArrowRight size={14} className="ml-auto text-gray-400" />
+                  <ArrowRight size={14} className="ml-auto text-[#1E2D4D]/30" />
                 </div>
               ))}
             </div>

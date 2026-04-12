@@ -89,7 +89,7 @@ export function CaliforniaCompliance() {
 
       <div className="min-h-screen bg-[#FAF7F0]">
         {/* Header */}
-        <header className="bg-white border-b border-gray-200">
+        <header className="bg-white border-b border-[#1E2D4D]/10">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <Link to="/" className="text-sm font-semibold tracking-wide" style={{ color: '#1E2D4D' }}>
               EvidLY
@@ -99,7 +99,7 @@ export function CaliforniaCompliance() {
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Breadcrumb */}
-          <nav className="text-sm text-gray-500 mb-6 flex items-center gap-1">
+          <nav className="text-sm text-[#1E2D4D]/50 mb-6 flex items-center gap-1">
             <Link to="/" className="hover:text-gray-700">Home</Link>
             <ChevronRight className="w-3.5 h-3.5" />
             <span className="text-gray-900 font-medium">California</span>
@@ -107,15 +107,15 @@ export function CaliforniaCompliance() {
 
           {/* Page header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-[#1E2D4D] mb-3">
+            <h1 className="text-3xl font-bold tracking-tight text-[#1E2D4D] mb-3">
               California Food Safety Compliance by County
             </h1>
-            <p className="text-lg text-gray-600 max-w-3xl">
+            <p className="text-lg text-[#1E2D4D]/70 max-w-3xl">
               Every county in California has its own food safety enforcement agency, grading system, and inspection methodology.
               Understanding your local requirements is the first step to passing inspections.
             </p>
             {!loading && (
-              <div className="flex flex-wrap gap-4 mt-4 text-sm text-gray-500">
+              <div className="flex flex-wrap gap-4 mt-4 text-sm text-[#1E2D4D]/50">
                 <span className="flex items-center gap-1.5">
                   <Building2 className="w-4 h-4" />
                   {jurisdictions.length} jurisdictions
@@ -130,7 +130,7 @@ export function CaliforniaCompliance() {
 
           {loading ? (
             <div className="flex items-center justify-center py-20">
-              <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+              <Loader2 className="w-8 h-8 animate-spin text-[#1E2D4D]/30" />
             </div>
           ) : error ? (
             <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-red-800">
@@ -147,8 +147,8 @@ export function CaliforniaCompliance() {
                   <section key={tier}>
                     <div className="flex items-baseline gap-3 mb-4">
                       <h2 className="text-xl font-semibold text-[#1E2D4D]">{tierInfo.label}</h2>
-                      <span className="text-sm text-gray-500">{tierInfo.description}</span>
-                      <span className="text-sm text-gray-400">({items.length})</span>
+                      <span className="text-sm text-[#1E2D4D]/50">{tierInfo.description}</span>
+                      <span className="text-sm text-[#1E2D4D]/30">({items.length})</span>
                     </div>
                     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                       {items.map(j => {
@@ -157,16 +157,16 @@ export function CaliforniaCompliance() {
                           <Link
                             key={j.id}
                             to={`/compliance/california/${toSlug(j.county)}`}
-                            className="bg-white border border-gray-200 rounded-xl p-4 hover:border-gray-300 transition-all group"
+                            className="bg-white border border-[#1E2D4D]/10 rounded-xl p-4 hover:border-gray-300 transition-all group"
                           >
                             <div className="flex items-start justify-between mb-2">
                               <h3 className="font-semibold text-[#1E2D4D] group-hover:text-[#1E2D4D] transition-colors">
                                 {j.county} County
-                                {j.city && <span className="text-sm font-normal text-gray-500 ml-1">({j.city})</span>}
+                                {j.city && <span className="text-sm font-normal text-[#1E2D4D]/50 ml-1">({j.city})</span>}
                               </h3>
-                              <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-[#1E2D4D] mt-0.5 flex-shrink-0" />
+                              <ChevronRight className="w-4 h-4 text-[#1E2D4D]/30 group-hover:text-[#1E2D4D] mt-0.5 flex-shrink-0" />
                             </div>
-                            <p className="text-sm text-gray-600 mb-3 line-clamp-1">{j.agency_name}</p>
+                            <p className="text-sm text-[#1E2D4D]/70 mb-3 line-clamp-1">{j.agency_name}</p>
                             <div className="flex flex-wrap gap-2">
                               <span
                                 className="text-xs font-medium px-2 py-0.5 rounded-full"
@@ -175,14 +175,14 @@ export function CaliforniaCompliance() {
                                 {badge.label}
                               </span>
                               {j.facility_count && (
-                                <span className="text-xs text-gray-500 flex items-center gap-1">
+                                <span className="text-xs text-[#1E2D4D]/50 flex items-center gap-1">
                                   <Building2 className="w-3 h-3" />
                                   {j.facility_count.toLocaleString()}
                                 </span>
                               )}
                             </div>
                             {j.fire_ahj_name && (
-                              <p className="text-xs text-gray-400 mt-2 flex items-center gap-1">
+                              <p className="text-xs text-[#1E2D4D]/30 mt-2 flex items-center gap-1">
                                 <Flame className="w-3 h-3" />
                                 {j.fire_ahj_name}
                               </p>
@@ -200,7 +200,7 @@ export function CaliforniaCompliance() {
           {/* CTA section */}
           <div className="mt-16 rounded-xl p-8 text-center" style={{ backgroundColor: '#1E2D4D' }}>
             <Shield className="w-10 h-10 mx-auto mb-3 text-white/80" />
-            <h2 className="text-2xl font-bold text-white mb-2">
+            <h2 className="text-2xl font-bold tracking-tight text-white mb-2">
               Get compliance monitoring for your kitchen
             </h2>
             <p className="text-white/70 mb-6 max-w-lg mx-auto">
@@ -226,7 +226,7 @@ export function CaliforniaCompliance() {
           </div>
 
           {/* Footer */}
-          <footer className="mt-12 pt-8 border-t border-gray-200 text-center text-sm text-gray-500 pb-8">
+          <footer className="mt-12 pt-8 border-t border-[#1E2D4D]/10 text-center text-sm text-[#1E2D4D]/50 pb-8">
             <p>Data sourced from California Department of Public Health and county enforcement agencies.</p>
             <div className="flex justify-center gap-4 mt-3">
               <Link to="/terms" className="hover:text-gray-700">Terms</Link>

@@ -91,7 +91,7 @@ export function ReportGeneratorPage() {
                         <Calendar className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5" style={{ color: TEXT_TERTIARY }} />
                         <input
                           type="date"
-                          className="w-full pl-8 pr-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/30"
+                          className="w-full pl-8 pr-3 py-2 text-sm rounded-lg border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30"
                           style={{ borderColor: CARD_BORDER, color: NAVY }}
                           onChange={e => updateParam(p.key, { ...(params[p.key] as Record<string, string> || {}), start: e.target.value })}
                         />
@@ -101,7 +101,7 @@ export function ReportGeneratorPage() {
                         <Calendar className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5" style={{ color: TEXT_TERTIARY }} />
                         <input
                           type="date"
-                          className="w-full pl-8 pr-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/30"
+                          className="w-full pl-8 pr-3 py-2 text-sm rounded-lg border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30"
                           style={{ borderColor: CARD_BORDER, color: NAVY }}
                           onChange={e => updateParam(p.key, { ...(params[p.key] as Record<string, string> || {}), end: e.target.value })}
                         />
@@ -111,7 +111,7 @@ export function ReportGeneratorPage() {
 
                   {p.type === 'select' && (
                     <select
-                      className="w-full px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/30"
+                      className="w-full px-3 py-2 text-sm rounded-lg border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30"
                       style={{ borderColor: CARD_BORDER, color: NAVY }}
                       onChange={e => updateParam(p.key, e.target.value)}
                     >
@@ -121,7 +121,7 @@ export function ReportGeneratorPage() {
 
                   {(p.type === 'multiSelect' || p.type === 'status') && (
                     <select
-                      className="w-full px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/30"
+                      className="w-full px-3 py-2 text-sm rounded-lg border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30"
                       style={{ borderColor: CARD_BORDER, color: NAVY }}
                       onChange={e => updateParam(p.key, [e.target.value])}
                     >

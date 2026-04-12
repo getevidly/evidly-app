@@ -103,8 +103,8 @@ export default function JurisdictionIntelligence() {
       <AdminBreadcrumb crumbs={[{ label: 'Jurisdiction Intelligence' }]} />
 
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-[#1E2D4D]">Jurisdiction Intelligence</h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">Jurisdiction Intelligence</h1>
+        <p className="text-sm text-[#1E2D4D]/50 mt-1">
           Inspection methodology changes, scoring updates, and policy shifts across all 62 CA EHDs + Fire AHJs
         </p>
       </div>
@@ -120,7 +120,7 @@ export default function JurisdictionIntelligence() {
         <select
           value={filterCounty}
           onChange={e => setFilterCounty(e.target.value)}
-          className="border border-gray-200 rounded-lg px-3 py-2 text-sm"
+          className="border border-[#1E2D4D]/10 rounded-lg px-3 py-2 text-sm"
         >
           <option value="">All Counties</option>
           {counties.map(c => <option key={c} value={c}>{c}</option>)}
@@ -143,8 +143,8 @@ export default function JurisdictionIntelligence() {
 
       {filtered.length === 0 ? (
         <div className="text-center py-16">
-          <p className="text-sm font-semibold text-gray-600 mb-2">No jurisdiction updates yet</p>
-          <p className="text-xs text-gray-400">
+          <p className="text-sm font-semibold text-[#1E2D4D]/70 mb-2">No jurisdiction updates yet</p>
+          <p className="text-xs text-[#1E2D4D]/30">
             Crawler monitors all 62 CA EHDs + Fire AHJs for inspection methodology and scoring changes.
           </p>
         </div>
@@ -154,7 +154,7 @@ export default function JurisdictionIntelligence() {
             const pc = PILLAR_BADGE[item.pillar] || PILLAR_BADGE.both;
             const meta = jurisdictionMeta[item.jurisdiction_name] || jurisdictionMeta[item.jurisdiction_key];
             return (
-              <div key={item.id} className="bg-white rounded-xl border border-gray-200 p-6">
+              <div key={item.id} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex gap-2 mb-2 flex-wrap">
@@ -165,11 +165,11 @@ export default function JurisdictionIntelligence() {
                         className="text-xs px-2 py-0.5 rounded-full font-medium">
                         {item.pillar.replace(/_/g, ' ')}
                       </span>
-                      <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full">
+                      <span className="text-xs px-2 py-0.5 bg-gray-100 text-[#1E2D4D]/70 rounded-full">
                         {item.update_type.replace(/_/g, ' ')}
                       </span>
                       {item.published && (
-                        <span className="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-medium">
+                        <span className="text-xs px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full font-medium">
                           Published
                         </span>
                       )}
@@ -181,9 +181,9 @@ export default function JurisdictionIntelligence() {
                     </div>
                     <p className="font-semibold text-sm mb-1" style={{ color: NAVY }}>{item.title}</p>
                     {item.description && (
-                      <p className="text-xs text-gray-500 line-clamp-2 mb-2">{item.description}</p>
+                      <p className="text-xs text-[#1E2D4D]/50 line-clamp-2 mb-2">{item.description}</p>
                     )}
-                    <div className="flex gap-4 text-xs text-gray-400">
+                    <div className="flex gap-4 text-xs text-[#1E2D4D]/30">
                       {item.county && <span>{item.county} County</span>}
                       {meta?.scoring_type && <span>Scoring: {meta.scoring_type.replace(/_/g, ' ')}</span>}
                       {meta?.confidence_score != null && <span>Confidence: {meta.confidence_score}%</span>}

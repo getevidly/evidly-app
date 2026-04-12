@@ -125,7 +125,7 @@ export default function EventLog() {
       <AdminBreadcrumb crumbs={[{ label: 'Event Log' }]} />
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Event Log</h1>
+          <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Event Log</h1>
           <p style={{ fontSize: 13, color: TEXT_SEC, marginTop: 4 }}>
             {totalCount !== null ? `${totalCount.toLocaleString()} events` : '—'}
           </p>

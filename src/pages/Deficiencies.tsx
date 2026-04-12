@@ -165,7 +165,7 @@ export function Deficiencies() {
   const StatCard = ({ label, value, sub, accent }: { label: string; value: number; sub?: string; accent?: string }) => (
     <div className="rounded-xl border p-4 text-center" style={{ backgroundColor: '#FFFFFF', borderColor: '#D1D9E6', boxShadow: '0 1px 3px rgba(11,22,40,.06)' }}>
       <p className="text-sm font-medium" style={{ color: '#6B7F96' }}>{label}</p>
-      <p className="text-2xl font-bold mt-1" style={{ color: accent || '#0B1628' }}>{value}</p>
+      <p className="text-2xl font-bold tracking-tight mt-1" style={{ color: accent || '#0B1628' }}>{value}</p>
       {sub && <p className="text-xs mt-0.5" style={{ color: '#dc2626' }}>{sub}</p>}
     </div>
   );
@@ -177,7 +177,7 @@ export function Deficiencies() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold" style={{ color: '#0B1628' }}>Deficiencies</h1>
+          <h1 className="text-2xl font-bold tracking-tight" style={{ color: '#0B1628' }}>Deficiencies</h1>
           <p className="text-sm mt-1" style={{ color: '#3D5068' }}>
             Compliance code violations found during service visits and inspections
           </p>
@@ -204,7 +204,7 @@ export function Deficiencies() {
         <select
           value={statusFilter}
           onChange={(e) => setFilter('status', e.target.value)}
-          className="px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+          className="px-3 py-2 border rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
           style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
         >
           <option value="all">All Statuses</option>
@@ -218,7 +218,7 @@ export function Deficiencies() {
         <select
           value={severityFilter}
           onChange={(e) => setFilter('severity', e.target.value)}
-          className="px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+          className="px-3 py-2 border rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
           style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
         >
           <option value="all">All Severities</option>
@@ -235,7 +235,7 @@ export function Deficiencies() {
             value={searchQuery}
             onChange={(e) => setFilter('q', e.target.value)}
             placeholder="Search deficiencies..."
-            className="w-full pl-9 pr-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+            className="w-full pl-9 pr-3 py-2 border rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
             style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
           />
         </div>
@@ -243,7 +243,7 @@ export function Deficiencies() {
         <select
           value={sortBy}
           onChange={(e) => setFilter('sort', e.target.value)}
-          className="px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+          className="px-3 py-2 border rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
           style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
         >
           <option value="severity">Sort: Severity</option>

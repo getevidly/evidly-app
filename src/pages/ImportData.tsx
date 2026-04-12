@@ -341,7 +341,7 @@ export function ImportData() {
             {i > 0 && (
               <div
                 className={`w-12 h-0.5 ${
-                  isCompleted ? 'bg-green-500' : 'bg-gray-200'
+                  isCompleted ? 'bg-green-500' : 'bg-[#1E2D4D]/8'
                 }`}
               />
             )}
@@ -352,7 +352,7 @@ export function ImportData() {
                     ? 'bg-green-500 text-white'
                     : isCurrent
                     ? 'bg-[#d4af37] text-white'
-                    : 'bg-gray-200 text-gray-500'
+                    : 'bg-gray-200 text-[#1E2D4D]/50'
                 }`}
               >
                 {isCompleted ? <Check className="w-4 h-4" /> : stepNum}
@@ -361,7 +361,7 @@ export function ImportData() {
                 className={`text-xs whitespace-nowrap ${
                   isCurrent
                     ? 'text-[#1E2D4D] font-semibold'
-                    : 'text-gray-400'
+                    : 'text-[#1E2D4D]/30'
                 }`}
               >
                 {label}
@@ -385,7 +385,7 @@ export function ImportData() {
         <h2 className="text-lg font-bold text-[#1E2D4D] mb-1">
           What would you like to import?
         </h2>
-        <p className="text-sm text-gray-500 mb-6">
+        <p className="text-sm text-[#1E2D4D]/50 mb-6">
           Choose a data type to get started with your import.
         </p>
 
@@ -401,7 +401,7 @@ export function ImportData() {
                 className={`text-left p-5 rounded-xl border bg-white shadow-sm transition-all hover:shadow-md hover:border-[#d4af37] ${
                   dataType === s.dataType
                     ? 'border-[#d4af37] ring-2 ring-[#d4af37]/30'
-                    : 'border-gray-200'
+                    : 'border-[#1E2D4D]/10'
                 }`}
               >
                 <div className="flex items-center gap-3 mb-2">
@@ -410,7 +410,7 @@ export function ImportData() {
                   </div>
                   <h3 className="font-semibold text-[#1E2D4D]">{s.label}</h3>
                 </div>
-                <p className="text-sm text-gray-500 leading-relaxed">
+                <p className="text-sm text-[#1E2D4D]/50 leading-relaxed">
                   {s.description}
                 </p>
               </button>
@@ -432,7 +432,7 @@ export function ImportData() {
           <h2 className="text-lg font-bold text-[#1E2D4D] mb-1">
             Upload {schema?.label} Data
           </h2>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-[#1E2D4D]/50">
             Upload a CSV or Excel file with your {schema?.label?.toLowerCase()} data, or
             download our template first.
           </p>
@@ -479,18 +479,18 @@ export function ImportData() {
         className={`border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-colors ${
           dragOver
             ? 'border-[#d4af37] bg-[#d4af37]/5'
-            : 'border-gray-300 hover:border-gray-400 bg-white'
+            : 'border-[#1E2D4D]/15 hover:border-gray-400 bg-white'
         }`}
       >
         <FileUp
           className={`w-12 h-12 mx-auto mb-4 ${
-            dragOver ? 'text-[#d4af37]' : 'text-gray-400'
+            dragOver ? 'text-[#d4af37]' : 'text-[#1E2D4D]/30'
           }`}
         />
-        <p className="text-base font-medium text-gray-700 mb-1">
+        <p className="text-base font-medium text-[#1E2D4D]/80 mb-1">
           Drag a file here or click to browse
         </p>
-        <p className="text-sm text-gray-400">Accepts .csv, .xlsx files up to 10MB</p>
+        <p className="text-sm text-[#1E2D4D]/30">Accepts .csv, .xlsx files up to 10MB</p>
         <input
           ref={fileInputRef}
           type="file"
@@ -514,13 +514,13 @@ export function ImportData() {
         <h2 className="text-lg font-bold text-[#1E2D4D] mb-1">
           Preview &amp; Validate
         </h2>
-        <p className="text-sm text-gray-500 mb-4">
+        <p className="text-sm text-[#1E2D4D]/50 mb-4">
           Review your data before importing. File: <strong>{fileName}</strong>
         </p>
 
         {/* Summary bar */}
-        <div className="flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-200 mb-4">
-          <span className="text-sm font-medium text-gray-700">
+        <div className="flex items-center gap-4 p-4 bg-white rounded-xl border border-[#1E2D4D]/10 mb-4">
+          <span className="text-sm font-medium text-[#1E2D4D]/80">
             {validation.total} rows:
           </span>
           <span className="flex items-center gap-1 text-sm text-green-600 font-medium">
@@ -538,18 +538,18 @@ export function ImportData() {
         </div>
 
         {/* Table */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mb-4">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden mb-4">
           <div className="overflow-x-auto max-h-[400px] overflow-y-auto">
             <table className="w-full text-sm">
               <thead className="bg-gray-50 sticky top-0 z-10">
                 <tr>
-                  <th className="px-3 py-2.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200 w-16">
+                  <th className="px-3 py-2.5 text-left text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wider border-b border-[#1E2D4D]/10 w-16">
                     Row
                   </th>
                   {schema.columns.map((col) => (
                     <th
                       key={col.field}
-                      className="px-3 py-2.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200 whitespace-nowrap"
+                      className="px-3 py-2.5 text-left text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wider border-b border-[#1E2D4D]/10 whitespace-nowrap"
                     >
                       {col.header}
                       {col.required && (
@@ -559,7 +559,7 @@ export function ImportData() {
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-[#1E2D4D]/5">
                 {validation.results.map((result, idx) => {
                   const row = parsedRows[idx] || {};
                   const bgClass =
@@ -582,7 +582,7 @@ export function ImportData() {
                           <span
                             className={`w-2 h-2 rounded-full flex-shrink-0 ${dotColor}`}
                           />
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-[#1E2D4D]/50">
                             {result.row}
                           </span>
                         </div>
@@ -593,7 +593,7 @@ export function ImportData() {
                         return (
                           <td
                             key={col.field}
-                            className="px-3 py-2 text-gray-700 whitespace-nowrap max-w-[200px] truncate"
+                            className="px-3 py-2 text-[#1E2D4D]/80 whitespace-nowrap max-w-[200px] truncate"
                             title={value}
                           >
                             {value || (
@@ -618,7 +618,7 @@ export function ImportData() {
               key={r.row}
               className="mb-2 px-4 py-2 rounded-xl border border-gray-100 bg-white text-xs"
             >
-              <span className="font-medium text-gray-600">Row {r.row}:</span>
+              <span className="font-medium text-[#1E2D4D]/70">Row {r.row}:</span>
               {r.errors.map((err, i) => (
                 <span key={`e${i}`} className="ml-2 text-red-600">
                   {err}
@@ -634,12 +634,12 @@ export function ImportData() {
 
         {/* Skip errors checkbox + action buttons */}
         <div className="flex items-center justify-between mt-6">
-          <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer select-none">
+          <label className="flex items-center gap-2 text-sm text-[#1E2D4D]/70 cursor-pointer select-none">
             <input
               type="checkbox"
               checked={skipErrors}
               onChange={(e) => setSkipErrors(e.target.checked)}
-              className="w-4 h-4 rounded border-gray-300 text-[#1E2D4D] focus:ring-[#1E2D4D]"
+              className="w-4 h-4 rounded border-[#1E2D4D]/15 text-[#1E2D4D] focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
             />
             Skip rows with errors
           </label>
@@ -647,7 +647,7 @@ export function ImportData() {
           <div className="flex items-center gap-3">
             <button
               onClick={goBack}
-              className="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-[#1E2D4D]/70 bg-white border border-[#1E2D4D]/15 rounded-xl hover:bg-gray-50 transition-colors"
             >
               Back
             </button>
@@ -682,11 +682,11 @@ export function ImportData() {
         <div className="mt-6">
           <div className="flex items-center gap-3 mb-3">
             <Loader2 className="w-5 h-5 text-[#d4af37] animate-spin" />
-            <span className="text-sm text-gray-600">
+            <span className="text-sm text-[#1E2D4D]/70">
               Processing records... {importProgress}%
             </span>
           </div>
-          <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+          <div className="w-full h-3 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
             <div
               className="h-full bg-[#d4af37] rounded-full transition-all duration-500 ease-out"
               style={{ width: `${importProgress}%` }}
@@ -697,7 +697,7 @@ export function ImportData() {
 
       {!importing && importResult && (
         <div className="mt-6">
-          <div className="p-6 bg-white rounded-xl border border-gray-200 text-center">
+          <div className="p-6 bg-white rounded-xl border border-[#1E2D4D]/10 text-center">
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center">
               <CheckCircle2 className="w-8 h-8 text-green-600" />
             </div>
@@ -705,7 +705,7 @@ export function ImportData() {
               {importResult.success} Records Imported
             </h3>
             {importResult.failed > 0 && (
-              <p className="text-sm text-gray-500 mb-1">
+              <p className="text-sm text-[#1E2D4D]/50 mb-1">
                 {importResult.failed} rows skipped due to errors
               </p>
             )}
@@ -714,7 +714,7 @@ export function ImportData() {
                 {importResult.invitationsSent} invitation{importResult.invitationsSent !== 1 ? 's' : ''} sent
               </p>
             )}
-            <p className="text-sm text-gray-500 mb-6">
+            <p className="text-sm text-[#1E2D4D]/50 mb-6">
               Your {schema?.label?.toLowerCase()} data has been successfully
               imported.{dataType === 'team' && importResult.invitationsSent
                 ? ' Team members with email addresses have been sent invitations.'
@@ -732,7 +732,7 @@ export function ImportData() {
                   setImportResult(null);
                   setImportProgress(0);
                 }}
-                className="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors"
+                className="px-4 py-2 text-sm font-medium text-[#1E2D4D]/70 bg-white border border-[#1E2D4D]/15 rounded-xl hover:bg-gray-50 transition-colors"
               >
                 Import More Data
               </button>
@@ -776,7 +776,7 @@ export function ImportData() {
             <h1 className="text-xl font-bold text-[#1E2D4D]">
               Bulk Data Import
             </h1>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-[#1E2D4D]/50">
               Import equipment, vendors, team members, and more from CSV or Excel files.
             </p>
           </div>
@@ -789,7 +789,7 @@ export function ImportData() {
         {step > 1 && step < 4 && (
           <button
             onClick={goBack}
-            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#1E2D4D] mb-4 transition-colors"
+            className="flex items-center gap-1.5 text-sm text-[#1E2D4D]/50 hover:text-[#1E2D4D] mb-4 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back
@@ -798,7 +798,7 @@ export function ImportData() {
         {step === 4 && !importing && !importResult && (
           <button
             onClick={goBack}
-            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#1E2D4D] mb-4 transition-colors"
+            className="flex items-center gap-1.5 text-sm text-[#1E2D4D]/50 hover:text-[#1E2D4D] mb-4 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back

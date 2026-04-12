@@ -316,7 +316,7 @@ export function MigrationWizard() {
 
   // ─── Render ───
   return (
-    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
+    <div className="bg-white rounded-2xl shadow-lg border border-[#1E2D4D]/10 overflow-hidden">
       {/* Step indicator */}
       <div className="px-6 py-5 border-b border-gray-100" style={{ background: '#FAFBFC' }}>
         <div className="flex items-center justify-between max-w-lg mx-auto">
@@ -364,7 +364,7 @@ export function MigrationWizard() {
             <h3 className="text-xl font-bold mb-1" style={{ color: NAVY }}>
               Where are you migrating from?
             </h3>
-            <p className="text-gray-500 mb-6">
+            <p className="text-[#1E2D4D]/50 mb-6">
               Select your current platform so we can provide specific export instructions.
             </p>
 
@@ -405,7 +405,7 @@ export function MigrationWizard() {
                     <p className="font-semibold text-sm mb-1" style={{ color: NAVY }}>
                       Export Instructions
                     </p>
-                    <p className="text-sm text-gray-700">{exportInstructions[platform]}</p>
+                    <p className="text-sm text-[#1E2D4D]/80">{exportInstructions[platform]}</p>
                   </div>
                 </div>
               </div>
@@ -419,7 +419,7 @@ export function MigrationWizard() {
             <h3 className="text-xl font-bold mb-1" style={{ color: NAVY }}>
               Upload your data
             </h3>
-            <p className="text-gray-500 mb-6">
+            <p className="text-[#1E2D4D]/50 mb-6">
               Drop your CSV file below. We will auto-detect your columns.
             </p>
 
@@ -448,10 +448,10 @@ export function MigrationWizard() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                 </svg>
 
-                <p className="text-gray-700 font-medium mb-1">
+                <p className="text-[#1E2D4D]/80 font-medium mb-1">
                   Drag and drop your CSV file here
                 </p>
-                <p className="text-gray-400 text-sm">
+                <p className="text-[#1E2D4D]/30 text-sm">
                   or click to browse your files
                 </p>
               </div>
@@ -492,14 +492,14 @@ export function MigrationWizard() {
                   <h4 className="text-sm font-bold mb-3" style={{ color: NAVY }}>
                     Column Mapping
                   </h4>
-                  <p className="text-sm text-gray-500 mb-4">
+                  <p className="text-sm text-[#1E2D4D]/50 mb-4">
                     We auto-detected your columns. Adjust any that are incorrect.
                   </p>
 
                   <div className="grid sm:grid-cols-2 gap-4">
                     {Object.entries(FIELD_LABELS).map(([field, label]) => (
                       <div key={field}>
-                        <label className="block text-xs font-semibold text-gray-600 mb-1.5">
+                        <label className="block text-xs font-semibold text-[#1E2D4D]/70 mb-1.5">
                           {label}
                           {(field === 'date' || field === 'equipment' || field === 'temperature') && (
                             <span className="text-red-500 ml-0.5">*</span>
@@ -508,7 +508,7 @@ export function MigrationWizard() {
                         <select
                           value={columnMapping[field] || ''}
                           onChange={(e) => updateColumnMapping(field, e.target.value)}
-                          className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 bg-white"
+                          className="w-full px-3 py-2 rounded-lg border border-[#1E2D4D]/15 text-sm focus-visible:outline-none focus-visible:ring-2 bg-white"
                           style={{ '--tw-ring-color': PRIMARY }}
                         >
                           <option value="">-- Select column --</option>
@@ -529,12 +529,12 @@ export function MigrationWizard() {
                     <h4 className="text-sm font-bold mb-3" style={{ color: NAVY }}>
                       Preview (first 5 rows)
                     </h4>
-                    <div className="overflow-x-auto rounded-lg border border-gray-200">
+                    <div className="overflow-x-auto rounded-lg border border-[#1E2D4D]/10">
                       <table className="w-full text-sm">
                         <thead>
                           <tr className="bg-[#FAF7F0]">
                             {csvHeaders.map((h) => (
-                              <th key={h} className="text-left px-3 py-2 text-xs font-semibold text-gray-600 whitespace-nowrap">
+                              <th key={h} className="text-left px-3 py-2 text-xs font-semibold text-[#1E2D4D]/70 whitespace-nowrap">
                                 {h}
                               </th>
                             ))}
@@ -544,7 +544,7 @@ export function MigrationWizard() {
                           {previewRows.map((row, i) => (
                             <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-[#FAF7F0]'}>
                               {csvHeaders.map((h) => (
-                                <td key={h} className="px-3 py-2 text-gray-700 whitespace-nowrap max-w-[200px] truncate">
+                                <td key={h} className="px-3 py-2 text-[#1E2D4D]/80 whitespace-nowrap max-w-[200px] truncate">
                                   {row[h] || '\u2014'}
                                 </td>
                               ))}
@@ -582,7 +582,7 @@ export function MigrationWizard() {
             <h3 className="text-xl font-bold mb-1" style={{ color: NAVY }}>
               Map your equipment
             </h3>
-            <p className="text-gray-500 mb-6">
+            <p className="text-[#1E2D4D]/50 mb-6">
               Match each piece of equipment from your CSV to EvidLY. We pre-filled thresholds based on equipment type.
             </p>
 
@@ -590,12 +590,12 @@ export function MigrationWizard() {
               {equipmentMap.map((eq, i) => (
                 <div
                   key={eq.csvName}
-                  className="rounded-lg border border-gray-200 p-4 hover:border-gray-300 transition-colors"
+                  className="rounded-lg border border-[#1E2D4D]/10 p-4 hover:border-gray-300 transition-colors"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-start gap-4">
                     {/* CSV name */}
                     <div className="flex-1">
-                      <label className="block text-xs font-semibold text-gray-500 mb-1">
+                      <label className="block text-xs font-semibold text-[#1E2D4D]/50 mb-1">
                         CSV Equipment Name
                       </label>
                       <p className="font-medium text-gray-900">{eq.csvName}</p>
@@ -603,13 +603,13 @@ export function MigrationWizard() {
 
                     {/* Action */}
                     <div className="flex-1">
-                      <label className="block text-xs font-semibold text-gray-500 mb-1">
+                      <label className="block text-xs font-semibold text-[#1E2D4D]/50 mb-1">
                         Action
                       </label>
                       <select
                         value={eq.action}
                         onChange={(e) => updateEquipment(i, { action: e.target.value })}
-                        className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 bg-white"
+                        className="w-full px-3 py-2 rounded-lg border border-[#1E2D4D]/15 text-sm focus-visible:outline-none focus-visible:ring-2 bg-white"
                         style={{ '--tw-ring-color': PRIMARY }}
                       >
                         <option value="create_new">Create New Equipment</option>
@@ -619,7 +619,7 @@ export function MigrationWizard() {
 
                     {/* Equipment type */}
                     <div className="flex-1">
-                      <label className="block text-xs font-semibold text-gray-500 mb-1">
+                      <label className="block text-xs font-semibold text-[#1E2D4D]/50 mb-1">
                         Type
                       </label>
                       <select
@@ -633,7 +633,7 @@ export function MigrationWizard() {
                             maxTemp: thresholds.max,
                           });
                         }}
-                        className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 bg-white"
+                        className="w-full px-3 py-2 rounded-lg border border-[#1E2D4D]/15 text-sm focus-visible:outline-none focus-visible:ring-2 bg-white"
                         style={{ '--tw-ring-color': PRIMARY }}
                       >
                         <option value="cooler">Cooler</option>
@@ -647,26 +647,26 @@ export function MigrationWizard() {
                     {/* Thresholds */}
                     <div className="flex gap-3">
                       <div>
-                        <label className="block text-xs font-semibold text-gray-500 mb-1">
+                        <label className="block text-xs font-semibold text-[#1E2D4D]/50 mb-1">
                           Min (\u00B0F)
                         </label>
                         <input
                           type="number"
                           value={eq.minTemp}
                           onChange={(e) => updateEquipment(i, { minTemp: Number(e.target.value) })}
-                          className="w-20 px-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2"
+                          className="w-20 px-3 py-2 rounded-lg border border-[#1E2D4D]/15 text-sm focus-visible:outline-none focus-visible:ring-2"
                           style={{ '--tw-ring-color': PRIMARY }}
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-gray-500 mb-1">
+                        <label className="block text-xs font-semibold text-[#1E2D4D]/50 mb-1">
                           Max (\u00B0F)
                         </label>
                         <input
                           type="number"
                           value={eq.maxTemp}
                           onChange={(e) => updateEquipment(i, { maxTemp: Number(e.target.value) })}
-                          className="w-20 px-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2"
+                          className="w-20 px-3 py-2 rounded-lg border border-[#1E2D4D]/15 text-sm focus-visible:outline-none focus-visible:ring-2"
                           style={{ '--tw-ring-color': PRIMARY }}
                         />
                       </div>
@@ -677,7 +677,7 @@ export function MigrationWizard() {
             </div>
 
             {equipmentMap.length === 0 && (
-              <div className="text-center py-10 text-gray-400">
+              <div className="text-center py-10 text-[#1E2D4D]/30">
                 <p>No equipment found in your CSV. Go back and check your column mapping.</p>
               </div>
             )}
@@ -690,33 +690,33 @@ export function MigrationWizard() {
             <h3 className="text-xl font-bold mb-1" style={{ color: NAVY }}>
               Import preview
             </h3>
-            <p className="text-gray-500 mb-6">
+            <p className="text-[#1E2D4D]/50 mb-6">
               Review your import before we bring everything into EvidLY.
             </p>
 
             {/* Summary cards */}
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-              <div className="rounded-lg border border-gray-200 p-4">
-                <p className="text-xs font-semibold text-gray-500 mb-1">Total Records</p>
-                <p className="text-2xl font-bold" style={{ color: NAVY }}>
+              <div className="rounded-lg border border-[#1E2D4D]/10 p-4">
+                <p className="text-xs font-semibold text-[#1E2D4D]/50 mb-1">Total Records</p>
+                <p className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>
                   {summary.total.toLocaleString()}
                 </p>
               </div>
-              <div className="rounded-lg border border-gray-200 p-4">
-                <p className="text-xs font-semibold text-gray-500 mb-1">Date Range</p>
+              <div className="rounded-lg border border-[#1E2D4D]/10 p-4">
+                <p className="text-xs font-semibold text-[#1E2D4D]/50 mb-1">Date Range</p>
                 <p className="text-sm font-bold" style={{ color: NAVY }}>
                   {summary.dateRange}
                 </p>
               </div>
-              <div className="rounded-lg border border-gray-200 p-4">
-                <p className="text-xs font-semibold text-gray-500 mb-1">Equipment</p>
-                <p className="text-2xl font-bold" style={{ color: NAVY }}>
+              <div className="rounded-lg border border-[#1E2D4D]/10 p-4">
+                <p className="text-xs font-semibold text-[#1E2D4D]/50 mb-1">Equipment</p>
+                <p className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>
                   {equipmentMap.filter((e) => e.action !== 'skip').length}
                 </p>
               </div>
-              <div className="rounded-lg border border-gray-200 p-4">
-                <p className="text-xs font-semibold text-gray-500 mb-1">Est. HACCP Records</p>
-                <p className="text-2xl font-bold" style={{ color: NAVY }}>
+              <div className="rounded-lg border border-[#1E2D4D]/10 p-4">
+                <p className="text-xs font-semibold text-[#1E2D4D]/50 mb-1">Est. HACCP Records</p>
+                <p className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>
                   {Math.ceil(summary.total * 0.12).toLocaleString()}
                 </p>
               </div>
@@ -727,25 +727,25 @@ export function MigrationWizard() {
               <h4 className="text-sm font-bold mb-3" style={{ color: NAVY }}>
                 Equipment to Import
               </h4>
-              <div className="rounded-lg border border-gray-200 overflow-hidden">
+              <div className="rounded-lg border border-[#1E2D4D]/10 overflow-hidden">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="bg-[#FAF7F0]">
-                      <th className="text-left px-4 py-2 text-xs font-semibold text-gray-600">Name</th>
-                      <th className="text-left px-4 py-2 text-xs font-semibold text-gray-600">Type</th>
-                      <th className="text-left px-4 py-2 text-xs font-semibold text-gray-600">Range</th>
-                      <th className="text-left px-4 py-2 text-xs font-semibold text-gray-600">Action</th>
+                      <th className="text-left px-4 py-2 text-xs font-semibold text-[#1E2D4D]/70">Name</th>
+                      <th className="text-left px-4 py-2 text-xs font-semibold text-[#1E2D4D]/70">Type</th>
+                      <th className="text-left px-4 py-2 text-xs font-semibold text-[#1E2D4D]/70">Range</th>
+                      <th className="text-left px-4 py-2 text-xs font-semibold text-[#1E2D4D]/70">Action</th>
                     </tr>
                   </thead>
                   <tbody>
                     {equipmentMap.map((eq) => (
                       <tr key={eq.csvName} className="border-t border-gray-100">
                         <td className="px-4 py-2 font-medium text-gray-900">{eq.csvName}</td>
-                        <td className="px-4 py-2 text-gray-600 capitalize">{eq.type.replace('_', ' ')}</td>
-                        <td className="px-4 py-2 text-gray-600">{eq.minTemp}\u00B0F \u2013 {eq.maxTemp}\u00B0F</td>
+                        <td className="px-4 py-2 text-[#1E2D4D]/70 capitalize">{eq.type.replace('_', ' ')}</td>
+                        <td className="px-4 py-2 text-[#1E2D4D]/70">{eq.minTemp}\u00B0F \u2013 {eq.maxTemp}\u00B0F</td>
                         <td className="px-4 py-2">
                           {eq.action === 'skip' ? (
-                            <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-500 font-medium">
+                            <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-[#1E2D4D]/50 font-medium">
                               Skipped
                             </span>
                           ) : (
@@ -795,7 +795,7 @@ export function MigrationWizard() {
                     {importProgress}%
                   </span>
                 </div>
-                <div className="w-full h-3 rounded-full bg-gray-200 overflow-hidden">
+                <div className="w-full h-3 rounded-full bg-[#1E2D4D]/8 overflow-hidden">
                   <div
                     className="h-full rounded-full transition-all duration-200"
                     style={{
@@ -839,13 +839,13 @@ export function MigrationWizard() {
               </div>
             </div>
 
-            <h3 className="text-2xl font-bold mb-2" style={{ color: NAVY }}>
+            <h3 className="text-2xl font-bold tracking-tight mb-2" style={{ color: NAVY }}>
               Migration complete!
             </h3>
-            <p className="text-gray-500 mb-2">
+            <p className="text-[#1E2D4D]/50 mb-2">
               Your compliance history is now in EvidLY.
             </p>
-            <div className="text-sm text-gray-600 mb-8 space-y-1">
+            <div className="text-sm text-[#1E2D4D]/70 mb-8 space-y-1">
               <p>
                 <span className="font-bold" style={{ color: PRIMARY }}>{summary.total.toLocaleString()}</span> temperature records imported
               </p>
@@ -878,7 +878,7 @@ export function MigrationWizard() {
             {step > 1 && (
               <button
                 onClick={goBack}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium text-[#1E2D4D]/70 hover:text-gray-900 hover:bg-gray-100 transition-colors"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />

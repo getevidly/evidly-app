@@ -219,15 +219,15 @@ export function Signup() {
         </div>
 
         <div className="flex-1 flex items-center justify-center p-6">
-          <div className="max-w-md w-full bg-white rounded-xl border border-gray-200 p-8 text-center">
+          <div className="max-w-md w-full bg-white rounded-xl border border-[#1E2D4D]/10 p-8 text-center">
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Check className="h-8 w-8 text-green-600" />
             </div>
             <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Check Your Email</h2>
-            <p className="text-gray-600 mb-4">
+            <p className="text-[#1E2D4D]/70 mb-4">
               We've sent a confirmation link to <strong>{email}</strong>. Click the link to verify your email and finish setting up your account.
             </p>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-[#1E2D4D]/50">
               Didn't receive it? Check your spam folder or{' '}
               <button onClick={() => setEmailSent(false)} className="text-[#1E2D4D] font-medium hover:underline">
                 try again
@@ -272,10 +272,10 @@ export function Signup() {
       {/* ── Main content ── */}
       <div className="flex-1 flex items-start justify-center px-4 sm:px-6 py-8">
         <div className="max-w-lg w-full">
-          <div className="bg-white rounded-xl border border-gray-200 p-8">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8">
             <div className="mb-6">
               <p className="text-center text-sm font-semibold text-[#A08C5A] mb-1">Lead with Confidence</p>
-              <h2 className="text-center text-2xl font-bold text-[#1E2D4D]">Create your account</h2>
+              <h2 className="text-center text-2xl font-bold tracking-tight text-[#1E2D4D]">Create your account</h2>
             </div>
 
             {error && (
@@ -288,7 +288,7 @@ export function Signup() {
 
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="fullName" className="block text-sm font-medium text-[#1E2D4D]/80">
                   Full Name
                 </label>
                 <input
@@ -298,12 +298,12 @@ export function Signup() {
                   required
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="mt-1 block w-full px-3 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
+                  className="mt-1 block w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
                 />
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="email" className="block text-sm font-medium text-[#1E2D4D]/80">
                   Email address
                 </label>
                 <input
@@ -314,12 +314,12 @@ export function Signup() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="mt-1 block w-full px-3 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
+                  className="mt-1 block w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
                 />
               </div>
 
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="phone" className="block text-sm font-medium text-[#1E2D4D]/80">
                   Phone
                 </label>
                 <input
@@ -330,12 +330,12 @@ export function Signup() {
                   value={phone}
                   onChange={handlePhoneChange}
                   placeholder="(555) 555-5555"
-                  className="mt-1 block w-full px-3 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
+                  className="mt-1 block w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
                 />
               </div>
 
               <div>
-                <label htmlFor="orgName" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="orgName" className="block text-sm font-medium text-[#1E2D4D]/80">
                   Organization Name
                 </label>
                 <input
@@ -345,13 +345,13 @@ export function Signup() {
                   required
                   value={orgName}
                   onChange={(e) => setOrgName(e.target.value)}
-                  className="mt-1 block w-full px-3 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
+                  className="mt-1 block w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
                 />
               </div>
 
               {/* ── County / Jurisdiction dropdown ── */}
               <div>
-                <label htmlFor="jurisdiction" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="jurisdiction" className="block text-sm font-medium text-[#1E2D4D]/80">
                   County / Jurisdiction
                 </label>
                 <select
@@ -359,7 +359,7 @@ export function Signup() {
                   name="jurisdiction"
                   value={jurisdiction}
                   onChange={(e) => setJurisdiction(e.target.value)}
-                  className="mt-1 block w-full px-3 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
+                  className="mt-1 block w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
                 >
                   <option value="">Select county...</option>
                   <optgroup label="California Counties">
@@ -377,13 +377,13 @@ export function Signup() {
                     ))}
                   </optgroup>
                 </select>
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs text-[#1E2D4D]/50">
                   Some cities operate independent health departments separate from their county.
                 </p>
               </div>
 
               <div>
-                <label htmlFor="industryType" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="industryType" className="block text-sm font-medium text-[#1E2D4D]/80">
                   Industry Type
                 </label>
                 <select
@@ -397,7 +397,7 @@ export function Signup() {
                     setIndustrySubtype('');
                     setSb1383Qualified(code === 'K12_EDUCATION');
                   }}
-                  className="mt-1 block w-full px-3 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
+                  className="mt-1 block w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
                 >
                   <option value="">Select industry...</option>
                   {Object.entries(INDUSTRY_TYPES).map(([key, industry]) => (
@@ -408,7 +408,7 @@ export function Signup() {
 
               {selectedIndustry && (
                 <div>
-                  <label htmlFor="industrySubtype" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="industrySubtype" className="block text-sm font-medium text-[#1E2D4D]/80">
                     {selectedIndustry.label} Type
                   </label>
                   <select
@@ -417,7 +417,7 @@ export function Signup() {
                     required
                     value={industrySubtype}
                     onChange={(e) => setIndustrySubtype(e.target.value)}
-                    className="mt-1 block w-full px-3 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
+                    className="mt-1 block w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
                   >
                     <option value="">Select type...</option>
                     {selectedIndustry.subtypes.map((subtype) => (
@@ -429,10 +429,10 @@ export function Signup() {
 
               {industryType && industryType !== 'K12_EDUCATION' && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">
                     Does your operation generate organic waste (food scraps, food-soiled paper) for disposal or recovery?
                   </label>
-                  <p className="text-xs text-gray-500 mb-3">
+                  <p className="text-xs text-[#1E2D4D]/50 mb-3">
                     California SB 1383 applies to most commercial food generators. Selecting yes enables the SB 1383 compliance module.
                   </p>
                   <div className="flex gap-3">
@@ -469,7 +469,7 @@ export function Signup() {
               )}
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="password" className="block text-sm font-medium text-[#1E2D4D]/80">
                   Password
                 </label>
                 <div className="relative mt-1">
@@ -481,7 +481,7 @@ export function Signup() {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="block w-full px-3 py-2.5 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
+                    className="block w-full px-3 py-2.5 pr-10 border border-[#1E2D4D]/15 rounded-lg shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
                   />
                   <button
                     type="button"
@@ -489,21 +489,21 @@ export function Signup() {
                     className="absolute inset-y-0 right-0 flex items-center pr-3"
                   >
                     {showPassword ? (
-                      <EyeOff className="h-5 w-5 text-gray-400" />
+                      <EyeOff className="h-5 w-5 text-[#1E2D4D]/30" />
                     ) : (
-                      <Eye className="h-5 w-5 text-gray-400" />
+                      <Eye className="h-5 w-5 text-[#1E2D4D]/30" />
                     )}
                   </button>
                 </div>
                 {password && (
                   <div className="mt-2">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs font-medium text-gray-700">Password Strength</span>
+                      <span className="text-xs font-medium text-[#1E2D4D]/80">Password Strength</span>
                       <span className={`text-xs font-medium ${strength.color.replace('bg-', 'text-')}`}>
                         {strength.label}
                       </span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="w-full bg-[#1E2D4D]/8 rounded-full h-2">
                       <div
                         className={`${strength.color} h-2 rounded-full transition-all duration-300`}
                         style={{ width: strength.width }}
@@ -512,23 +512,23 @@ export function Signup() {
                   </div>
                 )}
                 <div className="mt-2 space-y-1">
-                  <div className={`flex items-center text-xs ${passwordRequirements.minLength ? 'text-green-600' : 'text-gray-500'}`}>
+                  <div className={`flex items-center text-xs ${passwordRequirements.minLength ? 'text-green-600' : 'text-[#1E2D4D]/50'}`}>
                     {passwordRequirements.minLength ? <Check className="h-3 w-3 mr-1" /> : <X className="h-3 w-3 mr-1" />}
                     Minimum 12 characters
                   </div>
-                  <div className={`flex items-center text-xs ${passwordRequirements.hasUpper ? 'text-green-600' : 'text-gray-500'}`}>
+                  <div className={`flex items-center text-xs ${passwordRequirements.hasUpper ? 'text-green-600' : 'text-[#1E2D4D]/50'}`}>
                     {passwordRequirements.hasUpper ? <Check className="h-3 w-3 mr-1" /> : <X className="h-3 w-3 mr-1" />}
                     At least one uppercase letter
                   </div>
-                  <div className={`flex items-center text-xs ${passwordRequirements.hasLower ? 'text-green-600' : 'text-gray-500'}`}>
+                  <div className={`flex items-center text-xs ${passwordRequirements.hasLower ? 'text-green-600' : 'text-[#1E2D4D]/50'}`}>
                     {passwordRequirements.hasLower ? <Check className="h-3 w-3 mr-1" /> : <X className="h-3 w-3 mr-1" />}
                     At least one lowercase letter
                   </div>
-                  <div className={`flex items-center text-xs ${passwordRequirements.hasNumber ? 'text-green-600' : 'text-gray-500'}`}>
+                  <div className={`flex items-center text-xs ${passwordRequirements.hasNumber ? 'text-green-600' : 'text-[#1E2D4D]/50'}`}>
                     {passwordRequirements.hasNumber ? <Check className="h-3 w-3 mr-1" /> : <X className="h-3 w-3 mr-1" />}
                     At least one number
                   </div>
-                  <div className={`flex items-center text-xs ${passwordRequirements.hasSpecial ? 'text-green-600' : 'text-gray-500'}`}>
+                  <div className={`flex items-center text-xs ${passwordRequirements.hasSpecial ? 'text-green-600' : 'text-[#1E2D4D]/50'}`}>
                     {passwordRequirements.hasSpecial ? <Check className="h-3 w-3 mr-1" /> : <X className="h-3 w-3 mr-1" />}
                     At least one special character
                   </div>
@@ -536,7 +536,7 @@ export function Signup() {
               </div>
 
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-[#1E2D4D]/80">
                   Confirm Password
                 </label>
                 <div className="relative mt-1">
@@ -548,7 +548,7 @@ export function Signup() {
                     required
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="block w-full px-3 py-2.5 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
+                    className="block w-full px-3 py-2.5 pr-10 border border-[#1E2D4D]/15 rounded-lg shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
                   />
                   <button
                     type="button"
@@ -556,9 +556,9 @@ export function Signup() {
                     className="absolute inset-y-0 right-0 flex items-center pr-3"
                   >
                     {showConfirmPassword ? (
-                      <EyeOff className="h-5 w-5 text-gray-400" />
+                      <EyeOff className="h-5 w-5 text-[#1E2D4D]/30" />
                     ) : (
-                      <Eye className="h-5 w-5 text-gray-400" />
+                      <Eye className="h-5 w-5 text-[#1E2D4D]/30" />
                     )}
                   </button>
                 </div>
@@ -587,11 +587,11 @@ export function Signup() {
                     type="checkbox"
                     checked={termsAccepted}
                     onChange={(e) => setTermsAccepted(e.target.checked)}
-                    className="h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] border-gray-300 rounded"
+                    className="h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] border-[#1E2D4D]/15 rounded"
                   />
                 </div>
                 <div className="ml-3 text-sm">
-                  <label htmlFor="terms" className="text-gray-700">
+                  <label htmlFor="terms" className="text-[#1E2D4D]/80">
                     I agree to the{' '}
                     <a
                       href="https://getevidly.com/terms"
@@ -617,14 +617,14 @@ export function Signup() {
               <button
                 type="submit"
                 disabled={loading || !allRequirementsMet || !passwordsMatch || !industryType || !industrySubtype || !termsAccepted}
-                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-[#1E2D4D] hover:bg-[#2a3d5d] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1E2D4D] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-[#1E2D4D] hover:bg-[#2a3d5d] focus-visible:outline-none focus-visible:ring-2 focus:ring-offset-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {loading ? 'Creating account...' : 'Sign up'}
               </button>
             </form>
 
             <div className="mt-6 text-center">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-[#1E2D4D]/70">
                 Already have an account?{' '}
                 <Link to="/login" className="font-semibold text-[#1E2D4D] hover:text-[#2A3F6B]">
                   Sign in

@@ -32,7 +32,7 @@ export function RoadsideAssistanceCard({ data }: Props) {
             )}
           </div>
         </div>
-        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${data.isActive ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${data.isActive ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-[#1E2D4D]/50'}`}>
           {data.isActive ? 'Active' : 'Inactive'}
         </span>
       </div>

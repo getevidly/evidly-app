@@ -66,10 +66,10 @@ function CodeBlock({ code, language }: { code: string; language: string }) {
   return (
     <div className="relative bg-gray-900 rounded-lg overflow-hidden">
       <div className="flex items-center justify-between px-4 py-2 bg-gray-800">
-        <span className="text-xs text-gray-400 font-mono uppercase">{language}</span>
+        <span className="text-xs text-[#1E2D4D]/30 font-mono uppercase">{language}</span>
         <button
           onClick={() => { navigator.clipboard.writeText(code); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
-          className="flex items-center gap-1 text-xs text-gray-400 hover:text-white"
+          className="flex items-center gap-1 text-xs text-[#1E2D4D]/30 hover:text-white"
         >
           {copied ? <><Check className="h-3 w-3" /> Copied</> : <><Copy className="h-3 w-3" /> Copy</>}
         </button>
@@ -86,7 +86,7 @@ function GettingStartedSection() {
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Getting Started with the EvidLY API</h2>
-        <p className="text-sm text-gray-600">Build integrations that connect compliance data with your restaurant tech stack. The EvidLY API provides programmatic access to compliance scores, temperature logs, checklists, documents, and more.</p>
+        <p className="text-sm text-[#1E2D4D]/70">Build integrations that connect compliance data with your restaurant tech stack. The EvidLY API provides programmatic access to compliance scores, temperature logs, checklists, documents, and more.</p>
       </div>
 
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -139,15 +139,15 @@ function GettingStartedSection() {
         <h3 className="text-sm font-semibold text-[#1E2D4D] mb-2">Base URL</h3>
         <div className="flex items-center gap-3">
           <div className="bg-[#FAF7F0] rounded-lg px-4 py-2">
-            <code className="text-sm font-mono text-gray-700">https://api.evidly.com/v1</code>
+            <code className="text-sm font-mono text-[#1E2D4D]/80">https://api.evidly.com/v1</code>
           </div>
-          <span className="text-xs text-gray-400">(Production)</span>
+          <span className="text-xs text-[#1E2D4D]/30">(Production)</span>
         </div>
         <div className="flex items-center gap-3 mt-2">
           <div className="bg-[#FAF7F0] rounded-lg px-4 py-2">
-            <code className="text-sm font-mono text-gray-700">https://sandbox.evidly.com/v1</code>
+            <code className="text-sm font-mono text-[#1E2D4D]/80">https://sandbox.evidly.com/v1</code>
           </div>
-          <span className="text-xs text-gray-400">(Sandbox)</span>
+          <span className="text-xs text-[#1E2D4D]/30">(Sandbox)</span>
         </div>
       </div>
     </div>
@@ -159,31 +159,31 @@ function AuthenticationSection() {
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Authentication</h2>
-        <p className="text-sm text-gray-600">The EvidLY API uses OAuth 2.0 with support for both Authorization Code and Client Credentials flows.</p>
+        <p className="text-sm text-[#1E2D4D]/70">The EvidLY API uses OAuth 2.0 with support for both Authorization Code and Client Credentials flows.</p>
       </div>
 
       {/* Auth flows */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5">
+        <div className="bg-white border border-[#1E2D4D]/10 rounded-xl p-4 sm:p-5">
           <div className="flex items-center gap-2 mb-3">
             <Lock className="h-4 w-4 text-[#1E2D4D]" />
             <h3 className="font-semibold text-[#1E2D4D] text-sm">Authorization Code Flow</h3>
           </div>
-          <p className="text-xs text-gray-600 mb-3">For applications that act on behalf of a user. Requires user consent via browser redirect.</p>
-          <div className="space-y-1 text-xs text-gray-500">
+          <p className="text-xs text-[#1E2D4D]/70 mb-3">For applications that act on behalf of a user. Requires user consent via browser redirect.</p>
+          <div className="space-y-1 text-xs text-[#1E2D4D]/50">
             <div>1. Redirect user to <code className="font-mono bg-[#FAF7F0] px-1">/oauth/authorize</code></div>
             <div>2. User grants permission</div>
             <div>3. Exchange code for tokens at <code className="font-mono bg-[#FAF7F0] px-1">/oauth/token</code></div>
             <div>4. Use access token in API requests</div>
           </div>
         </div>
-        <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5">
+        <div className="bg-white border border-[#1E2D4D]/10 rounded-xl p-4 sm:p-5">
           <div className="flex items-center gap-2 mb-3">
             <Server className="h-4 w-4 text-[#1E2D4D]" />
             <h3 className="font-semibold text-[#1E2D4D] text-sm">Client Credentials Flow</h3>
           </div>
-          <p className="text-xs text-gray-600 mb-3">For server-to-server integrations that don't require user context. Simplest flow.</p>
-          <div className="space-y-1 text-xs text-gray-500">
+          <p className="text-xs text-[#1E2D4D]/70 mb-3">For server-to-server integrations that don't require user context. Simplest flow.</p>
+          <div className="space-y-1 text-xs text-[#1E2D4D]/50">
             <div>1. POST client_id + client_secret to <code className="font-mono bg-[#FAF7F0] px-1">/oauth/token</code></div>
             <div>2. Receive access token</div>
             <div>3. Use token in API requests</div>
@@ -215,7 +215,7 @@ function AuthenticationSection() {
             'read:webhooks', 'write:webhooks',
           ].map(scope => (
             <div key={scope} className="flex items-center gap-2 text-xs">
-              <code className="font-mono bg-[#FAF7F0] px-2 py-0.5 rounded text-gray-600">{scope}</code>
+              <code className="font-mono bg-[#FAF7F0] px-2 py-0.5 rounded text-[#1E2D4D]/70">{scope}</code>
             </div>
           ))}
         </div>
@@ -238,10 +238,10 @@ function ApiReferenceSection() {
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">API Reference</h2>
-        <p className="text-sm text-gray-600">{API_ENDPOINTS.length} endpoints across compliance, temperature, document, and sensor domains. All responses use JSON.</p>
+        <p className="text-sm text-[#1E2D4D]/70">{API_ENDPOINTS.length} endpoints across compliance, temperature, document, and sensor domains. All responses use JSON.</p>
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+      <div className="bg-white border border-[#1E2D4D]/10 rounded-xl overflow-hidden">
         {API_ENDPOINTS.map((ep, i) => {
           const mc = methodColors[ep.method];
           const isExpanded = expandedIdx === i;
@@ -254,12 +254,12 @@ function ApiReferenceSection() {
                 <span className="text-xs font-bold px-2 py-0.5 rounded w-14 text-center" style={{ backgroundColor: mc.bg, color: mc.text }}>
                   {ep.method}
                 </span>
-                <code className="text-xs font-mono text-gray-700 flex-1 break-all sm:break-normal">{ep.path}</code>
-                <ChevronDown className={`h-3.5 w-3.5 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                <code className="text-xs font-mono text-[#1E2D4D]/80 flex-1 break-all sm:break-normal">{ep.path}</code>
+                <ChevronDown className={`h-3.5 w-3.5 text-[#1E2D4D]/30 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
               </button>
               {isExpanded && (
                 <div className="px-4 pb-3 bg-[#FAF7F0]">
-                  <p className="text-xs text-gray-600 mb-3">{ep.desc}</p>
+                  <p className="text-xs text-[#1E2D4D]/70 mb-3">{ep.desc}</p>
                   <CodeBlock language="bash" code={`curl -X ${ep.method} "https://api.evidly.com${ep.path}" \\
   -H "Authorization: Bearer YOUR_TOKEN"`} />
                 </div>
@@ -277,7 +277,7 @@ function WebhooksSection() {
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Webhooks</h2>
-        <p className="text-sm text-gray-600">Receive real-time notifications when compliance events occur. All webhook payloads include HMAC-SHA256 signatures for verification.</p>
+        <p className="text-sm text-[#1E2D4D]/70">Receive real-time notifications when compliance events occur. All webhook payloads include HMAC-SHA256 signatures for verification.</p>
       </div>
 
       <div>
@@ -298,11 +298,11 @@ function verifyWebhook(payload, signature, secret) {
 
       <div>
         <h3 className="text-sm font-semibold text-[#1E2D4D] mb-3">Available Events ({WEBHOOK_EVENTS.length})</h3>
-        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+        <div className="bg-white border border-[#1E2D4D]/10 rounded-xl overflow-hidden">
           {WEBHOOK_EVENTS.map(we => (
             <div key={we.event} className="flex items-start gap-3 px-4 py-2.5 border-b border-gray-50 last:border-b-0 flex-wrap">
-              <code className="text-xs font-mono bg-[#FAF7F0] px-2 py-0.5 rounded text-gray-700 break-all sm:whitespace-nowrap">{we.event}</code>
-              <span className="text-xs text-gray-500">{we.desc}</span>
+              <code className="text-xs font-mono bg-[#FAF7F0] px-2 py-0.5 rounded text-[#1E2D4D]/80 break-all sm:whitespace-nowrap">{we.event}</code>
+              <span className="text-xs text-[#1E2D4D]/50">{we.desc}</span>
             </div>
           ))}
         </div>
@@ -336,13 +336,13 @@ function SandboxSection() {
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Sandbox Environment</h2>
-        <p className="text-sm text-gray-600">Test your integrations against realistic demo data without affecting production. The sandbox mirrors the full production API.</p>
+        <p className="text-sm text-[#1E2D4D]/70">Test your integrations against realistic demo data without affecting production. The sandbox mirrors the full production API.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5">
+        <div className="bg-white border border-[#1E2D4D]/10 rounded-xl p-4 sm:p-5">
           <h3 className="font-semibold text-[#1E2D4D] text-sm mb-2">Sandbox Features</h3>
-          <ul className="space-y-2 text-xs text-gray-600">
+          <ul className="space-y-2 text-xs text-[#1E2D4D]/70">
             {[
               '3 demo locations with full compliance data',
               '15+ IoT sensors with live-like readings',
@@ -355,20 +355,20 @@ function SandboxSection() {
             ))}
           </ul>
         </div>
-        <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5">
+        <div className="bg-white border border-[#1E2D4D]/10 rounded-xl p-4 sm:p-5">
           <h3 className="font-semibold text-[#1E2D4D] text-sm mb-2">Test Credentials</h3>
           <div className="space-y-3">
             <div>
-              <div className="text-xs text-gray-500 mb-1">Sandbox Base URL</div>
+              <div className="text-xs text-[#1E2D4D]/50 mb-1">Sandbox Base URL</div>
               <div className="bg-[#FAF7F0] rounded px-3 py-2">
-                <code className="text-xs font-mono text-gray-700">https://sandbox.evidly.com/v1</code>
+                <code className="text-xs font-mono text-[#1E2D4D]/80">https://sandbox.evidly.com/v1</code>
               </div>
             </div>
             <div>
-              <div className="text-xs text-gray-500 mb-1">Test API Key</div>
+              <div className="text-xs text-[#1E2D4D]/50 mb-1">Test API Key</div>
               <div className="bg-[#FAF7F0] rounded px-3 py-2 flex items-center justify-between">
-                <code className="text-xs font-mono text-gray-700">evd_sandbox_sk_test_••••••••</code>
-                <button onClick={() => toast.info('Demo: Key copied')} className="text-gray-400 hover:text-gray-600"><Copy className="h-3 w-3" /></button>
+                <code className="text-xs font-mono text-[#1E2D4D]/80">evd_sandbox_sk_test_••••••••</code>
+                <button onClick={() => toast.info('Demo: Key copied')} className="text-[#1E2D4D]/30 hover:text-gray-600"><Copy className="h-3 w-3" /></button>
               </div>
             </div>
           </div>
@@ -377,7 +377,7 @@ function SandboxSection() {
 
       <div>
         <h3 className="text-sm font-semibold text-[#1E2D4D] mb-2">Simulate Events</h3>
-        <p className="text-xs text-gray-500 mb-3">Trigger test webhook events to verify your endpoint handling:</p>
+        <p className="text-xs text-[#1E2D4D]/50 mb-3">Trigger test webhook events to verify your endpoint handling:</p>
         <CodeBlock language="bash" code={`curl -X POST "https://sandbox.evidly.com/v1/test/simulate-event" \\
   -H "Authorization: Bearer evd_sandbox_sk_your_key" \\
   -H "Content-Type: application/json" \\
@@ -401,23 +401,23 @@ function SdksSection() {
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">SDKs & Libraries</h2>
-        <p className="text-sm text-gray-600">Official client libraries for popular programming languages. All SDKs handle authentication, retries, and pagination automatically.</p>
+        <p className="text-sm text-[#1E2D4D]/70">Official client libraries for popular programming languages. All SDKs handle authentication, retries, and pagination automatically.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {sdks.map(sdk => (
-          <div key={sdk.lang} className="bg-white border border-gray-200 rounded-xl p-4">
+          <div key={sdk.lang} className="bg-white border border-[#1E2D4D]/10 rounded-xl p-4">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
                 <span className="text-lg">{sdk.icon}</span>
                 <span className="text-sm font-semibold text-[#1E2D4D]">{sdk.lang}</span>
               </div>
-              <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${sdk.status === 'stable' ? 'bg-green-50 text-green-700' : sdk.status === 'beta' ? 'bg-yellow-50 text-yellow-700' : 'bg-gray-100 text-gray-500'}`}>
+              <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${sdk.status === 'stable' ? 'bg-green-50 text-green-700' : sdk.status === 'beta' ? 'bg-yellow-50 text-yellow-700' : 'bg-gray-100 text-[#1E2D4D]/50'}`}>
                 {sdk.status}
               </span>
             </div>
             <div className="bg-[#FAF7F0] rounded px-3 py-2">
-              <code className="text-xs font-mono text-gray-600">{sdk.install}</code>
+              <code className="text-xs font-mono text-[#1E2D4D]/70">{sdk.install}</code>
             </div>
           </div>
         ))}
@@ -448,13 +448,13 @@ function RateLimitsSection() {
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Rate Limits</h2>
-        <p className="text-sm text-gray-600">Rate limits protect the API and ensure fair usage. Limits are applied per API key.</p>
+        <p className="text-sm text-[#1E2D4D]/70">Rate limits protect the API and ensure fair usage. Limits are applied per API key.</p>
       </div>
 
-      <div className="overflow-x-auto bg-white border border-gray-200 rounded-xl">
+      <div className="overflow-x-auto bg-white border border-[#1E2D4D]/10 rounded-xl">
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-[#FAF7F0] text-gray-600 text-xs uppercase">
+            <tr className="bg-[#FAF7F0] text-[#1E2D4D]/70 text-xs uppercase">
               <th className="text-left px-4 py-3 font-semibold">Plan</th>
               <th className="text-center px-4 py-3 font-semibold">Requests/min</th>
               <th className="text-center px-4 py-3 font-semibold">Requests/day</th>
@@ -471,10 +471,10 @@ function RateLimitsSection() {
             ].map(r => (
               <tr key={r.plan} className="border-t border-gray-100">
                 <td className="px-4 py-3 font-medium text-gray-900">{r.plan}</td>
-                <td className="px-4 py-3 text-center text-gray-600">{r.rpm}</td>
-                <td className="px-4 py-3 text-center text-gray-600">{r.rpd}</td>
-                <td className="px-4 py-3 text-center text-gray-600 hidden sm:table-cell">{r.wh}</td>
-                <td className="px-4 py-3 text-center text-gray-600 hidden sm:table-cell">{r.burst}</td>
+                <td className="px-4 py-3 text-center text-[#1E2D4D]/70">{r.rpm}</td>
+                <td className="px-4 py-3 text-center text-[#1E2D4D]/70">{r.rpd}</td>
+                <td className="px-4 py-3 text-center text-[#1E2D4D]/70 hidden sm:table-cell">{r.wh}</td>
+                <td className="px-4 py-3 text-center text-[#1E2D4D]/70 hidden sm:table-cell">{r.burst}</td>
               </tr>
             ))}
           </tbody>
@@ -504,7 +504,7 @@ function PricingSection() {
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">API Pricing</h2>
-        <p className="text-sm text-gray-600">API access is included with your EvidLY subscription. Higher tiers unlock more capacity.</p>
+        <p className="text-sm text-[#1E2D4D]/70">API access is included with your EvidLY subscription. Higher tiers unlock more capacity.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -531,23 +531,23 @@ function PricingSection() {
             highlight: false,
           },
         ].map(tier => (
-          <div key={tier.name} className={`rounded-xl p-4 sm:p-6 ${tier.highlight ? 'bg-[#1E2D4D] text-white border-2 border-[#d4af37]' : 'bg-white border border-gray-200'}`}>
+          <div key={tier.name} className={`rounded-xl p-4 sm:p-6 ${tier.highlight ? 'bg-[#1E2D4D] text-white border-2 border-[#d4af37]' : 'bg-white border border-[#1E2D4D]/10'}`}>
             <div className="text-sm font-semibold mb-1">{tier.name}</div>
             <div className="flex items-baseline gap-1 mb-1">
-              <span className="text-2xl font-bold">{tier.price}</span>
-              <span className={`text-xs ${tier.highlight ? 'text-white/70' : 'text-gray-500'}`}>{tier.note}</span>
+              <span className="text-2xl font-bold tracking-tight">{tier.price}</span>
+              <span className={`text-xs ${tier.highlight ? 'text-white/70' : 'text-[#1E2D4D]/50'}`}>{tier.note}</span>
             </div>
             <ul className="space-y-2 mt-4">
               {tier.features.map(f => (
                 <li key={f} className="flex items-start gap-2 text-xs">
                   <Check className={`h-3.5 w-3.5 mt-0.5 flex-shrink-0 ${tier.highlight ? 'text-[#d4af37]' : 'text-green-500'}`} />
-                  <span className={tier.highlight ? 'text-white/90' : 'text-gray-600'}>{f}</span>
+                  <span className={tier.highlight ? 'text-white/90' : 'text-[#1E2D4D]/70'}>{f}</span>
                 </li>
               ))}
             </ul>
             <button
               onClick={() => toast.info(`Demo: ${tier.name} plan signup preview`)}
-              className={`w-full mt-4 py-2 rounded-lg text-sm font-medium transition-colors min-h-[44px] ${tier.highlight ? 'bg-[#d4af37] text-[#1E2D4D] hover:bg-[#c4a030]' : 'bg-[#FAF7F0] text-gray-700 hover:bg-gray-100'}`}
+              className={`w-full mt-4 py-2 rounded-lg text-sm font-medium transition-colors min-h-[44px] ${tier.highlight ? 'bg-[#d4af37] text-[#1E2D4D] hover:bg-[#c4a030]' : 'bg-[#FAF7F0] text-[#1E2D4D]/80 hover:bg-gray-100'}`}
             >
               {tier.name === 'Enterprise' ? 'Contact Sales' : 'Get Started'}
             </button>
@@ -581,7 +581,7 @@ export function DeveloperPortal() {
     <div className="max-w-7xl mx-auto" style={{ fontFamily: "'DM Sans', sans-serif" }}>
       {/* Header */}
       <div className="mb-6">
-        <button onClick={() => navigate('/integrations')} className="flex items-center gap-1 text-sm text-gray-500 hover:text-[#1E2D4D] mb-3">
+        <button onClick={() => navigate('/integrations')} className="flex items-center gap-1 text-sm text-[#1E2D4D]/50 hover:text-[#1E2D4D] mb-3">
           <ArrowLeft className="h-4 w-4" /> Back to Integration Hub
         </button>
         <div className="flex items-center gap-3">
@@ -589,8 +589,8 @@ export function DeveloperPortal() {
             <Code2 className="h-5 w-5 text-[#d4af37]" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-[#1E2D4D]">Developer Portal</h1>
-            <p className="text-sm text-gray-500">API documentation, SDKs, and integration guides</p>
+            <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">Developer Portal</h1>
+            <p className="text-sm text-[#1E2D4D]/50">API documentation, SDKs, and integration guides</p>
           </div>
         </div>
       </div>
@@ -607,7 +607,7 @@ export function DeveloperPortal() {
                 className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-left ${
                   activeSection === sec.id
                     ? 'bg-[#1E2D4D] text-white'
-                    : 'text-gray-600 hover:bg-gray-50'
+                    : 'text-[#1E2D4D]/70 hover:bg-gray-50'
                 }`}
               >
                 <sec.icon className="h-4 w-4" />
@@ -622,7 +622,7 @@ export function DeveloperPortal() {
           <select
             value={activeSection}
             onChange={e => setActiveSection(e.target.value as Section)}
-            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm min-h-[44px]"
+            className="w-full border border-[#1E2D4D]/10 rounded-lg px-3 py-2 text-sm min-h-[44px]"
           >
             {SECTIONS.map(sec => <option key={sec.id} value={sec.id}>{sec.label}</option>)}
           </select>

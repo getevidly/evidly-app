@@ -19,10 +19,10 @@ export function ReportEmptyState({
       >
         <FileText className="w-8 h-8" style={{ color: '#1E2D4D' }} />
       </div>
-      <h3 className="text-lg font-semibold text-[#1E2D4D] mb-2">
+      <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-2">
         {message || `No data available${reportTitle ? ` for ${reportTitle}` : ''}`}
       </h3>
-      <p className="text-sm text-gray-500 max-w-md leading-relaxed">
+      <p className="text-sm text-[#1E2D4D]/50 max-w-md leading-relaxed">
         {guidance || 'Add locations and start using the platform to generate reports.'}
       </p>
     </div>

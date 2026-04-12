@@ -18,7 +18,7 @@ export function BenchmarkWidget({ locationId }: BenchmarkWidgetProps) {
   const qChange = comparison.quarterlyChange;
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 mt-4">
+    <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5 mt-4">
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-3">
@@ -26,8 +26,8 @@ export function BenchmarkWidget({ locationId }: BenchmarkWidgetProps) {
             <Target className="h-5 w-5" style={{ color: '#1E2D4D' }} />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-[#1E2D4D]">Industry Benchmark</h3>
-            <p className="text-xs text-gray-500">How you compare to {percentile.totalPeers.toLocaleString()} peers</p>
+            <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">Industry Benchmark</h3>
+            <p className="text-xs text-[#1E2D4D]/50">How you compare to {percentile.totalPeers.toLocaleString()} peers</p>
           </div>
         </div>
         <button
@@ -43,9 +43,9 @@ export function BenchmarkWidget({ locationId }: BenchmarkWidgetProps) {
       <div className="mb-4">
         <div className="flex items-center justify-between text-sm mb-2">
           <span className="font-semibold text-[#1E2D4D]">Your Score: {percentile.score}</span>
-          <span className="text-gray-500">Industry Avg: {comparison.industryAvg}</span>
+          <span className="text-[#1E2D4D]/50">Industry Avg: {comparison.industryAvg}</span>
         </div>
-        <div className="relative h-3 bg-gray-100 rounded-full overflow-hidden">
+        <div className="relative h-3 bg-[#1E2D4D]/5 rounded-full overflow-hidden">
           {/* Industry average marker */}
           <div
             className="absolute top-0 h-full w-0.5 bg-gray-400 z-10"
@@ -61,8 +61,8 @@ export function BenchmarkWidget({ locationId }: BenchmarkWidgetProps) {
           />
         </div>
         <div className="flex items-center justify-between mt-1">
-          <span className="text-xs text-gray-400">0</span>
-          <span className="text-xs text-gray-400">100</span>
+          <span className="text-xs text-[#1E2D4D]/30">0</span>
+          <span className="text-xs text-[#1E2D4D]/30">100</span>
         </div>
       </div>
 
@@ -70,14 +70,14 @@ export function BenchmarkWidget({ locationId }: BenchmarkWidgetProps) {
       <div className="flex items-center justify-between mb-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-2xl font-bold" style={{ color: '#d4af37' }}>{percentile.percentile}th</span>
-            <span className="text-sm font-medium text-gray-500">percentile</span>
+            <span className="text-2xl font-bold tracking-tight" style={{ color: '#d4af37' }}>{percentile.percentile}th</span>
+            <span className="text-sm font-medium text-[#1E2D4D]/50">percentile</span>
           </div>
-          <p className="text-xs text-gray-400 mt-0.5">Top {100 - percentile.percentile}% of peers</p>
+          <p className="text-xs text-[#1E2D4D]/30 mt-0.5">Top {100 - percentile.percentile}% of peers</p>
         </div>
         <div className="text-right">
-          <p className="text-sm font-medium text-gray-700">Restaurant — Fresno County, CA</p>
-          <p className="text-xs text-gray-500">Rank {percentile.rank} of {percentile.totalPeers.toLocaleString()}</p>
+          <p className="text-sm font-medium text-[#1E2D4D]/80">Restaurant — Fresno County, CA</p>
+          <p className="text-xs text-[#1E2D4D]/50">Rank {percentile.rank} of {percentile.totalPeers.toLocaleString()}</p>
         </div>
       </div>
 
@@ -88,7 +88,7 @@ export function BenchmarkWidget({ locationId }: BenchmarkWidgetProps) {
           <span className="text-sm font-semibold" style={{ color: getBadgeColor(comparison.badge.tier) }}>
             {getBadgeLabel(comparison.badge.tier)}
           </span>
-          <span className="text-xs text-gray-500 ml-1">since {new Date(comparison.badge.qualifyingSince!).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
+          <span className="text-xs text-[#1E2D4D]/50 ml-1">since {new Date(comparison.badge.qualifyingSince!).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
         </div>
       )}
 
@@ -99,7 +99,7 @@ export function BenchmarkWidget({ locationId }: BenchmarkWidgetProps) {
             <span className="px-2 py-0.5 rounded-full font-semibold" style={{ backgroundColor: '#f0fdf4', color: '#16a34a', border: '1px solid #bbf7d0' }}>
               LEAD
             </span>
-            <span className="text-gray-700">{topStrength.subcategory}</span>
+            <span className="text-[#1E2D4D]/80">{topStrength.subcategory}</span>
             <span className="font-semibold" style={{ color: '#16a34a' }}>
               {topStrength.delta > 0 ? '+' : ''}{topStrength.delta} vs avg
             </span>
@@ -110,7 +110,7 @@ export function BenchmarkWidget({ locationId }: BenchmarkWidgetProps) {
             <span className="px-2 py-0.5 rounded-full font-semibold" style={{ backgroundColor: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca' }}>
               LAG
             </span>
-            <span className="text-gray-700">{topWeakness.subcategory}</span>
+            <span className="text-[#1E2D4D]/80">{topWeakness.subcategory}</span>
             <span className="font-semibold" style={{ color: '#dc2626' }}>
               {topWeakness.delta > 0 ? '+' : ''}{topWeakness.delta} vs avg
             </span>
@@ -129,7 +129,7 @@ export function BenchmarkWidget({ locationId }: BenchmarkWidgetProps) {
           <span className="font-medium" style={{ color: qChange >= 0 ? '#16a34a' : '#dc2626' }}>
             {qChange >= 0 ? '+' : ''}{qChange} pts
           </span>
-          <span className="text-gray-400">vs last quarter</span>
+          <span className="text-[#1E2D4D]/30">vs last quarter</span>
         </div>
         <div className="flex items-center gap-2">
           <button

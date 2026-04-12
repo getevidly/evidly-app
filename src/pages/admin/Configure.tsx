@@ -153,7 +153,7 @@ export default function Configure() {
       <AdminBreadcrumb crumbs={[{ label: 'Configure' }]} />
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Configure</h1>
+          <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Configure</h1>
           <p style={{ fontSize: 13, color: TEXT_SEC, marginTop: 4 }}>Manage organizations, locations, users, and vendors.</p>
         </div>
         <button onClick={openModal} style={{

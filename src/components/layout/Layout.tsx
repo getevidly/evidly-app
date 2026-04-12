@@ -126,7 +126,7 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
         {/* Scrollable content area */}
         <div className="flex-1 overflow-y-auto" id="layout-scroll-container">
           <main className={`flex-1 relative ${isDemoMode ? 'pb-48 md:pb-28' : 'pb-36 md:pb-[72px]'}`}>
-            <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-[1200px] mx-auto w-full">{children}</div>
+            <div className="py-6 sm:py-8 px-4 sm:px-6 lg:px-8 max-w-[1200px] mx-auto w-full page-enter">{children}</div>
           </main>
         </div>
       </div>

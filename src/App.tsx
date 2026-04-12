@@ -346,7 +346,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
       <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#d4af37] mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <p className="mt-4 text-[#1E2D4D]/70">Loading...</p>
         </div>
       </div>
     );
@@ -380,7 +380,7 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
       <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#d4af37] mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <p className="mt-4 text-[#1E2D4D]/70">Loading...</p>
         </div>
       </div>
     );
@@ -435,7 +435,7 @@ function ProtectedLayout() {
         <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#d4af37] mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading...</p>
+            <p className="mt-4 text-[#1E2D4D]/70">Loading...</p>
           </div>
         </div>
       );
@@ -508,7 +508,7 @@ function ProtectedLayout() {
         <div className="flex items-center justify-center py-12">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#d4af37] mx-auto"></div>
-            <p className="mt-3 text-sm text-gray-500">Loading...</p>
+            <p className="mt-3 text-sm text-[#1E2D4D]/50">Loading...</p>
           </div>
         </div>
       }>
@@ -910,7 +910,7 @@ function App() {
                         </GlobalErrorHandlers>
                       </NotificationProvider>
                       <CookieConsent />
-                      <Toaster position="top-right" richColors closeButton duration={3000} />
+                      <Toaster position="top-right" richColors closeButton duration={4000} toastOptions={{ style: { borderRadius: '12px', boxShadow: '0 8px 30px rgba(0,0,0,0.12)' } }} />
                     </InactivityProvider>
                   </OfflineProvider>
                 </OperatingHoursProvider>

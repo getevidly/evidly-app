@@ -49,7 +49,7 @@ export default function PassportDemo() {
         <div className="max-w-4xl mx-auto flex items-center gap-3">
           <EvidlyIcon size={40} />
           <div>
-            <h1 className="font-['Outfit'] text-2xl font-bold">EvidLY Compliance Passport</h1>
+            <h1 className="font-['Outfit'] text-2xl font-bold tracking-tight">EvidLY Compliance Passport</h1>
             <p className="text-sm text-gray-300">Live Compliance Status</p>
           </div>
         </div>
@@ -57,11 +57,11 @@ export default function PassportDemo() {
 
       <main className="max-w-4xl mx-auto px-6 py-12">
         <div className="mb-12">
-          <h2 className="font-['Outfit'] text-3xl font-bold text-[#1E2D4D] mb-2">
+          <h2 className="font-['Outfit'] text-3xl font-bold tracking-tight text-[#1E2D4D] mb-2">
             {companyName} — Location 1
           </h2>
-          {isDemoMode && <p className="text-gray-600 text-lg mb-1">1245 Fulton Street, Fresno, CA 93721</p>}
-          <p className="text-sm text-gray-500">Last updated: {today}</p>
+          {isDemoMode && <p className="text-[#1E2D4D]/70 text-lg mb-1">1245 Fulton Street, Fresno, CA 93721</p>}
+          <p className="text-sm text-[#1E2D4D]/50">Last updated: {today}</p>
         </div>
 
         <div className="mb-16">
@@ -80,7 +80,7 @@ export default function PassportDemo() {
                   <div className="text-4xl font-bold text-[#1E2D4D]">{complianceData.foodSafety}</div>
                 </div>
               </div>
-              <div className="text-sm font-medium text-gray-600 mt-2">Food Safety</div>
+              <div className="text-sm font-medium text-[#1E2D4D]/70 mt-2">Food Safety</div>
             </div>
             {/* Facility Safety Ring */}
             <div className="flex flex-col items-center">
@@ -96,22 +96,22 @@ export default function PassportDemo() {
                   <div className="text-4xl font-bold text-[#1E2D4D]">{complianceData.facilitySafety}</div>
                 </div>
               </div>
-              <div className="text-sm font-medium text-gray-600 mt-2">Facility Safety</div>
+              <div className="text-sm font-medium text-[#1E2D4D]/70 mt-2">Facility Safety</div>
             </div>
           </div>
         </div>
 
         <div className="mb-12">
-          <h3 className="font-['Outfit'] text-2xl font-bold text-[#1E2D4D] mb-6">
+          <h3 className="font-['Outfit'] text-2xl font-bold tracking-tight text-[#1E2D4D] mb-6">
             Compliance Breakdown
           </h3>
           <div className="space-y-6">
             <div>
               <div className="flex justify-between items-center mb-2">
-                <span className="font-semibold text-gray-700">Food Safety</span>
+                <span className="font-semibold text-[#1E2D4D]/80">Food Safety</span>
                 <span className="font-bold text-[#1E2D4D]">{complianceData.foodSafety}</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-3">
+              <div className="w-full bg-[#1E2D4D]/8 rounded-full h-3">
                 <div
                   className="bg-green-500 h-3 rounded-full transition-all"
                   style={{ width: `${complianceData.foodSafety}%` }}
@@ -121,10 +121,10 @@ export default function PassportDemo() {
 
             <div>
               <div className="flex justify-between items-center mb-2">
-                <span className="font-semibold text-gray-700">Facility Safety</span>
+                <span className="font-semibold text-[#1E2D4D]/80">Facility Safety</span>
                 <span className="font-bold text-[#1E2D4D]">{complianceData.facilitySafety}</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-3">
+              <div className="w-full bg-[#1E2D4D]/8 rounded-full h-3">
                 <div
                   className="bg-green-500 h-3 rounded-full transition-all"
                   style={{ width: `${complianceData.facilitySafety}%` }}
@@ -136,7 +136,7 @@ export default function PassportDemo() {
         </div>
 
         <div className="mb-12">
-          <h3 className="font-['Outfit'] text-2xl font-bold text-[#1E2D4D] mb-6">
+          <h3 className="font-['Outfit'] text-2xl font-bold tracking-tight text-[#1E2D4D] mb-6">
             Recent Compliance Activity
           </h3>
           <div className="space-y-4">
@@ -162,9 +162,9 @@ export default function PassportDemo() {
         </div>
       </main>
 
-      <footer className="bg-[#FAF7F0] border-t border-gray-200 py-8 px-6 mt-16">
+      <footer className="bg-[#FAF7F0] border-t border-[#1E2D4D]/10 py-8 px-6 mt-16">
         <div className="max-w-4xl mx-auto text-center">
-          <p className="text-gray-600 font-medium mb-2">
+          <p className="text-[#1E2D4D]/70 font-medium mb-2">
             Powered by EvidLY — Lead with Confidence
           </p>
           <a

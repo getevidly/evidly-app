@@ -174,7 +174,7 @@ export function EmulationPanel() {
   if (isEmulating && emulatedUser) {
     return (
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold" style={{ color: BRAND, ...F }}>User Emulation</h3>
+        <h3 className="text-lg font-semibold tracking-tight" style={{ color: BRAND, ...F }}>User Emulation</h3>
 
         <div className="rounded-xl p-5" style={{ background: '#fef2f2', border: '2px solid #fecaca' }}>
           <div className="flex items-center gap-3 mb-4">
@@ -224,7 +224,7 @@ export function EmulationPanel() {
   // ── Normal view: search + select ──
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold" style={{ color: BRAND, ...F }}>User Emulation</h3>
+      <h3 className="text-lg font-semibold tracking-tight" style={{ color: BRAND, ...F }}>User Emulation</h3>
       <p className="text-sm" style={{ color: '#6B7F96', ...F }}>
         View EvidLY as any user to debug issues, verify permissions, or demonstrate features. Sessions are fully logged.
       </p>

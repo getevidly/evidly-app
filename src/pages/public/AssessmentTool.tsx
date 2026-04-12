@@ -43,7 +43,7 @@ function ScoreGauge({ score, label, size = 100 }: { score: number; label: string
           {score}
         </text>
       </svg>
-      <span className="text-xs font-medium text-gray-600 text-center">{label}</span>
+      <span className="text-xs font-medium text-[#1E2D4D]/70 text-center">{label}</span>
     </div>
   );
 }
@@ -58,7 +58,7 @@ function RiskBar({ label, score, estimate }: { label: string; score: number; est
         <span className="text-sm font-semibold" style={{ color: NAVY }}>{label}</span>
         <span className="text-sm font-bold" style={{ color }}>{score}/100</span>
       </div>
-      <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+      <div className="w-full h-3 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
         <div
           className="h-full rounded-full transition-all duration-1000"
           style={{ width: `${Math.max(2, score)}%`, backgroundColor: color }}
@@ -227,12 +227,12 @@ export function AssessmentTool() {
   return (
     <div className="min-h-screen bg-[#FAF7F0]">
       {/* Header */}
-      <header className="border-b border-gray-200 bg-white">
+      <header className="border-b border-[#1E2D4D]/10 bg-white">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-1 text-xl font-bold tracking-tight" style={{ color: NAVY }}>
             <span style={{ color: GOLD }}>E</span>vid<span style={{ color: GOLD }}>LY</span>
           </Link>
-          <span className="text-sm text-gray-500">Free Compliance Assessment</span>
+          <span className="text-sm text-[#1E2D4D]/50">Free Compliance Assessment</span>
         </div>
       </header>
 
@@ -240,12 +240,12 @@ export function AssessmentTool() {
 
         {/* ── PHASE: LEAD CAPTURE ──────────────────────────────── */}
         {phase === 'lead' && (
-          <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 sm:p-8">
             <div className="text-center mb-8">
-              <h1 className="text-2xl sm:text-3xl font-bold mb-2" style={{ color: NAVY }}>
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2" style={{ color: NAVY }}>
                 Free Compliance Risk Assessment
               </h1>
-              <p className="text-gray-600 max-w-lg mx-auto">
+              <p className="text-[#1E2D4D]/70 max-w-lg mx-auto">
                 Answer a few questions about your operation and get a personalized compliance gap report
                 with risk scores and estimated business impact — in under 5 minutes.
               </p>
@@ -254,11 +254,11 @@ export function AssessmentTool() {
             <div className="space-y-4 max-w-md mx-auto">
               {/* Business Name */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Business Name *</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Business Name *</label>
                 <input
                   type="text" value={leadData.businessName} data-demo-allow
                   onChange={e => setLeadData(p => ({ ...p, businessName: e.target.value }))}
-                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] ${leadErrors.businessName ? 'border-red-400' : 'border-gray-300'}`}
+                  className={`w-full px-3 py-2 border rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 ${leadErrors.businessName ? 'border-red-400' : 'border-[#1E2D4D]/15'}`}
                   placeholder="e.g. Joe's Kitchen"
                 />
                 {leadErrors.businessName && <p className="text-xs text-red-500 mt-1">{leadErrors.businessName}</p>}
@@ -266,11 +266,11 @@ export function AssessmentTool() {
 
               {/* Contact Name */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Your Name *</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Your Name *</label>
                 <input
                   type="text" value={leadData.contactName} data-demo-allow
                   onChange={e => setLeadData(p => ({ ...p, contactName: e.target.value }))}
-                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] ${leadErrors.contactName ? 'border-red-400' : 'border-gray-300'}`}
+                  className={`w-full px-3 py-2 border rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 ${leadErrors.contactName ? 'border-red-400' : 'border-[#1E2D4D]/15'}`}
                   placeholder="Your full name"
                 />
                 {leadErrors.contactName && <p className="text-xs text-red-500 mt-1">{leadErrors.contactName}</p>}
@@ -278,11 +278,11 @@ export function AssessmentTool() {
 
               {/* Email */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Email *</label>
                 <input
                   type="email" value={leadData.email} data-demo-allow
                   onChange={e => setLeadData(p => ({ ...p, email: e.target.value }))}
-                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] ${leadErrors.email ? 'border-red-400' : 'border-gray-300'}`}
+                  className={`w-full px-3 py-2 border rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 ${leadErrors.email ? 'border-red-400' : 'border-[#1E2D4D]/15'}`}
                   placeholder="you@company.com"
                 />
                 {leadErrors.email && <p className="text-xs text-red-500 mt-1">{leadErrors.email}</p>}
@@ -290,11 +290,11 @@ export function AssessmentTool() {
 
               {/* Phone (optional) */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Phone <span className="text-gray-400">(optional)</span></label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Phone <span className="text-[#1E2D4D]/30">(optional)</span></label>
                 <input
                   type="tel" value={leadData.phone} data-demo-allow
                   onChange={e => setLeadData(p => ({ ...p, phone: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
                   placeholder="(555) 555-5555"
                 />
               </div>
@@ -302,21 +302,21 @@ export function AssessmentTool() {
               {/* City + Zip */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">City *</label>
+                  <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">City *</label>
                   <input
                     type="text" value={leadData.city} data-demo-allow
                     onChange={e => setLeadData(p => ({ ...p, city: e.target.value }))}
-                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] ${leadErrors.city ? 'border-red-400' : 'border-gray-300'}`}
+                    className={`w-full px-3 py-2 border rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 ${leadErrors.city ? 'border-red-400' : 'border-[#1E2D4D]/15'}`}
                     placeholder="City"
                   />
                   {leadErrors.city && <p className="text-xs text-red-500 mt-1">{leadErrors.city}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">ZIP Code *</label>
+                  <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">ZIP Code *</label>
                   <input
                     type="text" value={leadData.zipCode} data-demo-allow
                     onChange={e => setLeadData(p => ({ ...p, zipCode: e.target.value }))}
-                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] ${leadErrors.zipCode ? 'border-red-400' : 'border-gray-300'}`}
+                    className={`w-full px-3 py-2 border rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 ${leadErrors.zipCode ? 'border-red-400' : 'border-[#1E2D4D]/15'}`}
                     placeholder="90210"
                   />
                   {leadErrors.zipCode && <p className="text-xs text-red-500 mt-1">{leadErrors.zipCode}</p>}
@@ -325,11 +325,11 @@ export function AssessmentTool() {
 
               {/* Referral Source */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">How did you hear about us?</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">How did you hear about us?</label>
                 <select
                   value={leadData.referralSource} data-demo-allow
                   onChange={e => setLeadData(p => ({ ...p, referralSource: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] bg-white"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 bg-white"
                 >
                   <option value="">Select...</option>
                   <option value="google">Google search</option>
@@ -352,7 +352,7 @@ export function AssessmentTool() {
                 Start Assessment
               </button>
 
-              <p className="text-xs text-gray-400 text-center">
+              <p className="text-xs text-[#1E2D4D]/30 text-center">
                 Takes about 3–5 minutes. Your data is kept confidential.
               </p>
             </div>
@@ -361,14 +361,14 @@ export function AssessmentTool() {
 
         {/* ── PHASE: QUESTIONS ─────────────────────────────────── */}
         {phase === 'questions' && currentQuestion && (
-          <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 sm:p-8">
             {/* Progress bar */}
             <div className="mb-6">
-              <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+              <div className="flex items-center justify-between text-xs text-[#1E2D4D]/50 mb-1">
                 <span>Question {currentIdx + 1} of {visibleQuestions.length}</span>
                 <span>{progressPct}% complete</span>
               </div>
-              <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div className="w-full h-2 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
                 <div
                   className="h-full rounded-full transition-all duration-300"
                   style={{ width: `${progressPct}%`, backgroundColor: BRAND }}
@@ -386,7 +386,7 @@ export function AssessmentTool() {
             )}
 
             {/* Question */}
-            <h2 className="text-lg font-semibold mb-5" style={{ color: NAVY }}>
+            <h2 className="text-lg font-semibold tracking-tight mb-5" style={{ color: NAVY }}>
               {currentQuestion.label}
             </h2>
 
@@ -402,16 +402,16 @@ export function AssessmentTool() {
                     className={`w-full text-left px-4 py-3 rounded-lg border-2 transition-all ${
                       selected
                         ? 'border-blue-500 bg-blue-50'
-                        : 'border-gray-200 hover:border-gray-300 bg-white'
+                        : 'border-[#1E2D4D]/10 hover:border-gray-300 bg-white'
                     }`}
                   >
                     <div className="flex items-center gap-3">
                       <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-                        selected ? 'border-blue-500' : 'border-gray-300'
+                        selected ? 'border-blue-500' : 'border-[#1E2D4D]/15'
                       }`}>
                         {selected && <div className="w-2.5 h-2.5 rounded-full bg-blue-500" />}
                       </div>
-                      <span className={`text-sm ${selected ? 'text-blue-900 font-medium' : 'text-gray-700'}`}>
+                      <span className={`text-sm ${selected ? 'text-blue-900 font-medium' : 'text-[#1E2D4D]/80'}`}>
                         {opt.label}
                       </span>
                     </div>
@@ -426,7 +426,7 @@ export function AssessmentTool() {
                 onClick={handleBack}
                 disabled={currentIdx === 0}
                 data-demo-allow
-                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 disabled:opacity-30 disabled:cursor-not-allowed"
+                className="px-4 py-2 text-sm text-[#1E2D4D]/70 hover:text-gray-800 disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 Back
               </button>
@@ -447,7 +447,7 @@ export function AssessmentTool() {
         {phase === 'results' && scores && (
           <div>
             {/* Tab bar */}
-            <div className="flex gap-1 mb-6 bg-white rounded-xl p-1 border border-gray-200">
+            <div className="flex gap-1 mb-6 bg-white rounded-xl p-1 border border-[#1E2D4D]/10">
               {(['diagnosis', 'prognosis', 'recommendations'] as const).map(tab => (
                 <button
                   key={tab}
@@ -456,7 +456,7 @@ export function AssessmentTool() {
                   className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors ${
                     resultsTab === tab
                       ? 'text-white shadow-sm'
-                      : 'text-gray-600 hover:text-gray-800'
+                      : 'text-[#1E2D4D]/70 hover:text-gray-800'
                   }`}
                   style={resultsTab === tab ? { backgroundColor: NAVY } : {}}
                 >
@@ -467,14 +467,14 @@ export function AssessmentTool() {
 
             {/* ── TAB: DIAGNOSIS ─────────────────────────────── */}
             {resultsTab === 'diagnosis' && (
-              <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8">
+              <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 sm:p-8">
                 <h2 className="text-xl font-bold mb-1" style={{ color: NAVY }}>Compliance Assessment Results</h2>
-                <p className="text-sm text-gray-500 mb-6">Prepared for {leadData.businessName}</p>
+                <p className="text-sm text-[#1E2D4D]/50 mb-6">Prepared for {leadData.businessName}</p>
 
                 {/* Overall Grade */}
                 <div className="flex items-center gap-5 mb-8 p-4 rounded-xl" style={{ backgroundColor: '#F8FAFC' }}>
                   <div
-                    className="w-20 h-20 rounded-xl flex items-center justify-center text-white text-3xl font-bold shadow-sm"
+                    className="w-20 h-20 rounded-xl flex items-center justify-center text-white text-3xl font-bold tracking-tight shadow-sm"
                     style={{ backgroundColor: gradeColor(scores.overallGrade) }}
                   >
                     {scores.overallGrade}
@@ -486,7 +486,7 @@ export function AssessmentTool() {
                        scores.overallGrade === 'C' ? 'Elevated Risk' :
                        scores.overallGrade === 'D' ? 'High Risk' : 'Critical Risk'}
                     </p>
-                    <p className="text-xs text-gray-500">Based on average of Revenue, Liability, Cost, and Operational risk scores</p>
+                    <p className="text-xs text-[#1E2D4D]/50">Based on average of Revenue, Liability, Cost, and Operational risk scores</p>
                   </div>
                 </div>
 
@@ -506,7 +506,7 @@ export function AssessmentTool() {
                       <SeverityDot severity={f.severity} />
                       <div>
                         <span className="font-medium" style={{ color: NAVY }}>{f.title}</span>
-                        <span className="text-gray-500"> — {f.description}</span>
+                        <span className="text-[#1E2D4D]/50"> — {f.description}</span>
                       </div>
                     </div>
                   ))}
@@ -529,9 +529,9 @@ export function AssessmentTool() {
 
             {/* ── TAB: PROGNOSIS ─────────────────────────────── */}
             {resultsTab === 'prognosis' && (
-              <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8">
+              <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 sm:p-8">
                 <h2 className="text-xl font-bold mb-1" style={{ color: NAVY }}>How These Gaps Impact Your Business</h2>
-                <p className="text-sm text-gray-500 mb-6">Four risk dimensions scored 0–100 (higher = more risk)</p>
+                <p className="text-sm text-[#1E2D4D]/50 mb-6">Four risk dimensions scored 0–100 (higher = more risk)</p>
 
                 {/* 4 Risk Bars */}
                 <RiskBar label="Revenue Risk" score={scores.revenueRisk}
@@ -549,11 +549,11 @@ export function AssessmentTool() {
                   if (!drivers || drivers.length === 0) return null;
                   return (
                     <div key={dim} className="mt-3 mb-4">
-                      <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">
+                      <p className="text-xs font-semibold uppercase tracking-wider text-[#1E2D4D]/30 mb-1">
                         Top {dim} risk drivers
                       </p>
                       {drivers.slice(0, 3).map((d, i) => (
-                        <p key={i} className="text-xs text-gray-500 pl-3">• {d.description}</p>
+                        <p key={i} className="text-xs text-[#1E2D4D]/50 pl-3">• {d.description}</p>
                       ))}
                     </div>
                   );
@@ -569,7 +569,7 @@ export function AssessmentTool() {
                   </p>
                 </div>
 
-                <p className="text-xs text-gray-400 mt-4 italic">
+                <p className="text-xs text-[#1E2D4D]/30 mt-4 italic">
                   When you become an EvidLY customer, these four scores appear on your dashboard and update in real-time.
                 </p>
               </div>
@@ -579,9 +579,9 @@ export function AssessmentTool() {
             {resultsTab === 'recommendations' && (
               <div className="space-y-6">
                 {scores.facilitySafety > 20 && (
-                  <div className="bg-white rounded-xl border border-gray-200 p-6">
+                  <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
                     <h3 className="text-lg font-bold mb-3" style={{ color: NAVY }}>Cleaning Pros Plus Can Help</h3>
-                    <ul className="space-y-2 text-sm text-gray-600 mb-4">
+                    <ul className="space-y-2 text-sm text-[#1E2D4D]/70 mb-4">
                       <li>• Hood cleaning service (scheduled per NFPA 96)</li>
                       <li>• Fire suppression system inspection</li>
                       <li>• Fire extinguisher inspection & recharging</li>
@@ -599,9 +599,9 @@ export function AssessmentTool() {
                 )}
 
                 {(scores.foodSafety > 20 || scores.documentation > 20) && (
-                  <div className="bg-white rounded-xl border border-gray-200 p-6">
+                  <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
                     <h3 className="text-lg font-bold mb-3" style={{ color: NAVY }}>EvidLY Can Help</h3>
-                    <ul className="space-y-2 text-sm text-gray-600 mb-4">
+                    <ul className="space-y-2 text-sm text-[#1E2D4D]/70 mb-4">
                       <li>• Real-time compliance dashboard with 4 risk scores</li>
                       <li>• Automated alerts before things expire</li>
                       <li>• Vendor document management & tracking</li>
@@ -628,9 +628,9 @@ export function AssessmentTool() {
                 )}
 
                 {/* PDF Download */}
-                <div className="bg-white rounded-xl border border-gray-200 p-6 text-center">
+                <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 text-center">
                   <h3 className="text-lg font-bold mb-2" style={{ color: NAVY }}>Download Your Report</h3>
-                  <p className="text-sm text-gray-500 mb-4">
+                  <p className="text-sm text-[#1E2D4D]/50 mb-4">
                     Get a branded 2-page PDF with your Diagnosis and Business Impact Analysis.
                   </p>
                   <button
@@ -644,7 +644,7 @@ export function AssessmentTool() {
                 </div>
 
                 {/* Contact */}
-                <div className="text-center text-sm text-gray-500">
+                <div className="text-center text-sm text-[#1E2D4D]/50">
                   <p className="font-medium" style={{ color: NAVY }}>Contact: Arthur Haggerty | Cleaning Pros Plus / EvidLY</p>
                   <p>arthur@getevidly.com | getevidly.com</p>
                 </div>
@@ -655,8 +655,8 @@ export function AssessmentTool() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 bg-white mt-12">
-        <div className="max-w-4xl mx-auto px-4 py-4 text-center text-xs text-gray-400">
+      <footer className="border-t border-[#1E2D4D]/10 bg-white mt-12">
+        <div className="max-w-4xl mx-auto px-4 py-4 text-center text-xs text-[#1E2D4D]/30">
           <p>This assessment is for informational purposes only and does not constitute legal, insurance, or regulatory advice.</p>
           <p className="mt-1">Powered by EvidLY — Lead with Confidence</p>
         </div>

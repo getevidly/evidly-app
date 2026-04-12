@@ -429,18 +429,18 @@ export function PhotoEvidencePage() {
             </div>
             <div>
               <h1 className="text-xl font-bold text-[#1E2D4D]">Photo Evidence</h1>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-[#1E2D4D]/50">
                 {stats.total} photo{stats.total !== 1 ? 's' : ''} across all locations
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             {/* View Toggle */}
-            <div className="flex items-center bg-gray-100 rounded-lg p-0.5">
+            <div className="flex items-center bg-[#1E2D4D]/5 rounded-lg p-0.5">
               <button
                 onClick={() => setViewMode('list')}
                 className={`p-1.5 rounded-md transition-colors ${
-                  viewMode === 'list' ? 'bg-white shadow-sm text-[#1E2D4D]' : 'text-gray-400 hover:text-gray-600'
+                  viewMode === 'list' ? 'bg-white shadow-sm text-[#1E2D4D]' : 'text-[#1E2D4D]/30 hover:text-gray-600'
                 }`}
                 title="List view"
               >
@@ -449,7 +449,7 @@ export function PhotoEvidencePage() {
               <button
                 onClick={() => setViewMode('grid')}
                 className={`p-1.5 rounded-md transition-colors ${
-                  viewMode === 'grid' ? 'bg-white shadow-sm text-[#1E2D4D]' : 'text-gray-400 hover:text-gray-600'
+                  viewMode === 'grid' ? 'bg-white shadow-sm text-[#1E2D4D]' : 'text-[#1E2D4D]/30 hover:text-gray-600'
                 }`}
                 title="Grid view"
               >
@@ -458,70 +458,70 @@ export function PhotoEvidencePage() {
             </div>
             {/* Search */}
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#1E2D4D]/30" />
               <input
                 type="text"
                 placeholder="Search photos..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/30 focus:border-[#1E2D4D] w-full sm:w-56"
+                className="pl-9 pr-3 py-2 text-sm border border-[#1E2D4D]/10 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30 focus:border-[#1E2D4D] w-full sm:w-56"
               />
             </div>
           </div>
         </div>
 
         {/* Filter Bar */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
           <div className="flex items-center gap-2 mb-3">
             <Filter className="h-4 w-4 text-[#1E2D4D]" />
-            <span className="text-sm font-semibold text-gray-700">Filters</span>
+            <span className="text-sm font-semibold text-[#1E2D4D]/80">Filters</span>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">Location</label>
+              <label className="block text-xs font-medium text-[#1E2D4D]/50 mb-1">Location</label>
               <div className="relative">
                 <select
                   value={locationFilter}
                   onChange={(e) => setLocationFilter(e.target.value as LocationName | 'all')}
-                  className="w-full appearance-none pl-3 pr-8 py-2 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/30 focus:border-[#1E2D4D]"
+                  className="w-full appearance-none pl-3 pr-8 py-2 text-sm border border-[#1E2D4D]/10 rounded-lg bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30 focus:border-[#1E2D4D]"
                 >
                   <option value="all">All Locations</option>
                   {LOCATIONS.map(loc => (
                     <option key={loc} value={loc}>{loc}</option>
                   ))}
                 </select>
-                <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#1E2D4D]/30 pointer-events-none" />
               </div>
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">Record Type</label>
+              <label className="block text-xs font-medium text-[#1E2D4D]/50 mb-1">Record Type</label>
               <div className="relative">
                 <select
                   value={typeFilter}
                   onChange={(e) => setTypeFilter(e.target.value as RecordType | 'all')}
-                  className="w-full appearance-none pl-3 pr-8 py-2 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/30 focus:border-[#1E2D4D]"
+                  className="w-full appearance-none pl-3 pr-8 py-2 text-sm border border-[#1E2D4D]/10 rounded-lg bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30 focus:border-[#1E2D4D]"
                 >
                   <option value="all">All Types</option>
                   {RECORD_TYPES.map(rt => (
                     <option key={rt} value={rt}>{rt}</option>
                   ))}
                 </select>
-                <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#1E2D4D]/30 pointer-events-none" />
               </div>
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">Date Range</label>
+              <label className="block text-xs font-medium text-[#1E2D4D]/50 mb-1">Date Range</label>
               <div className="relative">
                 <select
                   value={dateRange}
                   onChange={(e) => setDateRange(e.target.value as DateRange)}
-                  className="w-full appearance-none pl-3 pr-8 py-2 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/30 focus:border-[#1E2D4D]"
+                  className="w-full appearance-none pl-3 pr-8 py-2 text-sm border border-[#1E2D4D]/10 rounded-lg bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30 focus:border-[#1E2D4D]"
                 >
                   {DATE_RANGES.map(dr => (
                     <option key={dr.value} value={dr.value}>{dr.label}</option>
                   ))}
                 </select>
-                <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#1E2D4D]/30 pointer-events-none" />
               </div>
             </div>
           </div>
@@ -529,33 +529,33 @@ export function PhotoEvidencePage() {
 
         {/* Stats Row */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
             <div className="flex items-center gap-2 mb-1">
               <Image className="h-4 w-4 text-[#1E2D4D]" />
-              <span className="text-xs font-medium text-gray-500">Total Photos</span>
+              <span className="text-xs font-medium text-[#1E2D4D]/50">Total Photos</span>
             </div>
-            <p className="text-2xl font-bold text-[#1E2D4D]">{stats.total}</p>
+            <p className="text-2xl font-bold tracking-tight text-[#1E2D4D]">{stats.total}</p>
           </div>
-          <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
             <div className="flex items-center gap-2 mb-1">
               <MapPin className="h-4 w-4 text-[#1E2D4D]" />
-              <span className="text-xs font-medium text-gray-500">Geotagged</span>
+              <span className="text-xs font-medium text-[#1E2D4D]/50">Geotagged</span>
             </div>
-            <p className="text-2xl font-bold text-[#1E2D4D]">{stats.geoPercent}%</p>
+            <p className="text-2xl font-bold tracking-tight text-[#1E2D4D]">{stats.geoPercent}%</p>
           </div>
-          <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
             <div className="flex items-center gap-2 mb-1">
               <Calendar className="h-4 w-4 text-[#1E2D4D]" />
-              <span className="text-xs font-medium text-gray-500">This Week</span>
+              <span className="text-xs font-medium text-[#1E2D4D]/50">This Week</span>
             </div>
-            <p className="text-2xl font-bold text-[#1E2D4D]">{stats.thisWeek}</p>
+            <p className="text-2xl font-bold tracking-tight text-[#1E2D4D]">{stats.thisWeek}</p>
           </div>
-          <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
             <div className="flex items-center gap-2 mb-1">
               <CheckCircle className="h-4 w-4 text-emerald-500" />
-              <span className="text-xs font-medium text-gray-500">Verified</span>
+              <span className="text-xs font-medium text-[#1E2D4D]/50">Verified</span>
             </div>
-            <p className="text-2xl font-bold text-[#1E2D4D]">{stats.verified}</p>
+            <p className="text-2xl font-bold tracking-tight text-[#1E2D4D]">{stats.verified}</p>
           </div>
         </div>
 
@@ -564,7 +564,7 @@ export function PhotoEvidencePage() {
           <div className="space-y-6">
             {/* Results header */}
             <div className="flex items-center justify-between">
-              <span className="text-sm font-semibold text-gray-700">
+              <span className="text-sm font-semibold text-[#1E2D4D]/80">
                 Showing {filteredPhotos.length} photo{filteredPhotos.length !== 1 ? 's' : ''}
               </span>
               {(locationFilter !== 'all' || typeFilter !== 'all' || dateRange !== '30' || searchQuery) && (
@@ -587,12 +587,12 @@ export function PhotoEvidencePage() {
               <div key={group.label}>
                 {/* Date header */}
                 <div className="flex items-center gap-2 mb-3">
-                  <Calendar className="h-3.5 w-3.5 text-gray-400" />
-                  <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  <Calendar className="h-3.5 w-3.5 text-[#1E2D4D]/30" />
+                  <span className="text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wider">
                     {group.label}
                   </span>
                   <div className="flex-1 border-t border-gray-100" />
-                  <span className="text-xs text-gray-400">{group.photos.length}</span>
+                  <span className="text-xs text-[#1E2D4D]/30">{group.photos.length}</span>
                 </div>
 
                 {/* List view */}
@@ -605,12 +605,12 @@ export function PhotoEvidencePage() {
                           key={photo.id}
                           type="button"
                           onClick={() => setSelectedIndex(getFlatIndex(photo))}
-                          className="w-full flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-200 hover:border-gray-300 transition-all text-left"
+                          className="w-full flex items-center gap-4 p-4 bg-white rounded-xl border border-[#1E2D4D]/10 hover:border-gray-300 transition-all text-left"
                         >
                           <IconThumbnail recordType={photo.recordType} size={64} />
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-semibold text-[#1E2D4D] truncate">{photo.title}</p>
-                            <p className="text-xs text-gray-500 mt-0.5">{photo.subtitle}</p>
+                            <p className="text-xs text-[#1E2D4D]/50 mt-0.5">{photo.subtitle}</p>
                             <div className="flex items-center gap-2 mt-2 flex-wrap">
                               <CategoryBadge recordType={photo.recordType} small />
                               <span
@@ -622,7 +622,7 @@ export function PhotoEvidencePage() {
                             </div>
                           </div>
                           <div className="flex flex-col items-end gap-1 flex-shrink-0">
-                            <span className="text-xs text-gray-400">{photo.displayTime}</span>
+                            <span className="text-xs text-[#1E2D4D]/30">{photo.displayTime}</span>
                             {photo.verified && (
                               <span className="inline-flex items-center gap-0.5 text-xs text-emerald-600 font-medium">
                                 <CheckCircle className="h-3 w-3" />
@@ -642,7 +642,7 @@ export function PhotoEvidencePage() {
                         key={photo.id}
                         type="button"
                         onClick={() => setSelectedIndex(getFlatIndex(photo))}
-                        className="bg-white rounded-xl border border-gray-200 hover:border-gray-300 transition-all overflow-hidden text-left"
+                        className="bg-white rounded-xl border border-[#1E2D4D]/10 hover:border-gray-300 transition-all overflow-hidden text-left"
                       >
                         <div
                           className="aspect-square flex items-center justify-center"
@@ -655,12 +655,12 @@ export function PhotoEvidencePage() {
                         </div>
                         <div className="p-3">
                           <p className="text-xs font-semibold text-[#1E2D4D] truncate">{photo.title}</p>
-                          <p className="text-xs text-gray-500 truncate mt-0.5">{photo.subtitle}</p>
+                          <p className="text-xs text-[#1E2D4D]/50 truncate mt-0.5">{photo.subtitle}</p>
                           <div className="flex items-center gap-1 mt-2">
                             <CategoryBadge recordType={photo.recordType} small />
                           </div>
                           <div className="flex items-center justify-between mt-1.5">
-                            <span className="text-xs text-gray-400 truncate">{photo.displayTime}</span>
+                            <span className="text-xs text-[#1E2D4D]/30 truncate">{photo.displayTime}</span>
                             {photo.verified && <CheckCircle className="h-3 w-3 text-emerald-500 flex-shrink-0" />}
                           </div>
                         </div>
@@ -673,12 +673,12 @@ export function PhotoEvidencePage() {
           </div>
         ) : (
           /* Empty state */
-          <div className="bg-white rounded-xl border border-gray-200 p-10 flex flex-col items-center justify-center text-center">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-10 flex flex-col items-center justify-center text-center">
             <div className="h-16 w-16 rounded-full bg-[#eef4f8] flex items-center justify-center mb-4">
               <Camera className="h-8 w-8 text-[#1E2D4D]/40" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-700 mb-1">No photos found</h3>
-            <p className="text-sm text-gray-500 max-w-sm">
+            <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D]/80 mb-1">No photos found</h3>
+            <p className="text-sm text-[#1E2D4D]/50 max-w-sm">
               {searchQuery
                 ? `No photos match "${searchQuery}". Try adjusting your search or filters.`
                 : 'No photo evidence matches the current filters. Try broadening your date range or clearing filters.'
@@ -756,12 +756,12 @@ export function PhotoEvidencePage() {
               <div className="p-5 space-y-4">
                 {/* Title */}
                 <div>
-                  <h3 className="text-lg font-semibold text-[#1E2D4D]">{selected.title}</h3>
-                  <p className="text-sm text-gray-500 mt-0.5">{selected.subtitle}</p>
+                  <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">{selected.title}</h3>
+                  <p className="text-sm text-[#1E2D4D]/50 mt-0.5">{selected.subtitle}</p>
                 </div>
 
                 {/* Description */}
-                <p className="text-sm text-gray-700 leading-relaxed">
+                <p className="text-sm text-[#1E2D4D]/80 leading-relaxed">
                   {selected.description}
                 </p>
 
@@ -786,7 +786,7 @@ export function PhotoEvidencePage() {
                 </div>
 
                 {/* Metadata */}
-                <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500">
+                <div className="flex flex-wrap items-center gap-4 text-xs text-[#1E2D4D]/50">
                   <div className="flex items-center gap-1.5">
                     <Clock className="h-3.5 w-3.5 text-[#1E2D4D]" />
                     {selected.displayTime}
@@ -810,12 +810,12 @@ export function PhotoEvidencePage() {
                   </button>
                   <button
                     onClick={() => handlePrint(selected)}
-                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-[#1E2D4D]/70 bg-[#1E2D4D]/5 hover:bg-gray-200 rounded-lg transition-colors"
                   >
                     <Printer className="h-3.5 w-3.5" />
                     Print
                   </button>
-                  <span className="ml-auto text-xs text-gray-400">
+                  <span className="ml-auto text-xs text-[#1E2D4D]/30">
                     {selectedIndex + 1} / {filteredPhotos.length}
                   </span>
                 </div>

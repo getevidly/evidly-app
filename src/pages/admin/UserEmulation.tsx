@@ -143,7 +143,7 @@ export default function UserEmulation() {
       <AdminBreadcrumb crumbs={[{ label: 'User Emulation' }]} />
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <h1 className="text-2xl font-bold" style={{ color: NAVY }}>User Emulation</h1>
+          <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>User Emulation</h1>
           <p style={{ fontSize: 13, color: TEXT_SEC, marginTop: 4 }}>
             View the platform as any user — read-only, fully audited
           </p>

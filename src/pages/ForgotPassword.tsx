@@ -36,7 +36,7 @@ export function ForgotPassword() {
   return (
     <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full">
-        <div className="bg-white rounded-xl border border-gray-200 p-8">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8">
           <div className="flex justify-center mb-2">
             <div className="flex items-center">
               <div className="w-12 h-14">
@@ -46,7 +46,7 @@ export function ForgotPassword() {
                   <path d="M22 32L26 36L34 26" stroke="#d4af37" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
-              <span className="ml-3 text-3xl font-bold">
+              <span className="ml-3 text-3xl font-bold tracking-tight">
                 <span className="text-[#1E2D4D]">Evid</span>
                 <span className="text-[#d4af37]">LY</span>
               </span>
@@ -57,10 +57,10 @@ export function ForgotPassword() {
             <div className="text-center py-6">
               <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
               <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Check Your Email</h2>
-              <p className="text-gray-600 mb-6">
+              <p className="text-[#1E2D4D]/70 mb-6">
                 We've sent a password reset link to <strong>{email}</strong>. Click the link in the email to set a new password.
               </p>
-              <p className="text-sm text-gray-500 mb-6">
+              <p className="text-sm text-[#1E2D4D]/50 mb-6">
                 Didn't receive it? Check your spam folder or try again in a few minutes.
               </p>
               <button
@@ -73,7 +73,7 @@ export function ForgotPassword() {
           ) : (
             <>
               <h2 className="text-center text-xl font-bold text-[#1E2D4D] mb-2 mt-4">Reset Your Password</h2>
-              <p className="text-center text-sm text-gray-600 mb-6">
+              <p className="text-center text-sm text-[#1E2D4D]/70 mb-6">
                 Enter your email address and we'll send you a link to reset your password.
               </p>
 
@@ -85,11 +85,11 @@ export function ForgotPassword() {
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="email" className="block text-sm font-medium text-[#1E2D4D]/80">
                     Email address
                   </label>
                   <div className="relative mt-1">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[#1E2D4D]/30" />
                     <input
                       id="email"
                       type="email"
@@ -97,7 +97,7 @@ export function ForgotPassword() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="you@company.com"
-                      className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#d4af37] focus:border-[#d4af37]"
+                      className="block w-full pl-10 pr-3 py-2 border border-[#1E2D4D]/15 rounded-md shadow-sm focus:outline-none focus:ring-[#d4af37] focus:border-[#d4af37]"
                     />
                   </div>
                 </div>
@@ -105,7 +105,7 @@ export function ForgotPassword() {
                 <button
                   type="submit"
                   disabled={loading || !email}
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1E2D4D] hover:bg-[#162340] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1E2D4D] disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1E2D4D] hover:bg-[#162340] focus-visible:outline-none focus-visible:ring-2 focus:ring-offset-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? 'Sending...' : 'Send Reset Link'}
                 </button>

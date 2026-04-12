@@ -43,21 +43,21 @@ export function OnboardingProgressWidget({
       </div>
 
       <div className="flex items-center gap-3 mb-2">
-        <div className="flex-1 h-2.5 bg-gray-200 rounded-full overflow-hidden">
+        <div className="flex-1 h-2.5 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
           <div
             className="h-full rounded-full transition-all duration-300"
             style={{ width: `${progress}%`, backgroundColor: "#d4af37" }}
           />
         </div>
-        <span className="text-sm font-medium text-gray-700">{progress}%</span>
+        <span className="text-sm font-medium text-[#1E2D4D]/80">{progress}%</span>
       </div>
 
-      <p className="text-sm text-gray-600 mb-2">
+      <p className="text-sm text-[#1E2D4D]/70 mb-2">
         {remaining} required document{remaining !== 1 ? "s" : ""} still needed
       </p>
 
       {nextDocumentName && (
-        <p className="text-sm text-gray-500 mb-3">
+        <p className="text-sm text-[#1E2D4D]/50 mb-3">
           <span className="font-medium">Next:</span> Upload {nextDocumentName}
         </p>
       )}

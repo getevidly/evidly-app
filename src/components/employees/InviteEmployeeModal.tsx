@@ -52,7 +52,7 @@ export function InviteEmployeeModal({ open, onClose, onInvite }: InviteEmployeeM
       <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-xl shadow-xl border" style={{ backgroundColor: '#FFFFFF', borderColor: '#D1D9E6' }}>
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b sticky top-0 bg-white z-10" style={{ borderColor: '#D1D9E6' }}>
-          <h3 className="text-lg font-semibold" style={{ color: '#0B1628' }}>Invite Employee</h3>
+          <h3 className="text-lg font-semibold tracking-tight" style={{ color: '#0B1628' }}>Invite Employee</h3>
           <button onClick={onClose} className="p-2.5 -m-1 rounded-lg hover:bg-gray-100" aria-label="Close"><X className="w-5 h-5" style={{ color: '#6B7F96' }} /></button>
         </div>
 
@@ -61,31 +61,31 @@ export function InviteEmployeeModal({ open, onClose, onInvite }: InviteEmployeeM
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium mb-1" style={{ color: '#0B1628' }}>First Name <span className="text-red-500">*</span></label>
-              <input value={firstName} onChange={e => setFirstName(e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" style={{ borderColor: errors.firstName ? '#dc2626' : '#D1D9E6', color: '#0B1628' }} />
+              <input value={firstName} onChange={e => setFirstName(e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" style={{ borderColor: errors.firstName ? '#dc2626' : '#D1D9E6', color: '#0B1628' }} />
               {errors.firstName && <p className="text-xs mt-1 text-red-500">{errors.firstName}</p>}
             </div>
             <div>
               <label className="block text-sm font-medium mb-1" style={{ color: '#0B1628' }}>Last Name <span className="text-red-500">*</span></label>
-              <input value={lastName} onChange={e => setLastName(e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" style={{ borderColor: errors.lastName ? '#dc2626' : '#D1D9E6', color: '#0B1628' }} />
+              <input value={lastName} onChange={e => setLastName(e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" style={{ borderColor: errors.lastName ? '#dc2626' : '#D1D9E6', color: '#0B1628' }} />
               {errors.lastName && <p className="text-xs mt-1 text-red-500">{errors.lastName}</p>}
             </div>
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-1" style={{ color: '#0B1628' }}>Email <span className="text-red-500">*</span></label>
-            <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" style={{ borderColor: errors.email ? '#dc2626' : '#D1D9E6', color: '#0B1628' }} />
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" style={{ borderColor: errors.email ? '#dc2626' : '#D1D9E6', color: '#0B1628' }} />
             {errors.email && <p className="text-xs mt-1 text-red-500">{errors.email}</p>}
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-1" style={{ color: '#0B1628' }}>Phone</label>
-            <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="(555) 555-0000" className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" style={{ borderColor: '#D1D9E6', color: '#0B1628' }} />
+            <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="(555) 555-0000" className="w-full px-3 py-2 border rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" style={{ borderColor: '#D1D9E6', color: '#0B1628' }} />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium mb-1" style={{ color: '#0B1628' }}>Role</label>
-              <select value={role} onChange={e => setRole(e.target.value as EmployeeRole)} className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" style={{ borderColor: '#D1D9E6', color: '#0B1628' }}>
+              <select value={role} onChange={e => setRole(e.target.value as EmployeeRole)} className="w-full px-3 py-2 border rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" style={{ borderColor: '#D1D9E6', color: '#0B1628' }}>
                 {ROLES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
               </select>
             </div>
@@ -93,7 +93,7 @@ export function InviteEmployeeModal({ open, onClose, onInvite }: InviteEmployeeM
               <label className="block text-sm font-medium mb-1" style={{ color: '#0B1628' }}>Hourly Rate</label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm" style={{ color: '#6B7F96' }}>$</span>
-                <input type="number" value={hourlyRate} onChange={e => setHourlyRate(e.target.value)} placeholder="0.00" className="w-full pl-7 pr-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" style={{ borderColor: '#D1D9E6', color: '#0B1628' }} />
+                <input type="number" value={hourlyRate} onChange={e => setHourlyRate(e.target.value)} placeholder="0.00" className="w-full pl-7 pr-3 py-2 border rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" style={{ borderColor: '#D1D9E6', color: '#0B1628' }} />
               </div>
             </div>
           </div>

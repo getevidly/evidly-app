@@ -66,7 +66,7 @@ export function AvailabilityApprovalsPage() {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <ClipboardCheck className="w-6 h-6" style={{ color: NAVY }} />
-            <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Availability Approvals</h1>
+            <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Availability Approvals</h1>
           </div>
           <p className="text-sm" style={{ color: TEXT_TERTIARY }}>Review and approve late availability submissions.</p>
         </div>
@@ -99,7 +99,7 @@ export function AvailabilityApprovalsPage() {
       {isLoading ? (
         <div className="space-y-3">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="h-28 bg-gray-200 rounded-xl animate-pulse" />
+            <div key={i} className="h-28 bg-[#1E2D4D]/8 rounded-xl animate-pulse" />
           ))}
         </div>
       ) : submissions.length === 0 ? (

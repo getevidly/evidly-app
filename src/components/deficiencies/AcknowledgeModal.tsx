@@ -27,7 +27,7 @@ export function AcknowledgeModal({ deficiencyCode, deficiencyTitle, onClose, onS
         <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: '#D1D9E6' }}>
           <div className="flex items-center gap-2">
             <CheckCircle className="w-5 h-5" style={{ color: '#d97706' }} />
-            <h3 className="text-lg font-semibold" style={{ color: '#0B1628' }}>Acknowledge Deficiency</h3>
+            <h3 className="text-lg font-semibold tracking-tight" style={{ color: '#0B1628' }}>Acknowledge Deficiency</h3>
           </div>
           <button onClick={onClose} className="p-2.5 -m-1 rounded-lg hover:bg-gray-100 transition-colors" aria-label="Close">
             <X className="w-5 h-5" style={{ color: '#6B7F96' }} />
@@ -67,7 +67,7 @@ export function AcknowledgeModal({ deficiencyCode, deficiencyTitle, onClose, onS
               onChange={(e) => setNotes(e.target.value)}
               rows={3}
               placeholder="Optional notes about acknowledgement..."
-              className="w-full px-3 py-2 border rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+              className="w-full px-3 py-2 border rounded-lg text-sm resize-none focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
               style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
             />
           </div>

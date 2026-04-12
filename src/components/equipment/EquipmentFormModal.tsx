@@ -133,7 +133,7 @@ export function EquipmentFormModal({ equipment, onClose }: EquipmentFormModalPro
               value={locationId}
               onChange={e => setLocationId(e.target.value)}
               placeholder="Search for a location..."
-              className="w-full px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/30"
+              className="w-full px-3 py-2 text-sm rounded-lg border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30"
               style={{ borderColor: errors.locationId ? '#DC2626' : CARD_BORDER, color: NAVY }}
             />
           </Field>
@@ -143,7 +143,7 @@ export function EquipmentFormModal({ equipment, onClose }: EquipmentFormModalPro
             <select
               value={equipmentType}
               onChange={e => setEquipmentType(e.target.value)}
-              className="w-full px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/30"
+              className="w-full px-3 py-2 text-sm rounded-lg border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30"
               style={{ borderColor: errors.equipmentType ? '#DC2626' : CARD_BORDER, color: NAVY }}
             >
               <option value="">Select type...</option>
@@ -157,7 +157,7 @@ export function EquipmentFormModal({ equipment, onClose }: EquipmentFormModalPro
               value={name}
               onChange={e => setName(e.target.value)}
               placeholder="e.g., Main Kitchen Hood #1"
-              className="w-full px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/30"
+              className="w-full px-3 py-2 text-sm rounded-lg border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30"
               style={{ borderColor: errors.name ? '#DC2626' : CARD_BORDER, color: NAVY }}
             />
           </Field>

@@ -277,7 +277,7 @@ export default function AdminUsers() {
     return (
       <div className="p-8 text-center">
         <p className="text-red-600 font-medium">Failed to load users</p>
-        <button onClick={loadUsers} className="mt-4 px-4 py-2.5 bg-[#1E2D4D] text-white rounded-lg text-sm font-medium hover:bg-[#162340] transition-colors min-h-[44px]">Retry</button>
+        <button onClick={loadUsers} className="mt-4 px-4 py-2.5 bg-[#1E2D4D] text-white rounded-lg text-sm font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]">Retry</button>
       </div>
     );
   }

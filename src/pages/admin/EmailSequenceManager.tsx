@@ -338,11 +338,11 @@ export default function EmailSequenceManager() {
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-1 mb-6 border-b border-gray-200 overflow-x-auto">
+      <div className="flex items-center gap-1 mb-6 border-b border-[#1E2D4D]/10 overflow-x-auto">
         {tabs.map(tab => (
           <button key={tab.id} onClick={() => setActiveTab(tab.id)}
             className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap ${
-              activeTab === tab.id ? 'border-[#1E2D4D] text-[#1E2D4D]' : 'border-transparent text-gray-500 hover:text-gray-700'
+              activeTab === tab.id ? 'border-[#1E2D4D] text-[#1E2D4D]' : 'border-transparent text-[#1E2D4D]/50 hover:text-gray-700'
             }`}>
             <tab.icon className="h-4 w-4" />
             {tab.label}
@@ -476,24 +476,24 @@ function SequencesTab({ sequences, setSequences, isDemoMode, onRefresh }: {
         </button>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-[#FAF7F0] border-b border-gray-200">
-                <th className="text-center px-3 py-3 font-semibold text-gray-700 w-16">Step</th>
-                <th className="text-center px-3 py-3 font-semibold text-gray-700 w-20">Day</th>
-                <th className="text-left px-3 py-3 font-semibold text-gray-700">Subject</th>
-                <th className="text-center px-3 py-3 font-semibold text-gray-700 w-24">Status</th>
-                <th className="text-right px-3 py-3 font-semibold text-gray-700 w-20">Sent</th>
-                <th className="text-right px-3 py-3 font-semibold text-gray-700 w-24">Open Rate</th>
+              <tr className="bg-[#FAF7F0] border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors">
+                <th className="text-center px-3 py-3 font-semibold text-[#1E2D4D]/80 w-16">Step</th>
+                <th className="text-center px-3 py-3 font-semibold text-[#1E2D4D]/80 w-20">Day</th>
+                <th className="text-left px-3 py-3 font-semibold text-[#1E2D4D]/80">Subject</th>
+                <th className="text-center px-3 py-3 font-semibold text-[#1E2D4D]/80 w-24">Status</th>
+                <th className="text-right px-3 py-3 font-semibold text-[#1E2D4D]/80 w-20">Sent</th>
+                <th className="text-right px-3 py-3 font-semibold text-[#1E2D4D]/80 w-24">Open Rate</th>
               </tr>
             </thead>
             <tbody>
               {sequences.map(seq => (
                 <tr key={seq.id} className="border-b border-gray-100 hover:bg-gray-50">
                   <td className="px-3 py-3 text-center font-bold" style={{ color: NAVY }}>{seq.step}</td>
-                  <td className="px-3 py-3 text-center text-gray-600">Day {seq.day}</td>
+                  <td className="px-3 py-3 text-center text-[#1E2D4D]/70">Day {seq.day}</td>
                   <td className="px-3 py-3 text-gray-900 font-medium">{seq.subject}</td>
                   <td className="px-3 py-3 text-center">
                     <button
@@ -507,35 +507,35 @@ function SequencesTab({ sequences, setSequences, isDemoMode, onRefresh }: {
                       {seq.status === 'active' ? 'Active' : 'Paused'}
                     </button>
                   </td>
-                  <td className="px-3 py-3 text-right text-gray-600">{seq.sent}</td>
+                  <td className="px-3 py-3 text-right text-[#1E2D4D]/70">{seq.sent}</td>
                   <td className="px-3 py-3 text-right font-medium" style={{ color: NAVY }}>{seq.openRate}%</td>
                 </tr>
               ))}
               {sequences.length === 0 && (
-                <tr><td colSpan={6} className="px-4 py-8 text-center text-gray-400">No sequence steps configured.</td></tr>
+                <tr><td colSpan={6} className="px-4 py-8 text-center text-[#1E2D4D]/30">No sequence steps configured.</td></tr>
               )}
 
               {/* Inline add form */}
               {showAddForm && (
-                <tr className="bg-blue-50 border-t-2 border-blue-200">
+                <tr className="bg-blue-50 border-t-2 border-blue-200 hover:bg-[#1E2D4D]/[0.02] transition-colors">
                   <td className="px-3 py-3">
                     <input type="number" placeholder="#" value={newStep.step_number}
                       onChange={e => setNewStep(p => ({ ...p, step_number: e.target.value }))}
-                      className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm text-center" />
+                      className="w-full px-2 py-1.5 border border-[#1E2D4D]/15 rounded text-sm text-center" />
                   </td>
                   <td className="px-3 py-3">
                     <input type="number" placeholder="Day" value={newStep.trigger_day}
                       onChange={e => setNewStep(p => ({ ...p, trigger_day: e.target.value }))}
-                      className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm text-center" />
+                      className="w-full px-2 py-1.5 border border-[#1E2D4D]/15 rounded text-sm text-center" />
                   </td>
                   <td className="px-3 py-3" colSpan={2}>
                     <input type="text" placeholder="Email subject line..." value={newStep.subject}
                       onChange={e => setNewStep(p => ({ ...p, subject: e.target.value }))}
-                      className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm mb-2" />
+                      className="w-full px-2 py-1.5 border border-[#1E2D4D]/15 rounded text-sm mb-2" />
                     <textarea placeholder="Email body (HTML)..." value={newStep.body}
                       onChange={e => setNewStep(p => ({ ...p, body: e.target.value }))}
                       rows={3}
-                      className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm font-mono" />
+                      className="w-full px-2 py-1.5 border border-[#1E2D4D]/15 rounded text-sm font-mono" />
                   </td>
                   <td className="px-3 py-3 text-center" colSpan={2}>
                     <button onClick={handleAddStep}
@@ -607,11 +607,11 @@ function EditorTab({ sequences, setSequences, isDemoMode }: {
       {/* Left: Editor */}
       <div className="flex-[3] space-y-4">
         <div>
-          <label className="block text-xs font-medium text-gray-700 mb-1">Select Sequence Step</label>
+          <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Select Sequence Step</label>
           <select
             value={selectedStepId}
             onChange={e => setSelectedStepId(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
+            className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm bg-white focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]">
             {sequences.map(s => (
               <option key={s.id} value={s.id}>Step {s.step} (Day {s.day}): {s.subject}</option>
             ))}
@@ -619,27 +619,27 @@ function EditorTab({ sequences, setSequences, isDemoMode }: {
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-gray-700 mb-1">Subject</label>
+          <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Subject</label>
           <input type="text" value={editSubject} onChange={e => setEditSubject(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+            className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" />
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-gray-700 mb-1">Body (HTML)</label>
+          <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Body (HTML)</label>
           <textarea
             value={editBody}
             onChange={e => setEditBody(e.target.value)}
             rows={15}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+            className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm font-mono focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
             style={{ fontFamily: "'Fira Code', 'Courier New', monospace", fontSize: 13 }}
           />
         </div>
 
         <p className="text-xs" style={{ color: TEXT_SEC }}>
-          Available tokens: <code className="bg-gray-100 px-1 py-0.5 rounded text-xs">{'{{first_name}}'}</code>,{' '}
-          <code className="bg-gray-100 px-1 py-0.5 rounded text-xs">{'{{org_name}}'}</code>,{' '}
-          <code className="bg-gray-100 px-1 py-0.5 rounded text-xs">{'{{days_remaining}}'}</code>,{' '}
-          <code className="bg-gray-100 px-1 py-0.5 rounded text-xs">{'{{login_url}}'}</code>
+          Available tokens: <code className="bg-[#1E2D4D]/5 px-1 py-0.5 rounded text-xs">{'{{first_name}}'}</code>,{' '}
+          <code className="bg-[#1E2D4D]/5 px-1 py-0.5 rounded text-xs">{'{{org_name}}'}</code>,{' '}
+          <code className="bg-[#1E2D4D]/5 px-1 py-0.5 rounded text-xs">{'{{days_remaining}}'}</code>,{' '}
+          <code className="bg-[#1E2D4D]/5 px-1 py-0.5 rounded text-xs">{'{{login_url}}'}</code>
         </p>
 
         <button onClick={handleSave} disabled={saving}
@@ -713,7 +713,7 @@ function VendorPipelineTab({ vendors, setVendors, isDemoMode, onRefresh }: {
                 <span className="text-xs font-bold uppercase tracking-wide" style={{ color: NAVY }}>
                   {STAGE_LABELS[stage]}
                 </span>
-                <span className="text-xs bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded-full font-bold">
+                <span className="text-xs bg-gray-100 text-[#1E2D4D]/50 px-1.5 py-0.5 rounded-full font-bold">
                   {stageVendors.length}
                 </span>
               </div>
@@ -722,14 +722,14 @@ function VendorPipelineTab({ vendors, setVendors, isDemoMode, onRefresh }: {
                   const typeStyle = SERVICE_TYPE_COLORS[vendor.type] || { bg: '#F3F4F6', color: '#6B7280', label: vendor.type };
                   const isExpanded = expandedNotes === vendor.id;
                   return (
-                    <div key={vendor.id} className="bg-white rounded-xl border border-gray-200 p-3 transition-shadow">
+                    <div key={vendor.id} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-3 transition-shadow">
                       <div className="font-semibold text-sm text-gray-900 mb-1">{vendor.name}</div>
                       <span className="inline-block text-xs font-bold px-2 py-0.5 rounded-full mb-2"
                         style={{ background: typeStyle.bg, color: typeStyle.color }}>
                         {typeStyle.label}
                       </span>
 
-                      <div className="space-y-1 text-xs text-gray-500">
+                      <div className="space-y-1 text-xs text-[#1E2D4D]/50">
                         {vendor.lastTouch && (
                           <div className="flex items-center gap-1">
                             <Clock className="h-3 w-3" />
@@ -749,7 +749,7 @@ function VendorPipelineTab({ vendors, setVendors, isDemoMode, onRefresh }: {
                         <select
                           value={vendor.stage}
                           onChange={e => handleStageChange(vendor, e.target.value)}
-                          className="w-full text-xs border border-gray-200 rounded px-2 py-1 bg-white">
+                          className="w-full text-xs border border-[#1E2D4D]/10 rounded px-2 py-1 bg-white">
                           {VENDOR_STAGES.map(s => (
                             <option key={s} value={s}>{STAGE_LABELS[s]}</option>
                           ))}
@@ -759,7 +759,7 @@ function VendorPipelineTab({ vendors, setVendors, isDemoMode, onRefresh }: {
                       {/* Notes */}
                       {vendor.notes && (
                         <div className="mt-2">
-                          <p className={`text-xs text-gray-500 ${isExpanded ? '' : 'line-clamp-2'}`}>
+                          <p className={`text-xs text-[#1E2D4D]/50 ${isExpanded ? '' : 'line-clamp-2'}`}>
                             {vendor.notes}
                           </p>
                           {vendor.notes.length > 80 && (
@@ -776,7 +776,7 @@ function VendorPipelineTab({ vendors, setVendors, isDemoMode, onRefresh }: {
                   );
                 })}
                 {stageVendors.length === 0 && (
-                  <div className="text-xs text-gray-400 text-center py-6 bg-[#FAF7F0] rounded-lg">
+                  <div className="text-xs text-[#1E2D4D]/30 text-center py-6 bg-[#FAF7F0] rounded-lg">
                     No vendors
                   </div>
                 )}
@@ -820,7 +820,7 @@ function NotificationsTab({ notifications, isDemoMode }: {
         <div className="flex items-center gap-2">
           <Filter className="h-4 w-4" style={{ color: TEXT_SEC }} />
           <select value={dateFilter} onChange={e => setDateFilter(e.target.value as any)}
-            className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm bg-white">
+            className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-lg text-sm bg-white">
             <option value="7d">Last 7 days</option>
             <option value="30d">Last 30 days</option>
             <option value="all">All time</option>
@@ -831,12 +831,12 @@ function NotificationsTab({ notifications, isDemoMode }: {
           <Search className="h-4 w-4" style={{ color: TEXT_SEC }} />
           <input type="text" placeholder="Search vendor..." value={vendorSearch}
             onChange={e => setVendorSearch(e.target.value)}
-            className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm w-48" />
+            className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-lg text-sm w-48" />
         </div>
 
         <div>
           <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
-            className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm bg-white">
+            className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-lg text-sm bg-white">
             <option value="all">All statuses</option>
             <option value="delivered">Delivered</option>
             <option value="opened">Opened</option>
@@ -847,16 +847,16 @@ function NotificationsTab({ notifications, isDemoMode }: {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-[#FAF7F0] border-b border-gray-200">
-                <th className="text-left px-4 py-3 font-semibold text-gray-700">Vendor Name</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-700">Document Type</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-700">Sent At</th>
-                <th className="text-center px-4 py-3 font-semibold text-gray-700">Status</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-700">Opened At</th>
+              <tr className="bg-[#FAF7F0] border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors">
+                <th className="text-left px-4 py-3 font-semibold text-[#1E2D4D]/80">Vendor Name</th>
+                <th className="text-left px-4 py-3 font-semibold text-[#1E2D4D]/80">Document Type</th>
+                <th className="text-left px-4 py-3 font-semibold text-[#1E2D4D]/80">Sent At</th>
+                <th className="text-center px-4 py-3 font-semibold text-[#1E2D4D]/80">Status</th>
+                <th className="text-left px-4 py-3 font-semibold text-[#1E2D4D]/80">Opened At</th>
               </tr>
             </thead>
             <tbody>
@@ -865,20 +865,20 @@ function NotificationsTab({ notifications, isDemoMode }: {
                 return (
                   <tr key={n.id} className="border-b border-gray-100 hover:bg-gray-50">
                     <td className="px-4 py-3 font-medium text-gray-900">{n.vendorName}</td>
-                    <td className="px-4 py-3 text-gray-600">{n.documentType}</td>
-                    <td className="px-4 py-3 text-xs text-gray-500">{formatDateTime(n.sentAt)}</td>
+                    <td className="px-4 py-3 text-[#1E2D4D]/70">{n.documentType}</td>
+                    <td className="px-4 py-3 text-xs text-[#1E2D4D]/50">{formatDateTime(n.sentAt)}</td>
                     <td className="px-4 py-3 text-center">
                       <span className="inline-block text-xs font-bold px-2.5 py-0.5 rounded-full"
                         style={{ background: statusStyle.bg, color: statusStyle.color }}>
                         {statusStyle.label}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-xs text-gray-500">{formatDateTime(n.openedAt)}</td>
+                    <td className="px-4 py-3 text-xs text-[#1E2D4D]/50">{formatDateTime(n.openedAt)}</td>
                   </tr>
                 );
               })}
               {filtered.length === 0 && (
-                <tr><td colSpan={5} className="px-4 py-8 text-center text-gray-400">No notifications match the current filters.</td></tr>
+                <tr><td colSpan={5} className="px-4 py-8 text-center text-[#1E2D4D]/30">No notifications match the current filters.</td></tr>
               )}
             </tbody>
           </table>
@@ -911,16 +911,16 @@ function ReferralsTab({ referrals, isDemoMode }: {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-[#FAF7F0] border-b border-gray-200">
-                <th className="text-left px-4 py-3 font-semibold text-gray-700">Code</th>
-                <th className="text-center px-4 py-3 font-semibold text-gray-700">Type</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-700">Created By</th>
-                <th className="text-right px-4 py-3 font-semibold text-gray-700">Uses</th>
-                <th className="text-right px-4 py-3 font-semibold text-gray-700">Revenue Impact</th>
+              <tr className="bg-[#FAF7F0] border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors">
+                <th className="text-left px-4 py-3 font-semibold text-[#1E2D4D]/80">Code</th>
+                <th className="text-center px-4 py-3 font-semibold text-[#1E2D4D]/80">Type</th>
+                <th className="text-left px-4 py-3 font-semibold text-[#1E2D4D]/80">Created By</th>
+                <th className="text-right px-4 py-3 font-semibold text-[#1E2D4D]/80">Uses</th>
+                <th className="text-right px-4 py-3 font-semibold text-[#1E2D4D]/80">Revenue Impact</th>
               </tr>
             </thead>
             <tbody>
@@ -948,7 +948,7 @@ function ReferralsTab({ referrals, isDemoMode }: {
                 );
               })}
               {referrals.length === 0 && (
-                <tr><td colSpan={5} className="px-4 py-8 text-center text-gray-400">No referral codes yet.</td></tr>
+                <tr><td colSpan={5} className="px-4 py-8 text-center text-[#1E2D4D]/30">No referral codes yet.</td></tr>
               )}
             </tbody>
           </table>

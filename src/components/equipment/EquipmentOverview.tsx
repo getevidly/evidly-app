@@ -119,7 +119,7 @@ export function EquipmentOverview({ equipment, onPrintQR }: EquipmentOverviewPro
                 value={notes}
                 onChange={e => setNotes(e.target.value)}
                 rows={4}
-                className="w-full px-3 py-2 text-sm rounded-lg border resize-none focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/30"
+                className="w-full px-3 py-2 text-sm rounded-lg border resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30"
                 style={{ borderColor: CARD_BORDER, color: NAVY }}
               />
               <div className="flex gap-2">

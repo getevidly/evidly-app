@@ -50,7 +50,7 @@ export function ReportsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Reports</h1>
+          <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Reports</h1>
           <p className="text-sm mt-1" style={{ color: MUTED }}>Generate, schedule, and export reports across your operations.</p>
         </div>
         <div className="relative">
@@ -59,7 +59,7 @@ export function ReportsPage() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search reports..."
-            className="pl-9 pr-4 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/30"
+            className="pl-9 pr-4 py-2 text-sm rounded-lg border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30"
             style={{ background: CARD_BG, borderColor: CARD_BORDER, color: NAVY, width: 260 }}
           />
         </div>

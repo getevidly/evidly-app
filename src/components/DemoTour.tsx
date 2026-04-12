@@ -168,7 +168,7 @@ export function DemoTour() {
       <>
         <div className="fixed inset-0 z-[99990] bg-black/60 flex items-center justify-center">
           <div
-            className="bg-white rounded-xl border border-gray-200 w-full max-w-md mx-4 overflow-hidden"
+            className="bg-white rounded-xl border border-[#1E2D4D]/10 w-full max-w-md mx-4 overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-8 text-center">
@@ -208,7 +208,7 @@ export function DemoTour() {
                   <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">
                     {companyName} is Inspection Ready!
                   </h2>
-                  <p className="text-sm text-gray-500 mb-6 max-w-sm mx-auto">
+                  <p className="text-sm text-[#1E2D4D]/50 mb-6 max-w-sm mx-auto">
                     With EvidLY, this is your score on day one. Every temperature logged, every checklist completed, every document organized — all verified and inspection-ready.
                   </p>
                 </div>
@@ -239,7 +239,7 @@ export function DemoTour() {
               >
                 Start Exploring
               </button>
-              <p className="text-xs text-gray-400 mt-3">
+              <p className="text-xs text-[#1E2D4D]/30 mt-3">
                 You now have full access to explore every feature
               </p>
             </div>
@@ -287,7 +287,7 @@ export function DemoTour() {
 
       {/* Tooltip */}
       <div
-        className="fixed z-[99999] w-[360px] bg-white rounded-xl border border-gray-200"
+        className="fixed z-[99999] w-[360px] bg-white rounded-xl border border-[#1E2D4D]/10"
         style={{ top: tooltipPosition.top, left: tooltipPosition.left }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -295,10 +295,10 @@ export function DemoTour() {
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-lg font-bold text-[#1E2D4D]">{step?.title}</h3>
             <button onClick={completeTour} className="p-2.5 -m-1 hover:bg-gray-100 rounded-full transition-colors" aria-label="Close">
-              <X className="w-4 h-4 text-gray-400" />
+              <X className="w-4 h-4 text-[#1E2D4D]/30" />
             </button>
           </div>
-          <p className="text-sm text-gray-600 leading-relaxed">{step?.content}</p>
+          <p className="text-sm text-[#1E2D4D]/70 leading-relaxed">{step?.content}</p>
         </div>
 
         <div className="flex items-center justify-between px-5 py-3 bg-[#FAF7F0] rounded-b-xl border-t border-gray-100">
@@ -319,12 +319,12 @@ export function DemoTour() {
           <div className="flex items-center gap-2">
             <button
               onClick={completeTour}
-              className="px-3 py-1.5 text-xs text-gray-400 hover:text-gray-600 transition-colors"
+              className="px-3 py-1.5 text-xs text-[#1E2D4D]/30 hover:text-gray-600 transition-colors"
             >
               Skip Tour
             </button>
             {tourStep > 0 && (
-              <button onClick={prev} className="flex items-center gap-1 px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 transition-colors">
+              <button onClick={prev} className="flex items-center gap-1 px-3 py-1.5 text-sm text-[#1E2D4D]/70 hover:text-gray-900 transition-colors">
                 <ChevronLeft className="w-4 h-4" />
                 Back
               </button>

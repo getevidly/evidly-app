@@ -29,8 +29,8 @@ const CERT_TYPES = [
   { value: 'facility_safety_other', label: 'Other Facility Safety' },
 ];
 
-const inputClass = 'w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] bg-white';
-const labelClass = 'block text-sm font-medium text-gray-700 mb-1';
+const inputClass = 'w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] bg-white';
+const labelClass = 'block text-sm font-medium text-[#1E2D4D]/80 mb-1';
 
 interface Props {
   isOpen: boolean;
@@ -154,12 +154,12 @@ export function AddCertificationModal({ isOpen, onClose, employeeId, employeeNam
             </h3>
           </div>
           <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded" aria-label="Close">
-            <X size={18} className="text-gray-400" />
+            <X size={18} className="text-[#1E2D4D]/30" />
           </button>
         </div>
 
-        <p className="text-sm text-gray-500 mb-4">
-          {existingCert ? 'Update' : 'Add a new'} certification for <span className="font-semibold text-gray-700">{employeeName}</span>
+        <p className="text-sm text-[#1E2D4D]/50 mb-4">
+          {existingCert ? 'Update' : 'Add a new'} certification for <span className="font-semibold text-[#1E2D4D]/80">{employeeName}</span>
         </p>
 
         <div className="space-y-4">
@@ -248,7 +248,7 @@ export function AddCertificationModal({ isOpen, onClose, employeeId, employeeNam
                 onChange={e => setExpirationDate(e.target.value)}
                 className={inputClass}
               />
-              <p className="text-xs text-gray-400 mt-1">Leave blank for non-expiring certs</p>
+              <p className="text-xs text-[#1E2D4D]/30 mt-1">Leave blank for non-expiring certs</p>
             </div>
           </div>
 
@@ -278,7 +278,7 @@ export function AddCertificationModal({ isOpen, onClose, employeeId, employeeNam
         <div className="flex gap-3 mt-6">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+            className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-gray-50"
           >
             Cancel
           </button>

@@ -16,11 +16,11 @@ export function EquipmentQRCode({ equipmentId, equipmentName, locationName, size
   const qrUrl = `${window.location.origin}/temp/log?equipment=${equipmentId}&method=qr_scan`;
 
   return (
-    <div className="text-center p-6 bg-white rounded-xl border border-gray-200">
+    <div className="text-center p-6 bg-white rounded-xl border border-[#1E2D4D]/10">
       <QRCodeSVG value={qrUrl} size={size} level="M" />
       <p className="mt-3 text-sm font-medium text-gray-900">{equipmentName}</p>
-      {locationName && <p className="text-xs text-gray-500 mt-0.5">{locationName}</p>}
-      <p className="text-xs text-gray-400 mt-1">Scan to log temperature</p>
+      {locationName && <p className="text-xs text-[#1E2D4D]/50 mt-0.5">{locationName}</p>}
+      <p className="text-xs text-[#1E2D4D]/30 mt-1">Scan to log temperature</p>
       <button
         onClick={() => {
           const printWindow = window.open('', '_blank');

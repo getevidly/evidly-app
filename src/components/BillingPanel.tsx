@@ -78,7 +78,7 @@ export function BillingPanel() {
     <div className="space-y-6">
       <div>
         <h3 className="text-xl font-bold text-[#1E2D4D]">Billing & Subscription</h3>
-        <p className="text-sm text-gray-600 mt-1">
+        <p className="text-sm text-[#1E2D4D]/70 mt-1">
           Manage your subscription plan and billing details.
         </p>
       </div>
@@ -88,7 +88,7 @@ export function BillingPanel() {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-gray-200">Current Plan</p>
-            <h4 className="text-lg font-semibold mt-0.5">
+            <h4 className="text-lg font-semibold tracking-tight mt-0.5">
               {currentPlan === 'free'
                 ? 'Free Trial'
                 : PLANS.find((p) => p.id === currentPlan)?.name || currentPlan}
@@ -166,7 +166,7 @@ export function BillingPanel() {
               className={`relative rounded-lg border-2 p-5 transition-all ${
                 isCurrent
                   ? 'border-[#1E2D4D] bg-[#eef4f8]'
-                  : 'border-gray-200 bg-white hover:border-gray-300'
+                  : 'border-[#1E2D4D]/10 bg-white hover:border-gray-300'
               }`}
             >
               {/* Most Popular badge */}
@@ -181,15 +181,15 @@ export function BillingPanel() {
 
               <div className={isPopular ? 'mt-2' : ''}>
                 <h4 className="text-lg font-bold text-[#1E2D4D]">{plan.name}</h4>
-                <p className="text-xs text-gray-500">{plan.subtitle}</p>
+                <p className="text-xs text-[#1E2D4D]/50">{plan.subtitle}</p>
                 <div className="mt-2 mb-4">
-                  <span className="text-2xl font-bold text-[#1E2D4D]">{plan.priceLabel}</span>
+                  <span className="text-2xl font-bold tracking-tight text-[#1E2D4D]">{plan.priceLabel}</span>
                 </div>
 
                 {/* Features */}
                 <ul className="space-y-2 mb-6">
                   {plan.features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-2 text-sm text-gray-700">
+                    <li key={feature} className="flex items-start gap-2 text-sm text-[#1E2D4D]/80">
                       <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
                       <span>{feature}</span>
                     </li>
@@ -202,7 +202,7 @@ export function BillingPanel() {
                   disabled={isCurrent || isLoading}
                   className={`w-full py-2.5 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2 ${
                     isCurrent
-                      ? 'bg-gray-100 text-gray-500 cursor-default'
+                      ? 'bg-gray-100 text-[#1E2D4D]/50 cursor-default'
                       : isEnterprise
                         ? 'border-2 border-[#1E2D4D] text-[#1E2D4D] hover:bg-[#1E2D4D] hover:text-white'
                         : 'bg-[#1E2D4D] text-white hover:bg-[#162340]'
@@ -219,10 +219,10 @@ export function BillingPanel() {
 
       {/* Manage billing link for active subscribers */}
       {currentPlan !== 'free' && (
-        <div className="border border-gray-200 rounded-lg p-4 flex items-center justify-between">
+        <div className="border border-[#1E2D4D]/10 rounded-lg p-4 flex items-center justify-between">
           <div>
             <h4 className="text-sm font-semibold text-[#1E2D4D]">Need to update payment method or cancel?</h4>
-            <p className="text-xs text-gray-500 mt-0.5">
+            <p className="text-xs text-[#1E2D4D]/50 mt-0.5">
               Manage invoices, payment methods, and cancellation through the Stripe billing portal.
             </p>
           </div>

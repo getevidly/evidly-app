@@ -21,7 +21,7 @@ export function InspectionForecastCard({ forecast }) {
           <div className="p-2 bg-[#F4F6FA] rounded-lg">
             <Calendar className="h-5 w-5 text-[#1E2D4D]" />
           </div>
-          <h3 className="text-lg font-semibold text-[#0B1628]">Inspection Forecast</h3>
+          <h3 className="text-lg font-semibold tracking-tight text-[#0B1628]">Inspection Forecast</h3>
         </div>
         <div className="text-center py-8">
           <Calendar className="h-10 w-10 text-[#D1D9E6] mx-auto mb-3" />
@@ -43,7 +43,7 @@ export function InspectionForecastCard({ forecast }) {
           <div className="p-2 bg-[#F4F6FA] rounded-lg">
             <Calendar className="h-5 w-5 text-[#1E2D4D]" />
           </div>
-          <h3 className="text-lg font-semibold text-[#0B1628]">Inspection Forecast</h3>
+          <h3 className="text-lg font-semibold tracking-tight text-[#0B1628]">Inspection Forecast</h3>
         </div>
         <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${riskStyle.bg} ${riskStyle.text}`}>
           {riskStyle.label}

@@ -238,14 +238,14 @@ export function SecuritySettings() {
           <Shield size={24} style={{ color: BRAND }} />
         </div>
         <div>
-          <h1 className="text-2xl font-bold" style={{ color: BRAND, fontFamily: 'DM Sans, sans-serif' }}>Domain Security Policy</h1>
+          <h1 className="text-2xl font-bold tracking-tight" style={{ color: BRAND, fontFamily: 'DM Sans, sans-serif' }}>Domain Security Policy</h1>
           <p className="text-sm mt-0.5" style={{ color: TEXT_TERT }}>HTTPS enforcement, security headers, CORS, and domain verification</p>
         </div>
       </div>
 
       {/* ── Section A: HTTPS & Transport ───────────────────── */}
       <section className="bg-white rounded-xl border shadow-sm p-5" style={{ borderColor: '#D1D9E6' }}>
-        <h2 className="text-lg font-semibold mb-1" style={{ color: '#0B1628', fontFamily: 'DM Sans, sans-serif' }}>
+        <h2 className="text-lg font-semibold tracking-tight mb-1" style={{ color: '#0B1628', fontFamily: 'DM Sans, sans-serif' }}>
           <Lock size={16} className="inline mr-2" style={{ color: BRAND }} />
           HTTPS & Transport Security
         </h2>
@@ -290,7 +290,7 @@ export function SecuritySettings() {
       <section className="bg-white rounded-xl border shadow-sm p-5" style={{ borderColor: '#D1D9E6' }}>
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-lg font-semibold" style={{ color: '#0B1628', fontFamily: 'DM Sans, sans-serif' }}>
+            <h2 className="text-lg font-semibold tracking-tight" style={{ color: '#0B1628', fontFamily: 'DM Sans, sans-serif' }}>
               <Shield size={16} className="inline mr-2" style={{ color: BRAND }} />
               Security Headers
             </h2>
@@ -309,7 +309,7 @@ export function SecuritySettings() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b" style={{ borderColor: '#E8EDF5' }}>
+              <tr className="border-b hover:bg-[#1E2D4D]/[0.02] transition-colors" style={{ borderColor: '#E8EDF5' }}>
                 <th className="text-left py-2 pr-4 font-medium" style={{ color: TEXT_SEC }}>Header</th>
                 <th className="text-left py-2 pr-4 font-medium" style={{ color: TEXT_SEC }}>Value</th>
                 <th className="text-center py-2 font-medium" style={{ color: TEXT_SEC }}>Status</th>
@@ -337,7 +337,7 @@ export function SecuritySettings() {
 
       {/* ── Section C: Allowed Domains / CORS ──────────────── */}
       <section className="bg-white rounded-xl border shadow-sm p-5" style={{ borderColor: '#D1D9E6' }}>
-        <h2 className="text-lg font-semibold mb-1" style={{ color: '#0B1628', fontFamily: 'DM Sans, sans-serif' }}>
+        <h2 className="text-lg font-semibold tracking-tight mb-1" style={{ color: '#0B1628', fontFamily: 'DM Sans, sans-serif' }}>
           <Globe size={16} className="inline mr-2" style={{ color: BRAND }} />
           Allowed Domains & CORS
         </h2>
@@ -390,7 +390,7 @@ export function SecuritySettings() {
       <section className="bg-white rounded-xl border shadow-sm p-5" style={{ borderColor: '#D1D9E6' }}>
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-lg font-semibold" style={{ color: '#0B1628', fontFamily: 'DM Sans, sans-serif' }}>
+            <h2 className="text-lg font-semibold tracking-tight" style={{ color: '#0B1628', fontFamily: 'DM Sans, sans-serif' }}>
               <CheckCircle size={16} className="inline mr-2" style={{ color: BRAND }} />
               Domain Verification Status
             </h2>
@@ -413,7 +413,7 @@ export function SecuritySettings() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b" style={{ borderColor: '#E8EDF5' }}>
+                <tr className="border-b hover:bg-[#1E2D4D]/[0.02] transition-colors" style={{ borderColor: '#E8EDF5' }}>
                   <th className="text-left py-2 pr-4 font-medium" style={{ color: TEXT_SEC }}>Domain</th>
                   <th className="text-center py-2 px-2 font-medium" style={{ color: TEXT_SEC }}>HTTPS</th>
                   <th className="text-center py-2 px-2 font-medium" style={{ color: TEXT_SEC }}>HSTS</th>

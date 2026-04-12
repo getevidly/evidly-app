@@ -87,7 +87,7 @@ export function JobBlock({ job, compact, onClick }: JobBlockProps) {
       {/* Priority indicator */}
       {job.priority === 'urgent' && (
         <div className="mt-1">
-          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-red-100 text-red-700">URGENT</span>
+          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-red-50 text-red-700">URGENT</span>
         </div>
       )}
       {job.priority === 'high' && (

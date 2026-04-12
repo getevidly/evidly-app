@@ -31,7 +31,7 @@ export function DemoUpgradePrompt({ action, featureName, onClose, isOpen }: Demo
     <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4" data-demo-allow onClick={onClose}>
       <div className="absolute inset-0 bg-black/50" />
       <div
-        className="relative bg-white rounded-xl border border-gray-200 w-full max-w-md overflow-hidden"
+        className="relative bg-white rounded-xl border border-[#1E2D4D]/10 w-full max-w-md overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -53,11 +53,11 @@ export function DemoUpgradePrompt({ action, featureName, onClose, isOpen }: Demo
 
         {/* Body */}
         <div className="px-6 py-6">
-          <p className="text-gray-700 text-sm leading-relaxed mb-2">
+          <p className="text-[#1E2D4D]/80 text-sm leading-relaxed mb-2">
             <span className="font-semibold capitalize">{action}</span> is not available in demo mode.
             {featureName && <> Start a free trial to unlock <span className="font-semibold">{featureName}</span>.</>}
           </p>
-          <p className="text-gray-500 text-xs mb-5">
+          <p className="text-[#1E2D4D]/50 text-xs mb-5">
             Get full access to all features with your own data.
           </p>
 
@@ -71,7 +71,7 @@ export function DemoUpgradePrompt({ action, featureName, onClose, isOpen }: Demo
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-2.5 px-4 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors text-sm"
+              className="flex-1 py-2.5 px-4 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 font-medium rounded-lg hover:bg-gray-50 transition-colors text-sm"
             >
               Continue Demo
             </button>

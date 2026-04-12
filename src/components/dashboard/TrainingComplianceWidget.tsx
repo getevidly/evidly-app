@@ -51,7 +51,7 @@ export function TrainingComplianceWidget({ navigate }: Props) {
             {stats.comingDue} Coming Due
           </span>
         )}
-        <span className="text-gray-500 ml-auto">
+        <span className="text-[#1E2D4D]/50 ml-auto">
           {stats.completionPct}% training complete
         </span>
       </div>

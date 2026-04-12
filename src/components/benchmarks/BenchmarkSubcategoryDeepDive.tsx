@@ -37,7 +37,7 @@ function SubcategoryBar({ label, pillar, yourScore, verticalAvg }: {
           </span>
         </div>
       </div>
-      <div className="relative h-2.5 bg-gray-100 rounded-full overflow-visible">
+      <div className="relative h-2.5 bg-[#1E2D4D]/5 rounded-full overflow-visible">
         {/* Your score bar */}
         <div
           className="absolute top-0 left-0 h-full rounded-full transition-all duration-500"
@@ -56,7 +56,7 @@ function SubcategoryBar({ label, pillar, yourScore, verticalAvg }: {
         />
       </div>
       <div className="flex items-center justify-end mt-1">
-        <span className="text-xs text-gray-400">Vertical avg: {verticalAvg}%</span>
+        <span className="text-xs text-[#1E2D4D]/30">Vertical avg: {verticalAvg}%</span>
       </div>
     </div>
   );
@@ -66,10 +66,10 @@ export function BenchmarkSubcategoryDeepDive({ locationId }: Props) {
   const locScores = LOCATION_SUBCATEGORY_SCORES[locationId] || LOCATION_SUBCATEGORY_SCORES['downtown'];
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
-      <h3 className="text-lg font-semibold text-[#1E2D4D] mb-1">Subcategory Deep Dive</h3>
-      <p className="text-sm text-gray-500 mb-2">Your performance in 8 specific compliance areas vs vertical average</p>
-      <div className="flex items-center gap-4 mb-4 text-xs text-gray-400">
+    <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
+      <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-1">Subcategory Deep Dive</h3>
+      <p className="text-sm text-[#1E2D4D]/50 mb-2">Your performance in 8 specific compliance areas vs vertical average</p>
+      <div className="flex items-center gap-4 mb-4 text-xs text-[#1E2D4D]/30">
         <span className="flex items-center gap-1">
           <span className="inline-block w-3 h-1.5 rounded-full" style={{ backgroundColor: '#1E2D4D' }} /> Your score
         </span>

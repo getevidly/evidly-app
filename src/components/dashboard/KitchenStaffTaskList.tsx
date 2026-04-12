@@ -247,10 +247,10 @@ export default function KitchenStaffTaskList() {
                 <p className="text-4xl font-bold" style={{ color: getProgressColor(progressPct) }}>
                   {doneCount} / {totalTasks}
                 </p>
-                <p className="text-sm text-gray-500 mt-1">{s.tasksDone(doneCount, totalTasks)}</p>
+                <p className="text-sm text-[#1E2D4D]/50 mt-1">{s.tasksDone(doneCount, totalTasks)}</p>
               </>
             )}
-            <div className="w-full bg-gray-200 rounded-full mt-3" style={{ height: 14 }}>
+            <div className="w-full bg-[#1E2D4D]/8 rounded-full mt-3" style={{ height: 14 }}>
               <div
                 className="rounded-full transition-all duration-500 ease-out"
                 style={{
@@ -276,13 +276,13 @@ export default function KitchenStaffTaskList() {
 
             {todoTasks.length === 0 ? (
               <div
-                className="bg-white rounded-xl border border-gray-200 p-6 text-center"
+                className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 text-center"
               >
-                <p className="text-lg font-semibold text-gray-700">{s.allDone}</p>
+                <p className="text-lg font-semibold tracking-tight text-[#1E2D4D]/80">{s.allDone}</p>
               </div>
             ) : (
               <div
-                className="bg-white rounded-xl border border-gray-200 overflow-hidden divide-y divide-gray-100"
+                className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden divide-y divide-[#1E2D4D]/5"
               >
                 {todoTasks.map((task) => (
                   <div
@@ -348,16 +348,16 @@ export default function KitchenStaffTaskList() {
               style={{ minHeight: 56 }}
             >
               <CheckCircle2 size={20} className="text-green-500" />
-              <span className="text-sm font-semibold text-gray-700">
+              <span className="text-sm font-semibold text-[#1E2D4D]/80">
                 {s.done} ({doneCount})
               </span>
-              <span className="text-xs text-gray-400 ml-1">
+              <span className="text-xs text-[#1E2D4D]/30 ml-1">
                 {doneExpanded ? s.tapToCollapse : s.tapToExpand}
               </span>
               <span className="ml-auto">
                 {doneExpanded
-                  ? <ChevronUp size={20} className="text-gray-400" />
-                  : <ChevronDown size={20} className="text-gray-400" />
+                  ? <ChevronUp size={20} className="text-[#1E2D4D]/30" />
+                  : <ChevronDown size={20} className="text-[#1E2D4D]/30" />
                 }
               </span>
             </button>
@@ -374,11 +374,11 @@ export default function KitchenStaffTaskList() {
                   >
                     <CheckCircle2 size={20} className="text-green-400 shrink-0" />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm text-gray-500 line-through">
+                      <p className="text-sm text-[#1E2D4D]/50 line-through">
                         {getTaskDescription(task)}
                       </p>
                     </div>
-                    <span className="text-xs text-gray-400 shrink-0">{task.completedAt}</span>
+                    <span className="text-xs text-[#1E2D4D]/30 shrink-0">{task.completedAt}</span>
                   </button>
                 ))}
               </div>
@@ -427,11 +427,11 @@ export default function KitchenStaffTaskList() {
 
           {/* Language Toggle */}
           <div className="flex items-center justify-center gap-2 py-4">
-            <Globe size={16} className="text-gray-400" />
+            <Globe size={16} className="text-[#1E2D4D]/30" />
             <button
               type="button"
               onClick={() => setLocale('en' as Locale)}
-              className={`text-sm px-1 ${locale === 'en' ? 'font-bold text-[#1E2D4D] underline' : 'text-gray-400'}`}
+              className={`text-sm px-1 ${locale === 'en' ? 'font-bold text-[#1E2D4D] underline' : 'text-[#1E2D4D]/30'}`}
             >
               EN
             </button>
@@ -439,7 +439,7 @@ export default function KitchenStaffTaskList() {
             <button
               type="button"
               onClick={() => setLocale('es' as Locale)}
-              className={`text-sm px-1 ${locale === 'es' ? 'font-bold text-[#1E2D4D] underline' : 'text-gray-400'}`}
+              className={`text-sm px-1 ${locale === 'es' ? 'font-bold text-[#1E2D4D] underline' : 'text-[#1E2D4D]/30'}`}
             >
               ES
             </button>

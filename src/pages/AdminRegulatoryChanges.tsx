@@ -277,8 +277,8 @@ export function AdminRegulatoryChanges() {
             <Scale className="h-5 w-5" style={{ color: '#d4af37' }} />
           </div>
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-[#1E2D4D]">Regulatory Change Management</h1>
-            <p className="text-sm text-gray-500">Admin — Add, review, and publish regulatory changes for customers</p>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#1E2D4D]">Regulatory Change Management</h1>
+            <p className="text-sm text-[#1E2D4D]/50">Admin — Add, review, and publish regulatory changes for customers</p>
           </div>
         </div>
         <button
@@ -296,7 +296,7 @@ export function AdminRegulatoryChanges() {
       {/* Loading */}
       {!isDemoMode && loading && (
         <div className="flex justify-center py-12">
-          <div className="h-8 w-8 border-2 border-gray-300 border-t-[#d4af37] rounded-full animate-spin" />
+          <div className="h-8 w-8 border-2 border-[#1E2D4D]/15 border-t-[#d4af37] rounded-full animate-spin" />
         </div>
       )}
 
@@ -314,16 +314,16 @@ export function AdminRegulatoryChanges() {
 
       {/* Add New Change Form */}
       {showAddForm && (
-        <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-          <h3 className="text-lg font-semibold text-[#1E2D4D] mb-4">Add Regulatory Change</h3>
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 mb-6">
+          <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-4">Add Regulatory Change</h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Regulatory Source</label>
+              <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Regulatory Source</label>
               <select
                 value={newSource}
                 onChange={e => setNewSource(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
               >
                 <option value="">Select source...</option>
                 {isDemoMode ? (
@@ -338,11 +338,11 @@ export function AdminRegulatoryChanges() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Change Type</label>
+              <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Change Type</label>
               <select
                 value={newChangeType}
                 onChange={e => setNewChangeType(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
               >
                 <option value="amendment">Amendment</option>
                 <option value="new_edition">New Edition</option>
@@ -355,7 +355,7 @@ export function AdminRegulatoryChanges() {
 
           <div className="mb-4">
             <div className="flex items-center justify-between mb-1">
-              <label className="text-sm font-medium text-gray-700">
+              <label className="text-sm font-medium text-[#1E2D4D]/80">
                 Raw Regulatory Text / Description
               </label>
               <AIAssistButton
@@ -370,19 +370,19 @@ export function AdminRegulatoryChanges() {
               onChange={e => { setNewRawText(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('newRawText'); return n; }); }}
               placeholder="Paste the regulatory text here. Claude will generate a plain-English summary for customers."
               rows={6}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] resize-y"
+              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] resize-y"
             />
             {aiFields.has('newRawText') && <AIGeneratedIndicator />}
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Source URL (optional)</label>
+            <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Source URL (optional)</label>
             <input
               type="url"
               value={newSourceUrl}
               onChange={e => setNewSourceUrl(e.target.value)}
               placeholder="https://..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
             />
           </div>
 
@@ -407,7 +407,7 @@ export function AdminRegulatoryChanges() {
             </button>
             <button
               onClick={() => setShowAddForm(false)}
-              className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 transition-colors"
+              className="px-4 py-2 text-sm text-[#1E2D4D]/70 hover:text-gray-800 transition-colors"
             >
               Cancel
             </button>
@@ -420,7 +420,7 @@ export function AdminRegulatoryChanges() {
         {/* Pending Review */}
         {changes.filter(c => !c.published).length > 0 && (
           <div>
-            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-1">Pending Review</h3>
+            <h3 className="text-xs font-semibold text-[#1E2D4D]/30 uppercase tracking-wider mb-3 px-1">Pending Review</h3>
             <div className="space-y-3">
               {changes.filter(c => !c.published).map(change => {
                 const impact = impactColors[change.impactLevel];
@@ -428,7 +428,7 @@ export function AdminRegulatoryChanges() {
                 const isEditing = editingId === change.id;
 
                 return (
-                  <div key={change.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                  <div key={change.id} className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
                     <div className="p-4">
                       <div className="flex items-start gap-3">
                         <div className="mt-0.5 flex-shrink-0">
@@ -450,7 +450,7 @@ export function AdminRegulatoryChanges() {
                             )}
                           </div>
 
-                          <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500 mb-2">
+                          <div className="flex flex-wrap items-center gap-2 text-xs text-[#1E2D4D]/50 mb-2">
                             <span>{change.sourceName}</span>
                             {change.effectiveDate && (
                               <>
@@ -482,7 +482,7 @@ export function AdminRegulatoryChanges() {
                             <div className="space-y-3 mb-3">
                               <div>
                                 <div className="flex items-center justify-between mb-1">
-                                  <label className="text-xs font-medium text-gray-600">Summary</label>
+                                  <label className="text-xs font-medium text-[#1E2D4D]/70">Summary</label>
                                   <AIAssistButton
                                     fieldLabel="Summary"
                                     context={{ title: change.title }}
@@ -494,13 +494,13 @@ export function AdminRegulatoryChanges() {
                                   value={editSummary}
                                   onChange={e => { setEditSummary(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('editSummary'); return n; }); }}
                                   rows={3}
-                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] resize-y"
+                                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] resize-y"
                                 />
                                 {aiFields.has('editSummary') && <AIGeneratedIndicator />}
                               </div>
                               <div>
                                 <div className="flex items-center justify-between mb-1">
-                                  <label className="text-xs font-medium text-gray-600">What operators need to do</label>
+                                  <label className="text-xs font-medium text-[#1E2D4D]/70">What operators need to do</label>
                                   <AIAssistButton
                                     fieldLabel="Operator Impact"
                                     context={{ title: change.title, summary: editSummary }}
@@ -512,7 +512,7 @@ export function AdminRegulatoryChanges() {
                                   value={editImpact}
                                   onChange={e => { setEditImpact(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('editImpact'); return n; }); }}
                                   rows={3}
-                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] resize-y"
+                                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] resize-y"
                                 />
                                 {aiFields.has('editImpact') && <AIGeneratedIndicator />}
                               </div>
@@ -526,7 +526,7 @@ export function AdminRegulatoryChanges() {
                                 </button>
                                 <button
                                   onClick={() => setEditingId(null)}
-                                  className="px-3 py-1.5 text-xs text-gray-500 hover:text-gray-700"
+                                  className="px-3 py-1.5 text-xs text-[#1E2D4D]/50 hover:text-gray-700"
                                 >
                                   Cancel
                                 </button>
@@ -534,8 +534,8 @@ export function AdminRegulatoryChanges() {
                             </div>
                           ) : (
                             <>
-                              <p className="text-sm text-gray-700 mb-2">{change.summary}</p>
-                              <p className="text-sm text-gray-600 mb-3">
+                              <p className="text-sm text-[#1E2D4D]/80 mb-2">{change.summary}</p>
+                              <p className="text-sm text-[#1E2D4D]/70 mb-3">
                                 <span className="font-medium">What operators need to do: </span>
                                 {change.impactDescription}
                               </p>
@@ -546,7 +546,7 @@ export function AdminRegulatoryChanges() {
                           {change.affectedPillars.length > 0 && (
                             <div className="flex flex-wrap gap-1.5 mb-3">
                               {change.affectedPillars.map(p => (
-                                <span key={p} className="text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
+                                <span key={p} className="text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 text-[#1E2D4D]/70">
                                   {p.replace(/_/g, ' ')}
                                 </span>
                               ))}
@@ -565,7 +565,7 @@ export function AdminRegulatoryChanges() {
                             </button>
                             <button
                               onClick={() => startEdit(change)}
-                              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-600 border border-gray-200 hover:bg-gray-50 transition-colors"
+                              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-[#1E2D4D]/70 border border-[#1E2D4D]/10 hover:bg-gray-50 transition-colors"
                             >
                               <Pencil className="h-3 w-3" />
                               Edit Summary
@@ -582,7 +582,7 @@ export function AdminRegulatoryChanges() {
                                 href={change.sourceUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-600 transition-colors ml-auto"
+                                className="flex items-center gap-1 text-xs text-[#1E2D4D]/30 hover:text-gray-600 transition-colors ml-auto"
                               >
                                 <ExternalLink className="h-3 w-3" />
                                 Source
@@ -602,14 +602,14 @@ export function AdminRegulatoryChanges() {
         {/* Published */}
         {changes.filter(c => c.published).length > 0 && (
           <div>
-            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-1">Published</h3>
+            <h3 className="text-xs font-semibold text-[#1E2D4D]/30 uppercase tracking-wider mb-3 px-1">Published</h3>
             <div className="space-y-3">
               {changes.filter(c => c.published).map(change => {
                 const impact = impactColors[change.impactLevel];
                 const isExpanded = expandedId === change.id;
 
                 return (
-                  <div key={change.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                  <div key={change.id} className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
                     <div
                       className="p-4 cursor-pointer hover:bg-gray-50 transition-colors"
                       onClick={() => setExpandedId(isExpanded ? null : change.id)}
@@ -626,7 +626,7 @@ export function AdminRegulatoryChanges() {
                               {impact.label}
                             </span>
                           </div>
-                          <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
+                          <div className="flex flex-wrap items-center gap-2 text-xs text-[#1E2D4D]/50">
                             <span>
                               Published {change.publishedAt
                                 ? new Date(change.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
@@ -641,15 +641,15 @@ export function AdminRegulatoryChanges() {
                     </div>
                     {isExpanded && (
                       <div className="border-t border-gray-100 p-4 bg-[#FAF7F0]">
-                        <p className="text-sm text-gray-700 mb-2">{change.summary}</p>
-                        <p className="text-sm text-gray-600 mb-3">
+                        <p className="text-sm text-[#1E2D4D]/80 mb-2">{change.summary}</p>
+                        <p className="text-sm text-[#1E2D4D]/70 mb-3">
                           <span className="font-medium">Operator action: </span>
                           {change.impactDescription}
                         </p>
                         <div className="flex flex-wrap items-center gap-2">
                           <button
                             onClick={e => { e.stopPropagation(); handleUnpublish(change.id); }}
-                            className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+                            className="text-xs text-[#1E2D4D]/30 hover:text-gray-600 transition-colors"
                           >
                             Unpublish
                           </button>
@@ -659,7 +659,7 @@ export function AdminRegulatoryChanges() {
                               target="_blank"
                               rel="noopener noreferrer"
                               onClick={e => e.stopPropagation()}
-                              className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-600 transition-colors ml-auto"
+                              className="flex items-center gap-1 text-xs text-[#1E2D4D]/30 hover:text-gray-600 transition-colors ml-auto"
                             >
                               <ExternalLink className="h-3 w-3" />
                               View Source
@@ -678,8 +678,8 @@ export function AdminRegulatoryChanges() {
         {changes.length === 0 && (
           <div className="text-center py-16">
             <Scale className="h-12 w-12 mx-auto text-gray-300 mb-3" />
-            <p className="text-gray-500 font-medium">No regulatory changes yet</p>
-            <p className="text-gray-400 text-sm mt-1">Click "Add New Change" to analyze regulatory text with AI</p>
+            <p className="text-[#1E2D4D]/50 font-medium">No regulatory changes yet</p>
+            <p className="text-[#1E2D4D]/30 text-sm mt-1">Click "Add New Change" to analyze regulatory text with AI</p>
           </div>
         )}
       </div>

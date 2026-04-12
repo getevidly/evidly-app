@@ -56,7 +56,7 @@ import { RiskScenarioEngine } from '../components/intelligence/RiskScenarioEngin
 
 function TrendBadge({ value, size = 'sm' }: { value: number; size?: 'sm' | 'md' }) {
   const cls = size === 'md' ? 'text-sm font-bold' : 'text-xs font-semibold';
-  if (Math.abs(value) < 0.2) return <span className={`inline-flex items-center gap-0.5 text-gray-400 ${cls}`}><Minus className="h-3 w-3" /> 0.0</span>;
+  if (Math.abs(value) < 0.2) return <span className={`inline-flex items-center gap-0.5 text-[#1E2D4D]/30 ${cls}`}><Minus className="h-3 w-3" /> 0.0</span>;
   if (value > 0) return <span className={`inline-flex items-center gap-0.5 text-green-600 ${cls}`}><ArrowUp className="h-3 w-3" /> +{value.toFixed(1)}</span>;
   return <span className={`inline-flex items-center gap-0.5 text-red-500 ${cls}`}><ArrowDown className="h-3 w-3" /> {value.toFixed(1)}</span>;
 }
@@ -116,10 +116,10 @@ export function ComplianceIntelligence() {
   if (!isDemoMode) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--bg-main)', ...F }}>
-        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center max-w-md mx-auto">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-12 text-center max-w-md mx-auto">
           <BarChart3 className="h-12 w-12 mx-auto mb-4" style={{ color: '#9ca3af' }} />
-          <h2 className="text-lg font-semibold text-[#1E2D4D] mb-2">No Intelligence Data Yet</h2>
-          <p className="text-sm text-gray-500">
+          <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-2">No Intelligence Data Yet</h2>
+          <p className="text-sm text-[#1E2D4D]/50">
             Compliance intelligence data will appear as regulatory signals are processed.
           </p>
         </div>
@@ -147,7 +147,7 @@ export function ComplianceIntelligence() {
       </header>
 
       {/* Tab Navigation */}
-      <div className="bg-white border-b border-gray-200 shadow-sm">
+      <div className="bg-white border-b border-[#1E2D4D]/10 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex gap-1 overflow-x-auto">
           {TABS.map(tab => (
             <button
@@ -156,7 +156,7 @@ export function ComplianceIntelligence() {
               className={`flex items-center gap-2 px-4 py-3 text-xs font-medium border-b-2 transition-colors cursor-pointer whitespace-nowrap min-h-[44px] ${
                 activeTab === tab.id
                   ? 'border-[#1E2D4D] text-[#1E2D4D]'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  : 'border-transparent text-[#1E2D4D]/50 hover:text-gray-700'
               }`}
             >
               <tab.icon className="h-4 w-4" />
@@ -181,7 +181,7 @@ export function ComplianceIntelligence() {
       {/* Powered By */}
       {enterpriseTenant.showPoweredBy && (
         <footer className="text-center py-4 border-t border-gray-100 bg-white mt-6">
-          <p className="text-xs text-gray-400">Powered by <span style={{ color: '#d4af37', fontWeight: 600 }}>EvidLY</span></p>
+          <p className="text-xs text-[#1E2D4D]/30">Powered by <span style={{ color: '#d4af37', fontWeight: 600 }}>EvidLY</span></p>
         </footer>
       )}
 
@@ -204,13 +204,13 @@ function CommandCenterTab() {
   return (
     <div className="space-y-6">
       {/* Organization Pulse Banner */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6">
         <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
           <div className="flex items-center gap-2">
             <EvidlyIcon size={20} />
             <h2 className="text-base font-bold text-[#1E2D4D]">Organization Pulse</h2>
           </div>
-          <div className="flex items-center gap-3 text-xs text-gray-400">
+          <div className="flex items-center gap-3 text-xs text-[#1E2D4D]/30">
             <span>{companyName}</span>
             <span>·</span>
             <span>{TOTAL_LOCATIONS}/{TOTAL_ENROLLED} locations reporting</span>
@@ -224,11 +224,11 @@ function CommandCenterTab() {
           <div className="flex items-center gap-3">
             <ScoreCircle score={ORG_SCORE} size={72} />
             <div>
-              <p className="text-2xl font-bold text-[#1E2D4D]">{ORG_SCORE}%</p>
-              <p className="text-xs text-gray-500">Overall Compliance</p>
+              <p className="text-2xl font-bold tracking-tight text-[#1E2D4D]">{ORG_SCORE}%</p>
+              <p className="text-xs text-[#1E2D4D]/50">Overall Compliance</p>
             </div>
           </div>
-          <div className="h-12 w-px bg-gray-200 hidden md:block" />
+          <div className="h-12 w-px bg-[#1E2D4D]/8 hidden md:block" />
           {[
             { label: 'Facility Safety', score: FIRE_SCORE, trend: FIRE_TREND, icon: Flame, status: FIRE_SCORE >= 90 ? 'green' : FIRE_SCORE >= 80 ? 'yellow' : 'red' },
             { label: 'Food Safety', score: FOOD_SCORE, trend: FOOD_TREND, icon: UtensilsCrossed, status: FOOD_SCORE >= 90 ? 'green' : FOOD_SCORE >= 80 ? 'yellow' : 'red' },
@@ -240,7 +240,7 @@ function CommandCenterTab() {
                   <span className="text-sm font-bold" style={{ color: scoreColor(cat.score) }}>{cat.score}</span>
                   <TrendBadge value={cat.trend} />
                 </div>
-                <p className="text-xs text-gray-500">{cat.label}</p>
+                <p className="text-xs text-[#1E2D4D]/50">{cat.label}</p>
               </div>
             </div>
           ))}
@@ -250,57 +250,57 @@ function CommandCenterTab() {
       {/* Row 1 — Critical Intelligence Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Card 1 — Urgent Attention */}
-        <button onClick={() => toast.info('View urgent locations coming soon')} className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 text-left hover:shadow-md transition-shadow cursor-pointer">
+        <button onClick={() => toast.info('View urgent locations coming soon')} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5 text-left hover:shadow-md transition-shadow cursor-pointer">
           <div className="flex items-center gap-2 mb-3">
             <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-red-50"><AlertTriangle className="h-4 w-4 text-red-500" /></div>
             <h3 className="text-xs font-semibold text-[#1E2D4D]">Urgent Attention</h3>
           </div>
-          <p className="text-2xl font-bold text-red-600">{urgentLocations.belowThreshold}</p>
-          <p className="text-xs text-gray-500 mt-1">locations below {urgentLocations.threshold} — <span className="text-red-600 font-semibold">{urgentLocations.critical} critical (&lt;60)</span></p>
-          <p className="text-xs text-gray-400 mt-2 flex items-center gap-1"><ChevronRight className="h-3 w-3" /> View sorted by score</p>
+          <p className="text-2xl font-bold tracking-tight text-red-600">{urgentLocations.belowThreshold}</p>
+          <p className="text-xs text-[#1E2D4D]/50 mt-1">locations below {urgentLocations.threshold} — <span className="text-red-600 font-semibold">{urgentLocations.critical} critical (&lt;60)</span></p>
+          <p className="text-xs text-[#1E2D4D]/30 mt-2 flex items-center gap-1"><ChevronRight className="h-3 w-3" /> View sorted by score</p>
         </button>
 
         {/* Card 2 — Expiring This Quarter */}
-        <button onClick={() => toast.info('View expiration calendar coming soon')} className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 text-left hover:shadow-md transition-shadow cursor-pointer">
+        <button onClick={() => toast.info('View expiration calendar coming soon')} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5 text-left hover:shadow-md transition-shadow cursor-pointer">
           <div className="flex items-center gap-2 mb-3">
             <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-amber-50"><CalendarDays className="h-4 w-4 text-amber-500" /></div>
             <h3 className="text-xs font-semibold text-[#1E2D4D]">Expiring This Quarter</h3>
           </div>
           <div className="space-y-1">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-gray-600">Fire suppression</span>
+              <span className="text-xs text-[#1E2D4D]/70">Fire suppression</span>
               <span className="text-sm font-bold text-amber-600">{expiringThisQuarter.fireSuppression}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-xs text-gray-600">Food handler certs</span>
+              <span className="text-xs text-[#1E2D4D]/70">Food handler certs</span>
               <span className="text-sm font-bold text-amber-600">{expiringThisQuarter.foodHandlerCerts}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-xs text-gray-600">Vendor documents</span>
+              <span className="text-xs text-[#1E2D4D]/70">Vendor documents</span>
               <span className="text-sm font-bold text-amber-600">{expiringThisQuarter.vendorDocs}</span>
             </div>
           </div>
-          <p className="text-xs text-gray-400 mt-2 flex items-center gap-1"><ChevronRight className="h-3 w-3" /> Expiration calendar</p>
+          <p className="text-xs text-[#1E2D4D]/30 mt-2 flex items-center gap-1"><ChevronRight className="h-3 w-3" /> Expiration calendar</p>
         </button>
 
         {/* Card 3 — Incident Velocity */}
-        <button onClick={() => toast.info('View incident analytics coming soon')} className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 text-left hover:shadow-md transition-shadow cursor-pointer">
+        <button onClick={() => toast.info('View incident analytics coming soon')} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5 text-left hover:shadow-md transition-shadow cursor-pointer">
           <div className="flex items-center gap-2 mb-3">
             <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-green-50"><Activity className="h-4 w-4 text-green-600" /></div>
             <h3 className="text-xs font-semibold text-[#1E2D4D]">Incident Velocity</h3>
           </div>
           <div className="flex items-center gap-3">
             <div>
-              <p className="text-2xl font-bold text-green-600">{incidentVelocity.changePct}%</p>
-              <p className="text-xs text-gray-500">vs last quarter ({incidentVelocity.previous} → {incidentVelocity.current})</p>
+              <p className="text-2xl font-bold tracking-tight text-green-600">{incidentVelocity.changePct}%</p>
+              <p className="text-xs text-[#1E2D4D]/50">vs last quarter ({incidentVelocity.previous} → {incidentVelocity.current})</p>
             </div>
             <MiniSparkline data={incidentSparkline} />
           </div>
-          <p className="text-xs text-gray-400 mt-2 flex items-center gap-1"><ChevronRight className="h-3 w-3" /> Incident analytics</p>
+          <p className="text-xs text-[#1E2D4D]/30 mt-2 flex items-center gap-1"><ChevronRight className="h-3 w-3" /> Incident analytics</p>
         </button>
 
         {/* Card 4 — Compliance Momentum */}
-        <button onClick={() => toast.info('View location movement analysis coming soon')} className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 text-left hover:shadow-md transition-shadow cursor-pointer">
+        <button onClick={() => toast.info('View location movement analysis coming soon')} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5 text-left hover:shadow-md transition-shadow cursor-pointer">
           <div className="flex items-center gap-2 mb-3">
             <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-blue-50"><TrendingUp className="h-4 w-4 text-blue-600" /></div>
             <h3 className="text-xs font-semibold text-[#1E2D4D]">Compliance Momentum</h3>
@@ -313,23 +313,23 @@ function CommandCenterTab() {
             ].map(m => (
               <div key={m.label}>
                 <div className="flex items-center justify-between text-xs mb-0.5">
-                  <span className="text-gray-600">{m.label}</span>
+                  <span className="text-[#1E2D4D]/70">{m.label}</span>
                   <span className="font-bold" style={{ color: m.color }}>{m.pct}%</span>
                 </div>
-                <div className="h-1.5 bg-gray-100 rounded-full">
+                <div className="h-1.5 bg-[#1E2D4D]/5 rounded-full">
                   <div className="h-full rounded-full" style={{ width: `${m.pct}%`, backgroundColor: m.color }} />
                 </div>
               </div>
             ))}
           </div>
-          <p className="text-xs text-gray-400 mt-2 flex items-center gap-1"><ChevronRight className="h-3 w-3" /> Movement analysis</p>
+          <p className="text-xs text-[#1E2D4D]/30 mt-2 flex items-center gap-1"><ChevronRight className="h-3 w-3" /> Movement analysis</p>
         </button>
       </div>
 
       {/* Row 2 — Trend Chart */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
         <h3 className="text-sm font-semibold text-[#1E2D4D] mb-1">Organization Trend — 12 Months</h3>
-        <p className="text-xs text-gray-400 mb-4">Overall compliance with category breakdown · Dashed lines = regulatory events</p>
+        <p className="text-xs text-[#1E2D4D]/30 mb-4">Overall compliance with category breakdown · Dashed lines = regulatory events</p>
         <ResponsiveContainer width="100%" height={280}>
           <LineChart data={seasonalPatternThisYear} margin={{ top: 5, right: 10, bottom: 5, left: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -347,11 +347,11 @@ function CommandCenterTab() {
       </div>
 
       {/* Row 3 — AI Intelligence Insights */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
         <div className="flex items-center gap-2 mb-4">
           <Zap className="h-4 w-4" style={{ color: '#d4af37' }} />
           <h3 className="text-sm font-semibold text-[#1E2D4D]">This Week's Intelligence Briefing</h3>
-          <span className="text-xs text-gray-400 ml-auto">{weeklyInsights.length} insights</span>
+          <span className="text-xs text-[#1E2D4D]/30 ml-auto">{weeklyInsights.length} insights</span>
         </div>
         <div className="space-y-3">
           {weeklyInsights.map(insight => (
@@ -362,21 +362,21 @@ function CommandCenterTab() {
             }`}>
               <div className="flex items-start gap-3">
                 <span className={`text-xs font-bold px-2 py-0.5 rounded-full mt-0.5 flex-shrink-0 ${
-                  insight.severity === 'critical' ? 'bg-red-100 text-red-700' :
+                  insight.severity === 'critical' ? 'bg-red-50 text-red-700' :
                   insight.severity === 'advisory' ? 'bg-amber-100 text-amber-700' :
-                  'bg-blue-100 text-blue-700'
+                  'bg-blue-50 text-blue-700'
                 }`}>{insight.severity.toUpperCase()}</span>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs text-gray-800 leading-relaxed">{insight.text}</p>
                   <div className="flex items-center gap-4 mt-2">
-                    <span className="text-xs text-gray-400"><Target className="h-3 w-3 inline mr-0.5" />{insight.scope}</span>
-                    <span className="text-xs text-gray-400"><Zap className="h-3 w-3 inline mr-0.5" />{insight.action}</span>
+                    <span className="text-xs text-[#1E2D4D]/30"><Target className="h-3 w-3 inline mr-0.5" />{insight.scope}</span>
+                    <span className="text-xs text-[#1E2D4D]/30"><Zap className="h-3 w-3 inline mr-0.5" />{insight.action}</span>
                   </div>
                   <div className="flex items-center gap-2 mt-2">
                     <button onClick={() => toast.info(insight.drillDownLabel + ' — coming soon')} className="text-xs font-medium text-[#1E2D4D] hover:underline cursor-pointer flex items-center gap-0.5">
                       <ChevronRight className="h-3 w-3" />{insight.drillDownLabel}
                     </button>
-                    <button onClick={() => toast.info('Share insight coming soon')} className="text-xs font-medium text-gray-400 hover:text-gray-600 cursor-pointer flex items-center gap-0.5">
+                    <button onClick={() => toast.info('Share insight coming soon')} className="text-xs font-medium text-[#1E2D4D]/30 hover:text-gray-600 cursor-pointer flex items-center gap-0.5">
                       <Share2 className="h-3 w-3" />Share
                     </button>
                   </div>
@@ -434,63 +434,63 @@ function CompareTab() {
     <div className="space-y-6">
       {/* Toggle: Leaderboard vs Quartile */}
       <div className="flex items-center gap-2">
-        <button onClick={() => setShowQuartile(false)} className={`px-4 py-1.5 text-xs font-medium rounded-full border cursor-pointer ${!showQuartile ? 'bg-[#1E2D4D] text-white border-[#1E2D4D]' : 'bg-white text-gray-600 border-gray-200'}`}>Location Leaderboard</button>
-        <button onClick={() => setShowQuartile(true)} className={`px-4 py-1.5 text-xs font-medium rounded-full border cursor-pointer ${showQuartile ? 'bg-[#1E2D4D] text-white border-[#1E2D4D]' : 'bg-white text-gray-600 border-gray-200'}`}>Quartile Analysis</button>
+        <button onClick={() => setShowQuartile(false)} className={`px-4 py-1.5 text-xs font-medium rounded-full border cursor-pointer ${!showQuartile ? 'bg-[#1E2D4D] text-white border-[#1E2D4D]' : 'bg-white text-[#1E2D4D]/70 border-[#1E2D4D]/10'}`}>Location Leaderboard</button>
+        <button onClick={() => setShowQuartile(true)} className={`px-4 py-1.5 text-xs font-medium rounded-full border cursor-pointer ${showQuartile ? 'bg-[#1E2D4D] text-white border-[#1E2D4D]' : 'bg-white text-[#1E2D4D]/70 border-[#1E2D4D]/10'}`}>Quartile Analysis</button>
       </div>
 
       {!showQuartile ? (
         <>
           {/* Filters */}
-          <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
             <div className="flex items-center gap-3 flex-wrap">
               <div className="relative flex-1 min-w-0 sm:min-w-[200px]">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#1E2D4D]/30" />
                 <input
                   type="text"
                   placeholder="Search locations..."
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#1E2D4D]"
+                  className="w-full pl-9 pr-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-lg focus:outline-none focus:ring-1 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
                 />
               </div>
-              <select value={regionFilter} onChange={e => setRegionFilter(e.target.value)} className="text-xs border border-gray-200 rounded-lg px-3 py-2">
+              <select value={regionFilter} onChange={e => setRegionFilter(e.target.value)} className="text-xs border border-[#1E2D4D]/10 rounded-lg px-3 py-2">
                 <option value="all">All Regions</option>
                 {regions.map(r => <option key={r} value={r}>{r}</option>)}
               </select>
-              <select value={verticalFilter} onChange={e => setVerticalFilter(e.target.value)} className="text-xs border border-gray-200 rounded-lg px-3 py-2">
+              <select value={verticalFilter} onChange={e => setVerticalFilter(e.target.value)} className="text-xs border border-[#1E2D4D]/10 rounded-lg px-3 py-2">
                 <option value="all">All Verticals</option>
                 {verticals.map(v => <option key={v} value={v}>{v}</option>)}
               </select>
-              <button onClick={() => guardAction('export', 'compliance analytics', () => toast.info('Export to Excel coming soon'))} className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+              <button onClick={() => guardAction('export', 'compliance analytics', () => toast.info('Export to Excel coming soon'))} className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-[#1E2D4D]/70 border border-[#1E2D4D]/10 rounded-lg hover:bg-gray-50 cursor-pointer">
                 <Download className="h-3.5 w-3.5" /> Export
               </button>
-              <span className="text-xs text-gray-400">{filtered.length} of {TOTAL_LOCATIONS} locations</span>
+              <span className="text-xs text-[#1E2D4D]/30">{filtered.length} of {TOTAL_LOCATIONS} locations</span>
             </div>
           </div>
 
           {/* Location Table */}
-          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
             <div className="overflow-x-auto max-h-[600px] overflow-y-auto">
               <table className="w-full text-xs">
                 <thead className="sticky top-0 z-10 bg-gray-50">
-                  <tr className="border-b border-gray-200">
-                    <th className="text-center px-2 py-2 font-medium text-gray-600 cursor-pointer" onClick={() => handleSort('rank')}>Rank<SortArrow col="rank" /></th>
-                    <th className="text-left px-3 py-2 font-medium text-gray-600 cursor-pointer" onClick={() => handleSort('name')}>Location<SortArrow col="name" /></th>
-                    <th className="text-left px-2 py-2 font-medium text-gray-600 cursor-pointer hidden sm:table-cell" onClick={() => handleSort('region')}>Region<SortArrow col="region" /></th>
-                    <th className="text-center px-2 py-2 font-medium text-gray-600 cursor-pointer" onClick={() => handleSort('compositeScore')}>Composite<SortArrow col="compositeScore" /></th>
-                    <th className="text-center px-2 py-2 font-medium text-gray-600 cursor-pointer hidden sm:table-cell" onClick={() => handleSort('fire')}>Fire<SortArrow col="fire" /></th>
-                    <th className="text-center px-2 py-2 font-medium text-gray-600 cursor-pointer hidden sm:table-cell" onClick={() => handleSort('food')}>Food<SortArrow col="food" /></th>
-                    <th className="text-center px-2 py-2 font-medium text-gray-600 cursor-pointer hidden sm:table-cell" onClick={() => handleSort('docs')}>Docs<SortArrow col="docs" /></th>
-                    <th className="text-center px-2 py-2 font-medium text-gray-600 cursor-pointer" onClick={() => handleSort('trend')}>Trend<SortArrow col="trend" /></th>
-                    <th className="text-center px-2 py-2 font-medium text-gray-600 hidden sm:table-cell">Actions</th>
+                  <tr className="border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors">
+                    <th className="text-center px-2 py-2 font-medium text-[#1E2D4D]/70 cursor-pointer" onClick={() => handleSort('rank')}>Rank<SortArrow col="rank" /></th>
+                    <th className="text-left px-3 py-2 font-medium text-[#1E2D4D]/70 cursor-pointer" onClick={() => handleSort('name')}>Location<SortArrow col="name" /></th>
+                    <th className="text-left px-2 py-2 font-medium text-[#1E2D4D]/70 cursor-pointer hidden sm:table-cell" onClick={() => handleSort('region')}>Region<SortArrow col="region" /></th>
+                    <th className="text-center px-2 py-2 font-medium text-[#1E2D4D]/70 cursor-pointer" onClick={() => handleSort('compositeScore')}>Composite<SortArrow col="compositeScore" /></th>
+                    <th className="text-center px-2 py-2 font-medium text-[#1E2D4D]/70 cursor-pointer hidden sm:table-cell" onClick={() => handleSort('fire')}>Fire<SortArrow col="fire" /></th>
+                    <th className="text-center px-2 py-2 font-medium text-[#1E2D4D]/70 cursor-pointer hidden sm:table-cell" onClick={() => handleSort('food')}>Food<SortArrow col="food" /></th>
+                    <th className="text-center px-2 py-2 font-medium text-[#1E2D4D]/70 cursor-pointer hidden sm:table-cell" onClick={() => handleSort('docs')}>Docs<SortArrow col="docs" /></th>
+                    <th className="text-center px-2 py-2 font-medium text-[#1E2D4D]/70 cursor-pointer" onClick={() => handleSort('trend')}>Trend<SortArrow col="trend" /></th>
+                    <th className="text-center px-2 py-2 font-medium text-[#1E2D4D]/70 hidden sm:table-cell">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filtered.slice(0, 100).map(loc => (
                     <tr key={loc.id} className="border-b border-gray-50 hover:bg-gray-50 cursor-pointer" onClick={() => toast.info(`View ${loc.name} coming soon`)}>
-                      <td className="px-2 py-2 text-center text-gray-400 font-mono">{loc.rank}</td>
+                      <td className="px-2 py-2 text-center text-[#1E2D4D]/30 font-mono">{loc.rank}</td>
                       <td className="px-3 py-2 font-medium text-gray-900">{loc.name}</td>
-                      <td className="px-2 py-2 text-gray-500 hidden sm:table-cell">{loc.region}</td>
+                      <td className="px-2 py-2 text-[#1E2D4D]/50 hidden sm:table-cell">{loc.region}</td>
                       <td className="px-2 py-2 text-center"><span className="font-bold" style={{ color: scoreColor(loc.compositeScore) }}>{loc.compositeScore}</span></td>
                       <td className="px-2 py-2 text-center hidden sm:table-cell" style={{ color: scoreColor(loc.fire) }}>{loc.fire}</td>
                       <td className="px-2 py-2 text-center hidden sm:table-cell" style={{ color: scoreColor(loc.food) }}>{loc.food}</td>
@@ -509,7 +509,7 @@ function CompareTab() {
               </table>
             </div>
             {filtered.length > 100 && (
-              <div className="text-center py-3 text-xs text-gray-400 border-t border-gray-100">
+              <div className="text-center py-3 text-xs text-[#1E2D4D]/30 border-t border-gray-100">
                 Showing top 100 of {filtered.length} locations · Export for full list
               </div>
             )}
@@ -525,7 +525,7 @@ function CompareTab() {
                 i === 0 ? 'border-green-200' : i === 1 ? 'border-blue-200' : i === 2 ? 'border-amber-200' : 'border-red-200'
               }`}>
                 <h4 className="text-xs font-semibold text-[#1E2D4D] mb-1">{q.quartile}</h4>
-                <p className="text-xs text-gray-400 mb-3">{q.count} locations · Score range: {q.range}</p>
+                <p className="text-xs text-[#1E2D4D]/30 mb-3">{q.count} locations · Score range: {q.range}</p>
                 <div className="space-y-2">
                   {[
                     { label: 'Avg Score', value: q.avgScore + '%', color: scoreColor(q.avgScore) },
@@ -537,7 +537,7 @@ function CompareTab() {
                     { label: 'Vendor On-Time', value: q.vendorOnTime + '%' },
                   ].map(row => (
                     <div key={row.label} className="flex items-center justify-between text-xs">
-                      <span className="text-gray-500">{row.label}</span>
+                      <span className="text-[#1E2D4D]/50">{row.label}</span>
                       <span className={`font-semibold ${(row as any).bad ? 'text-red-600' : ''}`} style={(row as any).color ? { color: (row as any).color } : undefined}>
                         {row.value}
                       </span>
@@ -549,7 +549,7 @@ function CompareTab() {
           </div>
 
           {/* Quartile Bar Chart */}
-          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
             <h3 className="text-sm font-semibold text-[#1E2D4D] mb-4">Quartile Comparison</h3>
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={quartileStats} margin={{ top: 5, right: 10, bottom: 5, left: 0 }}>
@@ -566,7 +566,7 @@ function CompareTab() {
           </div>
 
           {/* Quartile Narrative */}
-          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
             <div className="flex items-center gap-2 mb-3">
               <Zap className="h-4 w-4" style={{ color: '#d4af37' }} />
               <h3 className="text-sm font-semibold text-[#1E2D4D]">What Separates Top from Bottom?</h3>
@@ -611,9 +611,9 @@ function TrendsTab() {
   return (
     <div className="space-y-6">
       {/* Seasonal Pattern: This Year vs Last Year */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
         <h3 className="text-sm font-semibold text-[#1E2D4D] mb-1">Seasonal Pattern Analysis</h3>
-        <p className="text-xs text-gray-400 mb-4">This year vs last year — identify recurring compliance dips</p>
+        <p className="text-xs text-[#1E2D4D]/30 mb-4">This year vs last year — identify recurring compliance dips</p>
         <ResponsiveContainer width="100%" height={280}>
           <LineChart margin={{ top: 5, right: 10, bottom: 5, left: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -633,7 +633,7 @@ function TrendsTab() {
       </div>
 
       {/* Cohort Analysis */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
         <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
           <h3 className="text-sm font-semibold text-[#1E2D4D]">Cohort Analysis</h3>
           <div className="flex gap-1">
@@ -646,7 +646,7 @@ function TrendsTab() {
                 key={opt.key}
                 onClick={() => setCohortType(opt.key)}
                 className={`px-3 py-1 text-xs font-medium rounded-full border cursor-pointer ${
-                  cohortType === opt.key ? 'bg-[#1E2D4D] text-white border-[#1E2D4D]' : 'bg-white text-gray-600 border-gray-200'
+                  cohortType === opt.key ? 'bg-[#1E2D4D] text-white border-[#1E2D4D]' : 'bg-white text-[#1E2D4D]/70 border-[#1E2D4D]/10'
                 }`}
               >{opt.label}</button>
             ))}
@@ -671,34 +671,34 @@ function TrendsTab() {
       </div>
 
       {/* Regulatory Impact */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
         <h3 className="text-sm font-semibold text-[#1E2D4D] mb-4">Regulatory Impact Analysis</h3>
         <div className="space-y-3">
           {regulatoryEvents.map(evt => (
-            <div key={evt.id} className="p-4 rounded-lg border border-gray-200 bg-[#FAF7F0]">
+            <div key={evt.id} className="p-4 rounded-lg border border-[#1E2D4D]/10 bg-[#FAF7F0]">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-100 text-blue-700">{evt.date}</span>
+                  <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-50 text-blue-700">{evt.date}</span>
                   <span className="text-xs font-semibold text-[#1E2D4D]">{evt.label}</span>
                 </div>
-                <span className="text-xs text-gray-400">{evt.affectedLocations} locations affected</span>
+                <span className="text-xs text-[#1E2D4D]/30">{evt.affectedLocations} locations affected</span>
               </div>
-              <p className="text-xs text-gray-600 mb-3">{evt.description}</p>
+              <p className="text-xs text-[#1E2D4D]/70 mb-3">{evt.description}</p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <div>
-                  <p className="text-xs text-gray-400">Before</p>
+                  <p className="text-xs text-[#1E2D4D]/30">Before</p>
                   <p className="text-sm font-bold" style={{ color: scoreColor(evt.beforeScore) }}>{evt.beforeScore}%</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-400">After</p>
+                  <p className="text-xs text-[#1E2D4D]/30">After</p>
                   <p className="text-sm font-bold" style={{ color: scoreColor(evt.afterScore) }}>{evt.afterScore}%</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-400">Adapted</p>
+                  <p className="text-xs text-[#1E2D4D]/30">Adapted</p>
                   <p className="text-sm font-bold text-green-600">{evt.adaptedPct}%</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-400">Still Pending</p>
+                  <p className="text-xs text-[#1E2D4D]/30">Still Pending</p>
                   <p className="text-sm font-bold text-amber-600">{evt.pendingLocations} locations</p>
                 </div>
               </div>
@@ -709,27 +709,27 @@ function TrendsTab() {
 
       {/* Rate of Change */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
           <h3 className="text-sm font-semibold text-green-700 mb-3">🚀 Fastest Improving</h3>
           <div className="space-y-2">
             {fastestImproving.slice(0, 7).map((loc, i) => (
               <div key={loc.id} className="flex items-center gap-3 p-2 rounded-lg bg-green-50/50">
-                <span className="text-xs text-gray-400 w-4 text-right">{i + 1}</span>
+                <span className="text-xs text-[#1E2D4D]/30 w-4 text-right">{i + 1}</span>
                 <span className="text-xs font-medium text-gray-900 flex-1 truncate">{loc.name}</span>
-                <span className="text-xs text-gray-400">{loc.region}</span>
+                <span className="text-xs text-[#1E2D4D]/30">{loc.region}</span>
                 <TrendBadge value={loc.trend} />
               </div>
             ))}
           </div>
         </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
           <h3 className="text-sm font-semibold text-red-600 mb-3">⚠️ Fastest Declining</h3>
           <div className="space-y-2">
             {fastestDeclining.slice(0, 7).map((loc, i) => (
               <div key={loc.id} className="flex items-center gap-3 p-2 rounded-lg bg-red-50/50">
-                <span className="text-xs text-gray-400 w-4 text-right">{i + 1}</span>
+                <span className="text-xs text-[#1E2D4D]/30 w-4 text-right">{i + 1}</span>
                 <span className="text-xs font-medium text-gray-900 flex-1 truncate">{loc.name}</span>
-                <span className="text-xs text-gray-400">{loc.region}</span>
+                <span className="text-xs text-[#1E2D4D]/30">{loc.region}</span>
                 <TrendBadge value={loc.trend} />
               </div>
             ))}
@@ -753,7 +753,7 @@ function RiskTab() {
   return (
     <div className="space-y-6">
       {/* Risk Summary Dashboard */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6">
         <h3 className="text-sm font-semibold text-[#1E2D4D] mb-4">Predictive Risk Overview</h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {[
@@ -763,9 +763,9 @@ function RiskTab() {
             { label: 'Critical Risk', count: riskSummary.critical, color: '#ef4444', bg: '#fef2f2', border: '#fca5a5', desc: 'Intervention recommended' },
           ].map(r => (
             <div key={r.label} className="rounded-xl border p-4 text-center" style={{ backgroundColor: r.bg, borderColor: r.border }}>
-              <p className="text-xl sm:text-3xl font-bold" style={{ color: r.color }}>{r.count}</p>
+              <p className="text-xl sm:text-3xl font-bold tracking-tight" style={{ color: r.color }}>{r.count}</p>
               <p className="text-xs font-semibold mt-1" style={{ color: r.color }}>{r.label}</p>
-              <p className="text-xs text-gray-500 mt-1">{r.desc}</p>
+              <p className="text-xs text-[#1E2D4D]/50 mt-1">{r.desc}</p>
             </div>
           ))}
         </div>
@@ -779,19 +779,19 @@ function RiskTab() {
           { label: 'Single-CFPM Risk', value: singleCFPMLocations, icon: Users, desc: 'locations — 1 departure = non-compliant', color: '#d4af37' },
           { label: 'Equipment Aging', value: equipmentReplacementDue, icon: Clock, desc: 'approaching replacement cycle', color: '#6b21a8' },
         ].map(f => (
-          <div key={f.label} className="bg-white rounded-xl border border-gray-200 p-4">
+          <div key={f.label} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
             <div className="flex items-center gap-2 mb-2">
               <f.icon className="h-4 w-4" style={{ color: f.color }} />
-              <span className="text-xs font-semibold text-gray-700">{f.label}</span>
+              <span className="text-xs font-semibold text-[#1E2D4D]/80">{f.label}</span>
             </div>
-            <p className="text-2xl font-bold" style={{ color: f.color }}>{f.value}</p>
-            <p className="text-xs text-gray-500 mt-0.5">{f.desc}</p>
+            <p className="text-2xl font-bold tracking-tight" style={{ color: f.color }}>{f.value}</p>
+            <p className="text-xs text-[#1E2D4D]/50 mt-0.5">{f.desc}</p>
           </div>
         ))}
       </div>
 
       {/* Risk Predictions Detail */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
         <h3 className="text-sm font-semibold text-[#1E2D4D] mb-4">High & Critical Risk Locations — Mitigation Plans</h3>
         <div className="space-y-3">
           {riskPredictions.map(pred => (
@@ -810,29 +810,29 @@ function RiskTab() {
                       {pred.riskLevel.toUpperCase()}
                     </span>
                   </div>
-                  <p className="text-xs text-gray-500 mt-0.5">{pred.region} · {pred.factors.length} risk factors identified</p>
+                  <p className="text-xs text-[#1E2D4D]/50 mt-0.5">{pred.region} · {pred.factors.length} risk factors identified</p>
                 </div>
-                <ChevronRight className={`h-4 w-4 text-gray-400 transition-transform ${expandedRisk === pred.id ? 'rotate-90' : ''}`} />
+                <ChevronRight className={`h-4 w-4 text-[#1E2D4D]/30 transition-transform ${expandedRisk === pred.id ? 'rotate-90' : ''}`} />
               </button>
 
               {expandedRisk === pred.id && (
                 <div className="px-4 pb-4 border-t" style={{ borderColor: riskBorder(pred.riskLevel) }}>
                   {/* Risk Factors */}
                   <div className="mt-3 mb-4">
-                    <h4 className="text-xs font-semibold text-gray-700 mb-2">Risk Factors</h4>
+                    <h4 className="text-xs font-semibold text-[#1E2D4D]/80 mb-2">Risk Factors</h4>
                     <div className="space-y-2">
                       {pred.factors.map((f, i) => (
                         <div key={i} className="flex items-center gap-3 text-xs">
                           <div className="w-16">
-                            <div className="h-1.5 bg-gray-200 rounded-full">
+                            <div className="h-1.5 bg-[#1E2D4D]/8 rounded-full">
                               <div className="h-full rounded-full" style={{ width: `${f.probability}%`, backgroundColor: f.severity === 'high' ? '#ef4444' : f.severity === 'medium' ? '#f59e0b' : '#d4af37' }} />
                             </div>
                           </div>
-                          <span className="text-gray-400 w-8 text-right font-mono">{f.probability}%</span>
+                          <span className="text-[#1E2D4D]/30 w-8 text-right font-mono">{f.probability}%</span>
                           <span className={`px-1.5 py-0.5 text-[9px] font-semibold rounded ${
-                            f.severity === 'high' ? 'bg-red-100 text-red-700' : f.severity === 'medium' ? 'bg-amber-100 text-amber-700' : 'bg-yellow-100 text-yellow-700'
+                            f.severity === 'high' ? 'bg-red-50 text-red-700' : f.severity === 'medium' ? 'bg-amber-100 text-amber-700' : 'bg-amber-50 text-amber-700'
                           }`}>{f.severity.toUpperCase()}</span>
-                          <span className="text-gray-700 flex-1">{f.label}</span>
+                          <span className="text-[#1E2D4D]/80 flex-1">{f.label}</span>
                         </div>
                       ))}
                     </div>
@@ -840,30 +840,30 @@ function RiskTab() {
 
                   {/* Mitigation Plan */}
                   <div>
-                    <h4 className="text-xs font-semibold text-gray-700 mb-2">Mitigation Plan</h4>
+                    <h4 className="text-xs font-semibold text-[#1E2D4D]/80 mb-2">Mitigation Plan</h4>
                     <div className="overflow-x-auto">
                       <table className="w-full text-xs">
                         <thead>
-                          <tr className="border-b border-gray-200">
-                            <th className="text-left py-1.5 pr-3 font-medium text-gray-500">#</th>
-                            <th className="text-left py-1.5 pr-3 font-medium text-gray-500">Action</th>
-                            <th className="text-left py-1.5 pr-3 font-medium text-gray-500">Effort</th>
-                            <th className="text-left py-1.5 pr-3 font-medium text-gray-500">Impact</th>
-                            <th className="text-left py-1.5 font-medium text-gray-500">Assignee</th>
+                          <tr className="border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors">
+                            <th className="text-left py-1.5 pr-3 font-medium text-[#1E2D4D]/50">#</th>
+                            <th className="text-left py-1.5 pr-3 font-medium text-[#1E2D4D]/50">Action</th>
+                            <th className="text-left py-1.5 pr-3 font-medium text-[#1E2D4D]/50">Effort</th>
+                            <th className="text-left py-1.5 pr-3 font-medium text-[#1E2D4D]/50">Impact</th>
+                            <th className="text-left py-1.5 font-medium text-[#1E2D4D]/50">Assignee</th>
                           </tr>
                         </thead>
                         <tbody>
                           {pred.mitigationSteps.map((step, j) => (
                             <tr key={j} className="border-b border-gray-100">
-                              <td className="py-1.5 pr-3 text-gray-400">{j + 1}</td>
+                              <td className="py-1.5 pr-3 text-[#1E2D4D]/30">{j + 1}</td>
                               <td className="py-1.5 pr-3 text-gray-800 font-medium">{step.action}</td>
-                              <td className="py-1.5 pr-3 text-gray-500">{step.effort}</td>
+                              <td className="py-1.5 pr-3 text-[#1E2D4D]/50">{step.effort}</td>
                               <td className="py-1.5 pr-3">
                                 <span className={`px-1.5 py-0.5 text-[9px] font-semibold rounded ${
-                                  step.impact === 'Critical' ? 'bg-red-100 text-red-700' : step.impact === 'High' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'
+                                  step.impact === 'Critical' ? 'bg-red-50 text-red-700' : step.impact === 'High' ? 'bg-amber-100 text-amber-700' : 'bg-blue-50 text-blue-700'
                                 }`}>{step.impact}</span>
                               </td>
-                              <td className="py-1.5 text-gray-500">{step.assignee}</td>
+                              <td className="py-1.5 text-[#1E2D4D]/50">{step.assignee}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -871,7 +871,7 @@ function RiskTab() {
                     </div>
                     <div className="flex gap-2 mt-3">
                       <button onClick={() => toast.info('Assign mitigation plan coming soon')} className="px-3 py-1.5 text-xs font-medium rounded-md cursor-pointer text-white min-h-[44px]" style={{ backgroundColor: '#1E2D4D' }}>Assign Plan</button>
-                      <button onClick={() => toast.info('Export mitigation plan coming soon')} className="px-3 py-1.5 text-xs font-medium rounded-md border border-gray-200 text-gray-600 cursor-pointer hover:bg-gray-50 min-h-[44px]">Export PDF</button>
+                      <button onClick={() => toast.info('Export mitigation plan coming soon')} className="px-3 py-1.5 text-xs font-medium rounded-md border border-[#1E2D4D]/10 text-[#1E2D4D]/70 cursor-pointer hover:bg-gray-50 min-h-[44px]">Export PDF</button>
                     </div>
                   </div>
                 </div>
@@ -906,9 +906,9 @@ const CustomScatterTooltip = ({ active, payload }: any) => {
   if (!active || !payload?.length) return null;
   const d = payload[0]?.payload;
   return (
-    <div className="bg-white p-2 rounded-xl border border-gray-200 text-xs">
+    <div className="bg-white p-2 rounded-xl border border-[#1E2D4D]/10 text-xs">
       <p className="font-semibold text-[#1E2D4D]">{d?.name}</p>
-      <p className="text-gray-500">X: {d?.x} · Y: {d?.y}</p>
+      <p className="text-[#1E2D4D]/50">X: {d?.x} · Y: {d?.y}</p>
     </div>
   );
 };
@@ -928,20 +928,20 @@ function StaffingTab() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
         <div className="flex items-center gap-2 mb-1">
           <Brain className="h-5 w-5" style={{ color: '#1E2D4D' }} />
           <h2 className="text-base font-bold text-[#1E2D4D]">Staffing Correlation Analysis</h2>
         </div>
-        <p className="text-xs text-gray-500">Connects HR data to compliance outcomes — insight no other platform provides because nobody else has both datasets in one system.</p>
+        <p className="text-xs text-[#1E2D4D]/50">Connects HR data to compliance outcomes — insight no other platform provides because nobody else has both datasets in one system.</p>
       </div>
 
       {/* Chart Grid — 2x2 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Chart 1 — Turnover vs Compliance */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
           <h3 className="text-sm font-semibold text-[#1E2D4D] mb-1">Turnover Rate vs Compliance Score</h3>
-          <p className="text-xs text-gray-400 mb-3">Each dot = one location · Expected: negative correlation</p>
+          <p className="text-xs text-[#1E2D4D]/30 mb-3">Each dot = one location · Expected: negative correlation</p>
           <ResponsiveContainer width="100%" height={260}>
             <ScatterChart margin={{ top: 5, right: 10, bottom: 5, left: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -957,9 +957,9 @@ function StaffingTab() {
         </div>
 
         {/* Chart 2 — Training vs Compliance */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
           <h3 className="text-sm font-semibold text-[#1E2D4D] mb-1">Training Completion vs Compliance Score</h3>
-          <p className="text-xs text-gray-400 mb-3">Food handler certs + EvidLY training · Strong positive correlation</p>
+          <p className="text-xs text-[#1E2D4D]/30 mb-3">Food handler certs + EvidLY training · Strong positive correlation</p>
           <ResponsiveContainer width="100%" height={260}>
             <ScatterChart margin={{ top: 5, right: 10, bottom: 5, left: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -975,9 +975,9 @@ function StaffingTab() {
         </div>
 
         {/* Chart 3 — CFPM Coverage (BarChart simulating box plot) */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
           <h3 className="text-sm font-semibold text-[#1E2D4D] mb-1">CFPM Coverage vs Food Safety Score</h3>
-          <p className="text-xs text-gray-400 mb-3">Single CFPM vs 2+ CFPMs · Median + interquartile range</p>
+          <p className="text-xs text-[#1E2D4D]/30 mb-3">Single CFPM vs 2+ CFPMs · Median + interquartile range</p>
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={[
               { group: 'Single CFPM', avg: cfpmComparison.singleCfpm.avgFoodScore, q1: cfpmComparison.singleCfpm.q1, q3: cfpmComparison.singleCfpm.q3 },
@@ -990,7 +990,7 @@ function StaffingTab() {
               <Bar dataKey="avg" name="Avg Food Safety" fill="#1E2D4D" radius={[4, 4, 0, 0]} barSize={60} />
             </BarChart>
           </ResponsiveContainer>
-          <div className="flex items-center justify-center gap-8 mt-2 text-xs text-gray-500">
+          <div className="flex items-center justify-center gap-8 mt-2 text-xs text-[#1E2D4D]/50">
             <span>Single CFPM: <strong className="text-red-600">{cfpmComparison.singleCfpm.count} locations</strong> · Avg {cfpmComparison.singleCfpm.avgFoodScore}%</span>
             <span>2+ CFPMs: <strong className="text-green-600">{cfpmComparison.multiCfpm.count} locations</strong> · Avg {cfpmComparison.multiCfpm.avgFoodScore}%</span>
           </div>
@@ -998,9 +998,9 @@ function StaffingTab() {
         </div>
 
         {/* Chart 4 — Staffing Level vs Checklist Completion */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
           <h3 className="text-sm font-semibold text-[#1E2D4D] mb-1">Staffing Level vs Checklist Completion</h3>
-          <p className="text-xs text-gray-400 mb-3">Headcount as staffing proxy · Do understaffed locations complete fewer checklists?</p>
+          <p className="text-xs text-[#1E2D4D]/30 mb-3">Headcount as staffing proxy · Do understaffed locations complete fewer checklists?</p>
           <ResponsiveContainer width="100%" height={260}>
             <ScatterChart margin={{ top: 5, right: 10, bottom: 5, left: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -1016,9 +1016,9 @@ function StaffingTab() {
       </div>
 
       {/* Chart 5 — Manager Tenure vs Score (full width) */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
         <h3 className="text-sm font-semibold text-[#1E2D4D] mb-1">Manager Tenure vs Location Score</h3>
-        <p className="text-xs text-gray-400 mb-3">Months on platform as tenure proxy · Longer tenure correlates with higher scores</p>
+        <p className="text-xs text-[#1E2D4D]/30 mb-3">Months on platform as tenure proxy · Longer tenure correlates with higher scores</p>
         <ResponsiveContainer width="100%" height={260}>
           <ScatterChart margin={{ top: 5, right: 10, bottom: 5, left: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -1034,9 +1034,9 @@ function StaffingTab() {
       </div>
 
       {/* Staffing Risk Indicators */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
         <h3 className="text-sm font-semibold text-[#1E2D4D] mb-1">Staffing Risk Indicators</h3>
-        <p className="text-xs text-gray-400 mb-4">Locations where staffing patterns predict compliance decline</p>
+        <p className="text-xs text-[#1E2D4D]/30 mb-4">Locations where staffing patterns predict compliance decline</p>
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
           {[
             { type: 'high-turnover' as const, label: 'High Turnover', icon: TrendingDown, color: '#ef4444' },
@@ -1044,13 +1044,13 @@ function StaffingTab() {
             { type: 'new-hires-untrained' as const, label: 'Untrained New Hires', icon: AlertCircle, color: '#d4af37' },
             { type: 'manager-vacancy' as const, label: 'Manager Vacancy', icon: AlertTriangle, color: '#ef4444' },
           ].map(rt => (
-            <div key={rt.type} className="rounded-lg border border-gray-200 p-4">
+            <div key={rt.type} className="rounded-lg border border-[#1E2D4D]/10 p-4">
               <div className="flex items-center gap-2 mb-2">
                 <rt.icon className="h-4 w-4" style={{ color: rt.color }} />
-                <span className="text-xs font-semibold text-gray-700">{rt.label}</span>
+                <span className="text-xs font-semibold text-[#1E2D4D]/80">{rt.label}</span>
               </div>
-              <p className="text-2xl font-bold" style={{ color: rt.color }}>{riskCounts[rt.type] || 0}</p>
-              <p className="text-xs text-gray-500">locations flagged</p>
+              <p className="text-2xl font-bold tracking-tight" style={{ color: rt.color }}>{riskCounts[rt.type] || 0}</p>
+              <p className="text-xs text-[#1E2D4D]/50">locations flagged</p>
             </div>
           ))}
         </div>
@@ -1059,20 +1059,20 @@ function StaffingTab() {
             <div key={i} className={`flex items-center gap-3 p-3 rounded-lg border ${
               ind.severity === 'critical' ? 'border-red-200 bg-red-50/50' :
               ind.severity === 'high' ? 'border-amber-200 bg-amber-50/50' :
-              'border-gray-200 bg-gray-50/50'
+              'border-[#1E2D4D]/10 bg-gray-50/50'
             }`}>
               <span className={`px-2 py-0.5 text-[9px] font-bold rounded-full flex-shrink-0 ${
-                ind.severity === 'critical' ? 'bg-red-100 text-red-700' :
+                ind.severity === 'critical' ? 'bg-red-50 text-red-700' :
                 ind.severity === 'high' ? 'bg-amber-100 text-amber-700' :
-                'bg-gray-100 text-gray-600'
+                'bg-gray-100 text-[#1E2D4D]/70'
               }`}>{ind.severity.toUpperCase()}</span>
               <div className="flex-1 min-w-0">
                 <span className="text-xs font-medium text-gray-900">{ind.locationName}</span>
-                <span className="text-xs text-gray-400 ml-2">{ind.region} · {ind.district}</span>
-                <p className="text-xs text-gray-600 mt-0.5">{ind.description}</p>
+                <span className="text-xs text-[#1E2D4D]/30 ml-2">{ind.region} · {ind.district}</span>
+                <p className="text-xs text-[#1E2D4D]/70 mt-0.5">{ind.description}</p>
               </div>
-              <span className="text-xs text-gray-400 flex-shrink-0">{ind.detectedDate}</span>
-              <button onClick={() => toast.info(`Investigate ${ind.locationName} coming soon`)} className="px-2.5 py-1 text-xs font-medium rounded-md border border-gray-200 text-gray-600 cursor-pointer hover:bg-gray-50 flex-shrink-0 min-h-[44px]">Investigate</button>
+              <span className="text-xs text-[#1E2D4D]/30 flex-shrink-0">{ind.detectedDate}</span>
+              <button onClick={() => toast.info(`Investigate ${ind.locationName} coming soon`)} className="px-2.5 py-1 text-xs font-medium rounded-md border border-[#1E2D4D]/10 text-[#1E2D4D]/70 cursor-pointer hover:bg-gray-50 flex-shrink-0 min-h-[44px]">Investigate</button>
             </div>
           ))}
         </div>
@@ -1104,12 +1104,12 @@ function FinancialTab() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
         <div className="flex items-center gap-2 mb-1">
           <DollarSign className="h-5 w-5" style={{ color: '#1E2D4D' }} />
           <h2 className="text-base font-bold text-[#1E2D4D]">Financial Impact Analysis</h2>
         </div>
-        <p className="text-xs text-gray-500">Translates compliance data into dollar figures for the CFO. All estimates based on industry benchmarks and your organization's data.</p>
+        <p className="text-xs text-[#1E2D4D]/50">Translates compliance data into dollar figures for the CFO. All estimates based on industry benchmarks and your organization's data.</p>
       </div>
 
       {/* CPP Service ROI Engine */}
@@ -1136,13 +1136,13 @@ function FinancialTab() {
                       <p className={`text-xl font-bold ${textColor}`}>
                         {formatDollars(cat.lowEstimate)} – {formatDollars(cat.highEstimate)}
                       </p>
-                      <p className="text-xs text-gray-400">{cat.color === 'green' ? 'estimated risk reduction' : 'estimated exposure'}</p>
+                      <p className="text-xs text-[#1E2D4D]/30">{cat.color === 'green' ? 'estimated risk reduction' : 'estimated exposure'}</p>
                     </div>
                   </div>
-                  <p className="text-xs text-gray-600 mt-2">{cat.description}</p>
+                  <p className="text-xs text-[#1E2D4D]/70 mt-2">{cat.description}</p>
                   <ul className="mt-2 space-y-1">
                     {cat.details.map((d, i) => (
-                      <li key={i} className="text-xs text-gray-500 flex items-start gap-1.5">
+                      <li key={i} className="text-xs text-[#1E2D4D]/50 flex items-start gap-1.5">
                         <span className="text-gray-300 mt-0.5">•</span>
                         <span>{d}</span>
                       </li>
@@ -1160,15 +1160,15 @@ function FinancialTab() {
         <div className="flex items-center gap-2 mb-4">
           <TrendingUp className="h-5 w-5" style={{ color: '#d4af37' }} />
           <h3 className="text-base font-bold text-[#1E2D4D]">Executive ROI Summary</h3>
-          <span className="text-xs text-gray-400 ml-auto">Board-ready view</span>
+          <span className="text-xs text-[#1E2D4D]/30 ml-auto">Board-ready view</span>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Left — Investment */}
           <div className="space-y-3">
-            <h4 className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Annual Compliance Investment</h4>
-            <div className="p-4 rounded-lg bg-[#FAF7F0] border border-gray-200">
-              <p className="text-2xl font-bold text-[#1E2D4D]">{formatDollars(roiSummary.annualInvestment)}<span className="text-sm font-normal text-gray-400">/year</span></p>
-              <p className="text-xs text-gray-500 mt-1">EvidLY platform subscription (487 locations)</p>
+            <h4 className="text-xs font-semibold text-[#1E2D4D]/70 uppercase tracking-wide">Annual Compliance Investment</h4>
+            <div className="p-4 rounded-lg bg-[#FAF7F0] border border-[#1E2D4D]/10">
+              <p className="text-2xl font-bold tracking-tight text-[#1E2D4D]">{formatDollars(roiSummary.annualInvestment)}<span className="text-sm font-normal text-[#1E2D4D]/30">/year</span></p>
+              <p className="text-xs text-[#1E2D4D]/50 mt-1">EvidLY platform subscription (487 locations)</p>
             </div>
             <div className="p-4 rounded-lg bg-red-50 border border-red-200">
               <p className="text-xs font-semibold text-red-700 mb-1">Without EvidLY — Estimated Annual Exposure</p>
@@ -1178,7 +1178,7 @@ function FinancialTab() {
           </div>
           {/* Right — Returns */}
           <div className="space-y-3">
-            <h4 className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Realized & Projected Savings</h4>
+            <h4 className="text-xs font-semibold text-[#1E2D4D]/70 uppercase tracking-wide">Realized & Projected Savings</h4>
             <div className="space-y-2">
               <div className="flex items-center justify-between p-3 rounded-lg bg-green-50 border border-green-200">
                 <span className="text-xs text-green-700">Insurance Premium Savings</span>
@@ -1194,43 +1194,43 @@ function FinancialTab() {
               </div>
             </div>
             <div className="p-4 rounded-lg border-2 border-[#d4af37] bg-[#fefce8] text-center">
-              <p className="text-xs text-gray-600 mb-1">Net ROI</p>
-              <p className="text-xl sm:text-3xl font-bold" style={{ color: '#d4af37' }}>{roiSummary.roiLow}x – {roiSummary.roiHigh}x</p>
-              <p className="text-xs text-gray-500 mt-1">return on compliance investment</p>
+              <p className="text-xs text-[#1E2D4D]/70 mb-1">Net ROI</p>
+              <p className="text-xl sm:text-3xl font-bold tracking-tight" style={{ color: '#d4af37' }}>{roiSummary.roiLow}x – {roiSummary.roiHigh}x</p>
+              <p className="text-xs text-[#1E2D4D]/50 mt-1">return on compliance investment</p>
             </div>
           </div>
         </div>
         <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100 flex-wrap gap-2">
-          <p className="text-xs text-gray-400 italic">Estimates based on industry averages and your organization's compliance data. Actual results may vary.</p>
+          <p className="text-xs text-[#1E2D4D]/30 italic">Estimates based on industry averages and your organization's compliance data. Actual results may vary.</p>
           <button onClick={() => guardAction('export', 'compliance analytics', () => toast.info('Generate Board Report coming soon'))} className="px-4 py-2 text-xs font-semibold rounded-lg text-white cursor-pointer min-h-[44px]" style={{ backgroundColor: '#1E2D4D' }}>Generate Board Report</button>
         </div>
       </div>
 
       {/* Historical Incidents */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
         <h3 className="text-sm font-semibold text-[#1E2D4D] mb-4">Historical Incidents — Last 12 Months</h3>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
-              <tr className="border-b border-gray-200">
-                <th className="text-left py-2 pr-3 font-medium text-gray-500">Type</th>
-                <th className="text-left py-2 pr-3 font-medium text-gray-500">Location</th>
-                <th className="text-left py-2 pr-3 font-medium text-gray-500">Date</th>
-                <th className="text-right py-2 pr-3 font-medium text-gray-500">Cost</th>
-                <th className="text-left py-2 font-medium text-gray-500">Resolution</th>
+              <tr className="border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors">
+                <th className="text-left py-2 pr-3 font-medium text-[#1E2D4D]/50">Type</th>
+                <th className="text-left py-2 pr-3 font-medium text-[#1E2D4D]/50">Location</th>
+                <th className="text-left py-2 pr-3 font-medium text-[#1E2D4D]/50">Date</th>
+                <th className="text-right py-2 pr-3 font-medium text-[#1E2D4D]/50">Cost</th>
+                <th className="text-left py-2 font-medium text-[#1E2D4D]/50">Resolution</th>
               </tr>
             </thead>
             <tbody>
               {historicalIncidents.map((inc, i) => (
                 <tr key={i} className="border-b border-gray-100">
                   <td className="py-2 pr-3 font-medium text-gray-800">{inc.type}</td>
-                  <td className="py-2 pr-3 text-gray-600">{inc.location}</td>
-                  <td className="py-2 pr-3 text-gray-500">{inc.date}</td>
+                  <td className="py-2 pr-3 text-[#1E2D4D]/70">{inc.location}</td>
+                  <td className="py-2 pr-3 text-[#1E2D4D]/50">{inc.date}</td>
                   <td className="py-2 pr-3 text-right font-semibold text-red-600">${inc.cost.toLocaleString()}</td>
-                  <td className="py-2 text-gray-500">{inc.resolution}</td>
+                  <td className="py-2 text-[#1E2D4D]/50">{inc.resolution}</td>
                 </tr>
               ))}
-              <tr className="border-t-2 border-gray-300">
+              <tr className="border-t-2 border-[#1E2D4D]/15">
                 <td colSpan={3} className="py-2 font-semibold text-[#1E2D4D]">Total Incident Cost (12 months)</td>
                 <td className="py-2 pr-3 text-right font-bold text-red-700">${historicalIncidents.reduce((s, i) => s + i.cost, 0).toLocaleString()}</td>
                 <td />
@@ -1259,12 +1259,12 @@ function ReportsTab() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
         <div className="flex items-center gap-2 mb-1">
           <FileBarChart className="h-5 w-5" style={{ color: '#1E2D4D' }} />
           <h2 className="text-base font-bold text-[#1E2D4D]">Executive Report Generator</h2>
         </div>
-        <p className="text-xs text-gray-500">Automated C-suite-ready reports with enterprise branding. PDF, PowerPoint, and interactive web formats.</p>
+        <p className="text-xs text-[#1E2D4D]/50">Automated C-suite-ready reports with enterprise branding. PDF, PowerPoint, and interactive web formats.</p>
       </div>
 
       {/* Report Templates */}
@@ -1272,19 +1272,19 @@ function ReportsTab() {
         <h3 className="text-sm font-semibold text-[#1E2D4D] mb-3">Report Templates</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {reportTemplates.map(rpt => (
-            <div key={rpt.id} className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 hover:shadow-md transition-shadow">
+            <div key={rpt.id} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5 hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between mb-2">
                 <h4 className="text-xs font-semibold text-[#1E2D4D]">{rpt.title}</h4>
                 <span className={`px-2 py-0.5 text-[9px] font-bold rounded-full ${
-                  rpt.type === 'monthly' ? 'bg-blue-100 text-blue-700' :
+                  rpt.type === 'monthly' ? 'bg-blue-50 text-blue-700' :
                   rpt.type === 'quarterly' ? 'bg-purple-100 text-purple-700' :
-                  'bg-gray-100 text-gray-600'
+                  'bg-gray-100 text-[#1E2D4D]/70'
                 }`}>{rpt.type.charAt(0).toUpperCase() + rpt.type.slice(1)}</span>
               </div>
-              <p className="text-xs text-gray-400 mb-2">{rpt.pages} pages · Last generated: {rpt.lastGenerated}</p>
+              <p className="text-xs text-[#1E2D4D]/30 mb-2">{rpt.pages} pages · Last generated: {rpt.lastGenerated}</p>
               <div className="flex flex-wrap gap-1 mb-3">
                 {rpt.sections.map(s => (
-                  <span key={s} className="px-1.5 py-0.5 text-[9px] rounded bg-gray-100 text-gray-500">{s}</span>
+                  <span key={s} className="px-1.5 py-0.5 text-[9px] rounded bg-gray-100 text-[#1E2D4D]/50">{s}</span>
                 ))}
               </div>
               <div className="flex items-center gap-1.5">
@@ -1295,7 +1295,7 @@ function ReportsTab() {
                 )}
                 <div className="flex-1" />
                 <button onClick={() => toast.info(`Generating ${rpt.title}`)} className="px-2.5 py-1 text-xs font-medium rounded-md text-white cursor-pointer" style={{ backgroundColor: '#1E2D4D' }}>Generate</button>
-                <button onClick={() => toast.info(`Schedule ${rpt.title} coming soon`)} className="px-2.5 py-1 text-xs font-medium rounded-md border border-gray-200 text-gray-600 cursor-pointer hover:bg-gray-50">Schedule</button>
+                <button onClick={() => toast.info(`Schedule ${rpt.title} coming soon`)} className="px-2.5 py-1 text-xs font-medium rounded-md border border-[#1E2D4D]/10 text-[#1E2D4D]/70 cursor-pointer hover:bg-gray-50">Schedule</button>
               </div>
             </div>
           ))}
@@ -1303,16 +1303,16 @@ function ReportsTab() {
       </div>
 
       {/* Ad-Hoc Report Builder */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
         <h3 className="text-sm font-semibold text-[#1E2D4D] mb-4">Ad-Hoc Report Builder</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           {/* Metrics */}
           <div>
-            <label className="text-xs font-semibold text-gray-600 uppercase tracking-wide block mb-2">Select Metrics</label>
+            <label className="text-xs font-semibold text-[#1E2D4D]/70 uppercase tracking-wide block mb-2">Select Metrics</label>
             <div className="space-y-1 max-h-48 overflow-y-auto">
               {reportSections.map(s => (
-                <label key={s} className="flex items-center gap-2 text-xs text-gray-700 cursor-pointer">
-                  <input type="checkbox" checked={selectedMetrics.includes(s)} onChange={() => toggleMetric(s)} className="rounded border-gray-300" />
+                <label key={s} className="flex items-center gap-2 text-xs text-[#1E2D4D]/80 cursor-pointer">
+                  <input type="checkbox" checked={selectedMetrics.includes(s)} onChange={() => toggleMetric(s)} className="rounded border-[#1E2D4D]/15" />
                   {s}
                 </label>
               ))}
@@ -1321,8 +1321,8 @@ function ReportsTab() {
           {/* Date Range + Scope */}
           <div className="space-y-3">
             <div>
-              <label className="text-xs font-semibold text-gray-600 uppercase tracking-wide block mb-2">Date Range</label>
-              <select value={dateRange} onChange={e => setDateRange(e.target.value)} className="w-full text-xs border border-gray-200 rounded-lg px-3 py-2">
+              <label className="text-xs font-semibold text-[#1E2D4D]/70 uppercase tracking-wide block mb-2">Date Range</label>
+              <select value={dateRange} onChange={e => setDateRange(e.target.value)} className="w-full text-xs border border-[#1E2D4D]/10 rounded-lg px-3 py-2">
                 <option value="last-30">Last 30 Days</option>
                 <option value="last-90">Last 90 Days</option>
                 <option value="ytd">Year to Date</option>
@@ -1330,8 +1330,8 @@ function ReportsTab() {
               </select>
             </div>
             <div>
-              <label className="text-xs font-semibold text-gray-600 uppercase tracking-wide block mb-2">Scope</label>
-              <select value={scope} onChange={e => setScope(e.target.value)} className="w-full text-xs border border-gray-200 rounded-lg px-3 py-2">
+              <label className="text-xs font-semibold text-[#1E2D4D]/70 uppercase tracking-wide block mb-2">Scope</label>
+              <select value={scope} onChange={e => setScope(e.target.value)} className="w-full text-xs border border-[#1E2D4D]/10 rounded-lg px-3 py-2">
                 <option value="organization">Entire Organization</option>
                 <option value="west">West Region</option>
                 <option value="midwest">Midwest Region</option>
@@ -1343,18 +1343,18 @@ function ReportsTab() {
           </div>
           {/* Export Options */}
           <div>
-            <label className="text-xs font-semibold text-gray-600 uppercase tracking-wide block mb-2">Export Format</label>
+            <label className="text-xs font-semibold text-[#1E2D4D]/70 uppercase tracking-wide block mb-2">Export Format</label>
             <div className="space-y-2">
               {[
                 { label: 'PDF Report', desc: 'Print-ready with branding' },
                 { label: 'PowerPoint', desc: 'Editable slide deck' },
                 { label: 'Interactive Web Link', desc: 'Shareable dashboard link' },
               ].map(fmt => (
-                <button key={fmt.label} onClick={() => toast.info(`Building ${fmt.label} report`)} className="w-full flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer text-left">
-                  <Download className="h-4 w-4 text-gray-400" />
+                <button key={fmt.label} onClick={() => toast.info(`Building ${fmt.label} report`)} className="w-full flex items-center gap-3 p-3 rounded-lg border border-[#1E2D4D]/10 hover:bg-gray-50 cursor-pointer text-left">
+                  <Download className="h-4 w-4 text-[#1E2D4D]/30" />
                   <div>
                     <p className="text-xs font-medium text-gray-800">{fmt.label}</p>
-                    <p className="text-xs text-gray-400">{fmt.desc}</p>
+                    <p className="text-xs text-[#1E2D4D]/30">{fmt.desc}</p>
                   </div>
                 </button>
               ))}
@@ -1362,41 +1362,41 @@ function ReportsTab() {
           </div>
         </div>
         <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-          <p className="text-xs text-gray-400">{selectedMetrics.length} sections selected</p>
+          <p className="text-xs text-[#1E2D4D]/30">{selectedMetrics.length} sections selected</p>
           <button onClick={() => guardAction('export', 'compliance analytics', () => toast.info('Building custom report'))} className="px-4 py-2 text-xs font-semibold rounded-lg text-white cursor-pointer" style={{ backgroundColor: '#1E2D4D' }}>Build Report</button>
         </div>
       </div>
 
       {/* Distribution List */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
         <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
           <h3 className="text-sm font-semibold text-[#1E2D4D]">Distribution List</h3>
-          <button onClick={() => toast.info('Add recipient coming soon')} className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-md border border-gray-200 text-gray-600 cursor-pointer hover:bg-gray-50">
+          <button onClick={() => toast.info('Add recipient coming soon')} className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-md border border-[#1E2D4D]/10 text-[#1E2D4D]/70 cursor-pointer hover:bg-gray-50">
             <Plus className="h-3 w-3" /> Add Recipient
           </button>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
-              <tr className="border-b border-gray-200">
-                <th className="text-left py-2 pr-3 font-medium text-gray-500">Name</th>
-                <th className="text-left py-2 pr-3 font-medium text-gray-500">Role</th>
-                <th className="text-left py-2 pr-3 font-medium text-gray-500 hidden sm:table-cell">Email</th>
-                <th className="text-left py-2 pr-3 font-medium text-gray-500 hidden sm:table-cell">Delivery</th>
-                <th className="text-center py-2 font-medium text-gray-500">Actions</th>
+              <tr className="border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors">
+                <th className="text-left py-2 pr-3 font-medium text-[#1E2D4D]/50">Name</th>
+                <th className="text-left py-2 pr-3 font-medium text-[#1E2D4D]/50">Role</th>
+                <th className="text-left py-2 pr-3 font-medium text-[#1E2D4D]/50 hidden sm:table-cell">Email</th>
+                <th className="text-left py-2 pr-3 font-medium text-[#1E2D4D]/50 hidden sm:table-cell">Delivery</th>
+                <th className="text-center py-2 font-medium text-[#1E2D4D]/50">Actions</th>
               </tr>
             </thead>
             <tbody>
               {distributionList.map((rec, i) => (
                 <tr key={i} className="border-b border-gray-100">
                   <td className="py-2 pr-3 font-medium text-gray-800">{rec.name}</td>
-                  <td className="py-2 pr-3 text-gray-600">{rec.role}</td>
-                  <td className="py-2 pr-3 text-gray-500 hidden sm:table-cell">{rec.email}</td>
+                  <td className="py-2 pr-3 text-[#1E2D4D]/70">{rec.role}</td>
+                  <td className="py-2 pr-3 text-[#1E2D4D]/50 hidden sm:table-cell">{rec.email}</td>
                   <td className="py-2 pr-3 hidden sm:table-cell">
                     <span className={`px-2 py-0.5 text-[9px] font-semibold rounded-full ${
-                      rec.deliveryMethod === 'email' ? 'bg-blue-100 text-blue-700' :
+                      rec.deliveryMethod === 'email' ? 'bg-blue-50 text-blue-700' :
                       rec.deliveryMethod === 'teams' ? 'bg-purple-100 text-purple-700' :
-                      'bg-green-100 text-green-700'
+                      'bg-emerald-50 text-emerald-700'
                     }`}>{rec.deliveryMethod.charAt(0).toUpperCase() + rec.deliveryMethod.slice(1)}</span>
                   </td>
                   <td className="py-2 text-center">
@@ -1409,7 +1409,7 @@ function ReportsTab() {
         </div>
         <div className="flex gap-2 mt-3">
           <button onClick={() => toast.info('Send to all recipients coming soon')} className="px-4 py-2 text-xs font-semibold rounded-lg text-white cursor-pointer" style={{ backgroundColor: '#1E2D4D' }}>Send Now</button>
-          <button onClick={() => toast.info('Schedule distribution coming soon')} className="px-4 py-2 text-xs font-semibold rounded-lg border border-gray-200 text-gray-600 cursor-pointer hover:bg-gray-50">Schedule Delivery</button>
+          <button onClick={() => toast.info('Schedule distribution coming soon')} className="px-4 py-2 text-xs font-semibold rounded-lg border border-[#1E2D4D]/10 text-[#1E2D4D]/70 cursor-pointer hover:bg-gray-50">Schedule Delivery</button>
         </div>
       </div>
     </div>
@@ -1431,12 +1431,12 @@ function AnomalyTab() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
         <div className="flex items-center gap-2 mb-1">
           <Radar className="h-5 w-5" style={{ color: '#1E2D4D' }} />
           <h2 className="text-base font-bold text-[#1E2D4D]">Anomaly Detection Engine</h2>
         </div>
-        <p className="text-xs text-gray-500">Real-time statistical anomaly detection shows unusual patterns automatically. Detection runs hourly against rolling 30-day baseline.</p>
+        <p className="text-xs text-[#1E2D4D]/50">Real-time statistical anomaly detection shows unusual patterns automatically. Detection runs hourly against rolling 30-day baseline.</p>
       </div>
 
       {/* Anomaly Summary */}
@@ -1446,41 +1446,41 @@ function AnomalyTab() {
           { type: 'Behavioral Anomalies', data: anomalySummary.behavioral, icon: Eye, color: '#f59e0b', desc: 'Unusual data entry patterns or workflow changes' },
           { type: 'Volume Anomalies', data: anomalySummary.volume, icon: Activity, color: '#6b21a8', desc: 'Unexpected spikes or drops in data volume' },
         ].map(cat => (
-          <div key={cat.type} className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+          <div key={cat.type} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
             <div className="flex items-center gap-2 mb-3">
               <cat.icon className="h-4 w-4" style={{ color: cat.color }} />
               <h3 className="text-xs font-semibold text-[#1E2D4D]">{cat.type}</h3>
             </div>
             <div className="flex items-center gap-4">
-              <p className="text-xl sm:text-3xl font-bold" style={{ color: cat.color }}>{cat.data.total}</p>
+              <p className="text-xl sm:text-3xl font-bold tracking-tight" style={{ color: cat.color }}>{cat.data.total}</p>
               {cat.data.critical > 0 && (
-                <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-red-100 text-red-700">{cat.data.critical} critical</span>
+                <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-red-50 text-red-700">{cat.data.critical} critical</span>
               )}
             </div>
-            <p className="text-xs text-gray-500 mt-1">{cat.desc}</p>
+            <p className="text-xs text-[#1E2D4D]/50 mt-1">{cat.desc}</p>
           </div>
         ))}
       </div>
 
       {/* Active Anomaly Alerts */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
         <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
           <h3 className="text-sm font-semibold text-[#1E2D4D]">Active Anomaly Alerts</h3>
-          <span className="text-xs text-gray-400">{sortedAlerts.length} anomalies detected</span>
+          <span className="text-xs text-[#1E2D4D]/30">{sortedAlerts.length} anomalies detected</span>
         </div>
         <div className="space-y-3 max-h-[600px] overflow-y-auto">
           {sortedAlerts.map(a => (
             <div key={a.id} className={`p-4 rounded-lg border ${
               a.severity === 'critical' ? 'border-red-200 bg-red-50/50' :
               a.severity === 'warning' ? 'border-amber-200 bg-amber-50/50' :
-              'border-gray-200 bg-gray-50/50'
+              'border-[#1E2D4D]/10 bg-gray-50/50'
             }`}>
               <div className="flex items-start gap-3">
                 <div className="flex flex-col gap-1 flex-shrink-0">
                   <span className={`px-2 py-0.5 text-[9px] font-bold rounded-full text-center ${
-                    a.severity === 'critical' ? 'bg-red-100 text-red-700' :
+                    a.severity === 'critical' ? 'bg-red-50 text-red-700' :
                     a.severity === 'warning' ? 'bg-amber-100 text-amber-700' :
-                    'bg-blue-100 text-blue-700'
+                    'bg-blue-50 text-blue-700'
                   }`}>{a.severity.toUpperCase()}</span>
                   <span className={`px-2 py-0.5 text-[9px] font-semibold rounded-full text-center ${
                     a.type === 'score' ? 'bg-red-50 text-red-600' :
@@ -1490,26 +1490,26 @@ function AnomalyTab() {
                   <span className={`px-2 py-0.5 text-[9px] rounded-full text-center ${
                     a.confidence === 'high' ? 'bg-green-50 text-green-700' :
                     a.confidence === 'medium' ? 'bg-yellow-50 text-yellow-700' :
-                    'bg-[#FAF7F0] text-gray-500'
+                    'bg-[#FAF7F0] text-[#1E2D4D]/50'
                   }`}>{a.confidence} conf.</span>
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-xs font-semibold text-[#1E2D4D]">{a.location}</span>
                     <span className={`px-1.5 py-0.5 text-[9px] font-medium rounded ${
-                      a.status === 'new' ? 'bg-blue-100 text-blue-700' :
+                      a.status === 'new' ? 'bg-blue-50 text-blue-700' :
                       a.status === 'investigating' ? 'bg-amber-100 text-amber-700' :
-                      a.status === 'resolved' ? 'bg-green-100 text-green-700' :
-                      'bg-gray-100 text-gray-500'
+                      a.status === 'resolved' ? 'bg-emerald-50 text-emerald-700' :
+                      'bg-gray-100 text-[#1E2D4D]/50'
                     }`}>{a.status}</span>
-                    <span className="text-xs text-gray-400 ml-auto">{a.detectedAt}</span>
+                    <span className="text-xs text-[#1E2D4D]/30 ml-auto">{a.detectedAt}</span>
                   </div>
-                  <p className="text-xs text-gray-700 mt-1">{a.description}</p>
-                  <p className="text-xs text-gray-500 mt-1"><strong>Context:</strong> {a.context}</p>
-                  <p className="text-xs text-gray-500 mt-1"><strong>Suggested:</strong> {a.suggestedAction}</p>
+                  <p className="text-xs text-[#1E2D4D]/80 mt-1">{a.description}</p>
+                  <p className="text-xs text-[#1E2D4D]/50 mt-1"><strong>Context:</strong> {a.context}</p>
+                  <p className="text-xs text-[#1E2D4D]/50 mt-1"><strong>Suggested:</strong> {a.suggestedAction}</p>
                   <div className="flex gap-2 mt-2">
                     <button onClick={() => toast.info(`Investigating ${a.location}`)} className="px-2.5 py-1 text-xs font-medium rounded-md text-white cursor-pointer" style={{ backgroundColor: '#1E2D4D' }}>Investigate</button>
-                    <button onClick={() => toast.success(`Status updated for ${a.location}`)} className="px-2.5 py-1 text-xs font-medium rounded-md border border-gray-200 text-gray-600 cursor-pointer hover:bg-gray-50">Update Status</button>
+                    <button onClick={() => toast.success(`Status updated for ${a.location}`)} className="px-2.5 py-1 text-xs font-medium rounded-md border border-[#1E2D4D]/10 text-[#1E2D4D]/70 cursor-pointer hover:bg-gray-50">Update Status</button>
                   </div>
                 </div>
               </div>
@@ -1524,7 +1524,7 @@ function AnomalyTab() {
           <Info className="h-4 w-4 text-amber-500" />
           <h3 className="text-sm font-semibold text-[#1E2D4D]">Data Quality Review</h3>
         </div>
-        <p className="text-xs text-gray-400 mb-4">These flags indicate data patterns that may warrant review — not accusations of misconduct. Enterprise analytics must be trustworthy.</p>
+        <p className="text-xs text-[#1E2D4D]/30 mb-4">These flags indicate data patterns that may warrant review — not accusations of misconduct. Enterprise analytics must be trustworthy.</p>
         <div className="space-y-3">
           {antiGamingFlags.map(flag => (
             <div key={flag.id} className="p-4 rounded-lg border border-amber-100 bg-amber-50/50">
@@ -1532,13 +1532,13 @@ function AnomalyTab() {
                 <span className="text-xs font-semibold text-[#1E2D4D]">{flag.location}</span>
                 <div className="flex items-center gap-2">
                   <span className={`px-2 py-0.5 text-[9px] font-semibold rounded-full ${
-                    flag.confidence === 'high' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'
+                    flag.confidence === 'high' ? 'bg-red-50 text-red-700' : 'bg-amber-100 text-amber-700'
                   }`}>{flag.confidence} confidence</span>
-                  <span className="text-xs text-gray-400">{flag.detectedAt}</span>
+                  <span className="text-xs text-[#1E2D4D]/30">{flag.detectedAt}</span>
                 </div>
               </div>
               <p className="text-xs font-medium text-amber-800 mb-1">{flag.pattern}</p>
-              <p className="text-xs text-gray-600">{flag.description}</p>
+              <p className="text-xs text-[#1E2D4D]/70">{flag.description}</p>
             </div>
           ))}
         </div>
@@ -1557,18 +1557,18 @@ function AnomalyTab() {
 
 function StatRow({ label, stats }: { label: string; stats: AggregationStats }) {
   return (
-    <tr className="border-b border-gray-50">
+    <tr className="border-b border-gray-50 hover:bg-[#1E2D4D]/[0.02] transition-colors">
       <td className="py-2 text-xs font-semibold text-[#1E2D4D] pr-4">{label}</td>
-      <td className="py-2 text-xs text-gray-600 text-center">{stats.mean}</td>
-      <td className="py-2 text-xs text-gray-600 text-center">{stats.median}</td>
-      <td className="py-2 text-xs text-gray-600 text-center">{stats.stdDev}</td>
-      <td className="py-2 text-xs text-gray-600 text-center">{stats.min}</td>
-      <td className="py-2 text-xs text-gray-600 text-center">{stats.max}</td>
-      <td className="py-2 text-xs text-gray-600 text-center">{stats.p25}</td>
-      <td className="py-2 text-xs text-gray-600 text-center">{stats.p50}</td>
-      <td className="py-2 text-xs text-gray-600 text-center">{stats.p75}</td>
-      <td className="py-2 text-xs text-gray-600 text-center">{stats.p90}</td>
-      <td className="py-2 text-xs text-gray-600 text-center">{stats.p95}</td>
+      <td className="py-2 text-xs text-[#1E2D4D]/70 text-center">{stats.mean}</td>
+      <td className="py-2 text-xs text-[#1E2D4D]/70 text-center">{stats.median}</td>
+      <td className="py-2 text-xs text-[#1E2D4D]/70 text-center">{stats.stdDev}</td>
+      <td className="py-2 text-xs text-[#1E2D4D]/70 text-center">{stats.min}</td>
+      <td className="py-2 text-xs text-[#1E2D4D]/70 text-center">{stats.max}</td>
+      <td className="py-2 text-xs text-[#1E2D4D]/70 text-center">{stats.p25}</td>
+      <td className="py-2 text-xs text-[#1E2D4D]/70 text-center">{stats.p50}</td>
+      <td className="py-2 text-xs text-[#1E2D4D]/70 text-center">{stats.p75}</td>
+      <td className="py-2 text-xs text-[#1E2D4D]/70 text-center">{stats.p90}</td>
+      <td className="py-2 text-xs text-[#1E2D4D]/70 text-center">{stats.p95}</td>
     </tr>
   );
 }
@@ -1587,12 +1587,12 @@ function PlatformTab() {
       <div className="rounded-xl p-4 sm:p-6" style={{ background: '#EEF1F7', border: '1px solid #D1D9E6' }}>
         <div className="max-w-3xl">
           <h2 className="text-xl font-bold text-[#1E2D4D] mb-1">{cSuitePitch.headline}</h2>
-          <p className="text-gray-500 text-sm mb-4">{cSuitePitch.subheadline}</p>
+          <p className="text-[#1E2D4D]/50 text-sm mb-4">{cSuitePitch.subheadline}</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {cSuitePitch.valueProps.map((prop, i) => (
               <div key={i} className="flex items-start gap-2">
                 <CheckCircle className="h-4 w-4 text-[#d4af37] flex-shrink-0 mt-0.5" />
-                <span className="text-gray-700 text-xs">{prop}</span>
+                <span className="text-[#1E2D4D]/80 text-xs">{prop}</span>
               </div>
             ))}
           </div>
@@ -1601,7 +1601,7 @@ function PlatformTab() {
       </div>
 
       {/* Section A: Aggregation Statistics */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
         <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
           <div className="flex items-center gap-2">
             <BarChart3 className="h-5 w-5" style={{ color: '#1E2D4D' }} />
@@ -1610,7 +1610,7 @@ function PlatformTab() {
           <select
             value={selectedRegion}
             onChange={e => setSelectedRegion(e.target.value)}
-            className="text-xs border border-gray-200 rounded-lg px-3 py-1.5 text-gray-700"
+            className="text-xs border border-[#1E2D4D]/10 rounded-lg px-3 py-1.5 text-[#1E2D4D]/80"
           >
             <option value="enterprise">Enterprise (All {enterpriseAggregation.compositeScore.count} locations)</option>
             {regionAggregations.map(r => (
@@ -1622,18 +1622,18 @@ function PlatformTab() {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-gray-200">
-                <th className="text-left text-xs uppercase tracking-wider text-gray-500 font-semibold pb-2 pr-4">Metric</th>
-                <th className="text-center text-xs uppercase tracking-wider text-gray-500 font-semibold pb-2">Mean</th>
-                <th className="text-center text-xs uppercase tracking-wider text-gray-500 font-semibold pb-2">Median</th>
-                <th className="text-center text-xs uppercase tracking-wider text-gray-500 font-semibold pb-2">Std Dev</th>
-                <th className="text-center text-xs uppercase tracking-wider text-gray-500 font-semibold pb-2">Min</th>
-                <th className="text-center text-xs uppercase tracking-wider text-gray-500 font-semibold pb-2">Max</th>
-                <th className="text-center text-xs uppercase tracking-wider text-gray-500 font-semibold pb-2">P25</th>
-                <th className="text-center text-xs uppercase tracking-wider text-gray-500 font-semibold pb-2">P50</th>
-                <th className="text-center text-xs uppercase tracking-wider text-gray-500 font-semibold pb-2">P75</th>
-                <th className="text-center text-xs uppercase tracking-wider text-gray-500 font-semibold pb-2">P90</th>
-                <th className="text-center text-xs uppercase tracking-wider text-gray-500 font-semibold pb-2">P95</th>
+              <tr className="border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors">
+                <th className="text-left text-xs uppercase tracking-wider text-[#1E2D4D]/50 font-semibold pb-2 pr-4">Metric</th>
+                <th className="text-center text-xs uppercase tracking-wider text-[#1E2D4D]/50 font-semibold pb-2">Mean</th>
+                <th className="text-center text-xs uppercase tracking-wider text-[#1E2D4D]/50 font-semibold pb-2">Median</th>
+                <th className="text-center text-xs uppercase tracking-wider text-[#1E2D4D]/50 font-semibold pb-2">Std Dev</th>
+                <th className="text-center text-xs uppercase tracking-wider text-[#1E2D4D]/50 font-semibold pb-2">Min</th>
+                <th className="text-center text-xs uppercase tracking-wider text-[#1E2D4D]/50 font-semibold pb-2">Max</th>
+                <th className="text-center text-xs uppercase tracking-wider text-[#1E2D4D]/50 font-semibold pb-2">P25</th>
+                <th className="text-center text-xs uppercase tracking-wider text-[#1E2D4D]/50 font-semibold pb-2">P50</th>
+                <th className="text-center text-xs uppercase tracking-wider text-[#1E2D4D]/50 font-semibold pb-2">P75</th>
+                <th className="text-center text-xs uppercase tracking-wider text-[#1E2D4D]/50 font-semibold pb-2">P90</th>
+                <th className="text-center text-xs uppercase tracking-wider text-[#1E2D4D]/50 font-semibold pb-2">P95</th>
               </tr>
             </thead>
             <tbody>
@@ -1649,17 +1649,17 @@ function PlatformTab() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5 pt-4 border-t border-gray-100">
           {Object.entries(activeAgg.periodChanges).map(([key, change]) => (
             <div key={key} className="text-center p-3 rounded-lg bg-[#FAF7F0]">
-              <p className="text-xs text-gray-500 mb-1">{change.label}</p>
+              <p className="text-xs text-[#1E2D4D]/50 mb-1">{change.label}</p>
               <div className="flex items-center justify-center gap-1">
                 {change.direction === 'up' ? (
                   <ArrowUp className="h-4 w-4 text-green-600" />
                 ) : change.direction === 'down' ? (
                   <ArrowDown className="h-4 w-4 text-red-500" />
                 ) : (
-                  <Minus className="h-4 w-4 text-gray-400" />
+                  <Minus className="h-4 w-4 text-[#1E2D4D]/30" />
                 )}
                 <span className={`text-lg font-bold ${
-                  change.direction === 'up' ? 'text-green-600' : change.direction === 'down' ? 'text-red-500' : 'text-gray-500'
+                  change.direction === 'up' ? 'text-green-600' : change.direction === 'down' ? 'text-red-500' : 'text-[#1E2D4D]/50'
                 }`}>{change.direction === 'up' ? '+' : ''}{change.value}</span>
               </div>
             </div>
@@ -1668,7 +1668,7 @@ function PlatformTab() {
       </div>
 
       {/* Section B: Data Freshness */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
         <div className="flex items-center gap-2 mb-4">
           <Clock className="h-5 w-5" style={{ color: '#1E2D4D' }} />
           <h3 className="text-sm font-bold text-[#1E2D4D]">Data Freshness</h3>
@@ -1682,16 +1682,16 @@ function PlatformTab() {
                   d.status === 'live' ? 'bg-green-500' : d.status === 'recent' ? 'bg-yellow-400' : 'bg-red-500'
                 }`} />
               </div>
-              <p className="text-xs text-gray-500">{d.interval}</p>
-              <p className="text-xs text-gray-400 mt-1">Last: {d.lastUpdated}</p>
-              <p className="text-xs text-gray-400">Next: {d.nextUpdate}</p>
+              <p className="text-xs text-[#1E2D4D]/50">{d.interval}</p>
+              <p className="text-xs text-[#1E2D4D]/30 mt-1">Last: {d.lastUpdated}</p>
+              <p className="text-xs text-[#1E2D4D]/30">Next: {d.nextUpdate}</p>
             </div>
           ))}
         </div>
       </div>
 
       {/* Section C: Database Schema */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
         <div className="flex items-center gap-2 mb-4">
           <Database className="h-5 w-5" style={{ color: '#1E2D4D' }} />
           <h3 className="text-sm font-bold text-[#1E2D4D]">Database Schema — {databaseTables.length} Tables</h3>
@@ -1705,23 +1705,23 @@ function PlatformTab() {
               >
                 <div className="flex items-center gap-3">
                   <code className="text-xs font-mono font-bold text-[#1E2D4D]">{table.name}</code>
-                  <span className="text-xs text-gray-400">{table.rowEstimate}</span>
+                  <span className="text-xs text-[#1E2D4D]/30">{table.rowEstimate}</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-xs text-gray-400">{table.columns.length} columns</span>
-                  <ChevronRight className={`h-4 w-4 text-gray-400 transition-transform ${expandedTable === table.name ? 'rotate-90' : ''}`} />
+                  <span className="text-xs text-[#1E2D4D]/30">{table.columns.length} columns</span>
+                  <ChevronRight className={`h-4 w-4 text-[#1E2D4D]/30 transition-transform ${expandedTable === table.name ? 'rotate-90' : ''}`} />
                 </div>
               </button>
               {expandedTable === table.name && (
                 <div className="border-t border-gray-100 px-4 py-3 bg-[#FAF7F0]">
-                  <p className="text-xs text-gray-600 mb-2">{table.description}</p>
-                  <p className="text-xs text-gray-400 mb-3">Refresh: {table.refreshSchedule}</p>
+                  <p className="text-xs text-[#1E2D4D]/70 mb-2">{table.description}</p>
+                  <p className="text-xs text-[#1E2D4D]/30 mb-3">Refresh: {table.refreshSchedule}</p>
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b border-gray-200">
-                        <th className="text-left text-[9px] uppercase text-gray-500 font-semibold pb-1">Column</th>
-                        <th className="text-left text-[9px] uppercase text-gray-500 font-semibold pb-1">Type</th>
-                        <th className="text-left text-[9px] uppercase text-gray-500 font-semibold pb-1">Description</th>
+                      <tr className="border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors">
+                        <th className="text-left text-[9px] uppercase text-[#1E2D4D]/50 font-semibold pb-1">Column</th>
+                        <th className="text-left text-[9px] uppercase text-[#1E2D4D]/50 font-semibold pb-1">Type</th>
+                        <th className="text-left text-[9px] uppercase text-[#1E2D4D]/50 font-semibold pb-1">Description</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -1729,15 +1729,15 @@ function PlatformTab() {
                         <tr key={col.name} className="border-b border-gray-50">
                           <td className="py-1.5 text-xs font-mono text-gray-800">{col.name}</td>
                           <td className="py-1.5 text-xs font-mono text-purple-600">{col.type}</td>
-                          <td className="py-1.5 text-xs text-gray-500">{col.description}</td>
+                          <td className="py-1.5 text-xs text-[#1E2D4D]/50">{col.description}</td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                   {table.indexes.length > 0 && (
-                    <div className="mt-2 pt-2 border-t border-gray-200">
-                      <span className="text-[9px] uppercase text-gray-500 font-semibold">Indexes: </span>
-                      <span className="text-xs font-mono text-gray-600">{table.indexes.join(' · ')}</span>
+                    <div className="mt-2 pt-2 border-t border-[#1E2D4D]/10">
+                      <span className="text-[9px] uppercase text-[#1E2D4D]/50 font-semibold">Indexes: </span>
+                      <span className="text-xs font-mono text-[#1E2D4D]/70">{table.indexes.join(' · ')}</span>
                     </div>
                   )}
                 </div>
@@ -1748,7 +1748,7 @@ function PlatformTab() {
       </div>
 
       {/* Section D: Edge Functions */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
         <div className="flex items-center gap-2 mb-4">
           <Server className="h-5 w-5" style={{ color: '#1E2D4D' }} />
           <h3 className="text-sm font-bold text-[#1E2D4D]">Edge Functions — {edgeFunctions.length} Functions</h3>
@@ -1756,13 +1756,13 @@ function PlatformTab() {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-gray-200">
-                <th className="text-left text-xs uppercase tracking-wider text-gray-500 font-semibold pb-2">Function</th>
-                <th className="text-left text-xs uppercase tracking-wider text-gray-500 font-semibold pb-2">Schedule</th>
-                <th className="text-left text-xs uppercase tracking-wider text-gray-500 font-semibold pb-2">Avg Runtime</th>
-                <th className="text-left text-xs uppercase tracking-wider text-gray-500 font-semibold pb-2">Last Run</th>
-                <th className="text-center text-xs uppercase tracking-wider text-gray-500 font-semibold pb-2">Status</th>
-                <th className="text-left text-xs uppercase tracking-wider text-gray-500 font-semibold pb-2">Dependencies</th>
+              <tr className="border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors">
+                <th className="text-left text-xs uppercase tracking-wider text-[#1E2D4D]/50 font-semibold pb-2">Function</th>
+                <th className="text-left text-xs uppercase tracking-wider text-[#1E2D4D]/50 font-semibold pb-2">Schedule</th>
+                <th className="text-left text-xs uppercase tracking-wider text-[#1E2D4D]/50 font-semibold pb-2">Avg Runtime</th>
+                <th className="text-left text-xs uppercase tracking-wider text-[#1E2D4D]/50 font-semibold pb-2">Last Run</th>
+                <th className="text-center text-xs uppercase tracking-wider text-[#1E2D4D]/50 font-semibold pb-2">Status</th>
+                <th className="text-left text-xs uppercase tracking-wider text-[#1E2D4D]/50 font-semibold pb-2">Dependencies</th>
               </tr>
             </thead>
             <tbody>
@@ -1770,16 +1770,16 @@ function PlatformTab() {
                 <tr key={fn.name} className="border-b border-gray-50">
                   <td className="py-2.5">
                     <code className="text-xs font-mono font-semibold text-[#1E2D4D]">{fn.name}</code>
-                    <p className="text-xs text-gray-400 mt-0.5">{fn.description}</p>
+                    <p className="text-xs text-[#1E2D4D]/30 mt-0.5">{fn.description}</p>
                   </td>
-                  <td className="py-2.5 text-xs text-gray-600">{fn.schedule}</td>
-                  <td className="py-2.5 text-xs text-gray-600">{fn.avgRuntime}</td>
-                  <td className="py-2.5 text-xs text-gray-500">{fn.lastRun}</td>
+                  <td className="py-2.5 text-xs text-[#1E2D4D]/70">{fn.schedule}</td>
+                  <td className="py-2.5 text-xs text-[#1E2D4D]/70">{fn.avgRuntime}</td>
+                  <td className="py-2.5 text-xs text-[#1E2D4D]/50">{fn.lastRun}</td>
                   <td className="py-2.5 text-center">
                     <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full ${
-                      fn.status === 'healthy' ? 'bg-green-100 text-green-700' :
+                      fn.status === 'healthy' ? 'bg-emerald-50 text-emerald-700' :
                       fn.status === 'warning' ? 'bg-amber-100 text-amber-700' :
-                      'bg-red-100 text-red-700'
+                      'bg-red-50 text-red-700'
                     }`}>
                       <span className={`w-1.5 h-1.5 rounded-full ${
                         fn.status === 'healthy' ? 'bg-green-500' :
@@ -1789,7 +1789,7 @@ function PlatformTab() {
                       {fn.status}
                     </span>
                   </td>
-                  <td className="py-2.5 text-xs font-mono text-gray-400">{fn.dependencies.join(', ')}</td>
+                  <td className="py-2.5 text-xs font-mono text-[#1E2D4D]/30">{fn.dependencies.join(', ')}</td>
                 </tr>
               ))}
             </tbody>
@@ -1798,12 +1798,12 @@ function PlatformTab() {
       </div>
 
       {/* Section E: Pricing Tiers */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
         <div className="flex items-center gap-2 mb-1">
           <CreditCard className="h-5 w-5" style={{ color: '#1E2D4D' }} />
           <h3 className="text-sm font-bold text-[#1E2D4D]">Intelligence Platform Pricing</h3>
         </div>
-        <p className="text-xs text-gray-400 mb-5">Add-on to EvidLY core platform. Volume discounts available for 500+ locations.</p>
+        <p className="text-xs text-[#1E2D4D]/30 mb-5">Add-on to EvidLY core platform. Volume discounts available for 500+ locations.</p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {pricingTiers.map(tier => (
             <div
@@ -1811,7 +1811,7 @@ function PlatformTab() {
               className={`rounded-xl p-4 sm:p-5 border-2 ${
                 tier.highlighted
                   ? 'border-[#d4af37] shadow-sm relative'
-                  : 'border-gray-200'
+                  : 'border-[#1E2D4D]/10'
               }`}
             >
               {tier.highlighted && (
@@ -1820,14 +1820,14 @@ function PlatformTab() {
                 </div>
               )}
               <h4 className="text-base font-bold text-[#1E2D4D]">{tier.name}</h4>
-              <p className="text-xs text-gray-500 mb-3">{tier.description}</p>
-              <p className="text-xl sm:text-3xl font-bold mb-1" style={{ color: '#1E2D4D' }}>{tier.priceLabel}</p>
-              <p className="text-xs text-gray-400 mb-4">{tier.locationLimit}</p>
+              <p className="text-xs text-[#1E2D4D]/50 mb-3">{tier.description}</p>
+              <p className="text-xl sm:text-3xl font-bold tracking-tight mb-1" style={{ color: '#1E2D4D' }}>{tier.priceLabel}</p>
+              <p className="text-xs text-[#1E2D4D]/30 mb-4">{tier.locationLimit}</p>
               <ul className="space-y-2">
                 {tier.features.map((feature, i) => (
                   <li key={i} className="flex items-start gap-2">
                     <CheckCircle className="h-3.5 w-3.5 text-green-500 flex-shrink-0 mt-0.5" />
-                    <span className="text-xs text-gray-700">{feature}</span>
+                    <span className="text-xs text-[#1E2D4D]/80">{feature}</span>
                   </li>
                 ))}
               </ul>
@@ -1836,7 +1836,7 @@ function PlatformTab() {
                 className={`w-full mt-5 py-2.5 rounded-lg text-xs font-semibold cursor-pointer transition-colors ${
                   tier.highlighted
                     ? 'text-white hover:opacity-90'
-                    : 'border border-gray-200 text-gray-700 hover:bg-gray-50'
+                    : 'border border-[#1E2D4D]/10 text-[#1E2D4D]/80 hover:bg-gray-50'
                 }`}
                 style={tier.highlighted ? { backgroundColor: '#1E2D4D' } : undefined}
               >
@@ -1854,7 +1854,7 @@ function PlatformTab() {
               <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-gray-100 bg-[#FAF7F0]">
                 <div>
                   <p className="text-xs font-semibold text-gray-800">{bundle.name}</p>
-                  <p className="text-xs text-gray-500">{bundle.description}</p>
+                  <p className="text-xs text-[#1E2D4D]/50">{bundle.description}</p>
                 </div>
                 <span className="px-3 py-1 rounded-full text-xs font-bold text-white" style={{ backgroundColor: '#d4af37' }}>Save {bundle.saving}</span>
               </div>

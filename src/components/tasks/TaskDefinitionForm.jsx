@@ -37,7 +37,7 @@ const ROLES = [
   { value: 'facilities_manager', label: 'Facilities Manager' },
 ];
 
-const inputClass = 'w-full text-sm px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[#1E2D4D]';
+const inputClass = 'w-full text-sm px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2';
 const labelClass = 'block text-xs font-semibold text-[var(--text-secondary)] mb-1';
 
 export function TaskDefinitionForm({ definition, onSave, onClose }) {

@@ -144,7 +144,7 @@ export default function VendorDetail() {
     return (
       <div className="p-8 text-center">
         <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Vendor Details</h2>
-        <p className="text-gray-500">Select a vendor to view their details and documents.</p>
+        <p className="text-[#1E2D4D]/50">Select a vendor to view their details and documents.</p>
       </div>
     );
   }
@@ -155,7 +155,7 @@ export default function VendorDetail() {
   if (!vendor) {
     return (
       <div className="p-8 text-center">
-        <p className="text-gray-500">Vendor not found</p>
+        <p className="text-[#1E2D4D]/50">Vendor not found</p>
         <button onClick={() => navigate('/vendors')} className="mt-4 text-blue-600 hover:text-blue-800">
           Back to Vendors
         </button>
@@ -170,13 +170,13 @@ export default function VendorDetail() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'on-file':
-        return <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800"><CheckCircle className="h-3 w-3 mr-1" />On File</span>;
+        return <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700"><CheckCircle className="h-3 w-3 mr-1" />On File</span>;
       case 'missing':
-        return <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800"><XCircle className="h-3 w-3 mr-1" />Missing</span>;
+        return <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-50 text-red-700"><XCircle className="h-3 w-3 mr-1" />Missing</span>;
       case 'expiring':
-        return <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"><AlertTriangle className="h-3 w-3 mr-1" />Expiring</span>;
+        return <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700"><AlertTriangle className="h-3 w-3 mr-1" />Expiring</span>;
       case 'expired':
-        return <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800"><XCircle className="h-3 w-3 mr-1" />Expired</span>;
+        return <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-50 text-red-700"><XCircle className="h-3 w-3 mr-1" />Expired</span>;
       default:
         return null;
     }
@@ -189,25 +189,25 @@ export default function VendorDetail() {
           <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Vendors', href: '/vendors' }, { label: vendor.companyName }]} />
           <button
             onClick={() => navigate('/vendors')}
-            className="flex items-center text-gray-600 hover:text-gray-900 mb-4 min-h-[44px]"
+            className="flex items-center text-[#1E2D4D]/70 hover:text-gray-900 mb-4 min-h-[44px]"
           >
             <ArrowLeft className="h-5 w-5 mr-2" />
             Back to All Vendors
           </button>
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-[#1E2D4D]">{vendor.companyName}</h1>
-              <p className="mt-1 text-sm text-gray-500">{vendor.serviceType}</p>
+              <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-[#1E2D4D]">{vendor.companyName}</h1>
+              <p className="mt-1 text-sm text-[#1E2D4D]/50">{vendor.serviceType}</p>
             </div>
             <div className="mt-4 md:mt-0">
               {vendor.status === 'overdue' && (
-                <span className="px-4 py-2 rounded-full text-sm font-medium bg-red-100 text-red-800">Overdue</span>
+                <span className="px-4 py-2 rounded-full text-sm font-medium bg-red-50 text-red-700">Overdue</span>
               )}
               {vendor.status === 'current' && (
-                <span className="px-4 py-2 rounded-full text-sm font-medium bg-green-100 text-green-800">Current</span>
+                <span className="px-4 py-2 rounded-full text-sm font-medium bg-emerald-50 text-emerald-700">Current</span>
               )}
               {vendor.status === 'upcoming' && (
-                <span className="px-4 py-2 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">Due Soon</span>
+                <span className="px-4 py-2 rounded-full text-sm font-medium bg-amber-50 text-amber-700">Due Soon</span>
               )}
             </div>
           </div>
@@ -215,7 +215,7 @@ export default function VendorDetail() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="border-b border-gray-200 mb-6 overflow-x-auto">
+        <div className="border-b border-[#1E2D4D]/10 mb-6 overflow-x-auto">
           <nav className="-mb-px flex space-x-8">
             {['overview', 'documents', 'history', 'contact'].map((tab) => (
               <button
@@ -224,7 +224,7 @@ export default function VendorDetail() {
                 className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm min-h-[44px] ${
                   activeTab === tab
                     ? 'border-[#1E2D4D] text-[#1E2D4D]'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    : 'border-transparent text-[#1E2D4D]/50 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -235,37 +235,37 @@ export default function VendorDetail() {
 
         {activeTab === 'overview' && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
-              <h2 className="text-lg font-semibold mb-4">Contact Information</h2>
+            <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6">
+              <h2 className="text-lg font-semibold tracking-tight mb-4">Contact Information</h2>
               <div className="space-y-3">
-                <div className="flex items-center text-gray-700">
-                  <Phone className="h-5 w-5 mr-3 text-gray-400" />
+                <div className="flex items-center text-[#1E2D4D]/80">
+                  <Phone className="h-5 w-5 mr-3 text-[#1E2D4D]/30" />
                   <span>{vendor.phone}</span>
                 </div>
-                <div className="flex items-center text-gray-700">
-                  <Mail className="h-5 w-5 mr-3 text-gray-400" />
+                <div className="flex items-center text-[#1E2D4D]/80">
+                  <Mail className="h-5 w-5 mr-3 text-[#1E2D4D]/30" />
                   <span>{vendor.email}</span>
                 </div>
-                <div className="flex items-center text-gray-700">
-                  <MapPin className="h-5 w-5 mr-3 text-gray-400" />
+                <div className="flex items-center text-[#1E2D4D]/80">
+                  <MapPin className="h-5 w-5 mr-3 text-[#1E2D4D]/30" />
                   <span>{vendor.contactName}</span>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
-              <h2 className="text-lg font-semibold mb-4">Service Schedule</h2>
+            <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6">
+              <h2 className="text-lg font-semibold tracking-tight mb-4">Service Schedule</h2>
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Last Service:</span>
+                  <span className="text-[#1E2D4D]/70">Last Service:</span>
                   <span className="font-medium">{vendor.lastService}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Next Due:</span>
+                  <span className="text-[#1E2D4D]/70">Next Due:</span>
                   <span className="font-medium">{vendor.nextDue}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Documents:</span>
+                  <span className="text-[#1E2D4D]/70">Documents:</span>
                   <span className="font-medium">{onFileDocs} of {requiredDocs.length}</span>
                 </div>
               </div>
@@ -275,11 +275,11 @@ export default function VendorDetail() {
 
         {activeTab === 'documents' && (
           <div>
-            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 mb-6">
+            <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6 mb-6">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
                 <div>
-                  <h2 className="text-lg font-semibold">Required Documents</h2>
-                  <p className="text-sm text-gray-600 mt-1">{onFileDocs} of {requiredDocs.length} required documents on file</p>
+                  <h2 className="text-lg font-semibold tracking-tight">Required Documents</h2>
+                  <p className="text-sm text-[#1E2D4D]/70 mt-1">{onFileDocs} of {requiredDocs.length} required documents on file</p>
                 </div>
                 <div className="flex gap-2 mt-4 md:mt-0">
                   <button
@@ -291,7 +291,7 @@ export default function VendorDetail() {
                   </button>
                   <button
                     onClick={() => guardAction('upload', 'Vendor Documents', () => toast.info('Upload'))}
-                    className="flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 min-h-[44px]"
+                    className="flex items-center px-4 py-2 bg-gray-200 text-[#1E2D4D]/80 rounded-lg hover:bg-gray-300 min-h-[44px]"
                   >
                     <Upload className="h-4 w-4 mr-2" />
                     Upload
@@ -299,7 +299,7 @@ export default function VendorDetail() {
                 </div>
               </div>
 
-              <div className="w-full bg-gray-200 rounded-full h-2 mb-6">
+              <div className="w-full bg-[#1E2D4D]/8 rounded-full h-2 mb-6">
                 <div
                   className="bg-green-600 h-2 rounded-full transition-all duration-300"
                   style={{ width: `${progressPercent}%` }}
@@ -335,7 +335,7 @@ export default function VendorDetail() {
               {/* Vendor Document Records */}
               {vendorDocs.filter(d => d.status !== 'pending_review').length > 0 && (
                 <div className="mb-6">
-                  <h3 className="text-sm font-semibold text-gray-600 mb-3">Recent Vendor Submissions</h3>
+                  <h3 className="text-sm font-semibold text-[#1E2D4D]/70 mb-3">Recent Vendor Submissions</h3>
                   <div className="space-y-3">
                     {vendorDocs
                       .filter(d => d.status !== 'pending_review')
@@ -354,18 +354,18 @@ export default function VendorDetail() {
 
               <div className="space-y-4">
                 {documents.map((doc, idx) => (
-                  <div key={idx} className="flex flex-col md:flex-row md:items-center justify-between p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
+                  <div key={idx} className="flex flex-col md:flex-row md:items-center justify-between p-4 border border-[#1E2D4D]/10 rounded-lg hover:shadow-md transition-shadow">
                     <div className="flex items-start space-x-3 flex-1">
-                      <FileText className="h-5 w-5 text-gray-400 mt-1" />
+                      <FileText className="h-5 w-5 text-[#1E2D4D]/30 mt-1" />
                       <div>
                         <p className="font-medium text-gray-900">{doc.name}</p>
                         <div className="flex flex-wrap gap-2 mt-1">
                           {getStatusBadge(doc.status)}
                           {doc.expirationDate && (
-                            <span className="text-xs text-gray-500">Exp: {doc.expirationDate}</span>
+                            <span className="text-xs text-[#1E2D4D]/50">Exp: {doc.expirationDate}</span>
                           )}
                           {doc.uploadDate && (
-                            <span className="text-xs text-gray-500">Uploaded: {doc.uploadDate}</span>
+                            <span className="text-xs text-[#1E2D4D]/50">Uploaded: {doc.uploadDate}</span>
                           )}
                         </div>
                       </div>
@@ -388,44 +388,44 @@ export default function VendorDetail() {
         )}
 
         {activeTab === 'history' && (
-          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
-            <h2 className="text-lg font-semibold mb-4">Service History</h2>
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6">
+            <h2 className="text-lg font-semibold tracking-tight mb-4">Service History</h2>
             <div className="space-y-6">
-              <div className="border-l-2 border-gray-300 pl-4 pb-4">
+              <div className="border-l-2 border-[#1E2D4D]/15 pl-4 pb-4">
                 <div className="flex items-center mb-2">
-                  <Calendar className="h-5 w-5 text-gray-400 mr-2" />
+                  <Calendar className="h-5 w-5 text-[#1E2D4D]/30 mr-2" />
                   <span className="font-medium">{vendor.lastService}</span>
                 </div>
-                <p className="text-gray-600">Regular service completed by {vendor.contactName}</p>
-                <p className="text-sm text-gray-500 mt-1">All systems checked and operational</p>
+                <p className="text-[#1E2D4D]/70">Regular service completed by {vendor.contactName}</p>
+                <p className="text-sm text-[#1E2D4D]/50 mt-1">All systems checked and operational</p>
               </div>
             </div>
           </div>
         )}
 
         {activeTab === 'contact' && (
-          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
-            <h2 className="text-lg font-semibold mb-4">Contact {vendor.contactName}</h2>
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6">
+            <h2 className="text-lg font-semibold tracking-tight mb-4">Contact {vendor.contactName}</h2>
             <div className="space-y-4 mb-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700">Company Name</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80">Company Name</label>
                 <p className="mt-1 text-gray-900">{vendor.companyName}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Contact Person</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80">Contact Person</label>
                 <p className="mt-1 text-gray-900">{vendor.contactName}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Email</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80">Email</label>
                 <p className="mt-1 text-gray-900">{vendor.email}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Phone</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80">Phone</label>
                 <p className="mt-1 text-gray-900">{vendor.phone}</p>
               </div>
             </div>
-            <div className="pt-4 border-t border-gray-200">
-              <p className="text-sm font-medium text-gray-700 mb-3">Quick Actions</p>
+            <div className="pt-4 border-t border-[#1E2D4D]/10">
+              <p className="text-sm font-medium text-[#1E2D4D]/80 mb-3">Quick Actions</p>
               <VendorContactActions
                 vendorName={vendor.companyName}
                 contactName={vendor.contactName}
@@ -440,14 +440,14 @@ export default function VendorDetail() {
       {showRequestModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-full max-w-md">
-            <h3 className="text-lg font-semibold mb-4">Request Document</h3>
-            <p className="text-gray-600 mb-4">
+            <h3 className="text-lg font-semibold tracking-tight mb-4">Request Document</h3>
+            <p className="text-[#1E2D4D]/70 mb-4">
               An email will be sent to {vendor.email} requesting the missing documents with a secure upload link.
             </p>
             <div className="flex gap-2 justify-end">
               <button
                 onClick={() => setShowRequestModal(false)}
-                className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg min-h-[44px]"
+                className="px-4 py-2 text-[#1E2D4D]/80 hover:bg-gray-100 rounded-lg min-h-[44px]"
               >
                 Cancel
               </button>

@@ -51,7 +51,7 @@ function getStatusBadge(status: ServiceStatus) {
     case 'overdue':
       return { icon: AlertTriangle, label: 'Overdue', bg: 'bg-red-100', text: 'text-red-800', iconColor: 'text-red-600' };
     case 'no_vendor':
-      return { icon: XCircle, label: 'No Vendor', bg: 'bg-gray-100', text: 'text-gray-600', iconColor: 'text-gray-400' };
+      return { icon: XCircle, label: 'No Vendor', bg: 'bg-[#1E2D4D]/5', text: 'text-[#1E2D4D]/70', iconColor: 'text-[#1E2D4D]/30' };
   }
 }
 
@@ -168,12 +168,12 @@ export default function ServicesPage() {
   if (!isDemoMode) {
     return (
       <div className="p-6">
-        <h1 className="text-2xl font-bold text-[#1E2D4D] mb-2">Vendor Services</h1>
-        <p className="text-sm text-gray-500 mb-6">Track and manage vendor service schedules across your locations.</p>
-        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+        <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D] mb-2">Vendor Services</h1>
+        <p className="text-sm text-[#1E2D4D]/50 mb-6">Track and manage vendor service schedules across your locations.</p>
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-12 text-center">
           <FileText className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-          <h2 className="text-lg font-semibold text-[#1E2D4D] mb-2">No Service Records Yet</h2>
-          <p className="text-sm text-gray-500 max-w-md mx-auto">
+          <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-2">No Service Records Yet</h2>
+          <p className="text-sm text-[#1E2D4D]/50 max-w-md mx-auto">
             Add vendors and log service visits to track your maintenance schedules.
           </p>
         </div>
@@ -239,14 +239,14 @@ export default function ServicesPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-semibold" style={{ color: '#0B1628' }}>Vendor Services</h1>
-            <p className="text-sm text-gray-500 mt-1">
+            <h1 className="text-2xl font-semibold tracking-tight" style={{ color: '#0B1628' }}>Vendor Services</h1>
+            <p className="text-sm text-[#1E2D4D]/50 mt-1">
               Track and log vendor-provided service records across your locations.
             </p>
           </div>
           <button
             onClick={() => setShowLogService(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] text-sm font-medium transition-colors self-start"
+            className="flex items-center gap-2 px-4 py-2 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] text-sm font-medium transition-all duration-150 active:scale-[0.98] self-start"
           >
             <Plus className="h-4 w-4" />
             Log Service
@@ -255,7 +255,7 @@ export default function ServicesPage() {
 
         {/* Required Services Status Overview */}
         <div>
-          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">Required Services — Status Overview</h2>
+          <h2 className="text-sm font-semibold text-[#1E2D4D]/80 uppercase tracking-wide mb-3">Required Services — Status Overview</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {requiredStatuses.map((rs) => {
               const badge = getStatusBadge(rs.status);
@@ -263,15 +263,15 @@ export default function ServicesPage() {
               return (
                 <div
                   key={rs.category.id}
-                  className="bg-white rounded-xl border border-gray-200 p-4 transition-shadow"
+                  className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 transition-shadow"
                 >
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <p className="text-sm font-semibold text-[#1E2D4D] truncate">{rs.serviceName}</p>
-                        <span className="flex-shrink-0 text-xs px-1.5 py-0.5 rounded-full bg-red-100 text-red-800 font-semibold">Required</span>
+                        <span className="flex-shrink-0 text-xs px-1.5 py-0.5 rounded-full bg-red-50 text-red-700 font-semibold">Required</span>
                       </div>
-                      <p className="text-xs text-gray-500 mt-0.5 truncate">
+                      <p className="text-xs text-[#1E2D4D]/50 mt-0.5 truncate">
                         {rs.vendorName || 'No vendor assigned'}
                       </p>
                     </div>
@@ -280,7 +280,7 @@ export default function ServicesPage() {
                       {badge.label}
                     </span>
                   </div>
-                  <div className="flex items-center gap-4 text-xs text-gray-500">
+                  <div className="flex items-center gap-4 text-xs text-[#1E2D4D]/50">
                     {rs.lastServiceDate && (
                       <span>Last: {format(new Date(rs.lastServiceDate), 'MMM d, yyyy')}</span>
                     )}
@@ -298,16 +298,16 @@ export default function ServicesPage() {
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
           <div className="flex items-center gap-2 mb-3">
-            <Filter className="h-4 w-4 text-gray-500" />
-            <span className="text-sm font-medium text-gray-700">Filters</span>
+            <Filter className="h-4 w-4 text-[#1E2D4D]/50" />
+            <span className="text-sm font-medium text-[#1E2D4D]/80">Filters</span>
           </div>
           <div className="flex flex-wrap gap-3">
             <select
               value={locationFilter}
               onChange={(e) => setLocationFilter(e.target.value)}
-              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]"
+              className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
             >
               {showAllLocationsOption() && <option value="all">All Locations</option>}
               {accessibleLocs.map((loc) => (
@@ -317,7 +317,7 @@ export default function ServicesPage() {
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]"
+              className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
             >
               <option value="all">All Categories</option>
               {VENDOR_CATEGORIES.map((cat) => (
@@ -337,32 +337,32 @@ export default function ServicesPage() {
 
         {/* Service History */}
         <div>
-          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">Service History</h2>
+          <h2 className="text-sm font-semibold text-[#1E2D4D]/80 uppercase tracking-wide mb-3">Service History</h2>
           {filteredRecords.length === 0 ? (
-            <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
+            <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8 text-center">
               <FileText className="h-10 w-10 text-gray-300 mx-auto mb-3" />
-              <p className="text-sm font-medium text-gray-600">No service records found</p>
-              <p className="text-xs text-gray-400 mt-1">Log a service to see records here.</p>
+              <p className="text-sm font-medium text-[#1E2D4D]/70">No service records found</p>
+              <p className="text-xs text-[#1E2D4D]/30 mt-1">Log a service to see records here.</p>
             </div>
           ) : (
-            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+            <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
               {/* Desktop table */}
               <div className="hidden md:block overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-gray-200 bg-[#FAF7F0]">
-                      <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Date</th>
-                      <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Service</th>
-                      <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Vendor</th>
-                      <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Location</th>
-                      <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Technician</th>
-                      <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Result</th>
-                      <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">QA Status</th>
-                      <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Next Due</th>
+                    <tr className="border-b border-[#1E2D4D]/10 bg-[#FAF7F0] hover:bg-[#1E2D4D]/[0.02] transition-colors">
+                      <th className="text-left px-4 py-3 text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wide">Date</th>
+                      <th className="text-left px-4 py-3 text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wide">Service</th>
+                      <th className="text-left px-4 py-3 text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wide">Vendor</th>
+                      <th className="text-left px-4 py-3 text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wide">Location</th>
+                      <th className="text-left px-4 py-3 text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wide">Technician</th>
+                      <th className="text-left px-4 py-3 text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wide">Result</th>
+                      <th className="text-left px-4 py-3 text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wide">QA Status</th>
+                      <th className="text-left px-4 py-3 text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wide">Next Due</th>
                       <th className="w-8"></th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100">
+                  <tbody className="divide-y divide-[#1E2D4D]/5">
                     {filteredRecords.map((record) => {
                       const required = isRequiredService(record.categoryId, record.serviceId);
                       return (
@@ -373,22 +373,22 @@ export default function ServicesPage() {
                           <td className="px-4 py-3">
                             <span className="text-gray-900">{record.serviceName}</span>
                             {required && (
-                              <span className="ml-1.5 text-xs px-1.5 py-0.5 rounded-full bg-red-100 text-red-800 font-semibold">Required</span>
+                              <span className="ml-1.5 text-xs px-1.5 py-0.5 rounded-full bg-red-50 text-red-700 font-semibold">Required</span>
                             )}
                           </td>
-                          <td className="px-4 py-3 text-gray-700">{record.vendorName}</td>
+                          <td className="px-4 py-3 text-[#1E2D4D]/80">{record.vendorName}</td>
                           <td className="px-4 py-3">
-                            <span className="flex items-center gap-1 text-gray-600">
-                              <MapPin className="h-3 w-3 text-gray-400" />
+                            <span className="flex items-center gap-1 text-[#1E2D4D]/70">
+                              <MapPin className="h-3 w-3 text-[#1E2D4D]/30" />
                               {record.locationName}
                             </span>
                           </td>
-                          <td className="px-4 py-3 text-gray-600">{record.technicianName || '—'}</td>
+                          <td className="px-4 py-3 text-[#1E2D4D]/70">{record.technicianName || '—'}</td>
                           <td className="px-4 py-3">
                             <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${
-                              record.result === 'pass' ? 'bg-green-100 text-green-800' :
-                              record.result === 'fail' ? 'bg-red-100 text-red-800' :
-                              'bg-gray-100 text-gray-600'
+                              record.result === 'pass' ? 'bg-emerald-50 text-emerald-700' :
+                              record.result === 'fail' ? 'bg-red-50 text-red-700' :
+                              'bg-gray-100 text-[#1E2D4D]/70'
                             }`}>
                               {record.result === 'pass' ? 'Pass' : record.result === 'fail' ? 'Fail' : 'N/A'}
                             </span>
@@ -396,21 +396,21 @@ export default function ServicesPage() {
                           <td className="px-4 py-3">
                             {record.qaStatus ? (
                               <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${
-                                record.qaStatus === 'approved' ? 'bg-green-100 text-green-800' :
-                                record.qaStatus === 'flagged' ? 'bg-red-100 text-red-800' :
-                                'bg-blue-100 text-blue-800'
+                                record.qaStatus === 'approved' ? 'bg-emerald-50 text-emerald-700' :
+                                record.qaStatus === 'flagged' ? 'bg-red-50 text-red-700' :
+                                'bg-blue-50 text-blue-700'
                               }`}>
                                 {record.qaStatus === 'approved' ? 'Approved' :
                                  record.qaStatus === 'flagged' ? 'Flagged' : 'Pending'}
                               </span>
                             ) : (
-                              <span className="text-xs text-gray-400">—</span>
+                              <span className="text-xs text-[#1E2D4D]/30">—</span>
                             )}
                           </td>
-                          <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
+                          <td className="px-4 py-3 text-[#1E2D4D]/70 whitespace-nowrap">
                             {record.nextDueDate ? format(new Date(record.nextDueDate), 'MMM d, yyyy') : '—'}
                           </td>
-                          <td className="px-2 py-3 text-gray-400">
+                          <td className="px-2 py-3 text-[#1E2D4D]/30">
                             <ChevronRight className="h-4 w-4" />
                           </td>
                         </tr>
@@ -421,7 +421,7 @@ export default function ServicesPage() {
               </div>
 
               {/* Mobile cards */}
-              <div className="md:hidden divide-y divide-gray-100">
+              <div className="md:hidden divide-y divide-[#1E2D4D]/5">
                 {filteredRecords.map((record) => {
                   const required = isRequiredService(record.categoryId, record.serviceId);
                   return (
@@ -431,33 +431,33 @@ export default function ServicesPage() {
                           <p className="text-sm font-semibold text-[#1E2D4D]">
                             {record.serviceName}
                             {required && (
-                              <span className="ml-1.5 text-xs px-1.5 py-0.5 rounded-full bg-red-100 text-red-800 font-semibold">Required</span>
+                              <span className="ml-1.5 text-xs px-1.5 py-0.5 rounded-full bg-red-50 text-red-700 font-semibold">Required</span>
                             )}
                           </p>
-                          <p className="text-xs text-gray-500">{record.vendorName}</p>
+                          <p className="text-xs text-[#1E2D4D]/50">{record.vendorName}</p>
                         </div>
                         <div className="flex items-center gap-2">
                           <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${
-                            record.result === 'pass' ? 'bg-green-100 text-green-800' :
-                            record.result === 'fail' ? 'bg-red-100 text-red-800' :
-                            'bg-gray-100 text-gray-600'
+                            record.result === 'pass' ? 'bg-emerald-50 text-emerald-700' :
+                            record.result === 'fail' ? 'bg-red-50 text-red-700' :
+                            'bg-gray-100 text-[#1E2D4D]/70'
                           }`}>
                             {record.result === 'pass' ? 'Pass' : record.result === 'fail' ? 'Fail' : 'N/A'}
                           </span>
                           {record.qaStatus && (
                             <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${
-                              record.qaStatus === 'approved' ? 'bg-green-100 text-green-800' :
-                              record.qaStatus === 'flagged' ? 'bg-red-100 text-red-800' :
-                              'bg-blue-100 text-blue-800'
+                              record.qaStatus === 'approved' ? 'bg-emerald-50 text-emerald-700' :
+                              record.qaStatus === 'flagged' ? 'bg-red-50 text-red-700' :
+                              'bg-blue-50 text-blue-700'
                             }`}>
                               {record.qaStatus === 'approved' ? 'Approved' :
                                record.qaStatus === 'flagged' ? 'Flagged' : 'Pending'}
                             </span>
                           )}
-                          <ChevronRight className="h-4 w-4 text-gray-400" />
+                          <ChevronRight className="h-4 w-4 text-[#1E2D4D]/30" />
                         </div>
                       </div>
-                      <div className="flex items-center gap-4 text-xs text-gray-500">
+                      <div className="flex items-center gap-4 text-xs text-[#1E2D4D]/50">
                         <span className="flex items-center gap-1">
                           <Calendar className="h-3 w-3" />
                           {format(new Date(record.serviceDate), 'MMM d, yyyy')}
@@ -468,7 +468,7 @@ export default function ServicesPage() {
                         </span>
                       </div>
                       {record.nextDueDate && (
-                        <p className="text-xs text-gray-400">Next due: {format(new Date(record.nextDueDate), 'MMM d, yyyy')}</p>
+                        <p className="text-xs text-[#1E2D4D]/30">Next due: {format(new Date(record.nextDueDate), 'MMM d, yyyy')}</p>
                       )}
                     </div>
                   );
@@ -485,10 +485,10 @@ export default function ServicesPage() {
           <div className="fixed inset-0 bg-black/50 z-50" onClick={() => setShowLogService(false)} />
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div
-              className="bg-white rounded-xl border border-gray-200 w-[95vw] sm:w-full max-w-lg max-h-[85vh] overflow-y-auto"
+              className="bg-white rounded-xl border border-[#1E2D4D]/10 w-[95vw] sm:w-full max-w-lg max-h-[85vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="p-4 sm:p-6 border-b border-gray-200">
+              <div className="p-4 sm:p-6 border-b border-[#1E2D4D]/10">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-[#eef4f8] rounded-lg">
@@ -496,10 +496,10 @@ export default function ServicesPage() {
                     </div>
                     <div>
                       <h3 className="text-lg font-bold text-[#1E2D4D]">Log a Service</h3>
-                      <p className="text-sm text-gray-500">Record a completed vendor service</p>
+                      <p className="text-sm text-[#1E2D4D]/50">Record a completed vendor service</p>
                     </div>
                   </div>
-                  <button onClick={() => setShowLogService(false)} className="text-gray-400 hover:text-gray-600">
+                  <button onClick={() => setShowLogService(false)} className="text-[#1E2D4D]/30 hover:text-gray-600">
                     <XCircle className="h-5 w-5" />
                   </button>
                 </div>
@@ -507,11 +507,11 @@ export default function ServicesPage() {
               <div className="p-4 sm:p-6 space-y-4">
                 {/* Location */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Location <span className="text-red-500">*</span></label>
+                  <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Location <span className="text-red-500">*</span></label>
                   <select
                     value={logForm.locationId}
                     onChange={(e) => setLogForm({ ...logForm, locationId: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
                   >
                     <option value="">Select location...</option>
                     {accessibleLocs.map((loc) => (
@@ -522,7 +522,7 @@ export default function ServicesPage() {
 
                 {/* Service Category */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Service Category <span className="text-red-500">*</span></label>
+                  <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Service Category <span className="text-red-500">*</span></label>
                   <select
                     value={logForm.categoryId}
                     onChange={(e) => {
@@ -533,14 +533,14 @@ export default function ServicesPage() {
                       }
                       setLogForm({ ...logForm, categoryId: catId, serviceId: '', vendorName: '' });
                     }}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
                   >
                     <option value="">Select category...</option>
                     {VENDOR_CATEGORIES.map((cat) => {
                       const hasVendor = categoryHasVendor(cat.id);
                       const reqServices = cat.services.filter((s) => s.required);
                       return (
-                        <option key={cat.id} value={cat.id} className={!hasVendor ? 'text-gray-400' : ''}>
+                        <option key={cat.id} value={cat.id} className={!hasVendor ? 'text-[#1E2D4D]/30' : ''}>
                           {cat.name}{!hasVendor ? ' (Add vendor first)' : ''}{reqServices.length > 0 ? ' *' : ''}
                         </option>
                       );
@@ -551,11 +551,11 @@ export default function ServicesPage() {
                 {/* Service */}
                 {logForm.categoryId && categoryHasVendor(logForm.categoryId) && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Service <span className="text-red-500">*</span></label>
+                    <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Service <span className="text-red-500">*</span></label>
                     <select
                       value={logForm.serviceId}
                       onChange={(e) => setLogForm({ ...logForm, serviceId: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
+                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
                     >
                       <option value="">Select service...</option>
                       {selectedCategoryServices.map((svc) => (
@@ -570,11 +570,11 @@ export default function ServicesPage() {
                 {/* Vendor */}
                 {logForm.categoryId && categoryHasVendor(logForm.categoryId) && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Vendor <span className="text-red-500">*</span></label>
+                    <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Vendor <span className="text-red-500">*</span></label>
                     <select
                       value={logForm.vendorName}
                       onChange={(e) => setLogForm({ ...logForm, vendorName: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
+                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
                     >
                       <option value="">Select vendor...</option>
                       {selectedCategoryVendors.map((v) => (
@@ -586,42 +586,42 @@ export default function ServicesPage() {
 
                 {/* Date Performed */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Date Performed <span className="text-red-500">*</span></label>
+                  <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Date Performed <span className="text-red-500">*</span></label>
                   <input
                     type="date"
                     value={logForm.serviceDate}
                     onChange={(e) => setLogForm({ ...logForm, serviceDate: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
                   />
                 </div>
 
                 {/* Technician Name */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Technician Name</label>
+                  <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Technician Name</label>
                   <input
                     type="text"
                     value={logForm.technicianName}
                     onChange={(e) => setLogForm({ ...logForm, technicianName: e.target.value })}
                     placeholder="e.g., John Smith"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
                   />
                 </div>
 
                 {/* Next Service Due */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Next Service Due</label>
+                  <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Next Service Due</label>
                   <input
                     type="date"
                     value={logForm.nextServiceDate}
                     onChange={(e) => setLogForm({ ...logForm, nextServiceDate: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
                   />
                 </div>
 
                 {/* Notes */}
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="text-sm font-medium text-gray-700">Notes</label>
+                    <label className="text-sm font-medium text-[#1E2D4D]/80">Notes</label>
                     <AIAssistButton
                       fieldLabel="Notes"
                       context={{ serviceName: logForm.serviceId }}
@@ -634,16 +634,16 @@ export default function ServicesPage() {
                     onChange={(e) => { setLogForm({ ...logForm, notes: e.target.value }); setAiFields(prev => { const n = new Set(prev); n.delete('notes'); return n; }); }}
                     placeholder="Service details, observations, follow-up items..."
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent resize-none"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent resize-none"
                   />
                   {aiFields.has('notes') && <AIGeneratedIndicator />}
                 </div>
               </div>
 
-              <div className="p-4 sm:p-6 border-t border-gray-200 flex justify-end gap-3">
+              <div className="p-4 sm:p-6 border-t border-[#1E2D4D]/10 flex justify-end gap-3">
                 <button
                   onClick={() => setShowLogService(false)}
-                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm font-medium"
+                  className="px-4 py-2 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 rounded-lg hover:bg-gray-50 text-sm font-medium"
                 >
                   Cancel
                 </button>

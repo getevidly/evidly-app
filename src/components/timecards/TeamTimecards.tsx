@@ -70,7 +70,7 @@ export function TeamTimecards({ shifts, onApprove, onBulkApprove, onViewShift, u
           <select
             value={locationFilter}
             onChange={e => setLocationFilter(e.target.value)}
-            className="text-sm border rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+            className="text-sm border rounded-lg px-3 py-1.5 focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
             style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
           >
             {locations.map(l => (

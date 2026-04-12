@@ -18,7 +18,7 @@ export function DemoGenerationLoading({ companyName, city, state, steps }: Props
 
   return (
     <div className="max-w-lg mx-auto px-4 sm:px-6 py-12">
-      <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8 text-center">
         {/* Header */}
         <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center animate-pulse" style={{ backgroundColor: `${GOLD}20` }}>
           <Sparkles className="w-7 h-7" style={{ color: GOLD }} />
@@ -26,7 +26,7 @@ export function DemoGenerationLoading({ companyName, city, state, steps }: Props
         <h2 className="text-lg font-bold mb-1" style={{ color: NAVY }}>
           Building Your Personalized Demo
         </h2>
-        <p className="text-sm text-gray-500 mb-6">
+        <p className="text-sm text-[#1E2D4D]/50 mb-6">
           Setting up <span className="font-semibold">{companyName}</span> in {city}, {state}...
         </p>
 
@@ -42,9 +42,9 @@ export function DemoGenerationLoading({ companyName, city, state, steps }: Props
                 <Circle className="w-5 h-5 text-gray-300 flex-shrink-0" />
               )}
               <span className={`text-sm ${
-                step.status === 'complete' ? 'text-gray-700' :
+                step.status === 'complete' ? 'text-[#1E2D4D]/80' :
                 step.status === 'in_progress' ? 'text-gray-900 font-medium' :
-                'text-gray-400'
+                'text-[#1E2D4D]/30'
               }`}>
                 {step.label}
               </span>
@@ -54,14 +54,14 @@ export function DemoGenerationLoading({ companyName, city, state, steps }: Props
 
         {/* Progress bar */}
         <div className="mb-2">
-          <div className="w-full h-2 rounded-full bg-gray-100 overflow-hidden">
+          <div className="w-full h-2 rounded-full bg-[#1E2D4D]/5 overflow-hidden">
             <div
               className="h-full rounded-full transition-all duration-500 ease-out"
               style={{ width: `${progress}%`, backgroundColor: NAVY }}
             />
           </div>
         </div>
-        <p className="text-xs text-gray-400">
+        <p className="text-xs text-[#1E2D4D]/30">
           {progress < 100 ? 'This takes about 30 seconds.' : 'Almost done...'}
         </p>
       </div>

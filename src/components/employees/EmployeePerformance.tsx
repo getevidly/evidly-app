@@ -13,7 +13,7 @@ function MetricCard({ icon, label, value, subtext, color }: { icon: React.ReactN
         <span style={{ color: color || '#1E2D4D' }}>{icon}</span>
         <span className="text-xs font-medium" style={{ color: '#6B7F96' }}>{label}</span>
       </div>
-      <p className="text-2xl font-bold" style={{ color: color || '#0B1628' }}>{value}</p>
+      <p className="text-2xl font-bold tracking-tight" style={{ color: color || '#0B1628' }}>{value}</p>
       {subtext && <p className="text-xs mt-1" style={{ color: '#6B7F96' }}>{subtext}</p>}
     </div>
   );

@@ -32,7 +32,7 @@ export function DemoConversionModal({ session, onClose, onConvert }: Props) {
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" onClick={onClose}>
       <div className="fixed inset-0 bg-black/50" />
       <div
-        className="relative bg-white rounded-xl border border-gray-200 shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
+        className="relative bg-white rounded-xl border border-[#1E2D4D]/10 shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
@@ -41,7 +41,7 @@ export function DemoConversionModal({ session, onClose, onConvert }: Props) {
             Convert {session.company_name} to Live Account
           </h2>
           <button onClick={onClose} className="p-2.5 -m-1 rounded-md hover:bg-gray-100" aria-label="Close">
-            <X className="w-5 h-5 text-gray-400" />
+            <X className="w-5 h-5 text-[#1E2D4D]/30" />
           </button>
         </div>
 
@@ -51,7 +51,7 @@ export function DemoConversionModal({ session, onClose, onConvert }: Props) {
             <h3 className="text-sm font-semibold text-green-700 mb-2 flex items-center gap-1.5">
               <CheckCircle2 className="w-4 h-4" /> KEEP:
             </h3>
-            <ul className="text-sm text-gray-600 space-y-1 ml-6">
+            <ul className="text-sm text-[#1E2D4D]/70 space-y-1 ml-6">
               <li>Location: {session.address}, {session.city}, {session.state}</li>
               <li>Jurisdiction: {session.health_authority} + {session.fire_authority}</li>
               <li>Prospect account and login credentials</li>
@@ -64,7 +64,7 @@ export function DemoConversionModal({ session, onClose, onConvert }: Props) {
             <h3 className="text-sm font-semibold text-red-700 mb-2 flex items-center gap-1.5">
               <Trash2 className="w-4 h-4" /> REMOVE:
             </h3>
-            <ul className="text-sm text-gray-600 space-y-1 ml-6">
+            <ul className="text-sm text-[#1E2D4D]/70 space-y-1 ml-6">
               <li>Sample temperature readings</li>
               <li>Sample checklists and completion history</li>
               <li>Sample compliance scores</li>
@@ -74,7 +74,7 @@ export function DemoConversionModal({ session, onClose, onConvert }: Props) {
             </ul>
           </div>
 
-          <p className="text-xs text-gray-500 bg-[#FAF7F0] rounded-lg p-3">
+          <p className="text-xs text-[#1E2D4D]/50 bg-[#FAF7F0] rounded-lg p-3">
             The customer starts fresh with a clean slate and begins building real compliance history from day one.
           </p>
 
@@ -86,7 +86,7 @@ export function DemoConversionModal({ session, onClose, onConvert }: Props) {
                 <label
                   key={plan.value}
                   className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
-                    selectedPlan === plan.value ? 'border-[#1E2D4D] bg-[#1E2D4D]/5' : 'border-gray-200 hover:border-gray-300'
+                    selectedPlan === plan.value ? 'border-[#1E2D4D] bg-[#1E2D4D]/5' : 'border-[#1E2D4D]/10 hover:border-gray-300'
                   }`}
                 >
                   <input
@@ -99,8 +99,8 @@ export function DemoConversionModal({ session, onClose, onConvert }: Props) {
                   />
                   <div className="flex-1">
                     <span className="text-sm font-medium">{plan.label}</span>
-                    <span className="text-sm text-gray-500 ml-2">— {plan.price}</span>
-                    {plan.note && <span className="text-xs text-gray-400 ml-1">({plan.note})</span>}
+                    <span className="text-sm text-[#1E2D4D]/50 ml-2">— {plan.price}</span>
+                    {plan.note && <span className="text-xs text-[#1E2D4D]/30 ml-1">({plan.note})</span>}
                   </div>
                 </label>
               ))}
@@ -108,12 +108,12 @@ export function DemoConversionModal({ session, onClose, onConvert }: Props) {
           </div>
 
           {/* Welcome email */}
-          <label className="flex items-center gap-2 text-sm text-gray-700">
+          <label className="flex items-center gap-2 text-sm text-[#1E2D4D]/80">
             <input
               type="checkbox"
               checked={sendWelcome}
               onChange={e => setSendWelcome(e.target.checked)}
-              className="rounded border-gray-300"
+              className="rounded border-[#1E2D4D]/15"
             />
             Send Welcome Email to Prospect
           </label>
@@ -123,7 +123,7 @@ export function DemoConversionModal({ session, onClose, onConvert }: Props) {
         <div className="flex items-center justify-end gap-3 p-5 border-t border-gray-100">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 border border-gray-300 hover:bg-gray-50"
+            className="px-4 py-2 rounded-lg text-sm font-medium text-[#1E2D4D]/80 border border-[#1E2D4D]/15 hover:bg-gray-50"
           >
             Cancel
           </button>

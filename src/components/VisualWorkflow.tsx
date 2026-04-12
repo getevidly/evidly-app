@@ -49,8 +49,8 @@ const steps = [
 export function VisualWorkflow() {
   return (
     <div>
-      <h3 className="text-lg font-semibold text-[#1E2D4D] mb-2">How EvidLY Works</h3>
-      <p className="text-sm text-gray-500 mb-6">From daily operations to inspection-ready — all automated.</p>
+      <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-2">How EvidLY Works</h3>
+      <p className="text-sm text-[#1E2D4D]/50 mb-6">From daily operations to inspection-ready — all automated.</p>
 
       {/* Desktop flow */}
       <div className="hidden lg:flex items-start justify-between gap-2">
@@ -66,7 +66,7 @@ export function VisualWorkflow() {
                   <Icon className="w-7 h-7" style={{ color: step.color }} />
                 </div>
                 <p className="text-sm font-semibold text-[#1E2D4D] mb-1">{step.title}</p>
-                <p className="text-xs text-gray-500 leading-relaxed">{step.description}</p>
+                <p className="text-xs text-[#1E2D4D]/50 leading-relaxed">{step.description}</p>
               </div>
               {index < steps.length - 1 && (
                 <ArrowRight className="w-5 h-5 text-gray-300 mt-5 mx-1 flex-shrink-0" />
@@ -83,7 +83,7 @@ export function VisualWorkflow() {
           return (
             <div
               key={step.title}
-              className="flex items-start gap-4 p-4 bg-white rounded-xl border border-gray-200 animate-slide-up"
+              className="flex items-start gap-4 p-4 bg-white rounded-xl border border-[#1E2D4D]/10 animate-slide-up"
               style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'both' }}
             >
               <div className="flex flex-col items-center">
@@ -94,12 +94,12 @@ export function VisualWorkflow() {
                   <Icon className="w-5 h-5" style={{ color: step.color }} />
                 </div>
                 {index < steps.length - 1 && (
-                  <div className="w-0.5 h-6 bg-gray-200 mt-2" />
+                  <div className="w-0.5 h-6 bg-[#1E2D4D]/8 mt-2" />
                 )}
               </div>
               <div>
                 <p className="text-sm font-semibold text-[#1E2D4D]">{step.title}</p>
-                <p className="text-xs text-gray-500 mt-1">{step.description}</p>
+                <p className="text-xs text-[#1E2D4D]/50 mt-1">{step.description}</p>
               </div>
             </div>
           );

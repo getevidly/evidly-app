@@ -36,7 +36,7 @@ function formatCurrency(n: number): string {
 }
 
 function TrendArrow({ value }: { value: number }) {
-  if (Math.abs(value) < 0.1) return <span className="text-xs text-gray-400 flex items-center gap-0.5"><Minus className="h-3 w-3" /> 0.0</span>;
+  if (Math.abs(value) < 0.1) return <span className="text-xs text-[#1E2D4D]/30 flex items-center gap-0.5"><Minus className="h-3 w-3" /> 0.0</span>;
   if (value > 0) return <span className="text-xs text-green-600 flex items-center gap-0.5 font-semibold"><ArrowUp className="h-3 w-3" /> +{value.toFixed(1)}</span>;
   return <span className="text-xs text-red-500 flex items-center gap-0.5 font-semibold"><ArrowDown className="h-3 w-3" /> {value.toFixed(1)}</span>;
 }
@@ -384,7 +384,7 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
                   P{sr.priority}
                 </span>
                 {sr.immediate && (
-                  <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-red-100 text-red-700">IMMEDIATE</span>
+                  <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-red-50 text-red-700">IMMEDIATE</span>
                 )}
                 <span className="px-1.5 py-0.5 rounded text-[9px] font-medium" style={{ backgroundColor: CARD_BG, color: MUTED }}>
                   <Clock className="h-3 w-3 inline mr-0.5" />{sr.timeframe}

@@ -46,7 +46,7 @@ export function ReportEquipmentIncidentModal({ isOpen, onClose }: ReportEquipmen
 
   // ── Shared input styles ────────────────────────────────────
   const inputClass =
-    'w-full px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/30';
+    'w-full px-3 py-2 text-sm rounded-lg border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30';
   const inputStyle = { background: CARD_BG, borderColor: CARD_BORDER, color: NAVY };
   const labelStyle = { color: NAVY };
 

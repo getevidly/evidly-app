@@ -79,7 +79,7 @@ export function AnnualVendorSpendWidget({
       >
         <div className="flex items-center gap-2">
           <DollarSign size={16} style={{ color: NAVY }} />
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-[#1E2D4D]/50">
             Annual Vendor Spend
           </h3>
         </div>
@@ -90,7 +90,7 @@ export function AnnualVendorSpendWidget({
         {serviceCount === 0 ? (
           /* Empty state */
           <div className="text-center py-2">
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-[#1E2D4D]/50">
               No vendor services on file — add services to track spend.
             </p>
             <button
@@ -104,10 +104,10 @@ export function AnnualVendorSpendWidget({
           </div>
         ) : (
           <>
-            <div className="text-2xl font-bold" style={{ color: NAVY }}>
+            <div className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>
               ${totalAnnualSpend.toLocaleString('en-US', { minimumFractionDigits: 0 })}
             </div>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-[#1E2D4D]/50 mt-1">
               {serviceCount} service{serviceCount !== 1 ? 's' : ''} across{' '}
               {locationCount} location{locationCount !== 1 ? 's' : ''}
             </p>
@@ -195,7 +195,7 @@ export function ServicesDueSoonWidget({ services: externalServices }: ServicesDu
       >
         <div className="flex items-center gap-2">
           <Calendar size={16} style={{ color: NAVY }} />
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-[#1E2D4D]/50">
             Services Due Soon
           </h3>
           {servicesDue.length > 0 && (
@@ -210,7 +210,7 @@ export function ServicesDueSoonWidget({ services: externalServices }: ServicesDu
       {servicesDue.length === 0 ? (
         /* Empty state */
         <div className="px-4 py-4 text-center">
-          <p className="text-sm text-gray-500">No upcoming services in the next 30 days. Records appear automatically when HoodOps completes work.</p>
+          <p className="text-sm text-[#1E2D4D]/50">No upcoming services in the next 30 days. Records appear automatically when HoodOps completes work.</p>
           <button
             type="button"
             onClick={() => navigate('/vendors')}
@@ -247,7 +247,7 @@ export function ServicesDueSoonWidget({ services: externalServices }: ServicesDu
                     <p className="text-sm font-medium text-gray-800 truncate">
                       {s.service_type}
                     </p>
-                    <p className="text-xs text-gray-500 truncate">
+                    <p className="text-xs text-[#1E2D4D]/50 truncate">
                       {s.vendor_name} · {s.location_name}
                     </p>
                   </div>

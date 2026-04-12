@@ -76,18 +76,18 @@ export function ReviewAlternativesModal({
         <div className="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-8 text-center">
           <CheckCircle className="w-14 h-14 text-green-500 mx-auto mb-4" />
           <h3 className="text-lg font-bold text-[#1E2D4D] mb-2">Date Confirmed!</h3>
-          <p className="text-sm text-gray-600 mb-6">
+          <p className="text-sm text-[#1E2D4D]/70 mb-6">
             {request.service_type} with {request.vendor_name} confirmed for {formatDate(confirmedDatetime)} at {formatTime(confirmedDatetime)}.
           </p>
 
           <div className="space-y-2 mb-6">
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Add to Calendar</p>
+            <p className="text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider">Add to Calendar</p>
             <div className="flex flex-col gap-2">
               <a
                 href={getGoogleCalendarUrl(calEvent)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-200 rounded-lg hover:bg-gray-50 text-sm font-medium text-gray-700"
+                className="flex items-center justify-center gap-2 px-4 py-2.5 border border-[#1E2D4D]/10 rounded-lg hover:bg-gray-50 text-sm font-medium text-[#1E2D4D]/80"
               >
                 <CalendarDays className="h-4 w-4" />
                 Google Calendar
@@ -96,14 +96,14 @@ export function ReviewAlternativesModal({
                 href={getOutlookCalendarUrl(calEvent)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-200 rounded-lg hover:bg-gray-50 text-sm font-medium text-gray-700"
+                className="flex items-center justify-center gap-2 px-4 py-2.5 border border-[#1E2D4D]/10 rounded-lg hover:bg-gray-50 text-sm font-medium text-[#1E2D4D]/80"
               >
                 <CalendarDays className="h-4 w-4" />
                 Outlook Calendar
               </a>
               <button
                 onClick={() => downloadIcsFile(calEvent)}
-                className="flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-200 rounded-lg hover:bg-gray-50 text-sm font-medium text-gray-700"
+                className="flex items-center justify-center gap-2 px-4 py-2.5 border border-[#1E2D4D]/10 rounded-lg hover:bg-gray-50 text-sm font-medium text-[#1E2D4D]/80"
               >
                 <CalendarDays className="h-4 w-4" />
                 Download .ics (Apple Calendar)
@@ -128,7 +128,7 @@ export function ReviewAlternativesModal({
       <div className="relative bg-white rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
           <h2 className="text-lg font-bold text-[#1E2D4D]">Review Alternative Dates</h2>
-          <button onClick={onClose} className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100" aria-label="Close">
+          <button onClick={onClose} className="p-2 text-[#1E2D4D]/30 hover:text-gray-600 rounded-lg hover:bg-gray-100" aria-label="Close">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -146,7 +146,7 @@ export function ReviewAlternativesModal({
 
           {/* Vendor's proposed slots */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Vendor's Proposed Dates</label>
+            <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">Vendor's Proposed Dates</label>
             <div className="space-y-2">
               {altSlots.map((slot, i) => (
                 <button
@@ -156,17 +156,17 @@ export function ReviewAlternativesModal({
                   className={`w-full flex items-center gap-3 p-4 rounded-lg border-2 text-left transition-colors ${
                     selectedSlot === slot
                       ? 'border-[#1E2D4D] bg-blue-50/50'
-                      : 'border-gray-200 hover:border-gray-300'
+                      : 'border-[#1E2D4D]/10 hover:border-gray-300'
                   }`}
                 >
                   <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                    selectedSlot === slot ? 'border-[#1E2D4D] bg-[#1E2D4D]' : 'border-gray-300'
+                    selectedSlot === slot ? 'border-[#1E2D4D] bg-[#1E2D4D]' : 'border-[#1E2D4D]/15'
                   }`}>
                     {selectedSlot === slot && <div className="w-2 h-2 bg-white rounded-full" />}
                   </div>
                   <div>
                     <p className="font-medium text-gray-900 text-sm">{formatDate(slot)}</p>
-                    <p className="text-xs text-gray-500">{formatTime(slot)}</p>
+                    <p className="text-xs text-[#1E2D4D]/50">{formatTime(slot)}</p>
                   </div>
                 </button>
               ))}
@@ -186,7 +186,7 @@ export function ReviewAlternativesModal({
             <button
               onClick={handleAccept}
               disabled={!selectedSlot || submitting}
-              className="flex items-center justify-center gap-2 flex-1 px-4 py-2.5 bg-[#1E2D4D] text-white font-semibold rounded-lg hover:bg-[#162340] transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center justify-center gap-2 flex-1 px-4 py-2.5 bg-[#1E2D4D] text-white font-semibold rounded-lg hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {submitting ? (
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" />

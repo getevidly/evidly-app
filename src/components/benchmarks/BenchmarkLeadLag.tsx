@@ -11,10 +11,10 @@ export function BenchmarkLeadLag({ locationId }: Props) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {/* Where You Lead */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
         <div className="flex items-center gap-2 mb-4">
           <TrendingUp className="h-5 w-5 text-green-500" />
-          <h3 className="text-lg font-semibold text-[#1E2D4D]">Where You Lead</h3>
+          <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">Where You Lead</h3>
         </div>
         <div className="space-y-3">
           {data.leads.map((item, i) => (
@@ -25,7 +25,7 @@ export function BenchmarkLeadLag({ locationId }: Props) {
                   {item.percentile}th pctl
                 </span>
               </div>
-              <div className="flex items-center gap-2 text-xs text-gray-600">
+              <div className="flex items-center gap-2 text-xs text-[#1E2D4D]/70">
                 <span>You: <strong>{item.yourScore}%</strong></span>
                 <span className="text-gray-300">|</span>
                 <span>Avg: {item.verticalAvg}%</span>
@@ -39,10 +39,10 @@ export function BenchmarkLeadLag({ locationId }: Props) {
       </div>
 
       {/* Where You Lag */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
         <div className="flex items-center gap-2 mb-4">
           <TrendingDown className="h-5 w-5 text-red-500" />
-          <h3 className="text-lg font-semibold text-[#1E2D4D]">Where You Lag</h3>
+          <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">Where You Lag</h3>
         </div>
         <div className="space-y-3">
           {data.lags.map((item, i) => (
@@ -53,7 +53,7 @@ export function BenchmarkLeadLag({ locationId }: Props) {
                   {item.percentile}th pctl
                 </span>
               </div>
-              <div className="flex items-center gap-2 text-xs text-gray-600 mb-2">
+              <div className="flex items-center gap-2 text-xs text-[#1E2D4D]/70 mb-2">
                 <span>You: <strong>{item.yourScore}%</strong></span>
                 <span className="text-gray-300">|</span>
                 <span>Avg: {item.verticalAvg}%</span>
@@ -64,7 +64,7 @@ export function BenchmarkLeadLag({ locationId }: Props) {
               {item.recommendation && (
                 <div className="flex items-start gap-1.5 mt-2 pt-2 border-t border-red-100">
                   <Lightbulb className="h-3.5 w-3.5 text-amber-500 mt-0.5 flex-shrink-0" />
-                  <p className="text-xs text-gray-600 leading-relaxed">{item.recommendation}</p>
+                  <p className="text-xs text-[#1E2D4D]/70 leading-relaxed">{item.recommendation}</p>
                 </div>
               )}
             </div>

@@ -196,10 +196,10 @@ export function CorrectiveActionDetail() {
         <button onClick={() => navigate('/corrective-actions')} className="flex items-center gap-1.5 text-sm font-medium mb-6" style={{ color: NAVY }}>
           <ArrowLeft size={16} /> Back to Corrective Actions
         </button>
-        <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8 text-center">
           <AlertTriangle className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-          <p className="text-sm font-medium text-gray-700">Corrective action not found</p>
-          <p className="text-xs text-gray-500 mt-1">The requested corrective action does not exist.</p>
+          <p className="text-sm font-medium text-[#1E2D4D]/80">Corrective action not found</p>
+          <p className="text-xs text-[#1E2D4D]/50 mt-1">The requested corrective action does not exist.</p>
         </div>
       </div>
     );
@@ -239,7 +239,7 @@ export function CorrectiveActionDetail() {
       </button>
 
       {/* Header */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
         <div className="flex flex-wrap items-center gap-2 mb-2">
           <h1 className="text-lg font-bold text-[#1E2D4D]">{item.title}</h1>
           <span
@@ -265,8 +265,8 @@ export function CorrectiveActionDetail() {
             </span>
           )}
         </div>
-        <p className="text-sm text-gray-600">{item.description}</p>
-        <div className="flex flex-wrap items-center gap-4 mt-3 text-xs text-gray-400">
+        <p className="text-sm text-[#1E2D4D]/70">{item.description}</p>
+        <div className="flex flex-wrap items-center gap-4 mt-3 text-xs text-[#1E2D4D]/30">
           <span className="flex items-center gap-1"><MapPin size={12} />{item.location}</span>
           {item.assignee && <span className="flex items-center gap-1"><User size={12} />Assigned to: {item.assignee}</span>}
           {item.assigned_by && <span className="flex items-center gap-1"><User size={12} />Assigned by: {item.assigned_by}</span>}
@@ -275,8 +275,8 @@ export function CorrectiveActionDetail() {
       </div>
 
       {/* Status Timeline */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <h3 className="text-sm font-semibold text-gray-700 mb-4">Status Timeline</h3>
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
+        <h3 className="text-sm font-semibold text-[#1E2D4D]/80 mb-4">Status Timeline</h3>
         <div className="flex items-center justify-between relative">
           {TIMELINE_STEPS.map((step, idx) => {
             const isCompleted = idx < currentStepIdx;
@@ -322,7 +322,7 @@ export function CorrectiveActionDetail() {
                 </span>
                 {/* Date */}
                 {dateForStep && (
-                  <span className="text-[9px] text-gray-400">{formatDate(dateForStep)}</span>
+                  <span className="text-[9px] text-[#1E2D4D]/30">{formatDate(dateForStep)}</span>
                 )}
               </div>
             );
@@ -331,33 +331,33 @@ export function CorrectiveActionDetail() {
       </div>
 
       {/* Assignment Section */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
         <div className="flex items-center gap-2 mb-3">
           <User size={16} style={{ color: NAVY }} />
-          <h3 className="text-sm font-semibold text-gray-700">Assignment</h3>
+          <h3 className="text-sm font-semibold text-[#1E2D4D]/80">Assignment</h3>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
-            <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-0.5">Assignee</p>
-            <p className="text-sm text-gray-700">{item.assignee || 'Unassigned'}</p>
+            <p className="text-xs font-medium text-[#1E2D4D]/30 uppercase tracking-wide mb-0.5">Assignee</p>
+            <p className="text-sm text-[#1E2D4D]/80">{item.assignee || 'Unassigned'}</p>
           </div>
           <div>
-            <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-0.5">Assigned By</p>
-            <p className="text-sm text-gray-700">{item.assigned_by || '\u2014'}</p>
+            <p className="text-xs font-medium text-[#1E2D4D]/30 uppercase tracking-wide mb-0.5">Assigned By</p>
+            <p className="text-sm text-[#1E2D4D]/80">{item.assigned_by || '\u2014'}</p>
           </div>
           <div>
-            <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-0.5">Assigned Date</p>
-            <p className="text-sm text-gray-700">{item.assignedAt ? formatDate(item.assignedAt) : '\u2014'}</p>
+            <p className="text-xs font-medium text-[#1E2D4D]/30 uppercase tracking-wide mb-0.5">Assigned Date</p>
+            <p className="text-sm text-[#1E2D4D]/80">{item.assignedAt ? formatDate(item.assignedAt) : '\u2014'}</p>
           </div>
         </div>
         {/* Reassign dropdown — only for management roles and non-terminal statuses */}
         {item.status !== 'verified' && canAdvance && (
           <div className="mt-3 pt-3 border-t border-gray-100">
-            <label className="block text-xs font-medium text-gray-500 mb-1">Reassign to</label>
+            <label className="block text-xs font-medium text-[#1E2D4D]/50 mb-1">Reassign to</label>
             <select
               value=""
               onChange={e => { if (e.target.value) handleReassign(e.target.value); }}
-              className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 text-gray-700 w-full sm:w-auto"
+              className="text-sm border border-[#1E2D4D]/10 rounded-lg px-3 py-1.5 text-[#1E2D4D]/80 w-full sm:w-auto"
             >
               <option value="">Select team member...</option>
               {DEMO_TEAM_MEMBERS.filter(m => m.name !== item.assignee).map(m => (
@@ -369,8 +369,8 @@ export function CorrectiveActionDetail() {
       </div>
 
       {/* Detail Grid */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <h3 className="text-sm font-semibold text-gray-700 mb-3">Details</h3>
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
+        <h3 className="text-sm font-semibold text-[#1E2D4D]/80 mb-3">Details</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <DetailField label="Category" value={CATEGORY_LABELS[item.category]} />
           <DetailField label="Source Type" value={SOURCE_TYPE_LABELS[item.source_type]} />
@@ -394,7 +394,7 @@ export function CorrectiveActionDetail() {
             <h3 className="text-sm font-semibold text-amber-800">AI-Suggested Resolution Plan</h3>
           </div>
           <p className="text-xs text-amber-600 mb-3">AI-generated \u2014 review before saving</p>
-          <p className="text-sm text-gray-700 bg-amber-50 rounded-lg p-3">{item.ai_draft}</p>
+          <p className="text-sm text-[#1E2D4D]/80 bg-amber-50 rounded-lg p-3">{item.ai_draft}</p>
           {item.status === 'in_progress' && (
             <button
               onClick={handleApplyAiDraft}
@@ -408,10 +408,10 @@ export function CorrectiveActionDetail() {
 
       {/* Resolution Note Section */}
       {['in_progress', 'resolved', 'verified'].includes(item.status) && (
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
           <div className="flex items-center gap-2 mb-3">
             <FileText size={16} style={{ color: NAVY }} />
-            <h3 className="text-sm font-semibold text-gray-700">Resolution Note</h3>
+            <h3 className="text-sm font-semibold text-[#1E2D4D]/80">Resolution Note</h3>
           </div>
           {item.resolution_note ? (
             <div className="bg-green-50 border border-green-200 rounded-lg p-3">
@@ -422,13 +422,13 @@ export function CorrectiveActionDetail() {
             </div>
           ) : item.status === 'in_progress' ? (
             <div>
-              <p className="text-xs text-gray-500 mb-2">Describe what was done to resolve this issue. Required to mark as resolved.</p>
+              <p className="text-xs text-[#1E2D4D]/50 mb-2">Describe what was done to resolve this issue. Required to mark as resolved.</p>
               <textarea
                 value={resolutionNote}
                 onChange={e => setResolutionNote(e.target.value)}
                 rows={3}
                 placeholder="Describe resolution actions taken..."
-                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E2D4D] resize-none"
+                className="w-full text-sm border border-[#1E2D4D]/10 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E2D4D] resize-none"
               />
               <SuggestionPill
                 fieldLabel="Resolution Note"
@@ -438,17 +438,17 @@ export function CorrectiveActionDetail() {
               />
             </div>
           ) : (
-            <p className="text-xs text-gray-400">No resolution note recorded.</p>
+            <p className="text-xs text-[#1E2D4D]/30">No resolution note recorded.</p>
           )}
         </div>
       )}
 
       {/* Verification Note Section */}
       {['resolved', 'verified'].includes(item.status) && (
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
           <div className="flex items-center gap-2 mb-3">
             <Shield size={16} style={{ color: NAVY }} />
-            <h3 className="text-sm font-semibold text-gray-700">Verification</h3>
+            <h3 className="text-sm font-semibold text-[#1E2D4D]/80">Verification</h3>
           </div>
           {item.verification_note ? (
             <div className="bg-green-50 border border-green-200 rounded-lg p-3">
@@ -463,13 +463,13 @@ export function CorrectiveActionDetail() {
             </div>
           ) : item.status === 'resolved' && canAdvance ? (
             <div>
-              <p className="text-xs text-gray-500 mb-2">Confirm this corrective action has been properly implemented. Required to verify.</p>
+              <p className="text-xs text-[#1E2D4D]/50 mb-2">Confirm this corrective action has been properly implemented. Required to verify.</p>
               <textarea
                 value={verificationNote}
                 onChange={e => setVerificationNote(e.target.value)}
                 rows={3}
                 placeholder="Describe verification findings..."
-                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E2D4D] resize-none"
+                className="w-full text-sm border border-[#1E2D4D]/10 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E2D4D] resize-none"
               />
               <SuggestionPill
                 fieldLabel="Verification Note"
@@ -479,31 +479,31 @@ export function CorrectiveActionDetail() {
               />
             </div>
           ) : item.status === 'resolved' ? (
-            <p className="text-xs text-gray-500">Awaiting verification from a manager or compliance officer.</p>
+            <p className="text-xs text-[#1E2D4D]/50">Awaiting verification from a manager or compliance officer.</p>
           ) : null}
         </div>
       )}
 
       {/* Notes / Comments Section */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
         <div className="flex items-center gap-2 mb-3">
           <MessageSquare size={16} style={{ color: NAVY }} />
-          <h3 className="text-sm font-semibold text-gray-700">Notes & Comments</h3>
-          <span className="text-xs text-gray-400">({item.notes.length})</span>
+          <h3 className="text-sm font-semibold text-[#1E2D4D]/80">Notes & Comments</h3>
+          <span className="text-xs text-[#1E2D4D]/30">({item.notes.length})</span>
         </div>
 
         {item.notes.length === 0 && (
-          <p className="text-xs text-gray-400 mb-3">No notes yet. Add the first note below.</p>
+          <p className="text-xs text-[#1E2D4D]/30 mb-3">No notes yet. Add the first note below.</p>
         )}
 
         <div className="space-y-3 mb-4">
           {item.notes.map((note, idx) => (
             <div key={idx} className="bg-[#FAF7F0] rounded-lg p-3">
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-xs font-semibold text-gray-700">{note.author}</span>
-                <span className="text-xs text-gray-400">{formatTimestamp(note.timestamp)}</span>
+                <span className="text-xs font-semibold text-[#1E2D4D]/80">{note.author}</span>
+                <span className="text-xs text-[#1E2D4D]/30">{formatTimestamp(note.timestamp)}</span>
               </div>
-              <p className="text-sm text-gray-600">{note.text}</p>
+              <p className="text-sm text-[#1E2D4D]/70">{note.text}</p>
             </div>
           ))}
         </div>
@@ -518,7 +518,7 @@ export function CorrectiveActionDetail() {
             fieldLabel="Add a note"
             formContext={{ title: item?.title, category: item?.category, severity: item?.severity }}
             entityType="corrective_action"
-            className="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E2D4D]"
+            className="flex-1 text-sm border border-[#1E2D4D]/10 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E2D4D]"
           />
           <button
             onClick={handleAddNote}
@@ -532,15 +532,15 @@ export function CorrectiveActionDetail() {
       </div>
 
       {/* Attachments Section */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
         <div className="flex items-center gap-2 mb-3">
           <Paperclip size={16} style={{ color: NAVY }} />
-          <h3 className="text-sm font-semibold text-gray-700">Attachments</h3>
-          <span className="text-xs text-gray-400">({item.attachments.length})</span>
+          <h3 className="text-sm font-semibold text-[#1E2D4D]/80">Attachments</h3>
+          <span className="text-xs text-[#1E2D4D]/30">({item.attachments.length})</span>
         </div>
 
         {item.attachments.length === 0 ? (
-          <p className="text-xs text-gray-400">No attachments.</p>
+          <p className="text-xs text-[#1E2D4D]/30">No attachments.</p>
         ) : (
           <div className="space-y-2">
             {item.attachments.map((att, idx) => (
@@ -549,9 +549,9 @@ export function CorrectiveActionDetail() {
                 onClick={() => toast.info('File download not available in demo mode')}
                 className="flex items-center gap-2 w-full text-left p-2 rounded-lg hover:bg-gray-50 transition-colors"
               >
-                <FileText size={14} className="text-gray-400 shrink-0" />
-                <span className="text-sm text-gray-700 flex-1">{att.name}</span>
-                <span className="text-xs text-gray-400 uppercase">{att.type.split('/').pop()}</span>
+                <FileText size={14} className="text-[#1E2D4D]/30 shrink-0" />
+                <span className="text-sm text-[#1E2D4D]/80 flex-1">{att.name}</span>
+                <span className="text-xs text-[#1E2D4D]/30 uppercase">{att.type.split('/').pop()}</span>
               </button>
             ))}
           </div>
@@ -559,15 +559,15 @@ export function CorrectiveActionDetail() {
       </div>
 
       {/* Audit Trail */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
         <div className="flex items-center gap-2 mb-3">
           <History size={16} style={{ color: NAVY }} />
-          <h3 className="text-sm font-semibold text-gray-700">Audit Trail</h3>
-          <span className="text-xs text-gray-400">({item.history.length})</span>
+          <h3 className="text-sm font-semibold text-[#1E2D4D]/80">Audit Trail</h3>
+          <span className="text-xs text-[#1E2D4D]/30">({item.history.length})</span>
         </div>
 
         {item.history.length === 0 ? (
-          <p className="text-xs text-gray-400">No history recorded.</p>
+          <p className="text-xs text-[#1E2D4D]/30">No history recorded.</p>
         ) : (
           <div className="space-y-2">
             {[...item.history].reverse().map((entry, idx) => {
@@ -583,17 +583,17 @@ export function CorrectiveActionDetail() {
 
               return (
                 <div key={idx} className="flex items-start gap-3 py-2 border-b border-gray-50 last:border-0">
-                  <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center shrink-0 mt-0.5">
-                    {entry.action === 'status_changed' && <ArrowRight size={10} className="text-gray-500" />}
-                    {entry.action === 'reassigned' && <User size={10} className="text-gray-500" />}
-                    {entry.action === 'note_added' && <MessageSquare size={10} className="text-gray-500" />}
+                  <div className="w-5 h-5 rounded-full bg-[#1E2D4D]/5 flex items-center justify-center shrink-0 mt-0.5">
+                    {entry.action === 'status_changed' && <ArrowRight size={10} className="text-[#1E2D4D]/50" />}
+                    {entry.action === 'reassigned' && <User size={10} className="text-[#1E2D4D]/50" />}
+                    {entry.action === 'note_added' && <MessageSquare size={10} className="text-[#1E2D4D]/50" />}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs text-gray-700">{actionText}</p>
+                    <p className="text-xs text-[#1E2D4D]/80">{actionText}</p>
                     {entry.detail && (
-                      <p className="text-xs text-gray-500 mt-0.5">{entry.detail}</p>
+                      <p className="text-xs text-[#1E2D4D]/50 mt-0.5">{entry.detail}</p>
                     )}
-                    <p className="text-xs text-gray-400 mt-0.5">{entry.by} &middot; {formatTimestamp(entry.timestamp)}</p>
+                    <p className="text-xs text-[#1E2D4D]/30 mt-0.5">{entry.by} &middot; {formatTimestamp(entry.timestamp)}</p>
                   </div>
                 </div>
               );
@@ -615,15 +615,15 @@ export function CorrectiveActionDetail() {
             {lifecycle.label}
           </button>
           {advanceBlocked && lifecycle.next === 'resolved' && (
-            <span className="text-xs text-gray-400">Resolution note required</span>
+            <span className="text-xs text-[#1E2D4D]/30">Resolution note required</span>
           )}
           {advanceBlocked && lifecycle.next === 'verified' && (
-            <span className="text-xs text-gray-400">Verification note required</span>
+            <span className="text-xs text-[#1E2D4D]/30">Verification note required</span>
           )}
         </div>
       )}
       {lifecycle && !canAdvance && (
-        <div className="text-xs text-gray-400">
+        <div className="text-xs text-[#1E2D4D]/30">
           Only authorized roles can advance this status.
         </div>
       )}
@@ -648,8 +648,8 @@ export function CorrectiveActionDetail() {
 function DetailField({ label, value, full }: { label: string; value: string; full?: boolean }) {
   return (
     <div className={full ? 'col-span-1 sm:col-span-2' : ''}>
-      <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-0.5">{label}</p>
-      <p className="text-sm text-gray-700">{value}</p>
+      <p className="text-xs font-medium text-[#1E2D4D]/30 uppercase tracking-wide mb-0.5">{label}</p>
+      <p className="text-sm text-[#1E2D4D]/80">{value}</p>
     </div>
   );
 }

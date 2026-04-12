@@ -113,7 +113,7 @@ const STATUS_COLORS: Record<string, { bg: string; text: string; border: string; 
 
 function ProgressBar({ value, color }: { value: number; color: string }) {
   return (
-    <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+    <div className="w-full h-2 bg-[#1E2D4D]/5 rounded-full overflow-hidden">
       <div
         className="h-full rounded-full transition-all duration-500"
         style={{ width: `${Math.min(100, Math.max(0, value))}%`, backgroundColor: color }}
@@ -174,15 +174,15 @@ function PillarSkeleton({ pillar }: { pillar: 'food_safety' | 'facility_safety' 
   const Icon = pillar === 'food_safety' ? UtensilsCrossed : Flame;
   const label = pillar === 'food_safety' ? 'Food Safety' : 'Facility Safety';
   return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden animate-pulse">
+    <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden animate-pulse">
       <div className="px-4 sm:px-5 py-4 border-b border-gray-100 flex items-center gap-3">
         <Icon className="w-5 h-5 text-gray-300" />
-        <h2 className="text-lg font-bold text-gray-400">{label}</h2>
+        <h2 className="text-lg font-bold text-[#1E2D4D]/30">{label}</h2>
       </div>
       <div className="p-4 sm:p-5 space-y-4">
-        <div className="h-20 bg-gray-100 rounded-lg" />
-        <div className="h-16 bg-gray-100 rounded-lg" />
-        <div className="h-12 bg-gray-100 rounded-lg" />
+        <div className="h-20 bg-[#1E2D4D]/5 rounded-lg" />
+        <div className="h-16 bg-[#1E2D4D]/5 rounded-lg" />
+        <div className="h-12 bg-[#1E2D4D]/5 rounded-lg" />
       </div>
     </div>
   );
@@ -225,12 +225,12 @@ function AhjCard({ label, grade, summary, authority, status, lastInspectionDate,
           <div className={`text-base font-bold ${statusColors.text}`}>
             {grade || '—'}
           </div>
-          <div className="text-sm text-gray-600 mt-1">{summary}</div>
-          <div className="text-xs text-gray-400 mt-2">
+          <div className="text-sm text-[#1E2D4D]/70 mt-1">{summary}</div>
+          <div className="text-xs text-[#1E2D4D]/30 mt-2">
             Authority: {authority}
           </div>
           {lastInspectionDate && (
-            <div className="flex items-center gap-1.5 text-xs text-gray-400 mt-1">
+            <div className="flex items-center gap-1.5 text-xs text-[#1E2D4D]/30 mt-1">
               <Calendar className="w-3 h-3" />
               <span>Last inspection: {formatInspectionDate(lastInspectionDate)}</span>
             </div>
@@ -294,7 +294,7 @@ function PillarPanel({
   const hasMultiAhj = !!federalOverlay;
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
       {/* Pillar Header */}
       <div
         className="px-4 sm:px-5 py-4 border-b flex items-center gap-3"
@@ -322,7 +322,7 @@ function PillarPanel({
               Jurisdiction Status
             </h3>
             {hasMultiAhj && (
-              <span className="text-xs text-gray-400">
+              <span className="text-xs text-[#1E2D4D]/30">
                 Resolved: {resolvedStatus === 'passing' ? 'Passing' : resolvedStatus === 'at_risk' ? 'At Risk' : 'Failing'}
               </span>
             )}
@@ -353,14 +353,14 @@ function PillarPanel({
               )}
             </div>
           ) : (
-            <div className="rounded-lg p-4 border border-gray-200 bg-[#FAF7F0]">
+            <div className="rounded-lg p-4 border border-[#1E2D4D]/10 bg-[#FAF7F0]">
               <div className="flex items-start gap-3">
-                <Info className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
+                <Info className="w-5 h-5 text-[#1E2D4D]/30 flex-shrink-0 mt-0.5" />
                 <div>
-                  <div className="text-sm font-medium text-gray-600">
+                  <div className="text-sm font-medium text-[#1E2D4D]/70">
                     {label} jurisdiction not configured
                   </div>
-                  <div className="text-xs text-gray-400 mt-1">
+                  <div className="text-xs text-[#1E2D4D]/30 mt-1">
                     No verified jurisdiction methodology is available for {label.toLowerCase()} at this location.
                   </div>
                   <button
@@ -394,7 +394,7 @@ function PillarPanel({
           <div className="space-y-3">
             {/* Overall pillar score */}
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">Overall</span>
+              <span className="text-sm text-[#1E2D4D]/70">Overall</span>
               <span className="text-xl font-bold" style={{ color: hasScore ? scoreColor : '#94a3b8' }}>
                 {scoreDisplay(score)}
               </span>
@@ -404,14 +404,14 @@ function PillarPanel({
             {/* Sub-scores */}
             <div className="grid grid-cols-2 gap-3 pt-2">
               <div className="bg-[#FAF7F0] rounded-lg p-3">
-                <div className="text-xs text-gray-500 mb-1">Operations</div>
+                <div className="text-xs text-[#1E2D4D]/50 mb-1">Operations</div>
                 <div className="text-lg font-bold" style={{ color: opsColor }}>
                   {scoreDisplay(opsScore)}
                 </div>
                 {opsScore != null && opsScore > 0 && <ProgressBar value={opsScore} color={opsColor} />}
               </div>
               <div className="bg-[#FAF7F0] rounded-lg p-3">
-                <div className="text-xs text-gray-500 mb-1">Documentation</div>
+                <div className="text-xs text-[#1E2D4D]/50 mb-1">Documentation</div>
                 <div className="text-lg font-bold" style={{ color: docsColor }}>
                   {scoreDisplay(docsScore)}
                 </div>
@@ -424,7 +424,7 @@ function PillarPanel({
         {/* ── Section 3: Fire Equipment Status (Facility Safety only) ── */}
         {facilityStatusBars && (
           <div>
-            <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
+            <div className="text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider mb-2">
               Equipment &amp; Permit Status
             </div>
             <FireStatusBars
@@ -440,10 +440,10 @@ function PillarPanel({
         {/* ── Section 4: Tracked Items ── */}
         {impactItems.length > 0 && (
           <div>
-            <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
+            <div className="text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider mb-2">
               Tracked Items
             </div>
-            <div className="border border-gray-200 rounded-lg overflow-hidden divide-y divide-gray-100">
+            <div className="border border-[#1E2D4D]/10 rounded-lg overflow-hidden divide-y divide-[#1E2D4D]/5">
               {impactItems.map((item, idx) => (
                 <div
                   key={idx}
@@ -488,10 +488,10 @@ export function ComplianceOverview() {
   if (!isDemoMode) {
     return (
       <div className="space-y-6">
-        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-12 text-center">
           <ClipboardCheck className="mx-auto h-12 w-12 text-gray-300 mb-4" />
-          <h2 className="text-lg font-semibold text-gray-700 mb-2">No compliance data yet</h2>
-          <p className="text-sm text-gray-500 mb-6">
+          <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D]/80 mb-2">No compliance data yet</h2>
+          <p className="text-sm text-[#1E2D4D]/50 mb-6">
             Add locations and complete checklists to see your compliance overview.
           </p>
           <button
@@ -664,8 +664,8 @@ export function ComplianceOverview() {
           <ArrowLeft className="h-4 w-4" />
           Back to Dashboard
         </button>
-        <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Compliance Overview</h1>
-        <p className="text-gray-500 text-sm mt-1">
+        <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Compliance Overview</h1>
+        <p className="text-[#1E2D4D]/50 text-sm mt-1">
           {selectedLocation.name} &mdash; {county} County
           {(hasFoodOverlay || hasFireOverlay) && (
             <span className="ml-2 text-amber-700 font-medium">(Multi-AHJ)</span>
@@ -674,7 +674,7 @@ export function ComplianceOverview() {
       </div>
 
       {/* Location Tabs */}
-      <div className="flex gap-1 bg-gray-100 rounded-lg p-1 w-fit flex-wrap">
+      <div className="flex gap-1 bg-[#1E2D4D]/5 rounded-lg p-1 w-fit flex-wrap">
         {ALL_LOCATION_TABS.map(loc => (
           <button
             key={loc.urlId}
@@ -682,7 +682,7 @@ export function ComplianceOverview() {
             className={`px-4 py-2 text-sm font-medium rounded-md transition-colors min-h-[44px] ${
               loc.urlId === locationParam
                 ? 'bg-white shadow-sm'
-                : 'text-gray-500 hover:text-gray-700'
+                : 'text-[#1E2D4D]/50 hover:text-gray-700'
             }`}
             style={loc.urlId === locationParam ? { color: NAVY } : undefined}
           >
@@ -752,11 +752,11 @@ export function ComplianceOverview() {
 function CorrectiveActionsSummary({ locationId, navigate }: { locationId: string; navigate: (p: string) => void }) {
   // No seeded data — in production, this queries Supabase for open CAs
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6">
+    <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-semibold text-gray-800">Open Corrective Actions</h3>
       </div>
-      <p className="text-xs text-gray-400">No open corrective actions for this location.</p>
+      <p className="text-xs text-[#1E2D4D]/30">No open corrective actions for this location.</p>
     </div>
   );
 }

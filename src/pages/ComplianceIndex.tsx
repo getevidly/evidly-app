@@ -144,7 +144,7 @@ const BLOG_IDEAS = [
 function ScoreBar({ value, max = 100, color }: { value: number; max?: number; color: string }) {
   return (
     <div className="flex items-center gap-2 flex-1">
-      <div className="flex-1 h-2.5 bg-gray-100 rounded-full overflow-hidden">
+      <div className="flex-1 h-2.5 bg-[#1E2D4D]/5 rounded-full overflow-hidden">
         <div className="h-full rounded-full transition-all" style={{ width: `${(value / max) * 100}%`, backgroundColor: color }} />
       </div>
       <span className="text-sm font-semibold text-gray-800 w-8 text-right">{value}</span>
@@ -155,7 +155,7 @@ function ScoreBar({ value, max = 100, color }: { value: number; max?: number; co
 function ChangeIndicator({ change }: { change: number }) {
   if (change > 0) return <span className="text-xs font-bold text-green-600 flex items-center gap-0.5"><TrendingUp className="h-3 w-3" /> +{change}</span>;
   if (change < 0) return <span className="text-xs font-bold text-red-500 flex items-center gap-0.5"><TrendingDown className="h-3 w-3" /> {change}</span>;
-  return <span className="text-xs font-bold text-gray-400">—</span>;
+  return <span className="text-xs font-bold text-[#1E2D4D]/30">—</span>;
 }
 
 function SeverityBadge({ severity }: { severity: string }) {
@@ -228,10 +228,10 @@ export function ComplianceIndex() {
     return (
       <>
         <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Benchmarks', href: '/benchmarks' }, { label: 'Compliance Index' }]} />
-        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center mt-6">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-12 text-center mt-6">
           <BarChart3 className="h-12 w-12 mx-auto mb-4" style={{ color: '#9ca3af' }} />
-          <h2 className="text-lg font-semibold text-[#1E2D4D] mb-2">No Compliance Index Data</h2>
-          <p className="text-sm text-gray-500 max-w-md mx-auto mb-5">
+          <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-2">No Compliance Index Data</h2>
+          <p className="text-sm text-[#1E2D4D]/50 max-w-md mx-auto mb-5">
             Add a location to start tracking compliance scores.
           </p>
           <button onClick={() => navigate('/org-hierarchy')} className="px-5 py-2.5 text-sm font-medium text-white rounded-lg" style={{ backgroundColor: '#1E2D4D' }}>
@@ -254,7 +254,7 @@ export function ComplianceIndex() {
               <div className="flex items-center gap-3 mb-3">
                 <EvidlyIcon size={40} />
                 <div>
-                  <h1 className="text-2xl font-bold">EvidLY Compliance Index</h1>
+                  <h1 className="text-2xl font-bold tracking-tight">EvidLY Compliance Index</h1>
                   <p className="text-sm text-gray-200">Q{REPORT.quarter} {REPORT.year} — California Commercial Kitchens</p>
                 </div>
               </div>
@@ -263,7 +263,7 @@ export function ComplianceIndex() {
                 Based on anonymized, aggregated data from {REPORT.totalLocations.toLocaleString()} locations
                 across {REPORT.counties} counties.
               </p>
-              <p className="text-xs text-gray-400 mt-2">Published {REPORT.published} | All data fully anonymized | Minimum 50 data points per segment</p>
+              <p className="text-xs text-[#1E2D4D]/30 mt-2">Published {REPORT.published} | All data fully anonymized | Minimum 50 data points per segment</p>
             </div>
             <div className="flex flex-col gap-2">
               <button
@@ -285,47 +285,47 @@ export function ComplianceIndex() {
           {/* Key stats row */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-6">
             <div className="bg-white/10 rounded-lg p-3 text-center">
-              <div className="text-xl sm:text-3xl font-bold">{REPORT.industryIndex}</div>
+              <div className="text-xl sm:text-3xl font-bold tracking-tight">{REPORT.industryIndex}</div>
               <div className="text-xs text-gray-300">Industry Index</div>
             </div>
             <div className="bg-white/10 rounded-lg p-3 text-center">
-              <div className="text-2xl font-bold text-green-400">+{REPORT.quarterChange}</div>
+              <div className="text-2xl font-bold tracking-tight text-green-400">+{REPORT.quarterChange}</div>
               <div className="text-xs text-gray-300">vs Q{REPORT.quarter - 1 || 4} {REPORT.quarter === 1 ? REPORT.year - 1 : REPORT.year}</div>
             </div>
             <div className="bg-white/10 rounded-lg p-3 text-center">
-              <div className="text-2xl font-bold text-green-400">+{REPORT.yearChange}</div>
+              <div className="text-2xl font-bold tracking-tight text-green-400">+{REPORT.yearChange}</div>
               <div className="text-xs text-gray-300">vs Q{REPORT.quarter} {REPORT.year - 1}</div>
             </div>
             <div className="bg-white/10 rounded-lg p-3 text-center">
-              <div className="text-2xl font-bold">{REPORT.totalLocations.toLocaleString()}</div>
+              <div className="text-2xl font-bold tracking-tight">{REPORT.totalLocations.toLocaleString()}</div>
               <div className="text-xs text-gray-300">Kitchens Sampled</div>
             </div>
             <div className="bg-white/10 rounded-lg p-3 text-center">
-              <div className="text-2xl font-bold">{REPORT.counties}</div>
+              <div className="text-2xl font-bold tracking-tight">{REPORT.counties}</div>
               <div className="text-xs text-gray-300">Counties Covered</div>
             </div>
           </div>
         </div>
 
         {/* ── 1. Executive Summary ── */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
           <SectionHeader icon={FileText} title="Executive Summary" number={1} />
           <div className="p-4 sm:p-6">
             <div className="prose prose-sm max-w-none">
-              <p className="text-sm text-gray-700 leading-relaxed">
+              <p className="text-sm text-[#1E2D4D]/80 leading-relaxed">
                 California's commercial kitchen compliance landscape continued its upward trajectory in Q4 2025,
                 with the industry readiness index reaching <strong>79 points</strong> — up 2 points from Q3 and
                 5 points higher than the same period last year. This marks the third consecutive quarter of improvement,
                 driven primarily by advances in <strong>temperature monitoring technology</strong> and increased adoption
                 of <strong>digital compliance platforms</strong>.
               </p>
-              <p className="text-sm text-gray-700 leading-relaxed mt-3">
+              <p className="text-sm text-[#1E2D4D]/80 leading-relaxed mt-3">
                 The healthcare vertical continues to lead at <strong>84 points</strong>, while QSR/Fast Food remains
                 the lowest-scoring segment at <strong>74 points</strong>, though both improved quarter-over-quarter.
                 Notably, the gap between the top and bottom verticals narrowed from 14 points to 10 points over the
                 past year — suggesting that compliance best practices are spreading across the industry.
               </p>
-              <p className="text-sm text-gray-700 leading-relaxed mt-3">
+              <p className="text-sm text-[#1E2D4D]/80 leading-relaxed mt-3">
                 Looking ahead, <strong>AB 660</strong> (Food Safety Modernization, effective January 2026) is already
                 influencing behavior — locations aware of the upcoming mandate show 8% higher documentation readiness.
                 We project the industry average will reach <strong>81 by Q1 2026</strong> as compliance efforts
@@ -336,13 +336,13 @@ export function ComplianceIndex() {
         </div>
 
         {/* ── 2. Overall Industry Score ── */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
           <SectionHeader icon={BarChart3} title="Overall Industry Score" number={2} />
           <div className="p-4 sm:p-6">
             <div className="flex items-center gap-4 sm:gap-8 mb-6 flex-wrap">
               <div className="text-center">
                 <div className="text-3xl sm:text-5xl font-bold" style={{ color: '#1E2D4D' }}>{REPORT.industryIndex}</div>
-                <div className="text-sm text-gray-500 mt-1">Q{REPORT.quarter} {REPORT.year}</div>
+                <div className="text-sm text-[#1E2D4D]/50 mt-1">Q{REPORT.quarter} {REPORT.year}</div>
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-4 mb-2">
@@ -355,15 +355,15 @@ export function ComplianceIndex() {
                     <span className="text-sm font-bold text-green-600">+{REPORT.yearChange} pts year-over-year</span>
                   </div>
                 </div>
-                <div className="h-4 bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-4 bg-[#1E2D4D]/5 rounded-full overflow-hidden">
                   <div className="h-full rounded-full" style={{ width: `${REPORT.industryIndex}%`, backgroundColor: '#1E2D4D' }} />
                 </div>
-                <div className="flex justify-between mt-1 text-xs text-gray-400">
+                <div className="flex justify-between mt-1 text-xs text-[#1E2D4D]/30">
                   <span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>
                 </div>
               </div>
             </div>
-            <div className="p-4 rounded-lg bg-[#FAF7F0] text-sm text-gray-600">
+            <div className="p-4 rounded-lg bg-[#FAF7F0] text-sm text-[#1E2D4D]/70">
               <strong>Methodology:</strong> The overall industry readiness index is based on two compliance pillars
               — Food Safety and Facility Safety — calculated from {REPORT.totalLocations.toLocaleString()} active
               locations on the EvidLY platform. All data is anonymized before aggregation.
@@ -385,29 +385,29 @@ export function ComplianceIndex() {
         </div>
 
         {/* ── 3. Score by Vertical ── */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
           <SectionHeader icon={Building2} title="Score by Vertical" number={3} />
           <div className="p-4 sm:p-6">
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="text-left text-xs font-semibold text-gray-500 uppercase pb-3">Vertical</th>
-                    <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3">Q4 Score</th>
-                    <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3 hidden sm:table-cell">Q3 Score</th>
-                    <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3">Change</th>
-                    <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3 hidden sm:table-cell">Locations</th>
-                    <th className="text-left text-xs font-semibold text-gray-500 uppercase pb-3 pl-4 w-48 hidden sm:table-cell">Score</th>
+                  <tr className="border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors">
+                    <th className="text-left text-xs font-semibold text-[#1E2D4D]/50 uppercase pb-3">Vertical</th>
+                    <th className="text-center text-xs font-semibold text-[#1E2D4D]/50 uppercase pb-3">Q4 Score</th>
+                    <th className="text-center text-xs font-semibold text-[#1E2D4D]/50 uppercase pb-3 hidden sm:table-cell">Q3 Score</th>
+                    <th className="text-center text-xs font-semibold text-[#1E2D4D]/50 uppercase pb-3">Change</th>
+                    <th className="text-center text-xs font-semibold text-[#1E2D4D]/50 uppercase pb-3 hidden sm:table-cell">Locations</th>
+                    <th className="text-left text-xs font-semibold text-[#1E2D4D]/50 uppercase pb-3 pl-4 w-48 hidden sm:table-cell">Score</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-[#1E2D4D]/5">
                   {VERTICAL_SCORES.map((v) => (
                     <tr key={v.vertical}>
                       <td className="py-3 text-sm font-medium text-gray-900">{v.vertical}</td>
                       <td className="py-3 text-center text-sm font-bold" style={{ color: '#1E2D4D' }}>{v.score}</td>
-                      <td className="py-3 text-center text-sm text-gray-500 hidden sm:table-cell">{v.prev}</td>
+                      <td className="py-3 text-center text-sm text-[#1E2D4D]/50 hidden sm:table-cell">{v.prev}</td>
                       <td className="py-3 text-center"><ChangeIndicator change={v.change} /></td>
-                      <td className="py-3 text-center text-sm text-gray-500 hidden sm:table-cell">{v.locations.toLocaleString()}</td>
+                      <td className="py-3 text-center text-sm text-[#1E2D4D]/50 hidden sm:table-cell">{v.locations.toLocaleString()}</td>
                       <td className="py-3 pl-4 hidden sm:table-cell"><ScoreBar value={v.score} color={v.score >= 80 ? '#22c55e' : v.score >= 75 ? '#d4af37' : '#ef4444'} /></td>
                     </tr>
                   ))}
@@ -425,34 +425,34 @@ export function ComplianceIndex() {
         </div>
 
         {/* ── 4. Score by State & County ── */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
           <SectionHeader icon={MapPin} title="Score by State — California County Breakdown" number={4} />
           <div className="p-4 sm:p-6">
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-[#1E2D4D]/70 mb-4">
               EvidLY currently operates across {REPORT.counties} California counties. County-level data requires minimum 20 locations per county.
               Geographic expansion to additional states is planned for 2026.
             </p>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="text-left text-xs font-semibold text-gray-500 uppercase pb-3">County</th>
-                    <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3">Score</th>
-                    <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3">QoQ Change</th>
-                    <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3 hidden sm:table-cell">Locations</th>
-                    <th className="text-left text-xs font-semibold text-gray-500 uppercase pb-3 pl-4 w-40 hidden sm:table-cell">Score</th>
+                  <tr className="border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors">
+                    <th className="text-left text-xs font-semibold text-[#1E2D4D]/50 uppercase pb-3">County</th>
+                    <th className="text-center text-xs font-semibold text-[#1E2D4D]/50 uppercase pb-3">Score</th>
+                    <th className="text-center text-xs font-semibold text-[#1E2D4D]/50 uppercase pb-3">QoQ Change</th>
+                    <th className="text-center text-xs font-semibold text-[#1E2D4D]/50 uppercase pb-3 hidden sm:table-cell">Locations</th>
+                    <th className="text-left text-xs font-semibold text-[#1E2D4D]/50 uppercase pb-3 pl-4 w-40 hidden sm:table-cell">Score</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-[#1E2D4D]/5">
                   {COUNTY_SCORES.map((c) => (
                     <tr key={c.county}>
                       <td className="py-2.5 text-sm text-gray-900 flex items-center gap-1.5">
-                        <MapPin className="h-3 w-3 text-gray-400" />
+                        <MapPin className="h-3 w-3 text-[#1E2D4D]/30" />
                         {c.county} County
                       </td>
                       <td className="py-2.5 text-center text-sm font-bold" style={{ color: '#1E2D4D' }}>{c.score}</td>
                       <td className="py-2.5 text-center"><ChangeIndicator change={c.change} /></td>
-                      <td className="py-2.5 text-center text-xs text-gray-500 hidden sm:table-cell">{c.locations}</td>
+                      <td className="py-2.5 text-center text-xs text-[#1E2D4D]/50 hidden sm:table-cell">{c.locations}</td>
                       <td className="py-2.5 pl-4 hidden sm:table-cell"><ScoreBar value={c.score} color={c.score >= 80 ? '#22c55e' : c.score >= 75 ? '#d4af37' : '#ef4444'} /></td>
                     </tr>
                   ))}
@@ -471,18 +471,18 @@ export function ComplianceIndex() {
         </div>
 
         {/* ── 5. Score by Category ── */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
           <SectionHeader icon={BarChart3} title="Score by Category" number={5} />
           <div className="p-4 sm:p-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               {CATEGORY_SCORES.map((c) => (
-                <div key={c.category} className={`p-4 rounded-xl border ${c.weakest ? 'border-red-200 bg-red-50/50' : 'border-gray-200 bg-[#FAF7F0]'}`}>
-                  <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">{c.category}</div>
+                <div key={c.category} className={`p-4 rounded-xl border ${c.weakest ? 'border-red-200 bg-red-50/50' : 'border-[#1E2D4D]/10 bg-[#FAF7F0]'}`}>
+                  <div className="text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider mb-2">{c.category}</div>
                   <div className="flex items-end gap-2">
-                    <span className="text-xl sm:text-3xl font-bold" style={{ color: '#1E2D4D' }}>{c.score}</span>
+                    <span className="text-xl sm:text-3xl font-bold tracking-tight" style={{ color: '#1E2D4D' }}>{c.score}</span>
                     <ChangeIndicator change={c.change} />
                   </div>
-                  <div className="mt-2 h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <div className="mt-2 h-2 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
                     <div className="h-full rounded-full" style={{ width: `${c.score}%`, backgroundColor: c.weakest ? '#ef4444' : '#1E2D4D' }} />
                   </div>
                   {c.weakest && (
@@ -493,7 +493,7 @@ export function ComplianceIndex() {
                 </div>
               ))}
             </div>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-[#1E2D4D]/70">
               <strong>Equipment readiness</strong> remains the weakest domain at 76 index points, primarily driven by overdue fire suppression
               inspections and deferred maintenance scheduling. Documentation leads at 81 index points, benefiting from the industry's shift
               toward digital record-keeping platforms.
@@ -502,7 +502,7 @@ export function ComplianceIndex() {
         </div>
 
         {/* ── 6. Trending Up/Down ── */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
           <SectionHeader icon={TrendingUp} title="Trending Up / Down" number={6} />
           <div className="p-4 sm:p-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -518,7 +518,7 @@ export function ComplianceIndex() {
                         <span className="text-sm font-semibold text-[#1E2D4D]">{item.area}</span>
                         <span className="text-xs font-bold text-green-600">{item.change}</span>
                       </div>
-                      <p className="text-xs text-gray-600">{item.detail}</p>
+                      <p className="text-xs text-[#1E2D4D]/70">{item.detail}</p>
                     </div>
                   ))}
                 </div>
@@ -535,7 +535,7 @@ export function ComplianceIndex() {
                         <span className="text-sm font-semibold text-[#1E2D4D]">{item.area}</span>
                         <span className="text-xs font-bold text-red-500">{item.change}</span>
                       </div>
-                      <p className="text-xs text-gray-600">{item.detail}</p>
+                      <p className="text-xs text-[#1E2D4D]/70">{item.detail}</p>
                     </div>
                   ))}
                 </div>
@@ -545,17 +545,17 @@ export function ComplianceIndex() {
         </div>
 
         {/* ── 7. Top Violations ── */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
           <SectionHeader icon={AlertTriangle} title="Top 10 Compliance Gaps" number={7} />
           <div className="p-4 sm:p-6">
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-[#1E2D4D]/70 mb-4">
               Most common compliance gaps across all {REPORT.totalLocations.toLocaleString()} sampled kitchens, ranked by prevalence.
             </p>
             <div className="space-y-2">
               {TOP_VIOLATIONS.map((v) => (
                 <div
                   key={v.rank}
-                  className="border border-gray-200 rounded-lg overflow-hidden cursor-pointer hover:border-gray-300 transition-colors"
+                  className="border border-[#1E2D4D]/10 rounded-lg overflow-hidden cursor-pointer hover:border-gray-300 transition-colors"
                   onClick={() => setExpandedViolation(expandedViolation === v.rank ? null : v.rank)}
                 >
                   <div className="flex items-center gap-3 px-4 py-3">
@@ -565,11 +565,11 @@ export function ComplianceIndex() {
                     <span className="flex-1 text-sm font-medium text-gray-900">{v.violation}</span>
                     <SeverityBadge severity={v.severity} />
                     <span className="text-sm font-bold" style={{ color: '#1E2D4D' }}>{v.pct}%</span>
-                    {expandedViolation === v.rank ? <ChevronDown className="h-4 w-4 text-gray-400" /> : <ChevronRight className="h-4 w-4 text-gray-400" />}
+                    {expandedViolation === v.rank ? <ChevronDown className="h-4 w-4 text-[#1E2D4D]/30" /> : <ChevronRight className="h-4 w-4 text-[#1E2D4D]/30" />}
                   </div>
                   {expandedViolation === v.rank && (
                     <div className="px-4 pb-3 border-t border-gray-100 pt-2">
-                      <p className="text-xs text-gray-600">{v.detail}</p>
+                      <p className="text-xs text-[#1E2D4D]/70">{v.detail}</p>
                     </div>
                   )}
                 </div>
@@ -579,7 +579,7 @@ export function ComplianceIndex() {
         </div>
 
         {/* ── 8. Seasonal Insights ── */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
           <SectionHeader icon={Calendar} title="Seasonal Insights" number={8} />
           <div className="p-4 sm:p-6">
             <QuarterlyTrendChart data={SEASONAL_DATA} />
@@ -588,9 +588,9 @@ export function ComplianceIndex() {
                 <div key={s.quarter} className="flex items-start gap-3 p-3 rounded-lg bg-[#FAF7F0]">
                   <div className="w-16 flex-shrink-0">
                     <div className="text-lg font-bold" style={{ color: '#1E2D4D' }}>{s.score}</div>
-                    <div className="text-xs text-gray-500 font-medium">{s.quarter}</div>
+                    <div className="text-xs text-[#1E2D4D]/50 font-medium">{s.quarter}</div>
                   </div>
-                  <p className="text-xs text-gray-600 leading-relaxed">{s.note}</p>
+                  <p className="text-xs text-[#1E2D4D]/70 leading-relaxed">{s.note}</p>
                 </div>
               ))}
             </div>
@@ -605,14 +605,14 @@ export function ComplianceIndex() {
         </div>
 
         {/* ── 9. Regulatory Impact ── */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
           <SectionHeader icon={Scale} title="Regulatory Impact" number={9} />
           <div className="p-6 space-y-4">
-            <p className="text-sm text-gray-600 mb-2">
+            <p className="text-sm text-[#1E2D4D]/70 mb-2">
               How new and upcoming legislation is affecting compliance behavior and scores.
             </p>
             {REGULATORY_IMPACT.map((reg, i) => (
-              <div key={i} className="border border-gray-200 rounded-xl p-4 sm:p-5">
+              <div key={i} className="border border-[#1E2D4D]/10 rounded-xl p-4 sm:p-5">
                 <div className="flex items-start justify-between mb-3 flex-wrap gap-2">
                   <div>
                     <h3 className="text-sm font-bold text-[#1E2D4D]">{reg.law}</h3>
@@ -622,13 +622,13 @@ export function ComplianceIndex() {
                     {reg.scoreEffect}
                   </span>
                 </div>
-                <p className="text-xs text-gray-600 mb-3">{reg.impact}</p>
+                <p className="text-xs text-[#1E2D4D]/70 mb-3">{reg.impact}</p>
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-gray-500 font-medium uppercase">Industry Preparedness</span>
-                    <span className="text-xs font-bold text-gray-700">{reg.preparedness}%</span>
+                    <span className="text-xs text-[#1E2D4D]/50 font-medium uppercase">Industry Preparedness</span>
+                    <span className="text-xs font-bold text-[#1E2D4D]/80">{reg.preparedness}%</span>
                   </div>
-                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="h-2 bg-[#1E2D4D]/5 rounded-full overflow-hidden">
                     <div
                       className="h-full rounded-full"
                       style={{
@@ -644,35 +644,35 @@ export function ComplianceIndex() {
         </div>
 
         {/* ── 10. Predictions ── */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
           <SectionHeader icon={Sparkles} title="Q1 2026 Predictions" number={10} />
           <div className="p-4 sm:p-6">
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-[#1E2D4D]/70 mb-4">
               Projections based on current trajectories, regulatory calendar, and seasonal patterns.
             </p>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="text-left text-xs font-semibold text-gray-500 uppercase pb-3">Metric</th>
-                    <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3">Current</th>
-                    <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3">Predicted Q1</th>
-                    <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3">Change</th>
-                    <th className="text-left text-xs font-semibold text-gray-500 uppercase pb-3 pl-4 hidden sm:table-cell">Reasoning</th>
+                  <tr className="border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors">
+                    <th className="text-left text-xs font-semibold text-[#1E2D4D]/50 uppercase pb-3">Metric</th>
+                    <th className="text-center text-xs font-semibold text-[#1E2D4D]/50 uppercase pb-3">Current</th>
+                    <th className="text-center text-xs font-semibold text-[#1E2D4D]/50 uppercase pb-3">Predicted Q1</th>
+                    <th className="text-center text-xs font-semibold text-[#1E2D4D]/50 uppercase pb-3">Change</th>
+                    <th className="text-left text-xs font-semibold text-[#1E2D4D]/50 uppercase pb-3 pl-4 hidden sm:table-cell">Reasoning</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-[#1E2D4D]/5">
                   {PREDICTIONS.map((p) => (
                     <tr key={p.metric}>
                       <td className="py-3 text-sm font-medium text-gray-900">{p.metric}</td>
-                      <td className="py-3 text-center text-sm text-gray-600">{p.current}</td>
+                      <td className="py-3 text-center text-sm text-[#1E2D4D]/70">{p.current}</td>
                       <td className="py-3 text-center text-sm font-bold" style={{ color: '#1E2D4D' }}>{p.predicted}</td>
                       <td className="py-3 text-center">
                         <span className="text-xs font-bold text-green-600 flex items-center justify-center gap-0.5">
                           <TrendingUp className="h-3 w-3" /> +{p.predicted - p.current}
                         </span>
                       </td>
-                      <td className="py-3 pl-4 text-xs text-gray-600 hidden sm:table-cell">{p.reason}</td>
+                      <td className="py-3 pl-4 text-xs text-[#1E2D4D]/70 hidden sm:table-cell">{p.reason}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -691,18 +691,18 @@ export function ComplianceIndex() {
         </div>
 
         {/* ── Blog Content Ideas ── */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
           <div className="px-4 sm:px-6 py-4 border-b border-gray-100" style={{ backgroundColor: '#fdf8e8' }}>
             <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
               <BookOpen className="h-5 w-5" style={{ color: '#d4af37' }} />
               Content Ideas from This Report
             </h2>
-            <p className="text-xs text-gray-600 mt-1">Auto-generated topics for blogs, press releases, and social campaigns</p>
+            <p className="text-xs text-[#1E2D4D]/70 mt-1">Auto-generated topics for blogs, press releases, and social campaigns</p>
           </div>
           <div className="p-4 sm:p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {BLOG_IDEAS.map((idea, i) => (
-                <div key={i} className="p-3 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors">
+                <div key={i} className="p-3 rounded-lg border border-[#1E2D4D]/10 hover:border-gray-300 transition-colors">
                   <div className="flex items-start gap-3">
                     <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: '#eef4f8' }}>
                       <FileText className="h-3.5 w-3.5" style={{ color: '#1E2D4D' }} />
@@ -710,8 +710,8 @@ export function ComplianceIndex() {
                     <div>
                       <h3 className="text-sm font-semibold text-[#1E2D4D] leading-tight">{idea.title}</h3>
                       <div className="flex items-center gap-2 mt-1.5">
-                        <span className="text-xs px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 font-medium">{idea.type}</span>
-                        <span className="text-xs text-gray-400">{idea.targetAudience}</span>
+                        <span className="text-xs px-1.5 py-0.5 rounded bg-gray-100 text-[#1E2D4D]/50 font-medium">{idea.type}</span>
+                        <span className="text-xs text-[#1E2D4D]/30">{idea.targetAudience}</span>
                       </div>
                     </div>
                   </div>
@@ -722,7 +722,7 @@ export function ComplianceIndex() {
         </div>
 
         {/* ── Data Integrity & Anonymization ── */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
           <div className="px-4 sm:px-6 py-4 border-b border-gray-100">
             <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
               <EvidlyIcon size={20} />
@@ -742,7 +742,7 @@ export function ComplianceIndex() {
                 ].map((item, i) => (
                   <div key={i} className="flex items-start gap-2">
                     <CheckCircle2 className="h-3.5 w-3.5 text-green-500 mt-0.5 flex-shrink-0" />
-                    <span className="text-xs text-gray-600">{item}</span>
+                    <span className="text-xs text-[#1E2D4D]/70">{item}</span>
                   </div>
                 ))}
               </div>
@@ -758,12 +758,12 @@ export function ComplianceIndex() {
                 ].map((item, i) => (
                   <div key={i} className="flex items-start gap-2">
                     <EvidlyIcon size={14} className="mt-0.5 flex-shrink-0" />
-                    <span className="text-xs text-gray-600">{item}</span>
+                    <span className="text-xs text-[#1E2D4D]/70">{item}</span>
                   </div>
                 ))}
               </div>
             </div>
-            <div className="mt-4 p-3 rounded-lg bg-[#FAF7F0] text-xs text-gray-500">
+            <div className="mt-4 p-3 rounded-lg bg-[#FAF7F0] text-xs text-[#1E2D4D]/50">
               All data reviewed by EvidLY team before publication. Geographic data aggregated to county level minimum.
               Individual organizations may opt out via Settings &gt; Privacy at any time.
             </div>
@@ -782,15 +782,15 @@ export function ComplianceIndex() {
           </p>
           <div className="flex items-center justify-center gap-3 mb-6">
             <div className="bg-white/10 rounded-lg px-4 py-2 text-white">
-              <div className="text-2xl font-bold">{REPORT.totalOrganizations}</div>
+              <div className="text-2xl font-bold tracking-tight">{REPORT.totalOrganizations}</div>
               <div className="text-xs text-gray-300">Organizations</div>
             </div>
             <div className="bg-white/10 rounded-lg px-4 py-2 text-white">
-              <div className="text-2xl font-bold">{REPORT.totalLocations.toLocaleString()}</div>
+              <div className="text-2xl font-bold tracking-tight">{REPORT.totalLocations.toLocaleString()}</div>
               <div className="text-xs text-gray-300">Locations</div>
             </div>
             <div className="bg-white/10 rounded-lg px-4 py-2 text-white">
-              <div className="text-2xl font-bold">{REPORT.counties}</div>
+              <div className="text-2xl font-bold tracking-tight">{REPORT.counties}</div>
               <div className="text-xs text-gray-300">Counties</div>
             </div>
           </div>
@@ -811,7 +811,7 @@ export function ComplianceIndex() {
             </button>
           </div>
 
-          <div className="mt-6 text-xs text-gray-400">
+          <div className="mt-6 text-xs text-[#1E2D4D]/30">
             Available for media to reference and cite. Contact press@evidly.com for interviews and data requests.
           </div>
         </div>

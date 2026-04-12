@@ -68,7 +68,7 @@ export default function ExecutiveSummary({ config }: { config: ReportTypeConfig 
         ].map(s => (
           <div key={s.label} className="rounded-xl p-4" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
             <p className="text-xs font-medium mb-1" style={{ color: MUTED }}>{s.label}</p>
-            <p className="text-2xl font-bold" style={{ color: getScoreColor(s.score) }}>{s.score}</p>
+            <p className="text-2xl font-bold tracking-tight" style={{ color: getScoreColor(s.score) }}>{s.score}</p>
             <StatusBadge status={getScoreStatus(s.score)} />
           </div>
         ))}

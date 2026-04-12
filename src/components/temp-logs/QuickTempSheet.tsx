@@ -107,7 +107,7 @@ export function QuickTempSheet({ open, onClose }: QuickTempSheetProps) {
         <select
           value={equipmentId}
           onChange={e => setEquipmentId(e.target.value)}
-          className="w-full px-3 py-3 border border-gray-300 rounded-lg text-sm mb-3"
+          className="w-full px-3 py-3 border border-[#1E2D4D]/15 rounded-lg text-sm mb-3"
           style={{ fontSize: 16 }}
         >
           <option value="">Select equipment...</option>
@@ -118,7 +118,7 @@ export function QuickTempSheet({ open, onClose }: QuickTempSheetProps) {
 
         {/* Range hint */}
         {selected && (
-          <p className="text-xs text-gray-500 mb-2">
+          <p className="text-xs text-[#1E2D4D]/50 mb-2">
             {selected.type === 'freezer'
               ? `Must remain: ${selected.maxTemp}°F or below`
               : `Range: ${selected.minTemp}°F – ${selected.maxTemp}°F`}
@@ -134,7 +134,7 @@ export function QuickTempSheet({ open, onClose }: QuickTempSheetProps) {
           onChange={e => setTemperature(e.target.value)}
           onFocus={e => { setTimeout(() => { e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 300); }}
           placeholder="°F"
-          className="w-full border border-gray-300 rounded-lg text-center font-bold mb-4"
+          className="w-full border border-[#1E2D4D]/15 rounded-lg text-center font-bold mb-4"
           style={{ fontSize: 24, height: 56 }}
         />
 

@@ -182,7 +182,7 @@ function FilterBar({ filters, setFilters, resetFilters }: {
             placeholder="Search RFPs by title, entity, keywords…"
             value={filters.search}
             onChange={e => setFilters(f => ({ ...f, search: e.target.value }))}
-            className="w-full pl-9 pr-4 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2"
+            className="w-full pl-9 pr-4 py-2 text-sm rounded-lg border focus-visible:outline-none focus-visible:ring-2"
             style={{
               borderColor: CARD_BORDER,
               color: TEXT_PRIMARY,
@@ -728,7 +728,7 @@ function DetailPanel({ item, onClose, onAction }: {
           {cls && tier && (
             <div className="flex items-center gap-3">
               <div className="w-16 h-16 rounded-xl flex flex-col items-center justify-center" style={{ background: tier.bg }}>
-                <span className="text-2xl font-bold leading-none" style={{ color: tier.text }}>{cls.relevance_score}</span>
+                <span className="text-2xl font-bold tracking-tight leading-none" style={{ color: tier.text }}>{cls.relevance_score}</span>
                 <span className="text-xs" style={{ color: tier.text }}>{tier.label}</span>
               </div>
               <div>

@@ -96,7 +96,7 @@ export function MeetingLocationField({
           type="checkbox"
           checked={sameAsJob}
           onChange={(e) => handleSameAsJobToggle(e.target.checked)}
-          className="w-4 h-4 rounded border-gray-300 focus:ring-2 focus:ring-offset-2"
+          className="w-4 h-4 rounded border-[#1E2D4D]/15 focus:ring-2 focus:ring-offset-2"
           style={{
             accentColor: NAVY,
             color: NAVY
@@ -120,7 +120,7 @@ export function MeetingLocationField({
           onChange={(e) => handleLocationChange(e.target.value)}
           disabled={sameAsJob}
           placeholder="Enter meeting address"
-          className="w-full px-3 py-2 rounded-lg border text-sm disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2"
+          className="w-full px-3 py-2 rounded-lg border text-sm disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus:ring-offset-2"
           style={{
             backgroundColor: sameAsJob ? '#f9fafb' : CARD_BG,
             borderColor: CARD_BORDER,
@@ -160,7 +160,7 @@ export function MeetingLocationField({
           onChange={(e) => handleNotesChange(e.target.value)}
           placeholder="Add any special instructions for the meeting point..."
           rows={3}
-          className="w-full px-3 py-2 rounded-lg border text-sm resize-none focus:outline-none focus:ring-2 focus:ring-offset-2"
+          className="w-full px-3 py-2 rounded-lg border text-sm resize-none focus-visible:outline-none focus-visible:ring-2 focus:ring-offset-2"
           style={{
             backgroundColor: CARD_BG,
             borderColor: CARD_BORDER,

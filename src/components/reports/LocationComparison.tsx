@@ -59,14 +59,14 @@ export default function LocationComparison({ config }: { config: ReportTypeConfi
       {/* Best / Worst callouts */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="rounded-xl p-4 flex items-center gap-3" style={{ background: '#f0fdf4', border: '1px solid #bbf7d0' }}>
-          <span className="text-2xl font-bold" style={{ color: '#16a34a' }}>{best.foodSafety}</span>
+          <span className="text-2xl font-bold tracking-tight" style={{ color: '#16a34a' }}>{best.foodSafety}</span>
           <div>
             <p className="text-xs font-semibold" style={{ color: '#166534' }}>Best Performing</p>
             <p className="text-sm font-medium" style={{ color: BODY_TEXT }}>{best.location}</p>
           </div>
         </div>
         <div className="rounded-xl p-4 flex items-center gap-3" style={{ background: '#fffbeb', border: '1px solid #fef3c7' }}>
-          <span className="text-2xl font-bold" style={{ color: '#d97706' }}>{worst.foodSafety}</span>
+          <span className="text-2xl font-bold tracking-tight" style={{ color: '#d97706' }}>{worst.foodSafety}</span>
           <div>
             <p className="text-xs font-semibold" style={{ color: '#92400e' }}>Needs Most Attention</p>
             <p className="text-sm font-medium" style={{ color: BODY_TEXT }}>{worst.location}</p>

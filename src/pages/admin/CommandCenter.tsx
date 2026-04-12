@@ -190,7 +190,7 @@ export default function CommandCenter() {
     <div className="space-y-6">
       <AdminBreadcrumb crumbs={[{ label: 'Command Center' }]} />
       <div>
-        <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Command Center</h1>
+        <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Command Center</h1>
         <p style={{ fontSize: 13, color: TEXT_SEC, marginTop: 4 }}>
           Platform operations health — live events, crawl status, open tickets.
         </p>

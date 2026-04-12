@@ -55,10 +55,10 @@ export function LiveActivityFeed() {
   }, [activities.length]);
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200">
+    <div className="bg-white rounded-xl border border-[#1E2D4D]/10">
       <div className="flex items-center justify-between p-4 border-b border-gray-100">
         <div className="flex items-center gap-2">
-          <h3 className="text-lg font-semibold text-[#1E2D4D]">Activity Feed</h3>
+          <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">Activity Feed</h3>
           <div className="flex items-center gap-1.5 px-2 py-0.5 bg-green-50 rounded-full">
             <div className="w-2 h-2 rounded-full bg-green-500 animate-live-dot" />
             <span className="text-xs font-medium text-green-700">Live</span>
@@ -73,7 +73,7 @@ export function LiveActivityFeed() {
       </div>
       <div className="divide-y divide-gray-50 max-h-[420px] overflow-y-auto">
         {activities.length === 0 ? (
-          <div className="py-10 text-center text-sm text-gray-400">No recent activity</div>
+          <div className="py-10 text-center text-sm text-[#1E2D4D]/30">No recent activity</div>
         ) : activities.map((activity, index) => {
           const { icon: Icon, color, bg } = iconMap[activity.icon];
           const isVisible = index < visibleItems;
@@ -99,14 +99,14 @@ export function LiveActivityFeed() {
                 <div className="flex items-center gap-1.5">
                   <span className="text-sm font-semibold text-[#1E2D4D]">{activity.user}</span>
                   {index === 0 && (
-                    <span className="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-xs font-bold rounded uppercase">New</span>
+                    <span className="px-1.5 py-0.5 bg-blue-50 text-blue-700 text-xs font-bold rounded uppercase">New</span>
                   )}
                 </div>
-                <p className="text-sm text-gray-600 mt-0.5">{activity.action}</p>
+                <p className="text-sm text-[#1E2D4D]/70 mt-0.5">{activity.action}</p>
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="text-xs text-gray-400">{activity.location}</span>
+                  <span className="text-xs text-[#1E2D4D]/30">{activity.location}</span>
                   <span className="text-xs text-gray-300">•</span>
-                  <span className="text-xs text-gray-400">{activity.time}</span>
+                  <span className="text-xs text-[#1E2D4D]/30">{activity.time}</span>
                 </div>
               </div>
             </div>

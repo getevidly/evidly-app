@@ -465,7 +465,7 @@ function InsightCard({ insight, selected, onSelect }: { insight: IntelligenceIns
               {insight.impact_level}
             </span>
             {!insight.read && (
-              <span className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase bg-blue-100 text-blue-700">NEW</span>
+              <span className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase bg-blue-50 text-blue-700">NEW</span>
             )}
             {pillarLabels.map(p => (
               <span key={p} className="px-1.5 py-0.5 rounded text-[9px] font-semibold" style={{ backgroundColor: '#fef3c7', color: '#92400e' }}>
@@ -843,7 +843,7 @@ function SourceStatusView({ sourceStatus: rawStatus, insightCount, criticalCount
           { label: 'Sources Active', value: String(sourceStatus.length), color: '#16a34a' },
         ].map(tile => (
           <div key={tile.label} className="rounded-xl p-4 text-center" style={{ backgroundColor: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
-            <div className="text-2xl font-bold" style={{ color: tile.color }}>{tile.value}</div>
+            <div className="text-2xl font-bold tracking-tight" style={{ color: tile.color }}>{tile.value}</div>
             <div className="text-xs mt-1" style={{ color: TEXT_TERTIARY }}>{tile.label}</div>
           </div>
         ))}

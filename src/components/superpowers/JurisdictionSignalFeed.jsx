@@ -29,7 +29,7 @@ export function JurisdictionSignalFeed({ signals }) {
           <div className="p-2 bg-[#F4F6FA] rounded-lg">
             <Radio className="h-5 w-5 text-[#1E2D4D]" />
           </div>
-          <h3 className="text-lg font-semibold text-[#0B1628]">Jurisdiction Signals</h3>
+          <h3 className="text-lg font-semibold tracking-tight text-[#0B1628]">Jurisdiction Signals</h3>
         </div>
         <div className="text-center py-8">
           <Radio className="h-10 w-10 text-[#D1D9E6] mx-auto mb-3" />
@@ -51,7 +51,7 @@ export function JurisdictionSignalFeed({ signals }) {
           <div className="p-2 bg-[#F4F6FA] rounded-lg">
             <Radio className="h-5 w-5 text-[#1E2D4D]" />
           </div>
-          <h3 className="text-lg font-semibold text-[#0B1628]">Jurisdiction Signals</h3>
+          <h3 className="text-lg font-semibold tracking-tight text-[#0B1628]">Jurisdiction Signals</h3>
         </div>
         <span className="text-xs text-[#6B7F96]">{signals.length} signal{signals.length !== 1 ? 's' : ''}</span>
       </div>

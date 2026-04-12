@@ -21,7 +21,7 @@ export function InsuranceReadinessWidget({ locationId }: InsuranceReadinessWidge
   const tierInfo = getInsuranceRiskTier(riskData.overall);
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+    <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
@@ -29,8 +29,8 @@ export function InsuranceReadinessWidget({ locationId }: InsuranceReadinessWidge
             <EvidlyIcon size={20} />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-[#1E2D4D]">Insurance Risk Score</h3>
-            <p className="text-xs text-gray-500">Designed to support carrier conversations</p>
+            <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">Insurance Risk Score</h3>
+            <p className="text-xs text-[#1E2D4D]/50">Designed to support carrier conversations</p>
           </div>
         </div>
         <button
@@ -50,7 +50,7 @@ export function InsuranceReadinessWidget({ locationId }: InsuranceReadinessWidge
             className="w-20 h-20 rounded-full flex items-center justify-center border-[3px]"
             style={{ borderColor: tierInfo.color, backgroundColor: tierInfo.bg }}
           >
-            <div className="text-2xl font-bold" style={{ color: tierInfo.color }}>{riskData.overall}</div>
+            <div className="text-2xl font-bold tracking-tight" style={{ color: tierInfo.color }}>{riskData.overall}</div>
           </div>
           <div
             className="mt-2 text-xs font-bold px-2 py-0.5 rounded-full inline-block"
@@ -67,10 +67,10 @@ export function InsuranceReadinessWidget({ locationId }: InsuranceReadinessWidge
             return (
               <div key={cat.key}>
                 <div className="flex items-center justify-between mb-0.5">
-                  <span className="text-xs text-gray-600">{cat.name} <span className="text-gray-400">({Math.round(cat.weight * 100)}%)</span></span>
+                  <span className="text-xs text-[#1E2D4D]/70">{cat.name} <span className="text-[#1E2D4D]/30">({Math.round(cat.weight * 100)}%)</span></span>
                   <span className="text-xs font-bold" style={{ color: catTier.color }}>{cat.score}</span>
                 </div>
-                <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div className="w-full h-2 bg-[#1E2D4D]/5 rounded-full overflow-hidden">
                   <div
                     className="h-full rounded-full transition-all duration-500"
                     style={{ width: `${Math.max(2, cat.score)}%`, backgroundColor: catTier.color }}
@@ -85,7 +85,7 @@ export function InsuranceReadinessWidget({ locationId }: InsuranceReadinessWidge
       {/* Action hint */}
       {riskData.actionItems.length > 0 && (
         <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
-          <span className="text-xs text-gray-400">{riskData.actionItems.length} improvement actions available</span>
+          <span className="text-xs text-[#1E2D4D]/30">{riskData.actionItems.length} improvement actions available</span>
           <button
             onClick={() => navigate(locationId === 'all' ? '/insurance-risk' : `/insurance-risk?location=${locationId}`)}
             className="text-xs font-medium flex items-center gap-1 hover:underline"

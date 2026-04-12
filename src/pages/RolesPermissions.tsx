@@ -223,7 +223,7 @@ function RolesPermissionsInner() {
             <Shield className="w-5 h-5" style={{ color: '#A08C5A' }} />
           </div>
           <div>
-            <h1 className="text-2xl font-bold" style={{ color: '#1E2D4D' }}>
+            <h1 className="text-2xl font-bold tracking-tight" style={{ color: '#1E2D4D' }}>
               Role Permissions
             </h1>
             <p className="text-sm" style={{ color: '#6B7F96' }}>
@@ -304,7 +304,7 @@ function RolesPermissionsInner() {
 
       {/* ── Permission Grid ──────────────────────────────────────── */}
       <div>
-        <h2 className="text-lg font-semibold mb-4" style={{ color: '#1E2D4D' }}>
+        <h2 className="text-lg font-semibold tracking-tight mb-4" style={{ color: '#1E2D4D' }}>
           Role Default Permissions
         </h2>
         <p className="text-sm mb-5" style={{ color: '#6B7F96' }}>
@@ -342,7 +342,7 @@ function RolesPermissionsInner() {
           style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border)' }}
         >
           <div className="px-6 py-4 border-b" style={{ borderColor: 'var(--border)' }}>
-            <h3 className="text-lg font-semibold" style={{ color: '#1E2D4D' }}>
+            <h3 className="text-lg font-semibold tracking-tight" style={{ color: '#1E2D4D' }}>
               Recent Permission Changes
             </h3>
           </div>

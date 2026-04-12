@@ -65,10 +65,10 @@ export default function AppInstallSection() {
             </div>
 
             <div className="flex-1 text-center md:text-left">
-              <h2 className="font-['Outfit'] text-2xl sm:text-3xl font-bold mb-3" style={{ color: '#1E2D4D' }}>
+              <h2 className="font-['Outfit'] text-2xl sm:text-3xl font-bold tracking-tight mb-3" style={{ color: '#1E2D4D' }}>
                 Take Compliance With You
               </h2>
-              <p className="text-gray-600 leading-relaxed mb-6 max-w-xl">
+              <p className="text-[#1E2D4D]/70 leading-relaxed mb-6 max-w-xl">
                 Log temperatures, complete checklists, and snap photos right from your kitchen.
                 Works on iPhone, Android, and desktop &mdash; install in seconds, no app store required.
               </p>

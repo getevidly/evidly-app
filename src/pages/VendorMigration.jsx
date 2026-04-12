@@ -144,7 +144,7 @@ export function VendorMigration() {
 
           <button
             onClick={scrollToWizard}
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-lg text-lg font-semibold text-white transition-all hover:scale-105 hover:shadow-lg"
+            className="inline-flex items-center gap-2 px-8 py-4 rounded-lg text-lg font-semibold tracking-tight text-white transition-all hover:scale-105 hover:shadow-lg"
             style={{ background: GOLD }}
           >
             Start My Migration
@@ -162,7 +162,7 @@ export function VendorMigration() {
             <h2 className="text-3xl md:text-4xl font-bold mb-3" style={{ color: NAVY }}>
               Be honest with yourself.
             </h2>
-            <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+            <p className="text-lg text-[#1E2D4D]/50 max-w-2xl mx-auto">
               Your current platform was fine when you started. But your kitchen has grown, and it hasn't kept up.
             </p>
           </div>
@@ -182,7 +182,7 @@ export function VendorMigration() {
                 <h3 className="text-xl font-bold mb-3" style={{ color: NAVY }}>
                   {card.title}
                 </h3>
-                <p className="text-gray-600 leading-relaxed">{card.description}</p>
+                <p className="text-[#1E2D4D]/70 leading-relaxed">{card.description}</p>
               </div>
             ))}
           </div>
@@ -196,12 +196,12 @@ export function VendorMigration() {
             <h2 className="text-3xl md:text-4xl font-bold mb-3" style={{ color: NAVY }}>
               What transfers to EvidLY
             </h2>
-            <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+            <p className="text-lg text-[#1E2D4D]/50 max-w-2xl mx-auto">
               Everything that matters comes with you. We make sure nothing falls through the cracks.
             </p>
           </div>
 
-          <div className="overflow-hidden rounded-xl border border-gray-200">
+          <div className="overflow-hidden rounded-xl border border-[#1E2D4D]/10">
             <table className="w-full">
               <thead>
                 <tr style={{ background: NAVY }}>
@@ -238,7 +238,7 @@ export function VendorMigration() {
                         </span>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-gray-500 text-sm hidden sm:table-cell">{row.note}</td>
+                    <td className="px-6 py-4 text-[#1E2D4D]/50 text-sm hidden sm:table-cell">{row.note}</td>
                   </tr>
                 ))}
               </tbody>
@@ -254,7 +254,7 @@ export function VendorMigration() {
             <h2 className="text-3xl md:text-4xl font-bold mb-3" style={{ color: NAVY }}>
               Start your migration
             </h2>
-            <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+            <p className="text-lg text-[#1E2D4D]/50 max-w-2xl mx-auto">
               Four steps. A few minutes. Your entire compliance history, safely transferred.
             </p>
           </div>
@@ -270,7 +270,7 @@ export function VendorMigration() {
             <h2 className="text-3xl md:text-4xl font-bold mb-3" style={{ color: NAVY }}>
               What happens after you switch
             </h2>
-            <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+            <p className="text-lg text-[#1E2D4D]/50 max-w-2xl mx-auto">
               The first 90 days set the foundation. Here is exactly what to expect.
             </p>
           </div>
@@ -309,7 +309,7 @@ export function VendorMigration() {
                     <h3 className="text-xl font-bold mt-1 mb-2" style={{ color: NAVY }}>
                       {step.title}
                     </h3>
-                    <p className="text-gray-600 leading-relaxed">{step.description}</p>
+                    <p className="text-[#1E2D4D]/70 leading-relaxed">{step.description}</p>
                   </div>
                 </div>
               ))}
@@ -335,7 +335,7 @@ export function VendorMigration() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
               onClick={scrollToWizard}
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-lg text-lg font-semibold text-white transition-all hover:scale-105 hover:shadow-lg"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-lg text-lg font-semibold tracking-tight text-white transition-all hover:scale-105 hover:shadow-lg"
               style={{ background: GOLD }}
             >
               Start My Migration
@@ -346,7 +346,7 @@ export function VendorMigration() {
 
             <a
               href="mailto:arthur@getevidly.com?subject=Migration%20from%20current%20platform"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-lg text-lg font-semibold transition-all hover:scale-105"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-lg text-lg font-semibold tracking-tight transition-all hover:scale-105"
               style={{
                 color: GOLD,
                 border: `2px solid ${GOLD}`,

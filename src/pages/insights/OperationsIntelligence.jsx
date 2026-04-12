@@ -296,7 +296,7 @@ function ScoreCard({ label, value, icon, color }) {
         <span style={{ color }}>{icon}</span>
         <span className="text-xs font-medium text-[#6B7F96] uppercase tracking-wide">{label}</span>
       </div>
-      <p className="text-2xl font-bold" style={{ color }}>{value}</p>
+      <p className="text-2xl font-bold tracking-tight" style={{ color }}>{value}</p>
     </div>
   );
 }

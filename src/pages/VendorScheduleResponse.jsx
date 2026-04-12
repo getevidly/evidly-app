@@ -128,7 +128,7 @@ export function VendorScheduleResponse() {
       <div className="min-h-screen bg-[#FAF7F0] flex items-center justify-center">
         <div className="text-center">
           <Loader className="w-8 h-8 text-[#1E2D4D] animate-spin mx-auto mb-3" />
-          <p className="text-sm text-gray-500">Validating your link...</p>
+          <p className="text-sm text-[#1E2D4D]/50">Validating your link...</p>
         </div>
       </div>
     );
@@ -138,11 +138,11 @@ export function VendorScheduleResponse() {
   if (phase === 'error') {
     return (
       <div className="min-h-screen bg-[#FAF7F0] flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl border border-gray-200 p-8 max-w-md w-full text-center">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8 max-w-md w-full text-center">
           <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
           <h1 className="text-xl font-bold text-[#1E2D4D] mb-2">Link Not Valid</h1>
-          <p className="text-gray-600 mb-6">{error}</p>
-          <p className="text-sm text-gray-400">If you believe this is an error, please contact your client directly.</p>
+          <p className="text-[#1E2D4D]/70 mb-6">{error}</p>
+          <p className="text-sm text-[#1E2D4D]/30">If you believe this is an error, please contact your client directly.</p>
         </div>
       </div>
     );
@@ -162,7 +162,7 @@ export function VendorScheduleResponse() {
         message: `Your proposed dates have been sent to ${data?.organization_name || 'the client'}. They will review and respond soon.`,
       },
       decline: {
-        icon: <XCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />,
+        icon: <XCircle className="w-16 h-16 text-[#1E2D4D]/30 mx-auto mb-4" />,
         title: 'Request Declined',
         message: `You've declined this service request. ${data?.organization_name || 'The client'} has been notified and may follow up.`,
       },
@@ -171,12 +171,12 @@ export function VendorScheduleResponse() {
 
     return (
       <div className="min-h-screen bg-[#FAF7F0] flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl border border-gray-200 p-8 max-w-md w-full text-center">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8 max-w-md w-full text-center">
           {cfg.icon}
           <h1 className="text-xl font-bold text-[#1E2D4D] mb-3">{cfg.title}</h1>
-          <p className="text-gray-600 text-sm mb-6">{cfg.message}</p>
+          <p className="text-[#1E2D4D]/70 text-sm mb-6">{cfg.message}</p>
           <div className="border-t border-gray-100 pt-4">
-            <div className="flex items-center justify-center gap-2 text-gray-400">
+            <div className="flex items-center justify-center gap-2 text-[#1E2D4D]/30">
               <EvidlyIcon size={20} />
               <span className="text-xs font-medium">Powered by EvidLY</span>
             </div>
@@ -192,7 +192,7 @@ export function VendorScheduleResponse() {
       <div className="min-h-screen bg-[#FAF7F0] flex items-center justify-center">
         <div className="text-center">
           <Loader className="w-8 h-8 text-[#1E2D4D] animate-spin mx-auto mb-3" />
-          <p className="text-sm text-gray-500">Submitting your response...</p>
+          <p className="text-sm text-[#1E2D4D]/50">Submitting your response...</p>
         </div>
       </div>
     );
@@ -202,9 +202,9 @@ export function VendorScheduleResponse() {
 
   const urgencyBadge = {
     normal: null,
-    soon: <span className="px-2 py-0.5 bg-yellow-100 text-yellow-700 text-xs font-medium rounded-full">Soon</span>,
+    soon: <span className="px-2 py-0.5 bg-amber-50 text-amber-700 text-xs font-medium rounded-full">Soon</span>,
     urgent: <span className="px-2 py-0.5 bg-orange-100 text-orange-700 text-xs font-medium rounded-full">Urgent</span>,
-    emergency: <span className="px-2 py-0.5 bg-red-100 text-red-700 text-xs font-medium rounded-full">Emergency</span>,
+    emergency: <span className="px-2 py-0.5 bg-red-50 text-red-700 text-xs font-medium rounded-full">Emergency</span>,
   };
 
   // ── Main content ──
@@ -212,7 +212,7 @@ export function VendorScheduleResponse() {
     <div className="min-h-screen bg-[#FAF7F0] p-4">
       <div className="max-w-lg mx-auto space-y-4">
         {/* Header */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
           <div className="px-6 py-5" style={{ backgroundColor: '#1E2D4D' }}>
             <div className="flex items-center gap-3">
               <EvidlyIcon size={36} />
@@ -228,21 +228,21 @@ export function VendorScheduleResponse() {
               <div className="flex items-start gap-3">
                 <Wrench className="h-5 w-5 mt-0.5 flex-shrink-0" style={{ color: '#A08C5A' }} />
                 <div>
-                  <p className="text-xs text-gray-500 font-medium">Service</p>
+                  <p className="text-xs text-[#1E2D4D]/50 font-medium">Service</p>
                   <p className="text-sm font-semibold text-[#1E2D4D]">{data.service_name || data.service_type}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 mt-0.5 flex-shrink-0" style={{ color: '#A08C5A' }} />
                 <div>
-                  <p className="text-xs text-gray-500 font-medium">Location</p>
+                  <p className="text-xs text-[#1E2D4D]/50 font-medium">Location</p>
                   <p className="text-sm font-semibold text-[#1E2D4D]">{data.location_name || 'Not specified'}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <Building2 className="h-5 w-5 mt-0.5 flex-shrink-0" style={{ color: '#A08C5A' }} />
                 <div>
-                  <p className="text-xs text-gray-500 font-medium">Client</p>
+                  <p className="text-xs text-[#1E2D4D]/50 font-medium">Client</p>
                   <div className="flex items-center gap-2">
                     <p className="text-sm font-semibold text-[#1E2D4D]">{data.organization_name}</p>
                     {urgencyBadge[data.urgency]}
@@ -253,13 +253,13 @@ export function VendorScheduleResponse() {
                 <div className="flex items-start gap-3">
                   <Send className="h-5 w-5 mt-0.5 flex-shrink-0" style={{ color: '#A08C5A' }} />
                   <div>
-                    <p className="text-xs text-gray-500 font-medium">Notes</p>
-                    <p className="text-sm text-gray-700">{data.notes}</p>
+                    <p className="text-xs text-[#1E2D4D]/50 font-medium">Notes</p>
+                    <p className="text-sm text-[#1E2D4D]/80">{data.notes}</p>
                   </div>
                 </div>
               )}
             </div>
-            <div className="mt-4 flex items-center gap-2 text-xs text-gray-400">
+            <div className="mt-4 flex items-center gap-2 text-xs text-[#1E2D4D]/30">
               <Clock className="h-3.5 w-3.5" />
               <span>This link expires {formatDate(data.expires_at)}</span>
             </div>
@@ -268,7 +268,7 @@ export function VendorScheduleResponse() {
 
         {/* Action buttons (schedule-info phase) */}
         {phase === 'schedule-info' && (
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
             <h2 className="text-base font-semibold text-[#1E2D4D] mb-4">Proposed Dates</h2>
             <div className="space-y-2 mb-6">
               {data.proposed_slots.map((slot, i) => (
@@ -276,7 +276,7 @@ export function VendorScheduleResponse() {
                   <CalendarDays className="h-5 w-5 text-[#1E2D4D] flex-shrink-0" />
                   <div>
                     <p className="text-sm font-medium text-gray-900">{formatDate(slot)}</p>
-                    <p className="text-xs text-gray-500">{formatTime(slot)}</p>
+                    <p className="text-xs text-[#1E2D4D]/50">{formatTime(slot)}</p>
                   </div>
                 </div>
               ))}
@@ -314,16 +314,16 @@ export function VendorScheduleResponse() {
 
               <button
                 onClick={() => setPhase('decline')}
-                className="w-full flex items-center justify-between px-4 py-3.5 rounded-lg border-2 border-gray-200 bg-[#FAF7F0] hover:bg-gray-100 transition-colors group"
+                className="w-full flex items-center justify-between px-4 py-3.5 rounded-lg border-2 border-[#1E2D4D]/10 bg-[#FAF7F0] hover:bg-gray-100 transition-colors group"
               >
                 <div className="flex items-center gap-3">
-                  <XCircle className="h-5 w-5 text-gray-500" />
+                  <XCircle className="h-5 w-5 text-[#1E2D4D]/50" />
                   <div className="text-left">
-                    <p className="text-sm font-semibold text-gray-700">Decline Request</p>
-                    <p className="text-xs text-gray-500">Unable to provide this service</p>
+                    <p className="text-sm font-semibold text-[#1E2D4D]/80">Decline Request</p>
+                    <p className="text-xs text-[#1E2D4D]/50">Unable to provide this service</p>
                   </div>
                 </div>
-                <ChevronRight className="h-4 w-4 text-gray-400 group-hover:translate-x-0.5 transition-transform" />
+                <ChevronRight className="h-4 w-4 text-[#1E2D4D]/30 group-hover:translate-x-0.5 transition-transform" />
               </button>
             </div>
           </div>
@@ -331,7 +331,7 @@ export function VendorScheduleResponse() {
 
         {/* Select Slot Form */}
         {phase === 'select-slot' && (
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
             <div className="flex items-center gap-2 mb-4">
               <CheckCircle className="h-5 w-5 text-green-600" />
               <h2 className="text-base font-semibold text-[#1E2D4D]">Select a Date</h2>
@@ -344,17 +344,17 @@ export function VendorScheduleResponse() {
                   className={`w-full flex items-center gap-3 p-4 rounded-lg border-2 text-left transition-colors ${
                     selectedSlot === slot
                       ? 'border-green-500 bg-green-50'
-                      : 'border-gray-200 hover:border-gray-300'
+                      : 'border-[#1E2D4D]/10 hover:border-gray-300'
                   }`}
                 >
                   <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                    selectedSlot === slot ? 'border-green-500 bg-green-500' : 'border-gray-300'
+                    selectedSlot === slot ? 'border-green-500 bg-green-500' : 'border-[#1E2D4D]/15'
                   }`}>
                     {selectedSlot === slot && <div className="w-2 h-2 bg-white rounded-full" />}
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-900">{formatDate(slot)}</p>
-                    <p className="text-xs text-gray-500">{formatTime(slot)}</p>
+                    <p className="text-xs text-[#1E2D4D]/50">{formatTime(slot)}</p>
                   </div>
                 </button>
               ))}
@@ -362,7 +362,7 @@ export function VendorScheduleResponse() {
             <div className="flex gap-3">
               <button
                 onClick={() => setPhase('schedule-info')}
-                className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors text-sm"
+                className="flex-1 px-4 py-2.5 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 font-medium rounded-lg hover:bg-gray-50 transition-colors text-sm"
               >
                 Back
               </button>
@@ -379,66 +379,66 @@ export function VendorScheduleResponse() {
 
         {/* Propose Alternatives Form */}
         {phase === 'propose-alternatives' && (
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
             <div className="flex items-center gap-2 mb-4">
               <CalendarDays className="h-5 w-5 text-blue-600" />
               <h2 className="text-base font-semibold text-[#1E2D4D]">Propose Alternative Dates</h2>
             </div>
-            <p className="text-sm text-gray-600 mb-4">Suggest up to 3 dates that work for your schedule.</p>
+            <p className="text-sm text-[#1E2D4D]/70 mb-4">Suggest up to 3 dates that work for your schedule.</p>
             <form onSubmit={(e) => { e.preventDefault(); handleSubmit('propose_alternatives'); }} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Option 1 *</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Option 1 *</label>
                 <input
                   type="datetime-local"
                   value={altSlot1}
                   onChange={(e) => setAltSlot1(e.target.value)}
                   required
                   min={new Date().toISOString().slice(0, 16)}
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1E2D4D] focus:border-[#1E2D4D]"
+                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Option 2</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Option 2</label>
                 <input
                   type="datetime-local"
                   value={altSlot2}
                   onChange={(e) => setAltSlot2(e.target.value)}
                   min={new Date().toISOString().slice(0, 16)}
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1E2D4D] focus:border-[#1E2D4D]"
+                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Option 3</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Option 3</label>
                 <input
                   type="datetime-local"
                   value={altSlot3}
                   onChange={(e) => setAltSlot3(e.target.value)}
                   min={new Date().toISOString().slice(0, 16)}
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1E2D4D] focus:border-[#1E2D4D]"
+                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Notes (optional)</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Notes (optional)</label>
                 <textarea
                   value={altNotes}
                   onChange={(e) => setAltNotes(e.target.value)}
                   rows={3}
                   placeholder="Any scheduling constraints or notes..."
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1E2D4D] focus:border-[#1E2D4D]"
+                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
                 />
               </div>
               <div className="flex gap-3 pt-2">
                 <button
                   type="button"
                   onClick={() => setPhase('schedule-info')}
-                  className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors text-sm"
+                  className="flex-1 px-4 py-2.5 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 font-medium rounded-lg hover:bg-gray-50 transition-colors text-sm"
                 >
                   Back
                 </button>
                 <button
                   type="submit"
                   disabled={!altSlot1}
-                  className="flex-1 px-4 py-2.5 bg-[#1E2D4D] text-white font-semibold rounded-lg hover:bg-[#162340] transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-4 py-2.5 bg-[#1E2D4D] text-white font-semibold rounded-lg hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Submit Alternatives
                 </button>
@@ -449,20 +449,20 @@ export function VendorScheduleResponse() {
 
         {/* Decline Form */}
         {phase === 'decline' && (
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
             <div className="flex items-center gap-2 mb-4">
-              <XCircle className="h-5 w-5 text-gray-500" />
+              <XCircle className="h-5 w-5 text-[#1E2D4D]/50" />
               <h2 className="text-base font-semibold text-[#1E2D4D]">Decline Request</h2>
             </div>
             <form onSubmit={(e) => { e.preventDefault(); handleSubmit('decline'); }} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Reason (optional)</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Reason (optional)</label>
                 <textarea
                   value={declineNotes}
                   onChange={(e) => setDeclineNotes(e.target.value)}
                   rows={3}
                   placeholder="Any reason for declining..."
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1E2D4D] focus:border-[#1E2D4D]"
+                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
                 />
               </div>
               <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
@@ -474,7 +474,7 @@ export function VendorScheduleResponse() {
                 <button
                   type="button"
                   onClick={() => setPhase('schedule-info')}
-                  className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors text-sm"
+                  className="flex-1 px-4 py-2.5 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 font-medium rounded-lg hover:bg-gray-50 transition-colors text-sm"
                 >
                   Back
                 </button>
@@ -491,7 +491,7 @@ export function VendorScheduleResponse() {
 
         {/* Footer */}
         <div className="text-center py-4">
-          <div className="flex items-center justify-center gap-2 text-gray-400">
+          <div className="flex items-center justify-center gap-2 text-[#1E2D4D]/30">
             <EvidlyIcon size={18} />
             <span className="text-xs font-medium">Powered by EvidLY</span>
           </div>

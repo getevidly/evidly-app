@@ -85,7 +85,7 @@ export function AnimatedComplianceScore({ score, label, color, trend }: Animated
           >
             {animatedScore}
           </div>
-          <div className="text-base text-gray-500 mt-1">Overall</div>
+          <div className="text-base text-[#1E2D4D]/50 mt-1">Overall</div>
         </div>
       </div>
 
@@ -96,12 +96,12 @@ export function AnimatedComplianceScore({ score, label, color, trend }: Animated
             animationComplete ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
           } ${
             color === 'green'
-              ? 'bg-green-100 text-green-800'
+              ? 'bg-emerald-50 text-emerald-700'
               : color === 'blue'
-              ? 'bg-blue-100 text-blue-800'
+              ? 'bg-blue-50 text-blue-700'
               : color === 'amber'
               ? 'bg-amber-100 text-amber-800'
-              : 'bg-red-100 text-red-800'
+              : 'bg-red-50 text-red-700'
           }`}
         >
           {label}
@@ -116,7 +116,7 @@ export function AnimatedComplianceScore({ score, label, color, trend }: Animated
           >
             <span style={{ color: trend.color, fontWeight: 600 }}>{trend.icon}</span>
             <span style={{ color: trend.color, fontWeight: 600 }}>{trend.diff}</span>
-            <span className="text-gray-400">vs 30 days ago</span>
+            <span className="text-[#1E2D4D]/30">vs 30 days ago</span>
           </div>
         )}
       </div>

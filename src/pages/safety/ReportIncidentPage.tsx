@@ -67,7 +67,7 @@ export function ReportIncidentPage() {
 
   // ── Shared styles ──────────────────────────────────────────
   const inputClass =
-    'w-full px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/30';
+    'w-full px-3 py-2 text-sm rounded-lg border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30';
   const inputStyle = { background: CARD_BG, borderColor: CARD_BORDER, color: NAVY };
   const labelClass = 'block text-sm font-medium mb-1.5';
   const labelStyle = { color: NAVY };
@@ -87,7 +87,7 @@ export function ReportIncidentPage() {
         </button>
         <div className="flex items-center gap-2">
           <ShieldAlert className="w-6 h-6" style={{ color: '#DC2626' }} />
-          <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Report Safety Incident</h1>
+          <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Report Safety Incident</h1>
         </div>
       </div>
 
@@ -227,7 +227,7 @@ export function ReportIncidentPage() {
               id="thirdParty"
               checked={thirdPartyInvolved}
               onChange={(e) => setThirdPartyInvolved(e.target.checked)}
-              className="w-4 h-4 rounded border-gray-300"
+              className="w-4 h-4 rounded border-[#1E2D4D]/15"
             />
             <label htmlFor="thirdParty" className="text-sm" style={{ color: NAVY }}>
               Third party involved
@@ -301,7 +301,7 @@ export function ReportIncidentPage() {
                 id="medicalAttention"
                 checked={medicalAttention}
                 onChange={(e) => setMedicalAttention(e.target.checked)}
-                className="w-4 h-4 rounded border-gray-300"
+                className="w-4 h-4 rounded border-[#1E2D4D]/15"
               />
               <label htmlFor="medicalAttention" className="text-sm" style={{ color: NAVY }}>
                 Medical attention required

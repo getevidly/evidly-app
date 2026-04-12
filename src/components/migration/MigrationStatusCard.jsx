@@ -80,7 +80,7 @@ export function MigrationStatusCard() {
     <div className="bg-white rounded-xl border border-emerald-200 shadow-sm p-4 relative" style={{ fontFamily: "'DM Sans', sans-serif" }}>
       <button
         onClick={handleDismiss}
-        className="absolute top-3 right-3 p-1 rounded-full hover:bg-gray-100 text-gray-400"
+        className="absolute top-3 right-3 p-1 rounded-full hover:bg-gray-100 text-[#1E2D4D]/30"
         aria-label="Dismiss"
       >
         <X className="h-3.5 w-3.5" />
@@ -94,7 +94,7 @@ export function MigrationStatusCard() {
           <div className="text-sm font-semibold text-[#1E2D4D]">
             {migrationData.count.toLocaleString()} records imported from {migrationData.platform}
           </div>
-          <div className="text-xs text-gray-500 mt-0.5">
+          <div className="text-xs text-[#1E2D4D]/50 mt-0.5">
             Imported on {migrationData.date}. Your AI has been analyzing your history for {migrationData.daysAnalyzing} day{migrationData.daysAnalyzing !== 1 ? 's' : ''}.
           </div>
           <div className="flex items-center gap-3 mt-2">

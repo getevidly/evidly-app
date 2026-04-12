@@ -49,13 +49,13 @@ export default function MobileStickyBar({ demoMode = false }: MobileStickyBarPro
 
   // Landing page: bottom sticky bar
   return (
-    <div className="sm:hidden fixed bottom-0 left-0 right-0 z-[999] bg-white/95 backdrop-blur-[10px] border-t border-gray-200 px-4 py-3 flex items-center justify-between gap-3">
+    <div className="sm:hidden fixed bottom-0 left-0 right-0 z-[999] bg-white/95 backdrop-blur-[10px] border-t border-[#1E2D4D]/10 px-4 py-3 flex items-center justify-between gap-3">
       <div className="text-sm font-semibold text-[#1E2D4D] truncate">
         $99/mo — Founder pricing
       </div>
       <button
         onClick={handleClick}
-        className="flex-shrink-0 min-h-[44px] px-6 py-2.5 bg-[#1E2D4D] text-white font-bold rounded-[10px] border-none cursor-pointer text-sm whitespace-nowrap hover:bg-[#162340] transition-colors"
+        className="flex-shrink-0 min-h-[44px] px-6 py-2.5 bg-[#1E2D4D] text-white font-bold rounded-[10px] border-none cursor-pointer text-sm whitespace-nowrap hover:bg-[#162340] transition-all duration-150 active:scale-[0.98]"
       >
         Get Started
       </button>

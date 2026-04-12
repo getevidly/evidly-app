@@ -242,12 +242,12 @@ export function AdminIntelligenceQueue() {
           </div>
           <div>
             <h1 className="text-lg font-bold text-[#1E2D4D]">Intelligence Queue</h1>
-            <p className="text-xs text-gray-500">Review and publish intelligence insights from external sources</p>
+            <p className="text-xs text-[#1E2D4D]/50">Review and publish intelligence insights from external sources</p>
           </div>
         </div>
         <button
           onClick={fetchInsights}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-[#1E2D4D]/10 hover:bg-gray-50 transition-colors"
         >
           <RefreshCw className="h-3.5 w-3.5" />
           Refresh
@@ -271,7 +271,7 @@ export function AdminIntelligenceQueue() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-4 border-b border-gray-200">
+      <div className="flex gap-1 mb-4 border-b border-[#1E2D4D]/10">
         {tabs.map(tab => (
           <button
             key={tab.key}
@@ -279,7 +279,7 @@ export function AdminIntelligenceQueue() {
             className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
               activeTab === tab.key
                 ? 'border-[#1E2D4D] text-[#1E2D4D]'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+                : 'border-transparent text-[#1E2D4D]/50 hover:text-gray-700'
             }`}
           >
             {tab.label} ({tab.count})
@@ -291,7 +291,7 @@ export function AdminIntelligenceQueue() {
       {loading && (
         <div className="text-center py-16">
           <RefreshCw className="h-8 w-8 mx-auto text-gray-300 mb-3 animate-spin" />
-          <p className="text-gray-500 text-sm">Loading insights...</p>
+          <p className="text-[#1E2D4D]/50 text-sm">Loading insights...</p>
         </div>
       )}
 
@@ -299,8 +299,8 @@ export function AdminIntelligenceQueue() {
       {!loading && filteredInsights.length === 0 && (
         <div className="text-center py-16">
           <Shield className="h-12 w-12 mx-auto text-gray-300 mb-3" />
-          <p className="text-gray-500 font-medium">No {activeTab} insights</p>
-          <p className="text-gray-400 text-sm mt-1">
+          <p className="text-[#1E2D4D]/50 font-medium">No {activeTab} insights</p>
+          <p className="text-[#1E2D4D]/30 text-sm mt-1">
             {activeTab === 'pending'
               ? 'Run the intelligence-collect function to fetch new data from external sources.'
               : activeTab === 'published'
@@ -320,7 +320,7 @@ export function AdminIntelligenceQueue() {
             const keyFindings = (insight.raw_source_data as any)?.key_findings as string[] | undefined;
 
             return (
-              <div key={insight.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+              <div key={insight.id} className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
                 {/* Card Header */}
                 <div
                   className="p-4 cursor-pointer hover:bg-gray-50/50 transition-colors"
@@ -338,7 +338,7 @@ export function AdminIntelligenceQueue() {
                         </span>
 
                         {/* Source badge */}
-                        <span className="text-xs font-medium px-1.5 py-0.5 rounded-md bg-gray-100 text-gray-600">
+                        <span className="text-xs font-medium px-1.5 py-0.5 rounded-md bg-gray-100 text-[#1E2D4D]/70">
                           {insight.source_id}
                         </span>
 
@@ -358,18 +358,18 @@ export function AdminIntelligenceQueue() {
                       </div>
 
                       <h3 className="text-sm font-semibold text-[#1E2D4D] truncate">{insight.title}</h3>
-                      <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{insight.summary}</p>
+                      <p className="text-xs text-[#1E2D4D]/50 mt-0.5 line-clamp-2">{insight.summary}</p>
                     </div>
 
                     <div className="flex items-center gap-2 shrink-0">
-                      <span className="text-xs text-gray-400 whitespace-nowrap">
+                      <span className="text-xs text-[#1E2D4D]/30 whitespace-nowrap">
                         <Clock className="h-3 w-3 inline mr-0.5" />
                         {timeAgo(insight.created_at)}
                       </span>
                       {isExpanded ? (
-                        <ChevronUp className="h-4 w-4 text-gray-400" />
+                        <ChevronUp className="h-4 w-4 text-[#1E2D4D]/30" />
                       ) : (
-                        <ChevronDown className="h-4 w-4 text-gray-400" />
+                        <ChevronDown className="h-4 w-4 text-[#1E2D4D]/30" />
                       )}
                     </div>
                   </div>
@@ -379,23 +379,23 @@ export function AdminIntelligenceQueue() {
                 {isExpanded && (
                   <div className="border-t border-gray-100 p-4 bg-[#FAF7F0]">
                     {/* Summary */}
-                    <p className="text-sm text-gray-700 mb-3">{insight.summary}</p>
+                    <p className="text-sm text-[#1E2D4D]/80 mb-3">{insight.summary}</p>
 
                     {/* Full analysis */}
                     {insight.full_analysis && (
                       <div className="mb-3">
-                        <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Full Analysis</h4>
-                        <p className="text-xs text-gray-600 whitespace-pre-line">{insight.full_analysis}</p>
+                        <h4 className="text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wider mb-1">Full Analysis</h4>
+                        <p className="text-xs text-[#1E2D4D]/70 whitespace-pre-line">{insight.full_analysis}</p>
                       </div>
                     )}
 
                     {/* Key Findings (from raw_source_data) */}
                     {keyFindings && keyFindings.length > 0 && (
                       <div className="mb-3">
-                        <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Key Findings</h4>
+                        <h4 className="text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wider mb-1">Key Findings</h4>
                         <ul className="space-y-1">
                           {keyFindings.map((finding, idx) => (
-                            <li key={idx} className="text-xs text-gray-600 flex items-start gap-1.5">
+                            <li key={idx} className="text-xs text-[#1E2D4D]/70 flex items-start gap-1.5">
                               <span className="text-blue-500 mt-0.5 font-bold">{idx + 1}.</span>
                               {finding}
                             </li>
@@ -417,10 +417,10 @@ export function AdminIntelligenceQueue() {
                     {/* Action Items */}
                     {insight.action_items?.length > 0 && (
                       <div className="mb-3">
-                        <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Action Items</h4>
+                        <h4 className="text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wider mb-1">Action Items</h4>
                         <ul className="space-y-1">
                           {(Array.isArray(insight.action_items) ? insight.action_items : []).map((item, idx) => (
-                            <li key={idx} className="text-xs text-gray-600 flex items-start gap-1.5">
+                            <li key={idx} className="text-xs text-[#1E2D4D]/70 flex items-start gap-1.5">
                               <span className="text-green-500 mt-0.5">-</span>
                               {item}
                             </li>
@@ -430,7 +430,7 @@ export function AdminIntelligenceQueue() {
                     )}
 
                     {/* Metadata row */}
-                    <div className="flex flex-wrap gap-3 text-xs text-gray-400 mb-3">
+                    <div className="flex flex-wrap gap-3 text-xs text-[#1E2D4D]/30 mb-3">
                       <span>Source: {insight.source_name}</span>
                       <span>Signal: {insight.market_signal_strength}</span>
                       {insight.affected_counties?.length > 0 && (
@@ -447,7 +447,7 @@ export function AdminIntelligenceQueue() {
                     {insight.tags?.length > 0 && (
                       <div className="flex flex-wrap gap-1 mb-3">
                         {insight.tags.map(tag => (
-                          <span key={tag} className="text-xs px-1.5 py-0.5 rounded bg-gray-100 text-gray-500">
+                          <span key={tag} className="text-xs px-1.5 py-0.5 rounded bg-gray-100 text-[#1E2D4D]/50">
                             {tag}
                           </span>
                         ))}
@@ -494,7 +494,7 @@ export function AdminIntelligenceQueue() {
                           </button>
                           <button
                             onClick={() => { setRejectingId(null); setRejectReason(''); }}
-                            className="px-3 py-1.5 text-xs rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors"
+                            className="px-3 py-1.5 text-xs rounded-lg border border-[#1E2D4D]/10 hover:bg-gray-100 transition-colors"
                           >
                             Cancel
                           </button>
@@ -504,21 +504,21 @@ export function AdminIntelligenceQueue() {
 
                     {/* Action Buttons (only for pending tab) */}
                     {activeTab === 'pending' && !isRejecting && (
-                      <div className="flex items-center gap-2 pt-2 border-t border-gray-200">
+                      <div className="flex items-center gap-2 pt-2 border-t border-[#1E2D4D]/10">
                         {/* Demo eligible checkbox */}
-                        <label className="flex items-center gap-1.5 text-xs text-gray-600 cursor-pointer">
+                        <label className="flex items-center gap-1.5 text-xs text-[#1E2D4D]/70 cursor-pointer">
                           <input
                             type="checkbox"
                             checked={demoEligible}
                             onChange={e => setDemoEligible(e.target.checked)}
-                            className="rounded border-gray-300 text-[#d4af37] focus:ring-[#d4af37]"
+                            className="rounded border-[#1E2D4D]/15 text-[#d4af37] focus:ring-[#d4af37]"
                           />
                           Demo
                         </label>
 
                         {/* Demo priority */}
                         {demoEligible && (
-                          <label className="flex items-center gap-1 text-xs text-gray-500">
+                          <label className="flex items-center gap-1 text-xs text-[#1E2D4D]/50">
                             Priority:
                             <input
                               type="number"
@@ -526,7 +526,7 @@ export function AdminIntelligenceQueue() {
                               max={10}
                               value={demoPriority}
                               onChange={e => setDemoPriority(Number(e.target.value))}
-                              className="w-12 border border-gray-300 rounded px-1.5 py-0.5 text-xs text-center"
+                              className="w-12 border border-[#1E2D4D]/15 rounded px-1.5 py-0.5 text-xs text-center"
                             />
                           </label>
                         )}
@@ -555,7 +555,7 @@ export function AdminIntelligenceQueue() {
 
                     {/* Published tab: view-only with status */}
                     {activeTab === 'published' && (
-                      <div className="flex items-center gap-2 pt-2 border-t border-gray-200 text-xs text-gray-400">
+                      <div className="flex items-center gap-2 pt-2 border-t border-[#1E2D4D]/10 text-xs text-[#1E2D4D]/30">
                         <Eye className="h-3.5 w-3.5" />
                         Published {insight.published_at ? timeAgo(insight.published_at) : ''}
                         {insight.reviewed_by && (

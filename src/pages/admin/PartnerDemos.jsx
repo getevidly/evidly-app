@@ -103,7 +103,7 @@ function CredentialsCard({ demo }) {
           ['Type', demo.partner_type],
         ].map(([label, value, isLink]) => (
           <div key={label} className="flex justify-between">
-            <span className="text-gray-400">{label}:</span>
+            <span className="text-[#1E2D4D]/30">{label}:</span>
             {isLink ? (
               <a href={value} target="_blank" rel="noopener noreferrer"
                 className="text-[#A08C5A] underline">{value}</a>
@@ -130,11 +130,11 @@ function CredentialsCard({ demo }) {
 // ── Status badge ────────────────────────────────────────────────
 function StatusBadge({ status }) {
   const colors = {
-    pending: 'bg-yellow-100 text-yellow-800',
-    active: 'bg-green-100 text-green-800',
-    completed: 'bg-gray-100 text-gray-700',
-    expired: 'bg-red-100 text-red-700',
-    cleaned: 'bg-[#FAF7F0] text-gray-400',
+    pending: 'bg-amber-50 text-amber-700',
+    active: 'bg-emerald-50 text-emerald-700',
+    completed: 'bg-gray-100 text-[#1E2D4D]/80',
+    expired: 'bg-red-50 text-red-700',
+    cleaned: 'bg-[#FAF7F0] text-[#1E2D4D]/30',
   };
   return (
     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${colors[status] || colors.pending}`}>
@@ -363,8 +363,8 @@ export default function PartnerDemos() {
         { label: 'Partner Demos' },
       ]} />
 
-      <h1 className="text-2xl font-bold text-[#1E2D4D] mb-1">Partner Demos</h1>
-      <p className="text-sm text-gray-500 mb-6">
+      <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D] mb-1">Partner Demos</h1>
+      <p className="text-sm text-[#1E2D4D]/50 mb-6">
         Create and manage partner demo environments for vendor, association, carrier, and integration partners
       </p>
 
@@ -373,18 +373,18 @@ export default function PartnerDemos() {
         {[
           { label: 'Active', count: activeDemos.length, color: 'text-green-700', bg: 'bg-green-50' },
           { label: 'Completed', count: completedDemos.filter(d => d.status === 'completed').length, color: 'text-blue-700', bg: 'bg-blue-50' },
-          { label: 'Cleaned', count: completedDemos.filter(d => d.status === 'cleaned').length, color: 'text-gray-500', bg: 'bg-[#FAF7F0]' },
+          { label: 'Cleaned', count: completedDemos.filter(d => d.status === 'cleaned').length, color: 'text-[#1E2D4D]/50', bg: 'bg-[#FAF7F0]' },
           { label: 'Total', count: demos.length, color: 'text-[#A08C5A]', bg: 'bg-[#FAF7F0]' },
         ].map(s => (
           <div key={s.label} className={`${s.bg} rounded-xl p-4`}>
-            <p className="text-xs text-gray-500 uppercase tracking-wider">{s.label}</p>
-            <p className={`text-2xl font-bold ${s.color}`}>{s.count}</p>
+            <p className="text-xs text-[#1E2D4D]/50 uppercase tracking-wider">{s.label}</p>
+            <p className={`text-2xl font-bold tracking-tight ${s.color}`}>{s.count}</p>
           </div>
         ))}
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 border-b border-gray-200 mb-6">
+      <div className="flex gap-1 border-b border-[#1E2D4D]/10 mb-6">
         {[
           { id: 'create', label: 'Create Partner Demo', icon: Plus },
           { id: 'active', label: 'Active Demos', icon: Play },
@@ -397,7 +397,7 @@ export default function PartnerDemos() {
               className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
                 isActive
                   ? 'border-[#1E2D4D] text-[#1E2D4D]'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  : 'border-transparent text-[#1E2D4D]/50 hover:text-gray-700'
               }`}>
               <Icon size={15} />
               {tab.label}
@@ -443,7 +443,7 @@ export default function PartnerDemos() {
                         className={`text-left p-4 rounded-xl border-2 transition-all ${
                           isSelected
                             ? 'border-[#1E2D4D] bg-[#FAF7F0]'
-                            : 'border-gray-200 hover:border-gray-300 bg-white'
+                            : 'border-[#1E2D4D]/10 hover:border-gray-300 bg-white'
                         }`}>
                         <div className="flex items-center gap-3">
                           <div className={`p-2 rounded-lg ${pt.bg}`}>
@@ -451,7 +451,7 @@ export default function PartnerDemos() {
                           </div>
                           <div>
                             <p className="font-medium text-[#1E2D4D]">{pt.label}</p>
-                            <p className="text-xs text-gray-500 mt-0.5">{pt.description}</p>
+                            <p className="text-xs text-[#1E2D4D]/50 mt-0.5">{pt.description}</p>
                           </div>
                           {isSelected && (
                             <CheckCircle2 size={20} className="ml-auto text-[#1E2D4D]" />
@@ -471,10 +471,10 @@ export default function PartnerDemos() {
                       2. Partner Information
                     </legend>
                     <label className="block">
-                      <span className="text-xs text-gray-500">Company Name *</span>
+                      <span className="text-xs text-[#1E2D4D]/50">Company Name *</span>
                       <input value={form.company_name}
                         onChange={e => updateForm('company_name', e.target.value)}
-                        className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#1E2D4D]/20 focus:border-[#1E2D4D]"
+                        className="mt-1 w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
                         placeholder={
                           selectedType === 'vendor' ? 'Cleaning Pros Plus' :
                           selectedType === 'association' ? 'California Restaurant Association' :
@@ -485,17 +485,17 @@ export default function PartnerDemos() {
                     </label>
                     <div className="grid grid-cols-2 gap-3">
                       <label className="block">
-                        <span className="text-xs text-gray-500">Contact Name</span>
+                        <span className="text-xs text-[#1E2D4D]/50">Contact Name</span>
                         <input value={form.contact_name}
                           onChange={e => updateForm('contact_name', e.target.value)}
-                          className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#1E2D4D]/20 focus:border-[#1E2D4D]"
+                          className="mt-1 w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
                           placeholder="Jane Smith" />
                       </label>
                       <label className="block">
-                        <span className="text-xs text-gray-500">Contact Email</span>
+                        <span className="text-xs text-[#1E2D4D]/50">Contact Email</span>
                         <input type="email" value={form.contact_email}
                           onChange={e => updateForm('contact_email', e.target.value)}
-                          className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#1E2D4D]/20 focus:border-[#1E2D4D]"
+                          className="mt-1 w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
                           placeholder="jane@partner.com" />
                       </label>
                     </div>
@@ -509,10 +509,10 @@ export default function PartnerDemos() {
 
                     {selectedType === 'vendor' && (
                       <label className="block">
-                        <span className="text-xs text-gray-500">Service Types</span>
+                        <span className="text-xs text-[#1E2D4D]/50">Service Types</span>
                         <input value={form.service_types}
                           onChange={e => updateForm('service_types', e.target.value)}
-                          className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#1E2D4D]/20 focus:border-[#1E2D4D]"
+                          className="mt-1 w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
                           placeholder="hood_cleaning, fire_suppression" />
                       </label>
                     )}
@@ -520,16 +520,16 @@ export default function PartnerDemos() {
                     {selectedType === 'association' && (
                       <>
                         <label className="block">
-                          <span className="text-xs text-gray-500">Estimated Member Count</span>
+                          <span className="text-xs text-[#1E2D4D]/50">Estimated Member Count</span>
                           <input type="number" value={form.member_count} min={5} max={50}
                             onChange={e => updateForm('member_count', parseInt(e.target.value) || 10)}
-                            className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#1E2D4D]/20 focus:border-[#1E2D4D]" />
+                            className="mt-1 w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]" />
                         </label>
                         <label className="block">
-                          <span className="text-xs text-gray-500">State(s)</span>
+                          <span className="text-xs text-[#1E2D4D]/50">State(s)</span>
                           <input value={form.states}
                             onChange={e => updateForm('states', e.target.value)}
-                            className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#1E2D4D]/20 focus:border-[#1E2D4D]"
+                            className="mt-1 w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
                             placeholder="California" />
                         </label>
                       </>
@@ -537,10 +537,10 @@ export default function PartnerDemos() {
 
                     {selectedType === 'integration' && (
                       <label className="block">
-                        <span className="text-xs text-gray-500">Integration Type</span>
+                        <span className="text-xs text-[#1E2D4D]/50">Integration Type</span>
                         <select value={form.integration_type}
                           onChange={e => updateForm('integration_type', e.target.value)}
-                          className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-[#1E2D4D]/20 focus:border-[#1E2D4D]">
+                          className="mt-1 w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]">
                           {INTEGRATION_TYPES.map(t => (
                             <option key={t.value} value={t.value}>{t.label}</option>
                           ))}
@@ -550,10 +550,10 @@ export default function PartnerDemos() {
 
                     {selectedType === 'carrier' && (
                       <label className="block">
-                        <span className="text-xs text-gray-500">Coverage Area</span>
+                        <span className="text-xs text-[#1E2D4D]/50">Coverage Area</span>
                         <input value={form.coverage_area}
                           onChange={e => updateForm('coverage_area', e.target.value)}
-                          className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#1E2D4D]/20 focus:border-[#1E2D4D]"
+                          className="mt-1 w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
                           placeholder="Central California" />
                       </label>
                     )}
@@ -561,23 +561,23 @@ export default function PartnerDemos() {
                     {selectedType === 'tribal_casino' && (
                       <>
                         <label className="block">
-                          <span className="text-xs text-gray-500">Tribe</span>
+                          <span className="text-xs text-[#1E2D4D]/50">Tribe</span>
                           <select value={form.tribe_index}
                             onChange={e => updateForm('tribe_index', parseInt(e.target.value))}
-                            className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-[#1E2D4D]/20 focus:border-[#1E2D4D]">
+                            className="mt-1 w-full border border-[#1E2D4D]/15 rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]">
                             {TRIBAL_OPTIONS.map((t, i) => (
                               <option key={i} value={i}>{t.name} — {t.casino}</option>
                             ))}
                           </select>
                         </label>
                         <label className="block">
-                          <span className="text-xs text-gray-500">Food Outlet Count</span>
+                          <span className="text-xs text-[#1E2D4D]/50">Food Outlet Count</span>
                           <div className="flex items-center gap-3 mt-1">
                             <button onClick={() => updateForm('outlet_count', Math.max(1, form.outlet_count - 1))}
-                              className="w-8 h-8 rounded-lg border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-50">-</button>
+                              className="w-8 h-8 rounded-lg border border-[#1E2D4D]/15 flex items-center justify-center text-[#1E2D4D]/70 hover:bg-gray-50">-</button>
                             <span className="text-lg font-bold text-[#1E2D4D] w-8 text-center">{form.outlet_count}</span>
                             <button onClick={() => updateForm('outlet_count', Math.min(8, form.outlet_count + 1))}
-                              className="w-8 h-8 rounded-lg border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-50">+</button>
+                              className="w-8 h-8 rounded-lg border border-[#1E2D4D]/15 flex items-center justify-center text-[#1E2D4D]/70 hover:bg-gray-50">+</button>
                           </div>
                         </label>
                         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
@@ -595,7 +595,7 @@ export default function PartnerDemos() {
 
                   {/* Submit */}
                   <button onClick={handleCreateDemo} disabled={creating}
-                    className="w-full py-3 bg-[#1E2D4D] text-white rounded-xl text-sm font-semibold hover:bg-[#162340] disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                    className="w-full py-3 bg-[#1E2D4D] text-white rounded-xl text-sm font-semibold hover:bg-[#162340] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 active:scale-[0.98]">
                     {creating ? (
                       <span className="flex items-center justify-center gap-2">
                         <RefreshCw size={14} className="animate-spin" /> Generating Partner Demo...
@@ -616,14 +616,14 @@ export default function PartnerDemos() {
       {/* ── Tab: Active Demos ────────────────────────────────────── */}
       {activeTab === 'active' && (
         <div className="space-y-4">
-          {loading && <p className="text-gray-400 text-sm">Loading demos...</p>}
+          {loading && <p className="text-[#1E2D4D]/30 text-sm">Loading demos...</p>}
           {!loading && activeDemos.length === 0 && (
-            <div className="text-center py-12 text-gray-400">
+            <div className="text-center py-12 text-[#1E2D4D]/30">
               <Handshake size={40} className="mx-auto mb-3 opacity-40" />
               <p className="font-medium">No active partner demos</p>
               <p className="text-sm mt-1">Create a new partner demo to get started</p>
               <button onClick={() => setActiveTab('create')}
-                className="mt-3 px-4 py-2 bg-[#1E2D4D] text-white rounded-lg text-sm hover:bg-[#162340] transition-colors">
+                className="mt-3 px-4 py-2 bg-[#1E2D4D] text-white rounded-lg text-sm hover:bg-[#162340] transition-all duration-150 active:scale-[0.98]">
                 <Plus size={14} className="inline mr-1" /> Create Demo
               </button>
             </div>
@@ -632,15 +632,15 @@ export default function PartnerDemos() {
             const typeConfig = getTypeConfig(demo.partner_type);
             const TypeIcon = typeConfig?.icon || Handshake;
             return (
-              <div key={demo.id} className="bg-white border border-gray-200 rounded-xl p-5">
+              <div key={demo.id} className="bg-white border border-[#1E2D4D]/10 rounded-xl p-5">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <div className={`p-2 rounded-lg ${typeConfig?.bg || 'bg-[#FAF7F0]'}`}>
-                      <TypeIcon size={20} className={typeConfig?.color || 'text-gray-700'} />
+                      <TypeIcon size={20} className={typeConfig?.color || 'text-[#1E2D4D]/80'} />
                     </div>
                     <div>
                       <h3 className="font-semibold text-[#1E2D4D]">{demo.partner_company}</h3>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-[#1E2D4D]/50">
                         {typeConfig?.label || demo.partner_type}
                         {demo.contact_name && ` · ${demo.contact_name}`}
                       </p>
@@ -649,7 +649,7 @@ export default function PartnerDemos() {
                   <div className="flex items-center gap-2">
                     <StatusBadge status={demo.status} />
                     <button onClick={() => handleExtend(demo.id)}
-                      className="px-3 py-1.5 text-[#1E2D4D] border border-gray-200 rounded-lg text-xs hover:bg-gray-50 transition-colors">
+                      className="px-3 py-1.5 text-[#1E2D4D] border border-[#1E2D4D]/10 rounded-lg text-xs hover:bg-gray-50 transition-colors">
                       <Clock size={12} className="inline mr-1" /> Extend 7d
                     </button>
                     <button onClick={() => handleManualCleanup(demo.id, demo.demo_org_id)}
@@ -660,7 +660,7 @@ export default function PartnerDemos() {
                 </div>
                 <CredentialsCard demo={demo} />
                 {demo.cleanup_scheduled_for && (
-                  <p className="text-xs text-gray-400 mt-3">
+                  <p className="text-xs text-[#1E2D4D]/30 mt-3">
                     <Clock size={12} className="inline mr-1" />
                     Auto-cleanup: {new Date(demo.cleanup_scheduled_for).toLocaleDateString()}
                   </p>
@@ -675,23 +675,23 @@ export default function PartnerDemos() {
       {activeTab === 'completed' && (
         <div className="space-y-4">
           {completedDemos.length === 0 && (
-            <p className="text-center text-gray-400 py-8">No completed demos yet.</p>
+            <p className="text-center text-[#1E2D4D]/30 py-8">No completed demos yet.</p>
           )}
           {completedDemos.map(demo => {
             const typeConfig = getTypeConfig(demo.partner_type);
             return (
               <div key={demo.id}
-                className="bg-white border border-gray-200 rounded-xl p-5 flex items-center justify-between">
+                className="bg-white border border-[#1E2D4D]/10 rounded-xl p-5 flex items-center justify-between">
                 <div>
                   <h3 className="font-medium text-[#1E2D4D]">
                     {demo.partner_company}
                   </h3>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-[#1E2D4D]/50">
                     {typeConfig?.label || demo.partner_type}
                     {demo.completed_at && ` · Completed ${new Date(demo.completed_at).toLocaleDateString()}`}
                   </p>
                   {demo.status === 'cleaned' && demo.cleaned_at && (
-                    <p className="text-xs text-gray-400 mt-1">
+                    <p className="text-xs text-[#1E2D4D]/30 mt-1">
                       Cleaned {new Date(demo.cleaned_at).toLocaleString()}
                     </p>
                   )}

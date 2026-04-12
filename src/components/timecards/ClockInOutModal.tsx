@@ -29,7 +29,7 @@ export function ClockInOutModal({ mode, currentDuration, onClose, onSubmit }: Cl
         <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: '#D1D9E6' }}>
           <div className="flex items-center gap-2">
             <Clock className="w-5 h-5" style={{ color: '#1E2D4D' }} />
-            <h3 className="text-lg font-semibold" style={{ color: '#0B1628' }}>
+            <h3 className="text-lg font-semibold tracking-tight" style={{ color: '#0B1628' }}>
               {mode === 'in' ? 'Clock In' : 'Clock Out'}
             </h3>
           </div>
@@ -80,7 +80,7 @@ export function ClockInOutModal({ mode, currentDuration, onClose, onSubmit }: Cl
               onChange={(e) => setNotes(e.target.value)}
               rows={2}
               placeholder={mode === 'in' ? 'Any notes for this shift...' : 'End of shift notes...'}
-              className="w-full px-3 py-2 border rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+              className="w-full px-3 py-2 border rounded-lg text-sm resize-none focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
               style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
             />
           </div>

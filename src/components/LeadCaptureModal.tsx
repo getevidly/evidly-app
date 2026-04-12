@@ -47,7 +47,7 @@ export function LeadCaptureModal({ isOpen, onClose }: LeadCaptureModalProps) {
     <>
       <div className="fixed inset-0 bg-black/50 z-[80]" onClick={onClose} />
       <div className="fixed inset-0 z-[90] flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl border border-gray-200 w-full max-w-md overflow-hidden" onClick={(e) => e.stopPropagation()}>
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 w-full max-w-md overflow-hidden" onClick={(e) => e.stopPropagation()}>
           {/* Header */}
           <div className="bg-[#1E2D4D] px-6 py-5 flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -68,61 +68,61 @@ export function LeadCaptureModal({ isOpen, onClose }: LeadCaptureModalProps) {
           <form onSubmit={handleSubmit} className="p-6 space-y-4">
             <div>
               <h2 className="text-lg font-bold text-[#1E2D4D] mb-1">See it in action</h2>
-              <p className="text-sm text-gray-500">We'll personalize the demo for your business.</p>
+              <p className="text-sm text-[#1E2D4D]/50">We'll personalize the demo for your business.</p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+              <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Full Name</label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#1E2D4D]/30" />
                 <input
                   type="text"
                   required
                   value={form.fullName}
                   onChange={(e) => setForm({ ...form, fullName: e.target.value })}
                   placeholder="John Smith"
-                  className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent"
+                  className="block w-full pl-10 pr-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] focus:border-transparent"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Email</label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#1E2D4D]/30" />
                 <input
                   type="email"
                   required
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
                   placeholder="john@company.com"
-                  className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent"
+                  className="block w-full pl-10 pr-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] focus:border-transparent"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
+              <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Company Name</label>
               <div className="relative">
-                <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#1E2D4D]/30" />
                 <input
                   type="text"
                   required
                   value={form.companyName}
                   onChange={(e) => setForm({ ...form, companyName: e.target.value })}
                   placeholder="e.g. Your Restaurant Group"
-                  className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent"
+                  className="block w-full pl-10 pr-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] focus:border-transparent"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Business Type</label>
+              <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Business Type</label>
               <select
                 required
                 value={form.businessType}
                 onChange={(e) => setForm({ ...form, businessType: e.target.value })}
-                className="block w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent"
+                className="block w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] focus:border-transparent"
               >
                 <option value="">Select your industry...</option>
                 {BUSINESS_TYPES.map((bt) => (
@@ -140,7 +140,7 @@ export function LeadCaptureModal({ isOpen, onClose }: LeadCaptureModalProps) {
               {submitting ? 'Loading...' : 'Start My Demo'}
             </button>
 
-            <p className="text-xs text-center text-gray-400">
+            <p className="text-xs text-center text-[#1E2D4D]/30">
               No account needed — explore the full platform instantly
             </p>
           </form>

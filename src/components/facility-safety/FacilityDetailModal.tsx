@@ -55,8 +55,8 @@ function StarRating({ rating }: { rating: number }) {
 function SectionHeader({ icon: Icon, title }: { icon: typeof Shield; title: string }) {
   return (
     <div className="flex items-center gap-2 mb-2">
-      <Icon size={14} className="text-gray-400" />
-      <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wide">{title}</h4>
+      <Icon size={14} className="text-[#1E2D4D]/30" />
+      <h4 className="text-xs font-bold text-[#1E2D4D]/50 uppercase tracking-wide">{title}</h4>
     </div>
   );
 }
@@ -64,7 +64,7 @@ function SectionHeader({ icon: Icon, title }: { icon: typeof Shield; title: stri
 function EmptyState({ message }: { message: string }) {
   return (
     <div className="text-center py-4">
-      <p className="text-xs text-gray-400">{message}</p>
+      <p className="text-xs text-[#1E2D4D]/30">{message}</p>
     </div>
   );
 }
@@ -98,7 +98,7 @@ export function FacilityDetailModal({ open, onClose, data, onAction }: FacilityD
               </span>
             </div>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors" aria-label="Close">
+          <button onClick={onClose} className="p-1.5 rounded-lg text-[#1E2D4D]/30 hover:text-gray-600 hover:bg-gray-100 transition-colors" aria-label="Close">
             <X size={18} />
           </button>
         </div>
@@ -117,11 +117,11 @@ export function FacilityDetailModal({ open, onClose, data, onAction }: FacilityD
                   <div key={i} className="flex items-start justify-between py-2 px-3 rounded-lg bg-[#FAF7F0] text-sm">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-xs font-medium text-gray-500">{new Date(entry.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                        <span className="text-xs font-medium text-[#1E2D4D]/50">{new Date(entry.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                         <ResultBadge result={entry.result} />
                       </div>
-                      <p className="text-xs text-gray-700 mt-0.5">{entry.description}</p>
-                      <p className="text-xs text-gray-400 mt-0.5">
+                      <p className="text-xs text-[#1E2D4D]/80 mt-0.5">{entry.description}</p>
+                      <p className="text-xs text-[#1E2D4D]/30 mt-0.5">
                         {entry.vendor}{entry.technician ? ` — ${entry.technician}` : ''}
                       </p>
                     </div>
@@ -143,19 +143,19 @@ export function FacilityDetailModal({ open, onClose, data, onAction }: FacilityD
                   <StarRating rating={data.vendor.rating} />
                 </div>
                 {data.vendor.phone && (
-                  <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                  <div className="flex items-center gap-1.5 text-xs text-[#1E2D4D]/50">
                     <Phone size={11} />
                     <span>{data.vendor.phone}</span>
                   </div>
                 )}
-                <div className="flex gap-4 text-xs text-gray-500 pt-1">
+                <div className="flex gap-4 text-xs text-[#1E2D4D]/50 pt-1">
                   <div>
-                    <span className="text-gray-400">Last Service: </span>
-                    <span className="font-medium text-gray-700">{new Date(data.vendor.lastService).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                    <span className="text-[#1E2D4D]/30">Last Service: </span>
+                    <span className="font-medium text-[#1E2D4D]/80">{new Date(data.vendor.lastService).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                   </div>
                   <div>
-                    <span className="text-gray-400">Next Due: </span>
-                    <span className="font-medium text-gray-700">{new Date(data.vendor.nextDue).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                    <span className="text-[#1E2D4D]/30">Next Due: </span>
+                    <span className="font-medium text-[#1E2D4D]/80">{new Date(data.vendor.nextDue).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                   </div>
                 </div>
               </div>
@@ -167,19 +167,19 @@ export function FacilityDetailModal({ open, onClose, data, onAction }: FacilityD
             <SectionHeader icon={Shield} title="Compliance Requirement" />
             <div className="rounded-lg bg-[#FAF7F0] p-3 space-y-1.5">
               <div className="flex items-center gap-2 text-xs">
-                <span className="text-gray-400 w-20">Frequency:</span>
-                <span className="font-medium text-gray-700">{data.compliance.frequency}</span>
+                <span className="text-[#1E2D4D]/30 w-20">Frequency:</span>
+                <span className="font-medium text-[#1E2D4D]/80">{data.compliance.frequency}</span>
               </div>
               <div className="flex items-center gap-2 text-xs">
-                <span className="text-gray-400 w-20">Authority:</span>
-                <span className="font-medium text-gray-700">{data.compliance.authorityReference}</span>
+                <span className="text-[#1E2D4D]/30 w-20">Authority:</span>
+                <span className="font-medium text-[#1E2D4D]/80">{data.compliance.authorityReference}</span>
               </div>
               <div className="flex items-center gap-2 text-xs">
-                <span className="text-gray-400 w-20">Jurisdiction:</span>
-                <span className="font-medium text-gray-700">{data.compliance.jurisdiction}</span>
+                <span className="text-[#1E2D4D]/30 w-20">Jurisdiction:</span>
+                <span className="font-medium text-[#1E2D4D]/80">{data.compliance.jurisdiction}</span>
               </div>
               {data.compliance.notes && (
-                <p className="text-xs text-gray-400 pt-1 border-t border-gray-100 mt-1">{data.compliance.notes}</p>
+                <p className="text-xs text-[#1E2D4D]/30 pt-1 border-t border-gray-100 mt-1">{data.compliance.notes}</p>
               )}
             </div>
           </div>
@@ -194,8 +194,8 @@ export function FacilityDetailModal({ open, onClose, data, onAction }: FacilityD
                 {data.documents.map((doc, i) => (
                   <div key={i} className="flex items-center justify-between py-2 px-3 rounded-lg bg-[#FAF7F0] text-xs">
                     <div className="min-w-0 flex-1">
-                      <p className="font-medium text-gray-700 truncate">{doc.name}</p>
-                      <p className="text-xs text-gray-400">
+                      <p className="font-medium text-[#1E2D4D]/80 truncate">{doc.name}</p>
+                      <p className="text-xs text-[#1E2D4D]/30">
                         Uploaded {new Date(doc.uploadedDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                         {doc.expiryDate ? ` · Expires ${new Date(doc.expiryDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}` : ''}
                       </p>
@@ -223,14 +223,14 @@ export function FacilityDetailModal({ open, onClose, data, onAction }: FacilityD
           </button>
           <button
             onClick={() => onAction('change_vendor', data.category)}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold border border-[#1E2D4D]/15 text-[#1E2D4D]/80 hover:bg-gray-50 transition-colors"
           >
             <Building2 size={13} />
             Change Vendor
           </button>
           <button
             onClick={() => onAction('upload', data.category)}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold border border-[#1E2D4D]/15 text-[#1E2D4D]/80 hover:bg-gray-50 transition-colors"
           >
             <Upload size={13} />
             Upload Document
@@ -238,7 +238,7 @@ export function FacilityDetailModal({ open, onClose, data, onAction }: FacilityD
           <div className="flex-1" />
           <button
             onClick={onClose}
-            className="px-3.5 py-2 rounded-lg text-xs font-semibold text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-colors"
+            className="px-3.5 py-2 rounded-lg text-xs font-semibold text-[#1E2D4D]/50 hover:text-gray-700 hover:bg-gray-50 transition-colors"
           >
             Close
           </button>

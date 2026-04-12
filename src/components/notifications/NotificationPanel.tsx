@@ -107,7 +107,7 @@ export function NotificationPanel({ isOpen, onClose }: NotificationPanelProps) {
               className="p-2.5 -m-1 rounded-lg hover:bg-gray-200 transition-colors"
               aria-label="Close"
             >
-              <X className="h-4 w-4 text-gray-500" />
+              <X className="h-4 w-4 text-[#1E2D4D]/50" />
             </button>
           </div>
         </div>
@@ -124,8 +124,8 @@ export function NotificationPanel({ isOpen, onClose }: NotificationPanelProps) {
           {filtered.length === 0 ? (
             <div className="text-center py-16 px-6">
               <Bell className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-              <p className="text-sm font-medium text-gray-500">No notifications</p>
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-sm font-medium text-[#1E2D4D]/50">No notifications</p>
+              <p className="text-xs text-[#1E2D4D]/30 mt-1">
                 Alerts will appear here as your team uses EvidLY.
               </p>
             </div>

@@ -53,7 +53,7 @@ export function LockScreen({ userEmail, userName, onUnlock, onSwitchUser, onMaxA
   return (
     <div className="fixed inset-0 z-[100000] bg-[#faf8f3] flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
-        <div className="bg-white rounded-xl border border-gray-200 p-8">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8">
           {/* EvidLY Logo */}
           <div className="flex justify-center mb-2">
             <div className="flex items-center">
@@ -64,7 +64,7 @@ export function LockScreen({ userEmail, userName, onUnlock, onSwitchUser, onMaxA
                   <path d="M22 32L26 36L34 26" stroke="#d4af37" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
-              <span className="ml-3 text-2xl font-bold">
+              <span className="ml-3 text-2xl font-bold tracking-tight">
                 <span className="text-[#1E2D4D]">Evid</span>
                 <span className="text-[#d4af37]">LY</span>
               </span>
@@ -77,7 +77,7 @@ export function LockScreen({ userEmail, userName, onUnlock, onSwitchUser, onMaxA
               <Lock className="w-8 h-8 text-[#1E2D4D]" />
             </div>
             <h2 className="text-lg font-bold text-[#1E2D4D]">Session Locked</h2>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-[#1E2D4D]/50 mt-1">
               Locked due to inactivity
             </p>
             <p className="text-sm font-medium text-[#1E2D4D] mt-2">
@@ -100,12 +100,12 @@ export function LockScreen({ userEmail, userName, onUnlock, onSwitchUser, onMaxA
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
               autoFocus
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-[#d4af37]"
+              className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-lg text-base focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] focus:border-[#d4af37]"
             />
             <button
               type="submit"
               disabled={loading || !password.trim()}
-              className="w-full mt-3 py-3 bg-[#1E2D4D] text-white font-semibold rounded-lg hover:bg-[#162340] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="w-full mt-3 py-3 bg-[#1E2D4D] text-white font-semibold rounded-lg hover:bg-[#162340] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 active:scale-[0.98]"
             >
               {loading ? 'Verifying...' : 'Unlock'}
             </button>
@@ -115,7 +115,7 @@ export function LockScreen({ userEmail, userName, onUnlock, onSwitchUser, onMaxA
           <div className="mt-6 text-center">
             <button
               onClick={onSwitchUser}
-              className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#1E2D4D] transition-colors bg-transparent border-none cursor-pointer"
+              className="inline-flex items-center gap-1.5 text-sm text-[#1E2D4D]/50 hover:text-[#1E2D4D] transition-colors bg-transparent border-none cursor-pointer"
             >
               <LogOut className="w-4 h-4" />
               Switch User

@@ -61,7 +61,7 @@ export function AddDeficiencyModal({ onClose, onSubmit }: AddDeficiencyModalProp
         <div className="flex items-center justify-between px-6 py-4 border-b sticky top-0 bg-white z-10" style={{ borderColor: '#D1D9E6' }}>
           <div className="flex items-center gap-2">
             <Plus className="w-5 h-5" style={{ color: '#1E2D4D' }} />
-            <h3 className="text-lg font-semibold" style={{ color: '#0B1628' }}>Add Deficiency</h3>
+            <h3 className="text-lg font-semibold tracking-tight" style={{ color: '#0B1628' }}>Add Deficiency</h3>
           </div>
           <button onClick={onClose} className="p-2.5 -m-1 rounded-lg hover:bg-gray-100 transition-colors" aria-label="Close">
             <X className="w-5 h-5" style={{ color: '#6B7F96' }} />
@@ -77,7 +77,7 @@ export function AddDeficiencyModal({ onClose, onSubmit }: AddDeficiencyModalProp
               <select
                 value={locationId}
                 onChange={(e) => setLocationId(e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                className="w-full px-3 py-2 border rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
                 style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
               >
                 <option value="">Select location...</option>
@@ -93,7 +93,7 @@ export function AddDeficiencyModal({ onClose, onSubmit }: AddDeficiencyModalProp
               <select
                 value={severity}
                 onChange={(e) => setSeverity(e.target.value as DefSeverity)}
-                className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                className="w-full px-3 py-2 border rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
                 style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
               >
                 {SEVERITIES.map((s) => (
@@ -112,7 +112,7 @@ export function AddDeficiencyModal({ onClose, onSubmit }: AddDeficiencyModalProp
               value={code}
               onChange={(e) => setCode(e.target.value)}
               placeholder="e.g. NFPA96-T12.4"
-              className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+              className="w-full px-3 py-2 border rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
               style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
             />
           </div>
@@ -126,7 +126,7 @@ export function AddDeficiencyModal({ onClose, onSubmit }: AddDeficiencyModalProp
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Short description of the deficiency"
-              className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+              className="w-full px-3 py-2 border rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
               style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
             />
           </div>
@@ -140,7 +140,7 @@ export function AddDeficiencyModal({ onClose, onSubmit }: AddDeficiencyModalProp
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
               placeholder="Full compliance code description and finding details..."
-              className="w-full px-3 py-2 border rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+              className="w-full px-3 py-2 border rounded-lg text-sm resize-none focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
               style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
             />
           </div>
@@ -154,7 +154,7 @@ export function AddDeficiencyModal({ onClose, onSubmit }: AddDeficiencyModalProp
               value={locationDescription}
               onChange={(e) => setLocationDescription(e.target.value)}
               placeholder="e.g. Main hood system, fryer bank"
-              className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+              className="w-full px-3 py-2 border rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
               style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
             />
           </div>
@@ -171,7 +171,7 @@ export function AddDeficiencyModal({ onClose, onSubmit }: AddDeficiencyModalProp
               placeholder="0.00"
               min="0"
               step="0.01"
-              className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+              className="w-full px-3 py-2 border rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
               style={{ borderColor: '#D1D9E6', color: '#0B1628', fontSize: 16 }}
             />
           </div>

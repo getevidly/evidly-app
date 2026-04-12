@@ -697,7 +697,7 @@ export function Sidebar() {
               href="https://evidly.com?ref=powered-by"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-300 transition-colors"
+              className="flex items-center gap-1.5 text-xs text-[#1E2D4D]/30 hover:text-gray-300 transition-colors"
             >
               <EvidlyIcon size={14} />
               <span>Powered by <span className="font-semibold text-gray-300">EvidLY</span></span>
@@ -713,7 +713,7 @@ export function Sidebar() {
           <div className="flex items-center justify-between px-4 py-3">
             <button
               onClick={handleLogout}
-              className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors"
+              className="flex items-center gap-3 text-[#1E2D4D]/30 hover:text-white transition-colors"
             >
               <LogOut size={16} />
               <span className="text-sm">Log Out</span>

@@ -398,12 +398,12 @@ export function CorrectiveActions() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 className="text-xl font-bold" style={{ color: NAVY }}>Corrective Actions</h1>
-          <p className="text-sm text-gray-500 mt-1">Track and resolve compliance violations with documented action plans.</p>
+          <p className="text-sm text-[#1E2D4D]/50 mt-1">Track and resolve compliance violations with documented action plans.</p>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={handleExportPdf}
-            className="px-3 py-2 rounded-lg text-sm font-medium border border-gray-200 text-gray-600 hover:bg-gray-50 flex items-center gap-1.5"
+            className="px-3 py-2 rounded-lg text-sm font-medium border border-[#1E2D4D]/10 text-[#1E2D4D]/70 hover:bg-gray-50 flex items-center gap-1.5"
           >
             <Download size={14} />
             Export PDF
@@ -428,20 +428,20 @@ export function CorrectiveActions() {
           { label: 'Avg Resolve', value: `${counts.avgResolve}d`, color: '#d97706' },
           { label: 'Verified', value: counts.verified, color: NAVY },
         ].map(card => (
-          <div key={card.label} className="bg-white rounded-xl border border-gray-200 p-4 text-center">
-            <p className="text-2xl font-bold" style={{ color: card.color }}>{card.value}</p>
-            <p className="text-xs text-gray-500 mt-1">{card.label}</p>
+          <div key={card.label} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 text-center">
+            <p className="text-2xl font-bold tracking-tight" style={{ color: card.color }}>{card.value}</p>
+            <p className="text-xs text-[#1E2D4D]/50 mt-1">{card.label}</p>
           </div>
         ))}
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl border border-gray-200 p-3 flex flex-wrap items-center gap-3">
-        <Filter size={16} className="text-gray-400" />
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-3 flex flex-wrap items-center gap-3">
+        <Filter size={16} className="text-[#1E2D4D]/30" />
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value as any)}
-          className="text-sm border border-gray-200 rounded-lg px-3 py-2.5 text-gray-700"
+          className="text-sm border border-[#1E2D4D]/10 rounded-lg px-3 py-2.5 text-[#1E2D4D]/80"
           style={{ fontSize: 16 }}
         >
           <option value="all">All Statuses</option>
@@ -454,7 +454,7 @@ export function CorrectiveActions() {
         <select
           value={filterLocation}
           onChange={(e) => setFilterLocation(e.target.value)}
-          className="text-sm border border-gray-200 rounded-lg px-3 py-2.5 text-gray-700"
+          className="text-sm border border-[#1E2D4D]/10 rounded-lg px-3 py-2.5 text-[#1E2D4D]/80"
           style={{ fontSize: 16 }}
         >
           <option value="all">All Locations</option>
@@ -465,7 +465,7 @@ export function CorrectiveActions() {
         <select
           value={filterSeverity}
           onChange={(e) => setFilterSeverity(e.target.value as any)}
-          className="text-sm border border-gray-200 rounded-lg px-3 py-2.5 text-gray-700"
+          className="text-sm border border-[#1E2D4D]/10 rounded-lg px-3 py-2.5 text-[#1E2D4D]/80"
           style={{ fontSize: 16 }}
         >
           <option value="all">All Severities</option>
@@ -475,11 +475,11 @@ export function CorrectiveActions() {
           <option value="low">Low</option>
         </select>
         <div className="flex items-center gap-1.5 ml-auto">
-          <ArrowDown size={12} className="text-gray-400" />
+          <ArrowDown size={12} className="text-[#1E2D4D]/30" />
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as SortOption)}
-            className="text-sm border border-gray-200 rounded-lg px-3 py-2.5 text-gray-700"
+            className="text-sm border border-[#1E2D4D]/10 rounded-lg px-3 py-2.5 text-[#1E2D4D]/80"
             style={{ fontSize: 16 }}
           >
             <option value="due_date">Sort: Due Date</option>
@@ -491,7 +491,7 @@ export function CorrectiveActions() {
         {hasAnyFilters && (
           <button
             onClick={() => { setFilterStatus('all'); setFilterLocation('all'); setFilterSeverity('all'); }}
-            className="text-xs text-gray-500 hover:text-gray-700 underline"
+            className="text-xs text-[#1E2D4D]/50 hover:text-gray-700 underline"
           >
             Clear filters
           </button>
@@ -502,10 +502,10 @@ export function CorrectiveActions() {
       <div className="space-y-3">
         {/* Empty state: no actions at all */}
         {actions.length === 0 && (
-          <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8 text-center">
             <AlertTriangle className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-            <p className="text-sm font-medium text-gray-700">No corrective actions on file</p>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-sm font-medium text-[#1E2D4D]/80">No corrective actions on file</p>
+            <p className="text-xs text-[#1E2D4D]/50 mt-1">
               Actions are created from self-inspections, failed checklists, temperature excursions, or manually.
             </p>
           </div>
@@ -513,7 +513,7 @@ export function CorrectiveActions() {
 
         {/* Empty state: no matches */}
         {actions.length > 0 && filtered.length === 0 && (
-          <div className="bg-white rounded-xl border border-gray-200 p-8 text-center text-gray-400 text-sm">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8 text-center text-[#1E2D4D]/30 text-sm">
             No corrective actions match the selected filters.
           </div>
         )}
@@ -527,7 +527,7 @@ export function CorrectiveActions() {
           return (
             <div
               key={item.id}
-              className="bg-white rounded-xl border border-gray-200 overflow-hidden cursor-pointer transition-all hover:border-gray-300"
+              className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden cursor-pointer transition-all hover:border-gray-300"
               onClick={() => navigate(`/corrective-actions/${item.id}`)}
             >
               <div className="p-4">
@@ -558,8 +558,8 @@ export function CorrectiveActions() {
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-gray-500 mb-2 line-clamp-2">{item.description}</p>
-                    <div className="flex flex-wrap items-center gap-4 text-xs text-gray-400">
+                    <p className="text-xs text-[#1E2D4D]/50 mb-2 line-clamp-2">{item.description}</p>
+                    <div className="flex flex-wrap items-center gap-4 text-xs text-[#1E2D4D]/30">
                       <span className="flex items-center gap-1"><MapPin size={12} />{item.location}</span>
                       {item.assignee && <span className="flex items-center gap-1"><User size={12} />{item.assignee}</span>}
                       <span>Source: {item.source}</span>
@@ -580,21 +580,21 @@ export function CorrectiveActions() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
           <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
             {/* Modal header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[#1E2D4D]/10">
               <h2 className="text-lg font-bold" style={{ color: NAVY }}>New Corrective Action</h2>
-              <button onClick={() => setShowCreateModal(false)} className="text-gray-400 hover:text-gray-600">
+              <button onClick={() => setShowCreateModal(false)} className="text-[#1E2D4D]/30 hover:text-gray-600">
                 <X size={20} />
               </button>
             </div>
 
             {/* Tab toggle */}
-            <div className="flex border-b border-gray-200 px-6">
+            <div className="flex border-b border-[#1E2D4D]/10 px-6">
               <button
                 onClick={() => setCreateTab('template')}
                 className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors flex items-center gap-1.5 ${
                   createTab === 'template'
                     ? 'border-current text-[#1E2D4D]'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                    : 'border-transparent text-[#1E2D4D]/50 hover:text-gray-700'
                 }`}
               >
                 <BookOpen size={14} />
@@ -605,7 +605,7 @@ export function CorrectiveActions() {
                 className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors flex items-center gap-1.5 ${
                   createTab === 'scratch'
                     ? 'border-current text-[#1E2D4D]'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                    : 'border-transparent text-[#1E2D4D]/50 hover:text-gray-700'
                 }`}
               >
                 <PenLine size={14} />
@@ -626,7 +626,7 @@ export function CorrectiveActions() {
                         className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
                           templateCategory === cat
                             ? 'text-white'
-                            : 'text-gray-600 bg-gray-100 hover:bg-gray-200'
+                            : 'text-[#1E2D4D]/70 bg-[#1E2D4D]/5 hover:bg-gray-200'
                         }`}
                         style={templateCategory === cat ? { backgroundColor: NAVY } : undefined}
                       >
@@ -646,7 +646,7 @@ export function CorrectiveActions() {
                         <button
                           key={tpl.id}
                           onClick={() => handleSelectTemplate(tpl)}
-                          className="text-left p-3 rounded-xl border border-gray-200 hover:border-gray-300 transition-all"
+                          className="text-left p-3 rounded-xl border border-[#1E2D4D]/10 hover:border-gray-300 transition-all"
                         >
                           <div className="flex items-start justify-between gap-2">
                             <div className="flex-1 min-w-0">
@@ -659,8 +659,8 @@ export function CorrectiveActions() {
                                   {sev.label}
                                 </span>
                               </div>
-                              <p className="text-xs text-gray-500 line-clamp-1">{tpl.description}</p>
-                              <div className="flex items-center gap-3 mt-1.5 text-xs text-gray-400">
+                              <p className="text-xs text-[#1E2D4D]/50 line-clamp-1">{tpl.description}</p>
+                              <div className="flex items-center gap-3 mt-1.5 text-xs text-[#1E2D4D]/30">
                                 <span className="flex items-center gap-1">
                                   <Shield size={10} />
                                   {tpl.regulation_reference}
@@ -679,7 +679,7 @@ export function CorrectiveActions() {
                 /* From Scratch / Form view */
                 <div className="space-y-4">
                   {createForm.templateId && (
-                    <div className="flex items-center gap-2 text-xs text-gray-500 bg-indigo-50 px-3 py-2 rounded-lg">
+                    <div className="flex items-center gap-2 text-xs text-[#1E2D4D]/50 bg-indigo-50 px-3 py-2 rounded-lg">
                       <BookOpen size={12} className="text-indigo-500" />
                       Pre-filled from template. Edit any field below.
                     </div>
@@ -687,24 +687,24 @@ export function CorrectiveActions() {
 
                   {/* Title */}
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Title *</label>
+                    <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Title *</label>
                     <input
                       type="text"
                       value={createForm.title}
                       onChange={e => setCreateForm(f => ({ ...f, title: e.target.value }))}
                       placeholder="e.g. Walk-in cooler temperature excursion"
-                      className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E2D4D]"
+                      className="w-full text-sm border border-[#1E2D4D]/10 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E2D4D]"
                     />
                   </div>
 
                   {/* Category + Severity side by side */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">Category</label>
+                      <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Category</label>
                       <select
                         value={createForm.category}
                         onChange={e => setCreateForm(f => ({ ...f, category: e.target.value as CACategory }))}
-                        className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2"
+                        className="w-full text-sm border border-[#1E2D4D]/10 rounded-lg px-3 py-2"
                       >
                         {Object.entries(CATEGORY_LABELS).map(([k, v]) => (
                           <option key={k} value={k}>{v}</option>
@@ -712,11 +712,11 @@ export function CorrectiveActions() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">Severity</label>
+                      <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Severity</label>
                       <select
                         value={createForm.severity}
                         onChange={e => setCreateForm(f => ({ ...f, severity: e.target.value as CASeverity }))}
-                        className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2"
+                        className="w-full text-sm border border-[#1E2D4D]/10 rounded-lg px-3 py-2"
                       >
                         {Object.entries(SEVERITY_LABELS).map(([k, v]) => (
                           <option key={k} value={k}>{v}</option>
@@ -728,21 +728,21 @@ export function CorrectiveActions() {
                   {/* Source + Location side by side */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">Source</label>
+                      <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Source</label>
                       <input
                         type="text"
                         value={createForm.source}
                         onChange={e => setCreateForm(f => ({ ...f, source: e.target.value }))}
                         placeholder="e.g. Temperature Log"
-                        className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E2D4D]"
+                        className="w-full text-sm border border-[#1E2D4D]/10 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E2D4D]"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">Location</label>
+                      <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Location</label>
                       <select
                         value={createForm.locationId}
                         onChange={e => setCreateForm(f => ({ ...f, locationId: e.target.value }))}
-                        className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2"
+                        className="w-full text-sm border border-[#1E2D4D]/10 rounded-lg px-3 py-2"
                       >
                         <option value="">Select location...</option>
                         {DEMO_LOCATIONS.map(loc => (
@@ -755,11 +755,11 @@ export function CorrectiveActions() {
                   {/* Assignee + Due Date side by side */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">Assignee</label>
+                      <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Assignee</label>
                       <select
                         value={createForm.assignee}
                         onChange={e => setCreateForm(f => ({ ...f, assignee: e.target.value }))}
-                        className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2"
+                        className="w-full text-sm border border-[#1E2D4D]/10 rounded-lg px-3 py-2"
                       >
                         <option value="">Unassigned</option>
                         {DEMO_TEAM_MEMBERS.map(m => (
@@ -768,12 +768,12 @@ export function CorrectiveActions() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">Due Date</label>
+                      <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Due Date</label>
                       <input
                         type="date"
                         value={createForm.dueDate}
                         onChange={e => setCreateForm(f => ({ ...f, dueDate: e.target.value }))}
-                        className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E2D4D]"
+                        className="w-full text-sm border border-[#1E2D4D]/10 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E2D4D]"
                       />
                     </div>
                   </div>
@@ -781,7 +781,7 @@ export function CorrectiveActions() {
                   {/* Description */}
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <label className="text-xs font-medium text-gray-700">Description</label>
+                      <label className="text-xs font-medium text-[#1E2D4D]/80">Description</label>
                       <AIAssistButton
                         fieldLabel="Description"
                         context={{ title: createForm.title, severity: createForm.severity, category: createForm.category, location: DEMO_LOCATIONS.find(l => l.id === createForm.locationId)?.name, source: createForm.source }}
@@ -794,7 +794,7 @@ export function CorrectiveActions() {
                       onChange={e => { setCreateForm(f => ({ ...f, description: e.target.value })); setAiFields(prev => { const s = new Set(prev); s.delete('description'); return s; }); }}
                       rows={3}
                       placeholder="Describe the issue and required corrective actions..."
-                      className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E2D4D] resize-none"
+                      className="w-full text-sm border border-[#1E2D4D]/10 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E2D4D] resize-none"
                     />
                     {aiFields.has('description') && <AIGeneratedIndicator />}
                   </div>
@@ -802,7 +802,7 @@ export function CorrectiveActions() {
                   {/* Root Cause */}
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <label className="text-xs font-medium text-gray-700">Root Cause</label>
+                      <label className="text-xs font-medium text-[#1E2D4D]/80">Root Cause</label>
                       <AIAssistButton
                         fieldLabel="Root Cause"
                         context={{ title: createForm.title, severity: createForm.severity, category: createForm.category, description: createForm.description, location: DEMO_LOCATIONS.find(l => l.id === createForm.locationId)?.name }}
@@ -815,20 +815,20 @@ export function CorrectiveActions() {
                       onChange={e => { setCreateForm(f => ({ ...f, rootCause: e.target.value })); setAiFields(prev => { const s = new Set(prev); s.delete('rootCause'); return s; }); }}
                       rows={2}
                       placeholder="Identify the underlying cause..."
-                      className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E2D4D] resize-none"
+                      className="w-full text-sm border border-[#1E2D4D]/10 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E2D4D] resize-none"
                     />
                     {aiFields.has('rootCause') && <AIGeneratedIndicator />}
                   </div>
 
                   {/* Regulation Reference */}
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Regulation Reference</label>
+                    <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Regulation Reference</label>
                     <input
                       type="text"
                       value={createForm.regulationReference}
                       onChange={e => setCreateForm(f => ({ ...f, regulationReference: e.target.value }))}
                       placeholder="e.g. FDA 21 CFR 117.150"
-                      className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E2D4D]"
+                      className="w-full text-sm border border-[#1E2D4D]/10 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E2D4D]"
                     />
                   </div>
                 </div>
@@ -836,10 +836,10 @@ export function CorrectiveActions() {
             </div>
 
             {/* Modal footer */}
-            <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-200">
+            <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-[#1E2D4D]/10">
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100"
+                className="px-4 py-2 rounded-lg text-sm font-medium text-[#1E2D4D]/70 hover:bg-gray-100"
               >
                 Cancel
               </button>

@@ -835,14 +835,14 @@ export function Equipment() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[#1E2D4D]">{t('pages.equipment.lifecycleTitle')}</h1>
-            <p className="text-sm text-gray-600 mt-1">{t('pages.equipment.lifecycleSubtitle')}</p>
+            <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">{t('pages.equipment.lifecycleTitle')}</h1>
+            <p className="text-sm text-[#1E2D4D]/70 mt-1">{t('pages.equipment.lifecycleSubtitle')}</p>
           </div>
           <div data-demo-allow className="flex flex-wrap gap-3">
             <select
               value={locationFilter}
               onChange={e => setLocationFilter(e.target.value)}
-              className="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+              className="w-full sm:w-auto px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
             >
               <option value="all">{t('pages.equipment.allLocations')}</option>
               {locations.map(l => <option key={l.id} value={l.name}>{l.name}</option>)}
@@ -850,7 +850,7 @@ export function Equipment() {
             <select
               value={pillarFilter}
               onChange={e => setPillarFilter(e.target.value as 'all' | 'facility_safety' | 'food_safety')}
-              className="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+              className="w-full sm:w-auto px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
             >
               <option value="all">{t('pages.equipment.allPillars')}</option>
               <option value="facility_safety">{t('pages.equipment.facilitySafety')}</option>
@@ -879,42 +879,42 @@ export function Equipment() {
 
         {/* KPI Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
-            <div className="flex items-center justify-center gap-2 mb-2"><Package className="h-5 w-5 text-[#1E2D4D]" /><span className="text-xs text-gray-500 uppercase font-semibold">{t('pages.equipment.totalEquipment')} <InfoTooltip content={ttEquipmentTotal} /></span></div>
-            <div className="text-xl sm:text-3xl font-bold text-[#1E2D4D]">{kpis.total}</div>
-            <div className="text-xs text-gray-400 mt-1">{locations.length > 0 ? `${t('pages.equipment.across')} ${locationFilter === 'all' ? `${locations.length} ${t('pages.equipment.locations')}` : `1 ${t('pages.equipment.location')}`}` : ''}</div>
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 text-center">
+            <div className="flex items-center justify-center gap-2 mb-2"><Package className="h-5 w-5 text-[#1E2D4D]" /><span className="text-xs text-[#1E2D4D]/50 uppercase font-semibold">{t('pages.equipment.totalEquipment')} <InfoTooltip content={ttEquipmentTotal} /></span></div>
+            <div className="text-xl sm:text-3xl font-bold tracking-tight text-[#1E2D4D]">{kpis.total}</div>
+            <div className="text-xs text-[#1E2D4D]/30 mt-1">{locations.length > 0 ? `${t('pages.equipment.across')} ${locationFilter === 'all' ? `${locations.length} ${t('pages.equipment.locations')}` : `1 ${t('pages.equipment.location')}`}` : ''}</div>
           </div>
-          <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
-            <div className="flex items-center justify-center gap-2 mb-2"><EvidlyIcon size={20} /><span className="text-xs text-gray-500 uppercase font-semibold">{t('pages.equipment.warrantyExpiring')} <InfoTooltip content={ttEquipmentWarranty} /></span></div>
-            <div className="text-xl sm:text-3xl font-bold text-[#d97706]">{kpis.warrantyExpiring}</div>
-            <div className="text-xs text-gray-400 mt-1">{t('pages.equipment.within90Days')}</div>
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 text-center">
+            <div className="flex items-center justify-center gap-2 mb-2"><EvidlyIcon size={20} /><span className="text-xs text-[#1E2D4D]/50 uppercase font-semibold">{t('pages.equipment.warrantyExpiring')} <InfoTooltip content={ttEquipmentWarranty} /></span></div>
+            <div className="text-xl sm:text-3xl font-bold tracking-tight text-[#d97706]">{kpis.warrantyExpiring}</div>
+            <div className="text-xs text-[#1E2D4D]/30 mt-1">{t('pages.equipment.within90Days')}</div>
           </div>
-          <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
-            <div className="flex items-center justify-center gap-2 mb-2"><AlertTriangle className="h-5 w-5 text-[#dc2626]" /><span className="text-xs text-gray-500 uppercase font-semibold">{t('pages.equipment.maintenanceOverdue')} <InfoTooltip content={ttEquipmentOverdue} /></span></div>
-            <div className="text-xl sm:text-3xl font-bold text-[#dc2626]">{kpis.maintenanceOverdue}</div>
-            <div className="text-xs text-gray-400 mt-1">{t('pages.equipment.needsImmediateAttention')}</div>
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 text-center">
+            <div className="flex items-center justify-center gap-2 mb-2"><AlertTriangle className="h-5 w-5 text-[#dc2626]" /><span className="text-xs text-[#1E2D4D]/50 uppercase font-semibold">{t('pages.equipment.maintenanceOverdue')} <InfoTooltip content={ttEquipmentOverdue} /></span></div>
+            <div className="text-xl sm:text-3xl font-bold tracking-tight text-[#dc2626]">{kpis.maintenanceOverdue}</div>
+            <div className="text-xs text-[#1E2D4D]/30 mt-1">{t('pages.equipment.needsImmediateAttention')}</div>
           </div>
-          <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
-            <div className="flex items-center justify-center gap-2 mb-2"><Clock className="h-5 w-5 text-[#1E2D4D]" /><span className="text-xs text-gray-500 uppercase font-semibold">{t('pages.equipment.avgEquipmentAge')}</span></div>
-            <div className="text-xl sm:text-3xl font-bold text-[#1E2D4D]">{kpis.avgAge}</div>
-            <div className="text-xs text-gray-400 mt-1">{t('pages.equipment.years')}</div>
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 text-center">
+            <div className="flex items-center justify-center gap-2 mb-2"><Clock className="h-5 w-5 text-[#1E2D4D]" /><span className="text-xs text-[#1E2D4D]/50 uppercase font-semibold">{t('pages.equipment.avgEquipmentAge')}</span></div>
+            <div className="text-xl sm:text-3xl font-bold tracking-tight text-[#1E2D4D]">{kpis.avgAge}</div>
+            <div className="text-xs text-[#1E2D4D]/30 mt-1">{t('pages.equipment.years')}</div>
           </div>
         </div>
 
         {/* Search + View Toggle */}
         <div data-demo-allow className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#1E2D4D]/30" />
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder={t('pages.equipment.searchPlaceholder')}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+              className="w-full pl-10 pr-4 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
             />
           </div>
-          <div className="flex bg-gray-100 rounded-lg p-1">
-            <button onClick={() => setViewMode('card')} className={`p-2 rounded ${viewMode === 'card' ? 'bg-white shadow-sm' : 'text-gray-400'}`}><LayoutGrid className="h-4 w-4" /></button>
-            <button onClick={() => setViewMode('table')} className={`p-2 rounded ${viewMode === 'table' ? 'bg-white shadow-sm' : 'text-gray-400'}`}><List className="h-4 w-4" /></button>
+          <div className="flex bg-[#1E2D4D]/5 rounded-lg p-1">
+            <button onClick={() => setViewMode('card')} className={`p-2 rounded ${viewMode === 'card' ? 'bg-white shadow-sm' : 'text-[#1E2D4D]/30'}`}><LayoutGrid className="h-4 w-4" /></button>
+            <button onClick={() => setViewMode('table')} className={`p-2 rounded ${viewMode === 'table' ? 'bg-white shadow-sm' : 'text-[#1E2D4D]/30'}`}><List className="h-4 w-4" /></button>
           </div>
         </div>
 
@@ -949,12 +949,12 @@ export function Equipment() {
                 <div
                   key={eq.id}
                   onClick={() => handleSelectEquipment(eq.id)}
-                  className={`bg-white rounded-xl border border-gray-200 p-4 cursor-pointer transition-all hover:shadow-md ${isSelected ? 'ring-2 ring-[#1E2D4D]' : ''}`}
+                  className={`bg-white rounded-xl border border-[#1E2D4D]/10 p-4 cursor-pointer transition-all hover:shadow-md ${isSelected ? 'ring-2 ring-[#1E2D4D]' : ''}`}
                 >
                   <div className="flex items-start justify-between mb-2">
                     <div>
                       <h3 className="font-bold text-[#1E2D4D] text-sm">{eq.name}</h3>
-                      <p className="text-xs text-gray-500">{eq.make} {eq.model}</p>
+                      <p className="text-xs text-[#1E2D4D]/50">{eq.make} {eq.model}</p>
                     </div>
                     <div className="flex items-center gap-1.5">
                       {(() => {
@@ -970,19 +970,19 @@ export function Equipment() {
                       <span style={badge(eq.condition, c.color, c.bg)}>{eq.condition}</span>
                     </div>
                   </div>
-                  <div className="space-y-1.5 text-xs text-gray-600">
-                    <div className="flex items-center gap-1.5"><MapPin className="h-3 w-3 text-gray-400" />{eq.location}</div>
-                    <div className="flex items-center gap-1.5"><Calendar className="h-3 w-3 text-gray-400" />{t('pages.equipment.installed')} {format(new Date(eq.installDate), 'MMM yyyy')} · {ageLabel(eq.installDate)}</div>
+                  <div className="space-y-1.5 text-xs text-[#1E2D4D]/70">
+                    <div className="flex items-center gap-1.5"><MapPin className="h-3 w-3 text-[#1E2D4D]/30" />{eq.location}</div>
+                    <div className="flex items-center gap-1.5"><Calendar className="h-3 w-3 text-[#1E2D4D]/30" />{t('pages.equipment.installed')} {format(new Date(eq.installDate), 'MMM yyyy')} · {ageLabel(eq.installDate)}</div>
                     <div className="flex items-center gap-1.5">
                       <EvidlyIcon size={12} />
                       <span>{t('pages.equipment.warranty')}: </span><span style={badge(w.label, w.color, w.bg)}>{w.label}</span>
-                      {w.label === 'Active' && <span className="text-gray-400">exp {format(new Date(eq.warrantyExpiry), 'MMM yyyy')}</span>}
+                      {w.label === 'Active' && <span className="text-[#1E2D4D]/30">exp {format(new Date(eq.warrantyExpiry), 'MMM yyyy')}</span>}
                     </div>
                     <div className="flex items-center gap-1.5">
                       <Wrench className="h-3 w-3" style={{ color: m.color }} />
                       <span>{t('pages.equipment.maintenance')}: </span><span style={badge(m.label, m.color, m.bg)}>{m.label}</span>
                     </div>
-                    <div className="flex items-center gap-1.5"><Truck className="h-3 w-3 text-gray-400" />{eq.linkedVendor}</div>
+                    <div className="flex items-center gap-1.5"><Truck className="h-3 w-3 text-[#1E2D4D]/30" />{eq.linkedVendor}</div>
                   </div>
                 </div>
               );
@@ -992,7 +992,7 @@ export function Equipment() {
 
         {/* Equipment List — Table View */}
         {!loading && viewMode === 'table' && (
-          <div className="bg-white rounded-xl border border-gray-200 overflow-x-auto">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-x-auto">
             <table className="w-full">
               <thead><tr>
                 <th style={thStyle}>{t('pages.equipment.title')}</th><th style={thStyle}>{t('pages.equipment.type')}</th><th style={thStyle} className="hidden sm:table-cell">{t('pages.equipment.location')}</th>
@@ -1008,7 +1008,7 @@ export function Equipment() {
                     <tr key={eq.id} onClick={() => handleSelectEquipment(eq.id)} className="cursor-pointer hover:bg-gray-50">
                       <td style={tdStyle}>
                         <div className="font-medium text-gray-900">{eq.name}</div>
-                        <div className="text-xs text-gray-400">{eq.make} {eq.model}</div>
+                        <div className="text-xs text-[#1E2D4D]/30">{eq.make} {eq.model}</div>
                       </td>
                       <td style={tdStyle}>{eq.type}</td>
                       <td style={tdStyle} className="hidden sm:table-cell">{eq.location}</td>
@@ -1026,19 +1026,19 @@ export function Equipment() {
         )}
 
         {filtered.length === 0 && (
-          <div className="bg-white rounded-xl border border-gray-200 p-12 text-center text-gray-400">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-12 text-center text-[#1E2D4D]/30">
             {t('pages.equipment.noMatch')}
           </div>
         )}
 
         {/* ── Detail Panel ─────────────────────────────────────────── */}
         {selected && (
-          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
             {/* Detail header */}
-            <div className="p-4 sm:p-5 border-b border-gray-200 flex items-start justify-between gap-2" style={{ backgroundColor: '#eef4f8' }}>
+            <div className="p-4 sm:p-5 border-b border-[#1E2D4D]/10 flex items-start justify-between gap-2" style={{ backgroundColor: '#eef4f8' }}>
               <div>
                 <h2 className="text-lg font-bold text-[#1E2D4D]">{selected.name}</h2>
-                <p className="text-sm text-gray-600">{selected.make} {selected.model} · S/N: {selected.serial}</p>
+                <p className="text-sm text-[#1E2D4D]/70">{selected.make} {selected.model} · S/N: {selected.serial}</p>
                 <div className="flex gap-3 mt-2 flex-wrap">
                   {(() => { const ss = statusStyle(selected.status); return <span style={badge(ss.label, ss.color, ss.bg)}>{ss.label}</span>; })()}
                   {(() => { const p = getEquipmentPillar(selected); const isF = p === 'facility_safety'; return <span style={{ ...badge(isF ? t('pages.equipment.facilitySafety') : t('pages.equipment.foodSafety'), isF ? '#b91c1c' : '#166534', isF ? '#fef2f2' : '#f0fdf4'), display: 'inline-flex', alignItems: 'center', gap: '3px' }}>{isF ? <Flame size={10} /> : <UtensilsCrossed size={10} />}{isF ? t('pages.equipment.facilitySafety') : t('pages.equipment.foodSafety')}</span>; })()}
@@ -1052,14 +1052,14 @@ export function Equipment() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <button onClick={() => setShowQRLabel(true)} className="text-xs font-medium px-3 py-1.5 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 transition-colors flex items-center gap-1"><QrCode className="h-3.5 w-3.5" />{t('pages.equipment.qrLabel')}</button>
-                <button onClick={() => navigate(`/equipment/${selected.id}`)} className="text-xs font-medium px-3 py-1.5 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 transition-colors">{t('pages.equipment.viewFullDetail')}</button>
-                <button onClick={() => setSelectedId(null)} className="p-1 rounded hover:bg-gray-200"><X className="h-5 w-5 text-gray-400" /></button>
+                <button onClick={() => setShowQRLabel(true)} className="text-xs font-medium px-3 py-1.5 rounded-lg border border-[#1E2D4D]/15 text-[#1E2D4D]/70 hover:bg-gray-100 transition-colors flex items-center gap-1"><QrCode className="h-3.5 w-3.5" />{t('pages.equipment.qrLabel')}</button>
+                <button onClick={() => navigate(`/equipment/${selected.id}`)} className="text-xs font-medium px-3 py-1.5 rounded-lg border border-[#1E2D4D]/15 text-[#1E2D4D]/70 hover:bg-gray-100 transition-colors">{t('pages.equipment.viewFullDetail')}</button>
+                <button onClick={() => setSelectedId(null)} className="p-1 rounded hover:bg-gray-200"><X className="h-5 w-5 text-[#1E2D4D]/30" /></button>
               </div>
             </div>
 
             {/* Tabs */}
-            <div className="flex border-b border-gray-200 overflow-x-auto">
+            <div className="flex border-b border-[#1E2D4D]/10 overflow-x-auto">
               {(() => {
                 const linkedSensor = isDemoMode ? iotSensors.find(s =>
                   s.name.toLowerCase() === selected.name.toLowerCase() ||
@@ -1078,7 +1078,7 @@ export function Equipment() {
                   key={tab}
                   onClick={() => setDetailTab(tab as typeof detailTab)}
                   className={`px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
-                    detailTab === tab ? 'border-[#1E2D4D] text-[#1E2D4D]' : 'border-transparent text-gray-500 hover:text-gray-700'
+                    detailTab === tab ? 'border-[#1E2D4D] text-[#1E2D4D]' : 'border-transparent text-[#1E2D4D]/50 hover:text-gray-700'
                   }`}
                 >
                   {label}
@@ -1091,23 +1091,23 @@ export function Equipment() {
               {detailTab === 'overview' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-4">
-                    <h4 className="text-sm font-bold text-gray-700 uppercase tracking-wide">{t('pages.equipment.specifications')}</h4>
+                    <h4 className="text-sm font-bold text-[#1E2D4D]/80 uppercase tracking-wide">{t('pages.equipment.specifications')}</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                      <div><span className="text-gray-400 block text-xs">{t('pages.equipment.type')}</span><span className="font-medium">{selected.type}</span></div>
-                      <div><span className="text-gray-400 block text-xs">{t('pages.equipment.make')}</span><span className="font-medium">{selected.make}</span></div>
-                      <div><span className="text-gray-400 block text-xs">{t('pages.equipment.model')}</span><span className="font-medium">{selected.model}</span></div>
-                      <div><span className="text-gray-400 block text-xs">{t('pages.equipment.serialNumber')}</span><span className="font-medium font-mono text-xs">{selected.serial}</span></div>
-                      <div><span className="text-gray-400 block text-xs">{t('pages.equipment.location')}</span><span className="font-medium">{selected.location}</span></div>
-                      <div><span className="text-gray-400 block text-xs">{t('pages.equipment.installationDate')}</span><span className="font-medium">{format(new Date(selected.installDate), 'MMM d, yyyy')}</span></div>
-                      <div><span className="text-gray-400 block text-xs">{t('pages.equipment.age')}</span><span className="font-medium">{ageLabel(selected.installDate)}</span></div>
-                      <div><span className="text-gray-400 block text-xs">{t('pages.equipment.purchasePrice')}</span><span className="font-medium">{currency(selected.purchasePrice)}</span></div>
-                      <div><span className="text-gray-400 block text-xs">{t('pages.equipment.maintenanceInterval')}</span><span className="font-medium">{selected.maintenanceInterval}</span></div>
-                      <div><span className="text-gray-400 block text-xs">{t('pages.equipment.linkedVendor')}</span><span className="font-medium text-[#1E2D4D]">{selected.linkedVendor}</span></div>
+                      <div><span className="text-[#1E2D4D]/30 block text-xs">{t('pages.equipment.type')}</span><span className="font-medium">{selected.type}</span></div>
+                      <div><span className="text-[#1E2D4D]/30 block text-xs">{t('pages.equipment.make')}</span><span className="font-medium">{selected.make}</span></div>
+                      <div><span className="text-[#1E2D4D]/30 block text-xs">{t('pages.equipment.model')}</span><span className="font-medium">{selected.model}</span></div>
+                      <div><span className="text-[#1E2D4D]/30 block text-xs">{t('pages.equipment.serialNumber')}</span><span className="font-medium font-mono text-xs">{selected.serial}</span></div>
+                      <div><span className="text-[#1E2D4D]/30 block text-xs">{t('pages.equipment.location')}</span><span className="font-medium">{selected.location}</span></div>
+                      <div><span className="text-[#1E2D4D]/30 block text-xs">{t('pages.equipment.installationDate')}</span><span className="font-medium">{format(new Date(selected.installDate), 'MMM d, yyyy')}</span></div>
+                      <div><span className="text-[#1E2D4D]/30 block text-xs">{t('pages.equipment.age')}</span><span className="font-medium">{ageLabel(selected.installDate)}</span></div>
+                      <div><span className="text-[#1E2D4D]/30 block text-xs">{t('pages.equipment.purchasePrice')}</span><span className="font-medium">{currency(selected.purchasePrice)}</span></div>
+                      <div><span className="text-[#1E2D4D]/30 block text-xs">{t('pages.equipment.maintenanceInterval')}</span><span className="font-medium">{selected.maintenanceInterval}</span></div>
+                      <div><span className="text-[#1E2D4D]/30 block text-xs">{t('pages.equipment.linkedVendor')}</span><span className="font-medium text-[#1E2D4D]">{selected.linkedVendor}</span></div>
                     </div>
                   </div>
                   <div className="space-y-4">
-                    <h4 className="text-sm font-bold text-gray-700 uppercase tracking-wide">{t('pages.equipment.warrantyInformation')}</h4>
-                    <div className="p-4 rounded-lg border border-gray-200">
+                    <h4 className="text-sm font-bold text-[#1E2D4D]/80 uppercase tracking-wide">{t('pages.equipment.warrantyInformation')}</h4>
+                    <div className="p-4 rounded-lg border border-[#1E2D4D]/10">
                       <div className="flex items-center gap-2 mb-3">
                         <EvidlyIcon size={20} />
                         <span className="font-bold text-sm" style={{ color: warrantyInfo(selected.warrantyExpiry).color }}>
@@ -1115,15 +1115,15 @@ export function Equipment() {
                         </span>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                        <div><span className="text-gray-400 block text-xs">{t('pages.equipment.provider')}</span><span className="font-medium">{selected.warrantyProvider}</span></div>
-                        <div><span className="text-gray-400 block text-xs">{t('pages.equipment.expiryDate')}</span><span className="font-medium">{format(new Date(selected.warrantyExpiry), 'MMM d, yyyy')}</span></div>
-                        <div className="col-span-2"><span className="text-gray-400 block text-xs">{t('pages.equipment.terms')}</span><span className="font-medium">{selected.warrantyTerms}</span></div>
+                        <div><span className="text-[#1E2D4D]/30 block text-xs">{t('pages.equipment.provider')}</span><span className="font-medium">{selected.warrantyProvider}</span></div>
+                        <div><span className="text-[#1E2D4D]/30 block text-xs">{t('pages.equipment.expiryDate')}</span><span className="font-medium">{format(new Date(selected.warrantyExpiry), 'MMM d, yyyy')}</span></div>
+                        <div className="col-span-2"><span className="text-[#1E2D4D]/30 block text-xs">{t('pages.equipment.terms')}</span><span className="font-medium">{selected.warrantyTerms}</span></div>
                       </div>
                     </div>
                     {selected.notes && (
                       <div>
-                        <h4 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">{t('pages.equipment.notesLabel')}</h4>
-                        <p className="text-sm text-gray-600 bg-[#FAF7F0] p-3 rounded-lg">{selected.notes}</p>
+                        <h4 className="text-sm font-bold text-[#1E2D4D]/80 uppercase tracking-wide mb-2">{t('pages.equipment.notesLabel')}</h4>
+                        <p className="text-sm text-[#1E2D4D]/70 bg-[#FAF7F0] p-3 rounded-lg">{selected.notes}</p>
                       </div>
                     )}
                     {equipmentPhotos.length > 0 && (
@@ -1145,39 +1145,39 @@ export function Equipment() {
                 const warrantyClaims = selected.serviceHistory.filter(r => r.cost === 0);
                 return (
                   <div className="space-y-6">
-                    <div className="p-4 rounded-lg border border-gray-200">
+                    <div className="p-4 rounded-lg border border-[#1E2D4D]/10">
                       <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
                         <div className="flex items-center gap-2">
                           <EvidlyIcon size={20} />
                           <span className="font-bold text-sm" style={{ color: wi.color }}>{wi.label}</span>
                         </div>
-                        {wi.days > 0 && <span className="text-xs text-gray-500">{wi.days} {t('pages.equipment.daysRemaining')}</span>}
+                        {wi.days > 0 && <span className="text-xs text-[#1E2D4D]/50">{wi.days} {t('pages.equipment.daysRemaining')}</span>}
                         {wi.days < 0 && <span className="text-xs text-red-500">{t('status.expired')} {Math.abs(wi.days)} {t('pages.equipment.expiredDaysAgo')}</span>}
                       </div>
-                      <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden mb-2">
+                      <div className="w-full bg-[#1E2D4D]/8 rounded-full h-3 overflow-hidden mb-2">
                         <div className="h-3 rounded-full transition-all" style={{ width: `${warPct}%`, backgroundColor: wi.color }} />
                       </div>
-                      <div className="flex flex-wrap justify-between gap-1 text-xs text-gray-400">
+                      <div className="flex flex-wrap justify-between gap-1 text-xs text-[#1E2D4D]/30">
                         <span>{t('pages.equipment.start')}: {format(new Date(selected.installDate), 'MMM d, yyyy')}</span>
                         <span>{warPct}% {t('pages.equipment.throughWarrantyPeriod')}</span>
                         <span>{t('pages.equipment.expires')}: {format(new Date(selected.warrantyExpiry), 'MMM d, yyyy')}</span>
                       </div>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="p-4 rounded-lg border border-gray-200">
-                        <h4 className="text-sm font-bold text-gray-700 mb-3">{t('pages.equipment.warrantyDetails')}</h4>
+                      <div className="p-4 rounded-lg border border-[#1E2D4D]/10">
+                        <h4 className="text-sm font-bold text-[#1E2D4D]/80 mb-3">{t('pages.equipment.warrantyDetails')}</h4>
                         <div className="space-y-2 text-sm">
-                          <div><span className="text-gray-400 text-xs block">{t('pages.equipment.provider')}</span><span className="font-medium">{selected.warrantyProvider}</span></div>
-                          <div><span className="text-gray-400 text-xs block">{t('pages.equipment.terms')}</span><span className="font-medium">{selected.warrantyTerms}</span></div>
+                          <div><span className="text-[#1E2D4D]/30 text-xs block">{t('pages.equipment.provider')}</span><span className="font-medium">{selected.warrantyProvider}</span></div>
+                          <div><span className="text-[#1E2D4D]/30 text-xs block">{t('pages.equipment.terms')}</span><span className="font-medium">{selected.warrantyTerms}</span></div>
                           {selected.warrantyContact && (
-                            <div><span className="text-gray-400 text-xs block">{t('pages.equipment.contact')}</span><span className="font-medium text-[#1E2D4D]">{selected.warrantyContact}</span></div>
+                            <div><span className="text-[#1E2D4D]/30 text-xs block">{t('pages.equipment.contact')}</span><span className="font-medium text-[#1E2D4D]">{selected.warrantyContact}</span></div>
                           )}
                         </div>
                       </div>
-                      <div className="p-4 rounded-lg border border-gray-200">
-                        <h4 className="text-sm font-bold text-gray-700 mb-3">{t('pages.equipment.warrantyClaims')} ({warrantyClaims.length})</h4>
+                      <div className="p-4 rounded-lg border border-[#1E2D4D]/10">
+                        <h4 className="text-sm font-bold text-[#1E2D4D]/80 mb-3">{t('pages.equipment.warrantyClaims')} ({warrantyClaims.length})</h4>
                         {warrantyClaims.length === 0 ? (
-                          <p className="text-sm text-gray-400">{t('pages.equipment.noWarrantyClaims')}</p>
+                          <p className="text-sm text-[#1E2D4D]/30">{t('pages.equipment.noWarrantyClaims')}</p>
                         ) : (
                           <div className="space-y-2">
                             {warrantyClaims.slice(0, 5).map((c, i) => (
@@ -1185,7 +1185,7 @@ export function Equipment() {
                                 <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
                                 <div>
                                   <div className="font-medium text-gray-800">{c.type}</div>
-                                  <div className="text-xs text-gray-500">{format(new Date(c.date), 'MMM d, yyyy')} · {c.vendor}</div>
+                                  <div className="text-xs text-[#1E2D4D]/50">{format(new Date(c.date), 'MMM d, yyyy')} · {c.vendor}</div>
                                 </div>
                               </div>
                             ))}
@@ -1223,27 +1223,27 @@ export function Equipment() {
               {detailTab === 'service' && (
                 <div>
                   <div className="flex items-center gap-2 mb-4">
-                    <span className="text-sm font-bold text-gray-700">{selected.serviceHistory.length} {t('pages.equipment.serviceRecords')}</span>
-                    <span className="text-xs text-gray-400">· {t('pages.equipment.totalSpend')}: {currency(selected.serviceHistory.reduce((s, r) => s + r.cost, 0))}</span>
+                    <span className="text-sm font-bold text-[#1E2D4D]/80">{selected.serviceHistory.length} {t('pages.equipment.serviceRecords')}</span>
+                    <span className="text-xs text-[#1E2D4D]/30">· {t('pages.equipment.totalSpend')}: {currency(selected.serviceHistory.reduce((s, r) => s + r.cost, 0))}</span>
                   </div>
                   <div className="space-y-0">
                     {selected.serviceHistory.map((rec, i) => (
                       <div key={i} className="flex gap-4 py-3 border-b border-gray-100 last:border-0">
                         <div className="flex flex-col items-center">
                           <div className="w-3 h-3 rounded-full bg-[#1E2D4D] mt-1" />
-                          {i < selected.serviceHistory.length - 1 && <div className="w-0.5 flex-1 bg-gray-200 mt-1" />}
+                          {i < selected.serviceHistory.length - 1 && <div className="w-0.5 flex-1 bg-[#1E2D4D]/8 mt-1" />}
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex flex-wrap items-start justify-between gap-1">
                             <div>
                               <div className="font-medium text-sm text-gray-900">{rec.type}</div>
-                              <div className="text-xs text-gray-500">{rec.vendor} · {format(new Date(rec.date), 'MMM d, yyyy')}</div>
+                              <div className="text-xs text-[#1E2D4D]/50">{rec.vendor} · {format(new Date(rec.date), 'MMM d, yyyy')}</div>
                             </div>
                             <span className="text-sm font-semibold" style={{ color: rec.cost > 0 ? '#1E2D4D' : '#16a34a' }}>
                               {rec.cost > 0 ? currency(rec.cost) : 'Warranty'}
                             </span>
                           </div>
-                          <p className="text-xs text-gray-500 mt-1">{rec.notes}</p>
+                          <p className="text-xs text-[#1E2D4D]/50 mt-1">{rec.notes}</p>
                         </div>
                       </div>
                     ))}
@@ -1308,15 +1308,15 @@ export function Equipment() {
                 return (
                   <div className="space-y-6">
                     {/* Lifecycle Progress Bar */}
-                    <div className="p-4 rounded-lg border border-gray-200">
+                    <div className="p-4 rounded-lg border border-[#1E2D4D]/10">
                       <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                        <span className="text-sm font-bold text-gray-700">{t('pages.equipment.lifecycleProgress')}</span>
+                        <span className="text-sm font-bold text-[#1E2D4D]/80">{t('pages.equipment.lifecycleProgress')}</span>
                         <span className="text-sm font-bold" style={{ color: statusColor }}>{statusLabel}</span>
                       </div>
-                      <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+                      <div className="w-full bg-[#1E2D4D]/8 rounded-full h-4 overflow-hidden">
                         <div className="h-4 rounded-full transition-all" style={{ width: `${pct}%`, backgroundColor: statusColor }} />
                       </div>
-                      <div className="flex flex-wrap justify-between gap-1 text-xs text-gray-400 mt-1">
+                      <div className="flex flex-wrap justify-between gap-1 text-xs text-[#1E2D4D]/30 mt-1">
                         <span>Installed {format(new Date(selected.installDate), 'yyyy')}</span>
                         <span>{age.toFixed(1)} of {selected.usefulLifeYears} years ({pct.toFixed(0)}%)</span>
                         <span>Expected {format(replacementDate, 'yyyy')}</span>
@@ -1325,41 +1325,41 @@ export function Equipment() {
 
                     {/* KPI Cards */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                      <div className="p-3 rounded-lg border border-gray-200">
-                        <div className="text-xs text-gray-400">{t('pages.equipment.purchasePrice')}</div>
+                      <div className="p-3 rounded-lg border border-[#1E2D4D]/10">
+                        <div className="text-xs text-[#1E2D4D]/30">{t('pages.equipment.purchasePrice')}</div>
                         <div className="text-lg font-bold text-[#1E2D4D]">{currency(selected.purchasePrice)}</div>
                       </div>
-                      <div className="p-3 rounded-lg border border-gray-200">
-                        <div className="text-xs text-gray-400">{t('pages.equipment.bookValue')}</div>
+                      <div className="p-3 rounded-lg border border-[#1E2D4D]/10">
+                        <div className="text-xs text-[#1E2D4D]/30">{t('pages.equipment.bookValue')}</div>
                         <div className="text-lg font-bold text-[#1E2D4D]">{currency(bv)}</div>
-                        <div className="text-xs text-gray-400">{t('pages.equipment.straightLineDepreciation')}</div>
+                        <div className="text-xs text-[#1E2D4D]/30">{t('pages.equipment.straightLineDepreciation')}</div>
                       </div>
-                      <div className="p-3 rounded-lg border border-gray-200">
-                        <div className="text-xs text-gray-400">{t('pages.equipment.totalMaintenance')}</div>
+                      <div className="p-3 rounded-lg border border-[#1E2D4D]/10">
+                        <div className="text-xs text-[#1E2D4D]/30">{t('pages.equipment.totalMaintenance')}</div>
                         <div className="text-lg font-bold text-[#1E2D4D]">{currency(totalSpend)}</div>
                       </div>
-                      <div className="p-3 rounded-lg border border-gray-200">
-                        <div className="text-xs text-gray-400">{t('pages.equipment.totalCostOwnership')}</div>
+                      <div className="p-3 rounded-lg border border-[#1E2D4D]/10">
+                        <div className="text-xs text-[#1E2D4D]/30">{t('pages.equipment.totalCostOwnership')}</div>
                         <div className="text-lg font-bold text-[#1E2D4D]">{currency(selected.purchasePrice + totalSpend)}</div>
                       </div>
                     </div>
 
                     {/* Second row KPIs */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                      <div className="p-3 rounded-lg border border-gray-200">
-                        <div className="text-xs text-gray-400">{t('pages.equipment.currentAge')}</div>
+                      <div className="p-3 rounded-lg border border-[#1E2D4D]/10">
+                        <div className="text-xs text-[#1E2D4D]/30">{t('pages.equipment.currentAge')}</div>
                         <div className="text-lg font-bold text-[#1E2D4D]">{ageLabel(selected.installDate)}</div>
                       </div>
-                      <div className="p-3 rounded-lg border border-gray-200">
-                        <div className="text-xs text-gray-400">{t('pages.equipment.remainingLife')}</div>
+                      <div className="p-3 rounded-lg border border-[#1E2D4D]/10">
+                        <div className="text-xs text-[#1E2D4D]/30">{t('pages.equipment.remainingLife')}</div>
                         <div className="text-lg font-bold" style={{ color: statusColor }}>{pastLife ? t('status.overdue') : `${remainingYears.toFixed(1)} yrs`}</div>
                       </div>
-                      <div className="p-3 rounded-lg border border-gray-200">
-                        <div className="text-xs text-gray-400">{t('pages.equipment.replacementCost')}</div>
+                      <div className="p-3 rounded-lg border border-[#1E2D4D]/10">
+                        <div className="text-xs text-[#1E2D4D]/30">{t('pages.equipment.replacementCost')}</div>
                         <div className="text-lg font-bold text-[#1E2D4D]">{currency(selected.replacementCost)}</div>
                       </div>
-                      <div className="p-3 rounded-lg border border-gray-200">
-                        <div className="text-xs text-gray-400">{t('pages.equipment.maintenanceTrend')}</div>
+                      <div className="p-3 rounded-lg border border-[#1E2D4D]/10">
+                        <div className="text-xs text-[#1E2D4D]/30">{t('pages.equipment.maintenanceTrend')}</div>
                         <div className="flex items-center gap-1">
                           {trend === 'increasing' && <TrendingUp className="h-4 w-4" style={{ color: trendColor }} />}
                           {trend === 'decreasing' && <TrendingDown className="h-4 w-4" style={{ color: trendColor }} />}
@@ -1370,17 +1370,17 @@ export function Equipment() {
 
                     {/* Annual Maintenance Cost Trend */}
                     {ac.length > 1 && (
-                      <div className="p-4 rounded-lg border border-gray-200">
-                        <h4 className="text-sm font-bold text-gray-700 mb-3">{t('pages.equipment.annualMaintenanceCostTrend')}</h4>
+                      <div className="p-4 rounded-lg border border-[#1E2D4D]/10">
+                        <h4 className="text-sm font-bold text-[#1E2D4D]/80 mb-3">{t('pages.equipment.annualMaintenanceCostTrend')}</h4>
                         <div className="flex items-end gap-3 h-24">
                           {ac.map((y, i) => {
                             const maxCost = Math.max(...ac.map(a => a.cost), 1);
                             const h = Math.max(4, (y.cost / maxCost) * 80);
                             return (
                               <div key={i} className="flex flex-col items-center flex-1">
-                                <span className="text-xs font-bold text-gray-600 mb-1">{currency(y.cost)}</span>
+                                <span className="text-xs font-bold text-[#1E2D4D]/70 mb-1">{currency(y.cost)}</span>
                                 <div className="w-full rounded-t" style={{ height: `${h}px`, backgroundColor: y.cost === Math.max(...ac.map(a => a.cost)) && trend === 'increasing' ? '#dc2626' : '#1E2D4D' }} />
-                                <span className="text-xs text-gray-400 mt-1">{y.year}</span>
+                                <span className="text-xs text-[#1E2D4D]/30 mt-1">{y.year}</span>
                               </div>
                             );
                           })}
@@ -1424,24 +1424,24 @@ export function Equipment() {
                 return (
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <div className="p-3 rounded-lg border border-gray-200">
-                        <div className="text-xs text-gray-400">{t('pages.equipment.purchasePrice')}</div>
+                      <div className="p-3 rounded-lg border border-[#1E2D4D]/10">
+                        <div className="text-xs text-[#1E2D4D]/30">{t('pages.equipment.purchasePrice')}</div>
                         <div className="text-lg font-bold text-[#1E2D4D]">{currency(selected.purchasePrice)}</div>
                       </div>
-                      <div className="p-3 rounded-lg border border-gray-200">
-                        <div className="text-xs text-gray-400">{t('pages.equipment.totalMaintenanceSpend')}</div>
+                      <div className="p-3 rounded-lg border border-[#1E2D4D]/10">
+                        <div className="text-xs text-[#1E2D4D]/30">{t('pages.equipment.totalMaintenanceSpend')}</div>
                         <div className="text-lg font-bold text-[#1E2D4D]">{currency(totalSpend)}</div>
                       </div>
-                      <div className="p-3 rounded-lg border border-gray-200">
-                        <div className="text-xs text-gray-400">{t('pages.equipment.totalCostOwnership')}</div>
+                      <div className="p-3 rounded-lg border border-[#1E2D4D]/10">
+                        <div className="text-xs text-[#1E2D4D]/30">{t('pages.equipment.totalCostOwnership')}</div>
                         <div className="text-lg font-bold text-[#1E2D4D]">{currency(selected.purchasePrice + totalSpend)}</div>
                       </div>
-                      <div className="p-3 rounded-lg border border-gray-200">
-                        <div className="text-xs text-gray-400">{t('pages.equipment.warrantyServices')}</div>
+                      <div className="p-3 rounded-lg border border-[#1E2D4D]/10">
+                        <div className="text-xs text-[#1E2D4D]/30">{t('pages.equipment.warrantyServices')}</div>
                         <div className="text-lg font-bold text-green-600">{warrantySaved} {t('pages.equipment.free')}</div>
                       </div>
                     </div>
-                    <h4 className="text-sm font-bold text-gray-700">{t('pages.equipment.serviceCostBreakdown')}</h4>
+                    <h4 className="text-sm font-bold text-[#1E2D4D]/80">{t('pages.equipment.serviceCostBreakdown')}</h4>
                     <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead><tr>
@@ -1471,7 +1471,7 @@ export function Equipment() {
                 return (
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <h4 className="text-sm font-bold text-gray-700">{vendors.length} Linked Vendor{vendors.length !== 1 ? 's' : ''}</h4>
+                      <h4 className="text-sm font-bold text-[#1E2D4D]/80">{vendors.length} Linked Vendor{vendors.length !== 1 ? 's' : ''}</h4>
                       <button
                         onClick={() => guardAction('edit', 'vendor links', () => showToast('Vendor link saved.'))}
                         className="flex items-center gap-1 text-xs font-medium text-[#1E2D4D] hover:text-[#141E33]"
@@ -1481,19 +1481,19 @@ export function Equipment() {
                     </div>
                     <div className="space-y-3">
                       {vendors.map((v, i) => (
-                        <div key={i} className="p-4 rounded-lg border border-gray-200 flex items-start justify-between gap-3">
+                        <div key={i} className="p-4 rounded-lg border border-[#1E2D4D]/10 flex items-start justify-between gap-3">
                           <div className="flex items-start gap-3">
                             <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#eef4f8' }}>
                               <Wrench className="h-5 w-5 text-[#1E2D4D]" />
                             </div>
                             <div>
                               <div className="font-medium text-sm text-gray-900">{v.vendor}</div>
-                              <div className="text-xs text-gray-500">{v.serviceType}</div>
+                              <div className="text-xs text-[#1E2D4D]/50">{v.serviceType}</div>
                               {v.isPrimary && <span style={badge(t('pages.equipment.primary'), '#1E2D4D', '#eef4f8')}>{t('pages.equipment.primary')}</span>}
                               {(() => {
                                 const lastSvc = selected.serviceHistory.find(s => s.vendor === v.vendor);
                                 return lastSvc ? (
-                                  <div className="text-xs text-gray-400 mt-1">{t('pages.equipment.lastService')}: {format(new Date(lastSvc.date), 'MMM d, yyyy')}</div>
+                                  <div className="text-xs text-[#1E2D4D]/30 mt-1">{t('pages.equipment.lastService')}: {format(new Date(lastSvc.date), 'MMM d, yyyy')}</div>
                                 ) : null;
                               })()}
                             </div>
@@ -1516,7 +1516,7 @@ export function Equipment() {
                           <span className="text-sm font-medium text-[#1E2D4D]">Warranty Provider: {selected.warrantyProvider}</span>
                         </div>
                         {selected.warrantyContact && (
-                          <div className="text-xs text-gray-500 mt-1 ml-6">{selected.warrantyContact}</div>
+                          <div className="text-xs text-[#1E2D4D]/50 mt-1 ml-6">{selected.warrantyContact}</div>
                         )}
                       </div>
                     )}
@@ -1532,7 +1532,7 @@ export function Equipment() {
                   (selected.name.toLowerCase().includes('cooler') && s.name.toLowerCase().includes('cooler') && s.locationName.toLowerCase().includes(selected.location?.toLowerCase().split(' ')[0] || '___')) ||
                   (selected.name.toLowerCase().includes('freezer') && s.name.toLowerCase().includes('freezer') && s.locationName.toLowerCase().includes(selected.location?.toLowerCase().split(' ')[0] || '___'))
                 );
-                if (!sensor) return <p className="text-sm text-gray-500">{t('pages.equipment.noIotSensor')}</p>;
+                if (!sensor) return <p className="text-sm text-[#1E2D4D]/50">{t('pages.equipment.noIotSensor')}</p>;
 
                 const provider = iotSensorProviders.find(p => p.slug === sensor.providerSlug);
                 const readings = iotSensorReadings.filter(r => r.sensorId === sensor.id);
@@ -1570,7 +1570,7 @@ export function Equipment() {
                         </div>
                         <div>
                           <h4 className="text-sm font-semibold text-[#1E2D4D]">{sensor.name}</h4>
-                          <p className="text-xs text-gray-500">{provider?.name || sensor.providerSlug} &middot; {sensor.macAddress}</p>
+                          <p className="text-xs text-[#1E2D4D]/50">{provider?.name || sensor.providerSlug} &middot; {sensor.macAddress}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-1.5">
@@ -1584,34 +1584,34 @@ export function Equipment() {
                     {/* Current Reading + Stats */}
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                       <div className="bg-[#FAF7F0] rounded-lg p-3">
-                        <p className="text-xs text-gray-500 mb-1">{t('pages.equipment.current')}</p>
-                        <p className={`text-2xl font-bold ${inRange ? 'text-gray-900' : 'text-red-600'}`}>{sensor.currentTempF}°F</p>
+                        <p className="text-xs text-[#1E2D4D]/50 mb-1">{t('pages.equipment.current')}</p>
+                        <p className={`text-2xl font-bold tracking-tight ${inRange ? 'text-gray-900' : 'text-red-600'}`}>{sensor.currentTempF}°F</p>
                         <p className="text-xs mt-0.5">{inRange ? <span className="text-green-600">{t('pages.equipment.inRange')}</span> : <span className="text-red-600">{t('pages.equipment.outOfRange')}</span>}</p>
                       </div>
                       <div className="bg-[#FAF7F0] rounded-lg p-3">
-                        <p className="text-xs text-gray-500 mb-1">{t('pages.equipment.range')}</p>
-                        <p className="text-lg font-semibold text-[#1E2D4D]">{thMin}–{thMax}°F</p>
-                        <p className="text-xs text-gray-400 mt-0.5">{t('pages.equipment.threshold')}</p>
+                        <p className="text-xs text-[#1E2D4D]/50 mb-1">{t('pages.equipment.range')}</p>
+                        <p className="text-lg font-semibold tracking-tight text-[#1E2D4D]">{thMin}–{thMax}°F</p>
+                        <p className="text-xs text-[#1E2D4D]/30 mt-0.5">{t('pages.equipment.threshold')}</p>
                       </div>
                       <div className="bg-[#FAF7F0] rounded-lg p-3">
-                        <p className="text-xs text-gray-500 mb-1">{t('pages.equipment.today')}</p>
-                        <p className="text-lg font-semibold text-[#1E2D4D]">{todayReadings}</p>
-                        <p className="text-xs text-gray-400 mt-0.5">{outOfRange > 0 ? <span className="text-amber-600">{outOfRange} {t('pages.equipment.outOfRange').toLowerCase()}</span> : <span className="text-green-600">{t('pages.equipment.allInRange')}</span>}</p>
+                        <p className="text-xs text-[#1E2D4D]/50 mb-1">{t('pages.equipment.today')}</p>
+                        <p className="text-lg font-semibold tracking-tight text-[#1E2D4D]">{todayReadings}</p>
+                        <p className="text-xs text-[#1E2D4D]/30 mt-0.5">{outOfRange > 0 ? <span className="text-amber-600">{outOfRange} {t('pages.equipment.outOfRange').toLowerCase()}</span> : <span className="text-green-600">{t('pages.equipment.allInRange')}</span>}</p>
                       </div>
                       <div className="bg-[#FAF7F0] rounded-lg p-3">
-                        <p className="text-xs text-gray-500 mb-1">{t('pages.equipment.lastSeen')}</p>
+                        <p className="text-xs text-[#1E2D4D]/50 mb-1">{t('pages.equipment.lastSeen')}</p>
                         <p className="text-sm font-semibold text-[#1E2D4D]">{lastSeen}</p>
                         <div className="flex items-center gap-2 mt-1">
-                          <span className="text-xs text-gray-400 flex items-center gap-0.5"><Battery className="h-3 w-3" /> {sensor.batteryPct}%</span>
-                          <span className="text-xs text-gray-400 flex items-center gap-0.5"><Signal className="h-3 w-3" /> {sensor.signalRssi}dBm</span>
+                          <span className="text-xs text-[#1E2D4D]/30 flex items-center gap-0.5"><Battery className="h-3 w-3" /> {sensor.batteryPct}%</span>
+                          <span className="text-xs text-[#1E2D4D]/30 flex items-center gap-0.5"><Signal className="h-3 w-3" /> {sensor.signalRssi}dBm</span>
                         </div>
                       </div>
                     </div>
 
                     {/* 24-Hour Chart */}
                     <div>
-                      <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">{t('pages.equipment.hourChart')}</h4>
-                      <div className="bg-white border border-gray-200 rounded-xl p-3" style={{ height: 180 }}>
+                      <h4 className="text-xs font-bold text-[#1E2D4D]/80 uppercase tracking-wide mb-2">{t('pages.equipment.hourChart')}</h4>
+                      <div className="bg-white border border-[#1E2D4D]/10 rounded-xl p-3" style={{ height: 180 }}>
                         <ResponsiveContainer width="100%" height="100%">
                           <LineChart data={chartData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
                             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -1628,21 +1628,21 @@ export function Equipment() {
 
                     {/* Recent Readings Table */}
                     <div>
-                      <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">{t('pages.equipment.recentReadings')}</h4>
-                      <div className="border border-gray-200 rounded-lg overflow-hidden">
+                      <h4 className="text-xs font-bold text-[#1E2D4D]/80 uppercase tracking-wide mb-2">{t('pages.equipment.recentReadings')}</h4>
+                      <div className="border border-[#1E2D4D]/10 rounded-lg overflow-hidden">
                         <table className="w-full text-sm">
                           <thead><tr className="bg-gray-50">
-                            <th className="px-3 py-2 text-left text-xs font-semibold text-gray-600">{t('pages.equipment.time')}</th>
-                            <th className="px-3 py-2 text-right text-xs font-semibold text-gray-600">{t('pages.equipment.temp')}</th>
-                            <th className="px-3 py-2 text-right text-xs font-semibold text-gray-600">{t('pages.equipment.humidity')}</th>
-                            <th className="px-3 py-2 text-center text-xs font-semibold text-gray-600">{t('pages.equipment.status')}</th>
+                            <th className="px-3 py-2 text-left text-xs font-semibold text-[#1E2D4D]/70">{t('pages.equipment.time')}</th>
+                            <th className="px-3 py-2 text-right text-xs font-semibold text-[#1E2D4D]/70">{t('pages.equipment.temp')}</th>
+                            <th className="px-3 py-2 text-right text-xs font-semibold text-[#1E2D4D]/70">{t('pages.equipment.humidity')}</th>
+                            <th className="px-3 py-2 text-center text-xs font-semibold text-[#1E2D4D]/70">{t('pages.equipment.status')}</th>
                           </tr></thead>
                           <tbody>
                             {readings.map((r, i) => (
                               <tr key={i} className="border-t border-gray-100">
-                                <td className="px-3 py-2 text-xs text-gray-600">{format(new Date(r.timestamp), 'h:mm:ss a')}</td>
+                                <td className="px-3 py-2 text-xs text-[#1E2D4D]/70">{format(new Date(r.timestamp), 'h:mm:ss a')}</td>
                                 <td className="px-3 py-2 text-sm font-medium text-right">{r.temperatureF}°F</td>
-                                <td className="px-3 py-2 text-xs text-gray-500 text-right">{r.humidityPct != null ? `${r.humidityPct}%` : '—'}</td>
+                                <td className="px-3 py-2 text-xs text-[#1E2D4D]/50 text-right">{r.humidityPct != null ? `${r.humidityPct}%` : '—'}</td>
                                 <td className="px-3 py-2 text-center">
                                   {r.complianceStatus === 'in_range' ? (
                                     <span className="text-green-600 text-xs font-medium">{t('pages.equipment.inRange')}</span>
@@ -1664,10 +1664,10 @@ export function Equipment() {
                       <button onClick={() => toast.info('Opening sensor detail page...')} className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-[#1E2D4D] bg-[#eef4f8] rounded-lg hover:bg-[#d9e8f0]">
                         <Wifi className="h-3.5 w-3.5" /> {t('pages.equipment.viewFullHistory')}
                       </button>
-                      <button onClick={() => toast.info('CSV export started...')} className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200">
+                      <button onClick={() => toast.info('CSV export started...')} className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-[#1E2D4D]/70 bg-[#1E2D4D]/5 rounded-lg hover:bg-gray-200">
                         <TrendingDown className="h-3.5 w-3.5" /> {t('pages.equipment.downloadCsv')}
                       </button>
-                      <button onClick={() => toast.info('Opening sensor settings...')} className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200">
+                      <button onClick={() => toast.info('Opening sensor settings...')} className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-[#1E2D4D]/70 bg-[#1E2D4D]/5 rounded-lg hover:bg-gray-200">
                         <Wrench className="h-3.5 w-3.5" /> {t('pages.equipment.configureSensor')}
                       </button>
                     </div>
@@ -1681,63 +1681,63 @@ export function Equipment() {
         {/* ── Add / Edit Equipment Modal ─────────────────────────── */}
         {showForm && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setShowForm(false)}>
-            <div className="bg-white rounded-xl border border-gray-200 w-[95vw] sm:w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4" onClick={e => e.stopPropagation()}>
-              <div className="p-5 border-b border-gray-200 flex items-center justify-between">
+            <div className="bg-white rounded-xl border border-[#1E2D4D]/10 w-[95vw] sm:w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4" onClick={e => e.stopPropagation()}>
+              <div className="p-5 border-b border-[#1E2D4D]/10 flex items-center justify-between">
                 <h2 className="text-lg font-bold text-[#1E2D4D]">{t('pages.equipment.addEquipment')}</h2>
-                <button onClick={() => setShowForm(false)} className="p-1 rounded hover:bg-gray-100"><X className="h-5 w-5 text-gray-400" /></button>
+                <button onClick={() => setShowForm(false)} className="p-1 rounded hover:bg-gray-100"><X className="h-5 w-5 text-[#1E2D4D]/30" /></button>
               </div>
               <form id="equipment-form" className="p-5 space-y-4" onSubmit={e => e.preventDefault()}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.equipmentType')}</label>
-                    <select name="equipment_type" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
+                    <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('pages.equipment.equipmentType')}</label>
+                    <select name="equipment_type" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]">
                       <option value="">{t('pages.equipment.selectType')}</option>
                       {EQUIPMENT_TYPES.map(eqType => <option key={eqType} value={eqType}>{eqType}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.location')}</label>
-                    <select name="location" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
+                    <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('pages.equipment.location')}</label>
+                    <select name="location" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]">
                       {locations.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.make')}</label>
-                    <input name="make" type="text" placeholder="e.g. True Manufacturing" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                    <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('pages.equipment.make')}</label>
+                    <input name="make" type="text" placeholder="e.g. True Manufacturing" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.model')}</label>
-                    <input name="model" type="text" placeholder="e.g. TG2R-2S" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                    <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('pages.equipment.model')}</label>
+                    <input name="model" type="text" placeholder="e.g. TG2R-2S" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.serialNumber')}</label>
-                    <input name="serial_number" type="text" placeholder="e.g. TM-2019-04821" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                    <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('pages.equipment.serialNumber')}</label>
+                    <input name="serial_number" type="text" placeholder="e.g. TM-2019-04821" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.installationDate')}</label>
-                    <input name="install_date" type="date" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                    <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('pages.equipment.installationDate')}</label>
+                    <input name="install_date" type="date" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.purchasePrice')}</label>
-                    <input name="purchase_price" type="number" placeholder="0.00" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                    <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('pages.equipment.purchasePrice')}</label>
+                    <input name="purchase_price" type="number" placeholder="0.00" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.expiryDate')}</label>
-                    <input name="warranty_expiry" type="date" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                    <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('pages.equipment.expiryDate')}</label>
+                    <input name="warranty_expiry" type="date" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.warrantyProvider')}</label>
-                    <input name="warranty_provider" type="text" placeholder="e.g. True Manufacturing" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                    <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('pages.equipment.warrantyProvider')}</label>
+                    <input name="warranty_provider" type="text" placeholder="e.g. True Manufacturing" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.maintenanceInterval')}</label>
-                    <select name="maintenance_interval" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
+                    <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('pages.equipment.maintenanceInterval')}</label>
+                    <select name="maintenance_interval" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]">
                       {MAINTENANCE_INTERVALS.map(i => <option key={i} value={i}>{i}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.assignedVendor')}</label>
-                    <select name="linked_vendor" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
+                    <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('pages.equipment.assignedVendor')}</label>
+                    <select name="linked_vendor" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]">
                       <option value="">{t('pages.equipment.selectVendor')}</option>
                       <option value="HVAC Service Vendor">HVAC Service Vendor</option>
                       <option value="Hood Cleaning Vendor">Hood Cleaning Vendor</option>
@@ -1747,7 +1747,7 @@ export function Equipment() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.photoEvidence')}</label>
+                    <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('pages.equipment.photoEvidence')}</label>
                     <PhotoEvidence
                       photos={equipmentPhotos}
                       onChange={setEquipmentPhotos}
@@ -1759,25 +1759,25 @@ export function Equipment() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.warrantyTerms')}</label>
-                    <input name="warranty_terms" type="text" placeholder="e.g. 5-year parts and labor" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                    <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('pages.equipment.warrantyTerms')}</label>
+                    <input name="warranty_terms" type="text" placeholder="e.g. 5-year parts and labor" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.warrantyContact')}</label>
-                    <input name="warranty_contact" type="text" placeholder="e.g. 1-800-555-0123" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                    <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('pages.equipment.warrantyContact')}</label>
+                    <input name="warranty_contact" type="text" placeholder="e.g. 1-800-555-0123" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.expectedUsefulLife')}</label>
-                    <input name="useful_life_years" type="number" placeholder="e.g. 10" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                    <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('pages.equipment.expectedUsefulLife')}</label>
+                    <input name="useful_life_years" type="number" placeholder="e.g. 10" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.replacementCostLabel')}</label>
-                    <input name="replacement_cost" type="number" placeholder="e.g. 12000" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                    <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('pages.equipment.replacementCostLabel')}</label>
+                    <input name="replacement_cost" type="number" placeholder="e.g. 12000" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" />
                   </div>
                 </div>
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="text-sm font-medium text-gray-700">{t('pages.equipment.notesLabel')}</label>
+                    <label className="text-sm font-medium text-[#1E2D4D]/80">{t('pages.equipment.notesLabel')}</label>
                     <AIAssistButton
                       fieldLabel="Notes"
                       context={{ equipmentName: (document.querySelector('#equipment-form select[name="equipment_type"]') as HTMLSelectElement)?.value || '', serviceType: 'equipment_record' }}
@@ -1785,7 +1785,7 @@ export function Equipment() {
                       onGenerated={(text) => { setEquipmentNotes(text); setAiFields(prev => new Set(prev).add('equipmentNotes')); }}
                     />
                   </div>
-                  <textarea name="notes" rows={3} placeholder="Additional notes..." value={equipmentNotes} onChange={(e) => { setEquipmentNotes(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('equipmentNotes'); return s; }); }} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] resize-none" />
+                  <textarea name="notes" rows={3} placeholder="Additional notes..." value={equipmentNotes} onChange={(e) => { setEquipmentNotes(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('equipmentNotes'); return s; }); }} className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] resize-none" />
                   {aiFields.has('equipmentNotes') && <AIGeneratedIndicator />}
                 </div>
                 <div className="flex gap-3 pt-2">
@@ -1829,7 +1829,7 @@ export function Equipment() {
                   </button>
                   <button
                     onClick={() => setShowForm(false)}
-                    className="px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+                    className="px-4 py-2.5 border border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-gray-50"
                   >
                     {t('pages.equipment.cancel')}
                   </button>
@@ -1851,8 +1851,8 @@ export function Equipment() {
       {/* QR Label Modal */}
       {showQRLabel && selected && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setShowQRLabel(false)}>
-          <div className="bg-white rounded-xl shadow-lg border border-gray-200 w-full max-w-xs p-6 text-center" onClick={e => e.stopPropagation()}>
-            <p className="text-xs font-bold text-gray-400 tracking-widest mb-3">EVIDLY</p>
+          <div className="bg-white rounded-xl shadow-lg border border-[#1E2D4D]/10 w-full max-w-xs p-6 text-center" onClick={e => e.stopPropagation()}>
+            <p className="text-xs font-bold text-[#1E2D4D]/30 tracking-widest mb-3">EVIDLY</p>
             <QRCodeSVG
               value={`evidly://equipment/${selected.id}`}
               size={160}
@@ -1860,13 +1860,13 @@ export function Equipment() {
               className="mx-auto"
             />
             <h3 className="text-sm font-bold text-[#1E2D4D] mt-3">{selected.name}</h3>
-            <p className="text-xs text-gray-500 mt-0.5">ID: {selected.id}</p>
+            <p className="text-xs text-[#1E2D4D]/50 mt-0.5">ID: {selected.id}</p>
             {selected.type && (
-              <p className="text-xs text-gray-500 mt-0.5">
+              <p className="text-xs text-[#1E2D4D]/50 mt-0.5">
                 Required: {selected.type.toLowerCase().includes('freezer') ? '≤0°F' : selected.type.toLowerCase().includes('hot') ? '≥135°F' : '≤41°F'}
               </p>
             )}
-            <p className="text-xs text-gray-400 mt-1">CalCode §113996</p>
+            <p className="text-xs text-[#1E2D4D]/30 mt-1">CalCode §113996</p>
             <div className="flex gap-2 mt-4">
               <button
                 onClick={() => {
@@ -1886,7 +1886,7 @@ export function Equipment() {
               </button>
               <button
                 onClick={() => setShowQRLabel(false)}
-                className="flex-1 px-3 py-2 border border-gray-300 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-100 transition-colors"
+                className="flex-1 px-3 py-2 border border-[#1E2D4D]/15 text-[#1E2D4D]/70 text-xs font-medium rounded-lg hover:bg-gray-100 transition-colors"
               >
                 {t('pages.equipment.close')}
               </button>

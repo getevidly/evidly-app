@@ -44,7 +44,7 @@ const TABS: { id: VendorTab; label: string; icon: typeof LayoutDashboard; badge?
 function TierBadge({ tier, size = 'sm' }: { tier: MarketplaceTier; size?: 'sm' | 'lg' }) {
   const cfg: Record<MarketplaceTier, { bg: string; text: string; border: string; icon: React.ComponentType<any>; label: string }> = {
     verified:  { bg: 'bg-green-50',  text: 'text-green-700',  border: 'border-green-200',  icon: EvidlyIcon, label: 'Verified'  },
-    certified: { bg: 'bg-gray-100',  text: 'text-gray-700',   border: 'border-gray-200',   icon: EvidlyIcon,      label: 'Certified' },
+    certified: { bg: 'bg-[#1E2D4D]/5',  text: 'text-[#1E2D4D]/80',   border: 'border-[#1E2D4D]/10',   icon: EvidlyIcon,      label: 'Certified' },
     preferred: { bg: 'bg-amber-50',  text: 'text-amber-700',  border: 'border-amber-200',  icon: Award,       label: 'Preferred' },
   };
   const c = cfg[tier];
@@ -65,14 +65,14 @@ function StarRating({ rating, size = 'sm' }: { rating: number; size?: 'sm' | 'lg
       {[1, 2, 3, 4, 5].map(i => (
         <Star key={i} className={sz} fill={i <= Math.round(rating) ? '#d4af37' : 'none'} stroke={i <= Math.round(rating) ? '#d4af37' : '#d1d5db'} />
       ))}
-      <span className={`ml-1 font-semibold ${size === 'lg' ? 'text-lg' : 'text-sm'} text-gray-700`}>{rating.toFixed(1)}</span>
+      <span className={`ml-1 font-semibold ${size === 'lg' ? 'text-lg' : 'text-sm'} text-[#1E2D4D]/80`}>{rating.toFixed(1)}</span>
     </div>
   );
 }
 
 function UrgencyBadge({ urgency }: { urgency: VendorLead['urgency'] }) {
   const map = {
-    low: 'bg-gray-100 text-gray-600',
+    low: 'bg-gray-100 text-[#1E2D4D]/70',
     normal: 'bg-blue-50 text-blue-700',
     high: 'bg-amber-50 text-amber-700',
     emergency: 'bg-red-50 text-red-700',
@@ -88,7 +88,7 @@ function StatusBadge({ status }: { status: string }) {
     scheduled: 'bg-cyan-50 text-cyan-700 border-cyan-200',
     in_progress: 'bg-amber-50 text-amber-700 border-amber-200',
     completed: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    declined: 'bg-gray-100 text-gray-500 border-gray-200',
+    declined: 'bg-gray-100 text-[#1E2D4D]/50 border-[#1E2D4D]/10',
     confirmed: 'bg-green-50 text-green-700 border-green-200',
     pending: 'bg-yellow-50 text-yellow-700 border-yellow-200',
     verified: 'bg-green-50 text-green-700 border-green-200',
@@ -96,13 +96,13 @@ function StatusBadge({ status }: { status: string }) {
     expired: 'bg-red-50 text-red-700 border-red-200',
   };
   const label = status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-  return <span className={`px-2 py-0.5 text-xs font-medium rounded-full border ${map[status] || 'bg-gray-100 text-gray-600 border-gray-200'}`}>{label}</span>;
+  return <span className={`px-2 py-0.5 text-xs font-medium rounded-full border ${map[status] || 'bg-gray-100 text-[#1E2D4D]/70 border-[#1E2D4D]/10'}`}>{label}</span>;
 }
 
 function ProgressBar({ value, color }: { value: number; color?: string }) {
   const c = color || (value >= 95 ? '#22c55e' : value >= 80 ? '#d4af37' : '#f59e0b');
   return (
-    <div className="w-full bg-gray-200 rounded-full h-2">
+    <div className="w-full bg-[#1E2D4D]/8 rounded-full h-2">
       <div className="h-2 rounded-full transition-all" style={{ width: `${Math.min(value, 100)}%`, backgroundColor: c }} />
     </div>
   );
@@ -160,7 +160,7 @@ export function VendorDashboard() {
       <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center">
         <div className="p-8 text-center">
           <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Vendor Dashboard</h2>
-          <p className="text-gray-500">No vendor data available.</p>
+          <p className="text-[#1E2D4D]/50">No vendor data available.</p>
         </div>
       </div>
     );
@@ -187,19 +187,19 @@ export function VendorDashboard() {
           { label: 'Conversion Rate', value: `${vendorDashboardStats.leadConversionRate}%`, icon: TrendingUp, color: 'text-cyan-600', bg: 'bg-cyan-50' },
           { label: 'Avg Response', value: `${vendorDashboardStats.avgResponseTime}h`, icon: Clock, color: 'text-orange-600', bg: 'bg-orange-50' },
         ].map(s => (
-          <div key={s.label} className="bg-white rounded-xl border border-gray-200 p-4">
+          <div key={s.label} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
             <div className={`w-9 h-9 ${s.bg} rounded-lg flex items-center justify-center mb-2`}>
               <s.icon className={`h-5 w-5 ${s.color}`} />
             </div>
-            <div className="text-2xl font-bold text-[#1E2D4D]">{s.value}</div>
-            <div className="text-xs text-gray-500">{s.label}</div>
+            <div className="text-2xl font-bold tracking-tight text-[#1E2D4D]">{s.value}</div>
+            <div className="text-xs text-[#1E2D4D]/50">{s.label}</div>
           </div>
         ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Certification Status */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-[#1E2D4D]">EvidLY Certification</h3>
             <TierBadge tier={vendorDashboardStats.currentTier} />
@@ -214,29 +214,29 @@ export function VendorDashboard() {
             ].map(r => (
               <div key={r.label}>
                 <div className="flex justify-between text-xs mb-0.5">
-                  <span className="text-gray-600">{r.label}</span>
-                  <span className="text-gray-400">{r.current} / {r.target}</span>
+                  <span className="text-[#1E2D4D]/70">{r.label}</span>
+                  <span className="text-[#1E2D4D]/30">{r.current} / {r.target}</span>
                 </div>
                 <ProgressBar value={r.pct} />
               </div>
             ))}
           </div>
-          <p className="text-xs text-gray-400 mt-3">Meet all targets for 3+ months to reach Preferred tier</p>
+          <p className="text-xs text-[#1E2D4D]/30 mt-3">Meet all targets for 3+ months to reach Preferred tier</p>
         </div>
 
         {/* Subscription Plan */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
           <h3 className="text-sm font-semibold text-[#1E2D4D] mb-3">Your Plan</h3>
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+            <div className="w-10 h-10 bg-[#1E2D4D]/5 rounded-lg flex items-center justify-center">
               <EvidlyIcon size={20} />
             </div>
             <div>
               <div className="font-semibold text-[#1E2D4D]">Free — EvidLY Listed</div>
-              <div className="text-xs text-gray-500">5 leads/month, basic listing</div>
+              <div className="text-xs text-[#1E2D4D]/50">5 leads/month, basic listing</div>
             </div>
           </div>
-          <div className="space-y-2 text-xs text-gray-600 mb-4">
+          <div className="space-y-2 text-xs text-[#1E2D4D]/70 mb-4">
             <div className="flex items-center gap-2"><CheckCircle className="h-3.5 w-3.5 text-green-500" /> Basic marketplace listing</div>
             <div className="flex items-center gap-2"><CheckCircle className="h-3.5 w-3.5 text-green-500" /> Credential verification</div>
             <div className="flex items-center gap-2"><XCircle className="h-3.5 w-3.5 text-gray-300" /> Analytics dashboard</div>
@@ -244,14 +244,14 @@ export function VendorDashboard() {
           </div>
           <button
             onClick={() => setShowSubscriptionModal(true)}
-            className="w-full py-2 bg-[#1E2D4D] text-white text-sm font-medium rounded-lg hover:bg-[#162340] transition-colors"
+            className="w-full py-2 bg-[#1E2D4D] text-white text-sm font-medium rounded-lg hover:bg-[#162340] transition-all duration-150 active:scale-[0.98]"
           >
             Upgrade Plan
           </button>
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
           <h3 className="text-sm font-semibold text-[#1E2D4D] mb-3">Quick Actions</h3>
           <div className="space-y-2">
             {[
@@ -263,13 +263,13 @@ export function VendorDashboard() {
               <button key={a.label} onClick={a.action} className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors text-left">
                 <div className="flex items-center gap-3">
                   <a.icon className={`h-4 w-4 ${a.color}`} />
-                  <span className="text-sm text-gray-700">{a.label}</span>
+                  <span className="text-sm text-[#1E2D4D]/80">{a.label}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   {a.count > 0 && (
                     <span className="px-1.5 py-0.5 bg-red-500 text-white text-xs font-bold rounded-full min-w-[18px] text-center">{a.count}</span>
                   )}
-                  <ChevronRight className="h-4 w-4 text-gray-400" />
+                  <ChevronRight className="h-4 w-4 text-[#1E2D4D]/30" />
                 </div>
               </button>
             ))}
@@ -279,17 +279,17 @@ export function VendorDashboard() {
 
       {/* Recent Leads + Upcoming Services */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="bg-white rounded-xl border border-gray-200">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10">
           <div className="px-5 py-3 border-b border-gray-100 flex items-center justify-between">
             <h3 className="text-sm font-semibold text-[#1E2D4D]">Recent Leads</h3>
             <button onClick={() => setActiveTab('leads')} className="text-xs text-[#1E2D4D] font-medium hover:underline">View All</button>
           </div>
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-[#1E2D4D]/5">
             {vendorLeads.slice(0, 4).map(lead => (
               <div key={lead.id} className="px-5 py-3 flex items-center justify-between">
                 <div>
                   <div className="text-sm font-medium text-gray-900">{lead.operatorOrg}</div>
-                  <div className="text-xs text-gray-500">{lead.serviceType} &middot; {timeAgo(lead.receivedAt)}</div>
+                  <div className="text-xs text-[#1E2D4D]/50">{lead.serviceType} &middot; {timeAgo(lead.receivedAt)}</div>
                 </div>
                 <StatusBadge status={lead.status} />
               </div>
@@ -297,17 +297,17 @@ export function VendorDashboard() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10">
           <div className="px-5 py-3 border-b border-gray-100 flex items-center justify-between">
             <h3 className="text-sm font-semibold text-[#1E2D4D]">Upcoming Services</h3>
             <button onClick={() => setActiveTab('services')} className="text-xs text-[#1E2D4D] font-medium hover:underline">View All</button>
           </div>
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-[#1E2D4D]/5">
             {vendorScheduledServices.slice(0, 4).map(svc => (
               <div key={svc.id} className="px-5 py-3 flex items-center justify-between">
                 <div>
                   <div className="text-sm font-medium text-gray-900">{svc.clientOrg}</div>
-                  <div className="text-xs text-gray-500">{svc.serviceType} &middot; {formatDate(svc.scheduledDate)} at {svc.scheduledTime}</div>
+                  <div className="text-xs text-[#1E2D4D]/50">{svc.serviceType} &middot; {formatDate(svc.scheduledDate)} at {svc.scheduledTime}</div>
                 </div>
                 <StatusBadge status={svc.status} />
               </div>
@@ -341,7 +341,7 @@ export function VendorDashboard() {
               className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-colors ${
                 leadFilter === f
                   ? 'bg-[#1E2D4D] text-white border-[#1E2D4D]'
-                  : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
+                  : 'bg-white text-[#1E2D4D]/70 border-[#1E2D4D]/10 hover:border-gray-300'
               }`}
             >
               {f === 'all' ? 'All' : f.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())} ({filterCounts[f]})
@@ -352,9 +352,9 @@ export function VendorDashboard() {
         {/* Lead Cards */}
         <div className="space-y-3">
           {filteredLeads.length === 0 ? (
-            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-8 text-center text-gray-500">No leads matching this filter.</div>
+            <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-8 text-center text-[#1E2D4D]/50">No leads matching this filter.</div>
           ) : filteredLeads.map(lead => (
-            <div key={lead.id} className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+            <div key={lead.id} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
               <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
@@ -362,18 +362,18 @@ export function VendorDashboard() {
                     <UrgencyBadge urgency={lead.urgency} />
                     <StatusBadge status={lead.status} />
                   </div>
-                  <div className="text-sm text-gray-600">{lead.operatorName} &middot; {lead.serviceType}</div>
+                  <div className="text-sm text-[#1E2D4D]/70">{lead.operatorName} &middot; {lead.serviceType}</div>
                 </div>
-                <div className="text-xs text-gray-400">{timeAgo(lead.receivedAt)}</div>
+                <div className="text-xs text-[#1E2D4D]/30">{timeAgo(lead.receivedAt)}</div>
               </div>
-              <div className="flex items-center gap-4 text-xs text-gray-500 mb-3">
+              <div className="flex items-center gap-4 text-xs text-[#1E2D4D]/50 mb-3">
                 <span className="flex items-center gap-1"><MapPin className="h-3 w-3" /> {lead.locationDetails}</span>
-                {lead.quoteAmount && <span className="font-medium text-gray-700">${lead.quoteAmount.toLocaleString()}</span>}
+                {lead.quoteAmount && <span className="font-medium text-[#1E2D4D]/80">${lead.quoteAmount.toLocaleString()}</span>}
                 {lead.scheduledDate && <span className="flex items-center gap-1"><CalendarDays className="h-3 w-3" /> {formatDate(lead.scheduledDate)}</span>}
               </div>
-              <p className="text-sm text-gray-600 mb-4">{lead.description}</p>
+              <p className="text-sm text-[#1E2D4D]/70 mb-4">{lead.description}</p>
               {lead.respondedAt && (
-                <div className="text-xs text-gray-400 mb-3">
+                <div className="text-xs text-[#1E2D4D]/30 mb-3">
                   Responded in {Math.round((new Date(lead.respondedAt).getTime() - new Date(lead.receivedAt).getTime()) / 3600000)}h
                 </div>
               )}
@@ -383,7 +383,7 @@ export function VendorDashboard() {
                     <button onClick={() => toast.info(`Quote for ${lead.operatorOrg} (Demo)`)} className="px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white text-sm font-medium rounded-lg hover:bg-[#162340]">
                       <Send className="h-3.5 w-3.5 inline mr-1.5" />Send Quote
                     </button>
-                    <button onClick={() => toast.info('Lead declined (demo)')} className="px-4 py-2 min-h-[44px] border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50">
+                    <button onClick={() => toast.info('Lead declined (demo)')} className="px-4 py-2 min-h-[44px] border border-[#1E2D4D]/10 text-[#1E2D4D]/70 text-sm font-medium rounded-lg hover:bg-gray-50">
                       Decline
                     </button>
                   </>
@@ -397,7 +397,7 @@ export function VendorDashboard() {
                   </button>
                 )}
                 {lead.status === 'completed' && (
-                  <button onClick={() => toast.info('Completion report available in production')} className="px-4 py-2 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50">
+                  <button onClick={() => toast.info('Completion report available in production')} className="px-4 py-2 border border-[#1E2D4D]/10 text-[#1E2D4D]/70 text-sm font-medium rounded-lg hover:bg-gray-50">
                     View Completion Report
                   </button>
                 )}
@@ -416,37 +416,37 @@ export function VendorDashboard() {
         <h3 className="text-sm font-semibold text-[#1E2D4D] mb-3">Upcoming Services (Next 14 Days)</h3>
         <div className="space-y-3">
           {vendorScheduledServices.map(svc => (
-            <div key={svc.id} className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+            <div key={svc.id} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
               <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <span className="font-semibold text-[#1E2D4D]">{svc.clientOrg}</span>
                     <StatusBadge status={svc.status} />
                   </div>
-                  <div className="text-sm text-gray-600">{svc.serviceType}</div>
+                  <div className="text-sm text-[#1E2D4D]/70">{svc.serviceType}</div>
                 </div>
                 <div className="text-right">
                   <div className="text-sm font-medium text-gray-900">{formatDate(svc.scheduledDate)}</div>
-                  <div className="text-xs text-gray-500">{svc.scheduledTime}</div>
+                  <div className="text-xs text-[#1E2D4D]/50">{svc.scheduledTime}</div>
                 </div>
               </div>
-              <div className="flex items-center gap-4 text-xs text-gray-500 mb-3">
+              <div className="flex items-center gap-4 text-xs text-[#1E2D4D]/50 mb-3">
                 <span className="flex items-center gap-1"><MapPin className="h-3 w-3" /> {svc.location}</span>
               </div>
-              {svc.notes && <p className="text-sm text-gray-600 bg-[#FAF7F0] rounded-lg p-3 mb-4">{svc.notes}</p>}
+              {svc.notes && <p className="text-sm text-[#1E2D4D]/70 bg-[#FAF7F0] rounded-lg p-3 mb-4">{svc.notes}</p>}
 
               {/* Service Completion Workflow */}
               <div className="flex flex-wrap gap-2">
                 <button onClick={() => toast.success(`Service started for ${svc.clientOrg}`)} className="px-3 py-1.5 min-h-[44px] bg-green-600 text-white text-xs font-medium rounded-lg hover:bg-green-700 flex items-center gap-1">
                   <CheckCircle className="h-3.5 w-3.5" /> Mark Started
                 </button>
-                <button onClick={() => toast.info('Camera for before/after photos (demo)')} className="px-3 py-1.5 min-h-[44px] border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1">
+                <button onClick={() => toast.info('Camera for before/after photos (demo)')} className="px-3 py-1.5 min-h-[44px] border border-[#1E2D4D]/10 text-[#1E2D4D]/70 text-xs font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1">
                   <Camera className="h-3.5 w-3.5" /> Upload Photos
                 </button>
-                <button onClick={() => toast.info('Upload service report (demo)')} className="px-3 py-1.5 min-h-[44px] border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1">
+                <button onClick={() => toast.info('Upload service report (demo)')} className="px-3 py-1.5 min-h-[44px] border border-[#1E2D4D]/10 text-[#1E2D4D]/70 text-xs font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1">
                   <Upload className="h-3.5 w-3.5" /> Upload Report
                 </button>
-                <button onClick={() => toast.success(`Service completed for ${svc.clientOrg}`)} className="px-3 py-1.5 min-h-[44px] border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1">
+                <button onClick={() => toast.success(`Service completed for ${svc.clientOrg}`)} className="px-3 py-1.5 min-h-[44px] border border-[#1E2D4D]/10 text-[#1E2D4D]/70 text-xs font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1">
                   <ClipboardCheck className="h-3.5 w-3.5" /> Mark Completed
                 </button>
               </div>
@@ -458,15 +458,15 @@ export function VendorDashboard() {
       {/* Recent Completions */}
       <div>
         <h3 className="text-sm font-semibold text-[#1E2D4D] mb-3">Recent Completions</h3>
-        <div className="bg-white rounded-xl border border-gray-200 divide-y divide-gray-100">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 divide-y divide-[#1E2D4D]/5">
           {vendorLeads.filter(l => l.status === 'completed').map(lead => (
             <div key={lead.id} className="px-5 py-4 flex items-center justify-between">
               <div>
                 <div className="text-sm font-medium text-gray-900">{lead.operatorOrg}</div>
-                <div className="text-xs text-gray-500">{lead.serviceType} &middot; {lead.scheduledDate && formatDate(lead.scheduledDate)}</div>
+                <div className="text-xs text-[#1E2D4D]/50">{lead.serviceType} &middot; {lead.scheduledDate && formatDate(lead.scheduledDate)}</div>
               </div>
               <div className="flex items-center gap-3">
-                {lead.quoteAmount && <span className="text-sm font-medium text-gray-700">${lead.quoteAmount}</span>}
+                {lead.quoteAmount && <span className="text-sm font-medium text-[#1E2D4D]/80">${lead.quoteAmount}</span>}
                 <StatusBadge status="completed" />
               </div>
             </div>
@@ -496,7 +496,7 @@ export function VendorDashboard() {
         <button onClick={() => toast.info('Upload new credential (demo)')} className="px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white text-sm font-medium rounded-lg hover:bg-[#162340] flex items-center gap-1.5">
           <Upload className="h-4 w-4" /> Upload Credential
         </button>
-        <button onClick={() => toast.info('Share credentials with operators (demo)')} className="px-4 py-2 min-h-[44px] border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1.5">
+        <button onClick={() => toast.info('Share credentials with operators (demo)')} className="px-4 py-2 min-h-[44px] border border-[#1E2D4D]/10 text-[#1E2D4D]/70 text-sm font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1.5">
           <Send className="h-4 w-4" /> Share with Operators
         </button>
       </div>
@@ -504,19 +504,19 @@ export function VendorDashboard() {
       {/* Credentials Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {vendorCredentials.map(cred => (
-          <div key={cred.id} className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+          <div key={cred.id} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
             <div className="flex items-start justify-between mb-2">
               <div className="flex items-center gap-2">
                 {cred.verifiedByEvidly ? (
                   <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
                 ) : (
-                  <Clock className="h-5 w-5 text-gray-400 flex-shrink-0" />
+                  <Clock className="h-5 w-5 text-[#1E2D4D]/30 flex-shrink-0" />
                 )}
                 <span className="text-sm font-medium text-gray-900">{cred.name}</span>
               </div>
               <StatusBadge status={cred.status} />
             </div>
-            <div className="ml-7 space-y-1 text-xs text-gray-500">
+            <div className="ml-7 space-y-1 text-xs text-[#1E2D4D]/50">
               <div>Type: {cred.type.charAt(0).toUpperCase() + cred.type.slice(1)}</div>
               {cred.issuedDate && <div>Issued: {formatDate(cred.issuedDate)}</div>}
               {cred.expirationDate && (
@@ -544,12 +544,12 @@ export function VendorDashboard() {
     return (
       <div className="space-y-6">
         {/* Rating Summary */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
             <div className="text-center">
               <div className="text-3xl sm:text-4xl font-bold text-[#1E2D4D]">{vendorDashboardStats.avgRating.toFixed(1)}</div>
               <StarRating rating={vendorDashboardStats.avgRating} size="lg" />
-              <p className="text-xs text-gray-500 mt-1">Based on {vendorReviews.length} reviews</p>
+              <p className="text-xs text-[#1E2D4D]/50 mt-1">Based on {vendorReviews.length} reviews</p>
             </div>
             <div className="flex-1 space-y-1.5 w-full">
               {[5, 4, 3, 2, 1].map(star => {
@@ -557,12 +557,12 @@ export function VendorDashboard() {
                 const pct = vendorReviews.length > 0 ? (count / vendorReviews.length) * 100 : 0;
                 return (
                   <div key={star} className="flex items-center gap-2 text-sm">
-                    <span className="w-3 text-gray-600">{star}</span>
+                    <span className="w-3 text-[#1E2D4D]/70">{star}</span>
                     <Star className="h-3.5 w-3.5" fill="#d4af37" stroke="#d4af37" />
-                    <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="flex-1 h-2 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
                       <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: '#d4af37' }} />
                     </div>
-                    <span className="w-5 text-xs text-gray-500 text-right">{count}</span>
+                    <span className="w-5 text-xs text-[#1E2D4D]/50 text-right">{count}</span>
                   </div>
                 );
               })}
@@ -573,26 +573,26 @@ export function VendorDashboard() {
         {/* Review List */}
         <div className="space-y-3">
           {vendorReviews.map(review => (
-            <div key={review.id} className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+            <div key={review.id} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
               <div className="flex items-start justify-between flex-wrap gap-2 mb-2">
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="font-medium text-gray-900">{review.reviewerName}</span>
-                    <span className="text-xs text-gray-500">{review.reviewerOrg}</span>
+                    <span className="text-xs text-[#1E2D4D]/50">{review.reviewerOrg}</span>
                   </div>
                   <div className="flex items-center gap-2 mt-1">
                     <StarRating rating={review.rating} />
-                    <span className="text-xs text-gray-400">&middot;</span>
-                    <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full">{review.serviceType}</span>
+                    <span className="text-xs text-[#1E2D4D]/30">&middot;</span>
+                    <span className="px-2 py-0.5 bg-gray-100 text-[#1E2D4D]/70 text-xs rounded-full">{review.serviceType}</span>
                   </div>
                 </div>
-                <span className="text-xs text-gray-400">{formatDate(review.date)}</span>
+                <span className="text-xs text-[#1E2D4D]/30">{formatDate(review.date)}</span>
               </div>
-              <p className="text-sm text-gray-700 mt-2">{review.text}</p>
+              <p className="text-sm text-[#1E2D4D]/80 mt-2">{review.text}</p>
               {review.vendorResponse ? (
                 <div className="mt-3 bg-[#FAF7F0] rounded-lg p-3 border-l-2 border-[#1E2D4D]">
-                  <div className="text-xs font-medium text-gray-500 mb-1">Your Response</div>
-                  <p className="text-sm text-gray-700">{review.vendorResponse}</p>
+                  <div className="text-xs font-medium text-[#1E2D4D]/50 mb-1">Your Response</div>
+                  <p className="text-sm text-[#1E2D4D]/80">{review.vendorResponse}</p>
                 </div>
               ) : (
                 <button
@@ -609,7 +609,7 @@ export function VendorDashboard() {
         {/* Tips */}
         <div className="bg-[#eef4f8] border border-[#b8d4e8] rounded-xl p-4 sm:p-5">
           <h3 className="text-sm font-semibold text-[#1E2D4D] mb-3">Tips to Improve Your Rating</h3>
-          <ul className="space-y-2 text-sm text-gray-700">
+          <ul className="space-y-2 text-sm text-[#1E2D4D]/80">
             <li className="flex items-start gap-2"><Zap className="h-4 w-4 text-[#d4af37] flex-shrink-0 mt-0.5" /> Respond to all reviews within 48 hours — operators notice and appreciate it</li>
             <li className="flex items-start gap-2"><Zap className="h-4 w-4 text-[#d4af37] flex-shrink-0 mt-0.5" /> Upload service documentation within 24 hours of completing a job</li>
             <li className="flex items-start gap-2"><Zap className="h-4 w-4 text-[#d4af37] flex-shrink-0 mt-0.5" /> Include before/after photos — they show quality and build trust</li>
@@ -651,16 +651,16 @@ export function VendorDashboard() {
             { label: 'Services Completed', value: vendorAnalyticsData.reduce((s, d) => s + d.servicesCompleted, 0), icon: CheckCircle, color: 'text-emerald-600' },
             { label: 'Avg Monthly Views', value: Math.round(vendorAnalyticsData.reduce((s, d) => s + d.profileViews, 0) / 12), icon: Eye, color: 'text-purple-600' },
           ].map(s => (
-            <div key={s.label} className="bg-white rounded-xl border border-gray-200 p-4">
+            <div key={s.label} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
               <s.icon className={`h-5 w-5 ${s.color} mb-2`} />
               <div className="text-xl font-bold text-[#1E2D4D]">{s.value}</div>
-              <div className="text-xs text-gray-500">{s.label}</div>
+              <div className="text-xs text-[#1E2D4D]/50">{s.label}</div>
             </div>
           ))}
         </div>
 
         {/* Profile Views Chart (div-based bars) */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
           <h3 className="text-sm font-semibold text-[#1E2D4D] mb-4">Profile Views (12 Months)</h3>
           <div className="flex items-end gap-1.5 h-40">
             {vendorAnalyticsData.map(d => (
@@ -670,14 +670,14 @@ export function VendorDashboard() {
                   style={{ height: `${(d.profileViews / maxViews) * 100}%`, backgroundColor: '#1E2D4D', minHeight: '4px' }}
                   title={`${d.month}: ${d.profileViews} views`}
                 />
-                <span className="text-[9px] text-gray-400 mt-1.5 truncate w-full text-center">{d.month.split(' ')[0]}</span>
+                <span className="text-[9px] text-[#1E2D4D]/30 mt-1.5 truncate w-full text-center">{d.month.split(' ')[0]}</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Monthly Data Table */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
           <div className="px-5 py-3 border-b border-gray-100">
             <h3 className="text-sm font-semibold text-[#1E2D4D]">Monthly Breakdown</h3>
           </div>
@@ -685,24 +685,24 @@ export function VendorDashboard() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-[#FAF7F0] text-left">
-                  <th className="px-4 py-2 text-xs font-medium text-gray-500">Month</th>
-                  <th className="px-4 py-2 text-xs font-medium text-gray-500 text-right">Views</th>
-                  <th className="px-4 py-2 text-xs font-medium text-gray-500 text-right hidden sm:table-cell">Requests</th>
-                  <th className="px-4 py-2 text-xs font-medium text-gray-500 text-right hidden sm:table-cell">Quoted</th>
-                  <th className="px-4 py-2 text-xs font-medium text-gray-500 text-right hidden sm:table-cell">Accepted</th>
-                  <th className="px-4 py-2 text-xs font-medium text-gray-500 text-right">Completed</th>
-                  <th className="px-4 py-2 text-xs font-medium text-gray-500 text-right">Revenue</th>
+                  <th className="px-4 py-2 text-xs font-medium text-[#1E2D4D]/50">Month</th>
+                  <th className="px-4 py-2 text-xs font-medium text-[#1E2D4D]/50 text-right">Views</th>
+                  <th className="px-4 py-2 text-xs font-medium text-[#1E2D4D]/50 text-right hidden sm:table-cell">Requests</th>
+                  <th className="px-4 py-2 text-xs font-medium text-[#1E2D4D]/50 text-right hidden sm:table-cell">Quoted</th>
+                  <th className="px-4 py-2 text-xs font-medium text-[#1E2D4D]/50 text-right hidden sm:table-cell">Accepted</th>
+                  <th className="px-4 py-2 text-xs font-medium text-[#1E2D4D]/50 text-right">Completed</th>
+                  <th className="px-4 py-2 text-xs font-medium text-[#1E2D4D]/50 text-right">Revenue</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-[#1E2D4D]/5">
                 {[...vendorAnalyticsData].reverse().map(d => (
                   <tr key={d.month} className="hover:bg-gray-50">
                     <td className="px-4 py-2 font-medium text-gray-900">{d.month}</td>
-                    <td className="px-4 py-2 text-right text-gray-600">{d.profileViews}</td>
-                    <td className="px-4 py-2 text-right text-gray-600 hidden sm:table-cell">{d.quoteRequests}</td>
-                    <td className="px-4 py-2 text-right text-gray-600 hidden sm:table-cell">{d.quotesSent}</td>
-                    <td className="px-4 py-2 text-right text-gray-600 hidden sm:table-cell">{d.quotesAccepted}</td>
-                    <td className="px-4 py-2 text-right text-gray-600">{d.servicesCompleted}</td>
+                    <td className="px-4 py-2 text-right text-[#1E2D4D]/70">{d.profileViews}</td>
+                    <td className="px-4 py-2 text-right text-[#1E2D4D]/70 hidden sm:table-cell">{d.quoteRequests}</td>
+                    <td className="px-4 py-2 text-right text-[#1E2D4D]/70 hidden sm:table-cell">{d.quotesSent}</td>
+                    <td className="px-4 py-2 text-right text-[#1E2D4D]/70 hidden sm:table-cell">{d.quotesAccepted}</td>
+                    <td className="px-4 py-2 text-right text-[#1E2D4D]/70">{d.servicesCompleted}</td>
                     <td className="px-4 py-2 text-right font-medium text-gray-900">${d.revenue.toLocaleString()}</td>
                   </tr>
                 ))}
@@ -712,7 +712,7 @@ export function VendorDashboard() {
         </div>
 
         {/* Category Comparison */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
           <h3 className="text-sm font-semibold text-[#1E2D4D] mb-4">How You Compare (Hood Cleaning Category)</h3>
           <div className="space-y-3">
             {[
@@ -723,10 +723,10 @@ export function VendorDashboard() {
             ].map(c => (
               <div key={c.label}>
                 <div className="flex justify-between text-xs mb-1">
-                  <span className="text-gray-600">{c.label}</span>
-                  <span className="text-gray-500">You: <span className="font-medium text-[#1E2D4D]">{c.you}</span> &middot; Avg: {c.avg}</span>
+                  <span className="text-[#1E2D4D]/70">{c.label}</span>
+                  <span className="text-[#1E2D4D]/50">You: <span className="font-medium text-[#1E2D4D]">{c.you}</span> &middot; Avg: {c.avg}</span>
                 </div>
-                <div className="relative h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div className="relative h-2 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
                   <div className="absolute h-full rounded-full bg-gray-400/40" style={{ width: `${c.pctAvg}%` }} />
                   <div className="absolute h-full rounded-full bg-[#1E2D4D]" style={{ width: `${c.pctYou}%` }} />
                 </div>
@@ -767,8 +767,8 @@ export function VendorDashboard() {
             { label: 'Bounced', value: stats.bounced, color: 'text-red-700', bg: 'bg-red-50' },
           ].map(s => (
             <div key={s.label} className={`${s.bg} rounded-xl p-4 text-center`}>
-              <div className={`text-2xl font-bold ${s.color}`}>{s.value}</div>
-              <div className="text-xs text-gray-500 mt-0.5">{s.label}</div>
+              <div className={`text-2xl font-bold tracking-tight ${s.color}`}>{s.value}</div>
+              <div className="text-xs text-[#1E2D4D]/50 mt-0.5">{s.label}</div>
             </div>
           ))}
         </div>
@@ -783,13 +783,13 @@ export function VendorDashboard() {
           </button>
           <button
             onClick={() => setShowBulkImport(true)}
-            className="px-4 py-2 min-h-[44px] border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1.5"
+            className="px-4 py-2 min-h-[44px] border border-[#1E2D4D]/10 text-[#1E2D4D]/80 text-sm font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1.5"
           >
             <Upload className="h-4 w-4" /> Bulk Import
           </button>
           <button
             onClick={() => setShowShareLink(true)}
-            className="px-4 py-2 min-h-[44px] border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1.5"
+            className="px-4 py-2 min-h-[44px] border border-[#1E2D4D]/10 text-[#1E2D4D]/80 text-sm font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1.5"
           >
             <Link2 className="h-4 w-4" /> Share Invite Link
           </button>
@@ -799,9 +799,9 @@ export function VendorDashboard() {
         <div>
           <h3 className="text-sm font-semibold text-[#1E2D4D] mb-3">Active Clients ({activeClients.length})</h3>
           {activeClients.length === 0 ? (
-            <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
+            <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8 text-center">
               <Users className="h-10 w-10 text-gray-300 mx-auto mb-3" />
-              <p className="text-sm text-gray-500 mb-4">No active clients yet. Invite your first client to get started.</p>
+              <p className="text-sm text-[#1E2D4D]/50 mb-4">No active clients yet. Invite your first client to get started.</p>
               <button
                 onClick={() => setShowInviteModal(true)}
                 className="px-4 py-2 bg-[#1E2D4D] text-white text-sm font-medium rounded-lg hover:bg-[#162340]"
@@ -814,19 +814,19 @@ export function VendorDashboard() {
               {activeClients.map(link => {
                 const invite = clientInvitations.find(i => i.id === link.invitation_id);
                 return (
-                  <div key={link.id} className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+                  <div key={link.id} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
                     <div className="flex items-start justify-between mb-3">
                       <div>
                         <div className="font-semibold text-[#1E2D4D]">{invite?.business_name || 'Client'}</div>
-                        <div className="text-xs text-gray-500">{invite?.contact_name} &middot; Linked {formatDate(link.linked_at)}</div>
+                        <div className="text-xs text-[#1E2D4D]/50">{invite?.contact_name} &middot; Linked {formatDate(link.linked_at)}</div>
                       </div>
                       <StatusBadge status="confirmed" />
                     </div>
-                    <div className="space-y-2 text-xs text-gray-600">
+                    <div className="space-y-2 text-xs text-[#1E2D4D]/70">
                       {link.services_provided.length > 0 && (
                         <div className="flex flex-wrap gap-1">
                           {link.services_provided.map(s => (
-                            <span key={s} className="px-2 py-0.5 bg-gray-100 rounded-full">{s}</span>
+                            <span key={s} className="px-2 py-0.5 bg-[#1E2D4D]/5 rounded-full">{s}</span>
                           ))}
                         </div>
                       )}
@@ -846,17 +846,17 @@ export function VendorDashboard() {
         <div>
           <h3 className="text-sm font-semibold text-[#1E2D4D] mb-3">Pending Invitations ({pendingInvitations.length})</h3>
           {pendingInvitations.length === 0 ? (
-            <div className="bg-white rounded-xl border border-gray-200 p-6 text-center text-sm text-gray-500">
+            <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 text-center text-sm text-[#1E2D4D]/50">
               All invitations have been accepted!
             </div>
           ) : (
-            <div className="bg-white rounded-xl border border-gray-200 divide-y divide-gray-100">
+            <div className="bg-white rounded-xl border border-[#1E2D4D]/10 divide-y divide-[#1E2D4D]/5">
               {pendingInvitations.map(inv => (
                 <div key={inv.id} className="px-5 py-4 flex flex-wrap items-center justify-between gap-3">
                   <div className="min-w-0">
                     <div className="text-sm font-medium text-gray-900 truncate">{inv.business_name}</div>
-                    <div className="text-xs text-gray-500">{inv.contact_name} &middot; {inv.email}</div>
-                    <div className="text-xs text-gray-400 mt-0.5">
+                    <div className="text-xs text-[#1E2D4D]/50">{inv.contact_name} &middot; {inv.email}</div>
+                    <div className="text-xs text-[#1E2D4D]/30 mt-0.5">
                       Sent {formatDate(inv.sent_at)}
                       {inv.reminder_count > 0 && ` · ${inv.reminder_count} reminder${inv.reminder_count > 1 ? 's' : ''}`}
                     </div>
@@ -866,7 +866,7 @@ export function VendorDashboard() {
                     {inv.status !== 'bounced' && (
                       <button
                         onClick={() => handleResend(inv.id)}
-                        className="px-3 py-1.5 border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1"
+                        className="px-3 py-1.5 border border-[#1E2D4D]/10 text-[#1E2D4D]/70 text-xs font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1"
                       >
                         <RefreshCw className="h-3 w-3" /> Resend
                       </button>
@@ -909,29 +909,29 @@ export function VendorDashboard() {
     if (!showSubscriptionModal) return null;
     return (
       <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowSubscriptionModal(false)}>
-        <div className="bg-white rounded-xl border border-gray-200 max-w-4xl w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6" onClick={e => e.stopPropagation()}>
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 max-w-4xl w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6" onClick={e => e.stopPropagation()}>
           <div className="flex items-center justify-between flex-wrap gap-2 mb-6">
             <h2 className="text-xl font-bold text-[#1E2D4D]">Choose Your Plan</h2>
             <button onClick={() => setShowSubscriptionModal(false)} className="p-2 hover:bg-gray-100 rounded-full">
-              <XCircle className="h-5 w-5 text-gray-400" />
+              <XCircle className="h-5 w-5 text-[#1E2D4D]/30" />
             </button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {vendorSubscriptionPlans.map(plan => {
               const isCurrent = vendorCurrentSubscription.plan === plan.id.replace('plan-', '');
               return (
-                <div key={plan.id} className={`rounded-xl border-2 p-4 sm:p-5 ${plan.highlighted ? 'border-[#d4af37] shadow-sm' : isCurrent ? 'border-[#1E2D4D]' : 'border-gray-200'}`}>
+                <div key={plan.id} className={`rounded-xl border-2 p-4 sm:p-5 ${plan.highlighted ? 'border-[#d4af37] shadow-sm' : isCurrent ? 'border-[#1E2D4D]' : 'border-[#1E2D4D]/10'}`}>
                   {plan.highlighted && (
                     <div className="text-xs font-bold text-[#d4af37] uppercase mb-2">Most Popular</div>
                   )}
                   <h3 className="font-bold text-[#1E2D4D]">{plan.name}</h3>
                   <div className="mt-2 mb-4">
                     {plan.price === 0 ? (
-                      <span className="text-2xl font-bold text-[#1E2D4D]">Free</span>
+                      <span className="text-2xl font-bold tracking-tight text-[#1E2D4D]">Free</span>
                     ) : plan.interval === 'per_lead' ? (
-                      <span className="text-2xl font-bold text-[#1E2D4D]">${plan.price}<span className="text-sm font-normal text-gray-500">/lead</span></span>
+                      <span className="text-2xl font-bold tracking-tight text-[#1E2D4D]">${plan.price}<span className="text-sm font-normal text-[#1E2D4D]/50">/lead</span></span>
                     ) : (
-                      <span className="text-2xl font-bold text-[#1E2D4D]">${plan.price}<span className="text-sm font-normal text-gray-500">/mo</span></span>
+                      <span className="text-2xl font-bold tracking-tight text-[#1E2D4D]">${plan.price}<span className="text-sm font-normal text-[#1E2D4D]/50">/mo</span></span>
                     )}
                   </div>
                   {plan.badge && (
@@ -941,7 +941,7 @@ export function VendorDashboard() {
                   )}
                   <ul className="space-y-2 mb-4">
                     {plan.features.map(f => (
-                      <li key={f} className="flex items-start gap-2 text-xs text-gray-600">
+                      <li key={f} className="flex items-start gap-2 text-xs text-[#1E2D4D]/70">
                         <CheckCircle className="h-3.5 w-3.5 text-green-500 flex-shrink-0 mt-0.5" />
                         {f}
                       </li>
@@ -954,7 +954,7 @@ export function VendorDashboard() {
                     }}
                     className={`w-full py-2 text-sm font-medium rounded-lg transition-colors ${
                       isCurrent
-                        ? 'bg-gray-100 text-gray-500 cursor-default'
+                        ? 'bg-gray-100 text-[#1E2D4D]/50 cursor-default'
                         : 'bg-[#1E2D4D] text-white hover:bg-[#162340]'
                     }`}
                   >
@@ -994,18 +994,18 @@ export function VendorDashboard() {
                   <path d="M22 32L26 36L34 26" stroke="#d4af37" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
-              <span className="ml-3 text-xl sm:text-2xl font-bold">
+              <span className="ml-3 text-xl sm:text-2xl font-bold tracking-tight">
                 <span className="text-[#1E2D4D]">Evid</span>
                 <span className="text-[#d4af37]">LY</span>
-                <span className="ml-2 text-sm text-gray-600 hidden sm:inline">Vendor Marketplace</span>
+                <span className="ml-2 text-sm text-[#1E2D4D]/70 hidden sm:inline">Vendor Marketplace</span>
               </span>
             </div>
             <div className="flex items-center gap-3">
-              <button onClick={() => toast.info('Notifications (Demo)')} className="relative p-2 text-gray-500 hover:text-gray-700">
+              <button onClick={() => toast.info('Notifications (Demo)')} className="relative p-2 text-[#1E2D4D]/50 hover:text-gray-700">
                 <Bell className="h-5 w-5" />
                 <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
               </button>
-              <button onClick={handleSignOut} className="px-4 py-2 text-sm text-gray-700 hover:text-gray-900 flex items-center gap-1.5">
+              <button onClick={handleSignOut} className="px-4 py-2 text-sm text-[#1E2D4D]/80 hover:text-gray-900 flex items-center gap-1.5">
                 <LogOut className="h-4 w-4" /> Sign Out
               </button>
             </div>
@@ -1014,7 +1014,7 @@ export function VendorDashboard() {
       </div>
 
       {/* Tab Navigation */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white border-b border-[#1E2D4D]/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex overflow-x-auto -mb-px">
             {TABS.map(tab => (
@@ -1024,7 +1024,7 @@ export function VendorDashboard() {
                 className={`flex items-center gap-2 px-5 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
                   activeTab === tab.id
                     ? 'border-[#1E2D4D] text-[#1E2D4D]'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    : 'border-transparent text-[#1E2D4D]/50 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
                 <tab.icon className="h-4 w-4" />

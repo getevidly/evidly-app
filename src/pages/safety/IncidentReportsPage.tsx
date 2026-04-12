@@ -132,9 +132,9 @@ export function IncidentReportsPage() {
   // ── Skeletons ──────────────────────────────────────────────
   const StatSkeleton = () => (
     <div className="rounded-lg p-4 animate-pulse" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
-      <div className="h-9 w-9 bg-gray-200 rounded-lg mx-auto mb-2" />
-      <div className="h-3 w-16 bg-gray-200 rounded mx-auto mb-2" />
-      <div className="h-6 w-10 bg-gray-200 rounded mx-auto" />
+      <div className="h-9 w-9 bg-[#1E2D4D]/8 rounded-lg mx-auto mb-2" />
+      <div className="h-3 w-16 bg-[#1E2D4D]/8 rounded mx-auto mb-2" />
+      <div className="h-6 w-10 bg-[#1E2D4D]/8 rounded mx-auto" />
     </div>
   );
 
@@ -144,7 +144,7 @@ export function IncidentReportsPage() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-2">
           <ShieldAlert className="w-6 h-6" style={{ color: NAVY }} />
-          <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Safety Incidents</h1>
+          <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Safety Incidents</h1>
         </div>
         <button
           onClick={() => navigate('/safety/incidents/new')}
@@ -199,12 +199,12 @@ export function IncidentReportsPage() {
         <div className="rounded-xl animate-pulse" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
           {Array.from({ length: 5 }).map((_, i) => (
             <div key={i} className="flex gap-4 px-6 py-4 border-b" style={{ borderColor: CARD_BORDER }}>
-              <div className="h-4 w-20 bg-gray-200 rounded" />
-              <div className="h-4 w-20 bg-gray-200 rounded" />
-              <div className="h-4 w-16 bg-gray-200 rounded" />
-              <div className="h-4 w-24 bg-gray-200 rounded" />
-              <div className="h-4 w-24 bg-gray-200 rounded" />
-              <div className="h-4 w-16 bg-gray-200 rounded" />
+              <div className="h-4 w-20 bg-[#1E2D4D]/8 rounded" />
+              <div className="h-4 w-20 bg-[#1E2D4D]/8 rounded" />
+              <div className="h-4 w-16 bg-[#1E2D4D]/8 rounded" />
+              <div className="h-4 w-24 bg-[#1E2D4D]/8 rounded" />
+              <div className="h-4 w-24 bg-[#1E2D4D]/8 rounded" />
+              <div className="h-4 w-16 bg-[#1E2D4D]/8 rounded" />
             </div>
           ))}
         </div>

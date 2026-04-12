@@ -54,15 +54,15 @@ export function TodaysOperations({ tasks, navigate, maxVisible = 6 }: TodaysOper
             >
               {isDone && <CheckCircle2 size={16} className="text-green-500 shrink-0" />}
               {task.status === 'in_progress' && <Hammer size={16} className="shrink-0" style={{ color: GOLD }} />}
-              {task.status === 'pending' && <span className="shrink-0 w-4 h-4 rounded-full border-2 border-gray-300" />}
+              {task.status === 'pending' && <span className="shrink-0 w-4 h-4 rounded-full border-2 border-[#1E2D4D]/15" />}
               {isOverdue && <AlertCircle size={16} className="text-red-500 shrink-0" />}
               <div className="flex-1 min-w-0">
-                <p className={`text-sm ${isDone ? 'text-gray-400 line-through' : 'text-gray-800'}`}>
+                <p className={`text-sm ${isDone ? 'text-[#1E2D4D]/30 line-through' : 'text-gray-800'}`}>
                   {task.label}
                 </p>
               </div>
               <div className="text-right shrink-0">
-                <p className={`text-xs ${isOverdue ? 'text-red-600 font-semibold' : 'text-gray-400'}`}>
+                <p className={`text-xs ${isOverdue ? 'text-red-600 font-semibold' : 'text-[#1E2D4D]/30'}`}>
                   {task.time}
                 </p>
               </div>

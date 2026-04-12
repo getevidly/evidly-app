@@ -42,7 +42,7 @@ export function FlagDocumentModal({ documentTitle, vendorName, onClose, onSubmit
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <AlertTriangle size={20} style={{ color: '#DC2626' }} />
-              <h3 className="text-lg font-semibold" style={{ color: NAVY }}>Flag Document Issue</h3>
+              <h3 className="text-lg font-semibold tracking-tight" style={{ color: NAVY }}>Flag Document Issue</h3>
             </div>
             <button
               type="button"

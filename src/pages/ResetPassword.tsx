@@ -85,9 +85,9 @@ export function ResetPassword() {
   if (sessionStatus === 'checking') {
     return (
       <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center py-12 px-4">
-        <div className="max-w-md w-full bg-white rounded-xl border border-gray-200 p-8 text-center">
+        <div className="max-w-md w-full bg-white rounded-xl border border-[#1E2D4D]/10 p-8 text-center">
           <Loader2 className="h-12 w-12 text-[#1E2D4D] mx-auto mb-4 animate-spin" />
-          <p className="text-gray-600">Verifying your reset link...</p>
+          <p className="text-[#1E2D4D]/70">Verifying your reset link...</p>
         </div>
       </div>
     );
@@ -97,7 +97,7 @@ export function ResetPassword() {
   if (sessionStatus === 'expired' && !error) {
     return (
       <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center py-12 px-4">
-        <div className="max-w-md w-full bg-white rounded-xl border border-gray-200 p-8 text-center">
+        <div className="max-w-md w-full bg-white rounded-xl border border-[#1E2D4D]/10 p-8 text-center">
           <div className="flex justify-center mb-4">
             <div className="flex items-center">
               <div className="w-12 h-14">
@@ -107,7 +107,7 @@ export function ResetPassword() {
                   <path d="M22 32L26 36L34 26" stroke="#d4af37" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
-              <span className="ml-3 text-3xl font-bold">
+              <span className="ml-3 text-3xl font-bold tracking-tight">
                 <span className="text-[#1E2D4D]">Evid</span>
                 <span className="text-[#d4af37]">LY</span>
               </span>
@@ -115,12 +115,12 @@ export function ResetPassword() {
           </div>
           <AlertTriangle className="h-16 w-16 text-amber-500 mx-auto mb-4" />
           <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Reset Link Expired</h2>
-          <p className="text-gray-600 mb-6">
+          <p className="text-[#1E2D4D]/70 mb-6">
             This password reset link has expired or is invalid. Please request a new one.
           </p>
           <Link
             to="/forgot-password"
-            className="inline-block px-6 py-3 bg-[#1E2D4D] text-white rounded-md font-medium hover:bg-[#162340] transition-colors no-underline"
+            className="inline-block px-6 py-3 bg-[#1E2D4D] text-white rounded-md font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] no-underline"
           >
             Request New Link
           </Link>
@@ -138,7 +138,7 @@ export function ResetPassword() {
   if (success) {
     return (
       <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center py-12 px-4">
-        <div className="max-w-md w-full bg-white rounded-xl border border-gray-200 p-8 text-center">
+        <div className="max-w-md w-full bg-white rounded-xl border border-[#1E2D4D]/10 p-8 text-center">
           <div className="flex justify-center mb-4">
             <div className="flex items-center">
               <div className="w-12 h-14">
@@ -148,7 +148,7 @@ export function ResetPassword() {
                   <path d="M22 32L26 36L34 26" stroke="#d4af37" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
-              <span className="ml-3 text-3xl font-bold">
+              <span className="ml-3 text-3xl font-bold tracking-tight">
                 <span className="text-[#1E2D4D]">Evid</span>
                 <span className="text-[#d4af37]">LY</span>
               </span>
@@ -156,7 +156,7 @@ export function ResetPassword() {
           </div>
           <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
           <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Password Updated!</h2>
-          <p className="text-gray-600">Your password has been changed successfully. Redirecting you to sign in...</p>
+          <p className="text-[#1E2D4D]/70">Your password has been changed successfully. Redirecting you to sign in...</p>
         </div>
       </div>
     );
@@ -166,7 +166,7 @@ export function ResetPassword() {
   return (
     <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full">
-        <div className="bg-white rounded-xl border border-gray-200 p-8">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8">
           <div className="flex justify-center mb-2">
             <div className="flex items-center">
               <div className="w-12 h-14">
@@ -176,14 +176,14 @@ export function ResetPassword() {
                   <path d="M22 32L26 36L34 26" stroke="#d4af37" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
-              <span className="ml-3 text-3xl font-bold">
+              <span className="ml-3 text-3xl font-bold tracking-tight">
                 <span className="text-[#1E2D4D]">Evid</span>
                 <span className="text-[#d4af37]">LY</span>
               </span>
             </div>
           </div>
           <h2 className="text-center text-xl font-bold text-[#1E2D4D] mb-2 mt-4">Set New Password</h2>
-          <p className="text-center text-sm text-gray-600 mb-6">
+          <p className="text-center text-sm text-[#1E2D4D]/70 mb-6">
             Choose a strong password for your account.
           </p>
 
@@ -202,22 +202,22 @@ export function ResetPassword() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700">New Password</label>
+              <label className="block text-sm font-medium text-[#1E2D4D]/80">New Password</label>
               <div className="relative mt-1">
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#d4af37] focus:border-[#d4af37]"
+                  className="block w-full px-3 py-2 pr-10 border border-[#1E2D4D]/15 rounded-md shadow-sm focus:outline-none focus:ring-[#d4af37] focus:border-[#d4af37]"
                 />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 flex items-center pr-3">
-                  {showPassword ? <EyeOff className="h-5 w-5 text-gray-400" /> : <Eye className="h-5 w-5 text-gray-400" />}
+                  {showPassword ? <EyeOff className="h-5 w-5 text-[#1E2D4D]/30" /> : <Eye className="h-5 w-5 text-[#1E2D4D]/30" />}
                 </button>
               </div>
               <div className="mt-2 space-y-1">
                 {Object.entries(passwordRequirements).map(([key, met]) => (
-                  <div key={key} className={`flex items-center text-xs ${met ? 'text-green-600' : 'text-gray-500'}`}>
+                  <div key={key} className={`flex items-center text-xs ${met ? 'text-green-600' : 'text-[#1E2D4D]/50'}`}>
                     {met ? <Check className="h-3 w-3 mr-1" /> : <X className="h-3 w-3 mr-1" />}
                     {key === 'minLength' && 'Minimum 12 characters'}
                     {key === 'hasUpper' && 'At least one uppercase letter'}
@@ -230,13 +230,13 @@ export function ResetPassword() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">Confirm New Password</label>
+              <label className="block text-sm font-medium text-[#1E2D4D]/80">Confirm New Password</label>
               <input
                 type="password"
                 required
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#d4af37] focus:border-[#d4af37]"
+                className="mt-1 block w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md shadow-sm focus:outline-none focus:ring-[#d4af37] focus:border-[#d4af37]"
               />
               {confirmPassword && (
                 <div className={`mt-1 flex items-center text-xs ${passwordsMatch ? 'text-green-600' : 'text-red-600'}`}>

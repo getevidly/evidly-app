@@ -69,17 +69,17 @@ export default function CarrierDemoDashboard() {
         { label: 'Carrier Dashboard' },
       ]} />
 
-      <h1 className="text-2xl font-bold text-[#1E2D4D] mb-1">
+      <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D] mb-1">
         Carrier Partner Dashboard
       </h1>
-      <p className="text-sm text-gray-500 mb-6">
+      <p className="text-sm text-[#1E2D4D]/50 mb-6">
         {demo?.partner_company || 'Insurance Carrier'} — Portfolio Risk Intelligence
       </p>
 
-      {loading && <p className="text-gray-400 text-sm">Loading carrier demo...</p>}
+      {loading && <p className="text-[#1E2D4D]/30 text-sm">Loading carrier demo...</p>}
 
       {!loading && !demo && (
-        <div className="text-center py-12 text-gray-400">
+        <div className="text-center py-12 text-[#1E2D4D]/30">
           <ShieldCheck size={40} className="mx-auto mb-3 opacity-40" />
           <p className="font-medium">No active carrier demo found</p>
           <p className="text-sm mt-1">Create a carrier partner demo first</p>
@@ -98,27 +98,27 @@ export default function CarrierDemoDashboard() {
             ].map(s => (
               <div key={s.label} className={`${s.bg} rounded-xl p-4`}>
                 <s.icon size={20} className={`${s.color} mb-2`} />
-                <p className="text-xs text-gray-500 uppercase tracking-wider">{s.label}</p>
-                <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
+                <p className="text-xs text-[#1E2D4D]/50 uppercase tracking-wider">{s.label}</p>
+                <p className={`text-2xl font-bold tracking-tight ${s.color}`}>{s.value}</p>
               </div>
             ))}
           </div>
 
           {/* Portfolio Risk Overview — CIC 5-pillar table */}
-          <div className="bg-white border border-gray-200 rounded-xl p-6">
-            <h2 className="text-lg font-semibold text-[#1E2D4D] mb-4">Portfolio Risk Overview — CIC 5-Pillar</h2>
+          <div className="bg-white border border-[#1E2D4D]/10 rounded-xl p-6">
+            <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-4">Portfolio Risk Overview — CIC 5-Pillar</h2>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="text-left py-2 px-3 text-xs text-gray-500 uppercase">Location</th>
-                    <th className="text-center py-2 px-2 text-xs text-gray-500 uppercase">P1 Rev</th>
-                    <th className="text-center py-2 px-2 text-xs text-gray-500 uppercase">P2 Liab</th>
-                    <th className="text-center py-2 px-2 text-xs text-gray-500 uppercase">P3 Cost</th>
-                    <th className="text-center py-2 px-2 text-xs text-gray-500 uppercase">P4 Ops</th>
-                    <th className="text-center py-2 px-2 text-xs text-gray-500 uppercase">P5 Work</th>
-                    <th className="text-center py-2 px-2 text-xs text-gray-500 uppercase">Overall</th>
-                    <th className="text-center py-2 px-2 text-xs text-gray-500 uppercase">Tier</th>
+                  <tr className="border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors">
+                    <th className="text-left py-2 px-3 text-xs text-[#1E2D4D]/50 uppercase">Location</th>
+                    <th className="text-center py-2 px-2 text-xs text-[#1E2D4D]/50 uppercase">P1 Rev</th>
+                    <th className="text-center py-2 px-2 text-xs text-[#1E2D4D]/50 uppercase">P2 Liab</th>
+                    <th className="text-center py-2 px-2 text-xs text-[#1E2D4D]/50 uppercase">P3 Cost</th>
+                    <th className="text-center py-2 px-2 text-xs text-[#1E2D4D]/50 uppercase">P4 Ops</th>
+                    <th className="text-center py-2 px-2 text-xs text-[#1E2D4D]/50 uppercase">P5 Work</th>
+                    <th className="text-center py-2 px-2 text-xs text-[#1E2D4D]/50 uppercase">Overall</th>
+                    <th className="text-center py-2 px-2 text-xs text-[#1E2D4D]/50 uppercase">Tier</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -126,7 +126,7 @@ export default function CarrierDemoDashboard() {
                     <tr key={profile.location_id || i} className="border-b border-gray-100 hover:bg-gray-50">
                       <td className="py-2 px-3">
                         <p className="font-medium text-[#1E2D4D]">{profile.location_name}</p>
-                        <p className="text-xs text-gray-400">{profile.county}</p>
+                        <p className="text-xs text-[#1E2D4D]/30">{profile.county}</p>
                       </td>
                       <td className={`text-center py-2 px-2 font-medium ${riskColor(profile.p1_revenue)}`}>{profile.p1_revenue}</td>
                       <td className={`text-center py-2 px-2 font-medium ${riskColor(profile.p2_liability)}`}>{profile.p2_liability}</td>
@@ -147,16 +147,16 @@ export default function CarrierDemoDashboard() {
           </div>
 
           {/* PSE Verification Status */}
-          <div className="bg-white border border-gray-200 rounded-xl p-6">
-            <h2 className="text-lg font-semibold text-[#1E2D4D] mb-4">PSE Verification Status</h2>
+          <div className="bg-white border border-[#1E2D4D]/10 rounded-xl p-6">
+            <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-4">PSE Verification Status</h2>
             <div className="grid grid-cols-2 gap-4 mb-4">
               <div className="bg-green-50 rounded-xl p-4 text-center">
-                <p className="text-3xl font-bold text-green-700">{pseSummary.fully_verified || 0}</p>
-                <p className="text-xs text-gray-500 mt-1">Fully Verified (Vendor)</p>
+                <p className="text-3xl font-bold tracking-tight text-green-700">{pseSummary.fully_verified || 0}</p>
+                <p className="text-xs text-[#1E2D4D]/50 mt-1">Fully Verified (Vendor)</p>
               </div>
               <div className="bg-[#FAF7F0] rounded-xl p-4 text-center">
-                <p className="text-3xl font-bold text-[#A08C5A]">{pseSummary.partial || 0}</p>
-                <p className="text-xs text-gray-500 mt-1">Partial / Self-Reported</p>
+                <p className="text-3xl font-bold tracking-tight text-[#A08C5A]">{pseSummary.partial || 0}</p>
+                <p className="text-xs text-[#1E2D4D]/50 mt-1">Partial / Self-Reported</p>
               </div>
             </div>
 
@@ -170,8 +170,8 @@ export default function CarrierDemoDashboard() {
                       <span key={type} title={type.replace(/_/g, ' ')}
                         className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium ${
                           verified
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-red-100 text-red-800'
+                            ? 'bg-emerald-50 text-emerald-700'
+                            : 'bg-red-50 text-red-700'
                         }`}>
                         {verified ? <CheckCircle2 size={10} className="mr-0.5" /> : <XCircle size={10} className="mr-0.5" />}
                         {type.split('_').map(w => w[0].toUpperCase()).join('')}
@@ -184,9 +184,9 @@ export default function CarrierDemoDashboard() {
           </div>
 
           {/* Risk Distribution */}
-          <div className="bg-white border border-gray-200 rounded-xl p-6">
-            <h2 className="text-lg font-semibold text-[#1E2D4D] mb-4">Risk Distribution</h2>
-            <div className="h-8 bg-gray-100 rounded-full overflow-hidden flex">
+          <div className="bg-white border border-[#1E2D4D]/10 rounded-xl p-6">
+            <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-4">Risk Distribution</h2>
+            <div className="h-8 bg-[#1E2D4D]/5 rounded-full overflow-hidden flex">
               {riskDist.low > 0 && (
                 <div className="h-full bg-green-500 flex items-center justify-center text-white text-xs font-medium"
                   style={{ width: `${(riskDist.low / locations.length) * 100}%` }}>
@@ -206,7 +206,7 @@ export default function CarrierDemoDashboard() {
                 </div>
               )}
             </div>
-            <div className="flex justify-between mt-2 text-xs text-gray-500">
+            <div className="flex justify-between mt-2 text-xs text-[#1E2D4D]/50">
               <span>Low Risk ({riskDist.low || 0})</span>
               <span>Moderate ({riskDist.moderate || 0})</span>
               <span>High Risk ({riskDist.high || 0})</span>
@@ -217,19 +217,19 @@ export default function CarrierDemoDashboard() {
           <div className="bg-[#1E2D4D] text-white rounded-xl p-6">
             <div className="flex items-center gap-2 mb-4">
               <FileJson size={20} className="text-[#A08C5A]" />
-              <h2 className="text-lg font-semibold">Data Feed Preview</h2>
+              <h2 className="text-lg font-semibold tracking-tight">Data Feed Preview</h2>
             </div>
             <div className="space-y-2 text-sm mb-4">
               <div className="flex justify-between">
-                <span className="text-gray-400">Endpoint:</span>
+                <span className="text-[#1E2D4D]/30">Endpoint:</span>
                 <span className="font-mono text-[#A08C5A]">{apiFeed.endpoint || '/api/v1/carrier/risk-feed'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-400">Format:</span>
+                <span className="text-[#1E2D4D]/30">Format:</span>
                 <span className="font-mono">{apiFeed.format || 'JSON'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-400">Frequency:</span>
+                <span className="text-[#1E2D4D]/30">Frequency:</span>
                 <span className="font-mono">{apiFeed.frequency || 'daily'}</span>
               </div>
             </div>

@@ -185,7 +185,7 @@ function LetterGradeResult({
         <div className="text-sm font-semibold" style={{ color: colors.text }}>
           Grade {grade}
         </div>
-        {detail && <div className="text-xs text-gray-500 truncate">{detail}</div>}
+        {detail && <div className="text-xs text-[#1E2D4D]/50 truncate">{detail}</div>}
       </div>
     </div>
   );
@@ -220,7 +220,7 @@ function LetterGradeStrictResult({
             Only Grade A (90+) passes
           </div>
         )}
-        {detail && <div className="text-xs text-gray-500 truncate">{detail}</div>}
+        {detail && <div className="text-xs text-[#1E2D4D]/50 truncate">{detail}</div>}
       </div>
     </div>
   );
@@ -245,7 +245,7 @@ function NumericResult({
       >
         {display}
       </div>
-      {detail && <div className="text-xs text-gray-500 truncate">{detail}</div>}
+      {detail && <div className="text-xs text-[#1E2D4D]/50 truncate">{detail}</div>}
     </div>
   );
 }
@@ -270,7 +270,7 @@ function ColorPlacardResult({
         <span className="w-3 h-3 rounded-full" style={{ backgroundColor: placard.dot }} />
         <span className="text-sm font-bold">{display}</span>
       </div>
-      {detail && <div className="text-xs text-gray-500 truncate">{detail}</div>}
+      {detail && <div className="text-xs text-[#1E2D4D]/50 truncate">{detail}</div>}
     </div>
   );
 }
@@ -294,7 +294,7 @@ function ThreeTierResult({
       >
         {display}
       </div>
-      {detail && <div className="text-xs text-gray-500 truncate">{detail}</div>}
+      {detail && <div className="text-xs text-[#1E2D4D]/50 truncate">{detail}</div>}
     </div>
   );
 }
@@ -318,7 +318,7 @@ function ViolationReportResult({
       >
         {display}
       </div>
-      {detail && <div className="text-xs text-gray-500 truncate">{detail}</div>}
+      {detail && <div className="text-xs text-[#1E2D4D]/50 truncate">{detail}</div>}
     </div>
   );
 }

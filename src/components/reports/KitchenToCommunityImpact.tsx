@@ -42,17 +42,17 @@ export default function KitchenToCommunityImpact({ config }: { config: ReportTyp
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="rounded-xl p-5 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
           <Heart size={24} className="mx-auto mb-2" style={{ color: GOLD }} />
-          <p className="text-3xl font-bold" style={{ color: BODY_TEXT }}>{data.totalMealsFunded}</p>
+          <p className="text-3xl font-bold tracking-tight" style={{ color: BODY_TEXT }}>{data.totalMealsFunded}</p>
           <p className="text-xs mt-1" style={{ color: MUTED }}>Total Meals Funded</p>
         </div>
         <div className="rounded-xl p-5 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
           <TrendingUp size={24} className="mx-auto mb-2" style={{ color: GOLD }} />
-          <p className="text-3xl font-bold" style={{ color: BODY_TEXT }}>${data.monthlyDonation}</p>
+          <p className="text-3xl font-bold tracking-tight" style={{ color: BODY_TEXT }}>${data.monthlyDonation}</p>
           <p className="text-xs mt-1" style={{ color: MUTED }}>Monthly Donation</p>
         </div>
         <div className="rounded-xl p-5 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
           <Users size={24} className="mx-auto mb-2" style={{ color: GOLD }} />
-          <p className="text-3xl font-bold" style={{ color: BODY_TEXT }}>{data.referralsCount}</p>
+          <p className="text-3xl font-bold tracking-tight" style={{ color: BODY_TEXT }}>{data.referralsCount}</p>
           <p className="text-xs mt-1" style={{ color: MUTED }}>Referrals</p>
         </div>
       </div>

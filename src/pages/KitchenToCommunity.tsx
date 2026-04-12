@@ -29,7 +29,7 @@ export default function KitchenToCommunity() {
             <br />
             Now it feeds kids too.
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg text-[#1E2D4D]/70 max-w-2xl mx-auto leading-relaxed">
             Every EvidLY subscription automatically funds meals for children through No Kid Hungry.
             No extra cost. No extra steps. Just impact.
           </p>
@@ -39,7 +39,7 @@ export default function KitchenToCommunity() {
       {/* How It Works */}
       <section className="py-16 px-4 sm:px-6" style={{ backgroundColor: '#FAFAFA' }}>
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl md:text-3xl font-bold text-center mb-12" style={{ color: NAVY }}>How It Works</h2>
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-center mb-12" style={{ color: NAVY }}>How It Works</h2>
           <div className="grid md:grid-cols-3 gap-6">
             {[
               {
@@ -58,12 +58,12 @@ export default function KitchenToCommunity() {
                 description: 'No Kid Hungry, a program of Share Our Strength (501(c)(3)). School breakfasts, community grants, after-school meals.',
               },
             ].map((step) => (
-              <div key={step.title} className="bg-white rounded-xl p-6 border border-gray-200">
+              <div key={step.title} className="bg-white rounded-xl p-6 border border-[#1E2D4D]/10">
                 <div className="w-12 h-12 rounded-lg flex items-center justify-center mb-4" style={{ backgroundColor: WARM_BG }}>
                   {step.icon}
                 </div>
                 <h3 className="text-lg font-bold mb-2" style={{ color: NAVY }}>{step.title}</h3>
-                <p className="text-sm text-gray-600 leading-relaxed">{step.description}</p>
+                <p className="text-sm text-[#1E2D4D]/70 leading-relaxed">{step.description}</p>
               </div>
             ))}
           </div>
@@ -77,10 +77,10 @@ export default function KitchenToCommunity() {
             <Users className="w-4 h-4" />
             Refer &amp; Multiply
           </div>
-          <h2 className="text-2xl md:text-3xl font-bold mb-4" style={{ color: NAVY }}>
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-4" style={{ color: NAVY }}>
             Refer a kitchen. Double the impact.
           </h2>
-          <p className="text-gray-600 leading-relaxed max-w-xl mx-auto mb-8">
+          <p className="text-[#1E2D4D]/70 leading-relaxed max-w-xl mx-auto mb-8">
             When you refer another kitchen to EvidLY, they get the 100-meal welcome donation on day one.
             For their first 3 months, the donation doubles to $20 per location per month.
             No extra cost to anyone.
@@ -92,8 +92,8 @@ export default function KitchenToCommunity() {
               { number: '$0', label: 'extra cost' },
             ].map((stat) => (
               <div key={stat.label} className="rounded-lg p-4" style={{ backgroundColor: WARM_BG }}>
-                <div className="text-2xl font-bold" style={{ color: GOLD }}>{stat.number}</div>
-                <div className="text-xs text-gray-600 mt-1">{stat.label}</div>
+                <div className="text-2xl font-bold tracking-tight" style={{ color: GOLD }}>{stat.number}</div>
+                <div className="text-xs text-[#1E2D4D]/70 mt-1">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -104,13 +104,13 @@ export default function KitchenToCommunity() {
       <section className="py-16 px-4 sm:px-6" style={{ backgroundColor: NAVY }}>
         <div className="max-w-3xl mx-auto text-center">
           <EvidlyIcon size={40} className="mx-auto mb-4" />
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-white mb-3">
             Total meals funded by EvidLY customers
           </h2>
-          <p className="text-lg font-semibold mb-2" style={{ color: GOLD }}>
+          <p className="text-lg font-semibold tracking-tight mb-2" style={{ color: GOLD }}>
             Launching May 5, 2026
           </p>
-          <p className="text-gray-400">
+          <p className="text-[#1E2D4D]/30">
             Goal: 10,000 meals in month one.
           </p>
         </div>
@@ -119,7 +119,7 @@ export default function KitchenToCommunity() {
       {/* Transparency */}
       <section className="py-16 px-4 sm:px-6">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8" style={{ color: NAVY }}>Transparency</h2>
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-center mb-8" style={{ color: NAVY }}>Transparency</h2>
           <div className="space-y-4">
             {[
               'Funded by EvidLY from operating revenue. Not charged to customers.',
@@ -130,7 +130,7 @@ export default function KitchenToCommunity() {
                 <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold text-white" style={{ backgroundColor: GOLD }}>
                   {i + 1}
                 </div>
-                <p className="text-sm text-gray-700 leading-relaxed">{item}</p>
+                <p className="text-sm text-[#1E2D4D]/80 leading-relaxed">{item}</p>
               </div>
             ))}
           </div>
@@ -140,10 +140,10 @@ export default function KitchenToCommunity() {
       {/* CTA */}
       <section className="py-16 px-4 sm:px-6" style={{ backgroundColor: WARM_BG }}>
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-2xl md:text-3xl font-bold mb-3" style={{ color: NAVY }}>
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-3" style={{ color: NAVY }}>
             Feed your business. Feed kids too.
           </h2>
-          <p className="text-gray-600 mb-8">
+          <p className="text-[#1E2D4D]/70 mb-8">
             Every subscription makes a difference. Start today.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -162,13 +162,13 @@ export default function KitchenToCommunity() {
               See the platform in action <ArrowRight className="w-4 h-4" />
             </button>
           </div>
-          <p className="text-xs text-gray-500 mt-4">$99/month after 30-day free trial. Cancel anytime.</p>
+          <p className="text-xs text-[#1E2D4D]/50 mt-4">$99/month after 30-day free trial. Cancel anytime.</p>
         </div>
       </section>
 
       {/* Footer note */}
       <div className="py-6 px-4 text-center border-t border-gray-100">
-        <p className="text-sm text-gray-500 flex items-center justify-center gap-2">
+        <p className="text-sm text-[#1E2D4D]/50 flex items-center justify-center gap-2">
           <Mail className="w-4 h-4" />
           Questions about Kitchen to Community?{' '}
           <a href="mailto:arthur@getevidly.com" className="font-semibold hover:underline" style={{ color: GOLD }}>

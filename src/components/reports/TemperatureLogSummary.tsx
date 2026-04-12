@@ -37,15 +37,15 @@ export default function TemperatureLogSummary({ config }: { config: ReportTypeCo
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
         <div className="rounded-xl p-4 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
-          <p className="text-2xl font-bold" style={{ color: avgCompliance >= 90 ? '#16a34a' : avgCompliance >= 75 ? '#d97706' : '#dc2626' }}>{avgCompliance}%</p>
+          <p className="text-2xl font-bold tracking-tight" style={{ color: avgCompliance >= 90 ? '#16a34a' : avgCompliance >= 75 ? '#d97706' : '#dc2626' }}>{avgCompliance}%</p>
           <p className="text-xs mt-1" style={{ color: MUTED }}>Avg Compliance</p>
         </div>
         <div className="rounded-xl p-4 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
-          <p className="text-2xl font-bold" style={{ color: BODY_TEXT }}>{data.tempCompliance.length}</p>
+          <p className="text-2xl font-bold tracking-tight" style={{ color: BODY_TEXT }}>{data.tempCompliance.length}</p>
           <p className="text-xs mt-1" style={{ color: MUTED }}>Weeks Tracked</p>
         </div>
         <div className="rounded-xl p-4 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
-          <p className="text-2xl font-bold" style={{ color: BODY_TEXT }}>
+          <p className="text-2xl font-bold tracking-tight" style={{ color: BODY_TEXT }}>
             {data.tempCompliance.filter(t => t.compliance < 90).length}
           </p>
           <p className="text-xs mt-1" style={{ color: MUTED }}>Weeks Below 90%</p>

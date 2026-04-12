@@ -34,11 +34,11 @@ export function IoTSensorLanding() {
             <Thermometer className="h-10 w-10 text-white" />
           </div>
           <div className="flex items-center justify-center gap-2 mb-3">
-            <span className="text-2xl font-bold text-[#1E2D4D]">Evid</span>
-            <span className="text-2xl font-bold" style={{ color: '#d4af37' }}>LY</span>
+            <span className="text-2xl font-bold tracking-tight text-[#1E2D4D]">Evid</span>
+            <span className="text-2xl font-bold tracking-tight" style={{ color: '#d4af37' }}>LY</span>
           </div>
-          <h1 className="text-3xl font-bold text-[#1E2D4D] mb-3">IoT Sensor Hub</h1>
-          <p className="text-lg text-gray-600 max-w-xl mx-auto">
+          <h1 className="text-3xl font-bold tracking-tight text-[#1E2D4D] mb-3">IoT Sensor Hub</h1>
+          <p className="text-lg text-[#1E2D4D]/70 max-w-xl mx-auto">
             Your sensors. Our intelligence. Zero manual logging.
           </p>
           <div className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-full" style={{ backgroundColor: '#fdf8e8', border: '1px solid #d4af37' }}>
@@ -48,7 +48,7 @@ export function IoTSensorLanding() {
         </div>
 
         {/* How It Works */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 mb-8">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5 mb-8">
           <h2 className="text-xl font-bold text-[#1E2D4D] mb-6 text-center">How It Works</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {[
@@ -62,23 +62,23 @@ export function IoTSensorLanding() {
                 </div>
                 <div className="w-7 h-7 rounded-full flex items-center justify-center mx-auto mb-2" style={{ backgroundColor: '#1E2D4D', color: 'white', fontSize: '12px', fontWeight: 700 }}>{item.step}</div>
                 <h3 className="text-sm font-bold text-[#1E2D4D] mb-1">{item.title}</h3>
-                <p className="text-xs text-gray-500">{item.desc}</p>
+                <p className="text-xs text-[#1E2D4D]/50">{item.desc}</p>
               </div>
             ))}
           </div>
         </div>
 
         {/* Supported Sensors */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 mb-8">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5 mb-8">
           <h2 className="text-xl font-bold text-[#1E2D4D] mb-6">Supported Sensor Ecosystem</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {PROVIDERS.map(p => (
-              <div key={p.name} className="p-3 rounded-xl border border-gray-200 hover:border-[#1E2D4D] transition-colors">
+              <div key={p.name} className="p-3 rounded-xl border border-[#1E2D4D]/10 hover:border-[#1E2D4D] transition-colors">
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center mb-2" style={{ backgroundColor: p.color + '15' }}>
                   <Thermometer className="h-4 w-4" style={{ color: p.color }} />
                 </div>
                 <div className="text-sm font-semibold text-[#1E2D4D]">{p.name}</div>
-                <div className="text-xs text-gray-500">{p.auth}</div>
+                <div className="text-xs text-[#1E2D4D]/50">{p.auth}</div>
                 <div className="text-xs mt-1" style={{ color: '#1E2D4D' }}>{p.note}</div>
               </div>
             ))}
@@ -86,7 +86,7 @@ export function IoTSensorLanding() {
         </div>
 
         {/* Three Ingestion Methods */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 mb-8">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5 mb-8">
           <h2 className="text-xl font-bold text-[#1E2D4D] mb-6">Three Ways to Ingest Data</h2>
           <div className="space-y-4">
             {METHODS.map(m => (
@@ -96,7 +96,7 @@ export function IoTSensorLanding() {
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-[#1E2D4D] mb-1">{m.title}</h3>
-                  <p className="text-xs text-gray-600">{m.desc}</p>
+                  <p className="text-xs text-[#1E2D4D]/70">{m.desc}</p>
                 </div>
               </div>
             ))}
@@ -110,18 +110,18 @@ export function IoTSensorLanding() {
             { value: '2 min', label: 'Alert Response', desc: 'Real-time threshold monitoring with instant notifications' },
             { value: '100%', label: 'Reading Capture', desc: 'Every data point logged — no gaps, no missed checks' },
           ].map(item => (
-            <div key={item.label} className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 text-center">
-              <div className="text-3xl font-bold mb-1" style={{ color: '#1E2D4D' }}>{item.value}</div>
+            <div key={item.label} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5 text-center">
+              <div className="text-3xl font-bold tracking-tight mb-1" style={{ color: '#1E2D4D' }}>{item.value}</div>
               <div className="text-sm font-semibold text-[#1E2D4D]">{item.label}</div>
-              <div className="text-xs text-gray-500 mt-1">{item.desc}</div>
+              <div className="text-xs text-[#1E2D4D]/50 mt-1">{item.desc}</div>
             </div>
           ))}
         </div>
 
         {/* Integration Preview */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 mb-8">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5 mb-8">
           <h2 className="text-xl font-bold text-[#1E2D4D] mb-4">Webhook API Preview</h2>
-          <p className="text-sm text-gray-600 mb-4">Point any sensor platform to your EvidLY webhook endpoint. We normalize everything.</p>
+          <p className="text-sm text-[#1E2D4D]/70 mb-4">Point any sensor platform to your EvidLY webhook endpoint. We normalize everything.</p>
           <div className="rounded-xl bg-gray-900 p-5 overflow-x-auto">
             <pre className="text-xs text-green-400 font-mono whitespace-pre">
 {`POST https://api.evidly.com/v1/iot/webhook/ingest
@@ -152,21 +152,21 @@ Content-Type: application/json
 
         {/* CTA */}
         <div className="text-center mb-12">
-          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
             <Radio className="h-8 w-8 mx-auto mb-3" style={{ color: '#1E2D4D' }} />
             <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Get Early Access</h2>
-            <p className="text-sm text-gray-600 mb-4">Already using temperature sensors? Let us connect them to your compliance system.</p>
+            <p className="text-sm text-[#1E2D4D]/70 mb-4">Already using temperature sensors? Let us connect them to your compliance system.</p>
             <a href="mailto:iot@evidly.com" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold text-white" style={{ backgroundColor: '#1E2D4D' }}>
               Request Access <ArrowRight className="h-4 w-4" />
             </a>
-            <p className="text-xs text-gray-400 mt-3">Free for early partners. No hardware purchase required.</p>
+            <p className="text-xs text-[#1E2D4D]/30 mt-3">Free for early partners. No hardware purchase required.</p>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="text-center text-sm text-gray-400">
+        <div className="text-center text-sm text-[#1E2D4D]/30">
           <a href="/" className="hover:text-gray-600 transition-colors">
-            Powered by <span className="font-semibold text-gray-500">Evid</span><span className="font-semibold" style={{ color: '#d4af37' }}>LY</span>
+            Powered by <span className="font-semibold text-[#1E2D4D]/50">Evid</span><span className="font-semibold" style={{ color: '#d4af37' }}>LY</span>
           </a>
         </div>
       </div>

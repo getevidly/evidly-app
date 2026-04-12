@@ -824,7 +824,7 @@ export function Analysis() {
             </div>
 
             {/* Score Projection */}
-            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6" style={{ marginBottom: '24px' }}>
+            <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6" style={{ marginBottom: '24px' }}>
               <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#111827', marginBottom: '16px', ...F }}>Score Projection</h2>
               {scoreProjectionData.length > 0 ? (
                 <>
@@ -863,7 +863,7 @@ export function Analysis() {
             </div>
 
             {/* Actions to Improve Score */}
-            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden" style={{ marginBottom: '24px' }}>
+            <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden" style={{ marginBottom: '24px' }}>
               <div className="p-4 sm:p-6 pb-4">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                   <div>
@@ -887,21 +887,21 @@ export function Analysis() {
                 </div>
               </div>
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
+                <table className="min-w-full divide-y divide-[#1E2D4D]/10">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Priority</th>
-                      <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
-                      <th className="hidden sm:table-cell px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pillar</th>
-                      <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Point Impact</th>
-                      <th className="hidden sm:table-cell px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
-                      <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
+                      <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider">Priority</th>
+                      <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider">Action</th>
+                      <th className="hidden sm:table-cell px-4 sm:px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider">Pillar</th>
+                      <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider">Point Impact</th>
+                      <th className="hidden sm:table-cell px-4 sm:px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider">Location</th>
+                      <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider"></th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="bg-white divide-y divide-[#1E2D4D]/10">
                     {actionsToImproveScore.length === 0 ? (
                       <tr>
-                        <td colSpan={6} className="px-4 sm:px-6 py-8 text-center text-sm text-gray-500">
+                        <td colSpan={6} className="px-4 sm:px-6 py-8 text-center text-sm text-[#1E2D4D]/50">
                           {isDemoMode ? 'No actions match the selected filters. Try adjusting the location or severity filter.' : 'Insufficient data — available after 30 days of activity'}
                         </td>
                       </tr>
@@ -915,9 +915,9 @@ export function Analysis() {
                           </span>
                         </td>
                         <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-semibold" style={{ color: '#1E2D4D' }}>+{action.pointImpact} pts</td>
-                        <td className="hidden sm:table-cell px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-600">{action.location}</td>
+                        <td className="hidden sm:table-cell px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-[#1E2D4D]/70">{action.location}</td>
                         <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
-                          <button onClick={() => navigate(action.link)} className="bg-[#1E2D4D] text-white text-xs font-medium px-3 py-1 rounded-lg hover:bg-[#162340] transition-colors duration-150 flex items-center gap-1 min-h-[44px]">
+                          <button onClick={() => navigate(action.link)} className="bg-[#1E2D4D] text-white text-xs font-medium px-3 py-1 rounded-lg hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] duration-150 flex items-center gap-1 min-h-[44px]">
                             Take Action <ArrowRight className="h-3 w-3" />
                           </button>
                         </td>
@@ -933,8 +933,8 @@ export function Analysis() {
               <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#111827', marginBottom: '16px', ...F }}>Compliance Trends</h2>
               {currentTrends.foodSafety.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-white rounded-xl border border-gray-200 p-3 sm:p-4">
-                    <h3 className="text-sm font-semibold text-gray-700 mb-3">Food Safety</h3>
+                  <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-3 sm:p-4">
+                    <h3 className="text-sm font-semibold text-[#1E2D4D]/80 mb-3">Food Safety</h3>
                     <ResponsiveContainer width="100%" height={150}>
                       <LineChart data={currentTrends.foodSafety}>
                         <CartesianGrid strokeDasharray="3 3" />
@@ -949,8 +949,8 @@ export function Analysis() {
                       {opEnd >= opStart ? '+' : ''}{opEnd - opStart} points over 12 weeks
                     </p>
                   </div>
-                  <div className="bg-white rounded-xl border border-gray-200 p-3 sm:p-4">
-                    <h3 className="text-sm font-semibold text-gray-700 mb-3">Facility Safety</h3>
+                  <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-3 sm:p-4">
+                    <h3 className="text-sm font-semibold text-[#1E2D4D]/80 mb-3">Facility Safety</h3>
                     <ResponsiveContainer width="100%" height={150}>
                       <LineChart data={currentTrends.facilitySafety}>
                         <CartesianGrid strokeDasharray="3 3" />
@@ -967,7 +967,7 @@ export function Analysis() {
                   </div>
                 </div>
               ) : (
-                <div className="bg-white rounded-xl border border-gray-200 p-6" style={{ textAlign: 'center' }}>
+                <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6" style={{ textAlign: 'center' }}>
                   <TrendingUp className="h-10 w-10 mx-auto mb-3" style={{ color: '#d1d5db' }} />
                   <p style={{ fontSize: '14px', fontWeight: 500, color: '#6b7280', marginBottom: '4px', ...F }}>Insufficient data</p>
                   <p style={{ fontSize: '13px', color: '#9ca3af', ...F }}>Compliance trends available after 30 days of activity</p>

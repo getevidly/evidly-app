@@ -365,10 +365,10 @@ const SectionHeader = memo(function SectionHeader({ id, icon: Icon, title, count
         <Icon className="h-4 w-4" style={{ color: '#1E2D4D' }} />
         <span className="font-semibold text-[#1E2D4D] text-sm">{title}</span>
         {count !== undefined && (
-          <span className="text-xs text-gray-500 bg-gray-200 rounded-full px-2 py-0.5">{count}</span>
+          <span className="text-xs text-[#1E2D4D]/50 bg-[#1E2D4D]/8 rounded-full px-2 py-0.5">{count}</span>
         )}
       </div>
-      {expanded ? <ChevronDown className="h-4 w-4 text-gray-400" /> : <ChevronRight className="h-4 w-4 text-gray-400" />}
+      {expanded ? <ChevronDown className="h-4 w-4 text-[#1E2D4D]/30" /> : <ChevronRight className="h-4 w-4 text-[#1E2D4D]/30" />}
     </button>
   );
 });
@@ -696,13 +696,13 @@ export function AuditTrail() {
         {/* Header */}
         <div className="no-print flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold text-[#1E2D4D]">Inspection Trail & Chain of Custody</h1>
-            <p className="text-sm text-gray-600 mt-1">Tamper-evident compliance records with full chain of custody</p>
+            <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">Inspection Trail & Chain of Custody</h1>
+            <p className="text-sm text-[#1E2D4D]/70 mt-1">Tamper-evident compliance records with full chain of custody</p>
           </div>
           {!generated && (
             <button
               onClick={() => setShowHistory(!showHistory)}
-              className="flex items-center gap-2 px-4 py-2 min-h-[44px] border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+              className="flex items-center gap-2 px-4 py-2 min-h-[44px] border border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-gray-50"
             >
               <History className="h-4 w-4" />
               Report History ({history.length})
@@ -712,13 +712,13 @@ export function AuditTrail() {
 
         {/* Report History Panel */}
         {showHistory && !generated && (
-          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 no-print">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6 no-print">
             <h2 className="text-lg font-bold text-[#1E2D4D] mb-4 flex items-center gap-2">
               <History className="h-5 w-5" style={{ color: '#1E2D4D' }} />
               Report History
             </h2>
             {history.length === 0 ? (
-              <p className="text-sm text-gray-500 text-center py-8">No reports generated yet</p>
+              <p className="text-sm text-[#1E2D4D]/50 text-center py-8">No reports generated yet</p>
             ) : (
               <div className="space-y-3">
                 {history.map(h => (
@@ -732,7 +732,7 @@ export function AuditTrail() {
                           h.status === 'shared' ? '#eff6ff' : h.status === 'expired' ? '#fef2f2' : '#f0fdf4',
                         )}>{h.status === 'shared' ? 'Shared' : h.status === 'expired' ? 'Expired' : 'Completed'}</span>
                       </div>
-                      <div className="flex items-center gap-3 mt-1 text-xs text-gray-500">
+                      <div className="flex items-center gap-3 mt-1 text-xs text-[#1E2D4D]/50">
                         <span className="flex items-center gap-1"><Calendar className="h-3 w-3" />{format(new Date(h.generatedAt), 'MMM d, yyyy h:mm a')}</span>
                         <span className="flex items-center gap-1"><Hash className="h-3 w-3" />{h.hash.substring(0, 12)}...</span>
                         <span>{h.modules.length} modules</span>
@@ -745,7 +745,7 @@ export function AuditTrail() {
                             navigator.clipboard.writeText(`${window.location.origin}/audit-trail/shared/${h.shareToken}`);
                             toast.success('Link copied');
                           }}
-                          className="p-2 rounded-lg hover:bg-gray-100 text-gray-500"
+                          className="p-2 rounded-lg hover:bg-gray-100 text-[#1E2D4D]/50"
                           title="Copy share link"
                         >
                           <Copy className="h-4 w-4" />
@@ -753,7 +753,7 @@ export function AuditTrail() {
                       )}
                       <button
                         onClick={() => handleDeleteHistory(h.id)}
-                        className="p-2 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500"
+                        className="p-2 rounded-lg hover:bg-red-50 text-[#1E2D4D]/30 hover:text-red-500"
                         title="Delete"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -768,17 +768,17 @@ export function AuditTrail() {
 
         {/* Configuration Panel */}
         {!generated && (
-          <div data-demo-allow className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 space-y-6 no-print">
+          <div data-demo-allow className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6 space-y-6 no-print">
             <h2 className="text-lg font-bold text-[#1E2D4D]">Report Configuration</h2>
 
             {/* Date + Location row */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Date Range</label>
                 <select
                   value={dateRange}
                   onChange={e => setDateRange(e.target.value as DateRange)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
                 >
                   <option value="7">Last 7 days</option>
                   <option value="30">Last 30 days</option>
@@ -787,17 +787,17 @@ export function AuditTrail() {
                 </select>
                 {dateRange === 'custom' && (
                   <div className="flex gap-2 mt-2">
-                    <input type="date" value={customFrom} onChange={e => setCustomFrom(e.target.value)} className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm" />
-                    <input type="date" value={customTo} onChange={e => setCustomTo(e.target.value)} className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm" />
+                    <input type="date" value={customFrom} onChange={e => setCustomFrom(e.target.value)} className="flex-1 px-2 py-1 border border-[#1E2D4D]/15 rounded text-sm" />
+                    <input type="date" value={customTo} onChange={e => setCustomTo(e.target.value)} className="flex-1 px-2 py-1 border border-[#1E2D4D]/15 rounded text-sm" />
                   </div>
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Location</label>
                 <select
                   value={locationFilter}
                   onChange={e => setLocationFilter(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
                 >
                   <option value="all">All Locations</option>
                   {(isDemoMode ? LOCATIONS : []).map(l => <option key={l} value={l}>{l}</option>)}
@@ -807,7 +807,7 @@ export function AuditTrail() {
 
             {/* Module selection */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Modules to Include</label>
+              <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">Modules to Include</label>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                 {modules.map(m => {
                   const Icon = m.icon;
@@ -816,13 +816,13 @@ export function AuditTrail() {
                       key={m.id}
                       onClick={() => toggleModule(m.id)}
                       className={`flex items-start gap-3 px-3 py-2.5 rounded-lg border text-left transition-colors ${
-                        m.enabled ? 'border-[#1E2D4D] bg-blue-50' : 'border-gray-200 bg-[#FAF7F0]'
+                        m.enabled ? 'border-[#1E2D4D] bg-blue-50' : 'border-[#1E2D4D]/10 bg-[#FAF7F0]'
                       }`}
                     >
-                      <Icon className={`h-4 w-4 mt-0.5 flex-shrink-0 ${m.enabled ? 'text-[#1E2D4D]' : 'text-gray-400'}`} />
+                      <Icon className={`h-4 w-4 mt-0.5 flex-shrink-0 ${m.enabled ? 'text-[#1E2D4D]' : 'text-[#1E2D4D]/30'}`} />
                       <div>
-                        <span className={`text-sm font-medium ${m.enabled ? 'text-[#1E2D4D]' : 'text-gray-400'}`}>{m.label}</span>
-                        <p className="text-xs text-gray-400 mt-0.5">{m.description}</p>
+                        <span className={`text-sm font-medium ${m.enabled ? 'text-[#1E2D4D]' : 'text-[#1E2D4D]/30'}`}>{m.label}</span>
+                        <p className="text-xs text-[#1E2D4D]/30 mt-0.5">{m.description}</p>
                       </div>
                     </button>
                   );
@@ -835,7 +835,7 @@ export function AuditTrail() {
               <Lock className="h-5 w-5 flex-shrink-0 mt-0.5" style={{ color: '#1E2D4D' }} />
               <div>
                 <p className="text-sm font-medium" style={{ color: '#1E2D4D' }}>Tamper-Evident Report</p>
-                <p className="text-xs text-gray-600 mt-0.5">
+                <p className="text-xs text-[#1E2D4D]/70 mt-0.5">
                   Each report receives a SHA-256 cryptographic hash computed from all included data.
                   Any modification to the report content will produce a different hash, ensuring integrity.
                 </p>
@@ -844,7 +844,7 @@ export function AuditTrail() {
 
             <button
               onClick={handleGenerate}
-              className="w-full md:w-auto px-8 py-3 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg font-bold text-lg hover:bg-[#162340] shadow-sm transition-colors"
+              className="w-full md:w-auto px-8 py-3 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg font-bold text-lg hover:bg-[#162340] shadow-sm transition-all duration-150 active:scale-[0.98]"
             >
               Generate Inspection Trail Report
             </button>
@@ -855,7 +855,7 @@ export function AuditTrail() {
         {generated && reportData && summary && (
           <>
             {/* Action bar */}
-            <div className="bg-white rounded-xl border border-gray-200 p-4 flex flex-wrap gap-3 items-center justify-between no-print">
+            <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 flex flex-wrap gap-3 items-center justify-between no-print">
               <button onClick={handleBack} className="flex items-center gap-1 text-sm text-[#1E2D4D] hover:underline font-medium">
                 ← Back to Configuration
               </button>
@@ -868,10 +868,10 @@ export function AuditTrail() {
                   {pdfLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
                   {pdfLoading ? 'Generating...' : 'Download PDF'}
                 </button>
-                <button onClick={handleShareLink} className="flex items-center gap-2 px-4 py-2 min-h-[44px] border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
+                <button onClick={handleShareLink} className="flex items-center gap-2 px-4 py-2 min-h-[44px] border border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-gray-50">
                   <Share2 className="h-4 w-4" /> Share (72h)
                 </button>
-                <button onClick={handlePrint} className="flex items-center gap-2 px-4 py-2 min-h-[44px] border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
+                <button onClick={handlePrint} className="flex items-center gap-2 px-4 py-2 min-h-[44px] border border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-gray-50">
                   <Printer className="h-4 w-4" /> Print
                 </button>
               </div>
@@ -940,7 +940,7 @@ export function AuditTrail() {
               </div>
 
               {/* Executive Summary */}
-              <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 report-section">
+              <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6 report-section">
                 <h3 className="text-lg font-bold text-[#1E2D4D] mb-4 flex items-center gap-2">
                   <BarChart3 className="h-5 w-5" style={{ color: '#1E2D4D' }} />
                   Executive Summary
@@ -949,52 +949,52 @@ export function AuditTrail() {
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
                   {summary.totalTemps > 0 && (
                     <div className="text-center p-3 rounded-lg" style={{ backgroundColor: '#eef4f8' }}>
-                      <p className="text-2xl font-bold" style={{ color: summary.tempPassRate >= 95 ? '#16a34a' : summary.tempPassRate >= 85 ? '#d97706' : '#dc2626' }}>
+                      <p className="text-2xl font-bold tracking-tight" style={{ color: summary.tempPassRate >= 95 ? '#16a34a' : summary.tempPassRate >= 85 ? '#d97706' : '#dc2626' }}>
                         {summary.tempPassRate}%
                       </p>
-                      <p className="text-xs text-gray-500 mt-1">Temp Pass Rate</p>
-                      <p className="text-xs text-gray-400">{summary.totalTemps} readings</p>
+                      <p className="text-xs text-[#1E2D4D]/50 mt-1">Temp Pass Rate</p>
+                      <p className="text-xs text-[#1E2D4D]/30">{summary.totalTemps} readings</p>
                     </div>
                   )}
                   {summary.totalChecklists > 0 && (
                     <div className="text-center p-3 rounded-lg" style={{ backgroundColor: '#eef4f8' }}>
-                      <p className="text-2xl font-bold" style={{ color: summary.avgScore >= 90 ? '#16a34a' : summary.avgScore >= 75 ? '#d97706' : '#dc2626' }}>
+                      <p className="text-2xl font-bold tracking-tight" style={{ color: summary.avgScore >= 90 ? '#16a34a' : summary.avgScore >= 75 ? '#d97706' : '#dc2626' }}>
                         {summary.avgScore}%
                       </p>
-                      <p className="text-xs text-gray-500 mt-1">Checklist Avg</p>
-                      <p className="text-xs text-gray-400">{summary.totalChecklists} completed</p>
+                      <p className="text-xs text-[#1E2D4D]/50 mt-1">Checklist Avg</p>
+                      <p className="text-xs text-[#1E2D4D]/30">{summary.totalChecklists} completed</p>
                     </div>
                   )}
                   {summary.totalIncidents > 0 && (
                     <div className="text-center p-3 rounded-lg" style={{ backgroundColor: '#eef4f8' }}>
-                      <p className="text-2xl font-bold" style={{ color: summary.openIncidents === 0 ? '#16a34a' : '#d97706' }}>
+                      <p className="text-2xl font-bold tracking-tight" style={{ color: summary.openIncidents === 0 ? '#16a34a' : '#d97706' }}>
                         {summary.resolvedIncidents}/{summary.totalIncidents}
                       </p>
-                      <p className="text-xs text-gray-500 mt-1">Resolved</p>
-                      <p className="text-xs text-gray-400">{summary.openIncidents} open</p>
+                      <p className="text-xs text-[#1E2D4D]/50 mt-1">Resolved</p>
+                      <p className="text-xs text-[#1E2D4D]/30">{summary.openIncidents} open</p>
                     </div>
                   )}
                   {summary.totalDocs > 0 && (
                     <div className="text-center p-3 rounded-lg" style={{ backgroundColor: '#eef4f8' }}>
-                      <p className="text-2xl font-bold" style={{ color: summary.expiredDocs === 0 ? '#16a34a' : '#dc2626' }}>
+                      <p className="text-2xl font-bold tracking-tight" style={{ color: summary.expiredDocs === 0 ? '#16a34a' : '#dc2626' }}>
                         {summary.currentDocs}
                       </p>
-                      <p className="text-xs text-gray-500 mt-1">Docs Current</p>
-                      <p className="text-xs text-gray-400">{summary.expiredDocs} expired</p>
+                      <p className="text-xs text-[#1E2D4D]/50 mt-1">Docs Current</p>
+                      <p className="text-xs text-[#1E2D4D]/30">{summary.expiredDocs} expired</p>
                     </div>
                   )}
                   {summary.totalEquipment > 0 && (
                     <div className="text-center p-3 rounded-lg" style={{ backgroundColor: '#eef4f8' }}>
-                      <p className="text-2xl font-bold" style={{ color: '#1E2D4D' }}>{summary.totalEquipment}</p>
-                      <p className="text-xs text-gray-500 mt-1">Equipment</p>
-                      <p className="text-xs text-gray-400">tracked</p>
+                      <p className="text-2xl font-bold tracking-tight" style={{ color: '#1E2D4D' }}>{summary.totalEquipment}</p>
+                      <p className="text-xs text-[#1E2D4D]/50 mt-1">Equipment</p>
+                      <p className="text-xs text-[#1E2D4D]/30">tracked</p>
                     </div>
                   )}
                   {summary.totalVendors > 0 && (
                     <div className="text-center p-3 rounded-lg" style={{ backgroundColor: '#eef4f8' }}>
-                      <p className="text-2xl font-bold" style={{ color: '#1E2D4D' }}>{summary.totalVendors}</p>
-                      <p className="text-xs text-gray-500 mt-1">Vendor Records</p>
-                      <p className="text-xs text-gray-400">in period</p>
+                      <p className="text-2xl font-bold tracking-tight" style={{ color: '#1E2D4D' }}>{summary.totalVendors}</p>
+                      <p className="text-xs text-[#1E2D4D]/50 mt-1">Vendor Records</p>
+                      <p className="text-xs text-[#1E2D4D]/30">in period</p>
                     </div>
                   )}
                 </div>
@@ -1014,7 +1014,7 @@ export function AuditTrail() {
                         </div>
                         <div>
                           <p className="text-sm font-semibold text-[#1E2D4D]">{cs.location}</p>
-                          <div className="flex gap-2 text-xs text-gray-500">
+                          <div className="flex gap-2 text-xs text-[#1E2D4D]/50">
                             <span>Food: {cs.foodSafety}</span>
                             <span>Facility: {cs.facilitySafety}</span>
                           </div>
@@ -1027,7 +1027,7 @@ export function AuditTrail() {
 
               {/* Temperature Logs */}
               {moduleEnabled('temp_logs') && reportData.tempLogs.length > 0 && (
-                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden report-section">
+                <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden report-section">
                   <SectionHeader id="temp_logs" icon={Thermometer} title="Temperature Logs" count={reportData.tempLogs.length} expanded={!!expandedSections['temp_logs']} onToggle={toggleExpand} />
                   {expandedSections['temp_logs'] && (
                     <div className="overflow-x-auto">
@@ -1052,7 +1052,7 @@ export function AuditTrail() {
                               <td style={tdStyle}>{t.location}</td>
                               <td style={tdStyle}>{t.equipment}</td>
                               <td style={tdStyle} className="font-mono font-medium">{t.reading}°F</td>
-                              <td style={tdStyle} className="text-xs text-gray-500">{t.range}</td>
+                              <td style={tdStyle} className="text-xs text-[#1E2D4D]/50">{t.range}</td>
                               <td style={tdStyle}>
                                 <span style={badge(t.pass ? 'Pass' : 'Fail', t.pass ? '#16a34a' : '#dc2626', t.pass ? '#f0fdf4' : '#fef2f2')}>
                                   {t.pass ? 'Pass' : 'Fail'}
@@ -1064,7 +1064,7 @@ export function AuditTrail() {
                         </tbody>
                       </table>
                       {reportData.tempLogs.length > 50 && (
-                        <p className="text-xs text-gray-400 text-center py-2">Showing 50 of {reportData.tempLogs.length} records</p>
+                        <p className="text-xs text-[#1E2D4D]/30 text-center py-2">Showing 50 of {reportData.tempLogs.length} records</p>
                       )}
                     </div>
                   )}
@@ -1073,7 +1073,7 @@ export function AuditTrail() {
 
               {/* Checklists */}
               {moduleEnabled('checklists') && reportData.checklists.length > 0 && (
-                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden report-section">
+                <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden report-section">
                   <SectionHeader id="checklists" icon={CheckSquare} title="Checklist Completions" count={reportData.checklists.length} expanded={!!expandedSections['checklists']} onToggle={toggleExpand} />
                   {expandedSections['checklists'] && (
                     <div className="overflow-x-auto">
@@ -1108,7 +1108,7 @@ export function AuditTrail() {
                         </tbody>
                       </table>
                       {reportData.checklists.length > 50 && (
-                        <p className="text-xs text-gray-400 text-center py-2">Showing 50 of {reportData.checklists.length} records</p>
+                        <p className="text-xs text-[#1E2D4D]/30 text-center py-2">Showing 50 of {reportData.checklists.length} records</p>
                       )}
                     </div>
                   )}
@@ -1117,7 +1117,7 @@ export function AuditTrail() {
 
               {/* Incidents */}
               {moduleEnabled('incidents') && reportData.incidents.length > 0 && (
-                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden report-section">
+                <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden report-section">
                   <SectionHeader id="incidents" icon={AlertTriangle} title="Incidents & Corrective Actions" count={reportData.incidents.length} expanded={!!expandedSections['incidents']} onToggle={toggleExpand} />
                   {expandedSections['incidents'] && (
                     <div className="overflow-x-auto">
@@ -1156,7 +1156,7 @@ export function AuditTrail() {
 
               {/* Equipment */}
               {moduleEnabled('equipment') && reportData.equipment.length > 0 && (
-                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden report-section">
+                <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden report-section">
                   <SectionHeader id="equipment" icon={Wrench} title="Equipment Status" count={reportData.equipment.length} expanded={!!expandedSections['equipment']} onToggle={toggleExpand} />
                   {expandedSections['equipment'] && (
                     <div className="overflow-x-auto">
@@ -1193,7 +1193,7 @@ export function AuditTrail() {
 
               {/* Vendor Services */}
               {moduleEnabled('vendors') && reportData.vendors.length > 0 && (
-                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden report-section">
+                <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden report-section">
                   <SectionHeader id="vendors" icon={Truck} title="Vendor Service Records" count={reportData.vendors.length} expanded={!!expandedSections['vendors']} onToggle={toggleExpand} />
                   {expandedSections['vendors'] && (
                     <div className="overflow-x-auto">
@@ -1230,7 +1230,7 @@ export function AuditTrail() {
 
               {/* Documents */}
               {moduleEnabled('documents') && reportData.documents.length > 0 && (
-                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden report-section">
+                <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden report-section">
                   <SectionHeader id="documents" icon={FileText} title="Document Registry" count={reportData.documents.length} expanded={!!expandedSections['documents']} onToggle={toggleExpand} />
                   {expandedSections['documents'] && (
                     <div className="overflow-x-auto">
@@ -1267,7 +1267,7 @@ export function AuditTrail() {
 
               {/* Compliance Scores */}
               {moduleEnabled('compliance') && reportData.complianceScores.length > 0 && (
-                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden report-section">
+                <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden report-section">
                   <SectionHeader id="compliance" icon={EvidlyIcon as any} title="Compliance Scores" count={reportData.complianceScores.length} expanded={!!expandedSections['compliance']} onToggle={toggleExpand} />
                   {expandedSections['compliance'] && (
                     <div className="overflow-x-auto">
@@ -1308,7 +1308,7 @@ export function AuditTrail() {
 
               {/* Audit Activity */}
               {moduleEnabled('audit_activity') && reportData.auditActivity.length > 0 && (
-                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden report-section">
+                <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden report-section">
                   <SectionHeader id="audit_activity" icon={ClipboardList} title="Inspection Activity Log" count={reportData.auditActivity.length} expanded={!!expandedSections['audit_activity']} onToggle={toggleExpand} />
                   {expandedSections['audit_activity'] && (
                     <div className="overflow-x-auto">
@@ -1337,7 +1337,7 @@ export function AuditTrail() {
                         </tbody>
                       </table>
                       {reportData.auditActivity.length > 50 && (
-                        <p className="text-xs text-gray-400 text-center py-2">Showing 50 of {reportData.auditActivity.length} entries</p>
+                        <p className="text-xs text-[#1E2D4D]/30 text-center py-2">Showing 50 of {reportData.auditActivity.length} entries</p>
                       )}
                     </div>
                   )}
@@ -1345,7 +1345,7 @@ export function AuditTrail() {
               )}
 
               {/* Chain of Custody Certification */}
-              <div className="bg-white rounded-xl border border-gray-200 overflow-hidden report-section">
+              <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden report-section">
                 <SectionHeader id="chain_of_custody" icon={Lock} title="Chain of Custody Certification" expanded={!!expandedSections['chain_of_custody']} onToggle={toggleExpand} />
                 {expandedSections['chain_of_custody'] && (
                   <div className="p-4 sm:p-6 space-y-4">
@@ -1356,18 +1356,18 @@ export function AuditTrail() {
                           {/* Timeline line */}
                           <div className="flex flex-col items-center">
                             <div className="w-3 h-3 rounded-full bg-[#1E2D4D] flex-shrink-0 mt-1.5" />
-                            {i < custodyChain.length - 1 && <div className="w-0.5 flex-1 bg-gray-200 mt-1" />}
+                            {i < custodyChain.length - 1 && <div className="w-0.5 flex-1 bg-[#1E2D4D]/8 mt-1" />}
                           </div>
                           {/* Content */}
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
                               <span className="text-sm font-semibold text-[#1E2D4D]">{entry.action}</span>
-                              <span className="text-xs text-gray-400">{entry.timestamp}</span>
+                              <span className="text-xs text-[#1E2D4D]/30">{entry.timestamp}</span>
                             </div>
-                            <p className="text-sm text-gray-600 mt-0.5">{entry.detail}</p>
-                            <p className="text-xs text-gray-500 mt-0.5">Actor: {entry.actor}</p>
+                            <p className="text-sm text-[#1E2D4D]/70 mt-0.5">{entry.detail}</p>
+                            <p className="text-xs text-[#1E2D4D]/50 mt-0.5">Actor: {entry.actor}</p>
                             {entry.hash && (
-                              <p className="font-mono text-xs text-gray-400 mt-1 break-all">Hash: {entry.hash}</p>
+                              <p className="font-mono text-xs text-[#1E2D4D]/30 mt-1 break-all">Hash: {entry.hash}</p>
                             )}
                           </div>
                         </div>
@@ -1380,7 +1380,7 @@ export function AuditTrail() {
                         <EvidlyIcon size={24} className="flex-shrink-0 mt-0.5" />
                         <div>
                           <h4 className="font-bold" style={{ color: '#1E2D4D' }}>Chain of Custody Certification</h4>
-                          <p className="text-sm text-gray-700 mt-1">
+                          <p className="text-sm text-[#1E2D4D]/80 mt-1">
                             I hereby certify that this report ({reportNumber}) accurately represents the compliance data
                             collected by the EvidLY platform during the period {dateRangeLabel}. All data points were
                             automatically logged at the time of occurrence. The SHA-256 hash below serves as a
@@ -1388,24 +1388,24 @@ export function AuditTrail() {
                           </p>
                           <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
-                              <p className="text-xs text-gray-500 uppercase tracking-wide">Certifying Officer</p>
+                              <p className="text-xs text-[#1E2D4D]/50 uppercase tracking-wide">Certifying Officer</p>
                               <p className="text-sm font-medium text-gray-900">Sarah Chen, Operations Manager</p>
                             </div>
                             <div>
-                              <p className="text-xs text-gray-500 uppercase tracking-wide">Date & Time</p>
+                              <p className="text-xs text-[#1E2D4D]/50 uppercase tracking-wide">Date & Time</p>
                               <p className="text-sm font-medium text-gray-900">{generatedAt}</p>
                             </div>
                           </div>
-                          <div className="mt-3 p-2 rounded bg-white border border-gray-200">
-                            <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">SHA-256 Integrity Hash</p>
-                            <p className="font-mono text-xs text-gray-700 break-all">{reportHash}</p>
+                          <div className="mt-3 p-2 rounded bg-white border border-[#1E2D4D]/10">
+                            <p className="text-xs text-[#1E2D4D]/50 uppercase tracking-wide mb-1">SHA-256 Integrity Hash</p>
+                            <p className="font-mono text-xs text-[#1E2D4D]/80 break-all">{reportHash}</p>
                           </div>
                         </div>
                       </div>
                     </div>
 
                     {/* Disclaimer */}
-                    <p className="text-xs text-gray-400 italic">
+                    <p className="text-xs text-[#1E2D4D]/30 italic">
                       This report is generated for compliance documentation purposes. It is not a substitute for
                       professional legal advice. Data accuracy depends on timely and accurate input by authorized users.
                       Report integrity can be verified by re-computing the SHA-256 hash of the report data.

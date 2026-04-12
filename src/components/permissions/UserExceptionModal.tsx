@@ -129,7 +129,7 @@ export function UserExceptionModal({
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b flex-shrink-0" style={{ borderColor: 'var(--border)' }}>
-          <h3 className="text-lg font-semibold" style={{ color: '#1E2D4D' }}>
+          <h3 className="text-lg font-semibold tracking-tight" style={{ color: '#1E2D4D' }}>
             {editUserId ? 'Edit User Permissions' : 'Add User Exception'}
           </h3>
           <button onClick={onClose} className="p-2.5 -m-1 rounded-lg hover:bg-gray-100 transition-colors" aria-label="Close">
@@ -152,7 +152,7 @@ export function UserExceptionModal({
                   placeholder="Search team members..."
                   value={userSearch}
                   onChange={e => setUserSearch(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 text-sm rounded-lg border focus:outline-none focus:ring-2"
+                  className="w-full pl-10 pr-4 py-2.5 text-sm rounded-lg border focus-visible:outline-none focus-visible:ring-2"
                   style={{ borderColor: 'var(--border)', color: '#1E2D4D' }}
                 />
               </div>
@@ -239,7 +239,7 @@ export function UserExceptionModal({
                   placeholder="e.g., Temporary access for Q1 review"
                   value={reason}
                   onChange={e => setReason(e.target.value)}
-                  className="w-full px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2"
+                  className="w-full px-3 py-2 text-sm rounded-lg border focus-visible:outline-none focus-visible:ring-2"
                   style={{ borderColor: 'var(--border)', color: '#1E2D4D' }}
                 />
               </div>

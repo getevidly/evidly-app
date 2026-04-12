@@ -69,7 +69,7 @@ export function LogUsageModal({ isOpen, onClose }: LogUsageModalProps) {
               placeholder="Search or type item name"
               value={itemName}
               onChange={e => setItemName(e.target.value)}
-              className="w-full px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#163a5f]/20"
+              className="w-full px-3 py-2 text-sm rounded-lg border focus-visible:outline-none focus-visible:ring-2 focus:ring-[#163a5f]/20"
               style={{ borderColor: CARD_BORDER, color: NAVY }}
             />
           </div>
@@ -84,7 +84,7 @@ export function LogUsageModal({ isOpen, onClose }: LogUsageModalProps) {
               min={1}
               value={quantity}
               onChange={e => setQuantity(parseInt(e.target.value, 10) || 1)}
-              className="w-full px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#163a5f]/20"
+              className="w-full px-3 py-2 text-sm rounded-lg border focus-visible:outline-none focus-visible:ring-2 focus:ring-[#163a5f]/20"
               style={{ borderColor: CARD_BORDER, color: NAVY }}
             />
           </div>
@@ -102,7 +102,7 @@ export function LogUsageModal({ isOpen, onClose }: LogUsageModalProps) {
               placeholder="e.g. JOB-1234"
               value={jobReference}
               onChange={e => setJobReference(e.target.value)}
-              className="w-full px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#163a5f]/20"
+              className="w-full px-3 py-2 text-sm rounded-lg border focus-visible:outline-none focus-visible:ring-2 focus:ring-[#163a5f]/20"
               style={{ borderColor: CARD_BORDER, color: NAVY }}
             />
           </div>
@@ -117,7 +117,7 @@ export function LogUsageModal({ isOpen, onClose }: LogUsageModalProps) {
               onChange={e => setNotes(e.target.value)}
               placeholder="Additional notes (optional)"
               rows={3}
-              className="w-full px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#163a5f]/20 resize-none"
+              className="w-full px-3 py-2 text-sm rounded-lg border focus-visible:outline-none focus-visible:ring-2 focus:ring-[#163a5f]/20 resize-none"
               style={{ borderColor: CARD_BORDER, color: NAVY }}
             />
           </div>

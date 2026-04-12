@@ -67,17 +67,17 @@ export function NotificationItem({
                   style={{ backgroundColor: sev.dot }}
                 />
               )}
-              <span className={`text-sm truncate ${isUnread ? 'font-semibold text-[#1E2D4D]' : 'font-medium text-gray-700'}`}>
+              <span className={`text-sm truncate ${isUnread ? 'font-semibold text-[#1E2D4D]' : 'font-medium text-[#1E2D4D]/80'}`}>
                 {n.title}
               </span>
             </div>
-            <span className="text-xs text-gray-400 flex-shrink-0 whitespace-nowrap">
+            <span className="text-xs text-[#1E2D4D]/30 flex-shrink-0 whitespace-nowrap">
               {timeAgo(n.createdAt)}
             </span>
           </div>
 
           {n.body && (
-            <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{n.body}</p>
+            <p className="text-xs text-[#1E2D4D]/50 mt-0.5 line-clamp-2">{n.body}</p>
           )}
 
           {/* Severity badge + action buttons */}
@@ -106,7 +106,7 @@ export function NotificationItem({
                   className="p-2.5 -m-1 rounded-full hover:bg-gray-100 active:scale-95 transition-transform"
                   title="Mark as read"
                 >
-                  <Check className="h-3.5 w-3.5 text-gray-400" />
+                  <Check className="h-3.5 w-3.5 text-[#1E2D4D]/30" />
                 </button>
               )}
               <button
@@ -114,14 +114,14 @@ export function NotificationItem({
                 className="p-2.5 -m-1 rounded-full hover:bg-gray-100 active:scale-95 transition-transform"
                 title="Snooze 24h"
               >
-                <Clock className="h-3.5 w-3.5 text-gray-400" />
+                <Clock className="h-3.5 w-3.5 text-[#1E2D4D]/30" />
               </button>
               <button
                 onClick={() => onDismiss(n.id)}
                 className="p-2.5 -m-1 rounded-full hover:bg-gray-100 active:scale-95 transition-transform"
                 title="Dismiss"
               >
-                <X className="h-3.5 w-3.5 text-gray-400" />
+                <X className="h-3.5 w-3.5 text-[#1E2D4D]/30" />
               </button>
             </div>
           </div>

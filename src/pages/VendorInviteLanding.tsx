@@ -59,7 +59,7 @@ export function VendorInviteLanding() {
           </div>
           <button
             onClick={() => navigate('/login')}
-            className="text-sm font-medium px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors"
+            className="text-sm font-medium px-4 py-2 rounded-lg border border-[#1E2D4D]/15 hover:bg-gray-50 transition-colors"
             style={{ color: NAVY }}
           >
             Sign In
@@ -82,7 +82,7 @@ export function VendorInviteLanding() {
           <h1 className="text-3xl sm:text-4xl font-bold text-[#1E2D4D] mb-4">
             Join EvidLY — the compliance<br />platform for commercial kitchens
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-[#1E2D4D]/70 max-w-2xl mx-auto">
             {provider.name} uses EvidLY to manage your service records, documentation, and scheduling.
             Sign up and they'll be automatically linked as your vendor — COI, certifications, and
             service schedule ready from day one.
@@ -100,19 +100,19 @@ export function VendorInviteLanding() {
           >
             Sign Up Free
           </button>
-          <span className="text-sm text-gray-500">Takes about 10 minutes to set up</span>
+          <span className="text-sm text-[#1E2D4D]/50">Takes about 10 minutes to set up</span>
         </div>
 
         {/* Services from provider */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8 mb-10">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 sm:p-8 mb-10">
+          <h2 className="text-sm font-semibold text-[#1E2D4D]/50 uppercase tracking-wide mb-4">
             Services {provider.name} provides you:
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {provider.services.map(svc => (
               <div key={svc} className="flex items-center gap-2">
                 <CheckCircle size={16} style={{ color: '#16a34a' }} />
-                <span className="text-sm text-gray-700">{svc}</span>
+                <span className="text-sm text-[#1E2D4D]/80">{svc}</span>
               </div>
             ))}
           </div>
@@ -122,22 +122,22 @@ export function VendorInviteLanding() {
         <h2 className="text-xl font-bold text-[#1E2D4D] text-center mb-6">What you get with EvidLY</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-12">
           {BENEFITS.map(b => (
-            <div key={b.title} className="bg-white rounded-xl border border-gray-200 p-6 flex gap-4">
+            <div key={b.title} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 flex gap-4">
               <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: '#eef4f8' }}>
                 <b.icon size={20} style={{ color: NAVY }} />
               </div>
               <div>
                 <h3 className="text-sm font-semibold text-[#1E2D4D] mb-1">{b.title}</h3>
-                <p className="text-xs text-gray-500">{b.description}</p>
+                <p className="text-xs text-[#1E2D4D]/50">{b.description}</p>
               </div>
             </div>
           ))}
         </div>
 
         {/* Bottom CTA */}
-        <div className="text-center bg-white rounded-xl border border-gray-200 p-8">
+        <div className="text-center bg-white rounded-xl border border-[#1E2D4D]/10 p-8">
           <h2 className="text-lg font-bold text-[#1E2D4D] mb-2">Ready to get started?</h2>
-          <p className="text-sm text-gray-500 mb-4">
+          <p className="text-sm text-[#1E2D4D]/50 mb-4">
             Your compliance records, vendor management, and facility safety — all in one place.
           </p>
           <button
@@ -149,15 +149,15 @@ export function VendorInviteLanding() {
           >
             Sign Up Free
           </button>
-          <p className="text-xs text-gray-400 mt-3">
+          <p className="text-xs text-[#1E2D4D]/30 mt-3">
             Already have an account? <button onClick={() => navigate('/login')} className="underline" style={{ color: NAVY }}>Sign in</button>
           </p>
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 py-6 text-center">
-        <p className="text-xs text-gray-400">
+      <footer className="border-t border-[#1E2D4D]/10 py-6 text-center">
+        <p className="text-xs text-[#1E2D4D]/30">
           <span className="font-semibold" style={{ color: NAVY }}>Evid</span>
           <span className="font-semibold" style={{ color: GOLD }}>LY</span>
           {' '}&middot; Compliance platform for commercial kitchens

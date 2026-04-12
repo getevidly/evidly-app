@@ -200,10 +200,10 @@ export function AdminClientOnboarding() {
     <>
       <AdminBreadcrumb crumbs={[{ label: 'Client Onboarding' }]} />
       <div className="max-w-3xl mx-auto">
-        <div className="bg-white rounded-xl border border-gray-200 p-8">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8">
           <div className="mb-6">
-            <h2 className="text-2xl font-bold text-[#1E2D4D] mb-2">Create Client Organization</h2>
-            <p className="text-gray-600">
+            <h2 className="text-2xl font-bold tracking-tight text-[#1E2D4D] mb-2">Create Client Organization</h2>
+            <p className="text-[#1E2D4D]/70">
               Set up a new client organization with pre-populated data. The client will receive an email to claim their account.
             </p>
           </div>
@@ -228,7 +228,7 @@ export function AdminClientOnboarding() {
               </h3>
 
               <div>
-                <label htmlFor="orgName" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="orgName" className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">
                   Organization Name
                 </label>
                 <input
@@ -237,21 +237,21 @@ export function AdminClientOnboarding() {
                   required
                   value={orgName}
                   onChange={(e) => setOrgName(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
                   placeholder={isTribal ? 'Table Mountain Casino Resort' : 'Main Street Restaurant Group'}
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="industryType" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="industryType" className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">
                     Industry Type
                   </label>
                   <select
                     id="industryType"
                     value={industryType}
                     onChange={(e) => setIndustryType(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
                   >
                     <option value="Restaurant">Restaurant</option>
                     <option value="Hotel">Hotel</option>
@@ -264,14 +264,14 @@ export function AdminClientOnboarding() {
 
                 {!isTribal && (
                   <div>
-                    <label htmlFor="industrySubtype" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="industrySubtype" className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">
                       Subtype
                     </label>
                     <select
                       id="industrySubtype"
                       value={industrySubtype}
                       onChange={(e) => setIndustrySubtype(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
                     >
                       <option value="restaurant-full">Full-Service</option>
                       <option value="restaurant-quick">Quick-Service</option>
@@ -285,7 +285,7 @@ export function AdminClientOnboarding() {
 
                 {isTribal && (
                   <div>
-                    <label htmlFor="tribeName" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="tribeName" className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">
                       Tribe Name
                     </label>
                     <select
@@ -293,7 +293,7 @@ export function AdminClientOnboarding() {
                       required
                       value={selectedTribe}
                       onChange={(e) => setSelectedTribe(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
                     >
                       <option value="">Select tribe...</option>
                       {TRIBAL_OPTIONS.map(t => (
@@ -308,7 +308,7 @@ export function AdminClientOnboarding() {
 
               {isTribal ? (
                 <div>
-                  <label htmlFor="outletCount" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="outletCount" className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">
                     <MapPin className="inline w-4 h-4 mr-1" />
                     Food Outlets per Property
                   </label>
@@ -320,15 +320,15 @@ export function AdminClientOnboarding() {
                     required
                     value={outletCount}
                     onChange={(e) => setOutletCount(parseInt(e.target.value) || 5)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
                   />
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-[#1E2D4D]/50 mt-1">
                     Typical casino properties have 5-15 food outlets (buffet, steakhouse, cafe, etc.)
                   </p>
                 </div>
               ) : (
                 <div>
-                  <label htmlFor="locationCount" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="locationCount" className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">
                     <MapPin className="inline w-4 h-4 mr-1" />
                     Number of Locations
                   </label>
@@ -339,7 +339,7 @@ export function AdminClientOnboarding() {
                     required
                     value={locationCount}
                     onChange={(e) => setLocationCount(parseInt(e.target.value))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
                   />
                 </div>
               )}
@@ -371,7 +371,7 @@ export function AdminClientOnboarding() {
               </h3>
 
               <div>
-                <label htmlFor="ownerName" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="ownerName" className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">
                   Full Name
                 </label>
                 <input
@@ -380,13 +380,13 @@ export function AdminClientOnboarding() {
                   required
                   value={ownerName}
                   onChange={(e) => setOwnerName(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
                   placeholder="John Smith"
                 />
               </div>
 
               <div>
-                <label htmlFor="ownerEmail" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="ownerEmail" className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">
                   <Mail className="inline w-4 h-4 mr-1" />
                   Email Address
                 </label>
@@ -396,13 +396,13 @@ export function AdminClientOnboarding() {
                   required
                   value={ownerEmail}
                   onChange={(e) => setOwnerEmail(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
                   placeholder="john@example.com"
                 />
               </div>
 
               <div>
-                <label htmlFor="ownerPhone" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="ownerPhone" className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">
                   Phone Number
                 </label>
                 <input
@@ -410,7 +410,7 @@ export function AdminClientOnboarding() {
                   type="tel"
                   value={ownerPhone}
                   onChange={(e) => setOwnerPhone(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
                   placeholder="(555) 123-4567"
                 />
               </div>
@@ -426,14 +426,14 @@ export function AdminClientOnboarding() {
               <button
                 type="button"
                 onClick={() => navigate('/dashboard')}
-                className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex-1 px-4 py-3 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 rounded-lg hover:bg-gray-50 transition-colors"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 px-4 py-3 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="flex-1 px-4 py-3 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {loading ? (
                   'Creating...'

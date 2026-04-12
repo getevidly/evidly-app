@@ -88,8 +88,8 @@ export function CompliancePackage() {
 
   return (
     <div>
-      <h3 className="text-lg font-semibold text-[#1E2D4D] mb-2">Compliance Package Builder</h3>
-      <p className="text-sm text-gray-500 mb-6">Generate a ready-to-share compliance package for inspectors, insurers, or landlords.</p>
+      <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-2">Compliance Package Builder</h3>
+      <p className="text-sm text-[#1E2D4D]/50 mb-6">Generate a ready-to-share compliance package for inspectors, insurers, or landlords.</p>
 
       {/* Package type selector */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
@@ -103,22 +103,22 @@ export function CompliancePackage() {
               className={`p-4 rounded-xl border-2 text-left transition-all ${
                 selectedType === type
                   ? 'border-[#1E2D4D] bg-blue-50'
-                  : 'border-gray-200 hover:border-gray-300'
+                  : 'border-[#1E2D4D]/10 hover:border-gray-300'
               }`}
             >
-              <Icon className={`w-6 h-6 mb-2 ${selectedType === type ? 'text-[#1E2D4D]' : 'text-gray-400'}`} />
+              <Icon className={`w-6 h-6 mb-2 ${selectedType === type ? 'text-[#1E2D4D]' : 'text-[#1E2D4D]/30'}`} />
               <p className="text-sm font-semibold text-[#1E2D4D]">{p.label}</p>
-              <p className="text-xs text-gray-500 mt-1 line-clamp-2">{p.description}</p>
+              <p className="text-xs text-[#1E2D4D]/50 mt-1 line-clamp-2">{p.description}</p>
             </button>
           );
         })}
       </div>
 
       {/* Document checklist */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
           <h4 className="font-semibold text-[#1E2D4D]">Documents in Package</h4>
-          <span className="text-sm text-gray-500">{includedDocs.length} documents</span>
+          <span className="text-sm text-[#1E2D4D]/50">{includedDocs.length} documents</span>
         </div>
         {missingCount > 0 && (
           <div className="flex items-center gap-2 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg mb-4 text-sm text-amber-800">
@@ -144,11 +144,11 @@ export function CompliancePackage() {
                   />
                   <div>
                     <span className="text-sm font-medium text-gray-900">{doc.name}</span>
-                    <span className="text-xs text-gray-400 ml-2">{doc.category}</span>
+                    <span className="text-xs text-[#1E2D4D]/30 ml-2">{doc.category}</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-500">{doc.date}</span>
+                  <span className="text-xs text-[#1E2D4D]/50">{doc.date}</span>
                   {doc.status === 'included' && <CheckCircle className="w-4 h-4 text-green-500" />}
                   {doc.status === 'expired' && <span className="text-xs font-medium text-red-600 bg-red-50 px-2 py-0.5 rounded">EXPIRED</span>}
                   {doc.status === 'missing' && <span className="text-xs font-medium text-red-600 bg-red-50 px-2 py-0.5 rounded">MISSING</span>}
@@ -164,7 +164,7 @@ export function CompliancePackage() {
         <button
           onClick={generatePackage}
           disabled={generating || includedDocs.length === 0}
-          className="flex items-center gap-2 px-6 py-3 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors font-medium disabled:opacity-50"
+          className="flex items-center gap-2 px-6 py-3 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] font-medium disabled:opacity-50"
         >
           {generating ? (
             <>
@@ -192,11 +192,11 @@ export function CompliancePackage() {
               <Share2 className="w-4 h-4" />
               Share Link
             </button>
-            <button className="flex items-center gap-2 px-4 py-3 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+            <button className="flex items-center gap-2 px-4 py-3 text-[#1E2D4D]/80 border border-[#1E2D4D]/15 rounded-lg hover:bg-gray-50 transition-colors">
               <Mail className="w-4 h-4" />
               Email
             </button>
-            <button className="flex items-center gap-2 px-4 py-3 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+            <button className="flex items-center gap-2 px-4 py-3 text-[#1E2D4D]/80 border border-[#1E2D4D]/15 rounded-lg hover:bg-gray-50 transition-colors">
               <Printer className="w-4 h-4" />
               Print
             </button>

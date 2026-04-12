@@ -241,9 +241,9 @@ function getScoreRing(score: number): string {
 
 function severityBadge(sev: Severity) {
   const map = {
-    critical: 'bg-red-100 text-red-700 border-red-200',
+    critical: 'bg-red-50 text-red-700 border-red-200',
     major: 'bg-orange-100 text-orange-700 border-orange-200',
-    minor: 'bg-yellow-100 text-yellow-700 border-yellow-200',
+    minor: 'bg-amber-50 text-amber-700 border-yellow-200',
   };
   return (
     <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${map[sev]}`}>
@@ -687,7 +687,7 @@ export function SelfAudit() {
           <ClipboardList className="h-6 w-6 text-[#1E2D4D]" />
           <h2 className="text-xl font-bold text-[#1E2D4D]">Self-Inspection Checklist</h2>
         </div>
-        <p className="text-sm text-gray-600 mb-4">
+        <p className="text-sm text-[#1E2D4D]/70 mb-4">
           Walk through 7 compliance sections covering {total} checklist items. Score your location
           using <span className="font-medium">{scoringConfig.agencyName}</span> inspection criteria.
         </p>
@@ -780,10 +780,10 @@ export function SelfAudit() {
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="text-sm font-semibold text-[#1E2D4D] truncate">{s.name}</h3>
-                <p className="text-xs text-gray-500">{s.citation}</p>
+                <p className="text-xs text-[#1E2D4D]/50">{s.citation}</p>
               </div>
             </div>
-            <p className="text-xs text-gray-500">{s.items.length} items</p>
+            <p className="text-xs text-[#1E2D4D]/50">{s.items.length} items</p>
           </div>
         ))}
       </div>
@@ -803,12 +803,12 @@ export function SelfAudit() {
         {/* Progress bar */}
         <div className="bg-white rounded-xl border border-[#b8d4e8] p-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-700">
+            <span className="text-sm font-medium text-[#1E2D4D]/80">
               {completedSections} of 7 sections &mdash; {sectionPct}% complete
             </span>
             <span className={`text-sm font-bold ${getScoreColor(score)}`}>Score: {score}%</span>
           </div>
-          <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
+          <div className="h-3 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
             <div
               className="h-full rounded-full transition-all duration-500"
               style={{ width: `${sectionPct}%`, backgroundColor: '#d4af37' }}
@@ -843,10 +843,10 @@ export function SelfAudit() {
               <h2 className="text-lg font-bold text-[#1E2D4D]">
                 Section {currentSection + 1}: {sec.name}
               </h2>
-              <p className="text-xs text-gray-500">{sec.citation}</p>
+              <p className="text-xs text-[#1E2D4D]/50">{sec.citation}</p>
             </div>
           </div>
-          <p className="text-sm text-gray-500 mt-2">
+          <p className="text-sm text-[#1E2D4D]/50 mt-2">
             {sectionAnswered(sec)} of {sec.items.length} items answered
           </p>
         </div>
@@ -862,14 +862,14 @@ export function SelfAudit() {
                   : item.status === 'fail'
                   ? 'border-red-300 bg-red-50/30'
                   : item.status === 'na'
-                  ? 'border-gray-300 bg-gray-50/30'
+                  ? 'border-[#1E2D4D]/15 bg-gray-50/30'
                   : 'border-[#b8d4e8]'
               }`}
             >
               <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-900">{item.text}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">{item.citation || sec.citation}</p>
+                  <p className="text-xs text-[#1E2D4D]/50 mt-0.5">{item.citation || sec.citation}</p>
                   {/* Jurisdiction Variance indicator */}
                   {item.itemDefId && (() => {
                     const variance = getItemVariance(item.itemDefId!, scoringConfig.county);
@@ -906,7 +906,7 @@ export function SelfAudit() {
                     className={`flex items-center justify-center gap-1.5 rounded-lg font-semibold text-xs transition-colors ${
                       item.status === 'na'
                         ? 'bg-gray-600 text-white'
-                        : 'bg-[#FAF7F0] text-gray-700 hover:bg-gray-100 border border-gray-200'
+                        : 'bg-[#FAF7F0] text-[#1E2D4D]/80 hover:bg-gray-100 border border-[#1E2D4D]/10'
                     }`}
                     style={{ minWidth: 44, minHeight: 44 }}
                   >
@@ -921,7 +921,7 @@ export function SelfAudit() {
                 <div className="mt-3 pt-3 border-t border-red-200 space-y-3">
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs font-medium text-gray-700">Issue Description</span>
+                      <span className="text-xs font-medium text-[#1E2D4D]/80">Issue Description</span>
                       <AIAssistButton
                         fieldLabel="Issue Description"
                         context={{ itemName: item.text }}
@@ -934,12 +934,12 @@ export function SelfAudit() {
                       onChange={(e) => { setItemNotes(currentSection, ii, e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete(`notes-${item.id}`); return n; }); }}
                       placeholder="Describe the issue..."
                       rows={2}
-                      className="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/30 focus:border-[#1E2D4D] resize-none"
+                      className="w-full text-sm border border-[#1E2D4D]/15 rounded-lg px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30 focus:border-[#1E2D4D] resize-none"
                     />
                     {aiFields.has(`notes-${item.id}`) && <AIGeneratedIndicator />}
                   </div>
                   <div>
-                    <p className="text-xs font-medium text-gray-700 mb-1.5">Severity</p>
+                    <p className="text-xs font-medium text-[#1E2D4D]/80 mb-1.5">Severity</p>
                     <div className="flex gap-2">
                       {(['critical', 'major', 'minor'] as Severity[]).map((sev) => {
                         const colors = {
@@ -1043,9 +1043,9 @@ export function SelfAudit() {
           {jurisdictionGrade && jurisdictionGrade.passFail !== 'no_grade' && (
             <div className="mb-3">
               <span className={`inline-block text-2xl font-extrabold px-4 py-1 rounded-lg ${
-                jurisdictionGrade.passFail === 'pass' ? 'bg-green-100 text-green-700' :
-                jurisdictionGrade.passFail === 'warning' ? 'bg-yellow-100 text-yellow-700' :
-                'bg-red-100 text-red-700'
+                jurisdictionGrade.passFail === 'pass' ? 'bg-emerald-50 text-emerald-700' :
+                jurisdictionGrade.passFail === 'warning' ? 'bg-amber-50 text-amber-700' :
+                'bg-red-50 text-red-700'
               }`}>
                 {jurisdictionGrade.display}
               </span>
@@ -1076,21 +1076,21 @@ export function SelfAudit() {
               />
             </svg>
             <div className="absolute flex items-center justify-center" style={{ width: circleSize, height: circleSize }}>
-              <span className={`text-3xl font-bold ${getScoreColor(score)}`}>{score}</span>
+              <span className={`text-3xl font-bold tracking-tight ${getScoreColor(score)}`}>{score}</span>
             </div>
           </div>
 
           {/* Scoring method label */}
-          <p className="text-xs text-gray-500 mb-1">
+          <p className="text-xs text-[#1E2D4D]/50 mb-1">
             {getScoringMethodLabel(activeScoringConfig.scoringType)} — {activeScoringConfig.agencyName}
           </p>
 
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-[#1E2D4D]/70">
             {failedItems.length} failed item{failedItems.length !== 1 ? 's' : ''} out of{' '}
             {sections.reduce((a, s) => a + s.items.filter((i) => i.status !== null && i.status !== 'na').length, 0)} scored
           </p>
           {startedAt && (
-            <p className="text-xs text-gray-400 mt-1">
+            <p className="text-xs text-[#1E2D4D]/30 mt-1">
               Completed {format(new Date(), 'MMM d, yyyy h:mm a')}
             </p>
           )}
@@ -1103,12 +1103,12 @@ export function SelfAudit() {
             {sections.map((s, idx) => (
               <div key={s.id}>
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-medium text-gray-700 truncate max-w-[60%]">{s.name}</span>
+                  <span className="text-xs font-medium text-[#1E2D4D]/80 truncate max-w-[60%]">{s.name}</span>
                   <span className={`text-xs font-bold ${getScoreColor(sectionScores[idx])}`}>
                     {sectionScores[idx]}%
                   </span>
                 </div>
-                <div className="h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                <div className="h-2.5 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
                   <div
                     className={`h-full rounded-full transition-all duration-500 ${getScoreBg(sectionScores[idx])}`}
                     style={{ width: `${sectionScores[idx]}%` }}
@@ -1131,7 +1131,7 @@ export function SelfAudit() {
               .filter((g) => g.items.length > 0)
               .map((group) => (
                 <div key={group.label} className="mb-4 last:mb-0">
-                  <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                  <h4 className="text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wide mb-2">
                     {group.label} ({group.items.length})
                   </h4>
                   <div className="space-y-2">
@@ -1143,11 +1143,11 @@ export function SelfAudit() {
                         <div className="flex items-start justify-between gap-2">
                           <div>
                             <p className="text-sm font-medium text-gray-900">{f.text}</p>
-                            <p className="text-xs text-gray-500 mt-0.5">{f.sectionName}</p>
+                            <p className="text-xs text-[#1E2D4D]/50 mt-0.5">{f.sectionName}</p>
                           </div>
                           {severityBadge(f.severity)}
                         </div>
-                        {f.notes && <p className="text-xs text-gray-600 mt-1.5 italic">{f.notes}</p>}
+                        {f.notes && <p className="text-xs text-[#1E2D4D]/70 mt-1.5 italic">{f.notes}</p>}
                       </div>
                     ))}
                   </div>
@@ -1166,7 +1166,7 @@ export function SelfAudit() {
             <div className="space-y-3">
               {failedItems.map((f, idx) => (
                 <div key={f.id} className="flex gap-3">
-                  <span className="text-xs font-bold text-gray-400 mt-0.5 shrink-0">{idx + 1}.</span>
+                  <span className="text-xs font-bold text-[#1E2D4D]/30 mt-0.5 shrink-0">{idx + 1}.</span>
                   <div>
                     <p className="text-sm text-gray-800">{correctiveAction(f, f.sectionName)}</p>
                   </div>
@@ -1263,7 +1263,7 @@ export function SelfAudit() {
             <TrendingUp className="h-5 w-5 text-green-600" />
             <h3 className="text-sm font-bold text-[#1E2D4D]">Inspection Trend</h3>
           </div>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-[#1E2D4D]/70">
             Your scores have improved from 85% to 94% over the last 3 inspections — a{' '}
             <span className="font-semibold text-green-600">+9 point</span> improvement.
           </p>
@@ -1271,7 +1271,7 @@ export function SelfAudit() {
       )}
 
       {loadingHistory && (
-        <div className="bg-white rounded-xl border border-[#b8d4e8] p-8 text-center text-sm text-gray-500">
+        <div className="bg-white rounded-xl border border-[#b8d4e8] p-8 text-center text-sm text-[#1E2D4D]/50">
           Loading past inspections...
         </div>
       )}
@@ -1279,8 +1279,8 @@ export function SelfAudit() {
       {!loadingHistory && pastSessions.length === 0 && (
         <div className="bg-white rounded-xl border border-[#b8d4e8] p-8 text-center">
           <ClipboardList className="h-10 w-10 mx-auto mb-3 text-gray-300" />
-          <p className="text-sm text-gray-500">No completed inspections yet.</p>
-          <p className="text-xs text-gray-400 mt-1">Complete a self-inspection to see it here.</p>
+          <p className="text-sm text-[#1E2D4D]/50">No completed inspections yet.</p>
+          <p className="text-xs text-[#1E2D4D]/30 mt-1">Complete a self-inspection to see it here.</p>
         </div>
       )}
 
@@ -1307,7 +1307,7 @@ export function SelfAudit() {
                     </span>
                   )}
                 </div>
-                <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
+                <div className="flex flex-wrap items-center gap-2 text-xs text-[#1E2D4D]/50">
                   <span>{audit.totalFails} fail{audit.totalFails !== 1 ? 's' : ''}</span>
                   {audit.critical > 0 && (
                     <span className="text-red-600 font-medium">{audit.critical} critical</span>
@@ -1320,20 +1320,20 @@ export function SelfAudit() {
                   )}
                   {audit.auditor && (
                     <>
-                      <span className="text-gray-400">|</span>
+                      <span className="text-[#1E2D4D]/30">|</span>
                       <span>{audit.auditor}</span>
                     </>
                   )}
                 </div>
               </div>
               <ChevronRight
-                className={`h-5 w-5 text-gray-400 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
+                className={`h-5 w-5 text-[#1E2D4D]/30 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
               />
             </button>
 
             {isExpanded && (
               <div className="border-t border-[#b8d4e8] px-5 py-4 bg-[#eef4f8]/30">
-                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+                <h4 className="text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wide mb-3">
                   Failed Items
                 </h4>
                 <div className="space-y-2">
@@ -1351,11 +1351,11 @@ export function SelfAudit() {
                       <div className="flex items-start justify-between gap-2">
                         <div>
                           <p className="text-sm font-medium text-gray-900">{f.item}</p>
-                          <p className="text-xs text-gray-500">{f.section}</p>
+                          <p className="text-xs text-[#1E2D4D]/50">{f.section}</p>
                         </div>
                         {severityBadge(f.severity)}
                       </div>
-                      {f.notes && <p className="text-xs text-gray-600 mt-1.5 italic">{f.notes}</p>}
+                      {f.notes && <p className="text-xs text-[#1E2D4D]/70 mt-1.5 italic">{f.notes}</p>}
                     </div>
                   ))}
                 </div>
@@ -1391,7 +1391,7 @@ export function SelfAudit() {
             className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors ${
               activeTab === 'audit'
                 ? 'bg-[#1E2D4D] text-white'
-                : 'text-gray-600 hover:bg-[#eef4f8]'
+                : 'text-[#1E2D4D]/70 hover:bg-[#eef4f8]'
             }`}
           >
             <ClipboardList className="h-4 w-4" />
@@ -1402,7 +1402,7 @@ export function SelfAudit() {
             className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors ${
               activeTab === 'history'
                 ? 'bg-[#1E2D4D] text-white'
-                : 'text-gray-600 hover:bg-[#eef4f8]'
+                : 'text-[#1E2D4D]/70 hover:bg-[#eef4f8]'
             }`}
           >
             <History className="h-4 w-4" />

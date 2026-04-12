@@ -47,15 +47,15 @@ export default function HACCPSummary({ config }: { config: ReportTypeConfig }) {
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
         <div className="rounded-xl p-4 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
-          <p className="text-2xl font-bold" style={{ color: BODY_TEXT }}>{data.totalDeviations}</p>
+          <p className="text-2xl font-bold tracking-tight" style={{ color: BODY_TEXT }}>{data.totalDeviations}</p>
           <p className="text-xs mt-1" style={{ color: MUTED }}>Deviations</p>
         </div>
         <div className="rounded-xl p-4 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
-          <p className="text-2xl font-bold" style={{ color: '#16a34a' }}>{data.resolvedRate}%</p>
+          <p className="text-2xl font-bold tracking-tight" style={{ color: '#16a34a' }}>{data.resolvedRate}%</p>
           <p className="text-xs mt-1" style={{ color: MUTED }}>Resolved</p>
         </div>
         <div className="rounded-xl p-4 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
-          <p className="text-2xl font-bold" style={{ color: BODY_TEXT }}>{data.compliance.length}</p>
+          <p className="text-2xl font-bold tracking-tight" style={{ color: BODY_TEXT }}>{data.compliance.length}</p>
           <p className="text-xs mt-1" style={{ color: MUTED }}>Locations Monitored</p>
         </div>
       </div>

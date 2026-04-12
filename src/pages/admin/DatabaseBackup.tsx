@@ -83,7 +83,7 @@ export default function DatabaseBackup() {
   return (
     <div className="space-y-6">
       <AdminBreadcrumb crumbs={[{ label: 'Database Backup' }]} />
-      <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Database Backup</h1>
+      <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Database Backup</h1>
 
       {/* Status card */}
       <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>

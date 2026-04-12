@@ -80,7 +80,7 @@ export function SchedulePage() {
         {/* Header */}
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
-            <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Schedule</h1>
+            <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Schedule</h1>
             <p className="text-sm mt-0.5" style={{ color: MUTED }}>Manage jobs, assignments, and routes.</p>
           </div>
           <div className="flex items-center gap-2">
@@ -219,13 +219,13 @@ function CalendarSkeleton({ view }: { view: string }) {
       {view === 'month' ? (
         <div className="grid grid-cols-7 gap-2">
           {Array.from({ length: 35 }).map((_, i) => (
-            <div key={i} className="h-20 bg-gray-100 rounded" />
+            <div key={i} className="h-20 bg-[#1E2D4D]/5 rounded" />
           ))}
         </div>
       ) : (
         <div className="space-y-2">
           {Array.from({ length: 10 }).map((_, i) => (
-            <div key={i} className="h-12 bg-gray-100 rounded" />
+            <div key={i} className="h-12 bg-[#1E2D4D]/5 rounded" />
           ))}
         </div>
       )}

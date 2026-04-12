@@ -93,8 +93,8 @@ export function EquipmentPage() {
   // Skeletons
   const StatSkeleton = () => (
     <div className="rounded-lg p-4 animate-pulse" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
-      <div className="h-3 w-20 bg-gray-200 rounded mb-2" />
-      <div className="h-6 w-10 bg-gray-200 rounded" />
+      <div className="h-3 w-20 bg-[#1E2D4D]/8 rounded mb-2" />
+      <div className="h-6 w-10 bg-[#1E2D4D]/8 rounded" />
     </div>
   );
 
@@ -103,7 +103,7 @@ export function EquipmentPage() {
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Equipment</h1>
+          <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Equipment</h1>
           <p className="text-sm mt-1" style={{ color: MUTED }}>Track equipment inventory, service schedules, and QR codes.</p>
         </div>
         <div className="flex items-center gap-2">
@@ -147,7 +147,7 @@ export function EquipmentPage() {
             onChange={e => setLocalSearch(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && handleSearch()}
             placeholder="Search equipment..."
-            className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/30"
+            className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30"
             style={{ background: CARD_BG, borderColor: CARD_BORDER, color: NAVY }}
           />
         </div>
@@ -210,10 +210,10 @@ export function EquipmentPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {Array.from({ length: 8 }).map((_, i) => (
             <div key={i} className="rounded-xl p-4 animate-pulse" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
-              <div className="h-8 w-8 bg-gray-200 rounded-lg mb-3" />
-              <div className="h-4 w-3/4 bg-gray-200 rounded mb-2" />
-              <div className="h-3 w-1/2 bg-gray-200 rounded mb-4" />
-              <div className="h-3 w-full bg-gray-200 rounded" />
+              <div className="h-8 w-8 bg-[#1E2D4D]/8 rounded-lg mb-3" />
+              <div className="h-4 w-3/4 bg-[#1E2D4D]/8 rounded mb-2" />
+              <div className="h-3 w-1/2 bg-[#1E2D4D]/8 rounded mb-4" />
+              <div className="h-3 w-full bg-[#1E2D4D]/8 rounded" />
             </div>
           ))}
         </div>

@@ -30,7 +30,7 @@ export function SuggestionPill({
       )}
 
       {isGenerating && (
-        <div className="flex items-center gap-1.5 text-xs text-gray-400 mt-1">
+        <div className="flex items-center gap-1.5 text-xs text-[#1E2D4D]/30 mt-1">
           <span
             className="inline-block w-3 h-3 border border-current border-t-transparent rounded-full animate-spin"
             style={{ color: '#A08C5A' }}
@@ -41,7 +41,7 @@ export function SuggestionPill({
 
       {suggestion && !isGenerating && (
         <div
-          className="flex items-start gap-2 mt-1.5 p-2.5 rounded-lg text-xs text-gray-700 max-w-full"
+          className="flex items-start gap-2 mt-1.5 p-2.5 rounded-lg text-xs text-[#1E2D4D]/80 max-w-full"
           style={{ backgroundColor: '#FAF7F0', border: '1px solid rgba(160, 140, 90, 0.3)' }}
         >
           <span className="mt-0.5 shrink-0 text-xs" style={{ color: '#A08C5A' }}>&#10024;</span>
@@ -58,7 +58,7 @@ export function SuggestionPill({
             <button
               type="button"
               onClick={dismiss}
-              className="px-2 py-1 text-gray-400 hover:text-gray-600 rounded min-w-[44px] min-h-[44px] md:min-h-0 md:min-w-0"
+              className="px-2 py-1 text-[#1E2D4D]/30 hover:text-gray-600 rounded min-w-[44px] min-h-[44px] md:min-h-0 md:min-w-0"
             >
               &times;
             </button>

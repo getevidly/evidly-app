@@ -48,8 +48,8 @@ export function GhostInput({
         onFocus={handleFocus}
         onKeyDown={handleKeyDown}
         placeholder={suggestion || placeholder}
-        className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm
-                    focus:outline-none focus:ring-2 focus:ring-[#A08C5A] focus:border-transparent
+        className={`w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm
+                    focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent
                     ${className ?? ''}`}
         {...props}
       />

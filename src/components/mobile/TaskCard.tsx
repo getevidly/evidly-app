@@ -23,7 +23,7 @@ export function TaskCard({ task, isCompleted, onToggle }: TaskCardProps) {
         className={`w-11 h-11 flex-shrink-0 flex items-center justify-center rounded-full transition-colors ${
           isCompleted
             ? 'bg-[#16A34A] text-white'
-            : 'border-2 border-gray-300 text-gray-400'
+            : 'border-2 border-[#1E2D4D]/15 text-[#1E2D4D]/30'
         }`}
       >
         {isCompleted ? (

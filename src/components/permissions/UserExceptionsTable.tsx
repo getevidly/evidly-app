@@ -84,7 +84,7 @@ export function UserExceptionsTable({
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <UserCog className="w-5 h-5" style={{ color: '#A08C5A' }} />
-            <h3 className="text-lg font-semibold" style={{ color: '#1E2D4D' }}>
+            <h3 className="text-lg font-semibold tracking-tight" style={{ color: '#1E2D4D' }}>
               User Exceptions
             </h3>
             {exceptions.length > 0 && (
@@ -116,7 +116,7 @@ export function UserExceptionsTable({
             placeholder="Search by user or permission..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-offset-1"
+            className="w-full pl-10 pr-4 py-2.5 text-sm rounded-lg border focus-visible:outline-none focus-visible:ring-2 focus:ring-offset-1"
             style={{
               borderColor: 'var(--border)',
               color: '#1E2D4D',

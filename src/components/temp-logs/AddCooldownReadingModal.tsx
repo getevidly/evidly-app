@@ -104,18 +104,18 @@ export function AddCooldownReadingModal({ open, onClose, activeCooldowns, locati
   return (
     <ModalShell open={open} onClose={handleClose} title="Add Cooldown Reading" subtitle="FDA 2-Stage Cooling Compliance">
       {/* Mode toggle */}
-      <div className="flex gap-1 p-1 bg-gray-100 rounded-lg mb-5">
+      <div className="flex gap-1 p-1 bg-[#1E2D4D]/5 rounded-lg mb-5">
         <button
           type="button"
           onClick={() => setMode('check')}
-          className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors ${mode === 'check' ? 'bg-white shadow-sm text-[#1E2D4D]' : 'text-gray-500 hover:text-gray-700'}`}
+          className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors ${mode === 'check' ? 'bg-white shadow-sm text-[#1E2D4D]' : 'text-[#1E2D4D]/50 hover:text-gray-700'}`}
         >
           Log Check on Existing
         </button>
         <button
           type="button"
           onClick={() => setMode('new')}
-          className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors ${mode === 'new' ? 'bg-white shadow-sm text-[#1E2D4D]' : 'text-gray-500 hover:text-gray-700'}`}
+          className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors ${mode === 'new' ? 'bg-white shadow-sm text-[#1E2D4D]' : 'text-[#1E2D4D]/50 hover:text-gray-700'}`}
         >
           New Cooldown
         </button>
@@ -137,7 +137,7 @@ export function AddCooldownReadingModal({ open, onClose, activeCooldowns, locati
                 })}
               </select>
               {activeCooldowns.length === 0 && (
-                <p className="mt-1.5 text-xs text-gray-500">No active cooldowns. Start a new one instead.</p>
+                <p className="mt-1.5 text-xs text-[#1E2D4D]/50">No active cooldowns. Start a new one instead.</p>
               )}
             </FormField>
 
@@ -151,7 +151,7 @@ export function AddCooldownReadingModal({ open, onClose, activeCooldowns, locati
 
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label className="text-sm font-medium text-gray-700">Notes</label>
+                <label className="text-sm font-medium text-[#1E2D4D]/80">Notes</label>
                 <AIAssistButton
                   fieldLabel="Notes"
                   context={{ equipmentName: selectedCooldown?.itemName || '', temperature: checkTemp }}
@@ -229,7 +229,7 @@ export function AddCooldownReadingModal({ open, onClose, activeCooldowns, locati
 
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label className="text-sm font-medium text-gray-700">Notes</label>
+                <label className="text-sm font-medium text-[#1E2D4D]/80">Notes</label>
                 <AIAssistButton
                   fieldLabel="Notes"
                   context={{ equipmentName: foodItem, temperature: currentTemp }}

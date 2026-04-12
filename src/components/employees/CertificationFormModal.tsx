@@ -39,7 +39,7 @@ export function CertificationFormModal({ existing, onClose, onSave }: Certificat
       <div className="w-full max-w-md max-h-[90vh] overflow-y-auto rounded-xl shadow-xl border" style={{ backgroundColor: '#FFFFFF', borderColor: '#D1D9E6' }}>
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b sticky top-0 bg-white z-10" style={{ borderColor: '#D1D9E6' }}>
-          <h3 className="text-lg font-semibold" style={{ color: '#0B1628' }}>{existing ? 'Edit Certification' : 'Add Certification'}</h3>
+          <h3 className="text-lg font-semibold tracking-tight" style={{ color: '#0B1628' }}>{existing ? 'Edit Certification' : 'Add Certification'}</h3>
           <button onClick={onClose} className="p-2.5 -m-1 rounded-lg hover:bg-gray-100" aria-label="Close"><X className="w-5 h-5" style={{ color: '#6B7F96' }} /></button>
         </div>
 
@@ -47,32 +47,32 @@ export function CertificationFormModal({ existing, onClose, onSave }: Certificat
         <div className="px-6 py-5 space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1" style={{ color: '#0B1628' }}>Certification Type</label>
-            <select value={certType} onChange={e => setCertType(e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" style={{ borderColor: '#D1D9E6', color: '#0B1628' }}>
+            <select value={certType} onChange={e => setCertType(e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" style={{ borderColor: '#D1D9E6', color: '#0B1628' }}>
               {CERT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
             </select>
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-1" style={{ color: '#0B1628' }}>Certification Name <span className="text-red-500">*</span></label>
-            <input value={certName} onChange={e => setCertName(e.target.value)} placeholder="e.g. IKECA Master Technician" className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" style={{ borderColor: errors.certName ? '#dc2626' : '#D1D9E6', color: '#0B1628' }} />
+            <input value={certName} onChange={e => setCertName(e.target.value)} placeholder="e.g. IKECA Master Technician" className="w-full px-3 py-2 border rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" style={{ borderColor: errors.certName ? '#dc2626' : '#D1D9E6', color: '#0B1628' }} />
             {errors.certName && <p className="text-xs mt-1 text-red-500">{errors.certName}</p>}
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-1" style={{ color: '#0B1628' }}>Certification Number <span className="text-red-500">*</span></label>
-            <input value={certNumber} onChange={e => setCertNumber(e.target.value)} placeholder="e.g. IK-2024-0891" className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" style={{ borderColor: errors.certNumber ? '#dc2626' : '#D1D9E6', color: '#0B1628' }} />
+            <input value={certNumber} onChange={e => setCertNumber(e.target.value)} placeholder="e.g. IK-2024-0891" className="w-full px-3 py-2 border rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" style={{ borderColor: errors.certNumber ? '#dc2626' : '#D1D9E6', color: '#0B1628' }} />
             {errors.certNumber && <p className="text-xs mt-1 text-red-500">{errors.certNumber}</p>}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium mb-1" style={{ color: '#0B1628' }}>Issued Date <span className="text-red-500">*</span></label>
-              <input type="date" value={issuedDate} onChange={e => setIssuedDate(e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" style={{ borderColor: errors.issuedDate ? '#dc2626' : '#D1D9E6', color: '#0B1628' }} />
+              <input type="date" value={issuedDate} onChange={e => setIssuedDate(e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" style={{ borderColor: errors.issuedDate ? '#dc2626' : '#D1D9E6', color: '#0B1628' }} />
               {errors.issuedDate && <p className="text-xs mt-1 text-red-500">{errors.issuedDate}</p>}
             </div>
             <div>
               <label className="block text-sm font-medium mb-1" style={{ color: '#0B1628' }}>Expiry Date <span className="text-red-500">*</span></label>
-              <input type="date" value={expiryDate} onChange={e => setExpiryDate(e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" style={{ borderColor: errors.expiryDate ? '#dc2626' : '#D1D9E6', color: '#0B1628' }} />
+              <input type="date" value={expiryDate} onChange={e => setExpiryDate(e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]" style={{ borderColor: errors.expiryDate ? '#dc2626' : '#D1D9E6', color: '#0B1628' }} />
               {errors.expiryDate && <p className="text-xs mt-1 text-red-500">{errors.expiryDate}</p>}
             </div>
           </div>

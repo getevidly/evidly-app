@@ -171,7 +171,7 @@ function PermissionRow({
         onClick={() => onToggle(permission.key, !granted)}
         className={`
           relative inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent
-          transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2
+          transition-colors duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus:ring-offset-2
           ${isLocked ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}
         `}
         style={{

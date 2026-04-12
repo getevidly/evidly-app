@@ -30,7 +30,7 @@ export function EmployeeCertifications({ certifications, onAdd, onEdit, onDelete
           <select
             value={statusFilter}
             onChange={e => setStatusFilter(e.target.value as CertStatus | 'all')}
-            className="text-sm border rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+            className="text-sm border rounded-lg px-3 py-1.5 focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
             style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
           >
             <option value="all">All ({certifications.length})</option>

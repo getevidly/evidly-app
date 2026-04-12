@@ -459,7 +459,7 @@ export function Alerts() {
         <div className="bg-gradient-to-r from-[#1E2D4D] to-[#2c5f7f] rounded-xl p-4 sm:p-6 text-white">
           <div className="flex items-center space-x-3 mb-2">
             <Bell className="h-8 w-8 text-[#d4af37]" />
-            <h2 className="text-xl sm:text-2xl font-bold">{t('pages.alerts.complianceAlerts')}</h2>
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight">{t('pages.alerts.complianceAlerts')}</h2>
           </div>
           <p className="text-gray-300">{t('pages.alerts.subtitle')}</p>
           <div className="flex items-center space-x-6 mt-4 flex-wrap gap-y-2">
@@ -468,14 +468,14 @@ export function Alerts() {
                 <Bell className="h-4 w-4 text-[#d4af37]" />
                 <span className="text-sm text-gray-300 font-medium">{t('pages.alerts.activeAlerts')}</span>
               </div>
-              <div className="text-xl sm:text-3xl font-bold text-white text-center">{activeCount}</div>
+              <div className="text-xl sm:text-3xl font-bold tracking-tight text-white text-center">{activeCount}</div>
             </div>
             <div>
               <div className="flex items-center justify-center gap-2 mb-1">
                 <AlertCircle className="h-4 w-4 text-red-400" />
                 <span className="text-sm text-gray-300 font-medium">{t('pages.alerts.critical')}</span>
               </div>
-              <div className="text-xl sm:text-3xl font-bold text-red-400 text-center">{urgentCount}</div>
+              <div className="text-xl sm:text-3xl font-bold tracking-tight text-red-400 text-center">{urgentCount}</div>
             </div>
           </div>
         </div>
@@ -485,7 +485,7 @@ export function Alerts() {
           <button
             onClick={() => setFilter('all')}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              filter === 'all' ? 'bg-[#1E2D4D] text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+              filter === 'all' ? 'bg-[#1E2D4D] text-white' : 'bg-white text-[#1E2D4D]/80 border border-[#1E2D4D]/15 hover:bg-gray-50'
             }`}
           >
             {t('pages.alerts.all')} ({activeCount})
@@ -493,7 +493,7 @@ export function Alerts() {
           <button
             onClick={() => setFilter('urgent')}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              filter === 'urgent' ? 'bg-red-500 text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+              filter === 'urgent' ? 'bg-red-500 text-white' : 'bg-white text-[#1E2D4D]/80 border border-[#1E2D4D]/15 hover:bg-gray-50'
             }`}
           >
             {t('pages.alerts.critical')} ({urgentCount})
@@ -501,7 +501,7 @@ export function Alerts() {
           <button
             onClick={() => setFilter('upcoming')}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              filter === 'upcoming' ? 'bg-[#1E2D4D] text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+              filter === 'upcoming' ? 'bg-[#1E2D4D] text-white' : 'bg-white text-[#1E2D4D]/80 border border-[#1E2D4D]/15 hover:bg-gray-50'
             }`}
           >
             {t('pages.alerts.upcoming')}
@@ -509,7 +509,7 @@ export function Alerts() {
           <button
             onClick={() => setFilter('snoozed')}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              filter === 'snoozed' ? 'bg-purple-500 text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+              filter === 'snoozed' ? 'bg-purple-500 text-white' : 'bg-white text-[#1E2D4D]/80 border border-[#1E2D4D]/15 hover:bg-gray-50'
             }`}
           >
             {t('pages.alerts.snoozed')}
@@ -517,7 +517,7 @@ export function Alerts() {
           <button
             onClick={() => setFilter('resolved')}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              filter === 'resolved' ? 'bg-green-500 text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+              filter === 'resolved' ? 'bg-green-500 text-white' : 'bg-white text-[#1E2D4D]/80 border border-[#1E2D4D]/15 hover:bg-gray-50'
             }`}
           >
             {t('pages.alerts.resolved')}
@@ -529,7 +529,7 @@ export function Alerts() {
           <select
             value={severityFilter}
             onChange={(e) => setSeverityFilter(e.target.value as any)}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+            className="px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
           >
             <option value="all">{t('pages.alerts.allSeverities')}</option>
             <option value="high">{t('status.critical')}</option>
@@ -539,7 +539,7 @@ export function Alerts() {
           <select
             value={locationFilter}
             onChange={(e) => setLocationFilter(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+            className="px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
           >
             <option value="all">{t('pages.alerts.allLocations')}</option>
             {alertLocations.map(loc => (
@@ -549,7 +549,7 @@ export function Alerts() {
           <select
             value={typeFilter}
             onChange={(e) => setTypeFilter(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+            className="px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
           >
             {alertTypes.map(t => (
               <option key={t.value} value={t.value}>{t.label}</option>
@@ -558,7 +558,7 @@ export function Alerts() {
           {(severityFilter !== 'all' || locationFilter !== 'all' || typeFilter !== 'all') && (
             <button
               onClick={() => { setSeverityFilter('all'); setLocationFilter('all'); setTypeFilter('all'); }}
-              className="px-3 py-2 text-sm text-gray-600 hover:text-gray-900 underline"
+              className="px-3 py-2 text-sm text-[#1E2D4D]/70 hover:text-gray-900 underline"
             >
               {t('pages.alerts.clearFilters')}
             </button>
@@ -567,7 +567,7 @@ export function Alerts() {
 
         <div className="space-y-4">
           {filteredAlerts.length === 0 ? (
-            <div className="bg-white rounded-xl border border-gray-200">
+            <div className="bg-white rounded-xl border border-[#1E2D4D]/10">
               <PageEmptyState
                 icon={<CheckCircle2 className="h-12 w-12 text-green-500 mx-auto" />}
                 title={filter === 'resolved' ? t('pages.alerts.noResolvedAlerts') : t('pages.alerts.noMatchingAlerts')}
@@ -593,18 +593,18 @@ export function Alerts() {
                         <div className="flex-1">
                           <div className="flex items-center space-x-3 mb-1">
                             {getSeverityIcon(alertItem.severity)}
-                            <h3 className="text-lg font-semibold text-[#1E2D4D]">{alertItem.title}</h3>
+                            <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">{alertItem.title}</h3>
                           </div>
-                          <div className="flex items-center flex-wrap gap-x-4 gap-y-1 text-sm text-gray-500">
+                          <div className="flex items-center flex-wrap gap-x-4 gap-y-1 text-sm text-[#1E2D4D]/50">
                             <span>{format(new Date(alertItem.created_at), 'MMM d, h:mm a')}</span>
                             <span className="flex items-center space-x-1">
                               <MapPin className="h-3.5 w-3.5" />
                               <span>{alertItem.location}</span>
                             </span>
                             <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
-                              alertItem.severity === 'high' ? 'bg-red-100 text-red-700' :
-                              alertItem.severity === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-                              'bg-blue-100 text-blue-700'
+                              alertItem.severity === 'high' ? 'bg-red-50 text-red-700' :
+                              alertItem.severity === 'medium' ? 'bg-amber-50 text-amber-700' :
+                              'bg-blue-50 text-blue-700'
                             }`}>
                               {getSeverityLabel(alertItem.severity)}
                             </span>
@@ -618,20 +618,20 @@ export function Alerts() {
                         </div>
                         <button
                           onClick={() => handleDismiss(alertItem.id)}
-                          className="text-gray-400 hover:text-gray-600 transition-colors"
+                          className="text-[#1E2D4D]/30 hover:text-gray-600 transition-colors"
                         >
                           <X className="h-5 w-5" />
                         </button>
                       </div>
-                      <p className="text-sm text-gray-600 mb-3">{alertItem.description}</p>
-                      <div className="bg-white rounded-md p-3 border border-gray-200 mb-3">
-                        <p className="text-sm font-medium text-gray-700 mb-1">{t('pages.alerts.recommendedAction')}:</p>
-                        <p className="text-sm text-gray-600">{alertItem.recommended_action}</p>
+                      <p className="text-sm text-[#1E2D4D]/70 mb-3">{alertItem.description}</p>
+                      <div className="bg-white rounded-md p-3 border border-[#1E2D4D]/10 mb-3">
+                        <p className="text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('pages.alerts.recommendedAction')}:</p>
+                        <p className="text-sm text-[#1E2D4D]/70">{alertItem.recommended_action}</p>
                       </div>
                       {alertItem.assigned_to && (
-                        <div className="flex items-center space-x-2 text-sm text-gray-500">
+                        <div className="flex items-center space-x-2 text-sm text-[#1E2D4D]/50">
                           <Users className="h-4 w-4" />
-                          <span>{t('pages.alerts.assignedTo')}: <strong className="text-gray-700">{alertItem.assigned_to}</strong></span>
+                          <span>{t('pages.alerts.assignedTo')}: <strong className="text-[#1E2D4D]/80">{alertItem.assigned_to}</strong></span>
                         </div>
                       )}
                       {alertItem.status === 'snoozed' && alertItem.snoozed_until && (
@@ -647,7 +647,7 @@ export function Alerts() {
                   <div className="flex items-center space-x-2 pt-3 border-t flex-wrap gap-y-2">
                     <button
                       onClick={() => handleResolveClick(alertItem)}
-                      className="px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white text-sm rounded-lg hover:bg-[#162340] transition-colors"
+                      className="px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white text-sm rounded-lg hover:bg-[#162340] transition-all duration-150 active:scale-[0.98]"
                     >
                       {t('pages.alerts.resolve')}
                     </button>
@@ -678,28 +678,28 @@ export function Alerts() {
                     <div className="relative">
                       <button
                         onClick={() => setOpenSnoozeDropdown(openSnoozeDropdown === alertItem.id ? null : alertItem.id)}
-                        className="px-4 py-2 min-h-[44px] bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 transition-colors flex items-center space-x-1"
+                        className="px-4 py-2 min-h-[44px] bg-gray-100 text-[#1E2D4D]/80 text-sm rounded-lg hover:bg-gray-200 transition-colors flex items-center space-x-1"
                       >
                         <span>{t('pages.alerts.snooze')}</span>
                         <ChevronDown className="h-4 w-4" />
                       </button>
                       {openSnoozeDropdown === alertItem.id && (
-                        <div className="absolute left-0 bottom-full mb-2 bg-white rounded-xl border border-gray-200 py-2 z-20 min-w-[150px]">
+                        <div className="absolute left-0 bottom-full mb-2 bg-white rounded-xl border border-[#1E2D4D]/10 py-2 z-20 min-w-[150px]">
                           <button
                             onClick={() => handleSnooze(alertItem.id, 7)}
-                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                            className="block w-full text-left px-4 py-2 text-sm text-[#1E2D4D]/80 hover:bg-gray-50"
                           >
                             {t('pages.alerts.snooze7Days')}
                           </button>
                           <button
                             onClick={() => handleSnooze(alertItem.id, 30)}
-                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                            className="block w-full text-left px-4 py-2 text-sm text-[#1E2D4D]/80 hover:bg-gray-50"
                           >
                             {t('pages.alerts.snooze30Days')}
                           </button>
                           <button
                             onClick={() => setShowCustomDatePicker(true)}
-                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 border-t"
+                            className="block w-full text-left px-4 py-2 text-sm text-[#1E2D4D]/80 hover:bg-gray-50 border-t"
                           >
                             {t('pages.alerts.customDate')}
                           </button>
@@ -726,21 +726,21 @@ export function Alerts() {
                     <div className="relative">
                       <button
                         onClick={() => setOpenReassignDropdown(openReassignDropdown === alertItem.id ? null : alertItem.id)}
-                        className="px-4 py-2 min-h-[44px] bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 transition-colors flex items-center space-x-1"
+                        className="px-4 py-2 min-h-[44px] bg-gray-100 text-[#1E2D4D]/80 text-sm rounded-lg hover:bg-gray-200 transition-colors flex items-center space-x-1"
                       >
                         <span>{t('pages.alerts.reassign')}</span>
                         <ChevronDown className="h-4 w-4" />
                       </button>
                       {openReassignDropdown === alertItem.id && (
-                        <div className="absolute left-0 bottom-full mb-2 bg-white rounded-xl border border-gray-200 py-2 z-20 min-w-[200px]">
+                        <div className="absolute left-0 bottom-full mb-2 bg-white rounded-xl border border-[#1E2D4D]/10 py-2 z-20 min-w-[200px]">
                           {teamMembers.map((member) => (
                             <button
                               key={member.id}
                               onClick={() => handleReassign(alertItem.id, member.name)}
-                              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                              className="block w-full text-left px-4 py-2 text-sm text-[#1E2D4D]/80 hover:bg-gray-50"
                             >
                               <div className="font-medium">{member.name}</div>
-                              <div className="text-xs text-gray-500">{member.role}</div>
+                              <div className="text-xs text-[#1E2D4D]/50">{member.role}</div>
                             </button>
                           ))}
                         </div>
@@ -766,18 +766,18 @@ export function Alerts() {
       {showResolveModal && selectedAlert && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl p-4 sm:p-6 max-w-lg w-[95vw] sm:w-full">
-            <h3 className="text-xl sm:text-2xl font-bold mb-4">{t('pages.alerts.resolveAlert')}</h3>
-            <p className="text-gray-600 mb-6">{selectedAlert.title}</p>
+            <h3 className="text-xl sm:text-2xl font-bold tracking-tight mb-4">{t('pages.alerts.resolveAlert')}</h3>
+            <p className="text-[#1E2D4D]/70 mb-6">{selectedAlert.title}</p>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">
                   {t('pages.alerts.resolutionType')} <span className="text-red-600">*</span>
                 </label>
                 <select
                   value={resolutionType}
                   onChange={(e) => setResolutionType(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
                 >
                   <option value="">{t('pages.alerts.selectResolutionType')}</option>
                   <option value="fixed">{t('pages.alerts.fixed')}</option>
@@ -789,7 +789,7 @@ export function Alerts() {
 
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <label className="text-sm font-medium text-gray-700">
+                  <label className="text-sm font-medium text-[#1E2D4D]/80">
                     {t('pages.alerts.actionTaken')} <span className="text-red-600">*</span>
                   </label>
                   <AIAssistButton
@@ -804,43 +804,43 @@ export function Alerts() {
                   onChange={(e) => { setResolutionNotes(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('resolutionNotes'); return n; }); }}
                   rows={4}
                   placeholder={t('pages.alerts.actionTakenPlaceholder')}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
                 />
                 {aiFields.has('resolutionNotes') && <AIGeneratedIndicator />}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">
                   {t('pages.alerts.resolvedBy')}
                 </label>
                 <input
                   type="text"
                   value="Current User"
                   disabled
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-[#FAF7F0]"
+                  className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-lg bg-[#FAF7F0]"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">
                   {t('pages.alerts.supportingDocument')}
                 </label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-gray-400 transition-colors cursor-pointer">
-                  <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                  <p className="text-sm text-gray-600">{t('pages.alerts.clickToUpload')}</p>
-                  <p className="text-xs text-gray-500 mt-1">{t('pages.alerts.fileTypes')}</p>
+                <div className="border-2 border-dashed border-[#1E2D4D]/15 rounded-lg p-4 text-center hover:border-gray-400 transition-colors cursor-pointer">
+                  <Upload className="h-8 w-8 text-[#1E2D4D]/30 mx-auto mb-2" />
+                  <p className="text-sm text-[#1E2D4D]/70">{t('pages.alerts.clickToUpload')}</p>
+                  <p className="text-xs text-[#1E2D4D]/50 mt-1">{t('pages.alerts.fileTypes')}</p>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">
                   {t('pages.alerts.dateResolved')}
                 </label>
                 <input
                   type="text"
                   value={format(new Date(), 'MMM d, yyyy')}
                   disabled
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-[#FAF7F0]"
+                  className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-lg bg-[#FAF7F0]"
                 />
               </div>
             </div>
@@ -848,13 +848,13 @@ export function Alerts() {
             <div className="flex space-x-3 mt-6">
               <button
                 onClick={() => setShowResolveModal(false)}
-                className="flex-1 px-4 py-2 min-h-[44px] border-2 border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                className="flex-1 px-4 py-2 min-h-[44px] border-2 border-[#1E2D4D]/15 rounded-lg text-[#1E2D4D]/80 hover:bg-gray-50 transition-colors"
               >
                 {t('common.cancel')}
               </button>
               <button
                 onClick={handleResolveSubmit}
-                className="flex-1 px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-colors"
+                className="flex-1 px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-all duration-150 active:scale-[0.98]"
               >
                 {t('pages.alerts.submitResolution')}
               </button>

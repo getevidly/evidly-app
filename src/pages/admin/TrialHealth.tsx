@@ -340,7 +340,7 @@ export default function TrialHealth() {
       </div>
 
       {/* ── Section A: Cohort Timeline ─────────────────────── */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 mb-6">
         <div className="flex items-center gap-2 mb-4">
           <Users className="w-5 h-5" style={{ color: NAVY }} />
           <h2 style={{ fontSize: 16, fontWeight: 700, color: NAVY, margin: 0 }}>Cohort Timeline</h2>
@@ -407,7 +407,7 @@ export default function TrialHealth() {
       </div>
 
       {/* ── Section B: Email Funnel ────────────────────────── */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 mb-6">
         <div className="flex items-center gap-2 mb-4">
           <Mail className="w-5 h-5" style={{ color: NAVY }} />
           <h2 style={{ fontSize: 16, fontWeight: 700, color: NAVY, margin: 0 }}>Email Funnel</h2>
@@ -454,7 +454,7 @@ export default function TrialHealth() {
       </div>
 
       {/* ── Section C: Expiring Trials ─────────────────────── */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 mb-6">
         <div className="flex items-center gap-2 mb-4">
           <AlertTriangle className="w-5 h-5" style={{ color: NAVY }} />
           <h2 style={{ fontSize: 16, fontWeight: 700, color: NAVY, margin: 0 }}>Expiring Trials &mdash; Next 7 Days</h2>

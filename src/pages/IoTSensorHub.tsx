@@ -156,10 +156,10 @@ function BatteryBar({ pct }: { pct: number }) {
   const color = pct > 50 ? '#22c55e' : pct > 20 ? '#f59e0b' : '#ef4444';
   return (
     <div className="flex items-center gap-1.5">
-      <div className="w-8 h-3 rounded-sm border border-gray-300 relative overflow-hidden bg-gray-100">
+      <div className="w-8 h-3 rounded-sm border border-[#1E2D4D]/15 relative overflow-hidden bg-[#1E2D4D]/5">
         <div className="absolute inset-y-0 left-0 rounded-sm" style={{ width: `${pct}%`, backgroundColor: color }} />
       </div>
-      <span className="text-xs text-gray-500">{pct}%</span>
+      <span className="text-xs text-[#1E2D4D]/50">{pct}%</span>
     </div>
   );
 }
@@ -197,7 +197,7 @@ function DonutChart({ value, total, color, label }: { value: number; total: numb
         <text x="50" y="48" textAnchor="middle" className="text-lg font-bold" fill="#111827">{Math.round(pct)}%</text>
         <text x="50" y="62" textAnchor="middle" className="text-xs" fill="#6b7280">{value}/{total}</text>
       </svg>
-      <span className="text-xs font-medium text-gray-600">{label}</span>
+      <span className="text-xs font-medium text-[#1E2D4D]/70">{label}</span>
     </div>
   );
 }
@@ -242,12 +242,12 @@ export function IoTSensorHub() {
   if (!isDemoMode && liveCheckDone && liveReadingsCount === 0) {
     return (
       <div className="px-3 sm:px-6 py-12 max-w-2xl mx-auto text-center" style={F}>
-        <div className="bg-white rounded-2xl border border-gray-200 p-8 sm:p-12">
+        <div className="bg-white rounded-2xl border border-[#1E2D4D]/10 p-8 sm:p-12">
           <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: '#ecfdf5' }}>
             <Activity className="h-8 w-8 text-emerald-500" />
           </div>
           <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Your temperature module is fully active</h2>
-          <p className="text-sm text-gray-500 mb-6 max-w-md mx-auto">
+          <p className="text-sm text-[#1E2D4D]/50 mb-6 max-w-md mx-auto">
             {livePatternsCount > 0
               ? `${livePatternsCount} readings logged, patterns identified. Sensors upgrade this to 24/7 automatic monitoring.`
               : 'Start logging temperatures manually — sensors upgrade this to 24/7 automatic monitoring.'}
@@ -262,7 +262,7 @@ export function IoTSensorHub() {
             </button>
             <button
               onClick={() => navigate('/iot/setup')}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold border border-gray-200 text-gray-600 min-h-[44px]"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold border border-[#1E2D4D]/10 text-[#1E2D4D]/70 min-h-[44px]"
             >
               Setup Wizard
             </button>
@@ -335,7 +335,7 @@ export function IoTSensorHub() {
   return (
     <div className="min-h-screen bg-[#FAF7F0]" style={F}>
       {/* ── Header ────────────────────────────────────────────────────── */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
+      <header className="bg-white border-b border-[#1E2D4D]/10 sticky top-0 z-30">
         <div className="max-w-[1400px] mx-auto px-3 sm:px-6 h-16 flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-4">
             <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#1E2D4D' }}>
@@ -344,8 +344,8 @@ export function IoTSensorHub() {
             <div className="flex items-center gap-1.5">
               <span className="text-lg font-bold text-[#1E2D4D]">Evid</span>
               <span className="text-lg font-bold" style={{ color: '#d4af37' }}>LY</span>
-              <span className="text-gray-400 mx-1 hidden sm:inline">|</span>
-              <span className="text-lg font-semibold text-gray-700 hidden sm:inline">IoT Sensor Hub</span>
+              <span className="text-[#1E2D4D]/30 mx-1 hidden sm:inline">|</span>
+              <span className="text-lg font-semibold tracking-tight text-[#1E2D4D]/80 hidden sm:inline">IoT Sensor Hub</span>
             </div>
           </div>
           <div className="flex items-center gap-2 sm:gap-4">
@@ -364,7 +364,7 @@ export function IoTSensorHub() {
             <button onClick={() => setShowWizard(true)} className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-white min-h-[44px]" style={{ backgroundColor: '#1E2D4D' }}>
               <Plus className="h-4 w-4" /> <span className="hidden sm:inline">Add Sensor</span>
             </button>
-            <button onClick={() => toast.info('Sign out clicked (demo)')} className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors">
+            <button onClick={() => toast.info('Sign out clicked (demo)')} className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-[#1E2D4D]/70 hover:bg-gray-100 transition-colors">
               <LogOut className="h-4 w-4" /> Sign Out
             </button>
           </div>
@@ -388,10 +388,10 @@ export function IoTSensorHub() {
       {/* ── Content ──────────────────────────────────────────────────── */}
       <main className="max-w-[1400px] mx-auto px-3 sm:px-6 py-6">
         {!isDemoMode ? (
-          <div className="rounded-xl border border-gray-200 bg-white p-12 flex flex-col items-center justify-center text-center">
+          <div className="rounded-xl border border-[#1E2D4D]/10 bg-white p-12 flex flex-col items-center justify-center text-center">
             <Thermometer className="h-12 w-12 text-gray-300 mb-4" />
-            <h3 className="text-lg font-semibold text-[#1E2D4D] mb-2">No sensors connected yet</h3>
-            <p className="text-sm text-gray-500 max-w-md">Connect your first sensor to start monitoring.</p>
+            <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-2">No sensors connected yet</h3>
+            <p className="text-sm text-[#1E2D4D]/50 max-w-md">Connect your first sensor to start monitoring.</p>
           </div>
         ) : deviceDetailId ? (
           <DeviceDetailView sensorId={deviceDetailId} onBack={() => setDeviceDetailId(null)} />
@@ -435,14 +435,14 @@ function LiveMonitorTab({ sensors, selectedSensor, setSelectedSensor, onlineCoun
           { label: 'Critical Alerts', value: criticalAlerts, total: null, color: '#ef4444', icon: XCircle },
           { label: 'Readings Today', value: totalReadingsToday, total: null, color: '#1E2D4D', icon: Database },
         ].map(item => (
-          <div key={item.label} className="bg-white rounded-xl border border-gray-200 p-4 text-center">
+          <div key={item.label} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 text-center">
             <div className="flex items-center justify-center gap-2 mb-2">
               <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: item.color + '15' }}>
                 <item.icon className="h-5 w-5" style={{ color: item.color }} />
               </div>
             </div>
-            <div className="text-2xl font-bold text-[#1E2D4D]">{item.value}{item.total !== null && <span className="text-sm font-normal text-gray-400">/{item.total}</span>}</div>
-            <div className="text-xs text-gray-500">{item.label}</div>
+            <div className="text-2xl font-bold tracking-tight text-[#1E2D4D]">{item.value}{item.total !== null && <span className="text-sm font-normal text-[#1E2D4D]/30">/{item.total}</span>}</div>
+            <div className="text-xs text-[#1E2D4D]/50">{item.label}</div>
           </div>
         ))}
       </div>
@@ -454,7 +454,7 @@ function LiveMonitorTab({ sensors, selectedSensor, setSelectedSensor, onlineCoun
             const provider = iotSensorProviders.find(p => p.slug === sensor.providerSlug);
             const isSelected = selectedSensor === sensor.id;
             return (
-              <button key={sensor.id} onClick={() => setSelectedSensor(isSelected ? null : sensor.id)} className={`bg-white rounded-xl border p-4 text-left transition-all hover:shadow-md ${isSelected ? 'border-[#1E2D4D] ring-2 ring-[#1E2D4D]/20' : 'border-gray-200'}`}>
+              <button key={sensor.id} onClick={() => setSelectedSensor(isSelected ? null : sensor.id)} className={`bg-white rounded-xl border p-4 text-left transition-all hover:shadow-md ${isSelected ? 'border-[#1E2D4D] ring-2 ring-[#1E2D4D]/20' : 'border-[#1E2D4D]/10'}`}>
                 {/* Top row: status + name + provider */}
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-2">
@@ -466,23 +466,23 @@ function LiveMonitorTab({ sensors, selectedSensor, setSelectedSensor, onlineCoun
 
                 {/* Location + zone badges */}
                 <div className="flex flex-wrap gap-1 mb-3">
-                  <span className="px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">{sensor.locationName}</span>
+                  <span className="px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-[#1E2D4D]/70">{sensor.locationName}</span>
                   <span className="px-2 py-0.5 rounded text-xs font-medium" style={{ backgroundColor: '#eef4f8', color: '#1E2D4D' }}>{sensor.zone}</span>
                 </div>
 
                 {/* Temperature display */}
                 {sensor.status !== 'offline' ? (
                   <div className="flex items-baseline gap-2 mb-2">
-                    <span className="text-xl sm:text-3xl font-bold" style={{ color: tempColor(sensor.currentTempF, sensor.zone) }}>{sensor.currentTempF.toFixed(1)}</span>
-                    <span className="text-sm text-gray-400">°F</span>
+                    <span className="text-xl sm:text-3xl font-bold tracking-tight" style={{ color: tempColor(sensor.currentTempF, sensor.zone) }}>{sensor.currentTempF.toFixed(1)}</span>
+                    <span className="text-sm text-[#1E2D4D]/30">°F</span>
                     {sensor.currentHumidity !== null && (
-                      <span className="text-sm text-gray-500 ml-auto">{sensor.currentHumidity}% RH</span>
+                      <span className="text-sm text-[#1E2D4D]/50 ml-auto">{sensor.currentHumidity}% RH</span>
                     )}
                   </div>
                 ) : (
                   <div className="flex items-center gap-2 mb-2">
-                    <WifiOff className="h-5 w-5 text-gray-400" />
-                    <span className="text-sm text-gray-400">Offline</span>
+                    <WifiOff className="h-5 w-5 text-[#1E2D4D]/30" />
+                    <span className="text-sm text-[#1E2D4D]/30">Offline</span>
                   </div>
                 )}
 
@@ -494,7 +494,7 @@ function LiveMonitorTab({ sensors, selectedSensor, setSelectedSensor, onlineCoun
                   </div>
                   <div className="flex items-center gap-2">
                     <MiniTrend sensorId={sensor.id} />
-                    <span className="text-xs text-gray-400">{timeAgo(sensor.lastSeenAt)}</span>
+                    <span className="text-xs text-[#1E2D4D]/30">{timeAgo(sensor.lastSeenAt)}</span>
                   </div>
                 </div>
               </button>
@@ -504,32 +504,32 @@ function LiveMonitorTab({ sensors, selectedSensor, setSelectedSensor, onlineCoun
 
         {/* Selected sensor detail panel */}
         {selected && (
-          <div className="w-full lg:w-80 flex-shrink-0 bg-white rounded-xl border border-gray-200 p-4 sm:p-5 sticky top-24 h-fit">
+          <div className="w-full lg:w-80 flex-shrink-0 bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5 sticky top-24 h-fit">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold text-[#1E2D4D]">{selected.name}</h3>
-              <button onClick={() => setSelectedSensor(null)} className="text-gray-400 hover:text-gray-600">
+              <button onClick={() => setSelectedSensor(null)} className="text-[#1E2D4D]/30 hover:text-gray-600">
                 <XCircle className="h-5 w-5" />
               </button>
             </div>
             <div className="space-y-3 mb-4">
-              <div className="flex justify-between text-sm"><span className="text-gray-500">Location</span><span className="font-medium">{selected.locationName}</span></div>
-              <div className="flex justify-between text-sm"><span className="text-gray-500">Zone</span><span className="font-medium">{selected.zone}</span></div>
-              <div className="flex justify-between text-sm"><span className="text-gray-500">Provider</span><span className="font-medium">{iotSensorProviders.find(p => p.slug === selected.providerSlug)?.name}</span></div>
-              <div className="flex justify-between text-sm"><span className="text-gray-500">MAC</span><span className="font-mono text-xs">{selected.macAddress}</span></div>
-              <div className="flex justify-between text-sm"><span className="text-gray-500">Firmware</span><span className="font-medium">{selected.firmware}</span></div>
-              <div className="flex justify-between text-sm"><span className="text-gray-500">Status</span><span className="font-medium capitalize" style={{ color: statusColor(selected.status) }}>{selected.status}</span></div>
+              <div className="flex justify-between text-sm"><span className="text-[#1E2D4D]/50">Location</span><span className="font-medium">{selected.locationName}</span></div>
+              <div className="flex justify-between text-sm"><span className="text-[#1E2D4D]/50">Zone</span><span className="font-medium">{selected.zone}</span></div>
+              <div className="flex justify-between text-sm"><span className="text-[#1E2D4D]/50">Provider</span><span className="font-medium">{iotSensorProviders.find(p => p.slug === selected.providerSlug)?.name}</span></div>
+              <div className="flex justify-between text-sm"><span className="text-[#1E2D4D]/50">MAC</span><span className="font-mono text-xs">{selected.macAddress}</span></div>
+              <div className="flex justify-between text-sm"><span className="text-[#1E2D4D]/50">Firmware</span><span className="font-medium">{selected.firmware}</span></div>
+              <div className="flex justify-between text-sm"><span className="text-[#1E2D4D]/50">Status</span><span className="font-medium capitalize" style={{ color: statusColor(selected.status) }}>{selected.status}</span></div>
             </div>
             <button onClick={() => onViewDetail(selected!.id)} className="w-full mb-4 px-4 py-2 rounded-lg text-sm font-medium text-white" style={{ backgroundColor: '#1E2D4D' }}>
               View Full Detail
             </button>
-            <h4 className="text-sm font-semibold text-gray-700 mb-2">Recent Readings</h4>
+            <h4 className="text-sm font-semibold text-[#1E2D4D]/80 mb-2">Recent Readings</h4>
             <div className="space-y-2 max-h-48 overflow-y-auto">
               {selectedReadings.map((r, i) => (
                 <div key={i} className={`flex items-center justify-between text-xs p-2 rounded ${r.isAnomaly ? 'bg-red-50 border border-red-200' : 'bg-[#FAF7F0]'}`}>
-                  <span className="text-gray-500">{formatTime(r.timestamp)}</span>
+                  <span className="text-[#1E2D4D]/50">{formatTime(r.timestamp)}</span>
                   <span className={`font-bold ${r.isAnomaly ? 'text-red-600' : 'text-gray-900'}`}>{r.temperatureF.toFixed(1)}°F</span>
-                  {r.humidityPct !== null && <span className="text-gray-500">{r.humidityPct}%</span>}
-                  <span className="text-gray-400">{r.batteryPct}%</span>
+                  {r.humidityPct !== null && <span className="text-[#1E2D4D]/50">{r.humidityPct}%</span>}
+                  <span className="text-[#1E2D4D]/30">{r.batteryPct}%</span>
                 </div>
               ))}
             </div>
@@ -555,20 +555,20 @@ function SensorFleetTab({ sensors, search, setSearch, locationFilter, setLocatio
   return (
     <div>
       {/* Filters */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 mb-4 flex flex-wrap items-center gap-3">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 mb-4 flex flex-wrap items-center gap-3">
         <div className="relative flex-1 min-w-0 sm:min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search sensors..." className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20 focus:border-[#1E2D4D]" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#1E2D4D]/30" />
+          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search sensors..." className="w-full pl-10 pr-4 py-2 rounded-lg border border-[#1E2D4D]/10 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]" />
         </div>
-        <select value={locationFilter} onChange={e => setLocationFilter(e.target.value)} className="px-3 py-2 rounded-xl border border-gray-200 text-sm bg-white">
+        <select value={locationFilter} onChange={e => setLocationFilter(e.target.value)} className="px-3 py-2 rounded-xl border border-[#1E2D4D]/10 text-sm bg-white">
           <option value="all">All Locations</option>
           {locations.map(l => <option key={l} value={l}>{l}</option>)}
         </select>
-        <select value={providerFilter} onChange={e => setProviderFilter(e.target.value)} className="px-3 py-2 rounded-xl border border-gray-200 text-sm bg-white">
+        <select value={providerFilter} onChange={e => setProviderFilter(e.target.value)} className="px-3 py-2 rounded-xl border border-[#1E2D4D]/10 text-sm bg-white">
           <option value="all">All Providers</option>
           {providerSlugs.map(s => <option key={s} value={s}>{iotSensorProviders.find(p => p.slug === s)?.name || s}</option>)}
         </select>
-        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="px-3 py-2 rounded-xl border border-gray-200 text-sm bg-white">
+        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="px-3 py-2 rounded-xl border border-[#1E2D4D]/10 text-sm bg-white">
           <option value="all">All Status</option>
           <option value="online">Online</option>
           <option value="warning">Warning</option>
@@ -581,22 +581,22 @@ function SensorFleetTab({ sensors, search, setSearch, locationFilter, setLocatio
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-200" style={{ backgroundColor: '#f8fafc' }}>
-                <th className="text-left px-4 py-3 font-semibold text-gray-700">Sensor</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-700 hidden sm:table-cell">Provider</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-700 hidden lg:table-cell">MAC Address</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-700 hidden md:table-cell">Location</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-700 hidden sm:table-cell">Zone</th>
-                <th className="text-center px-4 py-3 font-semibold text-gray-700">Temp</th>
-                <th className="text-center px-4 py-3 font-semibold text-gray-700 hidden md:table-cell">Battery</th>
-                <th className="text-center px-4 py-3 font-semibold text-gray-700 hidden lg:table-cell">Signal</th>
-                <th className="text-center px-4 py-3 font-semibold text-gray-700">Status</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-700 hidden sm:table-cell">Last Seen</th>
-                <th className="text-center px-4 py-3 font-semibold text-gray-700">Actions</th>
+              <tr className="border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors" style={{ backgroundColor: '#f8fafc' }}>
+                <th className="text-left px-4 py-3 font-semibold text-[#1E2D4D]/80">Sensor</th>
+                <th className="text-left px-4 py-3 font-semibold text-[#1E2D4D]/80 hidden sm:table-cell">Provider</th>
+                <th className="text-left px-4 py-3 font-semibold text-[#1E2D4D]/80 hidden lg:table-cell">MAC Address</th>
+                <th className="text-left px-4 py-3 font-semibold text-[#1E2D4D]/80 hidden md:table-cell">Location</th>
+                <th className="text-left px-4 py-3 font-semibold text-[#1E2D4D]/80 hidden sm:table-cell">Zone</th>
+                <th className="text-center px-4 py-3 font-semibold text-[#1E2D4D]/80">Temp</th>
+                <th className="text-center px-4 py-3 font-semibold text-[#1E2D4D]/80 hidden md:table-cell">Battery</th>
+                <th className="text-center px-4 py-3 font-semibold text-[#1E2D4D]/80 hidden lg:table-cell">Signal</th>
+                <th className="text-center px-4 py-3 font-semibold text-[#1E2D4D]/80">Status</th>
+                <th className="text-left px-4 py-3 font-semibold text-[#1E2D4D]/80 hidden sm:table-cell">Last Seen</th>
+                <th className="text-center px-4 py-3 font-semibold text-[#1E2D4D]/80">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -606,37 +606,37 @@ function SensorFleetTab({ sensors, search, setSearch, locationFilter, setLocatio
                   <tr key={sensor.id} className="border-b border-gray-100 hover:bg-gray-50">
                     <td className="px-4 py-3">
                       <div className="font-medium text-gray-900">{sensor.name}</div>
-                      <div className="text-xs text-gray-400">{sensor.firmware}</div>
+                      <div className="text-xs text-[#1E2D4D]/30">{sensor.firmware}</div>
                     </td>
                     <td className="px-4 py-3 hidden sm:table-cell">
                       <div className="flex items-center gap-2">
                         <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: provider?.color }} />
-                        <span className="text-gray-700">{provider?.name}</span>
+                        <span className="text-[#1E2D4D]/80">{provider?.name}</span>
                       </div>
                     </td>
-                    <td className="px-4 py-3 font-mono text-xs text-gray-500 hidden lg:table-cell">{sensor.macAddress}</td>
-                    <td className="px-4 py-3 text-gray-700 hidden md:table-cell">{sensor.locationName}</td>
+                    <td className="px-4 py-3 font-mono text-xs text-[#1E2D4D]/50 hidden lg:table-cell">{sensor.macAddress}</td>
+                    <td className="px-4 py-3 text-[#1E2D4D]/80 hidden md:table-cell">{sensor.locationName}</td>
                     <td className="px-4 py-3 hidden sm:table-cell"><span className="px-2 py-0.5 rounded text-xs font-medium" style={{ backgroundColor: '#eef4f8', color: '#1E2D4D' }}>{sensor.zone}</span></td>
                     <td className="px-4 py-3 text-center">
                       {sensor.status !== 'offline' ? (
                         <span className="font-bold" style={{ color: tempColor(sensor.currentTempF, sensor.zone) }}>{sensor.currentTempF.toFixed(1)}°F</span>
                       ) : (
-                        <span className="text-gray-400">—</span>
+                        <span className="text-[#1E2D4D]/30">—</span>
                       )}
                     </td>
                     <td className="px-4 py-3 hidden md:table-cell"><div className="flex justify-center"><BatteryBar pct={sensor.batteryPct} /></div></td>
-                    <td className="px-4 py-3 hidden lg:table-cell"><div className="flex justify-center">{sensor.signalRssi !== 0 ? <SignalBars rssi={sensor.signalRssi} /> : <span className="text-gray-400">—</span>}</div></td>
+                    <td className="px-4 py-3 hidden lg:table-cell"><div className="flex justify-center">{sensor.signalRssi !== 0 ? <SignalBars rssi={sensor.signalRssi} /> : <span className="text-[#1E2D4D]/30">—</span>}</div></td>
                     <td className="px-4 py-3 text-center">
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: statusColor(sensor.status) + '20', color: statusColor(sensor.status) }}>
                         <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: statusColor(sensor.status) }} />
                         {sensor.status.charAt(0).toUpperCase() + sensor.status.slice(1)}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-xs text-gray-500 hidden sm:table-cell">{timeAgo(sensor.lastSeenAt)}</td>
+                    <td className="px-4 py-3 text-xs text-[#1E2D4D]/50 hidden sm:table-cell">{timeAgo(sensor.lastSeenAt)}</td>
                     <td className="px-4 py-3 text-center">
                       <div className="flex items-center justify-center gap-1">
-                        <button onClick={() => onViewDetail(sensor.id)} className="text-gray-400 hover:text-[#1E2D4D]" title="View detail"><Eye className="h-4 w-4" /></button>
-                        <button onClick={() => toast.info(`Configure ${sensor.name} (demo)`)} className="text-gray-400 hover:text-[#1E2D4D]" title="Configure"><MoreHorizontal className="h-4 w-4" /></button>
+                        <button onClick={() => onViewDetail(sensor.id)} className="text-[#1E2D4D]/30 hover:text-[#1E2D4D]" title="View detail"><Eye className="h-4 w-4" /></button>
+                        <button onClick={() => toast.info(`Configure ${sensor.name} (demo)`)} className="text-[#1E2D4D]/30 hover:text-[#1E2D4D]" title="Configure"><MoreHorizontal className="h-4 w-4" /></button>
                       </div>
                     </td>
                   </tr>
@@ -645,7 +645,7 @@ function SensorFleetTab({ sensors, search, setSearch, locationFilter, setLocatio
             </tbody>
           </table>
         </div>
-        <div className="px-4 py-3 border-t border-gray-200 text-sm text-gray-500">
+        <div className="px-4 py-3 border-t border-[#1E2D4D]/10 text-sm text-[#1E2D4D]/50">
           Showing {sensors.length} of {iotSensors.length} sensors
         </div>
       </div>
@@ -688,17 +688,17 @@ function AlertsTab() {
                   <div className="flex items-center gap-2 mb-1">
                     <span className="px-2 py-0.5 rounded-full text-xs font-bold uppercase" style={{ backgroundColor: severityBg(alert.severity), color: severityColor(alert.severity) }}>{alert.severity}</span>
                     <span className="text-sm font-semibold text-[#1E2D4D]">{alert.sensorName}</span>
-                    <span className="text-xs text-gray-400">•</span>
-                    <span className="text-xs text-gray-500">{alert.locationName}</span>
+                    <span className="text-xs text-[#1E2D4D]/30">•</span>
+                    <span className="text-xs text-[#1E2D4D]/50">{alert.locationName}</span>
                   </div>
-                  <p className="text-sm text-gray-700 mb-1">{alert.message}</p>
-                  <div className="flex items-center gap-3 text-xs text-gray-400">
+                  <p className="text-sm text-[#1E2D4D]/80 mb-1">{alert.message}</p>
+                  <div className="flex items-center gap-3 text-xs text-[#1E2D4D]/30">
                     <span>{formatDateTime(alert.createdAt)}</span>
                     {alert.acknowledged && <span className="text-green-600">Acknowledged by {alert.acknowledgedBy}</span>}
                   </div>
                 </div>
                 {!alert.acknowledged && (
-                  <button onClick={() => toast.success(`Acknowledged alert for ${alert.sensorName}`)} className="px-3 py-1.5 rounded-lg text-xs font-medium border border-gray-200 hover:bg-gray-50 text-gray-600 flex-shrink-0">
+                  <button onClick={() => toast.success(`Acknowledged alert for ${alert.sensorName}`)} className="px-3 py-1.5 rounded-lg text-xs font-medium border border-[#1E2D4D]/10 hover:bg-gray-50 text-[#1E2D4D]/70 flex-shrink-0">
                     Acknowledge
                   </button>
                 )}
@@ -710,7 +710,7 @@ function AlertsTab() {
 
       {/* Threshold configuration */}
       <div className="w-full lg:w-80 flex-shrink-0">
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 sticky top-24">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5 sticky top-24">
           <h3 className="text-lg font-bold text-[#1E2D4D] mb-4">Alert Thresholds</h3>
           <div className="space-y-4">
             {[
@@ -722,11 +722,11 @@ function AlertsTab() {
               { label: 'Offline (minutes)', key: 'offlineMinutes' as const, icon: WifiOff, color: '#9ca3af' },
             ].map(item => (
               <div key={item.key}>
-                <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
+                <label className="flex items-center gap-2 text-sm font-medium text-[#1E2D4D]/80 mb-1">
                   <item.icon className="h-3.5 w-3.5" style={{ color: item.color }} />
                   {item.label}
                 </label>
-                <input type="number" value={thresholds[item.key]} onChange={e => setThresholds(prev => ({ ...prev, [item.key]: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20 focus:border-[#1E2D4D]" />
+                <input type="number" value={thresholds[item.key]} onChange={e => setThresholds(prev => ({ ...prev, [item.key]: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-lg border border-[#1E2D4D]/10 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]" />
               </div>
             ))}
           </div>
@@ -753,7 +753,7 @@ function IntegrationsTab({ onOpenWizard }: { onOpenWizard: () => void }) {
         {iotSensorProviders.map(provider => {
           const config = iotSensorConfigs.find(c => c.providerSlug === provider.slug);
           return (
-            <div key={provider.id} className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+            <div key={provider.id} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
               <div className="flex items-start justify-between mb-3 flex-wrap gap-2">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: provider.color + '20' }}>
@@ -768,7 +768,7 @@ function IntegrationsTab({ onOpenWizard }: { onOpenWizard: () => void }) {
                   </div>
                 </div>
                 {provider.status !== 'available' ? (
-                  <button onClick={() => toast.info(`Configure ${provider.name} integration (demo)`)} className="text-xs font-medium px-3 py-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-600">
+                  <button onClick={() => toast.info(`Configure ${provider.name} integration (demo)`)} className="text-xs font-medium px-3 py-1.5 rounded-lg border border-[#1E2D4D]/10 hover:bg-gray-50 text-[#1E2D4D]/70">
                     Configure
                   </button>
                 ) : (
@@ -781,20 +781,20 @@ function IntegrationsTab({ onOpenWizard }: { onOpenWizard: () => void }) {
               {/* Capabilities */}
               <div className="flex flex-wrap gap-1 mb-3">
                 {provider.capabilities.map(c => (
-                  <span key={c} className="px-2 py-0.5 rounded text-xs bg-gray-100 text-gray-600">{c.replace(/_/g, ' ')}</span>
+                  <span key={c} className="px-2 py-0.5 rounded text-xs bg-gray-100 text-[#1E2D4D]/70">{c.replace(/_/g, ' ')}</span>
                 ))}
               </div>
 
               {/* Stats */}
-              <div className="flex items-center gap-4 text-xs text-gray-500 pt-3 border-t border-gray-100">
-                <span><strong className="text-gray-700">{provider.sensorCount}</strong> sensors</span>
+              <div className="flex items-center gap-4 text-xs text-[#1E2D4D]/50 pt-3 border-t border-gray-100">
+                <span><strong className="text-[#1E2D4D]/80">{provider.sensorCount}</strong> sensors</span>
                 {provider.rateLimitPerMin && <span>{provider.rateLimitPerMin} req/min limit</span>}
-                {provider.lastSync ? <span>Last sync: {timeAgo(provider.lastSync)}</span> : <span className="text-gray-400">No syncs yet</span>}
+                {provider.lastSync ? <span>Last sync: {timeAgo(provider.lastSync)}</span> : <span className="text-[#1E2D4D]/30">No syncs yet</span>}
               </div>
 
               {/* Config details for connected */}
               {config && (
-                <div className="mt-3 pt-3 border-t border-gray-100 text-xs text-gray-500">
+                <div className="mt-3 pt-3 border-t border-gray-100 text-xs text-[#1E2D4D]/50">
                   <div className="flex items-center gap-3">
                     {config.pollingIntervalMin > 0 ? (
                       <span>Polling: every {config.pollingIntervalMin} min</span>
@@ -811,7 +811,7 @@ function IntegrationsTab({ onOpenWizard }: { onOpenWizard: () => void }) {
                 </div>
               )}
 
-              <div className="mt-2 text-xs text-gray-400">{provider.pricingNote}</div>
+              <div className="mt-2 text-xs text-[#1E2D4D]/30">{provider.pricingNote}</div>
             </div>
           );
         })}
@@ -819,32 +819,32 @@ function IntegrationsTab({ onOpenWizard }: { onOpenWizard: () => void }) {
 
       {/* Ingestion log */}
       <h3 className="text-lg font-bold text-[#1E2D4D] mb-3">Ingestion Log</h3>
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
         <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-200" style={{ backgroundColor: '#f8fafc' }}>
-              <th className="text-left px-4 py-3 font-semibold text-gray-700">Time</th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-700">Provider</th>
-              <th className="text-center px-4 py-3 font-semibold text-gray-700">Method</th>
-              <th className="text-center px-4 py-3 font-semibold text-gray-700 hidden sm:table-cell">Sensors</th>
-              <th className="text-center px-4 py-3 font-semibold text-gray-700">Readings</th>
-              <th className="text-center px-4 py-3 font-semibold text-gray-700 hidden sm:table-cell">Duration</th>
-              <th className="text-center px-4 py-3 font-semibold text-gray-700">Status</th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-700 hidden md:table-cell">Details</th>
+            <tr className="border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors" style={{ backgroundColor: '#f8fafc' }}>
+              <th className="text-left px-4 py-3 font-semibold text-[#1E2D4D]/80">Time</th>
+              <th className="text-left px-4 py-3 font-semibold text-[#1E2D4D]/80">Provider</th>
+              <th className="text-center px-4 py-3 font-semibold text-[#1E2D4D]/80">Method</th>
+              <th className="text-center px-4 py-3 font-semibold text-[#1E2D4D]/80 hidden sm:table-cell">Sensors</th>
+              <th className="text-center px-4 py-3 font-semibold text-[#1E2D4D]/80">Readings</th>
+              <th className="text-center px-4 py-3 font-semibold text-[#1E2D4D]/80 hidden sm:table-cell">Duration</th>
+              <th className="text-center px-4 py-3 font-semibold text-[#1E2D4D]/80">Status</th>
+              <th className="text-left px-4 py-3 font-semibold text-[#1E2D4D]/80 hidden md:table-cell">Details</th>
             </tr>
           </thead>
           <tbody>
             {iotIngestionLog.map(entry => (
               <tr key={entry.id} className="border-b border-gray-100 hover:bg-gray-50">
-                <td className="px-4 py-3 text-xs text-gray-500">{formatTime(entry.timestamp)}</td>
-                <td className="px-4 py-3 font-medium text-gray-700">{entry.provider}</td>
+                <td className="px-4 py-3 text-xs text-[#1E2D4D]/50">{formatTime(entry.timestamp)}</td>
+                <td className="px-4 py-3 font-medium text-[#1E2D4D]/80">{entry.provider}</td>
                 <td className="px-4 py-3 text-center">{methodBadge(entry.method)}</td>
-                <td className="px-4 py-3 text-center text-gray-700 hidden sm:table-cell">{entry.sensorCount}</td>
-                <td className="px-4 py-3 text-center text-gray-700">{entry.readingCount}</td>
-                <td className="px-4 py-3 text-center text-gray-500 hidden sm:table-cell">{entry.durationMs}ms</td>
+                <td className="px-4 py-3 text-center text-[#1E2D4D]/80 hidden sm:table-cell">{entry.sensorCount}</td>
+                <td className="px-4 py-3 text-center text-[#1E2D4D]/80">{entry.readingCount}</td>
+                <td className="px-4 py-3 text-center text-[#1E2D4D]/50 hidden sm:table-cell">{entry.durationMs}ms</td>
                 <td className="px-4 py-3 text-center">{logStatusBadge(entry.status)}</td>
-                <td className="px-4 py-3 text-xs text-gray-400 max-w-[200px] truncate hidden md:table-cell">{entry.errorMessage || '—'}</td>
+                <td className="px-4 py-3 text-xs text-[#1E2D4D]/30 max-w-[200px] truncate hidden md:table-cell">{entry.errorMessage || '—'}</td>
               </tr>
             ))}
           </tbody>
@@ -884,19 +884,19 @@ function AnalyticsTab({ data }: { data: { coolerTotal: number; coolerInRange: nu
           { label: 'Compliance Rate', value: `${data.coolerTotal > 0 ? Math.round((data.coolerInRange / data.coolerTotal) * 100) : 0}%`, icon: () => <EvidlyIcon size={16} />, color: '#22c55e' },
           { label: 'Fleet Uptime', value: `${uptimePct}%`, icon: Wifi, color: '#7c3aed' },
         ].map(item => (
-          <div key={item.label} className="bg-white rounded-xl border border-gray-200 p-4">
+          <div key={item.label} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
             <div className="flex items-center gap-2 mb-2">
               <item.icon className="h-4 w-4" style={{ color: item.color }} />
-              <span className="text-xs text-gray-500">{item.label}</span>
+              <span className="text-xs text-[#1E2D4D]/50">{item.label}</span>
             </div>
-            <div className="text-2xl font-bold text-[#1E2D4D]">{item.value}</div>
+            <div className="text-2xl font-bold tracking-tight text-[#1E2D4D]">{item.value}</div>
           </div>
         ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Temperature trend chart */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
           <h3 className="text-sm font-bold text-[#1E2D4D] mb-4">Cold Storage Temperature Trend</h3>
           <svg width="100%" height="200" viewBox="0 0 500 200" preserveAspectRatio="xMidYMid meet">
             {/* Grid lines */}
@@ -927,27 +927,27 @@ function AnalyticsTab({ data }: { data: { coolerTotal: number; coolerInRange: nu
             {coolerSensors.slice(0, 6).map((s, i) => (
               <div key={s.id} className="flex items-center gap-1.5 text-xs">
                 <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: trendColors[i] }} />
-                <span className="text-gray-600">{s.name}</span>
+                <span className="text-[#1E2D4D]/70">{s.name}</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Compliance donut + anomaly count */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
           <h3 className="text-sm font-bold text-[#1E2D4D] mb-4">Cold Storage Compliance</h3>
           <div className="flex items-center justify-around">
             <DonutChart value={data.coolerInRange} total={data.coolerTotal} color="#22c55e" label="In Range" />
             <DonutChart value={data.coolerTotal - data.coolerInRange} total={data.coolerTotal} color="#ef4444" label="Out of Range" />
           </div>
           <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between text-sm">
-            <span className="text-gray-500">Anomalies detected (24h)</span>
+            <span className="text-[#1E2D4D]/50">Anomalies detected (24h)</span>
             <span className="font-bold text-red-600">{anomalyCount}</span>
           </div>
         </div>
 
         {/* Readings by provider */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
           <h3 className="text-sm font-bold text-[#1E2D4D] mb-4">Readings by Provider</h3>
           <div className="space-y-3">
             {providerEntries.map(([name, count]) => {
@@ -955,11 +955,11 @@ function AnalyticsTab({ data }: { data: { coolerTotal: number; coolerInRange: nu
               return (
                 <div key={name} className="flex items-center gap-3">
                   <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: provider?.color || '#999' }} />
-                  <span className="text-sm text-gray-700 w-28 flex-shrink-0">{name}</span>
-                  <div className="flex-1 h-4 rounded-full bg-gray-100 overflow-hidden">
+                  <span className="text-sm text-[#1E2D4D]/80 w-28 flex-shrink-0">{name}</span>
+                  <div className="flex-1 h-4 rounded-full bg-[#1E2D4D]/5 overflow-hidden">
                     <div className="h-full rounded-full transition-all" style={{ width: `${(count / maxReadings) * 100}%`, backgroundColor: provider?.color || '#999' }} />
                   </div>
-                  <span className="text-sm font-medium text-gray-700 w-8 text-right">{count}</span>
+                  <span className="text-sm font-medium text-[#1E2D4D]/80 w-8 text-right">{count}</span>
                 </div>
               );
             })}
@@ -967,7 +967,7 @@ function AnalyticsTab({ data }: { data: { coolerTotal: number; coolerInRange: nu
         </div>
 
         {/* Ingestion methods breakdown */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
           <h3 className="text-sm font-bold text-[#1E2D4D] mb-4">Ingestion Methods</h3>
           <div className="space-y-4">
             {[
@@ -981,8 +981,8 @@ function AnalyticsTab({ data }: { data: { coolerTotal: number; coolerInRange: nu
                 </div>
                 <div className="flex-1">
                   <div className="text-sm font-semibold text-[#1E2D4D]">{item.method}</div>
-                  <div className="text-xs text-gray-500">{item.desc}</div>
-                  <div className="text-xs text-gray-400 mt-1">{item.count} syncs • {item.readings} readings</div>
+                  <div className="text-xs text-[#1E2D4D]/50">{item.desc}</div>
+                  <div className="text-xs text-[#1E2D4D]/30 mt-1">{item.count} syncs • {item.readings} readings</div>
                 </div>
               </div>
             ))}
@@ -1014,18 +1014,18 @@ function SettingsTab() {
 
       <div className="space-y-6">
         {/* Webhook URL */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
           <h3 className="text-sm font-bold text-[#1E2D4D] mb-1">Webhook Ingestion Endpoint</h3>
-          <p className="text-xs text-gray-500 mb-3">Configure your sensor platforms to push data to this URL. Include your API key in the X-API-Key header.</p>
+          <p className="text-xs text-[#1E2D4D]/50 mb-3">Configure your sensor platforms to push data to this URL. Include your API key in the X-API-Key header.</p>
           <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-            <code className="flex-1 min-w-0 px-4 py-2 rounded-lg bg-[#FAF7F0] border border-gray-200 text-sm font-mono text-gray-700 truncate">{webhookUrl}</code>
-            <button onClick={() => { navigator.clipboard.writeText(webhookUrl).then(() => toast.success('Webhook URL copied to clipboard')); }} className="px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-50">
-              <Copy className="h-4 w-4 text-gray-500" />
+            <code className="flex-1 min-w-0 px-4 py-2 rounded-lg bg-[#FAF7F0] border border-[#1E2D4D]/10 text-sm font-mono text-[#1E2D4D]/80 truncate">{webhookUrl}</code>
+            <button onClick={() => { navigator.clipboard.writeText(webhookUrl).then(() => toast.success('Webhook URL copied to clipboard')); }} className="px-3 py-2 rounded-lg border border-[#1E2D4D]/10 hover:bg-gray-50">
+              <Copy className="h-4 w-4 text-[#1E2D4D]/50" />
             </button>
           </div>
           <div className="mt-3 p-3 rounded-lg bg-[#FAF7F0]">
-            <p className="text-xs font-semibold text-gray-700 mb-1">Example Payload:</p>
-            <pre className="text-xs text-gray-500 font-mono whitespace-pre">
+            <p className="text-xs font-semibold text-[#1E2D4D]/80 mb-1">Example Payload:</p>
+            <pre className="text-xs text-[#1E2D4D]/50 font-mono whitespace-pre">
 {`POST ${webhookUrl}
 X-API-Key: your-api-key
 Content-Type: application/json
@@ -1041,7 +1041,7 @@ Content-Type: application/json
         </div>
 
         {/* Global thresholds */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
           <h3 className="text-sm font-bold text-[#1E2D4D] mb-3">Default Alert Thresholds</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {[
@@ -1053,15 +1053,15 @@ Content-Type: application/json
               { label: 'Default Poll (min)', key: 'defaultPollingMin' as const },
             ].map(item => (
               <div key={item.key}>
-                <label className="text-xs font-medium text-gray-600 mb-1 block">{item.label}</label>
-                <input type="number" value={globalConfig[item.key]} onChange={e => setGlobalConfig(prev => ({ ...prev, [item.key]: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20 focus:border-[#1E2D4D]" />
+                <label className="text-xs font-medium text-[#1E2D4D]/70 mb-1 block">{item.label}</label>
+                <input type="number" value={globalConfig[item.key]} onChange={e => setGlobalConfig(prev => ({ ...prev, [item.key]: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-lg border border-[#1E2D4D]/10 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]" />
               </div>
             ))}
           </div>
         </div>
 
         {/* Auto-log + notifications */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
           <h3 className="text-sm font-bold text-[#1E2D4D] mb-3">Compliance & Notifications</h3>
           <div className="space-y-3">
             {[
@@ -1074,29 +1074,29 @@ Content-Type: application/json
                 <div className={`w-10 h-6 rounded-full transition-colors relative cursor-pointer ${globalConfig[item.key] ? 'bg-[#1E2D4D]' : 'bg-gray-300'}`} onClick={() => setGlobalConfig(prev => ({ ...prev, [item.key]: !prev[item.key] }))}>
                   <div className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-transform ${globalConfig[item.key] ? 'translate-x-[18px]' : 'translate-x-0.5'}`} />
                 </div>
-                <span className="text-sm text-gray-700">{item.label}</span>
+                <span className="text-sm text-[#1E2D4D]/80">{item.label}</span>
               </label>
             ))}
           </div>
         </div>
 
         {/* Data retention + export */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
           <h3 className="text-sm font-bold text-[#1E2D4D] mb-3">Data Management</h3>
           <div className="flex items-center gap-4 mb-4">
             <div className="flex-1">
-              <label className="text-xs font-medium text-gray-600 mb-1 block">Data Retention (days)</label>
-              <input type="number" value={globalConfig.dataRetentionDays} onChange={e => setGlobalConfig(prev => ({ ...prev, dataRetentionDays: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20 focus:border-[#1E2D4D]" />
+              <label className="text-xs font-medium text-[#1E2D4D]/70 mb-1 block">Data Retention (days)</label>
+              <input type="number" value={globalConfig.dataRetentionDays} onChange={e => setGlobalConfig(prev => ({ ...prev, dataRetentionDays: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-lg border border-[#1E2D4D]/10 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]" />
             </div>
           </div>
           <div className="flex flex-wrap gap-3">
-            <button onClick={() => guardAction('export', 'sensor data', () => toast.info('Export sensor data as CSV (demo)'))} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 hover:bg-gray-50 text-gray-700">
+            <button onClick={() => guardAction('export', 'sensor data', () => toast.info('Export sensor data as CSV (demo)'))} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-[#1E2D4D]/10 hover:bg-gray-50 text-[#1E2D4D]/80">
               <Download className="h-4 w-4" /> Export CSV
             </button>
-            <button onClick={() => guardAction('export', 'sensor data', () => toast.info('Export sensor data as JSON (demo)'))} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 hover:bg-gray-50 text-gray-700">
+            <button onClick={() => guardAction('export', 'sensor data', () => toast.info('Export sensor data as JSON (demo)'))} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-[#1E2D4D]/10 hover:bg-gray-50 text-[#1E2D4D]/80">
               <Download className="h-4 w-4" /> Export JSON
             </button>
-            <button onClick={() => toast.info('Import sensor config from CSV (demo)')} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 hover:bg-gray-50 text-gray-700">
+            <button onClick={() => toast.info('Import sensor config from CSV (demo)')} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-[#1E2D4D]/10 hover:bg-gray-50 text-[#1E2D4D]/80">
               <Upload className="h-4 w-4" /> Import Config
             </button>
           </div>
@@ -1169,25 +1169,25 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-      <div className="bg-white rounded-xl border border-gray-200 w-[95vw] sm:w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col" style={F}>
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 w-[95vw] sm:w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col" style={F}>
         {/* Header */}
-        <div className="px-4 sm:px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+        <div className="px-4 sm:px-6 py-4 border-b border-[#1E2D4D]/10 flex items-center justify-between">
           <div>
             <h2 className="text-lg font-bold text-[#1E2D4D]">Add New Sensor Integration</h2>
-            <p className="text-xs text-gray-500">Step {step} of 5 — {WIZARD_STEPS[step - 1].label}</p>
+            <p className="text-xs text-[#1E2D4D]/50">Step {step} of 5 — {WIZARD_STEPS[step - 1].label}</p>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600" aria-label="Close"><X className="h-5 w-5" /></button>
+          <button onClick={onClose} className="text-[#1E2D4D]/30 hover:text-gray-600" aria-label="Close"><X className="h-5 w-5" /></button>
         </div>
 
         {/* Step indicators */}
         <div className="px-4 sm:px-6 py-3 border-b border-gray-100 flex items-center gap-2 overflow-x-auto">
           {WIZARD_STEPS.map(s => (
             <div key={s.step} className="flex items-center gap-2 flex-1">
-              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${s.step < step ? 'bg-green-500 text-white' : s.step === step ? 'text-white' : 'bg-gray-200 text-gray-500'}`} style={s.step === step ? { backgroundColor: '#1E2D4D' } : undefined}>
+              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${s.step < step ? 'bg-green-500 text-white' : s.step === step ? 'text-white' : 'bg-gray-200 text-[#1E2D4D]/50'}`} style={s.step === step ? { backgroundColor: '#1E2D4D' } : undefined}>
                 {s.step < step ? <CheckCircle className="h-4 w-4" /> : s.step}
               </div>
-              <span className={`text-xs font-medium hidden sm:block ${s.step === step ? 'text-gray-900' : 'text-gray-400'}`}>{s.label}</span>
-              {s.step < 5 && <div className="flex-1 h-0.5 rounded bg-gray-200"><div className="h-full rounded" style={{ width: s.step < step ? '100%' : '0%', backgroundColor: '#1E2D4D' }} /></div>}
+              <span className={`text-xs font-medium hidden sm:block ${s.step === step ? 'text-gray-900' : 'text-[#1E2D4D]/30'}`}>{s.label}</span>
+              {s.step < 5 && <div className="flex-1 h-0.5 rounded bg-[#1E2D4D]/8"><div className="h-full rounded" style={{ width: s.step < step ? '100%' : '0%', backgroundColor: '#1E2D4D' }} /></div>}
             </div>
           ))}
         </div>
@@ -1198,22 +1198,22 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
           {step === 1 && (
             <div>
               <h3 className="text-sm font-bold text-[#1E2D4D] mb-1">Select Sensor Brand</h3>
-              <p className="text-xs text-gray-500 mb-4">Choose the sensor platform you want to connect to EvidLY.</p>
+              <p className="text-xs text-[#1E2D4D]/50 mb-4">Choose the sensor platform you want to connect to EvidLY.</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {iotSensorProviders.map(p => (
-                  <button key={p.slug} onClick={() => { setSelectedProvider(p.slug); setAuthMethod(p.authType as any); }} className={`p-4 rounded-xl border text-left transition-all ${selectedProvider === p.slug ? 'border-[#1E2D4D] ring-2 ring-[#1E2D4D]/20 bg-[#eef4f8]' : 'border-gray-200 hover:border-gray-300'}`}>
+                  <button key={p.slug} onClick={() => { setSelectedProvider(p.slug); setAuthMethod(p.authType as any); }} className={`p-4 rounded-xl border text-left transition-all ${selectedProvider === p.slug ? 'border-[#1E2D4D] ring-2 ring-[#1E2D4D]/20 bg-[#eef4f8]' : 'border-[#1E2D4D]/10 hover:border-gray-300'}`}>
                     <div className="flex items-center gap-3 mb-2">
                       <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: p.color + '20' }}>
                         <Thermometer className="h-4 w-4" style={{ color: p.color }} />
                       </div>
                       <div>
                         <div className="text-sm font-semibold text-[#1E2D4D]">{p.name}</div>
-                        <div className="text-xs text-gray-400">{p.authType === 'oauth' ? 'OAuth 2.0' : p.authType === 'apikey' ? 'API Key' : p.authType === 'webhook' ? 'Webhook' : p.authType === 'bluetooth' ? 'Bluetooth' : 'CSV Import'}</div>
+                        <div className="text-xs text-[#1E2D4D]/30">{p.authType === 'oauth' ? 'OAuth 2.0' : p.authType === 'apikey' ? 'API Key' : p.authType === 'webhook' ? 'Webhook' : p.authType === 'bluetooth' ? 'Bluetooth' : 'CSV Import'}</div>
                       </div>
                     </div>
                     <div className="flex flex-wrap gap-1">
                       {p.capabilities.slice(0, 3).map(c => (
-                        <span key={c} className="px-1.5 py-0.5 rounded text-xs bg-gray-100 text-gray-500">{c.replace(/_/g, ' ')}</span>
+                        <span key={c} className="px-1.5 py-0.5 rounded text-xs bg-gray-100 text-[#1E2D4D]/50">{c.replace(/_/g, ' ')}</span>
                       ))}
                     </div>
                   </button>
@@ -1226,7 +1226,7 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
           {step === 2 && selectedProv && (
             <div>
               <h3 className="text-sm font-bold text-[#1E2D4D] mb-1">Authenticate with {selectedProv.name}</h3>
-              <p className="text-xs text-gray-500 mb-4">Connect your {selectedProv.name} account to start pulling sensor data.</p>
+              <p className="text-xs text-[#1E2D4D]/50 mb-4">Connect your {selectedProv.name} account to start pulling sensor data.</p>
 
               {selectedProv.authType === 'oauth' && (
                 <div className="space-y-4">
@@ -1251,14 +1251,14 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
                     <p className="text-xs text-green-600 mt-1">Access token received. Refresh token stored securely.</p>
                   </div>
                   <div>
-                    <h4 className="text-xs font-semibold text-gray-700 mb-2">Discovered Sensors ({discoveredSensors.length})</h4>
+                    <h4 className="text-xs font-semibold text-[#1E2D4D]/80 mb-2">Discovered Sensors ({discoveredSensors.length})</h4>
                     <div className="space-y-2">
                       {discoveredSensors.map(s => (
-                        <label key={s.id} className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
-                          <input type="checkbox" checked={s.selected} onChange={() => setDiscoveredSensors(prev => prev.map(x => x.id === s.id ? { ...x, selected: !x.selected } : x))} className="rounded border-gray-300" />
+                        <label key={s.id} className="flex items-center gap-3 p-3 rounded-lg border border-[#1E2D4D]/10 hover:bg-gray-50 cursor-pointer">
+                          <input type="checkbox" checked={s.selected} onChange={() => setDiscoveredSensors(prev => prev.map(x => x.id === s.id ? { ...x, selected: !x.selected } : x))} className="rounded border-[#1E2D4D]/15" />
                           <div className="flex-1">
                             <div className="text-sm font-medium text-gray-900">{s.name}</div>
-                            <div className="text-xs text-gray-500">{s.model} • {s.macAddress}</div>
+                            <div className="text-xs text-[#1E2D4D]/50">{s.model} • {s.macAddress}</div>
                           </div>
                           {s.lastReading !== null && <span className="text-sm font-bold" style={{ color: '#1E2D4D' }}>{s.lastReading}°F</span>}
                         </label>
@@ -1279,7 +1279,7 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
                       </div>
                     </div>
                     <p className="text-xs text-blue-700 mb-3">Find your API key in your {selectedProv.name} account settings under "API Access" or "Integrations".</p>
-                    <input type="text" value={apiKey} onChange={e => setApiKey(e.target.value)} placeholder={`Enter ${selectedProv.name} API key...`} className="w-full px-3 py-2 rounded-lg border border-blue-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20 focus:border-[#1E2D4D]" />
+                    <input type="text" value={apiKey} onChange={e => setApiKey(e.target.value)} placeholder={`Enter ${selectedProv.name} API key...`} className="w-full px-3 py-2 rounded-lg border border-blue-200 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]" />
                   </div>
                   {apiKey && (
                     <div className="p-3 rounded-lg bg-green-50 border border-green-200">
@@ -1293,20 +1293,20 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
               )}
 
               {(selectedProv.authType === 'webhook' || selectedProv.authType === 'bluetooth' || selectedProv.authType === 'csv') && (
-                <div className="p-4 rounded-xl bg-[#FAF7F0] border border-gray-200">
+                <div className="p-4 rounded-xl bg-[#FAF7F0] border border-[#1E2D4D]/10">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="w-10 h-10 rounded-lg bg-gray-200 flex items-center justify-center">
-                      {selectedProv.authType === 'webhook' ? <Zap className="h-5 w-5 text-green-600" /> : selectedProv.authType === 'bluetooth' ? <Bluetooth className="h-5 w-5 text-cyan-600" /> : <FileText className="h-5 w-5 text-gray-600" />}
+                    <div className="w-10 h-10 rounded-lg bg-[#1E2D4D]/8 flex items-center justify-center">
+                      {selectedProv.authType === 'webhook' ? <Zap className="h-5 w-5 text-green-600" /> : selectedProv.authType === 'bluetooth' ? <Bluetooth className="h-5 w-5 text-cyan-600" /> : <FileText className="h-5 w-5 text-[#1E2D4D]/70" />}
                     </div>
                     <div>
                       <div className="text-sm font-semibold text-[#1E2D4D]">{selectedProv.authType === 'webhook' ? 'Webhook Configuration' : selectedProv.authType === 'bluetooth' ? 'Bluetooth Pairing' : 'CSV Import Setup'}</div>
-                      <div className="text-xs text-gray-500">{selectedProv.authType === 'webhook' ? 'Configure your webhook endpoint in ' + selectedProv.name : selectedProv.authType === 'bluetooth' ? 'Pair via the EvidLY mobile app' : 'Upload CSV files from ' + selectedProv.name}</div>
+                      <div className="text-xs text-[#1E2D4D]/50">{selectedProv.authType === 'webhook' ? 'Configure your webhook endpoint in ' + selectedProv.name : selectedProv.authType === 'bluetooth' ? 'Pair via the EvidLY mobile app' : 'Upload CSV files from ' + selectedProv.name}</div>
                     </div>
                   </div>
                   {selectedProv.authType === 'webhook' && (
                     <div className="mt-3">
-                      <label className="text-xs font-medium text-gray-600 mb-1 block">Your Webhook URL</label>
-                      <code className="block px-3 py-2 rounded-xl bg-white border border-gray-200 text-xs font-mono text-gray-700">https://api.evidly.com/v1/iot/webhook/{selectedProv.slug}/ingest</code>
+                      <label className="text-xs font-medium text-[#1E2D4D]/70 mb-1 block">Your Webhook URL</label>
+                      <code className="block px-3 py-2 rounded-xl bg-white border border-[#1E2D4D]/10 text-xs font-mono text-[#1E2D4D]/80">https://api.evidly.com/v1/iot/webhook/{selectedProv.slug}/ingest</code>
                     </div>
                   )}
                 </div>
@@ -1318,20 +1318,20 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
           {step === 3 && (
             <div>
               <h3 className="text-sm font-bold text-[#1E2D4D] mb-1">Configure Compliance Thresholds</h3>
-              <p className="text-xs text-gray-500 mb-4">Set temperature and humidity limits based on your kitchen zone and jurisdiction requirements.</p>
+              <p className="text-xs text-[#1E2D4D]/50 mb-4">Set temperature and humidity limits based on your kitchen zone and jurisdiction requirements.</p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label className="text-xs font-medium text-gray-600 mb-1 block">Kitchen Zone</label>
-                  <select value={zone} onChange={e => { setZone(e.target.value); const z = zoneThresholds[e.target.value]; if (z) setThresholds(prev => ({ ...prev, highTempF: z.highTempF, lowTempF: z.lowTempF })); }} className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm">
+                  <label className="text-xs font-medium text-[#1E2D4D]/70 mb-1 block">Kitchen Zone</label>
+                  <select value={zone} onChange={e => { setZone(e.target.value); const z = zoneThresholds[e.target.value]; if (z) setThresholds(prev => ({ ...prev, highTempF: z.highTempF, lowTempF: z.lowTempF })); }} className="w-full px-3 py-2 rounded-lg border border-[#1E2D4D]/10 text-sm">
                     {Object.entries(zoneThresholds).map(([k, v]) => (
                       <option key={k} value={k}>{v.label}</option>
                     ))}
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-600 mb-1 block">Jurisdiction</label>
-                  <select value={jurisdiction} onChange={e => setJurisdiction(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm">
+                  <label className="text-xs font-medium text-[#1E2D4D]/70 mb-1 block">Jurisdiction</label>
+                  <select value={jurisdiction} onChange={e => setJurisdiction(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-[#1E2D4D]/10 text-sm">
                     <option value="fda">FDA Food Code (Federal)</option>
                     <option value="california">California CRFC</option>
                     <option value="new_york">New York State Sanitary Code</option>
@@ -1342,7 +1342,7 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
 
               {/* Threshold visualization bar */}
               <div className="bg-[#FAF7F0] rounded-xl p-4 mb-4">
-                <h4 className="text-xs font-semibold text-gray-700 mb-3">Temperature Threshold Range</h4>
+                <h4 className="text-xs font-semibold text-[#1E2D4D]/80 mb-3">Temperature Threshold Range</h4>
                 <div className="relative h-8 rounded-lg overflow-hidden bg-gradient-to-r from-blue-400 via-green-400 to-red-400 mb-2">
                   {zone !== 'hot_holding' ? (
                     <>
@@ -1361,7 +1361,7 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
                     </>
                   )}
                 </div>
-                <div className="flex justify-between text-xs text-gray-400">
+                <div className="flex justify-between text-xs text-[#1E2D4D]/30">
                   <span>{zone === 'hot_holding' ? '0°F' : '-20°F'}</span>
                   <span className="font-medium text-green-600">Safe Zone</span>
                   <span>{zone === 'hot_holding' ? '200°F' : '60°F'}</span>
@@ -1370,20 +1370,20 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-medium text-gray-600 mb-1 block">High Temp Alert (°F)</label>
-                  <input type="number" value={thresholds.highTempF} onChange={e => setThresholds(prev => ({ ...prev, highTempF: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20" />
+                  <label className="text-xs font-medium text-[#1E2D4D]/70 mb-1 block">High Temp Alert (°F)</label>
+                  <input type="number" value={thresholds.highTempF} onChange={e => setThresholds(prev => ({ ...prev, highTempF: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-lg border border-[#1E2D4D]/10 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20" />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-600 mb-1 block">Low Temp Alert (°F)</label>
-                  <input type="number" value={thresholds.lowTempF} onChange={e => setThresholds(prev => ({ ...prev, lowTempF: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20" />
+                  <label className="text-xs font-medium text-[#1E2D4D]/70 mb-1 block">Low Temp Alert (°F)</label>
+                  <input type="number" value={thresholds.lowTempF} onChange={e => setThresholds(prev => ({ ...prev, lowTempF: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-lg border border-[#1E2D4D]/10 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20" />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-600 mb-1 block">Humidity High (%)</label>
-                  <input type="number" value={thresholds.humidityHigh} onChange={e => setThresholds(prev => ({ ...prev, humidityHigh: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20" />
+                  <label className="text-xs font-medium text-[#1E2D4D]/70 mb-1 block">Humidity High (%)</label>
+                  <input type="number" value={thresholds.humidityHigh} onChange={e => setThresholds(prev => ({ ...prev, humidityHigh: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-lg border border-[#1E2D4D]/10 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20" />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-600 mb-1 block">Battery Low (%)</label>
-                  <input type="number" value={thresholds.batteryLowPct} onChange={e => setThresholds(prev => ({ ...prev, batteryLowPct: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20" />
+                  <label className="text-xs font-medium text-[#1E2D4D]/70 mb-1 block">Battery Low (%)</label>
+                  <input type="number" value={thresholds.batteryLowPct} onChange={e => setThresholds(prev => ({ ...prev, batteryLowPct: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-lg border border-[#1E2D4D]/10 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20" />
                 </div>
               </div>
             </div>
@@ -1393,27 +1393,27 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
           {step === 4 && (
             <div>
               <h3 className="text-sm font-bold text-[#1E2D4D] mb-1">Configure Alert Notifications</h3>
-              <p className="text-xs text-gray-500 mb-4">Set up who gets notified and how when thresholds are exceeded.</p>
+              <p className="text-xs text-[#1E2D4D]/50 mb-4">Set up who gets notified and how when thresholds are exceeded.</p>
 
               <div className="space-y-4">
                 <div>
-                  <label className="text-xs font-medium text-gray-600 mb-1 block">Alert Recipients</label>
+                  <label className="text-xs font-medium text-[#1E2D4D]/70 mb-1 block">Alert Recipients</label>
                   <div className="flex items-center gap-2">
-                    <Mail className="h-4 w-4 text-gray-400" />
-                    <input type="text" value={alertRecipients} onChange={e => setAlertRecipients(e.target.value)} placeholder="email@example.com, another@example.com" className="flex-1 px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D]/20" />
+                    <Mail className="h-4 w-4 text-[#1E2D4D]/30" />
+                    <input type="text" value={alertRecipients} onChange={e => setAlertRecipients(e.target.value)} placeholder="email@example.com, another@example.com" className="flex-1 px-3 py-2 rounded-lg border border-[#1E2D4D]/10 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20" />
                   </div>
-                  <p className="text-xs text-gray-400 mt-1">Comma-separated email addresses</p>
+                  <p className="text-xs text-[#1E2D4D]/30 mt-1">Comma-separated email addresses</p>
                 </div>
 
                 <div>
-                  <label className="text-xs font-medium text-gray-600 mb-2 block">Notification Methods</label>
+                  <label className="text-xs font-medium text-[#1E2D4D]/70 mb-2 block">Notification Methods</label>
                   <div className="flex gap-3">
                     {[
                       { key: 'email' as const, label: 'Email', icon: Mail },
                       { key: 'sms' as const, label: 'SMS', icon: Phone },
                       { key: 'push' as const, label: 'Push', icon: Bell },
                     ].map(m => (
-                      <button key={m.key} onClick={() => setAlertMethods(prev => ({ ...prev, [m.key]: !prev[m.key] }))} className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border text-sm font-medium transition-all ${alertMethods[m.key] ? 'border-[#1E2D4D] bg-[#eef4f8] text-[#1E2D4D]' : 'border-gray-200 text-gray-500 hover:border-gray-300'}`}>
+                      <button key={m.key} onClick={() => setAlertMethods(prev => ({ ...prev, [m.key]: !prev[m.key] }))} className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border text-sm font-medium transition-all ${alertMethods[m.key] ? 'border-[#1E2D4D] bg-[#eef4f8] text-[#1E2D4D]' : 'border-[#1E2D4D]/10 text-[#1E2D4D]/50 hover:border-gray-300'}`}>
                         <m.icon className="h-4 w-4" /> {m.label}
                       </button>
                     ))}
@@ -1421,11 +1421,11 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
                 </div>
 
                 <div>
-                  <label className="text-xs font-medium text-gray-600 mb-1 block">Escalation Timer (minutes)</label>
-                  <p className="text-xs text-gray-400 mb-2">If alert is not acknowledged within this time, escalate to secondary contacts.</p>
+                  <label className="text-xs font-medium text-[#1E2D4D]/70 mb-1 block">Escalation Timer (minutes)</label>
+                  <p className="text-xs text-[#1E2D4D]/30 mb-2">If alert is not acknowledged within this time, escalate to secondary contacts.</p>
                   <div className="flex flex-wrap items-center gap-3">
                     {[5, 10, 15, 30, 60].map(m => (
-                      <button key={m} onClick={() => setEscalationMinutes(m)} className={`px-3 py-1.5 rounded-lg text-sm font-medium border ${escalationMinutes === m ? 'border-[#1E2D4D] bg-[#eef4f8] text-[#1E2D4D]' : 'border-gray-200 text-gray-500'}`}>
+                      <button key={m} onClick={() => setEscalationMinutes(m)} className={`px-3 py-1.5 rounded-lg text-sm font-medium border ${escalationMinutes === m ? 'border-[#1E2D4D] bg-[#eef4f8] text-[#1E2D4D]' : 'border-[#1E2D4D]/10 text-[#1E2D4D]/50'}`}>
                         {m} min
                       </button>
                     ))}
@@ -1447,7 +1447,7 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
           {step === 5 && (
             <div>
               <h3 className="text-sm font-bold text-[#1E2D4D] mb-1">Set Reading Frequency</h3>
-              <p className="text-xs text-gray-500 mb-4">How often should EvidLY pull readings from this sensor platform?</p>
+              <p className="text-xs text-[#1E2D4D]/50 mb-4">How often should EvidLY pull readings from this sensor platform?</p>
 
               <div className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -1458,30 +1458,30 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
                     { min: 30, label: '30 min', desc: 'Conservative', note: 'Lower API usage, still within compliance' },
                     { min: 60, label: '60 min', desc: 'Minimum', note: 'Bare minimum for compliance logging' },
                   ].map(opt => (
-                    <button key={opt.min} onClick={() => setPollingInterval(opt.min)} className={`p-3 rounded-xl border text-left transition-all ${pollingInterval === opt.min ? 'border-[#1E2D4D] ring-2 ring-[#1E2D4D]/20 bg-[#eef4f8]' : 'border-gray-200 hover:border-gray-300'}`}>
+                    <button key={opt.min} onClick={() => setPollingInterval(opt.min)} className={`p-3 rounded-xl border text-left transition-all ${pollingInterval === opt.min ? 'border-[#1E2D4D] ring-2 ring-[#1E2D4D]/20 bg-[#eef4f8]' : 'border-[#1E2D4D]/10 hover:border-gray-300'}`}>
                       <div className="text-lg font-bold" style={{ color: pollingInterval === opt.min ? '#1E2D4D' : '#111827' }}>{opt.label}</div>
-                      <div className="text-xs font-medium text-gray-700">{opt.desc}</div>
-                      <div className="text-xs text-gray-400 mt-1">{opt.note}</div>
+                      <div className="text-xs font-medium text-[#1E2D4D]/80">{opt.desc}</div>
+                      <div className="text-xs text-[#1E2D4D]/30 mt-1">{opt.note}</div>
                     </button>
                   ))}
                 </div>
 
                 <div className="bg-[#FAF7F0] rounded-xl p-4">
-                  <h4 className="text-xs font-semibold text-gray-700 mb-2">Estimated API Usage</h4>
+                  <h4 className="text-xs font-semibold text-[#1E2D4D]/80 mb-2">Estimated API Usage</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
                     <div>
                       <div className="text-lg font-bold text-[#1E2D4D]">{Math.round(1440 / pollingInterval)}</div>
-                      <div className="text-xs text-gray-500">calls/day</div>
+                      <div className="text-xs text-[#1E2D4D]/50">calls/day</div>
                     </div>
                     <div>
                       <div className="text-lg font-bold text-[#1E2D4D]">{Math.round(1440 / pollingInterval * 30)}</div>
-                      <div className="text-xs text-gray-500">calls/month</div>
+                      <div className="text-xs text-[#1E2D4D]/50">calls/month</div>
                     </div>
                     <div>
                       <div className="text-lg font-bold" style={{ color: '#22c55e' }}>
                         {pollingInterval <= 5 ? 'High' : pollingInterval <= 15 ? 'Medium' : 'Low'}
                       </div>
-                      <div className="text-xs text-gray-500">data freshness</div>
+                      <div className="text-xs text-[#1E2D4D]/50">data freshness</div>
                     </div>
                   </div>
                 </div>
@@ -1503,8 +1503,8 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
         </div>
 
         {/* Footer */}
-        <div className="px-4 sm:px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-          <button onClick={() => step > 1 ? setStep((step - 1) as WizardStep) : onClose()} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 border border-gray-200">
+        <div className="px-4 sm:px-6 py-4 border-t border-[#1E2D4D]/10 flex items-center justify-between">
+          <button onClick={() => step > 1 ? setStep((step - 1) as WizardStep) : onClose()} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-[#1E2D4D]/70 hover:bg-gray-50 border border-[#1E2D4D]/10">
             <ChevronLeft className="h-4 w-4" /> {step === 1 ? 'Cancel' : 'Back'}
           </button>
           {step < 5 ? (
@@ -1528,7 +1528,7 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
 
 function DeviceDetailView({ sensorId, onBack }: { sensorId: string; onBack: () => void }) {
   const sensor = iotSensors.find(s => s.id === sensorId);
-  if (!sensor) return <div className="text-center py-12 text-gray-500">Sensor not found</div>;
+  if (!sensor) return <div className="text-center py-12 text-[#1E2D4D]/50">Sensor not found</div>;
 
   const provider = iotSensorProviders.find(p => p.slug === sensor.providerSlug);
   const readings = iotSensorReadings.filter(r => r.sensorId === sensorId).sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
@@ -1572,7 +1572,7 @@ function DeviceDetailView({ sensorId, onBack }: { sensorId: string; onBack: () =
       case 'calibration': return <Activity className="h-3.5 w-3.5 text-blue-600" />;
       case 'relocation': return <ArrowUpRight className="h-3.5 w-3.5 text-purple-600" />;
       case 'firmware_update': return <RefreshCw className="h-3.5 w-3.5 text-green-600" />;
-      default: return <FileText className="h-3.5 w-3.5 text-gray-500" />;
+      default: return <FileText className="h-3.5 w-3.5 text-[#1E2D4D]/50" />;
     }
   };
 
@@ -1590,14 +1590,14 @@ function DeviceDetailView({ sensorId, onBack }: { sensorId: string; onBack: () =
     <div>
       {/* Back button + sensor name */}
       <div className="flex items-center gap-4 mb-6 flex-wrap">
-        <button onClick={onBack} className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 border border-gray-200 min-h-[44px]">
+        <button onClick={onBack} className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-[#1E2D4D]/70 hover:bg-gray-100 border border-[#1E2D4D]/10 min-h-[44px]">
           <ArrowLeft className="h-4 w-4" /> Back
         </button>
         <div className="flex items-center gap-3 flex-wrap">
           <span className="w-3 h-3 rounded-full" style={{ backgroundColor: statusColor(sensor.status) }} />
           <h1 className="text-xl font-bold text-[#1E2D4D]">{sensor.name}</h1>
           <span className="px-2 py-0.5 rounded text-xs font-medium" style={{ backgroundColor: '#eef4f8', color: '#1E2D4D' }}>{sensor.zone}</span>
-          <span className="px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">{sensor.locationName}</span>
+          <span className="px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-[#1E2D4D]/70">{sensor.locationName}</span>
         </div>
       </div>
 
@@ -1605,22 +1605,22 @@ function DeviceDetailView({ sensorId, onBack }: { sensorId: string; onBack: () =
         {/* LEFT: Current reading + chart */}
         <div className="lg:col-span-2 space-y-6">
           {/* Current reading */}
-          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6">
             <div className="flex items-start justify-between mb-4 flex-wrap gap-2">
               <div>
-                <div className="text-sm text-gray-500 mb-1">Current Temperature</div>
+                <div className="text-sm text-[#1E2D4D]/50 mb-1">Current Temperature</div>
                 <div className="flex items-baseline gap-2">
                   <span className="text-3xl sm:text-5xl font-bold" style={{ color: tempColor(sensor.currentTempF, sensor.zone) }}>{sensor.currentTempF.toFixed(1)}</span>
-                  <span className="text-xl text-gray-400">°F</span>
+                  <span className="text-xl text-[#1E2D4D]/30">°F</span>
                 </div>
                 {sensor.currentHumidity !== null && (
-                  <div className="text-sm text-gray-500 mt-1">{sensor.currentHumidity}% relative humidity</div>
+                  <div className="text-sm text-[#1E2D4D]/50 mt-1">{sensor.currentHumidity}% relative humidity</div>
                 )}
               </div>
               <div className="text-right">
                 {latestReading && (
                   <div className="flex items-center gap-2 mb-2">
-                    <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${latestReading.complianceStatus === 'in_range' ? 'bg-green-100 text-green-700' : latestReading.complianceStatus === 'warning' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'}`}>
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${latestReading.complianceStatus === 'in_range' ? 'bg-emerald-50 text-emerald-700' : latestReading.complianceStatus === 'warning' ? 'bg-amber-100 text-amber-700' : 'bg-red-50 text-red-700'}`}>
                       {latestReading.complianceStatus === 'in_range' ? 'IN RANGE' : latestReading.complianceStatus === 'warning' ? 'WARNING' : 'VIOLATION'}
                     </span>
                   </div>
@@ -1629,18 +1629,18 @@ function DeviceDetailView({ sensorId, onBack }: { sensorId: string; onBack: () =
                   <BatteryBar pct={sensor.batteryPct} />
                   {sensor.signalRssi !== 0 && <SignalBars rssi={sensor.signalRssi} />}
                 </div>
-                <div className="text-xs text-gray-400 mt-2">Last seen: {timeAgo(sensor.lastSeenAt)}</div>
+                <div className="text-xs text-[#1E2D4D]/30 mt-2">Last seen: {timeAgo(sensor.lastSeenAt)}</div>
               </div>
             </div>
 
             {/* Threshold visualization bar */}
             {latestReading?.thresholdApplied && (
               <div className="mt-4 pt-4 border-t border-gray-100">
-                <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+                <div className="flex items-center justify-between text-xs text-[#1E2D4D]/50 mb-1">
                   <span>Threshold: {latestReading.thresholdApplied.rule.replace(/_/g, ' ')}</span>
                   <span>{thresholdMax !== null ? `Max ${thresholdMax}°F` : ''}{thresholdMin !== null ? `Min ${thresholdMin}°F` : ''}</span>
                 </div>
-                <div className="h-3 rounded-full overflow-hidden bg-gray-100 relative">
+                <div className="h-3 rounded-full overflow-hidden bg-[#1E2D4D]/5 relative">
                   {thresholdMax !== null && (
                     <>
                       <div className="absolute inset-y-0 left-0 rounded-l-full bg-green-200" style={{ width: `${Math.min(100, (thresholdMax / (thresholdMax + 20)) * 100)}%` }} />
@@ -1661,7 +1661,7 @@ function DeviceDetailView({ sensorId, onBack }: { sensorId: string; onBack: () =
           </div>
 
           {/* 24h temperature chart */}
-          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
             <h3 className="text-sm font-bold text-[#1E2D4D] mb-4">Temperature History</h3>
             <svg width="100%" height={chartH} viewBox={`0 0 ${chartW} ${chartH}`} preserveAspectRatio="xMidYMid meet">
               {/* Grid lines */}
@@ -1717,7 +1717,7 @@ function DeviceDetailView({ sensorId, onBack }: { sensorId: string; onBack: () =
             </svg>
 
             {/* Legend */}
-            <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
+            <div className="flex items-center gap-4 mt-3 text-xs text-[#1E2D4D]/50">
               <div className="flex items-center gap-1.5"><span className="w-3 h-0.5 bg-[#1E2D4D] rounded" />Temperature</div>
               <div className="flex items-center gap-1.5"><span className="w-3 h-0.5 bg-red-500 rounded" style={{ borderTop: '1px dashed #ef4444' }} />Threshold</div>
               <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-green-200" />Safe zone</div>
@@ -1726,34 +1726,34 @@ function DeviceDetailView({ sensorId, onBack }: { sensorId: string; onBack: () =
           </div>
 
           {/* Reading history table */}
-          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-            <div className="px-5 py-3 border-b border-gray-200">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
+            <div className="px-5 py-3 border-b border-[#1E2D4D]/10">
               <h3 className="text-sm font-bold text-[#1E2D4D]">Reading History</h3>
             </div>
             <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-100" style={{ backgroundColor: '#f8fafc' }}>
-                  <th className="text-left px-4 py-2 font-semibold text-gray-600 text-xs">Time</th>
-                  <th className="text-center px-4 py-2 font-semibold text-gray-600 text-xs">Temp</th>
-                  <th className="text-center px-4 py-2 font-semibold text-gray-600 text-xs hidden sm:table-cell">Humidity</th>
-                  <th className="text-center px-4 py-2 font-semibold text-gray-600 text-xs hidden sm:table-cell">Battery</th>
-                  <th className="text-center px-4 py-2 font-semibold text-gray-600 text-xs hidden md:table-cell">Quality</th>
-                  <th className="text-center px-4 py-2 font-semibold text-gray-600 text-xs">Compliance</th>
+                <tr className="border-b border-gray-100 hover:bg-[#1E2D4D]/[0.02] transition-colors" style={{ backgroundColor: '#f8fafc' }}>
+                  <th className="text-left px-4 py-2 font-semibold text-[#1E2D4D]/70 text-xs">Time</th>
+                  <th className="text-center px-4 py-2 font-semibold text-[#1E2D4D]/70 text-xs">Temp</th>
+                  <th className="text-center px-4 py-2 font-semibold text-[#1E2D4D]/70 text-xs hidden sm:table-cell">Humidity</th>
+                  <th className="text-center px-4 py-2 font-semibold text-[#1E2D4D]/70 text-xs hidden sm:table-cell">Battery</th>
+                  <th className="text-center px-4 py-2 font-semibold text-[#1E2D4D]/70 text-xs hidden md:table-cell">Quality</th>
+                  <th className="text-center px-4 py-2 font-semibold text-[#1E2D4D]/70 text-xs">Compliance</th>
                 </tr>
               </thead>
               <tbody>
                 {[...readings].reverse().map((r, i) => (
                   <tr key={i} className={`border-b border-gray-50 ${r.isAnomaly ? 'bg-red-50' : ''}`}>
-                    <td className="px-4 py-2 text-xs text-gray-500">{formatTime(r.timestamp)}</td>
+                    <td className="px-4 py-2 text-xs text-[#1E2D4D]/50">{formatTime(r.timestamp)}</td>
                     <td className="px-4 py-2 text-center font-bold" style={{ color: tempColor(r.temperatureF, sensor.zone) }}>{r.temperatureF.toFixed(1)}°F</td>
-                    <td className="px-4 py-2 text-center text-gray-500 hidden sm:table-cell">{r.humidityPct !== null ? `${r.humidityPct}%` : '—'}</td>
+                    <td className="px-4 py-2 text-center text-[#1E2D4D]/50 hidden sm:table-cell">{r.humidityPct !== null ? `${r.humidityPct}%` : '—'}</td>
                     <td className="px-4 py-2 hidden sm:table-cell"><div className="flex justify-center"><BatteryBar pct={r.batteryPct} /></div></td>
                     <td className="px-4 py-2 text-center hidden md:table-cell">
-                      <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${r.quality === 'good' ? 'bg-green-100 text-green-700' : r.quality === 'suspect' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'}`}>{r.quality}</span>
+                      <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${r.quality === 'good' ? 'bg-emerald-50 text-emerald-700' : r.quality === 'suspect' ? 'bg-amber-100 text-amber-700' : 'bg-red-50 text-red-700'}`}>{r.quality}</span>
                     </td>
                     <td className="px-4 py-2 text-center">
-                      <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${r.complianceStatus === 'in_range' ? 'bg-green-100 text-green-700' : r.complianceStatus === 'warning' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'}`}>
+                      <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${r.complianceStatus === 'in_range' ? 'bg-emerald-50 text-emerald-700' : r.complianceStatus === 'warning' ? 'bg-amber-100 text-amber-700' : 'bg-red-50 text-red-700'}`}>
                         {r.complianceStatus === 'in_range' ? 'In Range' : r.complianceStatus === 'warning' ? 'Warning' : 'Violation'}
                       </span>
                     </td>
@@ -1768,7 +1768,7 @@ function DeviceDetailView({ sensorId, onBack }: { sensorId: string; onBack: () =
         {/* RIGHT: Device info + maintenance + actions */}
         <div className="space-y-6">
           {/* Device info */}
-          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
             <h3 className="text-sm font-bold text-[#1E2D4D] mb-3">Device Information</h3>
             <div className="space-y-2.5">
               {[
@@ -1784,7 +1784,7 @@ function DeviceDetailView({ sensorId, onBack }: { sensorId: string; onBack: () =
                 { label: 'Last Seen', value: timeAgo(sensor.lastSeenAt) },
               ].map(item => (
                 <div key={item.label} className="flex justify-between text-sm">
-                  <span className="text-gray-500">{item.label}</span>
+                  <span className="text-[#1E2D4D]/50">{item.label}</span>
                   <span className={`font-medium ${(item as any).mono ? 'font-mono text-xs' : ''}`} style={(item as any).color ? { color: (item as any).color } : undefined}>
                     {(item as any).color ? (item.value as string).charAt(0).toUpperCase() + (item.value as string).slice(1) : item.value}
                   </span>
@@ -1795,16 +1795,16 @@ function DeviceDetailView({ sensorId, onBack }: { sensorId: string; onBack: () =
 
           {/* Active alerts for this sensor */}
           {alerts.length > 0 && (
-            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+            <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
               <h3 className="text-sm font-bold text-[#1E2D4D] mb-3">Alerts ({alerts.length})</h3>
               <div className="space-y-2">
                 {alerts.map(a => (
                   <div key={a.id} className={`p-3 rounded-lg border ${a.acknowledged ? 'opacity-60' : ''}`} style={{ borderColor: severityColor(a.severity) + '40', backgroundColor: severityBg(a.severity) }}>
                     <div className="flex items-center gap-2 mb-1">
                       <span className="px-1.5 py-0.5 rounded text-xs font-bold uppercase" style={{ color: severityColor(a.severity) }}>{a.severity}</span>
-                      <span className="text-xs text-gray-500">{formatDateTime(a.createdAt)}</span>
+                      <span className="text-xs text-[#1E2D4D]/50">{formatDateTime(a.createdAt)}</span>
                     </div>
-                    <p className="text-xs text-gray-700">{a.message}</p>
+                    <p className="text-xs text-[#1E2D4D]/80">{a.message}</p>
                   </div>
                 ))}
               </div>
@@ -1812,10 +1812,10 @@ function DeviceDetailView({ sensorId, onBack }: { sensorId: string; onBack: () =
           )}
 
           {/* Maintenance log */}
-          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
             <h3 className="text-sm font-bold text-[#1E2D4D] mb-3">Maintenance Log</h3>
             {maintenance.length === 0 ? (
-              <p className="text-xs text-gray-400">No maintenance records for this sensor.</p>
+              <p className="text-xs text-[#1E2D4D]/30">No maintenance records for this sensor.</p>
             ) : (
               <div className="space-y-3">
                 {maintenance.map(m => (
@@ -1825,8 +1825,8 @@ function DeviceDetailView({ sensorId, onBack }: { sensorId: string; onBack: () =
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="text-xs font-semibold text-[#1E2D4D]">{m.type.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</div>
-                      <p className="text-xs text-gray-600 mt-0.5">{m.description}</p>
-                      <div className="flex items-center gap-2 mt-1 text-xs text-gray-400">
+                      <p className="text-xs text-[#1E2D4D]/70 mt-0.5">{m.description}</p>
+                      <div className="flex items-center gap-2 mt-1 text-xs text-[#1E2D4D]/30">
                         <span>{new Date(m.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                         <span>•</span>
                         <span>{m.performedBy}</span>
@@ -1836,23 +1836,23 @@ function DeviceDetailView({ sensorId, onBack }: { sensorId: string; onBack: () =
                 ))}
               </div>
             )}
-            <button onClick={() => toast.info('Add maintenance entry (demo)')} className="w-full mt-3 px-3 py-2 rounded-lg text-xs font-medium border border-gray-200 text-gray-600 hover:bg-gray-50 flex items-center justify-center gap-1.5">
+            <button onClick={() => toast.info('Add maintenance entry (demo)')} className="w-full mt-3 px-3 py-2 rounded-lg text-xs font-medium border border-[#1E2D4D]/10 text-[#1E2D4D]/70 hover:bg-gray-50 flex items-center justify-center gap-1.5">
               <Plus className="h-3.5 w-3.5" /> Add Entry
             </button>
           </div>
 
           {/* Actions */}
-          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
             <h3 className="text-sm font-bold text-[#1E2D4D] mb-3">Actions</h3>
             <div className="space-y-2">
-              <button onClick={() => toast.info('Edit thresholds for this sensor (demo)')} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 border border-gray-200">
-                <SettingsIcon className="h-4 w-4 text-gray-400" /> Edit Thresholds
+              <button onClick={() => toast.info('Edit thresholds for this sensor (demo)')} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-gray-50 border border-[#1E2D4D]/10">
+                <SettingsIcon className="h-4 w-4 text-[#1E2D4D]/30" /> Edit Thresholds
               </button>
-              <button onClick={() => toast.info('Edit alert recipients (demo)')} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 border border-gray-200">
-                <Bell className="h-4 w-4 text-gray-400" /> Edit Alert Recipients
+              <button onClick={() => toast.info('Edit alert recipients (demo)')} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-gray-50 border border-[#1E2D4D]/10">
+                <Bell className="h-4 w-4 text-[#1E2D4D]/30" /> Edit Alert Recipients
               </button>
-              <button onClick={() => toast.info('Reassign kitchen zone (demo)')} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 border border-gray-200">
-                <Layers className="h-4 w-4 text-gray-400" /> Reassign Zone
+              <button onClick={() => toast.info('Reassign kitchen zone (demo)')} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-gray-50 border border-[#1E2D4D]/10">
+                <Layers className="h-4 w-4 text-[#1E2D4D]/30" /> Reassign Zone
               </button>
               <button onClick={() => toast.warning('Sensor monitoring paused (demo)')} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-amber-700 hover:bg-amber-50 border border-amber-200">
                 <Pause className="h-4 w-4" /> Pause Monitoring

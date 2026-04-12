@@ -37,7 +37,7 @@ const PRIMARY = '#1E2D4D';
 const GOLD = '#d4af37';
 const LIGHT_BG = '#eef4f8';
 const BORDER = '#b8d4e8';
-const INPUT_CLASS = 'w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent';
+const INPUT_CLASS = 'w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37] focus:border-transparent';
 
 /* ── Sensor Type Config ──────────────────────────────────── */
 
@@ -296,18 +296,18 @@ function AddSensorModal({ open, onClose, onSave, isDemoMode }: AddSensorModalPro
       <div className="bg-white rounded-xl p-5 w-[95vw] sm:w-auto sm:min-w-[480px] max-w-lg max-h-[90vh] overflow-y-auto relative" style={F}>
         <button
           onClick={handleClose}
-          className="absolute top-4 right-4 p-1 text-gray-400 hover:text-gray-600 transition-colors"
+          className="absolute top-4 right-4 p-1 text-[#1E2D4D]/30 hover:text-gray-600 transition-colors"
           aria-label="Close"
         >
           <X className="w-5 h-5" />
         </button>
         <h3 className="text-xl font-bold text-[#1E2D4D] mb-1 pr-8">Add Sensor</h3>
-        <p className="text-sm text-gray-500 mb-5">Configure a new IoT sensor for monitoring.</p>
+        <p className="text-sm text-[#1E2D4D]/50 mb-5">Configure a new IoT sensor for monitoring.</p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Sensor Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1.5">
               Sensor Name <span className="text-red-500">*</span>
             </label>
             <input
@@ -322,7 +322,7 @@ function AddSensorModal({ open, onClose, onSave, isDemoMode }: AddSensorModalPro
 
           {/* Sensor Type */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Sensor Type</label>
+            <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1.5">Sensor Type</label>
             <div className="grid grid-cols-2 gap-2">
               {SENSOR_TYPE_OPTIONS.map(opt => {
                 const Icon = opt.icon;
@@ -335,7 +335,7 @@ function AddSensorModal({ open, onClose, onSave, isDemoMode }: AddSensorModalPro
                     className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg border-2 text-sm font-medium transition-all ${
                       selected
                         ? 'border-[#1E2D4D] bg-[#eef4f8] text-[#1E2D4D]'
-                        : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                        : 'border-[#1E2D4D]/10 text-[#1E2D4D]/70 hover:border-gray-300'
                     }`}
                   >
                     <Icon className="h-4 w-4 flex-shrink-0" />
@@ -348,7 +348,7 @@ function AddSensorModal({ open, onClose, onSave, isDemoMode }: AddSensorModalPro
 
           {/* Location Assignment */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1.5">
               Location <span className="text-red-500">*</span>
             </label>
             <select
@@ -367,8 +367,8 @@ function AddSensorModal({ open, onClose, onSave, isDemoMode }: AddSensorModalPro
           {/* Equipment Assignment (optional) */}
           {locationId && filteredEquipment.length > 0 && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                Equipment Assignment <span className="text-gray-400 text-xs font-normal">(optional)</span>
+              <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1.5">
+                Equipment Assignment <span className="text-[#1E2D4D]/30 text-xs font-normal">(optional)</span>
               </label>
               <select
                 value={equipmentId}
@@ -386,12 +386,12 @@ function AddSensorModal({ open, onClose, onSave, isDemoMode }: AddSensorModalPro
           {/* Alert Thresholds */}
           {showThresholds && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1.5">
                 Alert Thresholds ({thresholdUnit})
               </label>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">Min</label>
+                  <label className="block text-xs text-[#1E2D4D]/50 mb-1">Min</label>
                   <input
                     type="number"
                     step="any"
@@ -402,7 +402,7 @@ function AddSensorModal({ open, onClose, onSave, isDemoMode }: AddSensorModalPro
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">Max</label>
+                  <label className="block text-xs text-[#1E2D4D]/50 mb-1">Max</label>
                   <input
                     type="number"
                     step="any"
@@ -414,14 +414,14 @@ function AddSensorModal({ open, onClose, onSave, isDemoMode }: AddSensorModalPro
                 </div>
               </div>
               {sensorType === 'temperature' && (
-                <p className="text-xs text-gray-400 mt-1.5">FDA default: 41°F max for cold holding</p>
+                <p className="text-xs text-[#1E2D4D]/30 mt-1.5">FDA default: 41°F max for cold holding</p>
               )}
             </div>
           )}
 
           {/* Polling Interval */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Polling Interval</label>
+            <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1.5">Polling Interval</label>
             <select
               value={pollingInterval}
               onChange={e => setPollingInterval(Number(e.target.value))}
@@ -438,7 +438,7 @@ function AddSensorModal({ open, onClose, onSave, isDemoMode }: AddSensorModalPro
             <button
               type="button"
               onClick={handleClose}
-              className="flex-1 px-4 py-3 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+              className="flex-1 px-4 py-3 text-sm font-medium text-[#1E2D4D]/80 bg-[#1E2D4D]/5 hover:bg-gray-200 rounded-lg transition-colors"
             >
               Cancel
             </button>
@@ -604,8 +604,8 @@ export function SensorHub() {
               <Radio className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-[#1E2D4D]">Manage Sensors</h1>
-              <p className="text-sm text-gray-500">Add, configure, and manage IoT sensors across your locations.</p>
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#1E2D4D]">Manage Sensors</h1>
+              <p className="text-sm text-[#1E2D4D]/50">Add, configure, and manage IoT sensors across your locations.</p>
             </div>
           </div>
           <button
@@ -620,10 +620,10 @@ export function SensorHub() {
         </div>
 
         {/* Empty state card */}
-        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-12 text-center">
           <Radio className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-          <h2 className="text-lg font-semibold text-[#1E2D4D] mb-2">No Sensors Configured</h2>
-          <p className="text-sm text-gray-500 max-w-md mx-auto mb-6">
+          <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-2">No Sensors Configured</h2>
+          <p className="text-sm text-[#1E2D4D]/50 max-w-md mx-auto mb-6">
             Add your first IoT sensor to start monitoring temperatures, humidity, and more across your locations.
           </p>
           <button
@@ -657,8 +657,8 @@ export function SensorHub() {
               <Radio className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-[#1E2D4D]">Manage Sensors</h1>
-              <p className="text-sm text-gray-500">Add, configure, and manage IoT sensors across your locations.</p>
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#1E2D4D]">Manage Sensors</h1>
+              <p className="text-sm text-[#1E2D4D]/50">Add, configure, and manage IoT sensors across your locations.</p>
             </div>
           </div>
         </div>
@@ -701,13 +701,13 @@ export function SensorHub() {
           { label: 'Violations', value: stats.violations, icon: AlertTriangle, color: stats.violations > 0 ? '#ef4444' : '#22c55e', sub: stats.violations > 0 ? 'Requires immediate action' : 'All readings in range' },
           { label: 'Active Alerts', value: stats.alerts, icon: Activity, color: stats.alerts > 0 ? '#f59e0b' : '#22c55e', sub: stats.alerts > 0 ? `${activeAlerts.filter(a => a.severity === 'critical').length} critical` : 'No unacknowledged alerts' },
         ].map(card => (
-          <div key={card.label} className="bg-white rounded-xl border border-gray-200 p-4">
+          <div key={card.label} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">{card.label}</span>
+              <span className="text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wide">{card.label}</span>
               <card.icon className="h-4 w-4" style={{ color: card.color }} />
             </div>
-            <div className="text-2xl font-bold" style={{ color: card.color }}>{card.value}</div>
-            <div className="text-xs text-gray-400 mt-1">{card.sub}</div>
+            <div className="text-2xl font-bold tracking-tight" style={{ color: card.color }}>{card.value}</div>
+            <div className="text-xs text-[#1E2D4D]/30 mt-1">{card.sub}</div>
           </div>
         ))}
       </div>
@@ -716,20 +716,20 @@ export function SensorHub() {
       {isDemoMode && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           {METHODS.map(m => (
-            <div key={m.title} className="bg-white rounded-xl border border-gray-200 p-4">
+            <div key={m.title} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: m.color + '12' }}>
                   <m.icon className="h-4.5 w-4.5" style={{ color: m.color }} />
                 </div>
                 <div>
                   <div className="text-sm font-bold text-[#1E2D4D]">{m.title}</div>
-                  <div className="text-xs text-gray-400">{m.count} ingestion events</div>
+                  <div className="text-xs text-[#1E2D4D]/30">{m.count} ingestion events</div>
                 </div>
               </div>
-              <p className="text-xs text-gray-500 mb-3 leading-relaxed">{m.desc}</p>
+              <p className="text-xs text-[#1E2D4D]/50 mb-3 leading-relaxed">{m.desc}</p>
               <div className="flex flex-wrap gap-1">
                 {m.providers.map(p => (
-                  <span key={p} className="px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">{p}</span>
+                  <span key={p} className="px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-[#1E2D4D]/70">{p}</span>
                 ))}
               </div>
             </div>
@@ -738,22 +738,22 @@ export function SensorHub() {
       )}
 
       {/* Filters */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 mb-4">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 mb-4">
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative flex-1 min-w-0 sm:min-w-[200px]">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#1E2D4D]/30" />
             <input
               type="text"
               placeholder="Search sensors by name, zone, or MAC address..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#1E2D4D]"
+              className="w-full pl-9 pr-3 py-2 rounded-lg border border-[#1E2D4D]/10 text-sm focus:outline-none focus:border-[#1E2D4D]"
             />
           </div>
           <select
             value={locationFilter}
             onChange={e => setLocationFilter(e.target.value)}
-            className="px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#1E2D4D]"
+            className="px-3 py-2 rounded-lg border border-[#1E2D4D]/10 text-sm focus:outline-none focus:border-[#1E2D4D]"
           >
             <option value="all">All Locations</option>
             {locations.map(l => <option key={l} value={l}>{l}</option>)}
@@ -761,7 +761,7 @@ export function SensorHub() {
           <select
             value={statusFilter}
             onChange={e => setStatusFilter(e.target.value)}
-            className="px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#1E2D4D]"
+            className="px-3 py-2 rounded-lg border border-[#1E2D4D]/10 text-sm focus:outline-none focus:border-[#1E2D4D]"
           >
             <option value="all">All Status</option>
             <option value="online">Online</option>
@@ -769,24 +769,24 @@ export function SensorHub() {
             <option value="error">Error</option>
             <option value="offline">Offline</option>
           </select>
-          <div className="text-xs text-gray-400">{filtered.length} sensor{filtered.length !== 1 ? 's' : ''}</div>
+          <div className="text-xs text-[#1E2D4D]/30">{filtered.length} sensor{filtered.length !== 1 ? 's' : ''}</div>
         </div>
       </div>
 
       {/* Connected Devices Table */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-gray-100" style={{ backgroundColor: LIGHT_BG }}>
-                <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-3">Device</th>
-                <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-3 hidden sm:table-cell">Brand</th>
-                <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-3 hidden sm:table-cell">Zone</th>
-                <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-3">Last Reading</th>
-                <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-3">Status</th>
-                <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-3 hidden sm:table-cell">Battery</th>
-                <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-3 hidden sm:table-cell">Signal</th>
-                <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-3 w-8"></th>
+              <tr className="border-b border-gray-100 hover:bg-[#1E2D4D]/[0.02] transition-colors" style={{ backgroundColor: LIGHT_BG }}>
+                <th className="text-left text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wide px-4 py-3">Device</th>
+                <th className="text-left text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wide px-4 py-3 hidden sm:table-cell">Brand</th>
+                <th className="text-left text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wide px-4 py-3 hidden sm:table-cell">Zone</th>
+                <th className="text-left text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wide px-4 py-3">Last Reading</th>
+                <th className="text-left text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wide px-4 py-3">Status</th>
+                <th className="text-left text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wide px-4 py-3 hidden sm:table-cell">Battery</th>
+                <th className="text-left text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wide px-4 py-3 hidden sm:table-cell">Signal</th>
+                <th className="text-left text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wide px-4 py-3 w-8"></th>
               </tr>
             </thead>
             <tbody>
@@ -809,13 +809,13 @@ export function SensorHub() {
                         </div>
                         <div>
                           <div className="text-sm font-semibold text-[#1E2D4D]">{sensor.name}</div>
-                          <div className="text-xs text-gray-400">{sensor.locationName}</div>
+                          <div className="text-xs text-[#1E2D4D]/30">{sensor.locationName}</div>
                         </div>
                       </div>
                     </td>
                     <td className="px-4 py-3 hidden sm:table-cell">{providerLogo(sensor.providerSlug)}</td>
                     <td className="px-4 py-3 hidden sm:table-cell">
-                      <span className="text-sm text-gray-700">{sensor.zone}</span>
+                      <span className="text-sm text-[#1E2D4D]/80">{sensor.zone}</span>
                     </td>
                     <td className="px-4 py-3">
                       {sensor.status !== 'offline' ? (
@@ -823,15 +823,15 @@ export function SensorHub() {
                           <div className="flex items-center gap-1.5">
                             <span className="text-sm font-bold" style={{ color: comp.color }}>{sensor.currentTempF}°F</span>
                             {sensor.currentHumidity !== null && (
-                              <span className="text-xs text-gray-400">{sensor.currentHumidity}%</span>
+                              <span className="text-xs text-[#1E2D4D]/30">{sensor.currentHumidity}%</span>
                             )}
                           </div>
-                          <div className="text-xs text-gray-400">{timeAgo(sensor.lastSeenAt)}</div>
+                          <div className="text-xs text-[#1E2D4D]/30">{timeAgo(sensor.lastSeenAt)}</div>
                         </div>
                       ) : (
                         <div>
-                          <span className="text-sm text-gray-400">— —</span>
-                          <div className="text-xs text-gray-400">{timeAgo(sensor.lastSeenAt)}</div>
+                          <span className="text-sm text-[#1E2D4D]/30">— —</span>
+                          <div className="text-xs text-[#1E2D4D]/30">{timeAgo(sensor.lastSeenAt)}</div>
                         </div>
                       )}
                     </td>
@@ -849,7 +849,7 @@ export function SensorHub() {
                     <td className="px-4 py-3 hidden sm:table-cell">
                       <div className="flex items-center gap-1.5">
                         {batteryIcon(sensor.batteryPct)}
-                        <span className="text-xs text-gray-600">{sensor.batteryPct}%</span>
+                        <span className="text-xs text-[#1E2D4D]/70">{sensor.batteryPct}%</span>
                       </div>
                     </td>
                     <td className="px-4 py-3 hidden sm:table-cell">{signalBars(sensor.signalRssi)}</td>
@@ -861,7 +861,7 @@ export function SensorHub() {
               })}
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="px-4 py-12 text-center text-sm text-gray-400">
+                  <td colSpan={8} className="px-4 py-12 text-center text-sm text-[#1E2D4D]/30">
                     No sensors match your filters.
                   </td>
                 </tr>
@@ -873,19 +873,19 @@ export function SensorHub() {
 
       {/* Recent Ingestion Activity — demo only */}
       {isDemoMode && (
-        <div className="mt-6 bg-white rounded-xl border border-gray-200 p-4">
+        <div className="mt-6 bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
           <h3 className="text-sm font-bold text-[#1E2D4D] mb-3">Recent Ingestion Activity</h3>
           <div className="space-y-2">
             {iotIngestionLog.slice(0, 5).map(log => (
               <div key={log.id} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0 flex-wrap gap-2">
                 <div className="flex items-center gap-3">
                   <span className={`w-2 h-2 rounded-full ${log.status === 'success' ? 'bg-green-400' : log.status === 'partial' ? 'bg-yellow-400' : 'bg-red-400'}`} />
-                  <span className="text-sm text-gray-700">{log.provider}</span>
-                  <span className="px-1.5 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">
+                  <span className="text-sm text-[#1E2D4D]/80">{log.provider}</span>
+                  <span className="px-1.5 py-0.5 rounded text-xs font-medium bg-gray-100 text-[#1E2D4D]/50">
                     {log.method === 'api_pull' ? 'API Pull' : log.method === 'webhook' ? 'Webhook' : log.method === 'bluetooth' ? 'Bluetooth' : 'Manual'}
                   </span>
                 </div>
-                <div className="flex items-center gap-4 text-xs text-gray-400">
+                <div className="flex items-center gap-4 text-xs text-[#1E2D4D]/30">
                   <span>{log.readingCount} readings</span>
                   <span>{log.durationMs}ms</span>
                   <span>{timeAgo(log.timestamp)}</span>

@@ -81,10 +81,10 @@ export function EquipmentDetail() {
   if (!equipment) {
     return (
       <div style={F} className="max-w-4xl mx-auto py-8 px-4">
-        <button onClick={() => navigate('/equipment')} className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-4">
+        <button onClick={() => navigate('/equipment')} className="flex items-center gap-1.5 text-sm text-[#1E2D4D]/50 hover:text-gray-700 mb-4">
           <ArrowLeft size={16} /> Back to Equipment
         </button>
-        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center text-gray-400">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-12 text-center text-[#1E2D4D]/30">
           <Package size={40} className="mx-auto mb-3 text-gray-300" />
           <p className="font-medium">Equipment not found</p>
           <p className="text-sm mt-1">This item may have been removed or the ID is invalid.</p>
@@ -110,17 +110,17 @@ export function EquipmentDetail() {
   return (
     <div style={F} className="max-w-4xl mx-auto">
       {/* Back link */}
-      <button onClick={() => navigate('/equipment')} className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-4">
+      <button onClick={() => navigate('/equipment')} className="flex items-center gap-1.5 text-sm text-[#1E2D4D]/50 hover:text-gray-700 mb-4">
         <ArrowLeft size={16} /> Back to Equipment
       </button>
 
       {/* Header card */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mb-6">
-        <div className="p-5 border-b border-gray-200" style={{ backgroundColor: '#eef4f8' }}>
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden mb-6">
+        <div className="p-5 border-b border-[#1E2D4D]/10" style={{ backgroundColor: '#eef4f8' }}>
           <div className="flex items-start justify-between gap-4">
             <div>
               <h1 className="text-xl font-bold text-[#1E2D4D]">{equipment.name}</h1>
-              <p className="text-sm text-gray-600 mt-0.5">{equipment.make} {equipment.model} · S/N: {equipment.serial}</p>
+              <p className="text-sm text-[#1E2D4D]/70 mt-0.5">{equipment.make} {equipment.model} · S/N: {equipment.serial}</p>
               <div className="flex gap-2 mt-3 flex-wrap">
                 <span style={badge(st.label, st.color, st.bg)}>{st.label}</span>
                 <span style={{ ...badge(isFire ? 'Facility Safety' : 'Food Safety', isFire ? '#b91c1c' : '#166534', isFire ? '#fef2f2' : '#f0fdf4'), display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
@@ -143,7 +143,7 @@ export function EquipmentDetail() {
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-gray-200 overflow-x-auto">
+        <div className="flex border-b border-[#1E2D4D]/10 overflow-x-auto">
           {tabs.map(tab => (
             <button
               key={tab.id}
@@ -151,7 +151,7 @@ export function EquipmentDetail() {
               className={`px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
                 activeTab === tab.id
                   ? 'border-[#1E2D4D] text-[#1E2D4D]'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  : 'border-transparent text-[#1E2D4D]/50 hover:text-gray-700'
               }`}
             >
               {tab.label}
@@ -167,22 +167,22 @@ export function EquipmentDetail() {
               <div className="space-y-4">
                 <h3 className="text-sm font-semibold text-[#1E2D4D] uppercase tracking-wide">Equipment Info</h3>
                 <div className="space-y-2.5 text-sm">
-                  <div className="flex items-center gap-2"><MapPin size={14} className="text-gray-400" /><span className="text-gray-600">{equipment.location}</span></div>
-                  <div className="flex items-center gap-2"><Calendar size={14} className="text-gray-400" /><span className="text-gray-600">Installed {format(new Date(equipment.installDate), 'MMM d, yyyy')} · {ageLabel(equipment.installDate)}</span></div>
-                  <div className="flex items-center gap-2"><Wrench size={14} className="text-gray-400" /><span className="text-gray-600">{equipment.maintenanceInterval} maintenance</span></div>
-                  <div className="flex items-center gap-2"><Truck size={14} className="text-gray-400" /><span className="text-gray-600">{equipment.linkedVendor}</span></div>
+                  <div className="flex items-center gap-2"><MapPin size={14} className="text-[#1E2D4D]/30" /><span className="text-[#1E2D4D]/70">{equipment.location}</span></div>
+                  <div className="flex items-center gap-2"><Calendar size={14} className="text-[#1E2D4D]/30" /><span className="text-[#1E2D4D]/70">Installed {format(new Date(equipment.installDate), 'MMM d, yyyy')} · {ageLabel(equipment.installDate)}</span></div>
+                  <div className="flex items-center gap-2"><Wrench size={14} className="text-[#1E2D4D]/30" /><span className="text-[#1E2D4D]/70">{equipment.maintenanceInterval} maintenance</span></div>
+                  <div className="flex items-center gap-2"><Truck size={14} className="text-[#1E2D4D]/30" /><span className="text-[#1E2D4D]/70">{equipment.linkedVendor}</span></div>
                 </div>
                 {equipment.notes && (
-                  <div className="mt-4 p-3 bg-[#FAF7F0] rounded-lg text-xs text-gray-600">{equipment.notes}</div>
+                  <div className="mt-4 p-3 bg-[#FAF7F0] rounded-lg text-xs text-[#1E2D4D]/70">{equipment.notes}</div>
                 )}
               </div>
               <div className="space-y-4">
                 <h3 className="text-sm font-semibold text-[#1E2D4D] uppercase tracking-wide">Warranty</h3>
                 <div className="space-y-2.5 text-sm">
-                  <div className="flex justify-between"><span className="text-gray-500">Provider</span><span className="text-gray-900 font-medium">{equipment.warrantyProvider}</span></div>
-                  <div className="flex justify-between"><span className="text-gray-500">Terms</span><span className="text-gray-900">{equipment.warrantyTerms}</span></div>
-                  <div className="flex justify-between"><span className="text-gray-500">Expires</span><span style={{ color: w.color, fontWeight: 600 }}>{format(new Date(equipment.warrantyExpiry), 'MMM d, yyyy')}</span></div>
-                  {equipment.warrantyContact && <div className="flex justify-between"><span className="text-gray-500">Contact</span><span className="text-gray-900 text-xs">{equipment.warrantyContact}</span></div>}
+                  <div className="flex justify-between"><span className="text-[#1E2D4D]/50">Provider</span><span className="text-gray-900 font-medium">{equipment.warrantyProvider}</span></div>
+                  <div className="flex justify-between"><span className="text-[#1E2D4D]/50">Terms</span><span className="text-gray-900">{equipment.warrantyTerms}</span></div>
+                  <div className="flex justify-between"><span className="text-[#1E2D4D]/50">Expires</span><span style={{ color: w.color, fontWeight: 600 }}>{format(new Date(equipment.warrantyExpiry), 'MMM d, yyyy')}</span></div>
+                  {equipment.warrantyContact && <div className="flex justify-between"><span className="text-[#1E2D4D]/50">Contact</span><span className="text-gray-900 text-xs">{equipment.warrantyContact}</span></div>}
                 </div>
               </div>
             </div>
@@ -212,7 +212,7 @@ export function EquipmentDetail() {
                     size={140}
                   />
                 </div>
-                <p className="text-xs text-gray-400 text-center mt-3">
+                <p className="text-xs text-[#1E2D4D]/30 text-center mt-3">
                   Staff scan this label to instantly log a temperature reading — CalCode §113996
                 </p>
               </div>
@@ -224,7 +224,7 @@ export function EquipmentDetail() {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-semibold text-[#1E2D4D]">Service History</h3>
-                <div className="text-xs text-gray-500">Total cost: <strong className="text-gray-900">${totalServiceCost.toLocaleString()}</strong></div>
+                <div className="text-xs text-[#1E2D4D]/50">Total cost: <strong className="text-gray-900">${totalServiceCost.toLocaleString()}</strong></div>
               </div>
               {equipment.serviceHistory.length === 0 ? (
                 <EmptyState type="service_records" />
@@ -232,16 +232,16 @@ export function EquipmentDetail() {
                 <div className="space-y-3">
                   {equipment.serviceHistory.map((sr, i) => (
                     <div key={i} className="flex items-start gap-3 p-3 rounded-lg border border-gray-100 hover:bg-gray-50">
-                      <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
-                        <Wrench size={14} className="text-gray-500" />
+                      <div className="w-8 h-8 rounded-full bg-[#1E2D4D]/5 flex items-center justify-center flex-shrink-0">
+                        <Wrench size={14} className="text-[#1E2D4D]/50" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
                           <span className="text-sm font-medium text-gray-900">{sr.type}</span>
-                          <span className="text-xs text-gray-500">{format(new Date(sr.date), 'MMM d, yyyy')}</span>
+                          <span className="text-xs text-[#1E2D4D]/50">{format(new Date(sr.date), 'MMM d, yyyy')}</span>
                         </div>
-                        <div className="text-xs text-gray-500 mt-0.5">{sr.vendor} · {sr.cost > 0 ? `$${sr.cost.toLocaleString()}` : 'No charge'}</div>
-                        {sr.notes && <div className="text-xs text-gray-600 mt-1">{sr.notes}</div>}
+                        <div className="text-xs text-[#1E2D4D]/50 mt-0.5">{sr.vendor} · {sr.cost > 0 ? `$${sr.cost.toLocaleString()}` : 'No charge'}</div>
+                        {sr.notes && <div className="text-xs text-[#1E2D4D]/70 mt-1">{sr.notes}</div>}
                       </div>
                     </div>
                   ))}
@@ -267,7 +267,7 @@ export function EquipmentDetail() {
                   <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-gray-100">
                     <div>
                       <div className="text-sm font-medium text-gray-900">{s.task}</div>
-                      <div className="text-xs text-gray-500">Every {s.interval} · Last: {format(new Date(s.lastDone), 'MMM d, yyyy')}</div>
+                      <div className="text-xs text-[#1E2D4D]/50">Every {s.interval} · Last: {format(new Date(s.lastDone), 'MMM d, yyyy')}</div>
                     </div>
                     <span style={badge(mi.label, mi.color, mi.bg)}>{mi.label}</span>
                   </div>
@@ -280,24 +280,24 @@ export function EquipmentDetail() {
           {activeTab === 'lifecycle' && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="bg-[#FAF7F0] rounded-xl p-4 text-center">
-                <DollarSign size={20} className="mx-auto mb-1 text-gray-400" />
+                <DollarSign size={20} className="mx-auto mb-1 text-[#1E2D4D]/30" />
                 <div className="text-lg font-bold text-[#1E2D4D]">${equipment.purchasePrice.toLocaleString()}</div>
-                <div className="text-xs text-gray-500">Purchase Price</div>
+                <div className="text-xs text-[#1E2D4D]/50">Purchase Price</div>
               </div>
               <div className="bg-[#FAF7F0] rounded-xl p-4 text-center">
-                <TrendingUp size={20} className="mx-auto mb-1 text-gray-400" />
+                <TrendingUp size={20} className="mx-auto mb-1 text-[#1E2D4D]/30" />
                 <div className="text-lg font-bold text-[#1E2D4D]">${equipment.replacementCost.toLocaleString()}</div>
-                <div className="text-xs text-gray-500">Replacement Cost</div>
+                <div className="text-xs text-[#1E2D4D]/50">Replacement Cost</div>
               </div>
               <div className="bg-[#FAF7F0] rounded-xl p-4 text-center">
-                <Clock size={20} className="mx-auto mb-1 text-gray-400" />
+                <Clock size={20} className="mx-auto mb-1 text-[#1E2D4D]/30" />
                 <div className="text-lg font-bold text-[#1E2D4D]">{equipment.usefulLifeYears} yrs</div>
-                <div className="text-xs text-gray-500">Useful Life</div>
+                <div className="text-xs text-[#1E2D4D]/50">Useful Life</div>
               </div>
               <div className="md:col-span-3 bg-[#FAF7F0] rounded-xl p-4">
-                <h4 className="text-sm font-semibold text-gray-700 mb-2">Total Maintenance Cost</h4>
-                <div className="text-2xl font-bold" style={{ color: NAVY }}>${totalServiceCost.toLocaleString()}</div>
-                <div className="text-xs text-gray-500 mt-1">across {equipment.serviceHistory.length} service records</div>
+                <h4 className="text-sm font-semibold text-[#1E2D4D]/80 mb-2">Total Maintenance Cost</h4>
+                <div className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>${totalServiceCost.toLocaleString()}</div>
+                <div className="text-xs text-[#1E2D4D]/50 mt-1">across {equipment.serviceHistory.length} service records</div>
               </div>
             </div>
           )}

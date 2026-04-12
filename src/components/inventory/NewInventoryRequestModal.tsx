@@ -124,7 +124,7 @@ export function NewInventoryRequestModal({ isOpen, onClose }: NewInventoryReques
                     placeholder="Item name"
                     value={item.name}
                     onChange={e => updateItem(index, 'name', e.target.value)}
-                    className="flex-1 px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#163a5f]/20"
+                    className="flex-1 px-3 py-2 text-sm rounded-lg border focus-visible:outline-none focus-visible:ring-2 focus:ring-[#163a5f]/20"
                     style={{ borderColor: CARD_BORDER, color: NAVY }}
                   />
                   <input
@@ -132,7 +132,7 @@ export function NewInventoryRequestModal({ isOpen, onClose }: NewInventoryReques
                     min={1}
                     value={item.quantity}
                     onChange={e => updateItem(index, 'quantity', parseInt(e.target.value, 10) || 1)}
-                    className="w-20 px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#163a5f]/20 text-center"
+                    className="w-20 px-3 py-2 text-sm rounded-lg border focus-visible:outline-none focus-visible:ring-2 focus:ring-[#163a5f]/20 text-center"
                     style={{ borderColor: CARD_BORDER, color: NAVY }}
                   />
                   <button
@@ -167,7 +167,7 @@ export function NewInventoryRequestModal({ isOpen, onClose }: NewInventoryReques
               onChange={e => setNotes(e.target.value)}
               placeholder="Additional notes (optional)"
               rows={3}
-              className="w-full px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#163a5f]/20 resize-none"
+              className="w-full px-3 py-2 text-sm rounded-lg border focus-visible:outline-none focus-visible:ring-2 focus:ring-[#163a5f]/20 resize-none"
               style={{ borderColor: CARD_BORDER, color: NAVY }}
             />
           </div>

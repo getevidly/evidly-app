@@ -63,7 +63,7 @@ export function ReferralTouchpoint() {
 
   return (
     <div className="fixed z-[1030] animate-in slide-in-from-bottom-4 max-w-sm" style={{ bottom: '148px', right: '20px' }}>
-      <div className="bg-white rounded-xl shadow-xl border border-gray-200 p-4 relative">
+      <div className="bg-white rounded-xl shadow-xl border border-[#1E2D4D]/10 p-4 relative">
         <button
           onClick={() => setVisible(false)}
           className="absolute top-2 right-2 p-1 text-gray-300 hover:text-gray-500 cursor-pointer"
@@ -77,7 +77,7 @@ export function ReferralTouchpoint() {
           </div>
           <div className="flex-1 pr-4">
             <h4 className="text-sm font-semibold text-[#1E2D4D] mb-0.5">{v.title}</h4>
-            <p className="text-xs text-gray-500 mb-3">{v.message}</p>
+            <p className="text-xs text-[#1E2D4D]/50 mb-3">{v.message}</p>
             <button
               onClick={() => {
                 setVisible(false);

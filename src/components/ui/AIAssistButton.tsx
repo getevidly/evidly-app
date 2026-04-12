@@ -55,7 +55,7 @@ export function AIAssistButton({ fieldLabel, context, currentValue, onGenerated 
 
   if (error) {
     return (
-      <span className="text-xs text-gray-400 italic">AI unavailable</span>
+      <span className="text-xs text-[#1E2D4D]/30 italic">AI unavailable</span>
     );
   }
 
@@ -91,7 +91,7 @@ export function AIAssistButton({ fieldLabel, context, currentValue, onGenerated 
           <button
             type="button"
             onClick={() => setShowChoice(false)}
-            className="px-1 py-1 text-gray-400 hover:text-gray-600 min-h-[28px]"
+            className="px-1 py-1 text-[#1E2D4D]/30 hover:text-gray-600 min-h-[28px]"
           >
             &times;
           </button>

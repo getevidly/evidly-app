@@ -79,7 +79,7 @@ function CollapsibleSection({ title, icon, badge, defaultOpen = false, children 
 }) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   return (
-    <div className="border border-gray-200 rounded-xl bg-white overflow-hidden">
+    <div className="border border-[#1E2D4D]/10 rounded-xl bg-white overflow-hidden">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between px-3 sm:px-5 py-4 hover:bg-gray-50 transition-colors"
@@ -89,7 +89,7 @@ function CollapsibleSection({ title, icon, badge, defaultOpen = false, children 
           <span className="font-semibold text-[#1E2D4D]">{title}</span>
           {badge}
         </div>
-        {isOpen ? <ChevronUp className="w-5 h-5 text-gray-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
+        {isOpen ? <ChevronUp className="w-5 h-5 text-[#1E2D4D]/30" /> : <ChevronDown className="w-5 h-5 text-[#1E2D4D]/30" />}
       </button>
       {isOpen && <div className="px-3 sm:px-5 pb-4 sm:pb-5 border-t border-gray-100">{children}</div>}
     </div>
@@ -133,10 +133,10 @@ export function ScoringBreakdown() {
   if (!isDemoMode) {
     return (
       <div className="space-y-6">
-        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-12 text-center">
           <ClipboardCheck className="mx-auto h-12 w-12 text-gray-300 mb-4" />
-          <h2 className="text-lg font-semibold text-gray-700 mb-2">No food safety data yet</h2>
-          <p className="text-sm text-gray-500 mb-6">Add locations and complete checklists to see your food safety scoring breakdown.</p>
+          <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D]/80 mb-2">No food safety data yet</h2>
+          <p className="text-sm text-[#1E2D4D]/50 mb-6">Add locations and complete checklists to see your food safety scoring breakdown.</p>
           <button onClick={() => navigate('/org-hierarchy')} className="px-5 py-2.5 text-sm font-medium text-white rounded-lg mb-3" style={{ backgroundColor: '#1E2D4D' }}>
             Add Location
           </button>
@@ -183,14 +183,14 @@ export function ScoringBreakdown() {
           <ArrowLeft className="h-4 w-4" />
           Back to Dashboard
         </button>
-        <h1 className="text-2xl font-bold text-[#1E2D4D]">Food Safety Overview</h1>
-        <p className="text-gray-500 text-sm mt-1">
+        <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">Food Safety Overview</h1>
+        <p className="text-[#1E2D4D]/50 text-sm mt-1">
           {selectedLocation.name} &mdash; {county}
         </p>
       </div>
 
       {/* Location Tabs */}
-      <div className="flex gap-1 bg-gray-100 rounded-lg p-1 w-fit">
+      <div className="flex gap-1 bg-[#1E2D4D]/5 rounded-lg p-1 w-fit">
         {locations.map(loc => (
           <button
             key={loc.urlId}
@@ -198,7 +198,7 @@ export function ScoringBreakdown() {
             className={`px-4 py-2 text-sm font-medium rounded-md transition-colors min-h-[44px] ${
               loc.urlId === locationParam
                 ? 'bg-white text-[#1E2D4D] shadow-sm'
-                : 'text-gray-500 hover:text-gray-700'
+                : 'text-[#1E2D4D]/50 hover:text-gray-700'
             }`}
           >
             {loc.name}
@@ -212,7 +212,7 @@ export function ScoringBreakdown() {
           <EvidlyIcon size={20} />
           Jurisdiction Status
         </h2>
-        <p className="text-sm text-gray-500 -mt-1">What the authorities see &mdash; official grades from your inspecting agencies.</p>
+        <p className="text-sm text-[#1E2D4D]/50 -mt-1">What the authorities see &mdash; official grades from your inspecting agencies.</p>
 
         {/* Food Safety */}
         <CollapsibleSection
@@ -237,10 +237,10 @@ export function ScoringBreakdown() {
                   <div className={`text-lg font-bold ${foodStatus.text}`}>
                     {gradeData.foodSafety.gradeDisplay}
                   </div>
-                  <div className="text-sm text-gray-600 mt-1">
+                  <div className="text-sm text-[#1E2D4D]/70 mt-1">
                     {gradeData.foodSafety.summary}
                   </div>
-                  <div className="text-xs text-gray-400 mt-2">
+                  <div className="text-xs text-[#1E2D4D]/30 mt-2">
                     Authority: {jurisdictionInfo.name}
                   </div>
                 </div>
@@ -252,15 +252,15 @@ export function ScoringBreakdown() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="text-center p-3 rounded-lg bg-[#FAF7F0]">
                   <div className="text-lg font-bold text-[#1E2D4D]">{gradeData.foodSafety.details.majorViolations}</div>
-                  <div className="text-xs text-gray-500">Major Violations</div>
+                  <div className="text-xs text-[#1E2D4D]/50">Major Violations</div>
                 </div>
                 <div className="text-center p-3 rounded-lg bg-[#FAF7F0]">
                   <div className="text-lg font-bold text-[#1E2D4D]">{gradeData.foodSafety.details.minorViolations}</div>
-                  <div className="text-xs text-gray-500">Minor Violations</div>
+                  <div className="text-xs text-[#1E2D4D]/50">Minor Violations</div>
                 </div>
                 <div className="text-center p-3 rounded-lg bg-[#FAF7F0]">
                   <div className="text-lg font-bold text-[#1E2D4D]">{gradeData.foodSafety.details.uncorrectedMajors}</div>
-                  <div className="text-xs text-gray-500">Uncorrected Majors</div>
+                  <div className="text-xs text-[#1E2D4D]/50">Uncorrected Majors</div>
                 </div>
               </div>
             )}
@@ -290,7 +290,7 @@ export function ScoringBreakdown() {
                   <div className={`text-lg font-bold ${fireStatus.text}`}>
                     {gradeData.facilitySafety.gradeDisplay}
                   </div>
-                  <div className="text-sm text-gray-600 mt-1">
+                  <div className="text-sm text-[#1E2D4D]/70 mt-1">
                     {gradeData.facilitySafety.summary}
                   </div>
                 </div>
@@ -299,7 +299,7 @@ export function ScoringBreakdown() {
 
             {/* Fire Status Bars */}
             <div>
-              <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Equipment &amp; Permit Status</div>
+              <div className="text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider mb-2">Equipment &amp; Permit Status</div>
               <FireStatusBars
                 permitStatus={gradeData.facilitySafety.permitStatus}
                 hoodStatus={gradeData.facilitySafety.hoodStatus}
@@ -331,10 +331,10 @@ export function ScoringBreakdown() {
             EvidLY Internal
           </span>
         </div>
-        <p className="text-sm text-gray-500 -mt-1">Internal operational metrics tracked by EvidLY &mdash; these are not jurisdiction grades.</p>
+        <p className="text-sm text-[#1E2D4D]/50 -mt-1">Internal operational metrics tracked by EvidLY &mdash; these are not jurisdiction grades.</p>
 
-        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
-          <div className="divide-y divide-gray-100">
+        <div className="bg-white border border-[#1E2D4D]/10 rounded-xl overflow-hidden">
+          <div className="divide-y divide-[#1E2D4D]/5">
             {OPERATIONAL_METRICS.map((metric, idx) => {
               const isWarning = metric.status === 'warning';
               return (
@@ -351,11 +351,11 @@ export function ScoringBreakdown() {
                     <span className="text-sm text-gray-800 font-medium">{metric.label}</span>
                   </div>
                   <div className="flex items-center gap-3 flex-shrink-0">
-                    <span className={`text-sm font-semibold ${isWarning ? 'text-amber-600' : 'text-gray-700'}`}>
+                    <span className={`text-sm font-semibold ${isWarning ? 'text-amber-600' : 'text-[#1E2D4D]/80'}`}>
                       {metric.value}
                     </span>
                     {metric.pct !== null && (
-                      <div className="w-20 sm:w-28 h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="w-20 sm:w-28 h-2 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
                         <div
                           className="h-full rounded-full transition-all"
                           style={{
@@ -379,9 +379,9 @@ export function ScoringBreakdown() {
           <Info className="w-5 h-5 text-[#1E2D4D]" />
           Jurisdiction Methodology
         </h2>
-        <p className="text-sm text-gray-500 -mt-1">How {jurisdictionInfo.name} grades food facilities.</p>
+        <p className="text-sm text-[#1E2D4D]/50 -mt-1">How {jurisdictionInfo.name} grades food facilities.</p>
 
-        <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-6">
+        <div className="bg-white border border-[#1E2D4D]/10 rounded-xl p-4 sm:p-6">
           <div className="flex items-start gap-4">
             <div className="w-10 h-10 rounded-lg bg-[#eef4f8] border border-[#b8d4e8] flex items-center justify-center flex-shrink-0">
               <EvidlyIcon size={20} />
@@ -393,7 +393,7 @@ export function ScoringBreakdown() {
                   {jurisdictionInfo.system}
                 </span>
               </div>
-              <p className="text-sm text-gray-600 mt-3 leading-relaxed">
+              <p className="text-sm text-[#1E2D4D]/70 mt-3 leading-relaxed">
                 {jurisdictionInfo.description}
               </p>
             </div>

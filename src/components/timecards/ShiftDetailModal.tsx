@@ -51,7 +51,7 @@ export function ShiftDetailModal({ shift, onClose, onApprove, onReject, onFlag, 
         <div className="flex items-center justify-between px-6 py-4 border-b sticky top-0 bg-white z-10" style={{ borderColor: '#D1D9E6' }}>
           <div className="flex items-center gap-2">
             <Clock className="w-5 h-5" style={{ color: '#1E2D4D' }} />
-            <h3 className="text-lg font-semibold" style={{ color: '#0B1628' }}>Shift Details</h3>
+            <h3 className="text-lg font-semibold tracking-tight" style={{ color: '#0B1628' }}>Shift Details</h3>
           </div>
           <button onClick={onClose} className="p-2.5 -m-1 rounded-lg hover:bg-gray-100 transition-colors" aria-label="Close">
             <X className="w-5 h-5" style={{ color: '#6B7F96' }} />
@@ -62,7 +62,7 @@ export function ShiftDetailModal({ shift, onClose, onApprove, onReject, onFlag, 
         <div className="px-6 py-5 space-y-5">
           {/* Employee + Date */}
           <div>
-            <p className="text-lg font-semibold" style={{ color: '#0B1628' }}>{shift.employeeName}</p>
+            <p className="text-lg font-semibold tracking-tight" style={{ color: '#0B1628' }}>{shift.employeeName}</p>
             <p className="text-sm" style={{ color: '#3D5068' }}>{dateLabel}</p>
             <div className="flex items-center gap-2 mt-2">
               <span
@@ -184,7 +184,7 @@ export function ShiftDetailModal({ shift, onClose, onApprove, onReject, onFlag, 
                 onChange={(e) => setReason(e.target.value)}
                 rows={2}
                 placeholder={rejectMode ? 'Explain why this shift is rejected...' : 'Describe the issue...'}
-                className="w-full px-3 py-2 border rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                className="w-full px-3 py-2 border rounded-lg text-sm resize-none focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
                 style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
               />
               <div className="flex gap-2 mt-2">

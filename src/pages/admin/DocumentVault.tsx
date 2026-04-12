@@ -160,7 +160,7 @@ export default function DocumentVault() {
       <AdminBreadcrumb crumbs={[{ label: 'Document Vault' }]} />
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Document Vault</h1>
+          <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Document Vault</h1>
           <p style={{ fontSize: 13, color: TEXT_SEC, marginTop: 4 }}>
             {docs.length} documents · {formatSize(totalSize)}
           </p>

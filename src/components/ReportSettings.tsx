@@ -188,8 +188,8 @@ export function ReportSettings() {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold text-[#1E2D4D] mb-2">Automated Reports</h3>
-        <p className="text-sm text-gray-600">
+        <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-2">Automated Reports</h3>
+        <p className="text-sm text-[#1E2D4D]/70">
           Choose which reports you'd like to receive automatically. We'll deliver them straight to your inbox.
         </p>
       </div>
@@ -203,7 +203,7 @@ export function ReportSettings() {
             <div
               key={report.type}
               className={`border rounded-lg p-4 transition-all ${
-                isActive ? 'border-[#d4af37] bg-[#faf8f3]' : 'border-gray-200 bg-white'
+                isActive ? 'border-[#d4af37] bg-[#faf8f3]' : 'border-[#1E2D4D]/10 bg-white'
               }`}
             >
               <div className="flex items-start gap-3">
@@ -222,12 +222,12 @@ export function ReportSettings() {
                       </span>
                     )}
                   </div>
-                  <p className="text-sm text-gray-600 mb-3">{report.description}</p>
+                  <p className="text-sm text-[#1E2D4D]/70 mb-3">{report.description}</p>
 
                   {isActive && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3 border-t border-gray-200">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3 border-t border-[#1E2D4D]/10">
                       <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                        <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">
                           Delivery Method
                         </label>
                         <div className="flex gap-2">
@@ -237,7 +237,7 @@ export function ReportSettings() {
                             className={`flex-1 px-3 py-2 text-sm rounded-lg flex items-center justify-center gap-2 transition-colors ${
                               sub?.delivery_method === 'email'
                                 ? 'bg-[#1E2D4D] text-white'
-                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                : 'bg-gray-100 text-[#1E2D4D]/80 hover:bg-gray-200'
                             }`}
                           >
                             <Mail className="w-4 h-4" />
@@ -249,7 +249,7 @@ export function ReportSettings() {
                             className={`flex-1 px-3 py-2 text-sm rounded-lg flex items-center justify-center gap-2 transition-colors ${
                               sub?.delivery_method === 'sms'
                                 ? 'bg-[#1E2D4D] text-white'
-                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                : 'bg-gray-100 text-[#1E2D4D]/80 hover:bg-gray-200'
                             }`}
                           >
                             <Smartphone className="w-4 h-4" />
@@ -260,13 +260,13 @@ export function ReportSettings() {
 
                       {report.frequency === 'weekly' && (
                         <div>
-                          <label className="block text-xs font-medium text-gray-700 mb-1">
+                          <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">
                             Day of Week
                           </label>
                           <select
                             value={sub?.delivery_day || 1}
                             onChange={(e) => updateSubscription(report.type, 'delivery_day', parseInt(e.target.value))}
-                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                            className="w-full px-3 py-2 text-sm border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
                           >
                             {DAYS_OF_WEEK.map((day) => (
                               <option key={day.value} value={day.value}>
@@ -278,16 +278,16 @@ export function ReportSettings() {
                       )}
 
                       <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                        <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">
                           Time
                         </label>
                         <div className="relative">
-                          <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                          <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#1E2D4D]/30" />
                           <input
                             type="time"
                             value={sub?.delivery_time || '07:00'}
                             onChange={(e) => updateSubscription(report.type, 'delivery_time', e.target.value)}
-                            className="w-full pl-10 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                            className="w-full pl-10 pr-3 py-2 text-sm border border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#d4af37]"
                           />
                         </div>
                       </div>

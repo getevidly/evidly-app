@@ -116,7 +116,7 @@ export function ServiceRecordDetail() {
   if (!isDemoMode) {
     return (
       <div className="p-6" style={{ ...FONT, background: PAGE_BG, minHeight: '100vh' }}>
-        <h1 className="text-2xl font-bold mb-2" style={{ color: BODY_TEXT }}>Service Record</h1>
+        <h1 className="text-2xl font-bold tracking-tight mb-2" style={{ color: BODY_TEXT }}>Service Record</h1>
         <div className="rounded-xl border" style={{ background: CARD_BG, borderColor: CARD_BORDER }}>
           <EmptyState type="service_records" customHeading="No Data Available" customSubtext="Service record details will appear here once connected to your account." />
         </div>
@@ -132,7 +132,7 @@ export function ServiceRecordDetail() {
         </button>
         <div className="rounded-xl border p-12 text-center" style={{ background: CARD_BG, borderColor: CARD_BORDER }}>
           <FileText className="h-12 w-12 mx-auto mb-4" style={{ color: TEXT_TERTIARY }} />
-          <h2 className="text-lg font-semibold mb-2" style={{ color: BODY_TEXT }}>Record Not Found</h2>
+          <h2 className="text-lg font-semibold tracking-tight mb-2" style={{ color: BODY_TEXT }}>Record Not Found</h2>
           <p className="text-sm" style={{ color: MUTED }}>The service record you're looking for doesn't exist.</p>
         </div>
       </div>
@@ -185,7 +185,7 @@ export function ServiceRecordDetail() {
       >
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
           <div className="min-w-0">
-            <h1 className="text-xl lg:text-2xl font-bold mb-1" style={{ color: BODY_TEXT }}>
+            <h1 className="text-xl lg:text-2xl font-bold tracking-tight mb-1" style={{ color: BODY_TEXT }}>
               {record.serviceName}
             </h1>
             <p className="text-sm mb-3" style={{ color: MUTED }}>{record.vendorName}</p>

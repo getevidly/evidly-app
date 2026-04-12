@@ -13,7 +13,7 @@ export function EmergencyInfoPage() {
     return (
       <div className="space-y-4 max-w-lg mx-auto">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="h-32 bg-gray-200 rounded-xl animate-pulse" />
+          <div key={i} className="h-32 bg-[#1E2D4D]/8 rounded-xl animate-pulse" />
         ))}
       </div>
     );
@@ -31,7 +31,7 @@ export function EmergencyInfoPage() {
         <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3" style={{ background: '#dc262612' }}>
           <AlertTriangle className="w-7 h-7" style={{ color: '#dc2626' }} />
         </div>
-        <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Emergency Info</h1>
+        <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Emergency Info</h1>
         <p className="text-sm mt-1" style={{ color: TEXT_TERTIARY }}>Critical contacts and policy info — tap to call</p>
       </div>
 

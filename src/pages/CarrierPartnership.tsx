@@ -20,11 +20,11 @@ export function CarrierPartnership() {
             <EvidlyIcon size={40} />
           </div>
           <div className="flex items-center justify-center gap-2 mb-3">
-            <span className="text-2xl font-bold text-[#1E2D4D]">Evid</span>
-            <span className="text-2xl font-bold" style={{ color: '#d4af37' }}>LY</span>
+            <span className="text-2xl font-bold tracking-tight text-[#1E2D4D]">Evid</span>
+            <span className="text-2xl font-bold tracking-tight" style={{ color: '#d4af37' }}>LY</span>
           </div>
-          <h1 className="text-3xl font-bold text-[#1E2D4D] mb-3">Insurance Carrier Partnership Portal</h1>
-          <p className="text-lg text-gray-600 max-w-xl mx-auto">
+          <h1 className="text-3xl font-bold tracking-tight text-[#1E2D4D] mb-3">Insurance Carrier Partnership Portal</h1>
+          <p className="text-lg text-[#1E2D4D]/70 max-w-xl mx-auto">
             Direct API access to verified kitchen risk profiles for evidence-based underwriting conversations.
           </p>
           <div className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-full" style={{ backgroundColor: '#fdf8e8', border: '1px solid #d4af37' }}>
@@ -34,7 +34,7 @@ export function CarrierPartnership() {
         </div>
 
         {/* What This Portal Will Offer */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 mb-8">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5 mb-8">
           <h2 className="text-xl font-bold text-[#1E2D4D] mb-6">What This Portal Will Offer</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
@@ -49,7 +49,7 @@ export function CarrierPartnership() {
                 </div>
                 <div>
                   <h3 className="text-sm font-semibold text-[#1E2D4D]">{item.title}</h3>
-                  <p className="text-xs text-gray-500 mt-1">{item.desc}</p>
+                  <p className="text-xs text-[#1E2D4D]/50 mt-1">{item.desc}</p>
                 </div>
               </div>
             ))}
@@ -57,7 +57,7 @@ export function CarrierPartnership() {
         </div>
 
         {/* Data Privacy */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 mb-8">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5 mb-8">
           <h2 className="text-lg font-bold text-[#1E2D4D] mb-4">Data Privacy & Consent</h2>
           <div className="space-y-3">
             {[
@@ -70,14 +70,14 @@ export function CarrierPartnership() {
             ].map((item, i) => (
               <div key={i} className="flex items-start gap-2.5">
                 <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                <span className="text-sm text-gray-700">{item}</span>
+                <span className="text-sm text-[#1E2D4D]/80">{item}</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* API Endpoints Preview */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 mb-8">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5 mb-8">
           <h2 className="text-lg font-bold text-[#1E2D4D] mb-4">API Endpoints</h2>
           <div className="space-y-2">
             {[
@@ -88,22 +88,22 @@ export function CarrierPartnership() {
               { method: 'GET', path: '/api/v1/risk-score/{id}/incidents', desc: 'Anonymized metrics' },
             ].map(ep => (
               <div key={ep.path} className="flex items-center gap-3 p-3 rounded-lg bg-[#FAF7F0] font-mono">
-                <span className={`px-2 py-0.5 text-xs font-bold rounded ${ep.method === 'POST' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
+                <span className={`px-2 py-0.5 text-xs font-bold rounded ${ep.method === 'POST' ? 'bg-blue-50 text-blue-700' : 'bg-emerald-50 text-emerald-700'}`}>
                   {ep.method}
                 </span>
                 <code className="text-xs text-gray-800 flex-1">{ep.path}</code>
-                <span className="text-xs text-gray-400 font-sans">{ep.desc}</span>
+                <span className="text-xs text-[#1E2D4D]/30 font-sans">{ep.desc}</span>
               </div>
             ))}
           </div>
-          <p className="text-xs text-gray-400 mt-3">
+          <p className="text-xs text-[#1E2D4D]/30 mt-3">
             Authentication via X-API-Key header. Rate limited: 60 requests/minute, 1,000 requests/day per key.
           </p>
         </div>
 
         {/* CTA */}
         <div className="text-center">
-          <p className="text-sm text-gray-600 mb-4">
+          <p className="text-sm text-[#1E2D4D]/70 mb-4">
             Insurance carriers interested in partnership opportunities:
           </p>
           <a
@@ -114,12 +114,12 @@ export function CarrierPartnership() {
             <Mail className="h-5 w-5" />
             Contact Partnership Team
           </a>
-          <p className="text-xs text-gray-400 mt-3">partnerships@evidly.com</p>
+          <p className="text-xs text-[#1E2D4D]/30 mt-3">partnerships@evidly.com</p>
         </div>
 
         {/* Footer Disclaimer */}
-        <div className="mt-12 pt-6 border-t border-gray-200 text-center">
-          <p className="text-xs text-gray-400 leading-relaxed max-w-lg mx-auto">
+        <div className="mt-12 pt-6 border-t border-[#1E2D4D]/10 text-center">
+          <p className="text-xs text-[#1E2D4D]/30 leading-relaxed max-w-lg mx-auto">
             EvidLY provides compliance documentation tools for food service operators.
             Risk scores reflect compliance activities tracked through the platform.
             Insurance premium decisions are made solely by carriers based on their own underwriting criteria.

@@ -51,23 +51,23 @@ function BadgeTierCard({ tier, isEarned, isCurrent, qualification, locationName 
           {isEarned ? (
             <EvidlyIcon size={32} />
           ) : (
-            <Lock className="h-6 w-6 text-gray-400" />
+            <Lock className="h-6 w-6 text-[#1E2D4D]/30" />
           )}
         </div>
         <h4 className="text-sm font-bold" style={{ color: isEarned ? color : '#6b7280' }}>
           {tier.charAt(0).toUpperCase() + tier.slice(1)}
         </h4>
-        <p className="text-xs text-gray-500 text-center mt-0.5">{label}</p>
+        <p className="text-xs text-[#1E2D4D]/50 text-center mt-0.5">{label}</p>
       </div>
 
       {/* Requirement */}
-      <p className="text-xs text-gray-400 text-center mb-3">{requirement}</p>
+      <p className="text-xs text-[#1E2D4D]/30 text-center mb-3">{requirement}</p>
 
       {/* Earned: show details + actions */}
       {isEarned && isCurrent && (
         <>
           {qualification.qualifyingSince && (
-            <p className="text-xs text-center text-gray-500 mb-3">
+            <p className="text-xs text-center text-[#1E2D4D]/50 mb-3">
               Qualified since {new Date(qualification.qualifyingSince).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
               {' '}({qualification.monthsQualified} months)
             </p>
@@ -76,13 +76,13 @@ function BadgeTierCard({ tier, isEarned, isCurrent, qualification, locationName 
           <div className="flex flex-wrap justify-center gap-1.5">
             <button
               onClick={() => toast.success('Badge image downloaded')}
-              className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded border border-gray-200 hover:bg-gray-50 text-gray-600"
+              className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded border border-[#1E2D4D]/10 hover:bg-gray-50 text-[#1E2D4D]/70"
             >
               <Download className="h-3 w-3" /> Download
             </button>
             <button
               onClick={() => toast.success('Certificate PDF generated')}
-              className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded border border-gray-200 hover:bg-gray-50 text-gray-600"
+              className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded border border-[#1E2D4D]/10 hover:bg-gray-50 text-[#1E2D4D]/70"
             >
               <Printer className="h-3 w-3" /> Certificate
             </button>
@@ -91,13 +91,13 @@ function BadgeTierCard({ tier, isEarned, isCurrent, qualification, locationName 
                 const post = generateSocialPost(tier, locationName, percentile);
                 navigator.clipboard.writeText(post).then(() => toast.success('Share text copied to clipboard'));
               }}
-              className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded border border-gray-200 hover:bg-gray-50 text-gray-600"
+              className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded border border-[#1E2D4D]/10 hover:bg-gray-50 text-[#1E2D4D]/70"
             >
               <Share2 className="h-3 w-3" /> Share
             </button>
             <button
               onClick={() => setShowQR(!showQR)}
-              className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded border border-gray-200 hover:bg-gray-50 text-gray-600"
+              className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded border border-[#1E2D4D]/10 hover:bg-gray-50 text-[#1E2D4D]/70"
             >
               <QrCode className="h-3 w-3" /> QR
             </button>
@@ -118,11 +118,11 @@ function BadgeTierCard({ tier, isEarned, isCurrent, qualification, locationName 
       {/* Not earned: show progress */}
       {!isEarned && tier === qualification.nextTier && (
         <div className="mt-2">
-          <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+          <div className="flex items-center justify-between text-xs text-[#1E2D4D]/50 mb-1">
             <span>Progress</span>
             <span>{qualification.progressToNext}%</span>
           </div>
-          <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+          <div className="h-1.5 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
             <div
               className="h-full rounded-full transition-all"
               style={{ width: `${qualification.progressToNext}%`, backgroundColor: color }}
@@ -144,12 +144,12 @@ export function BenchmarkBadge({ qualification, locationName }: BenchmarkBadgePr
   }
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+    <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
       <div className="flex items-center gap-3 mb-5">
         <EvidlyIcon size={20} />
         <div>
-          <h3 className="text-lg font-semibold text-[#1E2D4D]">Compliance Badges</h3>
-          <p className="text-xs text-gray-500">{locationName}</p>
+          <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">Compliance Badges</h3>
+          <p className="text-xs text-[#1E2D4D]/50">{locationName}</p>
         </div>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">

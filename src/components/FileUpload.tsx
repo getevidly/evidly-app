@@ -139,19 +139,19 @@ export function FileUpload({
         className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
           isDragging
             ? 'border-[#d4af37] bg-[#d4af37]/5'
-            : 'border-gray-300 hover:border-gray-400'
+            : 'border-[#1E2D4D]/15 hover:border-gray-400'
         }`}
       >
         <div className="flex flex-col items-center space-y-4">
-          <div className="p-4 bg-gray-100 rounded-full">
-            <Upload className="w-8 h-8 text-gray-600" />
+          <div className="p-4 bg-[#1E2D4D]/5 rounded-full">
+            <Upload className="w-8 h-8 text-[#1E2D4D]/70" />
           </div>
 
           <div>
             <p className="text-lg font-medium text-gray-900">
               Drag files here or choose an option below
             </p>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-[#1E2D4D]/50 mt-1">
               {accept.replace(/\./g, '').toUpperCase().split(',').join(', ')} up to {maxSizeMB}MB
             </p>
           </div>
@@ -160,7 +160,7 @@ export function FileUpload({
             <button
               type="button"
               onClick={handleCameraClick}
-              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-white border border-[#1E2D4D]/15 rounded-xl hover:bg-gray-50 transition-colors"
             >
               <Camera className="w-5 h-5" />
               <span className="hidden sm:inline">Camera</span>
@@ -169,7 +169,7 @@ export function FileUpload({
             <button
               type="button"
               onClick={handleComputerClick}
-              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-white border border-[#1E2D4D]/15 rounded-xl hover:bg-gray-50 transition-colors"
             >
               <Upload className="w-5 h-5" />
               <span className="hidden sm:inline">Computer</span>
@@ -178,7 +178,7 @@ export function FileUpload({
             <button
               type="button"
               onClick={() => toast.info('Google Drive integration coming soon')}
-              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-white border border-[#1E2D4D]/15 rounded-xl hover:bg-gray-50 transition-colors"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12.01 1.485L21.77 17.5H2.23L12.01 1.485zM3.625 18.25h16.74L12 21.515l-8.375-3.265z"/>
@@ -189,7 +189,7 @@ export function FileUpload({
             <button
               type="button"
               onClick={() => toast.info('Dropbox integration coming soon')}
-              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-white border border-[#1E2D4D]/15 rounded-xl hover:bg-gray-50 transition-colors"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M6 1.5l-6 4.5 6 4.5 6-4.5-6-4.5zm12 0l-6 4.5 6 4.5 6-4.5-6-4.5zm-12 13.5l-6 4.5 6 4.5 6-4.5-6-4.5zm12 0l-6 4.5 6 4.5 6-4.5-6-4.5z"/>
@@ -219,7 +219,7 @@ export function FileUpload({
       />
 
       {uploading && (
-        <div className="flex items-center justify-center gap-2 text-gray-600">
+        <div className="flex items-center justify-center gap-2 text-[#1E2D4D]/70">
           <Loader2 className="w-5 h-5 animate-spin" />
           <span>Processing files...</span>
         </div>
@@ -227,12 +227,12 @@ export function FileUpload({
 
       {showPreview && files.length > 0 && (
         <div className="space-y-2">
-          <h4 className="text-sm font-medium text-gray-700">Uploaded Files</h4>
+          <h4 className="text-sm font-medium text-[#1E2D4D]/80">Uploaded Files</h4>
           <div className="grid grid-cols-1 gap-2">
             {files.map((uploadedFile, index) => (
               <div
                 key={index}
-                className="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-xl"
+                className="flex items-center gap-3 p-3 bg-white border border-[#1E2D4D]/10 rounded-xl"
               >
                 <div className="flex-shrink-0">
                   {uploadedFile.preview ? (
@@ -247,8 +247,8 @@ export function FileUpload({
                       <FileText className="w-6 h-6 text-red-600" />
                     </div>
                   ) : (
-                    <div className="w-12 h-12 flex items-center justify-center bg-gray-100 rounded">
-                      <ImageIcon className="w-6 h-6 text-gray-600" />
+                    <div className="w-12 h-12 flex items-center justify-center bg-[#1E2D4D]/5 rounded">
+                      <ImageIcon className="w-6 h-6 text-[#1E2D4D]/70" />
                     </div>
                   )}
                 </div>
@@ -257,7 +257,7 @@ export function FileUpload({
                   <p className="text-sm font-medium text-gray-900 truncate">
                     {uploadedFile.file.name}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-[#1E2D4D]/50">
                     {formatFileSize(uploadedFile.file.size)}
                   </p>
                 </div>
@@ -267,7 +267,7 @@ export function FileUpload({
                   onClick={() => removeFile(index)}
                   className="flex-shrink-0 p-1 hover:bg-gray-100 rounded transition-colors"
                 >
-                  <X className="w-5 h-5 text-gray-400 hover:text-gray-600" />
+                  <X className="w-5 h-5 text-[#1E2D4D]/30 hover:text-gray-600" />
                 </button>
               </div>
             ))}

@@ -14,7 +14,7 @@ export default function WebinarSection() {
         <h2 className="font-['Outfit'] text-3xl sm:text-4xl font-bold mb-4" style={{ color: '#1E2D4D' }}>
           See EvidLY in Action
         </h2>
-        <p className="text-lg text-gray-600 leading-relaxed mb-8 max-w-2xl mx-auto">
+        <p className="text-lg text-[#1E2D4D]/70 leading-relaxed mb-8 max-w-2xl mx-auto">
           Join a free 15-minute walkthrough with Arthur Haggerty, EvidLY's founder.
           He'll show you exactly how EvidLY works for your type of kitchen.
         </p>
@@ -26,7 +26,7 @@ export default function WebinarSection() {
               'Q&A about compliance in your jurisdiction',
               'See Founder pricing (limited to 100 customers)',
             ].map((item, i) => (
-              <li key={i} className="flex items-start gap-3 text-gray-700">
+              <li key={i} className="flex items-start gap-3 text-[#1E2D4D]/80">
                 <Check className="w-5 h-5 flex-shrink-0 mt-0.5" strokeWidth={3} style={{ color: '#d4af37' }} />
                 <span>{item}</span>
               </li>

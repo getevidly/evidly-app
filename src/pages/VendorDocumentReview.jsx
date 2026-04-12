@@ -110,7 +110,7 @@ export default function VendorDocumentReview() {
       {/* Loading */}
       {loading && (
         <div className="flex justify-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-2 border-gray-300" style={{ borderTopColor: NAVY }} />
+          <div className="animate-spin rounded-full h-8 w-8 border-2 border-[#1E2D4D]/15" style={{ borderTopColor: NAVY }} />
         </div>
       )}
 
@@ -196,7 +196,7 @@ export default function VendorDocumentReview() {
                   <AIIcon size={10} />
                   {aiStatus.label}
                 </span>
-                {isExpanded ? <ChevronUp size={16} className="text-gray-400" /> : <ChevronDown size={16} className="text-gray-400" />}
+                {isExpanded ? <ChevronUp size={16} className="text-[#1E2D4D]/30" /> : <ChevronDown size={16} className="text-[#1E2D4D]/30" />}
               </div>
             </button>
 
@@ -391,7 +391,7 @@ export default function VendorDocumentReview() {
             className="rounded-xl p-6 w-full max-w-md"
             style={{ backgroundColor: CARD_BG }}
           >
-            <h3 className="text-lg font-semibold mb-3" style={{ color: BODY_TEXT }}>
+            <h3 className="text-lg font-semibold tracking-tight mb-3" style={{ color: BODY_TEXT }}>
               Decline Document
             </h3>
             <p className="text-sm mb-3" style={{ color: TEXT_TERTIARY }}>
@@ -429,8 +429,8 @@ export default function VendorDocumentReview() {
       {showUpgrade && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-xl p-6 max-w-sm w-full text-center">
-            <h3 className="text-lg font-semibold mb-2">{upgradeFeature || 'Feature'}</h3>
-            <p className="text-sm text-gray-500 mb-4">This feature requires a live account.</p>
+            <h3 className="text-lg font-semibold tracking-tight mb-2">{upgradeFeature || 'Feature'}</h3>
+            <p className="text-sm text-[#1E2D4D]/50 mb-4">This feature requires a live account.</p>
             <button
               onClick={() => setShowUpgrade(false)}
               className="px-6 py-2 rounded-lg text-sm font-semibold text-white"

@@ -35,7 +35,7 @@ function BlogCard({ post }: { post: Post }) {
   return (
     <Link
       to={`/blog/${post.slug.current}`}
-      className="group bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow duration-200"
+      className="group bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden hover:shadow-lg transition-shadow duration-200"
     >
       {post.coverImage && (
         <div className="aspect-[16/9] overflow-hidden">
@@ -71,10 +71,10 @@ function BlogCard({ post }: { post: Post }) {
         </h2>
 
         {post.excerpt && (
-          <p className="text-gray-600 text-sm mb-4 line-clamp-3">{post.excerpt}</p>
+          <p className="text-[#1E2D4D]/70 text-sm mb-4 line-clamp-3">{post.excerpt}</p>
         )}
 
-        <div className="flex items-center gap-4 text-xs text-gray-500">
+        <div className="flex items-center gap-4 text-xs text-[#1E2D4D]/50">
           {post.author && (
             <span className="flex items-center gap-1">
               <User className="w-3.5 h-3.5" />
@@ -135,7 +135,7 @@ export function BlogList() {
           >
             EvidLY Blog
           </h1>
-          <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="mt-4 text-lg text-[#1E2D4D]/70 max-w-2xl mx-auto">
             Food safety compliance insights, tips, and industry news.
           </p>
         </section>
@@ -148,14 +148,14 @@ export function BlogList() {
                 {[1, 2, 3].map((i) => (
                   <div
                     key={i}
-                    className="bg-white rounded-xl border border-gray-200 overflow-hidden animate-pulse"
+                    className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden animate-pulse"
                   >
-                    <div className="aspect-[16/9] bg-gray-200" />
+                    <div className="aspect-[16/9] bg-[#1E2D4D]/8" />
                     <div className="p-5 space-y-3">
-                      <div className="h-4 bg-gray-200 rounded w-1/4" />
-                      <div className="h-5 bg-gray-200 rounded w-3/4" />
-                      <div className="h-4 bg-gray-200 rounded w-full" />
-                      <div className="h-3 bg-gray-200 rounded w-1/3" />
+                      <div className="h-4 bg-[#1E2D4D]/8 rounded w-1/4" />
+                      <div className="h-5 bg-[#1E2D4D]/8 rounded w-3/4" />
+                      <div className="h-4 bg-[#1E2D4D]/8 rounded w-full" />
+                      <div className="h-3 bg-[#1E2D4D]/8 rounded w-1/3" />
                     </div>
                   </div>
                 ))}
@@ -164,13 +164,13 @@ export function BlogList() {
 
             {error && (
               <div className="text-center py-16">
-                <p className="text-gray-500">{error}</p>
+                <p className="text-[#1E2D4D]/50">{error}</p>
               </div>
             )}
 
             {!loading && !error && posts.length === 0 && (
               <div className="text-center py-16">
-                <p className="text-gray-500 text-lg">No posts yet. Check back soon!</p>
+                <p className="text-[#1E2D4D]/50 text-lg">No posts yet. Check back soon!</p>
               </div>
             )}
 

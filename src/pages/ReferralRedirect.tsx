@@ -58,12 +58,12 @@ export default function ReferralRedirect() {
             <CheckCircle className="h-6 w-6" style={{ color: '#1E2D4D' }} />
           </div>
 
-          <h1 className="text-2xl font-bold text-[#1E2D4D] mb-2">{message.heading}</h1>
-          <p className="text-gray-600 mb-6">{message.subtext}</p>
+          <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D] mb-2">{message.heading}</h1>
+          <p className="text-[#1E2D4D]/70 mb-6">{message.subtext}</p>
 
           {code && (
             <div className="mb-6 px-4 py-2 bg-[#FAF7F0] rounded-lg inline-block">
-              <span className="text-xs text-gray-400 block">Referral Code</span>
+              <span className="text-xs text-[#1E2D4D]/30 block">Referral Code</span>
               <span className="text-sm font-mono font-bold" style={{ color: '#1E2D4D' }}>{code}</span>
             </div>
           )}
@@ -79,12 +79,12 @@ export default function ReferralRedirect() {
             <ArrowRight className="h-4 w-4" />
           </button>
 
-          <p className="text-xs text-gray-400 mt-4">
+          <p className="text-xs text-[#1E2D4D]/30 mt-4">
             Redirecting to signup in {countdown}s...
           </p>
         </div>
 
-        <p className="text-xs text-gray-400 mt-6">
+        <p className="text-xs text-[#1E2D4D]/30 mt-6">
           30-day free trial. No credit card required.
         </p>
       </div>

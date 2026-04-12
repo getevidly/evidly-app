@@ -250,7 +250,7 @@ export default function AdminDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-bold" style={{ color: BRAND }}>Admin Dashboard</h1>
+          <h1 className="text-2xl font-bold tracking-tight" style={{ color: BRAND }}>Admin Dashboard</h1>
           <p className="text-sm mt-1" style={{ color: TEXT_TERT }}>
             Platform metrics, crawl health, and operational monitoring
           </p>
@@ -343,7 +343,7 @@ function KpiCard({ label, value, icon, color }: { label: string; value: string |
         <span style={{ color: color || BRAND }}>{icon}</span>
         <span className="text-xs font-medium" style={{ color: TEXT_TERT }}>{label}</span>
       </div>
-      <p className="text-2xl font-bold" style={{ color: color || '#0B1628' }}>{value}</p>
+      <p className="text-2xl font-bold tracking-tight" style={{ color: color || '#0B1628' }}>{value}</p>
     </div>
   );
 }
@@ -368,7 +368,7 @@ function CommandCenterTab({ crawlStats, latestRun, orgCount, locCount, recentErr
 }) {
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-semibold" style={{ color: BRAND }}>Platform Overview</h3>
+      <h3 className="text-lg font-semibold tracking-tight" style={{ color: BRAND }}>Platform Overview</h3>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <MiniStat label="Feeds Live" value={crawlStats.live} total={crawlStats.total} color="#16a34a" />
         <MiniStat label="Feeds Failed" value={crawlStats.failed} color="#dc2626" />
@@ -423,7 +423,7 @@ function CrawlMonitorTab({ feeds, runs }: { feeds: CrawlHealthRow[]; runs: Crawl
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-2">
-        <h3 className="text-lg font-semibold" style={{ color: BRAND }}>Crawl Health ({feeds.length} feeds)</h3>
+        <h3 className="text-lg font-semibold tracking-tight" style={{ color: BRAND }}>Crawl Health ({feeds.length} feeds)</h3>
         <div className="flex gap-1">
           {(['all', 'food_safety', 'facility_safety'] as const).map(p => (
             <button
@@ -444,7 +444,7 @@ function CrawlMonitorTab({ feeds, runs }: { feeds: CrawlHealthRow[]; runs: Crawl
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b" style={{ borderColor: '#e2e8f0' }}>
+            <tr className="border-b hover:bg-[#1E2D4D]/[0.02] transition-colors" style={{ borderColor: '#e2e8f0' }}>
               <th className="text-left py-2 px-2 text-xs font-medium" style={{ color: TEXT_TERT }}>Status</th>
               <th className="text-left py-2 px-2 text-xs font-medium" style={{ color: TEXT_TERT }}>Feed</th>
               <th className="text-left py-2 px-2 text-xs font-medium hidden sm:table-cell" style={{ color: TEXT_TERT }}>Pillar</th>
@@ -514,7 +514,7 @@ function EventLogTab({ events }: { events: EventRow[] }) {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2 flex-wrap">
-        <h3 className="text-lg font-semibold" style={{ color: BRAND }}>Event Log</h3>
+        <h3 className="text-lg font-semibold tracking-tight" style={{ color: BRAND }}>Event Log</h3>
         <select
           value={levelFilter}
           onChange={e => setLevelFilter(e.target.value)}
@@ -566,7 +566,7 @@ function LevelBadge({ level }: { level: string }) {
 function ApiKeysTab({ keys }: { keys: ApiKeyRow[] }) {
   return (
     <div className="space-y-3">
-      <h3 className="text-lg font-semibold" style={{ color: BRAND }}>API Keys ({keys.length})</h3>
+      <h3 className="text-lg font-semibold tracking-tight" style={{ color: BRAND }}>API Keys ({keys.length})</h3>
       {keys.length === 0 ? (
         <p className="text-sm py-8 text-center" style={{ color: TEXT_TERT }}>No API keys configured</p>
       ) : (
@@ -602,11 +602,11 @@ function LeadsTab({ leads }: { leads: LeadRow[] }) {
 
   return (
     <div className="space-y-3">
-      <h3 className="text-lg font-semibold" style={{ color: BRAND }}>Assessment Leads ({leads.length})</h3>
+      <h3 className="text-lg font-semibold tracking-tight" style={{ color: BRAND }}>Assessment Leads ({leads.length})</h3>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b" style={{ borderColor: '#e2e8f0' }}>
+            <tr className="border-b hover:bg-[#1E2D4D]/[0.02] transition-colors" style={{ borderColor: '#e2e8f0' }}>
               <th className="text-left py-2 px-2 text-xs font-medium" style={{ color: TEXT_TERT }}>Business</th>
               <th className="text-left py-2 px-2 text-xs font-medium hidden sm:table-cell" style={{ color: TEXT_TERT }}>County</th>
               <th className="text-left py-2 px-2 text-xs font-medium" style={{ color: TEXT_TERT }}>Status</th>
@@ -656,7 +656,7 @@ function EdgeFunctionsTab({ events }: { events: EventRow[] }) {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold" style={{ color: BRAND }}>Edge Functions ({KNOWN_FUNCTIONS.length})</h3>
+      <h3 className="text-lg font-semibold tracking-tight" style={{ color: BRAND }}>Edge Functions ({KNOWN_FUNCTIONS.length})</h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
         {KNOWN_FUNCTIONS.map(fn => {
           const errCount = edgeErrors.filter(e => e.message?.includes(fn) || e.metadata?.feedId === fn).length;
@@ -664,7 +664,7 @@ function EdgeFunctionsTab({ events }: { events: EventRow[] }) {
             <div key={fn} className="flex items-center gap-2 p-3 rounded-lg border" style={{ borderColor: '#e2e8f0' }}>
               <Zap size={14} style={{ color: errCount > 0 ? '#dc2626' : '#16a34a' }} />
               <span className="text-sm font-medium flex-1">{fn}</span>
-              {errCount > 0 && <span className="text-xs px-1.5 py-0.5 rounded-full bg-red-100 text-red-800">{errCount} err</span>}
+              {errCount > 0 && <span className="text-xs px-1.5 py-0.5 rounded-full bg-red-50 text-red-700">{errCount} err</span>}
             </div>
           );
         })}
@@ -678,7 +678,7 @@ function EdgeFunctionsTab({ events }: { events: EventRow[] }) {
 function DemoSessionsTab({ sessions }: { sessions: DemoSessionRow[] }) {
   return (
     <div className="space-y-3">
-      <h3 className="text-lg font-semibold" style={{ color: BRAND }}>Demo Sessions ({sessions.length})</h3>
+      <h3 className="text-lg font-semibold tracking-tight" style={{ color: BRAND }}>Demo Sessions ({sessions.length})</h3>
       {sessions.length === 0 ? (
         <p className="text-sm py-8 text-center" style={{ color: TEXT_TERT }}>No demo sessions recorded</p>
       ) : (
@@ -732,7 +732,7 @@ function K2CTab({ donations, onRefresh, isDemoMode }: { donations: K2CRow[]; onR
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold" style={{ color: BRAND }}>Kitchen to Community</h3>
+        <h3 className="text-lg font-semibold tracking-tight" style={{ color: BRAND }}>Kitchen to Community</h3>
         <button
           onClick={processK2C}
           disabled={processing}
@@ -849,7 +849,7 @@ function UsageTab({ orgCount, locCount, isDemoMode }: { orgCount: number; locCou
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold" style={{ color: BRAND }}>Platform Usage</h3>
+        <h3 className="text-lg font-semibold tracking-tight" style={{ color: BRAND }}>Platform Usage</h3>
         <button
           onClick={refreshMetrics}
           disabled={refreshing}
@@ -914,7 +914,7 @@ function WebAnalyticsTab({ leads }: { leads: LeadRow[] }) {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold" style={{ color: BRAND }}>Web Analytics</h3>
+      <h3 className="text-lg font-semibold tracking-tight" style={{ color: BRAND }}>Web Analytics</h3>
       {sourceBreakdown.length > 0 ? (
         <div>
           <h4 className="text-sm font-medium mb-2" style={{ color: TEXT_SEC }}>Lead Sources</h4>

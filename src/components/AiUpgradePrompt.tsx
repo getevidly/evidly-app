@@ -26,7 +26,7 @@ export function AiUpgradePrompt({ feature, description, variant = 'inline', onCl
         </div>
         <div className="flex-1">
           <span className="text-sm font-semibold text-[#1E2D4D]">{feature}</span>
-          <span className="text-xs text-gray-600 ml-2">{description}</span>
+          <span className="text-xs text-[#1E2D4D]/70 ml-2">{description}</span>
         </div>
         <button
           onClick={() => navigate('/settings?tab=billing')}
@@ -42,18 +42,18 @@ export function AiUpgradePrompt({ feature, description, variant = 'inline', onCl
   if (variant === 'modal') {
     return (
       <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-xl border border-gray-200 max-w-md w-full p-6 text-center">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 max-w-md w-full p-6 text-center">
           <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: '#fdf8e8' }}>
             <Sparkles className="h-7 w-7" style={{ color: '#d4af37' }} />
           </div>
           <h3 className="text-lg font-bold text-[#1E2D4D] mb-2">Upgrade to Premium</h3>
-          <p className="text-sm text-gray-600 mb-1"><strong>{feature}</strong></p>
-          <p className="text-sm text-gray-500 mb-6">{description}</p>
+          <p className="text-sm text-[#1E2D4D]/70 mb-1"><strong>{feature}</strong></p>
+          <p className="text-sm text-[#1E2D4D]/50 mb-6">{description}</p>
           <div className="flex gap-3">
             {onClose && (
               <button
                 onClick={onClose}
-                className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="flex-1 px-4 py-2.5 border border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-gray-50"
               >
                 Maybe Later
               </button>
@@ -79,7 +79,7 @@ export function AiUpgradePrompt({ feature, description, variant = 'inline', onCl
     >
       <Lock className="h-5 w-5 mx-auto mb-2" style={{ color: '#d4af37' }} />
       <p className="text-sm font-semibold text-[#1E2D4D] mb-1">{feature}</p>
-      <p className="text-xs text-gray-600 mb-3">{description}</p>
+      <p className="text-xs text-[#1E2D4D]/70 mb-3">{description}</p>
       <button
         onClick={() => navigate('/settings?tab=billing')}
         className="px-4 py-2 rounded-lg text-xs font-bold text-white flex items-center gap-1.5 mx-auto"

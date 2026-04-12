@@ -157,11 +157,11 @@ export function AddVendorModal({
       <div className="fixed inset-0 bg-black/50 z-50" onClick={handleClose} />
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div
-          className="bg-white rounded-xl border border-gray-200 w-[95vw] sm:w-full max-w-lg max-h-[90vh] overflow-y-auto"
+          className="bg-white rounded-xl border border-[#1E2D4D]/10 w-[95vw] sm:w-full max-w-lg max-h-[90vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="p-4 sm:p-6 border-b border-gray-200 sticky top-0 bg-white rounded-t-xl z-10">
+          <div className="p-4 sm:p-6 border-b border-[#1E2D4D]/10 sticky top-0 bg-white rounded-t-xl z-10">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <div className="p-2 bg-[#eef4f8] rounded-lg">
@@ -169,10 +169,10 @@ export function AddVendorModal({
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-[#1E2D4D]">Add Vendor</h3>
-                  <p className="text-sm text-gray-500">Enter vendor details to create a record</p>
+                  <p className="text-sm text-[#1E2D4D]/50">Enter vendor details to create a record</p>
                 </div>
               </div>
-              <button onClick={handleClose} className="text-gray-400 hover:text-gray-600" aria-label="Close">
+              <button onClick={handleClose} className="text-[#1E2D4D]/30 hover:text-gray-600" aria-label="Close">
                 <XCircle className="h-5 w-5" />
               </button>
             </div>
@@ -182,26 +182,26 @@ export function AddVendorModal({
           <div className="p-4 sm:p-6 space-y-4">
             {/* Company Name */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Vendor Name <span className="text-red-500">*</span></label>
+              <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Vendor Name <span className="text-red-500">*</span></label>
               <input
                 type="text"
                 value={form.companyName}
                 onChange={(e) => setForm(prev => ({ ...prev, companyName: e.target.value }))}
                 placeholder="e.g., Acme Hood Cleaning"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
+                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
               />
             </div>
 
             {/* Vendor Type (Service Category) */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Vendor Type <span className="text-red-500">*</span></label>
+              <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Vendor Type <span className="text-red-500">*</span></label>
               <select
                 value={form.categories[0] || ''}
                 onChange={(e) => {
                   const val = e.target.value;
                   setForm(prev => ({ ...prev, categories: val ? [val] : [] }));
                 }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent bg-white"
+                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent bg-white"
               >
                 <option value="">Select a type...</option>
                 {VENDOR_CATEGORIES.map((cat) => (
@@ -213,36 +213,36 @@ export function AddVendorModal({
 
             {/* Contact Name */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Primary Contact Name <span className="text-red-500">*</span></label>
+              <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Primary Contact Name <span className="text-red-500">*</span></label>
               <input
                 type="text"
                 value={form.contactName}
                 onChange={(e) => setForm(prev => ({ ...prev, contactName: e.target.value }))}
                 placeholder="e.g., John Smith"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
+                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
               />
             </div>
 
             {/* Contact Email & Phone */}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Contact Email <span className="text-red-500">*</span></label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Contact Email <span className="text-red-500">*</span></label>
                 <input
                   type="email"
                   value={form.contactEmail}
                   onChange={(e) => setForm(prev => ({ ...prev, contactEmail: e.target.value }))}
                   placeholder="vendor@example.com"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Contact Phone <span className="text-gray-400 text-xs font-normal">(optional)</span></label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Contact Phone <span className="text-[#1E2D4D]/30 text-xs font-normal">(optional)</span></label>
                 <input
                   type="tel"
                   value={form.contactPhone}
                   onChange={(e) => setForm(prev => ({ ...prev, contactPhone: e.target.value }))}
                   placeholder="(555) 123-4567"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
                 />
               </div>
             </div>
@@ -250,7 +250,7 @@ export function AddVendorModal({
             {/* Location Assignment — multi-select */}
             {accessibleLocations.length > 0 && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Location Assignment</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">Location Assignment</label>
                 <div className="bg-[#FAF7F0] rounded-lg p-3 space-y-2">
                   {accessibleLocations.map((loc) => (
                     <label key={loc.locationId} className="flex items-center gap-2 cursor-pointer">
@@ -265,9 +265,9 @@ export function AddVendorModal({
                               : [...prev.locationIds, loc.locationId],
                           }));
                         }}
-                        className="w-4 h-4 rounded border-gray-300 text-[#1E2D4D] focus:ring-[#1E2D4D]"
+                        className="w-4 h-4 rounded border-[#1E2D4D]/15 text-[#1E2D4D] focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
                       />
-                      <span className="text-sm text-gray-700">{loc.locationName}</span>
+                      <span className="text-sm text-[#1E2D4D]/80">{loc.locationName}</span>
                     </label>
                   ))}
                 </div>
@@ -276,21 +276,21 @@ export function AddVendorModal({
 
             {/* License / Cert Number */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">License / Cert Number <span className="text-gray-400 text-xs font-normal">(optional)</span></label>
+              <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">License / Cert Number <span className="text-[#1E2D4D]/30 text-xs font-normal">(optional)</span></label>
               <input
                 type="text"
                 value={form.licenseCertNumber}
                 onChange={(e) => setForm(prev => ({ ...prev, licenseCertNumber: e.target.value }))}
                 placeholder="e.g., LIC-2026-12345"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent"
+                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
               />
             </div>
 
             {/* Insurance COI toggle */}
             <div className="flex items-center justify-between bg-[#FAF7F0] rounded-lg p-3">
               <div>
-                <p className="text-sm font-medium text-gray-700">Insurance COI on File</p>
-                <p className="text-xs text-gray-500">Certificate of Insurance has been received</p>
+                <p className="text-sm font-medium text-[#1E2D4D]/80">Insurance COI on File</p>
+                <p className="text-xs text-[#1E2D4D]/50">Certificate of Insurance has been received</p>
               </div>
               <button
                 type="button"
@@ -308,7 +308,7 @@ export function AddVendorModal({
             {/* Notes */}
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="text-sm font-medium text-gray-700">Notes <span className="text-gray-400 text-xs font-normal">(optional)</span></label>
+                <label className="text-sm font-medium text-[#1E2D4D]/80">Notes <span className="text-[#1E2D4D]/30 text-xs font-normal">(optional)</span></label>
                 <AIAssistButton
                   fieldLabel="Notes"
                   context={{ vendorName: form.companyName }}
@@ -321,7 +321,7 @@ export function AddVendorModal({
                 onChange={(e) => { setForm(prev => ({ ...prev, notes: e.target.value })); setAiFields(prev => { const s = new Set(prev); s.delete('vendorNotes'); return s; }); }}
                 placeholder="Any additional details..."
                 rows={2}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E2D4D] focus:border-transparent resize-none"
+                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent resize-none"
               />
               {aiFields.has('vendorNotes') && <AIGeneratedIndicator />}
             </div>
@@ -335,10 +335,10 @@ export function AddVendorModal({
           </div>
 
           {/* Footer */}
-          <div className="p-4 sm:p-6 border-t border-gray-200 flex justify-end gap-3 sticky bottom-0 bg-white rounded-b-xl">
+          <div className="p-4 sm:p-6 border-t border-[#1E2D4D]/10 flex justify-end gap-3 sticky bottom-0 bg-white rounded-b-xl">
             <button
               onClick={handleClose}
-              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm font-medium"
+              className="px-4 py-2 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 rounded-lg hover:bg-gray-50 text-sm font-medium"
             >
               Cancel
             </button>
