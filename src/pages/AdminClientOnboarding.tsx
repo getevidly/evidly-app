@@ -104,6 +104,11 @@ export function AdminClientOnboarding() {
         industry_type: industryType,
         industry_subtype: industrySubtype,
         planned_location_count: isTribal ? outletCount : locationCount,
+        primary_contact_name: ownerName,
+        primary_contact_email: ownerEmail,
+        primary_contact_phone: ownerPhone || null,
+        status: 'pending',
+        plan: 'trial',
       };
 
       if (isTribal) {
@@ -147,6 +152,7 @@ export function AdminClientOnboarding() {
         email: ownerEmail,
         password: tempPassword,
         options: {
+          emailRedirectTo: `${window.location.origin}/email-confirmed`,
           data: {
             full_name: ownerName,
             user_type: isTribal ? 'tribal_casino' : 'restaurant',
