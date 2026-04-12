@@ -1,0 +1,46 @@
+═══════════════════════════════════════════
+  WORKFLOW TRACES
+  7 end-to-end workflows traced
+═══════════════════════════════════════════
+
+── Jurisdiction Config Drift ──
+  Chain: jurisdictions UPDATE → trg_jurisdiction_config_drift → fn_jurisdiction_config_drift_check() → net.http_post → jurisdiction-drift-alert edge fn → Resend email to arthur@getevidly.com → support_tickets INSERT
+  Tables: jurisdictions → jurisdiction_audit_baselines → support_tickets
+  Edge Functions: jurisdiction-drift-alert
+  Verified: YES
+
+── Trial End Date Auto-Set ──
+  Chain: organizations INSERT/UPDATE → trg_set_trial_end_date → set_trial_end_date() → sets trial_end_date = trial_start_date + 14 days
+  Tables: organizations
+  Edge Functions: none (DB trigger only)
+  Verified: YES
+
+── Support Ticket SLA Assignment ──
+  Chain: support_tickets INSERT → ticket_sla → set_ticket_sla() → auto-assigns SLA deadline based on priority
+  Tables: support_tickets
+  Edge Functions: none (DB trigger only)
+  Verified: YES
+
+── Temperature Deviation → Corrective Action ──
+  Chain: temperature_logs INSERT → trg_temp_deviation_to_ca → fn_temp_deviation_to_ca() → auto-creates corrective_action if temp_pass=false
+  Tables: temperature_logs → corrective_actions
+  Edge Functions: none (DB trigger only)
+  Verified: YES
+
+── Stripe Payment → K2C Donation ──
+  Chain: invoice.paid webhook → stripe-webhook → fetch subscriptions.user_id → user_profiles.organization_id → k2c-processor edge fn → k2c_donations INSERT + admin_event_log
+  Tables: subscriptions → user_profiles → k2c_donations → admin_event_log
+  Edge Functions: stripe-webhook, k2c-processor
+  Verified: YES
+
+── 14-Day Trial Email Sequence ──
+  Chain: pg_cron 7am PT → trial-email-sender → organizations(trial) → user_profiles → role-based email selection → Resend API → trial_email_log dedup
+  Tables: organizations → user_profiles → locations → trial_email_log
+  Edge Functions: trial-email-sender
+  Verified: YES
+
+── Sensor Alert → Emergency Playbook ──
+  Chain: sensor alert → playbook-auto-trigger → match ALERT_TO_PLAYBOOK → playbook_templates lookup → playbook_activations INSERT (suggested) → notifications INSERT for managers
+  Tables: playbook_templates → playbook_activations → location_members → notifications
+  Edge Functions: playbook-auto-trigger
+  Verified: YES

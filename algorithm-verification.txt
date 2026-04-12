@@ -1,0 +1,40 @@
+═══════════════════════════════════════════
+  ALGORITHM VERIFICATION REPORT
+═══════════════════════════════════════════
+
+── intelligence-collect ──
+  Algorithm: 5-phase pipeline: fetch all sources → batch dedup → Claude analysis (concurrency 5) → batch insert → auto-routing
+  External APIs: openFDA, USDA FSIS, CDPH, FoodSafety.gov, CDC, NWS, CPSC, Federal Register
+  AI Model: claude-haiku-4-5-20251001
+
+── stripe-webhook ──
+  Algorithm: Signature verification (HMAC SHA-256) → event dispatch → subscriptions upsert/update → K2C donation trigger on invoice.paid → notifications on trial_will_end and payment_failed
+  Tables: subscriptions, notifications, user_profiles
+  External APIs: Stripe API
+
+── trial-email-sender ──
+  Algorithm: 14-day drip: Welcome(day0) + Series1 How-to-Use(operational roles) + Series2 Lead-with-Confidence(leadership) + Referral(day5,10) + Warnings(day7,13,14). Owner gets both on alternating days.
+  Tables: organizations, user_profiles, locations, trial_email_log
+  External APIs: Resend
+
+── calculate-compliance-score ──
+  Algorithm: 7 scoring types (weighted_deduction,heavy_weighted,major_violation_count,negative_scale,major_minor_reinspect,violation_point_accumulation,report_only), 8 grading types (letter_grade,letter_grade_strict,color_placard,score_100,score_negative,pass_reinspect,three_tier_rating,report_only). CalCode §113985 imminent hazard check. Per-jurisdiction weights from verified source data. No defaults.
+  Scoring Types: weighted_deduction, heavy_weighted, major_violation_count, negative_scale, major_minor_reinspect, violation_point_accumulation, report_only
+  Grading Types: letter_grade, letter_grade_strict, color_placard, score_100, score_negative, pass_reinspect, three_tier_rating, report_only
+  Tables: location_jurisdictions, jurisdictions, calcode_violation_map, jurisdiction_violation_overrides, temperature_logs, checklist_completions, documents, equipment, haccp_plans, training_records, score_calculations, compliance_score_snapshots
+
+── snapshot-readiness ──
+  Algorithm: Daily readiness score: start at 100, deduct for openCA(-5 each, max -30), overdue temps(-3 each, max -20), expired docs(-5 each, max -25). Upserts to readiness_snapshots.
+  Tables: locations, corrective_actions, temperature_logs, documents, readiness_snapshots
+
+── playbook-auto-trigger ──
+  Algorithm: Maps sensor alerts to emergency playbook templates: temperature_critical, equipment_failure, power_loss, water_leak, fire_alarm, contamination, pest_detected, humidity_critical. Creates 'suggested' playbook activation and notifies location managers.
+  Tables: playbook_templates, playbook_activations, location_members, notifications
+
+── k2c-processor ──
+  Algorithm: Per-org donation: $10/location, 100 meals/location. Dedup by (org_id, donation_period). Triggered by stripe invoice.paid or API.
+  Tables: organizations, locations, k2c_donations, admin_event_log
+
+── intelligence-collect (routing) ──
+  Algorithm: Auto-routing: hold(enforcement/outbreak/critical risk, 12-24h deadline) → notify(elevated risk maxRisk>=50, 48h deadline) → auto(low risk in autonomous mode). Supervised mode defaults notify.
+  Risk Dimensions: risk_revenue, risk_liability, risk_cost, risk_operational
