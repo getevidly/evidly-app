@@ -343,7 +343,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center">
+      <div className="min-h-screen bg-cream flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#A08C5A] mx-auto"></div>
           <p className="mt-4 text-[#1E2D4D]/70">Loading...</p>
@@ -377,7 +377,7 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center">
+      <div className="min-h-screen bg-cream flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#A08C5A] mx-auto"></div>
           <p className="mt-4 text-[#1E2D4D]/70">Loading...</p>
@@ -432,7 +432,7 @@ function ProtectedLayout() {
   if (!effectiveDemoMode) {
     if (loading) {
       return (
-        <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center">
+        <div className="min-h-screen bg-cream flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#A08C5A] mx-auto"></div>
             <p className="mt-4 text-[#1E2D4D]/70">Loading...</p>

@@ -39,7 +39,7 @@ export default function ReferralRedirect() {
   }, [code, navigate]);
 
   return (
-    <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-cream flex items-center justify-center px-4">
       <div className="max-w-md w-full text-center">
         {/* Logo */}
         <div className="mb-8">

@@ -83,7 +83,7 @@ export function TempLogQuick() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center p-4">
+      <div className="min-h-screen bg-cream flex items-center justify-center p-4">
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8 max-w-sm w-full text-center modal-content-enter">
           <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
           <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Temperature Logged!</h2>
@@ -119,7 +119,7 @@ export function TempLogQuick() {
   }
 
   return (
-    <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-cream flex items-center justify-center p-4">
       <div className="bg-white rounded-xl border border-[#1E2D4D]/10 w-full max-w-sm overflow-hidden modal-content-enter">
         <div className="px-6 py-5" style={{ backgroundColor: '#1E2D4D' }}>
           <div className="flex items-center gap-3">

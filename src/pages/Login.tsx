@@ -312,7 +312,7 @@ export function Login() {
             <button
               type="submit"
               disabled={loading || (captchaEnabled && !captchaToken)}
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-[#1E2D4D] hover:bg-[#2a3d5d] disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus:ring-offset-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 transition-colors"
+              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-[#1E2D4D] hover:bg-[#162340] disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus:ring-offset-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 transition-colors"
             >
               {loading ? 'Signing in...' : 'Sign in'}
             </button>
@@ -327,7 +327,7 @@ export function Login() {
               </div>
               <button
                 onClick={() => toast.info('SSO login is a demo placeholder. In production, this redirects to your identity provider.')}
-                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 border-2 rounded-lg text-sm font-semibold transition-colors"
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 border-2 rounded-xl text-sm font-semibold transition-colors"
                 style={{ borderColor: branding.colors.primary, color: branding.colors.primary }}
               >
                 <EvidlyIcon size={16} />

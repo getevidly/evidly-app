@@ -1995,7 +1995,7 @@ export function EnterpriseDashboard() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#faf8f3]" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+    <div className="min-h-screen bg-cream" style={{ fontFamily: "'DM Sans', sans-serif" }}>
       {/* Toast */}
       {toastMessage && (
         <div style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 9999, backgroundColor: '#065f46', color: 'white', padding: '12px 20px', borderRadius: '10px', fontSize: '14px', fontWeight: 500, boxShadow: '0 4px 20px rgba(0,0,0,0.15)', display: 'flex', alignItems: 'center', gap: '8px', fontFamily: "'DM Sans', sans-serif" }}>

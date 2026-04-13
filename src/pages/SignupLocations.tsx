@@ -63,7 +63,7 @@ export function SignupLocations() {
   };
 
   return (
-    <div className="min-h-screen bg-[#faf8f3] py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-cream py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
           <div className="flex justify-center mb-6">

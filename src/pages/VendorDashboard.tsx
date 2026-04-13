@@ -157,7 +157,7 @@ export function VendorDashboard() {
 
   if (!isDemoMode) {
     return (
-      <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center">
+      <div className="min-h-screen bg-cream flex items-center justify-center">
         <div className="p-8 text-center">
           <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Vendor Dashboard</h2>
           <p className="text-[#1E2D4D]/50">No vendor data available.</p>
@@ -981,7 +981,7 @@ export function VendorDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[#faf8f3]">
+    <div className="min-h-screen bg-cream">
       {/* Portal Header */}
       <div className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

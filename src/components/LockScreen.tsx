@@ -51,7 +51,7 @@ export function LockScreen({ userEmail, userName, onUnlock, onSwitchUser, onMaxA
   const displayName = userName || userEmail.split('@')[0];
 
   return (
-    <div className="fixed inset-0 z-[100000] bg-[#faf8f3] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[100000] bg-cream flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8">
           {/* EvidLY Logo */}

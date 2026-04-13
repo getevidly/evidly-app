@@ -203,7 +203,7 @@ export function ReportSettings() {
             <div
               key={report.type}
               className={`border rounded-xl p-4 transition-all ${
-                isActive ? 'border-[#A08C5A] bg-[#faf8f3]' : 'border-[#1E2D4D]/10 bg-white'
+                isActive ? 'border-[#A08C5A] bg-cream' : 'border-[#1E2D4D]/10 bg-white'
               }`}
             >
               <div className="flex items-start gap-3">

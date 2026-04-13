@@ -568,7 +568,7 @@ export function VendorSetup() {
   const stepRenderers = [renderStep1, renderStep2, renderStep3, renderStep4, renderStep5];
 
   return (
-    <div className="min-h-screen bg-[#faf8f3] py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-cream py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">

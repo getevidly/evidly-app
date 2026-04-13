@@ -451,7 +451,7 @@ export function BrandingSettings() {
           {/* Mini Login Preview */}
           <div className="border border-[#1E2D4D]/10 rounded-xl overflow-hidden">
             <p className="text-xs font-medium text-[#1E2D4D]/50 px-4 pt-3 pb-2">Login Page</p>
-            <div className="p-6 text-center bg-[#faf8f3]" style={{ minHeight: 260 }}>
+            <div className="p-6 text-center bg-cream" style={{ minHeight: 260 }}>
               <div className="flex items-center justify-center gap-2 mb-2">
                 <EvidlyIcon size={24} />
                 <span className="text-lg font-bold" style={{ color: localColors.primary }}>

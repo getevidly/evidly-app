@@ -162,7 +162,7 @@ export function InspectorView() {
         }
       `}</style>
 
-      <div className="min-h-screen bg-[#faf8f3]">
+      <div className="min-h-screen bg-cream">
         <div className="print:hidden">
           <Breadcrumb
             items={[

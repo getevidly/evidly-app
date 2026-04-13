@@ -198,7 +198,7 @@ export function DemoWizard() {
   // ── Below: Onboarding wizard for real (non-demo) users ──
   // This code is kept for the real onboarding flow but never reached in demo mode.
   return (
-    <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center py-8 px-4">
+    <div className="min-h-screen bg-cream flex items-center justify-center py-8 px-4">
       <div className="max-w-2xl w-full">
         <div className="text-center mb-6">
           <span className="text-3xl font-bold tracking-tight">

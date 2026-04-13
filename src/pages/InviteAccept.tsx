@@ -162,7 +162,7 @@ export function InviteAccept() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center">
+      <div className="min-h-screen bg-cream flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#A08C5A] mx-auto"></div>
           <p className="mt-4 text-[#1E2D4D]/70">Loading invitation...</p>
@@ -173,7 +173,7 @@ export function InviteAccept() {
 
   if (error && !invitation) {
     return (
-      <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center px-4">
+      <div className="min-h-screen bg-cream flex items-center justify-center px-4">
         <div className="max-w-md w-full bg-white rounded-xl border border-[#1E2D4D]/10 p-8 text-center">
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <X className="w-8 h-8 text-red-600" />
@@ -192,7 +192,7 @@ export function InviteAccept() {
   }
 
   return (
-    <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-cream flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full">
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8">
           <div className="text-center mb-6">

@@ -125,7 +125,7 @@ export function TempLogScan() {
   // ── Success screen ──
   if (state === 'success' && matched) {
     return (
-      <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center p-4">
+      <div className="min-h-screen bg-cream flex items-center justify-center p-4">
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8 max-w-sm w-full text-center">
           <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
           <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Temperature Logged!</h2>
@@ -164,7 +164,7 @@ export function TempLogScan() {
   // ── Found animation (brief flash) ──
   if (state === 'found' && matched) {
     return (
-      <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center p-4">
+      <div className="min-h-screen bg-cream flex items-center justify-center p-4">
         <div className="bg-white rounded-xl shadow-sm border-2 border-green-400 p-8 max-w-sm w-full text-center animate-pulse">
           <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-3" />
           <h2 className="text-lg font-bold text-[#1E2D4D] mb-1">Equipment Found!</h2>
@@ -178,7 +178,7 @@ export function TempLogScan() {
   // ── Entry form (after scan matched) ──
   if (state === 'entry' && matched) {
     return (
-      <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center p-4">
+      <div className="min-h-screen bg-cream flex items-center justify-center p-4">
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10 w-full max-w-sm overflow-hidden">
           <div className="px-6 py-4" style={{ backgroundColor: '#1E2D4D' }}>
             <div className="flex items-center gap-3">
@@ -297,7 +297,7 @@ export function TempLogScan() {
   // ── Desktop restriction (non-demo) ──
   if (!isMobile && !isDemoMode) {
     return (
-      <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center p-4">
+      <div className="min-h-screen bg-cream flex items-center justify-center p-4">
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10 w-full max-w-sm p-8 text-center">
           <QrCode className="h-16 w-16 mx-auto mb-4" style={{ color: '#1E2D4D' }} />
           <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Mobile Device Required</h2>
@@ -318,7 +318,7 @@ export function TempLogScan() {
 
   // ── Scanner screen (default) ──
   return (
-    <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-cream flex items-center justify-center p-4">
       <div className="bg-white rounded-xl border border-[#1E2D4D]/10 w-full max-w-sm overflow-hidden">
         <div className="px-6 py-5" style={{ backgroundColor: '#1E2D4D' }}>
           <div className="flex items-center gap-3">

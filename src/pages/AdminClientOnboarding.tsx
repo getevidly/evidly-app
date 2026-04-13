@@ -237,7 +237,7 @@ export function AdminClientOnboarding() {
                   required
                   value={orgName}
                   onChange={(e) => setOrgName(e.target.value)}
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   placeholder={isTribal ? 'Table Mountain Casino Resort' : 'Main Street Restaurant Group'}
                 />
               </div>
@@ -251,7 +251,7 @@ export function AdminClientOnboarding() {
                     id="industryType"
                     value={industryType}
                     onChange={(e) => setIndustryType(e.target.value)}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   >
                     <option value="Restaurant">Restaurant</option>
                     <option value="Hotel">Hotel</option>
@@ -271,7 +271,7 @@ export function AdminClientOnboarding() {
                       id="industrySubtype"
                       value={industrySubtype}
                       onChange={(e) => setIndustrySubtype(e.target.value)}
-                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                     >
                       <option value="restaurant-full">Full-Service</option>
                       <option value="restaurant-quick">Quick-Service</option>
@@ -293,7 +293,7 @@ export function AdminClientOnboarding() {
                       required
                       value={selectedTribe}
                       onChange={(e) => setSelectedTribe(e.target.value)}
-                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                     >
                       <option value="">Select tribe...</option>
                       {TRIBAL_OPTIONS.map(t => (
@@ -320,7 +320,7 @@ export function AdminClientOnboarding() {
                     required
                     value={outletCount}
                     onChange={(e) => setOutletCount(parseInt(e.target.value) || 5)}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   />
                   <p className="text-xs text-[#1E2D4D]/50 mt-1">
                     Typical casino properties have 5-15 food outlets (buffet, steakhouse, cafe, etc.)
@@ -339,7 +339,7 @@ export function AdminClientOnboarding() {
                     required
                     value={locationCount}
                     onChange={(e) => setLocationCount(parseInt(e.target.value))}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   />
                 </div>
               )}
@@ -380,7 +380,7 @@ export function AdminClientOnboarding() {
                   required
                   value={ownerName}
                   onChange={(e) => setOwnerName(e.target.value)}
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   placeholder="John Smith"
                 />
               </div>
@@ -396,7 +396,7 @@ export function AdminClientOnboarding() {
                   required
                   value={ownerEmail}
                   onChange={(e) => setOwnerEmail(e.target.value)}
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   placeholder="john@example.com"
                 />
               </div>
@@ -410,7 +410,7 @@ export function AdminClientOnboarding() {
                   type="tel"
                   value={ownerPhone}
                   onChange={(e) => setOwnerPhone(e.target.value)}
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   placeholder="(555) 123-4567"
                 />
               </div>

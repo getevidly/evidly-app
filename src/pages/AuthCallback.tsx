@@ -99,7 +99,7 @@ export function AuthCallback() {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center">
+    <div className="min-h-screen bg-cream flex items-center justify-center">
       <div className="text-center">
         {error ? (
           <>

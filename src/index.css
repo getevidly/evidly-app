@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import 'leaflet/dist/leaflet.css';
 
 @tailwind base;
@@ -10,7 +10,7 @@
   --color-blue: #1E2D4D;
   --color-blue-light: #2A3F6B;
   --color-blue-dark: #141E33;
-  --color-gold: #c9a227;
+  --color-gold: #A08C5A;
   --color-gold-light: #A08C5A;
   --color-gold-dark: #a68a1f;
   --color-gold-bg: #f9f6ef;
@@ -64,7 +64,7 @@
 
   /* ── BRAND (never change) ── */
   --gold:           #A08C5A;
-  --gold-light:     #C4A96E;
+  --gold-light:     #C4AE7A;
   --gold-bg:        rgba(160,140,90,.1);
   --gold-border:    rgba(160,140,90,.3);
   --navy:           #0B1628;
