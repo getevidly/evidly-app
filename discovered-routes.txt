@@ -1,0 +1,358 @@
+DISCOVERED ROUTES — EvidLY App
+Generated: 2026-04-12
+Source: src/App.tsx (lines 552-870)
+Total: 261 routes (196 unique destinations + 65 redirects/aliases)
+
+================================================================
+PUBLIC ROUTES (no authentication required) — 52 routes
+================================================================
+
+# Auth pages
+/login                               Login form
+/admin-login                         Admin login form
+/signup                              Signup form
+/signup/locations                    Location setup (protected)
+/forgot-password                     Forgot password
+/reset-password                      Reset password
+/email-confirmed                     Email confirmation
+/auth/callback                       OAuth callback
+/setup-mfa                           MFA setup
+/mfa-challenge                       MFA challenge
+/suspended                           Suspended account
+
+# Demo entry
+/demo                                Demo wizard
+/demo/request                        Demo request
+/demo/schedule/:sessionId            Demo schedule
+
+# Vendor public
+/vendor/login                        Vendor login
+/vendor/register                     Vendor register
+/vendor/upload/:token                Vendor secure upload
+/vendor/invite/:code                 Vendor invite landing
+/vendor-update/:token                Vendor service update
+/vendor/schedule/:token              Vendor schedule response
+/vendor-connect/apply                Vendor connect apply
+
+# ScoreTable (public SEO pages)
+/scoretable                          ScoreTable index (all states)
+/scoretable/:stateSlug               ScoreTable state page
+/scoretable/:stateSlug/:countySlug   ScoreTable county detail
+/scoretable/city/:citySlug           ScoreTable city page
+
+# Public marketing/info
+/                                    Redirect → /login
+/operations-check                    Operations check tool
+/partners/insurance                  Carrier partnership
+/providers                           Marketplace landing
+/enterprise                          Enterprise landing
+/iot                                 IoT sensor landing
+/terms                               Terms of service
+/privacy                             Privacy policy
+/assessment                          Assessment tool
+/kitchen-check/:slug                 Kitchen check (county)
+/kitchen-to-community                Kitchen to community
+/leaderboard-preview                 Leaderboard preview
+/compliance/california               California compliance
+/compliance/california/:countySlug   County compliance
+/city/:citySlug                      City landing page
+/blog                                Blog list
+/blog/:slug                          Blog post
+/:slug                               County landing (catch-all)
+
+# Public verification/sharing
+/verify/:code                        Public verification
+/ref/:code                           Referral redirect
+/r/:code                             Referral page
+/risk/:shareToken                    Insurance risk shared
+/report/:token                       Shared report
+/passport/demo                       Passport demo
+/passport/:id                        Passport view
+/support/survey/:token               Survey page
+
+# QR-guarded
+/equipment/scan/:equipmentId         QR scan landing
+/temp/log                            Quick temp log
+/temp-logs/scan                      Temp log scan
+
+================================================================
+PROTECTED STANDALONE (auth required, no Layout) — 10 routes
+================================================================
+
+/vendor/dashboard                    Vendor dashboard
+/vendor/partner-dashboard            Vendor partner dashboard
+/vendor/setup                        Vendor setup
+/enterprise/admin                    Enterprise dashboard
+/enterprise/dashboard                Enterprise executive
+/enterprise/intelligence             Compliance intelligence
+/iot/hub                             IoT sensor hub
+/onboarding                          Onboarding wizard
+/demo-expired                        Demo expired page
+/admin/role-preview                  Role preview (standalone)
+
+================================================================
+PROTECTED WITH LAYOUT (auth, sidebar/topbar) — 89 routes
+================================================================
+
+# Core navigation
+/dashboard                           Main dashboard
+/food-safety                         Food safety hub
+/compliance                          Compliance hub
+/insights                            Insights hub
+/tools                               Tools hub
+/admin                               Admin hub / Admin home
+
+# Daily operations
+/temp-logs                           Temperature logs
+/iot-monitoring                      IoT monitoring
+/checklists                          Checklists
+/documents                           Documents
+/document-checklist                  Document checklist
+/haccp                               HACCP plans
+/alerts                              Alerts
+/incidents                           Incident log
+
+# Vendor management
+/vendors                             Vendors list
+/vendors/:vendorId                   Vendor detail
+/marketplace                         Vendor marketplace
+/vendor-connect                      Vendor connect
+/marketplace/vendor/:vendorSlug      Vendor profile
+/marketplace/:vendorSlug             Vendor profile (alt)
+/vendors/review                      Vendor document review
+
+# Intelligence & analysis
+/ai-advisor                          AI advisor
+/analysis                            Analysis
+/copilot                             Copilot insights
+/intelligence                        Intelligence hub
+/insights/intelligence               Business intelligence
+/insights/reports                    Client reports
+/insights/predictions                Predictive analysis
+/insights/inspection-forecast        Inspection forecast
+/insights/violation-radar            Violation radar
+/insights/trajectory                 Compliance trajectory
+/insights/vendor-performance         Vendor performance
+/insights/signals                    Jurisdiction signals
+/insights/leaderboard                Team leaderboard
+/insights/operations-intelligence    Operations intelligence
+
+# Compliance & safety
+/facility-safety                     Facility safety
+/workforce-risk                      Workforce risk
+/cic-pse                             CIC/PSE view
+/food-recovery                       Food recovery
+/sb1383                              SB 1383 compliance
+/k12                                 K-12 compliance
+/usda/production-records             USDA production records
+/regulatory-alerts                   Regulatory alerts
+/jurisdiction                        Jurisdiction settings
+/health-dept-report                  Health dept report
+/scoring-breakdown                   Scoring breakdown
+/benchmarks                          Benchmarks
+/compliance-trends                   Compliance trends
+/compliance-index                    Compliance index
+/compliance-overview                 Compliance overview
+
+# Equipment & services
+/equipment                           Equipment list
+/equipment/:id                       Equipment detail
+/equipment/:equipmentId/service/new  New service record
+/equipment/incidents                 Equipment incidents
+/services                            Services list
+/services/:recordId                  Service record detail
+
+# Insurance & risk
+/insurance-risk                      Insurance risk
+/improve-score                       Improve score
+/insurance-settings                  Insurance settings
+
+# Team & HR
+/team                                Team management
+/leaderboard                         Leaderboard
+/referrals                           Referral dashboard
+/employees                           Employees list
+/employees/:id                       Employee detail
+/timecards                           Timecards
+/timecards/alterations               Timecard alterations
+/shift-handoff                       Shift handoff
+
+# Schedule & availability
+/calendar                            Calendar
+/schedule                            Schedule
+/availability                        Availability submission
+/availability/team                   Team availability
+/availability/approvals              Availability approvals
+
+# Fleet & insurance (ops)
+/fleet                               Vehicles list
+/fleet/:id                           Vehicle detail
+/insurance                           Insurance list
+/insurance/:id                       Insurance policy
+
+# Training
+/training                            Training hub
+/training/course/:id                 Training course
+/training/courses/builder            Course builder
+/training/certificates               Certificate viewer
+/training/employee/:userId           Employee cert detail
+/dashboard/training                  Training records
+/dashboard/training/:employeeId      Employee training profile
+/dashboard/training-catalog          Training catalog
+
+# Playbooks
+/playbooks                           Incident playbooks
+/playbooks/active/:id                Playbook runner
+/playbooks/builder                   Playbook builder
+/playbooks/analytics                 Playbook analytics
+/playbooks/history/:id               Playbook timeline
+
+# Corrective actions & deficiencies
+/corrective-actions                  Corrective actions
+/corrective-actions/:actionId        Corrective action detail
+/deficiencies                        Deficiencies list
+/deficiencies/:deficiencyId          Deficiency detail
+
+# Reports & settings
+/reports                             Reports page
+/reports/:slug                       Report generator
+/settings                            Settings (→ /settings/company)
+/settings/company                    Company profile
+/settings/team-roles                 Team roles
+/settings/service-types              Service types
+/settings/notifications              Notifications
+/settings/billing                    Billing
+/settings/branding                   Branding settings
+/settings/sensors                    Sensor settings
+/settings/roles-permissions          Roles & permissions
+/settings/integrations               Integrations
+/settings/api-keys                   API keys
+/settings/webhooks                   Webhooks
+/settings/clock-reminders            Clock reminders
+
+# Misc protected
+/import                              Import data
+/help                                Help & support
+/weekly-digest                       Weekly digest
+/audit-report                        Audit report
+/progress                            Progress
+/org-hierarchy                       Org hierarchy
+/upgrade                             Upgrade
+/tasks                               Task manager
+/voice-help                          Voice help
+/self-audit                          Self audit
+/self-inspection                     Self inspection (= self-audit)
+/mock-inspection                     Mock inspection
+/photo-evidence                      Photo evidence
+/audit-trail                         Audit trail
+/self-diagnosis                      Self diagnosis
+/inspector-view                      Inspector view
+/inspector-mode                      Inspector mode
+/bonuses                             Bonus dashboard
+/performance                         Performance metrics
+/performance/me                      My performance
+/quality/callbacks                   Quality callbacks
+/inventory                           Inventory
+/inventory/requests                  Inventory requests
+/inventory/:id                       Inventory item
+/emergency                           Emergency info
+/migrate                             Vendor migration
+/iot/platform                        IoT platform
+/iot/setup                           Sensor setup wizard
+/sensors                             Sensor hub
+/sensors/add                         Add sensor
+/sensors/:id                         Sensor detail
+/iot-platform                        IoT platform (alt)
+/integrations                        Integration hub
+/developers                          Developer portal
+
+================================================================
+ADMIN ROUTES (platform_admin only) — 45 routes
+================================================================
+
+/admin/onboarding                    Client onboarding
+/admin/usage-analytics               Usage analytics
+/admin/regulatory-changes            Regulatory changes
+/admin/intelligence-admin            Intelligence admin
+/admin/jurisdiction-intelligence     Jurisdiction intelligence
+/admin/demo-generator                Demo generator (SalesGuard)
+/admin/demo-launcher                 Demo launcher (SalesGuard)
+/admin/demo-pipeline                 Demo pipeline (SalesGuard)
+/admin/demo-tours                    Demo tours (SalesGuard)
+/admin/partner-demos                 Partner demos (SalesGuard)
+/partner/vendor-demo                 Vendor demo dashboard
+/partner/association-demo            Association demo dashboard
+/partner/carrier-demo                Carrier demo dashboard
+/admin/kitchen-checkup               Assessment leads (SalesGuard)
+/admin/scoretable                    ScoreTable admin (SalesGuard)
+/admin/testimonials                  Testimonials (SalesGuard)
+/admin/api-keys                      Insurance API keys
+/admin/demo/dashboard                Demo dashboard
+/admin/command-center                Command center
+/admin/guided-tours                  Guided tours (SalesGuard)
+/admin/leads                         Assessment leads (SalesGuard)
+/admin/configure                     Configure
+/admin/emulate                       User emulation
+/admin/billing                       Admin billing
+/admin/crawl-monitor                 Crawl monitor
+/admin/rfp-monitor                   RFP intelligence
+/admin/messages                      System messages
+/admin/k2c                           Kitchen to community admin
+/admin/backup                        Database backup
+/admin/maintenance                   Maintenance mode
+/admin/security-settings             Security settings
+/admin/vault                         Document vault
+/admin/event-log                     Event log
+/admin/campaigns                     Marketing campaigns (SalesGuard)
+/admin/sales                         Sales pipeline (SalesGuard)
+/admin/users                         Admin users
+/admin/security                      Admin security
+/admin/audit-log                     Admin audit log
+/admin/orgs                          Admin organizations
+/admin/support                       Support tickets
+/admin/remote-connect                Remote connect
+/admin/staff                         Staff roles
+/admin/intelligence                  EvidLY intelligence
+/admin/reports                       Admin reports
+/admin/violation-outreach            Violation outreach (SalesGuard)
+/admin/email-sequences               Email sequences (SalesGuard)
+/admin/trial-health                  Trial health (SalesGuard)
+/admin/verification                  Verification report
+/admin/system/edge-functions         Edge functions
+/admin/feature-flags                 Feature flags
+/admin/vendor-connect                Admin vendor connect
+/admin/gtm                           GTM dashboard (SalesGuard)
+
+================================================================
+REDIRECT ALIASES — 17 routes
+================================================================
+
+/                                    → /login
+/settings                            → /settings/company
+/admin/onboard-client                → /admin/onboarding
+/admin/home                          → /admin
+/admin/dashboard                     → /admin
+/admin/intelligence-queue            → /admin/intelligence-admin
+/admin/rfp-intelligence              → /admin/rfp-monitor
+/admin/emulation                     → /admin/emulate
+/admin/regulatory                    → /admin/regulatory-changes
+/admin/rfp                           → /admin/rfp-monitor
+/admin/jurisdiction-intel            → /admin/jurisdiction-intelligence
+/admin/demos                         → /admin/demo-pipeline
+/admin/pipeline                      → /admin/sales
+/admin/assessments                   → /admin/kitchen-checkup
+/admin/user-provisioning             → /admin/users
+/regulatory-updates                  → /intelligence
+/incident-playbook                   → /playbooks
+/regulatory-tracking                 → /regulatory-alerts
+/ai-insights                         → /ai-advisor
+/analytics                           → /analysis
+/daily-operations                    → /dashboard
+/locations                           → /org-hierarchy
+/inspections                         → /self-audit
+/certifications                      → /training/certificates
+/sensor-dashboard                    → /sensors
+
+================================================================
+END OF ROUTES
+================================================================
