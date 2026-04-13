@@ -8,7 +8,7 @@ import {
   Lock, LogOut, Mail, MapPin, Medal, MessageSquare, Mic, Package, Phone,
   Plug, Radio, Recycle, RefreshCw, Rocket, Scale, School, Search, Settings,
   Shield, SlidersHorizontal, Sparkles, Star, Store, Target, Thermometer,
-  Timer, TrendingUp, Truck, UtensilsCrossed, Users, Wand2, Wifi, Wrench, Zap,
+  Timer, Trophy, TrendingUp, Truck, UtensilsCrossed, Users, Wand2, Wifi, Wrench, Zap,
 } from 'lucide-react';
 import { EvidlyIcon } from '../ui/EvidlyIcon';
 import { useRole } from '../../contexts/RoleContext';
