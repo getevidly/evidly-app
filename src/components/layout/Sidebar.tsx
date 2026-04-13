@@ -1,6 +1,15 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { LogOut } from 'lucide-react';
+import {
+  Activity, AlertTriangle, BarChart3, BookOpen, Bot, Brain, Bug, Building,
+  Calendar, CheckCircle, CheckSquare, ChefHat, ClipboardList, Clock,
+  DollarSign, Download, FileEdit, FileText, Flame, GraduationCap, Hammer,
+  Handshake, HardHat, HelpCircle, Home, Key, KeyRound, Landmark, Lightbulb,
+  Lock, LogOut, Mail, MapPin, Medal, MessageSquare, Mic, Package, Phone,
+  Plug, Radio, Recycle, RefreshCw, Rocket, Scale, School, Search, Settings,
+  Shield, SlidersHorizontal, Sparkles, Star, Store, Target, Thermometer,
+  Timer, TrendingUp, Truck, UtensilsCrossed, Users, Wand2, Wifi, Wrench, Zap,
+} from 'lucide-react';
 import { EvidlyIcon } from '../ui/EvidlyIcon';
 import { useRole } from '../../contexts/RoleContext';
 import { useDemo } from '../../contexts/DemoContext';
@@ -19,6 +28,75 @@ import {
   type SidebarSection,
 } from '../../config/sidebarConfig';
 import { useUnreadSignals } from '../../hooks/useUnreadSignals';
+
+// ── Emoji → Lucide Icon Map ─────────────────────────────
+// Maps sidebar emoji strings to lucide-react components for a professional look.
+// Falls back to rendering the raw emoji if no match is found.
+const SIDEBAR_ICONS: Record<string, any> = {
+  '✓': CheckSquare,
+  '🌡️': Thermometer,
+  '⚠️': AlertTriangle,
+  '📋': ClipboardList,
+  '🔍': Search,
+  '🎯': Target,
+  '📅': Calendar,
+  '📊': BarChart3,
+  '📝': FileEdit,
+  '🔧': Wrench,
+  '🔥': Flame,
+  '👷': HardHat,
+  '🛡️': Shield,
+  '📈': TrendingUp,
+  '🧠': Brain,
+  '🤖': Bot,
+  '🔒': Lock,
+  '🏆': Trophy,
+  '📡': Radio,
+  '🏅': Medal,
+  '✨': Sparkles,
+  '⚖️': Scale,
+  '🛠️': Hammer,
+  '🤝': Handshake,
+  '🏪': Store,
+  '♻️': Recycle,
+  '🏫': School,
+  '💰': DollarSign,
+  '📦': Package,
+  '🚛': Truck,
+  '📞': Phone,
+  '🎤': Mic,
+  '🔄': RefreshCw,
+  '🎓': GraduationCap,
+  '📚': BookOpen,
+  '✅': CheckCircle,
+  '⏰': Clock,
+  '⏱️': Timer,
+  '📄': FileText,
+  '🏛️': Landmark,
+  '📶': Wifi,
+  '🔮': Wand2,
+  '🔐': KeyRound,
+  '🎛️': SlidersHorizontal,
+  '📧': Mail,
+  '💊': Activity,
+  '🔑': Key,
+  '🔌': Plug,
+  '⚡': Zap,
+  '🕷️': Bug,
+  '🚀': Rocket,
+  '💬': MessageSquare,
+  '❓': HelpCircle,
+  '⭐': Star,
+  '🍽️': UtensilsCrossed,
+  '⚙️': Settings,
+  '📍': MapPin,
+  '👥': Users,
+  '🏠': Home,
+  '🏢': Building,
+  '👨‍🍳': ChefHat,
+  '📥': Download,
+  '💡': Lightbulb,
+};
 
 // ── Item descriptions (EN) ───────────────────────────────
 // Fallback descriptions keyed by item id; config descriptions take precedence.
@@ -269,6 +347,8 @@ const SidebarNavItem: React.FC<{
     setHovered(true);
   };
 
+  const IconComponent = SIDEBAR_ICONS[item.icon];
+
   return (
     <div ref={ref} style={{ position: 'relative' }}>
       <button
@@ -295,7 +375,10 @@ const SidebarNavItem: React.FC<{
         }}
         {...(testId ? { 'data-testid': testId } : {})}
       >
-        <span style={{ fontSize: 15, flexShrink: 0, lineHeight: 1 }}>{item.icon}</span>
+        {IconComponent
+          ? <IconComponent className="h-4 w-4 flex-shrink-0" style={{ color: isActive ? '#ffffff' : '#94a3b8' }} />
+          : <span style={{ fontSize: 15, flexShrink: 0, lineHeight: 1 }}>{item.icon}</span>
+        }
         <span style={{
           color: isActive ? '#ffffff' : '#94a3b8',
           fontSize: 12,

@@ -2,12 +2,12 @@ import { Loader2 } from 'lucide-react';
 import { forwardRef } from 'react';
 
 const variants = {
-  primary: 'bg-[#1E2D4D] text-white hover:bg-[#2A3F6B] active:scale-[0.98]',
-  gold: 'bg-[#A08C5A] text-white hover:bg-[#8B7A4E] active:scale-[0.98]',
-  secondary: 'border border-[#1E2D4D]/20 text-[#1E2D4D] hover:bg-[#FAF7F0] active:scale-[0.98]',
+  primary: 'bg-navy text-white hover:bg-navy-light active:scale-[0.98]',
+  gold: 'bg-gold text-white hover:bg-gold-dark active:scale-[0.98]',
+  secondary: 'border border-navy/20 text-navy hover:bg-cream active:scale-[0.98]',
   destructive: 'bg-red-600 text-white hover:bg-red-700 active:scale-[0.98]',
-  ghost: 'text-[#1E2D4D] hover:bg-[#1E2D4D]/5 active:scale-[0.98]',
-  outline: 'border border-[#A08C5A]/30 text-[#A08C5A] hover:bg-[#A08C5A]/5 active:scale-[0.98]',
+  ghost: 'text-navy hover:bg-navy/5 active:scale-[0.98]',
+  outline: 'border border-gold/30 text-gold hover:bg-gold/5 active:scale-[0.98]',
 };
 
 const sizes = {
@@ -22,7 +22,7 @@ const Button = forwardRef(({ variant = 'primary', size = 'md', isLoading, disabl
     ref={ref}
     type={type}
     disabled={disabled || isLoading}
-    className={`inline-flex items-center justify-center gap-2 font-medium rounded-xl transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus-visible:outline-none disabled:opacity-60 disabled:cursor-not-allowed ${variants[variant] || variants.primary} ${sizes[size] || sizes.md} ${className}`}
+    className={`inline-flex items-center justify-center gap-2 font-medium rounded-xl transition-all duration-150 focus-visible:ring-2 focus-visible:ring-gold/50 focus-visible:ring-offset-2 focus-visible:outline-none disabled:opacity-60 disabled:cursor-not-allowed ${variants[variant] || variants.primary} ${sizes[size] || sizes.md} ${className}`}
     {...props}
   >
     {isLoading ? <><Loader2 className="h-4 w-4 animate-spin" /><span>Loading...</span></> : children}
