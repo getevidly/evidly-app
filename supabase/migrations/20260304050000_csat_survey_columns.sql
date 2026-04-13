@@ -17,14 +17,11 @@ CREATE INDEX IF NOT EXISTS idx_support_tickets_csat_token
 
 -- RLS: Allow anonymous read/update by csat_token for survey submission
 -- (The survey page is public — no auth required)
-DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'anon_csat_survey_read' AND tablename = 'support_tickets') THEN
-    CREATE POLICY "anon_csat_survey_read" ON support_tickets FOR SELECT TO anon USING (csat_token IS NOT NULL);
-  END IF;
-END $$;
+CREATE POLICY IF NOT EXISTS "anon_csat_survey_read"
+  ON support_tickets FOR SELECT TO anon
+  USING (csat_token IS NOT NULL);
 
-DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'anon_csat_survey_update' AND tablename = 'support_tickets') THEN
-    CREATE POLICY "anon_csat_survey_update" ON support_tickets FOR UPDATE TO anon USING (csat_token IS NOT NULL) WITH CHECK (csat_token IS NOT NULL);
-  END IF;
-END $$;
+CREATE POLICY IF NOT EXISTS "anon_csat_survey_update"
+  ON support_tickets FOR UPDATE TO anon
+  USING (csat_token IS NOT NULL)
+  WITH CHECK (csat_token IS NOT NULL);

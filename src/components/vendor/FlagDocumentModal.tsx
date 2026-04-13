@@ -31,9 +31,9 @@ export function FlagDocumentModal({ documentTitle, vendorName, onClose, onSubmit
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 modal-backdrop-enter" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={onClose}>
       <div
-        className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 overflow-hidden modal-content-enter"
+        className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 overflow-hidden"
         onClick={e => e.stopPropagation()}
         style={{ fontFamily: 'Inter, sans-serif' }}
       >
@@ -42,7 +42,7 @@ export function FlagDocumentModal({ documentTitle, vendorName, onClose, onSubmit
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <AlertTriangle size={20} style={{ color: '#DC2626' }} />
-              <h3 className="text-lg font-semibold tracking-tight" style={{ color: NAVY }}>Flag Document Issue</h3>
+              <h3 className="text-lg font-semibold" style={{ color: NAVY }}>Flag Document Issue</h3>
             </div>
             <button
               type="button"

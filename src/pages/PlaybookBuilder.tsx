@@ -30,11 +30,11 @@ const CATEGORIES = [
 const SEVERITIES = [
   { value: 'critical', label: 'Critical', color: '#dc2626' },
   { value: 'high', label: 'High', color: '#ea580c' },
-  { value: 'medium', label: 'Medium', color: '#A08C5A' },
+  { value: 'medium', label: 'Medium', color: '#d4af37' },
   { value: 'low', label: 'Low', color: '#16a34a' },
 ] as const;
 
-const COLOR_OPTIONS = ['#dc2626', '#1E2D4D', '#15803d', '#7c3aed', '#A08C5A', '#0369a1'];
+const COLOR_OPTIONS = ['#dc2626', '#1e4d6b', '#15803d', '#7c3aed', '#d4af37', '#0369a1'];
 
 const LOCATIONS = [
   { id: 'loc-downtown', name: 'Location 1' }, // demo
@@ -151,7 +151,7 @@ export function PlaybookBuilder() {
   const toggleSwitch = (value: boolean, onChange: () => void, label: string, icon: React.ReactNode) => (
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 0' }}>
       <button onClick={onChange}
-        style={{ width: 40, height: 22, borderRadius: 11, background: value ? '#1E2D4D' : '#d1d5db', border: 'none', cursor: 'pointer', position: 'relative', transition: 'all 0.2s', flexShrink: 0 }}>
+        style={{ width: 40, height: 22, borderRadius: 11, background: value ? '#1e4d6b' : '#d1d5db', border: 'none', cursor: 'pointer', position: 'relative', transition: 'all 0.2s', flexShrink: 0 }}>
         <div style={{ width: 16, height: 16, borderRadius: 8, background: '#fff', position: 'absolute', top: 3, left: value ? 21 : 3, transition: 'left 0.2s' }} />
       </button>
       {icon}
@@ -166,14 +166,14 @@ export function PlaybookBuilder() {
     <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
       {/* Header */}
       <button onClick={() => navigate('/playbooks')}
-        style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#1E2D4D', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 16, padding: 0, fontFamily: "'DM Sans', sans-serif" }}>
+        style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#1e4d6b', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 16, padding: 0, fontFamily: "'DM Sans', sans-serif" }}>
         <ArrowLeft size={16} /> Back to Playbooks
       </button>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24, flexWrap: 'wrap', gap: 8 }}>
         <div>
           <h1 style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: '0 0 4px', display: 'flex', alignItems: 'center', gap: 10 }}>
-            <Siren size={24} color="#1E2D4D" /> Playbook Builder
+            <Siren size={24} color="#1e4d6b" /> Playbook Builder
           </h1>
           <p style={{ fontSize: 14, color: '#6b7280', margin: 0 }}>Create a custom incident response playbook with steps, checklists, and escalation rules</p>
         </div>
@@ -188,14 +188,14 @@ export function PlaybookBuilder() {
             <button key={s.id} onClick={() => setStep(s.id)}
               style={{
                 flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '10px 8px', minHeight: 48, whiteSpace: 'nowrap' as const,
-                borderRadius: 8, border: isCurrent ? '2px solid #1E2D4D' : '1px solid #e5e7eb',
+                borderRadius: 8, border: isCurrent ? '2px solid #1e4d6b' : '1px solid #e5e7eb',
                 background: isDone ? '#eef4f8' : isCurrent ? '#fff' : '#f9fafb',
-                color: isCurrent ? '#1E2D4D' : isDone ? '#1E2D4D' : '#9ca3af',
+                color: isCurrent ? '#1e4d6b' : isDone ? '#1e4d6b' : '#9ca3af',
                 fontSize: 13, fontWeight: isCurrent ? 700 : 500, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
               }}>
               <span style={{
                 width: 22, height: 22, borderRadius: 11, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                background: isDone ? '#1E2D4D' : isCurrent ? '#1E2D4D' : '#e5e7eb',
+                background: isDone ? '#1e4d6b' : isCurrent ? '#1e4d6b' : '#e5e7eb',
                 color: isDone || isCurrent ? '#fff' : '#9ca3af', fontSize: 12, fontWeight: 700, flexShrink: 0,
               }}>
                 {isDone ? '✓' : s.number}
@@ -393,7 +393,7 @@ export function PlaybookBuilder() {
 
             <div style={{ marginBottom: 28 }}>
               <label style={{ ...labelStyle, fontSize: 14, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
-                <Bell size={16} color="#1E2D4D" /> Auto-Notify
+                <Bell size={16} color="#1e4d6b" /> Auto-Notify
               </label>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {[
@@ -405,7 +405,7 @@ export function PlaybookBuilder() {
                   <label key={n.label}
                     style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderRadius: 8, border: '1px solid #e5e7eb', cursor: 'pointer', background: n.value ? '#eef4f8' : '#fff' }}>
                     <input type="checkbox" checked={n.value} onChange={n.onChange}
-                      style={{ width: 18, height: 18, accentColor: '#1E2D4D' }} />
+                      style={{ width: 18, height: 18, accentColor: '#1e4d6b' }} />
                     <div>
                       <div style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>{n.label}</div>
                       <div style={{ fontSize: 12, color: '#6b7280' }}>{n.desc}</div>
@@ -416,7 +416,7 @@ export function PlaybookBuilder() {
             </div>
 
             <div style={{ padding: 16, borderRadius: 10, background: '#eef4f8', border: '1px solid #b8d4e8' }}>
-              <div style={{ fontSize: 14, fontWeight: 700, color: '#1E2D4D', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ fontSize: 14, fontWeight: 700, color: '#1e4d6b', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 8 }}>
                 <EvidlyIcon size={16} /> Review Schedule
               </div>
               <p style={{ fontSize: 13, color: '#374151', margin: 0 }}>
@@ -491,7 +491,7 @@ export function PlaybookBuilder() {
             {/* Location assignment */}
             <div style={{ marginBottom: 24 }}>
               <label style={{ ...labelStyle, fontSize: 14, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
-                <Building2 size={16} color="#1E2D4D" /> Assign to Locations
+                <Building2 size={16} color="#1e4d6b" /> Assign to Locations
               </label>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {LOCATIONS.map(loc => (
@@ -502,7 +502,7 @@ export function PlaybookBuilder() {
                           prev.includes(loc.id) ? prev.filter(id => id !== loc.id) : [...prev, loc.id]
                         );
                       }}
-                      style={{ width: 18, height: 18, accentColor: '#1E2D4D' }} />
+                      style={{ width: 18, height: 18, accentColor: '#1e4d6b' }} />
                     <span style={{ fontSize: 14, color: '#374151' }}>{loc.name}</span>
                   </label>
                 ))}
@@ -516,7 +516,7 @@ export function PlaybookBuilder() {
                 <CheckCircle2 size={16} /> Publish Playbook
               </button>
               <button onClick={() => guardAction('save', 'Playbook Builder', () => toast.success("Playbook saved as draft"))}
-                style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '12px 24px', borderRadius: 8, border: '1px solid #1E2D4D', background: '#fff', color: '#1E2D4D', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
+                style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '12px 24px', borderRadius: 8, border: '1px solid #1e4d6b', background: '#fff', color: '#1e4d6b', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
                 <FileText size={16} /> Save as Draft
               </button>
             </div>
@@ -538,7 +538,7 @@ export function PlaybookBuilder() {
           <button onClick={goNext} disabled={!canNext()}
             style={{
               display: 'flex', alignItems: 'center', gap: 6, padding: '10px 20px', borderRadius: 8, border: 'none',
-              background: canNext() ? '#1E2D4D' : '#d1d5db', color: '#fff', fontSize: 14, fontWeight: 600,
+              background: canNext() ? '#1e4d6b' : '#d1d5db', color: '#fff', fontSize: 14, fontWeight: 600,
               cursor: canNext() ? 'pointer' : 'not-allowed', fontFamily: "'DM Sans', sans-serif", minHeight: 48,
             }}>
             Next Step <ChevronRight size={14} />

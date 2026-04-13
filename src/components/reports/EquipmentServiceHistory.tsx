@@ -51,7 +51,7 @@ export default function EquipmentServiceHistory({ config }: { config: ReportType
                   <td className="py-2 px-3 font-medium" style={{ color: BODY_TEXT }}>{e.equipment}</td>
                   <td className="py-2 px-3 text-xs" style={{ color: MUTED }}>{e.location}</td>
                   <td className="py-2 px-3">
-                    <span className="px-2 py-0.5 rounded text-xs font-semibold" style={{
+                    <span className="px-2 py-0.5 rounded text-[11px] font-semibold" style={{
                       backgroundColor: e.status === 'Current' ? '#f0fdf4' : '#fffbeb',
                       color: e.status === 'Current' ? '#166534' : '#92400e',
                     }}>{e.status}</span>
@@ -83,7 +83,7 @@ export default function EquipmentServiceHistory({ config }: { config: ReportType
                   <td className="py-2 px-3 text-xs" style={{ color: MUTED }}>{m.dueDate}</td>
                   <td className="py-2 px-3 text-xs" style={{ color: MUTED }}>{m.lastService}</td>
                   <td className="py-2 px-3">
-                    <span className="px-2 py-0.5 rounded text-xs font-semibold" style={{
+                    <span className="px-2 py-0.5 rounded text-[11px] font-semibold" style={{
                       backgroundColor: m.adherence === 'On Track' ? '#f0fdf4' : '#fef2f2',
                       color: m.adherence === 'On Track' ? '#166534' : '#991b1b',
                     }}>{m.adherence}</span>
@@ -115,7 +115,7 @@ export default function EquipmentServiceHistory({ config }: { config: ReportType
                   <td className="py-2 px-3 text-xs" style={{ color: MUTED }}>{r.serviceName}</td>
                   <td className="py-2 px-3 text-xs" style={{ color: MUTED }}>{r.locationName}</td>
                   <td className="py-2 px-3">
-                    <span className="px-2 py-0.5 rounded text-xs font-semibold" style={{
+                    <span className="px-2 py-0.5 rounded text-[11px] font-semibold" style={{
                       backgroundColor: r.result === 'pass' ? '#f0fdf4' : '#fef2f2',
                       color: r.result === 'pass' ? '#166534' : '#991b1b',
                     }}>{r.result === 'pass' ? 'Pass' : r.result === 'fail' ? 'Fail' : 'N/A'}</span>

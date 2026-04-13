@@ -34,7 +34,7 @@ function TaskRow({ task, navigate }: { task: TaskItem; navigate: (path: string) 
     <button
       type="button"
       onClick={() => navigate(task.route)}
-      className="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-[#FAF7F0]"
+      className="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-gray-50"
       style={{ borderBottom: '1px solid #F0F0F0' }}
     >
       {task.status === 'done' ? (
@@ -49,7 +49,7 @@ function TaskRow({ task, navigate }: { task: TaskItem; navigate: (path: string) 
         <p className="text-xs" style={{ color: '#6b7280' }}>{task.time}{task.reading ? ` · ${task.reading}` : ''}</p>
       </div>
       <span
-        className="text-xs font-semibold px-2 py-0.5 rounded-full shrink-0"
+        className="text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0"
         style={{ color: c.text, backgroundColor: `${c.dot}15` }}
       >
         {STATUS_LABELS[task.status]}
@@ -64,7 +64,7 @@ function DeadlineRow({ item, navigate }: { item: DeadlineItem; navigate: (path: 
     <button
       type="button"
       onClick={() => navigate(item.route)}
-      className="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-[#FAF7F0]"
+      className="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-gray-50"
       style={{ borderBottom: '1px solid #F0F0F0' }}
     >
       <CalendarDays size={16} style={{ color }} className="shrink-0" />
@@ -99,8 +99,8 @@ export function DashboardToday() {
       {/* Date header — centered */}
       <div className="text-center mb-4">
         <span className="font-semibold" style={{ color: '#1E2D4D' }}>Today</span>
-        <span className="mx-2 text-[#1E2D4D]/30">&middot;</span>
-        <span className="text-[#1E2D4D]/50">{todayStr}</span>
+        <span className="mx-2 text-gray-300">&middot;</span>
+        <span className="text-gray-500">{todayStr}</span>
       </div>
 
       {/* Summary strip — centered */}
@@ -118,8 +118,8 @@ export function DashboardToday() {
           <div className="absolute top-3 right-3 opacity-10">
             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#A08C5A" strokeWidth="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
           </div>
-          <p className="text-xs text-[#1E2D4D]/50 uppercase font-semibold mb-1 text-center">Tasks Today</p>
-          <p className="text-2xl font-bold tracking-tight text-center" style={{ color: NAVY }}>{tasks.length}</p>
+          <p className="text-xs text-gray-500 uppercase font-semibold mb-1 text-center">Tasks Today</p>
+          <p className="text-2xl font-bold text-center" style={{ color: NAVY }}>{tasks.length}</p>
           <p className="text-xs text-center">
             {doneCount === 0 && tasks.length === 0
               ? <span className="text-sm text-green-600 font-medium">All clear</span>
@@ -156,8 +156,8 @@ export function DashboardToday() {
               <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
             )}
           </div>
-          <p className="text-xs text-[#1E2D4D]/50 uppercase font-semibold mb-1 text-center">Overdue</p>
-          <p className="text-2xl font-bold tracking-tight text-center" style={{ color: overdueCount > 0 ? '#dc2626' : NAVY }}>{overdueCount}</p>
+          <p className="text-xs text-gray-500 uppercase font-semibold mb-1 text-center">Overdue</p>
+          <p className="text-2xl font-bold text-center" style={{ color: overdueCount > 0 ? '#dc2626' : NAVY }}>{overdueCount}</p>
           <p className="text-xs text-center">
             {overdueCount > 0
               ? <span className="text-sm text-red-600 font-medium animate-pulse">Needs attention</span>
@@ -176,9 +176,9 @@ export function DashboardToday() {
           <div className="absolute top-3 right-3 opacity-10">
             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
           </div>
-          <p className="text-xs text-[#1E2D4D]/50 uppercase font-semibold mb-1 text-center">Upcoming</p>
-          <p className="text-2xl font-bold tracking-tight text-center" style={{ color: urgentDeadlines.length > 0 ? '#d97706' : NAVY }}>{urgentDeadlines.length}</p>
-          <p className="text-xs text-[#1E2D4D]/50 text-center">deadlines this week</p>
+          <p className="text-xs text-gray-500 uppercase font-semibold mb-1 text-center">Upcoming</p>
+          <p className="text-2xl font-bold text-center" style={{ color: urgentDeadlines.length > 0 ? '#d97706' : NAVY }}>{urgentDeadlines.length}</p>
+          <p className="text-xs text-gray-500 text-center">deadlines this week</p>
         </button>
       </div>
 
@@ -209,7 +209,7 @@ export function DashboardToday() {
               <p className="font-semibold text-lg" style={{ color: '#1E2D4D' }}>
                 {showOverdueOnly ? 'No overdue items' : "You're all caught up!"}
               </p>
-              <p className="text-sm text-[#1E2D4D]/30 mt-1">
+              <p className="text-sm text-gray-400 mt-1">
                 {showOverdueOnly ? 'All tasks are on track.' : 'No tasks scheduled for today. Enjoy the calm.'}
               </p>
               {showOverdueOnly && (
@@ -259,7 +259,7 @@ export function DashboardToday() {
             key={link.route}
             type="button"
             onClick={() => navigate(link.route, { state: { fromTab: 'today' } })}
-            className="group bg-white rounded-xl p-4 flex items-center gap-3 cursor-pointer hover:shadow-md hover:-translate-y-0.5 hover:border-[#1E2D4D]/15 transition-all duration-200"
+            className="group bg-white rounded-xl p-4 flex items-center gap-3 cursor-pointer hover:shadow-md hover:-translate-y-0.5 hover:border-gray-300 transition-all duration-200"
             style={{ border: '1px solid #e5e7eb' }}
           >
             <div className="p-2 rounded-lg" style={{ backgroundColor: link.iconBg, color: link.iconColor }}>
@@ -268,7 +268,7 @@ export function DashboardToday() {
             <span className="text-sm font-medium" style={{ color: BODY_TEXT }}>{link.label}</span>
             <ChevronRight
               size={14}
-              className="ml-auto text-[#1E2D4D]/30 group-hover:text-[#1E2D4D]/70 group-hover:translate-x-1 transition-all duration-200"
+              className="ml-auto text-gray-300 group-hover:text-gray-600 group-hover:translate-x-1 transition-all duration-200"
             />
           </button>
         ))}

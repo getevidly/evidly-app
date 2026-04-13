@@ -2,7 +2,7 @@ import { ChevronRight } from 'lucide-react';
 import type { ReportTypeConfig } from '../../config/reportConfig';
 import { CARD_BG, CARD_BORDER, CARD_SHADOW, BODY_TEXT, MUTED } from '../dashboard/shared/constants';
 
-const NAVY = '#1E2D4D';
+const NAVY = '#1e4d6b';
 
 interface ReportCardProps {
   config: ReportTypeConfig;
@@ -48,7 +48,7 @@ export function ReportCard({ config, onClick, hasData = true }: ReportCardProps)
             </span>
           ) : (
             <span
-              className="inline-block mt-2 text-xs font-medium px-2 py-0.5 rounded"
+              className="inline-block mt-2 text-[11px] font-medium px-2 py-0.5 rounded"
               style={{ backgroundColor: '#f3f4f6', color: '#9ca3af' }}
             >
               No data yet

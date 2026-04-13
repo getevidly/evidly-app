@@ -54,8 +54,8 @@ interface QuestionAnswer {
 // Constants
 // ---------------------------------------------------------------------------
 
-const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const NAVY = '#1e4d6b';
+const GOLD = '#d4af37';
 
 /** Estimate likely outcome based on severity counts (NOT a score). */
 function estimateOutcome(critical: number, major: number): { label: string; color: string; bg: string } {
@@ -289,9 +289,9 @@ export default function MockInspection() {
           { label: 'Mock Inspection' },
         ]} />
         <div className="px-4 sm:px-6 py-12 max-w-2xl mx-auto text-center">
-          <Target className="h-16 w-16 mx-auto mb-4 text-[#1E2D4D]/30" />
-          <h1 className="text-2xl font-bold tracking-tight mb-2" style={{ color: NAVY }}>Mock Inspection</h1>
-          <p className="text-[#1E2D4D]/50 mb-6">
+          <Target className="h-16 w-16 mx-auto mb-4 text-gray-300" />
+          <h1 className="text-2xl font-bold mb-2" style={{ color: NAVY }}>Mock Inspection</h1>
+          <p className="text-gray-500 mb-6">
             Practice with an AI-simulated inspector using your jurisdiction's criteria.
             Available on Founder plan and above.
           </p>
@@ -318,11 +318,11 @@ export default function MockInspection() {
           <Target className="h-6 w-6" style={{ color: NAVY }} />
           <h2 className="text-xl font-bold" style={{ color: NAVY }}>Mock Inspection</h2>
         </div>
-        <p className="text-sm text-[#1E2D4D]/70 mb-4">
+        <p className="text-sm text-gray-600 mb-4">
           Practice answering questions from a simulated <span className="font-medium">{scoringConfig.agencyName}</span> inspector.
         </p>
 
-        <h3 className="text-sm font-semibold text-[#1E2D4D]/80 mb-3">Select Difficulty</h3>
+        <h3 className="text-sm font-semibold text-gray-700 mb-3">Select Difficulty</h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
           {(['routine', 'focused', 'critical'] as MockDifficulty[]).map(d => {
             const info = DIFFICULTY_INFO[d];
@@ -348,7 +348,7 @@ export default function MockInspection() {
                     {info.label}
                   </span>
                 </div>
-                <p className="text-xs text-[#1E2D4D]/70">{info.description}</p>
+                <p className="text-xs text-gray-600">{info.description}</p>
               </button>
             );
           })}
@@ -368,8 +368,8 @@ export default function MockInspection() {
       {!isDemoMode && pastSessions.length === 0 && (
         <div className="bg-white rounded-xl border border-[#b8d4e8] p-4 sm:p-5">
           <div className="flex items-center gap-2 mb-3">
-            <History className="h-5 w-5 text-[#1E2D4D]/50" />
-            <h3 className="text-sm font-bold text-[#1E2D4D]">Past Mock Inspections</h3>
+            <History className="h-5 w-5 text-gray-500" />
+            <h3 className="text-sm font-bold text-gray-900">Past Mock Inspections</h3>
           </div>
           <p style={{ fontSize: 13, color: '#6B7F96', textAlign: 'center', margin: '8px 0', padding: '8px 0' }}>
             No past sessions yet. Complete your first mock inspection above to see your history here.
@@ -379,23 +379,23 @@ export default function MockInspection() {
       {!isDemoMode && pastSessions.length > 0 && (
         <div className="bg-white rounded-xl border border-[#b8d4e8] p-4 sm:p-5">
           <div className="flex items-center gap-2 mb-3">
-            <History className="h-5 w-5 text-[#1E2D4D]/50" />
-            <h3 className="text-sm font-bold text-[#1E2D4D]">Past Mock Inspections</h3>
+            <History className="h-5 w-5 text-gray-500" />
+            <h3 className="text-sm font-bold text-gray-900">Past Mock Inspections</h3>
           </div>
           <div className="space-y-2">
             {pastSessions.map(session => {
               const diffInfo = DIFFICULTY_INFO[session.difficulty as MockDifficulty] || DIFFICULTY_INFO.routine;
               return (
-                <div key={session.id} className="flex items-center justify-between p-3 rounded-lg bg-[#FAF7F0] border border-[#1E2D4D]/10">
+                <div key={session.id} className="flex items-center justify-between p-3 rounded-lg bg-gray-50 border border-gray-200">
                   <div>
-                    <span className="text-sm font-medium text-[#1E2D4D]">
+                    <span className="text-sm font-medium text-gray-900">
                       {format(new Date(session.date), 'MMM d, yyyy')}
                     </span>
                     <span className="ml-2 text-xs font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: diffInfo.bgColor, color: diffInfo.color }}>
                       {diffInfo.label}
                     </span>
                   </div>
-                  <span className="text-xs text-[#1E2D4D]/50">
+                  <span className="text-xs text-gray-500">
                     {session.violations_found} violation{session.violations_found !== 1 ? 's' : ''}
                   </span>
                 </div>
@@ -422,7 +422,7 @@ export default function MockInspection() {
         {/* Progress */}
         <div className="bg-white rounded-xl border border-[#b8d4e8] p-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-[#1E2D4D]/80">
+            <span className="text-sm font-medium text-gray-700">
               Question {currentIdx + 1} of {questions.length} — {pct}% complete
             </span>
             {violationCount > 0 && (
@@ -431,7 +431,7 @@ export default function MockInspection() {
               </span>
             )}
           </div>
-          <div className="h-3 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
+          <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
             <div
               className="h-full rounded-full transition-all duration-500"
               style={{ width: `${pct}%`, backgroundColor: GOLD }}
@@ -462,15 +462,15 @@ export default function MockInspection() {
         }`}>
           {/* Inspector question */}
           <div className="flex items-start gap-3 mb-4">
-            <div className="h-8 w-8 rounded-full bg-[#1E2D4D]/5 flex items-center justify-center shrink-0">
-              <MessageSquare className="h-4 w-4 text-[#1E2D4D]/70" />
+            <div className="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
+              <MessageSquare className="h-4 w-4 text-gray-600" />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-medium text-[#1E2D4D] mb-1">{q.text}</p>
+              <p className="text-sm font-medium text-gray-900 mb-1">{q.text}</p>
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs text-[#1E2D4D]/50">{q.citation}</span>
+                <span className="text-xs text-gray-500">{q.citation}</span>
                 <span
-                  className="text-xs font-semibold px-2 py-0.5 rounded-full"
+                  className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
                   style={{
                     backgroundColor: q.category === 'food_safety' ? '#f0fdf4' : '#fef2f2',
                     color: q.category === 'food_safety' ? '#166534' : '#991b1b',
@@ -479,7 +479,7 @@ export default function MockInspection() {
                   {q.category === 'food_safety' ? 'Food Safety' : 'Facility Safety'}
                 </span>
                 <span
-                  className="text-xs font-semibold px-2 py-0.5 rounded-full border"
+                  className="text-[10px] font-semibold px-2 py-0.5 rounded-full border"
                   style={{
                     color: q.severity === 'critical' ? '#991b1b' : q.severity === 'major' ? '#92400e' : '#6b7280',
                     backgroundColor: q.severity === 'critical' ? '#fef2f2' : q.severity === 'major' ? '#fffbeb' : '#f3f4f6',
@@ -537,13 +537,13 @@ export default function MockInspection() {
           {/* Notes (optional) */}
           {current.answer === 'fail' && (
             <div className="mt-3">
-              <label className="text-xs font-medium text-[#1E2D4D]/80 mb-1 block">Your Notes</label>
+              <label className="text-xs font-medium text-gray-700 mb-1 block">Your Notes</label>
               <textarea
                 value={current.notes}
                 onChange={e => setNotes(currentIdx, e.target.value)}
                 placeholder="Document the issue..."
                 rows={2}
-                className="w-full text-sm border border-[#1E2D4D]/15 rounded-xl px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30 focus:border-[#1E2D4D] resize-none"
+                className="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/30 focus:border-[#1e4d6b] resize-none"
               />
               <SuggestionPill
                 fieldLabel="Question Notes"
@@ -560,7 +560,7 @@ export default function MockInspection() {
           <button
             onClick={() => setCurrentIdx(p => Math.max(0, p - 1))}
             disabled={currentIdx === 0}
-            className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-medium text-[#1E2D4D] bg-[#eef4f8] hover:bg-[#d9e8f0] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-medium text-[#1e4d6b] bg-[#eef4f8] hover:bg-[#d9e8f0] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             style={{ minHeight: 44 }}
           >
             <ChevronLeft className="h-4 w-4" />
@@ -614,30 +614,30 @@ export default function MockInspection() {
           {/* Severity counts */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
             <div className="text-center p-3 rounded-lg bg-red-50 border border-red-200">
-              <p className="text-2xl font-bold tracking-tight text-red-700">{severityCounts.critical}</p>
+              <p className="text-2xl font-bold text-red-700">{severityCounts.critical}</p>
               <p className="text-xs font-medium text-red-600">Critical</p>
             </div>
             <div className="text-center p-3 rounded-lg bg-orange-50 border border-orange-200">
-              <p className="text-2xl font-bold tracking-tight text-orange-700">{severityCounts.major}</p>
+              <p className="text-2xl font-bold text-orange-700">{severityCounts.major}</p>
               <p className="text-xs font-medium text-orange-600">Major</p>
             </div>
             <div className="text-center p-3 rounded-lg bg-yellow-50 border border-yellow-200">
-              <p className="text-2xl font-bold tracking-tight text-yellow-700">{severityCounts.minor}</p>
+              <p className="text-2xl font-bold text-yellow-700">{severityCounts.minor}</p>
               <p className="text-xs font-medium text-yellow-600">Minor</p>
             </div>
           </div>
 
           {/* Estimated outcome */}
-          <div className="flex items-center gap-3 p-3 rounded-xl border border-[#1E2D4D]/10">
+          <div className="flex items-center gap-3 p-3 rounded-lg border border-gray-200">
             <Shield className="h-5 w-5" style={{ color: outcome.color }} />
             <div>
-              <p className="text-xs font-medium text-[#1E2D4D]/50">Estimated outcome</p>
+              <p className="text-xs font-medium text-gray-500">Estimated outcome</p>
               <p className="text-sm font-bold" style={{ color: outcome.color }}>{outcome.label}</p>
             </div>
           </div>
 
           {/* Stats row */}
-          <div className="flex items-center justify-center gap-4 mt-4 text-xs text-[#1E2D4D]/50">
+          <div className="flex items-center justify-center gap-4 mt-4 text-xs text-gray-500">
             <span>{passes.length} passed &middot; {violations.length} failed &middot; {questions.length} total questions</span>
             <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {DIFFICULTY_INFO[difficulty].label} inspection</span>
           </div>
@@ -646,7 +646,7 @@ export default function MockInspection() {
         {/* Violations */}
         {violations.length > 0 && (
           <div className="bg-white rounded-xl border border-[#b8d4e8] p-5">
-            <h3 className="text-sm font-bold text-[#1E2D4D] mb-4 flex items-center gap-2">
+            <h3 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
               <AlertTriangle className="h-4 w-4 text-red-500" />
               What the Inspector Found ({violations.length})
             </h3>
@@ -659,22 +659,22 @@ export default function MockInspection() {
                   minor: 'border-l-yellow-500',
                 };
                 return (
-                  <div key={q.id} className={`border-l-4 ${sevColors[q.severity]} bg-[#FAF7F0] rounded-r-lg p-3`}>
+                  <div key={q.id} className={`border-l-4 ${sevColors[q.severity]} bg-gray-50 rounded-r-lg p-3`}>
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <p className="text-sm font-medium text-[#1E2D4D]">{q.violationType}</p>
-                        <p className="text-xs text-[#1E2D4D]/50 mt-0.5">{q.citation}</p>
+                        <p className="text-sm font-medium text-gray-900">{q.violationType}</p>
+                        <p className="text-xs text-gray-500 mt-0.5">{q.citation}</p>
                       </div>
                       <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${
-                        q.severity === 'critical' ? 'bg-red-50 text-red-700 border-red-200' :
+                        q.severity === 'critical' ? 'bg-red-100 text-red-700 border-red-200' :
                         q.severity === 'major' ? 'bg-orange-100 text-orange-700 border-orange-200' :
-                        'bg-amber-50 text-amber-700 border-yellow-200'
+                        'bg-yellow-100 text-yellow-700 border-yellow-200'
                       }`}>
                         {q.severity.charAt(0).toUpperCase() + q.severity.slice(1)}
                       </span>
                     </div>
                     <p className="text-xs text-red-700 mt-2 italic">{q.followUpOnFail}</p>
-                    {v.notes && <p className="text-xs text-[#1E2D4D]/70 mt-1">Notes: {v.notes}</p>}
+                    {v.notes && <p className="text-xs text-gray-600 mt-1">Notes: {v.notes}</p>}
                   </div>
                 );
               })}
@@ -685,7 +685,7 @@ export default function MockInspection() {
         {/* Passes */}
         {passes.length > 0 && (
           <div className="bg-white rounded-xl border border-[#b8d4e8] p-5">
-            <h3 className="text-sm font-bold text-[#1E2D4D] mb-4 flex items-center gap-2">
+            <h3 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-green-500" />
               What You Passed ({passes.length})
             </h3>
@@ -693,7 +693,7 @@ export default function MockInspection() {
               {passes.map(p => (
                 <div key={p.question.id} className="flex items-center gap-2 text-sm">
                   <CheckCircle2 className="h-3.5 w-3.5 text-green-500 shrink-0" />
-                  <span className="text-[#1E2D4D]/80">{p.question.text.length > 80 ? p.question.text.slice(0, 80) + '\u2026' : p.question.text}</span>
+                  <span className="text-gray-700">{p.question.text.length > 80 ? p.question.text.slice(0, 80) + '\u2026' : p.question.text}</span>
                 </div>
               ))}
             </div>

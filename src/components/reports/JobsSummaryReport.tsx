@@ -60,7 +60,7 @@ function StatusPill({ status }: { status: string }) {
   };
   const c = colors[status.toLowerCase()] || { bg: '#F3F4F6', text: '#6B7280' };
   return (
-    <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: c.bg, color: c.text }}>
+    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: c.bg, color: c.text }}>
       {status}
     </span>
   );

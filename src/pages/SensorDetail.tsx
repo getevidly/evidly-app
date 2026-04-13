@@ -18,8 +18,8 @@ import { useDemo } from '../contexts/DemoContext';
 import { EmptyState } from '../components/shared/EmptyState';
 
 const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
-const PRIMARY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const PRIMARY = '#1e4d6b';
+const GOLD = '#d4af37';
 const LIGHT_BG = '#eef4f8';
 const BORDER = '#b8d4e8';
 
@@ -132,7 +132,7 @@ function TempChart({ readings, zone, range }: { readings: IoTSensorReading[]; zo
     return result;
   }, [readings, range]);
 
-  if (extendedReadings.length < 2) return <div className="text-sm text-[#1E2D4D]/30 text-center py-8">Insufficient data</div>;
+  if (extendedReadings.length < 2) return <div className="text-sm text-gray-400 text-center py-8">Insufficient data</div>;
 
   const temps = extendedReadings.map(r => r.temp);
   const times = extendedReadings.map(r => r.time);
@@ -251,13 +251,13 @@ export function SensorDetail() {
   if (!isDemoMode) {
     return (
       <div className="p-6" style={F}>
-        <button onClick={() => navigate('/sensors')} className="flex items-center gap-1 text-sm text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80 mb-4">
+        <button onClick={() => navigate('/sensors')} className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-4">
           <ArrowLeft className="h-4 w-4" /> Back to Manage Sensors
         </button>
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-12 text-center">
-          <Thermometer className="h-12 w-12 mx-auto mb-4 text-[#1E2D4D]/30" />
-          <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-2">Sensor Not Found</h2>
-          <p className="text-sm text-[#1E2D4D]/50 max-w-md mx-auto">
+        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+          <Thermometer className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">Sensor Not Found</h2>
+          <p className="text-sm text-gray-500 max-w-md mx-auto">
             This sensor is not configured yet.
           </p>
         </div>
@@ -268,10 +268,10 @@ export function SensorDetail() {
   if (!sensor) {
     return (
       <div className="p-6" style={F}>
-        <button onClick={() => navigate('/sensors')} className="flex items-center gap-1 text-sm text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80 mb-4">
+        <button onClick={() => navigate('/sensors')} className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-4">
           <ArrowLeft className="h-4 w-4" /> Back to Manage Sensors
         </button>
-        <div className="text-center py-12 text-[#1E2D4D]/30">Sensor not found.</div>
+        <div className="text-center py-12 text-gray-400">Sensor not found.</div>
       </div>
     );
   }
@@ -282,7 +282,7 @@ export function SensorDetail() {
   return (
     <div className="px-3 sm:px-6 py-6 max-w-[1200px] mx-auto" style={F}>
       {/* Back nav */}
-      <button onClick={() => navigate('/sensors')} className="flex items-center gap-1 text-sm text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80 mb-4">
+      <button onClick={() => navigate('/sensors')} className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-4">
         <ArrowLeft className="h-4 w-4" /> Back to Manage Sensors
       </button>
 
@@ -293,15 +293,15 @@ export function SensorDetail() {
             <Thermometer className="h-6 w-6" style={{ color: compliance.color }} />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-[#1E2D4D]">{sensor.name}</h1>
+            <h1 className="text-xl font-bold text-gray-900">{sensor.name}</h1>
             <div className="flex items-center gap-2 mt-1">
-              <span className="text-sm text-[#1E2D4D]/50">{sensor.locationName}</span>
-              <span className="text-[#1E2D4D]/30">&middot;</span>
-              <span className="text-sm text-[#1E2D4D]/50">{sensor.zone}</span>
+              <span className="text-sm text-gray-500">{sensor.locationName}</span>
+              <span className="text-gray-300">&middot;</span>
+              <span className="text-sm text-gray-500">{sensor.zone}</span>
               {provider && (
                 <>
-                  <span className="text-[#1E2D4D]/30">&middot;</span>
-                  <span className="px-1.5 py-0.5 rounded text-xs font-bold" style={{ backgroundColor: provider.color + '15', color: provider.color }}>{provider.name}</span>
+                  <span className="text-gray-300">&middot;</span>
+                  <span className="px-1.5 py-0.5 rounded text-[10px] font-bold" style={{ backgroundColor: provider.color + '15', color: provider.color }}>{provider.name}</span>
                 </>
               )}
             </div>
@@ -309,19 +309,19 @@ export function SensorDetail() {
         </div>
         {/* Actions */}
         <div className="flex items-center gap-2 flex-wrap">
-          <button onClick={() => guardAction('edit', 'IoT Sensors', () => toast.info('Edit thresholds — demo mode'))} className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[#1E2D4D]/10 text-xs font-medium text-[#1E2D4D]/70 hover:bg-[#FAF7F0] min-h-[44px]">
+          <button onClick={() => guardAction('edit', 'IoT Sensors', () => toast.info('Edit thresholds — demo mode'))} className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 min-h-[44px]">
             <Settings className="h-3.5 w-3.5" /> Thresholds
           </button>
-          <button onClick={() => guardAction('edit', 'IoT Alerts', () => toast.info('Edit alerts — demo mode'))} className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[#1E2D4D]/10 text-xs font-medium text-[#1E2D4D]/70 hover:bg-[#FAF7F0]">
+          <button onClick={() => guardAction('edit', 'IoT Alerts', () => toast.info('Edit alerts — demo mode'))} className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50">
             <Bell className="h-3.5 w-3.5" /> Alerts
           </button>
-          <button onClick={() => guardAction('edit', 'IoT Sensors', () => toast.info('Reassign zone — demo mode'))} className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[#1E2D4D]/10 text-xs font-medium text-[#1E2D4D]/70 hover:bg-[#FAF7F0]">
+          <button onClick={() => guardAction('edit', 'IoT Sensors', () => toast.info('Reassign zone — demo mode'))} className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50">
             <MapPin className="h-3.5 w-3.5" /> Zone
           </button>
-          <button onClick={() => guardAction('pause', 'IoT Monitoring', () => toast.info('Pause monitoring — demo mode'))} className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-yellow-200 text-xs font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100">
+          <button onClick={() => guardAction('pause', 'IoT Monitoring', () => toast.info('Pause monitoring — demo mode'))} className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-yellow-200 text-xs font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100">
             <Pause className="h-3.5 w-3.5" /> Pause
           </button>
-          <button onClick={() => guardAction('delete', 'IoT Sensors', () => toast.info('Remove sensor — demo mode'))} className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-red-200 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100">
+          <button onClick={() => guardAction('delete', 'IoT Sensors', () => toast.info('Remove sensor — demo mode'))} className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-red-200 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100">
             <Trash2 className="h-3.5 w-3.5" /> Remove
           </button>
         </div>
@@ -330,9 +330,9 @@ export function SensorDetail() {
       {/* Top Row: Current Reading + Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         {/* Current Temperature — large */}
-        <div className="md:col-span-2 bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6">
+        <div className="md:col-span-2 bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wide">Current Temperature</span>
+            <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Current Temperature</span>
             <span className="px-2 py-0.5 rounded-full text-xs font-bold" style={{ backgroundColor: compliance.bg, color: compliance.color }}>
               {compliance.label}
             </span>
@@ -343,14 +343,14 @@ export function SensorDetail() {
               {sensor.currentHumidity !== null && (
                 <div className="flex items-center gap-1 mb-2">
                   <Droplets className="h-4 w-4 text-blue-400" />
-                  <span className="text-lg text-[#1E2D4D]/50">{sensor.currentHumidity}%</span>
+                  <span className="text-lg text-gray-500">{sensor.currentHumidity}%</span>
                 </div>
               )}
             </div>
           ) : (
-            <div className="text-5xl font-bold text-[#1E2D4D]/30">— —</div>
+            <div className="text-5xl font-bold text-gray-300">— —</div>
           )}
-          <div className="flex items-center gap-4 mt-3 text-xs text-[#1E2D4D]/30">
+          <div className="flex items-center gap-4 mt-3 text-xs text-gray-400">
             <span>Last reading: {timeAgo(sensor.lastSeenAt)}</span>
             {thMax !== null && <span>Threshold: max {thMax}°F</span>}
             {thMin !== null && <span>Threshold: min {thMin}°F</span>}
@@ -359,40 +359,40 @@ export function SensorDetail() {
 
         {/* Quick stats */}
         <div className="space-y-4">
-          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
+          <div className="bg-white rounded-xl border border-gray-200 p-4">
             <div className="flex items-center gap-2 mb-1">
               {sensor.batteryPct <= 20 ? <BatteryWarning className="h-4 w-4 text-red-500" /> : <Battery className="h-4 w-4 text-green-500" />}
-              <span className="text-xs font-medium text-[#1E2D4D]/50">Battery</span>
+              <span className="text-xs font-medium text-gray-500">Battery</span>
             </div>
             <div className="text-xl font-bold" style={{ color: sensor.batteryPct <= 20 ? '#ef4444' : sensor.batteryPct <= 50 ? '#f59e0b' : '#22c55e' }}>
               {sensor.batteryPct}%
             </div>
-            <div className="w-full h-1.5 rounded-full bg-[#1E2D4D]/5 mt-2">
+            <div className="w-full h-1.5 rounded-full bg-gray-100 mt-2">
               <div className="h-full rounded-full" style={{
                 width: `${sensor.batteryPct}%`,
                 backgroundColor: sensor.batteryPct <= 20 ? '#ef4444' : sensor.batteryPct <= 50 ? '#f59e0b' : '#22c55e',
               }} />
             </div>
           </div>
-          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
+          <div className="bg-white rounded-xl border border-gray-200 p-4">
             <div className="flex items-center gap-2 mb-1">
-              {sensor.signalRssi === 0 ? <WifiOff className="h-4 w-4 text-[#1E2D4D]/30" /> : <Wifi className="h-4 w-4" style={{ color: PRIMARY }} />}
-              <span className="text-xs font-medium text-[#1E2D4D]/50">Signal</span>
+              {sensor.signalRssi === 0 ? <WifiOff className="h-4 w-4 text-gray-300" /> : <Wifi className="h-4 w-4" style={{ color: PRIMARY }} />}
+              <span className="text-xs font-medium text-gray-500">Signal</span>
             </div>
             <div className="text-xl font-bold" style={{ color: sensor.signalRssi === 0 ? '#9ca3af' : PRIMARY }}>
               {sensor.signalRssi === 0 ? 'No Signal' : `${sensor.signalRssi} dBm`}
             </div>
-            <div className="text-xs text-[#1E2D4D]/30 mt-1">
+            <div className="text-xs text-gray-400 mt-1">
               {sensor.signalRssi === 0 ? 'Sensor offline' : sensor.signalRssi > -45 ? 'Excellent' : sensor.signalRssi > -55 ? 'Good' : 'Weak'}
             </div>
           </div>
         </div>
 
         {/* Active alerts for this sensor */}
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
           <div className="flex items-center gap-2 mb-3">
             <AlertTriangle className="h-4 w-4" style={{ color: alerts.some(a => !a.acknowledged && a.severity === 'critical') ? '#ef4444' : '#f59e0b' }} />
-            <span className="text-xs font-medium text-[#1E2D4D]/50">Active Alerts</span>
+            <span className="text-xs font-medium text-gray-500">Active Alerts</span>
           </div>
           {alerts.filter(a => !a.acknowledged).length > 0 ? (
             <div className="space-y-2">
@@ -403,7 +403,7 @@ export function SensorDetail() {
                   <div className="font-semibold" style={{ color: alert.severity === 'critical' ? '#ef4444' : alert.severity === 'warning' ? '#d97706' : '#2563eb' }}>
                     {alert.alertType.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
                   </div>
-                  <div className="text-[#1E2D4D]/50 mt-0.5">{alert.message.slice(0, 80)}...</div>
+                  <div className="text-gray-500 mt-0.5">{alert.message.slice(0, 80)}...</div>
                 </div>
               ))}
             </div>
@@ -417,10 +417,10 @@ export function SensorDetail() {
       </div>
 
       {/* Temperature Chart */}
-      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6 mb-6">
+      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 mb-6">
         <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
-          <h3 className="text-sm font-bold text-[#1E2D4D]">Temperature History</h3>
-          <div className="flex items-center gap-1 p-0.5 rounded-lg bg-[#1E2D4D]/5">
+          <h3 className="text-sm font-bold text-gray-900">Temperature History</h3>
+          <div className="flex items-center gap-1 p-0.5 rounded-lg bg-gray-100">
             {(['24h', '7d', '30d'] as const).map(r => (
               <button
                 key={r}
@@ -437,7 +437,7 @@ export function SensorDetail() {
             ))}
           </div>
         </div>
-        <div className="flex items-center gap-4 mb-2 text-xs text-[#1E2D4D]/30 flex-wrap">
+        <div className="flex items-center gap-4 mb-2 text-xs text-gray-400 flex-wrap">
           <span className="flex items-center gap-1"><span className="w-3 h-0.5 rounded" style={{ backgroundColor: PRIMARY }} /> Temperature</span>
           <span className="flex items-center gap-1"><span className="w-3 h-0.5 rounded bg-red-400" style={{ borderTop: '2px dashed #ef4444' }} /> Threshold</span>
           <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-red-50" /> Violation Zone</span>
@@ -449,8 +449,8 @@ export function SensorDetail() {
       {/* Bottom grid: Device Info + Maintenance Log */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Device Info */}
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6">
-          <h3 className="text-sm font-bold text-[#1E2D4D] mb-4">Device Information</h3>
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+          <h3 className="text-sm font-bold text-gray-900 mb-4">Device Information</h3>
           <div className="space-y-3">
             {[
               { label: 'Brand', value: provider?.name || '—' },
@@ -463,19 +463,19 @@ export function SensorDetail() {
               { label: 'Last Calibration', value: maintenance.find(m => m.type === 'calibration')?.date ? formatDate(maintenance.find(m => m.type === 'calibration')!.date) : 'Not recorded' },
               { label: 'Auto-Log Compliance', value: config?.autoLogCompliance ? 'Enabled' : 'Disabled' },
             ].map(row => (
-              <div key={row.label} className="flex items-center justify-between py-1.5 border-b border-[#1E2D4D]/3 last:border-0">
-                <span className="text-xs text-[#1E2D4D]/50">{row.label}</span>
-                <span className={`text-xs font-medium text-[#1E2D4D] ${(row as any).mono ? 'font-mono' : ''}`}>{row.value}</span>
+              <div key={row.label} className="flex items-center justify-between py-1.5 border-b border-gray-50 last:border-0">
+                <span className="text-xs text-gray-500">{row.label}</span>
+                <span className={`text-xs font-medium text-gray-900 ${(row as any).mono ? 'font-mono' : ''}`}>{row.value}</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Maintenance Log */}
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
           <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
-            <h3 className="text-sm font-bold text-[#1E2D4D]">Maintenance Log</h3>
-            <button onClick={() => guardAction('create', 'Sensor Maintenance', () => toast.info('Add maintenance entry — demo mode'))} className="flex items-center gap-1 text-xs font-medium hover:text-[#1E2D4D]/80" style={{ color: PRIMARY }}>
+            <h3 className="text-sm font-bold text-gray-900">Maintenance Log</h3>
+            <button onClick={() => guardAction('create', 'Sensor Maintenance', () => toast.info('Add maintenance entry — demo mode'))} className="flex items-center gap-1 text-xs font-medium hover:text-gray-700" style={{ color: PRIMARY }}>
               <Wrench className="h-3.5 w-3.5" /> Add Entry
             </button>
           </div>
@@ -485,17 +485,17 @@ export function SensorDetail() {
                 const Icon = maintenanceIcon(entry.type);
                 const badge = maintenanceBadge(entry.type);
                 return (
-                  <div key={entry.id} className="flex gap-3 p-3 rounded-lg bg-[#FAF7F0]">
+                  <div key={entry.id} className="flex gap-3 p-3 rounded-lg bg-gray-50">
                     <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: badge.bg }}>
                       <Icon className="h-3.5 w-3.5" style={{ color: badge.text }} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-0.5">
-                        <span className="px-1.5 py-0.5 rounded text-xs font-medium" style={{ backgroundColor: badge.bg, color: badge.text }}>{badge.label}</span>
-                        <span className="text-xs text-[#1E2D4D]/30">{formatDate(entry.date)}</span>
+                        <span className="px-1.5 py-0.5 rounded text-[10px] font-medium" style={{ backgroundColor: badge.bg, color: badge.text }}>{badge.label}</span>
+                        <span className="text-xs text-gray-400">{formatDate(entry.date)}</span>
                       </div>
-                      <div className="text-xs text-[#1E2D4D]/80">{entry.description}</div>
-                      <div className="text-xs text-[#1E2D4D]/30 mt-0.5">By {entry.performedBy}</div>
+                      <div className="text-xs text-gray-700">{entry.description}</div>
+                      <div className="text-[10px] text-gray-400 mt-0.5">By {entry.performedBy}</div>
                     </div>
                   </div>
                 );
@@ -508,18 +508,18 @@ export function SensorDetail() {
       </div>
 
       {/* Recent Readings Table */}
-      <div className="mt-6 bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6">
-        <h3 className="text-sm font-bold text-[#1E2D4D] mb-4">Recent Readings</h3>
+      <div className="mt-6 bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+        <h3 className="text-sm font-bold text-gray-900 mb-4">Recent Readings</h3>
         <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-[#1E2D4D]/5 hover:bg-[#1E2D4D]/[0.02] transition-colors">
-              <th className="text-left text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wide pb-2">Timestamp</th>
-              <th className="text-left text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wide pb-2">Temperature</th>
-              <th className="text-left text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wide pb-2 hidden sm:table-cell">Humidity</th>
-              <th className="text-left text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wide pb-2 hidden sm:table-cell">Quality</th>
-              <th className="text-left text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wide pb-2">Compliance</th>
-              <th className="text-left text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wide pb-2 hidden sm:table-cell">Battery</th>
+            <tr className="border-b border-gray-100">
+              <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wide pb-2">Timestamp</th>
+              <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wide pb-2">Temperature</th>
+              <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wide pb-2 hidden sm:table-cell">Humidity</th>
+              <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wide pb-2 hidden sm:table-cell">Quality</th>
+              <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wide pb-2">Compliance</th>
+              <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wide pb-2 hidden sm:table-cell">Battery</th>
             </tr>
           </thead>
           <tbody>
@@ -528,12 +528,12 @@ export function SensorDetail() {
                 : r.complianceStatus === 'warning' ? { color: '#f59e0b', bg: '#fffbeb' }
                   : { color: '#22c55e', bg: '#ecfdf5' };
               return (
-                <tr key={i} className="border-b border-[#1E2D4D]/3">
-                  <td className="py-2.5 text-xs text-[#1E2D4D]/70">{formatTime(r.timestamp)}</td>
+                <tr key={i} className="border-b border-gray-50">
+                  <td className="py-2.5 text-xs text-gray-600">{formatTime(r.timestamp)}</td>
                   <td className="py-2.5 text-xs font-bold" style={{ color: comp.color }}>{r.temperatureF}°F</td>
-                  <td className="py-2.5 text-xs text-[#1E2D4D]/70 hidden sm:table-cell">{r.humidityPct !== null ? `${r.humidityPct}%` : '—'}</td>
+                  <td className="py-2.5 text-xs text-gray-600 hidden sm:table-cell">{r.humidityPct !== null ? `${r.humidityPct}%` : '—'}</td>
                   <td className="py-2.5 hidden sm:table-cell">
-                    <span className="px-1.5 py-0.5 rounded text-xs font-medium" style={{
+                    <span className="px-1.5 py-0.5 rounded text-[10px] font-medium" style={{
                       backgroundColor: r.quality === 'good' ? '#ecfdf5' : r.quality === 'suspect' ? '#fffbeb' : '#fef2f2',
                       color: r.quality === 'good' ? '#059669' : r.quality === 'suspect' ? '#d97706' : '#ef4444',
                     }}>
@@ -541,11 +541,11 @@ export function SensorDetail() {
                     </span>
                   </td>
                   <td className="py-2.5">
-                    <span className="px-1.5 py-0.5 rounded text-xs font-medium" style={{ backgroundColor: comp.bg, color: comp.color }}>
+                    <span className="px-1.5 py-0.5 rounded text-[10px] font-medium" style={{ backgroundColor: comp.bg, color: comp.color }}>
                       {r.complianceStatus === 'in_range' ? 'In Range' : r.complianceStatus === 'warning' ? 'Warning' : 'Violation'}
                     </span>
                   </td>
-                  <td className="py-2.5 text-xs text-[#1E2D4D]/70 hidden sm:table-cell">{r.batteryPct}%</td>
+                  <td className="py-2.5 text-xs text-gray-600 hidden sm:table-cell">{r.batteryPct}%</td>
                 </tr>
               );
             })}

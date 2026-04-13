@@ -33,7 +33,7 @@ export function ProfitabilityReport({ data }: ProfitabilityProps) {
 
       {/* Flagged jobs alert */}
       {flagged.length > 0 && (
-        <div className="flex items-start gap-3 p-4 rounded-xl" style={{ background: '#FEF2F2', border: '1px solid #FECACA' }}>
+        <div className="flex items-start gap-3 p-4 rounded-lg" style={{ background: '#FEF2F2', border: '1px solid #FECACA' }}>
           <AlertTriangle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
           <div>
             <p className="text-sm font-semibold text-red-800">{flagged.length} job{flagged.length > 1 ? 's' : ''} below {MARGIN_THRESHOLD}% margin</p>
@@ -67,7 +67,7 @@ export function ProfitabilityReport({ data }: ProfitabilityProps) {
                     {isFlagged && <AlertTriangle className="inline w-3.5 h-3.5 ml-1 text-red-500" />}
                   </td>
                   <td className="px-3 py-2">
-                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{
+                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{
                       background: isFlagged ? '#FEF2F2' : '#F0FFF4',
                       color: isFlagged ? '#DC2626' : '#059669',
                     }}>

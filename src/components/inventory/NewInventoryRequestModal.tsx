@@ -79,7 +79,7 @@ export function NewInventoryRequestModal({ isOpen, onClose }: NewInventoryReques
           </h2>
           <button
             onClick={onClose}
-            className="p-2.5 -m-1 rounded-lg hover:bg-[#1E2D4D]/5 transition-colors"
+            className="p-2.5 -m-1 rounded-lg hover:bg-gray-100 transition-colors"
             aria-label="Close"
           >
             <X className="w-5 h-5" style={{ color: TEXT_TERTIARY }} />
@@ -98,7 +98,7 @@ export function NewInventoryRequestModal({ isOpen, onClose }: NewInventoryReques
                   key={p.value}
                   type="button"
                   onClick={() => setPriority(p.value)}
-                  className="px-3 py-1.5 text-xs font-medium rounded-xl border transition-colors"
+                  className="px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors"
                   style={{
                     borderColor: priority === p.value ? NAVY : CARD_BORDER,
                     background: priority === p.value ? NAVY : CARD_BG,
@@ -124,7 +124,7 @@ export function NewInventoryRequestModal({ isOpen, onClose }: NewInventoryReques
                     placeholder="Item name"
                     value={item.name}
                     onChange={e => updateItem(index, 'name', e.target.value)}
-                    className="flex-1 px-3 py-2 text-sm rounded-xl border focus-visible:outline-none focus-visible:ring-2 focus:ring-[#163a5f]/20"
+                    className="flex-1 px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#163a5f]/20"
                     style={{ borderColor: CARD_BORDER, color: NAVY }}
                   />
                   <input
@@ -132,13 +132,13 @@ export function NewInventoryRequestModal({ isOpen, onClose }: NewInventoryReques
                     min={1}
                     value={item.quantity}
                     onChange={e => updateItem(index, 'quantity', parseInt(e.target.value, 10) || 1)}
-                    className="w-20 px-3 py-2 text-sm rounded-xl border focus-visible:outline-none focus-visible:ring-2 focus:ring-[#163a5f]/20 text-center"
+                    className="w-20 px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#163a5f]/20 text-center"
                     style={{ borderColor: CARD_BORDER, color: NAVY }}
                   />
                   <button
                     type="button"
                     onClick={() => removeItem(index)}
-                    className="p-2 rounded-lg hover:bg-[#1E2D4D]/5 transition-colors"
+                    className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
                     disabled={items.length <= 1}
                     style={{ opacity: items.length <= 1 ? 0.3 : 1 }}
                   >
@@ -167,7 +167,7 @@ export function NewInventoryRequestModal({ isOpen, onClose }: NewInventoryReques
               onChange={e => setNotes(e.target.value)}
               placeholder="Additional notes (optional)"
               rows={3}
-              className="w-full px-3 py-2 text-sm rounded-xl border focus-visible:outline-none focus-visible:ring-2 focus:ring-[#163a5f]/20 resize-none"
+              className="w-full px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#163a5f]/20 resize-none"
               style={{ borderColor: CARD_BORDER, color: NAVY }}
             />
           </div>
@@ -180,7 +180,7 @@ export function NewInventoryRequestModal({ isOpen, onClose }: NewInventoryReques
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium rounded-xl border hover:bg-[#FAF7F0] transition-colors"
+              className="px-4 py-2 text-sm font-medium rounded-lg border hover:bg-gray-50 transition-colors"
               style={{ borderColor: CARD_BORDER, color: TEXT_TERTIARY }}
             >
               Cancel

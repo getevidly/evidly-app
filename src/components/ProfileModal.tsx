@@ -93,17 +93,17 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl p-4 sm:p-5 max-w-md w-full modal-content-enter">
+      <div className="bg-white rounded-xl p-4 sm:p-5 max-w-md w-full">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">My Profile</h2>
-          <button onClick={onClose} className="text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70" aria-label="Close">
+          <h2 className="text-2xl font-bold text-gray-900">My Profile</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600" aria-label="Close">
             <X className="h-6 w-6" />
           </button>
         </div>
 
         <form onSubmit={handleSave} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2 flex items-center gap-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
               <User className="h-4 w-4" />
               Full Name
             </label>
@@ -112,12 +112,12 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               required
-              className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2 flex items-center gap-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
               <Mail className="h-4 w-4" />
               Email
             </label>
@@ -125,13 +125,13 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
               type="email"
               value={profileEmail}
               disabled
-              className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl bg-[#1E2D4D]/5 text-[#1E2D4D]/70"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600"
             />
-            <p className="text-xs text-[#1E2D4D]/50 mt-1">Email cannot be changed</p>
+            <p className="text-xs text-gray-500 mt-1">Email cannot be changed</p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2 flex items-center gap-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
               <Phone className="h-4 w-4" />
               Phone
             </label>
@@ -141,19 +141,19 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
               onChange={(e) => setPhone(e.target.value.replace(/[^0-9()\-\s+]/g, ''))}
               inputMode="tel"
               placeholder="(555) 123-4567"
-              className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
             />
           </div>
 
-          <div className="border-t border-[#1E2D4D]/10 pt-4">
-            <h3 className="text-sm font-semibold text-[#1E2D4D] mb-1 flex items-center gap-2">
+          <div className="border-t border-gray-200 pt-4">
+            <h3 className="text-sm font-semibold text-gray-900 mb-1 flex items-center gap-2">
               <Lock className="h-4 w-4" />
               Kiosk PIN (Optional)
             </h3>
-            <p className="text-xs text-[#1E2D4D]/70 mb-3">Set a 4-digit PIN for quick access on kiosk devices</p>
+            <p className="text-xs text-gray-600 mb-3">Set a 4-digit PIN for quick access on kiosk devices</p>
             <div className="space-y-3">
               <div>
-                <label className="block text-xs text-[#1E2D4D]/50 mb-1">PIN</label>
+                <label className="block text-xs text-gray-500 mb-1">PIN</label>
                 <div className="relative">
                   <input
                     type={showPin ? 'text' : 'password'}
@@ -163,12 +163,12 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                     pattern="[0-9]*"
                     placeholder="● ● ● ●"
                     maxLength={4}
-                    className="w-full px-4 py-2 pr-10 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] text-center text-lg tracking-widest"
+                    className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37] text-center text-lg tracking-widest"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPin(!showPin)}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                     tabIndex={-1}
                   >
                     {showPin ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -176,7 +176,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                 </div>
               </div>
               <div>
-                <label className="block text-xs text-[#1E2D4D]/50 mb-1">Confirm PIN</label>
+                <label className="block text-xs text-gray-500 mb-1">Confirm PIN</label>
                 <div className="relative">
                   <input
                     type={showConfirmPin ? 'text' : 'password'}
@@ -186,14 +186,14 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                     pattern="[0-9]*"
                     placeholder="● ● ● ●"
                     maxLength={4}
-                    className={`w-full px-4 py-2 pr-10 border rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] text-center text-lg tracking-widest ${
-                      pinMismatch ? 'border-red-400' : 'border-[#1E2D4D]/15'
+                    className={`w-full px-4 py-2 pr-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37] text-center text-lg tracking-widest ${
+                      pinMismatch ? 'border-red-400' : 'border-gray-300'
                     }`}
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPin(!showConfirmPin)}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                     tabIndex={-1}
                   >
                     {showConfirmPin ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -218,14 +218,14 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-[#1E2D4D]/15 rounded-xl text-[#1E2D4D]/80 hover:bg-[#FAF7F0]"
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saveDisabled}
-              className="flex-1 px-4 py-2 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] disabled:opacity-50"
+              className="flex-1 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] disabled:opacity-50"
             >
               {loading ? 'Saving...' : 'Save Changes'}
             </button>

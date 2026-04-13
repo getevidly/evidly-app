@@ -60,9 +60,9 @@ function K2CReferralModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 modal-backdrop-enter" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={onClose}>
       <div
-        className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 overflow-hidden modal-content-enter"
+        className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 overflow-hidden"
         onClick={e => e.stopPropagation()}
         style={FONT}
       >
@@ -71,7 +71,7 @@ function K2CReferralModal({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Heart size={20} style={{ color: '#e11d48' }} />
-              <h3 className="text-lg font-semibold tracking-tight" style={{ color: MIDNIGHT_NAVY }}>
+              <h3 className="text-lg font-semibold" style={{ color: MIDNIGHT_NAVY }}>
                 Kitchen to Community
               </h3>
             </div>
@@ -195,7 +195,7 @@ export function OnboardingChecklistCard() {
   if (isAllComplete) {
     return (
       <div
-        className="bg-white rounded-xl overflow-hidden"
+        className="bg-white rounded-lg overflow-hidden"
         style={{ border: '1px solid #e5e7eb', ...FONT }}
       >
         <div className="flex items-center justify-between px-4 py-3">
@@ -236,7 +236,7 @@ export function OnboardingChecklistCard() {
                   <button
                     type="button"
                     onClick={() => navigate(step.route)}
-                    className="flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-colors hover:bg-[#1E2D4D]/5"
+                    className="flex items-center gap-1 px-2 py-1 rounded text-[11px] font-medium transition-colors hover:bg-gray-100"
                     style={{ color: '#6B7F96' }}
                   >
                     <Pencil size={10} />
@@ -292,7 +292,7 @@ export function OnboardingChecklistCard() {
       )}
 
       <div
-        className="bg-white rounded-xl overflow-hidden"
+        className="bg-white rounded-lg overflow-hidden"
         style={{ border: '1px solid #D1D9E6', ...FONT }}
       >
         {/* Gold accent bar */}
@@ -378,7 +378,7 @@ export function OnboardingChecklistCard() {
                     <Lock size={9} color="#9CA3AF" />
                   ) : (
                     <span
-                      className="text-xs font-bold"
+                      className="text-[10px] font-bold"
                       style={{ color: isCurrent ? '#FFFFFF' : '#9CA3AF' }}
                     >
                       {i + 1}
@@ -402,7 +402,7 @@ export function OnboardingChecklistCard() {
         {/* Current step detail panel */}
         {currentStep && (
           <div
-            className="mx-3 my-3 p-4 rounded-xl transition-all"
+            className="mx-3 my-3 p-4 rounded-lg transition-all"
             style={{
               backgroundColor: currentStep.completed ? STEP_BG_COMPLETED : STEP_BG_ACTIVE,
               borderLeft: `3px solid ${currentStep.completed ? STEP_BORDER_COMPLETED : STEP_BORDER_ACTIVE}`,
@@ -423,14 +423,14 @@ export function OnboardingChecklistCard() {
                 <h4 className="text-sm font-semibold" style={{ color: MIDNIGHT_NAVY }}>
                   {currentStep.label}
                   {currentStep.completed && (
-                    <span className="ml-2 text-xs font-normal" style={{ color: GREEN }}>Done</span>
+                    <span className="ml-2 text-[11px] font-normal" style={{ color: GREEN }}>Done</span>
                   )}
                 </h4>
                 <p className="text-xs mt-1" style={{ color: '#3D5068' }}>
                   {currentStep.description}
                 </p>
                 {!currentStep.completed && (
-                  <p className="text-xs mt-1.5 italic" style={{ color: '#6B7F96' }}>
+                  <p className="text-[11px] mt-1.5 italic" style={{ color: '#6B7F96' }}>
                     {currentStep.hint}
                   </p>
                 )}
@@ -456,7 +456,7 @@ export function OnboardingChecklistCard() {
                   <button
                     type="button"
                     onClick={() => navigate(currentStep.route)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors hover:bg-[#1E2D4D]/5"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors hover:bg-gray-100"
                     style={{ color: '#6B7F96', border: '1px solid #D1D9E6' }}
                   >
                     <Pencil size={12} />
@@ -549,7 +549,7 @@ export function OnboardingChecklistCard() {
                   ) : isLocked ? (
                     <Lock size={8} color="#9CA3AF" />
                   ) : (
-                    <span className="text-[11px] font-bold" style={{ color: '#9CA3AF' }}>{i + 1}</span>
+                    <span className="text-[9px] font-bold" style={{ color: '#9CA3AF' }}>{i + 1}</span>
                   )}
                 </div>
 
@@ -567,7 +567,7 @@ export function OnboardingChecklistCard() {
                 >
                   {step.label}
                   {isSkipped && (
-                    <span className="ml-1.5 text-xs font-normal" style={{ color: SKIPPED_COLOR }}>
+                    <span className="ml-1.5 text-[10px] font-normal" style={{ color: SKIPPED_COLOR }}>
                       (skipped)
                     </span>
                   )}
@@ -579,7 +579,7 @@ export function OnboardingChecklistCard() {
                     <button
                       type="button"
                       onClick={() => navigate(step.route)}
-                      className="flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-colors hover:bg-[#1E2D4D]/5 shrink-0"
+                      className="flex items-center gap-1 px-2 py-1 rounded text-[11px] font-medium transition-colors hover:bg-gray-100 shrink-0"
                       style={{ color: '#6B7F96' }}
                     >
                       <Pencil size={10} />
@@ -590,7 +590,7 @@ export function OnboardingChecklistCard() {
                   <button
                     type="button"
                     onClick={() => { unskipStep(step.id); goToStep(i); }}
-                    className="px-2 py-1 rounded text-xs font-semibold transition-colors hover:bg-amber-50 shrink-0"
+                    className="px-2 py-1 rounded text-[11px] font-semibold transition-colors hover:bg-amber-50 shrink-0"
                     style={{ color: ACCENT_GOLD }}
                   >
                     Start
@@ -601,7 +601,7 @@ export function OnboardingChecklistCard() {
                   <button
                     type="button"
                     onClick={() => goToStep(i)}
-                    className="shrink-0 p-0.5 rounded hover:bg-[#1E2D4D]/5 transition-colors"
+                    className="shrink-0 p-0.5 rounded hover:bg-gray-100 transition-colors"
                   >
                     <ChevronRight size={12} style={{ color: '#9CA3AF' }} />
                   </button>

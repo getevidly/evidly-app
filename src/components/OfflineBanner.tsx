@@ -39,7 +39,7 @@ export function OfflineBanner() {
     Icon = CheckCircle;
     message = 'All changes synced';
   } else if (syncStatus === 'syncing') {
-    bgColor = '#A08C5A';
+    bgColor = '#d4af37';
     Icon = Loader2;
     message = `Syncing ${pendingCount} change${pendingCount !== 1 ? 's' : ''}...`;
     spinning = true;

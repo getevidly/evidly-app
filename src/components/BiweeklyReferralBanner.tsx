@@ -122,7 +122,7 @@ export function BiweeklyReferralBanner() {
 
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-        <span className="text-[22px]">&#x1F381;</span>
+        <span style={{ fontSize: '22px' }}>&#x1F381;</span>
         <div>
           <div style={{
             fontFamily: 'system-ui, sans-serif', fontSize: '14px',

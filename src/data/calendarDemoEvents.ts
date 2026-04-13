@@ -26,7 +26,7 @@ export const OWNER_OPERATOR_CALENDAR = {
 
 export const EXECUTIVE_CALENDAR = {
   typeColors: {
-    review: '#1E2D4D',
+    review: '#1e4d6b',
     inspection: '#7c3aed',
     certification: '#d97706',
     meeting: '#0891b2',

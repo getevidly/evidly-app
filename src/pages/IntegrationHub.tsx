@@ -15,8 +15,8 @@ import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { Breadcrumb } from '../components/Breadcrumb';
 
-const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const NAVY = '#1e4d6b';
+const GOLD = '#d4af37';
 const MUTED_GOLD = '#A08C5A';
 
 // ── Integration catalog (static — matches DB seed) ────────
@@ -90,7 +90,7 @@ const STATUS_CONFIG: Record<string, { label: string; bg: string; text: string }>
   connected: { label: 'Connected', bg: 'bg-green-50', text: 'text-green-700' },
   available: { label: 'Available', bg: 'bg-blue-50', text: 'text-blue-700' },
   beta: { label: 'Beta', bg: 'bg-purple-50', text: 'text-purple-700' },
-  coming_soon: { label: 'Coming Soon', bg: 'bg-[#1E2D4D]/5', text: 'text-[#1E2D4D]/50' },
+  coming_soon: { label: 'Coming Soon', bg: 'bg-gray-100', text: 'text-gray-500' },
 };
 
 // ── Component ──────────────────────────────────────────────
@@ -162,13 +162,13 @@ export function IntegrationHub() {
         <div
           className="rounded-xl p-6 mb-6"
           style={{
-            background: 'linear-gradient(135deg, #0B1628 0%, #1E2D4D 50%, #0B1628 100%)',
+            background: 'linear-gradient(135deg, #0B1628 0%, #1e4d6b 50%, #0B1628 100%)',
           }}
         >
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-5">
             <div>
               <h2 className="text-lg font-bold text-white">Platform Ecosystem</h2>
-              <p className="text-sm text-[#1E2D4D]/30 mt-1">
+              <p className="text-sm text-gray-300 mt-1">
                 EvidLY connects with the tools your kitchen already uses — POS, accounting, HR, IoT sensors, insurance carriers, and more.
               </p>
             </div>
@@ -184,8 +184,8 @@ export function IntegrationHub() {
             {ecosystemStats.map(stat => (
               <div key={stat.label} className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
                 <div className="flex items-center gap-2 mb-1">
-                  <stat.icon className="h-4 w-4 text-[#A08C5A]" />
-                  <span className="text-xs text-[#1E2D4D]/30">{stat.label}</span>
+                  <stat.icon className="h-4 w-4 text-[#d4af37]" />
+                  <span className="text-xs text-gray-300">{stat.label}</span>
                 </div>
                 <div className="text-xl font-bold text-white">{stat.value}</div>
               </div>
@@ -197,17 +197,17 @@ export function IntegrationHub() {
       {/* ── Header ── */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">Integrations</h1>
-          <p className="text-sm text-[#1E2D4D]/70 mt-1">Connect EvidLY with the tools you already use</p>
+          <h1 className="text-2xl font-bold text-gray-900">Integrations</h1>
+          <p className="text-sm text-gray-600 mt-1">Connect EvidLY with the tools you already use</p>
         </div>
         <div className="flex gap-2">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#1E2D4D]/30" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Search integrations..."
-              className="pl-9 pr-4 py-2 border border-[#1E2D4D]/10 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] w-56"
+              className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] w-56"
             />
           </div>
           <button
@@ -225,7 +225,7 @@ export function IntegrationHub() {
       <div className="mb-8">
         <div className="flex items-center gap-2 mb-3">
           <Star className="h-4 w-4" style={{ color: GOLD }} />
-          <h2 className="text-sm font-bold text-[#1E2D4D] uppercase tracking-wide">Featured Integrations</h2>
+          <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wide">Featured Integrations</h2>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {featured.map(integration => {
@@ -233,22 +233,22 @@ export function IntegrationHub() {
             return (
               <div
                 key={integration.slug}
-                className="bg-white rounded-xl border-2 border-[#1E2D4D]/5 p-4 hover:border-[#A08C5A] hover:shadow-md transition-all cursor-pointer group"
+                className="bg-white rounded-xl border-2 border-gray-100 p-4 hover:border-[#d4af37] hover:shadow-md transition-all cursor-pointer group"
               >
                 <div className="flex items-start gap-3">
-                  <div className="text-2xl w-10 h-10 flex items-center justify-center rounded-lg bg-[#FAF7F0] group-hover:bg-amber-50 transition-colors">
+                  <div className="text-2xl w-10 h-10 flex items-center justify-center rounded-lg bg-gray-50 group-hover:bg-amber-50 transition-colors">
                     {LOGO_MAP[integration.slug] || '🔌'}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-[#1E2D4D] text-sm">{integration.name}</span>
-                      <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${s.bg} ${s.text}`}>{s.label}</span>
+                      <span className="font-semibold text-gray-900 text-sm">{integration.name}</span>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${s.bg} ${s.text}`}>{s.label}</span>
                     </div>
-                    <p className="text-xs text-[#1E2D4D]/50 mt-1 line-clamp-2">{integration.description}</p>
+                    <p className="text-xs text-gray-500 mt-1 line-clamp-2">{integration.description}</p>
                   </div>
                 </div>
                 <div className="mt-3 flex items-center justify-between">
-                  <span className="text-xs font-medium text-[#1E2D4D]/30 uppercase">
+                  <span className="text-[10px] font-medium text-gray-400 uppercase">
                     {CATEGORIES.find(c => c.id === integration.category)?.label}
                   </span>
                   {integration.status === 'available' ? (
@@ -267,7 +267,7 @@ export function IntegrationHub() {
                       Join Beta
                     </button>
                   ) : (
-                    <span className="text-xs text-[#1E2D4D]/30 flex items-center gap-1">
+                    <span className="text-xs text-gray-400 flex items-center gap-1">
                       <Clock className="h-3 w-3" /> Coming Soon
                     </span>
                   )}
@@ -287,13 +287,13 @@ export function IntegrationHub() {
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${
               activeCategory === cat.id
                 ? 'text-white'
-                : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/70 hover:bg-[#1E2D4D]/10'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
             style={activeCategory === cat.id ? { backgroundColor: NAVY } : undefined}
           >
             {cat.emoji && <span>{cat.emoji}</span>}
             {cat.label}
-            <span className="text-xs opacity-70">({categoryCounts[cat.id] || 0})</span>
+            <span className="text-[10px] opacity-70">({categoryCounts[cat.id] || 0})</span>
           </button>
         ))}
       </div>
@@ -305,25 +305,25 @@ export function IntegrationHub() {
           return (
             <div
               key={integration.slug}
-              className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 hover:shadow-md transition-shadow"
+              className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-shadow"
             >
               <div className="flex items-start gap-3">
-                <div className="text-2xl w-10 h-10 flex items-center justify-center rounded-lg bg-[#FAF7F0]">
+                <div className="text-2xl w-10 h-10 flex items-center justify-center rounded-lg bg-gray-50">
                   {LOGO_MAP[integration.slug] || '🔌'}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-semibold text-[#1E2D4D] text-sm">{integration.name}</span>
-                    <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${s.bg} ${s.text}`}>{s.label}</span>
+                    <span className="font-semibold text-gray-900 text-sm">{integration.name}</span>
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${s.bg} ${s.text}`}>{s.label}</span>
                     {integration.isFeatured && (
                       <Star className="h-3 w-3" style={{ color: GOLD }} fill={GOLD} />
                     )}
                   </div>
-                  <p className="text-xs text-[#1E2D4D]/50 mt-1 line-clamp-2">{integration.description}</p>
+                  <p className="text-xs text-gray-500 mt-1 line-clamp-2">{integration.description}</p>
                 </div>
               </div>
-              <div className="mt-3 flex items-center justify-between border-t border-[#1E2D4D]/5 pt-3">
-                <span className="text-xs font-medium text-[#1E2D4D]/30 uppercase">
+              <div className="mt-3 flex items-center justify-between border-t border-gray-100 pt-3">
+                <span className="text-[10px] font-medium text-gray-400 uppercase">
                   {CATEGORIES.find(c => c.id === integration.category)?.label}
                 </span>
                 {integration.status === 'available' ? (
@@ -346,7 +346,7 @@ export function IntegrationHub() {
                     <CheckCircle2 className="h-3.5 w-3.5" /> Connected
                   </span>
                 ) : (
-                  <span className="text-xs text-[#1E2D4D]/30 flex items-center gap-1">
+                  <span className="text-xs text-gray-400 flex items-center gap-1">
                     <Clock className="h-3 w-3" /> Coming Soon
                   </span>
                 )}
@@ -358,16 +358,16 @@ export function IntegrationHub() {
 
       {filtered.length === 0 && (
         <div className="text-center py-12">
-          <Search className="h-10 w-10 text-[#1E2D4D]/30 mx-auto mb-3" />
-          <p className="text-[#1E2D4D]/50 font-medium">No integrations found</p>
-          <p className="text-sm text-[#1E2D4D]/30 mt-1">Try a different search or category filter</p>
+          <Search className="h-10 w-10 text-gray-300 mx-auto mb-3" />
+          <p className="text-gray-500 font-medium">No integrations found</p>
+          <p className="text-sm text-gray-400 mt-1">Try a different search or category filter</p>
         </div>
       )}
 
       {/* ── CTA Section ── */}
-      <div className="bg-[#FAF7F0] rounded-xl border border-[#1E2D4D]/10 p-6 text-center">
-        <h3 className="text-lg font-bold text-[#1E2D4D] mb-2">Don't see what you need?</h3>
-        <p className="text-sm text-[#1E2D4D]/70 mb-4">
+      <div className="bg-gray-50 rounded-xl border border-gray-200 p-6 text-center">
+        <h3 className="text-lg font-bold text-gray-900 mb-2">Don't see what you need?</h3>
+        <p className="text-sm text-gray-600 mb-4">
           We're building new integrations every month. Let us know what tools you use and we'll prioritize accordingly.
         </p>
         <button
@@ -382,35 +382,35 @@ export function IntegrationHub() {
       {/* ── Request Integration Modal ── */}
       {showRequestForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-auto max-w-md sm:w-full modal-content-enter">
-            <h3 className="text-xl font-bold text-[#1E2D4D] mb-4">Request an Integration</h3>
+          <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-auto max-w-md sm:w-full">
+            <h3 className="text-xl font-bold text-gray-900 mb-4">Request an Integration</h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Integration Name <span className="text-red-500">*</span>
                 </label>
                 <input
                   value={requestName}
                   onChange={e => setRequestName(e.target.value)}
                   placeholder="e.g., Restaurant365, Lightspeed POS"
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Why do you need it?</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Why do you need it?</label>
                 <textarea
                   value={requestDescription}
                   onChange={e => setRequestDescription(e.target.value)}
                   placeholder="Tell us how this integration would help your operation..."
                   rows={3}
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] resize-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] resize-none"
                 />
               </div>
             </div>
             <div className="flex gap-3 mt-6">
               <button
                 onClick={() => setShowRequestForm(false)}
-                className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-[#FAF7F0]"
+                className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
               >
                 Cancel
               </button>

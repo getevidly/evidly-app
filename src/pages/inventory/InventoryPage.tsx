@@ -132,7 +132,7 @@ export function InventoryPage() {
               }}
             >
               <Icon className="w-5 h-5 mx-auto mb-2" style={{ color: s.color }} />
-              <p className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>
+              <p className="text-2xl font-bold" style={{ color: NAVY }}>
                 {s.value}
               </p>
               <p className="text-xs mt-0.5" style={{ color: TEXT_TERTIARY }}>
@@ -154,7 +154,7 @@ export function InventoryPage() {
           placeholder="Search items..."
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="w-full pl-9 pr-4 py-2 text-sm rounded-xl border focus-visible:outline-none focus-visible:ring-2 focus:ring-[#163a5f]/20"
+          className="w-full pl-9 pr-4 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#163a5f]/20"
           style={{ borderColor: CARD_BORDER, color: NAVY }}
         />
       </div>
@@ -218,7 +218,7 @@ export function InventoryPage() {
                   return (
                     <tr
                       key={item.id}
-                      className="cursor-pointer hover:bg-[#FAF7F0] transition-colors"
+                      className="cursor-pointer hover:bg-gray-50 transition-colors"
                       style={{ borderBottom: `1px solid ${CARD_BORDER}` }}
                       onClick={() => navigate(`/inventory/${item.id}`)}
                     >
@@ -242,7 +242,7 @@ export function InventoryPage() {
                       </td>
                       <td className="px-4 py-3">
                         <span
-                          className="text-xs font-semibold px-2 py-0.5 rounded-full"
+                          className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
                           style={{ background: badge.bg, color: badge.text }}
                         >
                           {badge.label}

@@ -9,10 +9,10 @@ interface JurisdictionScoreDisplayProps {
 export function JurisdictionScoreDisplay({ result }: JurisdictionScoreDisplayProps) {
   if (result.systemType === 'none') {
     return (
-      <div className="flex flex-col items-center justify-center p-6 bg-[#FAF7F0] rounded-xl border border-[#1E2D4D]/10 min-h-[200px]">
+      <div className="flex flex-col items-center justify-center p-6 bg-gray-50 rounded-xl border border-gray-200 min-h-[200px]">
         <EvidlyIcon size={40} className="mb-3" />
-        <div className="text-sm font-medium text-[#1E2D4D]/50">Non-CA Location</div>
-        <div className="text-xs text-[#1E2D4D]/30 mt-1 text-center max-w-[180px]">
+        <div className="text-sm font-medium text-gray-500">Non-CA Location</div>
+        <div className="text-xs text-gray-400 mt-1 text-center max-w-[180px]">
           {result.message}
         </div>
       </div>
@@ -23,7 +23,7 @@ export function JurisdictionScoreDisplay({ result }: JurisdictionScoreDisplayPro
   if (result.systemType === 'letter_grade') {
     return (
       <div className="flex flex-col items-center">
-        <div className="text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider mb-2">
+        <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
           {result.countyName}
         </div>
         <div
@@ -38,7 +38,7 @@ export function JurisdictionScoreDisplay({ result }: JurisdictionScoreDisplayPro
           )}
         </div>
         <div className="mt-3 text-center">
-          <div className="text-lg font-bold text-[#1E2D4D]/80">Score: {result.numericScore}</div>
+          <div className="text-lg font-bold text-gray-700">Score: {result.numericScore}</div>
           {result.grade.special && (
             <div className="text-xs font-semibold text-yellow-600 mt-1">{result.grade.special}</div>
           )}
@@ -50,7 +50,7 @@ export function JurisdictionScoreDisplay({ result }: JurisdictionScoreDisplayPro
           )}
         </div>
         {result.violations.length > 0 && (
-          <div className="mt-3 text-xs text-[#1E2D4D]/50">
+          <div className="mt-3 text-xs text-gray-500">
             {result.violations.length} violation{result.violations.length !== 1 ? 's' : ''} ({result.totalDeductions} pts deducted)
           </div>
         )}
@@ -62,7 +62,7 @@ export function JurisdictionScoreDisplay({ result }: JurisdictionScoreDisplayPro
   if (result.systemType === 'color_placard') {
     return (
       <div className="flex flex-col items-center">
-        <div className="text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider mb-2">
+        <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
           {result.countyName}
         </div>
         <div
@@ -73,7 +73,7 @@ export function JurisdictionScoreDisplay({ result }: JurisdictionScoreDisplayPro
           <span className="text-sm font-medium text-white/80 mt-1">Placard</span>
         </div>
         <div className="mt-3 text-center">
-          <div className="text-lg font-bold text-[#1E2D4D]/80">Score: {result.numericScore}</div>
+          <div className="text-lg font-bold text-gray-700">Score: {result.numericScore}</div>
           {!result.grade.passing && (
             <div className="flex items-center gap-1 text-xs text-red-600 mt-1">
               <AlertTriangle className="w-3 h-3" />
@@ -82,7 +82,7 @@ export function JurisdictionScoreDisplay({ result }: JurisdictionScoreDisplayPro
           )}
         </div>
         {result.violations.length > 0 && (
-          <div className="mt-3 text-xs text-[#1E2D4D]/50">
+          <div className="mt-3 text-xs text-gray-500">
             {result.violations.length} violation{result.violations.length !== 1 ? 's' : ''} ({result.totalDeductions} pts deducted)
           </div>
         )}
@@ -95,7 +95,7 @@ export function JurisdictionScoreDisplay({ result }: JurisdictionScoreDisplayPro
     const isPassing = result.grade.passing;
     return (
       <div className="flex flex-col items-center">
-        <div className="text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider mb-2">
+        <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
           {result.countyName}
         </div>
         <div
@@ -118,7 +118,7 @@ export function JurisdictionScoreDisplay({ result }: JurisdictionScoreDisplayPro
           )}
         </div>
         {result.violations.length > 0 && (
-          <div className="mt-3 text-xs text-[#1E2D4D]/50">
+          <div className="mt-3 text-xs text-gray-500">
             {result.violations.length} violation{result.violations.length !== 1 ? 's' : ''}
           </div>
         )}
@@ -129,7 +129,7 @@ export function JurisdictionScoreDisplay({ result }: JurisdictionScoreDisplayPro
   // Standard / Generic CalCode Display
   return (
     <div className="flex flex-col items-center">
-      <div className="text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider mb-2">
+      <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
         {result.countyName}
       </div>
       <div
@@ -148,7 +148,7 @@ export function JurisdictionScoreDisplay({ result }: JurisdictionScoreDisplayPro
         )}
       </div>
       {result.violations.length > 0 && (
-        <div className="mt-3 text-xs text-[#1E2D4D]/50">
+        <div className="mt-3 text-xs text-gray-500">
           {result.violations.length} violation{result.violations.length !== 1 ? 's' : ''} ({result.totalDeductions} pts deducted)
         </div>
       )}

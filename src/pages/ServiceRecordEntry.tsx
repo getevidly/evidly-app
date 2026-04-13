@@ -9,9 +9,9 @@ import { GhostInput } from '../components/ai/GhostInput';
 import { useDemo } from '../contexts/DemoContext';
 
 // ── Brand ─────────────────────────────────────────────────────────
-const NAVY = '#1E2D4D';
-const NAVY_HOVER = '#141E33';
-const GOLD = '#A08C5A';
+const NAVY = '#1e4d6b';
+const NAVY_HOVER = '#163a52';
+const GOLD = '#d4af37';
 const F: React.CSSProperties = { fontFamily: "'Inter', 'DM Sans', sans-serif" };
 
 // ── Demo equipment lookup ─────────────────────────────────────────
@@ -74,8 +74,8 @@ interface FormState {
   cost: string;
 }
 
-const inputClass = 'w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] bg-white';
-const labelClass = 'block text-sm font-medium text-[#1E2D4D]/80 mb-1';
+const inputClass = 'w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] bg-white';
+const labelClass = 'block text-sm font-medium text-gray-700 mb-1';
 
 export function ServiceRecordEntry() {
   const { equipmentId } = useParams<{ equipmentId: string }>();
@@ -160,23 +160,23 @@ export function ServiceRecordEntry() {
       {/* Back link */}
       <button
         onClick={() => navigate(equipmentId ? `/equipment/${equipmentId}` : '/equipment')}
-        className="flex items-center gap-1.5 text-sm text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80 mb-4"
+        className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-4"
       >
         <ArrowLeft size={16} /> Back to {equipment?.name || 'Equipment'}
       </button>
 
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-xl font-bold text-[#1E2D4D]">Record Service</h1>
+        <h1 className="text-xl font-bold text-gray-900">Record Service</h1>
         {equipment && (
-          <p className="text-sm text-[#1E2D4D]/50 mt-1">
+          <p className="text-sm text-gray-500 mt-1">
             {equipment.name} · {equipment.type} · {equipment.location}
           </p>
         )}
       </div>
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
+      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <div className="p-5 space-y-5">
           {/* Service Type */}
           <div>
@@ -217,7 +217,7 @@ export function ServiceRecordEntry() {
                 className={inputClass}
               />
               {form.nextServiceDate && form.serviceType && (DEFAULT_INTERVALS[form.serviceType] ?? 0) > 0 && (
-                <p className="text-xs text-[#1E2D4D]/30 mt-1">
+                <p className="text-xs text-gray-400 mt-1">
                   Auto-calculated from {SERVICE_TYPES.find(t => t.value === form.serviceType)?.label} interval ({DEFAULT_INTERVALS[form.serviceType]}d) — you can override
                 </p>
               )}
@@ -292,7 +292,7 @@ export function ServiceRecordEntry() {
                 className={`flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-semibold border transition-colors ${
                   form.passFail === 'pass'
                     ? 'bg-green-600 text-white border-green-600'
-                    : 'bg-white text-[#1E2D4D]/70 border-[#1E2D4D]/15 hover:border-green-400'
+                    : 'bg-white text-gray-600 border-gray-300 hover:border-green-400'
                 }`}
               >
                 <CheckCircle size={16} /> Pass
@@ -303,7 +303,7 @@ export function ServiceRecordEntry() {
                 className={`flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-semibold border transition-colors ${
                   form.passFail === 'fail'
                     ? 'bg-red-600 text-white border-red-600'
-                    : 'bg-white text-[#1E2D4D]/70 border-[#1E2D4D]/15 hover:border-red-400'
+                    : 'bg-white text-gray-600 border-gray-300 hover:border-red-400'
                 }`}
               >
                 <XCircle size={16} /> Fail
@@ -340,14 +340,14 @@ export function ServiceRecordEntry() {
           {/* Document upload placeholder */}
           <div>
             <label className={labelClass}>Document Upload</label>
-            <div className="border-2 border-dashed border-[#1E2D4D]/15 rounded-xl p-6 text-center">
-              <FileText size={24} className="mx-auto mb-2 text-[#1E2D4D]/30" />
-              <p className="text-sm text-[#1E2D4D]/50">Drag & drop certificate, invoice, or photo</p>
-              <p className="text-xs text-[#1E2D4D]/30 mt-1">PDF, JPG, PNG up to 25MB</p>
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+              <FileText size={24} className="mx-auto mb-2 text-gray-300" />
+              <p className="text-sm text-gray-500">Drag & drop certificate, invoice, or photo</p>
+              <p className="text-xs text-gray-400 mt-1">PDF, JPG, PNG up to 25MB</p>
               <button
                 type="button"
                 onClick={() => guardAction('upload', 'Service Records', () => toast.info('Document upload available in full version'))}
-                className="mt-3 text-xs font-medium px-3 py-1.5 rounded border border-[#1E2D4D]/15 text-[#1E2D4D]/70 hover:bg-[#FAF7F0]"
+                className="mt-3 text-xs font-medium px-3 py-1.5 rounded border border-gray-300 text-gray-600 hover:bg-gray-50"
               >
                 Browse Files
               </button>
@@ -356,11 +356,11 @@ export function ServiceRecordEntry() {
         </div>
 
         {/* Submit footer */}
-        <div className="border-t border-[#1E2D4D]/10 p-5 bg-[#FAF7F0] flex items-center justify-between">
+        <div className="border-t border-gray-200 p-5 bg-gray-50 flex items-center justify-between">
           <button
             type="button"
             onClick={() => navigate(equipmentId ? `/equipment/${equipmentId}` : '/equipment')}
-            className="px-4 py-2.5 rounded-lg text-sm font-medium border border-[#1E2D4D]/15 text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/5"
+            className="px-4 py-2.5 rounded-lg text-sm font-medium border border-gray-300 text-gray-700 hover:bg-gray-100"
           >
             Cancel
           </button>

@@ -14,7 +14,7 @@ export function ShiftSummaryCard({ summary }) {
         <div className="flex items-center gap-2 mb-3">
           <Sparkles className="h-4 w-4 text-[#A08C5A]" />
           <h3 className="text-sm font-semibold text-[#0B1628]">Shift Intelligence</h3>
-          <span className="px-1.5 py-0.5 bg-[#A08C5A]/10 text-[#A08C5A] text-[11px] font-medium rounded">AI</span>
+          <span className="px-1.5 py-0.5 bg-[#A08C5A]/10 text-[#A08C5A] text-[9px] font-medium rounded">AI</span>
         </div>
         <p className="text-xs text-[#6B7F96] text-center py-4">No shift data available for summary</p>
       </div>
@@ -29,9 +29,9 @@ export function ShiftSummaryCard({ summary }) {
         <div className="flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-[#A08C5A]" />
           <h3 className="text-sm font-semibold text-[#0B1628]">Shift Intelligence</h3>
-          <span className="px-1.5 py-0.5 bg-[#A08C5A]/10 text-[#A08C5A] text-[11px] font-medium rounded">AI Summary</span>
+          <span className="px-1.5 py-0.5 bg-[#A08C5A]/10 text-[#A08C5A] text-[9px] font-medium rounded">AI Summary</span>
         </div>
-        <span className="text-xs text-[#6B7F96]">{shiftLabel}</span>
+        <span className="text-[10px] text-[#6B7F96]">{shiftLabel}</span>
       </div>
 
       {/* Stats grid */}
@@ -39,20 +39,20 @@ export function ShiftSummaryCard({ summary }) {
         <div className="bg-[#F4F6FA] rounded-lg p-3 text-center">
           <ClipboardList className="h-4 w-4 text-[#1E2D4D] mx-auto mb-1" />
           <p className="text-lg font-bold text-[#0B1628]">{completionStats.checklistsCompleted}/{completionStats.checklistsTotal}</p>
-          <p className="text-xs text-[#6B7F96]">Checklists</p>
+          <p className="text-[10px] text-[#6B7F96]">Checklists</p>
         </div>
         <div className="bg-[#F4F6FA] rounded-lg p-3 text-center">
           <Thermometer className="h-4 w-4 text-[#1E2D4D] mx-auto mb-1" />
           <p className="text-lg font-bold text-[#0B1628]">{completionStats.tempLogsRecorded}</p>
-          <p className="text-xs text-[#6B7F96]">Temp Logs</p>
+          <p className="text-[10px] text-[#6B7F96]">Temp Logs</p>
           {completionStats.tempFailures > 0 && (
-            <p className="text-[11px] text-[#991B1B] font-medium">{completionStats.tempFailures} out of range</p>
+            <p className="text-[9px] text-[#991B1B] font-medium">{completionStats.tempFailures} out of range</p>
           )}
         </div>
         <div className="bg-[#F4F6FA] rounded-lg p-3 text-center">
           <Wrench className="h-4 w-4 text-[#1E2D4D] mx-auto mb-1" />
           <p className="text-lg font-bold text-[#0B1628]">{completionStats.correctiveActionsResolved}</p>
-          <p className="text-xs text-[#6B7F96]">CA Resolved</p>
+          <p className="text-[10px] text-[#6B7F96]">CA Resolved</p>
         </div>
       </div>
 
@@ -74,7 +74,7 @@ export function ShiftSummaryCard({ summary }) {
 
       {/* Handoff Notes */}
       <div className="border-t border-[#E8EDF5] pt-3">
-        <p className="text-xs text-[#6B7F96] uppercase tracking-wider font-medium mb-1.5">Auto Handoff Notes</p>
+        <p className="text-[10px] text-[#6B7F96] uppercase tracking-wider font-medium mb-1.5">Auto Handoff Notes</p>
         <ul className="space-y-1">
           {handoffNotes.map((note, i) => (
             <li key={i} className="text-xs text-[#3D5068] flex items-start gap-1.5">

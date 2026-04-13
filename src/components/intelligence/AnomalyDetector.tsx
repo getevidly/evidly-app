@@ -75,7 +75,7 @@ export const AnomalyDetector: React.FC<Props> = ({ data }) => {
     <div style={{ background: '#FFFFFF', border: '1px solid #D1D9E6', borderRadius: '12px', padding: '20px', marginBottom: '16px', boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
         <h2 style={{ color: '#0B1628', fontSize: '14px', fontWeight: 700, margin: 0, display: 'flex', alignItems: 'center', gap: '8px', fontFamily: 'system-ui' }}>
-          <span className="text-base">{'🔍'}</span> Anomaly Detection
+          <span style={{ fontSize: '16px' }}>{'🔍'}</span> Anomaly Detection
         </h2>
         <span style={{ fontSize: '11px', color: '#3D5068', fontFamily: 'system-ui' }}>
           {anomalies.length} anomalies detected
@@ -93,9 +93,9 @@ export const AnomalyDetector: React.FC<Props> = ({ data }) => {
             return (
               <div key={i} style={{ background: s.bg, border: `1px solid ${s.border}`, borderRadius: '8px', padding: '12px 14px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-                  <span className="text-xs">{s.icon}</span>
+                  <span style={{ fontSize: '12px' }}>{s.icon}</span>
                   <span style={{ background: s.border, borderRadius: '4px', padding: '1px 6px', fontSize: '9px', color: '#ffffff', fontWeight: 700, fontFamily: 'system-ui' }}>{s.label}</span>
-                  <p style={{ color: s.text, fontWeight: 700, margin: 0, fontFamily: 'system-ui' }}>{a.type}</p>
+                  <p style={{ color: s.text, fontSize: '12px', fontWeight: 700, margin: 0, fontFamily: 'system-ui' }}>{a.type}</p>
                   <span style={{ fontSize: '10px', color: '#3D5068', fontFamily: 'system-ui', marginLeft: 'auto' }}>{a.location}</span>
                 </div>
                 <p style={{ color: '#3D5068', fontSize: '11px', margin: '0 0 6px', lineHeight: 1.5, fontFamily: 'system-ui' }}>{a.description}</p>

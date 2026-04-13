@@ -83,10 +83,10 @@ export function EmptyState({ type, customHeading, customSubtext, customCta, cust
   return (
     <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
       <div className="text-4xl mb-4">{state.icon}</div>
-      <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-2">
+      <h3 className="text-lg font-semibold text-[#1E2D4D] mb-2">
         {heading}
       </h3>
-      <p className="text-sm text-[#1E2D4D]/50 max-w-xs mb-6">
+      <p className="text-sm text-gray-500 max-w-xs mb-6">
         {subtext}
       </p>
       {cta && ctaRoute && (

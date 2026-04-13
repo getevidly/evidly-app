@@ -26,9 +26,9 @@ export function ReportCenter() {
     return (
       <div className="p-6" style={F}>
         <div className="mt-8 flex flex-col items-center justify-center py-12">
-          <ShieldX className="h-16 w-16 text-[#1E2D4D]/30 mb-4" />
-          <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Reports Not Available</h2>
-          <p className="text-[#1E2D4D]/70 text-center max-w-md">
+          <ShieldX className="h-16 w-16 text-gray-400 mb-4" />
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Reports Not Available</h2>
+          <p className="text-gray-600 text-center max-w-md">
             Reports are available to managers and above. Contact your manager for access.
           </p>
         </div>
@@ -41,7 +41,7 @@ export function ReportCenter() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight" style={{ color: BODY_TEXT }}>Reports</h1>
+          <h1 className="text-xl sm:text-2xl font-bold" style={{ color: BODY_TEXT }}>Reports</h1>
           <p className="text-sm mt-1" style={{ color: MUTED }}>
             See where things stand across your kitchen operations
           </p>

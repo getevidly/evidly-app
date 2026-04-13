@@ -50,7 +50,7 @@ export const TrendEngine: React.FC<Props> = ({ data }) => {
     <div style={{ background: '#FFFFFF', border: '1px solid #D1D9E6', borderRadius: '12px', padding: '20px', marginBottom: '16px', boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
         <h2 style={{ color: '#0B1628', fontSize: '14px', fontWeight: 700, margin: 0, display: 'flex', alignItems: 'center', gap: '8px', fontFamily: 'system-ui' }}>
-          <span className="text-base">{'📈'}</span> 90-Day Compliance Trajectory
+          <span style={{ fontSize: '16px' }}>{'📈'}</span> 90-Day Compliance Trajectory
         </h2>
         <div style={{ display: 'flex', gap: '4px' }}>
           {Object.entries(metricLabels).map(([key, m]) => (

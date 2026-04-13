@@ -5,9 +5,9 @@ import Papa from 'papaparse';
 import { BULK_CSV_COLUMNS, generateCSVTemplate, type ClientInvitation } from '../../data/serviceProviderDemoData';
 
 // ── Brand colors ───────────────────────────────────────────────
-const NAVY = '#1E2D4D';
+const NAVY = '#1e4d6b';
 const NAVY_HOVER = '#163a52';
-const GOLD = '#A08C5A';
+const GOLD = '#d4af37';
 
 // ── Email regex ────────────────────────────────────────────────
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -227,16 +227,16 @@ export function BulkClientImport({ isOpen, onClose, onImportComplete, providerNa
   const stepLabels = ['Upload', 'Preview', 'Send'];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 modal-backdrop-enter" onClick={handleClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={handleClose}>
       <div
-        className="bg-white rounded-xl shadow-2xl w-full max-w-3xl mx-4 overflow-hidden flex flex-col max-h-[90vh] modal-content-enter"
+        className="bg-white rounded-xl shadow-2xl w-full max-w-3xl mx-4 overflow-hidden flex flex-col max-h-[90vh]"
         onClick={e => e.stopPropagation()}
         style={{ fontFamily: 'Inter, sans-serif' }}
       >
         {/* ── Header ───────────────────────────────────────── */}
         <div className="px-6 pt-5 pb-4 flex items-center justify-between" style={{ backgroundColor: NAVY }}>
           <div>
-            <h2 className="text-lg font-semibold tracking-tight text-white">Bulk Invite Clients</h2>
+            <h2 className="text-lg font-semibold text-white">Bulk Invite Clients</h2>
             <p className="text-sm text-white/70 mt-0.5">{providerName}</p>
           </div>
           <button
@@ -330,7 +330,7 @@ export function BulkClientImport({ isOpen, onClose, onImportComplete, providerNa
               </button>
 
               {/* Column reference */}
-              <div className="rounded-xl p-4" style={{ backgroundColor: '#F4F6FA', border: '1px solid #E8EDF5' }}>
+              <div className="rounded-lg p-4" style={{ backgroundColor: '#F4F6FA', border: '1px solid #E8EDF5' }}>
                 <p className="text-xs font-semibold mb-2" style={{ color: '#0B1628' }}>
                   CSV Columns
                 </p>
@@ -347,7 +347,7 @@ export function BulkClientImport({ isOpen, onClose, onImportComplete, providerNa
                         {col.header}
                       </span>
                       {col.required && (
-                        <span className="text-red-500 text-xs font-semibold mt-0.5">REQUIRED</span>
+                        <span className="text-red-500 text-[10px] font-semibold mt-0.5">REQUIRED</span>
                       )}
                       <span style={{ color: '#3D5068' }}>{col.description}</span>
                     </div>
@@ -394,7 +394,7 @@ export function BulkClientImport({ isOpen, onClose, onImportComplete, providerNa
               </div>
 
               {/* Table preview (first 10) */}
-              <div className="border rounded-xl overflow-x-auto" style={{ borderColor: '#D1D9E6' }}>
+              <div className="border rounded-lg overflow-x-auto" style={{ borderColor: '#D1D9E6' }}>
                 <table className="w-full text-xs">
                   <thead>
                     <tr style={{ backgroundColor: '#F4F6FA' }}>
@@ -486,7 +486,7 @@ export function BulkClientImport({ isOpen, onClose, onImportComplete, providerNa
                   >
                     <CheckCircle size={32} style={{ color: '#16A34A' }} />
                   </div>
-                  <p className="text-lg font-semibold tracking-tight" style={{ color: '#0B1628' }}>
+                  <p className="text-lg font-semibold" style={{ color: '#0B1628' }}>
                     All {validRows.length} invitations sent!
                   </p>
                   <p className="text-sm" style={{ color: '#6B7F96' }}>

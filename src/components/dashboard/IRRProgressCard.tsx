@@ -10,7 +10,7 @@ import { ClipboardCheck, ArrowRight } from 'lucide-react';
 import { useIRRSubmission } from '../../hooks/useIRRSubmission';
 import { IRR_QUESTIONS, POSTURE_LABELS } from '../../data/workforceRiskDemoData';
 
-const NAVY = '#1E2D4D';
+const NAVY = '#1e4d6b';
 const TEXT_SEC = '#6B7F96';
 const BORDER = '#D1D9E6';
 

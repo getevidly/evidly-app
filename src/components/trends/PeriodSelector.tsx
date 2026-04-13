@@ -21,7 +21,7 @@ export function PeriodSelector({ periods, selected, onChange }: Props) {
           onClick={() => onChange(p)}
           className="px-3 py-1 text-xs font-medium rounded-lg transition-colors"
           style={{
-            backgroundColor: selected === p ? '#1E2D4D' : 'transparent',
+            backgroundColor: selected === p ? '#1e4d6b' : 'transparent',
             color: selected === p ? 'white' : 'var(--text-secondary, #3D5068)',
           }}
         >

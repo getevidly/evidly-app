@@ -52,7 +52,7 @@ export function HealthBanner({ status, scope, message }: HealthBannerProps) {
 
   return (
     <div
-      className="flex items-center gap-3 rounded-xl px-4 py-3"
+      className="flex items-center gap-3 rounded-lg px-4 py-3"
       style={{
         backgroundColor: config.bgColor,
         borderLeft: `4px solid ${config.borderColor}`,
@@ -60,10 +60,10 @@ export function HealthBanner({ status, scope, message }: HealthBannerProps) {
     >
       <Icon size={18} className="shrink-0" style={{ color: config.iconColor }} />
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold" style={{ color: config.textColor }}>
+        <p className="text-[13px] font-semibold" style={{ color: config.textColor }}>
           {scope}
         </p>
-        <p className="text-xs" style={{ color: config.subTextColor }}>
+        <p className="text-[11px]" style={{ color: config.subTextColor }}>
           {message}
         </p>
       </div>

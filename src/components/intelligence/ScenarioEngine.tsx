@@ -382,7 +382,7 @@ export const ScenarioEngine: React.FC<ScenarioEngineProps> = ({ onScenarioChange
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span className="text-lg">{'⚡'}</span>
+          <span style={{ fontSize: '18px' }}>{'⚡'}</span>
           <div style={{ textAlign: 'left' }}>
             <p style={{
               color: applied ? '#A08C5A' : '#0B1628',
@@ -471,7 +471,7 @@ export const ScenarioEngine: React.FC<ScenarioEngineProps> = ({ onScenarioChange
                         onMouseLeave={e => (e.currentTarget.style.borderColor = '#D1D9E6')}
                       >
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-                          <span className="text-base">{scenario.icon}</span>
+                          <span style={{ fontSize: '16px' }}>{scenario.icon}</span>
                           <span style={{
                             color: '#0B1628', fontSize: '12px', fontWeight: 600,
                             fontFamily: F,
@@ -506,7 +506,7 @@ export const ScenarioEngine: React.FC<ScenarioEngineProps> = ({ onScenarioChange
                 >
                   {'←'} Back
                 </button>
-                <span className="text-base">{selectedScenario.icon}</span>
+                <span style={{ fontSize: '16px' }}>{selectedScenario.icon}</span>
                 <p style={{ color: '#0B1628', fontSize: '14px', fontWeight: 700, margin: 0, fontFamily: F }}>
                   {selectedScenario.label}
                 </p>

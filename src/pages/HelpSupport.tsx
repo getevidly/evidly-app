@@ -107,7 +107,7 @@ const FAQ_CATEGORIES: FaqCategory[] = [
 
   // ── Category 10: Account & Billing ──
   { id: 'billing', name: 'Account & Billing', icon: '\u{1F4B3}', articles: [
-    { id: 'ab-1', title: 'Subscription Plans', views: 1543, helpful: 89, body: `EvidLY offers three tiers: Founder Plan ($99/month base + $49 per location for 1-10 locations), Standard Plan ($199/month base + $99 per location), and Enterprise (custom pricing for 11+ locations). The Founder Plan includes early adopter benefits and is available to the first 1,000 customers. Annual billing gives you 2 months free (pay for 10 months, get 12). All plans include full access to both Food Safety and Facility safety categorys, the Jurisdiction Intelligence Engine, and all compliance features.` },
+    { id: 'ab-1', title: 'Subscription Plans', views: 1543, helpful: 89, body: `EvidLY offers three tiers: Founder Plan ($99/month base + $49 per location for 1-10 locations), Standard Plan ($199/month base + $99 per location), and Enterprise (custom pricing for 11+ locations). The Founder Plan includes early adopter benefits and is available to the first 1,000 customers. Annual billing gives you 2 months free (pay for 10 months, get 12). All plans include full access to both Food Safety and Facility Safety pillars, the Jurisdiction Intelligence Engine, and all compliance features.` },
     { id: 'ab-2', title: 'Adding and Removing Locations', views: 1201, helpful: 87, body: `Go to Administration → Locations to add or remove locations. Each location added increases your monthly per-location fee. When you remove a location, the billing adjustment takes effect at the start of your next billing cycle. Location data is retained for 90 days after removal in case you need to restore it.` },
     { id: 'ab-3', title: 'Managing Your Subscription', views: 876, helpful: 93, body: `Go to Administration → Billing to view your current plan, payment method, billing history, and upcoming charges. You can upgrade, downgrade, or cancel your subscription at any time. Upgrades take effect immediately. Downgrades and cancellations take effect at the end of your current billing period. If you have questions about billing, email founders@getevidly.com.` },
     { id: 'ab-4', title: 'Data Export and Ownership', views: 654, helpful: 90, body: `Your data belongs to you. You can export all of your compliance data, temperature logs, checklists, documents, and reports at any time from Administration → Settings → Data Export. Exports are delivered as CSV files for structured data and a ZIP archive for documents. If you cancel your subscription, you have 90 days to export your data before it’s permanently deleted.` },
@@ -243,7 +243,7 @@ export function HelpSupport() {
                 padding: '12px 20px', fontSize: '14px', fontWeight: 600, border: 'none',
                 backgroundColor: 'transparent', cursor: 'pointer', ...F, whiteSpace: 'nowrap', minHeight: '44px',
                 color: activeTab === tab.id ? '#1E2D4D' : '#6b7280',
-                borderBottom: activeTab === tab.id ? '2px solid #A08C5A' : '2px solid transparent',
+                borderBottom: activeTab === tab.id ? '2px solid #d4af37' : '2px solid transparent',
                 marginBottom: '-2px', display: 'flex', alignItems: 'center', gap: '6px',
               }}
             >
@@ -260,7 +260,7 @@ export function HelpSupport() {
         {/* AI Advisor teaser */}
         <div style={{ marginTop: '32px', padding: '16px 20px', backgroundColor: '#f5f3ff', border: '1px solid #e0d4fc', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span className="text-2xl">{'\u{1F916}'}</span>
+            <span style={{ fontSize: '24px' }}>{'\u{1F916}'}</span>
             <div>
               <div style={{ fontSize: '14px', fontWeight: 700, color: '#4c1d95', ...F }}>AI Advisor</div>
               <div style={{ fontSize: '12px', color: '#6b7280', ...F }}>Get instant AI-powered answers to your food safety and compliance questions</div>
@@ -335,7 +335,7 @@ export function HelpSupport() {
               if (article) setSelectedArticle(article);
             }} style={{ ...cardStyle, cursor: 'pointer', borderLeft: `4px solid ${qh.color}`, transition: 'box-shadow 0.15s' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
-                <span className="text-xl">{qh.icon}</span>
+                <span style={{ fontSize: '20px' }}>{qh.icon}</span>
                 <div style={{ fontSize: '14px', fontWeight: 700, color: '#1E2D4D', ...F }}>{qh.title}</div>
               </div>
               <div style={{ fontSize: '12px', color: '#6b7280', ...F }}>{qh.desc}</div>
@@ -354,7 +354,7 @@ export function HelpSupport() {
                   style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 16px', cursor: 'pointer', ...F }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <span className="text-lg">{cat.icon}</span>
+                    <span style={{ fontSize: '18px' }}>{cat.icon}</span>
                     <span style={{ fontSize: '14px', fontWeight: 600, color: '#1E2D4D' }}>{cat.name}</span>
                     <span style={{ fontSize: '11px', color: '#6b7280', fontWeight: 500 }}>{cat.articles.length} articles</span>
                   </div>
@@ -393,7 +393,7 @@ export function HelpSupport() {
           <div style={{ fontSize: '48px', marginBottom: '16px' }}>{'✅'}</div>
           <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#1E2D4D', margin: '0 0 8px 0', ...F }}>Ticket Submitted!</h2>
           <p style={{ fontSize: '14px', color: '#6b7280', margin: '0 0 4px 0', ...F }}>Your ticket number is</p>
-          <div style={{ fontSize: '24px', fontWeight: 800, color: '#A08C5A', marginBottom: '24px', ...F }}>{ticketNumber}</div>
+          <div style={{ fontSize: '24px', fontWeight: 800, color: '#d4af37', marginBottom: '24px', ...F }}>{ticketNumber}</div>
           <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '24px', ...F }}>We typically respond within 4 business hours. Check the "My Tickets" tab for updates.</p>
           <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
             <button onClick={resetTicketForm} style={{ ...btnPrimary, minHeight: '44px' }}>Submit Another</button>
@@ -564,7 +564,7 @@ export function HelpSupport() {
         {/* Emergency */}
         <div style={{ padding: '16px 20px', backgroundColor: '#fef2f2', border: '1px solid #fecaca', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span className="text-2xl">{'\u{1F6A8}'}</span>
+            <span style={{ fontSize: '24px' }}>{'\u{1F6A8}'}</span>
             <div>
               <div style={{ fontSize: '14px', fontWeight: 700, color: '#991b1b', ...F }}>Food Safety Emergency?</div>
               <div style={{ fontSize: '12px', color: '#b91c1c', ...F }}>If you have an active food safety emergency requiring immediate assistance, call our emergency line now.</div>

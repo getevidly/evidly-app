@@ -38,8 +38,8 @@ export default function MobileStickyBar({ demoMode = false }: MobileStickyBarPro
       >
         <button
           onClick={handleClick}
-          className="w-full max-w-sm py-2.5 rounded-lg font-bold text-sm transition-colors hover:bg-[#1E2D4D]/5"
-          style={{ backgroundColor: 'white', color: '#1E2D4D' }}
+          className="w-full max-w-sm py-2.5 rounded-lg font-bold text-sm transition-colors hover:bg-gray-100"
+          style={{ backgroundColor: 'white', color: '#1e4d6b' }}
         >
           Start Free Trial — $99/mo
         </button>
@@ -49,13 +49,13 @@ export default function MobileStickyBar({ demoMode = false }: MobileStickyBarPro
 
   // Landing page: bottom sticky bar
   return (
-    <div className="sm:hidden fixed bottom-0 left-0 right-0 z-[999] bg-white/95 backdrop-blur-[10px] border-t border-[#1E2D4D]/10 px-4 py-3 flex items-center justify-between gap-3">
-      <div className="text-sm font-semibold text-[#1E2D4D] truncate">
+    <div className="sm:hidden fixed bottom-0 left-0 right-0 z-[999] bg-white/95 backdrop-blur-[10px] border-t border-gray-200 px-4 py-3 flex items-center justify-between gap-3">
+      <div className="text-sm font-semibold text-[#1e4d6b] truncate">
         $99/mo — Founder pricing
       </div>
       <button
         onClick={handleClick}
-        className="flex-shrink-0 min-h-[44px] px-6 py-2.5 bg-[#1E2D4D] text-white font-bold rounded-[10px] border-none cursor-pointer text-sm whitespace-nowrap hover:bg-[#162340] transition-all duration-150 active:scale-[0.98]"
+        className="flex-shrink-0 min-h-[44px] px-6 py-2.5 bg-[#1e4d6b] text-white font-bold rounded-[10px] border-none cursor-pointer text-sm whitespace-nowrap hover:bg-[#2a6a8f] transition-colors"
       >
         Get Started
       </button>

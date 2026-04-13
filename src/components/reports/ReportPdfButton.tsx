@@ -28,7 +28,7 @@ export function ReportPdfButton({ onExport, label = 'Export PDF' }: ReportPdfBut
       onClick={handleClick}
       disabled={loading}
       className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white rounded-lg transition-colors disabled:opacity-60"
-      style={{ backgroundColor: '#1E2D4D' }}
+      style={{ backgroundColor: '#1e4d6b' }}
     >
       {loading ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
       {label}

@@ -83,11 +83,11 @@ export function NotificationPanel({ isOpen, onClose }: NotificationPanelProps) {
         }}
       >
         {/* Header */}
-        <div className="px-4 py-3 border-b border-[#1E2D4D]/5 flex items-center justify-between flex-shrink-0" style={{ backgroundColor: '#faf8f3' }}>
+        <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between flex-shrink-0" style={{ backgroundColor: '#faf8f3' }}>
           <div className="flex items-center gap-2">
-            <h3 className="text-sm font-bold text-[#1E2D4D]">Notifications</h3>
+            <h3 className="text-sm font-bold text-gray-900">Notifications</h3>
             {unreadCount > 0 && (
-              <span className="px-1.5 py-0.5 rounded-full text-xs font-semibold" style={{ backgroundColor: '#1E2D4D', color: 'white' }}>
+              <span className="px-1.5 py-0.5 rounded-full text-xs font-semibold" style={{ backgroundColor: '#1e4d6b', color: 'white' }}>
                 {unreadCount} new
               </span>
             )}
@@ -97,17 +97,17 @@ export function NotificationPanel({ isOpen, onClose }: NotificationPanelProps) {
               <button
                 onClick={markAllAsRead}
                 className="text-xs font-medium flex items-center gap-1 hover:underline"
-                style={{ color: '#1E2D4D' }}
+                style={{ color: '#1e4d6b' }}
               >
                 <CheckCheck className="h-3 w-3" /> Mark all read
               </button>
             )}
             <button
               onClick={onClose}
-              className="p-2.5 -m-1 rounded-lg hover:bg-[#1E2D4D]/10 transition-colors"
+              className="p-2.5 -m-1 rounded-lg hover:bg-gray-200 transition-colors"
               aria-label="Close"
             >
-              <X className="h-4 w-4 text-[#1E2D4D]/50" />
+              <X className="h-4 w-4 text-gray-500" />
             </button>
           </div>
         </div>
@@ -123,9 +123,9 @@ export function NotificationPanel({ isOpen, onClose }: NotificationPanelProps) {
         <div className="flex-1 overflow-y-auto">
           {filtered.length === 0 ? (
             <div className="text-center py-16 px-6">
-              <Bell className="w-10 h-10 text-[#1E2D4D]/30 mx-auto mb-3" />
-              <p className="text-sm font-medium text-[#1E2D4D]/50">No notifications</p>
-              <p className="text-xs text-[#1E2D4D]/30 mt-1">
+              <Bell className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+              <p className="text-sm font-medium text-gray-500">No notifications</p>
+              <p className="text-xs text-gray-400 mt-1">
                 Alerts will appear here as your team uses EvidLY.
               </p>
             </div>
@@ -144,11 +144,11 @@ export function NotificationPanel({ isOpen, onClose }: NotificationPanelProps) {
         </div>
 
         {/* Footer */}
-        <div className="px-4 py-2.5 border-t border-[#1E2D4D]/5 bg-[#FAF7F0] flex-shrink-0">
+        <div className="px-4 py-2.5 border-t border-gray-100 bg-gray-50 flex-shrink-0">
           <button
             onClick={() => handleNavigate('/settings/notifications')}
             className="w-full text-center text-xs font-semibold hover:underline"
-            style={{ color: '#1E2D4D' }}
+            style={{ color: '#1e4d6b' }}
           >
             Notification Preferences
           </button>

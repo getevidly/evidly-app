@@ -174,7 +174,7 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
   },
   {
     // ═══ SANTA CLARA COUNTY — STANDARDIZED (March 2026, updated) ═══
-    // DUAL: Green / Yellow / Red placard + numeric score (0-100), both published.
+    // DUAL: GYR placard + numeric score (0-100), both published.
     // GREEN=90-100, YELLOW=70-89, RED=<70. Score: 100-pt deductive.
     // Major=8pts, Moderate=3pts, Minor=2pts. Transparency: HIGH.
     // SCCDineOut app + eservices.sccgov.org/facilityinspection
@@ -195,7 +195,7 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
       scoreBase: 100,
       scoreDirection: 'downward_deduction',
       violationPoints: { major: 8, moderate: 3, minor: 2 },
-      scoreNote: 'Green / Yellow / Red placard color determined by numeric score thresholds. Score: 100-pt deductive (Major=8, Moderate=3, Minor=2).',
+      scoreNote: 'GYR placard color determined by numeric score thresholds. Score: 100-pt deductive (Major=8, Moderate=3, Minor=2).',
       placardPosted: true,
       inspectionFrequency: 'risk_based_1_to_3_per_year',
       transparencyLevel: 'high',
@@ -210,7 +210,7 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     facilityCount: 10000,
     dataSourceTier: 1,
     gradeLabel: '\u{1F7E2} 92',
-    gradeExplanation: 'DUAL: Green / Yellow / Red Placard + Numeric Score — Green=90-100, Yellow=70-89, Red=<70. Score: 100-pt deductive (Major=8, Moderate=3, Minor=2).',
+    gradeExplanation: 'DUAL: GYR Placard + Numeric Score — Green=90-100, Yellow=70-89, Red=<70. Score: 100-pt deductive (Major=8, Moderate=3, Minor=2).',
     passFailLabel: 'PASS',
     demoScore: 92,
     demoGrade: '\u{1F7E2} Green — 92',
@@ -580,7 +580,7 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     facilityCount: 3500,
     dataSourceTier: 1,
     gradeLabel: 'B',
-    gradeExplanation: 'Letter Grade A / B / C — A (90+) PASS, B (80-89) WARNING, C (75-79) FAIL, <75 CLOSURE. Threshold 75 not 70.',
+    gradeExplanation: 'Letter Grade A/B/C — A (90+) PASS, B (80-89) WARNING, C (75-79) FAIL, <75 CLOSURE. Threshold 75 not 70.',
     passFailLabel: 'WARNING',
     demoScore: 88,
     demoGrade: 'B — 88',
@@ -734,7 +734,7 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     facilityCount: 2200,
     dataSourceTier: 1,
     gradeLabel: 'GREEN',
-    gradeExplanation: 'Green / Yellow / Red Placard — Green=PASS, Yellow=Conditional (any uncorrected major), Red=CLOSED. No numeric score.',
+    gradeExplanation: 'GYR Placard — Green=PASS, Yellow=Conditional (any uncorrected major), Red=CLOSED. No numeric score.',
     passFailLabel: 'PASS',
     demoScore: 88,
     demoGrade: 'GREEN',
@@ -865,7 +865,7 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
       inspectionFrequency: 'risk_based_1_to_2_per_year',
       transparencyLevel: 'high',
       programLaunched: 'July 1, 2017',
-      gradingNote: 'Green / Yellow / Red placard launched July 2017, modeled on Sacramento County program. QR code on placard links directly to Yolo County EH inspection database. CFOs and temp event booths not included in placarding.',
+      gradingNote: 'GYR placard launched July 2017, modeled on Sacramento County program. QR code on placard links directly to Yolo County EH inspection database. CFOs and temp event booths not included in placarding.',
     },
     passThreshold: null,
     warningThreshold: null,
@@ -875,7 +875,7 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     facilityCount: 700,
     dataSourceTier: 1,
     gradeLabel: 'Green',
-    gradeExplanation: 'Green/Yellow/Red Placard — Green / Yellow / Red color placard posted at facility with QR code. Green=PASS. Yellow=CONDITIONAL PASS. Red=CLOSED. HIGH transparency.',
+    gradeExplanation: 'Green/Yellow/Red Placard — GYR color placard posted at facility with QR code. Green=PASS. Yellow=CONDITIONAL PASS. Red=CLOSED. HIGH transparency.',
     passFailLabel: 'GREEN',
     demoScore: 92,
     demoGrade: 'Green',
@@ -1004,7 +1004,7 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     facilityCount: null,
     dataSourceTier: 2,
     gradeLabel: 'B',
-    gradeExplanation: 'Letter Grade A / B / C — A (90-100) PASS, B (80-89), C (70-79), Closure (<70, no grade). Only letter-grade county in Bay Area. Rescore 1/year.',
+    gradeExplanation: 'Letter Grade A/B/C — A (90-100) PASS, B (80-89), C (70-79), Closure (<70, no grade). Only letter-grade county in Bay Area. Rescore 1/year.',
     passFailLabel: 'PASS',
     demoScore: 88,
     demoGrade: 'B — 88',
@@ -1304,7 +1304,7 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     // NO letter grade. NO numeric score. NO confirmed placard.
     // Inspection report only. ~500–700 facilities.
     // IMPORTANT: Yuba County ≠ Sutter County. Yuba City → Sutter. Marysville → Yuba.
-    // Sutter County uses Green / Yellow / Red placard; Yuba County does NOT.
+    // Sutter County uses GYR placard; Yuba County does NOT.
     // Transparency: MEDIUM.
     // Source: yuba.org/departments/community_development/environmental_health/ — verified March 2026
     id: 'demo-yuba',
@@ -1322,7 +1322,7 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
       reportAtOffice: true,
       inspectionFrequency: 'risk_based',
       transparencyLevel: 'medium',
-      programNote: 'Inspection report only — no letter grade, no numeric score, no confirmed placard. ~500–700 facilities. Marysville is county seat. Adjacent Sutter County uses Green / Yellow / Red placard — Yuba does NOT. Single EHD office at 915 8th Street, Marysville.',
+      programNote: 'Inspection report only — no letter grade, no numeric score, no confirmed placard. ~500–700 facilities. Marysville is county seat. Adjacent Sutter County uses GYR placard — Yuba does NOT. Single EHD office at 915 8th Street, Marysville.',
     },
     passThreshold: null,
     warningThreshold: null,
@@ -1332,7 +1332,7 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     facilityCount: 600,
     dataSourceTier: 3,
     gradeLabel: 'N/A',
-    gradeExplanation: 'No grade system — inspection report only. ~500–700 facilities. MEDIUM transparency. Different from adjacent Sutter County (Green / Yellow / Red placard).',
+    gradeExplanation: 'No grade system — inspection report only. ~500–700 facilities. MEDIUM transparency. Different from adjacent Sutter County (GYR placard).',
     passFailLabel: 'No Grade',
     demoScore: 85,
     demoGrade: 'No Grade',
@@ -1585,7 +1585,7 @@ export function calculateDemoGrade(score: number, jurisdiction: DemoJurisdiction
       return { grade: 'CLOSURE', passFail: 'fail', display: `Closure \u2014 ${score}` };
     }
     case 'color_placard': {
-      // Green / Yellow / Red placard — Green=pass, Yellow=conditional, Red=closed
+      // GYR placard — Green=pass, Yellow=conditional, Red=closed
       // In demo mode, score >= 80 = all majors corrected (Green)
       // score 60-79 = uncorrected major exists (Yellow)
       // score < 60 = imminent danger (Red)
@@ -1709,7 +1709,7 @@ export function calculateDemoGrade(score: number, jurisdiction: DemoJurisdiction
       };
     }
     case 'green_yellow_red': {
-      // Yolo County — Green / Yellow / Red placard WITHOUT numeric score
+      // Yolo County — GYR placard WITHOUT numeric score
       // Green = PASS (≤1 major corrected), Yellow = CONDITIONAL PASS (1+ major),
       // Red = CLOSED (imminent health hazard)
       const gyrNoScoreMajors = Math.max(0, Math.floor((100 - score) / 10));
@@ -1770,7 +1770,7 @@ export function calculateDemoGrade(score: number, jurisdiction: DemoJurisdiction
       };
     }
     case 'green_yellow_red_numeric': {
-      // San Francisco — Green / Yellow / Red placard + numeric score (0-100), both published
+      // San Francisco — GYR placard + numeric score (0-100), both published
       // CRITICAL: SF uses High/Moderate/Low RISK TIERS — not Major/Minor
       // GREEN=90-100, YELLOW=70-89, RED=<70 or imminent hazard
       const sfPass = jurisdiction.passThreshold || 90;

@@ -54,30 +54,30 @@ export function WelcomeBack({ userName, lastLoginAt, isDemoMode }: WelcomeBackPr
       }}
     >
       <div className="flex items-baseline gap-2 flex-wrap">
-        <span className="text-lg sm:text-xl font-semibold text-[#1E2D4D]">
+        <span className="text-lg sm:text-xl font-semibold text-[#1e4d6b]">
           {t(getGreetingKey())}, {firstName}!
         </span>
       </div>
 
       {lastLoginText && (
-        <p className="text-sm text-[#1E2D4D]/50 mt-1">{lastLoginText}</p>
+        <p className="text-[13px] text-gray-500 mt-1">{lastLoginText}</p>
       )}
 
       {priorities.length > 0 ? (
         <div className="mt-3">
-          <p className="text-sm font-semibold text-[#1E2D4D]/70 mb-1.5">
+          <p className="text-[13px] font-semibold text-gray-600 mb-1.5">
             {t('hero.todaysPriorities')}
           </p>
           <div className="space-y-1">
             {priorities.map((p, i) => (
-              <div key={i} className="text-sm text-[#1E2D4D]/80">
+              <div key={i} className="text-[13px] text-gray-700">
                 {p.icon} {p.text}
               </div>
             ))}
           </div>
         </div>
       ) : (
-        <div className="flex items-center gap-2 mt-3 text-sm text-[#166534]">
+        <div className="flex items-center gap-2 mt-3 text-[13px] text-[#166534]">
           <CheckCircle2 className="w-4 h-4" />
           <span>{t('hero.allCaughtUp')}</span>
         </div>

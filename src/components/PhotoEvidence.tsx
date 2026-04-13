@@ -344,7 +344,7 @@ export function PhotoEvidence({
             </span>
           )}
           {documentMode && (
-            <span style={{ fontSize: '10px', fontWeight: 500, color: '#1E2D4D', backgroundColor: '#eef4f8', padding: '2px 8px', borderRadius: '6px', ...F }}>
+            <span style={{ fontSize: '10px', fontWeight: 500, color: '#1e4d6b', backgroundColor: '#eef4f8', padding: '2px 8px', borderRadius: '6px', ...F }}>
               Auto-enhance ON
             </span>
           )}
@@ -424,7 +424,7 @@ export function PhotoEvidence({
             }}
           >
             {capturing ? (
-              <div style={{ width: '20px', height: '20px', border: '2px solid #d1d5db', borderTopColor: '#1E2D4D', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+              <div style={{ width: '20px', height: '20px', border: '2px solid #d1d5db', borderTopColor: '#1e4d6b', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
             ) : (
               <>
                 {photos.length === 0 ? (

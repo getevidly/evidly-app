@@ -59,7 +59,7 @@ export function ReportDetail() {
 
       {/* Report title */}
       <div>
-        <h1 className="text-xl sm:text-2xl font-bold tracking-tight" style={{ color: BODY_TEXT }}>
+        <h1 className="text-xl sm:text-2xl font-bold" style={{ color: BODY_TEXT }}>
           {config.title}
         </h1>
         <p className="text-sm mt-1" style={{ color: MUTED }}>{config.subtitle}</p>
@@ -69,7 +69,7 @@ export function ReportDetail() {
       <Suspense
         fallback={
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="h-8 w-8 animate-spin text-[#1E2D4D]/30" />
+            <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
           </div>
         }
       >

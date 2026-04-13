@@ -45,13 +45,13 @@ export function sortAttentionItems(items: AttentionItem[]): AttentionItem[] {
 
 const SEVERITY_BORDER: Record<AttentionItem['severity'], string> = {
   critical: '#dc2626',
-  warning: '#A08C5A',
+  warning: '#d4af37',
   info: '#9ca3af',
 };
 
 const PillarIcon = ({ pillar }: { pillar: InspectionPillar }) => {
-  if (pillar === 'food_safety') return <UtensilsCrossed size={16} className="text-[#1E2D4D]/50 shrink-0 mt-0.5" />;
-  return <Flame size={16} className="text-[#1E2D4D]/50 shrink-0 mt-0.5" />;
+  if (pillar === 'food_safety') return <UtensilsCrossed size={16} className="text-gray-500 shrink-0 mt-0.5" />;
+  return <Flame size={16} className="text-gray-500 shrink-0 mt-0.5" />;
 };
 
 // --------------- Component ---------------
@@ -79,7 +79,7 @@ export default function NeedsAttention({ items, maxVisible = 5, showLocationPref
         >
           Needs Attention
         </h3>
-        <div className="flex items-center gap-2 py-6 justify-center text-[#1E2D4D]/30">
+        <div className="flex items-center gap-2 py-6 justify-center text-gray-400">
           <CheckCircle size={18} className="text-green-500" />
           <span className="text-sm">All clear — no items need attention right now</span>
         </div>
@@ -101,7 +101,7 @@ export default function NeedsAttention({ items, maxVisible = 5, showLocationPref
         </span>
       </div>
 
-      <div className="border border-[#1E2D4D]/10 rounded-xl overflow-hidden divide-y divide-[#1E2D4D]/5">
+      <div className="border border-gray-200 rounded-lg overflow-hidden divide-y divide-gray-100">
         {visible.map((item) => {
           const title = showLocationPrefix && item.locationName
             ? `${item.locationName}: ${item.title}`
@@ -115,16 +115,16 @@ export default function NeedsAttention({ items, maxVisible = 5, showLocationPref
             >
               <PillarIcon pillar={item.pillar} />
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-[#1E2D4D] leading-snug">{title}</p>
+                <p className="text-sm font-medium text-gray-900 leading-snug">{title}</p>
                 {item.detail && (
-                  <p className="text-xs text-[#1E2D4D]/50 mt-0.5">{item.detail}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">{item.detail}</p>
                 )}
               </div>
               <button
                 type="button"
                 onClick={() => navigate(item.actionRoute)}
-                className="text-xs font-medium shrink-0 px-2 py-1 rounded hover:bg-[#FAF7F0] transition-colors"
-                style={{ color: '#1E2D4D' }}
+                className="text-xs font-medium shrink-0 px-2 py-1 rounded hover:bg-gray-50 transition-colors"
+                style={{ color: '#1e4d6b' }}
               >
                 {item.actionLabel} →
               </button>
@@ -138,7 +138,7 @@ export default function NeedsAttention({ items, maxVisible = 5, showLocationPref
           type="button"
           onClick={() => setExpanded(true)}
           className="text-xs font-medium mt-2 hover:underline"
-          style={{ color: '#1E2D4D' }}
+          style={{ color: '#1e4d6b' }}
         >
           View all alerts ({sorted.length})
         </button>

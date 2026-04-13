@@ -21,7 +21,7 @@ interface TabbedDetailSectionProps {
   defaultTab?: string;
 }
 
-const ACTIVE_BORDER = '#1E2D4D';
+const ACTIVE_BORDER = '#1e4d6b';
 
 export function TabbedDetailSection({ tabs, defaultTab }: TabbedDetailSectionProps) {
   const [activeTab, setActiveTab] = useState(defaultTab || tabs[0]?.id || '');

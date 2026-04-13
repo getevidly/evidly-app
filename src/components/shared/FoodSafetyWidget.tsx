@@ -36,7 +36,7 @@ export function FoodSafetyWidget({
     return (
       <div className="flex items-center gap-2">
         <UtensilsCrossed size={14} style={{ color, flexShrink: 0 }} />
-        <span className="text-sm font-semibold" style={{ color: '#1e3a5f' }}>{gradeDisplay}</span>
+        <span className="text-[13px] font-semibold" style={{ color: '#1e3a5f' }}>{gradeDisplay}</span>
       </div>
     );
   }
@@ -49,18 +49,18 @@ export function FoodSafetyWidget({
       <div className="flex items-start gap-2">
         <UtensilsCrossed size={14} style={{ color, marginTop: 2, flexShrink: 0 }} />
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold" style={{ color: '#1e3a5f' }}>{gradeDisplay}</p>
+          <p className="text-[13px] font-semibold" style={{ color: '#1e3a5f' }}>{gradeDisplay}</p>
           {summary && (
-            <p className="text-xs text-[#1E2D4D]/50 mt-0.5">{summary}</p>
+            <p className="text-[11px] text-gray-500 mt-0.5">{summary}</p>
           )}
           {gradingTypeLabel && (
-            <p className="text-xs mt-1" style={{ color: '#6B7F96' }}>{gradingTypeLabel}</p>
+            <p className="text-[10px] mt-1" style={{ color: '#6B7F96' }}>{gradingTypeLabel}</p>
           )}
           {agencyName && (
-            <p className="text-xs text-[#1E2D4D]/50 mt-1">{agencyName}</p>
+            <p className="text-[11px] text-gray-500 mt-1">{agencyName}</p>
           )}
           {agencyPhone && (
-            <a href={`tel:${agencyPhone}`} className="text-xs mt-0.5 block" style={{ color: '#1E2D4D' }}>
+            <a href={`tel:${agencyPhone}`} className="text-[11px] mt-0.5 block" style={{ color: '#1e4d6b' }}>
               {agencyPhone}
             </a>
           )}
@@ -69,8 +69,8 @@ export function FoodSafetyWidget({
               href={agencyWebsite}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs mt-0.5 block hover:underline"
-              style={{ color: '#1E2D4D' }}
+              className="text-[11px] mt-0.5 block hover:underline"
+              style={{ color: '#1e4d6b' }}
             >
               Agency Website &rarr;
             </a>

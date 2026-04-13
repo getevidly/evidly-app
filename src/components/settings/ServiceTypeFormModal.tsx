@@ -14,7 +14,7 @@ interface Props {
   onSaved?: (st: ServiceType) => void;
 }
 
-const PRESET_COLORS = ['#1E2D4D', '#16a34a', '#d97706', '#dc2626', '#7c3aed', '#0891b2', '#be185d', '#4f46e5'];
+const PRESET_COLORS = ['#1e4d6b', '#16a34a', '#d97706', '#dc2626', '#7c3aed', '#0891b2', '#be185d', '#4f46e5'];
 
 const ICON_OPTIONS = [
   'Wrench', 'Flame', 'Droplets', 'Wind', 'Zap', 'Shield',
@@ -55,7 +55,7 @@ export function ServiceTypeFormModal({ isOpen, onClose, serviceType, onSaved }: 
     code: '',
     description: '',
     icon: 'Wrench',
-    color: '#1E2D4D',
+    color: '#1e4d6b',
     durationMinutes: 60,
     basePrice: 0,
     complianceCodes: '',
@@ -78,7 +78,7 @@ export function ServiceTypeFormModal({ isOpen, onClose, serviceType, onSaved }: 
         isActive: serviceType.isActive,
       });
     } else {
-      setForm({ name: '', code: '', description: '', icon: 'Wrench', color: '#1E2D4D', durationMinutes: 60, basePrice: 0, complianceCodes: '', isActive: true });
+      setForm({ name: '', code: '', description: '', icon: 'Wrench', color: '#1e4d6b', durationMinutes: 60, basePrice: 0, complianceCodes: '', isActive: true });
     }
     setErrors({});
   }, [serviceType, isOpen]);

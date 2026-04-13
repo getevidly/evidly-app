@@ -80,7 +80,7 @@ export function DayView({ date, jobs, technicians, onJobClick }: DayViewProps) {
           <div className="w-16 flex-shrink-0">
             {HOURS.map(h => (
               <div key={h} className="relative" style={{ height: HOUR_HEIGHT }}>
-                <span className="absolute -top-2.5 right-2 text-xs font-medium" style={{ color: TEXT_TERTIARY }}>
+                <span className="absolute -top-2.5 right-2 text-[10px] font-medium" style={{ color: TEXT_TERTIARY }}>
                   {format(new Date(2000, 0, 1, h), 'h a')}
                 </span>
               </div>

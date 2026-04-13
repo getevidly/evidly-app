@@ -35,7 +35,7 @@ import {
   type DefStatus,
 } from '../data/deficienciesDemoData';
 
-const NAVY = '#1E2D4D';
+const NAVY = '#1e4d6b';
 
 const SEVERITY_ICONS = {
   critical: AlertOctagon,
@@ -175,7 +175,7 @@ export function DeficiencyDetail() {
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2 flex-wrap">
-              <button onClick={() => navigate('/deficiencies')} className="p-1 rounded hover:bg-[#1E2D4D]/5 transition-colors">
+              <button onClick={() => navigate('/deficiencies')} className="p-1 rounded hover:bg-gray-100 transition-colors">
                 <ArrowLeft className="w-5 h-5" style={{ color: '#6B7F96' }} />
               </button>
               <span
@@ -239,7 +239,7 @@ export function DeficiencyDetail() {
             {!['resolved', 'deferred'].includes(item.status) && (
               <button
                 onClick={() => setShowDeferModal(true)}
-                className="px-4 py-2 rounded-lg text-sm font-medium border transition-colors hover:bg-[#FAF7F0]"
+                className="px-4 py-2 rounded-lg text-sm font-medium border transition-colors hover:bg-gray-50"
                 style={{ borderColor: '#D1D9E6', color: '#3D5068' }}
               >
                 Defer
@@ -500,7 +500,7 @@ export function DeficiencyDetail() {
             </h2>
             <button
               onClick={() => alert('Schedule Follow-Up — available in the full version.')}
-              className="w-full px-4 py-2 rounded-lg text-sm font-medium border transition-colors hover:bg-[#FAF7F0]"
+              className="w-full px-4 py-2 rounded-lg text-sm font-medium border transition-colors hover:bg-gray-50"
               style={{ borderColor: '#D1D9E6', color: '#3D5068' }}
             >
               Schedule Follow-Up

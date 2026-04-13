@@ -1143,7 +1143,7 @@ export const DEMO_CLASSIFICATIONS: RfpClassification[] = [
     matched_keywords: [],
     competition_notes: 'Major construction firms (Granite, Flatiron, Skanska) compete for Caltrans highway projects. Completely outside our market.',
     recommended_action: 'skip',
-    ai_reasoning: 'Highway construction has no relevance to food safety compliance software. This is a civil engineering and construction project. Zero keyword matches, zero module matches. This RFP was likely shown because it appeared on CaleProcure, one of our monitored sources for California state opportunities.',
+    ai_reasoning: 'Highway construction has no relevance to food safety compliance software. This is a civil engineering and construction project. Zero keyword matches, zero module matches. This RFP was likely surfaced because it appeared on CaleProcure, one of our monitored sources for California state opportunities.',
     classification_model_version: 'claude-sonnet-4-5-20250929',
     tokens_used: 800,
     classification_cost: 0.004,

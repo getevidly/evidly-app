@@ -3,7 +3,7 @@ import { Shield, AlertTriangle } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePSESchedules } from '../../hooks/usePSESchedules';
 
-const NAVY = '#1E2D4D';
+const NAVY = '#1e4d6b';
 const TEXT_SEC = '#6B7F96';
 const BORDER = '#D1D9E6';
 

@@ -75,7 +75,7 @@ function StatCard({
 }) {
   return (
     <div
-      className="rounded-xl p-4 text-center"
+      className="rounded-lg p-4 text-center"
       style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}
     >
       <div
@@ -131,10 +131,10 @@ export function IncidentReportsPage() {
 
   // ── Skeletons ──────────────────────────────────────────────
   const StatSkeleton = () => (
-    <div className="rounded-xl p-4 animate-pulse" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
-      <div className="h-9 w-9 bg-[#1E2D4D]/8 rounded-lg mx-auto mb-2" />
-      <div className="h-3 w-16 bg-[#1E2D4D]/8 rounded mx-auto mb-2" />
-      <div className="h-6 w-10 bg-[#1E2D4D]/8 rounded mx-auto" />
+    <div className="rounded-lg p-4 animate-pulse" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
+      <div className="h-9 w-9 bg-gray-200 rounded-lg mx-auto mb-2" />
+      <div className="h-3 w-16 bg-gray-200 rounded mx-auto mb-2" />
+      <div className="h-6 w-10 bg-gray-200 rounded mx-auto" />
     </div>
   );
 
@@ -144,7 +144,7 @@ export function IncidentReportsPage() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-2">
           <ShieldAlert className="w-6 h-6" style={{ color: NAVY }} />
-          <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Safety Incidents</h1>
+          <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Safety Incidents</h1>
         </div>
         <button
           onClick={() => navigate('/safety/incidents/new')}
@@ -163,7 +163,7 @@ export function IncidentReportsPage() {
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <StatCard icon={ShieldAlert} label="Total Incidents (Quarter)" value={stats.total} color="#1E2D4D" />
+          <StatCard icon={ShieldAlert} label="Total Incidents (Quarter)" value={stats.total} color="#1e4d6b" />
           <StatCard icon={UserX} label="Injuries" value={stats.injuries} color="#DC2626" />
           <StatCard icon={Eye} label="Near Misses" value={stats.nearMisses} color="#D97706" />
           <StatCard icon={SearchIcon} label="Open Investigations" value={stats.openInvestigations} color="#7C3AED" />
@@ -175,7 +175,7 @@ export function IncidentReportsPage() {
         <select
           value={typeFilter}
           onChange={(e) => setTypeFilter(e.target.value as SafetyIncidentType | '')}
-          className="px-3 py-2 text-sm rounded-xl border"
+          className="px-3 py-2 text-sm rounded-lg border"
           style={{ borderColor: CARD_BORDER, color: NAVY }}
         >
           {TYPE_OPTIONS.map((o) => (
@@ -185,7 +185,7 @@ export function IncidentReportsPage() {
         <select
           value={severityFilter}
           onChange={(e) => setSeverityFilter(e.target.value as IncidentSeverity | '')}
-          className="px-3 py-2 text-sm rounded-xl border"
+          className="px-3 py-2 text-sm rounded-lg border"
           style={{ borderColor: CARD_BORDER, color: NAVY }}
         >
           {SEVERITY_OPTIONS.map((o) => (
@@ -199,12 +199,12 @@ export function IncidentReportsPage() {
         <div className="rounded-xl animate-pulse" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
           {Array.from({ length: 5 }).map((_, i) => (
             <div key={i} className="flex gap-4 px-6 py-4 border-b" style={{ borderColor: CARD_BORDER }}>
-              <div className="h-4 w-20 bg-[#1E2D4D]/8 rounded" />
-              <div className="h-4 w-20 bg-[#1E2D4D]/8 rounded" />
-              <div className="h-4 w-16 bg-[#1E2D4D]/8 rounded" />
-              <div className="h-4 w-24 bg-[#1E2D4D]/8 rounded" />
-              <div className="h-4 w-24 bg-[#1E2D4D]/8 rounded" />
-              <div className="h-4 w-16 bg-[#1E2D4D]/8 rounded" />
+              <div className="h-4 w-20 bg-gray-200 rounded" />
+              <div className="h-4 w-20 bg-gray-200 rounded" />
+              <div className="h-4 w-16 bg-gray-200 rounded" />
+              <div className="h-4 w-24 bg-gray-200 rounded" />
+              <div className="h-4 w-24 bg-gray-200 rounded" />
+              <div className="h-4 w-16 bg-gray-200 rounded" />
             </div>
           ))}
         </div>
@@ -240,7 +240,7 @@ export function IncidentReportsPage() {
                   return (
                     <tr
                       key={inc.id}
-                      className="hover:bg-[#FAF7F0]/50 transition-colors"
+                      className="hover:bg-gray-50/50 transition-colors"
                       style={{ borderBottom: `1px solid ${CARD_BORDER}` }}
                     >
                       <td className="px-4 py-3" style={{ color: NAVY }}>{formatDate(inc.incidentDate)}</td>
@@ -274,7 +274,7 @@ export function IncidentReportsPage() {
                         <button
                           onClick={() => navigate(`/safety/incidents/${inc.id}`)}
                           className="text-xs font-medium px-3 py-1 rounded-md transition-colors"
-                          style={{ color: '#1E2D4D', background: '#1E2D4D12' }}
+                          style={{ color: '#1e4d6b', background: '#1e4d6b12' }}
                         >
                           View
                         </button>

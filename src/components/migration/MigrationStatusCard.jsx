@@ -5,7 +5,7 @@ import { useDemo } from '../../contexts/DemoContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
 
-const PRIMARY = '#1E2D4D';
+const PRIMARY = '#1e4d6b';
 
 /**
  * MigrationStatusCard — shows on dashboard for 30 days after a data import.
@@ -80,7 +80,7 @@ export function MigrationStatusCard() {
     <div className="bg-white rounded-xl border border-emerald-200 shadow-sm p-4 relative" style={{ fontFamily: "'DM Sans', sans-serif" }}>
       <button
         onClick={handleDismiss}
-        className="absolute top-3 right-3 p-1 rounded-full hover:bg-[#1E2D4D]/5 text-[#1E2D4D]/30"
+        className="absolute top-3 right-3 p-1 rounded-full hover:bg-gray-100 text-gray-400"
         aria-label="Dismiss"
       >
         <X className="h-3.5 w-3.5" />
@@ -91,10 +91,10 @@ export function MigrationStatusCard() {
           <Upload className="h-4 w-4 text-emerald-600" />
         </div>
         <div className="flex-1 min-w-0">
-          <div className="text-sm font-semibold text-[#1E2D4D]">
+          <div className="text-sm font-semibold text-gray-900">
             {migrationData.count.toLocaleString()} records imported from {migrationData.platform}
           </div>
-          <div className="text-xs text-[#1E2D4D]/50 mt-0.5">
+          <div className="text-xs text-gray-500 mt-0.5">
             Imported on {migrationData.date}. Your AI has been analyzing your history for {migrationData.daysAnalyzing} day{migrationData.daysAnalyzing !== 1 ? 's' : ''}.
           </div>
           <div className="flex items-center gap-3 mt-2">

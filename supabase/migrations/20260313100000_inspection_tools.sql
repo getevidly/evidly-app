@@ -23,11 +23,11 @@ ALTER TABLE self_inspection_sessions ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users can view own org sessions"
   ON self_inspection_sessions FOR SELECT
-  USING (org_id IN (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
+  USING (org_id IN (SELECT org_id FROM profiles WHERE id = auth.uid()));
 
 CREATE POLICY "Users can insert own org sessions"
   ON self_inspection_sessions FOR INSERT
-  WITH CHECK (org_id IN (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
+  WITH CHECK (org_id IN (SELECT org_id FROM profiles WHERE id = auth.uid()));
 
 -- ── Mock Inspection Sessions ──────────────────────────────────────
 CREATE TABLE IF NOT EXISTS mock_inspection_sessions (
@@ -50,11 +50,11 @@ ALTER TABLE mock_inspection_sessions ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users can view own org mock sessions"
   ON mock_inspection_sessions FOR SELECT
-  USING (org_id IN (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
+  USING (org_id IN (SELECT org_id FROM profiles WHERE id = auth.uid()));
 
 CREATE POLICY "Users can insert own org mock sessions"
   ON mock_inspection_sessions FOR INSERT
-  WITH CHECK (org_id IN (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
+  WITH CHECK (org_id IN (SELECT org_id FROM profiles WHERE id = auth.uid()));
 
 -- ── Indexes ───────────────────────────────────────────────────────
 CREATE INDEX idx_self_inspection_sessions_org ON self_inspection_sessions(org_id);

@@ -40,7 +40,7 @@ export function InfoTooltip({ content }: InfoTooltipProps) {
         <Info
           size={14}
           style={{ color: '#9CA3AF' }}
-          className="hover:text-[#1E2D4D]/70 transition-colors"
+          className="hover:text-gray-600 transition-colors"
         />
       </span>
       {visible && (

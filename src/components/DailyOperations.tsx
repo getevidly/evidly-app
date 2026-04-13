@@ -36,7 +36,7 @@ export default function DailyOperations() {
             </p>
             <ul className="list-none">
               {features.map((feature, index) => (
-                <li key={index} className="flex items-start gap-4 py-4 border-b border-[#1E2D4D]/10 last:border-b-0">
+                <li key={index} className="flex items-start gap-4 py-4 border-b border-[var(--color-gray-200)] last:border-b-0">
                   <Check className="w-6 h-6 text-[var(--color-gold)] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
                   <div>
                     <strong className="block text-[var(--color-blue)] mb-1">{feature.title}</strong>
@@ -51,7 +51,7 @@ export default function DailyOperations() {
               src="/temp-logs.png"
               alt="EvidLY Temperature Logs — real-time cooler, freezer, and hot hold readings with pass/fail status"
               loading="lazy"
-              className="w-full rounded-[24px] shadow-[0_20px_50px_-10px_rgba(0,0,0,0.2)] border border-[#1E2D4D]/10/60"
+              className="w-full rounded-[24px] shadow-[0_20px_50px_-10px_rgba(0,0,0,0.2)] border border-gray-200/60"
             />
           </div>
         </div>

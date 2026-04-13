@@ -144,7 +144,7 @@ export default function TaskManager() {
               style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)' }}
             >
               <div className="text-xl font-bold" style={{ color: s.color }}>{s.value}</div>
-              <div className="text-xs text-[var(--text-tertiary)]">{s.label}</div>
+              <div className="text-[10px] text-[var(--text-tertiary)]">{s.label}</div>
             </div>
           ))}
         </div>
@@ -190,7 +190,7 @@ export default function TaskManager() {
               >
                 {f.label}
                 {f.value === 'overdue' && summary.overdue > 0 && (
-                  <span className="ml-1 px-1 rounded-full text-xs bg-red-200 text-red-800">{summary.overdue}</span>
+                  <span className="ml-1 px-1 rounded-full text-[10px] bg-red-200 text-red-800">{summary.overdue}</span>
                 )}
               </button>
             ))}
@@ -258,7 +258,7 @@ export default function TaskManager() {
                   className="px-2 py-2 text-center border-r border-[var(--border)] last:border-r-0"
                   style={{ backgroundColor: isToday ? '#EFF6FF' : 'transparent' }}
                 >
-                  <div className="text-xs font-medium text-[var(--text-tertiary)]">{DAY_NAMES[d.getDay()]}</div>
+                  <div className="text-[10px] font-medium text-[var(--text-tertiary)]">{DAY_NAMES[d.getDay()]}</div>
                   <div
                     className="text-sm font-bold"
                     style={{ color: isToday ? '#1E2D4D' : 'var(--text-primary)' }}
@@ -296,7 +296,7 @@ export default function TaskManager() {
                       >
                         {applies && (
                           <div
-                            className="text-xs px-1.5 py-0.5 rounded font-medium truncate"
+                            className="text-[10px] px-1.5 py-0.5 rounded font-medium truncate"
                             style={{ backgroundColor: '#EFF6FF', color: '#1E2D4D' }}
                             title={def.name}
                           >

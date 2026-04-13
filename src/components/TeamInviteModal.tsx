@@ -282,19 +282,19 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className={`bg-white rounded-xl border border-[#1E2D4D]/10 w-full ${isBulk ? 'max-w-lg' : 'max-w-md'} max-h-[90vh] overflow-y-auto`}>
-        <div className="flex items-center justify-between p-6 border-b border-[#1E2D4D]/10 sticky top-0 bg-white rounded-t-xl z-10">
+      <div className={`bg-white rounded-xl shadow-sm border border-gray-200 w-full ${isBulk ? 'max-w-lg' : 'max-w-md'} max-h-[90vh] overflow-y-auto`}>
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 sticky top-0 bg-white rounded-t-xl z-10">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-[#A08C5A]/10 rounded-lg">
-              {isBulk ? <Users className="w-6 h-6 text-[#A08C5A]" /> : <UserPlus className="w-6 h-6 text-[#A08C5A]" />}
+            <div className="p-2 bg-[#d4af37]/10 rounded-lg">
+              {isBulk ? <Users className="w-6 h-6 text-[#d4af37]" /> : <UserPlus className="w-6 h-6 text-[#d4af37]" />}
             </div>
-            <h2 className="text-xl font-bold text-[#1E2D4D]">
+            <h2 className="text-xl font-bold text-gray-900">
               {isBulk ? 'Invite Multiple Members' : 'Invite Team Member'}
             </h2>
           </div>
           <button
             onClick={handleClose}
-            className="text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 transition-colors"
+            className="text-gray-400 hover:text-gray-600 transition-colors"
             aria-label="Close"
           >
             <X className="w-6 h-6" />
@@ -311,7 +311,7 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
           {isBulk ? (
             <>
               <div>
-                <label htmlFor="bulkEmails" className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">
+                <label htmlFor="bulkEmails" className="block text-sm font-medium text-gray-700 mb-1">
                   Email Addresses
                 </label>
                 <textarea
@@ -320,16 +320,16 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
                   onChange={(e) => setBulkEmails(e.target.value)}
                   placeholder={"john@example.com, jane@example.com\nor one per line"}
                   rows={4}
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent resize-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent resize-none"
                 />
                 {bulkEmailCount > 0 && (
-                  <p className="text-xs text-[#1E2D4D]/50 mt-1">{bulkEmailCount} email{bulkEmailCount !== 1 ? 's' : ''} detected</p>
+                  <p className="text-xs text-gray-500 mt-1">{bulkEmailCount} email{bulkEmailCount !== 1 ? 's' : ''} detected</p>
                 )}
               </div>
 
               {locations.length > 0 && (
                 <div>
-                  <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Assign to Locations
                   </label>
                   <div className="space-y-2">
@@ -339,9 +339,9 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
                           type="checkbox"
                           checked={selectedLocations.includes(loc.locationId)}
                           onChange={() => toggleLocation(loc.locationId)}
-                          className="w-4 h-4 rounded border-[#1E2D4D]/15 text-[#1E2D4D] focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
+                          className="w-4 h-4 rounded border-gray-300 text-[#1e4d6b] focus:ring-[#1e4d6b]"
                         />
-                        <span className="text-sm text-[#1E2D4D]/80">{loc.locationName}</span>
+                        <span className="text-sm text-gray-700">{loc.locationName}</span>
                       </label>
                     ))}
                   </div>
@@ -352,7 +352,7 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
             <>
               {/* Full Name */}
               <div>
-                <label htmlFor="fullName" className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">
+                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
                   Full Name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -361,42 +361,42 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="e.g., Maria Garcia"
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
                 />
               </div>
 
               {/* Email & Phone */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                     Email <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#1E2D4D]/30" />
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <input
                       id="email"
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="email@example.com"
-                      className="w-full pl-9 pr-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                      className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">
-                    Phone <span className="text-[#1E2D4D]/30 text-xs font-normal">(optional)</span>
+                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                    Phone <span className="text-gray-400 text-xs font-normal">(optional)</span>
                   </label>
                   <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#1E2D4D]/30" />
+                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <input
                       id="phone"
                       type="tel"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="(555) 000-0000"
-                      className="w-full pl-9 pr-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                      className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
                     />
                   </div>
                 </div>
@@ -405,20 +405,20 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
               {/* Locations */}
               {locations.length > 0 && (
                 <div>
-                  <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">
-                    <MapPin className="w-3.5 h-3.5 inline mr-1 text-[#1E2D4D]/30" />
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <MapPin className="w-3.5 h-3.5 inline mr-1 text-gray-400" />
                     Assign to Locations
                   </label>
-                  <div className="space-y-2 bg-[#FAF7F0] rounded-lg p-3">
+                  <div className="space-y-2 bg-gray-50 rounded-lg p-3">
                     {locations.map(loc => (
                       <label key={loc.locationId} className="flex items-center gap-2 cursor-pointer">
                         <input
                           type="checkbox"
                           checked={selectedLocations.includes(loc.locationId)}
                           onChange={() => toggleLocation(loc.locationId)}
-                          className="w-4 h-4 rounded border-[#1E2D4D]/15 text-[#1E2D4D] focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
+                          className="w-4 h-4 rounded border-gray-300 text-[#1e4d6b] focus:ring-[#1e4d6b]"
                         />
-                        <span className="text-sm text-[#1E2D4D]/80">{loc.locationName}</span>
+                        <span className="text-sm text-gray-700">{loc.locationName}</span>
                       </label>
                     ))}
                   </div>
@@ -429,14 +429,14 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
 
           {/* Role — shared between single and bulk */}
           <div>
-            <label htmlFor="role" className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">
+            <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">
               Role
             </label>
             <select
               id="role"
               value={role}
               onChange={(e) => setRole(e.target.value)}
-              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
             >
               {ROLE_OPTIONS.map(opt => (
                 <option key={opt.value} value={opt.value}>
@@ -446,7 +446,7 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
             </select>
           </div>
 
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <p className="text-sm text-blue-800">
               {isBulk
                 ? `Email invitations will be sent to ${bulkEmailCount || 0} recipient${bulkEmailCount !== 1 ? 's' : ''} with a link to join your organization.`
@@ -459,14 +459,14 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
             <button
               type="button"
               onClick={handleClose}
-              className="flex-1 px-4 py-2 border-2 border-[#1E2D4D] text-[#1E2D4D] rounded-xl hover:bg-[#FAF7F0] transition-colors bg-white"
+              className="flex-1 px-4 py-2 border-2 border-[#1e4d6b] text-[#1e4d6b] rounded-xl hover:bg-gray-50 transition-colors bg-white"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading || (isBulk && bulkEmailCount === 0)}
-              className="flex-1 px-4 py-2 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+              className="flex-1 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
             >
               {loading
                 ? 'Sending...'

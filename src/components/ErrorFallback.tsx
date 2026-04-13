@@ -26,18 +26,18 @@ function PageFallback({ error, onRetry }: { error: Error | null; onRetry: () => 
         className="max-w-lg w-full rounded-xl p-8 text-center"
         style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}
       >
-        <AlertTriangle size={48} style={{ color: '#A08C5A' }} className="mx-auto mb-4" />
-        <h2 className="text-xl font-semibold mb-2" style={{ color: '#1E2D4D' }}>
+        <AlertTriangle size={48} style={{ color: '#d4af37' }} className="mx-auto mb-4" />
+        <h2 className="text-xl font-semibold mb-2" style={{ color: '#1e4d6b' }}>
           {t('errors.somethingWentWrong')}
         </h2>
-        <p className="text-[#1E2D4D]/70 mb-6">
+        <p className="text-gray-600 mb-6">
           {t('errors.pageError')}
         </p>
         <div className="flex items-center justify-center gap-3 mb-4">
           <button
             onClick={onRetry}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-white font-medium transition-colors cursor-pointer"
-            style={{ backgroundColor: '#A08C5A' }}
+            style={{ backgroundColor: '#d4af37' }}
             onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.9')}
             onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
           >
@@ -47,9 +47,9 @@ function PageFallback({ error, onRetry }: { error: Error | null; onRetry: () => 
           <button
             onClick={() => navigate('/dashboard')}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium bg-transparent transition-colors cursor-pointer"
-            style={{ border: '1px solid #1E2D4D', color: '#1E2D4D' }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1E2D4D', e.currentTarget.style.color = '#ffffff')}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent', e.currentTarget.style.color = '#1E2D4D')}
+            style={{ border: '1px solid #1e4d6b', color: '#1e4d6b' }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b', e.currentTarget.style.color = '#ffffff')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent', e.currentTarget.style.color = '#1e4d6b')}
           >
             <Home size={16} />
             {t('errors.goToDashboard')}
@@ -59,13 +59,13 @@ function PageFallback({ error, onRetry }: { error: Error | null; onRetry: () => 
           <div className="text-left mt-4">
             <button
               onClick={() => setShowDetails((prev) => !prev)}
-              className="inline-flex items-center gap-1 text-sm text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80 cursor-pointer bg-transparent border-none p-0"
+              className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 cursor-pointer bg-transparent border-none p-0"
             >
               {showDetails ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
               {t('errors.showDetails')}
             </button>
             {showDetails && (
-              <pre className="mt-2 p-3 bg-[#1E2D4D]/5 rounded-lg text-xs text-[#1E2D4D]/80 font-mono overflow-x-auto whitespace-pre-wrap break-words max-h-48 overflow-y-auto">
+              <pre className="mt-2 p-3 bg-gray-100 rounded-lg text-xs text-gray-700 font-mono overflow-x-auto whitespace-pre-wrap break-words max-h-48 overflow-y-auto">
                 <strong>Error:</strong> {error.message}
                 {'\n\n'}
                 <strong>Stack:</strong>
@@ -85,15 +85,15 @@ function SectionFallback({ onRetry }: { onRetry: () => void }) {
 
   return (
     <div
-      className="rounded-xl p-4 flex items-center gap-3"
+      className="rounded-lg p-4 flex items-center gap-3"
       style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}
     >
-      <AlertTriangle size={20} style={{ color: '#A08C5A' }} className="flex-shrink-0" />
-      <span className="text-sm text-[#1E2D4D]/70 flex-1">{t('errors.somethingWentWrong')}</span>
+      <AlertTriangle size={20} style={{ color: '#d4af37' }} className="flex-shrink-0" />
+      <span className="text-sm text-gray-600 flex-1">{t('errors.somethingWentWrong')}</span>
       <button
         onClick={onRetry}
         className="text-sm font-medium bg-transparent border-none cursor-pointer p-0"
-        style={{ color: '#A08C5A' }}
+        style={{ color: '#d4af37' }}
       >
         {t('errors.tryAgain')}
       </button>
@@ -105,14 +105,14 @@ function WidgetFallback({ onRetry }: { onRetry: () => void }) {
   const { t } = useTranslation();
 
   return (
-    <span className="inline-flex items-center gap-1.5 text-sm text-[#1E2D4D]/50">
-      <AlertTriangle size={14} style={{ color: '#A08C5A' }} />
+    <span className="inline-flex items-center gap-1.5 text-sm text-gray-500">
+      <AlertTriangle size={14} style={{ color: '#d4af37' }} />
       <span>{t('errors.somethingWentWrong')}</span>
-      <span className="text-[#1E2D4D]/30">·</span>
+      <span className="text-gray-300">·</span>
       <button
         onClick={onRetry}
         className="font-medium bg-transparent border-none cursor-pointer p-0"
-        style={{ color: '#A08C5A' }}
+        style={{ color: '#d4af37' }}
       >
         {t('errors.tryAgain')}
       </button>

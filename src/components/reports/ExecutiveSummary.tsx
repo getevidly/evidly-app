@@ -11,14 +11,14 @@ import { createReportPdf, drawReportHeader, drawSectionHeading, drawTable, drawS
 import { CARD_BG, CARD_BORDER, CARD_SHADOW, BODY_TEXT, MUTED, TEXT_TERTIARY } from '../dashboard/shared/constants';
 import type { ReportTypeConfig } from '../../config/reportConfig';
 
-const NAVY = '#1E2D4D';
+const NAVY = '#1e4d6b';
 
 function StatusBadge({ status }: { status: string }) {
   const isGood = status === 'Excellent' || status === 'Good';
   const isWarn = status === 'Needs Attention';
   return (
     <span
-      className="inline-block px-2 py-0.5 rounded text-xs font-semibold"
+      className="inline-block px-2 py-0.5 rounded text-[11px] font-semibold"
       style={{
         backgroundColor: isGood ? '#f0fdf4' : isWarn ? '#fffbeb' : '#fef2f2',
         color: isGood ? '#166534' : isWarn ? '#92400e' : '#991b1b',
@@ -68,7 +68,7 @@ export default function ExecutiveSummary({ config }: { config: ReportTypeConfig 
         ].map(s => (
           <div key={s.label} className="rounded-xl p-4" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
             <p className="text-xs font-medium mb-1" style={{ color: MUTED }}>{s.label}</p>
-            <p className="text-2xl font-bold tracking-tight" style={{ color: getScoreColor(s.score) }}>{s.score}</p>
+            <p className="text-2xl font-bold" style={{ color: getScoreColor(s.score) }}>{s.score}</p>
             <StatusBadge status={getScoreStatus(s.score)} />
           </div>
         ))}
@@ -129,10 +129,10 @@ export default function ExecutiveSummary({ config }: { config: ReportTypeConfig 
             {data.topIssues.map((item, i) => (
               <li key={i} className="flex items-start gap-2 text-sm">
                 <span
-                  className="shrink-0 mt-0.5 px-1.5 py-0.5 rounded text-xs font-bold"
+                  className="shrink-0 mt-0.5 px-1.5 py-0.5 rounded text-[10px] font-bold"
                   style={{
                     backgroundColor: item.priority === 'HIGH' ? '#fef2f2' : item.priority === 'MEDIUM' ? '#fffbeb' : '#eff6ff',
-                    color: item.priority === 'HIGH' ? '#ef4444' : item.priority === 'MEDIUM' ? '#A08C5A' : NAVY,
+                    color: item.priority === 'HIGH' ? '#ef4444' : item.priority === 'MEDIUM' ? '#d4af37' : NAVY,
                   }}
                 >
                   {item.priority}

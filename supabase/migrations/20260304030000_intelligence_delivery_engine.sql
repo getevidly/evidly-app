@@ -82,7 +82,7 @@ CREATE POLICY cif_tenant_read ON client_intelligence_feed
   FOR SELECT TO authenticated
   USING (
     organization_id IN (
-      SELECT organization_id FROM user_profiles WHERE id = auth.uid()
+      SELECT organization_id FROM profiles WHERE id = auth.uid()
     )
   );
 

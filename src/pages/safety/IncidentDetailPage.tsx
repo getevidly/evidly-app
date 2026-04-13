@@ -123,16 +123,16 @@ export function IncidentDetailPage() {
     return (
       <div className="space-y-6 max-w-3xl">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 bg-[#1E2D4D]/8 rounded-lg animate-pulse" />
-          <div className="h-7 w-48 bg-[#1E2D4D]/8 rounded animate-pulse" />
+          <div className="h-10 w-10 bg-gray-200 rounded-lg animate-pulse" />
+          <div className="h-7 w-48 bg-gray-200 rounded animate-pulse" />
         </div>
         {Array.from({ length: 4 }).map((_, i) => (
           <div key={i} className="rounded-xl p-6 animate-pulse" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
-            <div className="h-5 w-40 bg-[#1E2D4D]/8 rounded mb-4" />
+            <div className="h-5 w-40 bg-gray-200 rounded mb-4" />
             <div className="space-y-3">
-              <div className="h-4 w-full bg-[#1E2D4D]/8 rounded" />
-              <div className="h-4 w-3/4 bg-[#1E2D4D]/8 rounded" />
-              <div className="h-4 w-1/2 bg-[#1E2D4D]/8 rounded" />
+              <div className="h-4 w-full bg-gray-200 rounded" />
+              <div className="h-4 w-3/4 bg-gray-200 rounded" />
+              <div className="h-4 w-1/2 bg-gray-200 rounded" />
             </div>
           </div>
         ))}
@@ -147,12 +147,12 @@ export function IncidentDetailPage() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/safety/incidents')}
-            className="p-2 rounded-xl border hover:bg-[#FAF7F0] transition-colors"
+            className="p-2 rounded-lg border hover:bg-gray-50 transition-colors"
             style={{ borderColor: CARD_BORDER }}
           >
             <ArrowLeft className="w-4 h-4" style={{ color: NAVY }} />
           </button>
-          <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Incident Not Found</h1>
+          <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Incident Not Found</h1>
         </div>
         <div
           className="text-center py-16 rounded-xl"
@@ -168,7 +168,7 @@ export function IncidentDetailPage() {
           <button
             onClick={() => navigate('/safety/incidents')}
             className="mt-4 px-4 py-2 text-sm font-semibold text-white rounded-lg"
-            style={{ background: '#1E2D4D' }}
+            style={{ background: '#1e4d6b' }}
           >
             Back to Incidents
           </button>
@@ -188,13 +188,13 @@ export function IncidentDetailPage() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/safety/incidents')}
-            className="p-2 rounded-xl border hover:bg-[#FAF7F0] transition-colors"
+            className="p-2 rounded-lg border hover:bg-gray-50 transition-colors"
             style={{ borderColor: CARD_BORDER }}
           >
             <ArrowLeft className="w-4 h-4" style={{ color: NAVY }} />
           </button>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>
+            <h1 className="text-2xl font-bold" style={{ color: NAVY }}>
               Incident #{shortId(incident.id)}
             </h1>
             <p className="text-sm mt-0.5" style={{ color: TEXT_TERTIARY }}>
@@ -374,20 +374,20 @@ export function IncidentDetailPage() {
                   {idx > 0 && (
                     <div
                       className="absolute left-0 right-1/2 top-1/2 h-0.5 -translate-y-1/2"
-                      style={{ background: idx <= currentStepIdx ? '#1E2D4D' : CARD_BORDER }}
+                      style={{ background: idx <= currentStepIdx ? '#1e4d6b' : CARD_BORDER }}
                     />
                   )}
                   {idx < TIMELINE_STEPS.length - 1 && (
                     <div
                       className="absolute left-1/2 right-0 top-1/2 h-0.5 -translate-y-1/2"
-                      style={{ background: idx < currentStepIdx ? '#1E2D4D' : CARD_BORDER }}
+                      style={{ background: idx < currentStepIdx ? '#1e4d6b' : CARD_BORDER }}
                     />
                   )}
                   <div
                     className="relative z-10 w-8 h-8 rounded-full flex items-center justify-center mx-auto"
                     style={{
-                      background: isComplete ? '#1E2D4D' : CARD_BG,
-                      border: `2px solid ${isComplete ? '#1E2D4D' : CARD_BORDER}`,
+                      background: isComplete ? '#1e4d6b' : CARD_BG,
+                      border: `2px solid ${isComplete ? '#1e4d6b' : CARD_BORDER}`,
                     }}
                   >
                     {isComplete && (
@@ -413,7 +413,7 @@ export function IncidentDetailPage() {
           <button
             onClick={() => alert('Begin investigation flow coming soon.')}
             className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white rounded-lg transition-colors"
-            style={{ background: '#1E2D4D' }}
+            style={{ background: '#1e4d6b' }}
           >
             <Search className="w-4 h-4" />
             Begin Investigation
@@ -421,7 +421,7 @@ export function IncidentDetailPage() {
         )}
         <button
           onClick={() => alert('Update status flow coming soon.')}
-          className="px-4 py-2 text-sm font-medium rounded-xl border transition-colors hover:bg-[#FAF7F0]"
+          className="px-4 py-2 text-sm font-medium rounded-lg border transition-colors hover:bg-gray-50"
           style={{ borderColor: CARD_BORDER, color: NAVY }}
         >
           Update Status

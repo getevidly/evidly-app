@@ -14,7 +14,6 @@ import { useDemoGuard } from '../../hooks/useDemoGuard';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { KpiTile } from '../../components/admin/KpiTile';
 import { AIAssistButton } from '../../components/ui/AIAssistButton';
-import { usePageTitle } from '../../hooks/usePageTitle';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -139,7 +138,6 @@ const sectionBadge = (section: string): React.CSSProperties => {
 export default function FeatureFlags() {
   useDemoGuard();
   const { user } = useAuth();
-  usePageTitle('Admin | Feature Flags');
 
   const [flags, setFlags] = useState<FeatureFlag[]>([]);
   const [loading, setLoading] = useState(true);
@@ -295,7 +293,7 @@ export default function FeatureFlags() {
     return (
       <div className="p-8 text-center">
         <p className="text-red-600 font-medium">Failed to load data</p>
-        <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2.5 bg-[#1E2D4D] text-white rounded-lg text-sm font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]">Retry</button>
+        <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2 bg-[#1E2D4D] text-white rounded text-sm">Retry</button>
       </div>
     );
   }
@@ -304,7 +302,7 @@ export default function FeatureFlags() {
     <div className="space-y-6">
       <AdminBreadcrumb crumbs={[{ label: 'Feature Control' }]} />
       <div>
-        <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Domain Security & Feature Control</h1>
+        <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Domain Security & Feature Control</h1>
         <p className="mt-1 text-sm" style={{ color: TEXT_MUTED }}>
           Toggle features, set go-live criteria, customize end-user messages
         </p>

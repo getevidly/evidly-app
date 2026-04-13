@@ -24,7 +24,7 @@ import {
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 
-const BRAND = '#1E2D4D';
+const BRAND = '#1e4d6b';
 const GOLD = '#A08C5A';
 const TEXT_SEC = '#3D5068';
 const TEXT_TERT = '#6B7F96';
@@ -228,7 +228,7 @@ export function SecuritySettings() {
       <AdminBreadcrumb crumbs={[{ label: 'Security Settings' }]} />
 
       {isDemoMode && (
-        <div className="rounded-xl px-4 py-2 text-sm font-medium" style={{ backgroundColor: '#fef3c7', color: '#92400e', border: '1px solid #fde68a' }}>
+        <div className="rounded-lg px-4 py-2 text-sm font-medium" style={{ backgroundColor: '#fef3c7', color: '#92400e', border: '1px solid #fde68a' }}>
           Demo Mode — changes are not persisted
         </div>
       )}
@@ -238,14 +238,14 @@ export function SecuritySettings() {
           <Shield size={24} style={{ color: BRAND }} />
         </div>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight" style={{ color: BRAND, fontFamily: 'DM Sans, sans-serif' }}>Domain Security Policy</h1>
+          <h1 className="text-2xl font-bold" style={{ color: BRAND, fontFamily: 'DM Sans, sans-serif' }}>Domain Security Policy</h1>
           <p className="text-sm mt-0.5" style={{ color: TEXT_TERT }}>HTTPS enforcement, security headers, CORS, and domain verification</p>
         </div>
       </div>
 
       {/* ── Section A: HTTPS & Transport ───────────────────── */}
       <section className="bg-white rounded-xl border shadow-sm p-5" style={{ borderColor: '#D1D9E6' }}>
-        <h2 className="text-lg font-semibold tracking-tight mb-1" style={{ color: '#0B1628', fontFamily: 'DM Sans, sans-serif' }}>
+        <h2 className="text-lg font-semibold mb-1" style={{ color: '#0B1628', fontFamily: 'DM Sans, sans-serif' }}>
           <Lock size={16} className="inline mr-2" style={{ color: BRAND }} />
           HTTPS & Transport Security
         </h2>
@@ -273,7 +273,7 @@ export function SecuritySettings() {
               type="number"
               value={config.hsts_max_age_seconds}
               onChange={e => setConfig(c => ({ ...c, hsts_max_age_seconds: parseInt(e.target.value) || 0 }))}
-              className="w-32 px-3 py-1.5 text-sm border rounded-xl text-right"
+              className="w-32 px-3 py-1.5 text-sm border rounded-lg text-right"
               style={{ borderColor: '#D1D9E6' }}
             />
           </div>
@@ -290,7 +290,7 @@ export function SecuritySettings() {
       <section className="bg-white rounded-xl border shadow-sm p-5" style={{ borderColor: '#D1D9E6' }}>
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-lg font-semibold tracking-tight" style={{ color: '#0B1628', fontFamily: 'DM Sans, sans-serif' }}>
+            <h2 className="text-lg font-semibold" style={{ color: '#0B1628', fontFamily: 'DM Sans, sans-serif' }}>
               <Shield size={16} className="inline mr-2" style={{ color: BRAND }} />
               Security Headers
             </h2>
@@ -309,7 +309,7 @@ export function SecuritySettings() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b hover:bg-[#1E2D4D]/[0.02] transition-colors" style={{ borderColor: '#E8EDF5' }}>
+              <tr className="border-b" style={{ borderColor: '#E8EDF5' }}>
                 <th className="text-left py-2 pr-4 font-medium" style={{ color: TEXT_SEC }}>Header</th>
                 <th className="text-left py-2 pr-4 font-medium" style={{ color: TEXT_SEC }}>Value</th>
                 <th className="text-center py-2 font-medium" style={{ color: TEXT_SEC }}>Status</th>
@@ -337,7 +337,7 @@ export function SecuritySettings() {
 
       {/* ── Section C: Allowed Domains / CORS ──────────────── */}
       <section className="bg-white rounded-xl border shadow-sm p-5" style={{ borderColor: '#D1D9E6' }}>
-        <h2 className="text-lg font-semibold tracking-tight mb-1" style={{ color: '#0B1628', fontFamily: 'DM Sans, sans-serif' }}>
+        <h2 className="text-lg font-semibold mb-1" style={{ color: '#0B1628', fontFamily: 'DM Sans, sans-serif' }}>
           <Globe size={16} className="inline mr-2" style={{ color: BRAND }} />
           Allowed Domains & CORS
         </h2>
@@ -350,7 +350,7 @@ export function SecuritySettings() {
               value={config.cors_origins.join('\n')}
               onChange={e => setConfig(c => ({ ...c, cors_origins: e.target.value.split('\n').map(s => s.trim()).filter(Boolean) }))}
               rows={4}
-              className="w-full px-3 py-2 text-sm border rounded-xl font-mono"
+              className="w-full px-3 py-2 text-sm border rounded-lg font-mono"
               style={{ borderColor: '#D1D9E6' }}
             />
           </div>
@@ -361,7 +361,7 @@ export function SecuritySettings() {
               - JWT expiry: 3600s (1 hour recommended)
               - Refresh token rotation: enabled
               These cannot be changed from the app — must be configured in Supabase Dashboard. */}
-          <div className="flex items-start gap-3 py-3 px-4 rounded-xl" style={{ backgroundColor: '#F4F6FA', border: '1px solid #E8EDF5' }}>
+          <div className="flex items-start gap-3 py-3 px-4 rounded-lg" style={{ backgroundColor: '#F4F6FA', border: '1px solid #E8EDF5' }}>
             <Info size={16} className="mt-0.5 flex-shrink-0" style={{ color: BRAND }} />
             <div>
               <p className="text-sm font-medium" style={{ color: '#0B1628' }}>Session Cookies</p>
@@ -377,7 +377,7 @@ export function SecuritySettings() {
             disabled={saving}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white transition-colors disabled:opacity-50"
             style={{ backgroundColor: BRAND }}
-            onMouseEnter={e => { if (!saving) e.currentTarget.style.backgroundColor = '#2A3F6B'; }}
+            onMouseEnter={e => { if (!saving) e.currentTarget.style.backgroundColor = '#2a6a8f'; }}
             onMouseLeave={e => e.currentTarget.style.backgroundColor = BRAND}
           >
             {saving ? <Loader2 size={15} className="animate-spin" /> : <Save size={15} />}
@@ -390,7 +390,7 @@ export function SecuritySettings() {
       <section className="bg-white rounded-xl border shadow-sm p-5" style={{ borderColor: '#D1D9E6' }}>
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-lg font-semibold tracking-tight" style={{ color: '#0B1628', fontFamily: 'DM Sans, sans-serif' }}>
+            <h2 className="text-lg font-semibold" style={{ color: '#0B1628', fontFamily: 'DM Sans, sans-serif' }}>
               <CheckCircle size={16} className="inline mr-2" style={{ color: BRAND }} />
               Domain Verification Status
             </h2>
@@ -401,7 +401,7 @@ export function SecuritySettings() {
             disabled={verifying}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white transition-colors disabled:opacity-50"
             style={{ backgroundColor: BRAND }}
-            onMouseEnter={e => { if (!verifying) e.currentTarget.style.backgroundColor = '#2A3F6B'; }}
+            onMouseEnter={e => { if (!verifying) e.currentTarget.style.backgroundColor = '#2a6a8f'; }}
             onMouseLeave={e => e.currentTarget.style.backgroundColor = BRAND}
           >
             {verifying ? <Loader2 size={15} className="animate-spin" /> : <RefreshCw size={15} />}
@@ -413,7 +413,7 @@ export function SecuritySettings() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b hover:bg-[#1E2D4D]/[0.02] transition-colors" style={{ borderColor: '#E8EDF5' }}>
+                <tr className="border-b" style={{ borderColor: '#E8EDF5' }}>
                   <th className="text-left py-2 pr-4 font-medium" style={{ color: TEXT_SEC }}>Domain</th>
                   <th className="text-center py-2 px-2 font-medium" style={{ color: TEXT_SEC }}>HTTPS</th>
                   <th className="text-center py-2 px-2 font-medium" style={{ color: TEXT_SEC }}>HSTS</th>

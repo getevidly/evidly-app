@@ -20,7 +20,7 @@ export function AttentionItemList({ items }: AttentionItemListProps) {
   if (items.length === 0) return null;
 
   return (
-    <div className="bg-white rounded-xl" style={{ border: '1px solid #e5e7eb' }}>
+    <div className="bg-white rounded-lg" style={{ border: '1px solid #e5e7eb' }}>
       <div className="px-4 py-3" style={{ borderBottom: '1px solid #F0F0F0' }}>
         <h3 className="text-sm font-semibold" style={{ color: BODY_TEXT }}>What Needs Attention</h3>
       </div>
@@ -37,23 +37,23 @@ export function AttentionItemList({ items }: AttentionItemListProps) {
               key={item.id}
               type="button"
               onClick={() => navigate(item.route)}
-              className="w-full flex items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-[#FAF7F0]"
+              className="w-full flex items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-gray-50"
               style={{ borderBottom: '1px solid #F0F0F0', backgroundColor: bgColor }}
             >
               <Icon size={16} className="shrink-0 mt-0.5" style={{ color: iconColor }} />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
-                  <span className="text-xs font-bold uppercase px-1.5 py-0.5 rounded"
+                  <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded"
                     style={{ backgroundColor: iconColor, color: '#FFFFFF' }}>
                     {item.severity}
                   </span>
                   {item.locationName && (
-                    <span className="text-xs font-medium" style={{ color: '#6B7F96' }}>
+                    <span className="text-[11px] font-medium" style={{ color: '#6B7F96' }}>
                       {item.locationName}
                     </span>
                   )}
                 </div>
-                <p className="text-sm" style={{ color: labelColor }}>
+                <p className="text-[13px]" style={{ color: labelColor }}>
                   {item.description}
                 </p>
               </div>

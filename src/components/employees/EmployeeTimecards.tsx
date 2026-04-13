@@ -46,7 +46,7 @@ export function EmployeeTimecards({ employeeId }: EmployeeTimecardsProps) {
                   <tr key={date} className="border-t" style={{ borderColor: '#E8EDF5', backgroundColor: isToday ? '#eff6ff' : undefined }}>
                     <td className="px-4 py-2.5" style={{ color: '#0B1628' }}>
                       <span className="font-medium">{DAY_LABELS[idx]}</span>
-                      {isToday && <span className="ml-1.5 text-xs font-semibold px-1.5 py-0.5 rounded" style={{ color: '#1E2D4D', backgroundColor: '#dbeafe' }}>Today</span>}
+                      {isToday && <span className="ml-1.5 text-xs font-semibold px-1.5 py-0.5 rounded" style={{ color: '#1e4d6b', backgroundColor: '#dbeafe' }}>Today</span>}
                     </td>
                     <td className="px-4 py-2.5" style={{ color: '#3D5068' }}>{isFuture ? '—' : shift?.clockIn || '—'}</td>
                     <td className="px-4 py-2.5" style={{ color: '#3D5068' }}>{isFuture ? '—' : shift?.clockOut || (shift ? 'Active' : '—')}</td>

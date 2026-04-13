@@ -17,7 +17,6 @@ import { useDemoGuard } from '../../hooks/useDemoGuard';
 import AdminBreadcrumb from '../../components/admin/AdminBreadcrumb';
 import { StatCardRow } from '../../components/admin/StatCardRow';
 import { RefreshCw, Activity, Ticket, Radio, Zap } from 'lucide-react';
-import { usePageTitle } from '../../hooks/usePageTitle';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
@@ -96,7 +95,6 @@ export default function CommandCenter() {
   useDemoGuard();
   const { user } = useAuth();
   const { isDemoMode } = useDemo();
-  usePageTitle('Admin | Command Center');
 
   const [events, setEvents] = useState<EventRow[]>([]);
   const [sources, setSources] = useState<SourceRow[]>([]);
@@ -190,7 +188,7 @@ export default function CommandCenter() {
     <div className="space-y-6">
       <AdminBreadcrumb crumbs={[{ label: 'Command Center' }]} />
       <div>
-        <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Command Center</h1>
+        <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Command Center</h1>
         <p style={{ fontSize: 13, color: TEXT_SEC, marginTop: 4 }}>
           Platform operations health — live events, crawl status, open tickets.
         </p>
@@ -334,7 +332,7 @@ export default function CommandCenter() {
             ) : sources.map(s => (
               <div key={s.id} style={{ padding: '7px 18px', borderBottom: '1px solid #F3F4F6', display: 'flex', alignItems: 'center', gap: 8, fontSize: 11 }}
                 title={s.last_crawl_error || undefined}>
-                <span className="text-[13px]">{SOURCE_STATUS_ICON[s.status] || '❓'}</span>
+                <span style={{ fontSize: 13 }}>{SOURCE_STATUS_ICON[s.status] || '❓'}</span>
                 <span style={{ flex: 1, color: NAVY, fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {s.name}
                 </span>

@@ -33,7 +33,7 @@ export function ConfirmRoleChangeModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 modal-backdrop-enter">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div
         className="w-full max-w-md rounded-xl shadow-xl border"
         style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border)' }}
@@ -42,13 +42,13 @@ export function ConfirmRoleChangeModal({
         <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: 'var(--border)' }}>
           <div className="flex items-center gap-2">
             <AlertTriangle className="w-5 h-5 text-amber-500" />
-            <h3 className="text-lg font-semibold tracking-tight" style={{ color: '#1E2D4D' }}>
+            <h3 className="text-lg font-semibold" style={{ color: '#1E2D4D' }}>
               Confirm Permission Change
             </h3>
           </div>
           <button
             onClick={onClose}
-            className="p-2.5 -m-1 rounded-lg hover:bg-[#1E2D4D]/5 transition-colors"
+            className="p-2.5 -m-1 rounded-lg hover:bg-gray-100 transition-colors"
             aria-label="Close"
           >
             <X className="w-5 h-5" style={{ color: '#6B7F96' }} />
@@ -63,7 +63,7 @@ export function ConfirmRoleChangeModal({
           </p>
 
           <div
-            className="px-4 py-3 rounded-xl border"
+            className="px-4 py-3 rounded-lg border"
             style={{ backgroundColor: 'var(--bg-panel, #EEF1F7)', borderColor: 'var(--border)' }}
           >
             <p className="text-sm font-semibold" style={{ color: '#1E2D4D' }}>
@@ -90,7 +90,7 @@ export function ConfirmRoleChangeModal({
         <div className="flex items-center justify-end gap-3 px-6 py-4 border-t" style={{ borderColor: 'var(--border)' }}>
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm font-medium rounded-xl border transition-colors hover:bg-[#FAF7F0]"
+            className="px-4 py-2 text-sm font-medium rounded-lg border transition-colors hover:bg-gray-50"
             style={{ borderColor: 'var(--border)', color: '#3D5068' }}
           >
             Cancel
@@ -101,12 +101,12 @@ export function ConfirmRoleChangeModal({
               onClose();
             }}
             className="px-4 py-2 text-sm font-medium text-white rounded-lg transition-colors"
-            style={{ backgroundColor: newValue ? '#1E2D4D' : '#dc2626' }}
+            style={{ backgroundColor: newValue ? '#1e4d6b' : '#dc2626' }}
             onMouseEnter={e =>
-              (e.currentTarget.style.backgroundColor = newValue ? '#2A3F6B' : '#b91c1c')
+              (e.currentTarget.style.backgroundColor = newValue ? '#2a6a8f' : '#b91c1c')
             }
             onMouseLeave={e =>
-              (e.currentTarget.style.backgroundColor = newValue ? '#1E2D4D' : '#dc2626')
+              (e.currentTarget.style.backgroundColor = newValue ? '#1e4d6b' : '#dc2626')
             }
           >
             {newValue ? 'Grant' : 'Revoke'} for {affectedUserCount} user

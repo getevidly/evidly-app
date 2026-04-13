@@ -21,7 +21,7 @@ import { supabase } from '../lib/supabase';
 function TierBadge({ tier }: { tier: MarketplaceTier }) {
   const config: Record<MarketplaceTier, { bg: string; text: string; border: string; icon: React.ComponentType<any>; label: string }> = {
     verified:  { bg: 'bg-green-50',  text: 'text-green-700',  border: 'border-green-200',  icon: EvidlyIcon, label: 'Verified'  },
-    certified: { bg: 'bg-[#1E2D4D]/5',  text: 'text-[#1E2D4D]/80',   border: 'border-[#1E2D4D]/10',   icon: EvidlyIcon,      label: 'Certified' },
+    certified: { bg: 'bg-gray-100',  text: 'text-gray-700',   border: 'border-gray-200',   icon: EvidlyIcon,      label: 'Certified' },
     preferred: { bg: 'bg-amber-50',  text: 'text-amber-700',  border: 'border-amber-200',  icon: Award,       label: 'Preferred' },
   };
   const c = config[tier];
@@ -44,16 +44,16 @@ function StarRating({ rating, size = 'sm' }: { rating: number; size?: 'sm' | 'lg
 
   return (
     <div className="flex items-center gap-1">
-      <span className={`font-bold ${textSize}`} style={{ color: '#1E2D4D' }}>{rating.toFixed(1)}</span>
+      <span className={`font-bold ${textSize}`} style={{ color: '#1e4d6b' }}>{rating.toFixed(1)}</span>
       <div className="flex items-center">
         {Array.from({ length: fullStars }).map((_, i) => (
-          <Star key={`f-${i}`} className={starSize} fill="#A08C5A" stroke="#A08C5A" />
+          <Star key={`f-${i}`} className={starSize} fill="#d4af37" stroke="#d4af37" />
         ))}
         {hasHalf && (
-          <Star key="half" className={`${starSize} text-[#1E2D4D]/30`} fill="#A08C5A" stroke="#A08C5A" style={{ clipPath: 'inset(0 50% 0 0)' }} />
+          <Star key="half" className={`${starSize} text-gray-300`} fill="#d4af37" stroke="#d4af37" style={{ clipPath: 'inset(0 50% 0 0)' }} />
         )}
         {Array.from({ length: emptyStars }).map((_, i) => (
-          <Star key={`e-${i}`} className={`${starSize} text-[#1E2D4D]/30`} />
+          <Star key={`e-${i}`} className={`${starSize} text-gray-300`} />
         ))}
       </div>
     </div>
@@ -70,7 +70,7 @@ const SOURCE_CONFIG: Record<string, { label: string; bg: string; text: string; b
 function ReviewSourceBadge({ source }: { source: string }) {
   const config = SOURCE_CONFIG[source] || SOURCE_CONFIG.evidly;
   return (
-    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border ${config.bg} ${config.text} ${config.border}`}>
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium border ${config.bg} ${config.text} ${config.border}`}>
       {source === 'evidly' && <EvidlyIcon size={10} />}
       {config.label}
     </span>
@@ -182,8 +182,8 @@ function ProductionVendorProfile() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#FAF7F0] flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-[#1E2D4D]/30" />
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
       </div>
     );
   }
@@ -191,12 +191,12 @@ function ProductionVendorProfile() {
   if (!vendor) {
     return (
       <div className="p-8 text-center">
-        <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Vendor not found</h2>
-        <p className="text-[#1E2D4D]/70 mb-4">The vendor you are looking for does not exist or has been removed.</p>
+        <h2 className="text-xl font-bold text-gray-900 mb-2">Vendor not found</h2>
+        <p className="text-gray-600 mb-4">The vendor you are looking for does not exist or has been removed.</p>
         <button
           onClick={() => navigate('/marketplace')}
           className="inline-flex items-center gap-1 text-sm font-medium px-4 py-2 rounded-lg"
-          style={{ color: '#1E2D4D' }}
+          style={{ color: '#1e4d6b' }}
         >
           <ArrowLeft className="h-4 w-4" /> Back to Marketplace
         </button>
@@ -205,7 +205,7 @@ function ProductionVendorProfile() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF7F0]">
+    <div className="min-h-screen bg-gray-50">
       <Breadcrumb items={[
         { label: 'Dashboard', href: '/dashboard' },
         { label: 'Marketplace', href: '/marketplace' },
@@ -216,27 +216,27 @@ function ProductionVendorProfile() {
         <button
           onClick={() => navigate('/marketplace')}
           className="flex items-center gap-1 text-sm hover:underline mb-4"
-          style={{ color: '#1E2D4D' }}
+          style={{ color: '#1e4d6b' }}
         >
           <ArrowLeft className="h-4 w-4" /> Back to Marketplace
         </button>
 
         {/* Profile Header */}
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6 mb-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
           <div className="flex items-start justify-between flex-wrap gap-4">
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
-                <Building2 className="h-8 w-8" style={{ color: '#1E2D4D' }} />
+                <Building2 className="h-8 w-8" style={{ color: '#1e4d6b' }} />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-[#1E2D4D]">{vendor.company_name}</h1>
+                <h1 className="text-xl font-bold text-gray-900">{vendor.company_name}</h1>
                 <div className="flex items-center gap-2 mt-1">
                   <TierBadge tier={vendor.tier} />
                 </div>
                 {reviews.length > 0 && (
                   <div className="mt-1">
                     <StarRating rating={avgRating} size="lg" />
-                    <span className="text-sm text-[#1E2D4D]/50 ml-1">({reviews.length} reviews)</span>
+                    <span className="text-sm text-gray-500 ml-1">({reviews.length} reviews)</span>
                   </div>
                 )}
               </div>
@@ -244,13 +244,13 @@ function ProductionVendorProfile() {
             <button
               onClick={() => toast.info('Quote requests require a subscription')}
               className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-white text-sm font-medium min-h-[44px]"
-              style={{ backgroundColor: '#1E2D4D' }}
+              style={{ backgroundColor: '#1e4d6b' }}
             >
               <Send className="h-4 w-4" /> Request Quote
             </button>
           </div>
 
-          <div className="flex flex-wrap gap-4 mt-4 text-sm text-[#1E2D4D]/70">
+          <div className="flex flex-wrap gap-4 mt-4 text-sm text-gray-600">
             <span className="flex items-center gap-1"><Building2 className="h-4 w-4" />{vendor.years_in_business} years in business</span>
             <span className="flex items-center gap-1"><Clock className="h-4 w-4" />Responds in ~{vendor.response_time_hours} hours</span>
             {vendor.service_area?.length > 0 && (
@@ -258,7 +258,7 @@ function ProductionVendorProfile() {
             )}
           </div>
 
-          <div className="flex flex-wrap gap-4 mt-3 text-sm text-[#1E2D4D]/70">
+          <div className="flex flex-wrap gap-4 mt-3 text-sm text-gray-600">
             {vendor.phone && <span className="flex items-center gap-1"><Phone className="h-4 w-4" />{vendor.phone}</span>}
             {vendor.email && <span className="flex items-center gap-1"><Mail className="h-4 w-4" />{vendor.email}</span>}
             {vendor.website && <span className="flex items-center gap-1"><Globe className="h-4 w-4" />{vendor.website}</span>}
@@ -266,7 +266,7 @@ function ProductionVendorProfile() {
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex border-b border-[#1E2D4D]/10 mb-6 overflow-x-auto">
+        <div className="flex border-b border-gray-200 mb-6 overflow-x-auto">
           {[
             { id: 'about' as const, label: 'About' },
             { id: 'reviews' as const, label: `Reviews (${reviews.length})` },
@@ -275,9 +275,9 @@ function ProductionVendorProfile() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`px-4 py-3 text-sm cursor-pointer transition-colors whitespace-nowrap min-h-[44px] ${
-                activeTab === tab.id ? 'border-b-2 font-semibold' : 'text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
+                activeTab === tab.id ? 'border-b-2 font-semibold' : 'text-gray-500 hover:text-gray-700'
               }`}
-              style={activeTab === tab.id ? { borderColor: '#A08C5A', color: '#1E2D4D' } : undefined}
+              style={activeTab === tab.id ? { borderColor: '#d4af37', color: '#1e4d6b' } : undefined}
             >
               {tab.label}
             </button>
@@ -287,17 +287,17 @@ function ProductionVendorProfile() {
         {/* About Tab */}
         {activeTab === 'about' && (
           <div>
-            {vendor.description && <p className="text-[#1E2D4D]/80 leading-relaxed">{vendor.description}</p>}
+            {vendor.description && <p className="text-gray-700 leading-relaxed">{vendor.description}</p>}
 
             {vendor.certifications?.length > 0 && (
               <div className="mt-6">
-                <h3 className="text-sm font-semibold text-[#1E2D4D]/80 mb-2">Certifications</h3>
+                <h3 className="text-sm font-semibold text-gray-700 mb-2">Certifications</h3>
                 <div className="space-y-2">
                   {vendor.certifications.map((cert, idx) => (
-                    <div key={idx} className="flex items-center gap-2 bg-white rounded-xl border border-[#1E2D4D]/10 p-3">
-                      {cert.verified ? <CheckCircle className="h-4 w-4 text-green-500" /> : <XCircle className="h-4 w-4 text-[#1E2D4D]/30" />}
-                      <span className="text-sm text-[#1E2D4D]">{cert.name}</span>
-                      {cert.expirationDate && <span className="text-xs text-[#1E2D4D]/30 ml-auto">Exp: {cert.expirationDate}</span>}
+                    <div key={idx} className="flex items-center gap-2 bg-white rounded-lg border border-gray-200 p-3">
+                      {cert.verified ? <CheckCircle className="h-4 w-4 text-green-500" /> : <XCircle className="h-4 w-4 text-gray-300" />}
+                      <span className="text-sm text-gray-900">{cert.name}</span>
+                      {cert.expirationDate && <span className="text-xs text-gray-400 ml-auto">Exp: {cert.expirationDate}</span>}
                     </div>
                   ))}
                 </div>
@@ -306,12 +306,12 @@ function ProductionVendorProfile() {
 
             {vendor.service_area?.length > 0 && (
               <div className="mt-6">
-                <h3 className="text-sm font-semibold text-[#1E2D4D]/80 mb-2 flex items-center gap-1">
+                <h3 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1">
                   <MapPin className="h-4 w-4" /> Service Area
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {vendor.service_area.map((city: string) => (
-                    <span key={city} className="px-3 py-1 rounded-full text-sm" style={{ backgroundColor: '#eef4f8', color: '#1E2D4D' }}>
+                    <span key={city} className="px-3 py-1 rounded-full text-sm" style={{ backgroundColor: '#eef4f8', color: '#1e4d6b' }}>
                       {city}
                     </span>
                   ))}
@@ -321,10 +321,10 @@ function ProductionVendorProfile() {
 
             {vendor.languages?.length > 0 && (
               <div className="mt-6">
-                <h3 className="text-sm font-semibold text-[#1E2D4D]/80 mb-2">Languages</h3>
+                <h3 className="text-sm font-semibold text-gray-700 mb-2">Languages</h3>
                 <div className="flex flex-wrap gap-2">
                   {vendor.languages.map((lang: string) => (
-                    <span key={lang} className="px-3 py-1 rounded-full text-sm" style={{ backgroundColor: '#eef4f8', color: '#1E2D4D' }}>
+                    <span key={lang} className="px-3 py-1 rounded-full text-sm" style={{ backgroundColor: '#eef4f8', color: '#1e4d6b' }}>
                       {lang}
                     </span>
                   ))}
@@ -340,9 +340,9 @@ function ProductionVendorProfile() {
             {/* Rating summary + source filter */}
             <div className="flex items-center gap-8 mb-6 flex-wrap">
               <div className="text-center">
-                <div className="text-2xl sm:text-4xl font-bold text-[#1E2D4D]">{avgRating.toFixed(1)}</div>
+                <div className="text-2xl sm:text-4xl font-bold text-gray-900">{avgRating.toFixed(1)}</div>
                 <StarRating rating={avgRating} size="lg" />
-                <p className="text-sm text-[#1E2D4D]/50 mt-1">based on {reviews.length} reviews</p>
+                <p className="text-sm text-gray-500 mt-1">based on {reviews.length} reviews</p>
               </div>
 
               <div className="flex-1 min-w-0 sm:min-w-[200px] space-y-1">
@@ -351,12 +351,12 @@ function ProductionVendorProfile() {
                   const pct = reviews.length > 0 ? (count / reviews.length) * 100 : 0;
                   return (
                     <div key={starLevel} className="flex items-center gap-2 text-sm">
-                      <span className="w-3 text-[#1E2D4D]/70 text-right">{starLevel}</span>
-                      <Star className="h-3.5 w-3.5" fill="#A08C5A" stroke="#A08C5A" />
-                      <div className="flex-1 h-2 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
-                        <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: '#A08C5A' }} />
+                      <span className="w-3 text-gray-600 text-right">{starLevel}</span>
+                      <Star className="h-3.5 w-3.5" fill="#d4af37" stroke="#d4af37" />
+                      <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: '#d4af37' }} />
                       </div>
-                      <span className="w-5 text-[#1E2D4D]/50 text-xs">{count}</span>
+                      <span className="w-5 text-gray-500 text-xs">{count}</span>
                     </div>
                   );
                 })}
@@ -376,8 +376,8 @@ function ProductionVendorProfile() {
                   onClick={() => setSourceFilter(tab.id)}
                   className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors min-h-[32px] ${
                     sourceFilter === tab.id
-                      ? 'bg-[#1E2D4D] text-white border-[#1E2D4D]'
-                      : 'bg-white text-[#1E2D4D]/70 border-[#1E2D4D]/10 hover:border-[#1E2D4D]/15'
+                      ? 'bg-[#1e4d6b] text-white border-[#1e4d6b]'
+                      : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
                   }`}
                 >
                   {tab.label}
@@ -388,38 +388,38 @@ function ProductionVendorProfile() {
             {/* Review cards */}
             <div className="space-y-4">
               {filteredReviews.map(review => (
-                <div key={review.id} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
+                <div key={review.id} className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
                   <div className="flex items-center justify-between flex-wrap gap-2">
                     <div>
-                      <span className="font-semibold text-[#1E2D4D]">{review.reviewer_name || 'Anonymous'}</span>
+                      <span className="font-semibold text-gray-900">{review.reviewer_name || 'Anonymous'}</span>
                       {review.reviewer_org_name && (
-                        <span className="text-[#1E2D4D]/50 text-sm ml-2">{review.reviewer_org_name}</span>
+                        <span className="text-gray-500 text-sm ml-2">{review.reviewer_org_name}</span>
                       )}
                     </div>
-                    <span className="text-xs text-[#1E2D4D]/30">{new Date(review.created_at).toLocaleDateString()}</span>
+                    <span className="text-xs text-gray-400">{new Date(review.created_at).toLocaleDateString()}</span>
                   </div>
 
                   <div className="flex items-center gap-3 mt-1 flex-wrap">
                     <StarRating rating={review.rating} />
                     <ReviewSourceBadge source={review.source || 'evidly'} />
                     {review.service_type && (
-                      <span className="bg-[#1E2D4D]/5 rounded-full px-2.5 py-0.5 text-xs font-medium text-[#1E2D4D]/70">{review.service_type}</span>
+                      <span className="bg-gray-100 rounded-full px-2 py-0.5 text-xs text-gray-600">{review.service_type}</span>
                     )}
                   </div>
 
-                  {review.review_text && <p className="text-sm text-[#1E2D4D]/80 mt-2">{review.review_text}</p>}
+                  {review.review_text && <p className="text-sm text-gray-700 mt-2">{review.review_text}</p>}
 
                   {review.vendor_response && (
-                    <div className="mt-3 bg-[#FAF7F0] rounded-lg p-3">
-                      <span className="text-xs font-semibold text-[#1E2D4D]/50">Vendor Response</span>
-                      <p className="text-sm text-[#1E2D4D]/70 mt-1">{review.vendor_response}</p>
+                    <div className="mt-3 bg-gray-50 rounded-lg p-3">
+                      <span className="text-xs font-semibold text-gray-500">Vendor Response</span>
+                      <p className="text-sm text-gray-600 mt-1">{review.vendor_response}</p>
                     </div>
                   )}
                 </div>
               ))}
 
               {filteredReviews.length === 0 && (
-                <p className="text-sm text-[#1E2D4D]/50 text-center py-8">
+                <p className="text-sm text-gray-500 text-center py-8">
                   {sourceFilter === 'all' ? 'No reviews yet for this vendor.' : `No ${SOURCE_CONFIG[sourceFilter]?.label} reviews yet.`}
                 </p>
               )}
@@ -473,12 +473,12 @@ export function VendorProfile() {
   if (!vendor) {
     return (
       <div className="p-8 text-center">
-        <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Vendor not found</h2>
-        <p className="text-[#1E2D4D]/70 mb-4">The vendor you are looking for does not exist or has been removed.</p>
+        <h2 className="text-xl font-bold text-gray-900 mb-2">Vendor not found</h2>
+        <p className="text-gray-600 mb-4">The vendor you are looking for does not exist or has been removed.</p>
         <button
           onClick={() => navigate('/marketplace')}
           className="inline-flex items-center gap-1 text-sm font-medium px-4 py-2 rounded-lg"
-          style={{ color: '#1E2D4D' }}
+          style={{ color: '#1e4d6b' }}
         >
           <ArrowLeft className="h-4 w-4" /> Back to Marketplace
         </button>
@@ -520,7 +520,7 @@ export function VendorProfile() {
 
   // ── Render ──────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-[#FAF7F0]">
+    <div className="min-h-screen bg-gray-50">
       {/* Breadcrumb */}
       <Breadcrumb items={[
         { label: 'Dashboard', href: '/dashboard' },
@@ -533,28 +533,28 @@ export function VendorProfile() {
         <button
           onClick={() => navigate('/marketplace')}
           className="flex items-center gap-1 text-sm hover:underline mb-4"
-          style={{ color: '#1E2D4D' }}
+          style={{ color: '#1e4d6b' }}
         >
           <ArrowLeft className="h-4 w-4" /> Back to Marketplace
         </button>
 
         {/* ─── Profile Header ──────────────────────────────── */}
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6 mb-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
           {/* Top row */}
           <div className="flex items-start justify-between flex-wrap gap-4">
             {/* Left */}
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
-                <Building2 className="h-8 w-8" style={{ color: '#1E2D4D' }} />
+                <Building2 className="h-8 w-8" style={{ color: '#1e4d6b' }} />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-[#1E2D4D]">{vendor.companyName}</h1>
+                <h1 className="text-xl font-bold text-gray-900">{vendor.companyName}</h1>
                 <div className="flex items-center gap-2 mt-1">
                   <TierBadge tier={vendor.tier} />
                 </div>
                 <div className="mt-1">
                   <StarRating rating={vendor.rating} size="lg" />
-                  <span className="text-sm text-[#1E2D4D]/50 ml-1">({vendor.reviewCount} reviews)</span>
+                  <span className="text-sm text-gray-500 ml-1">({vendor.reviewCount} reviews)</span>
                 </div>
               </div>
             </div>
@@ -564,15 +564,15 @@ export function VendorProfile() {
               <button
                 onClick={() => setShowRequestModal(true)}
                 className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-white text-sm font-medium transition-colors min-h-[44px]"
-                style={{ backgroundColor: '#1E2D4D' }}
-                onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#141E33')}
-                onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
+                style={{ backgroundColor: '#1e4d6b' }}
+                onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#163a52')}
+                onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
               >
                 <Send className="h-4 w-4" /> Request Quote
               </button>
               <button
                 onClick={() => guardAction('message', 'Vendor Services', () => toast.info("Messaging"))}
-                className="flex items-center gap-2 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-[#FAF7F0] transition-colors min-h-[44px]"
+                className="flex items-center gap-2 border border-gray-300 text-gray-700 px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors min-h-[44px]"
               >
                 <MessageSquare className="h-4 w-4" /> Message Vendor
               </button>
@@ -580,7 +580,7 @@ export function VendorProfile() {
           </div>
 
           {/* Info row */}
-          <div className="flex flex-wrap gap-4 mt-4 text-sm text-[#1E2D4D]/70">
+          <div className="flex flex-wrap gap-4 mt-4 text-sm text-gray-600">
             <span className="flex items-center gap-1"><Building2 className="h-4 w-4" />{vendor.yearsInBusiness} years in business</span>
             <span className="flex items-center gap-1"><Clock className="h-4 w-4" />Responds in ~{vendor.responseTimeHours} hours</span>
             <span className="flex items-center gap-1"><MapPin className="h-4 w-4" />{serviceAreaDisplay}</span>
@@ -588,7 +588,7 @@ export function VendorProfile() {
           </div>
 
           {/* Contact row */}
-          <div className="flex flex-wrap gap-4 mt-3 text-sm text-[#1E2D4D]/70">
+          <div className="flex flex-wrap gap-4 mt-3 text-sm text-gray-600">
             <span className="flex items-center gap-1"><Phone className="h-4 w-4" />{vendor.phone}</span>
             {vendor.email && <span className="flex items-center gap-1"><Mail className="h-4 w-4" />{vendor.email}</span>}
             {vendor.website && <span className="flex items-center gap-1"><Globe className="h-4 w-4" />{vendor.website}</span>}
@@ -596,7 +596,7 @@ export function VendorProfile() {
         </div>
 
         {/* ─── Tab Navigation ──────────────────────────────── */}
-        <div className="flex border-b border-[#1E2D4D]/10 mb-6 overflow-x-auto">
+        <div className="flex border-b border-gray-200 mb-6 overflow-x-auto">
           {tabs.map(tab => (
             <button
               key={tab.id}
@@ -604,9 +604,9 @@ export function VendorProfile() {
               className={`px-4 py-3 text-sm cursor-pointer transition-colors whitespace-nowrap min-h-[44px] ${
                 activeTab === tab.id
                   ? 'border-b-2 font-semibold'
-                  : 'text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
+                  : 'text-gray-500 hover:text-gray-700'
               }`}
-              style={activeTab === tab.id ? { borderColor: '#A08C5A', color: '#1E2D4D' } : undefined}
+              style={activeTab === tab.id ? { borderColor: '#d4af37', color: '#1e4d6b' } : undefined}
             >
               {tab.label}
             </button>
@@ -619,39 +619,39 @@ export function VendorProfile() {
         {activeTab === 'about' && (
           <div>
             {/* Description */}
-            <p className="text-[#1E2D4D]/80 leading-relaxed">{vendor.description}</p>
+            <p className="text-gray-700 leading-relaxed">{vendor.description}</p>
 
             {/* Stats grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
               {/* Total Services */}
-              <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 text-center">
-                <TrendingUp className="h-5 w-5 mx-auto mb-1" style={{ color: '#1E2D4D' }} />
-                <div className="text-2xl font-bold tracking-tight text-[#1E2D4D]">{vendor.totalServices}</div>
-                <div className="text-xs text-[#1E2D4D]/50">Total Services</div>
+              <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
+                <TrendingUp className="h-5 w-5 mx-auto mb-1" style={{ color: '#1e4d6b' }} />
+                <div className="text-2xl font-bold text-gray-900">{vendor.totalServices}</div>
+                <div className="text-xs text-gray-500">Total Services</div>
               </div>
 
               {/* On-Time Rate */}
-              <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 text-center">
-                <div className="text-2xl font-bold tracking-tight text-[#1E2D4D]">{vendor.onTimeRate}%</div>
-                <div className="text-xs text-[#1E2D4D]/50 mb-2">On-Time Rate</div>
-                <div className="w-full h-2 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
+              <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
+                <div className="text-2xl font-bold text-gray-900">{vendor.onTimeRate}%</div>
+                <div className="text-xs text-gray-500 mb-2">On-Time Rate</div>
+                <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
                   <div className={`h-full rounded-full ${rateColor(vendor.onTimeRate)}`} style={{ width: `${vendor.onTimeRate}%` }} />
                 </div>
               </div>
 
               {/* Doc Upload Rate */}
-              <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 text-center">
-                <div className="text-2xl font-bold tracking-tight text-[#1E2D4D]">{vendor.docUploadRate}%</div>
-                <div className="text-xs text-[#1E2D4D]/50 mb-2">Doc Upload Rate</div>
-                <div className="w-full h-2 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
+              <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
+                <div className="text-2xl font-bold text-gray-900">{vendor.docUploadRate}%</div>
+                <div className="text-xs text-gray-500 mb-2">Doc Upload Rate</div>
+                <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
                   <div className={`h-full rounded-full ${rateColor(vendor.docUploadRate)}`} style={{ width: `${vendor.docUploadRate}%` }} />
                 </div>
               </div>
 
               {/* Avg Rating */}
-              <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 text-center">
-                <div className="text-2xl font-bold tracking-tight text-[#1E2D4D]">{vendor.rating.toFixed(1)}</div>
-                <div className="text-xs text-[#1E2D4D]/50 mb-1">Avg Rating</div>
+              <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
+                <div className="text-2xl font-bold text-gray-900">{vendor.rating.toFixed(1)}</div>
+                <div className="text-xs text-gray-500 mb-1">Avg Rating</div>
                 <div className="flex justify-center">
                   <StarRating rating={vendor.rating} />
                 </div>
@@ -660,15 +660,15 @@ export function VendorProfile() {
 
             {/* Categories */}
             <div className="mt-6">
-              <h3 className="text-sm font-semibold text-[#1E2D4D]/80 mb-2">Categories</h3>
+              <h3 className="text-sm font-semibold text-gray-700 mb-2">Categories</h3>
               <div className="flex flex-wrap gap-2">
                 {vendor.categories.map(cat => (
-                  <span key={cat} className="px-3 py-1 rounded-full text-sm" style={{ backgroundColor: '#eef4f8', color: '#1E2D4D' }}>
+                  <span key={cat} className="px-3 py-1 rounded-full text-sm" style={{ backgroundColor: '#eef4f8', color: '#1e4d6b' }}>
                     {cat}
                   </span>
                 ))}
                 {vendor.subcategories.map(sub => (
-                  <span key={sub} className="px-3 py-1 rounded-full text-sm" style={{ backgroundColor: '#eef4f8', color: '#1E2D4D' }}>
+                  <span key={sub} className="px-3 py-1 rounded-full text-sm" style={{ backgroundColor: '#eef4f8', color: '#1e4d6b' }}>
                     {sub}
                   </span>
                 ))}
@@ -677,10 +677,10 @@ export function VendorProfile() {
 
             {/* Languages */}
             <div className="mt-6">
-              <h3 className="text-sm font-semibold text-[#1E2D4D]/80 mb-2">Languages</h3>
+              <h3 className="text-sm font-semibold text-gray-700 mb-2">Languages</h3>
               <div className="flex flex-wrap gap-2">
                 {vendor.languages.map(lang => (
-                  <span key={lang} className="px-3 py-1 rounded-full text-sm" style={{ backgroundColor: '#eef4f8', color: '#1E2D4D' }}>
+                  <span key={lang} className="px-3 py-1 rounded-full text-sm" style={{ backgroundColor: '#eef4f8', color: '#1e4d6b' }}>
                     {lang}
                   </span>
                 ))}
@@ -689,12 +689,12 @@ export function VendorProfile() {
 
             {/* Service Area */}
             <div className="mt-6">
-              <h3 className="text-sm font-semibold text-[#1E2D4D]/80 mb-2 flex items-center gap-1">
+              <h3 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1">
                 <MapPin className="h-4 w-4" /> Service Area
               </h3>
               <div className="flex flex-wrap gap-2">
                 {vendor.serviceArea.map(city => (
-                  <span key={city} className="px-3 py-1 rounded-full text-sm" style={{ backgroundColor: '#eef4f8', color: '#1E2D4D' }}>
+                  <span key={city} className="px-3 py-1 rounded-full text-sm" style={{ backgroundColor: '#eef4f8', color: '#1e4d6b' }}>
                     {city}
                   </span>
                 ))}
@@ -705,24 +705,24 @@ export function VendorProfile() {
             <div className="mt-8 bg-gradient-to-r from-[#eef4f8] to-[#f0f7fb] rounded-xl border border-[#b8d4e8] p-5">
               <div className="flex items-center gap-2 mb-4">
                 <EvidlyIcon size={20} />
-                <h3 className="text-sm font-semibold text-[#1E2D4D]">EvidLY Platform Stats</h3>
+                <h3 className="text-sm font-semibold text-gray-900">EvidLY Platform Stats</h3>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="text-center">
-                  <div className="text-xl font-bold" style={{ color: '#1E2D4D' }}>{vendor.kitchensServed}+</div>
-                  <div className="text-xs text-[#1E2D4D]/50 mt-0.5">Kitchens Serviced</div>
+                  <div className="text-xl font-bold" style={{ color: '#1e4d6b' }}>{vendor.kitchensServed}+</div>
+                  <div className="text-xs text-gray-500 mt-0.5">Kitchens Serviced</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-xl font-bold" style={{ color: '#1E2D4D' }}>{vendor.docUploadRate}%</div>
-                  <div className="text-xs text-[#1E2D4D]/50 mt-0.5">Docs Uploaded &lt;24h</div>
+                  <div className="text-xl font-bold" style={{ color: '#1e4d6b' }}>{vendor.docUploadRate}%</div>
+                  <div className="text-xs text-gray-500 mt-0.5">Docs Uploaded &lt;24h</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-xl font-bold" style={{ color: '#1E2D4D' }}>{vendor.rating.toFixed(1)}</div>
-                  <div className="text-xs text-[#1E2D4D]/50 mt-0.5">Customer Rating</div>
+                  <div className="text-xl font-bold" style={{ color: '#1e4d6b' }}>{vendor.rating.toFixed(1)}</div>
+                  <div className="text-xs text-gray-500 mt-0.5">Customer Rating</div>
                 </div>
                 <div className="text-center">
                   <div className="text-xl font-bold text-green-600">0</div>
-                  <div className="text-xs text-[#1E2D4D]/50 mt-0.5">Compliance Issues (12mo)</div>
+                  <div className="text-xs text-gray-500 mt-0.5">Compliance Issues (12mo)</div>
                 </div>
               </div>
             </div>
@@ -741,18 +741,18 @@ export function VendorProfile() {
             </div>
 
             {/* Insurance Coverage */}
-            <h3 className="text-base font-semibold text-[#1E2D4D] mb-3">Insurance Coverage</h3>
+            <h3 className="text-base font-semibold text-gray-900 mb-3">Insurance Coverage</h3>
             <div className="space-y-3 mb-6">
               {vendor.insurance.map((ins, idx) => {
                 const expired = isExpired(ins.expirationDate);
                 return (
-                  <div key={idx} className="flex items-center gap-3 bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
+                  <div key={idx} className="flex items-center gap-3 bg-white rounded-xl border border-gray-200 p-4">
                     {ins.verified
                       ? <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
                       : <XCircle className="h-5 w-5 text-red-500 flex-shrink-0" />}
                     <div className="flex-1">
-                      <div className="font-medium text-[#1E2D4D] text-sm">{ins.type}</div>
-                      <div className="text-xs text-[#1E2D4D]/50">Expires {ins.expirationDate}</div>
+                      <div className="font-medium text-gray-900 text-sm">{ins.type}</div>
+                      <div className="text-xs text-gray-500">Expires {ins.expirationDate}</div>
                     </div>
                     {expired ? (
                       <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-700 border border-red-200">Expired</span>
@@ -765,19 +765,19 @@ export function VendorProfile() {
             </div>
 
             {/* Certifications & Licenses */}
-            <h3 className="text-base font-semibold text-[#1E2D4D] mb-3">Certifications &amp; Licenses</h3>
+            <h3 className="text-base font-semibold text-gray-900 mb-3">Certifications &amp; Licenses</h3>
             <div className="space-y-3">
               {vendor.certifications.map((cert, idx) => {
                 const expired = cert.expirationDate ? isExpired(cert.expirationDate) : false;
                 return (
-                  <div key={idx} className="flex items-center gap-3 bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
+                  <div key={idx} className="flex items-center gap-3 bg-white rounded-xl border border-gray-200 p-4">
                     {cert.verified
                       ? <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
                       : <XCircle className="h-5 w-5 text-red-500 flex-shrink-0" />}
                     <div className="flex-1">
-                      <div className="font-medium text-[#1E2D4D] text-sm">{cert.name}</div>
+                      <div className="font-medium text-gray-900 text-sm">{cert.name}</div>
                       {cert.expirationDate && (
-                        <div className="text-xs text-[#1E2D4D]/50">Expires {cert.expirationDate}</div>
+                        <div className="text-xs text-gray-500">Expires {cert.expirationDate}</div>
                       )}
                     </div>
                     {cert.expirationDate ? (
@@ -805,9 +805,9 @@ export function VendorProfile() {
             <div className="flex items-center gap-8 mb-6 flex-wrap">
               {/* Left — overall */}
               <div className="text-center">
-                <div className="text-2xl sm:text-4xl font-bold text-[#1E2D4D]">{vendor.rating.toFixed(1)}</div>
+                <div className="text-2xl sm:text-4xl font-bold text-gray-900">{vendor.rating.toFixed(1)}</div>
                 <StarRating rating={vendor.rating} size="lg" />
-                <p className="text-sm text-[#1E2D4D]/50 mt-1">based on {vendorReviews.length} reviews</p>
+                <p className="text-sm text-gray-500 mt-1">based on {vendorReviews.length} reviews</p>
               </div>
 
               {/* Right — star breakdown bars */}
@@ -817,12 +817,12 @@ export function VendorProfile() {
                   const pct = vendorReviews.length > 0 ? (count / vendorReviews.length) * 100 : 0;
                   return (
                     <div key={starLevel} className="flex items-center gap-2 text-sm">
-                      <span className="w-3 text-[#1E2D4D]/70 text-right">{starLevel}</span>
-                      <Star className="h-3.5 w-3.5" fill="#A08C5A" stroke="#A08C5A" />
-                      <div className="flex-1 h-2 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
-                        <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: '#A08C5A' }} />
+                      <span className="w-3 text-gray-600 text-right">{starLevel}</span>
+                      <Star className="h-3.5 w-3.5" fill="#d4af37" stroke="#d4af37" />
+                      <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: '#d4af37' }} />
                       </div>
-                      <span className="w-5 text-[#1E2D4D]/50 text-xs">{count}</span>
+                      <span className="w-5 text-gray-500 text-xs">{count}</span>
                     </div>
                   );
                 })}
@@ -833,7 +833,7 @@ export function VendorProfile() {
             <div className="mb-6">
               <button
                 onClick={() => guardAction('review', 'Vendor Services', () => toast.info("Reviews require a completed service"))}
-                className="flex items-center gap-2 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#FAF7F0] transition-colors min-h-[44px]"
+                className="flex items-center gap-2 border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors min-h-[44px]"
               >
                 <MessageSquare className="h-4 w-4" /> Write a Review
               </button>
@@ -842,40 +842,40 @@ export function VendorProfile() {
             {/* Review cards */}
             <div className="space-y-4">
               {vendorReviews.map(review => (
-                <div key={review.id} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
+                <div key={review.id} className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
                   {/* Header */}
                   <div className="flex items-center justify-between flex-wrap gap-2">
                     <div>
-                      <span className="font-semibold text-[#1E2D4D]">{review.reviewerName}</span>
-                      <span className="text-[#1E2D4D]/50 text-sm ml-2">{review.reviewerOrg}</span>
+                      <span className="font-semibold text-gray-900">{review.reviewerName}</span>
+                      <span className="text-gray-500 text-sm ml-2">{review.reviewerOrg}</span>
                     </div>
-                    <span className="text-xs text-[#1E2D4D]/30">{review.date}</span>
+                    <span className="text-xs text-gray-400">{review.date}</span>
                   </div>
 
                   {/* Stars + service type + verified badge */}
                   <div className="flex items-center gap-3 mt-1 flex-wrap">
                     <StarRating rating={review.rating} />
-                    <span className="bg-[#1E2D4D]/5 rounded-full px-2.5 py-0.5 text-xs font-medium text-[#1E2D4D]/70">{review.serviceType}</span>
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-200">
+                    <span className="bg-gray-100 rounded-full px-2 py-0.5 text-xs text-gray-600">{review.serviceType}</span>
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-50 text-green-700 border border-green-200">
                       <CheckCircle className="h-3 w-3" /> Verified EvidLY Customer
                     </span>
                   </div>
 
                   {/* Text */}
-                  <p className="text-sm text-[#1E2D4D]/80 mt-2">{review.text}</p>
+                  <p className="text-sm text-gray-700 mt-2">{review.text}</p>
 
                   {/* Vendor response */}
                   {review.vendorResponse && (
-                    <div className="mt-3 bg-[#FAF7F0] rounded-lg p-3">
-                      <span className="text-xs font-semibold text-[#1E2D4D]/50">Vendor Response</span>
-                      <p className="text-sm text-[#1E2D4D]/70 mt-1">{review.vendorResponse}</p>
+                    <div className="mt-3 bg-gray-50 rounded-lg p-3">
+                      <span className="text-xs font-semibold text-gray-500">Vendor Response</span>
+                      <p className="text-sm text-gray-600 mt-1">{review.vendorResponse}</p>
                     </div>
                   )}
                 </div>
               ))}
 
               {vendorReviews.length === 0 && (
-                <p className="text-sm text-[#1E2D4D]/50 text-center py-8">No reviews yet for this vendor.</p>
+                <p className="text-sm text-gray-500 text-center py-8">No reviews yet for this vendor.</p>
               )}
             </div>
           </div>
@@ -887,14 +887,14 @@ export function VendorProfile() {
         {activeTab === 'services' && (
           <div className="space-y-4">
             {vendor.serviceOfferings.map((offering, idx) => (
-              <div key={idx} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
-                <h3 className="font-semibold text-[#1E2D4D]">{offering.name}</h3>
-                <p className="text-sm text-[#1E2D4D]/70 mt-1">{offering.description}</p>
+              <div key={idx} className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+                <h3 className="font-semibold text-gray-900">{offering.name}</h3>
+                <p className="text-sm text-gray-600 mt-1">{offering.description}</p>
 
                 {/* Frequency tags */}
                 <div className="flex flex-wrap gap-2 mt-3">
                   {offering.frequencyOptions.map(freq => (
-                    <span key={freq} className="rounded-full px-3 py-1 text-xs" style={{ backgroundColor: '#eef4f8', color: '#1E2D4D' }}>
+                    <span key={freq} className="rounded-full px-3 py-1 text-xs" style={{ backgroundColor: '#eef4f8', color: '#1e4d6b' }}>
                       {freq}
                     </span>
                   ))}
@@ -903,9 +903,9 @@ export function VendorProfile() {
                 {/* Pricing */}
                 <div className="mt-2">
                   {offering.pricingDisplay === 'Request Quote' ? (
-                    <span className="text-sm font-semibold" style={{ color: '#1E2D4D' }}>{offering.pricingDisplay}</span>
+                    <span className="text-sm font-semibold" style={{ color: '#1e4d6b' }}>{offering.pricingDisplay}</span>
                   ) : (
-                    <span className="text-sm font-semibold text-[#1E2D4D]">{offering.pricingDisplay}</span>
+                    <span className="text-sm font-semibold text-gray-900">{offering.pricingDisplay}</span>
                   )}
                 </div>
 
@@ -913,9 +913,9 @@ export function VendorProfile() {
                 <button
                   onClick={() => setShowRequestModal(true)}
                   className="mt-3 flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors min-h-[44px]"
-                  style={{ backgroundColor: '#1E2D4D' }}
-                  onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#141E33')}
-                  onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
+                  style={{ backgroundColor: '#1e4d6b' }}
+                  onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#163a52')}
+                  onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
                 >
                   <Send className="h-3.5 w-3.5" /> Request Quote
                 </button>
@@ -929,18 +929,18 @@ export function VendorProfile() {
       {/* SERVICE REQUEST MODAL                                  */}
       {/* ═══════════════════════════════════════════════════════ */}
       {showRequestModal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 modal-backdrop-enter">
-          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 w-[95vw] sm:w-full max-w-lg max-h-[90vh] overflow-y-auto p-4 sm:p-6 modal-content-enter">
-            <h2 className="text-lg font-bold text-[#1E2D4D] mb-4">
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-[95vw] sm:w-full max-w-lg max-h-[90vh] overflow-y-auto p-4 sm:p-6">
+            <h2 className="text-lg font-bold text-gray-900 mb-4">
               Request Quote from {vendor.companyName}
             </h2>
 
             {/* Service Type */}
-            <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Service Type</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Service Type</label>
             <select
               value={requestForm.serviceType}
               onChange={e => setRequestForm(prev => ({ ...prev, serviceType: e.target.value }))}
-              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] mb-4"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] mb-4"
             >
               <option value="">Select a service...</option>
               {vendor.serviceOfferings.map(s => (
@@ -949,11 +949,11 @@ export function VendorProfile() {
             </select>
 
             {/* Location */}
-            <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Location</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
             <select
               value={requestForm.location}
               onChange={e => setRequestForm(prev => ({ ...prev, location: e.target.value }))}
-              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] mb-4"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] mb-4"
             >
               <option value="">Select a location...</option>
               {locations.map(l => (
@@ -962,18 +962,18 @@ export function VendorProfile() {
             </select>
 
             {/* Preferred Dates */}
-            <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Preferred Dates</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Preferred Dates</label>
             <input
               type="text"
               value={requestForm.preferredDates}
               onChange={e => setRequestForm(prev => ({ ...prev, preferredDates: e.target.value }))}
               placeholder="e.g., Next week, March 1-5"
-              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] mb-4"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] mb-4"
             />
 
             {/* Description */}
             <div className="flex items-center justify-between mb-1">
-              <label className="text-sm font-medium text-[#1E2D4D]/80">Description</label>
+              <label className="text-sm font-medium text-gray-700">Description</label>
               <AIAssistButton
                 fieldLabel="Description"
                 context={{ vendorName: vendor.companyName }}
@@ -986,16 +986,16 @@ export function VendorProfile() {
               onChange={e => { setRequestForm(prev => ({ ...prev, description: e.target.value })); setAiFields(prev => { const s = new Set(prev); s.delete('requestDescription'); return s; }); }}
               placeholder="Describe your needs..."
               rows={3}
-              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] mb-4"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] mb-4"
             />
             {aiFields.has('requestDescription') && <AIGeneratedIndicator />}
 
             {/* Urgency */}
-            <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Urgency</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Urgency</label>
             <select
               value={requestForm.urgency}
               onChange={e => setRequestForm(prev => ({ ...prev, urgency: e.target.value }))}
-              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] mb-6"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] mb-6"
             >
               <option value="Low">Low</option>
               <option value="Normal">Normal</option>
@@ -1007,16 +1007,16 @@ export function VendorProfile() {
             <div className="flex items-center justify-end gap-3">
               <button
                 onClick={() => setShowRequestModal(false)}
-                className="px-4 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm font-medium text-[#1E2D4D]/80 hover:bg-[#FAF7F0] transition-colors min-h-[44px]"
+                className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors min-h-[44px]"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSubmitRequest}
                 className="px-4 py-2 rounded-lg text-sm font-medium text-white transition-colors min-h-[44px]"
-                style={{ backgroundColor: '#1E2D4D' }}
-                onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#141E33')}
-                onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
+                style={{ backgroundColor: '#1e4d6b' }}
+                onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#163a52')}
+                onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
               >
                 Submit Request
               </button>

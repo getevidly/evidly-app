@@ -106,7 +106,7 @@ export function EquipmentFormModal({ equipment, onClose }: EquipmentFormModalPro
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 modal-backdrop-enter" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={onClose}>
       <div
         className="rounded-xl w-full max-w-lg mx-4 max-h-[90vh] flex flex-col"
         style={{ background: CARD_BG, boxShadow: '0 20px 60px rgba(0,0,0,0.2)' }}
@@ -115,12 +115,12 @@ export function EquipmentFormModal({ equipment, onClose }: EquipmentFormModalPro
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b flex-shrink-0" style={{ borderColor: CARD_BORDER }}>
           <div className="flex items-center gap-2">
-            <Wrench className="w-5 h-5" style={{ color: '#1E2D4D' }} />
+            <Wrench className="w-5 h-5" style={{ color: '#1e4d6b' }} />
             <h2 className="text-base font-bold" style={{ color: NAVY }}>
               {isEdit ? 'Edit Equipment' : 'Add Equipment'}
             </h2>
           </div>
-          <button onClick={onClose} className="p-2.5 -m-1 rounded hover:bg-[#1E2D4D]/5" aria-label="Close">
+          <button onClick={onClose} className="p-2.5 -m-1 rounded hover:bg-gray-100" aria-label="Close">
             <X className="w-5 h-5" style={{ color: TEXT_TERTIARY }} />
           </button>
         </div>
@@ -133,7 +133,7 @@ export function EquipmentFormModal({ equipment, onClose }: EquipmentFormModalPro
               value={locationId}
               onChange={e => setLocationId(e.target.value)}
               placeholder="Search for a location..."
-              className="w-full px-3 py-2 text-sm rounded-xl border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30"
+              className="w-full px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/30"
               style={{ borderColor: errors.locationId ? '#DC2626' : CARD_BORDER, color: NAVY }}
             />
           </Field>
@@ -143,7 +143,7 @@ export function EquipmentFormModal({ equipment, onClose }: EquipmentFormModalPro
             <select
               value={equipmentType}
               onChange={e => setEquipmentType(e.target.value)}
-              className="w-full px-3 py-2 text-sm rounded-xl border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30"
+              className="w-full px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/30"
               style={{ borderColor: errors.equipmentType ? '#DC2626' : CARD_BORDER, color: NAVY }}
             >
               <option value="">Select type...</option>
@@ -157,7 +157,7 @@ export function EquipmentFormModal({ equipment, onClose }: EquipmentFormModalPro
               value={name}
               onChange={e => setName(e.target.value)}
               placeholder="e.g., Main Kitchen Hood #1"
-              className="w-full px-3 py-2 text-sm rounded-xl border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30"
+              className="w-full px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/30"
               style={{ borderColor: errors.name ? '#DC2626' : CARD_BORDER, color: NAVY }}
             />
           </Field>
@@ -166,11 +166,11 @@ export function EquipmentFormModal({ equipment, onClose }: EquipmentFormModalPro
           <div className="grid grid-cols-2 gap-3">
             <Field label="Manufacturer">
               <input value={manufacturer} onChange={e => setManufacturer(e.target.value)} placeholder="e.g., CaptiveAire"
-                className="w-full px-3 py-2 text-sm rounded-xl border" style={{ borderColor: CARD_BORDER, color: NAVY }} />
+                className="w-full px-3 py-2 text-sm rounded-lg border" style={{ borderColor: CARD_BORDER, color: NAVY }} />
             </Field>
             <Field label="Model">
               <input value={model} onChange={e => setModel(e.target.value)} placeholder="e.g., ND-2-6"
-                className="w-full px-3 py-2 text-sm rounded-xl border" style={{ borderColor: CARD_BORDER, color: NAVY }} />
+                className="w-full px-3 py-2 text-sm rounded-lg border" style={{ borderColor: CARD_BORDER, color: NAVY }} />
             </Field>
           </div>
 
@@ -178,18 +178,18 @@ export function EquipmentFormModal({ equipment, onClose }: EquipmentFormModalPro
           <div className="grid grid-cols-2 gap-3">
             <Field label="Serial Number">
               <input value={serialNumber} onChange={e => setSerialNumber(e.target.value)} placeholder="e.g., SN-12345"
-                className="w-full px-3 py-2 text-sm rounded-xl border font-mono" style={{ borderColor: CARD_BORDER, color: NAVY }} />
+                className="w-full px-3 py-2 text-sm rounded-lg border font-mono" style={{ borderColor: CARD_BORDER, color: NAVY }} />
             </Field>
             <Field label="Install Date">
               <input type="date" value={installDate} onChange={e => setInstallDate(e.target.value)}
-                className="w-full px-3 py-2 text-sm rounded-xl border" style={{ borderColor: CARD_BORDER, color: NAVY }} />
+                className="w-full px-3 py-2 text-sm rounded-lg border" style={{ borderColor: CARD_BORDER, color: NAVY }} />
             </Field>
           </div>
 
           {/* Installed Area */}
           <Field label="Installed Area">
             <input value={installedArea} onChange={e => setInstalledArea(e.target.value)} placeholder="e.g., Main Kitchen Hood #1"
-              className="w-full px-3 py-2 text-sm rounded-xl border" style={{ borderColor: CARD_BORDER, color: NAVY }} />
+              className="w-full px-3 py-2 text-sm rounded-lg border" style={{ borderColor: CARD_BORDER, color: NAVY }} />
           </Field>
 
           {/* Custom fields based on equipment type */}
@@ -205,7 +205,7 @@ export function EquipmentFormModal({ equipment, onClose }: EquipmentFormModalPro
                       type={f.type}
                       value={customFields[f.key] || ''}
                       onChange={e => setCustomFields(prev => ({ ...prev, [f.key]: e.target.value }))}
-                      className="w-full px-3 py-2 text-sm rounded-xl border"
+                      className="w-full px-3 py-2 text-sm rounded-lg border"
                       style={{ borderColor: CARD_BORDER, color: NAVY }}
                     />
                   </Field>
@@ -221,7 +221,7 @@ export function EquipmentFormModal({ equipment, onClose }: EquipmentFormModalPro
               onChange={e => setNotes(e.target.value)}
               rows={3}
               placeholder="Additional notes..."
-              className="w-full px-3 py-2 text-sm rounded-xl border resize-none"
+              className="w-full px-3 py-2 text-sm rounded-lg border resize-none"
               style={{ borderColor: CARD_BORDER, color: NAVY }}
             />
           </Field>
@@ -229,14 +229,14 @@ export function EquipmentFormModal({ equipment, onClose }: EquipmentFormModalPro
 
         {/* Footer */}
         <div className="flex justify-end gap-3 p-5 border-t flex-shrink-0" style={{ borderColor: CARD_BORDER }}>
-          <button onClick={onClose} className="px-4 py-2 text-sm font-medium rounded-xl border hover:bg-[#FAF7F0]" style={{ borderColor: CARD_BORDER, color: NAVY }}>
+          <button onClick={onClose} className="px-4 py-2 text-sm font-medium rounded-lg border hover:bg-gray-50" style={{ borderColor: CARD_BORDER, color: NAVY }}>
             Cancel
           </button>
           <button
             onClick={handleSave}
             disabled={saving}
             className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white rounded-lg transition-colors"
-            style={{ background: saving ? '#9CA3AF' : '#1E2D4D' }}
+            style={{ background: saving ? '#9CA3AF' : '#1e4d6b' }}
           >
             {saving && <Loader2 className="w-4 h-4 animate-spin" />}
             {saving ? 'Saving...' : isEdit ? 'Save Changes' : 'Add Equipment'}

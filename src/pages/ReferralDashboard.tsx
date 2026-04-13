@@ -30,7 +30,6 @@ import {
   generateLinkedInShareUrl, generateEmailShareHref, generateSmsShareHref,
   getStandingVerifyUrl,
 } from '../lib/ambassadorSystem';
-import { usePageTitle } from '../hooks/usePageTitle';
 
 type Tab = 'overview' | 'badges' | 'network' | 'k2c' | 'stories' | 'vendor';
 
@@ -59,10 +58,10 @@ function StatCard({ label, value, icon: Icon, color, sub }: { label: string; val
     <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: `4px solid ${color}` }}>
       <div className="flex items-center gap-2 mb-2">
         <Icon className="h-4 w-4" style={{ color }} />
-        <span className="text-sm text-[#1E2D4D]/50 font-medium">{label}</span>
+        <span className="text-sm text-gray-500 font-medium">{label}</span>
       </div>
-      <div className="text-2xl font-bold tracking-tight" style={{ color }}>{value}</div>
-      {sub && <div className="text-xs text-[#1E2D4D]/30 mt-1">{sub}</div>}
+      <div className="text-2xl font-bold" style={{ color }}>{value}</div>
+      {sub && <div className="text-xs text-gray-400 mt-1">{sub}</div>}
     </div>
   );
 }
@@ -88,15 +87,15 @@ function BadgeCard({ badge, t }: { badge: ComplianceBadge; t: (key: string) => s
     <div className="bg-white rounded-xl shadow-sm border-2 p-5" style={{ borderColor: levelColors.border }}>
       <div className="flex items-start justify-between mb-3">
         <div className="text-3xl">{config.icon}</div>
-        <span className="text-xs font-bold uppercase px-2 py-0.5 rounded" style={{ backgroundColor: levelColors.bg, color: levelColors.text }}>
+        <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded" style={{ backgroundColor: levelColors.bg, color: levelColors.text }}>
           {badge.badgeLevel}
         </span>
       </div>
-      <h4 className="font-bold text-[#1E2D4D] mb-1">{config.label}</h4>
-      <p className="text-xs text-[#1E2D4D]/50 mb-1">{badge.locationName}</p>
-      <p className="text-xs text-[#1E2D4D]/30 mb-3">{config.description}</p>
+      <h4 className="font-bold text-gray-900 mb-1">{config.label}</h4>
+      <p className="text-xs text-gray-500 mb-1">{badge.locationName}</p>
+      <p className="text-xs text-gray-400 mb-3">{config.description}</p>
 
-      <div className="flex items-center gap-3 text-xs text-[#1E2D4D]/30 mb-3">
+      <div className="flex items-center gap-3 text-xs text-gray-400 mb-3">
         <span>{badge.shareCount} {t('referral.shares')}</span>
         <span>{badge.clickCount} {t('referral.clicks')}</span>
         <span>{badge.conversionCount} {t('referral.signups')}</span>
@@ -106,15 +105,15 @@ function BadgeCard({ badge, t }: { badge: ComplianceBadge; t: (key: string) => s
         <button
           onClick={handleShare}
           className="flex-1 flex items-center justify-center gap-1 px-3 py-2 rounded-lg text-xs font-medium text-white transition-colors cursor-pointer"
-          style={{ backgroundColor: '#1E2D4D' }}
-          onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#2A3F6B')}
-          onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
+          style={{ backgroundColor: '#1e4d6b' }}
+          onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
+          onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
         >
           <Share2 className="h-3 w-3" /> {t('referral.share')}
         </button>
         <button
           onClick={handleCopy}
-          className="flex items-center justify-center gap-1 px-3 py-2 rounded-lg text-xs font-medium border border-[#1E2D4D]/10 text-[#1E2D4D]/70 hover:bg-[#FAF7F0] transition-colors cursor-pointer"
+          className="flex items-center justify-center gap-1 px-3 py-2 rounded-lg text-xs font-medium border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer"
         >
           <Copy className="h-3 w-3" /> {t('referral.copy')}
         </button>
@@ -126,7 +125,6 @@ function BadgeCard({ badge, t }: { badge: ComplianceBadge; t: (key: string) => s
 export function ReferralDashboard() {
   const { isDemoMode } = useDemo();
   const { t } = useTranslation();
-  usePageTitle('Referral Program');
   const [activeTab, setActiveTab] = useState<Tab>('overview');
 
   const [copied, setCopied] = useState(false);
@@ -170,17 +168,17 @@ export function ReferralDashboard() {
       <Breadcrumb items={[{ label: t('nav.dashboard'), href: '/dashboard' }, { label: t('referral.referralProgram') }]} />
       <div className="space-y-6">
         {/* Header */}
-        <div className="bg-gradient-to-r from-[#1E2D4D] to-[#2c5f7f] rounded-xl p-6 text-white">
+        <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-xl p-6 text-white">
           <div className="flex items-center gap-3 mb-2">
-            <Gift className="h-8 w-8 text-[#A08C5A]" />
-            <h2 className="text-2xl font-bold tracking-tight">{t('referral.referralProgram')}</h2>
+            <Gift className="h-8 w-8 text-[#d4af37]" />
+            <h2 className="text-2xl font-bold">{t('referral.referralProgram')}</h2>
           </div>
-          <p className="text-[#1E2D4D]/30 mb-4">{t('referral.headerSubtitle')}</p>
+          <p className="text-gray-300 mb-4">{t('referral.headerSubtitle')}</p>
           <div className="flex flex-wrap gap-3">
             <button
               onClick={() => handleGenerateCode('champion_badge')}
               className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors cursor-pointer"
-              style={{ backgroundColor: '#A08C5A', color: '#1E2D4D' }}
+              style={{ backgroundColor: '#d4af37', color: '#1e4d6b' }}
             >
               <Share2 className="h-4 w-4" /> {t('referral.shareYourBadge')}
             </button>
@@ -203,8 +201,8 @@ export function ReferralDashboard() {
                 onClick={() => setActiveTab(tabId)}
                 className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors cursor-pointer ${
                   activeTab === tabId
-                    ? 'bg-[#1E2D4D] text-white'
-                    : 'bg-white text-[#1E2D4D]/70 hover:bg-[#FAF7F0] border border-[#1E2D4D]/10'
+                    ? 'bg-[#1e4d6b] text-white'
+                    : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
                 }`}
               >
                 <TabIcon className="h-4 w-4" />
@@ -216,16 +214,16 @@ export function ReferralDashboard() {
 
         {/* ── SHARE YOUR REFERRAL ─────────────────── */}
         {activeTab === 'overview' && (
-          <div className="bg-white rounded-xl p-6 border border-[#1E2D4D]/5">
-            <p className="text-xs font-semibold uppercase tracking-wider text-[#1E2D4D]/30 mb-3">Your referral link</p>
+          <div className="bg-white rounded-xl shadow-sm p-5 border border-gray-100">
+            <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">Your referral link</p>
             <div className="flex items-center gap-2 mb-4">
-              <div className="flex-1 bg-[#FAF7F0] rounded-xl px-4 py-2.5 font-mono text-sm text-[#1E2D4D] truncate border border-[#1E2D4D]/10">
+              <div className="flex-1 bg-gray-50 rounded-lg px-4 py-2.5 font-mono text-sm text-[#1e4d6b] truncate border border-gray-200">
                 {referralUrl || 'getevidly.com/verify/...'}
               </div>
               <button
                 onClick={handleCopyReferralLink}
                 className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer"
-                style={{ backgroundColor: '#1E2D4D', color: '#fff' }}
+                style={{ backgroundColor: '#1e4d6b', color: '#fff' }}
               >
                 {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                 {copied ? 'Copied' : 'Copy'}
@@ -236,21 +234,21 @@ export function ReferralDashboard() {
                 href={generateLinkedInShareUrl(referralCode, SHARE_MESSAGES.linkedin)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold border border-[#1E2D4D]/10 text-[#1E2D4D] hover:bg-[#FAF7F0] transition-colors"
+                className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold border border-gray-200 text-[#1E2D4D] hover:bg-gray-50 transition-colors"
                 style={{ textDecoration: 'none' }}
               >
                 <Linkedin className="h-3.5 w-3.5" /> LinkedIn
               </a>
               <a
                 href={generateEmailShareHref('My Kitchen', referralCode, SHARE_MESSAGES.email_body)}
-                className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold border border-[#1E2D4D]/10 text-[#1E2D4D] hover:bg-[#FAF7F0] transition-colors"
+                className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold border border-gray-200 text-[#1E2D4D] hover:bg-gray-50 transition-colors"
                 style={{ textDecoration: 'none' }}
               >
                 <Mail className="h-3.5 w-3.5" /> Email
               </a>
               <a
                 href={generateSmsShareHref('My Kitchen', referralCode, SHARE_MESSAGES.sms)}
-                className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold border border-[#1E2D4D]/10 text-[#1E2D4D] hover:bg-[#FAF7F0] transition-colors"
+                className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold border border-gray-200 text-[#1E2D4D] hover:bg-gray-50 transition-colors"
                 style={{ textDecoration: 'none' }}
               >
                 <MessageSquare className="h-3.5 w-3.5" /> Text
@@ -264,19 +262,19 @@ export function ReferralDashboard() {
           <>
             {/* Stats Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <StatCard label={t('referral.totalReferrals')} value={stats.totalReferrals} icon={Share2} color="#1E2D4D" sub={`${stats.converted} ${t('referral.converted')}`} />
-              <StatCard label={t('referral.rewardsEarned')} value={`$${stats.totalRewardsEarned}`} icon={Gift} color="#A08C5A" sub={`${stats.monthsFreeEarned} ${t('referral.monthFree')}`} />
+              <StatCard label={t('referral.totalReferrals')} value={stats.totalReferrals} icon={Share2} color="#1e4d6b" sub={`${stats.converted} ${t('referral.converted')}`} />
+              <StatCard label={t('referral.rewardsEarned')} value={`$${stats.totalRewardsEarned}`} icon={Gift} color="#d4af37" sub={`${stats.monthsFreeEarned} ${t('referral.monthFree')}`} />
               <StatCard label={t('referral.k2cDonated')} value={`$${stats.k2cTotalDonated}`} icon={Heart} color="#ef4444" sub={`${new Set(k2cDonations.map((d: any) => d.charityName)).size} ${t('referral.charities')}`} />
               <StatCard label={t('referral.networkRank')} value={stats.networkRank ? `#${stats.networkRank}` : '--'} icon={Trophy} color="#22c55e" sub={`${stats.referralPoints} ${t('referral.pts')}`} />
             </div>
 
             {/* Recent Activity */}
             <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-4">{t('referral.recentReferralActivity')}</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('referral.recentReferralActivity')}</h3>
               {referrals.length === 0 ? (
                 <div className="text-center py-8">
-                  <Share2 className="h-10 w-10 mx-auto mb-3 text-[#1E2D4D]/30" />
-                  <p className="text-sm text-[#1E2D4D]/50">No referral activity yet. Share your badge or referral link to get started.</p>
+                  <Share2 className="h-10 w-10 mx-auto mb-3 text-gray-300" />
+                  <p className="text-sm text-gray-500">No referral activity yet. Share your badge or referral link to get started.</p>
                 </div>
               ) : (
               <div className="space-y-3">
@@ -303,13 +301,13 @@ export function ReferralDashboard() {
                     expired: t('referral.expired'),
                   };
                   return (
-                    <div key={ref.id} className="flex items-center justify-between py-2 border-b border-[#1E2D4D]/3 last:border-0">
+                    <div key={ref.id} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
                       <div className="flex items-center gap-3">
                         <div className="w-2 h-2 rounded-full" style={{ backgroundColor: statusColors[ref.status] }} />
                         <div>
-                          <span className="text-sm font-medium text-[#1E2D4D]">{mechanicLabels[ref.mechanic]}</span>
+                          <span className="text-sm font-medium text-gray-900">{mechanicLabels[ref.mechanic]}</span>
                           {ref.referredEmail && (
-                            <span className="text-xs text-[#1E2D4D]/30 ml-2">{ref.referredEmail}</span>
+                            <span className="text-xs text-gray-400 ml-2">{ref.referredEmail}</span>
                           )}
                         </div>
                       </div>
@@ -317,7 +315,7 @@ export function ReferralDashboard() {
                         <span className="text-xs font-medium px-2 py-0.5 rounded-full" style={{ backgroundColor: `${statusColors[ref.status]}15`, color: statusColors[ref.status] }}>
                           {statusLabels[ref.status] ?? ref.status.replace('_', ' ')}
                         </span>
-                        <span className="text-xs text-[#1E2D4D]/30">
+                        <span className="text-xs text-gray-400">
                           {new Date(ref.createdAt).toLocaleDateString()}
                         </span>
                       </div>
@@ -335,7 +333,7 @@ export function ReferralDashboard() {
                 title={t('referral.complianceChampion')}
                 description={t('referral.complianceChampionDesc')}
                 stat={`${badges.length} ${t('referral.badgesEarned')}`}
-                color="#A08C5A"
+                color="#d4af37"
                 onClick={() => setActiveTab('badges')}
               />
               <MechanicCard
@@ -343,7 +341,7 @@ export function ReferralDashboard() {
                 title={t('referral.networkLeaderboard')}
                 description={t('referral.networkLeaderboardDesc')}
                 stat={`${t('referral.rank')} #${stats.networkRank}`}
-                color="#1E2D4D"
+                color="#1e4d6b"
                 onClick={() => setActiveTab('network')}
               />
               <MechanicCard
@@ -371,12 +369,12 @@ export function ReferralDashboard() {
                 onClick={() => setActiveTab('vendor')}
               />
               <div className="bg-gradient-to-br from-[#eef4f8] to-white rounded-xl border border-[#b8d4e8] p-5 flex flex-col items-center justify-center text-center">
-                <Sparkles className="h-8 w-8 mb-2" style={{ color: '#A08C5A' }} />
-                <p className="text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('referral.yourReferralLink')}</p>
+                <Sparkles className="h-8 w-8 mb-2" style={{ color: '#d4af37' }} />
+                <p className="text-sm font-medium text-gray-700 mb-1">{t('referral.yourReferralLink')}</p>
                 <button
                   onClick={() => handleGenerateCode('champion_badge')}
                   className="text-xs font-medium px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
-                  style={{ backgroundColor: '#1E2D4D', color: 'white' }}
+                  style={{ backgroundColor: '#1e4d6b', color: 'white' }}
                 >
                   {t('referral.generateAndCopy')}
                 </button>
@@ -390,16 +388,16 @@ export function ReferralDashboard() {
           <>
             <div className="bg-white rounded-xl shadow-sm p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">{t('referral.yourComplianceBadges')}</h3>
-                <span className="text-sm text-[#1E2D4D]/30">{badges.length} {t('referral.earned')}</span>
+                <h3 className="text-lg font-semibold text-gray-900">{t('referral.yourComplianceBadges')}</h3>
+                <span className="text-sm text-gray-400">{badges.length} {t('referral.earned')}</span>
               </div>
-              <p className="text-sm text-[#1E2D4D]/50 mb-6">
+              <p className="text-sm text-gray-500 mb-6">
                 {t('referral.badgesShareDescription')}
               </p>
               {badges.length === 0 ? (
                 <div className="text-center py-8">
-                  <Award className="h-10 w-10 mx-auto mb-3 text-[#1E2D4D]/30" />
-                  <p className="text-sm text-[#1E2D4D]/50">No badges earned yet. Achieve compliance milestones to earn shareable badges.</p>
+                  <Award className="h-10 w-10 mx-auto mb-3 text-gray-300" />
+                  <p className="text-sm text-gray-500">No badges earned yet. Achieve compliance milestones to earn shareable badges.</p>
                 </div>
               ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -412,7 +410,7 @@ export function ReferralDashboard() {
 
             {/* Badge levels info */}
             <div className="bg-[#eef4f8] rounded-xl border border-[#b8d4e8] p-5">
-              <h4 className="font-semibold mb-3" style={{ color: '#1E2D4D' }}>{t('referral.badgeLevels')}</h4>
+              <h4 className="font-semibold mb-3" style={{ color: '#1e4d6b' }}>{t('referral.badgeLevels')}</h4>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {(['bronze', 'silver', 'gold', 'platinum'] as const).map(level => {
                   const colors = BADGE_LEVEL_COLORS[level];
@@ -431,41 +429,41 @@ export function ReferralDashboard() {
         {/* ── NETWORK TAB ──────────────────────────── */}
         {activeTab === 'network' && (
           <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-[#1E2D4D]/5">
-              <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-1">{t('referral.complianceNetworkLeaderboard')}</h3>
-              <p className="text-sm text-[#1E2D4D]/50">{t('referral.networkLeaderboardSubtitle')}</p>
+            <div className="p-6 border-b border-gray-100">
+              <h3 className="text-lg font-semibold text-gray-900 mb-1">{t('referral.complianceNetworkLeaderboard')}</h3>
+              <p className="text-sm text-gray-500">{t('referral.networkLeaderboardSubtitle')}</p>
             </div>
             <div>
               {network.length === 0 && (
                 <div className="text-center py-8">
-                  <Users className="h-10 w-10 mx-auto mb-3 text-[#1E2D4D]/30" />
-                  <p className="text-sm text-[#1E2D4D]/50">The compliance network leaderboard will appear as organizations join.</p>
+                  <Users className="h-10 w-10 mx-auto mb-3 text-gray-300" />
+                  <p className="text-sm text-gray-500">The compliance network leaderboard will appear as organizations join.</p>
                 </div>
               )}
               {network.map((org, index) => {
                 const isTop3 = index < 3;
-                const rankColors = ['#A08C5A', '#9ca3af', '#92400e'];
+                const rankColors = ['#d4af37', '#9ca3af', '#92400e'];
                 return (
                   <div
                     key={org.id}
-                    className={`flex items-center justify-between px-6 py-4 border-b border-[#1E2D4D]/3 last:border-0 ${org.isCurrentOrg ? 'bg-[#eef4f8]' : 'hover:bg-[#FAF7F0]'}`}
+                    className={`flex items-center justify-between px-6 py-4 border-b border-gray-50 last:border-0 ${org.isCurrentOrg ? 'bg-[#eef4f8]' : 'hover:bg-gray-50'}`}
                   >
                     <div className="flex items-center gap-4">
                       <div className="w-8 text-center">
                         {isTop3 ? (
                           <Trophy className="h-5 w-5 mx-auto" style={{ color: rankColors[index] }} />
                         ) : (
-                          <span className="text-sm font-semibold text-[#1E2D4D]/30">#{org.networkRank}</span>
+                          <span className="text-sm font-semibold text-gray-400">#{org.networkRank}</span>
                         )}
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="font-medium text-[#1E2D4D]">{org.displayName}</span>
+                          <span className="font-medium text-gray-900">{org.displayName}</span>
                           {org.isCurrentOrg && (
-                            <span className="text-xs font-bold px-1.5 py-0.5 rounded" style={{ backgroundColor: '#1E2D4D', color: 'white' }}>{t('referral.you')}</span>
+                            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded" style={{ backgroundColor: '#1e4d6b', color: 'white' }}>{t('referral.you')}</span>
                           )}
                         </div>
-                        <div className="flex items-center gap-3 text-xs text-[#1E2D4D]/30 mt-0.5">
+                        <div className="flex items-center gap-3 text-xs text-gray-400 mt-0.5">
                           <span>{org.complianceScore >= 90 ? t('referral.compliant') : org.complianceScore >= 75 ? t('referral.satisfactory') : t('referral.actionRequired')}</span>
                           <span>{org.badgesEarned} {t('referral.badges')}</span>
                           <span>{org.successfulReferrals}/{org.totalReferrals} {t('referral.referrals')}</span>
@@ -474,8 +472,8 @@ export function ReferralDashboard() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-lg font-bold" style={{ color: '#A08C5A' }}>{org.referralPoints.toLocaleString()}</div>
-                      <div className="text-xs text-[#1E2D4D]/30">{t('referral.points')}</div>
+                      <div className="text-lg font-bold" style={{ color: '#d4af37' }}>{org.referralPoints.toLocaleString()}</div>
+                      <div className="text-xs text-gray-400">{t('referral.points')}</div>
                     </div>
                   </div>
                 );
@@ -483,9 +481,9 @@ export function ReferralDashboard() {
             </div>
 
             {/* Points breakdown */}
-            {network.length > 0 && <div className="p-6 bg-[#FAF7F0] border-t border-[#1E2D4D]/5">
-              <h4 className="text-sm font-semibold text-[#1E2D4D]/80 mb-3">{t('referral.howPointsWork')}</h4>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs text-[#1E2D4D]/70">
+            {network.length > 0 && <div className="p-6 bg-gray-50 border-t border-gray-100">
+              <h4 className="text-sm font-semibold text-gray-700 mb-3">{t('referral.howPointsWork')}</h4>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs text-gray-600">
                 <div className="flex items-center gap-2"><TrendingUp className="h-3 w-3 text-green-500" /> {t('referral.referralConverted')}</div>
                 <div className="flex items-center gap-2"><TrendingUp className="h-3 w-3 text-blue-500" /> {t('referral.referralSignedUp')}</div>
                 <div className="flex items-center gap-2"><TrendingUp className="h-3 w-3 text-amber-500" /> {t('referral.referralClicked')}</div>
@@ -502,52 +500,52 @@ export function ReferralDashboard() {
               <div className="flex items-center gap-3 mb-3">
                 <Heart className="h-8 w-8 text-red-500" />
                 <div>
-                  <h3 className="text-lg font-bold text-[#1E2D4D]">{t('referral.kitchenToCommunity')} (K2C)</h3>
-                  <p className="text-sm text-[#1E2D4D]/70">{t('referral.k2cSubtitle')}</p>
+                  <h3 className="text-lg font-bold text-gray-900">{t('referral.kitchenToCommunity')} (K2C)</h3>
+                  <p className="text-sm text-gray-600">{t('referral.k2cSubtitle')}</p>
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
                 <div className="bg-white/80 rounded-lg p-3 text-center">
-                  <div className="text-2xl font-bold tracking-tight text-red-600">${stats.k2cTotalDonated}</div>
-                  <div className="text-xs text-[#1E2D4D]/50">{t('referral.totalDonated')}</div>
+                  <div className="text-2xl font-bold text-red-600">${stats.k2cTotalDonated}</div>
+                  <div className="text-xs text-gray-500">{t('referral.totalDonated')}</div>
                 </div>
                 <div className="bg-white/80 rounded-lg p-3 text-center">
-                  <div className="text-2xl font-bold tracking-tight text-red-600">{k2cDonations.length}</div>
-                  <div className="text-xs text-[#1E2D4D]/50">{t('referral.donations')}</div>
+                  <div className="text-2xl font-bold text-red-600">{k2cDonations.length}</div>
+                  <div className="text-xs text-gray-500">{t('referral.donations')}</div>
                 </div>
                 <div className="bg-white/80 rounded-lg p-3 text-center">
-                  <div className="text-2xl font-bold tracking-tight text-red-600">{new Set(k2cDonations.map((d: any) => d.charityName)).size}</div>
-                  <div className="text-xs text-[#1E2D4D]/50">{t('referral.charitiesHelped')}</div>
+                  <div className="text-2xl font-bold text-red-600">{new Set(k2cDonations.map((d: any) => d.charityName)).size}</div>
+                  <div className="text-xs text-gray-500">{t('referral.charitiesHelped')}</div>
                 </div>
               </div>
             </div>
 
             {/* Donation History */}
             <div className="bg-white rounded-xl shadow-sm p-6">
-              <h4 className="font-semibold text-[#1E2D4D] mb-4">{t('referral.donationHistory')}</h4>
+              <h4 className="font-semibold text-gray-900 mb-4">{t('referral.donationHistory')}</h4>
               {k2cDonations.length === 0 ? (
                 <div className="text-center py-8">
-                  <Heart className="h-10 w-10 mx-auto mb-3 text-[#1E2D4D]/30" />
-                  <p className="text-sm text-[#1E2D4D]/50">No K2C donations yet. Share your K2C referral link to start donating meals.</p>
+                  <Heart className="h-10 w-10 mx-auto mb-3 text-gray-300" />
+                  <p className="text-sm text-gray-500">No K2C donations yet. Share your K2C referral link to start donating meals.</p>
                 </div>
               ) : (
               <div className="space-y-3">
                 {k2cDonations.map(d => (
-                  <div key={d.id} className="flex items-center justify-between py-3 border-b border-[#1E2D4D]/3 last:border-0">
+                  <div key={d.id} className="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center">
                         <Heart className="h-5 w-5 text-red-500" />
                       </div>
                       <div>
-                        <div className="text-sm font-medium text-[#1E2D4D]">{d.charityName}</div>
+                        <div className="text-sm font-medium text-gray-900">{d.charityName}</div>
                         {d.publicMessage && (
-                          <div className="text-xs text-[#1E2D4D]/30 italic mt-0.5">"{d.publicMessage}"</div>
+                          <div className="text-xs text-gray-400 italic mt-0.5">"{d.publicMessage}"</div>
                         )}
                       </div>
                     </div>
                     <div className="text-right">
                       <div className="text-lg font-bold text-red-600">${d.amount}</div>
-                      <div className="text-xs text-[#1E2D4D]/30">{new Date(d.donatedAt).toLocaleDateString()}</div>
+                      <div className="text-xs text-gray-400">{new Date(d.donatedAt).toLocaleDateString()}</div>
                     </div>
                   </div>
                 ))}
@@ -557,7 +555,7 @@ export function ReferralDashboard() {
 
             {/* CTA */}
             <div className="bg-white rounded-xl shadow-sm p-6 text-center">
-              <p className="text-[#1E2D4D]/70 mb-4">{t('referral.k2cShareCta')}</p>
+              <p className="text-gray-600 mb-4">{t('referral.k2cShareCta')}</p>
               <button
                 onClick={() => handleGenerateCode('k2c_amplifier')}
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-white font-semibold transition-colors cursor-pointer"
@@ -575,12 +573,12 @@ export function ReferralDashboard() {
         {activeTab === 'stories' && (
           <>
             <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-1">{t('referral.inspectionHeroStories')}</h3>
-              <p className="text-sm text-[#1E2D4D]/50 mb-6">{t('referral.storiesSubtitle')}</p>
+              <h3 className="text-lg font-semibold text-gray-900 mb-1">{t('referral.inspectionHeroStories')}</h3>
+              <p className="text-sm text-gray-500 mb-6">{t('referral.storiesSubtitle')}</p>
               {heroStories.length === 0 ? (
                 <div className="text-center py-8">
-                  <Star className="h-10 w-10 mx-auto mb-3 text-[#1E2D4D]/30" />
-                  <p className="text-sm text-[#1E2D4D]/50">No inspection hero stories yet. Pass an inspection and share your success!</p>
+                  <Star className="h-10 w-10 mx-auto mb-3 text-gray-300" />
+                  <p className="text-sm text-gray-500">No inspection hero stories yet. Pass an inspection and share your success!</p>
                 </div>
               ) : (
               <div className="space-y-4">
@@ -590,21 +588,21 @@ export function ReferralDashboard() {
                       <div>
                         <div className="flex items-center gap-2 mb-1">
                           <Star className="h-5 w-5 text-yellow-500" />
-                          <h4 className="font-bold text-[#1E2D4D]">{story.headline}</h4>
+                          <h4 className="font-bold text-gray-900">{story.headline}</h4>
                         </div>
-                        <div className="flex items-center gap-3 text-xs text-[#1E2D4D]/50">
+                        <div className="flex items-center gap-3 text-xs text-gray-500">
                           <span>{story.locationName}</span>
                           <span>{t('referral.score')}: {story.score}</span>
                           <span>{new Date(story.inspectionDate).toLocaleDateString()}</span>
                         </div>
                       </div>
-                      <div className="text-3xl font-bold tracking-tight" style={{ color: '#22c55e' }}>{story.score}</div>
+                      <div className="text-3xl font-bold" style={{ color: '#22c55e' }}>{story.score}</div>
                     </div>
-                    <blockquote className="text-sm text-[#1E2D4D]/80 italic border-l-3 border-purple-300 pl-3 mb-4" style={{ borderLeftWidth: '3px' }}>
+                    <blockquote className="text-sm text-gray-700 italic border-l-3 border-purple-300 pl-3 mb-4" style={{ borderLeftWidth: '3px' }}>
                       "{story.quote}"
                     </blockquote>
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-[#1E2D4D]/30">{story.shareCount} {t('referral.shares')}</span>
+                      <span className="text-xs text-gray-400">{story.shareCount} {t('referral.shares')}</span>
                       <button
                         onClick={() => {
                           const url = getVerifyUrl(story.referralCode);
@@ -626,8 +624,8 @@ export function ReferralDashboard() {
             {/* Create new story CTA */}
             <div className="bg-white rounded-xl shadow-sm p-6 text-center">
               <Star className="h-10 w-10 mx-auto mb-3 text-yellow-400" />
-              <h4 className="font-semibold text-[#1E2D4D] mb-1">{t('referral.passedRecentInspection')}</h4>
-              <p className="text-sm text-[#1E2D4D]/50 mb-4">{t('referral.createStoryDesc')}</p>
+              <h4 className="font-semibold text-gray-900 mb-1">{t('referral.passedRecentInspection')}</h4>
+              <p className="text-sm text-gray-500 mb-4">{t('referral.createStoryDesc')}</p>
               <button
                 onClick={() => {
                   toast.success(t('referral.storyCreationNotice'));
@@ -648,15 +646,15 @@ export function ReferralDashboard() {
               <div className="flex items-center gap-3 mb-4">
                 <Truck className="h-6 w-6" style={{ color: '#0891b2' }} />
                 <div>
-                  <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">{t('referral.vendorRipple')}</h3>
-                  <p className="text-sm text-[#1E2D4D]/50">{t('referral.vendorRippleSubtitle')}</p>
+                  <h3 className="text-lg font-semibold text-gray-900">{t('referral.vendorRipple')}</h3>
+                  <p className="text-sm text-gray-500">{t('referral.vendorRippleSubtitle')}</p>
                 </div>
               </div>
 
               {vendorRipples.length === 0 ? (
                 <div className="text-center py-8">
-                  <Truck className="h-10 w-10 mx-auto mb-3 text-[#1E2D4D]/30" />
-                  <p className="text-sm text-[#1E2D4D]/50">No vendor ripples yet. When your vendors join EvidLY through your referral, they'll appear here.</p>
+                  <Truck className="h-10 w-10 mx-auto mb-3 text-gray-300" />
+                  <p className="text-sm text-gray-500">No vendor ripples yet. When your vendors join EvidLY through your referral, they'll appear here.</p>
                 </div>
               ) : (
               <div className="space-y-3">
@@ -668,14 +666,14 @@ export function ReferralDashboard() {
                   };
                   const sc = statusConfig[ripple.status];
                   return (
-                    <div key={ripple.id} className="flex items-center justify-between py-3 border-b border-[#1E2D4D]/3 last:border-0">
+                    <div key={ripple.id} className="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: '#e0f2fe' }}>
                           <Truck className="h-5 w-5" style={{ color: '#0891b2' }} />
                         </div>
                         <div>
-                          <div className="text-sm font-medium text-[#1E2D4D]">{ripple.vendorName}</div>
-                          <div className="text-xs text-[#1E2D4D]/30">
+                          <div className="text-sm font-medium text-gray-900">{ripple.vendorName}</div>
+                          <div className="text-xs text-gray-400">
                             {ripple.referredOrgName ? `${t('referral.referred')}: ${ripple.referredOrgName}` : t('referral.referralLinkShared')}
                           </div>
                         </div>
@@ -692,18 +690,18 @@ export function ReferralDashboard() {
 
             {/* How it works */}
             <div className="bg-[#eef4f8] rounded-xl border border-[#b8d4e8] p-5">
-              <h4 className="font-semibold mb-3" style={{ color: '#1E2D4D' }}>{t('referral.howVendorRippleWorks')}</h4>
-              <div className="space-y-2 text-sm text-[#1E2D4D]/80">
+              <h4 className="font-semibold mb-3" style={{ color: '#1e4d6b' }}>{t('referral.howVendorRippleWorks')}</h4>
+              <div className="space-y-2 text-sm text-gray-700">
                 <div className="flex items-start gap-2">
-                  <span className="w-6 h-6 rounded-full bg-white flex items-center justify-center text-xs font-bold" style={{ color: '#1E2D4D' }}>1</span>
+                  <span className="w-6 h-6 rounded-full bg-white flex items-center justify-center text-xs font-bold" style={{ color: '#1e4d6b' }}>1</span>
                   <span>{t('referral.vendorStep1')}</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <span className="w-6 h-6 rounded-full bg-white flex items-center justify-center text-xs font-bold" style={{ color: '#1E2D4D' }}>2</span>
+                  <span className="w-6 h-6 rounded-full bg-white flex items-center justify-center text-xs font-bold" style={{ color: '#1e4d6b' }}>2</span>
                   <span>{t('referral.vendorStep2')}</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <span className="w-6 h-6 rounded-full bg-white flex items-center justify-center text-xs font-bold" style={{ color: '#1E2D4D' }}>3</span>
+                  <span className="w-6 h-6 rounded-full bg-white flex items-center justify-center text-xs font-bold" style={{ color: '#1e4d6b' }}>3</span>
                   <span>{t('referral.vendorStep3')}</span>
                 </div>
               </div>
@@ -726,16 +724,16 @@ function MechanicCard({ icon: Icon, title, description, stat, color, onClick }: 
   return (
     <button
       onClick={onClick}
-      className="bg-white rounded-xl p-6 text-left hover:shadow-md transition-shadow cursor-pointer border border-[#1E2D4D]/5"
+      className="bg-white rounded-xl shadow-sm p-5 text-left hover:shadow-md transition-shadow cursor-pointer border border-gray-100"
     >
       <div className="flex items-center gap-2 mb-2">
         <Icon className="h-5 w-5" style={{ color }} />
-        <h4 className="font-semibold text-[#1E2D4D]">{title}</h4>
+        <h4 className="font-semibold text-gray-900">{title}</h4>
       </div>
-      <p className="text-xs text-[#1E2D4D]/50 mb-3">{description}</p>
+      <p className="text-xs text-gray-500 mb-3">{description}</p>
       <div className="flex items-center justify-between">
         <span className="text-xs font-medium" style={{ color }}>{stat}</span>
-        <ArrowRight className="h-4 w-4 text-[#1E2D4D]/30" />
+        <ArrowRight className="h-4 w-4 text-gray-300" />
       </div>
     </button>
   );

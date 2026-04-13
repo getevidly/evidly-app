@@ -134,7 +134,7 @@ export default function MaintenanceMode() {
   return (
     <div className="space-y-6">
       <AdminBreadcrumb crumbs={[{ label: 'Maintenance Mode' }]} />
-      <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Maintenance Mode</h1>
+      <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Maintenance Mode</h1>
 
       {/* Status card */}
       <div style={{

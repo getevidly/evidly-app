@@ -28,7 +28,7 @@ UPDATE jurisdictions SET
     "source": "LA County Code Title 8 §8.04.225"
   }'::jsonb,
   fire_ahj_name = 'Los Angeles County Fire Department',
-  fire_ahj_type = 'county_fire',
+  fire_ahj_type = 'county_fd',
   fire_code_edition = '2025 CFC',
   nfpa96_edition = '2024',
   has_local_amendments = true,
@@ -56,7 +56,7 @@ UPDATE jurisdictions SET
     "source": "sdcounty.ca.gov"
   }'::jsonb,
   fire_ahj_name = 'San Diego County Fire Authority',
-  fire_ahj_type = 'county_fire',
+  fire_ahj_type = 'county_fd',
   fire_code_edition = '2025 CFC',
   nfpa96_edition = '2024',
   hood_cleaning_default = 'semi_annual',
@@ -80,7 +80,7 @@ UPDATE jurisdictions SET
     "source": "Fresno County DPH Environmental Health"
   }'::jsonb,
   fire_ahj_name = 'Fresno County Fire Protection District',
-  fire_ahj_type = 'county_fire',
+  fire_ahj_type = 'county_fd',
   fire_code_edition = '2025 CFC',
   nfpa96_edition = '2024',
   hood_cleaning_default = 'semi_annual',
@@ -101,7 +101,7 @@ UPDATE jurisdictions SET
     "source": "Stanislaus County HSA"
   }'::jsonb,
   fire_ahj_name = 'Stanislaus County Fire Prevention Bureau',
-  fire_ahj_type = 'county_fire',
+  fire_ahj_type = 'county_fd',
   fire_code_edition = '2025 CFC',
   nfpa96_edition = '2024',
   hood_cleaning_default = 'semi_annual',
@@ -128,7 +128,7 @@ UPDATE jurisdictions SET
     "source": "Merced County DPH Environmental Health"
   }'::jsonb,
   fire_ahj_name = 'Merced County Fire Department',
-  fire_ahj_type = 'county_fire',
+  fire_ahj_type = 'county_fd',
   fire_code_edition = '2025 CFC',
   nfpa96_edition = '2024',
   hood_cleaning_default = 'semi_annual',
@@ -154,7 +154,7 @@ UPDATE jurisdictions SET
     "source": "Sacramento County EMD"
   }'::jsonb,
   fire_ahj_name = 'Sacramento Fire Department',
-  fire_ahj_type = 'municipal_fire',
+  fire_ahj_type = 'city_fd',
   fire_code_edition = '2025 CFC',
   nfpa96_edition = '2024',
   hood_cleaning_default = 'semi_annual',
@@ -177,7 +177,7 @@ UPDATE jurisdictions SET
     "source": "Alameda County DEH"
   }'::jsonb,
   fire_ahj_name = 'Alameda County Fire Department',
-  fire_ahj_type = 'county_fire',
+  fire_ahj_type = 'county_fd',
   fire_code_edition = '2025 CFC',
   nfpa96_edition = '2024',
   hood_cleaning_default = 'semi_annual',
@@ -205,7 +205,7 @@ UPDATE jurisdictions SET
     "source": "Santa Clara County DEH"
   }'::jsonb,
   fire_ahj_name = 'Santa Clara County Fire Marshal',
-  fire_ahj_type = 'county_fire',
+  fire_ahj_type = 'county_fd',
   fire_code_edition = '2025 CFC',
   nfpa96_edition = '2024',
   hood_cleaning_default = 'semi_annual',
@@ -235,7 +235,7 @@ UPDATE jurisdictions SET
     "source": "Riverside County DEH"
   }'::jsonb,
   fire_ahj_name = 'Riverside County Fire Department',
-  fire_ahj_type = 'county_fire',
+  fire_ahj_type = 'county_fd',
   fire_code_edition = '2025 CFC',
   nfpa96_edition = '2024',
   hood_cleaning_default = 'semi_annual',
@@ -262,7 +262,7 @@ UPDATE jurisdictions SET
     "source": "San Bernardino County DPH"
   }'::jsonb,
   fire_ahj_name = 'San Bernardino County Fire Department',
-  fire_ahj_type = 'county_fire',
+  fire_ahj_type = 'county_fd',
   fire_code_edition = '2025 CFC',
   nfpa96_edition = '2024',
   hood_cleaning_default = 'semi_annual',

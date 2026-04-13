@@ -35,11 +35,11 @@ export function VehicleFormModal({ onClose }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 modal-backdrop-enter">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto modal-content-enter">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: CARD_BORDER }}>
           <h2 className="text-lg font-bold" style={{ color: NAVY }}>Add Vehicle</h2>
-          <button onClick={onClose} className="p-2.5 -m-1 rounded hover:bg-[#1E2D4D]/5" aria-label="Close"><X className="w-5 h-5" /></button>
+          <button onClick={onClose} className="p-2.5 -m-1 rounded hover:bg-gray-100" aria-label="Close"><X className="w-5 h-5" /></button>
         </div>
 
         <div className="px-6 py-4 space-y-4">
@@ -50,7 +50,7 @@ export function VehicleFormModal({ onClose }: Props) {
             <select
               value={vehicleType}
               onChange={e => setVehicleType(e.target.value as VehicleType)}
-              className="w-full px-3 py-2 text-sm border rounded-xl"
+              className="w-full px-3 py-2 text-sm border rounded-lg"
               style={{ borderColor: CARD_BORDER, color: NAVY }}
             >
               {TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
@@ -79,14 +79,14 @@ export function VehicleFormModal({ onClose }: Props) {
               value={notes}
               onChange={e => setNotes(e.target.value)}
               rows={3}
-              className="w-full px-3 py-2 text-sm border rounded-xl resize-none"
+              className="w-full px-3 py-2 text-sm border rounded-lg resize-none"
               style={{ borderColor: CARD_BORDER, color: NAVY }}
             />
           </div>
         </div>
 
         <div className="flex justify-end gap-3 px-6 py-4 border-t" style={{ borderColor: CARD_BORDER }}>
-          <button onClick={onClose} className="px-4 py-2 text-sm font-medium rounded-xl border" style={{ borderColor: CARD_BORDER, color: NAVY }}>
+          <button onClick={onClose} className="px-4 py-2 text-sm font-medium rounded-lg border" style={{ borderColor: CARD_BORDER, color: NAVY }}>
             Cancel
           </button>
           <button onClick={handleSave} className="px-4 py-2 text-sm font-semibold text-white rounded-lg" style={{ background: NAVY }}>
@@ -106,7 +106,7 @@ function Field({ label, value, onChange, placeholder }: { label: string; value: 
         value={value}
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full px-3 py-2 text-sm border rounded-xl"
+        className="w-full px-3 py-2 text-sm border rounded-lg"
         style={{ borderColor: CARD_BORDER, color: NAVY }}
       />
     </div>

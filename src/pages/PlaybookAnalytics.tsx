@@ -36,8 +36,8 @@ import {
 } from '../data/demoData';
 
 const FONT = "'DM Sans', sans-serif";
-const PRIMARY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const PRIMARY = '#1e4d6b';
+const GOLD = '#d4af37';
 const LIGHT_BG = '#eef4f8';
 
 type TimeFilter = '30d' | '6m' | '1y';

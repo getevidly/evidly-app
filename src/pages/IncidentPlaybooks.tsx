@@ -102,7 +102,7 @@ function PlaybookCard({ template, onActivate, isCustom }: { template: PlaybookTe
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <h3 style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 700, color: '#111827', margin: 0, lineHeight: 1.3 }}>{template.title}</h3>
               {isCustom && (
-                <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 6px', borderRadius: 4, background: '#A08C5A', color: 'white', whiteSpace: 'nowrap' }}>CUSTOM</span>
+                <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 6px', borderRadius: 4, background: '#d4af37', color: 'white', whiteSpace: 'nowrap' }}>CUSTOM</span>
               )}
             </div>
             <div style={{ display: 'flex', gap: 6, marginTop: 6, flexWrap: 'wrap' }}>
@@ -147,7 +147,7 @@ function PlaybookCard({ template, onActivate, isCustom }: { template: PlaybookTe
 function ActiveIncidentCard({ incident, onContinue }: { incident: ActiveIncidentPlaybook; onContinue: () => void }) {
   const template = playbookTemplates.find(t => t.id === incident.templateId);
   const Icon = template ? ICON_MAP[template.icon] || Siren : Siren;
-  const color = template?.color || '#1E2D4D';
+  const color = template?.color || '#1e4d6b';
   const sev = SEVERITY_CONFIG[incident.severity];
   const progress = Math.round((incident.currentStepNumber / incident.totalSteps) * 100);
   const elapsed = getElapsedMinutes(incident.initiatedAt);
@@ -190,7 +190,7 @@ function ActiveIncidentCard({ incident, onContinue }: { incident: ActiveIncident
 
         <button
           onClick={onContinue}
-          style={{ width: '100%', padding: '10px 0', borderRadius: 8, border: 'none', background: '#1E2D4D', color: 'white', fontSize: 13, fontWeight: 600, fontFamily: "'DM Sans', sans-serif", cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, minHeight: 44 }}
+          style={{ width: '100%', padding: '10px 0', borderRadius: 8, border: 'none', background: '#1e4d6b', color: 'white', fontSize: 13, fontWeight: 600, fontFamily: "'DM Sans', sans-serif", cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, minHeight: 44 }}
         >
           Continue <ChevronRight size={14} />
         </button>
@@ -203,7 +203,7 @@ function ActiveIncidentCard({ incident, onContinue }: { incident: ActiveIncident
 function CompletedIncidentCard({ incident, onViewReport, guardAction }: { incident: ActiveIncidentPlaybook; onViewReport: () => void; guardAction: (action: string, feature: string, cb: () => void) => void }) {
   const template = playbookTemplates.find(t => t.id === incident.templateId);
   const Icon = template ? ICON_MAP[template.icon] || Siren : Siren;
-  const color = template?.color || '#1E2D4D';
+  const color = template?.color || '#1e4d6b';
   const durationMin = incident.completedAt
     ? Math.round((new Date(incident.completedAt).getTime() - new Date(incident.initiatedAt).getTime()) / 60000)
     : 0;
@@ -234,7 +234,7 @@ function CompletedIncidentCard({ incident, onViewReport, guardAction }: { incide
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           <button
             onClick={onViewReport}
-            style={{ flex: 1, padding: '8px 0', borderRadius: 8, border: '1px solid #1E2D4D', background: '#eef4f8', color: '#1E2D4D', fontSize: 12, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, minHeight: 40, fontFamily: "'DM Sans', sans-serif" }}
+            style={{ flex: 1, padding: '8px 0', borderRadius: 8, border: '1px solid #1e4d6b', background: '#eef4f8', color: '#1e4d6b', fontSize: 12, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, minHeight: 40, fontFamily: "'DM Sans', sans-serif" }}
           >
             <FileText size={13} /> View Report
           </button>
@@ -273,7 +273,7 @@ export function IncidentPlaybooks() {
     return (
       <div style={{ fontFamily: "'DM Sans', sans-serif", maxWidth: 1200, margin: '0 auto' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24 }}>
-          <Siren size={24} color="#1E2D4D" />
+          <Siren size={24} color="#1e4d6b" />
           <h1 style={{ fontSize: 20, fontWeight: 700, color: '#111827', margin: 0 }}>Incident Playbooks</h1>
         </div>
         <div style={{ background: 'white', borderRadius: 12, border: '1px solid #e5e7eb', padding: 48, textAlign: 'center' }}>
@@ -300,7 +300,7 @@ export function IncidentPlaybooks() {
     title: cp.title,
     shortDescription: cp.description,
     icon: cp.category === 'health_safety' ? 'AlertTriangle' : 'ClipboardCheck',
-    color: cp.severity === 'high' ? '#dc2626' : '#A08C5A',
+    color: cp.severity === 'high' ? '#dc2626' : '#d4af37',
     defaultSeverity: cp.severity as PlaybookSeverity,
     category: cp.category as PlaybookCategory,
     stepCount: cp.steps.length,
@@ -359,13 +359,13 @@ export function IncidentPlaybooks() {
       <div style={{ marginBottom: 24 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <Siren size={24} color="#1E2D4D" />
+            <Siren size={24} color="#1e4d6b" />
             <h1 style={{ fontSize: 20, fontWeight: 700, color: '#111827', margin: 0 }}>Response Playbooks</h1>
           </div>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             <button
               onClick={() => navigate('/playbooks/builder')}
-              style={{ padding: '9px 18px', borderRadius: 8, border: '1px solid #A08C5A', background: '#fffbeb', color: '#92400e', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, minHeight: 40, fontFamily: "'DM Sans', sans-serif" }}
+              style={{ padding: '9px 18px', borderRadius: 8, border: '1px solid #d4af37', background: '#fffbeb', color: '#92400e', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, minHeight: 40, fontFamily: "'DM Sans', sans-serif" }}
             >
               <Plus size={14} /> Create Custom Playbook
             </button>
@@ -383,10 +383,10 @@ export function IncidentPlaybooks() {
       {/* KPI Row */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(180px, 100%), 1fr))', gap: 12, marginBottom: 24 }}>
         {[
-          { label: 'Available Playbooks', value: playbookTemplates.length + customPlaybookCards.length, icon: FileText, color: '#1E2D4D' },
+          { label: 'Available Playbooks', value: playbookTemplates.length + customPlaybookCards.length, icon: FileText, color: '#1e4d6b' },
           { label: 'Active Incidents', value: activeIncidents.length, icon: Siren, color: activeIncidents.length > 0 ? '#dc2626' : '#22c55e' },
           { label: 'Completed This Month', value: completedIncidents.length, icon: CheckCircle2, color: '#22c55e' },
-          { label: 'Avg Response Time', value: '47m', icon: BarChart3, color: '#A08C5A' },
+          { label: 'Avg Response Time', value: '47m', icon: BarChart3, color: '#d4af37' },
         ].map(kpi => (
           <div key={kpi.label} style={{ background: 'white', borderRadius: 10, padding: '16px 18px', border: '1px solid #e5e7eb', boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
@@ -411,10 +411,10 @@ export function IncidentPlaybooks() {
                 padding: '10px 20px',
                 fontSize: 14,
                 fontWeight: isActive ? 700 : 500,
-                color: isActive ? '#1E2D4D' : '#6b7280',
+                color: isActive ? '#1e4d6b' : '#6b7280',
                 background: 'none',
                 border: 'none',
-                borderBottom: isActive ? '2px solid #1E2D4D' : '2px solid transparent',
+                borderBottom: isActive ? '2px solid #1e4d6b' : '2px solid transparent',
                 marginBottom: -2,
                 cursor: 'pointer',
                 fontFamily: "'DM Sans', sans-serif",
@@ -434,7 +434,7 @@ export function IncidentPlaybooks() {
                   fontWeight: 700,
                   padding: '1px 7px',
                   borderRadius: 9999,
-                  background: isActive ? '#1E2D4D' : '#e5e7eb',
+                  background: isActive ? '#1e4d6b' : '#e5e7eb',
                   color: isActive ? 'white' : '#6b7280',
                 }}>{count}</span>
               )}
@@ -481,9 +481,9 @@ export function IncidentPlaybooks() {
           {filteredCustom.length > 0 && (
             <>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 32, marginBottom: 16 }}>
-                <Sparkles size={16} color="#A08C5A" />
+                <Sparkles size={16} color="#d4af37" />
                 <h2 style={{ fontSize: 16, fontWeight: 700, color: '#111827', margin: 0 }}>Custom Playbooks</h2>
-                <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 9999, background: '#A08C5A', color: 'white' }}>{filteredCustom.length}</span>
+                <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 9999, background: '#d4af37', color: 'white' }}>{filteredCustom.length}</span>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(320px, 100%), 1fr))', gap: 16 }}>
                 {filteredCustom.map(t => (
@@ -496,7 +496,7 @@ export function IncidentPlaybooks() {
           {filteredTemplates.length === 0 && filteredCustom.length === 0 && (
             <div style={{ textAlign: 'center', padding: 48, color: '#9ca3af' }}>
               <Search size={32} style={{ margin: '0 auto 12px', opacity: 0.5 }} />
-              <p className="text-sm">No playbooks match your search.</p>
+              <p style={{ fontSize: 14 }}>No playbooks match your search.</p>
             </div>
           )}
         </>
@@ -508,7 +508,7 @@ export function IncidentPlaybooks() {
           {activeIncidents.length === 0 ? (
             <div style={{ textAlign: 'center', padding: 48, color: '#9ca3af' }}>
               <CheckCircle2 size={32} style={{ margin: '0 auto 12px', opacity: 0.5 }} />
-              <p className="text-sm">No active incidents. All clear!</p>
+              <p style={{ fontSize: 14 }}>No active incidents. All clear!</p>
             </div>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(340px, 100%), 1fr))', gap: 16 }}>
@@ -530,7 +530,7 @@ export function IncidentPlaybooks() {
           {completedIncidents.length === 0 ? (
             <div style={{ textAlign: 'center', padding: 48, color: '#9ca3af' }}>
               <FileText size={32} style={{ margin: '0 auto 12px', opacity: 0.5 }} />
-              <p className="text-sm">No completed incidents yet.</p>
+              <p style={{ fontSize: 14 }}>No completed incidents yet.</p>
             </div>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(340px, 100%), 1fr))', gap: 16 }}>

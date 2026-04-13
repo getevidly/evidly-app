@@ -473,8 +473,6 @@
 |-------|-----------|------|-------------|
 | `/compliance/california` | `CaliforniaCompliance.tsx` | Public | California compliance overview |
 | `/compliance/california/:countySlug` | `CountyCompliance.tsx` | Public | County-specific compliance page |
-| `/scoretable/washington` | `ScoreTableWashington.jsx` | Public | Washington state ScoreTable — all 39 counties |
-| `/scoretable/washington/:countySlug` | `ScoreTableWACounty.jsx` | Public | Washington county ScoreTable — DB-driven |
 | `/scoretable/:slug` | `ScoreTableCountyPage.tsx` | Public | County score table with cross-links |
 | `/scoretable/city/:citySlug` | `ScoreTableCityPage.tsx` | Public | City-level score table |
 | `/kitchen-check/:slug` | `KitchenCheck.tsx` | Public | County kitchen check tool |

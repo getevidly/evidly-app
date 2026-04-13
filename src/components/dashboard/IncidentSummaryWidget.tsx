@@ -21,7 +21,7 @@ export function IncidentSummaryWidget({ navigate }: Props) {
   if (stats.openCount === 0) return null;
 
   return (
-    <div className="bg-white rounded-xl" style={{ border: '1px solid #e5e7eb' }}>
+    <div className="bg-white rounded-lg" style={{ border: '1px solid #e5e7eb' }}>
       {/* Header */}
       <div
         className="flex items-center justify-between px-4 py-3"
@@ -61,7 +61,7 @@ export function IncidentSummaryWidget({ navigate }: Props) {
       <button
         type="button"
         onClick={() => navigate('/incidents')}
-        className="w-full px-4 py-3 text-center text-xs font-semibold transition-colors hover:bg-[#FAF7F0]"
+        className="w-full px-4 py-3 text-center text-xs font-semibold transition-colors hover:bg-gray-50"
         style={{ color: NAVY, borderTop: '1px solid #F0F0F0' }}
       >
         View All <ChevronRight size={12} className="inline" />

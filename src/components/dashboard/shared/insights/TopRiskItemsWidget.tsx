@@ -53,7 +53,7 @@ export function TopRiskItemsWidget({ items }: Props) {
       </div>
       {sorted.length === 0 ? (
         <div className="px-4 py-6 text-center">
-          <p className="text-sm text-[#1E2D4D]/50">No open risk items</p>
+          <p className="text-sm text-gray-500">No open risk items</p>
         </div>
       ) : (
         <div>
@@ -68,7 +68,7 @@ export function TopRiskItemsWidget({ items }: Props) {
                 key={item.id}
                 type="button"
                 onClick={() => navigate(item.route)}
-                className="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-[#FAF7F0]"
+                className="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-gray-50"
                 style={{ borderBottom: `1px solid #F0F0F0` }}
               >
                 {isCritical
@@ -76,17 +76,17 @@ export function TopRiskItemsWidget({ items }: Props) {
                   : <AlertCircle size={16} style={{ color: style.dot }} className="shrink-0" />
                 }
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-[#1E2D4D]/90 truncate">{item.title}</p>
-                  <p className="text-xs text-[#1E2D4D]/50">{item.location} &middot; {item.category}</p>
+                  <p className="text-[13px] font-semibold text-gray-800 truncate">{item.title}</p>
+                  <p className="text-[11px] text-gray-500">{item.location} &middot; {item.category}</p>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <span
-                    className="text-xs font-bold px-2 py-0.5 rounded"
+                    className="text-[10px] font-bold px-2 py-0.5 rounded"
                     style={{ backgroundColor: style.bg, color: style.text }}
                   >
                     {item.severity.charAt(0).toUpperCase() + item.severity.slice(1)}
                   </span>
-                  <span className={`text-xs font-medium ${isOverdue ? 'text-red-600' : 'text-[#1E2D4D]/50'}`}>
+                  <span className={`text-[10px] font-medium ${isOverdue ? 'text-red-600' : 'text-gray-500'}`}>
                     {dueLabel}
                   </span>
                 </div>
@@ -99,7 +99,7 @@ export function TopRiskItemsWidget({ items }: Props) {
         <button
           type="button"
           onClick={() => navigate('/corrective-actions')}
-          className="w-full px-4 py-3 text-center text-xs font-semibold transition-colors hover:bg-[#FAF7F0]"
+          className="w-full px-4 py-3 text-center text-xs font-semibold transition-colors hover:bg-gray-50"
           style={{ color: NAVY }}
         >
           View all {items.length} items &rarr;

@@ -37,18 +37,18 @@ export default function TemperatureLogSummary({ config }: { config: ReportTypeCo
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
         <div className="rounded-xl p-4 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
-          <p className="text-2xl font-bold tracking-tight" style={{ color: avgCompliance >= 90 ? '#16a34a' : avgCompliance >= 75 ? '#d97706' : '#dc2626' }}>{avgCompliance}%</p>
-          <p className="text-xs mt-1" style={{ color: MUTED }}>Avg Compliance</p>
+          <p className="text-2xl font-bold" style={{ color: avgCompliance >= 90 ? '#16a34a' : avgCompliance >= 75 ? '#d97706' : '#dc2626' }}>{avgCompliance}%</p>
+          <p className="text-[11px] mt-1" style={{ color: MUTED }}>Avg Compliance</p>
         </div>
         <div className="rounded-xl p-4 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
-          <p className="text-2xl font-bold tracking-tight" style={{ color: BODY_TEXT }}>{data.tempCompliance.length}</p>
-          <p className="text-xs mt-1" style={{ color: MUTED }}>Weeks Tracked</p>
+          <p className="text-2xl font-bold" style={{ color: BODY_TEXT }}>{data.tempCompliance.length}</p>
+          <p className="text-[11px] mt-1" style={{ color: MUTED }}>Weeks Tracked</p>
         </div>
         <div className="rounded-xl p-4 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
-          <p className="text-2xl font-bold tracking-tight" style={{ color: BODY_TEXT }}>
+          <p className="text-2xl font-bold" style={{ color: BODY_TEXT }}>
             {data.tempCompliance.filter(t => t.compliance < 90).length}
           </p>
-          <p className="text-xs mt-1" style={{ color: MUTED }}>Weeks Below 90%</p>
+          <p className="text-[11px] mt-1" style={{ color: MUTED }}>Weeks Below 90%</p>
         </div>
       </div>
 
@@ -62,7 +62,7 @@ export default function TemperatureLogSummary({ config }: { config: ReportTypeCo
               <XAxis dataKey="week" tick={{ fontSize: 11, fill: '#6B7F96' }} />
               <YAxis domain={[60, 100]} tick={{ fontSize: 11, fill: '#6B7F96' }} />
               <Tooltip />
-              <Line type="monotone" dataKey="compliance" name="Compliance %" stroke="#1E2D4D" strokeWidth={2} dot={{ r: 3 }} />
+              <Line type="monotone" dataKey="compliance" name="Compliance %" stroke="#1e4d6b" strokeWidth={2} dot={{ r: 3 }} />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -86,7 +86,7 @@ export default function TemperatureLogSummary({ config }: { config: ReportTypeCo
                   <td className="py-2 px-3" style={{ color: BODY_TEXT }}>{t.week}</td>
                   <td className="py-2 px-3 font-bold" style={{ color: t.compliance >= 90 ? '#16a34a' : t.compliance >= 75 ? '#d97706' : '#dc2626' }}>{t.compliance}%</td>
                   <td className="py-2 px-3">
-                    <span className="px-2 py-0.5 rounded text-xs font-semibold" style={{
+                    <span className="px-2 py-0.5 rounded text-[11px] font-semibold" style={{
                       backgroundColor: t.compliance >= 90 ? '#f0fdf4' : t.compliance >= 75 ? '#fffbeb' : '#fef2f2',
                       color: t.compliance >= 90 ? '#166534' : t.compliance >= 75 ? '#92400e' : '#991b1b',
                     }}>{t.compliance >= 90 ? 'On Target' : t.compliance >= 75 ? 'Needs Improvement' : 'Below Target'}</span>

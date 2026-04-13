@@ -149,10 +149,10 @@ const COUNTY_DATA={
     agency:"LA County Department of Public Health",agencyShort:"LA County DPH",
     method:"deduction",transparency:"HIGH",
     h1:"Los Angeles County Kitchen Inspection Check",
-    heroSub:"12 questions. Free. Calibrated for LA County's A / B / C grade card system. 280 inspectors. 55,000 facilities. Know your grade before it's posted in your window.",
+    heroSub:"12 questions. Free. Calibrated for LA County's A/B/C grade card system. 280 inspectors. 55,000 facilities. Know your grade before it's posted in your window.",
     intro:"LA County uses a 100-point deduction system with mandatory grade card posting. Critical violations cost 4 points, major violations 2 points, minor violations 1 point. Below 70 is a fail. A 'B' in your window costs you customers. This checklist covers what LA County inspectors look for most.",
     metaTitle:"Los Angeles County Kitchen Inspection Check | Free | EvidLY",
-    metaDesc:"Free kitchen inspection check for LA County restaurants. A / B / C grade card system. Know your grade before it gets posted in your window.",
+    metaDesc:"Free kitchen inspection check for LA County restaurants. A/B/C grade card system. Know your grade before it gets posted in your window.",
     keywords:"Los Angeles County kitchen compliance checklist, LA County restaurant inspection prep, LACDPH food safety checklist, free kitchen safety checklist Los Angeles",
     faq:[
       {q:"What does this LA County checklist cover?",a:"12 items covering the violations most frequently cited by LA County's 280 inspectors — temperature control, employee hygiene, pest prevention, HACCP, hood cleaning, and fire suppression documentation."},

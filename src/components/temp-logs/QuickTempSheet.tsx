@@ -84,20 +84,20 @@ export function QuickTempSheet({ open, onClose }: QuickTempSheetProps) {
   return (
     <>
       {/* Backdrop */}
-      <div className="fixed inset-0 z-50 bg-black/40 modal-backdrop-enter" onClick={onClose} />
+      <div className="fixed inset-0 z-50 bg-black/40" onClick={onClose} />
 
       {/* Sheet */}
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-2xl shadow-2xl px-5 pt-4 animate-slide-up pb-[calc(2rem+env(safe-area-inset-bottom))]">
         {/* Handle + close */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <Thermometer size={18} style={{ color: '#1E2D4D' }} />
+            <Thermometer size={18} style={{ color: '#1e4d6b' }} />
             <span className="text-sm font-bold" style={{ color: '#1E2D4D' }}>Quick Temp Log</span>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-2.5 -m-1 rounded-lg hover:bg-[#1E2D4D]/5 transition-colors"
+            className="p-2.5 -m-1 rounded-lg hover:bg-gray-100 transition-colors"
           >
             <X size={20} style={{ color: '#6b7280' }} />
           </button>
@@ -107,7 +107,7 @@ export function QuickTempSheet({ open, onClose }: QuickTempSheetProps) {
         <select
           value={equipmentId}
           onChange={e => setEquipmentId(e.target.value)}
-          className="w-full px-3 py-3 border border-[#1E2D4D]/15 rounded-xl text-sm mb-3"
+          className="w-full px-3 py-3 border border-gray-300 rounded-lg text-sm mb-3"
           style={{ fontSize: 16 }}
         >
           <option value="">Select equipment...</option>
@@ -118,7 +118,7 @@ export function QuickTempSheet({ open, onClose }: QuickTempSheetProps) {
 
         {/* Range hint */}
         {selected && (
-          <p className="text-xs text-[#1E2D4D]/50 mb-2">
+          <p className="text-xs text-gray-500 mb-2">
             {selected.type === 'freezer'
               ? `Must remain: ${selected.maxTemp}°F or below`
               : `Range: ${selected.minTemp}°F – ${selected.maxTemp}°F`}
@@ -134,7 +134,7 @@ export function QuickTempSheet({ open, onClose }: QuickTempSheetProps) {
           onChange={e => setTemperature(e.target.value)}
           onFocus={e => { setTimeout(() => { e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 300); }}
           placeholder="°F"
-          className="w-full border border-[#1E2D4D]/15 rounded-xl text-center font-bold mb-4"
+          className="w-full border border-gray-300 rounded-lg text-center font-bold mb-4"
           style={{ fontSize: 24, height: 56 }}
         />
 

@@ -13,7 +13,7 @@ export function TrainingComplianceWidget({ navigate }: Props) {
   if (stats.comingDue === 0 && stats.needsRenewal === 0) return null;
 
   return (
-    <div className="bg-white rounded-xl" style={{ border: '1px solid #e5e7eb' }}>
+    <div className="bg-white rounded-lg" style={{ border: '1px solid #e5e7eb' }}>
       {/* Header */}
       <div
         className="flex items-center justify-between px-4 py-3"
@@ -51,7 +51,7 @@ export function TrainingComplianceWidget({ navigate }: Props) {
             {stats.comingDue} Coming Due
           </span>
         )}
-        <span className="text-[#1E2D4D]/50 ml-auto">
+        <span className="text-gray-500 ml-auto">
           {stats.completionPct}% training complete
         </span>
       </div>
@@ -60,7 +60,7 @@ export function TrainingComplianceWidget({ navigate }: Props) {
       <button
         type="button"
         onClick={() => navigate('/dashboard/training')}
-        className="w-full px-4 py-3 text-center text-xs font-semibold transition-colors hover:bg-[#FAF7F0]"
+        className="w-full px-4 py-3 text-center text-xs font-semibold transition-colors hover:bg-gray-50"
         style={{ color: NAVY, borderTop: '1px solid #F0F0F0' }}
       >
         View All <ChevronRight size={12} className="inline" />

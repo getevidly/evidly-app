@@ -66,8 +66,8 @@ import {
 // ── Constants ────────────────────────────────────────────────
 
 const MIDNIGHT_NAVY = '#0B1628';
-const BRAND_BLUE = '#1E2D4D';
-const BRAND_BLUE_HOVER = '#2A3F6B';
+const BRAND_BLUE = '#1e4d6b';
+const BRAND_BLUE_HOVER = '#2a6a8f';
 const BRAND_GOLD = '#A08C5A';
 const PAGE_BG = '#F4F6FA';
 const CARD_BG = '#FFFFFF';
@@ -182,7 +182,7 @@ function FilterBar({ filters, setFilters, resetFilters }: {
             placeholder="Search RFPs by title, entity, keywords…"
             value={filters.search}
             onChange={e => setFilters(f => ({ ...f, search: e.target.value }))}
-            className="w-full pl-9 pr-4 py-2 text-sm rounded-xl border focus-visible:outline-none focus-visible:ring-2"
+            className="w-full pl-9 pr-4 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2"
             style={{
               borderColor: CARD_BORDER,
               color: TEXT_PRIMARY,
@@ -214,7 +214,7 @@ function FilterBar({ filters, setFilters, resetFilters }: {
         {hasActiveFilters && (
           <button
             onClick={resetFilters}
-            className="text-xs px-2 py-1 rounded hover:bg-[#1E2D4D]/5 transition-colors"
+            className="text-xs px-2 py-1 rounded hover:bg-gray-100 transition-colors"
             style={{ color: TEXT_TERTIARY }}
           >
             Clear all
@@ -278,7 +278,7 @@ function FilterBar({ filters, setFilters, resetFilters }: {
           <div className="col-span-2 md:col-span-1">
             <label className="text-xs font-medium mb-1 block" style={{ color: TEXT_TERTIARY }}>State</label>
             <select
-              className="w-full text-sm px-3 py-1.5 rounded-xl border focus:outline-none"
+              className="w-full text-sm px-3 py-1.5 rounded-lg border focus:outline-none"
               style={{ borderColor: CARD_BORDER, color: TEXT_PRIMARY }}
               value={filters.state[0] ?? ''}
               onChange={e => setFilters(f => ({ ...f, state: e.target.value ? [e.target.value] : [] }))}
@@ -306,7 +306,7 @@ function FilterBar({ filters, setFilters, resetFilters }: {
           <div>
             <label className="text-xs font-medium mb-1 block" style={{ color: TEXT_TERTIARY }}>NAICS Code</label>
             <select
-              className="w-full text-sm px-3 py-1.5 rounded-xl border focus:outline-none"
+              className="w-full text-sm px-3 py-1.5 rounded-lg border focus:outline-none"
               style={{ borderColor: CARD_BORDER, color: TEXT_PRIMARY }}
               value={filters.naics_code}
               onChange={e => setFilters(f => ({ ...f, naics_code: e.target.value }))}
@@ -324,14 +324,14 @@ function FilterBar({ filters, setFilters, resetFilters }: {
             <div className="flex gap-2">
               <input
                 type="date"
-                className="flex-1 text-xs px-2 py-1.5 rounded-xl border focus:outline-none"
+                className="flex-1 text-xs px-2 py-1.5 rounded-lg border focus:outline-none"
                 style={{ borderColor: CARD_BORDER, color: TEXT_PRIMARY }}
                 value={filters.date_from ?? ''}
                 onChange={e => setFilters(f => ({ ...f, date_from: e.target.value || null }))}
               />
               <input
                 type="date"
-                className="flex-1 text-xs px-2 py-1.5 rounded-xl border focus:outline-none"
+                className="flex-1 text-xs px-2 py-1.5 rounded-lg border focus:outline-none"
                 style={{ borderColor: CARD_BORDER, color: TEXT_PRIMARY }}
                 value={filters.date_to ?? ''}
                 onChange={e => setFilters(f => ({ ...f, date_to: e.target.value || null }))}
@@ -412,7 +412,7 @@ function RfpCard({ item, onSelect, onAction }: {
             <span className="text-lg font-bold leading-none" style={{ color: tier.text }}>
               {cls.relevance_score}
             </span>
-            <span className="text-xs" style={{ color: tier.text }}>{tier.label}</span>
+            <span className="text-[10px]" style={{ color: tier.text }}>{tier.label}</span>
           </div>
         )}
         <div className="min-w-0 flex-1">
@@ -422,7 +422,7 @@ function RfpCard({ item, onSelect, onAction }: {
           <div className="flex items-center gap-2 flex-wrap text-xs" style={{ color: TEXT_SECONDARY }}>
             <span>{item.issuing_entity}</span>
             <span
-              className="px-1.5 py-0.5 rounded text-xs font-medium"
+              className="px-1.5 py-0.5 rounded text-[10px] font-medium"
               style={{ background: `${BRAND_BLUE}12`, color: BRAND_BLUE }}
             >
               {ENTITY_LABELS[item.entity_type] ?? item.entity_type}
@@ -444,7 +444,7 @@ function RfpCard({ item, onSelect, onAction }: {
           {cls.matched_modules.map(mod => (
             <span
               key={mod}
-              className="px-2 py-0.5 rounded-full text-xs font-medium"
+              className="px-2 py-0.5 rounded-full text-[10px] font-medium"
               style={{ background: `${BRAND_GOLD}18`, color: BRAND_GOLD }}
             >
               {MODULE_LABELS[mod] ?? mod}
@@ -533,14 +533,14 @@ function RfpCard({ item, onSelect, onAction }: {
         </button>
         <button
           onClick={e => { e.stopPropagation(); onAction('watching'); }}
-          className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors hover:bg-[#FAF7F0]"
+          className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors hover:bg-gray-50"
           style={{ borderColor: CARD_BORDER, color: TEXT_SECONDARY }}
         >
           <Eye size={12} /> Watch
         </button>
         <button
           onClick={e => { e.stopPropagation(); onAction('declined'); }}
-          className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors hover:bg-[#FAF7F0]"
+          className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors hover:bg-gray-50"
           style={{ borderColor: CARD_BORDER, color: TEXT_TERTIARY }}
         >
           <XCircle size={12} /> Skip
@@ -596,7 +596,7 @@ function RfpTableView({ items, onSelect, onAction }: {
             return (
               <tr
                 key={item.id}
-                className="border-t cursor-pointer hover:bg-[#FAF7F0] transition-colors"
+                className="border-t cursor-pointer hover:bg-gray-50 transition-colors"
                 style={{ borderColor: CARD_BORDER }}
                 onClick={() => onSelect(item.id)}
               >
@@ -616,7 +616,7 @@ function RfpTableView({ items, onSelect, onAction }: {
                 <td className="px-4 py-3 text-xs" style={{ color: TEXT_SECONDARY }}>
                   <span className="block truncate max-w-[140px]">{item.issuing_entity}</span>
                   <span
-                    className="inline-block px-1.5 py-0.5 rounded text-xs mt-0.5"
+                    className="inline-block px-1.5 py-0.5 rounded text-[10px] mt-0.5"
                     style={{ background: `${BRAND_BLUE}12`, color: BRAND_BLUE }}
                   >
                     {ENTITY_LABELS[item.entity_type] ?? item.entity_type}
@@ -628,12 +628,12 @@ function RfpTableView({ items, onSelect, onAction }: {
                 <td className="px-4 py-3">
                   <div className="flex flex-wrap gap-1 max-w-[160px]">
                     {(cls?.matched_modules ?? []).slice(0, 3).map(mod => (
-                      <span key={mod} className="px-1.5 py-0.5 rounded text-xs" style={{ background: `${BRAND_GOLD}18`, color: BRAND_GOLD }}>
+                      <span key={mod} className="px-1.5 py-0.5 rounded text-[10px]" style={{ background: `${BRAND_GOLD}18`, color: BRAND_GOLD }}>
                         {MODULE_LABELS[mod] ?? mod}
                       </span>
                     ))}
                     {(cls?.matched_modules?.length ?? 0) > 3 && (
-                      <span className="text-xs" style={{ color: TEXT_TERTIARY }}>+{cls!.matched_modules.length - 3}</span>
+                      <span className="text-[10px]" style={{ color: TEXT_TERTIARY }}>+{cls!.matched_modules.length - 3}</span>
                     )}
                   </div>
                 </td>
@@ -728,7 +728,7 @@ function DetailPanel({ item, onClose, onAction }: {
           {cls && tier && (
             <div className="flex items-center gap-3">
               <div className="w-16 h-16 rounded-xl flex flex-col items-center justify-center" style={{ background: tier.bg }}>
-                <span className="text-2xl font-bold tracking-tight leading-none" style={{ color: tier.text }}>{cls.relevance_score}</span>
+                <span className="text-2xl font-bold leading-none" style={{ color: tier.text }}>{cls.relevance_score}</span>
                 <span className="text-xs" style={{ color: tier.text }}>{tier.label}</span>
               </div>
               <div>
@@ -805,7 +805,7 @@ function DetailPanel({ item, onClose, onAction }: {
               <h4 className="text-xs font-semibold mb-1" style={{ color: TEXT_PRIMARY }}>Matched Keywords</h4>
               <div className="flex flex-wrap gap-1">
                 {cls.matched_keywords.map(kw => (
-                  <span key={kw} className="px-2 py-0.5 rounded text-xs border" style={{ borderColor: CARD_BORDER, color: TEXT_SECONDARY }}>
+                  <span key={kw} className="px-2 py-0.5 rounded text-[10px] border" style={{ borderColor: CARD_BORDER, color: TEXT_SECONDARY }}>
                     {kw}
                   </span>
                 ))}
@@ -842,7 +842,7 @@ function DetailPanel({ item, onClose, onAction }: {
                     <div>
                       <span className="font-medium capitalize" style={{ color: TEXT_PRIMARY }}>{act.action}</span>
                       {act.notes && <span style={{ color: TEXT_SECONDARY }}> — {act.notes}</span>}
-                      <span className="block text-xs" style={{ color: TEXT_TERTIARY }}>
+                      <span className="block text-[10px]" style={{ color: TEXT_TERTIARY }}>
                         {formatDateShort(act.created_at)} by {act.created_by ?? 'admin'}
                       </span>
                     </div>
@@ -867,7 +867,7 @@ function DetailPanel({ item, onClose, onAction }: {
               value={notes}
               onChange={e => { setNotes(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('notes'); return n; }); }}
               placeholder="Add notes about this RFP…"
-              className="w-full text-sm p-3 rounded-xl border mb-1 resize-none"
+              className="w-full text-sm p-3 rounded-lg border mb-1 resize-none"
               style={{ borderColor: CARD_BORDER, color: TEXT_PRIMARY }}
               rows={3}
             />
@@ -1083,7 +1083,7 @@ function KeywordCloud({ listings }: { listings: RfpListingWithDetails[] }) {
             }}
           >
             {word}
-            <span className="ml-1 text-xs" style={{ color: TEXT_TERTIARY }}>{count}</span>
+            <span className="ml-1 text-[10px]" style={{ color: TEXT_TERTIARY }}>{count}</span>
           </span>
         );
       })}
@@ -1123,7 +1123,7 @@ function SourcesTab({ sources }: { sources: RfpSource[] }) {
           placeholder="Search sources…"
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="w-full pl-9 pr-4 py-2 text-sm rounded-xl border focus:outline-none"
+          className="w-full pl-9 pr-4 py-2 text-sm rounded-lg border focus:outline-none"
           style={{ borderColor: CARD_BORDER, color: TEXT_PRIMARY, background: CARD_BG }}
         />
       </div>
@@ -1151,7 +1151,7 @@ function SourcesTab({ sources }: { sources: RfpSource[] }) {
                 </td>
                 <td className="px-4 py-3">
                   <span className="font-medium block" style={{ color: TEXT_PRIMARY }}>{src.name}</span>
-                  <a href={src.url} target="_blank" rel="noopener noreferrer" className="text-xs hover:underline" style={{ color: BRAND_BLUE }}>
+                  <a href={src.url} target="_blank" rel="noopener noreferrer" className="text-[10px] hover:underline" style={{ color: BRAND_BLUE }}>
                     {src.url}
                   </a>
                 </td>
@@ -1380,7 +1380,7 @@ export default function RfpIntelligence() {
                 {filteredListings.length} RFP{filteredListings.length !== 1 ? 's' : ''}
                 {filters.search || filters.relevance_tier.length > 0 ? ' (filtered)' : ''}
               </span>
-              <div className="flex items-center gap-1 border rounded-xl p-0.5" style={{ borderColor: CARD_BORDER }}>
+              <div className="flex items-center gap-1 border rounded-lg p-0.5" style={{ borderColor: CARD_BORDER }}>
                 <button
                   onClick={() => setViewMode('cards')}
                   className="p-1.5 rounded transition-colors"

@@ -49,7 +49,7 @@ function StatCard({
 }) {
   return (
     <div
-      className="rounded-xl p-4 text-center"
+      className="rounded-lg p-4 text-center"
       style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}
     >
       <div
@@ -100,10 +100,10 @@ export function EquipmentIncidentsPage() {
 
   // ── Skeletons ──────────────────────────────────────────────
   const StatSkeleton = () => (
-    <div className="rounded-xl p-4 animate-pulse" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
-      <div className="h-9 w-9 bg-[#1E2D4D]/8 rounded-lg mx-auto mb-2" />
-      <div className="h-3 w-16 bg-[#1E2D4D]/8 rounded mx-auto mb-2" />
-      <div className="h-6 w-10 bg-[#1E2D4D]/8 rounded mx-auto" />
+    <div className="rounded-lg p-4 animate-pulse" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
+      <div className="h-9 w-9 bg-gray-200 rounded-lg mx-auto mb-2" />
+      <div className="h-3 w-16 bg-gray-200 rounded mx-auto mb-2" />
+      <div className="h-6 w-10 bg-gray-200 rounded mx-auto" />
     </div>
   );
 
@@ -113,12 +113,12 @@ export function EquipmentIncidentsPage() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-2">
           <AlertTriangle className="w-6 h-6" style={{ color: NAVY }} />
-          <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Equipment Incidents</h1>
+          <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Equipment Incidents</h1>
         </div>
         <button
           onClick={() => setShowReportModal(true)}
           className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white rounded-lg transition-colors"
-          style={{ background: '#1E2D4D' }}
+          style={{ background: '#1e4d6b' }}
         >
           Report Incident
         </button>
@@ -131,7 +131,7 @@ export function EquipmentIncidentsPage() {
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <StatCard icon={AlertTriangle} label="Total Incidents" value={stats.total} color="#1E2D4D" />
+          <StatCard icon={AlertTriangle} label="Total Incidents" value={stats.total} color="#1e4d6b" />
           <StatCard icon={DollarSign} label="Damage" value={stats.damage} color="#DC2626" />
           <StatCard icon={PackageX} label="Loss" value={stats.loss} color="#D97706" />
           <StatCard icon={Clock} label="Pending Resolution" value={stats.pending} color="#7C3AED" />
@@ -161,12 +161,12 @@ export function EquipmentIncidentsPage() {
         <div className="rounded-xl animate-pulse" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
           {Array.from({ length: 5 }).map((_, i) => (
             <div key={i} className="flex gap-4 px-6 py-4 border-b" style={{ borderColor: CARD_BORDER }}>
-              <div className="h-4 w-20 bg-[#1E2D4D]/8 rounded" />
-              <div className="h-4 w-16 bg-[#1E2D4D]/8 rounded" />
-              <div className="h-4 w-32 bg-[#1E2D4D]/8 rounded" />
-              <div className="h-4 w-24 bg-[#1E2D4D]/8 rounded" />
-              <div className="h-4 w-16 bg-[#1E2D4D]/8 rounded" />
-              <div className="h-4 w-16 bg-[#1E2D4D]/8 rounded" />
+              <div className="h-4 w-20 bg-gray-200 rounded" />
+              <div className="h-4 w-16 bg-gray-200 rounded" />
+              <div className="h-4 w-32 bg-gray-200 rounded" />
+              <div className="h-4 w-24 bg-gray-200 rounded" />
+              <div className="h-4 w-16 bg-gray-200 rounded" />
+              <div className="h-4 w-16 bg-gray-200 rounded" />
             </div>
           ))}
         </div>
@@ -201,7 +201,7 @@ export function EquipmentIncidentsPage() {
                   return (
                     <tr
                       key={inc.id}
-                      className="hover:bg-[#FAF7F0]/50 transition-colors"
+                      className="hover:bg-gray-50/50 transition-colors"
                       style={{ borderBottom: `1px solid ${CARD_BORDER}` }}
                     >
                       <td className="px-4 py-3" style={{ color: NAVY }}>{formatDate(inc.incidentDate)}</td>
@@ -232,7 +232,7 @@ export function EquipmentIncidentsPage() {
                           <button
                             onClick={() => alert('Resolve incident flow coming soon.')}
                             className="text-xs font-medium px-3 py-1 rounded-md transition-colors"
-                            style={{ color: '#1E2D4D', background: '#1E2D4D12' }}
+                            style={{ color: '#1e4d6b', background: '#1e4d6b12' }}
                           >
                             Resolve
                           </button>

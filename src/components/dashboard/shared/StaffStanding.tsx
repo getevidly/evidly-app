@@ -24,7 +24,7 @@ export function StaffStanding({ totalTasks, completedTasks, overdueTasks }: Staf
   return (
     <>
       <style>{KEYFRAMES}</style>
-      <div className="bg-white rounded-xl px-4 py-5" style={{ border: '1px solid #e5e7eb' }}>
+      <div className="bg-white rounded-lg px-4 py-5" style={{ border: '1px solid #e5e7eb' }}>
         <div className="flex items-center gap-5">
           {/* Progress ring */}
           <div className="relative shrink-0" style={{ width: 96, height: 96 }}>
@@ -46,7 +46,7 @@ export function StaffStanding({ totalTasks, completedTasks, overdueTasks }: Staf
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <span className="text-lg font-bold" style={{ color: BODY_TEXT }}>{completedTasks}/{totalTasks}</span>
-              <span className="text-xs text-[#1E2D4D]/50">tasks</span>
+              <span className="text-[10px] text-gray-500">tasks</span>
             </div>
           </div>
 
@@ -55,16 +55,16 @@ export function StaffStanding({ totalTasks, completedTasks, overdueTasks }: Staf
             <h3 className="text-sm font-semibold" style={{ color: BODY_TEXT }}>Shift Progress</h3>
             <div className="space-y-1">
               <div className="flex justify-between text-[12px]">
-                <span className="text-[#1E2D4D]/50">Completed</span>
+                <span className="text-gray-500">Completed</span>
                 <span className="font-semibold text-green-600">{completedTasks}</span>
               </div>
               <div className="flex justify-between text-[12px]">
-                <span className="text-[#1E2D4D]/50">Remaining</span>
+                <span className="text-gray-500">Remaining</span>
                 <span className="font-semibold" style={{ color: BODY_TEXT }}>{remaining}</span>
               </div>
               {overdueTasks > 0 && (
                 <div className="flex justify-between text-[12px]">
-                  <span className="text-[#1E2D4D]/50">Overdue</span>
+                  <span className="text-gray-500">Overdue</span>
                   <span className="font-semibold text-red-600">{overdueTasks}</span>
                 </div>
               )}

@@ -30,7 +30,7 @@ SELECT
   ) AS temp_compliance_pct,
   -- Checklist completion rate (last 30 days)
   COALESCE(
-    (SELECT ROUND(100.0 * COUNT(CASE WHEN cc.completed_at IS NOT NULL THEN 1 END) / NULLIF(COUNT(*), 0), 1)
+    (SELECT ROUND(100.0 * COUNT(CASE WHEN cc.status = 'completed' THEN 1 END) / NULLIF(COUNT(*), 0), 1)
      FROM checklist_completions cc
      WHERE cc.location_id = l.id
      AND cc.created_at > NOW() - INTERVAL '30 days'),

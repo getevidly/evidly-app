@@ -95,10 +95,10 @@ export function ShiftHandoff() {
       <div className="min-h-[60vh] flex items-center justify-center p-6">
         <div className="text-center max-w-sm">
           <p className="text-5xl mb-4">🎉</p>
-          <h2 className="text-2xl font-bold tracking-tight mb-2" style={{ color: NAVY }}>
+          <h2 className="text-2xl font-bold mb-2" style={{ color: NAVY }}>
             Great shift, {firstName}!
           </h2>
-          <p className="text-sm text-[#1E2D4D]/50 mb-6">
+          <p className="text-sm text-gray-500 mb-6">
             Your handoff notes have been saved. The next team is set up for success.
           </p>
           <button
@@ -121,33 +121,33 @@ export function ShiftHandoff() {
       ]} />
 
       {/* Header */}
-      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
+      <div className="bg-white rounded-xl border border-gray-200 p-5">
         <div className="flex items-center justify-between mb-1">
           <h1 className="text-lg font-bold" style={{ color: NAVY }}>End of Shift Summary</h1>
           <Clock size={18} style={{ color: GOLD }} />
         </div>
-        <p className="text-sm text-[#1E2D4D]/50">
+        <p className="text-sm text-gray-500">
           {getShiftDateLabel()} &middot; {getShiftName()} Shift
         </p>
       </div>
 
       {/* Shift stats */}
-      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
-        <h3 className="text-sm font-semibold text-[#1E2D4D]/80 mb-4">Your shift in numbers</h3>
+      <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <h3 className="text-sm font-semibold text-gray-700 mb-4">Your shift in numbers</h3>
         <div className="grid grid-cols-2 gap-3">
           {[
-            { icon: Thermometer, label: 'Temperature readings', value: stats.tempCount, color: '#1E2D4D' },
+            { icon: Thermometer, label: 'Temperature readings', value: stats.tempCount, color: '#1e4d6b' },
             { icon: CheckSquare, label: 'Checklists completed', value: stats.checklistCount, color: '#059669' },
             { icon: Wrench, label: 'CAs resolved', value: stats.caResolved, color: '#d97706' },
             { icon: AlertCircle, label: 'Items left open', value: stats.openItems, color: stats.openItems > 0 ? '#dc2626' : '#059669' },
           ].map(item => {
             const Icon = item.icon;
             return (
-              <div key={item.label} className="flex items-center gap-3 p-3 rounded-lg bg-[#FAF7F0]">
+              <div key={item.label} className="flex items-center gap-3 p-3 rounded-lg bg-gray-50">
                 <Icon size={20} style={{ color: item.color }} className="shrink-0" />
                 <div>
                   <p className="text-xl font-bold" style={{ color: NAVY }}>{item.value}</p>
-                  <p className="text-xs text-[#1E2D4D]/50">{item.label}</p>
+                  <p className="text-[11px] text-gray-500">{item.label}</p>
                 </div>
               </div>
             );
@@ -166,12 +166,12 @@ export function ShiftHandoff() {
 
       {/* Open items for next shift */}
       {openItems.length > 0 && (
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
-          <h3 className="text-sm font-semibold text-[#1E2D4D]/80 mb-3">Open items for next shift</h3>
+        <div className="bg-white rounded-xl border border-gray-200 p-5">
+          <h3 className="text-sm font-semibold text-gray-700 mb-3">Open items for next shift</h3>
           <ul className="space-y-2">
             {openItems.map((item, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-[#1E2D4D]/70">
-                <span className="text-[#1E2D4D]/30 mt-0.5">&#8226;</span>
+              <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                <span className="text-gray-400 mt-0.5">&#8226;</span>
                 {item}
               </li>
             ))}
@@ -180,15 +180,15 @@ export function ShiftHandoff() {
       )}
 
       {/* Notes field */}
-      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
-        <h3 className="text-sm font-semibold text-[#1E2D4D]/80 mb-2">Notes for next shift</h3>
+      <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <h3 className="text-sm font-semibold text-gray-700 mb-2">Notes for next shift</h3>
         <textarea
           value={notes}
           onChange={e => setNotes(e.target.value)}
           onFocus={e => { setTimeout(() => { e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 300); }}
           placeholder="Anything the next team should know..."
           rows={3}
-          className="w-full text-sm border border-[#1E2D4D]/10 rounded-xl px-3 py-2 resize-none focus:outline-none focus:border-[#1E2D4D]"
+          className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 resize-none focus:outline-none focus:border-[#1e4d6b]"
           style={{ fontSize: 16 }}
         />
       </div>

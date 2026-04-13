@@ -441,7 +441,7 @@ export function K2CInviteModal({
                     onClick={handleLoadTemplate}
                     style={{
                       padding: '6px 14px', borderRadius: '6px',
-                      border: 'none', backgroundColor: '#1E2D4D',
+                      border: 'none', backgroundColor: '#1e4d6b',
                       fontSize: '12px', fontWeight: 600, color: '#ffffff', cursor: 'pointer',
                     }}
                   >
@@ -482,7 +482,7 @@ export function K2CInviteModal({
               background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '10px',
               padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '10px',
             }}>
-              <span className="text-2xl">🍽️</span>
+              <span style={{ fontSize: '24px' }}>🍽️</span>
               <div>
                 <p style={{ margin: 0, fontSize: '13px', fontWeight: 600, color: '#92400e' }}>
                   Your referral impact
@@ -517,7 +517,7 @@ export function K2CInviteModal({
               disabled={loading || !contactName.trim() || !businessName.trim() || !email.trim()}
               style={{
                 padding: '10px 24px', borderRadius: '8px',
-                border: 'none', backgroundColor: '#1E2D4D',
+                border: 'none', backgroundColor: '#1e4d6b',
                 fontSize: '14px', fontWeight: 600, color: '#ffffff',
                 cursor: loading ? 'wait' : 'pointer',
                 opacity: (!contactName.trim() || !businessName.trim() || !email.trim()) ? 0.5 : 1,

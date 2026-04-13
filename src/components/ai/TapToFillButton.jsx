@@ -53,7 +53,7 @@ export function TapToFillButton({
         </>
       ) : (
         <>
-          <span className="text-[13px]">&#10024;</span>
+          <span style={{ fontSize: '13px' }}>&#10024;</span>
           AI suggest
         </>
       )}

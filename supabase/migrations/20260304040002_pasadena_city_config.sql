@@ -13,7 +13,7 @@
 -- KEY FACTS:
 --   INDEPENDENT CITY — LA County EHD has NO jurisdiction
 --   LA County permits NOT valid within Pasadena city limits
---   *** CRITICAL: PASS / CONDITIONAL PASS / CLOSED — NOT A / B / C ***
+--   *** CRITICAL: PASS / CONDITIONAL PASS / CLOSED — NOT A/B/C ***
 --   PASS = 85–100
 --   CONDITIONAL PASS = 75–84 → mandatory 5-working-day follow-up;
 --     must score 95+ with no major violations to upgrade to PASS
@@ -81,7 +81,7 @@ UPDATE jurisdictions SET
     "food_safety_manager": { "required": true, "min_per_facility": 1, "exam_type": "ANSI_accredited" }
   }'::jsonb,
 
-  scoring_methodology = 'PASS/CONDITIONAL PASS/CLOSED. PASS=85-100, CONDITIONAL PASS=75-84 (5 working day follow-up; 95+ to upgrade), CLOSED=<75 ($150 hearing fee). INDEPENDENT CITY — NOT A / B / C.',
+  scoring_methodology = 'PASS/CONDITIONAL PASS/CLOSED. PASS=85-100, CONDITIONAL PASS=75-84 (5 working day follow-up; 95+ to upgrade), CLOSED=<75 ($150 hearing fee). INDEPENDENT CITY — NOT A/B/C.',
 
   pass_threshold = 85,
   warning_threshold = 75,
@@ -90,7 +90,7 @@ UPDATE jurisdictions SET
   fire_ahj_name = 'City of Pasadena Fire Department',
   fire_ahj_type = 'city_fire',
   has_local_amendments = true,
-  local_amendment_notes = 'PASS/CONDITIONAL PASS/CLOSED per Pasadena Municipal Code Ch. 8.13 (effective July 1, 2014). NOT A / B / C. 5-working-day follow-up for CONDITIONAL PASS; 95+ to upgrade. Hearing fee $150. LA County permits invalid.',
+  local_amendment_notes = 'PASS/CONDITIONAL PASS/CLOSED per Pasadena Municipal Code Ch. 8.13 (effective July 1, 2014). NOT A/B/C. 5-working-day follow-up for CONDITIONAL PASS; 95+ to upgrade. Hearing fee $150. LA County permits invalid.',
 
   data_source_type = 'portal',
   data_source_url = 'https://www.decadeonline.com/main.phtml?agency=pas',

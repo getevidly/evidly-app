@@ -49,7 +49,7 @@ export function MetricCardRow({ cards }: MetricCardRowProps) {
           </p>
           {card.detail && (
             <p
-              className="text-xs mt-0.5 leading-tight"
+              className="text-[11px] mt-0.5 leading-tight"
               style={{ color: TEXT_TERTIARY }}
             >
               {card.detail}

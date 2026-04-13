@@ -146,7 +146,7 @@ export function K2CReferralTracker({ onInviteClick }: K2CReferralTrackerProps) {
         onClick={onInviteClick}
         style={{
           width: '100%', padding: '12px 0', borderRadius: '8px',
-          border: 'none', backgroundColor: '#1E2D4D', color: '#ffffff',
+          border: 'none', backgroundColor: '#1e4d6b', color: '#ffffff',
           fontSize: '14px', fontWeight: 700, cursor: 'pointer',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
         }}

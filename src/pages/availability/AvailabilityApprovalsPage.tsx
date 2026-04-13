@@ -66,7 +66,7 @@ export function AvailabilityApprovalsPage() {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <ClipboardCheck className="w-6 h-6" style={{ color: NAVY }} />
-            <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Availability Approvals</h1>
+            <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Availability Approvals</h1>
           </div>
           <p className="text-sm" style={{ color: TEXT_TERTIARY }}>Review and approve late availability submissions.</p>
         </div>
@@ -83,11 +83,11 @@ export function AvailabilityApprovalsPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 gap-4">
-        <div className="rounded-xl p-4 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
+        <div className="rounded-lg p-4 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
           <p className="text-xs" style={{ color: TEXT_TERTIARY }}>Pending Approvals</p>
           <p className="text-xl font-bold mt-1" style={{ color: '#c2410c' }}>{submissions.length}</p>
         </div>
-        <div className="rounded-xl p-4 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
+        <div className="rounded-lg p-4 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
           <p className="text-xs" style={{ color: TEXT_TERTIARY }}>Status</p>
           <p className="text-sm font-bold mt-1.5" style={{ color: submissions.length === 0 ? '#16a34a' : '#c2410c' }}>
             {submissions.length === 0 ? 'All Clear' : 'Action Required'}
@@ -99,7 +99,7 @@ export function AvailabilityApprovalsPage() {
       {isLoading ? (
         <div className="space-y-3">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="h-28 bg-[#1E2D4D]/8 rounded-xl animate-pulse" />
+            <div key={i} className="h-28 bg-gray-200 rounded-xl animate-pulse" />
           ))}
         </div>
       ) : submissions.length === 0 ? (
@@ -134,7 +134,7 @@ export function AvailabilityApprovalsPage() {
                     return (
                       <div
                         key={d}
-                        className="flex-1 text-center py-1.5 rounded text-xs font-medium"
+                        className="flex-1 text-center py-1.5 rounded text-[10px] font-medium"
                         style={{
                           background: isAvail ? '#dcfce7' : '#f3f4f6',
                           color: isAvail ? '#16a34a' : '#9ca3af',
@@ -158,11 +158,11 @@ export function AvailabilityApprovalsPage() {
                       value={rejectReason}
                       onChange={e => setRejectReason(e.target.value)}
                       placeholder="Reason for rejection..."
-                      className="w-full px-3 py-2 text-sm border rounded-xl"
+                      className="w-full px-3 py-2 text-sm border rounded-lg"
                       style={{ borderColor: CARD_BORDER, color: NAVY }}
                     />
                     <div className="flex gap-2">
-                      <button onClick={() => { setRejectingId(null); setRejectReason(''); }} className="flex-1 px-3 py-1.5 text-xs font-medium rounded-xl border" style={{ borderColor: CARD_BORDER, color: NAVY }}>
+                      <button onClick={() => { setRejectingId(null); setRejectReason(''); }} className="flex-1 px-3 py-1.5 text-xs font-medium rounded-lg border" style={{ borderColor: CARD_BORDER, color: NAVY }}>
                         Cancel
                       </button>
                       <button onClick={() => handleReject(sub.id)} className="flex-1 px-3 py-1.5 text-xs font-semibold text-white rounded-lg" style={{ background: '#dc2626' }}>
@@ -181,7 +181,7 @@ export function AvailabilityApprovalsPage() {
                     </button>
                     <button
                       onClick={() => setRejectingId(sub.id)}
-                      className="flex-1 flex items-center justify-center gap-1 px-3 py-2 text-sm font-medium rounded-xl border"
+                      className="flex-1 flex items-center justify-center gap-1 px-3 py-2 text-sm font-medium rounded-lg border"
                       style={{ borderColor: '#dc2626', color: '#dc2626' }}
                     >
                       <XCircle className="w-3.5 h-3.5" /> Reject

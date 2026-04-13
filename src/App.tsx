@@ -213,12 +213,10 @@ const KitchenCheckPage = lazy(() => import('./pages/public/KitchenCheckPage'));
 const NewLandingPage = lazy(() => import('./pages/public/LandingPage'));
 const OperationsCheck = lazy(() => import('./pages/public/OperationsCheck'));
 const CountyWrapper = () => { const { slug } = useParams(); return <CountyLandingPage county={slug?.replace("-county", "")} />; };
+const ScoreTableWrapper = () => { const { slug } = useParams(); return <ScoreTableCountyPage county={slug?.replace("-county", "")} />; };
 const KitchenCheckWrapper = () => { const { slug } = useParams(); return <KitchenCheckPage county={slug?.replace("-county", "")} />; };
 const CityPage = lazy(() => import('./pages/public/CityPage'));
 const ScoreTableCityPage = lazy(() => import('./pages/public/ScoreTableCityPage'));
-const ScoreTableIndex = lazy(() => import('./pages/public/ScoreTableIndex'));
-const ScoreTableState = lazy(() => import('./pages/public/ScoreTableState'));
-const ScoreTableCountyDetail = lazy(() => import('./pages/public/ScoreTableCountyDetail'));
 
 const BlogList = lazy(() => import('./pages/public/BlogList').then(m => ({ default: m.BlogList })));
 const BlogPost = lazy(() => import('./pages/public/BlogPost').then(m => ({ default: m.BlogPost })));
@@ -234,11 +232,6 @@ const InsuranceApiKeys = lazy(() => import('./pages/admin/InsuranceApiKeys'));
 const DemoGenerator = lazy(() => import('./pages/admin/DemoGenerator'));
 const DemoLauncher = lazy(() => import('./pages/admin/DemoLauncher'));
 const DemoPipeline = lazy(() => import('./pages/admin/DemoPipeline'));
-const DemoTours = lazy(() => import('./pages/admin/DemoTours'));
-const PartnerDemos = lazy(() => import('./pages/admin/PartnerDemos'));
-const VendorDemoDashboard = lazy(() => import('./pages/partner/VendorDemoDashboard'));
-const AssociationDemoDashboard = lazy(() => import('./pages/partner/AssociationDemoDashboard'));
-const CarrierDemoDashboard = lazy(() => import('./pages/partner/CarrierDemoDashboard'));
 const GtmDashboard = lazy(() => import('./pages/admin/GtmDashboard'));
 const DemoDashboard = lazy(() => import('./pages/admin/DemoDashboard'));
 const DemoRequest = lazy(() => import('./pages/DemoRequest'));
@@ -255,7 +248,6 @@ const ComplianceTrajectoryPage = lazy(() => import('./pages/insights/ComplianceT
 const VendorPerformancePage = lazy(() => import('./pages/insights/VendorPerformance').then(m => ({ default: m.VendorPerformance })));
 const JurisdictionSignalsPage = lazy(() => import('./pages/insights/JurisdictionSignals').then(m => ({ default: m.JurisdictionSignals })));
 const TeamLeaderboardPage = lazy(() => import('./pages/insights/TeamLeaderboard').then(m => ({ default: m.TeamLeaderboard })));
-const OperationsIntelligencePage = lazy(() => import('./pages/insights/OperationsIntelligence').then(m => ({ default: m.OperationsIntelligence })));
 const ToolsHub = lazy(() => import('./pages/ToolsHub').then(m => ({ default: m.ToolsHub })));
 const AdminHub = lazy(() => import('./pages/AdminHub').then(m => ({ default: m.AdminHub })));
 const VendorSetup = lazy(() => import('./pages/VendorSetup').then(m => ({ default: m.VendorSetup })));
@@ -343,10 +335,10 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-cream flex items-center justify-center">
+      <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#A08C5A] mx-auto"></div>
-          <p className="mt-4 text-[#1E2D4D]/70">Loading...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#d4af37] mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
         </div>
       </div>
     );
@@ -377,10 +369,10 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-cream flex items-center justify-center">
+      <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#A08C5A] mx-auto"></div>
-          <p className="mt-4 text-[#1E2D4D]/70">Loading...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#d4af37] mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
         </div>
       </div>
     );
@@ -432,10 +424,10 @@ function ProtectedLayout() {
   if (!effectiveDemoMode) {
     if (loading) {
       return (
-        <div className="min-h-screen bg-cream flex items-center justify-center">
+        <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#A08C5A] mx-auto"></div>
-            <p className="mt-4 text-[#1E2D4D]/70">Loading...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#d4af37] mx-auto"></div>
+            <p className="mt-4 text-gray-600">Loading...</p>
           </div>
         </div>
       );
@@ -507,8 +499,8 @@ function ProtectedLayout() {
       <Suspense fallback={
         <div className="flex items-center justify-center py-12">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#A08C5A] mx-auto"></div>
-            <p className="mt-3 text-sm text-[#1E2D4D]/50">Loading...</p>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#d4af37] mx-auto"></div>
+            <p className="mt-3 text-sm text-gray-500">Loading...</p>
           </div>
         </div>
       }>
@@ -570,10 +562,8 @@ function AppRoutes() {
         <Route path="/compliance/california" element={<Suspense fallback={<PageSkeleton />}><CaliforniaCompliance /></Suspense>} />
         <Route path="/compliance/california/:countySlug" element={<Suspense fallback={<PageSkeleton />}><CountyCompliance /></Suspense>} />
         <Route path="/assessment" element={<Suspense fallback={<PageSkeleton />}><AssessmentTool /></Suspense>} />
-        <Route path="/scoretable" element={<Suspense fallback={<PageSkeleton />}><ScoreTableIndex /></Suspense>} />
+        <Route path="/scoretable/:slug" element={<Suspense fallback={<PageSkeleton />}><ScoreTableWrapper /></Suspense>} />
         <Route path="/scoretable/city/:citySlug" element={<Suspense fallback={<PageSkeleton />}><ScoreTableCityPage /></Suspense>} />
-        <Route path="/scoretable/:stateSlug" element={<Suspense fallback={<PageSkeleton />}><ScoreTableState /></Suspense>} />
-        <Route path="/scoretable/:stateSlug/:countySlug" element={<Suspense fallback={<PageSkeleton />}><ScoreTableCountyDetail /></Suspense>} />
         <Route path="/kitchen-check/:slug" element={<Suspense fallback={<PageSkeleton />}><KitchenCheckWrapper /></Suspense>} />
         <Route path="/kitchen-to-community" element={<Suspense fallback={<PageSkeleton />}><KitchenToCommunity /></Suspense>} />
         <Route path="/leaderboard-preview" element={<Suspense fallback={<PageSkeleton />}><LeaderboardPreview /></Suspense>} />
@@ -639,7 +629,6 @@ function AppRoutes() {
           <Route path="/insights" element={<InsightsHub />} />
           <Route path="/tools" element={<ToolsHub />} />
           <Route path="/admin" element={<AdminRoute />} />
-          <Route path="/admin/onboarding" element={<AdminClientOnboarding />} />
           <Route path="/temp-logs" element={<TempLogs />} />
           <Route path="/iot-monitoring" element={<IoTMonitoring />} />
           <Route path="/checklists" element={<Checklists />} />
@@ -730,6 +719,7 @@ function AppRoutes() {
 
           {/* Admin routes — RequireAdmin enforces platform_admin access */}
           <Route element={<RequireAdmin />}>
+          <Route path="/admin/onboarding" element={<AdminClientOnboarding />} />
           <Route path="/admin/onboard-client" element={<Navigate to="/admin/onboarding" replace />} />
           <Route path="/admin/usage-analytics" element={<UsageAnalytics />} />
           <Route path="/iot-platform" element={<IoTSensorPlatform />} />
@@ -786,11 +776,6 @@ function AppRoutes() {
           <Route path="/admin/demo-launcher" element={<SalesGuard><DemoLauncher /></SalesGuard>} />
           <Route path="/admin/demos" element={<Navigate to="/admin/demo-pipeline" replace />} />
           <Route path="/admin/demo-pipeline" element={<SalesGuard><DemoPipeline /></SalesGuard>} />
-          <Route path="/admin/demo-tours" element={<SalesGuard><DemoTours /></SalesGuard>} />
-          <Route path="/admin/partner-demos" element={<SalesGuard><PartnerDemos /></SalesGuard>} />
-          <Route path="/partner/vendor-demo" element={<SalesGuard><VendorDemoDashboard /></SalesGuard>} />
-          <Route path="/partner/association-demo" element={<SalesGuard><AssociationDemoDashboard /></SalesGuard>} />
-          <Route path="/partner/carrier-demo" element={<SalesGuard><CarrierDemoDashboard /></SalesGuard>} />
           <Route path="/admin/kitchen-checkup" element={<SalesGuard><AssessmentLeads /></SalesGuard>} />
           <Route path="/admin/scoretable" element={<SalesGuard><AdminScoreTable /></SalesGuard>} />
           <Route path="/admin/testimonials" element={<SalesGuard><AdminTestimonials /></SalesGuard>} />
@@ -846,7 +831,6 @@ function AppRoutes() {
           <Route path="/insights/vendor-performance" element={<VendorPerformancePage />} />
           <Route path="/insights/signals" element={<JurisdictionSignalsPage />} />
           <Route path="/insights/leaderboard" element={<TeamLeaderboardPage />} />
-          <Route path="/insights/operations-intelligence" element={<OperationsIntelligencePage />} />
           {/* Stub routes for upcoming features */}
           <Route path="/tasks" element={<TaskManager />} />
           <Route path="/vendors/review" element={<VendorDocumentReview />} />
@@ -910,7 +894,7 @@ function App() {
                         </GlobalErrorHandlers>
                       </NotificationProvider>
                       <CookieConsent />
-                      <Toaster position="top-right" richColors closeButton duration={4000} toastOptions={{ style: { borderRadius: '12px', boxShadow: '0 8px 30px rgba(0,0,0,0.12)' } }} />
+                      <Toaster position="top-right" richColors closeButton duration={3000} />
                     </InactivityProvider>
                   </OfflineProvider>
                 </OperatingHoursProvider>

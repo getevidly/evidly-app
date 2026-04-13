@@ -147,7 +147,7 @@ function OutbreakCard({ signal }: { signal: BISignal }) {
   return (
     <>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
-        <span className="text-base">🚨</span>
+        <span style={{ fontSize: 16 }}>🚨</span>
         <TypePill type="outbreak" />
         <span style={{ fontSize: 11, color: TEXT_TERTIARY, marginLeft: 'auto' }}>
           {formatDate(signal.published_at)}
@@ -174,7 +174,7 @@ function OutbreakCard({ signal }: { signal: BISignal }) {
         </div>
       )}
       {signal.outbreak_source_url && (
-        <div className="text-xs">
+        <div style={{ fontSize: 12 }}>
           <strong style={{ color: '#3D5068' }}>Source: </strong>
           <a
             href={signal.outbreak_source_url}

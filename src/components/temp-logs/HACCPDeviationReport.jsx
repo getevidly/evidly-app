@@ -111,7 +111,7 @@ export function HACCPDeviationReport({ violation, onClose }) {
                 onClick={generate}
                 style={{
                   padding: '10px 24px', fontSize: 14, fontWeight: 600,
-                  backgroundColor: '#1E2D4D', color: '#fff', border: 'none',
+                  backgroundColor: '#1e4d6b', color: '#fff', border: 'none',
                   borderRadius: 8, cursor: 'pointer',
                 }}
               >
@@ -130,7 +130,7 @@ export function HACCPDeviationReport({ violation, onClose }) {
             <div style={{ textAlign: 'center', padding: '24px 0' }}>
               <p style={{ fontSize: 13, color: '#DC2626', marginBottom: 12 }}>{error}</p>
               <button onClick={generate} style={{
-                padding: '8px 16px', fontSize: 13, backgroundColor: '#1E2D4D',
+                padding: '8px 16px', fontSize: 13, backgroundColor: '#1e4d6b',
                 color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer',
               }}>
                 Retry
@@ -160,7 +160,7 @@ export function HACCPDeviationReport({ violation, onClose }) {
                 <button onClick={handlePrint} style={{
                   flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
                   padding: '10px 0', fontSize: 13, fontWeight: 600, border: 'none',
-                  borderRadius: 8, background: '#1E2D4D', cursor: 'pointer', color: '#fff',
+                  borderRadius: 8, background: '#1e4d6b', cursor: 'pointer', color: '#fff',
                 }}>
                   <Printer size={14} />
                   Print / PDF

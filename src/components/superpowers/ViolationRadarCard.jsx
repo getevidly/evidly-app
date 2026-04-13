@@ -15,7 +15,7 @@ export function ViolationRadarCard({ risks }) {
           <div className="p-2 bg-[#F4F6FA] rounded-lg">
             <Target className="h-5 w-5 text-[#1E2D4D]" />
           </div>
-          <h3 className="text-lg font-semibold tracking-tight text-[#0B1628]">Violation Risk Radar</h3>
+          <h3 className="text-lg font-semibold text-[#0B1628]">Violation Risk Radar</h3>
         </div>
         <div className="text-center py-8">
           <ShieldAlert className="h-10 w-10 text-[#D1D9E6] mx-auto mb-3" />
@@ -33,7 +33,7 @@ export function ViolationRadarCard({ risks }) {
           <div className="p-2 bg-[#F4F6FA] rounded-lg">
             <Target className="h-5 w-5 text-[#1E2D4D]" />
           </div>
-          <h3 className="text-lg font-semibold tracking-tight text-[#0B1628]">Violation Risk Radar</h3>
+          <h3 className="text-lg font-semibold text-[#0B1628]">Violation Risk Radar</h3>
         </div>
         <span className="text-xs text-[#6B7F96]">{risks.length} potential risk{risks.length !== 1 ? 's' : ''}</span>
       </div>
@@ -42,13 +42,13 @@ export function ViolationRadarCard({ risks }) {
         {risks.map((risk, i) => {
           const style = SEVERITY_STYLES[risk.severity];
           return (
-            <div key={i} className="border border-[#E8EDF5] rounded-xl p-4">
+            <div key={i} className="border border-[#E8EDF5] rounded-lg p-4">
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <AlertTriangle className={`h-4 w-4 ${style.text}`} />
                   <span className="text-sm font-medium text-[#0B1628]">{risk.category}</span>
                 </div>
-                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${style.bg} ${style.text}`}>
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${style.bg} ${style.text}`}>
                   {style.label}
                 </span>
               </div>
@@ -56,7 +56,7 @@ export function ViolationRadarCard({ risks }) {
 
               {/* Probability bar */}
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs text-[#6B7F96] w-20">Estimated risk</span>
+                <span className="text-[10px] text-[#6B7F96] w-20">Estimated risk</span>
                 <div className="flex-1 h-2 bg-[#EEF1F7] rounded-full overflow-hidden">
                   <div
                     className={`h-full rounded-full transition-all ${
@@ -73,14 +73,14 @@ export function ViolationRadarCard({ risks }) {
               {/* Suggested action */}
               <div className="flex items-start gap-1.5 mt-2 p-2 bg-[#F4F6FA] rounded">
                 <Info className="h-3 w-3 text-[#6B7F96] mt-0.5 flex-shrink-0" />
-                <p className="text-xs text-[#6B7F96]">{risk.suggestedAction}</p>
+                <p className="text-[11px] text-[#6B7F96]">{risk.suggestedAction}</p>
               </div>
             </div>
           );
         })}
       </div>
 
-      <p className="text-xs text-[#6B7F96] border-t border-[#E8EDF5] pt-3">
+      <p className="text-[10px] text-[#6B7F96] border-t border-[#E8EDF5] pt-3">
         This analysis is advisory only — risk estimates are based on current operational data and may not reflect actual inspection outcomes. Inspector findings are determined solely by your local health authority.
       </p>
     </div>

@@ -78,7 +78,7 @@ export function AvailabilityEditor({ technician, weekStart, onClose }: Availabil
             <h2 className="text-base font-bold" style={{ color: NAVY }}>Set Availability</h2>
             <p className="text-xs mt-0.5" style={{ color: TEXT_TERTIARY }}>{technician.name}</p>
           </div>
-          <button onClick={onClose} className="p-2.5 -m-1 rounded hover:bg-[#1E2D4D]/5" aria-label="Close">
+          <button onClick={onClose} className="p-2.5 -m-1 rounded hover:bg-gray-100" aria-label="Close">
             <X className="w-4 h-4" style={{ color: TEXT_TERTIARY }} />
           </button>
         </div>
@@ -96,9 +96,9 @@ export function AvailabilityEditor({ technician, weekStart, onClose }: Availabil
           {slots.map((slot, idx) => (
             <div
               key={slot.date}
-              className="flex items-center gap-3 p-2.5 rounded-xl border transition-colors"
+              className="flex items-center gap-3 p-2.5 rounded-lg border transition-colors"
               style={{
-                borderColor: slot.available ? '#1E2D4D40' : CARD_BORDER,
+                borderColor: slot.available ? '#1e4d6b40' : CARD_BORDER,
                 background: slot.available ? '#F0F7FF' : '#F9FAFB',
                 opacity: slot.available ? 1 : 0.6,
               }}
@@ -109,8 +109,8 @@ export function AvailabilityEditor({ technician, weekStart, onClose }: Availabil
                 onClick={() => updateSlot(idx, { available: !slot.available })}
                 className="w-5 h-5 rounded border flex items-center justify-center flex-shrink-0"
                 style={{
-                  borderColor: slot.available ? '#1E2D4D' : CARD_BORDER,
-                  background: slot.available ? '#1E2D4D' : 'white',
+                  borderColor: slot.available ? '#1e4d6b' : CARD_BORDER,
+                  background: slot.available ? '#1e4d6b' : 'white',
                 }}
               >
                 {slot.available && <Check className="w-3 h-3 text-white" />}
@@ -128,20 +128,20 @@ export function AvailabilityEditor({ technician, weekStart, onClose }: Availabil
                     type="time"
                     value={slot.startTime}
                     onChange={e => updateSlot(idx, { startTime: e.target.value })}
-                    className="px-2 py-1 text-xs rounded border w-20"
+                    className="px-2 py-1 text-[10px] rounded border w-20"
                     style={{ borderColor: CARD_BORDER, color: NAVY }}
                   />
-                  <span className="text-xs" style={{ color: TEXT_TERTIARY }}>to</span>
+                  <span className="text-[10px]" style={{ color: TEXT_TERTIARY }}>to</span>
                   <input
                     type="time"
                     value={slot.endTime}
                     onChange={e => updateSlot(idx, { endTime: e.target.value })}
-                    className="px-2 py-1 text-xs rounded border w-20"
+                    className="px-2 py-1 text-[10px] rounded border w-20"
                     style={{ borderColor: CARD_BORDER, color: NAVY }}
                   />
                 </div>
               ) : (
-                <span className="text-xs font-medium" style={{ color: MUTED }}>Day off</span>
+                <span className="text-[10px] font-medium" style={{ color: MUTED }}>Day off</span>
               )}
             </div>
           ))}
@@ -151,7 +151,7 @@ export function AvailabilityEditor({ technician, weekStart, onClose }: Availabil
         <div className="flex justify-end gap-2 px-5 py-4 border-t" style={{ borderColor: CARD_BORDER }}>
           <button
             onClick={onClose}
-            className="px-4 py-2 text-xs font-semibold rounded-xl border hover:bg-[#FAF7F0]"
+            className="px-4 py-2 text-xs font-semibold rounded-lg border hover:bg-gray-50"
             style={{ borderColor: CARD_BORDER, color: NAVY }}
           >
             Cancel
@@ -159,7 +159,7 @@ export function AvailabilityEditor({ technician, weekStart, onClose }: Availabil
           <button
             onClick={handleSave}
             className="px-4 py-2 text-xs font-semibold rounded-lg text-white"
-            style={{ background: '#1E2D4D' }}
+            style={{ background: '#1e4d6b' }}
           >
             Save Availability
           </button>

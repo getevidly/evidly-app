@@ -86,7 +86,7 @@ function Banner({type,st,h,s}){
 function renderRow(row,i,oa){
   if(row[0]==="!"){
     const crit=row[1]==="c";
-    return <Row key={i} bg={crit?"#fef2f2":"white"}><span className="text-xs">{crit?"🔴":"🟡"}</span><div style={{flex:1}}><div style={{fontWeight:600,color:crit?"#991b1b":BODY,...FF}}>{row[2]}</div><div style={{fontSize:10,color:MUTED,...FF}}>{row[3]}</div></div><Btn l="View" s o oc={()=>oa?.("View",{primary:row[2],secondary:row[3]})}/></Row>;
+    return <Row key={i} bg={crit?"#fef2f2":"white"}><span style={{fontSize:12}}>{crit?"🔴":"🟡"}</span><div style={{flex:1}}><div style={{fontSize:12,fontWeight:600,color:crit?"#991b1b":BODY,...FF}}>{row[2]}</div><div style={{fontSize:10,color:MUTED,...FF}}>{row[3]}</div></div><Btn l="View" s o oc={()=>oa?.("View",{primary:row[2],secondary:row[3]})}/></Row>;
   }
   if(row[0]==="~"){
     return <div key={i} style={{display:"flex",alignItems:"center",gap:10,marginBottom:7,...FF}}><span style={{fontSize:11,color:MUTED,width:160,flexShrink:0}}>{row[1]}</span><div style={{flex:1,height:7,background:"#F3F4F6",borderRadius:3,overflow:"hidden"}}><div style={{height:"100%",width:`${row[2]}%`,background:row[3]||"#166534",borderRadius:3}}/></div><span style={{fontSize:11,fontWeight:700,color:row[3]||"#166534",width:32,textAlign:"right"}}>{row[2]}%</span></div>;
@@ -482,12 +482,12 @@ function Dashboard({role,sample,oa}){
       </div>
     </div>
     <Card t="My Tasks — Today">
-      <Row><div style={{width:16,height:16,borderRadius:4,border:"2px solid #16a34a",background:"#f0fdf4",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><span style={{fontSize:8,color:"#16a34a",fontWeight:900}}>✓</span></div><span className="text-xs">📋</span><div style={{flex:1,fontSize:12,color:"#9ca3af",textDecoration:"line-through",...FF}}>Morning opening checklist</div><span style={{fontSize:10,color:MUTED,...FF}}>6:15 AM</span></Row>
-      <Row><div style={{width:16,height:16,borderRadius:4,border:"2px solid #d1d5db",background:"#f9fafb",flexShrink:0}}/><span className="text-xs">🌡️</span><div style={{flex:1,color:BODY,...FF}}>Check prep cooler temperature</div><span style={{fontSize:10,color:MUTED,...FF}}>Due 2:00 PM</span><Btn l="Start" s oc={()=>oa?.("Start",{primary:"Log Temperature — Prep Cooler"})}/></Row>
-      <Row><div style={{width:16,height:16,borderRadius:4,border:"2px solid #d1d5db",background:"#f9fafb",flexShrink:0}}/><span className="text-xs">🌡️</span><div style={{flex:1,color:BODY,...FF}}>Check walk-in cooler #2</div><span style={{fontSize:10,color:MUTED,...FF}}>Due 2:00 PM</span><Btn l="Start" s oc={()=>oa?.("Start",{primary:"Log Temperature — Walk-in Cooler #2"})}/></Row>
+      <Row><div style={{width:16,height:16,borderRadius:4,border:"2px solid #16a34a",background:"#f0fdf4",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><span style={{fontSize:8,color:"#16a34a",fontWeight:900}}>✓</span></div><span style={{fontSize:12}}>📋</span><div style={{flex:1,fontSize:12,color:"#9ca3af",textDecoration:"line-through",...FF}}>Morning opening checklist</div><span style={{fontSize:10,color:MUTED,...FF}}>6:15 AM</span></Row>
+      <Row><div style={{width:16,height:16,borderRadius:4,border:"2px solid #d1d5db",background:"#f9fafb",flexShrink:0}}/><span style={{fontSize:12}}>🌡️</span><div style={{flex:1,fontSize:12,color:BODY,...FF}}>Check prep cooler temperature</div><span style={{fontSize:10,color:MUTED,...FF}}>Due 2:00 PM</span><Btn l="Start" s oc={()=>oa?.("Start",{primary:"Log Temperature — Prep Cooler"})}/></Row>
+      <Row><div style={{width:16,height:16,borderRadius:4,border:"2px solid #d1d5db",background:"#f9fafb",flexShrink:0}}/><span style={{fontSize:12}}>🌡️</span><div style={{flex:1,fontSize:12,color:BODY,...FF}}>Check walk-in cooler #2</div><span style={{fontSize:10,color:MUTED,...FF}}>Due 2:00 PM</span><Btn l="Start" s oc={()=>oa?.("Start",{primary:"Log Temperature — Walk-in Cooler #2"})}/></Row>
     </Card>
     <div style={{background:"#fef2f2",border:"1px solid #fecaca",borderRadius:8,padding:"12px 14px",display:"flex",gap:10,alignItems:"center"}}>
-      <span className="text-xl">⚠️</span><div style={{flex:1}}><div style={{fontWeight:700,color:"#991b1b",...FF}}>See something wrong?</div><div style={{fontSize:11,color:"#7f1d1d",...FF}}>Report it immediately.</div></div><Btn l="Report Issue" d oc={()=>oa?.("Report Issue",{})}/>
+      <span style={{fontSize:20}}>⚠️</span><div style={{flex:1}}><div style={{fontSize:12,fontWeight:700,color:"#991b1b",...FF}}>See something wrong?</div><div style={{fontSize:11,color:"#7f1d1d",...FF}}>Report it immediately.</div></div><Btn l="Report Issue" d oc={()=>oa?.("Report Issue",{})}/>
     </div>
   </div>;
 

@@ -67,7 +67,7 @@ export interface Employee {
 export const ROLE_CONFIG: Record<EmployeeRole, { label: string; color: string; bg: string }> = {
   owner:      { label: 'Owner',      color: '#7c3aed', bg: '#f5f3ff' },
   admin:      { label: 'Admin',      color: '#4f46e5', bg: '#eef2ff' },
-  supervisor: { label: 'Supervisor', color: '#1E2D4D', bg: '#eff6ff' },
+  supervisor: { label: 'Supervisor', color: '#1e4d6b', bg: '#eff6ff' },
   technician: { label: 'Technician', color: '#16a34a', bg: '#f0fdf4' },
   office:     { label: 'Office',     color: '#0d9488', bg: '#f0fdfa' },
 };

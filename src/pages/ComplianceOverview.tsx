@@ -113,7 +113,7 @@ const STATUS_COLORS: Record<string, { bg: string; text: string; border: string; 
 
 function ProgressBar({ value, color }: { value: number; color: string }) {
   return (
-    <div className="w-full h-2 bg-[#1E2D4D]/5 rounded-full overflow-hidden">
+    <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
       <div
         className="h-full rounded-full transition-all duration-500"
         style={{ width: `${Math.min(100, Math.max(0, value))}%`, backgroundColor: color }}
@@ -174,15 +174,15 @@ function PillarSkeleton({ pillar }: { pillar: 'food_safety' | 'facility_safety' 
   const Icon = pillar === 'food_safety' ? UtensilsCrossed : Flame;
   const label = pillar === 'food_safety' ? 'Food Safety' : 'Facility Safety';
   return (
-    <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden animate-pulse">
-      <div className="px-4 sm:px-5 py-4 border-b border-[#1E2D4D]/5 flex items-center gap-3">
-        <Icon className="w-5 h-5 text-[#1E2D4D]/30" />
-        <h2 className="text-lg font-bold text-[#1E2D4D]/30">{label}</h2>
+    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden animate-pulse">
+      <div className="px-4 sm:px-5 py-4 border-b border-gray-100 flex items-center gap-3">
+        <Icon className="w-5 h-5 text-gray-300" />
+        <h2 className="text-lg font-bold text-gray-400">{label}</h2>
       </div>
       <div className="p-4 sm:p-5 space-y-4">
-        <div className="h-20 bg-[#1E2D4D]/5 rounded-lg" />
-        <div className="h-16 bg-[#1E2D4D]/5 rounded-lg" />
-        <div className="h-12 bg-[#1E2D4D]/5 rounded-lg" />
+        <div className="h-20 bg-gray-100 rounded-lg" />
+        <div className="h-16 bg-gray-100 rounded-lg" />
+        <div className="h-12 bg-gray-100 rounded-lg" />
       </div>
     </div>
   );
@@ -203,7 +203,7 @@ interface AhjCardProps {
 function AhjCard({ label, grade, summary, authority, status, lastInspectionDate, isFederal }: AhjCardProps) {
   const statusColors = STATUS_COLORS[status] || STATUS_COLORS.at_risk;
   return (
-    <div className={`rounded-xl p-4 border ${statusColors.bg} ${statusColors.border}`}>
+    <div className={`rounded-lg p-4 border ${statusColors.bg} ${statusColors.border}`}>
       <div className="flex items-start gap-3">
         <div
           className="w-3 h-3 rounded-full mt-1 flex-shrink-0"
@@ -212,7 +212,7 @@ function AhjCard({ label, grade, summary, authority, status, lastInspectionDate,
         <div className="flex-1">
           {/* AHJ label (Primary / Federal Overlay) */}
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-semibold px-1.5 py-0.5 rounded uppercase tracking-wider"
+            <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded uppercase tracking-wider"
               style={{
                 color: isFederal ? '#92400e' : NAVY,
                 backgroundColor: isFederal ? '#fef3c7' : '#F0F3F7',
@@ -225,12 +225,12 @@ function AhjCard({ label, grade, summary, authority, status, lastInspectionDate,
           <div className={`text-base font-bold ${statusColors.text}`}>
             {grade || '—'}
           </div>
-          <div className="text-sm text-[#1E2D4D]/70 mt-1">{summary}</div>
-          <div className="text-xs text-[#1E2D4D]/30 mt-2">
+          <div className="text-sm text-gray-600 mt-1">{summary}</div>
+          <div className="text-xs text-gray-400 mt-2">
             Authority: {authority}
           </div>
           {lastInspectionDate && (
-            <div className="flex items-center gap-1.5 text-xs text-[#1E2D4D]/30 mt-1">
+            <div className="flex items-center gap-1.5 text-xs text-gray-400 mt-1">
               <Calendar className="w-3 h-3" />
               <span>Last inspection: {formatInspectionDate(lastInspectionDate)}</span>
             </div>
@@ -294,7 +294,7 @@ function PillarPanel({
   const hasMultiAhj = !!federalOverlay;
 
   return (
-    <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
+    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
       {/* Pillar Header */}
       <div
         className="px-4 sm:px-5 py-4 border-b flex items-center gap-3"
@@ -304,7 +304,7 @@ function PillarPanel({
         <h2 className="text-lg font-bold" style={{ color: NAVY }}>{label}</h2>
         {hasMultiAhj && (
           <span
-            className="text-xs font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1"
+            className="text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1"
             style={{ color: '#92400e', backgroundColor: '#fef3c7', border: '1px solid #fbbf24' }}
           >
             <Shield className="w-3 h-3" />
@@ -322,7 +322,7 @@ function PillarPanel({
               Jurisdiction Status
             </h3>
             {hasMultiAhj && (
-              <span className="text-xs text-[#1E2D4D]/30">
+              <span className="text-[10px] text-gray-400">
                 Resolved: {resolvedStatus === 'passing' ? 'Passing' : resolvedStatus === 'at_risk' ? 'At Risk' : 'Failing'}
               </span>
             )}
@@ -353,14 +353,14 @@ function PillarPanel({
               )}
             </div>
           ) : (
-            <div className="rounded-xl p-4 border border-[#1E2D4D]/10 bg-[#FAF7F0]">
+            <div className="rounded-lg p-4 border border-gray-200 bg-gray-50">
               <div className="flex items-start gap-3">
-                <Info className="w-5 h-5 text-[#1E2D4D]/30 flex-shrink-0 mt-0.5" />
+                <Info className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
                 <div>
-                  <div className="text-sm font-medium text-[#1E2D4D]/70">
+                  <div className="text-sm font-medium text-gray-600">
                     {label} jurisdiction not configured
                   </div>
-                  <div className="text-xs text-[#1E2D4D]/30 mt-1">
+                  <div className="text-xs text-gray-400 mt-1">
                     No verified jurisdiction methodology is available for {label.toLowerCase()} at this location.
                   </div>
                   <button
@@ -384,7 +384,7 @@ function PillarPanel({
               EvidLY Score
             </h3>
             <span
-              className="text-xs font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider border"
+              className="text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider border"
               style={{ color: NAVY, backgroundColor: '#F0F3F7', borderColor: '#D1D9E6' }}
             >
               EvidLY Internal
@@ -394,7 +394,7 @@ function PillarPanel({
           <div className="space-y-3">
             {/* Overall pillar score */}
             <div className="flex items-center justify-between">
-              <span className="text-sm text-[#1E2D4D]/70">Overall</span>
+              <span className="text-sm text-gray-600">Overall</span>
               <span className="text-xl font-bold" style={{ color: hasScore ? scoreColor : '#94a3b8' }}>
                 {scoreDisplay(score)}
               </span>
@@ -403,15 +403,15 @@ function PillarPanel({
 
             {/* Sub-scores */}
             <div className="grid grid-cols-2 gap-3 pt-2">
-              <div className="bg-[#FAF7F0] rounded-lg p-3">
-                <div className="text-xs text-[#1E2D4D]/50 mb-1">Operations</div>
+              <div className="bg-gray-50 rounded-lg p-3">
+                <div className="text-xs text-gray-500 mb-1">Operations</div>
                 <div className="text-lg font-bold" style={{ color: opsColor }}>
                   {scoreDisplay(opsScore)}
                 </div>
                 {opsScore != null && opsScore > 0 && <ProgressBar value={opsScore} color={opsColor} />}
               </div>
-              <div className="bg-[#FAF7F0] rounded-lg p-3">
-                <div className="text-xs text-[#1E2D4D]/50 mb-1">Documentation</div>
+              <div className="bg-gray-50 rounded-lg p-3">
+                <div className="text-xs text-gray-500 mb-1">Documentation</div>
                 <div className="text-lg font-bold" style={{ color: docsColor }}>
                   {scoreDisplay(docsScore)}
                 </div>
@@ -424,7 +424,7 @@ function PillarPanel({
         {/* ── Section 3: Fire Equipment Status (Facility Safety only) ── */}
         {facilityStatusBars && (
           <div>
-            <div className="text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider mb-2">
+            <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
               Equipment &amp; Permit Status
             </div>
             <FireStatusBars
@@ -440,18 +440,18 @@ function PillarPanel({
         {/* ── Section 4: Tracked Items ── */}
         {impactItems.length > 0 && (
           <div>
-            <div className="text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider mb-2">
+            <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
               Tracked Items
             </div>
-            <div className="border border-[#1E2D4D]/10 rounded-xl overflow-hidden divide-y divide-[#1E2D4D]/5">
+            <div className="border border-gray-200 rounded-lg overflow-hidden divide-y divide-gray-100">
               {impactItems.map((item, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center gap-3 px-3 sm:px-4 py-2.5 hover:bg-[#FAF7F0] transition-colors"
+                  className="flex items-center gap-3 px-3 sm:px-4 py-2.5 hover:bg-gray-50 transition-colors"
                 >
                   <StatusIcon status={item.status} />
                   <div className="flex-1 min-w-0">
-                    <span className="text-sm text-[#1E2D4D]/90">{item.label}</span>
+                    <span className="text-sm text-gray-800">{item.label}</span>
                   </div>
                   <span className={`text-xs font-medium ${
                     item.status === 'current' ? 'text-green-600'
@@ -488,10 +488,10 @@ export function ComplianceOverview() {
   if (!isDemoMode) {
     return (
       <div className="space-y-6">
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-12 text-center">
-          <ClipboardCheck className="mx-auto h-12 w-12 text-[#1E2D4D]/30 mb-4" />
-          <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D]/80 mb-2">No compliance data yet</h2>
-          <p className="text-sm text-[#1E2D4D]/50 mb-6">
+        <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
+          <ClipboardCheck className="mx-auto h-12 w-12 text-gray-300 mb-4" />
+          <h2 className="text-lg font-semibold text-gray-700 mb-2">No compliance data yet</h2>
+          <p className="text-sm text-gray-500 mb-6">
             Add locations and complete checklists to see your compliance overview.
           </p>
           <button
@@ -664,8 +664,8 @@ export function ComplianceOverview() {
           <ArrowLeft className="h-4 w-4" />
           Back to Dashboard
         </button>
-        <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Compliance Overview</h1>
-        <p className="text-[#1E2D4D]/50 text-sm mt-1">
+        <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Compliance Overview</h1>
+        <p className="text-gray-500 text-sm mt-1">
           {selectedLocation.name} &mdash; {county} County
           {(hasFoodOverlay || hasFireOverlay) && (
             <span className="ml-2 text-amber-700 font-medium">(Multi-AHJ)</span>
@@ -674,7 +674,7 @@ export function ComplianceOverview() {
       </div>
 
       {/* Location Tabs */}
-      <div className="flex gap-1 bg-[#1E2D4D]/5 rounded-lg p-1 w-fit flex-wrap">
+      <div className="flex gap-1 bg-gray-100 rounded-lg p-1 w-fit flex-wrap">
         {ALL_LOCATION_TABS.map(loc => (
           <button
             key={loc.urlId}
@@ -682,7 +682,7 @@ export function ComplianceOverview() {
             className={`px-4 py-2 text-sm font-medium rounded-md transition-colors min-h-[44px] ${
               loc.urlId === locationParam
                 ? 'bg-white shadow-sm'
-                : 'text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
+                : 'text-gray-500 hover:text-gray-700'
             }`}
             style={loc.urlId === locationParam ? { color: NAVY } : undefined}
           >
@@ -752,11 +752,11 @@ export function ComplianceOverview() {
 function CorrectiveActionsSummary({ locationId, navigate }: { locationId: string; navigate: (p: string) => void }) {
   // No seeded data — in production, this queries Supabase for open CAs
   return (
-    <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
+    <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold text-[#1E2D4D]/90">Open Corrective Actions</h3>
+        <h3 className="text-sm font-semibold text-gray-800">Open Corrective Actions</h3>
       </div>
-      <p className="text-xs text-[#1E2D4D]/30">No open corrective actions for this location.</p>
+      <p className="text-xs text-gray-400">No open corrective actions for this location.</p>
     </div>
   );
 }

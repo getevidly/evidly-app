@@ -130,7 +130,7 @@ export default function AIChatWidget() {
         <button
           onClick={() => { trackEvent('chat_widget_open', { page: 'landing' }); setIsOpen(true); }}
           className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white hover:scale-110 transition-transform"
-          style={{ backgroundColor: '#1E2D4D' }}
+          style={{ backgroundColor: '#1e4d6b' }}
           aria-label="Open compliance chat"
         >
           <MessageCircle className="w-6 h-6" />
@@ -139,11 +139,11 @@ export default function AIChatWidget() {
 
       {/* Chat panel */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 z-50 w-[360px] max-w-[calc(100vw-2rem)] max-h-[520px] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-[#1E2D4D]/10">
+        <div className="fixed bottom-6 right-6 z-50 w-[360px] max-w-[calc(100vw-2rem)] max-h-[520px] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200">
           {/* Header */}
           <div
             className="px-4 py-3 flex items-center justify-between text-white flex-shrink-0"
-            style={{ backgroundColor: '#1E2D4D' }}
+            style={{ backgroundColor: '#1e4d6b' }}
           >
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-sm">
@@ -170,8 +170,8 @@ export default function AIChatWidget() {
                 <div
                   className={`max-w-[85%] px-3 py-2 rounded-xl text-sm leading-relaxed ${
                     msg.role === 'user'
-                      ? 'bg-[#eef4f8] text-[#1E2D4D]/90'
-                      : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/80'
+                      ? 'bg-[#eef4f8] text-gray-800'
+                      : 'bg-gray-100 text-gray-700'
                   }`}
                 >
                   {msg.content}
@@ -179,7 +179,7 @@ export default function AIChatWidget() {
                     <button
                       onClick={() => navigate('/demo')}
                       className="block mt-2 text-sm font-medium hover:underline bg-transparent border-none cursor-pointer p-0"
-                      style={{ color: '#1E2D4D' }}
+                      style={{ color: '#1e4d6b' }}
                     >
                       Try the interactive demo &rarr;
                     </button>
@@ -190,7 +190,7 @@ export default function AIChatWidget() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="block mt-2 text-sm font-medium hover:underline"
-                      style={{ color: '#1E2D4D' }}
+                      style={{ color: '#1e4d6b' }}
                     >
                       Book a live walkthrough &rarr;
                     </a>
@@ -199,7 +199,7 @@ export default function AIChatWidget() {
                     <button
                       onClick={() => navigate('/signup')}
                       className="block mt-2 text-sm font-medium hover:underline bg-transparent border-none cursor-pointer p-0"
-                      style={{ color: '#1E2D4D' }}
+                      style={{ color: '#1e4d6b' }}
                     >
                       Sign up for full access &rarr;
                     </button>
@@ -209,7 +209,7 @@ export default function AIChatWidget() {
             ))}
             {loading && (
               <div className="flex justify-start">
-                <div className="bg-[#1E2D4D]/5 px-3 py-2 rounded-xl text-sm text-[#1E2D4D]/30">
+                <div className="bg-gray-100 px-3 py-2 rounded-xl text-sm text-gray-400">
                   <span className="inline-flex gap-1">
                     <span className="animate-bounce" style={{ animationDelay: '0ms' }}>.</span>
                     <span className="animate-bounce" style={{ animationDelay: '150ms' }}>.</span>
@@ -229,7 +229,7 @@ export default function AIChatWidget() {
                   key={i}
                   onClick={() => handleSend(q)}
                   className="text-xs px-3 py-1.5 rounded-full border transition-colors bg-transparent cursor-pointer"
-                  style={{ borderColor: '#b8d4e8', color: '#1E2D4D' }}
+                  style={{ borderColor: '#b8d4e8', color: '#1e4d6b' }}
                   onMouseEnter={e => {
                     (e.target as HTMLElement).style.backgroundColor = '#eef4f8';
                   }}
@@ -253,24 +253,24 @@ export default function AIChatWidget() {
                   onChange={e => setInput(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && handleSend()}
                   placeholder="Ask about compliance..."
-                  className="flex-1 px-3 py-2 border border-[#1E2D4D]/10 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#b8d4e8] focus:border-[#1E2D4D]"
+                  className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#b8d4e8] focus:border-[#1e4d6b]"
                 />
                 <button
                   onClick={() => handleSend()}
                   disabled={!input.trim() || loading}
                   className="px-3 py-2 rounded-lg text-white text-sm font-medium disabled:opacity-50 transition-colors"
-                  style={{ backgroundColor: '#A08C5A' }}
+                  style={{ backgroundColor: '#d4af37' }}
                 >
                   <Send className="w-4 h-4" />
                 </button>
               </div>
             ) : (
-              <p className="text-xs text-[#1E2D4D]/50 text-center py-2">
+              <p className="text-xs text-gray-500 text-center py-2">
                 You've reached the chat limit.{' '}
                 <button
                   onClick={() => navigate('/signup')}
                   className="font-medium bg-transparent border-none cursor-pointer p-0 underline"
-                  style={{ color: '#1E2D4D' }}
+                  style={{ color: '#1e4d6b' }}
                 >
                   Sign up
                 </button>{' '}

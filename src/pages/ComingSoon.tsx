@@ -27,7 +27,7 @@ export function ComingSoon({ title, description }: ComingSoonProps) {
           padding: '4px 14px',
           fontSize: 11,
           fontWeight: 700,
-          color: '#1E2D4D',
+          color: '#1e4d6b',
           letterSpacing: '0.5px',
           textTransform: 'uppercase',
           marginBottom: 16,
@@ -38,7 +38,7 @@ export function ComingSoon({ title, description }: ComingSoonProps) {
         <h1 style={{
           fontSize: 22,
           fontWeight: 800,
-          color: '#1E2D4D',
+          color: '#1e4d6b',
           margin: '0 0 8px',
         }}>
           {title}
@@ -58,7 +58,7 @@ export function ComingSoon({ title, description }: ComingSoonProps) {
         <button
           onClick={() => navigate(-1)}
           style={{
-            background: '#1E2D4D',
+            background: '#1e4d6b',
             color: '#ffffff',
             border: 'none',
             borderRadius: 8,

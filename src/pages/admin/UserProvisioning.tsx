@@ -174,7 +174,7 @@ export default function UserProvisioning() {
     <div className="space-y-6">
       <AdminBreadcrumb crumbs={[{ label: 'User Provisioning' }]} />
       <div>
-        <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>User Provisioning</h1>
+        <h1 className="text-2xl font-bold" style={{ color: NAVY }}>User Provisioning</h1>
         <p style={{ fontSize: 13, color: TEXT_SEC, marginTop: 4 }}>
           Invite users, create accounts, and manage roles across all organizations.
         </p>

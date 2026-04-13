@@ -47,10 +47,10 @@ export function Upgrade() {
       <div className="max-w-3xl mx-auto space-y-8">
         {/* Hero */}
         <div className="text-center">
-          <h1 className="text-2xl font-bold tracking-tight mb-2" style={{ color: '#1E2D4D' }}>
+          <h1 className="text-2xl font-bold mb-2" style={{ color: '#1E2D4D' }}>
             Your hood is covered. Protect your whole kitchen.
           </h1>
-          <p className="text-[#1E2D4D]/50 text-sm max-w-lg mx-auto">
+          <p className="text-gray-500 text-sm max-w-lg mx-auto">
             You're getting free hood cleaning compliance through your CPP relationship.
             Upgrade to protect every aspect of your kitchen's compliance.
           </p>
@@ -79,7 +79,7 @@ export function Upgrade() {
               <p className="text-xs font-semibold" style={{ color: p.color }}>
                 Pillar {p.num}
               </p>
-              <p className="text-xs text-[#1E2D4D]/50 mt-0.5">{p.label}</p>
+              <p className="text-xs text-gray-500 mt-0.5">{p.label}</p>
             </div>
           ))}
         </div>
@@ -87,17 +87,17 @@ export function Upgrade() {
         {/* Comparison */}
         <div className="grid md:grid-cols-2 gap-6">
           {/* CPP Free */}
-          <div className="rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
-            <div className="px-5 py-4 border-b border-[#1E2D4D]/5">
-              <p className="text-xs font-semibold text-[#1E2D4D]/30 uppercase tracking-wider">Current Plan</p>
-              <p className="text-lg font-bold text-[#1E2D4D] mt-1">CPP Free</p>
-              <p className="text-xs text-[#1E2D4D]/50">Included with your CPP service</p>
+          <div className="rounded-xl border border-gray-200 overflow-hidden">
+            <div className="px-5 py-4 border-b border-gray-100">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Current Plan</p>
+              <p className="text-lg font-bold text-gray-900 mt-1">CPP Free</p>
+              <p className="text-xs text-gray-500">Included with your CPP service</p>
             </div>
             <div className="px-5 py-4 space-y-3">
               {FREE_FEATURES.map((f, i) => (
                 <div key={i} className="flex items-start gap-2">
                   <Check className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                  <span className="text-sm text-[#1E2D4D]/80">{f.label}</span>
+                  <span className="text-sm text-gray-700">{f.label}</span>
                 </div>
               ))}
             </div>
@@ -117,12 +117,12 @@ export function Upgrade() {
               </p>
               <div className="flex items-baseline gap-2 mt-1">
                 <p className="text-lg font-bold text-white">EvidLY Standard</p>
-                <p className="text-sm text-[#1E2D4D]/30">$99/mo</p>
+                <p className="text-sm text-gray-300">$99/mo</p>
               </div>
-              <p className="text-xs text-[#1E2D4D]/30 mt-0.5">Founder pricing — locked through July 4, 2026</p>
+              <p className="text-xs text-gray-400 mt-0.5">Founder pricing — locked through July 4, 2026</p>
             </div>
             <div className="px-5 py-4 space-y-3">
-              <p className="text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider mb-2">
+              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
                 Everything in CPP Free, plus:
               </p>
               {PAID_FEATURES.map((f, i) => {
@@ -130,12 +130,12 @@ export function Upgrade() {
                 return (
                   <div key={i} className="flex items-start gap-2">
                     <Icon className="w-4 h-4 mt-0.5 flex-shrink-0" style={{ color: '#A08C5A' }} />
-                    <span className="text-sm text-[#1E2D4D]/80">{f.label}</span>
+                    <span className="text-sm text-gray-700">{f.label}</span>
                   </div>
                 );
               })}
             </div>
-            <div className="px-5 py-4 border-t border-[#1E2D4D]/5">
+            <div className="px-5 py-4 border-t border-gray-100">
               <a
                 href="mailto:founders@getevidly.com?subject=EvidLY Upgrade — Founder Pricing"
                 className="w-full flex items-center justify-center px-4 py-3 text-white text-sm font-semibold rounded-xl transition-colors"
@@ -145,7 +145,7 @@ export function Upgrade() {
               >
                 Upgrade Now →
               </a>
-              <p className="text-center text-xs text-[#1E2D4D]/30 mt-2">
+              <p className="text-center text-xs text-gray-400 mt-2">
                 Or call (559) 761-5502
               </p>
             </div>
@@ -153,23 +153,23 @@ export function Upgrade() {
         </div>
 
         {/* FAQ */}
-        <div className="rounded-xl border border-[#1E2D4D]/10 p-6 space-y-4">
-          <h2 className="text-sm font-semibold text-[#1E2D4D]">Frequently Asked Questions</h2>
+        <div className="rounded-xl border border-gray-200 p-6 space-y-4">
+          <h2 className="text-sm font-semibold text-gray-900">Frequently Asked Questions</h2>
           <div>
-            <p className="text-sm font-medium text-[#1E2D4D]/90">What happens to my hood cleaning records?</p>
-            <p className="text-xs text-[#1E2D4D]/50 mt-1">
+            <p className="text-sm font-medium text-gray-800">What happens to my hood cleaning records?</p>
+            <p className="text-xs text-gray-500 mt-1">
               Nothing changes. Your hood cleaning records, certificates, and service dates stay free forever through your CPP relationship.
             </p>
           </div>
           <div>
-            <p className="text-sm font-medium text-[#1E2D4D]/90">Can I cancel anytime?</p>
-            <p className="text-xs text-[#1E2D4D]/50 mt-1">
+            <p className="text-sm font-medium text-gray-800">Can I cancel anytime?</p>
+            <p className="text-xs text-gray-500 mt-1">
               Yes. Cancel anytime and you'll revert to CPP Free. Your hood cleaning data stays intact.
             </p>
           </div>
           <div>
-            <p className="text-sm font-medium text-[#1E2D4D]/90">What is Founder pricing?</p>
-            <p className="text-xs text-[#1E2D4D]/50 mt-1">
+            <p className="text-sm font-medium text-gray-800">What is Founder pricing?</p>
+            <p className="text-xs text-gray-500 mt-1">
               Early adopters lock in $99/mo. This rate is guaranteed through July 4, 2026 — the price goes up after that.
             </p>
           </div>

@@ -5,7 +5,7 @@ import type { TrainingEmployee } from '../../data/trainingRecordsDemoData';
 import { CARD_BG, CARD_BORDER, BODY_TEXT, MUTED, TEXT_TERTIARY } from '../dashboard/shared/constants';
 import { AIAssistButton, AIGeneratedIndicator } from '../ui/AIAssistButton';
 
-const NAVY = '#1E2D4D';
+const NAVY = '#1e4d6b';
 
 interface AssignTrainingModalProps {
   open: boolean;

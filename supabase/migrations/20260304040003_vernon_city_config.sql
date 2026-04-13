@@ -50,7 +50,7 @@ UPDATE jurisdictions SET
     "food_safety_manager": { "required": true, "min_per_facility": 1, "exam_type": "ANSI_accredited" }
   }'::jsonb,
 
-  scoring_methodology = 'Letter Grade A / B / C following LA County methodology. INDEPENDENT CITY. Primarily industrial food manufacturers/processors. ~50–150 retail food facilities. No online portal.',
+  scoring_methodology = 'Letter Grade A/B/C following LA County methodology. INDEPENDENT CITY. Primarily industrial food manufacturers/processors. ~50–150 retail food facilities. No online portal.',
 
   pass_threshold = 90,
   warning_threshold = 80,
@@ -67,6 +67,6 @@ UPDATE jurisdictions SET
   facility_count = 100,
   population_rank = 58,
 
-  notes = 'STANDARDIZED March 2026. LETTER GRADE A / B / C. MEDIUM transparency. INDEPENDENT CITY — NOT LA County EHD. Primarily industrial; food manufacturing/processing dominant. ~50–150 public-facing retail facilities. No online portal. DHEC at 4305 S. Santa Fe Ave (Mon–Thu 7am–5:30pm). Only CA independent city health dept with no state/federal funding.'
+  notes = 'STANDARDIZED March 2026. LETTER GRADE A/B/C. MEDIUM transparency. INDEPENDENT CITY — NOT LA County EHD. Primarily industrial; food manufacturing/processing dominant. ~50–150 public-facing retail facilities. No online portal. DHEC at 4305 S. Santa Fe Ave (Mon–Thu 7am–5:30pm). Only CA independent city health dept with no state/federal funding.'
 
 WHERE county = 'Los Angeles' AND city = 'Vernon' AND state = 'CA';

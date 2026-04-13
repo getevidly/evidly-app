@@ -927,7 +927,7 @@ export default function EvidLYIntelligence() {
                   padding: '8px 0', borderBottom: '1px solid #F0EDE8',
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span className="text-sm">{meta.icon}</span>
+                    <span style={{ fontSize: 14 }}>{meta.icon}</span>
                     <span style={{ fontSize: 12, color: '#4A5568' }}>{meta.label}</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11 }}>
@@ -2302,7 +2302,7 @@ export default function EvidLYIntelligence() {
                     {DIMS.map(dim => (
                       <div key={dim.key} style={{ display: 'grid', gridTemplateColumns: '140px 100px 1fr', gap: 8, alignItems: 'center' }}>
                         <div>
-                          <span className="text-xs">{dim.icon}</span>
+                          <span style={{ fontSize: 12 }}>{dim.icon}</span>
                           <span style={{ fontSize: 11, fontWeight: 600, color: NAVY, marginLeft: 4 }}>{dim.label}</span>
                         </div>
                         <select value={pubForm[dim.key]} onChange={e => setPubForm(f => ({ ...f, [dim.key]: e.target.value }))}
@@ -2376,7 +2376,7 @@ export default function EvidLYIntelligence() {
                     ].map(dim => (
                       <div key={dim.key} style={{ display: 'grid', gridTemplateColumns: '140px 100px 1fr', gap: 8, alignItems: 'center' }}>
                         <div>
-                          <span className="text-xs">{dim.icon}</span>
+                          <span style={{ fontSize: 12 }}>{dim.icon}</span>
                           <span style={{ fontSize: 11, fontWeight: 600, color: '#065F46', marginLeft: 4 }}>{dim.label}</span>
                         </div>
                         <select value={pubForm[dim.key]} onChange={e => setPubForm(f => ({ ...f, [dim.key]: e.target.value }))}

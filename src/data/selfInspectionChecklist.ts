@@ -677,7 +677,7 @@ export const JURISDICTION_VARIANCES: JurisdictionVariance[] = [
     itemId: 'temp-001',
     varianceType: 'different_citation',
     description: 'Orange County uses Pass / Reinspection Due-Pass / Closed placards. No letter grade. No numeric score. Major CRF violations trigger reinspection.',
-    standardValue: 'LA County: letter grade A / B / C',
+    standardValue: 'LA County: letter grade A/B/C',
     jurisdictionValue: 'Orange: Pass/Reinspection/Closed placard only',
   },
 
@@ -686,7 +686,7 @@ export const JURISDICTION_VARIANCES: JurisdictionVariance[] = [
     jurisdictionId: 'Santa Clara',
     itemId: 'temp-001',
     varianceType: 'different_penalty',
-    description: 'Santa Clara County uses 100-pt deductive with Major=8pts, Moderate=3pts, Minor=2pts. Green / Yellow / Red placard + numeric score both published.',
+    description: 'Santa Clara County uses 100-pt deductive with Major=8pts, Moderate=3pts, Minor=2pts. GYR placard + numeric score both published.',
     standardValue: 'LA County: Major=4pts',
     jurisdictionValue: 'Santa Clara: Major=8pts (higher penalty per violation)',
   },

@@ -89,7 +89,7 @@ export function MyTasksToday() {
               >
                 <Icon className="w-3.5 h-3.5 flex-shrink-0" style={{ color: si.color }} />
                 <span className="text-xs font-medium text-[var(--text-primary)] truncate flex-1">{task.title}</span>
-                <span className="text-xs text-[var(--text-tertiary)] flex-shrink-0">{dueTime}</span>
+                <span className="text-[10px] text-[var(--text-tertiary)] flex-shrink-0">{dueTime}</span>
               </div>
             );
           })}

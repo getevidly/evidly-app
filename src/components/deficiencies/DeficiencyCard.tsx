@@ -21,7 +21,7 @@ export function DeficiencyCard({ deficiency, onClick }: DeficiencyCardProps) {
   return (
     <div
       onClick={onClick}
-      className={`rounded-xl border p-3 transition-colors ${onClick ? 'cursor-pointer hover:shadow-md' : ''}`}
+      className={`rounded-lg border p-3 transition-colors ${onClick ? 'cursor-pointer hover:shadow-md' : ''}`}
       style={{ backgroundColor: '#FFFFFF', borderColor: '#D1D9E6' }}
     >
       <div className="flex items-start gap-2">

@@ -16,7 +16,7 @@
 --   SF uses HIGH / MODERATE / LOW risk tiers — NOT Major/Minor categories.
 --
 -- Verified facts:
---   - Green / Yellow / Red placard + numeric score (0-100), both published
+--   - GYR placard + numeric score (0-100), both published
 --   - GREEN (PASS) = Score 90-100, low violation burden
 --   - YELLOW (CONDITIONAL PASS) = Score 70-89, violations corrected
 --   - RED (CLOSED) = Score below 70 OR imminent health hazard
@@ -66,9 +66,9 @@ UPDATE jurisdictions SET
     "has_local_health_code": true,
     "local_code_ref": "SF Health Code Article 22",
     "transparency_level": "high",
-    "grading_note": "DUAL: Green / Yellow / Red placard + numeric score (0-100), both published. CRITICAL: SF uses High/Moderate/Low RISK TIERS — not CalCode Major/Minor. Agency is SFDPH, not a county EHD. Consolidated city-county. ~7,000+ facilities."
+    "grading_note": "DUAL: GYR placard + numeric score (0-100), both published. CRITICAL: SF uses High/Moderate/Low RISK TIERS — not CalCode Major/Minor. Agency is SFDPH, not a county EHD. Consolidated city-county. ~7,000+ facilities."
   }'::jsonb,
-  scoring_methodology = 'DUAL: Green / Yellow / Red placard + numeric score (0-100), both published. CRITICAL: SF uses High/Moderate/Low RISK TIERS — not CalCode Major/Minor categories. Agency is SFDPH (not a county EHD). Consolidated city-county jurisdiction. GREEN=90-100 (Pass), YELLOW=70-89 (Conditional Pass), RED=<70 or imminent hazard (Closed). ~7,000+ permitted facilities. Risk-based inspection frequency.',
+  scoring_methodology = 'DUAL: GYR placard + numeric score (0-100), both published. CRITICAL: SF uses High/Moderate/Low RISK TIERS — not CalCode Major/Minor categories. Agency is SFDPH (not a county EHD). Consolidated city-county jurisdiction. GREEN=90-100 (Pass), YELLOW=70-89 (Conditional Pass), RED=<70 or imminent hazard (Closed). ~7,000+ permitted facilities. Risk-based inspection frequency.',
 
   -- Thresholds
   pass_threshold = 90,
@@ -90,7 +90,7 @@ UPDATE jurisdictions SET
   facility_count = 7000,
 
   -- Notes
-  notes = 'STANDARDIZED (2026-03-03). Confidence: HIGH (85/100). Consolidated city-county — SFDPH not EHD. DUAL: Green / Yellow / Red placard + numeric score, both published. HIGH transparency. Risk tiers = High/Moderate/Low (NOT Major/Minor). ~7,000+ facilities. SF Health Code Article 22 + CalCode. Contact: (415) 252-3800. 1 Dr. Carlton B. Goodlett Place, City Hall Room 308, SF 94102.'
+  notes = 'STANDARDIZED (2026-03-03). Confidence: HIGH (85/100). Consolidated city-county — SFDPH not EHD. DUAL: GYR placard + numeric score, both published. HIGH transparency. Risk tiers = High/Moderate/Low (NOT Major/Minor). ~7,000+ facilities. SF Health Code Article 22 + CalCode. Contact: (415) 252-3800. 1 Dr. Carlton B. Goodlett Place, City Hall Room 308, SF 94102.'
 WHERE county = 'San Francisco'
   AND city IS NULL
   AND state = 'CA';

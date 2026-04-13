@@ -18,11 +18,11 @@ export function BenchmarkTrendAnalysis({ locationId }: Props) {
   const quarterlyDelta = currentQAvg - prevQAvg;
 
   return (
-    <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">Trend Analysis</h3>
-          <p className="text-sm text-[#1E2D4D]/50">Your score vs industry benchmarks over time</p>
+          <h3 className="text-lg font-semibold text-gray-900">Trend Analysis</h3>
+          <p className="text-sm text-gray-500">Your score vs industry benchmarks over time</p>
         </div>
         <div className="flex items-center gap-1">
           {([3, 6, 12] as const).map(m => (
@@ -31,7 +31,7 @@ export function BenchmarkTrendAnalysis({ locationId }: Props) {
               onClick={() => setMonths(m)}
               className="px-3 py-1 text-xs font-medium rounded-lg transition-colors"
               style={{
-                backgroundColor: months === m ? '#1E2D4D' : 'transparent',
+                backgroundColor: months === m ? '#1e4d6b' : 'transparent',
                 color: months === m ? 'white' : 'var(--text-secondary, #3D5068)',
               }}
             >
@@ -52,8 +52,8 @@ export function BenchmarkTrendAnalysis({ locationId }: Props) {
             <ReferenceLine y={90} stroke="#22c55e" strokeDasharray="3 3" label={{ value: '90', position: 'right', fontSize: 10 }} />
             <ReferenceLine y={75} stroke="#eab308" strokeDasharray="3 3" label={{ value: '75', position: 'right', fontSize: 10 }} />
             <ReferenceLine y={60} stroke="#f59e0b" strokeDasharray="3 3" label={{ value: '60', position: 'right', fontSize: 10 }} />
-            <Line type="monotone" dataKey="yourScore" stroke="#1E2D4D" strokeWidth={3} dot={{ r: 3 }} name="Your Score" />
-            <Line type="monotone" dataKey="verticalAvg" stroke="#A08C5A" strokeWidth={1.5} dot={{ r: 2 }} strokeDasharray="6 3" name="Restaurant Avg" />
+            <Line type="monotone" dataKey="yourScore" stroke="#1e4d6b" strokeWidth={3} dot={{ r: 3 }} name="Your Score" />
+            <Line type="monotone" dataKey="verticalAvg" stroke="#d4af37" strokeWidth={1.5} dot={{ r: 2 }} strokeDasharray="6 3" name="Restaurant Avg" />
             <Line type="monotone" dataKey="industryAvg" stroke="#3D5068" strokeWidth={1.5} dot={{ r: 2 }} strokeDasharray="6 3" name="Industry Avg" />
           </LineChart>
         </ResponsiveContainer>
@@ -62,15 +62,15 @@ export function BenchmarkTrendAnalysis({ locationId }: Props) {
       {/* Quarterly summary */}
       <div className="mt-4 flex items-center gap-6 text-sm">
         <div>
-          <span className="text-[#1E2D4D]/50">Current quarter avg: </span>
-          <span className="font-bold text-[#1E2D4D]">{currentQAvg}</span>
+          <span className="text-gray-500">Current quarter avg: </span>
+          <span className="font-bold text-gray-900">{currentQAvg}</span>
         </div>
         <div>
-          <span className="text-[#1E2D4D]/50">Previous quarter avg: </span>
-          <span className="font-bold text-[#1E2D4D]">{prevQAvg}</span>
+          <span className="text-gray-500">Previous quarter avg: </span>
+          <span className="font-bold text-gray-900">{prevQAvg}</span>
         </div>
         <div>
-          <span className="text-[#1E2D4D]/50">Change: </span>
+          <span className="text-gray-500">Change: </span>
           <span className="font-bold" style={{ color: quarterlyDelta >= 0 ? '#16a34a' : '#dc2626' }}>
             {quarterlyDelta >= 0 ? '+' : ''}{quarterlyDelta} pts
           </span>

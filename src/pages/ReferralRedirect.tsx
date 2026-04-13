@@ -39,11 +39,11 @@ export default function ReferralRedirect() {
   }, [code, navigate]);
 
   return (
-    <div className="min-h-screen bg-cream flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center px-4">
       <div className="max-w-md w-full text-center">
         {/* Logo */}
         <div className="mb-8">
-          <div className="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center" style={{ backgroundColor: '#1E2D4D' }}>
+          <div className="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center" style={{ backgroundColor: '#1e4d6b' }}>
             {message.icon === 'heart' ? (
               <Heart className="h-8 w-8 text-white" />
             ) : (
@@ -53,38 +53,38 @@ export default function ReferralRedirect() {
         </div>
 
         {/* Card */}
-        <div className="bg-white rounded-2xl shadow-lg p-8 border border-[#1E2D4D]/5">
+        <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
           <div className="w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
-            <CheckCircle className="h-6 w-6" style={{ color: '#1E2D4D' }} />
+            <CheckCircle className="h-6 w-6" style={{ color: '#1e4d6b' }} />
           </div>
 
-          <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D] mb-2">{message.heading}</h1>
-          <p className="text-[#1E2D4D]/70 mb-6">{message.subtext}</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">{message.heading}</h1>
+          <p className="text-gray-600 mb-6">{message.subtext}</p>
 
           {code && (
-            <div className="mb-6 px-4 py-2 bg-[#FAF7F0] rounded-lg inline-block">
-              <span className="text-xs text-[#1E2D4D]/30 block">Referral Code</span>
-              <span className="text-sm font-mono font-bold" style={{ color: '#1E2D4D' }}>{code}</span>
+            <div className="mb-6 px-4 py-2 bg-gray-50 rounded-lg inline-block">
+              <span className="text-xs text-gray-400 block">Referral Code</span>
+              <span className="text-sm font-mono font-bold" style={{ color: '#1e4d6b' }}>{code}</span>
             </div>
           )}
 
           <button
             onClick={() => navigate(`/signup?ref=${code}`)}
             className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-white font-semibold transition-colors cursor-pointer"
-            style={{ backgroundColor: '#1E2D4D' }}
+            style={{ backgroundColor: '#1e4d6b' }}
             onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
-            onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
+            onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
           >
             Start Free Trial
             <ArrowRight className="h-4 w-4" />
           </button>
 
-          <p className="text-xs text-[#1E2D4D]/30 mt-4">
+          <p className="text-xs text-gray-400 mt-4">
             Redirecting to signup in {countdown}s...
           </p>
         </div>
 
-        <p className="text-xs text-[#1E2D4D]/30 mt-6">
+        <p className="text-xs text-gray-400 mt-6">
           30-day free trial. No credit card required.
         </p>
       </div>

@@ -11,7 +11,7 @@
 -- Verified: March 2026
 --
 -- KEY FACTS:
---   LETTER GRADE A / B / C system confirmed per official guide (10/12/2023)
+--   LETTER GRADE A/B/C system confirmed per official guide (10/12/2023)
 --   A=90-100 | B=80-89 | C=<80
 --   C grade: corrections required + reinspection request within 30 days
 --   B grade: no mandatory reinspection; operator may request re-score
@@ -51,7 +51,7 @@ UPDATE jurisdictions SET
     "food_safety_manager": { "required": true, "min_per_facility": 1, "exam_type": "ANSI_accredited" }
   }'::jsonb,
 
-  scoring_methodology = 'Letter Grade A / B / C. 100-point deduction. A=90-100 (no reinspection), B=80-89 (optional re-score), C=<80 (corrections + reinspection within 30 days). Grade Card posted conspicuously. Confirmed per official guide (10/12/2023).',
+  scoring_methodology = 'Letter Grade A/B/C. 100-point deduction. A=90-100 (no reinspection), B=80-89 (optional re-score), C=<80 (corrections + reinspection within 30 days). Grade Card posted conspicuously. Confirmed per official guide (10/12/2023).',
 
   pass_threshold = 90,
   warning_threshold = 80,
@@ -68,6 +68,6 @@ UPDATE jurisdictions SET
   facility_count = 1000,
   population_rank = 30,
 
-  notes = 'STANDARDIZED March 2026. LETTER GRADE A / B / C. HIGH transparency. Confirmed per official guide (10/12/2023). CRITICAL: address is 1221 W. State St. (not 797 Main St.). C grade = correction + 30-day reinspection. US/Mexico border. Large agricultural workforce.'
+  notes = 'STANDARDIZED March 2026. LETTER GRADE A/B/C. HIGH transparency. Confirmed per official guide (10/12/2023). CRITICAL: address is 1221 W. State St. (not 797 Main St.). C grade = correction + 30-day reinspection. US/Mexico border. Large agricultural workforce.'
 
 WHERE county = 'Imperial' AND city IS NULL AND state = 'CA';

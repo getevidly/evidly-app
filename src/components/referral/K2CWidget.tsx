@@ -85,7 +85,7 @@ export function K2CWidget({
           onMouseEnter={(e) => { e.currentTarget.style.textDecoration = 'underline'; }}
           onMouseLeave={(e) => { e.currentTarget.style.textDecoration = 'none'; }}
         >
-          <span className="text-lg">🍽️</span>
+          <span style={{ fontSize: '18px' }}>🍽️</span>
           Kitchen to Community
         </a>
       </div>
@@ -98,7 +98,7 @@ export function K2CWidget({
         </div>
         <div style={{ width: '1px', backgroundColor: '#D1D9E6' }} />
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '24px', fontWeight: 800, color: '#1E2D4D' }}>{totalReferrals}</div>
+          <div style={{ fontSize: '24px', fontWeight: 800, color: '#1e4d6b' }}>{totalReferrals}</div>
           <div style={{ fontSize: '11px', color: '#6B7F96' }}>Referrals</div>
         </div>
         <div style={{ width: '1px', backgroundColor: '#D1D9E6' }} />
@@ -172,7 +172,7 @@ export function K2CWidget({
         onClick={() => navigate('/referrals')}
         style={{
           background: 'none', border: 'none', cursor: 'pointer', padding: 0,
-          fontSize: '12px', fontWeight: 600, color: '#1E2D4D',
+          fontSize: '12px', fontWeight: 600, color: '#1e4d6b',
           display: 'inline-flex', alignItems: 'center', gap: '4px',
           marginTop: '10px',
         }}

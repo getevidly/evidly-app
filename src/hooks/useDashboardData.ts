@@ -239,7 +239,7 @@ const DEMO_ACTIVITY: ActivityItem[] = [
   { initials: 'MJ', name: 'Marcus J.', action: 'logged Walk-in Cooler: 38°F ✓', time: '15 min ago', url: '/temp-logs', borderColor: '#22c55e' },
   { initials: 'SC', name: 'Sarah C.', action: 'completed Opening Checklist', time: '45 min ago', url: '/checklists', borderColor: '#22c55e' },
   { initials: 'DP', name: 'David P.', action: 'logged Freezer: 15°F ✓', time: '1h ago', url: '/temp-logs', borderColor: '#22c55e' },
-  { initials: 'ER', name: 'Emma R.', action: 'uploaded Food Handler Cert', time: '2h ago', url: '/documents', borderColor: '#1E2D4D' },
+  { initials: 'ER', name: 'Emma R.', action: 'uploaded Food Handler Cert', time: '2h ago', url: '/documents', borderColor: '#1e4d6b' },
   { initials: 'AT', name: 'Alex T.', action: 'logged Hot Hold: 127°F ✗', time: '3h ago', url: '/temp-logs', borderColor: '#ef4444' },
 ];
 

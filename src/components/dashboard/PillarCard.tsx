@@ -17,7 +17,7 @@ const PILLAR_CONFIG = {
 
 function ProgressBar({ value, color }: { value: number; color: string }) {
   return (
-    <div className="w-full h-1.5 bg-[#1E2D4D]/5 rounded-full overflow-hidden">
+    <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
       <div
         className="h-full rounded-full transition-all duration-500"
         style={{ width: `${Math.min(100, Math.max(0, value))}%`, backgroundColor: color }}
@@ -36,8 +36,9 @@ export default function PillarCard({ pillar, score, opsScore, docsScore, onClick
     <button
       type="button"
       onClick={onClick}
-      className="w-full text-left bg-white rounded-xl border border-[#1E2D4D]/10 p-4 transition-shadow duration-200 hover:shadow-md"
+      className="w-full text-left bg-white rounded-lg p-4 transition-shadow duration-200 hover:shadow-md"
       style={{
+        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
         cursor: onClick ? 'pointer' : 'default',
         fontFamily: 'Inter, sans-serif',
       }}
@@ -45,7 +46,7 @@ export default function PillarCard({ pillar, score, opsScore, docsScore, onClick
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <Icon size={18} style={{ color }} />
-          <span className="text-sm font-semibold text-[#1E2D4D]">{label}</span>
+          <span className="text-sm font-semibold text-gray-900">{label}</span>
         </div>
         <span className="text-lg font-bold" style={{ color }}>
           {score}

@@ -316,8 +316,8 @@ describe('selfInspectionScoring', () => {
     });
 
     it('getGradingFormatLabel returns correct labels', () => {
-      expect(getGradingFormatLabel('letter_grade')).toBe('Letter Grade (A / B / C)');
-      expect(getGradingFormatLabel('color_placard')).toBe('Green / Yellow / Red Placard');
+      expect(getGradingFormatLabel('letter_grade')).toBe('Letter Grade (A/B/C)');
+      expect(getGradingFormatLabel('color_placard')).toBe('Green/Yellow/Red Placard');
       expect(getGradingFormatLabel('unknown_type')).toBe('No Grade');
     });
 

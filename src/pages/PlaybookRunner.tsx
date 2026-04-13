@@ -548,7 +548,7 @@ export function PlaybookRunner() {
 
             {/* Compliance Narrative */}
             <div style={{ marginTop: 24, padding: 20, borderRadius: 10, background: '#eef4f8', border: '1px solid #b8d4e8' }}>
-              <h4 style={{ fontSize: 14, fontWeight: 700, color: '#1E2D4D', margin: '0 0 8px', display: 'flex', alignItems: 'center', gap: 6 }}>
+              <h4 style={{ fontSize: 14, fontWeight: 700, color: '#1e4d6b', margin: '0 0 8px', display: 'flex', alignItems: 'center', gap: 6 }}>
                 <EvidlyIcon size={16} /> Compliance Narrative
               </h4>
               <p style={{ fontSize: 13, color: '#374151', lineHeight: 1.6, margin: 0 }}>
@@ -568,13 +568,13 @@ export function PlaybookRunner() {
             <div style={{ display: 'flex', gap: 10, marginTop: 20, flexWrap: 'wrap' }}>
               <button
                 onClick={() => guardAction('download', 'Incident Playbooks', () => toast.success('PDF download started'))}
-                style={{ padding: '10px 20px', borderRadius: 8, border: 'none', background: '#1E2D4D', color: 'white', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, minHeight: 44, fontFamily: "'DM Sans', sans-serif" }}
+                style={{ padding: '10px 20px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: 'white', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, minHeight: 44, fontFamily: "'DM Sans', sans-serif" }}
               >
                 <Download size={14} /> Download PDF
               </button>
               <button
                 onClick={() => guardAction('export', 'Incident Playbooks', () => toast.success('Insurance claim report generated'))}
-                style={{ padding: '10px 20px', borderRadius: 8, border: '1px solid #A08C5A', background: '#fffbeb', color: '#92400e', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, minHeight: 44, fontFamily: "'DM Sans', sans-serif" }}
+                style={{ padding: '10px 20px', borderRadius: 8, border: '1px solid #d4af37', background: '#fffbeb', color: '#92400e', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, minHeight: 44, fontFamily: "'DM Sans', sans-serif" }}
               >
                 <DollarSign size={14} /> Insurance Report
               </button>
@@ -720,7 +720,7 @@ export function PlaybookRunner() {
         <div style={{ display: 'flex', gap: 8 }}>
           <button
             onClick={() => setShowAiPanel(!showAiPanel)}
-            style={{ padding: '8px 16px', borderRadius: 8, border: showAiPanel ? '2px solid #1E2D4D' : '1px solid #d1d5db', background: showAiPanel ? '#eef4f8' : 'white', color: showAiPanel ? '#1E2D4D' : '#374151', fontSize: 12, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, minHeight: 40, fontFamily: "'DM Sans', sans-serif" }}
+            style={{ padding: '8px 16px', borderRadius: 8, border: showAiPanel ? '2px solid #1e4d6b' : '1px solid #d1d5db', background: showAiPanel ? '#eef4f8' : 'white', color: showAiPanel ? '#1e4d6b' : '#374151', fontSize: 12, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, minHeight: 40, fontFamily: "'DM Sans', sans-serif" }}
           >
             <Bot size={15} /> AI Help
           </button>
@@ -792,7 +792,7 @@ export function PlaybookRunner() {
                     : isDone
                       ? <CheckCircle2 size={16} color="#22c55e" style={{ flexShrink: 0 }} />
                       : isCurrent
-                        ? <div style={{ width: 16, height: 16, borderRadius: 8, border: '2px solid #1E2D4D', background: '#1E2D4D', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        ? <div style={{ width: 16, height: 16, borderRadius: 8, border: '2px solid #1e4d6b', background: '#1e4d6b', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             <div style={{ width: 6, height: 6, borderRadius: 3, background: 'white' }} />
                           </div>
                         : <Circle size={16} color="#d1d5db" style={{ flexShrink: 0 }} />
@@ -800,7 +800,7 @@ export function PlaybookRunner() {
                   <span style={{
                     fontSize: 12,
                     fontWeight: isCurrent ? 600 : 400,
-                    color: isSkippedStep ? '#d97706' : isDone ? '#22c55e' : isCurrent ? '#1E2D4D' : '#9ca3af',
+                    color: isSkippedStep ? '#d97706' : isDone ? '#22c55e' : isCurrent ? '#1e4d6b' : '#9ca3af',
                     lineHeight: 1.3,
                   }}>
                     {s.stepNumber}. {s.title}
@@ -830,7 +830,7 @@ export function PlaybookRunner() {
                 <span style={{ fontSize: 12, fontWeight: 600, color: '#6b7280' }}>Step {step.stepNumber} of {steps.length}</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   {step.regulatoryReference && (
-                    <span style={{ fontSize: 11, padding: '3px 10px', borderRadius: 6, background: '#eef4f8', color: '#1E2D4D', fontWeight: 500, border: '1px solid #b8d4e8' }}>
+                    <span style={{ fontSize: 11, padding: '3px 10px', borderRadius: 6, background: '#eef4f8', color: '#1e4d6b', fontWeight: 500, border: '1px solid #b8d4e8' }}>
                       <EvidlyIcon size={11} className="inline align-middle mr-0.5" />
                       {step.regulatoryReference}
                     </span>
@@ -1175,8 +1175,8 @@ export function PlaybookRunner() {
             {/* Header */}
             <div style={{ padding: '14px 16px', borderBottom: '1px solid #e5e7eb', background: '#eef4f8', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <Bot size={18} color="#1E2D4D" />
-                <span style={{ fontSize: 14, fontWeight: 700, color: '#1E2D4D' }}>AI Copilot</span>
+                <Bot size={18} color="#1e4d6b" />
+                <span style={{ fontSize: 14, fontWeight: 700, color: '#1e4d6b' }}>AI Copilot</span>
               </div>
               <button onClick={() => setShowAiPanel(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
                 <X size={16} color="#6b7280" />
@@ -1205,7 +1205,7 @@ export function PlaybookRunner() {
                     ),
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4, fontSize: 11, fontWeight: 600, color: msg.role === 'assistant' ? '#1E2D4D' : '#92400e' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4, fontSize: 11, fontWeight: 600, color: msg.role === 'assistant' ? '#1e4d6b' : '#92400e' }}>
                     {msg.role === 'assistant' ? <Bot size={12} /> : <AlertTriangle size={12} />}
                     {msg.role === 'assistant' ? 'AI Copilot' : 'System Alert'}
                   </div>
@@ -1216,7 +1216,7 @@ export function PlaybookRunner() {
                         <button
                           key={si}
                           onClick={() => toast.info(`AI suggestion: "${s}" — demo mode`)}
-                          style={{ padding: '4px 10px', borderRadius: 6, border: '1px solid #b8d4e8', background: 'white', color: '#1E2D4D', fontSize: 11, fontWeight: 500, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}
+                          style={{ padding: '4px 10px', borderRadius: 6, border: '1px solid #b8d4e8', background: 'white', color: '#1e4d6b', fontSize: 11, fontWeight: 500, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}
                         >
                           {s}
                         </button>
@@ -1249,7 +1249,7 @@ export function PlaybookRunner() {
                 />
                 <button
                   onClick={() => toast.info('AI Copilot coming soon')}
-                  style={{ padding: '8px 12px', borderRadius: 8, border: 'none', background: '#1E2D4D', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                  style={{ padding: '8px 12px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
                 >
                   <MessageSquare size={14} />
                 </button>

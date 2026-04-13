@@ -13,7 +13,7 @@
 -- KEY FACTS:
 --   INDEPENDENT CITY — LA County EHD has NO jurisdiction here
 --   LA County health permits NOT valid within Pasadena city limits
---   *** CRITICAL: PASS / CONDITIONAL PASS / CLOSED — NOT A / B / C ***
+--   *** CRITICAL: PASS / CONDITIONAL PASS / CLOSED — NOT A/B/C ***
 --   PASS = 85–100
 --   CONDITIONAL PASS = 75–84 → mandatory 5-working-day follow-up;
 --     must score 95+ with no major violations to upgrade to PASS
@@ -83,7 +83,7 @@ UPDATE jurisdictions SET
     "food_safety_manager": { "required": true, "min_per_facility": 1, "exam_type": "ANSI_accredited" }
   }'::jsonb,
 
-  scoring_methodology = 'PASS/CONDITIONAL PASS/CLOSED (NOT A / B / C). PASS=85-100, CONDITIONAL PASS=75-84 (5-working-day follow-up; must score 95+ to upgrade), CLOSED=<75 (Permit Suspension Hearing, $150 fee). INDEPENDENT CITY separate from LA County EHD.',
+  scoring_methodology = 'PASS/CONDITIONAL PASS/CLOSED (NOT A/B/C). PASS=85-100, CONDITIONAL PASS=75-84 (5-working-day follow-up; must score 95+ to upgrade), CLOSED=<75 (Permit Suspension Hearing, $150 fee). INDEPENDENT CITY separate from LA County EHD.',
 
   pass_threshold = 85,
   warning_threshold = 75,
@@ -92,7 +92,7 @@ UPDATE jurisdictions SET
   fire_ahj_name = 'City of Pasadena Fire Department',
   fire_ahj_type = 'city_fire',
   has_local_amendments = true,
-  local_amendment_notes = 'PASS/CONDITIONAL PASS/CLOSED per Pasadena Municipal Code Chapter 8.13 (effective July 1, 2014). NOT A / B / C. CONDITIONAL PASS requires 5-working-day follow-up; 95+ to upgrade. Hearing fee $150. LA County permits invalid.',
+  local_amendment_notes = 'PASS/CONDITIONAL PASS/CLOSED per Pasadena Municipal Code Chapter 8.13 (effective July 1, 2014). NOT A/B/C. CONDITIONAL PASS requires 5-working-day follow-up; 95+ to upgrade. Hearing fee $150. LA County permits invalid.',
 
   data_source_type = 'portal',
   data_source_url = 'https://www.decadeonline.com/main.phtml?agency=pas',
@@ -100,6 +100,6 @@ UPDATE jurisdictions SET
   facility_count = 1750,
   population_rank = 20,
 
-  notes = 'STANDARDIZED March 2026. PASS/CONDITIONAL PASS/CLOSED — NOT A / B / C. CRITICAL: grading_type = pass_conditional_closed. HIGH transparency. INDEPENDENT CITY — NOT under LA County EHD. CONDITIONAL PASS triggers 5-working-day follow-up; 95+ to upgrade. $150 hearing fee. decadeonline.com/main.phtml?agency=pas.'
+  notes = 'STANDARDIZED March 2026. PASS/CONDITIONAL PASS/CLOSED — NOT A/B/C. CRITICAL: grading_type = pass_conditional_closed. HIGH transparency. INDEPENDENT CITY — NOT under LA County EHD. CONDITIONAL PASS triggers 5-working-day follow-up; 95+ to upgrade. $150 hearing fee. decadeonline.com/main.phtml?agency=pas.'
 
 WHERE county = 'Los Angeles' AND city = 'Pasadena' AND state = 'CA';

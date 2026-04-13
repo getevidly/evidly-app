@@ -238,16 +238,16 @@ export function AdminIntelligenceQueue() {
       <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#eff6ff' }}>
-            <Brain className="h-5 w-5" style={{ color: '#1E2D4D' }} />
+            <Brain className="h-5 w-5" style={{ color: '#1e4d6b' }} />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-[#1E2D4D]">Intelligence Queue</h1>
-            <p className="text-xs text-[#1E2D4D]/50">Review and publish intelligence insights from external sources</p>
+            <h1 className="text-lg font-bold text-gray-900">Intelligence Queue</h1>
+            <p className="text-xs text-gray-500">Review and publish intelligence insights from external sources</p>
           </div>
         </div>
         <button
           onClick={fetchInsights}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl border border-[#1E2D4D]/10 hover:bg-[#FAF7F0] transition-colors"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
         >
           <RefreshCw className="h-3.5 w-3.5" />
           Refresh
@@ -271,15 +271,15 @@ export function AdminIntelligenceQueue() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-4 border-b border-[#1E2D4D]/10">
+      <div className="flex gap-1 mb-4 border-b border-gray-200">
         {tabs.map(tab => (
           <button
             key={tab.key}
             onClick={() => { setActiveTab(tab.key); setExpandedId(null); setRejectingId(null); }}
             className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
               activeTab === tab.key
-                ? 'border-[#1E2D4D] text-[#1E2D4D]'
-                : 'border-transparent text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
+                ? 'border-[#1e4d6b] text-[#1e4d6b]'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
             {tab.label} ({tab.count})
@@ -290,17 +290,17 @@ export function AdminIntelligenceQueue() {
       {/* Loading */}
       {loading && (
         <div className="text-center py-16">
-          <RefreshCw className="h-8 w-8 mx-auto text-[#1E2D4D]/30 mb-3 animate-spin" />
-          <p className="text-[#1E2D4D]/50 text-sm">Loading insights...</p>
+          <RefreshCw className="h-8 w-8 mx-auto text-gray-300 mb-3 animate-spin" />
+          <p className="text-gray-500 text-sm">Loading insights...</p>
         </div>
       )}
 
       {/* Empty State */}
       {!loading && filteredInsights.length === 0 && (
         <div className="text-center py-16">
-          <Shield className="h-12 w-12 mx-auto text-[#1E2D4D]/30 mb-3" />
-          <p className="text-[#1E2D4D]/50 font-medium">No {activeTab} insights</p>
-          <p className="text-[#1E2D4D]/30 text-sm mt-1">
+          <Shield className="h-12 w-12 mx-auto text-gray-300 mb-3" />
+          <p className="text-gray-500 font-medium">No {activeTab} insights</p>
+          <p className="text-gray-400 text-sm mt-1">
             {activeTab === 'pending'
               ? 'Run the intelligence-collect function to fetch new data from external sources.'
               : activeTab === 'published'
@@ -320,10 +320,10 @@ export function AdminIntelligenceQueue() {
             const keyFindings = (insight.raw_source_data as any)?.key_findings as string[] | undefined;
 
             return (
-              <div key={insight.id} className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
+              <div key={insight.id} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
                 {/* Card Header */}
                 <div
-                  className="p-4 cursor-pointer hover:bg-[#FAF7F0]/50 transition-colors"
+                  className="p-4 cursor-pointer hover:bg-gray-50/50 transition-colors"
                   onClick={() => setExpandedId(isExpanded ? null : insight.id)}
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -331,45 +331,45 @@ export function AdminIntelligenceQueue() {
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
                         {/* Impact badge */}
                         <span
-                          className="text-xs font-semibold px-1.5 py-0.5 rounded-md"
+                          className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md"
                           style={{ backgroundColor: impact.bg, color: impact.dot, border: `1px solid ${impact.border}` }}
                         >
                           {impact.label}
                         </span>
 
                         {/* Source badge */}
-                        <span className="text-xs font-medium px-1.5 py-0.5 rounded-md bg-[#1E2D4D]/5 text-[#1E2D4D]/70">
+                        <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-gray-100 text-gray-600">
                           {insight.source_id}
                         </span>
 
                         {/* Pillars */}
                         {insight.affected_pillars?.map(p => (
-                          <span key={p} className="text-xs px-1.5 py-0.5 rounded-md bg-blue-50 text-blue-600">
+                          <span key={p} className="text-[10px] px-1.5 py-0.5 rounded-md bg-blue-50 text-blue-600">
                             {p === 'food_safety' ? 'Food' : p === 'facility_safety' ? 'Fire' : p}
                           </span>
                         ))}
 
                         {/* Demo eligible flag */}
                         {insight.is_demo_eligible && (
-                          <span className="text-xs font-semibold px-1.5 py-0.5 rounded-md" style={{ backgroundColor: '#fffbeb', color: '#A08C5A', border: '1px solid #fde68a' }}>
+                          <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md" style={{ backgroundColor: '#fffbeb', color: '#d4af37', border: '1px solid #fde68a' }}>
                             Demo{insight.demo_priority > 0 ? ` (${insight.demo_priority})` : ''}
                           </span>
                         )}
                       </div>
 
-                      <h3 className="text-sm font-semibold text-[#1E2D4D] truncate">{insight.title}</h3>
-                      <p className="text-xs text-[#1E2D4D]/50 mt-0.5 line-clamp-2">{insight.summary}</p>
+                      <h3 className="text-sm font-semibold text-gray-900 truncate">{insight.title}</h3>
+                      <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{insight.summary}</p>
                     </div>
 
                     <div className="flex items-center gap-2 shrink-0">
-                      <span className="text-xs text-[#1E2D4D]/30 whitespace-nowrap">
+                      <span className="text-[10px] text-gray-400 whitespace-nowrap">
                         <Clock className="h-3 w-3 inline mr-0.5" />
                         {timeAgo(insight.created_at)}
                       </span>
                       {isExpanded ? (
-                        <ChevronUp className="h-4 w-4 text-[#1E2D4D]/30" />
+                        <ChevronUp className="h-4 w-4 text-gray-400" />
                       ) : (
-                        <ChevronDown className="h-4 w-4 text-[#1E2D4D]/30" />
+                        <ChevronDown className="h-4 w-4 text-gray-400" />
                       )}
                     </div>
                   </div>
@@ -377,25 +377,25 @@ export function AdminIntelligenceQueue() {
 
                 {/* Expanded Content */}
                 {isExpanded && (
-                  <div className="border-t border-[#1E2D4D]/5 p-4 bg-[#FAF7F0]">
+                  <div className="border-t border-gray-100 p-4 bg-gray-50">
                     {/* Summary */}
-                    <p className="text-sm text-[#1E2D4D]/80 mb-3">{insight.summary}</p>
+                    <p className="text-sm text-gray-700 mb-3">{insight.summary}</p>
 
                     {/* Full analysis */}
                     {insight.full_analysis && (
                       <div className="mb-3">
-                        <h4 className="text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wider mb-1">Full Analysis</h4>
-                        <p className="text-xs text-[#1E2D4D]/70 whitespace-pre-line">{insight.full_analysis}</p>
+                        <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Full Analysis</h4>
+                        <p className="text-xs text-gray-600 whitespace-pre-line">{insight.full_analysis}</p>
                       </div>
                     )}
 
                     {/* Key Findings (from raw_source_data) */}
                     {keyFindings && keyFindings.length > 0 && (
                       <div className="mb-3">
-                        <h4 className="text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wider mb-1">Key Findings</h4>
+                        <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Key Findings</h4>
                         <ul className="space-y-1">
                           {keyFindings.map((finding, idx) => (
-                            <li key={idx} className="text-xs text-[#1E2D4D]/70 flex items-start gap-1.5">
+                            <li key={idx} className="text-xs text-gray-600 flex items-start gap-1.5">
                               <span className="text-blue-500 mt-0.5 font-bold">{idx + 1}.</span>
                               {finding}
                             </li>
@@ -417,10 +417,10 @@ export function AdminIntelligenceQueue() {
                     {/* Action Items */}
                     {insight.action_items?.length > 0 && (
                       <div className="mb-3">
-                        <h4 className="text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wider mb-1">Action Items</h4>
+                        <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Action Items</h4>
                         <ul className="space-y-1">
                           {(Array.isArray(insight.action_items) ? insight.action_items : []).map((item, idx) => (
-                            <li key={idx} className="text-xs text-[#1E2D4D]/70 flex items-start gap-1.5">
+                            <li key={idx} className="text-xs text-gray-600 flex items-start gap-1.5">
                               <span className="text-green-500 mt-0.5">-</span>
                               {item}
                             </li>
@@ -430,7 +430,7 @@ export function AdminIntelligenceQueue() {
                     )}
 
                     {/* Metadata row */}
-                    <div className="flex flex-wrap gap-3 text-xs text-[#1E2D4D]/30 mb-3">
+                    <div className="flex flex-wrap gap-3 text-[10px] text-gray-400 mb-3">
                       <span>Source: {insight.source_name}</span>
                       <span>Signal: {insight.market_signal_strength}</span>
                       {insight.affected_counties?.length > 0 && (
@@ -447,7 +447,7 @@ export function AdminIntelligenceQueue() {
                     {insight.tags?.length > 0 && (
                       <div className="flex flex-wrap gap-1 mb-3">
                         {insight.tags.map(tag => (
-                          <span key={tag} className="text-xs px-1.5 py-0.5 rounded bg-[#1E2D4D]/5 text-[#1E2D4D]/50">
+                          <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-500">
                             {tag}
                           </span>
                         ))}
@@ -481,7 +481,7 @@ export function AdminIntelligenceQueue() {
                           onChange={e => { setRejectReason(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('rejectReason'); return n; }); }}
                           rows={2}
                           placeholder="Why is this insight being rejected?"
-                          className="w-full border border-red-200 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-red-300 focus:border-transparent outline-none resize-none"
+                          className="w-full border border-red-200 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-red-300 focus:border-transparent outline-none resize-none"
                         />
                         {aiFields.has('rejectReason') && <AIGeneratedIndicator />}
                         <div className="flex gap-2">
@@ -494,7 +494,7 @@ export function AdminIntelligenceQueue() {
                           </button>
                           <button
                             onClick={() => { setRejectingId(null); setRejectReason(''); }}
-                            className="px-3 py-1.5 text-xs rounded-xl border border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/5 transition-colors"
+                            className="px-3 py-1.5 text-xs rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors"
                           >
                             Cancel
                           </button>
@@ -504,21 +504,21 @@ export function AdminIntelligenceQueue() {
 
                     {/* Action Buttons (only for pending tab) */}
                     {activeTab === 'pending' && !isRejecting && (
-                      <div className="flex items-center gap-2 pt-2 border-t border-[#1E2D4D]/10">
+                      <div className="flex items-center gap-2 pt-2 border-t border-gray-200">
                         {/* Demo eligible checkbox */}
-                        <label className="flex items-center gap-1.5 text-xs text-[#1E2D4D]/70 cursor-pointer">
+                        <label className="flex items-center gap-1.5 text-xs text-gray-600 cursor-pointer">
                           <input
                             type="checkbox"
                             checked={demoEligible}
                             onChange={e => setDemoEligible(e.target.checked)}
-                            className="rounded border-[#1E2D4D]/15 text-[#A08C5A] focus:ring-[#A08C5A]"
+                            className="rounded border-gray-300 text-[#d4af37] focus:ring-[#d4af37]"
                           />
                           Demo
                         </label>
 
                         {/* Demo priority */}
                         {demoEligible && (
-                          <label className="flex items-center gap-1 text-xs text-[#1E2D4D]/50">
+                          <label className="flex items-center gap-1 text-xs text-gray-500">
                             Priority:
                             <input
                               type="number"
@@ -526,7 +526,7 @@ export function AdminIntelligenceQueue() {
                               max={10}
                               value={demoPriority}
                               onChange={e => setDemoPriority(Number(e.target.value))}
-                              className="w-12 border border-[#1E2D4D]/15 rounded px-1.5 py-0.5 text-xs text-center"
+                              className="w-12 border border-gray-300 rounded px-1.5 py-0.5 text-xs text-center"
                             />
                           </label>
                         )}
@@ -555,14 +555,14 @@ export function AdminIntelligenceQueue() {
 
                     {/* Published tab: view-only with status */}
                     {activeTab === 'published' && (
-                      <div className="flex items-center gap-2 pt-2 border-t border-[#1E2D4D]/10 text-xs text-[#1E2D4D]/30">
+                      <div className="flex items-center gap-2 pt-2 border-t border-gray-200 text-xs text-gray-400">
                         <Eye className="h-3.5 w-3.5" />
                         Published {insight.published_at ? timeAgo(insight.published_at) : ''}
                         {insight.reviewed_by && (
                           <span className="ml-1">by {insight.reviewed_by}</span>
                         )}
                         {insight.is_demo_eligible && (
-                          <span className="ml-1 text-[#A08C5A] font-medium">+ Demo{insight.demo_priority > 0 ? ` (${insight.demo_priority})` : ''}</span>
+                          <span className="ml-1 text-[#d4af37] font-medium">+ Demo{insight.demo_priority > 0 ? ` (${insight.demo_priority})` : ''}</span>
                         )}
                       </div>
                     )}

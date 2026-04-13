@@ -54,7 +54,7 @@ export const ScoringBreakdownPanel: React.FC<ScoringBreakdownPanelProps> = ({
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
         <div>
-          <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 600, color: '#1E2D4D' }}>
+          <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 600, color: '#1e4d6b' }}>
             Score Breakdown
           </h3>
           <p style={{ margin: '2px 0 0', fontSize: '0.85rem', color: '#757575' }}>

@@ -24,7 +24,7 @@ export function FoodSafetyHub() {
       {/* Header */}
       <div>
         <h1
-          className="text-2xl font-bold tracking-tight"
+          className="text-2xl font-bold"
           style={{ color: 'var(--text-primary, #0B1628)' }}
         >
           Food Safety

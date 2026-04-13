@@ -23,7 +23,7 @@ export default function Problem() {
   ];
 
   return (
-    <section className="py-[100px] px-6 bg-[#FAF7F0]">
+    <section className="py-[100px] px-6 bg-[var(--color-gray-50)]">
       <div className="max-w-[1000px] mx-auto">
         <div className="text-center mb-16">
           <h2 className="font-['Outfit'] text-[clamp(1.75rem,4vw,2.5rem)] font-bold text-[var(--color-blue)] tracking-tight mb-3">
@@ -33,7 +33,7 @@ export default function Problem() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {problems.map((problem, index) => (
-            <div key={index} className="bg-white rounded-[20px] p-10 text-center border border-[#1E2D4D]/10">
+            <div key={index} className="bg-white rounded-[20px] p-10 text-center border border-[var(--color-gray-200)]">
               <div className="text-[3rem] mb-5">{problem.icon}</div>
               <h3 className="font-['Outfit'] text-[1.5rem] font-bold text-[var(--color-blue)] mb-3">{problem.title}</h3>
               <p className="text-[var(--color-text-light)] leading-[1.6]">{problem.description}</p>

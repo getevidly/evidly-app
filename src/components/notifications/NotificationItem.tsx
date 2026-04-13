@@ -45,13 +45,13 @@ export function NotificationItem({
 
   return (
     <div
-      className="border-b border-[#1E2D4D]/3 hover:bg-[#FAF7F0] transition-colors cursor-pointer"
+      className="border-b border-gray-50 hover:bg-gray-50 transition-colors cursor-pointer"
       style={{ backgroundColor: isUnread ? '#fafbff' : 'white' }}
     >
       <div className="px-4 py-3 flex gap-3" onClick={handleClick}>
         {/* Category icon */}
         <div
-          className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center mt-0.5 min-h-[44px] min-w-[44px]"
+          className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center mt-0.5"
           style={{ backgroundColor: catColors?.bg || '#f8fafc' }}
         >
           <CategoryIcon className="h-4 w-4" style={{ color: catColors?.color || '#6B7F96' }} />
@@ -67,17 +67,17 @@ export function NotificationItem({
                   style={{ backgroundColor: sev.dot }}
                 />
               )}
-              <span className={`text-sm truncate ${isUnread ? 'font-semibold text-[#1E2D4D]' : 'font-medium text-[#1E2D4D]/80'}`}>
+              <span className={`text-sm truncate ${isUnread ? 'font-semibold text-gray-900' : 'font-medium text-gray-700'}`}>
                 {n.title}
               </span>
             </div>
-            <span className="text-xs text-[#1E2D4D]/30 flex-shrink-0 whitespace-nowrap">
+            <span className="text-xs text-gray-400 flex-shrink-0 whitespace-nowrap">
               {timeAgo(n.createdAt)}
             </span>
           </div>
 
           {n.body && (
-            <p className="text-xs text-[#1E2D4D]/50 mt-0.5 line-clamp-2">{n.body}</p>
+            <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{n.body}</p>
           )}
 
           {/* Severity badge + action buttons */}
@@ -93,7 +93,7 @@ export function NotificationItem({
               <button
                 onClick={(e) => { e.stopPropagation(); handleClick(); }}
                 className="text-xs font-medium flex items-center gap-0.5 hover:underline"
-                style={{ color: '#1E2D4D' }}
+                style={{ color: '#1e4d6b' }}
               >
                 {n.actionLabel} <ChevronRight className="h-3 w-3" />
               </button>
@@ -103,25 +103,25 @@ export function NotificationItem({
               {isUnread && (
                 <button
                   onClick={() => onMarkAsRead(n.id)}
-                  className="p-2.5 -m-1 rounded-full hover:bg-[#1E2D4D]/5 active:scale-95 transition-transform"
+                  className="p-2.5 -m-1 rounded-full hover:bg-gray-100 active:scale-95 transition-transform"
                   title="Mark as read"
                 >
-                  <Check className="h-3.5 w-3.5 text-[#1E2D4D]/30" />
+                  <Check className="h-3.5 w-3.5 text-gray-400" />
                 </button>
               )}
               <button
                 onClick={() => onSnooze(n.id)}
-                className="p-2.5 -m-1 rounded-full hover:bg-[#1E2D4D]/5 active:scale-95 transition-transform"
+                className="p-2.5 -m-1 rounded-full hover:bg-gray-100 active:scale-95 transition-transform"
                 title="Snooze 24h"
               >
-                <Clock className="h-3.5 w-3.5 text-[#1E2D4D]/30" />
+                <Clock className="h-3.5 w-3.5 text-gray-400" />
               </button>
               <button
                 onClick={() => onDismiss(n.id)}
-                className="p-2.5 -m-1 rounded-full hover:bg-[#1E2D4D]/5 active:scale-95 transition-transform"
+                className="p-2.5 -m-1 rounded-full hover:bg-gray-100 active:scale-95 transition-transform"
                 title="Dismiss"
               >
-                <X className="h-3.5 w-3.5 text-[#1E2D4D]/30" />
+                <X className="h-3.5 w-3.5 text-gray-400" />
               </button>
             </div>
           </div>

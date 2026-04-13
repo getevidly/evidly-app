@@ -26,7 +26,6 @@ import {
   DEMO_AI_ANALYSIS,
   documentNeedsAttention,
 } from '../data/documentAiDemoData';
-import { usePageTitle } from '../hooks/usePageTitle';
 
 type ScanStatus = 'scanning' | 'available' | 'quarantined';
 
@@ -208,7 +207,6 @@ export function Documents() {
   const { t } = useTranslation();
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
-  usePageTitle('Documents');
   const [documents, setDocuments] = useState<Document[]>([]);
   const [sharedItems, setSharedItems] = useState<SharedItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -396,11 +394,11 @@ export function Documents() {
   const getSharedStatusBadge = (status: string) => {
     switch (status) {
       case 'downloaded':
-        return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-700">{t('pages.documents.downloaded')}</span>;
+        return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">{t('pages.documents.downloaded')}</span>;
       case 'viewed':
-        return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-50 text-blue-700">{t('pages.documents.viewed')}</span>;
+        return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">{t('pages.documents.viewed')}</span>;
       case 'sent':
-        return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-[#1E2D4D]/5 text-[#1E2D4D]/70">{t('pages.documents.sent')}</span>;
+        return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">{t('pages.documents.sent')}</span>;
       default:
         return null;
     }
@@ -423,13 +421,13 @@ export function Documents() {
 
         <div className="flex justify-between items-center flex-wrap gap-2">
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#1E2D4D]">{t('pages.documents.documentation')}</h1>
-            <p className="text-sm text-[#1E2D4D]/70 mt-1">{t('pages.documents.subtitle')}</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t('pages.documents.documentation')}</h1>
+            <p className="text-sm text-gray-600 mt-1">{t('pages.documents.subtitle')}</p>
           </div>
           <div className="flex gap-2 flex-wrap">
             <button
               onClick={() => navigate('/import?type=documents')}
-              className="flex items-center space-x-2 px-4 py-2 min-h-[44px] border border-[#1E2D4D] text-[#1E2D4D] rounded-lg hover:bg-[#eef4f8] shadow-sm transition-colors duration-150"
+              className="flex items-center space-x-2 px-4 py-2 min-h-[44px] border border-[#1e4d6b] text-[#1e4d6b] rounded-lg hover:bg-[#eef4f8] shadow-sm transition-colors duration-150"
             >
               <Upload className="h-4 w-4" />
               <span>Import</span>
@@ -437,7 +435,7 @@ export function Documents() {
             {selectedDocs.length > 0 && activeTab === 'documents' && (
               <button
                 onClick={handleShareMultiple}
-                className="flex items-center space-x-2 px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-xl shadow-sm hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] duration-150"
+                className="flex items-center space-x-2 px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg shadow-sm hover:bg-[#163a52] transition-colors duration-150"
               >
                 <Share2 className="h-5 w-5" />
                 <span>{t('pages.documents.shareSelected').replace('{{count}}', String(selectedDocs.length))}</span>
@@ -445,7 +443,7 @@ export function Documents() {
             )}
             <button
               onClick={() => setShowSmartUpload(true)}
-              className="flex items-center space-x-2 px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] shadow-sm transition-all duration-150 active:scale-[0.98] duration-150"
+              className="flex items-center space-x-2 px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] shadow-sm transition-colors duration-150"
             >
               <Plus className="h-5 w-5" />
               <span className="hidden sm:inline">{t('pages.documents.upload')}</span>
@@ -453,7 +451,7 @@ export function Documents() {
             </button>
             <button
               onClick={() => setShowPhotoCapture(!showPhotoCapture)}
-              className="flex items-center space-x-2 px-4 py-2 min-h-[44px] bg-white text-[#1E2D4D] border-2 border-[#1E2D4D] rounded-xl hover:bg-[#FAF7F0] shadow-sm transition-colors duration-150"
+              className="flex items-center space-x-2 px-4 py-2 min-h-[44px] bg-white text-[#1e4d6b] border-2 border-[#1e4d6b] rounded-xl hover:bg-gray-50 shadow-sm transition-colors duration-150"
             >
               <Camera className="h-5 w-5" />
               <span className="hidden sm:inline">{t('pages.documents.takePhoto')}</span>
@@ -464,7 +462,7 @@ export function Documents() {
 
         {/* Photo Capture Panel — documentMode auto-enhances for readability */}
         {showPhotoCapture && (
-          <div className="bg-white rounded-xl p-4 sm:p-5 border border-[#1E2D4D]/10">
+          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5 border border-gray-200">
             <PhotoEvidence
               photos={docPhotos}
               onChange={setDocPhotos}
@@ -472,14 +470,14 @@ export function Documents() {
               maxPhotos={3}
               documentMode
             />
-            <p className="text-xs text-[#1E2D4D]/30 mt-1" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+            <p className="text-xs text-gray-400 mt-1" style={{ fontFamily: "'DM Sans', sans-serif" }}>
               {t('pages.documents.photoHint')}
             </p>
             {docPhotos.length > 0 && (
               <div className="mt-3 space-y-3">
                 <button
                   onClick={() => { toast.success('Document photo saved'); setShowPhotoCapture(false); setDocPhotos([]); }}
-                  className="px-4 py-2 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] text-sm font-medium"
+                  className="px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium"
                 >
                   {t('pages.documents.saveDocumentPhoto')}
                 </button>
@@ -491,33 +489,33 @@ export function Documents() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #1E2D4D' }}>
+          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #1e4d6b' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
-              <FileText className="h-4 w-4 text-[#1E2D4D]" />
-              <span className="text-sm text-[#1E2D4D]/50 font-medium">{t('pages.documents.totalDocuments')}</span>
+              <FileText className="h-4 w-4 text-[#1e4d6b]" />
+              <span className="text-sm text-gray-500 font-medium">{t('pages.documents.totalDocuments')}</span>
             </div>
-            <div className="text-xl sm:text-3xl font-bold tracking-tight text-[#1E2D4D] text-center">{locationFilteredDocs.length}</div>
+            <div className="text-xl sm:text-3xl font-bold text-[#1e4d6b] text-center">{locationFilteredDocs.length}</div>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #16a34a' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <CheckCircle className="h-4 w-4 text-green-600" />
-              <span className="text-sm text-[#1E2D4D]/50 font-medium">{t('status.current')}</span>
+              <span className="text-sm text-gray-500 font-medium">{t('status.current')}</span>
             </div>
-            <div className="text-xl sm:text-3xl font-bold tracking-tight text-green-600 text-center">{statusCounts.current}</div>
+            <div className="text-xl sm:text-3xl font-bold text-green-600 text-center">{statusCounts.current}</div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #A08C5A' }}>
+          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #d4af37' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
-              <Clock className="h-4 w-4 text-[#A08C5A]" />
-              <span className="text-sm text-[#1E2D4D]/50 font-medium">{t('status.expiringSoon')}</span>
+              <Clock className="h-4 w-4 text-[#d4af37]" />
+              <span className="text-sm text-gray-500 font-medium">{t('status.expiringSoon')}</span>
             </div>
-            <div className="text-xl sm:text-3xl font-bold tracking-tight text-[#1E2D4D] text-center">{statusCounts.expiring}</div>
+            <div className="text-xl sm:text-3xl font-bold text-[#d4af37] text-center">{statusCounts.expiring}</div>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #ef4444' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <AlertTriangle className="h-4 w-4 text-red-600" />
-              <span className="text-sm text-[#1E2D4D]/50 font-medium">{t('status.expired')}</span>
+              <span className="text-sm text-gray-500 font-medium">{t('status.expired')}</span>
             </div>
-            <div className="text-xl sm:text-3xl font-bold tracking-tight text-red-600 text-center">{statusCounts.expired}</div>
+            <div className="text-xl sm:text-3xl font-bold text-red-600 text-center">{statusCounts.expired}</div>
           </div>
         </div>
 
@@ -563,13 +561,13 @@ export function Documents() {
           </div>
         )}
 
-        <div className="flex space-x-2 border-b border-[#1E2D4D]/10 overflow-x-auto">
+        <div className="flex space-x-2 border-b border-gray-200 overflow-x-auto">
           <button
             onClick={() => setActiveTab('documents')}
             className={`px-6 py-3 font-medium text-sm whitespace-nowrap border-b-2 transition-colors ${
               activeTab === 'documents'
-                ? 'border-[#A08C5A] text-[#1E2D4D]'
-                : 'border-transparent text-[#1E2D4D]/70 hover:text-[#1E2D4D] hover:border-[#1E2D4D]/15'
+                ? 'border-[#d4af37] text-[#1e4d6b]'
+                : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
             }`}
           >
             {t('pages.documents.allDocuments')}
@@ -578,8 +576,8 @@ export function Documents() {
             onClick={() => setActiveTab('shared')}
             className={`px-6 py-3 font-medium text-sm whitespace-nowrap border-b-2 transition-colors ${
               activeTab === 'shared'
-                ? 'border-[#A08C5A] text-[#1E2D4D]'
-                : 'border-transparent text-[#1E2D4D]/70 hover:text-[#1E2D4D] hover:border-[#1E2D4D]/15'
+                ? 'border-[#d4af37] text-[#1e4d6b]'
+                : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
             }`}
           >
             {t('pages.documents.shared')} ({sharedItems.length})
@@ -598,7 +596,7 @@ export function Documents() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   style={{ width: '100%', padding: '8px 12px 8px 36px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '14px', outline: 'none' }}
-                  onFocus={(e) => e.currentTarget.style.borderColor = '#1E2D4D'}
+                  onFocus={(e) => e.currentTarget.style.borderColor = '#1e4d6b'}
                   onBlur={(e) => e.currentTarget.style.borderColor = '#d1d5db'}
                 />
               </div>
@@ -618,7 +616,7 @@ export function Documents() {
               <button
                 onClick={() => setSelectedCategory('All')}
                 className={`px-4 py-2 rounded-lg text-sm whitespace-nowrap transition-colors duration-150 ${
-                  selectedCategory === 'All' ? 'bg-[#1E2D4D] text-white' : 'bg-white text-[#1E2D4D]/80 border border-[#1E2D4D]/15 hover:bg-[#FAF7F0]'
+                  selectedCategory === 'All' ? 'bg-[#1e4d6b] text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
                 }`}
               >
                 {t('pages.documents.all')} ({locationFilteredDocs.length})
@@ -630,7 +628,7 @@ export function Documents() {
                     key={cat}
                     onClick={() => setSelectedCategory(cat)}
                     className={`px-4 py-2 rounded-lg text-sm whitespace-nowrap transition-colors duration-150 ${
-                      selectedCategory === cat ? 'bg-[#1E2D4D] text-white' : 'bg-white text-[#1E2D4D]/80 border border-[#1E2D4D]/15 hover:bg-[#FAF7F0]'
+                      selectedCategory === cat ? 'bg-[#1e4d6b] text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
                     }`}
                   >
                     {categoryLabelMap[cat] || cat} {count > 0 ? `(${count})` : ''}
@@ -639,12 +637,12 @@ export function Documents() {
               })}
             </div>
 
-            <div className="bg-white border border-[#1E2D4D]/10 rounded-xl overflow-hidden">
+            <div className="bg-white shadow-sm border border-gray-200 rounded-xl overflow-hidden">
               {loading ? (
                 <div className="p-12">
                   <div className="animate-pulse space-y-4">
                     {[1, 2, 3].map((i) => (
-                      <div key={i} className="h-16 bg-[#1E2D4D]/8 rounded"></div>
+                      <div key={i} className="h-16 bg-gray-200 rounded"></div>
                     ))}
                   </div>
                 </div>
@@ -668,8 +666,8 @@ export function Documents() {
                 />
               ) : (
                 <div style={{ overflowX: 'auto' }}>
-                  <table className="min-w-full divide-y divide-[#1E2D4D]/10">
-                    <thead className="bg-[#FAF7F0]">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
                       <tr>
                         <th className="px-4 py-3 text-left" style={{ width: '40px' }}>
                           <input
@@ -682,36 +680,36 @@ export function Documents() {
                                 setSelectedDocs([]);
                               }
                             }}
-                            className="h-4 w-4 text-[#1E2D4D] focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 border-[#1E2D4D]/15 rounded"
+                            className="h-4 w-4 text-[#1e4d6b] focus:ring-[#1e4d6b] border-gray-300 rounded"
                           />
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           {t('pages.documents.documentName')}
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider hidden sm:table-cell">
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
                           {t('pages.documents.category')}
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider hidden sm:table-cell">
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
                           {t('pages.documents.location')}
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           {t('pages.documents.status')}
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider hidden md:table-cell">
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
                           Scan
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider hidden lg:table-cell">
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
                           {t('pages.documents.uploaded')}
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           {t('pages.documents.expiration')}
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           {t('pages.documents.actions')}
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-[#1E2D4D]/10">
+                    <tbody className="bg-white divide-y divide-gray-200">
                       {filteredDocuments.map((doc) => {
                         const docStatus = getDocStatus(doc);
                         const hasAi = !!doc.ai_analysis;
@@ -719,7 +717,7 @@ export function Documents() {
                         return (
                           <React.Fragment key={doc.id}>
                           <tr
-                            className={`${selectedDocs.includes(doc.id) ? 'bg-blue-50' : 'hover:bg-[#FAF7F0]'} ${hasAi ? 'cursor-pointer' : ''}`}
+                            className={`${selectedDocs.includes(doc.id) ? 'bg-blue-50' : 'hover:bg-gray-50'} ${hasAi ? 'cursor-pointer' : ''}`}
                             onClick={(e) => {
                               // Don't toggle if clicking checkbox, button, or select
                               const target = e.target as HTMLElement;
@@ -732,7 +730,7 @@ export function Documents() {
                                 type="checkbox"
                                 checked={selectedDocs.includes(doc.id)}
                                 onChange={() => handleToggleDoc(doc.id)}
-                                className="h-4 w-4 text-[#1E2D4D] focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 border-[#1E2D4D]/15 rounded"
+                                className="h-4 w-4 text-[#1e4d6b] focus:ring-[#1e4d6b] border-gray-300 rounded"
                               />
                             </td>
                             <td className="px-4 py-4">
@@ -740,19 +738,19 @@ export function Documents() {
                                 {hasAi ? (
                                   <ChevronRight
                                     size={16}
-                                    className={`text-[#1E2D4D]/30 mr-2 flex-shrink-0 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
+                                    className={`text-gray-400 mr-2 flex-shrink-0 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
                                   />
                                 ) : (
-                                  <FileText className="h-5 w-5 text-[#1E2D4D]/30 mr-2 flex-shrink-0" />
+                                  <FileText className="h-5 w-5 text-gray-400 mr-2 flex-shrink-0" />
                                 )}
                                 <div>
                                   <div className="flex items-center gap-2">
-                                    <span className="text-sm font-medium text-[#1E2D4D]">{doc.title}</span>
+                                    <span className="text-sm font-medium text-gray-900">{doc.title}</span>
                                     {doc.needs_attention && <NeedsAttentionBadge />}
                                     {doc.import_source && doc.import_source !== 'direct' && (
                                       <span
-                                        className="text-xs px-1.5 py-0.5 rounded font-medium"
-                                        style={{ backgroundColor: '#eef4f8', color: '#1E2D4D' }}
+                                        className="text-[10px] px-1.5 py-0.5 rounded font-medium"
+                                        style={{ backgroundColor: '#eef4f8', color: '#1e4d6b' }}
                                         title={`Imported from ${doc.import_source.replace('_', ' ')}`}
                                       >
                                         Cloud
@@ -761,7 +759,7 @@ export function Documents() {
                                   </div>
                                   {doc.provided_by && (
                                     <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '2px' }}>
-                                      {t('pages.documents.providedBy')} <span style={{ color: '#1E2D4D', fontWeight: 500 }}>{doc.provided_by}</span>
+                                      {t('pages.documents.providedBy')} <span style={{ color: '#1e4d6b', fontWeight: 500 }}>{doc.provided_by}</span>
                                     </div>
                                   )}
                                 </div>
@@ -771,7 +769,7 @@ export function Documents() {
                               {editingDocId === doc.id ? (
                                 <select
                                   autoFocus
-                                  className="border border-[#1E2D4D]/15 rounded-md px-2 py-1 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 bg-white"
+                                  className="border border-gray-300 rounded-md px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] bg-white"
                                   defaultValue={doc.category}
                                   onChange={(e) => handleCategoryChange(doc.id, e.target.value)}
                                   onBlur={() => setEditingDocId(null)}
@@ -793,13 +791,13 @@ export function Documents() {
                                 </select>
                               ) : (
                                 <div className="flex items-center gap-1.5">
-                                  <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-50 text-blue-700">
+                                  <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
                                     {categoryLabelMap[doc.category] || doc.category}
                                   </span>
                                   {doc.categorization_source === 'manual' && (
                                     <span
                                       title="Manually categorized"
-                                      className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-xs font-medium"
+                                      className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium"
                                       style={{ backgroundColor: '#fef3c7', color: '#92400e' }}
                                     >
                                       <Pencil size={9} />
@@ -809,7 +807,7 @@ export function Documents() {
                                 </div>
                               )}
                             </td>
-                            <td className="px-4 py-4 whitespace-nowrap text-sm text-[#1E2D4D]/70 hidden sm:table-cell">
+                            <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-600 hidden sm:table-cell">
                               {doc.location}
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap">
@@ -818,18 +816,18 @@ export function Documents() {
                             <td className="px-4 py-4 whitespace-nowrap hidden md:table-cell">
                               <ScanStatusBadge scanStatus={doc.scan_status} />
                             </td>
-                            <td className="px-4 py-4 whitespace-nowrap text-sm text-[#1E2D4D]/50 hidden lg:table-cell">
+                            <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
                               {format(new Date(doc.created_at), 'MMM d, yyyy')}
                             </td>
-                            <td className="px-4 py-4 whitespace-nowrap text-sm text-[#1E2D4D]/50">
+                            <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
                               {doc.expiration_date ? format(new Date(doc.expiration_date), 'MMM d, yyyy') : '—'}
                             </td>
-                            <td className="px-4 py-4 whitespace-nowrap text-sm text-[#1E2D4D]/50">
+                            <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
                               <div className="flex space-x-2">
                                 <button
                                   onClick={() => setEditingDocId(editingDocId === doc.id ? null : doc.id)}
-                                  style={{ color: editingDocId === doc.id ? '#A08C5A' : '#6b7280' }}
-                                  onMouseEnter={(e) => { if (editingDocId !== doc.id) e.currentTarget.style.color = '#1E2D4D'; }}
+                                  style={{ color: editingDocId === doc.id ? '#d4af37' : '#6b7280' }}
+                                  onMouseEnter={(e) => { if (editingDocId !== doc.id) e.currentTarget.style.color = '#1e4d6b'; }}
                                   onMouseLeave={(e) => { if (editingDocId !== doc.id) e.currentTarget.style.color = '#6b7280'; }}
                                   title="Edit category"
                                 >
@@ -837,9 +835,9 @@ export function Documents() {
                                 </button>
                                 <button
                                   onClick={() => handleShareDocument(doc.title)}
-                                  style={{ color: '#1E2D4D' }}
-                                  onMouseEnter={(e) => e.currentTarget.style.color = '#141E33'}
-                                  onMouseLeave={(e) => e.currentTarget.style.color = '#1E2D4D'}
+                                  style={{ color: '#1e4d6b' }}
+                                  onMouseEnter={(e) => e.currentTarget.style.color = '#163a52'}
+                                  onMouseLeave={(e) => e.currentTarget.style.color = '#1e4d6b'}
                                   title="Share document"
                                 >
                                   <Share2 className="h-4 w-4" />
@@ -847,7 +845,7 @@ export function Documents() {
                                 <button
                                   onClick={() => handleDownload(doc)}
                                   className="hover:opacity-70"
-                                  style={{ color: '#1E2D4D' }}
+                                  style={{ color: '#1e4d6b' }}
                                   title="Download"
                                 >
                                   <Download className="h-4 w-4" />
@@ -866,7 +864,7 @@ export function Documents() {
                           {hasAi && isExpanded && doc.ai_analysis && (
                             <tr>
                               <td colSpan={9} className="p-0">
-                                <div className="bg-[#FAF7F0] border-t border-b border-[#1E2D4D]/5">
+                                <div className="bg-gray-50 border-t border-b border-gray-100">
                                   <AiAnalysisPanel
                                     analysis={doc.ai_analysis}
                                     isOpen={true}
@@ -888,7 +886,7 @@ export function Documents() {
         )}
 
         {activeTab === 'shared' && (
-          <div className="bg-white border border-[#1E2D4D]/10 rounded-xl overflow-hidden">
+          <div className="bg-white shadow-sm border border-gray-200 rounded-xl overflow-hidden">
             {sharedItems.length === 0 ? (
               <EmptyState
                 icon={Share2}
@@ -903,42 +901,42 @@ export function Documents() {
               />
             ) : (
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-[#1E2D4D]/10">
-                  <thead className="bg-[#FAF7F0]">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         {t('pages.documents.document')}
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         {t('pages.documents.recipient')}
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider hidden sm:table-cell">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
                         {t('pages.documents.recipientType')}
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider hidden sm:table-cell">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
                         {t('pages.documents.dateShared')}
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         {t('pages.documents.status')}
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-[#1E2D4D]/10">
+                  <tbody className="bg-white divide-y divide-gray-200">
                     {sharedItems.map((item) => (
-                      <tr key={item.id} className="hover:bg-[#FAF7F0]">
+                      <tr key={item.id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
-                            <FileText className="h-5 w-5 text-[#1E2D4D]/30 mr-2" />
-                            <span className="text-sm font-medium text-[#1E2D4D]">{item.document}</span>
+                            <FileText className="h-5 w-5 text-gray-400 mr-2" />
+                            <span className="text-sm font-medium text-gray-900">{item.document}</span>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1E2D4D]">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                           {item.recipient}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1E2D4D]/70 hidden sm:table-cell">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 hidden sm:table-cell">
                           {item.recipientType}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1E2D4D]/50 hidden sm:table-cell">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">
                           {format(new Date(item.date), 'MMM d, yyyy')}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">

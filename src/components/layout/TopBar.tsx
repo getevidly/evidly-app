@@ -151,7 +151,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
             </div>
             <DemoModeBadge />
             {userRole === 'platform_admin' && (
-              <span className="hidden sm:inline px-2 py-0.5 text-xs font-bold tracking-wider rounded bg-[#A08C5A] text-[#1E2D4D] uppercase whitespace-nowrap flex-shrink-0">
+              <span className="hidden sm:inline px-2 py-0.5 text-[10px] font-bold tracking-wider rounded bg-[#d4af37] text-[#1E2D4D] uppercase whitespace-nowrap flex-shrink-0">
                 Platform Admin
               </span>
             )}
@@ -161,14 +161,14 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
             {/* Quick Switcher trigger (Ctrl+K) */}
             <button
               onClick={() => window.dispatchEvent(new Event('open-quick-switcher'))}
-              className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl border transition-colors text-sm cursor-pointer"
+              className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-colors text-sm cursor-pointer"
               style={{ backgroundColor: '#ffffff', borderColor: '#d4c9a8', color: '#1E2D4D' }}
               title={`${t('topBar.quickSearch')} (${navigator.platform?.includes('Mac') ? '⌘K' : 'Ctrl+K'})`}
               data-tour="tour-search"
             >
               <Search className="h-3.5 w-3.5" />
               <span className="text-xs">{t('topBar.search')}</span>
-              <kbd className="ml-1 px-1.5 py-0.5 text-xs font-medium bg-[#1E2D4D]/5 border border-[#1E2D4D]/15 rounded text-[#1E2D4D]/50">
+              <kbd className="ml-1 px-1.5 py-0.5 text-[10px] font-medium bg-gray-100 border border-gray-300 rounded text-gray-500">
                 {navigator.platform?.includes('Mac') ? '⌘K' : 'Ctrl+K'}
               </kbd>
             </button>
@@ -210,8 +210,8 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                         }}
                         className={`block w-full text-left px-4 py-2 text-sm transition-colors duration-150 ${
                           !selectedLocation
-                            ? 'bg-[#eef4f8] text-[#1E2D4D] font-medium border-l-2 border-[#A08C5A]'
-                            : 'text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/5'
+                            ? 'bg-[#eef4f8] text-[#1e4d6b] font-medium border-l-2 border-[#d4af37]'
+                            : 'text-gray-700 hover:bg-gray-100'
                         }`}
                       >
                         {t('common.allLocations')}
@@ -225,8 +225,8 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                           }}
                           className={`block w-full text-left px-4 py-2 text-sm transition-colors duration-150 ${
                             selectedLocation === location.id
-                              ? 'bg-[#eef4f8] text-[#1E2D4D] font-medium border-l-2 border-[#A08C5A]'
-                              : 'text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/5'
+                              ? 'bg-[#eef4f8] text-[#1e4d6b] font-medium border-l-2 border-[#d4af37]'
+                              : 'text-gray-700 hover:bg-gray-100'
                           }`}
                         >
                           {location.name}
@@ -268,8 +268,8 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                         }}
                         className={`block w-full text-left px-4 py-2 text-sm transition-colors duration-150 ${
                           locale === loc
-                            ? 'bg-[#eef4f8] text-[#1E2D4D] font-medium border-l-2 border-[#A08C5A]'
-                            : 'text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/5'
+                            ? 'bg-[#eef4f8] text-[#1e4d6b] font-medium border-l-2 border-[#d4af37]'
+                            : 'text-gray-700 hover:bg-gray-100'
                         }`}
                       >
                         {LOCALE_META[loc as Locale].flag} {LOCALE_META[loc as Locale].label}
@@ -329,7 +329,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                   {roleLabels[userRole]}
                 </span>
                 {isTestMode && (
-                  <span className="text-[11px] font-bold px-1.5 py-0.5 rounded bg-orange-500 text-white">TEST</span>
+                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-orange-500 text-white">TEST</span>
                 )}
                 <ChevronDown className="h-4 w-4" style={{ color: '#6b7280' }} />
               </button>
@@ -346,15 +346,15 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                         }}
                         className={`block w-full text-left px-4 py-2.5 transition-colors duration-150 ${
                           userRole === role
-                            ? 'bg-[#eef4f8] text-[#1E2D4D] border-l-2 border-[#A08C5A]'
-                            : 'text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/5'
+                            ? 'bg-[#eef4f8] text-[#1e4d6b] border-l-2 border-[#d4af37]'
+                            : 'text-gray-700 hover:bg-gray-100'
                         }`}
                         {...(isTestMode ? { 'data-testid': `role-option-${role}` } : {})}
                       >
                         <span className={`text-sm ${userRole === role ? 'font-medium' : ''}`}>
                           {t(i18nKey) !== i18nKey ? t(i18nKey) : label}
                         </span>
-                        <p className="text-xs text-[#1E2D4D]/30 mt-0.5 leading-snug">{t(i18nDescKey) !== i18nDescKey ? t(i18nDescKey) : description}</p>
+                        <p className="text-xs text-gray-400 mt-0.5 leading-snug">{t(i18nDescKey) !== i18nDescKey ? t(i18nDescKey) : description}</p>
                       </button>
                     ))}
                   </div>
@@ -392,7 +392,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                         setShowProfileModal(true);
                         setShowUserMenu(false);
                       }}
-                      className="block w-full text-left px-4 py-2 text-sm text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/5 transition-colors duration-150 flex items-center gap-2"
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150 flex items-center gap-2"
                     >
                       <User className="h-4 w-4" />
                       {t('topBar.myProfile')}
@@ -405,7 +405,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                         setPwError('');
                         setPwSuccess('');
                       }}
-                      className="block w-full text-left px-4 py-2 text-sm text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/5 transition-colors duration-150 flex items-center gap-2"
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150 flex items-center gap-2"
                     >
                       <Lock className="h-4 w-4" />
                       {t('topBar.changePassword')}
@@ -415,7 +415,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                         navigate('/settings');
                         setShowUserMenu(false);
                       }}
-                      className="block w-full text-left px-4 py-2 text-sm text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/5 transition-colors duration-150"
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150"
                     >
                       {t('nav.settings')}
                     </button>
@@ -425,15 +425,15 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                           navigate('/admin');
                           setShowUserMenu(false);
                         }}
-                        className="block w-full text-left px-4 py-2 text-sm text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/5 transition-colors duration-150"
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150"
                       >
                         Admin Panel
                       </button>
                     )}
-                    <div className="border-t border-[#1E2D4D]/10 my-1" />
+                    <div className="border-t border-gray-200 my-1" />
                     <button
                       onClick={handleSignOut}
-                      className="block w-full text-left px-4 py-2 text-sm text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/5 transition-colors duration-150"
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150"
                     >
                       {t('topBar.signOut')}
                     </button>
@@ -455,77 +455,77 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
         <>
           <div className="fixed inset-0 bg-black bg-opacity-50 z-[60]" onClick={() => setShowChangePassword(false)} />
           <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl border border-[#1E2D4D]/10 w-full max-w-md modal-content-enter" onClick={(e) => e.stopPropagation()}>
-              <div className="p-6 border-b border-[#1E2D4D]/10">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+              <div className="p-6 border-b border-gray-200">
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-[#1E2D4D] flex items-center justify-center">
+                  <div className="h-10 w-10 rounded-lg bg-[#1e4d6b] flex items-center justify-center">
                     <Lock className="h-5 w-5 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">{t('topBar.changePassword')}</h2>
-                    <p className="text-sm text-[#1E2D4D]/50">{t('topBar.updateYourPassword')}</p>
+                    <h2 className="text-lg font-semibold text-gray-900">{t('topBar.changePassword')}</h2>
+                    <p className="text-sm text-gray-500">{t('topBar.updateYourPassword')}</p>
                   </div>
                 </div>
               </div>
               <div className="p-6 space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('topBar.currentPassword')}</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('topBar.currentPassword')}</label>
                   <div className="relative">
                     <input
                       type={showCurrentPw ? 'text' : 'password'}
                       value={pwForm.current}
                       onChange={(e) => setPwForm({ ...pwForm, current: e.target.value })}
-                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent pr-10"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent pr-10"
                       placeholder={t('topBar.enterCurrentPassword')}
                     />
-                    <button type="button" onClick={() => setShowCurrentPw(!showCurrentPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70">
+                    <button type="button" onClick={() => setShowCurrentPw(!showCurrentPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                       {showCurrentPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('topBar.newPassword')}</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('topBar.newPassword')}</label>
                   <div className="relative">
                     <input
                       type={showNewPw ? 'text' : 'password'}
                       value={pwForm.newPw}
                       onChange={(e) => setPwForm({ ...pwForm, newPw: e.target.value })}
-                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent pr-10"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent pr-10"
                       placeholder={t('topBar.enterNewPassword')}
                     />
-                    <button type="button" onClick={() => setShowNewPw(!showNewPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70">
+                    <button type="button" onClick={() => setShowNewPw(!showNewPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                       {showNewPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('topBar.confirmNewPassword')}</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('topBar.confirmNewPassword')}</label>
                   <input
                     type="password"
                     value={pwForm.confirm}
                     onChange={(e) => setPwForm({ ...pwForm, confirm: e.target.value })}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
                     placeholder={t('topBar.reEnterNewPassword')}
                   />
                 </div>
                 {pwError && (
-                  <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-3 py-2">{pwError}</div>
+                  <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{pwError}</div>
                 )}
                 {pwSuccess && (
-                  <div className="text-sm text-green-700 bg-green-50 border border-green-200 rounded-xl px-3 py-2">{pwSuccess}</div>
+                  <div className="text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-2">{pwSuccess}</div>
                 )}
               </div>
-              <div className="p-6 border-t border-[#1E2D4D]/10 flex justify-end gap-3">
+              <div className="p-6 border-t border-gray-200 flex justify-end gap-3">
                 <button
                   onClick={() => setShowChangePassword(false)}
-                  className="px-4 py-2 text-sm font-medium text-[#1E2D4D]/80 bg-white border border-[#1E2D4D]/15 rounded-xl hover:bg-[#FAF7F0]"
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50"
                 >
                   {t('common.cancel')}
                 </button>
                 <button
                   onClick={handleChangePassword}
                   className="px-4 py-2 text-sm font-medium text-white rounded-lg hover:opacity-90"
-                  style={{ backgroundColor: '#1E2D4D' }}
+                  style={{ backgroundColor: '#1e4d6b' }}
                 >
                   {t('topBar.updatePassword')}
                 </button>

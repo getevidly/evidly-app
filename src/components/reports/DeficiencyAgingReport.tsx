@@ -37,7 +37,7 @@ export function DeficiencyAgingReport({ data }: DeficiencyAgingProps) {
       </div>
 
       {/* Aging matrix */}
-      <div className="rounded-xl p-4" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
+      <div className="rounded-lg p-4" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
         <h4 className="text-xs font-bold uppercase mb-3" style={{ color: TEXT_TERTIARY }}>Aging Matrix</h4>
         <div className="overflow-x-auto">
           <table className="w-full text-sm" style={{ borderCollapse: 'collapse' }}>
@@ -57,7 +57,7 @@ export function DeficiencyAgingReport({ data }: DeficiencyAgingProps) {
                 return (
                   <tr key={sev} style={{ borderBottom: `1px solid ${CARD_BORDER}` }}>
                     <td className="px-3 py-2">
-                      <span className="text-xs font-semibold px-2 py-0.5 rounded-full capitalize" style={{ background: sc.bg, color: sc.text }}>
+                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full capitalize" style={{ background: sc.bg, color: sc.text }}>
                         {sev}
                       </span>
                     </td>
@@ -93,7 +93,7 @@ export function DeficiencyAgingReport({ data }: DeficiencyAgingProps) {
                   <td className="px-3 py-2 font-medium" style={{ color: NAVY }}>{String(def.title || '')}</td>
                   <td className="px-3 py-2" style={{ color: TEXT_TERTIARY }}>{String(def.location || '')}</td>
                   <td className="px-3 py-2">
-                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full capitalize" style={{ background: sc.bg, color: sc.text }}>
+                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full capitalize" style={{ background: sc.bg, color: sc.text }}>
                       {String(def.severity || '')}
                     </span>
                   </td>

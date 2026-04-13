@@ -84,7 +84,7 @@ export function CompanyProfilePage() {
     dateFormat: 'MM/DD/YYYY',
     currency: 'USD',
     fiscalYearStart: 1,
-    primaryColor: '#1E2D4D',
+    primaryColor: '#1e4d6b',
     certHeaderText: '',
     certFooterText: '',
   });
@@ -104,7 +104,7 @@ export function CompanyProfilePage() {
         dateFormat: settings.dateFormat || 'MM/DD/YYYY',
         currency: settings.currency || 'USD',
         fiscalYearStart: settings.fiscalYearStart || 1,
-        primaryColor: settings.primaryColor || '#1E2D4D',
+        primaryColor: settings.primaryColor || '#1e4d6b',
         certHeaderText: settings.certHeaderText || '',
         certFooterText: settings.certFooterText || '',
       });
@@ -332,7 +332,7 @@ export function CompanyProfilePage() {
               style={{ ...inputStyle, width: 140 }}
               value={form.primaryColor}
               onChange={e => handleChange('primaryColor', e.target.value)}
-              placeholder="#1E2D4D"
+              placeholder="#1e4d6b"
             />
           </div>
         </div>

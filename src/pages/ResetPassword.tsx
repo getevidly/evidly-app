@@ -84,10 +84,10 @@ export function ResetPassword() {
   // Loading state while Supabase processes the recovery token
   if (sessionStatus === 'checking') {
     return (
-      <div className="min-h-screen bg-cream flex items-center justify-center py-12 px-4">
-        <div className="max-w-md w-full bg-white rounded-xl border border-[#1E2D4D]/10 p-8 text-center">
-          <Loader2 className="h-12 w-12 text-[#1E2D4D] mx-auto mb-4 animate-spin" />
-          <p className="text-[#1E2D4D]/70">Verifying your reset link...</p>
+      <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center py-12 px-4">
+        <div className="max-w-md w-full bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
+          <Loader2 className="h-12 w-12 text-[#1e4d6b] mx-auto mb-4 animate-spin" />
+          <p className="text-gray-600">Verifying your reset link...</p>
         </div>
       </div>
     );
@@ -96,36 +96,36 @@ export function ResetPassword() {
   // Expired or invalid link
   if (sessionStatus === 'expired' && !error) {
     return (
-      <div className="min-h-screen bg-cream flex items-center justify-center py-12 px-4">
-        <div className="max-w-md w-full bg-white rounded-xl border border-[#1E2D4D]/10 p-8 text-center">
+      <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center py-12 px-4">
+        <div className="max-w-md w-full bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
           <div className="flex justify-center mb-4">
             <div className="flex items-center">
               <div className="w-12 h-14">
                 <svg viewBox="0 0 56 65" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-                  <path d="M28 0L56 10V28C56 47.33 44.12 58.17 28 65C11.88 58.17 0 47.33 0 28V10L28 0Z" fill="#A08C5A"/>
-                  <path d="M28 6L50 14V28C50 43.5 40.5 52.5 28 58C15.5 52.5 6 43.5 6 28V14L28 6Z" fill="#1E2D4D"/>
-                  <path d="M22 32L26 36L34 26" stroke="#A08C5A" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M28 0L56 10V28C56 47.33 44.12 58.17 28 65C11.88 58.17 0 47.33 0 28V10L28 0Z" fill="#d4af37"/>
+                  <path d="M28 6L50 14V28C50 43.5 40.5 52.5 28 58C15.5 52.5 6 43.5 6 28V14L28 6Z" fill="#1e4d6b"/>
+                  <path d="M22 32L26 36L34 26" stroke="#d4af37" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
-              <span className="ml-3 text-3xl font-bold tracking-tight">
-                <span className="text-[#1E2D4D]">Evid</span>
-                <span className="text-[#A08C5A]">LY</span>
+              <span className="ml-3 text-3xl font-bold">
+                <span className="text-[#1e4d6b]">Evid</span>
+                <span className="text-[#d4af37]">LY</span>
               </span>
             </div>
           </div>
           <AlertTriangle className="h-16 w-16 text-amber-500 mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Reset Link Expired</h2>
-          <p className="text-[#1E2D4D]/70 mb-6">
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Reset Link Expired</h2>
+          <p className="text-gray-600 mb-6">
             This password reset link has expired or is invalid. Please request a new one.
           </p>
           <Link
             to="/forgot-password"
-            className="inline-block px-6 py-3 bg-[#1E2D4D] text-white rounded-md font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] no-underline"
+            className="inline-block px-6 py-3 bg-[#1e4d6b] text-white rounded-md font-medium hover:bg-[#2a6a8f] transition-colors no-underline"
           >
             Request New Link
           </Link>
           <div className="mt-4">
-            <Link to="/login" className="text-sm font-medium text-[#1E2D4D] hover:text-[#2A3F6B]">
+            <Link to="/login" className="text-sm font-medium text-[#1e4d6b] hover:text-[#2a6a8f]">
               Back to sign in
             </Link>
           </div>
@@ -137,26 +137,26 @@ export function ResetPassword() {
   // Success state
   if (success) {
     return (
-      <div className="min-h-screen bg-cream flex items-center justify-center py-12 px-4">
-        <div className="max-w-md w-full bg-white rounded-xl border border-[#1E2D4D]/10 p-8 text-center">
+      <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center py-12 px-4">
+        <div className="max-w-md w-full bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
           <div className="flex justify-center mb-4">
             <div className="flex items-center">
               <div className="w-12 h-14">
                 <svg viewBox="0 0 56 65" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-                  <path d="M28 0L56 10V28C56 47.33 44.12 58.17 28 65C11.88 58.17 0 47.33 0 28V10L28 0Z" fill="#A08C5A"/>
-                  <path d="M28 6L50 14V28C50 43.5 40.5 52.5 28 58C15.5 52.5 6 43.5 6 28V14L28 6Z" fill="#1E2D4D"/>
-                  <path d="M22 32L26 36L34 26" stroke="#A08C5A" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M28 0L56 10V28C56 47.33 44.12 58.17 28 65C11.88 58.17 0 47.33 0 28V10L28 0Z" fill="#d4af37"/>
+                  <path d="M28 6L50 14V28C50 43.5 40.5 52.5 28 58C15.5 52.5 6 43.5 6 28V14L28 6Z" fill="#1e4d6b"/>
+                  <path d="M22 32L26 36L34 26" stroke="#d4af37" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
-              <span className="ml-3 text-3xl font-bold tracking-tight">
-                <span className="text-[#1E2D4D]">Evid</span>
-                <span className="text-[#A08C5A]">LY</span>
+              <span className="ml-3 text-3xl font-bold">
+                <span className="text-[#1e4d6b]">Evid</span>
+                <span className="text-[#d4af37]">LY</span>
               </span>
             </div>
           </div>
           <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Password Updated!</h2>
-          <p className="text-[#1E2D4D]/70">Your password has been changed successfully. Redirecting you to sign in...</p>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Password Updated!</h2>
+          <p className="text-gray-600">Your password has been changed successfully. Redirecting you to sign in...</p>
         </div>
       </div>
     );
@@ -164,26 +164,26 @@ export function ResetPassword() {
 
   // Main form
   return (
-    <div className="min-h-screen bg-cream flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full">
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
           <div className="flex justify-center mb-2">
             <div className="flex items-center">
               <div className="w-12 h-14">
                 <svg viewBox="0 0 56 65" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-                  <path d="M28 0L56 10V28C56 47.33 44.12 58.17 28 65C11.88 58.17 0 47.33 0 28V10L28 0Z" fill="#A08C5A"/>
-                  <path d="M28 6L50 14V28C50 43.5 40.5 52.5 28 58C15.5 52.5 6 43.5 6 28V14L28 6Z" fill="#1E2D4D"/>
-                  <path d="M22 32L26 36L34 26" stroke="#A08C5A" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M28 0L56 10V28C56 47.33 44.12 58.17 28 65C11.88 58.17 0 47.33 0 28V10L28 0Z" fill="#d4af37"/>
+                  <path d="M28 6L50 14V28C50 43.5 40.5 52.5 28 58C15.5 52.5 6 43.5 6 28V14L28 6Z" fill="#1e4d6b"/>
+                  <path d="M22 32L26 36L34 26" stroke="#d4af37" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
-              <span className="ml-3 text-3xl font-bold tracking-tight">
-                <span className="text-[#1E2D4D]">Evid</span>
-                <span className="text-[#A08C5A]">LY</span>
+              <span className="ml-3 text-3xl font-bold">
+                <span className="text-[#1e4d6b]">Evid</span>
+                <span className="text-[#d4af37]">LY</span>
               </span>
             </div>
           </div>
-          <h2 className="text-center text-xl font-bold text-[#1E2D4D] mb-2 mt-4">Set New Password</h2>
-          <p className="text-center text-sm text-[#1E2D4D]/70 mb-6">
+          <h2 className="text-center text-xl font-bold text-gray-900 mb-2 mt-4">Set New Password</h2>
+          <p className="text-center text-sm text-gray-600 mb-6">
             Choose a strong password for your account.
           </p>
 
@@ -202,22 +202,22 @@ export function ResetPassword() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-[#1E2D4D]/80">New Password</label>
+              <label className="block text-sm font-medium text-gray-700">New Password</label>
               <div className="relative mt-1">
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full px-3 py-2 pr-10 border border-[#1E2D4D]/15 rounded-md shadow-sm focus:outline-none focus:ring-[#A08C5A] focus:border-[#A08C5A]"
+                  className="block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#d4af37] focus:border-[#d4af37]"
                 />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 flex items-center pr-3">
-                  {showPassword ? <EyeOff className="h-5 w-5 text-[#1E2D4D]/30" /> : <Eye className="h-5 w-5 text-[#1E2D4D]/30" />}
+                  {showPassword ? <EyeOff className="h-5 w-5 text-gray-400" /> : <Eye className="h-5 w-5 text-gray-400" />}
                 </button>
               </div>
               <div className="mt-2 space-y-1">
                 {Object.entries(passwordRequirements).map(([key, met]) => (
-                  <div key={key} className={`flex items-center text-xs ${met ? 'text-green-600' : 'text-[#1E2D4D]/50'}`}>
+                  <div key={key} className={`flex items-center text-xs ${met ? 'text-green-600' : 'text-gray-500'}`}>
                     {met ? <Check className="h-3 w-3 mr-1" /> : <X className="h-3 w-3 mr-1" />}
                     {key === 'minLength' && 'Minimum 12 characters'}
                     {key === 'hasUpper' && 'At least one uppercase letter'}
@@ -230,13 +230,13 @@ export function ResetPassword() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[#1E2D4D]/80">Confirm New Password</label>
+              <label className="block text-sm font-medium text-gray-700">Confirm New Password</label>
               <input
                 type="password"
                 required
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md shadow-sm focus:outline-none focus:ring-[#A08C5A] focus:border-[#A08C5A]"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#d4af37] focus:border-[#d4af37]"
               />
               {confirmPassword && (
                 <div className={`mt-1 flex items-center text-xs ${passwordsMatch ? 'text-green-600' : 'text-red-600'}`}>
@@ -248,7 +248,7 @@ export function ResetPassword() {
             <button
               type="submit"
               disabled={loading || !allRequirementsMet || !passwordsMatch}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1E2D4D] hover:bg-[#162340] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1e4d6b] hover:bg-[#2a6a8f] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Updating...' : 'Update Password'}
             </button>

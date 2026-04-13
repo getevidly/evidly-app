@@ -42,7 +42,7 @@ export function ShiftDetailModal({ shift, onClose, onApprove, onReject, onFlag, 
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 modal-backdrop-enter">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div
         className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-xl shadow-xl border"
         style={{ backgroundColor: '#FFFFFF', borderColor: '#D1D9E6' }}
@@ -50,10 +50,10 @@ export function ShiftDetailModal({ shift, onClose, onApprove, onReject, onFlag, 
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b sticky top-0 bg-white z-10" style={{ borderColor: '#D1D9E6' }}>
           <div className="flex items-center gap-2">
-            <Clock className="w-5 h-5" style={{ color: '#1E2D4D' }} />
-            <h3 className="text-lg font-semibold tracking-tight" style={{ color: '#0B1628' }}>Shift Details</h3>
+            <Clock className="w-5 h-5" style={{ color: '#1e4d6b' }} />
+            <h3 className="text-lg font-semibold" style={{ color: '#0B1628' }}>Shift Details</h3>
           </div>
-          <button onClick={onClose} className="p-2.5 -m-1 rounded-lg hover:bg-[#1E2D4D]/5 transition-colors" aria-label="Close">
+          <button onClick={onClose} className="p-2.5 -m-1 rounded-lg hover:bg-gray-100 transition-colors" aria-label="Close">
             <X className="w-5 h-5" style={{ color: '#6B7F96' }} />
           </button>
         </div>
@@ -62,7 +62,7 @@ export function ShiftDetailModal({ shift, onClose, onApprove, onReject, onFlag, 
         <div className="px-6 py-5 space-y-5">
           {/* Employee + Date */}
           <div>
-            <p className="text-lg font-semibold tracking-tight" style={{ color: '#0B1628' }}>{shift.employeeName}</p>
+            <p className="text-lg font-semibold" style={{ color: '#0B1628' }}>{shift.employeeName}</p>
             <p className="text-sm" style={{ color: '#3D5068' }}>{dateLabel}</p>
             <div className="flex items-center gap-2 mt-2">
               <span
@@ -94,7 +94,7 @@ export function ShiftDetailModal({ shift, onClose, onApprove, onReject, onFlag, 
           </div>
 
           {/* Hours Breakdown */}
-          <div className="rounded-xl border p-4" style={{ borderColor: '#D1D9E6' }}>
+          <div className="rounded-lg border p-4" style={{ borderColor: '#D1D9E6' }}>
             <p className="text-sm font-semibold mb-3" style={{ color: '#0B1628' }}>Hours Breakdown</p>
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
@@ -122,7 +122,7 @@ export function ShiftDetailModal({ shift, onClose, onApprove, onReject, onFlag, 
 
           {/* Anomalies */}
           {shift.anomalies.length > 0 && (
-            <div className="rounded-xl border p-4" style={{ borderColor: '#fed7aa', backgroundColor: '#fff7ed' }}>
+            <div className="rounded-lg border p-4" style={{ borderColor: '#fed7aa', backgroundColor: '#fff7ed' }}>
               <p className="text-sm font-semibold mb-2 flex items-center gap-1.5" style={{ color: '#9a3412' }}>
                 <AlertTriangle className="w-4 h-4" /> Anomalies Detected
               </p>
@@ -144,16 +144,16 @@ export function ShiftDetailModal({ shift, onClose, onApprove, onReject, onFlag, 
 
           {/* Rejection reason */}
           {shift.status === 'rejected' && shift.rejectionReason && (
-            <div className="rounded-xl border p-4" style={{ borderColor: '#fecaca', backgroundColor: '#fef2f2' }}>
+            <div className="rounded-lg border p-4" style={{ borderColor: '#fecaca', backgroundColor: '#fef2f2' }}>
               <p className="text-sm font-semibold mb-1" style={{ color: '#dc2626' }}>Rejection Reason</p>
               <p className="text-sm" style={{ color: '#991b1b' }}>{shift.rejectionReason}</p>
             </div>
           )}
 
           {/* Verification Checklist (demo) */}
-          <div className="rounded-xl border p-4" style={{ borderColor: '#D1D9E6' }}>
+          <div className="rounded-lg border p-4" style={{ borderColor: '#D1D9E6' }}>
             <p className="text-sm font-semibold mb-2 flex items-center gap-1.5" style={{ color: '#0B1628' }}>
-              <Shield className="w-4 h-4" style={{ color: '#1E2D4D' }} /> Verification
+              <Shield className="w-4 h-4" style={{ color: '#1e4d6b' }} /> Verification
             </p>
             <div className="grid grid-cols-2 gap-2">
               {[
@@ -184,13 +184,13 @@ export function ShiftDetailModal({ shift, onClose, onApprove, onReject, onFlag, 
                 onChange={(e) => setReason(e.target.value)}
                 rows={2}
                 placeholder={rejectMode ? 'Explain why this shift is rejected...' : 'Describe the issue...'}
-                className="w-full px-3 py-2 border rounded-xl text-sm resize-none focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                className="w-full px-3 py-2 border rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
                 style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
               />
               <div className="flex gap-2 mt-2">
                 <button
                   onClick={() => { setRejectMode(false); setFlagMode(false); setReason(''); }}
-                  className="px-3 py-1.5 text-xs rounded-xl border hover:bg-[#FAF7F0]"
+                  className="px-3 py-1.5 text-xs rounded-lg border hover:bg-gray-50"
                   style={{ borderColor: '#D1D9E6', color: '#3D5068' }}
                 >
                   Cancel
@@ -212,7 +212,7 @@ export function ShiftDetailModal({ shift, onClose, onApprove, onReject, onFlag, 
         <div className="flex items-center justify-end gap-2 px-6 py-4 border-t" style={{ borderColor: '#D1D9E6' }}>
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm font-medium rounded-xl border hover:bg-[#FAF7F0] transition-colors"
+            className="px-4 py-2 text-sm font-medium rounded-lg border hover:bg-gray-50 transition-colors"
             style={{ borderColor: '#D1D9E6', color: '#3D5068' }}
           >
             Close

@@ -107,7 +107,7 @@ export function CopilotBriefingCard() {
             width: 36, height: 36, borderRadius: 10,
             background: '#FDF8E8', display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
-            <Bot style={{ width: 20, height: 20, color: '#A08C5A' }} />
+            <Bot style={{ width: 20, height: 20, color: '#d4af37' }} />
           </div>
           <div>
             <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary, #0B1628)' }}>
@@ -119,14 +119,14 @@ export function CopilotBriefingCard() {
           </div>
         </div>
         <p style={{ fontSize: 13, color: 'var(--text-secondary, #3D5068)', margin: '0 0 12px 0' }}>
-          No insights yet — your AI Copilot will show signals as data is collected.
+          No insights yet — your AI Copilot will surface signals as data is collected.
         </p>
         <button
           onClick={() => navigate('/ai-advisor')}
           style={{
             display: 'flex', alignItems: 'center', gap: 5,
             padding: '7px 14px', borderRadius: 8,
-            background: '#1E2D4D', border: 'none',
+            background: '#1e4d6b', border: 'none',
             fontSize: 12, fontWeight: 600, color: '#fff',
             cursor: 'pointer',
           }}
@@ -153,7 +153,7 @@ export function CopilotBriefingCard() {
             width: 36, height: 36, borderRadius: 10,
             background: '#FDF8E8', display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
-            <Bot style={{ width: 20, height: 20, color: '#A08C5A' }} />
+            <Bot style={{ width: 20, height: 20, color: '#d4af37' }} />
           </div>
           <div>
             <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary, #0B1628)' }}>
@@ -210,7 +210,7 @@ export function CopilotBriefingCard() {
           style={{
             display: 'flex', alignItems: 'center', gap: 5,
             padding: '7px 14px', borderRadius: 8,
-            background: '#1E2D4D', border: 'none',
+            background: '#1e4d6b', border: 'none',
             fontSize: 12, fontWeight: 600, color: '#fff',
             cursor: 'pointer',
           }}

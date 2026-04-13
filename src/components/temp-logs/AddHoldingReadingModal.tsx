@@ -97,10 +97,10 @@ export function AddHoldingReadingModal({ open, onClose, equipment, isHoldingHot:
           </select>
           {selectedEq && holdingType && (
             <div className="mt-1.5 flex items-center gap-2">
-              <span className={`px-2 py-0.5 rounded text-xs font-semibold ${holdingType === 'hot' ? 'bg-red-50 text-red-700' : 'bg-blue-50 text-blue-700'}`}>
+              <span className={`px-2 py-0.5 rounded text-xs font-semibold ${holdingType === 'hot' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'}`}>
                 {holdingType === 'hot' ? 'Hot Holding' : 'Cold Holding'}
               </span>
-              <span className="text-xs text-[#1E2D4D]/50">Safe range: {rangeLabel}</span>
+              <span className="text-xs text-gray-500">Safe range: {rangeLabel}</span>
             </div>
           )}
         </FormField>
@@ -164,7 +164,7 @@ export function AddHoldingReadingModal({ open, onClose, equipment, isHoldingHot:
 
         <div>
           <div className="flex items-center justify-between mb-2">
-            <label className="text-sm font-medium text-[#1E2D4D]/80">Notes</label>
+            <label className="text-sm font-medium text-gray-700">Notes</label>
             <AIAssistButton
               fieldLabel="Notes"
               context={{ equipmentName: selectedEq?.name || '', temperature }}

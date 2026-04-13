@@ -22,12 +22,11 @@ import { getCleaningFrequency, getFrequencyLabel, COOKING_TYPE_OPTIONS, type Coo
 import { InfoTooltip } from '../components/ui/InfoTooltip';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 import { ErrorState } from '../components/shared/PageStates';
-import { usePageTitle } from '../hooks/usePageTitle';
 
 // ── Brand ─────────────────────────────────────────────────────────
-const NAVY = '#1E2D4D';
-const NAVY_HOVER = '#141E33';
-const GOLD = '#A08C5A';
+const NAVY = '#1e4d6b';
+const NAVY_HOVER = '#163a52';
+const GOLD = '#d4af37';
 const LIGHT_BLUE_BG = '#eef4f8';
 const BORDER = '#b8d4e8';
 
@@ -42,7 +41,7 @@ const AUTHORITY_LABELS: Record<string, { label: string; color: string; bg: strin
   nfpa_101:  { label: 'NFPA 101',         color: '#1d4ed8', bg: '#eff6ff' },
   cfc:       { label: 'CFC / IFC',        color: '#7c3aed', bg: '#f5f3ff' },
   calfire:   { label: 'CalFire Title 19',  color: '#c2410c', bg: '#fff7ed' },
-  evidly_best_practice: { label: 'EvidLY Best Practice', color: '#1E2D4D', bg: '#eef4f8' },
+  evidly_best_practice: { label: 'EvidLY Best Practice', color: '#1e4d6b', bg: '#eef4f8' },
 };
 
 // ── Types ─────────────────────────────────────────────────────────
@@ -147,7 +146,6 @@ export function FacilitySafety() {
   const { t } = useTranslation();
   const { isDemoMode } = useDemo();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
-  usePageTitle('Facility Safety');
   const [pageError, setPageError] = useState<string | null>(null);
 
   if (pageError) {
@@ -246,8 +244,8 @@ export function FacilitySafety() {
             <Flame size={22} color="#dc2626" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-[#1E2D4D]">{t('pages.facilitySafety.checklist')}<InfoTooltip content="Track fire suppression, hood cleaning, pest control, grease trap, and other facility safety compliance." /></h1>
-            <p className="text-sm text-[#1E2D4D]/50">
+            <h1 className="text-xl font-bold text-gray-900">{t('pages.facilitySafety.checklist')}<InfoTooltip content="Track fire suppression, hood cleaning, pest control, grease trap, and other facility safety compliance." /></h1>
+            <p className="text-sm text-gray-500">
               {ahjLabel ? `${ahjLabel} — ` : ''}
               {codeLabel ? `${codeLabel} · ` : ''}NFPA 96 · NFPA 10 · NFPA 17A · NFPA 101
             </p>
@@ -257,11 +255,11 @@ export function FacilitySafety() {
         {/* Location selector */}
         {locations.length > 0 && (
         <div className="flex items-center gap-2">
-          <MapPin size={14} className="text-[#1E2D4D]/30" />
+          <MapPin size={14} className="text-gray-400" />
           <select
             value={locationParam}
             onChange={e => navigate(`/facility-safety?location=${e.target.value}`)}
-            className="text-sm border border-[#1E2D4D]/15 rounded-xl px-3 py-1.5 focus-visible:outline-none focus-visible:ring-2"
+            className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2"
             style={{ focusRingColor: GOLD } as any}
           >
             {locations.map(loc => (
@@ -275,10 +273,10 @@ export function FacilitySafety() {
       {/* Production empty state — no locations */}
       {locations.length === 0 && !isDemoMode && (
         <div className="text-center py-12 text-[var(--text-secondary)]">
-          <Flame size={32} className="mx-auto mb-3 text-[#1E2D4D]/30" />
+          <Flame size={32} className="mx-auto mb-3 text-gray-300" />
           <p className="font-medium text-lg">Add a location to begin facility safety tracking.</p>
           <p className="text-sm mt-1 mb-5">Once you add a location, your facility safety checklists and status will appear here.</p>
-          <button onClick={() => navigate('/org-hierarchy')} className="px-5 py-2.5 text-sm font-medium text-white rounded-lg" style={{ backgroundColor: '#1E2D4D' }}>
+          <button onClick={() => navigate('/org-hierarchy')} className="px-5 py-2.5 text-sm font-medium text-white rounded-lg" style={{ backgroundColor: '#1e4d6b' }}>
             Add Location
           </button>
         </div>
@@ -291,10 +289,10 @@ export function FacilitySafety() {
         const noData = completedCount === 0 && passCount === 0 && failCount === 0;
         const badgeText = noData ? 'No Status' : fireGrade;
         const badgeClass = noData
-          ? 'bg-[#1E2D4D]/5 text-[#1E2D4D]/50'
-          : fireStatus === 'passing' ? 'bg-emerald-50 text-emerald-700'
-          : fireStatus === 'at_risk' ? 'bg-[#1E2D4D]/5 text-[#1E2D4D]/50'
-          : 'bg-red-50 text-red-700';
+          ? 'bg-gray-100 text-gray-500'
+          : fireStatus === 'passing' ? 'bg-green-100 text-green-700'
+          : fireStatus === 'at_risk' ? 'bg-gray-100 text-gray-500'
+          : 'bg-red-100 text-red-700';
 
         const facilityItems: StatusItem[] = override ? [
           { key: 'permit', label: 'Permit', status: override.facilitySafety.permitStatus as AnyStatus },
@@ -313,34 +311,34 @@ export function FacilitySafety() {
               <div className="flex items-center gap-4">
                 <div className="text-center">
                   <div className={`text-xl font-bold px-3 py-1 rounded-full ${badgeClass}`}>{badgeText}<InfoTooltip content="Combined score based on service recency, documentation status, and inspection results." /></div>
-                  <div className="text-xs text-[#1E2D4D]/50 mt-1">{fireSummary}</div>
+                  <div className="text-xs text-gray-500 mt-1">{fireSummary}</div>
                 </div>
-                <div className="h-10 w-px bg-[#1E2D4D]/15" />
+                <div className="h-10 w-px bg-gray-300" />
                 <div className="flex gap-6 text-sm">
                   <div className="text-center">
-                    <div className="text-lg font-semibold tracking-tight text-[#1E2D4D]">{completedCount}/{items.length}</div>
-                    <div className="text-xs text-[#1E2D4D]/50">{t('pages.facilitySafety.completed')}</div>
+                    <div className="text-lg font-semibold text-gray-900">{completedCount}/{items.length}</div>
+                    <div className="text-xs text-gray-500">{t('pages.facilitySafety.completed')}</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-lg font-semibold tracking-tight" style={{ color: '#16a34a' }}>{passCount}</div>
-                    <div className="text-xs text-[#1E2D4D]/50">{t('pages.facilitySafety.passed')}</div>
+                    <div className="text-lg font-semibold" style={{ color: '#16a34a' }}>{passCount}</div>
+                    <div className="text-xs text-gray-500">{t('pages.facilitySafety.passed')}</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-lg font-semibold tracking-tight" style={{ color: failCount > 0 ? '#dc2626' : '#6b7280' }}>{failCount}</div>
-                    <div className="text-xs text-[#1E2D4D]/50">{t('pages.facilitySafety.failed')}</div>
+                    <div className="text-lg font-semibold" style={{ color: failCount > 0 ? '#dc2626' : '#6b7280' }}>{failCount}</div>
+                    <div className="text-xs text-gray-500">{t('pages.facilitySafety.failed')}</div>
                   </div>
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-xs text-[#1E2D4D]/50 mb-1">{t('pages.facilitySafety.progress')}</div>
+                <div className="text-xs text-gray-500 mb-1">{t('pages.facilitySafety.progress')}</div>
                 <div className="w-28 sm:w-40 h-2.5 bg-white rounded-full overflow-hidden border" style={{ borderColor: '#d1d5db' }}>
                   <div className="h-full rounded-full transition-all duration-300" style={{ width: `${progressPercent}%`, backgroundColor: progressPercent === 100 ? '#16a34a' : NAVY }} />
                 </div>
-                <div className="text-xs text-[#1E2D4D]/50 mt-0.5">{progressPercent}%</div>
+                <div className="text-xs text-gray-500 mt-0.5">{progressPercent}%</div>
               </div>
             </div>
             {facilityItems.length > 0 && (
-              <div className="mt-3 pt-3 border-t border-[#1E2D4D]/10">
+              <div className="mt-3 pt-3 border-t border-gray-200">
                 <FireStatusBars
                   items={facilityItems}
                   onCardClick={(cardKey) => {
@@ -357,7 +355,7 @@ export function FacilitySafety() {
       })()}
 
       {/* Tab Bar */}
-      <div className="flex gap-1 mb-6 bg-[#1E2D4D]/5 rounded-lg p-1">
+      <div className="flex gap-1 mb-6 bg-gray-100 rounded-lg p-1">
         {(Object.keys(TAB_LABELS) as Frequency[]).map(freq => {
           const isActive = activeTab === freq;
           const count = ITEMS_BY_FREQUENCY[freq].length;
@@ -381,7 +379,7 @@ export function FacilitySafety() {
 
       {/* Submitted banner */}
       {submitted && (
-        <div className="rounded-xl border border-green-200 bg-green-50 p-4 mb-4 flex items-center justify-between">
+        <div className="rounded-lg border border-green-200 bg-green-50 p-4 mb-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <CheckCircle2 size={18} className="text-green-600" />
             <span className="text-sm font-medium text-green-800">
@@ -413,7 +411,7 @@ export function FacilitySafety() {
               className={`rounded-xl border transition-all ${
                 isFailed ? 'border-red-200 bg-red-50/30' :
                 isPassed ? 'border-green-200 bg-green-50/30' :
-                'border-[#1E2D4D]/10 bg-white'
+                'border-gray-200 bg-white'
               }`}
             >
               {/* Main row */}
@@ -433,22 +431,22 @@ export function FacilitySafety() {
                   {/* Content */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-sm font-semibold text-[#1E2D4D]">{item.title}</span>
+                      <span className="text-sm font-semibold text-gray-900">{item.title}</span>
                       {/* Authority badge — annotated with AHJ when config available */}
                       <span
-                        className="text-xs font-semibold px-1.5 py-0.5 rounded"
+                        className="text-[10px] font-semibold px-1.5 py-0.5 rounded"
                         style={{ color: auth.color, backgroundColor: auth.bg }}
                         title={ahjLabel ? `Authority: ${ahjLabel}` : undefined}
                       >
                         {auth.label}{item.authoritySection ? ` ${item.authoritySection}` : ''}{codeLabel && (item.authoritySource === 'cfc' || item.authoritySource === 'nfpa_96') ? ` (${codeLabel})` : ''}
                       </span>
                       {needsCorrectiveAction && (
-                        <span className="text-xs font-semibold px-1.5 py-0.5 rounded bg-red-50 text-red-700">
+                        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-red-100 text-red-700">
                           {t('pages.facilitySafety.correctiveActionRequired')}
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-[#1E2D4D]/50 mt-0.5">{item.description}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">{item.description}</p>
                   </div>
 
                   {/* Pass/Fail buttons */}
@@ -458,7 +456,7 @@ export function FacilitySafety() {
                       className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors ${
                         isPassed
                           ? 'bg-green-600 text-white border-green-600'
-                          : 'bg-white text-[#1E2D4D]/70 border-[#1E2D4D]/15 hover:border-green-400 hover:text-green-600'
+                          : 'bg-white text-gray-600 border-gray-300 hover:border-green-400 hover:text-green-600'
                       }`}
                       disabled={submitted}
                     >
@@ -470,7 +468,7 @@ export function FacilitySafety() {
                       className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors ${
                         isFailed
                           ? 'bg-red-600 text-white border-red-600'
-                          : 'bg-white text-[#1E2D4D]/70 border-[#1E2D4D]/15 hover:border-red-400 hover:text-red-600'
+                          : 'bg-white text-gray-600 border-gray-300 hover:border-red-400 hover:text-red-600'
                       }`}
                       disabled={submitted}
                     >
@@ -479,7 +477,7 @@ export function FacilitySafety() {
                     </button>
                     <button
                       onClick={() => setExpandedItem(isExpanded ? null : item.id)}
-                      className="p-1.5 rounded-xl border border-[#1E2D4D]/10 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 hover:border-[#1E2D4D]/15"
+                      className="p-1.5 rounded-lg border border-gray-200 text-gray-400 hover:text-gray-600 hover:border-gray-300"
                     >
                       {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                     </button>
@@ -507,7 +505,7 @@ export function FacilitySafety() {
                       placeholder={t('pages.facilitySafety.describeCorrectiveAction')}
                       rows={2}
                       disabled={submitted}
-                      className="w-full text-sm border border-red-200 rounded-xl px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus:ring-red-300 bg-white resize-none"
+                      className="w-full text-sm border border-red-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-300 bg-white resize-none"
                     />
                     {aiFields.has(`corrective_${item.id}`) && <AIGeneratedIndicator />}
                   </div>
@@ -516,10 +514,10 @@ export function FacilitySafety() {
 
               {/* Expanded section */}
               {isExpanded && (
-                <div className="border-t border-[#1E2D4D]/5 px-4 pb-4 pt-3 ml-10">
+                <div className="border-t border-gray-100 px-4 pb-4 pt-3 ml-10">
                   <div className="grid gap-3">
                     {/* Authority note */}
-                    <div className="flex items-start gap-2 text-xs text-[#1E2D4D]/50 bg-[#FAF7F0] rounded-lg p-2.5">
+                    <div className="flex items-start gap-2 text-xs text-gray-500 bg-gray-50 rounded-lg p-2.5">
                       <EvidlyIcon size={13} className="mt-0.5 flex-shrink-0" />
                       <span>{item.authorityNote}</span>
                     </div>
@@ -527,7 +525,7 @@ export function FacilitySafety() {
                     {/* Notes */}
                     <div>
                       <div className="flex items-center justify-between mb-1">
-                        <label className="text-xs font-medium text-[#1E2D4D]/70">{t('pages.facilitySafety.notes')}</label>
+                        <label className="text-xs font-medium text-gray-600">{t('pages.facilitySafety.notes')}</label>
                         <AIAssistButton
                           fieldLabel="Notes"
                           context={{ category: 'facility_safety', itemName: item.title }}
@@ -541,7 +539,7 @@ export function FacilitySafety() {
                         placeholder={t('pages.facilitySafety.optionalNotes')}
                         rows={2}
                         disabled={submitted}
-                        className="w-full text-sm border border-[#1E2D4D]/10 rounded-xl px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 resize-none"
+                        className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200 resize-none"
                       />
                       {aiFields.has(`notes_${item.id}`) && <AIGeneratedIndicator />}
                     </div>
@@ -567,7 +565,7 @@ export function FacilitySafety() {
                           placeholder={t('pages.facilitySafety.describeCorrectiveAction')}
                           rows={2}
                           disabled={submitted}
-                          className="w-full text-sm border border-red-200 rounded-xl px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus:ring-red-300 bg-white resize-none"
+                          className="w-full text-sm border border-red-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-300 bg-white resize-none"
                         />
                         {aiFields.has(`exp_corrective_${item.id}`) && <AIGeneratedIndicator />}
                       </div>
@@ -592,7 +590,7 @@ export function FacilitySafety() {
 
       {/* Kitchen role message for non-daily tabs */}
       {userRole === 'kitchen_staff' && activeTab !== 'daily' && (
-        <div className="text-center py-12 text-[#1E2D4D]/50">
+        <div className="text-center py-12 text-gray-500">
           <EvidlyIcon size={32} className="mx-auto mb-2" />
           <p className="text-sm font-medium">{t(`pages.facilitySafety.${activeTab}`)} {t('pages.facilitySafety.managedByManager')}</p>
           <p className="text-xs mt-1">{t('pages.facilitySafety.accessDailyChecks')}</p>
@@ -602,7 +600,7 @@ export function FacilitySafety() {
       {/* Submit bar */}
       {items.length > 0 && (
         <div className="mt-6 flex items-center justify-between">
-          <div className="text-sm text-[#1E2D4D]/50">
+          <div className="text-sm text-gray-500">
             {completedCount}/{items.length} {t('pages.facilitySafety.itemsCompleted')}
             {failCount > 0 && (
               <span className="ml-2 text-red-600 font-medium">
@@ -614,7 +612,7 @@ export function FacilitySafety() {
             {submitted ? (
               <button
                 onClick={handleReset}
-                className="px-5 py-2.5 rounded-lg text-sm font-semibold border border-[#1E2D4D]/15 text-[#1E2D4D]/80 hover:bg-[#FAF7F0]"
+                className="px-5 py-2.5 rounded-lg text-sm font-semibold border border-gray-300 text-gray-700 hover:bg-gray-50"
               >
                 {t('pages.facilitySafety.startNewChecklist')}
               </button>
@@ -635,20 +633,20 @@ export function FacilitySafety() {
       )}
 
       {/* Vendor-Performed Services Reference */}
-      <div className="mt-8 rounded-xl border border-[#1E2D4D]/10 bg-white overflow-hidden">
+      <div className="mt-8 rounded-xl border border-gray-200 bg-white overflow-hidden">
         <button
           onClick={() => setExpandedItem(expandedItem === 'vendor-ref' ? null : 'vendor-ref')}
-          className="w-full flex items-center justify-between p-4 hover:bg-[#FAF7F0] transition-colors"
+          className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
         >
           <div className="flex items-center gap-2">
-            <FileText size={16} className="text-[#1E2D4D]/30" />
-            <span className="text-sm font-semibold text-[#1E2D4D]/80">{t('pages.facilitySafety.vendorServices')}</span>
-            <span className="text-xs text-[#1E2D4D]/30">{t('pages.facilitySafety.trackedInEquipment')}</span>
+            <FileText size={16} className="text-gray-400" />
+            <span className="text-sm font-semibold text-gray-700">{t('pages.facilitySafety.vendorServices')}</span>
+            <span className="text-xs text-gray-400">{t('pages.facilitySafety.trackedInEquipment')}</span>
           </div>
-          {expandedItem === 'vendor-ref' ? <ChevronDown size={16} className="text-[#1E2D4D]/30" /> : <ChevronRight size={16} className="text-[#1E2D4D]/30" />}
+          {expandedItem === 'vendor-ref' ? <ChevronDown size={16} className="text-gray-400" /> : <ChevronRight size={16} className="text-gray-400" />}
         </button>
         {expandedItem === 'vendor-ref' && (
-          <div className="border-t border-[#1E2D4D]/5 p-4">
+          <div className="border-t border-gray-100 p-4">
             <div className="space-y-3">
               {(() => {
                 const locCookingType = (fireConfig as any)?.cooking_type as string | undefined;
@@ -662,18 +660,18 @@ export function FacilitySafety() {
                   { service: 'Grease Trap Cleaning', freq: fireConfig?.grease_trap?.cleaning_interval ? `Every ${fireConfig.grease_trap.cleaning_interval}` : 'Per schedule', authority: 'Local plumbing code', vendor: 'Licensed hauler' },
                 ];
               })().map(svc => (
-                <div key={svc.service} className="flex items-center justify-between py-2 border-b border-[#1E2D4D]/3 last:border-0">
+                <div key={svc.service} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
                   <div>
-                    <div className="text-sm font-medium text-[#1E2D4D]/90">{svc.service}</div>
-                    <div className="text-xs text-[#1E2D4D]/50">{svc.vendor} · {svc.freq}</div>
+                    <div className="text-sm font-medium text-gray-800">{svc.service}</div>
+                    <div className="text-xs text-gray-500">{svc.vendor} · {svc.freq}</div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-semibold px-1.5 py-0.5 rounded" style={{ color: '#b91c1c', backgroundColor: '#fef2f2' }}>
+                    <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded" style={{ color: '#b91c1c', backgroundColor: '#fef2f2' }}>
                       {svc.authority}
                     </span>
                     <button
                       onClick={() => navigate('/equipment')}
-                      className="text-xs font-medium px-2.5 py-1 rounded border border-[#1E2D4D]/10 text-[#1E2D4D]/70 hover:bg-[#FAF7F0]"
+                      className="text-xs font-medium px-2.5 py-1 rounded border border-gray-200 text-gray-600 hover:bg-gray-50"
                     >
                       {t('pages.facilitySafety.viewInEquipment')}
                     </button>

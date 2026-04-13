@@ -51,7 +51,7 @@ export const DemoJurisdictionSwitcher: React.FC<DemoJurisdictionSwitcherProps> =
               style={{
                 padding: '8px 14px',
                 borderRadius: '8px',
-                border: isActive ? '2px solid #1E2D4D' : '1px solid #E0E0E0',
+                border: isActive ? '2px solid #1e4d6b' : '1px solid #E0E0E0',
                 backgroundColor: isActive ? '#eef4f8' : '#FFFFFF',
                 cursor: 'pointer',
                 display: 'flex',

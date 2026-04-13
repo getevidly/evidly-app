@@ -29,21 +29,24 @@ export function CookieConsent() {
   if (!visible) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-[#1E2D4D]/10 shadow-lg px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
-      <p className="text-sm text-[#1E2D4D]/70">
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <p className="text-sm text-gray-600">
         We use cookies to improve your experience and analyze site traffic.{' '}
-        <a href="/privacy" className="text-[#1E2D4D] underline">Privacy Policy</a>
+        <a href="/privacy" className="text-[#1e4d6b] underline">Privacy Policy</a>
       </p>
       <div className="flex gap-2 shrink-0">
         <button
           onClick={decline}
-          className="px-4 py-2 text-sm text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80 transition-colors"
+          className="px-4 py-2 text-sm text-gray-500 hover:text-gray-700 transition-colors"
         >
           Decline
         </button>
         <button
           onClick={accept}
-          className="px-4 py-2 text-sm text-white bg-[#1E2D4D] hover:bg-[#162340] rounded-lg transition-colors"
+          className="px-4 py-2 text-sm text-white rounded-lg transition-colors"
+          style={{ backgroundColor: '#1e4d6b' }}
+          onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
+          onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
         >
           Accept
         </button>

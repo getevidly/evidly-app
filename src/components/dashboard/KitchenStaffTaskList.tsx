@@ -56,7 +56,7 @@ const STAFF_CALENDAR_EVENTS: CalendarEvent[] = (() => {
 })();
 
 const STAFF_CALENDAR_COLORS: Record<string, string> = {
-  checklist: '#1E2D4D',
+  checklist: '#1e4d6b',
   temp_check: '#d97706',
 };
 
@@ -115,7 +115,7 @@ const STRINGS = {
 
 function getProgressColor(pct: number): string {
   if (pct >= 80) return '#16a34a';
-  if (pct >= 40) return '#A08C5A';
+  if (pct >= 40) return '#d4af37';
   return '#9ca3af';
 }
 
@@ -247,10 +247,10 @@ export default function KitchenStaffTaskList() {
                 <p className="text-4xl font-bold" style={{ color: getProgressColor(progressPct) }}>
                   {doneCount} / {totalTasks}
                 </p>
-                <p className="text-sm text-[#1E2D4D]/50 mt-1">{s.tasksDone(doneCount, totalTasks)}</p>
+                <p className="text-sm text-gray-500 mt-1">{s.tasksDone(doneCount, totalTasks)}</p>
               </>
             )}
-            <div className="w-full bg-[#1E2D4D]/8 rounded-full mt-3" style={{ height: 14 }}>
+            <div className="w-full bg-gray-200 rounded-full mt-3" style={{ height: 14 }}>
               <div
                 className="rounded-full transition-all duration-500 ease-out"
                 style={{
@@ -276,13 +276,15 @@ export default function KitchenStaffTaskList() {
 
             {todoTasks.length === 0 ? (
               <div
-                className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 text-center"
+                className="bg-white rounded-lg p-6 text-center"
+                style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}
               >
-                <p className="text-lg font-semibold tracking-tight text-[#1E2D4D]/80">{s.allDone}</p>
+                <p className="text-lg font-semibold text-gray-700">{s.allDone}</p>
               </div>
             ) : (
               <div
-                className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden divide-y divide-[#1E2D4D]/5"
+                className="bg-white rounded-lg overflow-hidden divide-y divide-gray-100"
+                style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}
               >
                 {todoTasks.map((task) => (
                   <div
@@ -291,9 +293,9 @@ export default function KitchenStaffTaskList() {
                     style={{ minHeight: 72 }}
                   >
                     <div className="flex items-start gap-3">
-                      <Circle size={32} className="text-[#1E2D4D]/30 shrink-0 mt-0.5" strokeWidth={1.5} />
+                      <Circle size={32} className="text-gray-300 shrink-0 mt-0.5" strokeWidth={1.5} />
                       <div className="flex-1 min-w-0">
-                        <p className="text-[#1E2D4D] font-medium" style={{ fontSize: 16, lineHeight: '1.4' }}>
+                        <p className="text-gray-900 font-medium" style={{ fontSize: 16, lineHeight: '1.4' }}>
                           {getTaskDescription(task)}
                         </p>
                       </div>
@@ -305,7 +307,7 @@ export default function KitchenStaffTaskList() {
                           onClick={() => navigate('/temp-logs')}
                           className="flex items-center justify-center gap-2 rounded-lg text-white font-semibold transition-opacity hover:opacity-90 active:opacity-80"
                           style={{
-                            backgroundColor: '#1E2D4D',
+                            backgroundColor: '#1e4d6b',
                             height: 44,
                             paddingLeft: 16,
                             paddingRight: 16,
@@ -348,16 +350,16 @@ export default function KitchenStaffTaskList() {
               style={{ minHeight: 56 }}
             >
               <CheckCircle2 size={20} className="text-green-500" />
-              <span className="text-sm font-semibold text-[#1E2D4D]/80">
+              <span className="text-sm font-semibold text-gray-700">
                 {s.done} ({doneCount})
               </span>
-              <span className="text-xs text-[#1E2D4D]/30 ml-1">
+              <span className="text-xs text-gray-400 ml-1">
                 {doneExpanded ? s.tapToCollapse : s.tapToExpand}
               </span>
               <span className="ml-auto">
                 {doneExpanded
-                  ? <ChevronUp size={20} className="text-[#1E2D4D]/30" />
-                  : <ChevronDown size={20} className="text-[#1E2D4D]/30" />
+                  ? <ChevronUp size={20} className="text-gray-400" />
+                  : <ChevronDown size={20} className="text-gray-400" />
                 }
               </span>
             </button>
@@ -369,16 +371,16 @@ export default function KitchenStaffTaskList() {
                     key={task.id}
                     type="button"
                     onClick={() => task.type === 'temp_log' ? navigate('/temp-logs') : toast.info('Task already completed')}
-                    className="w-full flex items-center gap-3 p-3 rounded-lg text-left hover:bg-[#1E2D4D]/5 transition-colors"
+                    className="w-full flex items-center gap-3 p-3 rounded-lg text-left hover:bg-gray-100 transition-colors"
                     style={{ backgroundColor: '#f9fafb' }}
                   >
                     <CheckCircle2 size={20} className="text-green-400 shrink-0" />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm text-[#1E2D4D]/50 line-through">
+                      <p className="text-sm text-gray-500 line-through">
                         {getTaskDescription(task)}
                       </p>
                     </div>
-                    <span className="text-xs text-[#1E2D4D]/30 shrink-0">{task.completedAt}</span>
+                    <span className="text-xs text-gray-400 shrink-0">{task.completedAt}</span>
                   </button>
                 ))}
               </div>
@@ -392,7 +394,7 @@ export default function KitchenStaffTaskList() {
               onClick={() => navigate('/temp-logs')}
               className="w-full flex items-center justify-center gap-3 rounded-lg text-white font-bold transition-opacity hover:opacity-90 active:opacity-80"
               style={{
-                backgroundColor: '#1E2D4D',
+                backgroundColor: '#1e4d6b',
                 height: 56,
                 fontSize: 16,
               }}
@@ -427,19 +429,19 @@ export default function KitchenStaffTaskList() {
 
           {/* Language Toggle */}
           <div className="flex items-center justify-center gap-2 py-4">
-            <Globe size={16} className="text-[#1E2D4D]/30" />
+            <Globe size={16} className="text-gray-400" />
             <button
               type="button"
               onClick={() => setLocale('en' as Locale)}
-              className={`text-sm px-1 ${locale === 'en' ? 'font-bold text-[#1E2D4D] underline' : 'text-[#1E2D4D]/30'}`}
+              className={`text-sm px-1 ${locale === 'en' ? 'font-bold text-gray-900 underline' : 'text-gray-400'}`}
             >
               EN
             </button>
-            <span className="text-[#1E2D4D]/30">|</span>
+            <span className="text-gray-300">|</span>
             <button
               type="button"
               onClick={() => setLocale('es' as Locale)}
-              className={`text-sm px-1 ${locale === 'es' ? 'font-bold text-[#1E2D4D] underline' : 'text-[#1E2D4D]/30'}`}
+              className={`text-sm px-1 ${locale === 'es' ? 'font-bold text-gray-900 underline' : 'text-gray-400'}`}
             >
               ES
             </button>

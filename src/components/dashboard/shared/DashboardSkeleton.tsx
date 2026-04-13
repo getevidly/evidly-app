@@ -13,37 +13,37 @@ export function DashboardSkeleton() {
         {/* Hero skeleton */}
         <div className="rounded-xl animate-pulse" style={{ background: '#263d56', height: 120 }} />
         {/* Banner skeleton */}
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 animate-pulse">
-          <div className="w-40 h-3 bg-[#1E2D4D]/8 rounded mb-2" />
-          <div className="w-64 h-2 bg-[#1E2D4D]/5 rounded" />
+        <div className="bg-white rounded-lg p-4 animate-pulse" style={{ border: '1px solid #e5e7eb' }}>
+          <div className="w-40 h-3 bg-gray-200 rounded mb-2" />
+          <div className="w-64 h-2 bg-gray-100 rounded" />
         </div>
         {/* Location list skeleton */}
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 animate-pulse">
+        <div className="bg-white rounded-lg animate-pulse" style={{ border: '1px solid #e5e7eb' }}>
           <div className="px-4 py-3" style={{ borderBottom: '1px solid #F0F0F0' }}>
-            <div className="w-32 h-3 bg-[#1E2D4D]/8 rounded" />
+            <div className="w-32 h-3 bg-gray-200 rounded" />
           </div>
           {[1, 2, 3].map(i => (
             <div key={i} className="px-4 py-3" style={{ borderBottom: '1px solid #F0F0F0' }}>
-              <div className="w-24 h-3 bg-[#1E2D4D]/8 rounded mb-2" />
+              <div className="w-24 h-3 bg-gray-200 rounded mb-2" />
               <div className="flex gap-4">
-                <div className="w-20 h-2 bg-[#1E2D4D]/5 rounded" />
-                <div className="w-20 h-2 bg-[#1E2D4D]/5 rounded" />
+                <div className="w-20 h-2 bg-gray-100 rounded" />
+                <div className="w-20 h-2 bg-gray-100 rounded" />
               </div>
             </div>
           ))}
         </div>
         {/* Tasks skeleton */}
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 animate-pulse">
+        <div className="bg-white rounded-lg animate-pulse" style={{ border: '1px solid #e5e7eb' }}>
           <div className="px-4 py-3" style={{ borderBottom: '1px solid #F0F0F0' }}>
-            <div className="w-28 h-3 bg-[#1E2D4D]/8 rounded" />
+            <div className="w-28 h-3 bg-gray-200 rounded" />
           </div>
           {[1, 2, 3].map(i => (
             <div key={i} className="px-4 py-3 flex items-center gap-3" style={{ borderBottom: '1px solid #F0F0F0' }}>
-              <div className="w-4 h-4 bg-[#1E2D4D]/8 rounded-full" />
+              <div className="w-4 h-4 bg-gray-200 rounded-full" />
               <div className="flex-1">
-                <div className="w-48 h-2.5 bg-[#1E2D4D]/8 rounded" />
+                <div className="w-48 h-2.5 bg-gray-200 rounded" />
               </div>
-              <div className="w-16 h-2 bg-[#1E2D4D]/5 rounded" />
+              <div className="w-16 h-2 bg-gray-100 rounded" />
             </div>
           ))}
         </div>

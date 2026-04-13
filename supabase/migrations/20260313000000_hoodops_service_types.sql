@@ -73,11 +73,11 @@ ALTER TABLE location_service_schedules ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users can view own org schedules"
   ON location_service_schedules FOR SELECT
-  USING (organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
+  USING (organization_id = (SELECT organization_id FROM profiles WHERE id = auth.uid()));
 
 CREATE POLICY "Users can manage own org schedules"
   ON location_service_schedules FOR ALL
-  USING (organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
+  USING (organization_id = (SELECT organization_id FROM profiles WHERE id = auth.uid()));
 
 
 -- ── 4. Extend vendor_service_records ───────────────────────

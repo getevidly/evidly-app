@@ -52,7 +52,7 @@ export const PRIORITY_COLORS = {
     label: 'High',
   },
   medium: {
-    color: '#1E2D4D',
+    color: '#1e4d6b',
     bg: '#eef4f8',
     border: '#b8d4e8',
     label: 'Medium',
@@ -97,7 +97,7 @@ export const STATUS_TRICOLOR = {
 // ── Notification Category Colors ──────────────────────────────
 
 export const CATEGORY_COLORS = {
-  compliance: { color: '#1E2D4D', bg: '#eef4f8', icon: 'ClipboardCheck' },
+  compliance: { color: '#1e4d6b', bg: '#eef4f8', icon: 'ClipboardCheck' },
   safety:     { color: '#dc2626', bg: '#fef2f2', icon: 'ShieldAlert' },
   documents:  { color: '#2563eb', bg: '#eff6ff', icon: 'FileText' },
   vendors:    { color: '#7c3aed', bg: '#f5f3ff', icon: 'Truck' },

@@ -33,8 +33,8 @@ export function EquipmentDocuments({ equipmentId }: EquipmentDocumentsProps) {
       <div className="space-y-3">
         {Array.from({ length: 3 }).map((_, i) => (
           <div key={i} className="rounded-xl p-4 animate-pulse" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
-            <div className="h-4 w-48 bg-[#1E2D4D]/8 rounded mb-2" />
-            <div className="h-3 w-32 bg-[#1E2D4D]/8 rounded" />
+            <div className="h-4 w-48 bg-gray-200 rounded mb-2" />
+            <div className="h-3 w-32 bg-gray-200 rounded" />
           </div>
         ))}
       </div>
@@ -56,7 +56,7 @@ export function EquipmentDocuments({ equipmentId }: EquipmentDocumentsProps) {
     <div className="space-y-4">
       {/* Upload area */}
       <div
-        className="rounded-xl p-8 text-center cursor-pointer hover:bg-[#FAF7F0] transition-colors"
+        className="rounded-xl p-8 text-center cursor-pointer hover:bg-gray-50 transition-colors"
         style={{ background: CARD_BG, border: `2px dashed ${CARD_BORDER}` }}
         onClick={handleFileSelect}
         onDragOver={e => e.preventDefault()}
@@ -83,7 +83,7 @@ export function EquipmentDocuments({ equipmentId }: EquipmentDocumentsProps) {
             return (
               <div
                 key={doc.id}
-                className="flex items-center justify-between px-4 py-3 hover:bg-[#FAF7F0] transition-colors"
+                className="flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-colors"
                 style={{ borderBottom: i < items.length - 1 ? `1px solid ${CARD_BORDER}` : 'none' }}
               >
                 <div className="flex items-center gap-3">
@@ -103,7 +103,7 @@ export function EquipmentDocuments({ equipmentId }: EquipmentDocumentsProps) {
                 </div>
                 <button
                   onClick={() => alert('Download (demo)')}
-                  className="p-2 rounded-lg hover:bg-[#1E2D4D]/5 transition-colors"
+                  className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
                 >
                   <Download className="w-4 h-4" style={{ color: TEXT_TERTIARY }} />
                 </button>

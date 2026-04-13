@@ -60,7 +60,7 @@ export default function MarketingCampaigns() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#A08C5A]" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#d4af37]" />
       </div>
     );
   }
@@ -80,11 +80,11 @@ export default function MarketingCampaigns() {
         <p style={{ fontSize: 13, color: '#6B7280', margin: '4px 0 0 0', fontFamily: 'Inter, sans-serif' }}>Track campaigns, channel performance, and tour attribution</p>
       </div>
 
-      <div className="flex items-center gap-1 mb-6 border-b border-[#1E2D4D]/10">
+      <div className="flex items-center gap-1 mb-6 border-b border-gray-200">
         {tabs.map(tab => (
           <button key={tab.id} onClick={() => setActiveTab(tab.id)}
             className={`px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${
-              activeTab === tab.id ? 'border-[#1E2D4D] text-[#1E2D4D]' : 'border-transparent text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
+              activeTab === tab.id ? 'border-[#1E2D4D] text-[#1E2D4D]' : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}>{tab.label}</button>
         ))}
       </div>
@@ -167,32 +167,32 @@ function DashboardTab({ campaigns, touchpoints, pipeline, sessions }: {
       ]} />
 
       {/* Channel performance */}
-      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
-        <h3 className="text-sm font-bold text-[#1E2D4D] mb-4 uppercase tracking-wide">Channel Performance (30d)</h3>
+      <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <h3 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wide">Channel Performance (30d)</h3>
         {channelPerf.length === 0 ? (
-          <p className="text-sm text-[#1E2D4D]/30">No channel data yet.</p>
+          <p className="text-sm text-gray-400">No channel data yet.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-[#FAF7F0] border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors">
-                  <th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/80">Channel</th>
-                  <th className="text-right px-3 py-2 font-semibold text-[#1E2D4D]/80">Touches</th>
-                  <th className="text-right px-3 py-2 font-semibold text-[#1E2D4D]/80">Tours</th>
-                  <th className="text-right px-3 py-2 font-semibold text-[#1E2D4D]/80">Won</th>
-                  <th className="text-right px-3 py-2 font-semibold text-[#1E2D4D]/80">Pipeline MRR</th>
-                  <th className="text-right px-3 py-2 font-semibold text-[#1E2D4D]/80">CAC</th>
+                <tr className="bg-gray-50 border-b border-gray-200">
+                  <th className="text-left px-3 py-2 font-semibold text-gray-700">Channel</th>
+                  <th className="text-right px-3 py-2 font-semibold text-gray-700">Touches</th>
+                  <th className="text-right px-3 py-2 font-semibold text-gray-700">Tours</th>
+                  <th className="text-right px-3 py-2 font-semibold text-gray-700">Won</th>
+                  <th className="text-right px-3 py-2 font-semibold text-gray-700">Pipeline MRR</th>
+                  <th className="text-right px-3 py-2 font-semibold text-gray-700">CAC</th>
                 </tr>
               </thead>
               <tbody>
                 {channelPerf.map(([ch, v]) => (
-                  <tr key={ch} className="border-b border-[#1E2D4D]/5">
-                    <td className="px-3 py-2 font-medium text-[#1E2D4D] capitalize">{ch.replace(/_/g, ' ')}</td>
-                    <td className="px-3 py-2 text-right text-[#1E2D4D]/70">{v.touches}</td>
-                    <td className="px-3 py-2 text-right text-[#1E2D4D]/70">{v.tours}</td>
-                    <td className="px-3 py-2 text-right text-[#1E2D4D]/70">{v.won}</td>
-                    <td className="px-3 py-2 text-right text-[#1E2D4D]/70">{formatCents(v.pipelineMRR)}</td>
-                    <td className="px-3 py-2 text-right text-[#1E2D4D]/50">{v.budget > 0 && v.won > 0 ? formatCents(Math.round(v.budget / v.won)) : '—'}</td>
+                  <tr key={ch} className="border-b border-gray-100">
+                    <td className="px-3 py-2 font-medium text-gray-900 capitalize">{ch.replace(/_/g, ' ')}</td>
+                    <td className="px-3 py-2 text-right text-gray-600">{v.touches}</td>
+                    <td className="px-3 py-2 text-right text-gray-600">{v.tours}</td>
+                    <td className="px-3 py-2 text-right text-gray-600">{v.won}</td>
+                    <td className="px-3 py-2 text-right text-gray-600">{formatCents(v.pipelineMRR)}</td>
+                    <td className="px-3 py-2 text-right text-gray-500">{v.budget > 0 && v.won > 0 ? formatCents(Math.round(v.budget / v.won)) : '—'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -202,20 +202,20 @@ function DashboardTab({ campaigns, touchpoints, pipeline, sessions }: {
       </div>
 
       {/* Top campaigns */}
-      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
-        <h3 className="text-sm font-bold text-[#1E2D4D] mb-4 uppercase tracking-wide">Top Campaigns</h3>
+      <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <h3 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wide">Top Campaigns</h3>
         {topCampaigns.length === 0 ? (
-          <p className="text-sm text-[#1E2D4D]/30">No campaigns created yet.</p>
+          <p className="text-sm text-gray-400">No campaigns created yet.</p>
         ) : (
           <div className="space-y-2">
             {topCampaigns.map(c => (
-              <div key={c.id} className="flex items-center justify-between py-2 border-b border-[#1E2D4D]/5 last:border-0">
+              <div key={c.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
                 <div>
-                  <span className="text-sm font-semibold text-[#1E2D4D]">{c.name}</span>
-                  <span className="ml-2 text-xs font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 capitalize">{c.channel?.replace(/_/g, ' ')}</span>
-                  <span className={`ml-2 text-xs font-bold px-2 py-0.5 rounded-full ${c.status === 'active' ? 'bg-green-50 text-green-700' : c.status === 'paused' ? 'bg-yellow-50 text-yellow-700' : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/50'}`}>{c.status}</span>
+                  <span className="text-sm font-semibold text-gray-900">{c.name}</span>
+                  <span className="ml-2 text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 capitalize">{c.channel?.replace(/_/g, ' ')}</span>
+                  <span className={`ml-2 text-[10px] font-bold px-2 py-0.5 rounded-full ${c.status === 'active' ? 'bg-green-50 text-green-700' : c.status === 'paused' ? 'bg-yellow-50 text-yellow-700' : 'bg-gray-100 text-gray-500'}`}>{c.status}</span>
                 </div>
-                <div className="text-xs text-[#1E2D4D]/50">
+                <div className="text-xs text-gray-500">
                   {c.touches} touches · {c.tours} tours
                 </div>
               </div>
@@ -244,42 +244,42 @@ function CampaignsTab({ campaigns, touchpoints, pipeline, onRefresh }: {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-bold text-[#1E2D4D]">{campaigns.length} Campaigns</h3>
+        <h3 className="text-sm font-bold text-gray-900">{campaigns.length} Campaigns</h3>
         <button onClick={() => setShowCreate(true)}
           className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white rounded-lg" style={{ backgroundColor: NAVY }}>
           <Plus className="h-4 w-4" /> New Campaign
         </button>
       </div>
 
-      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-[#FAF7F0] border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors">
-              <th className="text-left px-4 py-3 font-semibold text-[#1E2D4D]/80">Name</th>
-              <th className="text-left px-4 py-3 font-semibold text-[#1E2D4D]/80">Channel</th>
-              <th className="text-center px-4 py-3 font-semibold text-[#1E2D4D]/80">Status</th>
-              <th className="text-left px-4 py-3 font-semibold text-[#1E2D4D]/80">Start</th>
-              <th className="text-left px-4 py-3 font-semibold text-[#1E2D4D]/80">End</th>
-              <th className="text-right px-4 py-3 font-semibold text-[#1E2D4D]/80">Budget</th>
-              <th className="text-right px-4 py-3 font-semibold text-[#1E2D4D]/80">Tours</th>
+            <tr className="bg-gray-50 border-b border-gray-200">
+              <th className="text-left px-4 py-3 font-semibold text-gray-700">Name</th>
+              <th className="text-left px-4 py-3 font-semibold text-gray-700">Channel</th>
+              <th className="text-center px-4 py-3 font-semibold text-gray-700">Status</th>
+              <th className="text-left px-4 py-3 font-semibold text-gray-700">Start</th>
+              <th className="text-left px-4 py-3 font-semibold text-gray-700">End</th>
+              <th className="text-right px-4 py-3 font-semibold text-gray-700">Budget</th>
+              <th className="text-right px-4 py-3 font-semibold text-gray-700">Tours</th>
             </tr>
           </thead>
           <tbody>
             {enriched.map(c => (
-              <tr key={c.id} className="border-b border-[#1E2D4D]/5 hover:bg-[#FAF7F0]">
-                <td className="px-4 py-3 font-medium text-[#1E2D4D]">{c.name}</td>
-                <td className="px-4 py-3 capitalize text-[#1E2D4D]/70">{c.channel?.replace(/_/g, ' ')}</td>
+              <tr key={c.id} className="border-b border-gray-100 hover:bg-gray-50">
+                <td className="px-4 py-3 font-medium text-gray-900">{c.name}</td>
+                <td className="px-4 py-3 capitalize text-gray-600">{c.channel?.replace(/_/g, ' ')}</td>
                 <td className="px-4 py-3 text-center">
-                  <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${c.status === 'active' ? 'bg-green-50 text-green-700' : c.status === 'paused' ? 'bg-yellow-50 text-yellow-700' : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/50'}`}>{c.status}</span>
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${c.status === 'active' ? 'bg-green-50 text-green-700' : c.status === 'paused' ? 'bg-yellow-50 text-yellow-700' : 'bg-gray-100 text-gray-500'}`}>{c.status}</span>
                 </td>
-                <td className="px-4 py-3 text-xs text-[#1E2D4D]/50">{formatDate(c.start_date)}</td>
-                <td className="px-4 py-3 text-xs text-[#1E2D4D]/50">{formatDate(c.end_date)}</td>
-                <td className="px-4 py-3 text-right text-[#1E2D4D]/70">{c.budget_cents > 0 ? formatCents(c.budget_cents) : '—'}</td>
-                <td className="px-4 py-3 text-right font-medium text-[#1E2D4D]">{c.tours}</td>
+                <td className="px-4 py-3 text-xs text-gray-500">{formatDate(c.start_date)}</td>
+                <td className="px-4 py-3 text-xs text-gray-500">{formatDate(c.end_date)}</td>
+                <td className="px-4 py-3 text-right text-gray-600">{c.budget_cents > 0 ? formatCents(c.budget_cents) : '—'}</td>
+                <td className="px-4 py-3 text-right font-medium text-gray-900">{c.tours}</td>
               </tr>
             ))}
             {enriched.length === 0 && (
-              <tr><td colSpan={7} className="px-4 py-8 text-center text-[#1E2D4D]/30">No campaigns yet. Create your first campaign.</td></tr>
+              <tr><td colSpan={7} className="px-4 py-8 text-center text-gray-400">No campaigns yet. Create your first campaign.</td></tr>
             )}
           </tbody>
         </table>
@@ -336,28 +336,28 @@ function CampaignModal({ onClose, onSave }: { onClose: () => void; onSave: () =>
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] max-w-lg max-h-[90vh] overflow-y-auto modal-content-enter">
-        <h3 className="text-lg font-bold text-[#1E2D4D] mb-4">New Campaign</h3>
+      <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] max-w-lg max-h-[90vh] overflow-y-auto">
+        <h3 className="text-lg font-bold text-gray-900 mb-4">New Campaign</h3>
         <div className="space-y-4">
           <FormInput label="Campaign Name *" value={form.name} onChange={v => { setFieldErrors(p => ({ ...p, name: '' })); setForm(p => ({ ...p, name: v })); }} error={fieldErrors.name} />
           <FormSelect label="Channel" value={form.channel} onChange={handleChannelChange}
             options={CHANNELS.map(c => ({ value: c, label: c.replace(/_/g, ' ') }))} />
           <FormInput label="Target Segment" value={form.target_segment} onChange={v => setForm(p => ({ ...p, target_segment: v }))} placeholder="e.g., restaurant_single" />
           <div>
-            <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Budget ($)</label>
+            <label className="block text-xs font-medium text-gray-700 mb-1">Budget ($)</label>
             <input type="number" min={0} value={form.budget_cents / 100} onChange={e => setForm(p => ({ ...p, budget_cents: Math.round(parseFloat(e.target.value || '0') * 100) }))}
-              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Start Date</label>
+              <label className="block text-xs font-medium text-gray-700 mb-1">Start Date</label>
               <input type="date" value={form.start_date} onChange={e => setForm(p => ({ ...p, start_date: e.target.value }))}
-                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
             </div>
             <div>
-              <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">End Date</label>
+              <label className="block text-xs font-medium text-gray-700 mb-1">End Date</label>
               <input type="date" value={form.end_date} onChange={e => setForm(p => ({ ...p, end_date: e.target.value }))}
-                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
             </div>
           </div>
           {isGoogleChannel && (
@@ -369,7 +369,7 @@ function CampaignModal({ onClose, onSave }: { onClose: () => void; onSave: () =>
           )}
         </div>
         <div className="flex gap-3 mt-6">
-          <button onClick={onClose} className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-[#FAF7F0]">Cancel</button>
+          <button onClick={onClose} className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</button>
           <button onClick={handleSave} disabled={!form.name.trim() || saving}
             className="flex-1 px-4 py-2.5 min-h-[44px] text-white rounded-lg text-sm font-bold disabled:opacity-40" style={{ backgroundColor: NAVY }}>
             {saving ? 'Creating...' : 'Create Campaign'}
@@ -420,38 +420,38 @@ function AttributionTab({ campaigns, touchpoints, pipeline, sessions }: {
     <div className="space-y-6">
       {/* Attribution model toggle */}
       <div className="flex items-center gap-2 mb-4">
-        <span className="text-sm font-medium text-[#1E2D4D]/80">Attribution Model:</span>
+        <span className="text-sm font-medium text-gray-700">Attribution Model:</span>
         <button onClick={() => setAttrModel('first_touch')}
-          className={`px-3 py-1 rounded-full text-xs font-semibold ${attrModel === 'first_touch' ? 'text-white' : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/70'}`}
+          className={`px-3 py-1 rounded-full text-xs font-semibold ${attrModel === 'first_touch' ? 'text-white' : 'bg-gray-100 text-gray-600'}`}
           style={attrModel === 'first_touch' ? { backgroundColor: NAVY } : undefined}>First Touch</button>
         <button onClick={() => setAttrModel('last_touch')}
-          className={`px-3 py-1 rounded-full text-xs font-semibold ${attrModel === 'last_touch' ? 'text-white' : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/70'}`}
+          className={`px-3 py-1 rounded-full text-xs font-semibold ${attrModel === 'last_touch' ? 'text-white' : 'bg-gray-100 text-gray-600'}`}
           style={attrModel === 'last_touch' ? { backgroundColor: NAVY } : undefined}>Last Touch</button>
       </div>
 
       {/* Won deal attribution */}
-      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
-        <h3 className="text-sm font-bold text-[#1E2D4D] mb-4 uppercase tracking-wide">Won Deal Attribution ({attrModel.replace('_', ' ')})</h3>
+      <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <h3 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wide">Won Deal Attribution ({attrModel.replace('_', ' ')})</h3>
         {attributedDeals.length === 0 ? (
-          <p className="text-sm text-[#1E2D4D]/30">No won deals to attribute yet.</p>
+          <p className="text-sm text-gray-400">No won deals to attribute yet.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-[#FAF7F0] border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors">
-                  <th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/80">Company</th>
-                  <th className="text-right px-3 py-2 font-semibold text-[#1E2D4D]/80">MRR</th>
-                  <th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/80">Campaign</th>
-                  <th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/80">Channel</th>
+                <tr className="bg-gray-50 border-b border-gray-200">
+                  <th className="text-left px-3 py-2 font-semibold text-gray-700">Company</th>
+                  <th className="text-right px-3 py-2 font-semibold text-gray-700">MRR</th>
+                  <th className="text-left px-3 py-2 font-semibold text-gray-700">Campaign</th>
+                  <th className="text-left px-3 py-2 font-semibold text-gray-700">Channel</th>
                 </tr>
               </thead>
               <tbody>
                 {attributedDeals.map(d => (
-                  <tr key={d.id} className="border-b border-[#1E2D4D]/5">
-                    <td className="px-3 py-2 font-medium text-[#1E2D4D]">{d.org_name}</td>
-                    <td className="px-3 py-2 text-right text-[#1E2D4D]/70">{formatCents(d.estimated_mrr_cents)}/mo</td>
-                    <td className="px-3 py-2 text-[#1E2D4D]/70">{d.campaign?.name || '— No campaign —'}</td>
-                    <td className="px-3 py-2 text-[#1E2D4D]/50 capitalize">{d.touchpoint?.channel?.replace(/_/g, ' ') || '—'}</td>
+                  <tr key={d.id} className="border-b border-gray-100">
+                    <td className="px-3 py-2 font-medium text-gray-900">{d.org_name}</td>
+                    <td className="px-3 py-2 text-right text-gray-600">{formatCents(d.estimated_mrr_cents)}/mo</td>
+                    <td className="px-3 py-2 text-gray-600">{d.campaign?.name || '— No campaign —'}</td>
+                    <td className="px-3 py-2 text-gray-500 capitalize">{d.touchpoint?.channel?.replace(/_/g, ' ') || '—'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -461,20 +461,20 @@ function AttributionTab({ campaigns, touchpoints, pipeline, sessions }: {
       </div>
 
       {/* Pipeline by source */}
-      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
-        <h3 className="text-sm font-bold text-[#1E2D4D] mb-4 uppercase tracking-wide">Pipeline by Source</h3>
+      <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <h3 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wide">Pipeline by Source</h3>
         {sourceBreakdown.length === 0 ? (
-          <p className="text-sm text-[#1E2D4D]/30">No pipeline data yet.</p>
+          <p className="text-sm text-gray-400">No pipeline data yet.</p>
         ) : (
           <div className="space-y-2">
             {sourceBreakdown.map(([source, v]) => (
               <div key={source} className="flex items-center gap-3">
-                <span className="text-xs font-medium text-[#1E2D4D]/70 w-28 truncate capitalize">{source.replace(/_/g, ' ')}</span>
-                <div className="flex-1 bg-[#1E2D4D]/5 rounded-full h-5 overflow-hidden">
+                <span className="text-xs font-medium text-gray-600 w-28 truncate capitalize">{source.replace(/_/g, ' ')}</span>
+                <div className="flex-1 bg-gray-100 rounded-full h-5 overflow-hidden">
                   <div className="h-full rounded-full" style={{ width: `${v.mrr / maxMRR * 100}%`, backgroundColor: NAVY }} />
                 </div>
-                <span className="text-xs font-bold text-[#1E2D4D]/80 w-20 text-right">{formatCents(v.mrr)} MRR</span>
-                <span className="text-xs text-[#1E2D4D]/30 w-12 text-right">{v.count} deals</span>
+                <span className="text-xs font-bold text-gray-700 w-20 text-right">{formatCents(v.mrr)} MRR</span>
+                <span className="text-xs text-gray-400 w-12 text-right">{v.count} deals</span>
               </div>
             ))}
           </div>
@@ -493,9 +493,9 @@ function FormInput({ label, value, onChange, placeholder, type = 'text', error }
 }) {
   return (
     <div>
-      <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">{label}</label>
+      <label className="block text-xs font-medium text-gray-700 mb-1">{label}</label>
       <input type={type} value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder}
-        className={`w-full px-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] ${error ? 'border-red-500' : 'border-[#1E2D4D]/15'}`} />
+        className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] ${error ? 'border-red-500' : 'border-gray-300'}`} />
       {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
     </div>
   );
@@ -506,9 +506,9 @@ function FormSelect({ label, value, onChange, options }: {
 }) {
   return (
     <div>
-      <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">{label}</label>
+      <label className="block text-xs font-medium text-gray-700 mb-1">{label}</label>
       <select value={value} onChange={e => onChange(e.target.value)}
-        className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm bg-white focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
+        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
         {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
       </select>
     </div>

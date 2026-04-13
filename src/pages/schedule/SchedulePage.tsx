@@ -80,19 +80,19 @@ export function SchedulePage() {
         {/* Header */}
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Schedule</h1>
+            <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Schedule</h1>
             <p className="text-sm mt-0.5" style={{ color: MUTED }}>Manage jobs, assignments, and routes.</p>
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowUnassigned(!showUnassigned)}
-              className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-xl border hover:bg-[#FAF7F0] transition-colors relative"
+              className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg border hover:bg-gray-50 transition-colors relative"
               style={{ borderColor: CARD_BORDER, color: NAVY }}
             >
               {showUnassigned ? <PanelRightClose className="w-4 h-4" /> : <PanelRightOpen className="w-4 h-4" />}
               Unassigned
               {unassignedJobs.length > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center">
+                <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">
                   {unassignedJobs.length}
                 </span>
               )}
@@ -100,7 +100,7 @@ export function SchedulePage() {
             <button
               onClick={() => alert('New job (demo)')}
               className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white rounded-lg"
-              style={{ background: '#1E2D4D' }}
+              style={{ background: '#1e4d6b' }}
             >
               <Plus className="w-4 h-4" /> New Job
             </button>
@@ -111,17 +111,17 @@ export function SchedulePage() {
         <div className="flex items-center justify-between flex-wrap gap-3">
           {/* Date navigation */}
           <div className="flex items-center gap-2">
-            <button onClick={() => navigate('prev')} className="p-1.5 rounded-xl border hover:bg-[#FAF7F0]" style={{ borderColor: CARD_BORDER }}>
+            <button onClick={() => navigate('prev')} className="p-1.5 rounded-lg border hover:bg-gray-50" style={{ borderColor: CARD_BORDER }}>
               <ChevronLeft className="w-4 h-4" style={{ color: NAVY }} />
             </button>
             <button
               onClick={() => navigate('today')}
-              className="px-3 py-1.5 text-xs font-semibold rounded-xl border hover:bg-[#FAF7F0]"
+              className="px-3 py-1.5 text-xs font-semibold rounded-lg border hover:bg-gray-50"
               style={{ borderColor: CARD_BORDER, color: NAVY }}
             >
               Today
             </button>
-            <button onClick={() => navigate('next')} className="p-1.5 rounded-xl border hover:bg-[#FAF7F0]" style={{ borderColor: CARD_BORDER }}>
+            <button onClick={() => navigate('next')} className="p-1.5 rounded-lg border hover:bg-gray-50" style={{ borderColor: CARD_BORDER }}>
               <ChevronRight className="w-4 h-4" style={{ color: NAVY }} />
             </button>
             <h2 className="text-base font-bold ml-2" style={{ color: NAVY }}>{dateLabel}</h2>
@@ -134,7 +134,7 @@ export function SchedulePage() {
               <select
                 value={techParam}
                 onChange={e => setParam('tech', e.target.value)}
-                className="px-2 py-1.5 text-sm rounded-xl border"
+                className="px-2 py-1.5 text-sm rounded-lg border"
                 style={{ borderColor: CARD_BORDER, color: NAVY }}
               >
                 <option value="">All Technicians</option>
@@ -143,14 +143,14 @@ export function SchedulePage() {
             </div>
 
             {/* View toggle */}
-            <div className="flex rounded-xl border overflow-hidden" style={{ borderColor: CARD_BORDER }}>
+            <div className="flex rounded-lg border overflow-hidden" style={{ borderColor: CARD_BORDER }}>
               {(['day', 'week', 'month'] as const).map(v => (
                 <button
                   key={v}
                   onClick={() => setParam('view', v)}
                   className="px-3 py-1.5 text-xs font-semibold capitalize transition-colors"
                   style={{
-                    background: viewParam === v ? '#1E2D4D' : CARD_BG,
+                    background: viewParam === v ? '#1e4d6b' : CARD_BG,
                     color: viewParam === v ? 'white' : TEXT_TERTIARY,
                   }}
                 >
@@ -219,13 +219,13 @@ function CalendarSkeleton({ view }: { view: string }) {
       {view === 'month' ? (
         <div className="grid grid-cols-7 gap-2">
           {Array.from({ length: 35 }).map((_, i) => (
-            <div key={i} className="h-20 bg-[#1E2D4D]/5 rounded" />
+            <div key={i} className="h-20 bg-gray-100 rounded" />
           ))}
         </div>
       ) : (
         <div className="space-y-2">
           {Array.from({ length: 10 }).map((_, i) => (
-            <div key={i} className="h-12 bg-[#1E2D4D]/5 rounded" />
+            <div key={i} className="h-12 bg-gray-100 rounded" />
           ))}
         </div>
       )}

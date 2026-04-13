@@ -51,7 +51,7 @@ export function EquipmentDetailPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-8 h-8 animate-spin" style={{ color: '#1E2D4D' }} />
+        <Loader2 className="w-8 h-8 animate-spin" style={{ color: '#1e4d6b' }} />
       </div>
     );
   }
@@ -61,7 +61,7 @@ export function EquipmentDetailPage() {
       <div className="text-center py-20">
         <p className="text-base font-semibold" style={{ color: NAVY }}>Equipment not found</p>
         <p className="text-sm mt-1" style={{ color: TEXT_TERTIARY }}>This equipment may have been removed.</p>
-        <button onClick={() => navigate('/equipment')} className="mt-4 text-sm text-[#1E2D4D] hover:underline">
+        <button onClick={() => navigate('/equipment')} className="mt-4 text-sm text-[#1e4d6b] hover:underline">
           Back to Equipment
         </button>
       </div>
@@ -75,7 +75,7 @@ export function EquipmentDetailPage() {
     <div className="space-y-6">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm" style={{ color: TEXT_TERTIARY }}>
-        <Link to="/equipment" className="hover:text-[#1E2D4D] flex items-center gap-1">
+        <Link to="/equipment" className="hover:text-[#1e4d6b] flex items-center gap-1">
           <ArrowLeft className="w-4 h-4" /> Equipment
         </Link>
         <span>/</span>
@@ -85,7 +85,7 @@ export function EquipmentDetailPage() {
       {/* Header */}
       <div className="flex items-start justify-between flex-wrap gap-4">
         <div className="flex items-start gap-4">
-          <div className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl" style={{ background: '#eef4f8', color: '#1E2D4D' }}>
+          <div className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl" style={{ background: '#eef4f8', color: '#1e4d6b' }}>
             <EquipmentIcon type={equipment.equipmentType} />
           </div>
           <div>
@@ -94,10 +94,10 @@ export function EquipmentDetailPage() {
               {equipment.customerName} &middot; {equipment.locationName}
             </p>
             <div className="flex items-center gap-2 mt-2">
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full capitalize" style={{ background: condStyle.bg, color: condStyle.text }}>
+              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full capitalize" style={{ background: condStyle.bg, color: condStyle.text }}>
                 {equipment.condition}
               </span>
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: statStyle.bg, color: statStyle.text }}>
+              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: statStyle.bg, color: statStyle.text }}>
                 {statStyle.label}
               </span>
             </div>
@@ -107,14 +107,14 @@ export function EquipmentDetailPage() {
         <div className="flex items-center gap-2 relative">
           <button
             onClick={() => setShowEditModal(true)}
-            className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-xl border hover:bg-[#FAF7F0] transition-colors"
+            className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg border hover:bg-gray-50 transition-colors"
             style={{ borderColor: CARD_BORDER, color: NAVY }}
           >
             <Edit className="w-4 h-4" /> Edit
           </button>
           <button
             onClick={() => setShowMenu(!showMenu)}
-            className="p-2 rounded-xl border hover:bg-[#FAF7F0] transition-colors"
+            className="p-2 rounded-lg border hover:bg-gray-50 transition-colors"
             style={{ borderColor: CARD_BORDER, color: NAVY }}
           >
             <MoreHorizontal className="w-4 h-4" />
@@ -122,16 +122,16 @@ export function EquipmentDetailPage() {
 
           {showMenu && (
             <div
-              className="absolute right-0 top-full mt-1 w-48 rounded-xl shadow-lg border py-1 z-10"
+              className="absolute right-0 top-full mt-1 w-48 rounded-lg shadow-lg border py-1 z-10"
               style={{ background: CARD_BG, borderColor: CARD_BORDER }}
             >
-              <button onClick={() => { setShowQRPrint(true); setShowMenu(false); }} className="w-full text-left px-3 py-2 text-sm hover:bg-[#FAF7F0] flex items-center gap-2" style={{ color: NAVY }}>
+              <button onClick={() => { setShowQRPrint(true); setShowMenu(false); }} className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 flex items-center gap-2" style={{ color: NAVY }}>
                 <QrCode className="w-4 h-4" /> Print QR Code
               </button>
-              <button onClick={() => { alert('Equipment deactivated (demo)'); setShowMenu(false); }} className="w-full text-left px-3 py-2 text-sm hover:bg-[#FAF7F0] flex items-center gap-2" style={{ color: '#D97706' }}>
+              <button onClick={() => { alert('Equipment deactivated (demo)'); setShowMenu(false); }} className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 flex items-center gap-2" style={{ color: '#D97706' }}>
                 <Power className="w-4 h-4" /> Deactivate
               </button>
-              <button onClick={() => { alert('Equipment deleted (demo)'); setShowMenu(false); }} className="w-full text-left px-3 py-2 text-sm hover:bg-[#FAF7F0] flex items-center gap-2" style={{ color: '#DC2626' }}>
+              <button onClick={() => { alert('Equipment deleted (demo)'); setShowMenu(false); }} className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 flex items-center gap-2" style={{ color: '#DC2626' }}>
                 <Trash2 className="w-4 h-4" /> Delete
               </button>
             </div>
@@ -150,7 +150,7 @@ export function EquipmentDetailPage() {
           >
             {tab}
             {activeTab === tab && (
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 rounded-t" style={{ background: '#1E2D4D' }} />
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 rounded-t" style={{ background: '#1e4d6b' }} />
             )}
           </button>
         ))}

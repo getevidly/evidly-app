@@ -8,7 +8,7 @@
 import { useState } from 'react';
 import { X, Bell } from 'lucide-react';
 
-const inputClass = 'w-full text-sm px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2';
+const inputClass = 'w-full text-sm px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[#1E2D4D]';
 
 export function NotificationPrefs({ onClose }) {
   const [prefs, setPrefs] = useState({
@@ -26,7 +26,7 @@ export function NotificationPrefs({ onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 modal-backdrop-enter">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
       <div
         className="w-full max-w-sm rounded-2xl"
         style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)' }}

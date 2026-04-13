@@ -257,7 +257,7 @@ export function AutoBreadcrumb() {
   return <BreadcrumbNav items={items} />;
 }
 
-const NAVY = '#1E2D4D';
+const NAVY = '#1e4d6b';
 
 function DashboardBreadcrumbWithTabs({ search }: { search: string }) {
   const params = new URLSearchParams(search);
@@ -309,23 +309,37 @@ function BreadcrumbNav({ items }: { items: BreadcrumbItem[] }) {
     <nav
       aria-label="Breadcrumb"
       className="flex items-center flex-wrap gap-y-0.5"
+      style={{ fontFamily: 'Inter, sans-serif' }}
     >
       {items.map((item, i) => (
         <span key={i} className="flex items-center">
           {i > 0 && (
-            <ChevronRight className="mx-1.5 flex-shrink-0 w-3.5 h-3.5 text-[#1E2D4D]/20" />
+            <ChevronRight
+              className="mx-1.5 flex-shrink-0"
+              style={{ width: 14, height: 14, color: '#D1D5DB' }}
+            />
           )}
           {item.href ? (
             <Link
               to={item.href}
-              className="flex items-center gap-1 text-sm text-[#1E2D4D]/50 hover:text-[#A08C5A] hover:underline underline-offset-4 decoration-[#A08C5A]/40 transition-colors"
+              className="flex items-center gap-1 cursor-pointer hover:underline transition-colors"
+              style={{ fontSize: '0.875rem', color: '#6B7280' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#1e4d6b'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#6B7280'; }}
             >
-              {i === 0 && <Home className="w-4 h-4" />}
+              {i === 0 && <Home style={{ width: 16, height: 16 }} />}
               {item.label}
             </Link>
           ) : (
-            <span className="flex items-center gap-1 text-sm text-[#1E2D4D] font-medium">
-              {i === 0 && <Home className="w-4 h-4" />}
+            <span
+              className="flex items-center gap-1"
+              style={{
+                fontSize: '0.875rem',
+                color: '#1E2D4D',
+                fontWeight: 600,
+              }}
+            >
+              {i === 0 && <Home style={{ width: 16, height: 16 }} />}
               {item.label}
             </span>
           )}

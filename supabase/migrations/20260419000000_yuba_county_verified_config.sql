@@ -23,7 +23,7 @@
 -- IMPORTANT NOTE:
 --   Yuba County ≠ Sutter County. Yuba City is the county seat of SUTTER County.
 --   Marysville is the county seat of YUBA County.
---   Sutter County uses a Green / Yellow / Red placard system — Yuba County does NOT.
+--   Sutter County uses a GYR placard system — Yuba County does NOT.
 --
 -- COUNTY CONTEXT: Marysville (county seat), Olivehurst, Linda, Wheatland.
 --   Small rural county. Single EHD office in Marysville.
@@ -54,8 +54,8 @@ UPDATE jurisdictions SET
   fire_ahj_name          = 'CAL FIRE / City of Marysville Fire / Yuba County Fire',
   fire_ahj_type          = 'mixed_cal_fire_city',
   has_local_amendments   = false,
-  scoring_methodology    = 'Inspection report only. NO letter grade. NO numeric score. NO confirmed placard. Reports documented per CalCode inspection. Available at EHD office. No confirmed public online searchable database. ~500-700 fixed food facilities. Different from neighboring Sutter County (Green / Yellow / Red placard).',
-  notes                  = 'STANDARDIZED March 2026. Inspection report only. Marysville = Yuba County seat (NOT Yuba City which is in Sutter County). Small rural county. Single EHD office. Adjacent Sutter County uses Green / Yellow / Red placard — Yuba does NOT.',
+  scoring_methodology    = 'Inspection report only. NO letter grade. NO numeric score. NO confirmed placard. Reports documented per CalCode inspection. Available at EHD office. No confirmed public online searchable database. ~500-700 fixed food facilities. Different from neighboring Sutter County (GYR placard).',
+  notes                  = 'STANDARDIZED March 2026. Inspection report only. Marysville = Yuba County seat (NOT Yuba City which is in Sutter County). Small rural county. Single EHD office. Adjacent Sutter County uses GYR placard — Yuba does NOT.',
   data_source_url        = 'https://www.yuba.org/departments/community_development/environmental_health/',
   data_source_type       = 'static_page',
   data_source_tier       = 3,

@@ -42,16 +42,16 @@ export function HoodOpsReportCard({
         {onToggleFavorite && (
           <button
             onClick={e => { e.stopPropagation(); onToggleFavorite(); }}
-            className="p-2.5 -m-1 rounded hover:bg-[#1E2D4D]/5 transition-colors"
+            className="p-2.5 -m-1 rounded hover:bg-gray-100 transition-colors"
           >
-            <Star className={`w-4 h-4 ${isFavorite ? 'fill-amber-400 text-amber-400' : 'text-[#1E2D4D]/30'}`} />
+            <Star className={`w-4 h-4 ${isFavorite ? 'fill-amber-400 text-amber-400' : 'text-gray-300'}`} />
           </button>
         )}
       </div>
-      <p className="text-sm font-semibold mb-1 group-hover:text-[#1E2D4D]" style={{ color: NAVY }}>{title}</p>
+      <p className="text-sm font-semibold mb-1 group-hover:text-[#1e4d6b]" style={{ color: NAVY }}>{title}</p>
       <p className="text-xs leading-relaxed" style={{ color: TEXT_TERTIARY }}>{description}</p>
       <div className="mt-3">
-        <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ color: categoryColor, background: categoryBg }}>
+        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ color: categoryColor, background: categoryBg }}>
           {categoryLabel}
         </span>
       </div>

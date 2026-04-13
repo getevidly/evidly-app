@@ -25,10 +25,10 @@ export function VersionHistoryPanel({ documentId, documentType }: VersionHistory
 
   return (
     <div
-      className="rounded-xl border p-3"
+      className="rounded-lg border p-3"
       style={{ backgroundColor: '#FAFBFC', borderColor: '#E5E7EB' }}
     >
-      <h5 className="text-xs font-semibold text-[#1E2D4D]/70 mb-2">
+      <h5 className="text-xs font-semibold text-gray-600 mb-2">
         Version History — {documentType}
       </h5>
       <div className="space-y-0">
@@ -58,17 +58,17 @@ export function VersionHistoryPanel({ documentId, documentType }: VersionHistory
               {/* Version details */}
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-xs font-semibold text-[#1E2D4D]/80">
+                  <span className="text-xs font-semibold text-gray-700">
                     v{ver.version} {isCurrent ? '(Current)' : ''}
                   </span>
                   <span
-                    className="text-xs font-medium px-1.5 py-0.5 rounded"
+                    className="text-[10px] font-medium px-1.5 py-0.5 rounded"
                     style={{ backgroundColor: statusCfg.bg, color: statusCfg.color }}
                   >
                     {statusCfg.label}
                   </span>
                 </div>
-                <div className="flex items-center gap-2 text-xs text-[#1E2D4D]/50 mt-0.5 flex-wrap">
+                <div className="flex items-center gap-2 text-[11px] text-gray-500 mt-0.5 flex-wrap">
                   <span>{formatDate(ver.created_at)}</span>
                   {reviewer && <span>Reviewed by {reviewer}</span>}
                 </div>

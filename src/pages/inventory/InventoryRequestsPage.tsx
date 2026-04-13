@@ -172,13 +172,13 @@ function RequestCard({ request }: { request: InventoryRequest }) {
         </div>
         <div className="flex items-center gap-2">
           <span
-            className="text-xs font-semibold px-2 py-0.5 rounded-full"
+            className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
             style={{ background: priorityBadge.bg, color: priorityBadge.text }}
           >
             {priorityBadge.label}
           </span>
           <span
-            className="text-xs font-semibold px-2 py-0.5 rounded-full"
+            className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
             style={{ background: statusBadge.bg, color: statusBadge.text }}
           >
             {statusBadge.label}
@@ -223,7 +223,7 @@ function RequestCard({ request }: { request: InventoryRequest }) {
           </button>
           <button
             onClick={() => alert('Request denied (not yet implemented)')}
-            className="px-4 py-1.5 text-xs font-medium rounded-xl border transition-colors hover:bg-[#FAF7F0]"
+            className="px-4 py-1.5 text-xs font-medium rounded-lg border transition-colors hover:bg-gray-50"
             style={{ borderColor: CARD_BORDER, color: '#DC2626' }}
           >
             Deny

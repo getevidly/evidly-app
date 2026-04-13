@@ -18,7 +18,7 @@ export function MobileQuickActions({ actions }: MobileQuickActionsProps) {
           style={{ boxShadow: '0 1px 3px rgba(30,45,77,0.08), 0 1px 2px rgba(30,45,77,0.06)' }}
         >
           <span className="text-[22px] mb-1">{action.icon}</span>
-          <span className="text-xs font-bold text-[#1E2D4D]">{action.label}</span>
+          <span className="text-[11px] font-bold text-[#1E2D4D]">{action.label}</span>
         </button>
       ))}
     </div>

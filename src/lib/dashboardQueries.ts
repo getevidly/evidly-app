@@ -219,7 +219,7 @@ const DEMO_ACTIVITY: ActivityItem[] = [
   { initials: 'MJ', name: 'Marcus J.', action: 'logged Walk-in Cooler: 38\u00b0F \u2713', time: '15 min ago', url: '/temp-logs?id=walk-in-cooler-downtown', borderColor: '#22c55e' },
   { initials: 'SC', name: 'Sarah C.', action: 'completed Opening Checklist', time: '45 min ago', url: '/checklists?id=opening-checklist', borderColor: '#22c55e' },
   { initials: 'DP', name: 'David P.', action: 'logged Freezer: 15\u00b0F \u2713', time: '1h ago', url: '/temp-logs?id=freezer-downtown', borderColor: '#22c55e' },
-  { initials: 'ER', name: 'Emma R.', action: 'uploaded Food Handler Cert', time: '2h ago', url: '/documents?id=food-handler-cert', borderColor: '#1E2D4D' },
+  { initials: 'ER', name: 'Emma R.', action: 'uploaded Food Handler Cert', time: '2h ago', url: '/documents?id=food-handler-cert', borderColor: '#1e4d6b' },
   { initials: 'AT', name: 'Alex T.', action: 'logged Hot Hold: 127\u00b0F \u2717', time: '3h ago', url: '/temp-logs?id=hot-hold-airport', borderColor: '#ef4444' },
 ];
 

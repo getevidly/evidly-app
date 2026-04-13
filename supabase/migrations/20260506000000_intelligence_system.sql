@@ -71,23 +71,11 @@ CREATE TABLE IF NOT EXISTS intelligence_signals (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
-DO $$ BEGIN
-  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'intelligence_signals' AND column_name = 'status') THEN
-    CREATE INDEX IF NOT EXISTS signals_status_idx ON intelligence_signals (status);
-  END IF;
-  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'intelligence_signals' AND column_name = 'ai_urgency') THEN
-    CREATE INDEX IF NOT EXISTS signals_urgency_idx ON intelligence_signals (ai_urgency);
-  END IF;
-  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'intelligence_signals' AND column_name = 'signal_type') THEN
-    CREATE INDEX IF NOT EXISTS signals_type_idx ON intelligence_signals (signal_type);
-  END IF;
-  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'intelligence_signals' AND column_name = 'source_id') THEN
-    CREATE INDEX IF NOT EXISTS signals_source_idx ON intelligence_signals (source_id);
-  END IF;
-  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'intelligence_signals' AND column_name = 'discovered_at') THEN
-    CREATE INDEX IF NOT EXISTS signals_discovered_idx ON intelligence_signals (discovered_at);
-  END IF;
-END $$;
+CREATE INDEX IF NOT EXISTS signals_status_idx     ON intelligence_signals (status);
+CREATE INDEX IF NOT EXISTS signals_urgency_idx    ON intelligence_signals (ai_urgency);
+CREATE INDEX IF NOT EXISTS signals_type_idx       ON intelligence_signals (signal_type);
+CREATE INDEX IF NOT EXISTS signals_source_idx     ON intelligence_signals (source_id);
+CREATE INDEX IF NOT EXISTS signals_discovered_idx ON intelligence_signals (discovered_at);
 
 -- ── Intelligence Correlations ────────────────────────────
 CREATE TABLE IF NOT EXISTS intelligence_correlations (
@@ -151,7 +139,7 @@ BEGIN FOR t IN SELECT unnest(ARRAY[
   'intelligence_sources','intelligence_signals',
   'intelligence_correlations','jie_updates'
 ]) LOOP
-  EXECUTE format('CREATE POLICY "admin_only" ON %I FOR ALL USING (EXISTS (SELECT 1 FROM user_profiles WHERE id = auth.uid() AND role = ''platform_admin''))', t);
+  EXECUTE format('CREATE POLICY "admin_only" ON %I FOR ALL USING (EXISTS (SELECT 1 FROM user_profiles WHERE user_id = auth.uid() AND role = ''platform_admin''))', t);
   EXECUTE format('CREATE POLICY "service_role_all" ON %I FOR ALL USING (auth.role() = ''service_role'')', t);
 END LOOP; END $$;
 

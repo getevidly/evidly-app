@@ -187,8 +187,8 @@ export function getScoringMethodLabel(scoringType: string): string {
     numeric_score: 'Numeric Score',
     violation_report: 'Violation Report Only',
     report_only: 'Report Only',
-    color_placard: 'Color Placard (Green / Yellow / Red)',
-    color_placard_and_numeric: 'Green / Yellow / Red Placard + Numeric Score',
+    color_placard: 'Color Placard (GYR)',
+    color_placard_and_numeric: 'GYR Placard + Numeric Score',
     inspection_report: 'Inspection Report Only',
     letter_grade: '100-Point Deductive',
     pass_fail_placard: 'Pass/Fail Placard',
@@ -201,12 +201,12 @@ export function getScoringMethodLabel(scoringType: string): string {
  */
 export function getGradingFormatLabel(gradingType: string): string {
   const labels: Record<string, string> = {
-    letter_grade: 'Letter Grade (A / B / C)',
+    letter_grade: 'Letter Grade (A/B/C)',
     letter_grade_strict: 'Letter Grade \u2014 A-Only Passes',
-    letter_grade_abc: 'Letter Grade (A / B / C)',
-    color_placard: 'Green / Yellow / Red Placard',
-    green_yellow_red: 'Green / Yellow / Red Placard',
-    green_yellow_red_numeric: 'Green / Yellow / Red Placard + Numeric Score',
+    letter_grade_abc: 'Letter Grade (A/B/C)',
+    color_placard: 'Green/Yellow/Red Placard',
+    green_yellow_red: 'Green/Yellow/Red Placard',
+    green_yellow_red_numeric: 'GYR Placard + Numeric Score',
     score_100: 'Numeric Score (0\u2013100)',
     score_negative: 'Negative Scale',
     numeric_score: 'Numeric Score',
@@ -240,10 +240,10 @@ export function getTierLabel(tier: number): string {
  */
 export function getTierColor(tier: number): string {
   switch (tier) {
-    case 1: return 'bg-emerald-50 text-emerald-700 border-green-200';
-    case 2: return 'bg-blue-50 text-blue-700 border-blue-200';
-    case 3: return 'bg-amber-50 text-amber-700 border-yellow-200';
-    case 4: return 'bg-gray-100 text-[#1E2D4D]/50 border-[#1E2D4D]/10';
-    default: return 'bg-gray-100 text-[#1E2D4D]/50 border-[#1E2D4D]/10';
+    case 1: return 'bg-green-100 text-green-700 border-green-200';
+    case 2: return 'bg-blue-100 text-blue-700 border-blue-200';
+    case 3: return 'bg-yellow-100 text-yellow-700 border-yellow-200';
+    case 4: return 'bg-gray-100 text-gray-500 border-gray-200';
+    default: return 'bg-gray-100 text-gray-500 border-gray-200';
   }
 }

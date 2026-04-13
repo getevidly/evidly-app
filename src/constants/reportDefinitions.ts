@@ -11,7 +11,7 @@ import type { LucideIcon } from 'lucide-react';
 export type ReportCategory = 'operations' | 'financial' | 'compliance' | 'team';
 
 export const CATEGORY_META: Record<ReportCategory, { label: string; color: string; bg: string; icon: LucideIcon }> = {
-  operations: { label: 'Operations', color: '#1E2D4D', bg: '#eef4f8', icon: ClipboardList },
+  operations: { label: 'Operations', color: '#1e4d6b', bg: '#eef4f8', icon: ClipboardList },
   financial:  { label: 'Financial',  color: '#16a34a', bg: '#f0fdf4', icon: DollarSign },
   compliance: { label: 'Compliance', color: '#7c3aed', bg: '#faf5ff', icon: Shield },
   team:       { label: 'Team',       color: '#0891b2', bg: '#ecfeff', icon: Users },

@@ -33,15 +33,15 @@ export function InspectionProbabilityWidget({ locations }: Props) {
     >
       <div className="px-4 py-3" style={{ borderBottom: `1px solid ${CARD_BORDER}` }}>
         <h3 className="text-sm font-semibold" style={{ color: BODY_TEXT }}>Inspection Probability</h3>
-        <p className="text-xs text-[#1E2D4D]/50 mt-0.5">Estimated likelihood of next inspection window</p>
+        <p className="text-[11px] text-gray-500 mt-0.5">Estimated likelihood of next inspection window</p>
       </div>
-      <div className="divide-y divide-[#1E2D4D]/5">
+      <div className="divide-y divide-gray-100">
         {withProbability.map(loc => (
           <div key={loc.name} className="px-4 py-3">
             <div className="flex items-center justify-between mb-1.5">
               <div>
-                <p className="text-sm font-semibold text-[#1E2D4D]/90">{loc.name}</p>
-                <p className="text-xs text-[#1E2D4D]/50">{loc.jurisdictionName}</p>
+                <p className="text-[13px] font-semibold text-gray-800">{loc.name}</p>
+                <p className="text-[11px] text-gray-500">{loc.jurisdictionName}</p>
               </div>
               <span
                 className="text-sm font-bold"
@@ -50,7 +50,7 @@ export function InspectionProbabilityWidget({ locations }: Props) {
                 {loc.probability}%
               </span>
             </div>
-            <div className="w-full h-2 rounded-full bg-[#1E2D4D]/5 overflow-hidden">
+            <div className="w-full h-2 rounded-full bg-gray-100 overflow-hidden">
               <div
                 className="h-full rounded-full transition-all"
                 style={{
@@ -59,7 +59,7 @@ export function InspectionProbabilityWidget({ locations }: Props) {
                 }}
               />
             </div>
-            <p className="text-xs text-[#1E2D4D]/30 mt-1">
+            <p className="text-[10px] text-gray-400 mt-1">
               Last inspected {loc.daysSince} days ago &middot; {loc.frequencyDays}-day cycle
             </p>
           </div>

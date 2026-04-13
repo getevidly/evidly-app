@@ -61,7 +61,7 @@ export function DashboardGreeting({ role, firstName }) {
         {greeting}
       </h1>
       {firstName && (
-        <p className="text-sm text-[#1E2D4D]/50 mt-0.5">{firstName}, here's your snapshot.</p>
+        <p className="text-sm text-gray-500 mt-0.5">{firstName}, here's your snapshot.</p>
       )}
     </div>
   );

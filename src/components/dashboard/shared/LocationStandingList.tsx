@@ -38,10 +38,10 @@ function FallbackPill({ pillar, level, reason }: { pillar: string; level: Standi
         className="shrink-0 rounded-full"
         style={{ width: 6, height: 6, backgroundColor: config.dot }}
       />
-      <span className="text-xs font-medium uppercase tracking-wide" style={{ color: '#6B7F96' }}>
+      <span className="text-[10px] font-medium uppercase tracking-wide" style={{ color: '#6B7F96' }}>
         {pillar}
       </span>
-      <span className="text-xs font-medium truncate max-w-[140px]" style={{ color: config.textColor }}>
+      <span className="text-[11px] font-medium truncate max-w-[140px]" style={{ color: config.textColor }}>
         {displayText}
       </span>
     </div>
@@ -52,7 +52,7 @@ export function LocationStandingList({ standings, navigate }: LocationStandingLi
   if (standings.length === 0) return null;
 
   return (
-    <div className="bg-white rounded-xl" style={{ border: '1px solid #e5e7eb' }}>
+    <div className="bg-white rounded-lg" style={{ border: '1px solid #e5e7eb' }}>
       <div className="px-4 py-3" style={{ borderBottom: '1px solid #F0F0F0' }}>
         <h3 className="text-sm font-semibold" style={{ color: BODY_TEXT }}>Location Standing</h3>
       </div>
@@ -62,7 +62,7 @@ export function LocationStandingList({ standings, navigate }: LocationStandingLi
             key={s.locationId}
             type="button"
             onClick={() => navigate(`/dashboard?location=${s.locationId}`)}
-            className="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-[#FAF7F0]"
+            className="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-gray-50"
             style={{ borderBottom: '1px solid #F0F0F0' }}
           >
             <div className="flex-1 min-w-0">
@@ -70,7 +70,7 @@ export function LocationStandingList({ standings, navigate }: LocationStandingLi
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
                 {/* Food Safety — jurisdiction-native result or fallback */}
                 <div className="flex items-center gap-1.5">
-                  <span className="text-xs font-medium uppercase tracking-wide" style={{ color: '#6B7F96' }}>
+                  <span className="text-[10px] font-medium uppercase tracking-wide" style={{ color: '#6B7F96' }}>
                     Food
                   </span>
                   {s.foodScoringType && s.foodGradeDisplay ? (
@@ -86,12 +86,12 @@ export function LocationStandingList({ standings, navigate }: LocationStandingLi
                 </div>
                 {/* Facility Safety — pass/fail badge */}
                 <div className="flex items-center gap-1.5">
-                  <span className="text-xs font-medium uppercase tracking-wide" style={{ color: '#6B7F96' }}>
+                  <span className="text-[10px] font-medium uppercase tracking-wide" style={{ color: '#6B7F96' }}>
                     Facility
                   </span>
                   {s.facilityGradeDisplay && s.facilityStatus ? (
                     <span
-                      className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold"
+                      className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold"
                       style={{
                         backgroundColor: FACILITY_STATUS_STYLE[s.facilityStatus].bg,
                         color: FACILITY_STATUS_STYLE[s.facilityStatus].text,
@@ -106,13 +106,13 @@ export function LocationStandingList({ standings, navigate }: LocationStandingLi
               </div>
               {/* Authority attribution line */}
               {s.foodAuthority && (
-                <div className="mt-1 text-xs text-[#1E2D4D]/30 truncate">
+                <div className="mt-1 text-[10px] text-gray-400 truncate">
                   {s.foodAuthority}{s.facilityAuthority ? ` · ${s.facilityAuthority}` : ''}
                 </div>
               )}
             </div>
             {s.openItemCount > 0 && (
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-red-50 text-red-700">
+              <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-red-50 text-red-700">
                 {s.openItemCount} open
               </span>
             )}

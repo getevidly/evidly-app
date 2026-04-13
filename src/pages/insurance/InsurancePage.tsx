@@ -62,7 +62,7 @@ export function InsurancePage() {
         <div>
           <div className="flex items-center gap-2">
             <Shield className="w-6 h-6" style={{ color: NAVY }} />
-            <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Insurance</h1>
+            <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Insurance</h1>
           </div>
           <p className="text-sm mt-1" style={{ color: TEXT_TERTIARY }}>Manage policies, coverage, and roadside assistance.</p>
         </div>
@@ -79,9 +79,9 @@ export function InsurancePage() {
       {isLoading ? (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="rounded-xl p-4 animate-pulse" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
-              <div className="h-3 w-20 bg-[#1E2D4D]/8 rounded mb-2 mx-auto" />
-              <div className="h-6 w-10 bg-[#1E2D4D]/8 rounded mx-auto" />
+            <div key={i} className="rounded-lg p-4 animate-pulse" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
+              <div className="h-3 w-20 bg-gray-200 rounded mb-2 mx-auto" />
+              <div className="h-6 w-10 bg-gray-200 rounded mx-auto" />
             </div>
           ))}
         </div>
@@ -136,7 +136,7 @@ export function InsurancePage() {
       {section === 'roadside' && (
         <div className="space-y-4">
           {loadingRoadside ? (
-            <div className="h-32 bg-[#1E2D4D]/8 rounded-xl animate-pulse" />
+            <div className="h-32 bg-gray-200 rounded-xl animate-pulse" />
           ) : roadsideList.length === 0 ? (
             <div className="text-center py-12 rounded-xl" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
               <AlertTriangle className="w-10 h-10 mx-auto mb-3" style={{ color: TEXT_TERTIARY }} />
@@ -175,7 +175,7 @@ function PolicyList({
     return (
       <div className="space-y-3">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="h-20 bg-[#1E2D4D]/8 rounded-xl animate-pulse" />
+          <div key={i} className="h-20 bg-gray-200 rounded-xl animate-pulse" />
         ))}
       </div>
     );
@@ -216,7 +216,7 @@ function PolicyList({
                 {isExpiringSoon && (
                   <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700">Expiring Soon</span>
                 )}
-                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${p.isActive ? 'bg-green-50 text-green-700' : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/50'}`}>
+                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${p.isActive ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
                   {p.isActive ? 'Active' : 'Inactive'}
                 </span>
               </div>
@@ -235,7 +235,7 @@ function PolicyList({
 
 function StatCard({ icon: Icon, label, value, color }: { icon: typeof Shield; label: string; value: string | number; color: string }) {
   return (
-    <div className="rounded-xl p-4 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
+    <div className="rounded-lg p-4 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
       <div className="w-9 h-9 rounded-lg flex items-center justify-center mx-auto mb-2" style={{ background: `${color}12` }}>
         <Icon className="w-4.5 h-4.5" style={{ color }} />
       </div>

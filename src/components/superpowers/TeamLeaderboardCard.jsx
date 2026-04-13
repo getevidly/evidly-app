@@ -15,7 +15,7 @@ export function TeamLeaderboardCard({ entries, isKitchenStaff, currentUserId }) 
           <div className="p-2 bg-[#F4F6FA] rounded-lg">
             <Medal className="h-5 w-5 text-[#1E2D4D]" />
           </div>
-          <h3 className="text-lg font-semibold tracking-tight text-[#0B1628]">Team Leaderboard</h3>
+          <h3 className="text-lg font-semibold text-[#0B1628]">Team Leaderboard</h3>
         </div>
         <div className="text-center py-8">
           <Users className="h-10 w-10 text-[#D1D9E6] mx-auto mb-3" />
@@ -38,7 +38,7 @@ export function TeamLeaderboardCard({ entries, isKitchenStaff, currentUserId }) 
           <div className="p-2 bg-[#F4F6FA] rounded-lg">
             <Medal className="h-5 w-5 text-[#1E2D4D]" />
           </div>
-          <h3 className="text-lg font-semibold tracking-tight text-[#0B1628]">
+          <h3 className="text-lg font-semibold text-[#0B1628]">
             {isKitchenStaff ? 'Your Compliance Score' : 'Team Leaderboard'}
           </h3>
         </div>
@@ -49,7 +49,7 @@ export function TeamLeaderboardCard({ entries, isKitchenStaff, currentUserId }) 
 
       {/* Column headers */}
       {!isKitchenStaff && (
-        <div className="grid grid-cols-[40px_1fr_50px_50px_50px_60px] gap-2 px-3 py-2 text-xs text-[#6B7F96] uppercase tracking-wider font-medium border-b border-[#E8EDF5]">
+        <div className="grid grid-cols-[40px_1fr_50px_50px_50px_60px] gap-2 px-3 py-2 text-[10px] text-[#6B7F96] uppercase tracking-wider font-medium border-b border-[#E8EDF5]">
           <span>#</span>
           <span>Name</span>
           <span className="text-center" title="Checklists (40 pts)"><ClipboardList className="h-3 w-3 mx-auto" /></span>
@@ -83,7 +83,7 @@ export function TeamLeaderboardCard({ entries, isKitchenStaff, currentUserId }) 
               <div>
                 <p className={`text-sm ${isCurrentUser ? 'font-semibold text-[#0B1628]' : 'text-[#0B1628]'}`}>
                   {entry.name}
-                  {isCurrentUser && <span className="text-xs text-[#A08C5A] ml-1">(You)</span>}
+                  {isCurrentUser && <span className="text-[10px] text-[#A08C5A] ml-1">(You)</span>}
                 </p>
               </div>
               <span className="text-xs text-center text-[#3D5068]">{entry.checklistScore}</span>
@@ -99,19 +99,19 @@ export function TeamLeaderboardCard({ entries, isKitchenStaff, currentUserId }) 
       <div className="flex items-center gap-4 mt-3 pt-3 border-t border-[#E8EDF5]">
         <div className="flex items-center gap-1">
           <ClipboardList className="h-3 w-3 text-[#6B7F96]" />
-          <span className="text-xs text-[#6B7F96]">Checklists (40)</span>
+          <span className="text-[10px] text-[#6B7F96]">Checklists (40)</span>
         </div>
         <div className="flex items-center gap-1">
           <Thermometer className="h-3 w-3 text-[#6B7F96]" />
-          <span className="text-xs text-[#6B7F96]">Temp Logs (35)</span>
+          <span className="text-[10px] text-[#6B7F96]">Temp Logs (35)</span>
         </div>
         <div className="flex items-center gap-1">
           <Wrench className="h-3 w-3 text-[#6B7F96]" />
-          <span className="text-xs text-[#6B7F96]">CA Speed (25)</span>
+          <span className="text-[10px] text-[#6B7F96]">CA Speed (25)</span>
         </div>
       </div>
 
-      <p className="text-xs text-[#6B7F96] mt-2">
+      <p className="text-[10px] text-[#6B7F96] mt-2">
         Based on task completion data. Scores are advisory and updated periodically.
       </p>
     </div>

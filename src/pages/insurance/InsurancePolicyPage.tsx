@@ -28,8 +28,8 @@ export function InsurancePolicyPage() {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <div className="h-8 w-48 bg-[#1E2D4D]/8 rounded animate-pulse" />
-        <div className="h-64 bg-[#1E2D4D]/8 rounded-xl animate-pulse" />
+        <div className="h-8 w-48 bg-gray-200 rounded animate-pulse" />
+        <div className="h-64 bg-gray-200 rounded-xl animate-pulse" />
       </div>
     );
   }
@@ -59,12 +59,12 @@ export function InsurancePolicyPage() {
             <Shield className="w-6 h-6" style={{ color: NAVY }} />
           </div>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>
+            <h1 className="text-2xl font-bold" style={{ color: NAVY }}>
               {POLICY_TYPE_LABELS[p.policyType] || p.policyType}
             </h1>
             <p className="text-sm" style={{ color: TEXT_TERTIARY }}>{p.insuranceCompany} — {p.policyNumber}</p>
           </div>
-          <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${p.isActive ? 'bg-green-50 text-green-700' : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/50'}`}>
+          <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${p.isActive ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
             {p.isActive ? 'Active' : 'Inactive'}
           </span>
         </div>

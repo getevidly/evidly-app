@@ -100,7 +100,7 @@ export const VideoCapture: React.FC<Props> = ({ onVideoReady }) => {
       {mode === 'idle' && (
         <div style={{ display: 'flex', gap: '8px' }}>
           <button onClick={startRecording} style={{
-            background: '#1E2D4D', border: '1px solid #1E2D4D',
+            background: '#1e4d6b', border: '1px solid #1e4d6b',
             borderRadius: '6px', padding: '8px 14px',
             color: '#ffffff', fontSize: '12px', fontWeight: 600,
             cursor: 'pointer', fontFamily: 'system-ui',
@@ -109,7 +109,7 @@ export const VideoCapture: React.FC<Props> = ({ onVideoReady }) => {
             {'📷'} Record Video
           </button>
           <button onClick={() => fileInputRef.current?.click()} style={{
-            background: '#1E2D4D', border: '1px solid #1E2D4D',
+            background: '#1e4d6b', border: '1px solid #1e4d6b',
             borderRadius: '6px', padding: '8px 14px',
             color: '#ffffff', fontSize: '12px', fontWeight: 600,
             cursor: 'pointer', fontFamily: 'system-ui',

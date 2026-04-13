@@ -103,13 +103,13 @@ export default function PlatformStats() {
   ];
 
   return (
-    <section ref={sectionRef} className="py-20 px-6 bg-[#1E2D4D]">
+    <section ref={sectionRef} className="py-20 px-6 bg-[#1e4d6b]">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="font-['Outfit'] text-4xl font-bold text-white mb-4">
             Trusted by Compliance Operations Teams Everywhere
           </h2>
-          <p className="text-xl text-[#1E2D4D]/30 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
             Real results from real teams managing compliance every day
           </p>
         </div>
@@ -117,10 +117,10 @@ export default function PlatformStats() {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {statItems.map((stat, index) => (
             <div key={index} className="text-center">
-              <div className="font-['Outfit'] text-5xl font-bold text-[#1E2D4D] mb-2">
+              <div className="font-['Outfit'] text-5xl font-bold text-[#d4af37] mb-2">
                 {stat.prefix}{stat.value}{stat.suffix}
               </div>
-              <div className="text-[#1E2D4D]/30 text-sm font-medium">{stat.label}</div>
+              <div className="text-gray-300 text-sm font-medium">{stat.label}</div>
             </div>
           ))}
         </div>

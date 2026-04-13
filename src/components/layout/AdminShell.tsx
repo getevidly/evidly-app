@@ -61,7 +61,6 @@ const NAV_SECTIONS: NavSection[] = [
       { label: 'Demo Generator', path: '/admin/demo-generator', salesOnly: true },
       { label: 'Demo Launcher', path: '/admin/demo-launcher', salesOnly: true },
       { label: 'Demo Pipeline', path: '/admin/demo-pipeline', salesOnly: true },
-      { label: 'Demo Tours', path: '/admin/demo-tours', salesOnly: true },
       { label: 'Kitchen Checkup', path: '/admin/kitchen-checkup', salesOnly: true },
       { label: 'Guided Tours', path: '/admin/guided-tours', salesOnly: true },
       { label: 'Client Onboarding', path: '/admin/onboarding', salesOnly: true },

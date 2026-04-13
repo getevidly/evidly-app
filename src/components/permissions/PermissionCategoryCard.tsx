@@ -55,7 +55,7 @@ export function PermissionCategoryCard({
       <button
         type="button"
         onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-[#FAF7F0] transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-gray-50 transition-colors"
       >
         <div className="flex items-center gap-3">
           <span className="text-lg">{category.icon}</span>
@@ -149,7 +149,7 @@ function PermissionRow({
             )}
             {isOverridden && (
               <span
-                className="text-xs font-semibold px-1.5 py-0.5 rounded-full flex-shrink-0"
+                className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full flex-shrink-0"
                 style={{ backgroundColor: 'rgba(160, 140, 90, 0.15)', color: '#A08C5A' }}
               >
                 OVERRIDE
@@ -171,12 +171,12 @@ function PermissionRow({
         onClick={() => onToggle(permission.key, !granted)}
         className={`
           relative inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent
-          transition-colors duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus:ring-offset-2
+          transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2
           ${isLocked ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}
         `}
         style={{
           backgroundColor: granted
-            ? isOverridden ? '#A08C5A' : '#1E2D4D'
+            ? isOverridden ? '#A08C5A' : '#1e4d6b'
             : '#D1D9E6',
           ...(granted && !isLocked ? { boxShadow: '0 0 0 2px transparent' } : {}),
         }}

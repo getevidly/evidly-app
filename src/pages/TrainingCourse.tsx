@@ -95,11 +95,11 @@ function LessonViewer({ module, lessonIdx, onNext, onBack }: {
         </button>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#9ca3af' }}>
           {Array.from({ length: module.lessonCount }, (_, i) => (
-            <div key={i} style={{ width: 8, height: 8, borderRadius: 4, background: i === lessonIdx ? '#1E2D4D' : i < lessonIdx ? '#b8d4e8' : '#e5e7eb' }} />
+            <div key={i} style={{ width: 8, height: 8, borderRadius: 4, background: i === lessonIdx ? '#1e4d6b' : i < lessonIdx ? '#b8d4e8' : '#e5e7eb' }} />
           ))}
         </div>
         <button onClick={onNext}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 24px', borderRadius: 8, border: 'none', background: '#1E2D4D', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
+          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 24px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
           {lessonIdx >= module.lessonCount - 1 ? 'Take Quiz' : 'Next'} <ChevronRight size={14} />
         </button>
       </div>
@@ -171,14 +171,14 @@ function QuizEngine({ moduleTitle, questionCount, passingScore, onComplete }: {
                   </div>
                 ))}
                 <div style={{ marginTop: 10, padding: '10px 12px', borderRadius: 8, background: '#eef4f8', border: '1px solid #b8d4e8' }}>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: '#1E2D4D', marginBottom: 2 }}>Explanation</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#1e4d6b', marginBottom: 2 }}>Explanation</div>
                   <div style={{ fontSize: 13, color: '#374151', lineHeight: 1.5 }}>{qq.explanation}</div>
                 </div>
               </div>
             );
           })}
           <button onClick={() => setReviewMode(false)}
-            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 20px', borderRadius: 8, border: 'none', background: '#1E2D4D', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 20px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
             <ArrowLeft size={14} /> Back to Results
           </button>
         </div>
@@ -207,7 +207,7 @@ function QuizEngine({ moduleTitle, questionCount, passingScore, onComplete }: {
           )}
           {!passed && (
             <button onClick={() => { setCurrentQ(0); setAnswers(new Array(DEMO_QUESTIONS.length).fill(null)); setSelected(null); setShowResults(false); setChecked(false); }}
-              style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 20px', borderRadius: 8, border: 'none', background: '#1E2D4D', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
+              style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 20px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
               <RotateCcw size={16} /> Retake Quiz
             </button>
           )}
@@ -241,7 +241,7 @@ function QuizEngine({ moduleTitle, questionCount, passingScore, onComplete }: {
         {/* Progress dots */}
         <div style={{ display: 'flex', gap: 4 }}>
           {questions.map((_, i) => (
-            <div key={i} style={{ width: 10, height: 10, borderRadius: 5, background: i < currentQ ? '#1E2D4D' : i === currentQ ? '#A08C5A' : '#e5e7eb' }} />
+            <div key={i} style={{ width: 10, height: 10, borderRadius: 5, background: i < currentQ ? '#1e4d6b' : i === currentQ ? '#d4af37' : '#e5e7eb' }} />
           ))}
         </div>
       </div>
@@ -256,14 +256,14 @@ function QuizEngine({ moduleTitle, questionCount, passingScore, onComplete }: {
               <button key={i} onClick={() => !checked && setSelected(i)} disabled={checked}
                 style={{
                   display: 'flex', alignItems: 'center', gap: 12, padding: '14px 16px', borderRadius: 10, minHeight: 48,
-                  border: optCorrect ? '2px solid #15803d' : optWrong ? '2px solid #dc2626' : selected === i ? '2px solid #1E2D4D' : '1px solid #d1d5db',
+                  border: optCorrect ? '2px solid #15803d' : optWrong ? '2px solid #dc2626' : selected === i ? '2px solid #1e4d6b' : '1px solid #d1d5db',
                   background: optCorrect ? '#dcfce7' : optWrong ? '#fee2e2' : selected === i ? '#eef4f8' : '#fff',
                   cursor: checked ? 'default' : 'pointer', textAlign: 'left',
                   fontSize: 15, color: '#374151', fontFamily: "'DM Sans', sans-serif", transition: 'all 0.15s',
                 }}>
                 <div style={{
                   width: 22, height: 22, borderRadius: 11, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  border: optCorrect ? 'none' : optWrong ? 'none' : selected === i ? '6px solid #1E2D4D' : '2px solid #d1d5db',
+                  border: optCorrect ? 'none' : optWrong ? 'none' : selected === i ? '6px solid #1e4d6b' : '2px solid #d1d5db',
                   background: optCorrect ? '#15803d' : optWrong ? '#dc2626' : 'transparent',
                 }}>
                   {optCorrect && <CheckCircle2 size={18} color="#fff" />}
@@ -294,7 +294,7 @@ function QuizEngine({ moduleTitle, questionCount, passingScore, onComplete }: {
           <button onClick={handleCheck} disabled={selected === null}
             style={{
               display: 'flex', alignItems: 'center', gap: 6, padding: '10px 24px', borderRadius: 8, border: 'none', minHeight: 48,
-              background: selected !== null ? '#1E2D4D' : '#d1d5db', color: '#fff', fontSize: 14, fontWeight: 600,
+              background: selected !== null ? '#1e4d6b' : '#d1d5db', color: '#fff', fontSize: 14, fontWeight: 600,
               cursor: selected !== null ? 'pointer' : 'not-allowed', fontFamily: "'DM Sans', sans-serif",
             }}>
             Check Answer
@@ -303,7 +303,7 @@ function QuizEngine({ moduleTitle, questionCount, passingScore, onComplete }: {
           <button onClick={handleNext}
             style={{
               display: 'flex', alignItems: 'center', gap: 6, padding: '10px 24px', borderRadius: 8, border: 'none', minHeight: 48,
-              background: '#1E2D4D', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+              background: '#1e4d6b', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
             }}>
             {currentQ < questions.length - 1 ? 'Next Question' : 'See Results'} <ChevronRight size={14} />
           </button>
@@ -349,7 +349,7 @@ function AICompanion({ courseTitle }: { courseTitle: string }) {
   return (
     <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #e5e7eb', overflow: 'hidden', display: 'flex', flexDirection: 'column', height: 400 }}>
       <div style={{ padding: '12px 16px', background: '#fffbeb', borderBottom: '1px solid #fde68a', display: 'flex', alignItems: 'center', gap: 8 }}>
-        <Brain size={18} color="#A08C5A" />
+        <Brain size={18} color="#d4af37" />
         <span style={{ fontWeight: 700, color: '#92400e', fontSize: 14 }}>AI Study Companion</span>
         <span style={{ fontSize: 12, color: '#92400e', opacity: 0.7 }}>(Powered by Claude)</span>
       </div>
@@ -359,7 +359,7 @@ function AICompanion({ courseTitle }: { courseTitle: string }) {
           <div key={i} style={{ display: 'flex', justifyContent: m.role === 'user' ? 'flex-end' : 'flex-start' }}>
             <div style={{
               maxWidth: '80%', padding: '10px 14px', borderRadius: 12,
-              background: m.role === 'user' ? '#1E2D4D' : '#f3f4f6',
+              background: m.role === 'user' ? '#1e4d6b' : '#f3f4f6',
               color: m.role === 'user' ? '#fff' : '#374151',
               fontSize: 14, lineHeight: 1.6, whiteSpace: 'pre-wrap',
             }}>
@@ -375,7 +375,7 @@ function AICompanion({ courseTitle }: { courseTitle: string }) {
           placeholder="Ask a question about the material..."
           style={{ flex: 1, padding: '8px 12px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 14, fontFamily: "'DM Sans', sans-serif" }} />
         <button onClick={handleSend}
-          style={{ padding: '8px 14px', borderRadius: 8, border: 'none', background: '#1E2D4D', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+          style={{ padding: '8px 14px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
           <Send size={16} />
         </button>
       </div>
@@ -388,16 +388,16 @@ function AICompanion({ courseTitle }: { courseTitle: string }) {
 function CertificateView({ cert, course }: { cert: TrainingCertificate; course: TCourse }) {
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   return (
-    <div style={{ background: '#fff', borderRadius: 12, border: '2px solid #A08C5A', padding: 40, textAlign: 'center', maxWidth: 600, margin: '0 auto' }}>
-      <div style={{ borderBottom: '2px solid #A08C5A', paddingBottom: 24, marginBottom: 24 }}>
-        <Award size={48} color="#A08C5A" />
-        <h2 style={{ fontSize: 28, fontWeight: 700, color: '#1E2D4D', margin: '12px 0 4px' }}>Certificate of Completion</h2>
+    <div style={{ background: '#fff', borderRadius: 12, border: '2px solid #d4af37', padding: 40, textAlign: 'center', maxWidth: 600, margin: '0 auto' }}>
+      <div style={{ borderBottom: '2px solid #d4af37', paddingBottom: 24, marginBottom: 24 }}>
+        <Award size={48} color="#d4af37" />
+        <h2 style={{ fontSize: 28, fontWeight: 700, color: '#1e4d6b', margin: '12px 0 4px' }}>Certificate of Completion</h2>
         <p style={{ fontSize: 14, color: '#6b7280', margin: 0 }}>EvidLY Training & Certification Platform</p>
       </div>
       <p style={{ fontSize: 16, color: '#6b7280', margin: '0 0 8px' }}>This certifies that</p>
       <p style={{ fontSize: 26, fontWeight: 700, color: '#111827', margin: '0 0 8px' }}>{cert.employeeName}</p>
       <p style={{ fontSize: 16, color: '#6b7280', margin: '0 0 20px' }}>has successfully completed</p>
-      <p style={{ fontSize: 20, fontWeight: 700, color: '#1E2D4D', margin: '0 0 8px' }}>{course.title}</p>
+      <p style={{ fontSize: 20, fontWeight: 700, color: '#1e4d6b', margin: '0 0 8px' }}>{course.title}</p>
       <p style={{ fontSize: 14, color: '#6b7280', margin: '0 0 24px' }}>
         Score: {cert.scorePercent}% &middot; {course.moduleCount} modules &middot; {course.estimatedDurationMin} minutes
       </p>
@@ -418,7 +418,7 @@ function CertificateView({ cert, course }: { cert: TrainingCertificate; course: 
         )}
       </div>
       <button onClick={() => guardAction('download', 'Training Certificates', () => toast.info('Certificate PDF download (demo)'))}
-        style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '10px 24px', borderRadius: 8, border: 'none', background: '#1E2D4D', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+        style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '10px 24px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
         <Download size={16} /> Download PDF
       </button>
       {showUpgrade && (
@@ -452,7 +452,7 @@ export function TrainingCourse() {
     return (
       <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
         <button onClick={() => navigate('/training')}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#1E2D4D', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 16, padding: 0, fontFamily: "'DM Sans', sans-serif" }}>
+          style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#1e4d6b', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 16, padding: 0, fontFamily: "'DM Sans', sans-serif" }}>
           <ArrowLeft size={16} /> Back to Training
         </button>
         <h1 style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: '0 0 24px' }}>Training Course</h1>
@@ -483,7 +483,7 @@ export function TrainingCourse() {
         <h2 style={{ color: '#111827' }}>Course Not Found</h2>
         <p style={{ color: '#6b7280' }}>The requested course could not be found.</p>
         <button onClick={() => navigate('/training')}
-          style={{ padding: '8px 16px', borderRadius: 8, border: 'none', background: '#1E2D4D', color: '#fff', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+          style={{ padding: '8px 16px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
           Back to Training
         </button>
       </div>
@@ -515,7 +515,7 @@ export function TrainingCourse() {
         <style>{RESPONSIVE_STYLES}</style>
         {/* Header */}
         <button onClick={() => navigate('/training')}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#1E2D4D', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 16, padding: 0, fontFamily: "'DM Sans', sans-serif" }}>
+          style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#1e4d6b', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 16, padding: 0, fontFamily: "'DM Sans', sans-serif" }}>
           <ArrowLeft size={16} /> Back to Training
         </button>
 
@@ -566,7 +566,7 @@ export function TrainingCourse() {
                     <button onClick={() => toggleModule(idx)}
                       style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 12, padding: '14px 16px', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', fontFamily: "'DM Sans', sans-serif" }}>
                       <div style={{ width: 28, height: 28, borderRadius: 14, background: isComplete ? '#dcfce7' : '#eef4f8', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        {isComplete ? <CheckCircle2 size={16} color="#15803d" /> : <span style={{ fontSize: 13, fontWeight: 700, color: '#1E2D4D' }}>{idx + 1}</span>}
+                        {isComplete ? <CheckCircle2 size={16} color="#15803d" /> : <span style={{ fontSize: 13, fontWeight: 700, color: '#1e4d6b' }}>{idx + 1}</span>}
                       </div>
                       <div style={{ flex: 1 }}>
                         <div style={{ fontSize: 15, fontWeight: 600, color: '#111827' }}>{mod.title}</div>
@@ -586,7 +586,7 @@ export function TrainingCourse() {
                           return (
                             <button key={i} onClick={() => startLesson(idx, i)}
                               style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '8px 12px', marginBottom: 4, background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: 6, cursor: 'pointer', textAlign: 'left', fontFamily: "'DM Sans', sans-serif" }}>
-                              <Play size={14} color="#1E2D4D" />
+                              <Play size={14} color="#1e4d6b" />
                               <span style={{ fontSize: 13, color: '#374151' }}>
                                 Lesson {i + 1}{demoLesson ? `: ${demoLesson.title}` : ''}
                               </span>
@@ -595,8 +595,8 @@ export function TrainingCourse() {
                         })}
                         <button onClick={() => { setActiveModuleIdx(idx); setView('quiz'); }}
                           style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '8px 12px', marginTop: 4, background: '#eef4f8', border: '1px solid #b8d4e8', borderRadius: 6, cursor: 'pointer', textAlign: 'left', fontFamily: "'DM Sans', sans-serif" }}>
-                          <FileText size={14} color="#1E2D4D" />
-                          <span style={{ fontSize: 13, fontWeight: 600, color: '#1E2D4D' }}>Module Quiz ({mod.questionCount} questions)</span>
+                          <FileText size={14} color="#1e4d6b" />
+                          <span style={{ fontSize: 13, fontWeight: 600, color: '#1e4d6b' }}>Module Quiz ({mod.questionCount} questions)</span>
                         </button>
                       </div>
                     )}
@@ -614,9 +614,9 @@ export function TrainingCourse() {
                 <h3 style={{ fontSize: 14, fontWeight: 700, color: '#111827', margin: '0 0 12px' }}>Your Progress</h3>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
                   <div style={{ flex: 1, height: 10, background: '#f3f4f6', borderRadius: 5, overflow: 'hidden' }}>
-                    <div style={{ width: `${enrollment.progressPercent}%`, height: '100%', background: '#1E2D4D', borderRadius: 5 }} />
+                    <div style={{ width: `${enrollment.progressPercent}%`, height: '100%', background: '#1e4d6b', borderRadius: 5 }} />
                   </div>
-                  <span style={{ fontSize: 14, fontWeight: 700, color: '#1E2D4D' }}>{enrollment.progressPercent}%</span>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: '#1e4d6b' }}>{enrollment.progressPercent}%</span>
                 </div>
                 <div style={{ fontSize: 13, color: '#6b7280', lineHeight: 1.8 }}>
                   <div>Status: <span style={{ fontWeight: 600, color: STATUS_BADGE[enrollment.status]?.text }}>{STATUS_BADGE[enrollment.status]?.label}</span></div>
@@ -625,7 +625,7 @@ export function TrainingCourse() {
                 </div>
                 {enrollment.status === 'in_progress' && (
                   <button onClick={() => { setActiveModuleIdx(0); setActiveLessonIdx(0); setView('lesson'); }}
-                    style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '10px 16px', borderRadius: 8, border: 'none', background: '#1E2D4D', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginTop: 12, fontFamily: "'DM Sans', sans-serif" }}>
+                    style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '10px 16px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginTop: 12, fontFamily: "'DM Sans', sans-serif" }}>
                     <Play size={16} /> Continue Learning
                   </button>
                 )}
@@ -635,12 +635,12 @@ export function TrainingCourse() {
             {/* Certificate (if exists) */}
             {cert && (
               <div style={{ background: '#fffbeb', borderRadius: 10, border: '1px solid #fde68a', padding: 20, marginBottom: 16, textAlign: 'center' }}>
-                <Award size={32} color="#A08C5A" />
+                <Award size={32} color="#d4af37" />
                 <div style={{ fontWeight: 700, color: '#92400e', fontSize: 14, marginTop: 8, marginBottom: 4 }}>Certificate Earned</div>
                 <code style={{ fontSize: 12, color: '#6b7280' }}>{cert.certificateNumber}</code>
                 <div style={{ fontSize: 12, color: '#92400e', marginTop: 4 }}>{cert.employeeName} &middot; {cert.scorePercent}%</div>
                 <button onClick={() => setView('certificate')}
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '6px 14px', borderRadius: 8, border: '1px solid #A08C5A', background: '#fff', color: '#92400e', fontSize: 13, fontWeight: 600, cursor: 'pointer', marginTop: 10, fontFamily: "'DM Sans', sans-serif" }}>
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '6px 14px', borderRadius: 8, border: '1px solid #d4af37', background: '#fff', color: '#92400e', fontSize: 13, fontWeight: 600, cursor: 'pointer', marginTop: 10, fontFamily: "'DM Sans', sans-serif" }}>
                   <Eye size={14} /> View
                 </button>
               </div>
@@ -648,7 +648,7 @@ export function TrainingCourse() {
 
             {/* AI Companion Toggle */}
             <button onClick={() => setShowAI(!showAI)}
-              style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '12px 16px', borderRadius: 10, border: '1px solid #A08C5A', background: showAI ? '#fffbeb' : '#fff', color: '#92400e', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 16, fontFamily: "'DM Sans', sans-serif" }}>
+              style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '12px 16px', borderRadius: 10, border: '1px solid #d4af37', background: showAI ? '#fffbeb' : '#fff', color: '#92400e', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 16, fontFamily: "'DM Sans', sans-serif" }}>
               <Brain size={16} /> {showAI ? 'Hide' : 'Show'} AI Study Companion
             </button>
             {showAI && <AICompanion courseTitle={course.title} />}
@@ -684,7 +684,7 @@ export function TrainingCourse() {
     return (
       <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
         <button onClick={() => setView('overview')}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#1E2D4D', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 16, padding: 0, fontFamily: "'DM Sans', sans-serif" }}>
+          style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#1e4d6b', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 16, padding: 0, fontFamily: "'DM Sans', sans-serif" }}>
           <ArrowLeft size={16} /> Back to Course Overview
         </button>
         <LessonViewer
@@ -717,7 +717,7 @@ export function TrainingCourse() {
     return (
       <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
         <button onClick={() => setView('overview')}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#1E2D4D', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 16, padding: 0, fontFamily: "'DM Sans', sans-serif" }}>
+          style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#1e4d6b', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 16, padding: 0, fontFamily: "'DM Sans', sans-serif" }}>
           <ArrowLeft size={16} /> Back to Course Overview
         </button>
         <QuizEngine
@@ -735,7 +735,7 @@ export function TrainingCourse() {
     return (
       <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
         <button onClick={() => setView('overview')}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#1E2D4D', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 16, padding: 0, fontFamily: "'DM Sans', sans-serif" }}>
+          style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#1e4d6b', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 16, padding: 0, fontFamily: "'DM Sans', sans-serif" }}>
           <ArrowLeft size={16} /> Back to Course Overview
         </button>
         <CertificateView cert={cert} course={course} />

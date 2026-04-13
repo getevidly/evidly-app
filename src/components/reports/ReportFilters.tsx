@@ -34,7 +34,7 @@ export function ReportFilters({
 
   return (
     <div
-      className="flex flex-wrap items-center gap-3 rounded-xl px-4 py-3"
+      className="flex flex-wrap items-center gap-3 rounded-lg px-4 py-3"
       style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}
     >
       {/* Date range */}

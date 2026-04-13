@@ -61,14 +61,14 @@ export function BlogPost() {
         <Navigation />
         <div className="pt-28 pb-16 px-4 sm:px-6">
           <div className="max-w-3xl mx-auto animate-pulse space-y-6">
-            <div className="h-4 bg-[#1E2D4D]/8 rounded w-24" />
-            <div className="h-8 bg-[#1E2D4D]/8 rounded w-3/4" />
-            <div className="h-4 bg-[#1E2D4D]/8 rounded w-1/3" />
-            <div className="aspect-[16/9] bg-[#1E2D4D]/8 rounded-xl" />
+            <div className="h-4 bg-gray-200 rounded w-24" />
+            <div className="h-8 bg-gray-200 rounded w-3/4" />
+            <div className="h-4 bg-gray-200 rounded w-1/3" />
+            <div className="aspect-[16/9] bg-gray-200 rounded-xl" />
             <div className="space-y-3">
-              <div className="h-4 bg-[#1E2D4D]/8 rounded w-full" />
-              <div className="h-4 bg-[#1E2D4D]/8 rounded w-5/6" />
-              <div className="h-4 bg-[#1E2D4D]/8 rounded w-4/6" />
+              <div className="h-4 bg-gray-200 rounded w-full" />
+              <div className="h-4 bg-gray-200 rounded w-5/6" />
+              <div className="h-4 bg-gray-200 rounded w-4/6" />
             </div>
           </div>
         </div>
@@ -81,15 +81,15 @@ export function BlogPost() {
       <div className="min-h-screen bg-white">
         <Navigation />
         <div className="pt-28 pb-16 px-4 sm:px-6 text-center">
-          <h1 className="text-3xl font-bold tracking-tight mb-4" style={{ color: NAVY }}>
+          <h1 className="text-3xl font-bold mb-4" style={{ color: NAVY }}>
             Post Not Found
           </h1>
-          <p className="text-[#1E2D4D]/50 mb-6">
+          <p className="text-gray-500 mb-6">
             The blog post you're looking for doesn't exist or has been removed.
           </p>
           <Link
             to="/blog"
-            className="inline-flex items-center gap-2 text-[#1E2D4D] hover:text-[#2A3F6B] font-medium"
+            className="inline-flex items-center gap-2 text-[#1e4d6b] hover:text-[#2a6a8f] font-medium"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Blog
@@ -130,7 +130,7 @@ export function BlogPost() {
             <nav className="mb-6">
               <Link
                 to="/blog"
-                className="inline-flex items-center gap-1.5 text-sm text-[#1E2D4D] hover:text-[#2A3F6B] font-medium"
+                className="inline-flex items-center gap-1.5 text-sm text-[#1e4d6b] hover:text-[#2a6a8f] font-medium"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Back to Blog
@@ -146,7 +146,7 @@ export function BlogPost() {
             </h1>
 
             {/* Meta */}
-            <div className="flex flex-wrap items-center gap-4 text-sm text-[#1E2D4D]/50 mb-6">
+            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-6">
               {post.author && (
                 <span className="flex items-center gap-1.5">
                   <User className="w-4 h-4" />
@@ -167,7 +167,7 @@ export function BlogPost() {
                 {post.categories.map((cat) => (
                   <span
                     key={cat}
-                    className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full bg-blue-50 text-[#1E2D4D]"
+                    className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full bg-blue-50 text-[#1e4d6b]"
                   >
                     <Tag className="w-3 h-3" />
                     {cat}

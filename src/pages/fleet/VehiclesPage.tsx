@@ -69,7 +69,7 @@ export function VehiclesPage() {
         <div>
           <div className="flex items-center gap-2">
             <Truck className="w-6 h-6" style={{ color: NAVY }} />
-            <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Fleet</h1>
+            <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Fleet</h1>
           </div>
           <p className="text-sm mt-1" style={{ color: TEXT_TERTIARY }}>Manage vehicles, maintenance, and registrations.</p>
         </div>
@@ -86,9 +86,9 @@ export function VehiclesPage() {
       {isLoading ? (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="rounded-xl p-4 animate-pulse" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
-              <div className="h-3 w-20 bg-[#1E2D4D]/8 rounded mb-2 mx-auto" />
-              <div className="h-6 w-10 bg-[#1E2D4D]/8 rounded mx-auto" />
+            <div key={i} className="rounded-lg p-4 animate-pulse" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
+              <div className="h-3 w-20 bg-gray-200 rounded mb-2 mx-auto" />
+              <div className="h-6 w-10 bg-gray-200 rounded mx-auto" />
             </div>
           ))}
         </div>
@@ -103,7 +103,7 @@ export function VehiclesPage() {
 
       {/* Tabs + Search */}
       <div className="flex flex-wrap items-center gap-3">
-        <div className="flex rounded-xl border overflow-hidden" style={{ borderColor: CARD_BORDER }}>
+        <div className="flex rounded-lg border overflow-hidden" style={{ borderColor: CARD_BORDER }}>
           {TYPE_TABS.map(t => (
             <button
               key={t.value}
@@ -124,7 +124,7 @@ export function VehiclesPage() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search vehicles..."
-            className="w-full pl-9 pr-3 py-2 text-sm rounded-xl border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30"
+            className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/30"
             style={{ background: CARD_BG, borderColor: CARD_BORDER, color: NAVY }}
           />
         </div>
@@ -134,8 +134,8 @@ export function VehiclesPage() {
       {isLoading ? (
         <div className="space-y-3">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="rounded-xl p-4 animate-pulse" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
-              <div className="h-4 w-full bg-[#1E2D4D]/8 rounded" />
+            <div key={i} className="rounded-lg p-4 animate-pulse" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
+              <div className="h-4 w-full bg-gray-200 rounded" />
             </div>
           ))}
         </div>
@@ -180,7 +180,7 @@ export function VehiclesPage() {
                   <tr
                     key={v.id}
                     onClick={() => navigate(`/fleet/${v.id}`)}
-                    className="cursor-pointer hover:bg-[#FAF7F0] transition-colors border-t"
+                    className="cursor-pointer hover:bg-gray-50 transition-colors border-t"
                     style={{ borderColor: CARD_BORDER, background: CARD_BG }}
                   >
                     <td className="px-4 py-3 font-medium" style={{ color: NAVY }}>{v.name}</td>
@@ -216,7 +216,7 @@ export function VehiclesPage() {
 
 function StatCard({ icon: Icon, label, value, color }: { icon: typeof Truck; label: string; value: number; color: string }) {
   return (
-    <div className="rounded-xl p-4 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
+    <div className="rounded-lg p-4 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
       <div className="w-9 h-9 rounded-lg flex items-center justify-center mx-auto mb-2" style={{ background: `${color}12` }}>
         <Icon className="w-4.5 h-4.5" style={{ color }} />
       </div>

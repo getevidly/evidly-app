@@ -22,72 +22,49 @@
 // TODO: Track CalCode 2026 legislative changes: SB 68 (allergen disclosure), AB 660 (date labels)
 // TODO: Verify FDA Food Code 2026 full revision when published (currently 2022 + 2024 Supplement)
 
-// Normalized fire AHJ types (FIRE-JIE-CA-01, FIRE-JIE-NV-01, FIRE-FIX-02)
-export type FireAhjType = 'municipal_fire' | 'county_fire' | 'fire_district' | 'cal_fire_contract' | 'state_fire_marshal' | 'mixed' | 'tribal_fire';
-
-// Fire AHJ jurisdiction configuration (fire_jurisdiction_config JSONB column)
-// Populated for CA, NV, OR, WA, AZ jurisdictions. NFPA 96-2024 Table 12.4
-// cleaning frequencies are universal; per-jurisdiction differences are
-// fire_ahj_name, fire_ahj_type, enabling_statute, and ahj_split_notes.
+// Fire AHJ jurisdiction configuration (from fire_jurisdiction_config JSONB column)
 export interface FireJurisdictionConfig {
   fire_ahj_name: string;
-  fire_ahj_type: FireAhjType;
-  fire_code_edition: string; // "2025 CFC" | "2021 IFC" | "2025 OFC" | "2018 IFC"
-  nfpa_96_edition: string;   // "2024"
-  enabling_statute?: string; // Cross-state standardized: "California Fire Code (Title 24 Part 9), Title 19 CCR"
-  // State-specific booleans (kept for backward compatibility)
-  title_19_ccr?: boolean;    // CA: California Code of Regulations Title 19
-  nrs_477?: boolean;         // NV: Nevada Revised Statutes Chapter 477
-  ors_479?: boolean;         // OR: Oregon Revised Statutes Chapter 479
-  oar_837_040?: boolean;     // OR: Oregon Administrative Rules 837-040
-  rcw_19_27?: boolean;       // WA: Revised Code of Washington 19.27
-  wac_51_54a?: boolean;      // WA: Washington Administrative Code 51-54A
-  state_fire_marshal?: string; // "CAL FIRE OSFM" | "Nevada SFM Division" | "OSFM" | "WSP Fire Protection" | "DFFM"
-  has_local_fire_code_adoption?: boolean; // AZ: cities adopt IFC independently
-  local_fire_code_notes?: string;         // AZ: patchwork adoption details
-  nfpa_96_table_12_4: {
-    type_i_heavy_volume: string;    // "monthly"
-    type_i_moderate_volume: string; // "quarterly"
-    type_i_low_volume: string;      // "semi_annual"
-    type_ii: string;                // "annual"
-    solid_fuel_cooking: string;     // "monthly"
-    source: string;                 // "NFPA 96-2024 Table 12.4"
+  fire_ahj_type: 'city_fire' | 'county_fire' | 'state_fire' | 'federal' | 'contract';
+  fire_code_edition: string; // e.g. "2022 CFC"
+  nfpa_96_cleaning_frequencies: {
+    type_i_hood: string;   // e.g. "monthly" | "quarterly"
+    type_ii_hood: string;  // e.g. "semi-annual" | "annual"
   };
   hood_suppression: {
-    system_type: string;         // "UL-300 wet chemical"
-    inspection_interval: string; // "semi_annual"
-    standard: string;            // "NFPA 96 / UL-300"
+    system_type: string;         // e.g. "UL-300 wet chemical"
+    inspection_interval: string; // e.g. "semi-annual"
+    standard: string;            // e.g. "NFPA 96 / UL-300"
   };
   ansul_system: {
     required: boolean;
-    inspection_interval: string; // "semi_annual"
-    standard: string;            // "NFPA 17A"
+    inspection_interval: string; // e.g. "semi-annual"
+    standard: string;            // e.g. "NFPA 17A"
   };
   fire_extinguisher: {
-    types: string[];               // ["K-class", "ABC"]
-    inspection_interval: string;   // "annual"
-    hydrostatic_test: string;      // "6-year K-class / 12-year ABC"
+    types: string[];               // e.g. ["K-class", "ABC"]
+    inspection_interval: string;   // e.g. "annual"
+    hydrostatic_interval: string;  // e.g. "5-year" | "12-year"
   };
   fire_alarm: {
     required: boolean;
-    monitoring_type: string;     // "central_station"
-    inspection_interval: string; // "annual"
+    monitoring_type: string;     // e.g. "central station" | "local"
+    inspection_interval: string; // e.g. "annual"
   };
   sprinkler_system: {
     required: boolean;
-    inspection_interval: string; // "annual"
-    type: string;                // "wet"
+    inspection_interval: string; // e.g. "annual"
+    type: string;                // e.g. "wet" | "dry" | "pre-action"
   };
   grease_trap: {
     required: boolean;
-    cleaning_interval: string;   // "90_days"
-    interceptor_type: string;    // "gravity"
+    cleaning_interval: string;   // e.g. "90 days"
+    interceptor_type: string;    // e.g. "gravity" | "hydromechanical"
   };
-  pse_safeguards: string[];     // ["hood_cleaning", "fire_suppression_system", "sprinklers", "fire_alarm_monitoring"]
   ahj_split_notes: string | null;   // Multi-AHJ areas (e.g. LA County city vs unincorporated)
   federal_overlay: {
-    agency: string;      // "NPS" | "DOD"
-    authority: string;   // "36 CFR §2.10"
+    agency: string;      // e.g. "NPS" | "DOD"
+    authority: string;   // e.g. "36 CFR §2.10"
     notes: string;
   } | null;
 }
@@ -151,21 +128,3 @@ export interface LocationScore {
   federalFireOverlay: AuthorityScore | null;
   // NO combined/blended/overall score — these are independent authorities
 }
-
-// CASINO-JIE-01: Tribal jurisdiction configuration
-// Stored in jurisdictions table for governmental_level = 'tribal'
-export interface TribalJurisdictionConfig {
-  tribal_entity_name: string;
-  tribal_food_authority: string;         // e.g. "TEHO"
-  food_code_basis: string;               // e.g. "FDA Food Code 2022 (advisory)"
-  sovereignty_type: 'federally_recognized' | 'state_recognized';
-  nigc_overlay: boolean;                 // National Indian Gaming Commission
-  nigc_config?: {
-    gaming_floor_food: boolean;
-    banquet_operations: boolean;
-    employee_dining: boolean;
-  };
-}
-
-// Governmental level of a jurisdiction (NOT to be confused with jurisdiction_type which is pillar type)
-export type GovernmentalLevel = 'county' | 'city' | 'tribal' | 'federal';

@@ -29,7 +29,7 @@ export function JurisdictionSignalFeed({ signals }) {
           <div className="p-2 bg-[#F4F6FA] rounded-lg">
             <Radio className="h-5 w-5 text-[#1E2D4D]" />
           </div>
-          <h3 className="text-lg font-semibold tracking-tight text-[#0B1628]">Jurisdiction Signals</h3>
+          <h3 className="text-lg font-semibold text-[#0B1628]">Jurisdiction Signals</h3>
         </div>
         <div className="text-center py-8">
           <Radio className="h-10 w-10 text-[#D1D9E6] mx-auto mb-3" />
@@ -51,7 +51,7 @@ export function JurisdictionSignalFeed({ signals }) {
           <div className="p-2 bg-[#F4F6FA] rounded-lg">
             <Radio className="h-5 w-5 text-[#1E2D4D]" />
           </div>
-          <h3 className="text-lg font-semibold tracking-tight text-[#0B1628]">Jurisdiction Signals</h3>
+          <h3 className="text-lg font-semibold text-[#0B1628]">Jurisdiction Signals</h3>
         </div>
         <span className="text-xs text-[#6B7F96]">{signals.length} signal{signals.length !== 1 ? 's' : ''}</span>
       </div>
@@ -79,20 +79,20 @@ export function JurisdictionSignalFeed({ signals }) {
         {filtered.map((signal, i) => {
           const severity = SEVERITY_STYLES[signal.ai_urgency] || SEVERITY_STYLES.info;
           return (
-            <div key={signal.id || i} className={`border rounded-xl p-4 ${severity.border}`}>
+            <div key={signal.id || i} className={`border rounded-lg p-4 ${severity.border}`}>
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${severity.bg} ${severity.text}`}>
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${severity.bg} ${severity.text}`}>
                     {severity.label}
                   </span>
                   {signal.category && (
-                    <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-[#F4F6FA] text-[#3D5068]">
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-[#F4F6FA] text-[#3D5068]">
                       {signal.category}
                     </span>
                   )}
                 </div>
                 {signal.published_at && (
-                  <span className="text-xs text-[#6B7F96]">
+                  <span className="text-[10px] text-[#6B7F96]">
                     {new Date(signal.published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                   </span>
                 )}
@@ -102,7 +102,7 @@ export function JurisdictionSignalFeed({ signals }) {
                 <p className="text-xs text-[#3D5068] mb-2">{signal.summary}</p>
               )}
               {signal.county && (
-                <p className="text-xs text-[#6B7F96]">
+                <p className="text-[10px] text-[#6B7F96]">
                   {signal.county} County{signal.source_name ? ` · ${signal.source_name}` : ''}
                 </p>
               )}
@@ -114,7 +114,7 @@ export function JurisdictionSignalFeed({ signals }) {
         )}
       </div>
 
-      <p className="text-xs text-[#6B7F96] border-t border-[#E8EDF5] pt-3">
+      <p className="text-[10px] text-[#6B7F96] border-t border-[#E8EDF5] pt-3">
         Intelligence signals are advisory — sourced from public regulatory, legislative, and industry data feeds. Verify all information with official sources before taking action.
       </p>
     </div>

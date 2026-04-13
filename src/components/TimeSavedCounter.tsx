@@ -33,7 +33,7 @@ export function TimeSavedCounter({ hoursSaved, moneySaved, logsCompleted, docsSt
       label: 'Est. Money Saved',
       suffix: '',
       prefix: '$',
-      color: '#A08C5A',
+      color: '#d4af37',
       bgColor: '#fefce8',
       link: '/reports',
     },
@@ -67,7 +67,7 @@ export function TimeSavedCounter({ hoursSaved, moneySaved, logsCompleted, docsSt
           <div
             key={stat.label}
             onClick={() => navigate(stat.link)}
-            className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 animate-slide-up"
+            className="bg-white rounded-xl border border-gray-200 p-5 animate-slide-up"
             style={{
               animationDelay: `${index * 150}ms`,
               animationFillMode: 'both',
@@ -77,10 +77,10 @@ export function TimeSavedCounter({ hoursSaved, moneySaved, logsCompleted, docsSt
           >
             <div className="flex items-center justify-center gap-2 mb-2">
               <Icon className="h-4 w-4" style={{ color: stat.color }} />
-              <span className="text-sm text-[#1E2D4D]/50 font-medium">{stat.label}</span>
+              <span className="text-sm text-gray-500 font-medium">{stat.label}</span>
             </div>
             <div
-              className="text-3xl font-bold tracking-tight animate-counter-glow text-center"
+              className="text-3xl font-bold animate-counter-glow text-center"
               style={{ color: '#1e3a5f' }}
             >
               {stat.prefix}{stat.value.toLocaleString()}{stat.suffix}

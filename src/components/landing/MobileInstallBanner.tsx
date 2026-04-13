@@ -60,7 +60,7 @@ export default function MobileInstallBanner() {
   if (!visible) return null;
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-[60] sm:hidden" style={{ backgroundColor: '#1E2D4D' }}>
+    <div className="fixed top-0 left-0 right-0 z-[60] sm:hidden" style={{ backgroundColor: '#1e4d6b' }}>
       <div className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center gap-3 min-w-0">
           <Download className="w-5 h-5 text-white flex-shrink-0" />
@@ -72,7 +72,7 @@ export default function MobileInstallBanner() {
           <button
             onClick={handleInstall}
             className="px-4 py-1.5 rounded-lg text-sm font-bold transition-colors min-h-[36px]"
-            style={{ backgroundColor: '#A08C5A', color: '#1E2D4D' }}
+            style={{ backgroundColor: '#d4af37', color: '#1e4d6b' }}
           >
             Install
           </button>

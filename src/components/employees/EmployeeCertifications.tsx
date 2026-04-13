@@ -30,7 +30,7 @@ export function EmployeeCertifications({ certifications, onAdd, onEdit, onDelete
           <select
             value={statusFilter}
             onChange={e => setStatusFilter(e.target.value as CertStatus | 'all')}
-            className="text-sm border rounded-xl px-3 py-1.5 focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+            className="text-sm border rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
             style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
           >
             <option value="all">All ({certifications.length})</option>
@@ -40,7 +40,7 @@ export function EmployeeCertifications({ certifications, onAdd, onEdit, onDelete
           </select>
         </div>
         {canEdit && (
-          <button onClick={onAdd} className="flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold rounded-lg text-white bg-[#1E2D4D] hover:bg-[#162340] transition-colors min-h-[44px]">
+          <button onClick={onAdd} className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-lg text-white hover:opacity-90" style={{ backgroundColor: '#1e4d6b' }}>
             <Plus className="w-4 h-4" /> Add Certification
           </button>
         )}
@@ -48,7 +48,7 @@ export function EmployeeCertifications({ certifications, onAdd, onEdit, onDelete
 
       {/* Expiry warnings */}
       {(expiredCount > 0 || expiringCount > 0) && statusFilter === 'all' && (
-        <div className="rounded-xl border p-3" style={{ borderColor: expiredCount > 0 ? '#fecaca' : '#fed7aa', backgroundColor: expiredCount > 0 ? '#fef2f2' : '#fff7ed' }}>
+        <div className="rounded-lg border p-3" style={{ borderColor: expiredCount > 0 ? '#fecaca' : '#fed7aa', backgroundColor: expiredCount > 0 ? '#fef2f2' : '#fff7ed' }}>
           <div className="flex items-center gap-2">
             <AlertTriangle className="w-4 h-4 flex-shrink-0" style={{ color: expiredCount > 0 ? '#dc2626' : '#d97706' }} />
             <p className="text-sm font-medium" style={{ color: expiredCount > 0 ? '#991b1b' : '#9a3412' }}>
@@ -91,7 +91,7 @@ export function EmployeeCertifications({ certifications, onAdd, onEdit, onDelete
                   </div>
                   {canEdit && (
                     <div className="flex items-center gap-1">
-                      <button onClick={() => onEdit(cert)} className="p-1.5 rounded-lg hover:bg-[#1E2D4D]/5 transition-colors" title="Edit">
+                      <button onClick={() => onEdit(cert)} className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors" title="Edit">
                         <Pencil className="w-4 h-4" style={{ color: '#6B7F96' }} />
                       </button>
                       <button onClick={() => onDelete(cert.id)} className="p-1.5 rounded-lg hover:bg-red-50 transition-colors" title="Delete">

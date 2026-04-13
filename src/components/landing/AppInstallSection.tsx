@@ -58,17 +58,17 @@ export default function AppInstallSection() {
             <div className="flex-shrink-0">
               <div
                 className="w-20 h-20 rounded-2xl flex items-center justify-center"
-                style={{ backgroundColor: '#1E2D4D' }}
+                style={{ backgroundColor: '#1e4d6b' }}
               >
                 <Smartphone className="w-10 h-10 text-white" />
               </div>
             </div>
 
             <div className="flex-1 text-center md:text-left">
-              <h2 className="font-['Outfit'] text-2xl sm:text-3xl font-bold tracking-tight mb-3" style={{ color: '#1E2D4D' }}>
+              <h2 className="font-['Outfit'] text-2xl sm:text-3xl font-bold mb-3" style={{ color: '#1e4d6b' }}>
                 Take Compliance With You
               </h2>
-              <p className="text-[#1E2D4D]/70 leading-relaxed mb-6 max-w-xl">
+              <p className="text-gray-600 leading-relaxed mb-6 max-w-xl">
                 Log temperatures, complete checklists, and snap photos right from your kitchen.
                 Works on iPhone, Android, and desktop &mdash; install in seconds, no app store required.
               </p>
@@ -82,7 +82,7 @@ export default function AppInstallSection() {
                   <button
                     onClick={handleInstall}
                     className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-base text-white transition-all hover:-translate-y-0.5 hover:shadow-lg min-h-[44px]"
-                    style={{ backgroundColor: '#1E2D4D' }}
+                    style={{ backgroundColor: '#1e4d6b' }}
                   >
                     <Download className="w-5 h-5" />
                     Install App
@@ -91,7 +91,7 @@ export default function AppInstallSection() {
                 <button
                   onClick={() => navigate('/demo')}
                   className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-base transition-all hover:-translate-y-0.5 border-2 min-h-[44px] bg-white"
-                  style={{ color: '#1E2D4D', borderColor: '#1E2D4D' }}
+                  style={{ color: '#1e4d6b', borderColor: '#1e4d6b' }}
                 >
                   <Play className="w-5 h-5" />
                   Watch Demo

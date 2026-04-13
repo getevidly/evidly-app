@@ -20,7 +20,6 @@ import { WelcomeModal } from '../components/WelcomeModal';
 import { PushOptInBanner } from '../components/PushOptInBanner';
 import { ErrorState } from '../components/shared/PageStates';
 import { X } from 'lucide-react';
-import { usePageTitle } from '../hooks/usePageTitle';
 
 // ── Dashboard ────────────────────────────────────────────
 // Role visibility for above-fold items is now handled inside each
@@ -57,15 +56,29 @@ function OutbreakBanner() {
   if (outbreaks.length === 0) return null;
 
   return (
-    <div className="bg-red-50 border-2 border-[#991B1B] rounded-xl px-4 py-3 mb-3 flex items-center gap-3 animate-fade-in">
-      <span className="text-lg">🚨</span>
-      <div className="flex-1 min-w-0">
-        <strong className="text-[#991B1B] text-[13px]">Outbreak Alert</strong>
-        <span className="text-[13px] text-[#1E2D4D]/80 ml-2">{outbreaks[0].title}</span>
+    <div style={{
+      background: '#FEF2F2',
+      border: '2px solid #991B1B',
+      borderRadius: 8,
+      padding: '12px 16px',
+      marginBottom: 12,
+      display: 'flex',
+      alignItems: 'center',
+      gap: 12,
+    }}>
+      <span style={{ fontSize: 18 }}>🚨</span>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <strong style={{ color: '#991B1B', fontSize: 13 }}>
+          Outbreak Alert
+        </strong>
+        <span style={{ fontSize: 13, color: '#374151', marginLeft: 8 }}>
+          {outbreaks[0].title}
+        </span>
       </div>
-      <Link to="/insights/intelligence" className="text-xs font-bold text-[#991B1B] shrink-0 hover:underline underline-offset-2">
-        View →
-      </Link>
+      <Link to="/insights/intelligence" style={{
+        fontSize: 12, fontWeight: 700,
+        color: '#991B1B', textDecoration: 'none',
+      }}>View →</Link>
     </div>
   );
 }
@@ -77,29 +90,35 @@ function IntelligenceBanner() {
   const isOutbreak = ['outbreak', 'health_alert', 'fda_recall', 'recall', 'allergen_alert'].includes(banner.signal_type);
 
   return (
-    <div className={`rounded-xl px-4 py-3 mb-3 flex items-center gap-3 border-l-4 animate-fade-in ${
-      isOutbreak ? 'bg-red-50 border-l-red-600' : 'bg-blue-50 border-l-[#1E2D4D]'
-    }`}>
-      <div className="flex-1 min-w-0">
-        <strong className={`text-[13px] ${isOutbreak ? 'text-[#991B1B]' : 'text-[#1E2D4D]'}`}>
+    <div style={{
+      background: isOutbreak ? '#FEF2F2' : '#EFF6FF',
+      borderLeft: `4px solid ${isOutbreak ? '#DC2626' : '#1E2D4D'}`,
+      borderRadius: 8,
+      padding: '12px 16px',
+      marginBottom: 12,
+      display: 'flex',
+      alignItems: 'center',
+      gap: 12,
+    }}>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <strong style={{ color: isOutbreak ? '#991B1B' : '#1E2D4D', fontSize: 13 }}>
           {banner.title}
         </strong>
         {banner.summary && (
-          <p className="text-xs text-[#1E2D4D]/70 mt-0.5">{banner.summary}</p>
+          <p style={{ fontSize: 12, color: '#374151', marginTop: 2 }}>
+            {banner.summary}
+          </p>
         )}
       </div>
-      <Link
-        to="/insights/intelligence"
-        className={`text-xs font-bold shrink-0 hover:underline underline-offset-2 ${
-          isOutbreak ? 'text-[#991B1B]' : 'text-[#1E2D4D]'
-        }`}
-      >
-        View →
-      </Link>
+      <Link to="/insights/intelligence" style={{
+        fontSize: 12, fontWeight: 700,
+        color: isOutbreak ? '#991B1B' : '#1E2D4D',
+        textDecoration: 'none', flexShrink: 0,
+      }}>View →</Link>
       <button
         type="button"
         onClick={dismiss}
-        className="text-[#1E2D4D]/30 shrink-0 p-1 hover:text-[#1E2D4D]/60 transition-colors"
+        style={{ color: '#9CA3AF', flexShrink: 0, padding: 4, background: 'none', border: 'none', cursor: 'pointer' }}
         title="Dismiss"
         aria-label="Dismiss"
       >
@@ -113,7 +132,6 @@ export function Dashboard() {
   const { userRole } = useRole();
   const { user, profile } = useAuth();
   const { isDemoMode, firstName: demoFirstName } = useDemo();
-  usePageTitle('Dashboard');
   const [searchParams] = useSearchParams();
   const tab = searchParams.get('tab') || 'overview';
   const [pageError, setPageError] = useState<string | null>(null);

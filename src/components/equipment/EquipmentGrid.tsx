@@ -45,15 +45,15 @@ export function EquipmentGrid({ items }: EquipmentGridProps) {
           >
             {/* Type icon + condition */}
             <div className="flex items-start justify-between mb-3">
-              <div className="w-10 h-10 rounded-lg flex items-center justify-center text-xl" style={{ background: '#eef4f8', color: '#1E2D4D' }}>
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center text-xl" style={{ background: '#eef4f8', color: '#1e4d6b' }}>
                 {TYPE_ICONS[item.equipmentType] || '\u2699'}
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="text-xs font-semibold px-2 py-0.5 rounded-full capitalize" style={{ background: condStyle.bg, color: condStyle.text }}>
+                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full capitalize" style={{ background: condStyle.bg, color: condStyle.text }}>
                   {item.condition}
                 </span>
                 {item.deficiencyCount > 0 && (
-                  <span className="flex items-center gap-0.5 text-xs font-semibold px-1.5 py-0.5 rounded-full" style={{ background: '#FEF2F2', color: '#DC2626' }}>
+                  <span className="flex items-center gap-0.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-full" style={{ background: '#FEF2F2', color: '#DC2626' }}>
                     <AlertTriangle className="w-3 h-3" /> {item.deficiencyCount}
                   </span>
                 )}
@@ -61,7 +61,7 @@ export function EquipmentGrid({ items }: EquipmentGridProps) {
             </div>
 
             {/* Name + location */}
-            <p className="text-sm font-semibold mb-0.5 group-hover:text-[#1E2D4D] truncate" style={{ color: NAVY }}>
+            <p className="text-sm font-semibold mb-0.5 group-hover:text-[#1e4d6b] truncate" style={{ color: NAVY }}>
               {item.name}
             </p>
             <p className="text-xs truncate" style={{ color: TEXT_TERTIARY }}>
@@ -89,7 +89,7 @@ export function EquipmentGrid({ items }: EquipmentGridProps) {
             </div>
 
             {/* QR mini */}
-            <div className="mt-3 flex items-center gap-1 text-xs" style={{ color: TEXT_TERTIARY }}>
+            <div className="mt-3 flex items-center gap-1 text-[10px]" style={{ color: TEXT_TERTIARY }}>
               <QrCode className="w-3 h-3" />
               <span>{item.qrCodeId}</span>
             </div>

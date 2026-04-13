@@ -37,11 +37,11 @@ export default function Hero() {
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="flex-1 px-5 py-3.5 border-2 border-[#1E2D4D]/10 rounded-xl text-base transition-colors focus:outline-none focus:border-[var(--color-gold)]"
+                className="flex-1 px-5 py-3.5 border-2 border-[var(--color-gray-200)] rounded-xl text-base transition-colors focus:outline-none focus:border-[var(--color-gold)]"
               />
               <button
                 type="submit"
-                className="px-7 py-3.5 whitespace-nowrap bg-[#1E2D4D] text-white font-bold rounded-[10px] transition-all hover:bg-[#162340] hover:-translate-y-0.5 hover:shadow-[0_10px_30px_rgba(30,77,107,0.3)] border-none cursor-pointer text-center min-h-[44px]"
+                className="px-7 py-3.5 whitespace-nowrap bg-[#1e4d6b] text-white font-bold rounded-[10px] transition-all hover:bg-[#2a6a8f] hover:-translate-y-0.5 hover:shadow-[0_10px_30px_rgba(30,77,107,0.3)] border-none cursor-pointer text-center min-h-[44px]"
               >
                 Get Started
               </button>

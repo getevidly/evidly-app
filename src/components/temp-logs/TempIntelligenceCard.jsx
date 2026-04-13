@@ -67,7 +67,7 @@ export function TempIntelligenceCard() {
     }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span className="text-base">🧠</span>
+          <span style={{ fontSize: 16 }}>🧠</span>
           <span style={{ fontSize: 13, fontWeight: 700, color: '#1E3A5F' }}>Temperature Intelligence — Today</span>
         </div>
         <button

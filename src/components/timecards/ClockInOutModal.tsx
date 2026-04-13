@@ -20,7 +20,7 @@ export function ClockInOutModal({ mode, currentDuration, onClose, onSubmit }: Cl
   const timeDisplay = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 modal-backdrop-enter">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div
         className="w-full max-w-md rounded-xl shadow-xl border"
         style={{ backgroundColor: '#FFFFFF', borderColor: '#D1D9E6' }}
@@ -28,12 +28,12 @@ export function ClockInOutModal({ mode, currentDuration, onClose, onSubmit }: Cl
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: '#D1D9E6' }}>
           <div className="flex items-center gap-2">
-            <Clock className="w-5 h-5" style={{ color: '#1E2D4D' }} />
-            <h3 className="text-lg font-semibold tracking-tight" style={{ color: '#0B1628' }}>
+            <Clock className="w-5 h-5" style={{ color: '#1e4d6b' }} />
+            <h3 className="text-lg font-semibold" style={{ color: '#0B1628' }}>
               {mode === 'in' ? 'Clock In' : 'Clock Out'}
             </h3>
           </div>
-          <button onClick={onClose} className="p-2.5 -m-1 rounded-lg hover:bg-[#1E2D4D]/5 transition-colors" aria-label="Close">
+          <button onClick={onClose} className="p-2.5 -m-1 rounded-lg hover:bg-gray-100 transition-colors" aria-label="Close">
             <X className="w-5 h-5" style={{ color: '#6B7F96' }} />
           </button>
         </div>
@@ -60,7 +60,7 @@ export function ClockInOutModal({ mode, currentDuration, onClose, onSubmit }: Cl
           )}
 
           {/* Location (demo stub) */}
-          <div className="p-3 rounded-xl border" style={{ borderColor: '#D1D9E6', backgroundColor: '#EEF1F7' }}>
+          <div className="p-3 rounded-lg border" style={{ borderColor: '#D1D9E6', backgroundColor: '#EEF1F7' }}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4" style={{ color: '#3D5068' }} />
@@ -80,7 +80,7 @@ export function ClockInOutModal({ mode, currentDuration, onClose, onSubmit }: Cl
               onChange={(e) => setNotes(e.target.value)}
               rows={2}
               placeholder={mode === 'in' ? 'Any notes for this shift...' : 'End of shift notes...'}
-              className="w-full px-3 py-2 border rounded-xl text-sm resize-none focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+              className="w-full px-3 py-2 border rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
               style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
             />
           </div>
@@ -88,7 +88,7 @@ export function ClockInOutModal({ mode, currentDuration, onClose, onSubmit }: Cl
           {/* Photo (demo stub) */}
           <button
             onClick={() => alert('Camera integration available in the live app.')}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-dashed transition-colors hover:bg-[#FAF7F0]"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-dashed transition-colors hover:bg-gray-50"
             style={{ borderColor: '#D1D9E6', color: '#6B7F96' }}
           >
             <Camera className="w-4 h-4" />
@@ -100,7 +100,7 @@ export function ClockInOutModal({ mode, currentDuration, onClose, onSubmit }: Cl
         <div className="flex items-center justify-end gap-3 px-6 py-4 border-t" style={{ borderColor: '#D1D9E6' }}>
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm font-medium rounded-xl border hover:bg-[#FAF7F0] transition-colors"
+            className="px-4 py-2 text-sm font-medium rounded-lg border hover:bg-gray-50 transition-colors"
             style={{ borderColor: '#D1D9E6', color: '#3D5068' }}
           >
             Cancel

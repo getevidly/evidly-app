@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { CheckCircle2, Calendar, Shield, Clock } from 'lucide-react';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const GOLD = '#d4af37';
 
 // Default Calendly URL — configurable in admin settings
 const DEFAULT_CALENDLY_URL = 'https://calendly.com/founders-getevidly/60min';
@@ -59,7 +59,7 @@ export function DemoSchedule() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#F4F6FA' }}>
       {/* Header */}
-      <header className="border-b border-[#1E2D4D]/10 bg-white">
+      <header className="border-b border-gray-200 bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-4 flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: NAVY }}>
             <Shield className="w-5 h-5 text-white" />
@@ -75,17 +75,17 @@ export function DemoSchedule() {
             <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ backgroundColor: '#dcfce7' }}>
               <CheckCircle2 className="w-8 h-8 text-green-600" />
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight mb-3" style={{ color: NAVY }}>
+            <h1 className="text-2xl sm:text-3xl font-bold mb-3" style={{ color: NAVY }}>
               You're Booked!
             </h1>
-            <p className="text-[#1E2D4D]/70 max-w-md mx-auto mb-6">
+            <p className="text-gray-600 max-w-md mx-auto mb-6">
               An EvidLY specialist will walk you through your personalized demo for{' '}
               <span className="font-semibold">{companyName}</span>.
               We'll send a calendar invite with the meeting link.
             </p>
-            <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 max-w-md mx-auto text-left">
+            <div className="bg-white rounded-xl border border-gray-200 p-6 max-w-md mx-auto text-left">
               <h3 className="font-semibold text-sm mb-3" style={{ color: NAVY }}>What happens next:</h3>
-              <ul className="space-y-2 text-sm text-[#1E2D4D]/70">
+              <ul className="space-y-2 text-sm text-gray-600">
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
                   <span>Calendar invite sent to your email</span>
@@ -105,21 +105,21 @@ export function DemoSchedule() {
           /* ── Scheduling Page ── */
           <>
             <div className="text-center mb-8">
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight mb-3" style={{ color: NAVY }}>
+              <h1 className="text-2xl sm:text-3xl font-bold mb-3" style={{ color: NAVY }}>
                 Almost There! Schedule Your Personalized Demo
               </h1>
             </div>
 
             {/* Status checks */}
-            <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 mb-6">
+            <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
-                  <span className="text-sm text-[#1E2D4D]/80">Your kitchen info has been saved</span>
+                  <span className="text-sm text-gray-700">Your kitchen info has been saved</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
-                  <span className="text-sm text-[#1E2D4D]/80">
+                  <span className="text-sm text-gray-700">
                     We're preparing your personalized demo for{' '}
                     <span className="font-semibold">{companyName}</span>
                     {location && <> in <span className="font-semibold">{location}</span></>}
@@ -129,8 +129,8 @@ export function DemoSchedule() {
             </div>
 
             {/* Calendly Embed Area */}
-            <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden mb-6">
-              <div className="p-4 border-b border-[#1E2D4D]/5 flex items-center gap-2">
+            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mb-6">
+              <div className="p-4 border-b border-gray-100 flex items-center gap-2">
                 <Calendar className="w-5 h-5" style={{ color: NAVY }} />
                 <h2 className="font-semibold text-sm" style={{ color: NAVY }}>
                   Pick a time to meet with an EvidLY specialist
@@ -144,11 +144,11 @@ export function DemoSchedule() {
                     <Calendar className="w-8 h-8" style={{ color: NAVY }} />
                   </div>
                   <h3 className="font-semibold mb-2" style={{ color: NAVY }}>Calendly Scheduling Widget</h3>
-                  <p className="text-sm text-[#1E2D4D]/50 max-w-sm mb-4">
+                  <p className="text-sm text-gray-500 max-w-sm mb-4">
                     In production, the Calendly inline widget loads here with available time slots.
                     The Calendly URL is configurable in admin settings.
                   </p>
-                  <p className="text-xs text-[#1E2D4D]/30 mb-6">
+                  <p className="text-xs text-gray-400 mb-6">
                     Default URL: {DEFAULT_CALENDLY_URL}
                   </p>
                   {/* Demo button to simulate booking */}
@@ -166,7 +166,7 @@ export function DemoSchedule() {
             </div>
 
             {/* Footer note */}
-            <div className="flex items-start gap-2 text-xs text-[#1E2D4D]/30 max-w-lg mx-auto">
+            <div className="flex items-start gap-2 text-xs text-gray-400 max-w-lg mx-auto">
               <Clock className="w-4 h-4 flex-shrink-0 mt-0.5" />
               <span>
                 After scheduling, our team will have your personalized demo ready for your call.

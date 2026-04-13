@@ -162,10 +162,10 @@ export function InviteAccept() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-cream flex items-center justify-center">
+      <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#A08C5A] mx-auto"></div>
-          <p className="mt-4 text-[#1E2D4D]/70">Loading invitation...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#d4af37] mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading invitation...</p>
         </div>
       </div>
     );
@@ -173,16 +173,16 @@ export function InviteAccept() {
 
   if (error && !invitation) {
     return (
-      <div className="min-h-screen bg-cream flex items-center justify-center px-4">
-        <div className="max-w-md w-full bg-white rounded-xl border border-[#1E2D4D]/10 p-8 text-center">
+      <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center px-4">
+        <div className="max-w-md w-full bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <X className="w-8 h-8 text-red-600" />
           </div>
-          <h2 className="text-2xl font-bold tracking-tight text-[#1E2D4D] mb-2">Invalid Invitation</h2>
-          <p className="text-[#1E2D4D]/70 mb-6">{error}</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Invalid Invitation</h2>
+          <p className="text-gray-600 mb-6">{error}</p>
           <a
             href="/"
-            className="inline-block px-6 py-2 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-all duration-150 active:scale-[0.98]"
+            className="inline-block px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] transition-colors"
           >
             Return to Home
           </a>
@@ -192,17 +192,17 @@ export function InviteAccept() {
   }
 
   return (
-    <div className="min-h-screen bg-cream flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full">
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
           <div className="text-center mb-6">
             <div className="flex justify-center mb-4">
-              <div className="p-3 bg-[#A08C5A]/10 rounded-full">
-                <UserPlus className="w-8 h-8 text-[#A08C5A]" />
+              <div className="p-3 bg-[#d4af37]/10 rounded-full">
+                <UserPlus className="w-8 h-8 text-[#d4af37]" />
               </div>
             </div>
-            <h2 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">Join Your Team</h2>
-            <p className="text-[#1E2D4D]/70 mt-2">
+            <h2 className="text-2xl font-bold text-gray-900">Join Your Team</h2>
+            <p className="text-gray-600 mt-2">
               You've been invited to join <span className="font-semibold">{invitation?.organizations?.name}</span> as a <span className="font-semibold">{invitation?.role}</span>
             </p>
           </div>
@@ -215,7 +215,7 @@ export function InviteAccept() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="fullName" className="block text-sm font-medium text-[#1E2D4D]/80">
+              <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
                 Full Name
               </label>
               <input
@@ -224,12 +224,12 @@ export function InviteAccept() {
                 required
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md shadow-sm focus:outline-none focus:ring-[#A08C5A] focus:border-[#A08C5A]"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#d4af37] focus:border-[#d4af37]"
               />
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-[#1E2D4D]/80">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                 Email
               </label>
               <input
@@ -237,12 +237,12 @@ export function InviteAccept() {
                 type="email"
                 disabled
                 value={invitation?.email || ''}
-                className="mt-1 block w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md shadow-sm bg-[#FAF7F0] text-[#1E2D4D]/50"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-50 text-gray-500"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-[#1E2D4D]/80">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                 Create Password
               </label>
               <div className="relative mt-1">
@@ -252,7 +252,7 @@ export function InviteAccept() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full px-3 py-2 pr-10 border border-[#1E2D4D]/15 rounded-md shadow-sm focus:outline-none focus:ring-[#A08C5A] focus:border-[#A08C5A]"
+                  className="block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#d4af37] focus:border-[#d4af37]"
                 />
                 <button
                   type="button"
@@ -260,35 +260,35 @@ export function InviteAccept() {
                   className="absolute inset-y-0 right-0 flex items-center pr-3"
                 >
                   {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70" />
+                    <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
                   ) : (
-                    <Eye className="h-5 w-5 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70" />
+                    <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
                   )}
                 </button>
               </div>
             </div>
 
             {password && (
-              <div className="bg-[#FAF7F0] rounded-xl p-4 space-y-2">
-                <p className="text-sm font-medium text-[#1E2D4D]/80">Password Requirements:</p>
+              <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+                <p className="text-sm font-medium text-gray-700">Password Requirements:</p>
                 <div className="space-y-1 text-sm">
-                  <div className={`flex items-center gap-2 ${passwordRequirements.length ? 'text-green-600' : 'text-[#1E2D4D]/50'}`}>
+                  <div className={`flex items-center gap-2 ${passwordRequirements.length ? 'text-green-600' : 'text-gray-500'}`}>
                     {passwordRequirements.length ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
                     At least 12 characters
                   </div>
-                  <div className={`flex items-center gap-2 ${passwordRequirements.uppercase ? 'text-green-600' : 'text-[#1E2D4D]/50'}`}>
+                  <div className={`flex items-center gap-2 ${passwordRequirements.uppercase ? 'text-green-600' : 'text-gray-500'}`}>
                     {passwordRequirements.uppercase ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
                     One uppercase letter
                   </div>
-                  <div className={`flex items-center gap-2 ${passwordRequirements.lowercase ? 'text-green-600' : 'text-[#1E2D4D]/50'}`}>
+                  <div className={`flex items-center gap-2 ${passwordRequirements.lowercase ? 'text-green-600' : 'text-gray-500'}`}>
                     {passwordRequirements.lowercase ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
                     One lowercase letter
                   </div>
-                  <div className={`flex items-center gap-2 ${passwordRequirements.number ? 'text-green-600' : 'text-[#1E2D4D]/50'}`}>
+                  <div className={`flex items-center gap-2 ${passwordRequirements.number ? 'text-green-600' : 'text-gray-500'}`}>
                     {passwordRequirements.number ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
                     One number
                   </div>
-                  <div className={`flex items-center gap-2 ${passwordRequirements.special ? 'text-green-600' : 'text-[#1E2D4D]/50'}`}>
+                  <div className={`flex items-center gap-2 ${passwordRequirements.special ? 'text-green-600' : 'text-gray-500'}`}>
                     {passwordRequirements.special ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
                     One special character
                   </div>
@@ -297,7 +297,7 @@ export function InviteAccept() {
             )}
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-[#1E2D4D]/80">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
                 Confirm Password
               </label>
               <div className="relative mt-1">
@@ -307,7 +307,7 @@ export function InviteAccept() {
                   required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="block w-full px-3 py-2 pr-10 border border-[#1E2D4D]/15 rounded-md shadow-sm focus:outline-none focus:ring-[#A08C5A] focus:border-[#A08C5A]"
+                  className="block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#d4af37] focus:border-[#d4af37]"
                 />
                 <button
                   type="button"
@@ -315,9 +315,9 @@ export function InviteAccept() {
                   className="absolute inset-y-0 right-0 flex items-center pr-3"
                 >
                   {showConfirmPassword ? (
-                    <EyeOff className="h-5 w-5 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70" />
+                    <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
                   ) : (
-                    <Eye className="h-5 w-5 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70" />
+                    <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
                   )}
                 </button>
               </div>
@@ -350,7 +350,7 @@ export function InviteAccept() {
             <button
               type="submit"
               disabled={submitting || !allRequirementsMet || !passwordsMatch || !captchaToken}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1E2D4D] hover:bg-[#162340] focus-visible:outline-none focus-visible:ring-2 focus:ring-offset-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1e4d6b] hover:bg-[#2a6a8f] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1e4d6b] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {submitting ? 'Creating Account...' : 'Accept Invitation & Join Team'}
             </button>

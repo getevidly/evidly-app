@@ -14,9 +14,9 @@ import {
 
 const CATEGORY_CONFIG: Record<TrainingCategory, { label: string; color: string; bg: string }> = {
   food_safety_handler: { label: 'Food Handler', color: '#15803d', bg: '#dcfce7' },
-  food_safety_manager: { label: 'CFPM', color: '#1E2D4D', bg: '#e0f2fe' },
+  food_safety_manager: { label: 'CFPM', color: '#1e4d6b', bg: '#e0f2fe' },
   facility_safety: { label: 'Facility Safety', color: '#dc2626', bg: '#fee2e2' },
-  compliance_ops: { label: 'Compliance', color: '#A08C5A', bg: '#fef3c7' },
+  compliance_ops: { label: 'Compliance', color: '#d4af37', bg: '#fef3c7' },
   custom: { label: 'Custom', color: '#7c3aed', bg: '#ede9fe' },
 };
 
@@ -39,13 +39,13 @@ function CertificateCard({ cert, onView }: { cert: TrainingCertificate; onView: 
       onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)')}
       onMouseLeave={e => (e.currentTarget.style.boxShadow = 'none')}>
       {/* Gold Top Stripe */}
-      <div style={{ height: 4, background: '#A08C5A' }} />
+      <div style={{ height: 4, background: '#d4af37' }} />
       <div style={{ padding: 16 }}>
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16, flexWrap: 'wrap', gap: 8 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{ width: 44, height: 44, borderRadius: 22, background: '#fffbeb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Award size={22} color="#A08C5A" />
+              <Award size={22} color="#d4af37" />
             </div>
             <div>
               <div style={{ fontSize: 15, fontWeight: 700, color: '#111827' }}>{cert.employeeName}</div>
@@ -88,7 +88,7 @@ function CertificateCard({ cert, onView }: { cert: TrainingCertificate; onView: 
         {/* Actions */}
         <div style={{ display: 'flex', gap: 8 }}>
           <button onClick={onView}
-            style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '10px 14px', borderRadius: 8, border: 'none', background: '#1E2D4D', color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
+            style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '10px 14px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
             <Eye size={14} /> View
           </button>
           <button onClick={() => toast.success(`Downloaded ${cert.certificateNumber}`)}
@@ -115,16 +115,16 @@ function CertificateDetailModal({ cert, onClose }: { cert: TrainingCertificate; 
         onClick={e => e.stopPropagation()}>
         {/* Certificate Render */}
         <div style={{ padding: '24px 16px', textAlign: 'center', background: 'linear-gradient(180deg, #fffbeb 0%, #fff 40%)' }}>
-          <div style={{ border: '3px solid #A08C5A', borderRadius: 12, padding: '20px 16px', background: '#fff' }}>
-            <Award size={48} color="#A08C5A" style={{ marginBottom: 12 }} />
-            <h2 style={{ fontSize: 20, fontWeight: 700, color: '#1E2D4D', margin: '0 0 4px' }}>Certificate of Completion</h2>
+          <div style={{ border: '3px solid #d4af37', borderRadius: 12, padding: '20px 16px', background: '#fff' }}>
+            <Award size={48} color="#d4af37" style={{ marginBottom: 12 }} />
+            <h2 style={{ fontSize: 20, fontWeight: 700, color: '#1e4d6b', margin: '0 0 4px' }}>Certificate of Completion</h2>
             <p style={{ fontSize: 13, color: '#6b7280', margin: '0 0 24px' }}>EvidLY Training & Certification Platform</p>
 
             <p style={{ fontSize: 14, color: '#6b7280', margin: '0 0 4px' }}>This certifies that</p>
             <p style={{ fontSize: 20, fontWeight: 700, color: '#111827', margin: '0 0 4px' }}>{cert.employeeName}</p>
             <p style={{ fontSize: 13, color: '#6b7280', margin: '0 0 20px' }}>{cert.locationName}</p>
             <p style={{ fontSize: 14, color: '#6b7280', margin: '0 0 4px' }}>has successfully completed</p>
-            <p style={{ fontSize: 20, fontWeight: 700, color: '#1E2D4D', margin: '0 0 4px' }}>{cert.courseTitle}</p>
+            <p style={{ fontSize: 20, fontWeight: 700, color: '#1e4d6b', margin: '0 0 4px' }}>{cert.courseTitle}</p>
             <p style={{ fontSize: 13, color: '#6b7280', margin: '0 0 24px' }}>
               Score: {cert.scorePercent}% {course && `• ${course.moduleCount} modules • ${course.estimatedDurationMin} min`}
             </p>
@@ -150,7 +150,7 @@ function CertificateDetailModal({ cert, onClose }: { cert: TrainingCertificate; 
         {/* Modal Actions */}
         <div style={{ padding: '16px 16px 24px', display: 'flex', gap: 12, justifyContent: 'center', borderTop: '1px solid #e5e7eb', flexWrap: 'wrap' }}>
           <button onClick={() => toast.success(`Downloaded ${cert.certificateNumber}`)}
-            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 20px', borderRadius: 8, border: 'none', background: '#1E2D4D', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
+            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 20px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
             <Download size={16} /> Download PDF
           </button>
           <button onClick={() => toast.info(`Print ${cert.certificateNumber} — demo mode`)}
@@ -179,7 +179,7 @@ export function CertificateViewer() {
     return (
       <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
         <button onClick={() => navigate('/training')}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#1E2D4D', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 16, padding: 0, fontFamily: "'DM Sans', sans-serif" }}>
+          style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#1e4d6b', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 16, padding: 0, fontFamily: "'DM Sans', sans-serif" }}>
           <ArrowLeft size={16} /> Back to Training
         </button>
         <h1 style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: '0 0 24px' }}>Certificate Manager</h1>
@@ -215,7 +215,7 @@ export function CertificateViewer() {
     <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
       {/* Header */}
       <button onClick={() => navigate('/training')}
-        style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#1E2D4D', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 16, padding: 0, fontFamily: "'DM Sans', sans-serif" }}>
+        style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#1e4d6b', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 16, padding: 0, fontFamily: "'DM Sans', sans-serif" }}>
         <ArrowLeft size={16} /> Back to Training
       </button>
 
@@ -225,7 +225,7 @@ export function CertificateViewer() {
           <p style={{ fontSize: 14, color: '#6b7280', margin: 0 }}>View, download, and manage all training certificates</p>
         </div>
         <button onClick={() => toast.info('Bulk download — demo mode')}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 8, border: 'none', background: '#1E2D4D', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
+          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
           <Download size={16} /> Bulk Download
         </button>
       </div>
@@ -233,7 +233,7 @@ export function CertificateViewer() {
       {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12, marginBottom: 24 }}>
         {[
-          { label: 'Total Certificates', value: stats.total, icon: Award, color: '#1E2D4D' },
+          { label: 'Total Certificates', value: stats.total, icon: Award, color: '#1e4d6b' },
           { label: 'Valid', value: stats.valid, icon: CheckCircle2, color: '#15803d' },
           { label: 'Expiring Soon', value: stats.expiring, icon: AlertTriangle, color: '#92400e' },
           { label: 'Expired', value: stats.expired, icon: XCircle, color: '#dc2626' },

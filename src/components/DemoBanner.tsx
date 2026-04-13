@@ -20,8 +20,8 @@ export function DemoBanner() {
         <span className="sm:hidden text-xs font-semibold">Demo Mode</span>
         <button
           onClick={() => navigate('/signup')}
-          className="inline-flex items-center gap-1 px-3 py-1 rounded-md text-xs sm:text-sm font-bold transition-colors hover:bg-[#1E2D4D]/5"
-          style={{ backgroundColor: 'white', color: '#1E2D4D' }}
+          className="inline-flex items-center gap-1 px-3 py-1 rounded-md text-xs sm:text-sm font-bold transition-colors hover:bg-gray-100"
+          style={{ backgroundColor: 'white', color: '#1e4d6b' }}
         >
           Start Free Trial
           <ArrowRight className="h-3.5 w-3.5" />
@@ -47,8 +47,8 @@ export function DemoBanner() {
         <span className="sm:hidden text-xs font-semibold">Demo Trial</span>
         <button
           onClick={() => navigate('/pricing')}
-          className="inline-flex items-center gap-1 px-3 py-1 rounded-md text-xs sm:text-sm font-bold transition-colors hover:bg-[#1E2D4D]/5"
-          style={{ backgroundColor: 'white', color: '#1E2D4D' }}
+          className="inline-flex items-center gap-1 px-3 py-1 rounded-md text-xs sm:text-sm font-bold transition-colors hover:bg-gray-100"
+          style={{ backgroundColor: 'white', color: '#1e4d6b' }}
         >
           Upgrade to Full Account
           <ArrowRight className="h-3.5 w-3.5" />

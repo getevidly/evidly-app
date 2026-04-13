@@ -112,32 +112,32 @@ export function VendorCombobox({ value, onChange, locationId, className }: Props
           setIsOpen(!isOpen);
           if (!isOpen) setTimeout(() => inputRef.current?.focus(), 50);
         }}
-        className="w-full flex items-center justify-between px-4 py-3 border border-[#1E2D4D]/15 rounded-xl bg-white text-left focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] hover:border-[#1E2D4D]/20 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-3 border border-gray-300 rounded-lg bg-white text-left focus:outline-none focus:ring-2 focus:ring-[#d4af37] hover:border-gray-400 transition-colors"
       >
-        <span className={value ? 'text-[#1E2D4D]' : 'text-[#1E2D4D]/30'}>
+        <span className={value ? 'text-gray-900' : 'text-gray-400'}>
           {value || 'Select vendor...'}
         </span>
-        <ChevronDown className={`h-4 w-4 text-[#1E2D4D]/30 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {/* Dropdown */}
       {isOpen && (
         <div
           ref={listRef}
-          className="absolute z-50 mt-1 w-full bg-white border border-[#1E2D4D]/10 rounded-xl shadow-lg overflow-hidden"
+          className="absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden"
           style={{ maxHeight: '340px' }}
         >
           {/* Search input */}
-          <div className="sticky top-0 bg-white border-b border-[#1E2D4D]/5 p-2">
+          <div className="sticky top-0 bg-white border-b border-gray-100 p-2">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#1E2D4D]/30" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <input
                 ref={inputRef}
                 type="text"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 placeholder="Search vendors..."
-                className="w-full pl-9 pr-8 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
+                className="w-full pl-9 pr-8 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent"
                 onKeyDown={e => {
                   if (e.key === 'Escape') { setIsOpen(false); setSearch(''); }
                 }}
@@ -146,7 +146,7 @@ export function VendorCombobox({ value, onChange, locationId, className }: Props
                 <button
                   type="button"
                   onClick={() => setSearch('')}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 text-gray-400 hover:text-gray-600"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
@@ -159,7 +159,7 @@ export function VendorCombobox({ value, onChange, locationId, className }: Props
             {/* Custom vendors section */}
             {filteredCustom.length > 0 && (
               <div>
-                <div className="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#1E2D4D]/30 bg-[#FAF7F0] border-b border-[#1E2D4D]/5">
+                <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-gray-400 bg-gray-50 border-b border-gray-100">
                   Recent / Custom
                 </div>
                 {filteredCustom.map(v => (
@@ -168,11 +168,11 @@ export function VendorCombobox({ value, onChange, locationId, className }: Props
                     type="button"
                     onClick={() => handleSelect(v.name)}
                     className={`w-full text-left px-4 py-2.5 text-sm hover:bg-[#eef4f8] transition-colors flex items-center justify-between ${
-                      value === v.name ? 'bg-[#eef4f8] font-semibold text-[#1E2D4D]' : 'text-[#1E2D4D]/80'
+                      value === v.name ? 'bg-[#eef4f8] font-semibold text-[#1e4d6b]' : 'text-gray-700'
                     }`}
                   >
                     {v.name}
-                    {value === v.name && <span className="text-[#1E2D4D] text-xs">&#10003;</span>}
+                    {value === v.name && <span className="text-[#1e4d6b] text-xs">&#10003;</span>}
                   </button>
                 ))}
               </div>
@@ -181,7 +181,7 @@ export function VendorCombobox({ value, onChange, locationId, className }: Props
             {/* Seed vendors by category */}
             {filteredSeedByCategory.map(group => (
               <div key={group.category}>
-                <div className="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#1E2D4D]/30 bg-[#FAF7F0] border-b border-[#1E2D4D]/5">
+                <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-gray-400 bg-gray-50 border-b border-gray-100">
                   {group.label}
                 </div>
                 {group.vendors.map(name => (
@@ -190,11 +190,11 @@ export function VendorCombobox({ value, onChange, locationId, className }: Props
                     type="button"
                     onClick={() => handleSelect(name)}
                     className={`w-full text-left px-4 py-2.5 text-sm hover:bg-[#eef4f8] transition-colors flex items-center justify-between ${
-                      value === name ? 'bg-[#eef4f8] font-semibold text-[#1E2D4D]' : 'text-[#1E2D4D]/80'
+                      value === name ? 'bg-[#eef4f8] font-semibold text-[#1e4d6b]' : 'text-gray-700'
                     }`}
                   >
                     {name}
-                    {value === name && <span className="text-[#1E2D4D] text-xs">&#10003;</span>}
+                    {value === name && <span className="text-[#1e4d6b] text-xs">&#10003;</span>}
                   </button>
                 ))}
               </div>
@@ -202,14 +202,14 @@ export function VendorCombobox({ value, onChange, locationId, className }: Props
 
             {/* No results */}
             {!hasResults && search && (
-              <div className="px-4 py-6 text-center text-sm text-[#1E2D4D]/50">
+              <div className="px-4 py-6 text-center text-sm text-gray-500">
                 No vendors match "{search}"
               </div>
             )}
           </div>
 
           {/* Add Custom Vendor — always at bottom */}
-          <div className="sticky bottom-0 bg-white border-t border-[#1E2D4D]/10">
+          <div className="sticky bottom-0 bg-white border-t border-gray-200">
             {showAddForm ? (
               <div className="p-2 flex items-center gap-2">
                 <input
@@ -217,7 +217,7 @@ export function VendorCombobox({ value, onChange, locationId, className }: Props
                   value={newVendorName}
                   onChange={e => setNewVendorName(e.target.value)}
                   placeholder="Enter vendor name..."
-                  className="flex-1 px-3 py-2 text-sm border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                  className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
                   autoFocus
                   onKeyDown={e => {
                     if (e.key === 'Enter') { e.preventDefault(); handleAddCustom(); }
@@ -228,14 +228,14 @@ export function VendorCombobox({ value, onChange, locationId, className }: Props
                   type="button"
                   onClick={handleAddCustom}
                   disabled={!newVendorName.trim()}
-                  className="px-3 py-2 text-sm font-semibold text-white bg-[#1E2D4D] rounded-lg hover:bg-[#162340] transition-colors disabled:opacity-40"
+                  className="px-3 py-2 text-sm font-semibold text-white bg-[#1e4d6b] rounded-lg hover:bg-[#163a52] transition-colors disabled:opacity-40"
                 >
                   Add
                 </button>
                 <button
                   type="button"
                   onClick={() => { setShowAddForm(false); setNewVendorName(''); }}
-                  className="p-2 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70"
+                  className="p-2 text-gray-400 hover:text-gray-600"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -244,7 +244,7 @@ export function VendorCombobox({ value, onChange, locationId, className }: Props
               <button
                 type="button"
                 onClick={() => setShowAddForm(true)}
-                className="w-full flex items-center gap-2 px-4 py-3 text-sm font-medium text-[#1E2D4D] hover:bg-[#eef4f8] transition-colors"
+                className="w-full flex items-center gap-2 px-4 py-3 text-sm font-medium text-[#1e4d6b] hover:bg-[#eef4f8] transition-colors"
               >
                 <Plus className="h-4 w-4" />
                 Add Custom Vendor

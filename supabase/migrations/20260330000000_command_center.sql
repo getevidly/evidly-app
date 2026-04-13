@@ -27,11 +27,8 @@ CREATE TABLE IF NOT EXISTS intelligence_signals (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
-DO $$ BEGIN
-  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'intelligence_signals' AND column_name = 'status') THEN
-    CREATE INDEX IF NOT EXISTS idx_signals_status_created ON intelligence_signals (status, created_at DESC);
-  END IF;
-END $$;
+CREATE INDEX IF NOT EXISTS idx_signals_status_created
+  ON intelligence_signals (status, created_at DESC);
 
 -- ── 2. intelligence_game_plans ───────────────────────────────
 CREATE TABLE IF NOT EXISTS intelligence_game_plans (

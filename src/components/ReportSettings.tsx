@@ -188,8 +188,8 @@ export function ReportSettings() {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-2">Automated Reports</h3>
-        <p className="text-sm text-[#1E2D4D]/70">
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">Automated Reports</h3>
+        <p className="text-sm text-gray-600">
           Choose which reports you'd like to receive automatically. We'll deliver them straight to your inbox.
         </p>
       </div>
@@ -202,8 +202,8 @@ export function ReportSettings() {
           return (
             <div
               key={report.type}
-              className={`border rounded-xl p-4 transition-all ${
-                isActive ? 'border-[#A08C5A] bg-cream' : 'border-[#1E2D4D]/10 bg-white'
+              className={`border rounded-lg p-4 transition-all ${
+                isActive ? 'border-[#d4af37] bg-[#faf8f3]' : 'border-gray-200 bg-white'
               }`}
             >
               <div className="flex items-start gap-3">
@@ -211,23 +211,23 @@ export function ReportSettings() {
                   type="checkbox"
                   checked={isActive}
                   onChange={() => toggleReport(report.type, report.frequency)}
-                  className="mt-1 h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] rounded"
+                  className="mt-1 h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] rounded"
                 />
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <h4 className="font-semibold text-[#1E2D4D]">{report.name}</h4>
+                    <h4 className="font-semibold text-gray-900">{report.name}</h4>
                     {report.recommended && (
-                      <span className="text-xs bg-[#A08C5A] text-[#1E2D4D] px-2 py-0.5 rounded font-semibold">
+                      <span className="text-xs bg-[#d4af37] text-[#1e4d6b] px-2 py-0.5 rounded font-semibold">
                         Recommended
                       </span>
                     )}
                   </div>
-                  <p className="text-sm text-[#1E2D4D]/70 mb-3">{report.description}</p>
+                  <p className="text-sm text-gray-600 mb-3">{report.description}</p>
 
                   {isActive && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3 border-t border-[#1E2D4D]/10">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3 border-t border-gray-200">
                       <div>
-                        <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">
+                        <label className="block text-xs font-medium text-gray-700 mb-1">
                           Delivery Method
                         </label>
                         <div className="flex gap-2">
@@ -236,8 +236,8 @@ export function ReportSettings() {
                             onClick={() => updateSubscription(report.type, 'delivery_method', 'email')}
                             className={`flex-1 px-3 py-2 text-sm rounded-lg flex items-center justify-center gap-2 transition-colors ${
                               sub?.delivery_method === 'email'
-                                ? 'bg-[#1E2D4D] text-white'
-                                : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/10'
+                                ? 'bg-[#1e4d6b] text-white'
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                             }`}
                           >
                             <Mail className="w-4 h-4" />
@@ -248,8 +248,8 @@ export function ReportSettings() {
                             onClick={() => updateSubscription(report.type, 'delivery_method', 'sms')}
                             className={`flex-1 px-3 py-2 text-sm rounded-lg flex items-center justify-center gap-2 transition-colors ${
                               sub?.delivery_method === 'sms'
-                                ? 'bg-[#1E2D4D] text-white'
-                                : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/10'
+                                ? 'bg-[#1e4d6b] text-white'
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                             }`}
                           >
                             <Smartphone className="w-4 h-4" />
@@ -260,13 +260,13 @@ export function ReportSettings() {
 
                       {report.frequency === 'weekly' && (
                         <div>
-                          <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">
+                          <label className="block text-xs font-medium text-gray-700 mb-1">
                             Day of Week
                           </label>
                           <select
                             value={sub?.delivery_day || 1}
                             onChange={(e) => updateSubscription(report.type, 'delivery_day', parseInt(e.target.value))}
-                            className="w-full px-3 py-2 text-sm border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
                           >
                             {DAYS_OF_WEEK.map((day) => (
                               <option key={day.value} value={day.value}>
@@ -278,16 +278,16 @@ export function ReportSettings() {
                       )}
 
                       <div>
-                        <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">
+                        <label className="block text-xs font-medium text-gray-700 mb-1">
                           Time
                         </label>
                         <div className="relative">
-                          <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#1E2D4D]/30" />
+                          <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                           <input
                             type="time"
                             value={sub?.delivery_time || '07:00'}
                             onChange={(e) => updateSubscription(report.type, 'delivery_time', e.target.value)}
-                            className="w-full pl-10 pr-3 py-2 text-sm border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                            className="w-full pl-10 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
                           />
                         </div>
                       </div>
@@ -304,7 +304,7 @@ export function ReportSettings() {
         <button
           onClick={saveSubscriptions}
           disabled={saving}
-          className="px-6 py-2 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
+          className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
         >
           {saving ? 'Saving...' : 'Save Report Settings'}
         </button>
