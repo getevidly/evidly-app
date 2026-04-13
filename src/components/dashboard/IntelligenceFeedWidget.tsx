@@ -248,7 +248,7 @@ export function IntelligenceFeedWidget() {
                 background: lc.bg, color: lc.text, border: `1px solid ${lc.text}18`,
                 display: 'inline-flex', alignItems: 'center', gap: 2,
               }}>
-              <span style={{ fontSize: 10 }}>{meta.icon}</span>
+              <span className="text-[11px]">{meta.icon}</span>
               {d.level === 'critical' ? 'CRIT' : d.level.toUpperCase().slice(0, 4)}
             </span>
           );
@@ -286,7 +286,7 @@ export function IntelligenceFeedWidget() {
   // Loading state (production only)
   if (!isDemoMode && loading) {
     return (
-      <div className="bg-white rounded-lg overflow-hidden" style={{ border: '1px solid #e5e7eb' }}>
+      <div className="bg-white rounded-xl overflow-hidden" style={{ border: '1px solid #e5e7eb' }}>
         <div className="flex items-center gap-2 px-4 py-3" style={{ borderBottom: '1px solid #F0F0F0' }}>
           <Zap size={14} style={{ color: GOLD }} />
           <span className="text-sm font-semibold" style={{ color: NAVY }}>Business Intelligence</span>
@@ -294,11 +294,11 @@ export function IntelligenceFeedWidget() {
         {[1, 2].map(i => (
           <div key={i} className="px-4 py-3 animate-pulse" style={{ borderBottom: '1px solid #F0F0F0' }}>
             <div className="flex items-center gap-2 mb-2">
-              <div className="h-3 w-12 bg-gray-200 rounded" />
-              <div className="h-3 w-16 bg-gray-200 rounded" />
+              <div className="h-3 w-12 bg-[#1E2D4D]/8 rounded" />
+              <div className="h-3 w-16 bg-[#1E2D4D]/8 rounded" />
             </div>
-            <div className="h-4 w-3/4 bg-gray-200 rounded mb-1" />
-            <div className="h-3 w-full bg-gray-100 rounded" />
+            <div className="h-4 w-3/4 bg-[#1E2D4D]/8 rounded mb-1" />
+            <div className="h-3 w-full bg-[#1E2D4D]/5 rounded" />
           </div>
         ))}
       </div>
@@ -308,7 +308,7 @@ export function IntelligenceFeedWidget() {
   // Error state (production only)
   if (!isDemoMode && error) {
     return (
-      <div className="bg-white rounded-lg overflow-hidden" style={{ border: '1px solid #e5e7eb' }}>
+      <div className="bg-white rounded-xl overflow-hidden" style={{ border: '1px solid #e5e7eb' }}>
         <div className="flex items-center gap-2 px-4 py-3" style={{ borderBottom: '1px solid #F0F0F0' }}>
           <Zap size={14} style={{ color: GOLD }} />
           <span className="text-sm font-semibold" style={{ color: NAVY }}>Business Intelligence</span>
@@ -331,11 +331,11 @@ export function IntelligenceFeedWidget() {
   // Empty state — always show widget, never return null
   if (items.length === 0) {
     return (
-      <div className="bg-white rounded-lg overflow-hidden" style={{ border: '1px solid #e5e7eb' }}>
+      <div className="bg-white rounded-xl overflow-hidden" style={{ border: '1px solid #e5e7eb' }}>
         <button
           type="button"
           onClick={() => navigate('/insights/intelligence')}
-          className="w-full flex items-center justify-between px-4 py-3 text-left transition-colors hover:bg-gray-50"
+          className="w-full flex items-center justify-between px-4 py-3 text-left transition-colors hover:bg-[#FAF7F0]"
           style={{ borderBottom: '1px solid #F0F0F0' }}
         >
           <div className="flex items-center gap-2">
@@ -343,13 +343,13 @@ export function IntelligenceFeedWidget() {
             <span className="text-sm font-semibold" style={{ color: NAVY }}>Business Intelligence</span>
           </div>
           <div className="flex items-center gap-1">
-            <span className="text-[11px] font-medium" style={{ color: GOLD }}>View all</span>
+            <span className="text-xs font-medium" style={{ color: GOLD }}>View all</span>
             <ChevronRight size={14} style={{ color: GOLD }} />
           </div>
         </button>
         <div className="px-4 py-5 text-center">
           <Zap size={20} className="mx-auto mb-2" style={{ color: '#D1D5DB' }} />
-          <p className="text-[13px] font-medium mb-1" style={{ color: NAVY }}>
+          <p className="text-sm font-medium mb-1" style={{ color: NAVY }}>
             Your intelligence feed is active
           </p>
           <p className="text-xs mb-3" style={{ color: MUTED, maxWidth: 320, margin: '0 auto 12px' }}>
@@ -369,25 +369,25 @@ export function IntelligenceFeedWidget() {
   }
 
   return (
-    <div className="bg-white rounded-lg overflow-hidden" style={{ border: '1px solid #e5e7eb' }}>
+    <div className="bg-white rounded-xl overflow-hidden" style={{ border: '1px solid #e5e7eb' }}>
       {/* Header */}
       <button
         type="button"
         onClick={() => navigate('/insights/intelligence')}
-        className="w-full flex items-center justify-between px-4 py-3 text-left transition-colors hover:bg-gray-50"
+        className="w-full flex items-center justify-between px-4 py-3 text-left transition-colors hover:bg-[#FAF7F0]"
         style={{ borderBottom: '1px solid #F0F0F0' }}
       >
         <div className="flex items-center gap-2">
           <Zap size={14} style={{ color: GOLD }} />
           <span className="text-sm font-semibold" style={{ color: NAVY }}>Business Intelligence</span>
           {criticalCount > 0 && (
-            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded" style={{ background: '#FEF2F2', color: '#DC2626' }}>
+            <span className="text-xs font-bold px-1.5 py-0.5 rounded" style={{ background: '#FEF2F2', color: '#DC2626' }}>
               {criticalCount} critical
             </span>
           )}
         </div>
         <div className="flex items-center gap-1">
-          <span className="text-[11px] font-medium" style={{ color: GOLD }}>View all</span>
+          <span className="text-xs font-medium" style={{ color: GOLD }}>View all</span>
           <ChevronRight size={14} style={{ color: GOLD }} />
         </div>
       </button>
@@ -414,21 +414,21 @@ export function IntelligenceFeedWidget() {
               <div className="flex-1 min-w-0">
                 {/* Priority badge + category + time */}
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-[9px] font-black px-1.5 py-0.5 rounded"
+                  <span className="text-[11px] font-black px-1.5 py-0.5 rounded"
                     style={{ background: PRIORITY_DOT[item.priority] + '15', color: PRIORITY_DOT[item.priority] || MUTED }}>
                     {item.priority.toUpperCase()}
                   </span>
                   {item.category && (
-                    <span className="text-[9px] font-medium px-1.5 py-0.5 rounded" style={{ background: '#F0FDF4', color: '#065F46' }}>
+                    <span className="text-[11px] font-medium px-1.5 py-0.5 rounded" style={{ background: '#F0FDF4', color: '#065F46' }}>
                       {item.category.replace(/_/g, ' ')}
                     </span>
                   )}
-                  <span className="text-[10px]" style={{ color: MUTED }}>{timeAgo(item.created_at)}</span>
+                  <span className="text-xs" style={{ color: MUTED }}>{timeAgo(item.created_at)}</span>
                 </div>
                 {/* Title */}
-                <p className="text-[13px] font-semibold" style={{ color: isActioned ? MUTED : NAVY }}>{item.title}</p>
+                <p className="text-sm font-semibold" style={{ color: isActioned ? MUTED : NAVY }}>{item.title}</p>
                 {/* Summary */}
-                <p className="text-[11px] mt-0.5" style={{ color: MUTED, lineHeight: 1.5 }}>{item.summary}</p>
+                <p className="text-xs mt-0.5" style={{ color: MUTED, lineHeight: 1.5 }}>{item.summary}</p>
                 {/* Risk dimensions */}
                 {!isActioned && renderRiskDims(item)}
                 {/* Opportunity dimensions */}
@@ -437,7 +437,7 @@ export function IntelligenceFeedWidget() {
                 {item.recommended_action && !isActioned && (
                   <div className="mt-1.5 flex items-start gap-1.5">
                     <AlertTriangle size={10} className="shrink-0 mt-0.5" style={{ color: dotColor }} />
-                    <span className="text-[10px] font-medium" style={{ color: NAVY }}>
+                    <span className="text-xs font-medium" style={{ color: NAVY }}>
                       {item.recommended_action}
                     </span>
                   </div>
@@ -479,7 +479,7 @@ export function IntelligenceFeedWidget() {
         <button
           type="button"
           onClick={() => navigate('/insights/intelligence')}
-          className="w-full px-4 py-2.5 text-center text-xs font-semibold transition-colors hover:bg-gray-50"
+          className="w-full px-4 py-2.5 text-center text-xs font-semibold transition-colors hover:bg-[#FAF7F0]"
           style={{ color: NAVY }}
         >
           +{items.length - 3} more intelligence items →

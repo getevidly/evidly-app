@@ -29,7 +29,7 @@ UPDATE jurisdictions SET
   fire_ahj_name = 'CAL FIRE / City of Napa Fire / City of American Canyon Fire',
   fire_ahj_type = 'mixed_cal_fire_city',
   has_local_amendments = false,
-  scoring_methodology = 'Letter grade A/B/C. Points deducted from 100. A=90-100, B=80-89, C=70-79. Closure=below 70 (no grade, min 24-hr). Rescore option: 1/year, fee required. April 2025: 90%+ A, 98%+ A or B. Only letter-grade county in Bay Area batch.',
+  scoring_methodology = 'Letter grade A / B / C. Points deducted from 100. A=90-100, B=80-89, C=70-79. Closure=below 70 (no grade, min 24-hr). Rescore option: 1/year, fee required. April 2025: 90%+ A, 98%+ A or B. Only letter-grade county in Bay Area batch.',
   notes = 'STANDARDIZED March 2026. Letter grade (only in Bay Area batch). A=90+, B=80-89, C=70-79, Closure=<70. Napa Valley wine/culinary tourism market. Rescore option 1/year.'
 WHERE county = 'Napa' AND city IS NULL;
 

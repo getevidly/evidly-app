@@ -202,7 +202,7 @@ export const COUNTY_TEMPLATES: Record<CountyTemplate, CountyTemplateConfig> = {
   'la': {
     id: 'la',
     name: 'Los Angeles County',
-    gradingSystem: 'Letter Grade (A/B/C)',
+    gradingSystem: 'Letter Grade (A / B / C)',
     gradingDescription: 'Grade card prominently displayed at entrance',
     getGrade: (score: number) => score >= 90 ? 'A' : score >= 80 ? 'B' : score >= 70 ? 'C' : 'Score Card',
     getGradeColor: (score: number) => score >= 90 ? '#22c55e' : score >= 80 ? '#eab308' : '#ef4444',

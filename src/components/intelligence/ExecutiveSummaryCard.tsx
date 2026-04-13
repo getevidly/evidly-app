@@ -171,7 +171,7 @@ export const ExecutiveSummaryCard: React.FC<Props> = ({ data, viewMode, loading,
     }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '18px' }}>{v.icon}</span>
+          <span className="text-lg">{v.icon}</span>
           <span style={{
             fontFamily: "system-ui, -apple-system, 'Segoe UI', sans-serif",
             fontSize: '13px',

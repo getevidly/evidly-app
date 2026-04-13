@@ -58,7 +58,7 @@ function step1Email(v: VendorPartner): { subject: string; bodyHtml: string } {
     bodyHtml: `
       <p>I'm Arthur Haggerty, founder of EvidLY — a compliance intelligence platform for California commercial kitchens.</p>
       <p><strong>Here's why I'm reaching out to ${esc(v.company_name)}:</strong></p>
-      <p>EvidLY tracks service currency for ${esc(cat)} across our operator network. When a kitchen's records show a service is overdue or a vendor hasn't been confirmed, we alert the operator — and surface recommended vendors in their area.</p>
+      <p>EvidLY tracks service currency for ${esc(cat)} across our operator network. When a kitchen's records show a service is overdue or a vendor hasn't been confirmed, we alert the operator — and show recommended vendors in their area.</p>
       <p>If you serve California commercial kitchens, I'd like to discuss having ${esc(v.company_name)} listed as a preferred provider in EvidLY for operators in your service area.</p>
       <p>No cost to be listed. We send you qualified leads.</p>
       <p>15 minutes: <a href="https://calendly.com/founders-getevidly/60min" style="color:#1e4d6b;">calendly.com/founders-getevidly/60min</a><br/>Or reply directly — I check this email personally.</p>
@@ -92,7 +92,7 @@ function step3Email(v: VendorPartner): { subject: string; bodyHtml: string } {
       <p>Last note from me on this — I want to make sure you have the full picture before I move on.</p>
       <p><strong>What EvidLY vendor partner status means:</strong></p>
       <ul style="color:#334155;line-height:1.8;">
-        <li>Your company surfaces when operators in your area are due for ${esc(cat)} service</li>
+        <li>Your company appears when operators in your area are due for ${esc(cat)} service</li>
         <li>Operators can request a quote directly from EvidLY</li>
         <li>Your completed service records sync back to EvidLY (no double entry for your team)</li>
         <li>Your COI and license are verified once — operators see you as pre-vetted</li>

@@ -150,7 +150,7 @@ export const predictedScores: PredictedScore[] = [
 
 // ── BU Line Colors ───────────────────────────────────────────────
 export const BU_LINE_COLORS: Record<string, string> = {
-  compositeScore: '#1e4d6b',
+  compositeScore: '#1E2D4D',
   higherEd: '#22c55e',
   healthcare: '#6b21a8',
   destinations: '#d4af37',

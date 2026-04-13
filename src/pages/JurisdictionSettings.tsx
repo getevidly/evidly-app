@@ -33,6 +33,7 @@ import {
 import { CALIFORNIA_STATE_LAWS } from '../lib/californiaLaws';
 import { JURISDICTION_DATABASE, type JurisdictionScore } from '../data/jurisdictionData';
 import { getCountyProfile, extractCountySlug } from '../lib/jurisdictionScoring';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 // ── Helper functions ────────────────────────────────────────────
 
@@ -63,20 +64,20 @@ function getGapActionLabel(category: string): string {
 
 function getInspectionSystemBadge(type: InspectionSystem['type']): { label: string; color: string } {
   switch (type) {
-    case 'letter_grade': return { label: 'Letter Grade (A/B/C)', color: 'bg-blue-100 text-blue-700 border-blue-200' };
-    case 'color_placard': return { label: 'Color Placard', color: 'bg-green-100 text-green-700 border-green-200' };
+    case 'letter_grade': return { label: 'Letter Grade (A / B / C)', color: 'bg-blue-50 text-blue-700 border-blue-200' };
+    case 'color_placard': return { label: 'Color Placard', color: 'bg-emerald-50 text-emerald-700 border-green-200' };
     case 'pass_fail': return { label: 'Pass/Fail', color: 'bg-amber-100 text-amber-700 border-amber-200' };
-    case 'standard': return { label: 'Standard Inspection', color: 'bg-gray-100 text-gray-700 border-gray-200' };
-    default: return { label: type, color: 'bg-gray-100 text-gray-700 border-gray-200' };
+    case 'standard': return { label: 'Standard Inspection', color: 'bg-[#1E2D4D]/5 text-[#1E2D4D]/80 border-[#1E2D4D]/10' };
+    default: return { label: type, color: 'bg-[#1E2D4D]/5 text-[#1E2D4D]/80 border-[#1E2D4D]/10' };
   }
 }
 
 function getLawStatusBadge(status: CaliforniaStateLaw['status']): { label: string; color: string } {
   switch (status) {
-    case 'effective': return { label: 'Effective', color: 'bg-green-100 text-green-700' };
+    case 'effective': return { label: 'Effective', color: 'bg-emerald-50 text-emerald-700' };
     case 'upcoming': return { label: 'Upcoming', color: 'bg-amber-100 text-amber-700' };
-    case 'phased': return { label: 'Phased', color: 'bg-blue-100 text-blue-700' };
-    default: return { label: status, color: 'bg-gray-100 text-gray-700' };
+    case 'phased': return { label: 'Phased', color: 'bg-blue-50 text-blue-700' };
+    default: return { label: status, color: 'bg-[#1E2D4D]/5 text-[#1E2D4D]/80' };
   }
 }
 
@@ -85,7 +86,7 @@ function getBillBadgeColor(status: CaliforniaStateLaw['status']): string {
     case 'effective': return 'bg-green-50 text-green-700 border-green-200';
     case 'upcoming': return 'bg-amber-50 text-amber-700 border-amber-200';
     case 'phased': return 'bg-blue-50 text-blue-700 border-blue-200';
-    default: return 'bg-gray-50 text-gray-700 border-gray-200';
+    default: return 'bg-[#FAF7F0] text-[#1E2D4D]/80 border-[#1E2D4D]/10';
   }
 }
 
@@ -108,9 +109,9 @@ function getUrgencyTextColor(days: number): string {
 }
 
 function getUrgencyBadgeColor(days: number): string {
-  if (days < 90) return 'bg-red-100 text-red-700';
+  if (days < 90) return 'bg-red-50 text-red-700';
   if (days < 180) return 'bg-amber-100 text-amber-700';
-  return 'bg-blue-100 text-blue-700';
+  return 'bg-blue-50 text-blue-700';
 }
 
 // Short summary for each key CA regulation
@@ -146,9 +147,9 @@ function getJurisdictionDataForCounty(countyField: string): { food?: Jurisdictio
 
 function getTransparencyBadge(level: 'high' | 'medium' | 'low'): { label: string; className: string } {
   switch (level) {
-    case 'high': return { label: 'Public Records', className: 'bg-green-100 text-green-700 border-green-200' };
+    case 'high': return { label: 'Public Records', className: 'bg-emerald-50 text-emerald-700 border-green-200' };
     case 'medium': return { label: 'Limited Public', className: 'bg-amber-100 text-amber-700 border-amber-200' };
-    case 'low': return { label: 'FOIA Required', className: 'bg-gray-100 text-gray-600 border-gray-200' };
+    case 'low': return { label: 'FOIA Required', className: 'bg-[#1E2D4D]/5 text-[#1E2D4D]/70 border-[#1E2D4D]/10' };
   }
 }
 
@@ -159,17 +160,17 @@ function ExpandableDescription({ text }: { text: string }) {
   const isLong = text.length > 150;
 
   if (!isLong) {
-    return <p className="text-sm text-gray-600">{text}</p>;
+    return <p className="text-sm text-[#1E2D4D]/70">{text}</p>;
   }
 
   return (
     <div>
-      <p className={`text-sm text-gray-600 ${expanded ? '' : 'line-clamp-2'}`}>
+      <p className={`text-sm text-[#1E2D4D]/70 ${expanded ? '' : 'line-clamp-2'}`}>
         {text}
       </p>
       <button
         onClick={() => setExpanded(!expanded)}
-        className="text-xs font-medium text-[#1e4d6b] hover:text-[#2a6a8f] mt-0.5"
+        className="text-xs font-medium text-[#1E2D4D] hover:text-[#2A3F6B] mt-0.5"
       >
         {expanded ? 'Show less' : 'Show more'}
       </button>
@@ -194,18 +195,18 @@ function CollapsibleSection({
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="border-b border-gray-100 last:border-b-0">
+    <div className="border-b border-[#1E2D4D]/5 last:border-b-0">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center gap-3 px-3 sm:px-6 py-3 text-left hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center gap-3 px-3 sm:px-6 py-3 text-left hover:bg-[#FAF7F0] transition-colors"
       >
-        <span className="text-[#1e4d6b]">{icon}</span>
-        <span className="text-sm font-semibold text-gray-800 flex-1">{title}</span>
+        <span className="text-[#1E2D4D]">{icon}</span>
+        <span className="text-sm font-semibold text-[#1E2D4D]/90 flex-1">{title}</span>
         {badge}
         {open ? (
-          <ChevronUp className="w-4 h-4 text-gray-400" />
+          <ChevronUp className="w-4 h-4 text-[#1E2D4D]/30" />
         ) : (
-          <ChevronDown className="w-4 h-4 text-gray-400" />
+          <ChevronDown className="w-4 h-4 text-[#1E2D4D]/30" />
         )}
       </button>
       {open && <div className="px-3 sm:px-6 pb-4">{children}</div>}
@@ -305,54 +306,54 @@ function AddLocationDialog({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-[95vw] sm:w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <div className="p-4 sm:p-6 border-b border-gray-100">
-          <h2 className="text-lg font-bold text-gray-900">Add Location</h2>
-          <p className="text-sm text-gray-500 mt-1">
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 modal-backdrop-enter">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 w-[95vw] sm:w-full max-w-lg max-h-[90vh] overflow-y-auto modal-content-enter">
+        <div className="p-4 sm:p-6 border-b border-[#1E2D4D]/5">
+          <h2 className="text-lg font-bold text-[#1E2D4D]">Add Location</h2>
+          <p className="text-sm text-[#1E2D4D]/50 mt-1">
             Select your jurisdiction to auto-configure compliance requirements
           </p>
         </div>
 
         <div className="p-4 sm:p-6 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Location Name</label>
+            <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Location Name</label>
             <input
               type="text"
               value={name}
               onChange={e => setName(e.target.value)}
               placeholder="e.g., Location 1" // demo
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
+              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Street Address</label>
+            <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Street Address</label>
             <input
               type="text"
               value={address}
               onChange={e => setAddress(e.target.value)}
               placeholder="e.g., 123 Main Street"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
+              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
             />
           </div>
 
           {/* Jurisdiction Selector (replaces City field) */}
           <div className="relative">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">
               Jurisdiction <span className="text-red-500">*</span>
             </label>
             {selectedCounty ? (
               <div className="flex items-center gap-2">
                 <div
-                  className="flex-1 flex items-center gap-2 px-3 py-2 border border-[#1e4d6b] rounded-lg bg-[#eef4f8] cursor-pointer"
+                  className="flex-1 flex items-center gap-2 px-3 py-2 border border-[#1E2D4D] rounded-xl bg-[#eef4f8] cursor-pointer"
                   onClick={() => { setSelectedCounty(''); setShowDropdown(true); }}
                 >
-                  <MapPin className="w-3.5 h-3.5 text-[#1e4d6b]" />
-                  <span className="text-sm font-medium text-[#1e4d6b]">{selectedCounty} County, CA</span>
+                  <MapPin className="w-3.5 h-3.5 text-[#1E2D4D]" />
+                  <span className="text-sm font-medium text-[#1E2D4D]">{selectedCounty} County, CA</span>
                   <button
                     type="button"
                     onClick={(e) => { e.stopPropagation(); setSelectedCounty(''); setIncludeNPS(false); }}
-                    className="ml-auto text-gray-400 hover:text-gray-600"
+                    className="ml-auto text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70"
                   >
                     <XCircle className="w-4 h-4" />
                   </button>
@@ -361,36 +362,36 @@ function AddLocationDialog({
             ) : (
               <div className="relative">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#1E2D4D]/30" />
                   <input
                     type="text"
                     value={jurisdictionSearch}
                     onChange={e => { setJurisdictionSearch(e.target.value); setShowDropdown(true); }}
                     onFocus={() => setShowDropdown(true)}
                     placeholder="Search jurisdictions (e.g., Merced, Fresno...)"
-                    className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
+                    className="w-full pl-9 pr-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
                   />
                 </div>
 
                 {showDropdown && (
-                  <div className="absolute z-10 w-full mt-1 bg-white rounded-lg border border-gray-200 shadow-lg max-h-56 overflow-y-auto">
+                  <div className="absolute z-10 w-full mt-1 bg-white rounded-xl border border-[#1E2D4D]/10 shadow-lg max-h-56 overflow-y-auto">
                     {filteredOptions.length > 0 ? (
                       filteredOptions.map(opt => (
                         <button
                           key={opt.county}
                           type="button"
                           onClick={() => handleSelectJurisdiction(opt.county)}
-                          className="w-full text-left px-3 py-2.5 hover:bg-[#eef4f8] transition-colors border-b border-gray-50 last:border-b-0"
+                          className="w-full text-left px-3 py-2.5 hover:bg-[#eef4f8] transition-colors border-b border-[#1E2D4D]/3 last:border-b-0"
                         >
                           <div className="flex items-center gap-2">
-                            <MapPin className="w-3.5 h-3.5 text-[#1e4d6b] flex-shrink-0" />
-                            <span className="text-sm font-medium text-gray-900">{opt.county} County</span>
-                            <span className="text-xs text-gray-400 ml-auto">{opt.state}</span>
+                            <MapPin className="w-3.5 h-3.5 text-[#1E2D4D] flex-shrink-0" />
+                            <span className="text-sm font-medium text-[#1E2D4D]">{opt.county} County</span>
+                            <span className="text-xs text-[#1E2D4D]/30 ml-auto">{opt.state}</span>
                           </div>
                           <div className="ml-[22px] mt-0.5 flex items-center gap-2">
-                            <span className="text-xs text-gray-500">{opt.gradingScale}</span>
+                            <span className="text-xs text-[#1E2D4D]/50">{opt.gradingScale}</span>
                             {opt.isDualJurisdiction && (
-                              <span className="px-1.5 py-0.5 text-[10px] font-medium rounded bg-amber-100 text-amber-700">
+                              <span className="px-1.5 py-0.5 text-xs font-medium rounded bg-amber-100 text-amber-700">
                                 Dual Jurisdiction
                               </span>
                             )}
@@ -399,16 +400,16 @@ function AddLocationDialog({
                       ))
                     ) : (
                       <div className="px-3 py-4 text-center">
-                        <p className="text-sm text-gray-500">No matching jurisdictions found</p>
+                        <p className="text-sm text-[#1E2D4D]/50">No matching jurisdictions found</p>
                       </div>
                     )}
-                    <div className="px-3 py-2 border-t border-gray-100 bg-gray-50">
-                      <p className="text-xs text-gray-400">
+                    <div className="px-3 py-2 border-t border-[#1E2D4D]/5 bg-[#FAF7F0]">
+                      <p className="text-xs text-[#1E2D4D]/30">
                         Don't see your jurisdiction?{' '}
                         <button
                           type="button"
                           onClick={() => { setShowDropdown(false); guardAction('add', 'Jurisdiction Settings', () => toast.info('Request Jurisdiction (Demo) — Contact support@evidly.com for priority onboarding.')); }}
-                          className="text-[#1e4d6b] font-medium hover:underline"
+                          className="text-[#1E2D4D] font-medium hover:underline"
                         >
                           Request it here
                         </button>
@@ -468,11 +469,11 @@ function AddLocationDialog({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">State</label>
+              <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">State</label>
               <select
                 value={state}
                 onChange={e => setState(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b] bg-white"
+                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D] bg-white"
               >
                 <option value="">Select State...</option>
                 <option value="CA">California</option>
@@ -486,13 +487,13 @@ function AddLocationDialog({
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Zip Code</label>
+              <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Zip Code</label>
               <input
                 type="text"
                 value={zip}
                 onChange={e => setZip(e.target.value)}
                 placeholder="93721"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
+                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
               />
             </div>
           </div>
@@ -501,7 +502,7 @@ function AddLocationDialog({
             onClick={handleDetect}
             disabled={detecting || !selectedCounty}
             className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{ backgroundColor: '#1e4d6b' }}
+            style={{ backgroundColor: '#1E2D4D' }}
           >
             {detecting ? (
               <>
@@ -519,17 +520,17 @@ function AddLocationDialog({
           {/* Detection Results */}
           {detected && (
             <div className="mt-4 space-y-3">
-              <div className={`p-4 rounded-lg border ${detected.isCaliforniaLocation ? 'border-green-200 bg-green-50' : 'border-gray-200 bg-gray-50'}`}>
+              <div className={`p-4 rounded-xl border ${detected.isCaliforniaLocation ? 'border-green-200 bg-green-50' : 'border-[#1E2D4D]/10 bg-[#FAF7F0]'}`}>
                 <div className="flex items-center gap-2 mb-2">
                   {detected.isCaliforniaLocation ? (
                     <CheckCircle2 className="w-5 h-5 text-green-600" />
                   ) : (
                     <AlertTriangle className="w-5 h-5 text-amber-500" />
                   )}
-                  <span className="text-sm font-bold text-gray-900">
+                  <span className="text-sm font-bold text-[#1E2D4D]">
                     {detected.isCaliforniaLocation ? 'California Location Detected' : 'Non-California Location'}
                   </span>
-                  <span className="ml-auto text-xs text-gray-500">
+                  <span className="ml-auto text-xs text-[#1E2D4D]/50">
                     via {detected.detectionMethod === 'zip' ? 'zip code' : 'state field'}
                   </span>
                 </div>
@@ -537,8 +538,8 @@ function AddLocationDialog({
                 {detected.isCaliforniaLocation && (
                   <>
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-xs text-gray-500">Jurisdiction chain:</span>
-                      <span className="text-xs font-medium text-[#1e4d6b]">
+                      <span className="text-xs text-[#1E2D4D]/50">Jurisdiction chain:</span>
+                      <span className="text-xs font-medium text-[#1E2D4D]">
                         {detected.jurisdictionChain.map(id => {
                           const j = getJurisdiction(id);
                           return j?.name || id;
@@ -548,8 +549,8 @@ function AddLocationDialog({
 
                     {detected.detectedCounty && (
                       <div className="flex items-center gap-2 mb-2">
-                        <MapPin className="w-3.5 h-3.5 text-gray-400" />
-                        <span className="text-xs text-gray-600">
+                        <MapPin className="w-3.5 h-3.5 text-[#1E2D4D]/30" />
+                        <span className="text-xs text-[#1E2D4D]/70">
                           County: <strong>{detected.detectedCounty}</strong>
                         </span>
                       </div>
@@ -569,7 +570,7 @@ function AddLocationDialog({
                       </p>
                       <div className="flex flex-wrap gap-1.5">
                         {detected.regulations.filter(r => r.isActive).slice(0, 6).map(r => (
-                          <span key={r.law.id} className="px-2 py-0.5 text-xs rounded-full bg-green-100 text-green-700 border border-green-200">
+                          <span key={r.law.id} className="px-2 py-0.5 text-xs rounded-full bg-emerald-50 text-emerald-700 border border-green-200">
                             {r.law.billNumber}
                           </span>
                         ))}
@@ -584,7 +585,7 @@ function AddLocationDialog({
                 )}
 
                 {!detected.isCaliforniaLocation && (
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-[#1E2D4D]/70">
                     Federal (FDA Food Code) requirements will be applied. State-specific regulations
                     not available for this location.
                   </p>
@@ -594,10 +595,10 @@ function AddLocationDialog({
           )}
         </div>
 
-        <div className="p-4 sm:p-6 border-t border-gray-100 flex justify-end gap-3">
+        <div className="p-4 sm:p-6 border-t border-[#1E2D4D]/5 flex justify-end gap-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+            className="px-4 py-2 text-sm font-medium text-[#1E2D4D]/80 border border-[#1E2D4D]/15 rounded-xl hover:bg-[#FAF7F0]"
           >
             Cancel
           </button>
@@ -605,7 +606,7 @@ function AddLocationDialog({
             onClick={handleAdd}
             disabled={!detected || !selectedCounty}
             className="px-4 py-2 text-sm font-medium text-white rounded-lg disabled:opacity-50"
-            style={{ backgroundColor: '#1e4d6b' }}
+            style={{ backgroundColor: '#1E2D4D' }}
           >
             Add Location
           </button>
@@ -632,12 +633,12 @@ function RegulationToggle({
   const summary = REGULATION_SUMMARIES[regulation.law.id] || regulation.law.description;
 
   return (
-    <div className={`flex items-start gap-3 p-3 rounded-lg border ${
+    <div className={`flex items-start gap-3 p-3 rounded-xl border ${
       enabled
         ? regulation.isActive
           ? 'border-green-200 bg-green-50/50'
           : 'border-amber-200 bg-amber-50/50'
-        : 'border-gray-200 bg-gray-50 opacity-60'
+        : 'border-[#1E2D4D]/10 bg-[#FAF7F0] opacity-60'
     }`}>
       <button
         onClick={onToggle}
@@ -647,7 +648,7 @@ function RegulationToggle({
         {enabled ? (
           <ToggleRight className={`w-6 h-6 ${regulation.isActive ? 'text-green-600' : 'text-amber-600'}`} />
         ) : (
-          <ToggleLeft className="w-6 h-6 text-gray-400" />
+          <ToggleLeft className="w-6 h-6 text-[#1E2D4D]/30" />
         )}
       </button>
       <div className="flex-1 min-w-0">
@@ -655,9 +656,9 @@ function RegulationToggle({
           <span className={`text-xs font-bold ${regulation.isActive ? 'text-green-700' : 'text-amber-700'}`}>
             {regulation.law.billNumber}
           </span>
-          <span className="text-sm font-medium text-gray-900">{regulation.law.name}</span>
+          <span className="text-sm font-medium text-[#1E2D4D]">{regulation.law.name}</span>
           {regulation.isActive ? (
-            <span className="px-1.5 py-0.5 text-xs rounded-full bg-green-100 text-green-700">
+            <span className="px-1.5 py-0.5 text-xs rounded-full bg-emerald-50 text-emerald-700">
               Active
             </span>
           ) : (
@@ -666,9 +667,9 @@ function RegulationToggle({
             </span>
           )}
         </div>
-        <p className="text-xs text-gray-500 mt-0.5">{summary}</p>
+        <p className="text-xs text-[#1E2D4D]/50 mt-0.5">{summary}</p>
         <div className="flex items-center gap-3 mt-1">
-          <span className="text-xs text-gray-400">
+          <span className="text-xs text-[#1E2D4D]/30">
             Effective: {new Date(regulation.law.effectiveDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
           </span>
           {regulation.isUpcoming && regulation.daysUntilEffective > 0 && (
@@ -691,6 +692,7 @@ export function JurisdictionSettings() {
   const navigate = useNavigate();
   const { isDemoMode } = useDemo();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  usePageTitle('Jurisdiction Settings');
   const [expandedLocation, setExpandedLocation] = useState<string | null>(null);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [addedLocations, setAddedLocations] = useState<LocationJurisdictionConfig[]>([]);
@@ -786,22 +788,22 @@ export function JurisdictionSettings() {
       <div className="mt-4 mb-6 flex items-start justify-between flex-wrap gap-2">
         <div>
           <div className="flex items-center gap-2.5">
-            <BookOpen className="w-6 h-6 text-[#1e4d6b]" />
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Know Your Inspector</h1>
-            <span className="px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider" style={{ backgroundColor: '#eef4f8', color: '#1e4d6b', border: '1px solid #b8d4e8' }}>
+            <BookOpen className="w-6 h-6 text-[#1E2D4D]" />
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#1E2D4D]">Know Your Inspector</h1>
+            <span className="px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider" style={{ backgroundColor: '#eef4f8', color: '#1E2D4D', border: '1px solid #b8d4e8' }}>
               Reference
             </span>
           </div>
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="text-sm text-[#1E2D4D]/70 mt-1">
             Your jurisdiction's scoring system, inspector priorities, and violation patterns.
           </p>
         </div>
         <button
           onClick={() => setShowAddDialog(true)}
           className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white rounded-lg min-h-[44px]"
-          style={{ backgroundColor: '#1e4d6b' }}
-          onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
-          onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+          style={{ backgroundColor: '#1E2D4D' }}
+          onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#2A3F6B')}
+          onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
         >
           <Plus className="w-4 h-4" />
           Add Location
@@ -809,12 +811,12 @@ export function JurisdictionSettings() {
       </div>
 
       {/* Auto-Detection Explainer */}
-      <div className="bg-[#eef4f8] rounded-lg p-4 border border-[#b8d4e8] mb-6">
+      <div className="bg-[#eef4f8] rounded-xl p-4 border border-[#b8d4e8] mb-6">
         <div className="flex items-start gap-3">
-          <Zap className="w-5 h-5 text-[#1e4d6b] mt-0.5 flex-shrink-0" />
+          <Zap className="w-5 h-5 text-[#1E2D4D] mt-0.5 flex-shrink-0" />
           <div>
-            <p className="text-sm font-semibold text-gray-900">Jurisdiction Auto-Detection</p>
-            <p className="text-sm text-gray-700 mt-0.5">
+            <p className="text-sm font-semibold text-[#1E2D4D]">Jurisdiction Auto-Detection</p>
+            <p className="text-sm text-[#1E2D4D]/80 mt-0.5">
               When a location is added with a California address or zip code (900xx–961xx), EvidLY automatically
               layers <strong>Federal (FDA/NFPA 2025/OSHA)</strong> + <strong>California state</strong> + <strong>county-specific</strong> requirements.
               County health department, grading system, and inspection frequency are detected from the zip code.
@@ -824,18 +826,18 @@ export function JurisdictionSettings() {
       </div>
 
       {/* Key California Regulations Summary */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 mb-6 overflow-hidden">
-        <div className="p-4 sm:p-5 border-b border-gray-100">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/5 mb-6 overflow-hidden">
+        <div className="p-4 sm:p-5 border-b border-[#1E2D4D]/5">
           <div className="flex items-center gap-2">
             <EvidlyIcon size={20} />
-            <h2 className="text-base sm:text-lg font-bold text-gray-900">California Regulations — Auto-Applied</h2>
+            <h2 className="text-base sm:text-lg font-bold text-[#1E2D4D]">California Regulations — Auto-Applied</h2>
           </div>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-[#1E2D4D]/50 mt-1">
             These regulations are automatically applied to all California locations
           </p>
         </div>
 
-        <div className="divide-y divide-gray-100">
+        <div className="divide-y divide-[#1E2D4D]/5">
           {keyRegulations.map(reg => (
             <div
               key={reg.law.id}
@@ -852,26 +854,26 @@ export function JurisdictionSettings() {
                   <span className={`text-xs font-bold ${reg.isActive ? 'text-green-700' : 'text-amber-700'}`}>
                     {reg.law.billNumber}
                   </span>
-                  <span className="text-sm font-medium text-gray-900">{reg.law.name}</span>
+                  <span className="text-sm font-medium text-[#1E2D4D]">{reg.law.name}</span>
                 </div>
-                <p className="text-xs text-gray-500 mt-0.5">
+                <p className="text-xs text-[#1E2D4D]/50 mt-0.5">
                   {REGULATION_SUMMARIES[reg.law.id] || reg.law.description}
                 </p>
               </div>
 
               {/* Status badge with countdown */}
               {reg.isActive ? (
-                <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-700 whitespace-nowrap">
+                <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-700 whitespace-nowrap">
                   Active
                 </span>
               ) : (
                 <div className="text-right flex-shrink-0">
                   <span className={`px-2.5 py-1 text-xs font-semibold rounded-full whitespace-nowrap ${
                     reg.daysUntilEffective < 90
-                      ? 'bg-red-100 text-red-700'
+                      ? 'bg-red-50 text-red-700'
                       : reg.daysUntilEffective < 180
                       ? 'bg-amber-100 text-amber-700'
-                      : 'bg-blue-100 text-blue-700'
+                      : 'bg-blue-50 text-blue-700'
                   }`}>
                     Upcoming
                   </span>
@@ -891,13 +893,13 @@ export function JurisdictionSettings() {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-green-700">California Labor Code</span>
-                <span className="text-sm font-medium text-gray-900">Minimum Wage $16.90/hour</span>
+                <span className="text-sm font-medium text-[#1E2D4D]">Minimum Wage $16.90/hour</span>
               </div>
-              <p className="text-xs text-gray-500 mt-0.5">
+              <p className="text-xs text-[#1E2D4D]/50 mt-0.5">
                 State rate $16.90/hr, fast food chains (60+ locations) $20/hr, healthcare $18.63/hr
               </p>
             </div>
-            <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-700 whitespace-nowrap">Active</span>
+            <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-700 whitespace-nowrap">Active</span>
           </div>
 
           <div className="px-3 sm:px-5 py-3 flex items-center gap-4 flex-wrap">
@@ -905,51 +907,51 @@ export function JurisdictionSettings() {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-green-700">CalCode §113948</span>
-                <span className="text-sm font-medium text-gray-900">Food Handler Certification within 30 Days</span>
+                <span className="text-sm font-medium text-[#1E2D4D]">Food Handler Certification within 30 Days</span>
               </div>
-              <p className="text-xs text-gray-500 mt-0.5">
+              <p className="text-xs text-[#1E2D4D]/50 mt-0.5">
                 All food employees must obtain certification within 30 days of hire; 3-year renewal
               </p>
             </div>
-            <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-700 whitespace-nowrap">Active</span>
+            <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-700 whitespace-nowrap">Active</span>
           </div>
         </div>
       </div>
 
       {/* Added Locations (from Add Location dialog) */}
       {addedLocations.map(config => (
-        <div key={config.locationId} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-4">
+        <div key={config.locationId} className="bg-white rounded-xl border border-[#1E2D4D]/5 overflow-hidden mb-4">
           <div className="p-4 sm:p-6">
             <div className="flex items-center gap-2 mb-2">
-              <MapPin className="w-5 h-5 text-[#1e4d6b]" />
-              <span className="text-lg font-semibold text-gray-900">{config.locationName}</span>
-              <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-100 text-blue-700">
+              <MapPin className="w-5 h-5 text-[#1E2D4D]" />
+              <span className="text-lg font-semibold tracking-tight text-[#1E2D4D]">{config.locationName}</span>
+              <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-50 text-blue-700">
                 New
               </span>
             </div>
-            <p className="text-sm text-gray-500 ml-7">
+            <p className="text-sm text-[#1E2D4D]/50 ml-7">
               {config.address}{config.address && ', '}{config.city}{config.city && ', '}{config.state} {config.zip}
             </p>
-            <p className="text-xs text-[#1e4d6b] mt-1 ml-7">
+            <p className="text-xs text-[#1E2D4D] mt-1 ml-7">
               {config.jurisdictionChain.map(id => {
                 const j = getJurisdiction(id);
                 return j?.name || id;
               }).join(' → ')}
             </p>
             <div className="flex items-center gap-2 mt-2 ml-7">
-              <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-700">
+              <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-700">
                 Auto-detected
               </span>
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-[#1E2D4D]/50">
                 via {config.detectionMethod === 'zip' ? 'zip code' : 'state field'}
               </span>
             </div>
 
             {config.isCaliforniaLocation && (
               <div className="mt-4">
-                <h3 className="text-sm font-semibold text-gray-800 mb-3">
+                <h3 className="text-sm font-semibold text-[#1E2D4D]/90 mb-3">
                   Regulation Overrides
-                  <span className="ml-2 text-xs font-normal text-gray-500">
+                  <span className="ml-2 text-xs font-normal text-[#1E2D4D]/50">
                     Toggle regulations on/off for this location
                   </span>
                 </h3>
@@ -973,18 +975,18 @@ export function JurisdictionSettings() {
 
       {/* Empty state — live mode with no locations configured */}
       {!isDemoMode && locationProfiles.length === 0 && addedLocations.length === 0 && (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center mb-6">
-          <BookOpen className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-1">Add your first location to configure jurisdiction-specific compliance requirements.</h3>
-          <p className="text-sm text-gray-500 mb-4">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/5 p-8 text-center mb-6">
+          <BookOpen className="w-10 h-10 text-[#1E2D4D]/30 mx-auto mb-3" />
+          <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-1">Add your first location to configure jurisdiction-specific compliance requirements.</h3>
+          <p className="text-sm text-[#1E2D4D]/50 mb-4">
             Once you add a location, EvidLY will auto-detect your county and layer the relevant federal, state, and local requirements.
           </p>
           <button
             onClick={() => setShowAddDialog(true)}
             className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white rounded-lg"
-            style={{ backgroundColor: '#1e4d6b' }}
-            onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
-            onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+            style={{ backgroundColor: '#1E2D4D' }}
+            onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#2A3F6B')}
+            onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
           >
             <Plus className="w-4 h-4" />
             Add Your First Location
@@ -1006,28 +1008,28 @@ export function JurisdictionSettings() {
         return (
           <div
             key={location.locationName}
-            className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-4"
+            className="bg-white rounded-xl border border-[#1E2D4D]/5 overflow-hidden mb-4"
           >
             {/* Card Header */}
             <div className="p-4 sm:p-6 flex items-center justify-between">
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <MapPin className="w-5 h-5 text-[#1e4d6b]" />
-                  <span className="text-lg font-semibold text-gray-900">
+                  <MapPin className="w-5 h-5 text-[#1E2D4D]" />
+                  <span className="text-lg font-semibold tracking-tight text-[#1E2D4D]">
                     {location.locationName}
                   </span>
                 </div>
-                <p className="text-sm text-gray-500 mt-1 ml-7">
+                <p className="text-sm text-[#1E2D4D]/50 mt-1 ml-7">
                   {location.address}, {location.city}, {location.state} {location.zip}
                 </p>
-                <p className="text-xs text-[#1e4d6b] mt-1 ml-7">
+                <p className="text-xs text-[#1E2D4D] mt-1 ml-7">
                   {profile.jurisdictionChainNames.join(' → ')}
                 </p>
                 <div className="flex items-center gap-2 mt-2 ml-7">
-                  <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-700">
+                  <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-700">
                     Auto-configured
                   </span>
-                  <span className="px-2 py-0.5 text-xs rounded-full bg-[#eef4f8] text-[#1e4d6b] border border-[#b8d4e8]">
+                  <span className="px-2 py-0.5 text-xs rounded-full bg-[#eef4f8] text-[#1E2D4D] border border-[#b8d4e8]">
                     CA detected via zip
                   </span>
                 </div>
@@ -1036,19 +1038,19 @@ export function JurisdictionSettings() {
                 onClick={() =>
                   setExpandedLocation(isExpanded ? null : location.locationName)
                 }
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-[#1E2D4D]/5 rounded-lg transition-colors"
               >
                 {isExpanded ? (
-                  <ChevronUp className="w-5 h-5 text-gray-500" />
+                  <ChevronUp className="w-5 h-5 text-[#1E2D4D]/50" />
                 ) : (
-                  <ChevronDown className="w-5 h-5 text-gray-500" />
+                  <ChevronDown className="w-5 h-5 text-[#1E2D4D]/50" />
                 )}
               </button>
             </div>
 
             {/* Expanded Content */}
             {isExpanded && (
-              <div className="border-t border-gray-100">
+              <div className="border-t border-[#1E2D4D]/5">
                 {/* Regulation Overrides */}
                 {demoConfig && (
                   <CollapsibleSection
@@ -1056,7 +1058,7 @@ export function JurisdictionSettings() {
                     title="Applied Regulations"
                     defaultOpen
                     badge={
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-[#1E2D4D]/50">
                         {demoConfig.regulations.filter(r => r.isActive).length} active,{' '}
                         {demoConfig.regulations.filter(r => r.isUpcoming).length} upcoming
                       </span>
@@ -1074,7 +1076,7 @@ export function JurisdictionSettings() {
                           />
                         ))}
                     </div>
-                    <p className="text-xs text-gray-400 italic mt-3">
+                    <p className="text-xs text-[#1E2D4D]/30 italic mt-3">
                       Toggle regulations off to override auto-detection. Changes are saved per-location.
                     </p>
                   </CollapsibleSection>
@@ -1090,7 +1092,7 @@ export function JurisdictionSettings() {
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="text-left text-xs text-gray-500 uppercase tracking-wide border-b border-gray-200">
+                          <tr className="text-left text-xs text-[#1E2D4D]/50 uppercase tracking-wide border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors">
                             <th className="pb-2 pr-4">Food Type / Threshold</th>
                             <th className="pb-2 pr-4">Required Temp</th>
                             <th className="pb-2">Source</th>
@@ -1098,12 +1100,12 @@ export function JurisdictionSettings() {
                         </thead>
                         <tbody>
                           {profile.temperatureThresholds.map((t, i) => (
-                            <tr key={`thresh-${i}`} className={i % 2 === 1 ? 'bg-gray-50' : ''}>
-                              <td className="py-2 pr-4 font-medium text-gray-700">{t.type}</td>
-                              <td className="py-2 pr-4 text-gray-600">
+                            <tr key={`thresh-${i}`} className={i % 2 === 1 ? 'bg-[#FAF7F0]' : ''}>
+                              <td className="py-2 pr-4 font-medium text-[#1E2D4D]/80">{t.type}</td>
+                              <td className="py-2 pr-4 text-[#1E2D4D]/70">
                                 {t.tempF}&deg;F {t.type.toLowerCase().includes('cold') ? 'max' : 'min'}
                               </td>
-                              <td className="py-2 text-gray-400 text-xs">{t.source}</td>
+                              <td className="py-2 text-[#1E2D4D]/30 text-xs">{t.source}</td>
                             </tr>
                           ))}
                           {profile.cookingTemps.map((c, i) => (
@@ -1111,15 +1113,15 @@ export function JurisdictionSettings() {
                               key={`cook-${i}`}
                               className={
                                 (profile.temperatureThresholds.length + i) % 2 === 1
-                                  ? 'bg-gray-50'
+                                  ? 'bg-[#FAF7F0]'
                                   : ''
                               }
                             >
-                              <td className="py-2 pr-4 font-medium text-gray-700">{c.foodType}</td>
-                              <td className="py-2 pr-4 text-gray-600">
+                              <td className="py-2 pr-4 font-medium text-[#1E2D4D]/80">{c.foodType}</td>
+                              <td className="py-2 pr-4 text-[#1E2D4D]/70">
                                 {c.requiredTempF}&deg;F for {c.holdTimeSeconds}s
                               </td>
-                              <td className="py-2 text-gray-400 text-xs">{c.source}</td>
+                              <td className="py-2 text-[#1E2D4D]/30 text-xs">{c.source}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -1130,12 +1132,12 @@ export function JurisdictionSettings() {
                   {/* Cooling Requirements */}
                   {profile.coolingRequirements.length > 0 && (
                     <div className="mt-4">
-                      <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                      <h4 className="text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wide mb-2">
                         Cooling Requirements
                       </h4>
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="text-left text-xs text-gray-500 uppercase tracking-wide border-b border-gray-200">
+                          <tr className="text-left text-xs text-[#1E2D4D]/50 uppercase tracking-wide border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors">
                             <th className="pb-2 pr-4">Stage</th>
                             <th className="pb-2 pr-4">Temperature Range</th>
                             <th className="pb-2">Source</th>
@@ -1143,12 +1145,12 @@ export function JurisdictionSettings() {
                         </thead>
                         <tbody>
                           {profile.coolingRequirements.map((cr, i) => (
-                            <tr key={`cool-${i}`} className={i % 2 === 1 ? 'bg-gray-50' : ''}>
-                              <td className="py-2 pr-4 font-medium text-gray-700">{cr.stage}</td>
-                              <td className="py-2 pr-4 text-gray-600">
+                            <tr key={`cool-${i}`} className={i % 2 === 1 ? 'bg-[#FAF7F0]' : ''}>
+                              <td className="py-2 pr-4 font-medium text-[#1E2D4D]/80">{cr.stage}</td>
+                              <td className="py-2 pr-4 text-[#1E2D4D]/70">
                                 {cr.fromTempF}&deg;F &rarr; {cr.toTempF}&deg;F in {cr.maxHours} hours
                               </td>
-                              <td className="py-2 text-gray-400 text-xs">{cr.source}</td>
+                              <td className="py-2 text-[#1E2D4D]/30 text-xs">{cr.source}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -1163,13 +1165,13 @@ export function JurisdictionSettings() {
                   title="Required Documents"
                 >
                   {locationGaps && (
-                    <p className="text-sm text-gray-600 mb-3">
+                    <p className="text-sm text-[#1E2D4D]/70 mb-3">
                       You have{' '}
-                      <span className="font-semibold text-gray-900">
+                      <span className="font-semibold text-[#1E2D4D]">
                         {locationGaps.totalCompliant}
                       </span>{' '}
                       of{' '}
-                      <span className="font-semibold text-gray-900">
+                      <span className="font-semibold text-[#1E2D4D]">
                         {locationGaps.totalRequired}
                       </span>{' '}
                       required documents on file
@@ -1183,16 +1185,16 @@ export function JurisdictionSettings() {
                       return (
                         <div
                           key={i}
-                          className="flex items-center gap-3 py-2 border-b border-gray-50 last:border-b-0"
+                          className="flex items-center gap-3 py-2 border-b border-[#1E2D4D]/3 last:border-b-0"
                         >
                           {getStatusIcon(status)}
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-800">{doc.name}</p>
-                            <p className="text-xs text-gray-500">
+                            <p className="text-sm font-medium text-[#1E2D4D]/90">{doc.name}</p>
+                            <p className="text-xs text-[#1E2D4D]/50">
                               Renewal: {doc.renewalFrequency}
                             </p>
                           </div>
-                          <span className="text-xs text-gray-400 hidden sm:block">{doc.source}</span>
+                          <span className="text-xs text-[#1E2D4D]/30 hidden sm:block">{doc.source}</span>
                         </div>
                       );
                     })}
@@ -1209,7 +1211,7 @@ export function JurisdictionSettings() {
                       <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                           <thead>
-                            <tr className="text-left text-xs text-gray-500 uppercase tracking-wide border-b border-gray-200">
+                            <tr className="text-left text-xs text-[#1E2D4D]/50 uppercase tracking-wide border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors">
                               <th className="pb-2 pr-4">Certification</th>
                               <th className="pb-2 pr-4">Renewal Period</th>
                               <th className="pb-2 pr-4">Approved Providers</th>
@@ -1218,24 +1220,24 @@ export function JurisdictionSettings() {
                           </thead>
                           <tbody>
                             {profile.certifications.map((cert, i) => (
-                              <tr key={i} className={i % 2 === 1 ? 'bg-gray-50' : ''}>
-                                <td className="py-2 pr-4 font-medium text-gray-700">
+                              <tr key={i} className={i % 2 === 1 ? 'bg-[#FAF7F0]' : ''}>
+                                <td className="py-2 pr-4 font-medium text-[#1E2D4D]/80">
                                   {cert.type}
                                 </td>
-                                <td className="py-2 pr-4 text-gray-600">
+                                <td className="py-2 pr-4 text-[#1E2D4D]/70">
                                   Every {cert.renewalYears} year{cert.renewalYears !== 1 ? 's' : ''}
                                 </td>
-                                <td className="py-2 pr-4 text-gray-600 text-xs">
+                                <td className="py-2 pr-4 text-[#1E2D4D]/70 text-xs">
                                   {cert.approvedProviders?.join(', ') || 'N/A'}
                                 </td>
-                                <td className="py-2 text-gray-400 text-xs">{cert.source}</td>
+                                <td className="py-2 text-[#1E2D4D]/30 text-xs">{cert.source}</td>
                               </tr>
                             ))}
                           </tbody>
                         </table>
                       </div>
                       {locationGaps && locationGaps.gaps.filter(g => g.category === 'certification').length > 0 && (
-                        <div className="mt-3 p-3 bg-red-50 rounded-lg border border-red-100">
+                        <div className="mt-3 p-3 bg-red-50 rounded-xl border border-red-100">
                           <p className="text-xs font-semibold text-red-700 mb-2">Certification Gaps</p>
                           {locationGaps.gaps
                             .filter(g => g.category === 'certification')
@@ -1249,7 +1251,7 @@ export function JurisdictionSettings() {
                       )}
                     </>
                   ) : (
-                    <p className="text-sm text-gray-500 italic">
+                    <p className="text-sm text-[#1E2D4D]/50 italic">
                       No additional certification requirements beyond inherited jurisdictions.
                     </p>
                   )}
@@ -1263,28 +1265,28 @@ export function JurisdictionSettings() {
                   {profile.healthDepartment ? (
                     <div className="space-y-3 text-sm">
                       <div className="flex items-center gap-2">
-                        <span className="text-gray-500 w-40">Expected frequency:</span>
-                        <span className="text-gray-800 font-medium">
+                        <span className="text-[#1E2D4D]/50 w-40">Expected frequency:</span>
+                        <span className="text-[#1E2D4D]/90 font-medium">
                           {profile.healthDepartment.inspectionFrequency}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-gray-500 w-40">Permit renewal:</span>
-                        <span className="text-gray-800 font-medium">
+                        <span className="text-[#1E2D4D]/50 w-40">Permit renewal:</span>
+                        <span className="text-[#1E2D4D]/90 font-medium">
                           {profile.healthDepartment.permitRenewal}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-gray-500 w-40">Last inspection:</span>
-                        <span className="text-gray-800 font-medium">Nov 15, 2025</span>
+                        <span className="text-[#1E2D4D]/50 w-40">Last inspection:</span>
+                        <span className="text-[#1E2D4D]/90 font-medium">Nov 15, 2025</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-gray-500 w-40">Next expected:</span>
-                        <span className="text-gray-800 font-medium">By Nov 2026</span>
+                        <span className="text-[#1E2D4D]/50 w-40">Next expected:</span>
+                        <span className="text-[#1E2D4D]/90 font-medium">By Nov 2026</span>
                       </div>
                     </div>
                   ) : (
-                    <p className="text-sm text-gray-500 italic">
+                    <p className="text-sm text-[#1E2D4D]/50 italic">
                       No local health department data available for this jurisdiction level.
                     </p>
                   )}
@@ -1304,7 +1306,7 @@ export function JurisdictionSettings() {
                         <div className="space-y-4">
                           {/* System type + transparency badge */}
                           <div className="flex items-center gap-3 flex-wrap">
-                            <span className="text-sm text-gray-500">System type:</span>
+                            <span className="text-sm text-[#1E2D4D]/50">System type:</span>
                             <span className={`inline-flex items-center px-2.5 py-0.5 text-xs font-semibold rounded-full border ${getInspectionSystemBadge(inspectionSystem.type).color}`}>
                               {getInspectionSystemBadge(inspectionSystem.type).label}
                             </span>
@@ -1314,26 +1316,26 @@ export function JurisdictionSettings() {
                               </span>
                             )}
                           </div>
-                          <p className="text-sm text-gray-600">{inspectionSystem.details}</p>
+                          <p className="text-sm text-[#1E2D4D]/70">{inspectionSystem.details}</p>
 
                           {/* Grade Ranges */}
                           {inspectionSystem.grades && inspectionSystem.grades.length > 0 && (
                             <div>
-                              <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                              <h4 className="text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wide mb-2">
                                 Grade Ranges
                               </h4>
                               <table className="w-full text-sm">
                                 <thead>
-                                  <tr className="text-left text-xs text-gray-500 uppercase tracking-wide border-b border-gray-200">
+                                  <tr className="text-left text-xs text-[#1E2D4D]/50 uppercase tracking-wide border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors">
                                     <th className="pb-2 pr-4">Grade</th>
                                     <th className="pb-2">Score Range</th>
                                   </tr>
                                 </thead>
                                 <tbody>
                                   {inspectionSystem.grades.map((grade, i) => (
-                                    <tr key={i} className={i % 2 === 1 ? 'bg-gray-50' : ''}>
-                                      <td className="py-2 pr-4 font-medium text-gray-700">{grade.label}</td>
-                                      <td className="py-2 text-gray-600">{grade.range}</td>
+                                    <tr key={i} className={i % 2 === 1 ? 'bg-[#FAF7F0]' : ''}>
+                                      <td className="py-2 pr-4 font-medium text-[#1E2D4D]/80">{grade.label}</td>
+                                      <td className="py-2 text-[#1E2D4D]/70">{grade.range}</td>
                                     </tr>
                                   ))}
                                 </tbody>
@@ -1343,12 +1345,12 @@ export function JurisdictionSettings() {
 
                           {/* A) Point Deductions */}
                           <div>
-                            <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                            <h4 className="text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wide mb-2">
                               Point Deductions
                             </h4>
                             <table className="w-full text-sm">
                               <thead>
-                                <tr className="text-left text-xs text-gray-500 uppercase tracking-wide border-b border-gray-200">
+                                <tr className="text-left text-xs text-[#1E2D4D]/50 uppercase tracking-wide border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors">
                                   <th className="pb-2 pr-4">Violation Severity</th>
                                   <th className="pb-2">Points Deducted</th>
                                 </tr>
@@ -1360,14 +1362,14 @@ export function JurisdictionSettings() {
                                   { label: 'Minor violation', pts: scoringProfile.deductions.minor },
                                   { label: 'Good retail practice', pts: scoringProfile.deductions.good_practice },
                                 ].map((row, i) => (
-                                  <tr key={i} className={i % 2 === 1 ? 'bg-gray-50' : ''}>
-                                    <td className="py-2 pr-4 font-medium text-gray-700">{row.label}</td>
-                                    <td className="py-2 text-gray-600">{row.pts > 0 ? `−${row.pts} pts` : '—'}</td>
+                                  <tr key={i} className={i % 2 === 1 ? 'bg-[#FAF7F0]' : ''}>
+                                    <td className="py-2 pr-4 font-medium text-[#1E2D4D]/80">{row.label}</td>
+                                    <td className="py-2 text-[#1E2D4D]/70">{row.pts > 0 ? `−${row.pts} pts` : '—'}</td>
                                   </tr>
                                 ))}
                               </tbody>
                             </table>
-                            <p className="text-xs text-gray-400 mt-1">
+                            <p className="text-xs text-[#1E2D4D]/30 mt-1">
                               Starting score: {scoringProfile.startingScore} · County: {scoringProfile.countyName}
                             </p>
                           </div>
@@ -1375,7 +1377,7 @@ export function JurisdictionSettings() {
                           {/* B) Traffic Light Mapping */}
                           {jData.food?.trafficLightMapping && (
                             <div>
-                              <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                              <h4 className="text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wide mb-2">
                                 Inspection Outcome Indicators
                               </h4>
                               <div className="space-y-2">
@@ -1386,11 +1388,11 @@ export function JurisdictionSettings() {
                                 ]).map(({ key, color, borderColor, bgColor }) => {
                                   const mapping = jData.food!.trafficLightMapping![key];
                                   return (
-                                    <div key={key} className={`flex items-start gap-3 p-2.5 rounded-lg border ${borderColor} ${bgColor}`}>
+                                    <div key={key} className={`flex items-start gap-3 p-2.5 rounded-xl border ${borderColor} ${bgColor}`}>
                                       <div className={`w-3 h-3 rounded-full mt-0.5 flex-shrink-0 ${color}`} />
                                       <div>
-                                        <span className="text-sm font-semibold text-gray-800">{mapping.label}</span>
-                                        <p className="text-xs text-gray-600 mt-0.5">{mapping.condition}</p>
+                                        <span className="text-sm font-semibold text-[#1E2D4D]/90">{mapping.label}</span>
+                                        <p className="text-xs text-[#1E2D4D]/70 mt-0.5">{mapping.condition}</p>
                                       </div>
                                     </div>
                                   );
@@ -1402,7 +1404,7 @@ export function JurisdictionSettings() {
                           {/* C) Closure & Re-inspection Policy */}
                           {(jData.food?.closureTrigger || jData.food?.reinspectionPolicy) && (
                             <div>
-                              <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                              <h4 className="text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wide mb-2">
                                 Closure Triggers &amp; Re-inspection
                               </h4>
                               <div className="space-y-2 text-sm">
@@ -1410,8 +1412,8 @@ export function JurisdictionSettings() {
                                   <div className="flex items-start gap-2">
                                     <XCircle className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
                                     <div>
-                                      <span className="font-medium text-gray-700">Closure trigger:</span>{' '}
-                                      <span className="text-gray-600">{jData.food.closureTrigger}</span>
+                                      <span className="font-medium text-[#1E2D4D]/80">Closure trigger:</span>{' '}
+                                      <span className="text-[#1E2D4D]/70">{jData.food.closureTrigger}</span>
                                     </div>
                                   </div>
                                 )}
@@ -1419,8 +1421,8 @@ export function JurisdictionSettings() {
                                   <div className="flex items-start gap-2">
                                     <AlertTriangle className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
                                     <div>
-                                      <span className="font-medium text-gray-700">Re-inspection:</span>{' '}
-                                      <span className="text-gray-600">{jData.food.reinspectionPolicy}</span>
+                                      <span className="font-medium text-[#1E2D4D]/80">Re-inspection:</span>{' '}
+                                      <span className="text-[#1E2D4D]/70">{jData.food.reinspectionPolicy}</span>
                                     </div>
                                   </div>
                                 )}
@@ -1430,8 +1432,8 @@ export function JurisdictionSettings() {
 
                           {/* D) Transparency Notes */}
                           {jData.food?.transparencyNotes && (
-                            <div className="p-3 rounded-lg bg-gray-50 border border-gray-200">
-                              <p className="text-xs text-gray-600">
+                            <div className="p-3 rounded-lg bg-[#FAF7F0] border border-[#1E2D4D]/10">
+                              <p className="text-xs text-[#1E2D4D]/70">
                                 <strong>Transparency:</strong> {jData.food.transparencyNotes}
                               </p>
                             </div>
@@ -1440,14 +1442,14 @@ export function JurisdictionSettings() {
                           {/* E) NFPA Adoption (facility safety) */}
                           {jData.fire?.nfpaAdoption && (
                             <div className="p-3 rounded-lg bg-orange-50 border border-orange-200">
-                              <p className="text-xs text-gray-700">
+                              <p className="text-xs text-[#1E2D4D]/80">
                                 <strong>NFPA 96 Adoption:</strong> {jData.fire.nfpaAdoption}
                               </p>
                             </div>
                           )}
                         </div>
                       ) : (
-                        <p className="text-sm text-gray-500 italic">
+                        <p className="text-sm text-[#1E2D4D]/50 italic">
                           No inspection grading system data available for this jurisdiction level.
                         </p>
                       )}
@@ -1464,7 +1466,7 @@ export function JurisdictionSettings() {
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="text-left text-xs text-gray-500 uppercase tracking-wide border-b border-gray-200">
+                          <tr className="text-left text-xs text-[#1E2D4D]/50 uppercase tracking-wide border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors">
                             <th className="pb-2 pr-4">Service</th>
                             <th className="pb-2 pr-4">Frequency</th>
                             <th className="pb-2 pr-4">Condition</th>
@@ -1473,20 +1475,20 @@ export function JurisdictionSettings() {
                         </thead>
                         <tbody>
                           {profile.serviceFrequencies.map((svc, i) => (
-                            <tr key={i} className={i % 2 === 1 ? 'bg-gray-50' : ''}>
-                              <td className="py-2 pr-4 font-medium text-gray-700">{svc.service}</td>
-                              <td className="py-2 pr-4 text-gray-600">{svc.frequencyLabel}</td>
-                              <td className="py-2 pr-4 text-gray-500 text-xs">
+                            <tr key={i} className={i % 2 === 1 ? 'bg-[#FAF7F0]' : ''}>
+                              <td className="py-2 pr-4 font-medium text-[#1E2D4D]/80">{svc.service}</td>
+                              <td className="py-2 pr-4 text-[#1E2D4D]/70">{svc.frequencyLabel}</td>
+                              <td className="py-2 pr-4 text-[#1E2D4D]/50 text-xs">
                                 {svc.condition || '—'}
                               </td>
-                              <td className="py-2 text-gray-400 text-xs">{svc.source}</td>
+                              <td className="py-2 text-[#1E2D4D]/30 text-xs">{svc.source}</td>
                             </tr>
                           ))}
                         </tbody>
                       </table>
                     </div>
                   ) : (
-                    <p className="text-sm text-gray-500 italic">
+                    <p className="text-sm text-[#1E2D4D]/50 italic">
                       No additional service frequency requirements at this jurisdiction level.
                     </p>
                   )}
@@ -1506,30 +1508,30 @@ export function JurisdictionSettings() {
                         return (
                           <div
                             key={i}
-                            className="flex items-center gap-3 py-2 border-b border-gray-50 last:border-b-0"
+                            className="flex items-center gap-3 py-2 border-b border-[#1E2D4D]/3 last:border-b-0"
                           >
                             {getStatusIcon(postingStatus)}
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-gray-800">{posting.name}</p>
+                              <p className="text-sm font-medium text-[#1E2D4D]/90">{posting.name}</p>
                               <div className="flex gap-1.5 mt-1">
                                 {posting.languages.map(lang => (
                                   <span
                                     key={lang}
-                                    className="px-2 py-0.5 text-xs rounded-full bg-[#eef4f8] text-[#1e4d6b] border border-[#b8d4e8]"
+                                    className="px-2 py-0.5 text-xs rounded-full bg-[#eef4f8] text-[#1E2D4D] border border-[#b8d4e8]"
                                   >
                                     {lang}
                                   </span>
                                 ))}
                               </div>
                             </div>
-                            <span className="text-xs text-gray-400 hidden sm:block">
+                            <span className="text-xs text-[#1E2D4D]/30 hidden sm:block">
                               {posting.source}
                             </span>
                           </div>
                         );
                       })}
                       {locationGaps && locationGaps.gaps.filter(g => g.category === 'posting').length > 0 && (
-                        <div className="mt-3 p-3 bg-red-50 rounded-lg border border-red-100">
+                        <div className="mt-3 p-3 bg-red-50 rounded-xl border border-red-100">
                           <p className="text-xs font-semibold text-red-700 mb-2">Posting Gaps</p>
                           {locationGaps.gaps
                             .filter(g => g.category === 'posting')
@@ -1543,7 +1545,7 @@ export function JurisdictionSettings() {
                       )}
                     </div>
                   ) : (
-                    <p className="text-sm text-gray-500 italic">
+                    <p className="text-sm text-[#1E2D4D]/50 italic">
                       No additional posting requirements at this jurisdiction level.
                     </p>
                   )}
@@ -1556,44 +1558,44 @@ export function JurisdictionSettings() {
                 >
                   {profile.healthDepartment ? (
                     <div className="space-y-3 text-sm">
-                      <p className="font-semibold text-gray-900">
+                      <p className="font-semibold text-[#1E2D4D]">
                         {profile.healthDepartment.name}
                       </p>
                       <div className="flex items-center gap-2">
-                        <Phone className="w-4 h-4 text-gray-400" />
+                        <Phone className="w-4 h-4 text-[#1E2D4D]/30" />
                         <a
                           href={`tel:${profile.healthDepartment.phone}`}
-                          className="text-[#1e4d6b] hover:underline"
+                          className="text-[#1E2D4D] hover:underline"
                         >
                           {profile.healthDepartment.phone}
                         </a>
                       </div>
                       <div className="flex items-center gap-2">
-                        <ExternalLink className="w-4 h-4 text-gray-400" />
+                        <ExternalLink className="w-4 h-4 text-[#1E2D4D]/30" />
                         <a
                           href={profile.healthDepartment.website}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[#1e4d6b] hover:underline"
+                          className="text-[#1E2D4D] hover:underline"
                         >
                           {profile.healthDepartment.website}
                         </a>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-gray-500">Inspection frequency:</span>
-                        <span className="text-gray-800">
+                        <span className="text-[#1E2D4D]/50">Inspection frequency:</span>
+                        <span className="text-[#1E2D4D]/90">
                           {profile.healthDepartment.inspectionFrequency}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-gray-500">Permit renewal:</span>
-                        <span className="text-gray-800">
+                        <span className="text-[#1E2D4D]/50">Permit renewal:</span>
+                        <span className="text-[#1E2D4D]/90">
                           {profile.healthDepartment.permitRenewal}
                         </span>
                       </div>
                     </div>
                   ) : (
-                    <p className="text-sm text-gray-500 italic">
+                    <p className="text-sm text-[#1E2D4D]/50 italic">
                       Health department contact not available at this jurisdiction level. Check the
                       county or city jurisdiction for local contact information.
                     </p>
@@ -1612,20 +1614,20 @@ export function JurisdictionSettings() {
                       return (
                         <div
                           key={law.id}
-                          className="p-3 rounded-lg border border-gray-200 bg-gray-50"
+                          className="p-3 rounded-xl border border-[#1E2D4D]/10 bg-[#FAF7F0]"
                         >
                           <div className="flex items-start gap-2 flex-wrap">
                             <span className={`inline-flex items-center px-2 py-0.5 text-xs font-semibold rounded border ${billColor}`}>
                               {law.billNumber}
                             </span>
-                            <span className="text-sm font-semibold text-gray-900 flex-1">
+                            <span className="text-sm font-semibold text-[#1E2D4D] flex-1">
                               {law.name}
                             </span>
                             <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full ${statusBadge.color}`}>
                               {statusBadge.label}
                             </span>
                           </div>
-                          <p className="text-xs text-gray-500 mt-1">
+                          <p className="text-xs text-[#1E2D4D]/50 mt-1">
                             Effective: {new Date(law.effectiveDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                           </p>
                           <div className="mt-1.5">
@@ -1634,7 +1636,7 @@ export function JurisdictionSettings() {
                         </div>
                       );
                     })}
-                    <p className="text-xs text-gray-400 italic mt-2">
+                    <p className="text-xs text-[#1E2D4D]/30 italic mt-2">
                       Laws filtered based on your business type and size. Contact support to update.
                     </p>
                   </div>
@@ -1648,17 +1650,17 @@ export function JurisdictionSettings() {
                   {minimumWage ? (
                     <div className="space-y-4">
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <div className="p-3 rounded-lg border border-gray-200 bg-gray-50">
-                          <p className="text-xs text-gray-500 uppercase tracking-wide font-semibold">General Rate</p>
-                          <p className="text-2xl font-bold text-gray-900 mt-1">
+                        <div className="p-3 rounded-xl border border-[#1E2D4D]/10 bg-[#FAF7F0]">
+                          <p className="text-xs text-[#1E2D4D]/50 uppercase tracking-wide font-semibold">General Rate</p>
+                          <p className="text-2xl font-bold tracking-tight text-[#1E2D4D] mt-1">
                             ${minimumWage.general.toFixed(2)}
-                            <span className="text-sm font-normal text-gray-500">/hr</span>
+                            <span className="text-sm font-normal text-[#1E2D4D]/50">/hr</span>
                           </p>
                         </div>
                         {minimumWage.fastFood && (
-                          <div className="p-3 rounded-lg border border-amber-200 bg-amber-50">
+                          <div className="p-3 rounded-xl border border-amber-200 bg-amber-50">
                             <p className="text-xs text-amber-700 uppercase tracking-wide font-semibold">Fast Food Rate</p>
-                            <p className="text-2xl font-bold text-amber-900 mt-1">
+                            <p className="text-2xl font-bold tracking-tight text-amber-900 mt-1">
                               ${minimumWage.fastFood.toFixed(2)}
                               <span className="text-sm font-normal text-amber-600">/hr</span>
                             </p>
@@ -1666,9 +1668,9 @@ export function JurisdictionSettings() {
                           </div>
                         )}
                         {minimumWage.healthcare && (
-                          <div className="p-3 rounded-lg border border-blue-200 bg-blue-50">
+                          <div className="p-3 rounded-xl border border-blue-200 bg-blue-50">
                             <p className="text-xs text-blue-700 uppercase tracking-wide font-semibold">Healthcare Rate</p>
-                            <p className="text-2xl font-bold text-blue-900 mt-1">
+                            <p className="text-2xl font-bold tracking-tight text-blue-900 mt-1">
                               ${minimumWage.healthcare.toFixed(2)}
                               <span className="text-sm font-normal text-blue-600">/hr</span>
                             </p>
@@ -1676,15 +1678,15 @@ export function JurisdictionSettings() {
                           </div>
                         )}
                       </div>
-                      <div className="flex items-center gap-2 text-xs text-gray-500">
+                      <div className="flex items-center gap-2 text-xs text-[#1E2D4D]/50">
                         <span>Source: {minimumWage.source}</span>
-                        <span className="text-gray-300">|</span>
+                        <span className="text-[#1E2D4D]/30">|</span>
                         <span>
                           Effective: {new Date(minimumWage.effectiveDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                         </span>
                       </div>
                       <div className="p-3 rounded-lg bg-[#eef4f8] border border-[#b8d4e8]">
-                        <p className="text-xs text-gray-600">
+                        <p className="text-xs text-[#1E2D4D]/70">
                           <strong>Note:</strong> Local city minimum wages may be higher than the state rate.
                           Check your city ordinances for applicable local minimum wage requirements.
                           Cities like San Francisco, West Hollywood, and Emeryville have rates above $19/hr.
@@ -1692,26 +1694,26 @@ export function JurisdictionSettings() {
                       </div>
                     </div>
                   ) : (
-                    <p className="text-sm text-gray-500 italic">
+                    <p className="text-sm text-[#1E2D4D]/50 italic">
                       Minimum wage data not available for this jurisdiction.
                     </p>
                   )}
                 </CollapsibleSection>
 
                 {/* Override Controls */}
-                <div className="px-3 sm:px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between flex-wrap gap-3">
+                <div className="px-3 sm:px-6 py-4 bg-[#FAF7F0] border-t border-[#1E2D4D]/5 flex items-center justify-between flex-wrap gap-3">
                   <div className="flex items-center gap-3">
                     <button
                       onClick={() =>
                         toast.info('Override available for Management roles')
                       }
-                      className="px-3 py-1.5 text-xs border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-600"
+                      className="px-3 py-1.5 text-xs border border-[#1E2D4D]/15 rounded-xl hover:bg-[#FAF7F0] text-[#1E2D4D]/70"
                     >
                       Override
                     </button>
                     <button
                       onClick={() => guardAction('reset', 'Jurisdiction Settings', () => toast.info('Reset to Defaults (Demo)'))}
-                      className="px-3 py-1.5 text-xs border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-600 flex items-center gap-1.5"
+                      className="px-3 py-1.5 text-xs border border-[#1E2D4D]/15 rounded-xl hover:bg-[#FAF7F0] text-[#1E2D4D]/70 flex items-center gap-1.5"
                     >
                       <RotateCcw className="w-3 h-3" />
                       Reset to Default
@@ -1720,7 +1722,7 @@ export function JurisdictionSettings() {
                   {LOCATION_URL_ID[location.locationName] && (
                     <button
                       onClick={() => navigate(`/scoring-breakdown?location=${LOCATION_URL_ID[location.locationName]}`)}
-                      className="text-xs font-medium text-[#1e4d6b] hover:text-[#163a52] flex items-center gap-1 transition-colors"
+                      className="text-xs font-medium text-[#1E2D4D] hover:text-[#141E33] flex items-center gap-1 transition-colors"
                     >
                       View scoring breakdown
                       <ArrowRight className="w-3 h-3" />
@@ -1735,7 +1737,7 @@ export function JurisdictionSettings() {
 
       {/* Compliance Gap Analysis Section */}
       <div className="mt-8">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">Compliance Gap Analysis</h2>
+        <h2 className="text-xl font-bold text-[#1E2D4D] mb-4">Compliance Gap Analysis</h2>
 
         {complianceGaps.map(locationGap => {
           const pct = Math.round(
@@ -1746,18 +1748,18 @@ export function JurisdictionSettings() {
           return (
             <div
               key={locationGap.locationName}
-              className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 mb-4"
+              className="bg-white rounded-xl border border-[#1E2D4D]/5 p-4 sm:p-6 mb-4"
             >
               {/* Summary */}
               <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
-                <h3 className="text-sm font-semibold text-gray-900">
+                <h3 className="text-sm font-semibold text-[#1E2D4D]">
                   {locationGap.locationName}
                 </h3>
-                <span className="text-sm font-bold text-gray-700">
+                <span className="text-sm font-bold text-[#1E2D4D]/80">
                   {locationGap.totalCompliant} / {locationGap.totalRequired} &mdash; {pct}%
                 </span>
               </div>
-              <div className="bg-gray-200 rounded-full h-2 mb-4">
+              <div className="bg-[#1E2D4D]/8 rounded-full h-2 mb-4">
                 <div
                   className={`${barColor} rounded-full h-2 transition-all`}
                   style={{ width: `${pct}%` }}
@@ -1770,16 +1772,16 @@ export function JurisdictionSettings() {
                   {locationGap.gaps.map((gap, i) => (
                     <div
                       key={i}
-                      className="flex items-center gap-3 py-2 px-3 rounded-lg bg-gray-50"
+                      className="flex items-center gap-3 py-2 px-3 rounded-lg bg-[#FAF7F0]"
                     >
                       {getStatusIcon(gap.status)}
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-800">{gap.item}</p>
-                        <p className="text-xs text-gray-500">{gap.detail}</p>
+                        <p className="text-sm font-medium text-[#1E2D4D]/90">{gap.item}</p>
+                        <p className="text-xs text-[#1E2D4D]/50">{gap.detail}</p>
                       </div>
                       <button
                         onClick={() => guardAction('action', 'Jurisdiction Settings', () => toast.info(`${gap.action || 'Action'} (Demo)`))}
-                        className="px-3 py-1 text-xs font-medium text-[#1e4d6b] border border-[#b8d4e8] rounded-lg hover:bg-[#eef4f8] whitespace-nowrap"
+                        className="px-3 py-1 text-xs font-medium text-[#1E2D4D] border border-[#b8d4e8] rounded-xl hover:bg-[#eef4f8] whitespace-nowrap"
                       >
                         {getGapActionLabel(gap.category)}
                       </button>
@@ -1802,7 +1804,7 @@ export function JurisdictionSettings() {
       {/* Upcoming Regulatory Changes Timeline */}
       {upcomingLaws.length > 0 && (
         <div className="mt-8">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Upcoming Regulatory Changes</h2>
+          <h2 className="text-xl font-bold text-[#1E2D4D] mb-4">Upcoming Regulatory Changes</h2>
 
           <div className="space-y-3">
             {upcomingLaws.map((law) => {
@@ -1822,7 +1824,7 @@ export function JurisdictionSettings() {
                         <span className={`inline-flex items-center px-2 py-0.5 text-xs font-bold rounded ${urgencyBadge}`}>
                           {daysLeft > 0 ? `${daysLeft} days remaining` : 'Effective now'}
                         </span>
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-[#1E2D4D]/50">
                           {new Date(law.effectiveDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                         </span>
                       </div>
@@ -1830,18 +1832,18 @@ export function JurisdictionSettings() {
                         <span className={`text-xs font-semibold ${urgencyText}`}>
                           {law.billNumber}
                         </span>
-                        <span className="text-sm font-semibold text-gray-900">{law.name}</span>
+                        <span className="text-sm font-semibold text-[#1E2D4D]">{law.name}</span>
                       </div>
-                      <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                      <p className="text-sm text-[#1E2D4D]/70 mt-1 line-clamp-2">
                         {law.description}
                       </p>
                     </div>
                     <button
                       onClick={() => guardAction('plan', 'Jurisdiction Settings', () => toast.info(`Compliance Plan for ${law.billNumber} (Demo)`))}
                       className="px-3 py-1.5 text-xs font-medium text-white rounded-lg whitespace-nowrap"
-                      style={{ backgroundColor: '#1e4d6b' }}
-                      onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
-                      onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+                      style={{ backgroundColor: '#1E2D4D' }}
+                      onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#2A3F6B')}
+                      onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
                     >
                       Prepare Now
                     </button>
@@ -1852,28 +1854,28 @@ export function JurisdictionSettings() {
           </div>
 
           {/* Key Upcoming Dates Summary */}
-          <div className="mt-4 p-4 bg-white rounded-xl shadow-sm border border-gray-100">
-            <h3 className="text-sm font-semibold text-gray-900 mb-3">Key Upcoming Dates</h3>
+          <div className="mt-4 p-4 bg-white rounded-xl border border-[#1E2D4D]/5">
+            <h3 className="text-sm font-semibold text-[#1E2D4D] mb-3">Key Upcoming Dates</h3>
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
-              <div className="p-3 rounded-lg border border-red-200 bg-red-50">
+              <div className="p-3 rounded-xl border border-red-200 bg-red-50">
                 <p className="text-xs font-semibold text-red-700">Apr 1, 2026</p>
-                <p className="text-sm font-medium text-gray-900 mt-0.5">CalCode §114002(a)</p>
-                <p className="text-xs text-gray-600 mt-0.5">CA cooling requirement</p>
+                <p className="text-sm font-medium text-[#1E2D4D] mt-0.5">CalCode §114002(a)</p>
+                <p className="text-xs text-[#1E2D4D]/70 mt-0.5">CA cooling requirement</p>
               </div>
-              <div className="p-3 rounded-lg border border-amber-200 bg-amber-50">
+              <div className="p-3 rounded-xl border border-amber-200 bg-amber-50">
                 <p className="text-xs font-semibold text-amber-700">Jul 1, 2026</p>
-                <p className="text-sm font-medium text-gray-900 mt-0.5">AB 660 &amp; SB 68</p>
-                <p className="text-xs text-gray-600 mt-0.5">Date labels + Allergen disclosure</p>
+                <p className="text-sm font-medium text-[#1E2D4D] mt-0.5">AB 660 &amp; SB 68</p>
+                <p className="text-xs text-[#1E2D4D]/70 mt-0.5">Date labels + Allergen disclosure</p>
               </div>
-              <div className="p-3 rounded-lg border border-blue-200 bg-blue-50">
+              <div className="p-3 rounded-xl border border-blue-200 bg-blue-50">
                 <p className="text-xs font-semibold text-blue-700">Jan 1, 2027</p>
-                <p className="text-sm font-medium text-gray-900 mt-0.5">AB 418</p>
-                <p className="text-xs text-gray-600 mt-0.5">Banned food additives</p>
+                <p className="text-sm font-medium text-[#1E2D4D] mt-0.5">AB 418</p>
+                <p className="text-xs text-[#1E2D4D]/70 mt-0.5">Banned food additives</p>
               </div>
-              <div className="p-3 rounded-lg border border-blue-200 bg-blue-50">
+              <div className="p-3 rounded-xl border border-blue-200 bg-blue-50">
                 <p className="text-xs font-semibold text-blue-700">Dec 31, 2027</p>
-                <p className="text-sm font-medium text-gray-900 mt-0.5">AB 2316</p>
-                <p className="text-xs text-gray-600 mt-0.5">School food synthetic dye ban</p>
+                <p className="text-sm font-medium text-[#1E2D4D] mt-0.5">AB 2316</p>
+                <p className="text-xs text-[#1E2D4D]/70 mt-0.5">School food synthetic dye ban</p>
               </div>
             </div>
           </div>
@@ -1881,17 +1883,17 @@ export function JurisdictionSettings() {
       )}
 
       {/* Onboarding Note */}
-      <div className="bg-[#eef4f8] rounded-lg p-4 border border-[#b8d4e8] mt-6">
+      <div className="bg-[#eef4f8] rounded-xl p-4 border border-[#b8d4e8] mt-6">
         <div className="flex items-start gap-3">
           <EvidlyIcon size={20} className="mt-0.5 flex-shrink-0" />
           <div>
-            <p className="text-sm text-gray-700">
+            <p className="text-sm text-[#1E2D4D]/80">
               <strong>How auto-detection works:</strong> When you add a location with a California zip code (900xx–961xx)
               or state = "CA", EvidLY auto-flags it as a California jurisdiction and layers Federal + State + County requirements.
               County is detected from the zip code to apply the correct health department, grading system, and inspection frequency.
               You can override any regulation from the location's settings.
             </p>
-            <p className="text-xs text-gray-500 mt-2">
+            <p className="text-xs text-[#1E2D4D]/50 mt-2">
               In production, jurisdiction configs are stored per-location in the database with support for manual overrides.
             </p>
           </div>

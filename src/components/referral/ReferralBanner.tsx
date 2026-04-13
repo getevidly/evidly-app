@@ -47,7 +47,7 @@ export const ReferralBanner: React.FC<ReferralBannerProps> = ({
         {/* Left: Impact story */}
         <div style={{ flex: 1, minWidth: '240px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-            <span style={{ fontSize: '20px' }}>🍽️</span>
+            <span className="text-xl">🍽️</span>
             <span style={{
               fontFamily: "system-ui, -apple-system, 'Segoe UI', sans-serif",
               fontSize: '16px',

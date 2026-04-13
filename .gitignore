@@ -32,6 +32,14 @@ test-results/
 coverage/
 .env.test
 
+# UI simulation screenshots (52MB+)
+screenshots/
+ui-simulation-report.json
+
+# Temp fix scripts
+ui-fix-*.cjs
+ui-crawl*.cjs
+
 # Sanity Studio
 studio/node_modules
 studio/dist

@@ -10,10 +10,10 @@ function MetricCard({ icon, label, value, subtext, color }: { icon: React.ReactN
   return (
     <div className="rounded-xl border p-4" style={{ backgroundColor: '#FFFFFF', borderColor: '#D1D9E6', boxShadow: '0 1px 3px rgba(11,22,40,.06)' }}>
       <div className="flex items-center gap-2 mb-2">
-        <span style={{ color: color || '#1e4d6b' }}>{icon}</span>
+        <span style={{ color: color || '#1E2D4D' }}>{icon}</span>
         <span className="text-xs font-medium" style={{ color: '#6B7F96' }}>{label}</span>
       </div>
-      <p className="text-2xl font-bold" style={{ color: color || '#0B1628' }}>{value}</p>
+      <p className="text-2xl font-bold tracking-tight" style={{ color: color || '#0B1628' }}>{value}</p>
       {subtext && <p className="text-xs mt-1" style={{ color: '#6B7F96' }}>{subtext}</p>}
     </div>
   );
@@ -30,7 +30,7 @@ function MiniBar({ values, max, color }: { values: number[]; max: number; color:
             style={{ height: `${Math.max(4, (v / max) * 100)}%`, backgroundColor: color, minHeight: 4 }}
             title={String(v)}
           />
-          <span className="text-[10px]" style={{ color: '#6B7F96' }}>W{i + 1}</span>
+          <span className="text-xs" style={{ color: '#6B7F96' }}>W{i + 1}</span>
         </div>
       ))}
     </div>
@@ -50,14 +50,14 @@ export function EmployeePerformance({ performance: perf, name }: EmployeePerform
         <MetricCard icon={<Clock className="w-4 h-4" />} label="On-Time Rate" value={`${perf.onTimeRate}%`} color={perf.onTimeRate >= 95 ? '#16a34a' : perf.onTimeRate >= 85 ? '#d97706' : '#dc2626'} />
         <MetricCard icon={<AlertTriangle className="w-4 h-4" />} label="Deficiencies Documented" value={perf.deficienciesDocumented} color="#d97706" />
         <MetricCard icon={<ThumbsUp className="w-4 h-4" />} label="Customer Compliments" value={perf.customerCompliments} color="#16a34a" />
-        <MetricCard icon={<TrendingUp className="w-4 h-4" />} label="Points Earned" value={perf.pointsEarned.toLocaleString()} color="#1e4d6b" subtext={`#${perf.leaderboardPosition} on leaderboard`} />
+        <MetricCard icon={<TrendingUp className="w-4 h-4" />} label="Points Earned" value={perf.pointsEarned.toLocaleString()} color="#1E2D4D" subtext={`#${perf.leaderboardPosition} on leaderboard`} />
       </div>
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <div className="rounded-xl border p-5" style={{ backgroundColor: '#FFFFFF', borderColor: '#D1D9E6', boxShadow: '0 1px 3px rgba(11,22,40,.06)' }}>
           <h4 className="text-sm font-semibold mb-3" style={{ color: '#0B1628' }}>Jobs per Week (Last 8 Weeks)</h4>
-          <MiniBar values={perf.weeklyJobs} max={maxJobs} color="#1e4d6b" />
+          <MiniBar values={perf.weeklyJobs} max={maxJobs} color="#1E2D4D" />
         </div>
         <div className="rounded-xl border p-5" style={{ backgroundColor: '#FFFFFF', borderColor: '#D1D9E6', boxShadow: '0 1px 3px rgba(11,22,40,.06)' }}>
           <h4 className="text-sm font-semibold mb-3" style={{ color: '#0B1628' }}>QA Scores (Last 8 Weeks)</h4>

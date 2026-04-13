@@ -27,13 +27,13 @@ const C = {
   goldD:    "#8A7748",
   white:    "#FFFFFF",
   cream:    "#F8F7F4",
-  g1:       "#f5f5f4",
-  g2:       "#e7e5e4",
-  g3:       "#d6d3d1",
-  g4:       "#a8a29e",
-  g5:       "#78716c",
-  g6:       "#57534e",
-  g8:       "#1c1917",
+  g1:       "#FAF7F0",
+  g2:       "rgba(30,45,77,0.12)",
+  g3:       "rgba(30,45,77,0.18)",
+  g4:       "rgba(30,45,77,0.35)",
+  g5:       "rgba(30,45,77,0.55)",
+  g6:       "rgba(30,45,77,0.65)",
+  g8:       "#1E2D4D",
   green:    "#16a34a",
   greenBg:  "#f0fdf4",
   red:      "#dc2626",
@@ -643,11 +643,11 @@ function CoverageSection() {
         <div style={{ textAlign: "center", marginBottom: 52 }}>
           <Eyebrow>What's Covered</Eyebrow>
           <h2 style={{ fontSize: "clamp(1.5rem, 4vw, 2.2rem)", fontWeight: 800, color: C.navy, margin: "0 0 12px", fontFamily: FF_HEAD, letterSpacing: "-0.03em" }}>Food safety and facility safety.<br />One platform.</h2>
-          <p style={{ fontSize: "0.92rem", color: C.g5, maxWidth: 460, margin: "0 auto", fontFamily: FF_SANS, lineHeight: 1.75 }}>Most platforms cover one or the other. EvidLY covers both — scored against your county, not a generic national checklist.</p>
+          <p style={{ fontSize: "0.92rem", color: C.g5, maxWidth: 460, margin: "0 auto", fontFamily: FF_SANS, lineHeight: 1.75 }}>EvidLY shows you what your county expects for food safety and fire safety. Both authorities. Mapped to your specific county. So the ordinary is handled — and you're free to build as high as you want.</p>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
           {pillars.map((p, i) => (
-            <div key={p.label} className={`card-lift reveal reveal-d${i+1}`} style={{ background: C.white, borderRadius: 18, padding: "34px 28px", border: `1px solid ${C.g2}`, borderTop: `4px solid ${p.color}` }}>
+            <div key={p.label} className={`card-lift reveal reveal-d${i+1}`} style={{ background: C.white, borderRadius: 18, padding: "34px 28px", border: '1px solid rgba(160,140,90,0.3)' }}>
               <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 22 }}>
                 <span style={{ fontSize: "1.4rem" }}>{p.icon}</span>
                 <h3 style={{ fontSize: "1.1rem", fontWeight: 800, color: p.color, margin: 0, fontFamily: FF_HEAD, letterSpacing: "-0.02em" }}>{p.label}</h3>
@@ -691,7 +691,7 @@ function IntelligenceSection({ onTour }) {
     {
       icon: "✅", label: "Always Ready", startingState: "Operations Challenged",
       color: "#166534", bg: "#f0fdf4", bd: "#86efac", tx: "#14532d",
-      headline: "Documentation gaps always surface at the worst possible moment.",
+      headline: "Documentation gaps always show up at the worst possible moment.",
       points: ["Missing vendor records block your ability to prove due diligence", "Unscheduled equipment downtime from missed calibration logs", "Reinspection window shrinks when corrective actions aren't documented"],
     },
     {
@@ -759,31 +759,39 @@ function IntelligenceSection({ onTour }) {
 // WHO WE ARE
 // ─────────────────────────────────────────────
 function FoundersSection() {
-  const stats = [{ n: "300+", l: "Commercial kitchens per year" }, { n: "20+", l: "Years in enterprise compliance" }, { n: "62", l: "CA jurisdictions mapped" }];
   return (
     <section style={{ padding: "96px 24px", background: C.cream, borderTop: `1px solid ${C.g2}` }}>
-      <div className="reveal" style={{ maxWidth: 880, margin: "0 auto" }}>
-        <div style={{ textAlign: "center", marginBottom: 44 }}>
+      <div className="reveal" style={{ maxWidth: 700, margin: "0 auto", textAlign: "center" }}>
+        <Eyebrow>The Mirror</Eyebrow>
+        <h2 style={{ fontSize: "clamp(1.5rem, 4vw, 2.2rem)", fontWeight: 800, color: C.navy, margin: "0 0 24px", fontFamily: FF_HEAD, letterSpacing: "-0.03em" }}>Every choice you've made has set the standard.</h2>
+        <p style={{ fontSize: "0.94rem", color: C.g6, lineHeight: 1.85, margin: "0 0 18px", fontFamily: FF_SANS }}>The equipment you invested in. The vendors you vetted. The team you built. The kitchen you run — none of it was accidental.</p>
+        <p style={{ fontSize: "0.94rem", color: C.g6, lineHeight: 1.85, margin: "0 0 40px", fontFamily: FF_SANS }}>EvidLY exists because someone who runs a kitchen like yours shouldn't have to wonder whether the ordinary is handled. You should know. That's the whole point.</p>
+        <div style={{ background: C.white, borderRadius: 16, border: `1px solid ${C.g2}`, padding: "30px 36px" }}>
+          <p style={{ fontSize: "1.05rem", fontWeight: 700, color: C.navy, lineHeight: 1.7, margin: 0, fontFamily: FF_HEAD, fontStyle: "italic", letterSpacing: "-0.01em" }}>"The greatest measure of EvidLY isn't what it shows you. It's the confidence you have when the ordinary is already handled."</p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─────────────────────────────────────────────
+// CREDIBILITY / BIO
+// ─────────────────────────────────────────────
+function CredibilitySection() {
+  return (
+    <section style={{ padding: "96px 24px", background: C.white }}>
+      <div className="reveal" style={{ maxWidth: 760, margin: "0 auto" }}>
+        <div style={{ textAlign: "center", marginBottom: 40 }}>
           <Eyebrow>Who Built This</Eyebrow>
-          <h2 style={{ fontSize: "clamp(1.4rem, 4vw, 2rem)", fontWeight: 800, color: C.navy, margin: "0 0 16px", fontFamily: FF_HEAD, letterSpacing: "-0.03em" }}>Built from 300 kitchens a year. Not a whitepaper.</h2>
+          <h2 style={{ fontSize: "clamp(1.4rem, 4vw, 2rem)", fontWeight: 800, color: C.navy, margin: "0 0 16px", fontFamily: FF_HEAD, letterSpacing: "-0.03em" }}>This didn't come from a boardroom.</h2>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24, marginBottom: 32 }}>
-          <div className="card-lift reveal reveal-d1" style={{ background: C.white, borderRadius: 18, padding: "30px 26px", border: `1px solid ${C.g2}`, borderTop: `4px solid ${C.navy}` }}>
-            <p style={{ fontSize: "0.88rem", color: C.g6, lineHeight: 1.8, margin: 0, fontFamily: FF_SANS }}>We're in over <strong>300 commercial kitchens every year</strong> — including Aramark's seven locations at Yosemite National Park, Cintas, and the largest operators across California's Central Valley. EvidLY was built from what we see on the ground every day.</p>
-          </div>
-          <div className="card-lift reveal reveal-d2" style={{ background: C.white, borderRadius: 18, padding: "30px 26px", border: `1px solid ${C.g2}`, borderTop: `4px solid ${C.gold}` }}>
-            <p style={{ fontSize: "0.88rem", color: C.g6, lineHeight: 1.8, margin: 0, fontFamily: FF_SANS }}>The compliance frameworks behind EvidLY come from two decades of enterprise security and regulatory consulting — for Blue Cross, Kaiser, the NFL, the State of Tennessee, and organizations that cannot afford to get it wrong. That's the standard we hold ourselves to.</p>
-          </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+          <p style={{ fontSize: "0.92rem", color: C.g6, lineHeight: 1.85, margin: 0, fontFamily: FF_SANS }}>Arthur Haggerty spent 25 years in enterprise IT and cybersecurity — consulting for Deloitte, Cisco, and Dell Technologies, serving clients like American Airlines, Boeing, Burger King, Chase, Netflix, and the NFL. He holds a Master's in Information Technology and is a United States Air Force veteran.</p>
+          <p style={{ fontSize: "0.92rem", color: C.g6, lineHeight: 1.85, margin: 0, fontFamily: FF_SANS }}>Then he built Cleaning Pros Plus from the ground up. IKECA certified. CECS. CESI in progress. PECT. Over 300 commercial kitchen exhaust systems cleaned every year. Clients include Cintas, Aramark, and Yosemite National Park — three separate accounts, three different standards, all met.</p>
+          <p style={{ fontSize: "0.92rem", color: C.g6, lineHeight: 1.85, margin: 0, fontFamily: FF_SANS }}>EvidLY was built by someone who's cleaned the hoods and read the code. We didn't guess what kitchen leaders need — we've been standing in the kitchen next to them for years.</p>
         </div>
-        <div className="reveal reveal-d3" style={{ display: "flex", gap: 0, justifyContent: "center", flexWrap: "wrap", borderRadius: 16, overflow: "hidden", border: `1px solid ${C.g2}` }}>
-          {stats.map((s, i) => (
-            <div key={i} style={{ flex: "1 1 180px", padding: "26px 22px", textAlign: "center", background: C.white, borderLeft: i > 0 ? `1px solid ${C.g2}` : "none" }}>
-              <div style={{ fontSize: "1.8rem", fontWeight: 500, color: C.navy, lineHeight: 1, fontFamily: FF_MONO, letterSpacing: "-0.02em" }}>
-                <AnimatedCounter end={parseInt(s.n)} suffix={s.n.replace(/\d/g, "")} duration={2000} />
-              </div>
-              <div style={{ fontSize: "0.72rem", color: C.g4, marginTop: 6, textTransform: "uppercase", letterSpacing: "0.08em", fontFamily: FF_SANS }}>{s.l}</div>
-            </div>
-          ))}
+        <div style={{ textAlign: "center", marginTop: 36 }}>
+          <p style={{ fontSize: "1rem", fontWeight: 700, color: C.navy, fontFamily: FF_HEAD, fontStyle: "italic", letterSpacing: "-0.01em" }}>"Cleaning Pros Plus is the hands. EvidLY is the eyes."</p>
         </div>
       </div>
     </section>
@@ -1153,6 +1161,7 @@ export default function LandingPage() {
       <CoverageSection />
       <IntelligenceSection onTour={openTour} />
       <FoundersSection />
+      <CredibilitySection />
       <PricingSection onTour={openTour} onIRR={openIRR} />
       <IRRSection     onIRR={openIRR} />
       <FinalCTA       onTour={openTour} onIRR={openIRR} />

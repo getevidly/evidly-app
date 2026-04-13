@@ -1,8 +1,8 @@
 import { useRef } from 'react';
 import { MigrationWizard } from '../components/migration/MigrationWizard';
 
-const PRIMARY = '#1e4d6b';
-const GOLD = '#d4af37';
+const PRIMARY = '#1E2D4D';
+const GOLD = '#A08C5A';
 const NAVY = '#1E2D4D';
 const MUTED_GOLD = '#A08C5A';
 const CREAM = '#FAF7F0';
@@ -73,7 +73,7 @@ const timelineSteps = [
     day: 'Day 30',
     title: 'Patterns emerge',
     description:
-      'Temperature trends, equipment reliability, and staff compliance patterns surface. You see your kitchen clearly for the first time.',
+      'Temperature trends, equipment reliability, and staff compliance patterns emerge. You see your kitchen clearly for the first time.',
   },
   {
     day: 'Day 90',
@@ -117,7 +117,7 @@ export function VendorMigration() {
           <p className="text-2xl md:text-3xl font-medium mb-6" style={{ color: GOLD }}>
             Your kitchen deserves better.
           </p>
-          <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto mb-10 leading-relaxed">
+          <p className="text-lg md:text-xl text-[#1E2D4D]/30 max-w-3xl mx-auto mb-10 leading-relaxed">
             Import your entire compliance history from Zenput, Squadle, ComplianceMate, and CSV.
             No data left behind. No gaps in your record. No hardware to ship back.
           </p>
@@ -144,7 +144,7 @@ export function VendorMigration() {
 
           <button
             onClick={scrollToWizard}
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-lg text-lg font-semibold text-white transition-all hover:scale-105 hover:shadow-lg"
+            className="inline-flex items-center gap-2 px-8 py-4 rounded-lg text-lg font-semibold tracking-tight text-white transition-all hover:scale-105 hover:shadow-lg"
             style={{ background: GOLD }}
           >
             Start My Migration
@@ -162,7 +162,7 @@ export function VendorMigration() {
             <h2 className="text-3xl md:text-4xl font-bold mb-3" style={{ color: NAVY }}>
               Be honest with yourself.
             </h2>
-            <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+            <p className="text-lg text-[#1E2D4D]/50 max-w-2xl mx-auto">
               Your current platform was fine when you started. But your kitchen has grown, and it hasn't kept up.
             </p>
           </div>
@@ -171,7 +171,7 @@ export function VendorMigration() {
             {painCards.map((card) => (
               <div
                 key={card.title}
-                className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+                className="bg-white rounded-xl p-8 border border-[#1E2D4D]/5 hover:shadow-md transition-shadow"
               >
                 <div
                   className="w-14 h-14 rounded-lg flex items-center justify-center mb-5"
@@ -182,7 +182,7 @@ export function VendorMigration() {
                 <h3 className="text-xl font-bold mb-3" style={{ color: NAVY }}>
                   {card.title}
                 </h3>
-                <p className="text-gray-600 leading-relaxed">{card.description}</p>
+                <p className="text-[#1E2D4D]/70 leading-relaxed">{card.description}</p>
               </div>
             ))}
           </div>
@@ -196,12 +196,12 @@ export function VendorMigration() {
             <h2 className="text-3xl md:text-4xl font-bold mb-3" style={{ color: NAVY }}>
               What transfers to EvidLY
             </h2>
-            <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+            <p className="text-lg text-[#1E2D4D]/50 max-w-2xl mx-auto">
               Everything that matters comes with you. We make sure nothing falls through the cracks.
             </p>
           </div>
 
-          <div className="overflow-hidden rounded-xl border border-gray-200">
+          <div className="overflow-hidden rounded-xl border border-[#1E2D4D]/10">
             <table className="w-full">
               <thead>
                 <tr style={{ background: NAVY }}>
@@ -214,9 +214,9 @@ export function VendorMigration() {
                 {transferRows.map((row, i) => (
                   <tr
                     key={row.item}
-                    className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
+                    className={i % 2 === 0 ? 'bg-white' : 'bg-[#FAF7F0]'}
                   >
-                    <td className="px-6 py-4 font-medium text-gray-900">{row.item}</td>
+                    <td className="px-6 py-4 font-medium text-[#1E2D4D]">{row.item}</td>
                     <td className="px-6 py-4 text-center">
                       {row.transfers ? (
                         <span
@@ -238,7 +238,7 @@ export function VendorMigration() {
                         </span>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-gray-500 text-sm hidden sm:table-cell">{row.note}</td>
+                    <td className="px-6 py-4 text-[#1E2D4D]/50 text-sm hidden sm:table-cell">{row.note}</td>
                   </tr>
                 ))}
               </tbody>
@@ -254,7 +254,7 @@ export function VendorMigration() {
             <h2 className="text-3xl md:text-4xl font-bold mb-3" style={{ color: NAVY }}>
               Start your migration
             </h2>
-            <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+            <p className="text-lg text-[#1E2D4D]/50 max-w-2xl mx-auto">
               Four steps. A few minutes. Your entire compliance history, safely transferred.
             </p>
           </div>
@@ -270,7 +270,7 @@ export function VendorMigration() {
             <h2 className="text-3xl md:text-4xl font-bold mb-3" style={{ color: NAVY }}>
               What happens after you switch
             </h2>
-            <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+            <p className="text-lg text-[#1E2D4D]/50 max-w-2xl mx-auto">
               The first 90 days set the foundation. Here is exactly what to expect.
             </p>
           </div>
@@ -309,7 +309,7 @@ export function VendorMigration() {
                     <h3 className="text-xl font-bold mt-1 mb-2" style={{ color: NAVY }}>
                       {step.title}
                     </h3>
-                    <p className="text-gray-600 leading-relaxed">{step.description}</p>
+                    <p className="text-[#1E2D4D]/70 leading-relaxed">{step.description}</p>
                   </div>
                 </div>
               ))}
@@ -327,7 +327,7 @@ export function VendorMigration() {
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Ready to stop settling?
           </h2>
-          <p className="text-lg text-gray-300 mb-10 max-w-xl mx-auto leading-relaxed">
+          <p className="text-lg text-[#1E2D4D]/30 mb-10 max-w-xl mx-auto leading-relaxed">
             Your kitchen runs on precision. Your compliance platform should too.
             Bring your history, leave the headaches behind.
           </p>
@@ -335,7 +335,7 @@ export function VendorMigration() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
               onClick={scrollToWizard}
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-lg text-lg font-semibold text-white transition-all hover:scale-105 hover:shadow-lg"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-lg text-lg font-semibold tracking-tight text-white transition-all hover:scale-105 hover:shadow-lg"
               style={{ background: GOLD }}
             >
               Start My Migration
@@ -346,7 +346,7 @@ export function VendorMigration() {
 
             <a
               href="mailto:arthur@getevidly.com?subject=Migration%20from%20current%20platform"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-lg text-lg font-semibold transition-all hover:scale-105"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-lg text-lg font-semibold tracking-tight transition-all hover:scale-105"
               style={{
                 color: GOLD,
                 border: `2px solid ${GOLD}`,

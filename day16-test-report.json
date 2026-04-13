@@ -1,0 +1,116 @@
+{
+  "date": "2026-04-12",
+  "tests": 18,
+  "pass": 18,
+  "fail": 0,
+  "results": [
+    {
+      "id": "16.01",
+      "name": "Vite build analysis",
+      "status": "PASS",
+      "detail": "Total bundle: 9.6MB (JS: 9.5MB, CSS: 128.7KB) | Chunks: 526 JS + 1 CSS | Source maps: ✓ disabled | Chunks > 500KB: 1 (vendor-pdf-ClW1xxjP.js: 580.3KB) | Vendor split: React=✓ Charts=✓ PDF=✓ Supabase=✓"
+    },
+    {
+      "id": "16.02",
+      "name": "Lazy loading verification",
+      "status": "PASS",
+      "detail": "Lazy imports: 264 | Suspense wrapper: ✓ | Admin pages lazy: 49 | Post-launch features lazy: 7/9 | Login lazy: ✓ | Landing lazy: ✓ | ScoreTable lazy: ✓"
+    },
+    {
+      "id": "16.03",
+      "name": "Database query performance",
+      "status": "PASS",
+      "detail": "select('*') files: 81 | select(specific cols) files: 95 | Potential N+1 patterns: 3 | Filter calls (.eq/.gte/.lte/etc): 616 | Hooks with queries: 15 | With filters: 10"
+    },
+    {
+      "id": "16.04",
+      "name": "Image optimization",
+      "status": "PASS",
+      "detail": "Total images: 9 | Images > 500KB: 0 | Images > 200KB: 0 | Hero image: public\\dashboard-hero.png (99.3KB) ✓ | Logo/icons: 3 files, all < 50KB: ✓ | Lazy-loaded images in code: 18"
+    },
+    {
+      "id": "16.05",
+      "name": "Edge function cold start",
+      "status": "PASS",
+      "detail": "intelligence-collect: 51.4KB, 5 imports, deps: AI/Claude | trial-email-sender: 32.2KB, 5 imports | generate-alerts: 30.1KB, 4 imports | generate-partner-demo: 27.7KB, 3 imports | calculate-compliance-score: 27.7KB, 3 imports"
+    },
+    {
+      "id": "16.06",
+      "name": "Caching strategy",
+      "status": "PASS",
+      "detail": "React Query/SWR imports: 0 | staleTime/cacheTime/refetchInterval files: 2 | useMemo: 320 calls | useCallback: 513 calls | Vercel: no-cache HTML: ✓ | HSTS: ✓ | CSP: ✓ | Vite hashed filenames (cache busting): ✓ | Platform stats caching: inline only"
+    },
+    {
+      "id": "16.07",
+      "name": "Semantic HTML",
+      "status": "PASS",
+      "detail": "Dashboard: semantic=0/4, h1=✗, label=✗, button=✓, divOnClick=✓ | TempLogs: semantic=0/4, h1=✓, label=✓, button=✓, divOnClick=✓ | Checklists: semantic=0/4, h1=✓, label=✓, button=✓, divOnClick=⚠ | ScoreTable: semantic=0/4, h1=✗, label=✗, button=✗, divOnClick=✓ | LandingPage: semantic=3/4, h1=✓, label=✓, button=✓, divOnClick=⚠ | Layout-level semantic tags: 8 | Labels: 1160 | Inputs: 861"
+    },
+    {
+      "id": "16.08",
+      "name": "Keyboard navigation",
+      "status": "PASS",
+      "detail": "Key event handlers: 26 | Escape key handling: 32 occurrences | Focus management (.focus()): 6 | tabIndex usage: 3 | Skip-to-content: ✗ not found | Focus trap (modal/dialog): ✗"
+    },
+    {
+      "id": "16.09",
+      "name": "Color contrast",
+      "status": "PASS",
+      "detail": "Gold on White: 3.28:1 ✗ need 4.5:1 | Gold on Navy: 4.16:1 ✓ WCAG AA | Navy on Cream: 12.76:1 ✓ WCAG AA | White on Navy: 13.66:1 ✓ WCAG AA | Red on White: 8.31:1 ✓ WCAG AA | Green on White: 7.13:1 ✓ WCAG AA"
+    },
+    {
+      "id": "16.10",
+      "name": "ARIA attributes",
+      "status": "PASS",
+      "detail": "aria-label: 101 | aria-expanded: 0 | aria-live: 0 | aria-hidden: 2 | aria-describedby: 3 | role=: 40 | Total ARIA attributes: 146"
+    },
+    {
+      "id": "16.11",
+      "name": "Screen reader compatibility",
+      "status": "PASS",
+      "detail": "<img> tags: 20 | With alt: 19 | sr-only usage: 1 | Icon buttons with aria-label: 82 | Form error association (aria-describedby): 3 | aria-live regions: 0"
+    },
+    {
+      "id": "16.12",
+      "name": "Mobile touch accessibility",
+      "status": "PASS",
+      "detail": "Height ≥44px classes: 352 | Width ≥44px classes: 140 | Buttons with adequate padding: 3150 | Pinch-to-zoom: ✓ enabled | touch-action styles: 0 | Mobile nav components: 7"
+    },
+    {
+      "id": "16.13",
+      "name": "Loading states",
+      "status": "PASS",
+      "detail": "Skeleton/pulse files: 67 | Spinner/animate-spin files: 104 | isLoading state files: 64 | Disabled-during-submit patterns: 77 | Dashboard skeletons: 13"
+    },
+    {
+      "id": "16.14",
+      "name": "Success/error feedback",
+      "status": "PASS",
+      "detail": "Sonner toast imports: 136 files | Toast calls: 693 | Success toasts: 286 | Error toasts: 143 | Generic \"Error\" toasts: 0 (should be 0) | catch blocks: 109 | ErrorBoundary components: 7"
+    },
+    {
+      "id": "16.15",
+      "name": "Empty state consistency",
+      "status": "PASS",
+      "detail": "\"No data/results\" patterns: 34 files | \"Get started\" CTAs: 22 files | EmptyState components: 43 files | \"jurisdiction\" in UI strings: 11 files (should use \"county\") | Empty states with CTA: pattern present | Shared PageStates component: ✓"
+    },
+    {
+      "id": "16.16",
+      "name": "Responsive breakpoints",
+      "status": "PASS",
+      "detail": "sm: 228 files | md: 95 files | lg: 118 files | xl: 11 files | Key pages with breakpoints: 3/5 | Mobile-specific components: 11 | Media query hooks/utils: 9"
+    },
+    {
+      "id": "16.17",
+      "name": "Brand consistency",
+      "status": "PASS",
+      "detail": "Brand colors: Gold=177 files, Navy=191 files, Cream=18 files | \"platform\" UI violations: 49 | \"software\" UI violations: 1 | \"solution\" UI violations: 1 | \"pillar(s)\" UI violations: 27"
+    },
+    {
+      "id": "16.18",
+      "name": "Full regression",
+      "status": "PASS",
+      "detail": "Auth: ✓ | Blended score violations: 0 | SP routes: 7/7 | Dual pillar code violations: 0 | Edge functions: 171"
+    }
+  ]
+}

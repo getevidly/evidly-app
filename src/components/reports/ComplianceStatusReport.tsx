@@ -20,7 +20,7 @@ export function ComplianceStatusReport({ data }: ComplianceStatusProps) {
     <div className="space-y-5">
       {/* Summary */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <ScoreCard label="Total Locations" value={String(locations.length)} icon={Shield} iconColor="#1e4d6b" />
+        <ScoreCard label="Total Locations" value={String(locations.length)} icon={Shield} iconColor="#1E2D4D" />
         <ScoreCard label="Compliant" value={String(locations.filter(l => (Number(l.score) || 0) >= 90).length)} icon={CheckCircle} iconColor="#059669" />
         <ScoreCard label="At Risk" value={String(locations.filter(l => { const s = Number(l.score) || 0; return s >= 70 && s < 90; }).length)} icon={AlertTriangle} iconColor="#D97706" />
         <ScoreCard label="Non-Compliant" value={String(locations.filter(l => (Number(l.score) || 0) < 70).length)} icon={XCircle} iconColor="#DC2626" />
@@ -48,7 +48,7 @@ export function ComplianceStatusReport({ data }: ComplianceStatusProps) {
                   <td className="px-3 py-2" style={{ color: TEXT_TERTIARY }}>{String(loc.facilitySafety || '—')}</td>
                   <td className="px-3 py-2 text-xs" style={{ color: TEXT_TERTIARY }}>{String(loc.lastInspection || '—')}</td>
                   <td className="px-3 py-2">
-                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{
+                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{
                       background: score >= 90 ? '#F0FFF4' : score >= 70 ? '#FFFBEB' : '#FEF2F2',
                       color: sc,
                     }}>

@@ -1,0 +1,85 @@
+═══════════════════════════════════════════
+  DAY 5 — EMPTY STATE AUDIT
+  Every page tested: Does it guide the user when empty?
+═══════════════════════════════════════════
+
+── /insights/inspection-forecast ──
+  Result: PASS
+  Note: No inspection history → InspectionForecastCard shows explanatory empty state with jurisdiction profile CTA. useDemoGuard active.
+
+── /insights/violation-radar ──
+  Result: PASS
+  Note: No risk data → ViolationRadarCard shows "No active risk signals" with explanation of what generates signals (temp deviations, overdue CAs, expired docs, overdue services).
+
+── /insights/trajectory ──
+  Result: PASS
+  Note: No snapshots → ComplianceTrajectoryCard shows "Your Compliance Trajectory builds over time" with guidance on what generates data points.
+
+── /insights/vendor-performance ──
+  Result: PASS
+  Note: No vendors → VendorPerformanceCard shows guidance to connect service vendors and track performance.
+
+── /shift-handoff ──
+  Result: PASS
+  Note: No shift data → Shows shift summary card with 0 counts and guidance to complete opening checklist. useDemoGuard shows sample stats in guided tour.
+
+── /insights/signals ──
+  Result: PASS
+  Note: No signals → JurisdictionSignalFeed shows "Your Signal Feed surfaces regulatory changes, recalls, and enforcement actions that affect your county." Clear and action-oriented.
+
+── /insights/leaderboard ──
+  Result: PASS
+  Note: No team activity → TeamLeaderboardCard shows guidance: "Your Team Leaderboard tracks who is contributing most to food safety." Points explained.
+
+── /insights ──
+  Result: PASS
+  Note: InsightsHub renders cards from sidebarConfig. If no insights items for role → "No insight tools are assigned to your role." Clean empty state.
+
+── /shift-handoff (notes) ──
+  Result: PASS
+  Note: Empty notes field with placeholder text prompting user to leave shift notes. Clear and inviting.
+
+── /tasks (embedded) ──
+  Result: PASS
+  Note: Tasks are embedded in various pages (dashboard, shift handoff). Empty: "No tasks assigned" with guidance.
+
+── /calendar ──
+  Result: FAIL
+  Note: Calendar shows upcoming service dates, document expiries, and task due dates.
+
+── /notifications (bell) ──
+  Result: PASS
+  Note: No notifications → badge hidden (count=0). NotificationPanel shows "All clear" empty state.
+
+── /notifications (panel) ──
+  Result: PASS
+  Note: Empty panel shows "All clear! Notifications appear here when something needs your attention — temperature alerts, expiring documents, and regulatory updates."
+
+── /insights/signals (delivery) ──
+  Result: PASS
+  Note: Signal delivery is admin-controlled via intelligence-approve edge function. No auto-delivery without admin approval.
+
+── /weekly-digest ──
+  Result: PASS
+  Note: Weekly digest is an edge function + email delivery. No standalone page. ai_weekly_digests table logs sent digests.
+
+── /kitchen-to-community ──
+  Result: PASS
+  Note: K2C page always renders mission content. Impact counter shows 0 if no donations. Demo mode shows sample data. Guided tour by design.
+
+── /referrals ──
+  Result: PASS
+  Note: ReferralDashboard uses demo seed data in guided tour. Production: real referral code generation via generateReferralCode(). Empty state shows invite CTA.
+
+── /sb1383 ──
+  Result: PASS
+  Note: SB 1383 page uses demo data in guided tour (approved exception per CLAUDE.md). Empty state shows SB 1383 requirements explanation and "Add Your First Report" CTA.
+
+══════════════════════════════════════════
+  EMPTY STATE VOICE GUIDELINES
+══════════════════════════════════════════
+
+- Warm, confident, action-oriented
+- Never use: "jurisdiction" (say "county"), "operators" (say "you")
+- Never use: "monitor/track" standalone (say "surfaces")
+- Connect every action to the user goal: peace of mind, readiness, confidence

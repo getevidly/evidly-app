@@ -85,7 +85,7 @@ export function EmployeeOverview({ employee, isAdmin, onResendInvite }: Employee
             } />
           </div>
           {isPending && (
-            <button onClick={onResendInvite} className="mt-3 flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border hover:bg-gray-50" style={{ borderColor: '#D1D9E6', color: '#1e4d6b' }}>
+            <button onClick={onResendInvite} className="mt-3 flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl border hover:bg-[#FAF7F0]" style={{ borderColor: '#D1D9E6', color: '#1E2D4D' }}>
               <Send className="w-3.5 h-3.5" /> Resend Invite
             </button>
           )}
@@ -99,7 +99,7 @@ export function EmployeeOverview({ employee, isAdmin, onResendInvite }: Employee
             <Stat label="Jobs All Time" value={perf.jobsAllTime} />
             <Stat label="Jobs This Month" value={perf.jobsThisMonth} />
             <Stat label="Avg QA Score" value={perf.avgQaScore > 0 ? `${perf.avgQaScore}%` : '—'} color={perf.avgQaScore >= 90 ? '#16a34a' : perf.avgQaScore >= 80 ? '#d97706' : undefined} />
-            <Stat label="Points Earned" value={perf.pointsEarned.toLocaleString()} color="#1e4d6b" />
+            <Stat label="Points Earned" value={perf.pointsEarned.toLocaleString()} color="#1E2D4D" />
           </div>
         </Card>
 
@@ -136,7 +136,7 @@ export function EmployeeOverview({ employee, isAdmin, onResendInvite }: Employee
               ))}
               <div className="flex items-center justify-between pt-2 border-t" style={{ borderColor: '#E8EDF5' }}>
                 <span className="text-xs" style={{ color: '#6B7F96' }}>Leaderboard Position</span>
-                <span className="flex items-center gap-1 text-sm font-bold" style={{ color: '#1e4d6b' }}>
+                <span className="flex items-center gap-1 text-sm font-bold" style={{ color: '#1E2D4D' }}>
                   <Award className="w-4 h-4" /> #{perf.leaderboardPosition}
                 </span>
               </div>

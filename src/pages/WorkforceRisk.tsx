@@ -15,8 +15,8 @@ import {
 } from '../data/workforceRiskDemoData';
 
 // ── Brand ─────────────────────────────────────────────────────────
-const NAVY = '#1e4d6b';
-const GOLD = '#d4af37';
+const NAVY = '#1E2D4D';
+const GOLD = '#A08C5A';
 const PURPLE = '#6B21A8';
 const TEXT_SEC = '#6B7F96';
 const BORDER = '#D1D9E6';

@@ -32,7 +32,7 @@ export function JobDetailPanel({ job, onClose, onReschedule, onAssign }: JobDeta
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b" style={{ borderColor: CARD_BORDER }}>
         <h3 className="text-sm font-bold" style={{ color: NAVY }}>Job Details</h3>
-        <button onClick={onClose} className="p-2.5 -m-1 rounded hover:bg-gray-100" aria-label="Close">
+        <button onClick={onClose} className="p-2.5 -m-1 rounded hover:bg-[#1E2D4D]/5" aria-label="Close">
           <X className="w-4 h-4" style={{ color: TEXT_TERTIARY }} />
         </button>
       </div>
@@ -47,7 +47,7 @@ export function JobDetailPanel({ job, onClose, onReschedule, onAssign }: JobDeta
         </span>
         {job.priority !== 'normal' && job.priority !== 'low' && (
           <span
-            className="inline-flex items-center ml-2 px-2 py-1 rounded-full text-[10px] font-bold"
+            className="inline-flex items-center ml-2 px-2 py-1 rounded-full text-xs font-bold"
             style={{
               color: job.priority === 'urgent' ? '#DC2626' : '#EA580C',
               background: job.priority === 'urgent' ? '#FEF2F2' : '#FFF7ED',
@@ -87,8 +87,8 @@ export function JobDetailPanel({ job, onClose, onReschedule, onAssign }: JobDeta
               href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(job.meetingLocation)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="ml-6 mt-1 inline-flex items-center gap-1 text-[10px] font-semibold hover:underline"
-              style={{ color: '#1e4d6b' }}
+              className="ml-6 mt-1 inline-flex items-center gap-1 text-xs font-semibold hover:underline"
+              style={{ color: '#1E2D4D' }}
             >
               <ExternalLink className="w-3 h-3" />
               Get Directions
@@ -102,7 +102,7 @@ export function JobDetailPanel({ job, onClose, onReschedule, onAssign }: JobDeta
         <div className="mx-4 mb-4 px-3 py-2 rounded-lg" style={{ background: '#F8FAFC', border: `1px solid ${CARD_BORDER}` }}>
           <div className="flex items-center gap-1.5">
             <RotateCcw className="w-3.5 h-3.5" style={{ color: TEXT_TERTIARY }} />
-            <span className="text-[10px] font-semibold" style={{ color: TEXT_TERTIARY }}>Part of recurring schedule</span>
+            <span className="text-xs font-semibold" style={{ color: TEXT_TERTIARY }}>Part of recurring schedule</span>
           </div>
         </div>
       )}
@@ -111,7 +111,7 @@ export function JobDetailPanel({ job, onClose, onReschedule, onAssign }: JobDeta
       <div className="mt-auto px-4 py-4 border-t space-y-2" style={{ borderColor: CARD_BORDER }}>
         <button
           onClick={onReschedule}
-          className="w-full flex items-center justify-between px-3 py-2.5 text-xs font-semibold rounded-lg border hover:bg-gray-50 transition-colors"
+          className="w-full flex items-center justify-between px-3 py-2.5 text-xs font-semibold rounded-xl border hover:bg-[#FAF7F0] transition-colors"
           style={{ borderColor: CARD_BORDER, color: NAVY }}
         >
           <span className="flex items-center gap-2">
@@ -125,7 +125,7 @@ export function JobDetailPanel({ job, onClose, onReschedule, onAssign }: JobDeta
           <button
             onClick={() => alert('Assign technician (demo)')}
             className="w-full flex items-center justify-between px-3 py-2.5 text-xs font-semibold rounded-lg text-white transition-colors"
-            style={{ background: '#1e4d6b' }}
+            style={{ background: '#1E2D4D' }}
           >
             <span className="flex items-center gap-2">
               <UserPlus className="w-3.5 h-3.5" />
@@ -137,7 +137,7 @@ export function JobDetailPanel({ job, onClose, onReschedule, onAssign }: JobDeta
 
         <button
           onClick={() => alert('View full job details (demo)')}
-          className="w-full flex items-center justify-center gap-1.5 px-3 py-2 text-[10px] font-semibold rounded-lg hover:bg-gray-50 transition-colors"
+          className="w-full flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg hover:bg-[#FAF7F0] transition-colors"
           style={{ color: TEXT_TERTIARY }}
         >
           Open Full Details
@@ -155,9 +155,9 @@ function InfoRow({ icon: Icon, label, value, subValue }: {
     <div className="flex gap-2.5">
       <Icon className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" style={{ color: TEXT_TERTIARY }} />
       <div className="min-w-0">
-        <p className="text-[10px] font-semibold uppercase" style={{ color: MUTED }}>{label}</p>
+        <p className="text-xs font-semibold uppercase" style={{ color: MUTED }}>{label}</p>
         <p className="text-xs font-medium" style={{ color: NAVY }}>{value}</p>
-        {subValue && <p className="text-[10px]" style={{ color: TEXT_TERTIARY }}>{subValue}</p>}
+        {subValue && <p className="text-xs" style={{ color: TEXT_TERTIARY }}>{subValue}</p>}
       </div>
     </div>
   );

@@ -22,6 +22,7 @@ import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { useMobile } from '../hooks/useMobile';
 import { useRegulatoryChanges } from '../hooks/useRegulatoryChanges';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
@@ -43,6 +44,7 @@ export function Settings() {
   const { t, locale, setLocale } = useTranslation();
   const navigate = useNavigate();
   const { jurisdictions: monitoredJurisdictions, loading: jurisdictionsLoading } = useRegulatoryChanges();
+  usePageTitle('Settings');
   const canEditHours = userRole === 'executive' || userRole === 'owner_operator';
   const [activeTab, setActiveTab] = useState('profile');
   const [pwForm, setPwForm] = useState({ current: '', newPw: '', confirm: '' });
@@ -234,13 +236,13 @@ export function Settings() {
       <Breadcrumb items={[{ label: t('nav.dashboard'), href: '/dashboard' }, { label: t('settings.title') }]} />
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{t('settings.title')}</h1>
-          <p className="text-sm text-gray-600 mt-1">{t('settings.subtitle')}</p>
+          <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">{t('settings.title')}</h1>
+          <p className="text-sm text-[#1E2D4D]/70 mt-1">{t('settings.subtitle')}</p>
         </div>
       </div>
       <div className="flex flex-col lg:flex-row gap-6 mt-6">
         <div className="lg:w-64 flex-shrink-0">
-          <nav className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto lg:overflow-visible">
+          <nav className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-x-auto lg:overflow-visible">
             <div className="flex lg:flex-col">
               {tabs.map((tab) => (
                 <button
@@ -248,8 +250,8 @@ export function Settings() {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center space-x-3 px-4 py-3 text-left transition-colors whitespace-nowrap min-h-[44px] ${
                     activeTab === tab.id
-                      ? 'bg-[#1e4d6b] text-white'
-                      : 'text-gray-700 hover:bg-gray-50'
+                      ? 'bg-[#1E2D4D] text-white'
+                      : 'text-[#1E2D4D]/80 hover:bg-[#FAF7F0]'
                   } lg:w-full`}
                 >
                   <tab.icon className="h-5 w-5 flex-shrink-0" />
@@ -260,15 +262,15 @@ export function Settings() {
           </nav>
         </div>
 
-        <div className="flex-1 bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+        <div className="flex-1 bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6">
           {activeTab === 'profile' && (
             <div className="space-y-6">
               <div className="flex items-center gap-3">
-                <h3 className="text-xl font-bold text-gray-900">{t('settings.profileSettings')}</h3>
+                <h3 className="text-xl font-bold text-[#1E2D4D]">{t('settings.profileSettings')}</h3>
                 {isDemoMode && (
                   <span
                     style={{
-                      background: '#d4af37',
+                      background: '#A08C5A',
                       color: '#FAF7F0',
                       padding: '3px 10px',
                       borderRadius: 4,
@@ -282,42 +284,42 @@ export function Settings() {
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">{t('settings.fullName')}</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('settings.fullName')}</label>
                 <input
                   type="text"
                   defaultValue={isDemoMode ? ROLE_DEMO_PROFILES[userRole].name : (profile?.full_name || '')}
                   key={`name-${isDemoMode ? userRole : profile?.id || 'loading'}`}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">{t('settings.email')}</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('settings.email')}</label>
                 <input
                   type="email"
                   defaultValue={isDemoMode ? ROLE_DEMO_PROFILES[userRole].email : (user?.email || '')}
                   key={`email-${isDemoMode ? userRole : user?.id || 'loading'}`}
                   disabled
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md bg-[#FAF7F0] text-[#1E2D4D]/50"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">{t('settings.role')}</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('settings.role')}</label>
                 <input
                   type="text"
                   defaultValue={isDemoMode ? ROLE_DEMO_PROFILES[userRole].role : (profile?.role || '')}
                   key={`role-${isDemoMode ? userRole : profile?.id || 'loading'}`}
                   disabled
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md bg-[#FAF7F0] text-[#1E2D4D]/50"
                 />
               </div>
 
               {/* Language preference */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">{t('settings.preferredLanguage')}</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('settings.preferredLanguage')}</label>
                 <select
                   value={locale}
                   onChange={(e) => setLocale(e.target.value as Locale)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                 >
                   {SUPPORTED_LOCALES.map((loc) => (
                     <option key={loc} value={loc}>
@@ -328,10 +330,10 @@ export function Settings() {
               </div>
 
               <div className="flex gap-3">
-                <button onClick={() => guardAction('settings', 'profile settings', () => toast.success('Profile saved'))} className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
+                <button onClick={() => guardAction('settings', 'profile settings', () => toast.success('Profile saved'))} className="px-6 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] duration-150">
                   {t('settings.saveChanges')}
                 </button>
-                <button onClick={() => setActiveTab('profile')} className="px-6 py-2 min-h-[44px] border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-150">
+                <button onClick={() => setActiveTab('profile')} className="px-6 py-2 min-h-[44px] border border-[#1E2D4D]/15 text-[#1E2D4D]/80 rounded-lg hover:bg-[#FAF7F0] transition-colors duration-150">
                   Cancel
                 </button>
               </div>
@@ -340,44 +342,44 @@ export function Settings() {
 
           {activeTab === 'organization' && (
             <div className="space-y-6">
-              <h3 className="text-xl font-bold text-gray-900">{t('settings.orgSettings')}</h3>
+              <h3 className="text-xl font-bold text-[#1E2D4D]">{t('settings.orgSettings')}</h3>
 
               {/* Logo Upload */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">{t('settings.companyLogo')}</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('settings.companyLogo')}</label>
                 <div className="flex items-center gap-4">
                   <div
                     className="flex items-center justify-center"
                     style={{ width: '80px', height: '80px', border: '2px dashed #d1d5db', borderRadius: '12px', backgroundColor: '#f9fafb' }}
                   >
                     <div className="text-center">
-                      <Upload className="h-6 w-6 text-gray-400 mx-auto mb-1" />
+                      <Upload className="h-6 w-6 text-[#1E2D4D]/30 mx-auto mb-1" />
                       <span style={{ fontSize: '10px', color: '#9ca3af' }}>{t('settings.upload')}</span>
                     </div>
                   </div>
                   <div>
                     <button
                       onClick={() => toast.info('Logo upload')}
-                      className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 text-gray-700"
+                      className="px-4 py-2 text-sm border border-[#1E2D4D]/15 rounded-md hover:bg-[#FAF7F0] text-[#1E2D4D]/80"
                     >
                       {t('settings.chooseFile')}
                     </button>
-                    <p className="text-xs text-gray-500 mt-1">{t('settings.logoHint')}</p>
+                    <p className="text-xs text-[#1E2D4D]/50 mt-1">{t('settings.logoHint')}</p>
                   </div>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">{t('settings.orgName')}</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('settings.orgName')}</label>
                 <input
                   type="text"
                   defaultValue={companyName}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">{t('settings.industry')}</label>
-                <select defaultValue="casual_dining" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('settings.industry')}</label>
+                <select defaultValue="casual_dining" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
                   <option value="casual_dining">Casual Dining Restaurant</option>
                   <option value="quick_service">Quick Service / Fast Food</option>
                   <option value="fine_dining">Fine Dining</option>
@@ -392,19 +394,19 @@ export function Settings() {
                   <option value="convenience">Convenience Store (prepared food)</option>
                   <option value="other">Other</option>
                 </select>
-                <p className="text-xs text-gray-500 mt-1">Used for industry benchmarking and peer comparison</p>
+                <p className="text-xs text-[#1E2D4D]/50 mt-1">Used for industry benchmarking and peer comparison</p>
               </div>
 
               {/* Timezone */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Timezone</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">Timezone</label>
                 <select
                   value={timezone}
                   onChange={(e) => {
                     setTimezone(e.target.value);
                     toast.success('Timezone updated');
                   }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                 >
                   <option value="America/Los_Angeles">Pacific Time (PT)</option>
                   <option value="America/Denver">Mountain Time (MT)</option>
@@ -413,43 +415,43 @@ export function Settings() {
                   <option value="America/Anchorage">Alaska Time (AKT)</option>
                   <option value="Pacific/Honolulu">Hawaii Time (HT)</option>
                 </select>
-                <p className="text-xs text-gray-500 mt-1">All scheduled tasks and reports will use this timezone</p>
+                <p className="text-xs text-[#1E2D4D]/50 mt-1">All scheduled tasks and reports will use this timezone</p>
               </div>
 
               {/* Locations */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">{t('settings.locations')}</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-3">{t('settings.locations')}</label>
                 <div className="space-y-3">
                   {isDemoMode ? [
                     { name: 'Location 1', address: '1245 Fulton Street, Fresno, CA 93721' },
                     { name: 'Location 2', address: '1636 Macready Drive, Merced, CA 95340' },
                     { name: 'Location 3', address: '1 University Circle, Modesto, CA 95348' },
                   ].map((loc) => (
-                    <div key={loc.name} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                    <div key={loc.name} className="flex items-center justify-between p-3 border border-[#1E2D4D]/10 rounded-xl">
                       <div className="flex items-center gap-3">
-                        <MapPin className="h-5 w-5 text-[#1e4d6b]" />
+                        <MapPin className="h-5 w-5 text-[#1E2D4D]" />
                         <div>
-                          <div className="text-sm font-medium text-gray-900">{loc.name}</div>
-                          <div className="text-xs text-gray-500">{loc.address}</div>
+                          <div className="text-sm font-medium text-[#1E2D4D]">{loc.name}</div>
+                          <div className="text-xs text-[#1E2D4D]/50">{loc.address}</div>
                         </div>
                       </div>
-                      <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">{t('settings.active')}</span>
+                      <span className="px-2 py-1 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-700">{t('settings.active')}</span>
                     </div>
                   )) : (
-                    <div className="p-4 text-center text-sm text-gray-500 border border-dashed border-gray-200 rounded-lg">
+                    <div className="p-4 text-center text-sm text-[#1E2D4D]/50 border border-dashed border-[#1E2D4D]/10 rounded-lg">
                       No locations configured. Add your first location below.
                     </div>
                   )}
                 </div>
                 <button
                   onClick={() => toast.info('Add location')}
-                  className="mt-3 px-4 py-2 text-sm border border-dashed border-gray-300 rounded-md hover:bg-gray-50 text-gray-600 w-full"
+                  className="mt-3 px-4 py-2 text-sm border border-dashed border-[#1E2D4D]/15 rounded-md hover:bg-[#FAF7F0] text-[#1E2D4D]/70 w-full"
                 >
                   {t('settings.addLocation')}
                 </button>
               </div>
 
-              <button onClick={() => guardAction('settings', 'organization settings', () => toast.success('Organization settings saved'))} className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
+              <button onClick={() => guardAction('settings', 'organization settings', () => toast.success('Organization settings saved'))} className="px-6 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] duration-150">
                 {t('settings.saveChanges')}
               </button>
             </div>
@@ -457,24 +459,24 @@ export function Settings() {
 
           {activeTab === 'notifications' && (
             <div className="space-y-6">
-              <h3 className="text-xl font-bold text-gray-900">{t('settings.notifPreferences')}</h3>
+              <h3 className="text-xl font-bold text-[#1E2D4D]">{t('settings.notifPreferences')}</h3>
 
               {/* TODO: Email/SMS notification templates should respect user language preference (Resend/Twilio) */}
 
               <div className="space-y-6">
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h4 className="font-semibold text-gray-900 mb-4">{t('settings.deliveryMethods')}</h4>
+                <div className="bg-[#FAF7F0] rounded-xl p-4">
+                  <h4 className="font-semibold text-[#1E2D4D] mb-4">{t('settings.deliveryMethods')}</h4>
                   <div className="space-y-3">
                     <label className="flex items-start space-x-3">
                       <input
                         type="checkbox"
                         checked={notificationSettings.email_enabled}
                         onChange={(e) => setNotificationSettings({ ...notificationSettings, email_enabled: e.target.checked })}
-                        className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded mt-1"
+                        className="h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] border-[#1E2D4D]/15 rounded mt-1"
                       />
                       <div>
-                        <span className="text-sm font-medium text-gray-900">{t('settings.emailNotifications')}</span>
-                        <p className="text-xs text-gray-500">{t('settings.emailNotifDesc')}</p>
+                        <span className="text-sm font-medium text-[#1E2D4D]">{t('settings.emailNotifications')}</span>
+                        <p className="text-xs text-[#1E2D4D]/50">{t('settings.emailNotifDesc')}</p>
                       </div>
                     </label>
                     <label className="flex items-start space-x-3">
@@ -482,64 +484,64 @@ export function Settings() {
                         type="checkbox"
                         checked={notificationSettings.sms_enabled}
                         onChange={(e) => setNotificationSettings({ ...notificationSettings, sms_enabled: e.target.checked })}
-                        className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded mt-1"
+                        className="h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] border-[#1E2D4D]/15 rounded mt-1"
                       />
                       <div>
-                        <span className="text-sm font-medium text-gray-900">{t('settings.smsNotifications')}</span>
-                        <p className="text-xs text-gray-500">{t('settings.smsNotifDesc')}</p>
+                        <span className="text-sm font-medium text-[#1E2D4D]">{t('settings.smsNotifications')}</span>
+                        <p className="text-xs text-[#1E2D4D]/50">{t('settings.smsNotifDesc')}</p>
                       </div>
                     </label>
                   </div>
                 </div>
 
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h4 className="font-semibold text-gray-900 mb-4">{t('settings.alertTypes')}</h4>
+                <div className="bg-[#FAF7F0] rounded-xl p-4">
+                  <h4 className="font-semibold text-[#1E2D4D] mb-4">{t('settings.alertTypes')}</h4>
                   <div className="space-y-3">
                     {alertTypes.map((item) => (
                       <label key={item.key} className="flex items-start space-x-3">
                         <input
                           type="checkbox"
                           defaultChecked={item.checked}
-                          className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded mt-1"
+                          className="h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] border-[#1E2D4D]/15 rounded mt-1"
                         />
                         <div>
-                          <span className="text-sm font-medium text-gray-900">{t(item.key)}</span>
-                          <p className="text-xs text-gray-500">{item.desc}</p>
+                          <span className="text-sm font-medium text-[#1E2D4D]">{t(item.key)}</span>
+                          <p className="text-xs text-[#1E2D4D]/50">{item.desc}</p>
                         </div>
                       </label>
                     ))}
                   </div>
                 </div>
 
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h4 className="font-semibold text-gray-900 mb-4">{t('settings.quietHours')}</h4>
-                  <p className="text-sm text-gray-600 mb-4">
+                <div className="bg-[#FAF7F0] rounded-xl p-4">
+                  <h4 className="font-semibold text-[#1E2D4D] mb-4">{t('settings.quietHours')}</h4>
+                  <p className="text-sm text-[#1E2D4D]/70 mb-4">
                     {t('settings.quietHoursDesc')}
                   </p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.startTimeLabel')}</label>
+                      <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('settings.startTimeLabel')}</label>
                       <input
                         type="time"
                         value={notificationSettings.quiet_hours_start}
                         onChange={(e) => setNotificationSettings({ ...notificationSettings, quiet_hours_start: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                        className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.endTimeLabel')}</label>
+                      <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('settings.endTimeLabel')}</label>
                       <input
                         type="time"
                         value={notificationSettings.quiet_hours_end}
                         onChange={(e) => setNotificationSettings({ ...notificationSettings, quiet_hours_end: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                        className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                       />
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h4 className="font-semibold text-gray-900 mb-4">{t('settings.reminderFrequency')}</h4>
+                <div className="bg-[#FAF7F0] rounded-xl p-4">
+                  <h4 className="font-semibold text-[#1E2D4D] mb-4">{t('settings.reminderFrequency')}</h4>
                   <div className="space-y-2">
                     <label className="flex items-center space-x-3">
                       <input
@@ -548,11 +550,11 @@ export function Settings() {
                         value="per_event"
                         checked={notificationSettings.reminder_frequency === 'per_event'}
                         onChange={(e) => setNotificationSettings({ ...notificationSettings, reminder_frequency: e.target.value })}
-                        className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300"
+                        className="h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] border-[#1E2D4D]/15"
                       />
                       <div>
-                        <span className="text-sm font-medium text-gray-900">{t('settings.perEvent')}</span>
-                        <p className="text-xs text-gray-500">{t('settings.perEventDesc')}</p>
+                        <span className="text-sm font-medium text-[#1E2D4D]">{t('settings.perEvent')}</span>
+                        <p className="text-xs text-[#1E2D4D]/50">{t('settings.perEventDesc')}</p>
                       </div>
                     </label>
                     <label className="flex items-center space-x-3">
@@ -562,11 +564,11 @@ export function Settings() {
                         value="daily"
                         checked={notificationSettings.reminder_frequency === 'daily'}
                         onChange={(e) => setNotificationSettings({ ...notificationSettings, reminder_frequency: e.target.value })}
-                        className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300"
+                        className="h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] border-[#1E2D4D]/15"
                       />
                       <div>
-                        <span className="text-sm font-medium text-gray-900">{t('settings.dailyDigest')}</span>
-                        <p className="text-xs text-gray-500">{t('settings.dailyDigestDesc')}</p>
+                        <span className="text-sm font-medium text-[#1E2D4D]">{t('settings.dailyDigest')}</span>
+                        <p className="text-xs text-[#1E2D4D]/50">{t('settings.dailyDigestDesc')}</p>
                       </div>
                     </label>
                     <label className="flex items-center space-x-3">
@@ -576,22 +578,22 @@ export function Settings() {
                         value="weekly"
                         checked={notificationSettings.reminder_frequency === 'weekly'}
                         onChange={(e) => setNotificationSettings({ ...notificationSettings, reminder_frequency: e.target.value })}
-                        className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300"
+                        className="h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] border-[#1E2D4D]/15"
                       />
                       <div>
-                        <span className="text-sm font-medium text-gray-900">{t('settings.weeklyDigestSetting')}</span>
-                        <p className="text-xs text-gray-500">{t('settings.weeklyDigestDesc')}</p>
+                        <span className="text-sm font-medium text-[#1E2D4D]">{t('settings.weeklyDigestSetting')}</span>
+                        <p className="text-xs text-[#1E2D4D]/50">{t('settings.weeklyDigestDesc')}</p>
                       </div>
                     </label>
                   </div>
                 </div>
 
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <h4 className="font-semibold text-gray-900 mb-2">{t('settings.docExpirationAlerts')}</h4>
-                  <p className="text-sm text-gray-600">
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                  <h4 className="font-semibold text-[#1E2D4D] mb-2">{t('settings.docExpirationAlerts')}</h4>
+                  <p className="text-sm text-[#1E2D4D]/70">
                     You will automatically receive alerts for expiring documents:
                   </p>
-                  <ul className="mt-2 space-y-1 text-sm text-gray-600">
+                  <ul className="mt-2 space-y-1 text-sm text-[#1E2D4D]/70">
                     <li>• {t('settings.days30before')}</li>
                     <li>• {t('settings.days14before')}</li>
                     <li>• {t('settings.days7before')}</li>
@@ -601,70 +603,70 @@ export function Settings() {
                 </div>
 
                 {/* Copilot Notification Preferences */}
-                <div className="bg-gray-50 rounded-lg p-4">
+                <div className="bg-[#FAF7F0] rounded-xl p-4">
                   <div className="flex items-center gap-2 mb-4">
                     <span className="text-lg">🤖</span>
-                    <h4 className="font-semibold text-gray-900">Copilot Notification Settings</h4>
+                    <h4 className="font-semibold text-[#1E2D4D]">Copilot Notification Settings</h4>
                   </div>
-                  <p className="text-sm text-gray-600 mb-4">
+                  <p className="text-sm text-[#1E2D4D]/70 mb-4">
                     Control how the AI Compliance Copilot notifies you about proactive insights, predictions, and recommendations.
                   </p>
 
                   <div className="space-y-4">
                     <div>
-                      <h5 className="text-sm font-medium text-gray-800 mb-2">In-App Notifications</h5>
+                      <h5 className="text-sm font-medium text-[#1E2D4D]/90 mb-2">In-App Notifications</h5>
                       <div className="space-y-2">
                         <label className="flex items-center space-x-3">
-                          <input type="checkbox" defaultChecked disabled className="h-4 w-4 text-[#d4af37] border-gray-300 rounded opacity-60" />
-                          <span className="text-sm text-gray-700">Critical alerts <span className="text-xs text-gray-400">(always on)</span></span>
+                          <input type="checkbox" defaultChecked disabled className="h-4 w-4 text-[#A08C5A] border-[#1E2D4D]/15 rounded opacity-60" />
+                          <span className="text-sm text-[#1E2D4D]/80">Critical alerts <span className="text-xs text-[#1E2D4D]/30">(always on)</span></span>
                         </label>
                         <label className="flex items-center space-x-3">
-                          <input type="checkbox" defaultChecked className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded" />
-                          <span className="text-sm text-gray-700">Warnings</span>
+                          <input type="checkbox" defaultChecked className="h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] border-[#1E2D4D]/15 rounded" />
+                          <span className="text-sm text-[#1E2D4D]/80">Warnings</span>
                         </label>
                         <label className="flex items-center space-x-3">
-                          <input type="checkbox" defaultChecked className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded" />
-                          <span className="text-sm text-gray-700">Recommendations &amp; patterns</span>
+                          <input type="checkbox" defaultChecked className="h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] border-[#1E2D4D]/15 rounded" />
+                          <span className="text-sm text-[#1E2D4D]/80">Recommendations &amp; patterns</span>
                         </label>
                         <label className="flex items-center space-x-3">
-                          <input type="checkbox" defaultChecked className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded" />
-                          <span className="text-sm text-gray-700">Weekly summary</span>
+                          <input type="checkbox" defaultChecked className="h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] border-[#1E2D4D]/15 rounded" />
+                          <span className="text-sm text-[#1E2D4D]/80">Weekly summary</span>
                         </label>
                       </div>
                     </div>
 
                     <div>
-                      <h5 className="text-sm font-medium text-gray-800 mb-2">Email Notifications</h5>
+                      <h5 className="text-sm font-medium text-[#1E2D4D]/90 mb-2">Email Notifications</h5>
                       <div className="space-y-2">
                         <label className="flex items-center space-x-3">
-                          <input type="checkbox" defaultChecked className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded" />
-                          <span className="text-sm text-gray-700">Critical alerts — immediate</span>
+                          <input type="checkbox" defaultChecked className="h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] border-[#1E2D4D]/15 rounded" />
+                          <span className="text-sm text-[#1E2D4D]/80">Critical alerts — immediate</span>
                         </label>
                         <label className="flex items-center space-x-3">
-                          <input type="checkbox" defaultChecked className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded" />
-                          <span className="text-sm text-gray-700">Warnings — daily digest</span>
+                          <input type="checkbox" defaultChecked className="h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] border-[#1E2D4D]/15 rounded" />
+                          <span className="text-sm text-[#1E2D4D]/80">Warnings — daily digest</span>
                         </label>
                         <label className="flex items-center space-x-3">
-                          <input type="checkbox" className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded" />
-                          <span className="text-sm text-gray-700">Recommendations</span>
+                          <input type="checkbox" className="h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] border-[#1E2D4D]/15 rounded" />
+                          <span className="text-sm text-[#1E2D4D]/80">Recommendations</span>
                         </label>
                         <label className="flex items-center space-x-3">
-                          <input type="checkbox" defaultChecked className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded" />
-                          <span className="text-sm text-gray-700">Weekly summary — Monday 6 AM</span>
+                          <input type="checkbox" defaultChecked className="h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] border-[#1E2D4D]/15 rounded" />
+                          <span className="text-sm text-[#1E2D4D]/80">Weekly summary — Monday 6 AM</span>
                         </label>
                       </div>
                     </div>
 
                     <div>
-                      <h5 className="text-sm font-medium text-gray-800 mb-2">SMS Notifications</h5>
+                      <h5 className="text-sm font-medium text-[#1E2D4D]/90 mb-2">SMS Notifications</h5>
                       <div className="space-y-2">
                         <label className="flex items-center space-x-3">
-                          <input type="checkbox" defaultChecked className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded" />
-                          <span className="text-sm text-gray-700">Critical alerts only</span>
+                          <input type="checkbox" defaultChecked className="h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] border-[#1E2D4D]/15 rounded" />
+                          <span className="text-sm text-[#1E2D4D]/80">Critical alerts only</span>
                         </label>
                         <label className="flex items-center space-x-3">
-                          <input type="checkbox" className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded" />
-                          <span className="text-sm text-gray-700">All copilot notifications</span>
+                          <input type="checkbox" className="h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] border-[#1E2D4D]/15 rounded" />
+                          <span className="text-sm text-[#1E2D4D]/80">All copilot notifications</span>
                         </label>
                       </div>
                     </div>
@@ -675,12 +677,12 @@ export function Settings() {
               <button
                 onClick={saveNotificationSettings}
                 disabled={saving}
-                className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {saving ? t('common.saving') : t('settings.savePreferences')}
               </button>
 
-              <div className="border-t border-gray-200 pt-6 mt-8">
+              <div className="border-t border-[#1E2D4D]/10 pt-6 mt-8">
                 <ReportSettings />
               </div>
             </div>
@@ -689,40 +691,40 @@ export function Settings() {
           {activeTab === 'regulatory-monitoring' && (
             <div className="space-y-6">
               {/* TODO: i18n for regulatory monitoring section */}
-              <h3 className="text-xl font-bold text-gray-900">Regulatory Monitoring</h3>
-              <p className="text-sm text-gray-600">Configure how EvidLY monitors regulatory changes and notifies your team.</p>
+              <h3 className="text-xl font-bold text-[#1E2D4D]">Regulatory Monitoring</h3>
+              <p className="text-sm text-[#1E2D4D]/70">Configure how EvidLY monitors regulatory changes and notifies your team.</p>
 
               {/* Enable/disable toggle */}
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h4 className="font-semibold text-gray-900 mb-4">Monitoring Status</h4>
+              <div className="bg-[#FAF7F0] rounded-xl p-4">
+                <h4 className="font-semibold text-[#1E2D4D] mb-4">Monitoring Status</h4>
                 <label className="flex items-center justify-between gap-3">
                   <div>
-                    <span className="text-sm font-medium text-gray-900">Enable Regulatory Alerts</span>
-                    <p className="text-xs text-gray-500">Automatically monitor regulatory changes for your jurisdictions</p>
+                    <span className="text-sm font-medium text-[#1E2D4D]">Enable Regulatory Alerts</span>
+                    <p className="text-xs text-[#1E2D4D]/50">Automatically monitor regulatory changes for your jurisdictions</p>
                   </div>
                   <div className="relative">
                     <input type="checkbox" defaultChecked className="sr-only peer" />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#d4af37] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1e4d6b]"></div>
+                    <div className="w-11 h-6 bg-[#1E2D4D]/8 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#A08C5A] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-[#1E2D4D]/15 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1E2D4D]"></div>
                   </div>
                 </label>
               </div>
 
               {/* Notification preferences */}
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h4 className="font-semibold text-gray-900 mb-4">Alert Notifications</h4>
+              <div className="bg-[#FAF7F0] rounded-xl p-4">
+                <h4 className="font-semibold text-[#1E2D4D] mb-4">Alert Notifications</h4>
                 <div className="space-y-3">
                   <label className="flex items-start space-x-3">
-                    <input type="checkbox" defaultChecked className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded mt-1" />
+                    <input type="checkbox" defaultChecked className="h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] border-[#1E2D4D]/15 rounded mt-1" />
                     <div>
-                      <span className="text-sm font-medium text-gray-900">In-App Notifications</span>
-                      <p className="text-xs text-gray-500">Show alerts in the notification bell and Regulatory Alerts page</p>
+                      <span className="text-sm font-medium text-[#1E2D4D]">In-App Notifications</span>
+                      <p className="text-xs text-[#1E2D4D]/50">Show alerts in the notification bell and Regulatory Alerts page</p>
                     </div>
                   </label>
                   <label className="flex items-start space-x-3">
-                    <input type="checkbox" defaultChecked className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded mt-1" />
+                    <input type="checkbox" defaultChecked className="h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] border-[#1E2D4D]/15 rounded mt-1" />
                     <div>
-                      <span className="text-sm font-medium text-gray-900">Email Notifications</span>
-                      <p className="text-xs text-gray-500">Send email alerts for "Action Required" changes to selected roles</p>
+                      <span className="text-sm font-medium text-[#1E2D4D]">Email Notifications</span>
+                      <p className="text-xs text-[#1E2D4D]/50">Send email alerts for "Action Required" changes to selected roles</p>
                       {/* TODO: Wire to Resend for email delivery */}
                     </div>
                   </label>
@@ -730,55 +732,55 @@ export function Settings() {
               </div>
 
               {/* Digest option */}
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h4 className="font-semibold text-gray-900 mb-4">Alert Delivery</h4>
+              <div className="bg-[#FAF7F0] rounded-xl p-4">
+                <h4 className="font-semibold text-[#1E2D4D] mb-4">Alert Delivery</h4>
                 <div className="space-y-2">
                   <label className="flex items-center space-x-3">
-                    <input type="radio" name="reg-delivery" defaultChecked className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300" />
+                    <input type="radio" name="reg-delivery" defaultChecked className="h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] border-[#1E2D4D]/15" />
                     <div>
-                      <span className="text-sm font-medium text-gray-900">Send individual alerts</span>
-                      <p className="text-xs text-gray-500">Receive notifications as soon as changes are detected</p>
+                      <span className="text-sm font-medium text-[#1E2D4D]">Send individual alerts</span>
+                      <p className="text-xs text-[#1E2D4D]/50">Receive notifications as soon as changes are detected</p>
                     </div>
                   </label>
                   <label className="flex items-center space-x-3">
-                    <input type="radio" name="reg-delivery" className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300" />
+                    <input type="radio" name="reg-delivery" className="h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] border-[#1E2D4D]/15" />
                     <div>
-                      <span className="text-sm font-medium text-gray-900">Weekly regulatory digest every Monday</span>
-                      <p className="text-xs text-gray-500">Receive a consolidated summary of all changes once per week</p>
+                      <span className="text-sm font-medium text-[#1E2D4D]">Weekly regulatory digest every Monday</span>
+                      <p className="text-xs text-[#1E2D4D]/50">Receive a consolidated summary of all changes once per week</p>
                     </div>
                   </label>
                 </div>
               </div>
 
               {/* Which roles receive alerts */}
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h4 className="font-semibold text-gray-900 mb-4">Email Alert Recipients</h4>
-                <p className="text-xs text-gray-500 mb-3">Select which roles receive email alerts for regulatory changes</p>
+              <div className="bg-[#FAF7F0] rounded-xl p-4">
+                <h4 className="font-semibold text-[#1E2D4D] mb-4">Email Alert Recipients</h4>
+                <p className="text-xs text-[#1E2D4D]/50 mb-3">Select which roles receive email alerts for regulatory changes</p>
                 <div className="space-y-2">
                   <label className="flex items-center space-x-3">
-                    <input type="checkbox" defaultChecked className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded" />
-                    <span className="text-sm text-gray-700">Executive View</span>
+                    <input type="checkbox" defaultChecked className="h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] border-[#1E2D4D]/15 rounded" />
+                    <span className="text-sm text-[#1E2D4D]/80">Executive View</span>
                   </label>
                   <label className="flex items-center space-x-3">
-                    <input type="checkbox" defaultChecked className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded" />
-                    <span className="text-sm text-gray-700">Management</span>
+                    <input type="checkbox" defaultChecked className="h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] border-[#1E2D4D]/15 rounded" />
+                    <span className="text-sm text-[#1E2D4D]/80">Management</span>
                   </label>
                   <label className="flex items-center space-x-3">
-                    <input type="checkbox" className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded" />
-                    <span className="text-sm text-gray-700">Kitchen Staff</span>
+                    <input type="checkbox" className="h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] border-[#1E2D4D]/15 rounded" />
+                    <span className="text-sm text-[#1E2D4D]/80">Kitchen Staff</span>
                   </label>
                 </div>
               </div>
 
               {/* Monitored jurisdictions */}
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h4 className="font-semibold text-gray-900 mb-4">Monitored Jurisdictions</h4>
-                <p className="text-xs text-gray-500 mb-3">Auto-populated from your location addresses. Add custom jurisdictions if needed.</p>
+              <div className="bg-[#FAF7F0] rounded-xl p-4">
+                <h4 className="font-semibold text-[#1E2D4D] mb-4">Monitored Jurisdictions</h4>
+                <p className="text-xs text-[#1E2D4D]/50 mb-3">Auto-populated from your location addresses. Add custom jurisdictions if needed.</p>
                 <div className="space-y-2">
                   {jurisdictionsLoading ? (
-                    <p className="text-sm text-gray-500 py-2">Loading jurisdictions...</p>
+                    <p className="text-sm text-[#1E2D4D]/50 py-2">Loading jurisdictions...</p>
                   ) : monitoredJurisdictions.length === 0 ? (
-                    <p className="text-sm text-gray-500 py-2">No locations found. Add locations to enable jurisdiction monitoring.</p>
+                    <p className="text-sm text-[#1E2D4D]/50 py-2">No locations found. Add locations to enable jurisdiction monitoring.</p>
                   ) : (
                     [...monitoredJurisdictions.map(j => ({
                       name: j.type === 'county' ? `${j.name} County, ${j.state}`
@@ -788,25 +790,25 @@ export function Settings() {
                     })),
                     { name: 'Federal (FDA, OSHA)', type: 'Federal' },
                     ].map((j) => (
-                      <div key={j.name} className="flex items-center justify-between py-2 px-3 border border-gray-200 rounded-xl bg-white">
+                      <div key={j.name} className="flex items-center justify-between py-2 px-3 border border-[#1E2D4D]/10 rounded-xl bg-white">
                         <div className="flex items-center gap-2">
-                          <MapPin className="h-4 w-4 text-[#1e4d6b]" />
-                          <span className="text-sm text-gray-700">{j.name}</span>
+                          <MapPin className="h-4 w-4 text-[#1E2D4D]" />
+                          <span className="text-sm text-[#1E2D4D]/80">{j.name}</span>
                         </div>
-                        <span className="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">{j.type}</span>
+                        <span className="px-2 py-0.5 text-xs rounded-full bg-[#1E2D4D]/5 text-[#1E2D4D]/70">{j.type}</span>
                       </div>
                     ))
                   )}
                   <button
                     onClick={() => toast.success('Custom jurisdiction added')}
-                    className="w-full py-2 text-sm border border-dashed border-gray-300 rounded-md hover:bg-gray-50 text-gray-600"
+                    className="w-full py-2 text-sm border border-dashed border-[#1E2D4D]/15 rounded-md hover:bg-[#FAF7F0] text-[#1E2D4D]/70"
                   >
                     + Add Custom Jurisdiction
                   </button>
                 </div>
               </div>
 
-              <button onClick={() => guardAction('settings', 'regulatory settings', () => toast.success('Regulatory monitoring preferences saved'))} className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
+              <button onClick={() => guardAction('settings', 'regulatory settings', () => toast.success('Regulatory monitoring preferences saved'))} className="px-6 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] duration-150">
                 {t('settings.saveChanges')}
               </button>
             </div>
@@ -821,15 +823,15 @@ export function Settings() {
             ];
             return (
             <div className="space-y-6">
-              <h3 className="text-xl font-bold text-gray-900">Jurisdiction Profile</h3>
-              <p className="text-sm text-gray-600">View and manage jurisdiction-specific compliance requirements for each location.</p>
+              <h3 className="text-xl font-bold text-[#1E2D4D]">Jurisdiction Profile</h3>
+              <p className="text-sm text-[#1E2D4D]/70">View and manage jurisdiction-specific compliance requirements for each location.</p>
 
-              <div className="bg-[#eef4f8] border border-[#b8d4e8] rounded-lg p-4">
+              <div className="bg-[#eef4f8] border border-[#b8d4e8] rounded-xl p-4">
                 <div className="flex items-start gap-3">
-                  <Globe className="h-5 w-5 text-[#1e4d6b] mt-0.5 flex-shrink-0" />
+                  <Globe className="h-5 w-5 text-[#1E2D4D] mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="text-sm font-medium text-[#1e4d6b]">Hierarchical Jurisdiction Engine</p>
-                    <p className="text-xs text-[#1e4d6b]/80 mt-1">
+                    <p className="text-sm font-medium text-[#1E2D4D]">Hierarchical Jurisdiction Engine</p>
+                    <p className="text-xs text-[#1E2D4D]/80 mt-1">
                       EvidLY automatically merges compliance requirements from Federal (FDA), State (California CalCode),
                       County, and City jurisdictions — so each location gets the exact requirements that apply to them.
                     </p>
@@ -839,13 +841,13 @@ export function Settings() {
 
               {/* Auto-detected jurisdictions per location with override */}
               <div className="space-y-3">
-                <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">Detected Jurisdictions</h4>
+                <h4 className="text-sm font-semibold text-[#1E2D4D]/80 uppercase tracking-wider">Detected Jurisdictions</h4>
                 {locationJurisdictions.map((loc) => (
-                  <div key={loc.name} className="border border-gray-200 rounded-xl p-4 bg-white">
+                  <div key={loc.name} className="border border-[#1E2D4D]/10 rounded-xl p-4 bg-white">
                     <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                       <div>
-                        <h4 className="font-semibold text-gray-900">{loc.name}</h4>
-                        <p className="text-xs text-gray-500 mt-1">{loc.chain}</p>
+                        <h4 className="font-semibold text-[#1E2D4D]">{loc.name}</h4>
+                        <p className="text-xs text-[#1E2D4D]/50 mt-1">{loc.chain}</p>
                       </div>
                       <span className="px-2 py-0.5 text-xs rounded-full bg-green-50 text-green-700 border border-green-200 flex items-center gap-1">
                         <CheckCircle2 className="h-3 w-3" />
@@ -853,11 +855,11 @@ export function Settings() {
                       </span>
                     </div>
                     <div className="mt-3 flex flex-wrap items-center gap-3">
-                      <label className="text-xs font-medium text-gray-500">County:</label>
+                      <label className="text-xs font-medium text-[#1E2D4D]/50">County:</label>
                       <select
                         defaultValue={loc.detectedSlug}
                         onChange={() => toast.success(`Jurisdiction override saved for ${loc.name}`)}
-                        className="text-sm border border-gray-300 rounded-xl px-3 py-1.5 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
+                        className="text-sm border border-[#1E2D4D]/15 rounded-xl px-3 py-1.5 bg-white text-[#1E2D4D]/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
                       >
                         {availableCounties.map(c => (
                           <option key={c.slug} value={c.slug}>{c.name} ({c.systemType.replace('_', ' ')})</option>
@@ -869,48 +871,48 @@ export function Settings() {
               </div>
 
               {/* Dashboard & Reporting Toggles */}
-              <div className="border border-gray-200 rounded-xl p-4 sm:p-5 bg-white space-y-4">
-                <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">Display Preferences</h4>
+              <div className="border border-[#1E2D4D]/10 rounded-xl p-4 sm:p-5 bg-white space-y-4">
+                <h4 className="text-sm font-semibold text-[#1E2D4D]/80 uppercase tracking-wider">Display Preferences</h4>
 
                 <label className="flex items-center justify-between cursor-pointer">
                   <div>
-                    <div className="text-sm font-medium text-gray-900">Show jurisdiction score on dashboard</div>
-                    <div className="text-xs text-gray-500">Display the inspector grade next to your EvidLY score</div>
+                    <div className="text-sm font-medium text-[#1E2D4D]">Show jurisdiction score on dashboard</div>
+                    <div className="text-xs text-[#1E2D4D]/50">Display the inspector grade next to your EvidLY score</div>
                   </div>
                   <input
                     type="checkbox"
                     defaultChecked={true}
                     onChange={() => toast.success('Dashboard display preference saved')}
-                    className="w-5 h-5 text-[#1e4d6b] border-gray-300 rounded focus:ring-[#1e4d6b]"
+                    className="w-5 h-5 text-[#1E2D4D] border-[#1E2D4D]/15 rounded focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
                   />
                 </label>
 
-                <div className="border-t border-gray-100"></div>
+                <div className="border-t border-[#1E2D4D]/5"></div>
 
                 <label className="flex items-center justify-between cursor-pointer">
                   <div>
-                    <div className="text-sm font-medium text-gray-900">Include jurisdiction score in reports</div>
-                    <div className="text-xs text-gray-500">Add inspector grade details to generated compliance reports</div>
+                    <div className="text-sm font-medium text-[#1E2D4D]">Include jurisdiction score in reports</div>
+                    <div className="text-xs text-[#1E2D4D]/50">Add inspector grade details to generated compliance reports</div>
                   </div>
                   <input
                     type="checkbox"
                     defaultChecked={true}
                     onChange={() => toast.success('Report inclusion preference saved')}
-                    className="w-5 h-5 text-[#1e4d6b] border-gray-300 rounded focus:ring-[#1e4d6b]"
+                    className="w-5 h-5 text-[#1E2D4D] border-[#1E2D4D]/15 rounded focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
                   />
                 </label>
               </div>
 
               {/* Manual jurisdiction selection */}
-              <div className="border border-gray-200 rounded-xl p-4 sm:p-5 bg-white">
-                <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">Manual Jurisdiction Override</h4>
-                <p className="text-xs text-gray-500 mb-3">If auto-detection is incorrect for a location, select the correct county scoring system manually.</p>
+              <div className="border border-[#1E2D4D]/10 rounded-xl p-4 sm:p-5 bg-white">
+                <h4 className="text-sm font-semibold text-[#1E2D4D]/80 uppercase tracking-wider mb-3">Manual Jurisdiction Override</h4>
+                <p className="text-xs text-[#1E2D4D]/50 mb-3">If auto-detection is incorrect for a location, select the correct county scoring system manually.</p>
                 <select
                   defaultValue=""
                   onChange={(e) => {
                     if (e.target.value) toast.success(`Manual jurisdiction set to ${e.target.value}`);
                   }}
-                  className="w-full text-sm border border-gray-300 rounded-xl px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
+                  className="w-full text-sm border border-[#1E2D4D]/15 rounded-xl px-3 py-2 bg-white text-[#1E2D4D]/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
                 >
                   <option value="">Select a county scoring system...</option>
                   {availableCounties.map(c => (
@@ -921,7 +923,7 @@ export function Settings() {
 
               <button
                 onClick={() => navigate('/jurisdiction')}
-                className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150"
+                className="px-6 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] duration-150"
               >
                 View Full Jurisdiction Configuration →
               </button>
@@ -931,80 +933,80 @@ export function Settings() {
 
           {activeTab === 'integrations' && (
             <div className="space-y-6">
-              <h3 className="text-xl font-bold text-gray-900">{t('settings.integrationSettings')}</h3>
-              <p className="text-gray-600">{t('settings.integrationsDesc')}</p>
+              <h3 className="text-xl font-bold text-[#1E2D4D]">{t('settings.integrationSettings')}</h3>
+              <p className="text-[#1E2D4D]/70">{t('settings.integrationsDesc')}</p>
 
               <div className="space-y-4">
                 {/* Calendar Integration */}
-                <div className="border border-gray-200 rounded-lg p-4 sm:p-5">
+                <div className="border border-[#1E2D4D]/10 rounded-xl p-4 sm:p-5">
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="flex items-center gap-3 sm:gap-4">
                       <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
                         <Globe className="h-6 w-6 text-blue-700" />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-gray-900">Calendar Integration</h4>
-                        <p className="text-sm text-gray-500">Add confirmed service events to your external calendar</p>
+                        <h4 className="font-semibold text-[#1E2D4D]">Calendar Integration</h4>
+                        <p className="text-sm text-[#1E2D4D]/50">Add confirmed service events to your external calendar</p>
                       </div>
                     </div>
                   </div>
                   <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div className="p-3 rounded-lg bg-gray-50 border border-gray-100">
-                      <p className="text-sm font-medium text-gray-900">Google Calendar</p>
-                      <p className="text-xs text-gray-500 mt-1">Click "Add to Calendar" on confirmed service requests to open in Google Calendar.</p>
+                    <div className="p-3 rounded-lg bg-[#FAF7F0] border border-[#1E2D4D]/5">
+                      <p className="text-sm font-medium text-[#1E2D4D]">Google Calendar</p>
+                      <p className="text-xs text-[#1E2D4D]/50 mt-1">Click "Add to Calendar" on confirmed service requests to open in Google Calendar.</p>
                     </div>
-                    <div className="p-3 rounded-lg bg-gray-50 border border-gray-100">
-                      <p className="text-sm font-medium text-gray-900">Microsoft Outlook</p>
-                      <p className="text-xs text-gray-500 mt-1">Click "Add to Calendar" to open events in Outlook web calendar.</p>
+                    <div className="p-3 rounded-lg bg-[#FAF7F0] border border-[#1E2D4D]/5">
+                      <p className="text-sm font-medium text-[#1E2D4D]">Microsoft Outlook</p>
+                      <p className="text-xs text-[#1E2D4D]/50 mt-1">Click "Add to Calendar" to open events in Outlook web calendar.</p>
                     </div>
-                    <div className="p-3 rounded-lg bg-gray-50 border border-gray-100">
-                      <p className="text-sm font-medium text-gray-900">Apple Calendar</p>
-                      <p className="text-xs text-gray-500 mt-1">Download .ics files to import into Apple Calendar or any iCal app.</p>
+                    <div className="p-3 rounded-lg bg-[#FAF7F0] border border-[#1E2D4D]/5">
+                      <p className="text-sm font-medium text-[#1E2D4D]">Apple Calendar</p>
+                      <p className="text-xs text-[#1E2D4D]/50 mt-1">Download .ics files to import into Apple Calendar or any iCal app.</p>
                     </div>
                   </div>
                   <div className="mt-3 p-3 rounded-lg" style={{ backgroundColor: '#eef4f8' }}>
-                    <p className="text-xs text-gray-600">
+                    <p className="text-xs text-[#1E2D4D]/70">
                       Service events are automatically added to your EvidLY Calendar when confirmed. Use the calendar buttons on confirmed service requests to add them to your external calendar.
                     </p>
                   </div>
                 </div>
 
                 {/* Insurance Risk Score Sharing */}
-                <div className="border-2 rounded-lg p-4 sm:p-5" style={{ borderColor: '#1e4d6b' }}>
+                <div className="border-2 rounded-xl p-4 sm:p-5" style={{ borderColor: '#1E2D4D' }}>
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="flex items-center gap-3 sm:gap-4">
-                      <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#1e4d6b' }}>
+                      <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#1E2D4D' }}>
                         <EvidlyIcon size={24} />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-gray-900">Insurance Risk Score Sharing</h4>
-                        <p className="text-sm text-gray-500">Share your EvidLY risk score with insurance carriers via secure API</p>
+                        <h4 className="font-semibold text-[#1E2D4D]">Insurance Risk Score Sharing</h4>
+                        <p className="text-sm text-[#1E2D4D]/50">Share your EvidLY risk score with insurance carriers via secure API</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
                       <button
                         onClick={() => toast.info('Insurance data sharing is currently disabled')}
-                        className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200 transition-colors"
+                        className="relative inline-flex h-6 w-11 items-center rounded-full bg-[#1E2D4D]/8 transition-colors"
                       >
                         <span className="inline-block h-4 w-4 transform rounded-full bg-white transition-transform translate-x-1" />
                       </button>
                     </div>
                   </div>
                   <div className="mt-3 p-3 rounded-lg" style={{ backgroundColor: '#eef4f8' }}>
-                    <p className="text-xs text-gray-600">
+                    <p className="text-xs text-[#1E2D4D]/70">
                       When enabled, authorized insurance carriers can access your risk score via API. No employee PII is ever shared.
                       Only aggregated compliance scores, anonymized incident counts, and service compliance dates are included.
                     </p>
                   </div>
                   <div className="mt-3 flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-xs text-gray-500">
-                      <span className="px-2 py-0.5 rounded-full" style={{ backgroundColor: '#fdf8e8', color: '#d4af37' }}>Coming Soon</span>
+                    <div className="flex items-center gap-2 text-xs text-[#1E2D4D]/50">
+                      <span className="px-2 py-0.5 rounded-full" style={{ backgroundColor: '#fdf8e8', color: '#A08C5A' }}>Coming Soon</span>
                       <span>Carrier partnerships launching soon</span>
                     </div>
                     <button
                       onClick={() => navigate('/insurance-settings')}
                       className="text-sm font-medium transition-colors hover:underline"
-                      style={{ color: '#1e4d6b' }}
+                      style={{ color: '#1E2D4D' }}
                     >
                       Manage Insurance Connections →
                     </button>
@@ -1012,90 +1014,90 @@ export function Settings() {
                 </div>
 
                 {/* Restaurant365 */}
-                <div className="border border-gray-200 rounded-lg p-4 sm:p-5">
+                <div className="border border-[#1E2D4D]/10 rounded-xl p-4 sm:p-5">
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="flex items-center gap-3 sm:gap-4">
                       <div className="w-12 h-12 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0">
                         <span className="text-orange-600 font-bold text-lg">R365</span>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-gray-900">Restaurant365</h4>
-                        <p className="text-sm text-gray-500">Sync inventory, recipes, and financial data</p>
+                        <h4 className="font-semibold text-[#1E2D4D]">Restaurant365</h4>
+                        <p className="text-sm text-[#1E2D4D]/50">Sync inventory, recipes, and financial data</p>
                       </div>
                     </div>
                     <button
                       onClick={() => toast.info('Restaurant365 integration')}
-                      className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700"
+                      className="px-4 py-2 text-sm border border-[#1E2D4D]/15 rounded-xl hover:bg-[#FAF7F0] text-[#1E2D4D]/80"
                     >
                       {t('settings.connect')}
                     </button>
                   </div>
-                  <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
-                    <span className="px-2 py-0.5 bg-gray-100 rounded-full">{t('settings.comingSoon')}</span>
+                  <div className="mt-3 flex items-center gap-2 text-xs text-[#1E2D4D]/50">
+                    <span className="px-2 py-0.5 bg-[#1E2D4D]/5 rounded-full">{t('settings.comingSoon')}</span>
                     <span>Auto-sync vendor data and purchase orders</span>
                   </div>
                 </div>
 
                 {/* Cintas */}
-                <div className="border border-gray-200 rounded-lg p-4 sm:p-5">
+                <div className="border border-[#1E2D4D]/10 rounded-xl p-4 sm:p-5">
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="flex items-center gap-3 sm:gap-4">
                       <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
                         <span className="text-blue-700 font-bold text-sm">CINTAS</span>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-gray-900">Cintas</h4>
-                        <p className="text-sm text-gray-500">Fire protection, uniforms, and facility services</p>
+                        <h4 className="font-semibold text-[#1E2D4D]">Cintas</h4>
+                        <p className="text-sm text-[#1E2D4D]/50">Fire protection, uniforms, and facility services</p>
                       </div>
                     </div>
                     <button
                       onClick={() => toast.info('Cintas integration')}
-                      className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700"
+                      className="px-4 py-2 text-sm border border-[#1E2D4D]/15 rounded-xl hover:bg-[#FAF7F0] text-[#1E2D4D]/80"
                     >
                       {t('settings.connect')}
                     </button>
                   </div>
-                  <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
-                    <span className="px-2 py-0.5 bg-gray-100 rounded-full">{t('settings.comingSoon')}</span>
+                  <div className="mt-3 flex items-center gap-2 text-xs text-[#1E2D4D]/50">
+                    <span className="px-2 py-0.5 bg-[#1E2D4D]/5 rounded-full">{t('settings.comingSoon')}</span>
                     <span>Auto-import service records and certificates</span>
                   </div>
                 </div>
 
                 {/* Ecosure / Ecolab */}
-                <div className="border border-gray-200 rounded-lg p-4 sm:p-5">
+                <div className="border border-[#1E2D4D]/10 rounded-xl p-4 sm:p-5">
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="flex items-center gap-3 sm:gap-4">
                       <div className="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center flex-shrink-0">
                         <span className="text-green-700 font-bold text-sm">ECO</span>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-gray-900">Ecolab / EcoSure</h4>
-                        <p className="text-sm text-gray-500">Food safety inspections and sanitation services</p>
+                        <h4 className="font-semibold text-[#1E2D4D]">Ecolab / EcoSure</h4>
+                        <p className="text-sm text-[#1E2D4D]/50">Food safety inspections and sanitation services</p>
                       </div>
                     </div>
                     <button
                       onClick={() => toast.info('Ecolab integration')}
-                      className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700"
+                      className="px-4 py-2 text-sm border border-[#1E2D4D]/15 rounded-xl hover:bg-[#FAF7F0] text-[#1E2D4D]/80"
                     >
                       {t('settings.connect')}
                     </button>
                   </div>
-                  <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
-                    <span className="px-2 py-0.5 bg-gray-100 rounded-full">{t('settings.comingSoon')}</span>
+                  <div className="mt-3 flex items-center gap-2 text-xs text-[#1E2D4D]/50">
+                    <span className="px-2 py-0.5 bg-[#1E2D4D]/5 rounded-full">{t('settings.comingSoon')}</span>
                     <span>Import inspection scores and corrective actions</span>
                   </div>
                 </div>
 
                 {/* API Access */}
-                <div className="border border-dashed border-gray-300 rounded-lg p-4 sm:p-5">
+                <div className="border border-dashed border-[#1E2D4D]/15 rounded-xl p-4 sm:p-5">
                   <div className="flex items-center gap-3 sm:gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center">
-                      <Plug className="h-6 w-6 text-gray-500" />
+                    <div className="w-12 h-12 rounded-lg bg-[#1E2D4D]/5 flex items-center justify-center">
+                      <Plug className="h-6 w-6 text-[#1E2D4D]/50" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900">{t('settings.apiAccess')}</h4>
-                      <p className="text-sm text-gray-500">{t('settings.apiDesc')}</p>
-                      <p className="text-xs text-gray-400 mt-1">{t('settings.enterprisePlan')}</p>
+                      <h4 className="font-semibold text-[#1E2D4D]">{t('settings.apiAccess')}</h4>
+                      <p className="text-sm text-[#1E2D4D]/50">{t('settings.apiDesc')}</p>
+                      <p className="text-xs text-[#1E2D4D]/30 mt-1">{t('settings.enterprisePlan')}</p>
                     </div>
                   </div>
                 </div>
@@ -1107,8 +1109,8 @@ export function Settings() {
             <div className="space-y-6">
               {/* Security Navigation Cards */}
               <div>
-                <h3 className="text-xl font-bold text-gray-900" style={{ fontFamily: 'DM Sans, sans-serif' }}>Security & Access</h3>
-                <p className="text-sm text-gray-600 mt-1">Manage access control, audit trails, and compliance reporting.</p>
+                <h3 className="text-xl font-bold text-[#1E2D4D]" style={{ fontFamily: 'DM Sans, sans-serif' }}>Security & Access</h3>
+                <p className="text-sm text-[#1E2D4D]/70 mt-1">Manage access control, audit trails, and compliance reporting.</p>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                 {[
@@ -1140,16 +1142,16 @@ export function Settings() {
                   <button
                     key={card.title}
                     onClick={() => navigate(card.path)}
-                    className="flex flex-col items-start gap-3 p-5 bg-white border border-gray-200 rounded-lg text-left hover:shadow-md hover:border-[#1e4d6b]/30 transition-all duration-150 group"
+                    className="flex flex-col items-start gap-3 p-6 bg-white border border-[#1E2D4D]/10 rounded-xl text-left hover:shadow-md hover:border-[#1E2D4D]/30 transition-all duration-150 group"
                   >
-                    <div className="p-2 rounded-lg bg-[#1e4d6b]/10 group-hover:bg-[#1e4d6b]/15 transition-colors">
-                      <card.icon className="h-5 w-5 text-[#1e4d6b]" />
+                    <div className="p-2 rounded-lg bg-[#1E2D4D]/10 group-hover:bg-[#1E2D4D]/15 transition-colors">
+                      <card.icon className="h-5 w-5 text-[#1E2D4D]" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-semibold text-gray-900" style={{ fontFamily: 'DM Sans, sans-serif' }}>{card.title}</h4>
-                      <p className="text-xs text-gray-500 mt-1">{card.description}</p>
+                      <h4 className="text-sm font-semibold text-[#1E2D4D]" style={{ fontFamily: 'DM Sans, sans-serif' }}>{card.title}</h4>
+                      <p className="text-xs text-[#1E2D4D]/50 mt-1">{card.description}</p>
                     </div>
-                    <span className="text-xs font-medium text-[#1e4d6b] group-hover:text-[#2a6a8f] transition-colors mt-auto">
+                    <span className="text-xs font-medium text-[#1E2D4D] group-hover:text-[#2A3F6B] transition-colors mt-auto">
                       Manage →
                     </span>
                   </button>
@@ -1157,12 +1159,12 @@ export function Settings() {
               </div>
 
               {/* Session Info */}
-              <div className="bg-white border border-gray-200 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Clock className="h-4 w-4 text-gray-400" />
+              <div className="bg-white border border-[#1E2D4D]/10 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
+                <div className="flex items-center gap-2 text-sm text-[#1E2D4D]/70">
+                  <Clock className="h-4 w-4 text-[#1E2D4D]/30" />
                   <span>Last login: {profile?.last_login_at ? new Date(profile.last_login_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }) : 'N/A'}</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="flex items-center gap-2 text-sm text-[#1E2D4D]/70">
                   <span className="relative flex h-2.5 w-2.5">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
@@ -1172,55 +1174,55 @@ export function Settings() {
               </div>
 
               {/* Separator */}
-              <hr className="border-gray-200" />
+              <hr className="border-[#1E2D4D]/10" />
 
-              <h3 className="text-xl font-bold text-gray-900">{t('settings.securityChangePassword')}</h3>
-              <p className="text-sm text-gray-600">{t('settings.securityDesc')}</p>
+              <h3 className="text-xl font-bold text-[#1E2D4D]">{t('settings.securityChangePassword')}</h3>
+              <p className="text-sm text-[#1E2D4D]/70">{t('settings.securityDesc')}</p>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">Current Password</label>
                 <div className="relative">
                   <input
                     type={showCurrentPw ? 'text' : 'password'}
                     value={pwForm.current}
                     onChange={(e) => { setPwForm({ ...pwForm, current: e.target.value }); setPwError(''); setPwSuccess(''); }}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37] pr-10"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] pr-10"
                     placeholder="Enter current password"
                   />
-                  <button type="button" onClick={() => setShowCurrentPw(!showCurrentPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                  <button type="button" onClick={() => setShowCurrentPw(!showCurrentPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70">
                     {showCurrentPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">New Password</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">New Password</label>
                 <div className="relative">
                   <input
                     type={showNewPw ? 'text' : 'password'}
                     value={pwForm.newPw}
                     onChange={(e) => { setPwForm({ ...pwForm, newPw: e.target.value }); setPwError(''); setPwSuccess(''); }}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37] pr-10"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] pr-10"
                     placeholder="Enter new password"
                   />
-                  <button type="button" onClick={() => setShowNewPw(!showNewPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                  <button type="button" onClick={() => setShowNewPw(!showNewPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70">
                     {showNewPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">Confirm New Password</label>
                 <input
                   type="password"
                   value={pwForm.confirm}
                   onChange={(e) => { setPwForm({ ...pwForm, confirm: e.target.value }); setPwError(''); setPwSuccess(''); }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   placeholder="Re-enter new password"
                 />
               </div>
               {pwError && (
-                <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{pwError}</div>
+                <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-3 py-2">{pwError}</div>
               )}
               {pwSuccess && (
-                <div className="text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-2">{pwSuccess}</div>
+                <div className="text-sm text-green-700 bg-green-50 border border-green-200 rounded-xl px-3 py-2">{pwSuccess}</div>
               )}
               <button
                 onClick={() => {
@@ -1251,7 +1253,7 @@ export function Settings() {
                     }
                   });
                 }}
-                className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150"
+                className="px-6 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] duration-150"
               >
                 Update Password
               </button>
@@ -1261,10 +1263,10 @@ export function Settings() {
           {activeTab === 'operating-hours' && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-xl font-bold text-gray-900">{t('settings.hoursAndShifts')}</h3>
-                <p className="text-sm text-gray-600 mt-1">{t('settings.hoursShiftsDesc')}</p>
+                <h3 className="text-xl font-bold text-[#1E2D4D]">{t('settings.hoursAndShifts')}</h3>
+                <p className="text-sm text-[#1E2D4D]/70 mt-1">{t('settings.hoursShiftsDesc')}</p>
                 {!canEditHours && (
-                  <div className="mt-2 text-sm text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                  <div className="mt-2 text-sm text-amber-600 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">
                     {t('settings.viewOnlyHours')}
                   </div>
                 )}
@@ -1272,13 +1274,13 @@ export function Settings() {
 
               {/* Operating Hours */}
               <div>
-                <h4 className="font-semibold text-gray-900 mb-4">{t('settings.operatingHours')}</h4>
+                <h4 className="font-semibold text-[#1E2D4D] mb-4">{t('settings.operatingHours')}</h4>
                 <div className="space-y-4">
                   {locationHours.map((loc) => (
-                    <div key={loc.locationName} className="border border-gray-200 rounded-lg p-4 sm:p-5">
+                    <div key={loc.locationName} className="border border-[#1E2D4D]/10 rounded-xl p-4 sm:p-5">
                       <div className="flex items-center gap-2 mb-4">
-                        <MapPin className="h-5 w-5 text-[#1e4d6b]" />
-                        <span className="font-semibold text-gray-900">{loc.locationName}</span>
+                        <MapPin className="h-5 w-5 text-[#1E2D4D]" />
+                        <span className="font-semibold text-[#1E2D4D]">{loc.locationName}</span>
                       </div>
 
                       <div className="flex flex-wrap gap-3 mb-4">
@@ -1293,39 +1295,39 @@ export function Settings() {
                                 newDays[idx] = !newDays[idx];
                                 updateLocationHours(loc.locationName, { days: newDays });
                               }}
-                              className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded"
+                              className="h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] border-[#1E2D4D]/15 rounded"
                             />
-                            <span className="text-sm font-medium text-gray-700">{dayLabelsI18n[idx]}</span>
+                            <span className="text-sm font-medium text-[#1E2D4D]/80">{dayLabelsI18n[idx]}</span>
                           </label>
                         ))}
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.opens')}</label>
+                          <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('settings.opens')}</label>
                           <select
                             value={loc.openTime}
                             disabled={!canEditHours}
                             onChange={(e) => updateLocationHours(loc.locationName, { openTime: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37] disabled:bg-gray-50 disabled:text-gray-500"
+                            className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] disabled:bg-[#FAF7F0] disabled:text-[#1E2D4D]/50"
                           >
                             {generateOpeningTimes().map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                           </select>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.closes')}</label>
+                          <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('settings.closes')}</label>
                           <select
                             value={loc.closeTime}
                             disabled={!canEditHours}
                             onChange={(e) => updateLocationHours(loc.locationName, { closeTime: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37] disabled:bg-gray-50 disabled:text-gray-500"
+                            className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] disabled:bg-[#FAF7F0] disabled:text-[#1E2D4D]/50"
                           >
                             {generateClosingTimes().map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                           </select>
                         </div>
                       </div>
 
-                      <div className="mt-3 text-xs text-gray-500">
+                      <div className="mt-3 text-xs text-[#1E2D4D]/50">
                         {loc.days.filter(Boolean).length} {t('settings.daysPerWeek')} {formatTime24to12(loc.openTime)} – {formatTime24to12(loc.closeTime)}
                       </div>
                     </div>
@@ -1335,28 +1337,28 @@ export function Settings() {
 
               {/* Shift Configuration */}
               <div>
-                <h4 className="font-semibold text-gray-900 mb-4">{t('settings.shiftConfiguration')}</h4>
+                <h4 className="font-semibold text-[#1E2D4D] mb-4">{t('settings.shiftConfiguration')}</h4>
                 <div className="space-y-4">
                   {locationHours.map((loc) => {
                     const locShifts = getShiftsForLocation(loc.locationName).filter(s => s.locationName === loc.locationName);
                     return (
-                      <div key={loc.locationName} className="border border-gray-200 rounded-lg p-4 sm:p-5">
+                      <div key={loc.locationName} className="border border-[#1E2D4D]/10 rounded-xl p-4 sm:p-5">
                         <div className="flex items-center gap-2 mb-4">
-                          <MapPin className="h-5 w-5 text-[#1e4d6b]" />
-                          <span className="font-semibold text-gray-900">{loc.locationName}</span>
-                          <span className="text-xs text-gray-400 ml-auto">{locShifts.length} {locShifts.length !== 1 ? t('settings.shifts') : t('settings.shift')}</span>
+                          <MapPin className="h-5 w-5 text-[#1E2D4D]" />
+                          <span className="font-semibold text-[#1E2D4D]">{loc.locationName}</span>
+                          <span className="text-xs text-[#1E2D4D]/30 ml-auto">{locShifts.length} {locShifts.length !== 1 ? t('settings.shifts') : t('settings.shift')}</span>
                         </div>
 
                         <div className="space-y-3">
                           {locShifts.map((shift) => (
-                            <div key={shift.id} className="bg-gray-50 rounded-lg p-4">
+                            <div key={shift.id} className="bg-[#FAF7F0] rounded-xl p-4">
                               <div className="flex items-center gap-3 mb-3">
                                 <input
                                   type="text"
                                   value={shift.name}
                                   disabled={!canEditHours}
                                   onChange={(e) => updateShift(shift.id, { name: e.target.value })}
-                                  className="px-3 py-1.5 border border-gray-300 rounded-md text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#d4af37] disabled:bg-white disabled:border-transparent disabled:text-gray-700 w-40"
+                                  className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-md text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] disabled:bg-white disabled:border-transparent disabled:text-[#1E2D4D]/80 w-40"
                                 />
                                 {canEditHours && (
                                   <button
@@ -1369,23 +1371,23 @@ export function Settings() {
                               </div>
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                                 <div>
-                                  <label className="block text-xs font-medium text-gray-500 mb-1">{t('settings.startTimeLabel')}</label>
+                                  <label className="block text-xs font-medium text-[#1E2D4D]/50 mb-1">{t('settings.startTimeLabel')}</label>
                                   <select
                                     value={shift.startTime}
                                     disabled={!canEditHours}
                                     onChange={(e) => updateShift(shift.id, { startTime: e.target.value })}
-                                    className="w-full px-2 py-1.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] disabled:bg-white disabled:text-gray-500"
+                                    className="w-full px-2 py-1.5 border border-[#1E2D4D]/15 rounded-md text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] disabled:bg-white disabled:text-[#1E2D4D]/50"
                                   >
                                     {generateAllTimes().map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                                   </select>
                                 </div>
                                 <div>
-                                  <label className="block text-xs font-medium text-gray-500 mb-1">{t('settings.endTimeLabel')}</label>
+                                  <label className="block text-xs font-medium text-[#1E2D4D]/50 mb-1">{t('settings.endTimeLabel')}</label>
                                   <select
                                     value={shift.endTime}
                                     disabled={!canEditHours}
                                     onChange={(e) => updateShift(shift.id, { endTime: e.target.value })}
-                                    className="w-full px-2 py-1.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] disabled:bg-white disabled:text-gray-500"
+                                    className="w-full px-2 py-1.5 border border-[#1E2D4D]/15 rounded-md text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] disabled:bg-white disabled:text-[#1E2D4D]/50"
                                   >
                                     {generateAllTimes().map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                                   </select>
@@ -1403,9 +1405,9 @@ export function Settings() {
                                         newDays[idx] = !newDays[idx];
                                         updateShift(shift.id, { days: newDays });
                                       }}
-                                      className="h-3.5 w-3.5 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded"
+                                      className="h-3.5 w-3.5 text-[#A08C5A] focus:ring-[#A08C5A] border-[#1E2D4D]/15 rounded"
                                     />
-                                    <span className="text-xs text-gray-600">{dayLabelsI18n[idx]}</span>
+                                    <span className="text-xs text-[#1E2D4D]/70">{dayLabelsI18n[idx]}</span>
                                   </label>
                                 ))}
                               </div>
@@ -1414,7 +1416,7 @@ export function Settings() {
                           {canEditHours && (
                             <button
                               onClick={() => addShift({ name: t('settings.newShift'), locationName: loc.locationName, startTime: '09:00', endTime: '17:00', days: [false, true, true, true, true, true, false] })}
-                              className="w-full py-2 text-sm border border-dashed border-gray-300 rounded-md hover:bg-gray-50 text-gray-600"
+                              className="w-full py-2 text-sm border border-dashed border-[#1E2D4D]/15 rounded-md hover:bg-[#FAF7F0] text-[#1E2D4D]/70"
                             >
                               {t('settings.addShift')}
                             </button>
@@ -1427,7 +1429,7 @@ export function Settings() {
               </div>
 
               {canEditHours && (
-                <button onClick={() => guardAction('settings', 'operating hours', () => toast.success('Hours and shifts saved'))} className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
+                <button onClick={() => guardAction('settings', 'operating hours', () => toast.success('Hours and shifts saved'))} className="px-6 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] duration-150">
                   {t('settings.saveChanges')}
                 </button>
               )}
@@ -1436,17 +1438,17 @@ export function Settings() {
 
           {activeTab === 'privacy' && (
             <div className="space-y-6">
-              <h3 className="text-xl font-bold text-gray-900">Privacy & Benchmarking</h3>
-              <p className="text-sm text-gray-600">Control how your anonymized data is used in the EvidLY Compliance Index.</p>
+              <h3 className="text-xl font-bold text-[#1E2D4D]">Privacy & Benchmarking</h3>
+              <p className="text-sm text-[#1E2D4D]/70">Control how your anonymized data is used in the EvidLY Compliance Index.</p>
 
-              <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+              <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-semibold text-gray-900 mb-1">Include my anonymized data in EvidLY Compliance Index</h4>
-                    <p className="text-sm text-gray-500 mb-3">
+                    <h4 className="font-semibold text-[#1E2D4D] mb-1">Include my anonymized data in EvidLY Compliance Index</h4>
+                    <p className="text-sm text-[#1E2D4D]/50 mb-3">
                       When enabled, your location scores are included in aggregate industry benchmarks. Your data is fully anonymized — no business names, addresses, or employee information is ever shared.
                     </p>
-                    <div className="space-y-2 text-xs text-gray-500">
+                    <div className="space-y-2 text-xs text-[#1E2D4D]/50">
                       <div className="flex items-start gap-2">
                         <CheckCircle2 className="h-3.5 w-3.5 text-green-500 mt-0.5 flex-shrink-0" />
                         <span>All data is fully anonymized before aggregation</span>
@@ -1470,7 +1472,7 @@ export function Settings() {
                       setBenchmarkOptIn(!benchmarkOptIn);
                       toast.success(benchmarkOptIn ? 'Opted out of benchmarking' : 'Opted in to benchmarking');
                     }}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors flex-shrink-0 ${benchmarkOptIn ? 'bg-green-500' : 'bg-gray-300'}`}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors flex-shrink-0 ${benchmarkOptIn ? 'bg-green-500' : 'bg-[#1E2D4D]/15'}`}
                   >
                     <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${benchmarkOptIn ? 'translate-x-6' : 'translate-x-1'}`} />
                   </button>
@@ -1478,7 +1480,7 @@ export function Settings() {
               </div>
 
               {!benchmarkOptIn && (
-                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
                   <div className="flex items-start gap-3">
                     <EvidlyIcon size={20} className="mt-0.5 flex-shrink-0" />
                     <div>
@@ -1492,9 +1494,9 @@ export function Settings() {
                 </div>
               )}
 
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h4 className="font-semibold text-gray-900 mb-2 text-sm">Data We Never Share</h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-gray-600">
+              <div className="bg-[#FAF7F0] rounded-xl p-4">
+                <h4 className="font-semibold text-[#1E2D4D] mb-2 text-sm">Data We Never Share</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-[#1E2D4D]/70">
                   <div>• Business names or addresses</div>
                   <div>• Employee information</div>
                   <div>• Specific violation details</div>
@@ -1508,40 +1510,40 @@ export function Settings() {
               {userRole === 'owner_operator' && (
                 <>
                   <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: 24, marginTop: 8 }}>
-                    <h3 className="text-lg font-bold text-gray-900 mb-1">Visibility & Community</h3>
-                    <p className="text-sm text-gray-500 mb-4">Control your presence on the EvidLY community leaderboard.</p>
+                    <h3 className="text-lg font-bold text-[#1E2D4D] mb-1">Visibility & Community</h3>
+                    <p className="text-sm text-[#1E2D4D]/50 mb-4">Control your presence on the EvidLY community leaderboard.</p>
                   </div>
 
-                  <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+                  <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6">
                     <div className="flex items-start gap-3 mb-4">
                       <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#fffbeb' }}>
                         <Trophy className="h-5 w-5" style={{ color: '#A08C5A' }} />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-gray-900">Compliance Leaderboard</h4>
-                        <p className="text-sm text-gray-500">Showcase your kitchen's excellence to the EvidLY community.</p>
+                        <h4 className="font-semibold text-[#1E2D4D]">Compliance Leaderboard</h4>
+                        <p className="text-sm text-[#1E2D4D]/50">Showcase your kitchen's excellence to the EvidLY community.</p>
                       </div>
                     </div>
 
-                    <div className="flex items-start gap-3 mb-5 bg-gray-50 rounded-lg p-4">
+                    <div className="flex items-start gap-3 mb-5 bg-[#FAF7F0] rounded-xl p-4">
                       <Trophy className="h-5 w-5 flex-shrink-0 mt-0.5" style={{ color: '#A08C5A' }} />
                       <div>
-                        <p className="text-sm font-semibold text-gray-900 mb-2">Join the EvidLY Compliance Leaderboard</p>
-                        <div className="space-y-2 text-xs text-gray-600">
+                        <p className="text-sm font-semibold text-[#1E2D4D] mb-2">Join the EvidLY Compliance Leaderboard</p>
+                        <div className="space-y-2 text-xs text-[#1E2D4D]/70">
                           <div className="flex items-start gap-2">
-                            <span className="text-gray-400 mt-0.5">•</span>
+                            <span className="text-[#1E2D4D]/30 mt-0.5">•</span>
                             <span>Compete for monthly rewards including free months, K2C meal multipliers, and the Compliance Champion plaque</span>
                           </div>
                           <div className="flex items-start gap-2">
-                            <span className="text-gray-400 mt-0.5">•</span>
+                            <span className="text-[#1E2D4D]/30 mt-0.5">•</span>
                             <span>Your operational metrics (temp compliance, checklist completion, streak) are visible to other EvidLY customers</span>
                           </div>
                           <div className="flex items-start gap-2">
-                            <span className="text-gray-400 mt-0.5">•</span>
+                            <span className="text-[#1E2D4D]/30 mt-0.5">•</span>
                             <span>Inspection results shown exactly as reported by your jurisdiction — never generated by EvidLY</span>
                           </div>
                           <div className="flex items-start gap-2">
-                            <span className="text-gray-400 mt-0.5">•</span>
+                            <span className="text-[#1E2D4D]/30 mt-0.5">•</span>
                             <span>Opt out any time — your data is removed within 24 hours</span>
                           </div>
                         </div>
@@ -1581,18 +1583,18 @@ export function Settings() {
                             }
                             setLeaderboardToggling(false);
                           }}
-                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors flex-shrink-0 ${leaderboardOptIn ? 'bg-green-500' : 'bg-gray-300'} ${leaderboardToggling ? 'opacity-50' : ''}`}
+                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors flex-shrink-0 ${leaderboardOptIn ? 'bg-green-500' : 'bg-[#1E2D4D]/15'} ${leaderboardToggling ? 'opacity-50' : ''}`}
                         >
                           <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${leaderboardOptIn ? 'translate-x-6' : 'translate-x-1'}`} />
                         </button>
-                        <span className="text-sm font-medium text-gray-700">
+                        <span className="text-sm font-medium text-[#1E2D4D]/80">
                           {leaderboardOptIn ? 'Competing on the leaderboard' : 'I want to compete on the leaderboard'}
                         </span>
                       </div>
                     </div>
 
                     {leaderboardOptIn && leaderboardOptInDate && (
-                      <p className="text-xs text-gray-400 mb-4">
+                      <p className="text-xs text-[#1E2D4D]/30 mb-4">
                         Competing since {new Date(leaderboardOptInDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                       </p>
                     )}
@@ -1610,40 +1612,40 @@ export function Settings() {
 
                   {/* SB 1383 Enrollment */}
                   <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: 24, marginTop: 8 }}>
-                    <h3 className="text-lg font-bold text-gray-900 mb-1">California SB 1383 Compliance</h3>
-                    <p className="text-sm text-gray-500 mb-4">Organic waste diversion and food recovery tracking for California locations.</p>
+                    <h3 className="text-lg font-bold text-[#1E2D4D] mb-1">California SB 1383 Compliance</h3>
+                    <p className="text-sm text-[#1E2D4D]/50 mb-4">Organic waste diversion and food recovery tracking for California locations.</p>
                   </div>
 
-                  <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+                  <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6">
                     <div className="flex items-start gap-3 mb-4">
                       <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#ecfdf5' }}>
                         <Recycle className="h-5 w-5" style={{ color: '#40916C' }} />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-gray-900">SB 1383 Food Recovery Tracking</h4>
-                        <p className="text-sm text-gray-500">Track organic waste diversion, food recovery agreements, and hauler records.</p>
+                        <h4 className="font-semibold text-[#1E2D4D]">SB 1383 Food Recovery Tracking</h4>
+                        <p className="text-sm text-[#1E2D4D]/50">Track organic waste diversion, food recovery agreements, and hauler records.</p>
                       </div>
                     </div>
 
-                    <div className="flex items-start gap-3 mb-5 bg-gray-50 rounded-lg p-4">
+                    <div className="flex items-start gap-3 mb-5 bg-[#FAF7F0] rounded-xl p-4">
                       <Recycle className="h-5 w-5 flex-shrink-0 mt-0.5" style={{ color: '#40916C' }} />
                       <div>
-                        <p className="text-sm font-semibold text-gray-900 mb-2">What SB 1383 tracking includes</p>
-                        <div className="space-y-2 text-xs text-gray-600">
+                        <p className="text-sm font-semibold text-[#1E2D4D] mb-2">What SB 1383 tracking includes</p>
+                        <div className="space-y-2 text-xs text-[#1E2D4D]/70">
                           <div className="flex items-start gap-2">
-                            <span className="text-gray-400 mt-0.5">•</span>
+                            <span className="text-[#1E2D4D]/30 mt-0.5">•</span>
                             <span>Log edible food recovery pounds and organic waste diversion per reporting period</span>
                           </div>
                           <div className="flex items-start gap-2">
-                            <span className="text-gray-400 mt-0.5">•</span>
+                            <span className="text-[#1E2D4D]/30 mt-0.5">•</span>
                             <span>Track food recovery partner agreements, hauler details, and weight tickets</span>
                           </div>
                           <div className="flex items-start gap-2">
-                            <span className="text-gray-400 mt-0.5">•</span>
+                            <span className="text-[#1E2D4D]/30 mt-0.5">•</span>
                             <span>April 1 annual reporting deadline reminders</span>
                           </div>
                           <div className="flex items-start gap-2">
-                            <span className="text-gray-400 mt-0.5">•</span>
+                            <span className="text-[#1E2D4D]/30 mt-0.5">•</span>
                             <span>EvidLY documents your records — your jurisdiction determines compliance</span>
                           </div>
                         </div>
@@ -1676,18 +1678,18 @@ export function Settings() {
                               setSb1383Toggling(false);
                             });
                           }}
-                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors flex-shrink-0 ${sb1383Enrolled ? 'bg-green-500' : 'bg-gray-300'} ${sb1383Toggling ? 'opacity-50' : ''}`}
+                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors flex-shrink-0 ${sb1383Enrolled ? 'bg-green-500' : 'bg-[#1E2D4D]/15'} ${sb1383Toggling ? 'opacity-50' : ''}`}
                         >
                           <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${sb1383Enrolled ? 'translate-x-6' : 'translate-x-1'}`} />
                         </button>
-                        <span className="text-sm font-medium text-gray-700">
+                        <span className="text-sm font-medium text-[#1E2D4D]/80">
                           {sb1383Enrolled ? 'SB 1383 tracking is active' : 'Enable SB 1383 tracking for my organization'}
                         </span>
                       </div>
                     </div>
 
                     {sb1383Enrolled && sb1383EnrolledDate && (
-                      <p className="text-xs text-gray-400 mb-4">
+                      <p className="text-xs text-[#1E2D4D]/30 mb-4">
                         Enrolled since {new Date(sb1383EnrolledDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                       </p>
                     )}
@@ -1705,40 +1707,40 @@ export function Settings() {
 
                   {/* K-12 Food Safety Enrollment */}
                   <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: 24, marginTop: 8 }}>
-                    <h3 className="text-lg font-bold text-gray-900 mb-1">K-12 Food Safety Module</h3>
-                    <p className="text-sm text-gray-500 mb-4">USDA and County EH audit readiness for K-12 food service programs.</p>
+                    <h3 className="text-lg font-bold text-[#1E2D4D] mb-1">K-12 Food Safety Module</h3>
+                    <p className="text-sm text-[#1E2D4D]/50 mb-4">USDA and County EH audit readiness for K-12 food service programs.</p>
                   </div>
 
-                  <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+                  <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6">
                     <div className="flex items-start gap-3 mb-4">
                       <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#eff6ff' }}>
                         <School className="h-5 w-5" style={{ color: '#1D4ED8' }} />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-gray-900">K-12 Audit Readiness Dashboard</h4>
-                        <p className="text-sm text-gray-500">Organize records for USDA reviews and county health inspections.</p>
+                        <h4 className="font-semibold text-[#1E2D4D]">K-12 Audit Readiness Dashboard</h4>
+                        <p className="text-sm text-[#1E2D4D]/50">Organize records for USDA reviews and county health inspections.</p>
                       </div>
                     </div>
 
-                    <div className="flex items-start gap-3 mb-5 bg-gray-50 rounded-lg p-4">
+                    <div className="flex items-start gap-3 mb-5 bg-[#FAF7F0] rounded-xl p-4">
                       <School className="h-5 w-5 flex-shrink-0 mt-0.5" style={{ color: '#1D4ED8' }} />
                       <div>
-                        <p className="text-sm font-semibold text-gray-900 mb-2">What the K-12 module includes</p>
-                        <div className="space-y-2 text-xs text-gray-600">
+                        <p className="text-sm font-semibold text-[#1E2D4D] mb-2">What the K-12 module includes</p>
+                        <div className="space-y-2 text-xs text-[#1E2D4D]/70">
                           <div className="flex items-start gap-2">
-                            <span className="text-gray-400 mt-0.5">•</span>
+                            <span className="text-[#1E2D4D]/30 mt-0.5">•</span>
                             <span>Audit readiness view — every checklist item, sourced from your existing EvidLY data</span>
                           </div>
                           <div className="flex items-start gap-2">
-                            <span className="text-gray-400 mt-0.5">•</span>
+                            <span className="text-[#1E2D4D]/30 mt-0.5">•</span>
                             <span>Dual authority dashboard — County EH vs USDA requirements side by side</span>
                           </div>
                           <div className="flex items-start gap-2">
-                            <span className="text-gray-400 mt-0.5">•</span>
+                            <span className="text-[#1E2D4D]/30 mt-0.5">•</span>
                             <span>Meal metrics — daily counts, trends, and period totals per school</span>
                           </div>
                           <div className="flex items-start gap-2">
-                            <span className="text-gray-400 mt-0.5">•</span>
+                            <span className="text-[#1E2D4D]/30 mt-0.5">•</span>
                             <span>NSLP claim period documentation completeness</span>
                           </div>
                         </div>
@@ -1772,18 +1774,18 @@ export function Settings() {
                               setK12Toggling(false);
                             });
                           }}
-                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors flex-shrink-0 ${k12Enrolled ? 'bg-blue-500' : 'bg-gray-300'} ${k12Toggling ? 'opacity-50' : ''}`}
+                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors flex-shrink-0 ${k12Enrolled ? 'bg-blue-500' : 'bg-[#1E2D4D]/15'} ${k12Toggling ? 'opacity-50' : ''}`}
                         >
                           <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${k12Enrolled ? 'translate-x-6' : 'translate-x-1'}`} />
                         </button>
-                        <span className="text-sm font-medium text-gray-700">
+                        <span className="text-sm font-medium text-[#1E2D4D]/80">
                           {k12Enrolled ? 'K-12 module is active' : 'Enable K-12 food safety module'}
                         </span>
                       </div>
                     </div>
 
                     {k12Enrolled && k12EnrolledDate && (
-                      <p className="text-xs text-gray-400 mb-4">
+                      <p className="text-xs text-[#1E2D4D]/30 mb-4">
                         Enrolled since {new Date(k12EnrolledDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                       </p>
                     )}
@@ -1809,18 +1811,18 @@ export function Settings() {
 
           {activeTab === 'enterprise' && (
             <div className="space-y-6">
-              <h3 className="text-xl font-bold text-gray-900">Enterprise Administration</h3>
-              <p className="text-sm text-gray-600">Manage enterprise tenants, SSO configuration, and white-label branding.</p>
+              <h3 className="text-xl font-bold text-[#1E2D4D]">Enterprise Administration</h3>
+              <p className="text-sm text-[#1E2D4D]/70">Manage enterprise tenants, SSO configuration, and white-label branding.</p>
 
               {/* SSO Quick Status */}
-              <div className="border border-gray-200 rounded-lg p-4 sm:p-5">
+              <div className="border border-[#1E2D4D]/10 rounded-xl p-4 sm:p-5">
                 <div className="flex flex-wrap items-center gap-3 mb-3">
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
-                    <KeyRound className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+                    <KeyRound className="h-5 w-5" style={{ color: '#1E2D4D' }} />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">SSO Quick Status</h4>
-                    <p className="text-xs text-gray-500">Enterprise single sign-on configuration</p>
+                    <h4 className="font-semibold text-[#1E2D4D]">SSO Quick Status</h4>
+                    <p className="text-xs text-[#1E2D4D]/50">Enterprise single sign-on configuration</p>
                   </div>
                   <div className="ml-auto">
                     <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-200">
@@ -1834,32 +1836,32 @@ export function Settings() {
                     { name: 'Compass Group', provider: 'OIDC via Azure AD', status: 'passed', color: '#003DA5' },
                     { name: 'Sodexo', provider: 'Not configured', status: 'pending', color: '#ED1C24' },
                   ].map(item => (
-                    <div key={item.name} className="flex items-center gap-3 p-2 rounded-lg bg-gray-50">
-                      <div className="w-6 h-6 rounded flex items-center justify-center text-white text-[9px] font-bold" style={{ backgroundColor: item.color }}>
+                    <div key={item.name} className="flex items-center gap-3 p-2 rounded-lg bg-[#FAF7F0]">
+                      <div className="w-6 h-6 rounded flex items-center justify-center text-white text-[11px] font-bold" style={{ backgroundColor: item.color }}>
                         {item.name[0]}
                       </div>
-                      <span className="text-sm font-medium text-gray-700 flex-1">{item.name}</span>
-                      <span className="text-xs text-gray-500">{item.provider}</span>
+                      <span className="text-sm font-medium text-[#1E2D4D]/80 flex-1">{item.name}</span>
+                      <span className="text-xs text-[#1E2D4D]/50">{item.provider}</span>
                       <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${item.status === 'passed' ? 'bg-green-50 text-green-700' : 'bg-amber-50 text-amber-700'}`}>
                         {item.status === 'passed' ? 'Active' : 'Pending'}
                       </span>
                     </div>
                   ))}
                 </div>
-                <button onClick={() => navigate('/enterprise/admin')} className="text-sm font-medium flex items-center gap-1 cursor-pointer" style={{ color: '#1e4d6b' }}>
+                <button onClick={() => navigate('/enterprise/admin')} className="text-sm font-medium flex items-center gap-1 cursor-pointer" style={{ color: '#1E2D4D' }}>
                   Configure SSO <ExternalLink className="h-3.5 w-3.5" />
                 </button>
               </div>
 
               {/* Tenant Branding Preview */}
-              <div className="border border-gray-200 rounded-lg p-4 sm:p-5">
+              <div className="border border-[#1E2D4D]/10 rounded-xl p-4 sm:p-5">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
-                    <Layers className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+                    <Layers className="h-5 w-5" style={{ color: '#1E2D4D' }} />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">Tenant Branding</h4>
-                    <p className="text-xs text-gray-500">White-label configuration for enterprise clients</p>
+                    <h4 className="font-semibold text-[#1E2D4D]">Tenant Branding</h4>
+                    <p className="text-xs text-[#1E2D4D]/50">White-label configuration for enterprise clients</p>
                   </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-3">
@@ -1868,39 +1870,39 @@ export function Settings() {
                     { name: 'Compass Compliance', colors: ['#003DA5', '#1B365D', '#FFB81C'] },
                     { name: 'Sodexo Safe Kitchen', colors: ['#ED1C24', '#231F20', '#00A0DF'] },
                   ].map(t => (
-                    <div key={t.name} className="p-3 rounded-lg bg-gray-50 text-center">
+                    <div key={t.name} className="p-3 rounded-lg bg-[#FAF7F0] text-center">
                       <div className="flex items-center justify-center gap-1 mb-2">
                         {t.colors.map((c, i) => (
-                          <div key={i} className="w-5 h-5 rounded-full border border-gray-200" style={{ backgroundColor: c }} />
+                          <div key={i} className="w-5 h-5 rounded-full border border-[#1E2D4D]/10" style={{ backgroundColor: c }} />
                         ))}
                       </div>
-                      <p className="text-[11px] font-medium text-gray-700">{t.name}</p>
+                      <p className="text-xs font-medium text-[#1E2D4D]/80">{t.name}</p>
                     </div>
                   ))}
                 </div>
-                <button onClick={() => navigate('/enterprise/admin')} className="text-sm font-medium flex items-center gap-1 cursor-pointer" style={{ color: '#1e4d6b' }}>
+                <button onClick={() => navigate('/enterprise/admin')} className="text-sm font-medium flex items-center gap-1 cursor-pointer" style={{ color: '#1E2D4D' }}>
                   Manage Branding <ExternalLink className="h-3.5 w-3.5" />
                 </button>
               </div>
 
               {/* Enterprise Admin Portal Link */}
-              <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-lg p-4 sm:p-6 text-white">
-                <h4 className="text-lg font-semibold mb-2">Enterprise Admin Portal</h4>
-                <p className="text-gray-200 text-sm mb-4">Full enterprise management — tenants, hierarchy, SSO, SCIM provisioning, branding, user directory, and reports.</p>
-                <button onClick={() => navigate('/enterprise/admin')} className="px-4 py-2 rounded-xl bg-white text-[#1e4d6b] text-sm font-semibold hover:bg-gray-100 cursor-pointer transition-colors">
+              <div className="bg-gradient-to-r from-[#1E2D4D] to-[#2c5f7f] rounded-xl p-4 sm:p-6 text-white">
+                <h4 className="text-lg font-semibold tracking-tight mb-2">Enterprise Admin Portal</h4>
+                <p className="text-[#1E2D4D]/20 text-sm mb-4">Full enterprise management — tenants, hierarchy, SSO, SCIM provisioning, branding, user directory, and reports.</p>
+                <button onClick={() => navigate('/enterprise/admin')} className="px-4 py-2 rounded-xl bg-white text-[#1E2D4D] text-sm font-semibold hover:bg-[#1E2D4D]/5 cursor-pointer transition-colors">
                   Open Enterprise Admin
                 </button>
               </div>
 
               {/* SCIM Status */}
-              <div className="border border-gray-200 rounded-lg p-4 sm:p-5">
+              <div className="border border-[#1E2D4D]/10 rounded-xl p-4 sm:p-5">
                 <div className="flex flex-wrap items-center gap-3">
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#eef4f8' }}>
                     <EvidlyIcon size={20} />
                   </div>
                   <div className="flex-1">
-                    <h4 className="font-semibold text-gray-900">SCIM 2.0 Provisioning</h4>
-                    <p className="text-xs text-gray-500">Automated user lifecycle management</p>
+                    <h4 className="font-semibold text-[#1E2D4D]">SCIM 2.0 Provisioning</h4>
+                    <p className="text-xs text-[#1E2D4D]/50">Automated user lifecycle management</p>
                   </div>
                   <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-200">
                     2 Active
@@ -1912,18 +1914,18 @@ export function Settings() {
 
           {activeTab === 'sync' && (
             <div className="space-y-6">
-              <h3 className="text-xl font-bold text-gray-900">Sync & Offline</h3>
-              <p className="text-sm text-gray-600">Manage offline data, sync status, and device registration for this browser.</p>
+              <h3 className="text-xl font-bold text-[#1E2D4D]">Sync & Offline</h3>
+              <p className="text-sm text-[#1E2D4D]/70">Manage offline data, sync status, and device registration for this browser.</p>
 
               {/* Install App */}
-              <div className="border border-gray-200 rounded-lg p-4 sm:p-5">
+              <div className="border border-[#1E2D4D]/10 rounded-xl p-4 sm:p-5">
                 <div className="flex flex-wrap items-center gap-3">
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: isStandalone ? '#dcfce7' : '#eef4f8' }}>
-                    {isStandalone ? <Check className="h-5 w-5 text-green-600" /> : <Download className="h-5 w-5" style={{ color: '#1e4d6b' }} />}
+                    {isStandalone ? <Check className="h-5 w-5 text-green-600" /> : <Download className="h-5 w-5" style={{ color: '#1E2D4D' }} />}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-semibold text-gray-900">Install App</h4>
-                    <p className="text-xs text-gray-500">
+                    <h4 className="font-semibold text-[#1E2D4D]">Install App</h4>
+                    <p className="text-xs text-[#1E2D4D]/50">
                       {isStandalone
                         ? 'EvidLY is installed as an app on this device'
                         : 'Install EvidLY for faster access, offline support, and a full-screen experience'}
@@ -1937,7 +1939,7 @@ export function Settings() {
                     <button
                       onClick={handleInstallApp}
                       className="px-4 py-2 rounded-lg text-white text-sm font-semibold transition-colors flex items-center gap-2 cursor-pointer hover:opacity-90"
-                      style={{ backgroundColor: '#1e4d6b' }}
+                      style={{ backgroundColor: '#1E2D4D' }}
                     >
                       <Download className="h-4 w-4" />
                       Install
@@ -1947,13 +1949,13 @@ export function Settings() {
               </div>
 
               {/* Connection Status */}
-              <div className="border border-gray-200 rounded-lg p-4 sm:p-5">
+              <div className="border border-[#1E2D4D]/10 rounded-xl p-4 sm:p-5">
                 <div className="flex flex-wrap items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: isOnline ? '#dcfce7' : '#fee2e2' }}>
                     {isOnline ? <Wifi className="h-5 w-5 text-green-600" /> : <WifiOff className="h-5 w-5 text-red-600" />}
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">Connection Status</h4>
+                    <h4 className="font-semibold text-[#1E2D4D]">Connection Status</h4>
                     <div className="flex items-center gap-2 mt-0.5">
                       <span className={`inline-block w-2 h-2 rounded-full ${isOnline ? 'bg-green-500' : 'bg-red-500'}`} />
                       <span className={`text-sm font-medium ${isOnline ? 'text-green-700' : 'text-red-700'}`}>
@@ -1966,22 +1968,22 @@ export function Settings() {
                       syncStatus === 'idle' ? 'bg-green-50 text-green-700 border border-green-200' :
                       syncStatus === 'syncing' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
                       syncStatus === 'error' ? 'bg-red-50 text-red-700 border border-red-200' :
-                      'bg-gray-50 text-gray-700 border border-gray-200'
+                      'bg-[#FAF7F0] text-[#1E2D4D]/80 border border-[#1E2D4D]/10'
                     }`}>
                       {syncStatus === 'idle' ? 'Synced' : syncStatus === 'syncing' ? 'Syncing...' : syncStatus === 'error' ? 'Sync Error' : 'Offline'}
                     </span>
                   </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="bg-gray-50 rounded-lg p-3">
-                    <p className="text-xs text-gray-500 mb-1">Last Sync</p>
-                    <p className="text-sm font-medium text-gray-900">
+                  <div className="bg-[#FAF7F0] rounded-lg p-3">
+                    <p className="text-xs text-[#1E2D4D]/50 mb-1">Last Sync</p>
+                    <p className="text-sm font-medium text-[#1E2D4D]">
                       {lastSyncTime ? lastSyncTime.toLocaleString() : 'Never'}
                     </p>
                   </div>
-                  <div className="bg-gray-50 rounded-lg p-3">
-                    <p className="text-xs text-gray-500 mb-1">Pending Changes</p>
-                    <p className="text-sm font-medium text-gray-900">
+                  <div className="bg-[#FAF7F0] rounded-lg p-3">
+                    <p className="text-xs text-[#1E2D4D]/50 mb-1">Pending Changes</p>
+                    <p className="text-sm font-medium text-[#1E2D4D]">
                       {pendingCount} {pendingCount === 1 ? 'action' : 'actions'}
                     </p>
                   </div>
@@ -1989,14 +1991,14 @@ export function Settings() {
               </div>
 
               {/* Sync Actions */}
-              <div className="border border-gray-200 rounded-lg p-4 sm:p-5">
+              <div className="border border-[#1E2D4D]/10 rounded-xl p-4 sm:p-5">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
-                    <RefreshCw className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+                    <RefreshCw className="h-5 w-5" style={{ color: '#1E2D4D' }} />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">Sync Actions</h4>
-                    <p className="text-xs text-gray-500">Manually trigger sync or clear offline data</p>
+                    <h4 className="font-semibold text-[#1E2D4D]">Sync Actions</h4>
+                    <p className="text-xs text-[#1E2D4D]/50">Manually trigger sync or clear offline data</p>
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-3">
@@ -2004,7 +2006,7 @@ export function Settings() {
                     onClick={() => triggerSync()}
                     disabled={!isOnline || syncStatus === 'syncing'}
                     className="px-4 py-2 rounded-lg text-white text-sm font-semibold transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                    style={{ backgroundColor: '#1e4d6b' }}
+                    style={{ backgroundColor: '#1E2D4D' }}
                   >
                     <RefreshCw className={`h-4 w-4 ${syncStatus === 'syncing' ? 'animate-spin' : ''}`} />
                     {syncStatus === 'syncing' ? 'Syncing...' : 'Sync Now'}
@@ -2012,7 +2014,7 @@ export function Settings() {
                   {!clearConfirm ? (
                     <button
                       onClick={() => setClearConfirm(true)}
-                      className="px-4 py-2 rounded-lg border border-red-200 text-red-700 text-sm font-semibold hover:bg-red-50 transition-colors flex items-center gap-2 cursor-pointer"
+                      className="px-4 py-2 rounded-xl border border-red-200 text-red-700 text-sm font-semibold hover:bg-red-50 transition-colors flex items-center gap-2 cursor-pointer"
                     >
                       <Trash2 className="h-4 w-4" />
                       Clear Offline Data
@@ -2028,7 +2030,7 @@ export function Settings() {
                       </button>
                       <button
                         onClick={() => setClearConfirm(false)}
-                        className="px-3 py-1.5 rounded-lg border border-gray-300 text-gray-700 text-sm font-semibold hover:bg-gray-50 transition-colors cursor-pointer"
+                        className="px-3 py-1.5 rounded-xl border border-[#1E2D4D]/15 text-[#1E2D4D]/80 text-sm font-semibold hover:bg-[#FAF7F0] transition-colors cursor-pointer"
                       >
                         Cancel
                       </button>
@@ -2038,34 +2040,34 @@ export function Settings() {
               </div>
 
               {/* Device Info */}
-              <div className="border border-gray-200 rounded-lg p-4 sm:p-5">
+              <div className="border border-[#1E2D4D]/10 rounded-xl p-4 sm:p-5">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
-                    <Smartphone className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+                    <Smartphone className="h-5 w-5" style={{ color: '#1E2D4D' }} />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">Device Information</h4>
-                    <p className="text-xs text-gray-500">This device's sync registration details</p>
+                    <h4 className="font-semibold text-[#1E2D4D]">Device Information</h4>
+                    <p className="text-xs text-[#1E2D4D]/50">This device's sync registration details</p>
                   </div>
                 </div>
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between py-2 border-b border-gray-100">
-                    <span className="text-sm text-gray-600">Device ID</span>
-                    <code className="text-xs bg-gray-100 px-2 py-1 rounded font-mono text-gray-700">{deviceId.slice(0, 8)}...{deviceId.slice(-4)}</code>
+                  <div className="flex items-center justify-between py-2 border-b border-[#1E2D4D]/5">
+                    <span className="text-sm text-[#1E2D4D]/70">Device ID</span>
+                    <code className="text-xs bg-[#1E2D4D]/5 px-2 py-1 rounded font-mono text-[#1E2D4D]/80">{deviceId.slice(0, 8)}...{deviceId.slice(-4)}</code>
                   </div>
-                  <div className="flex items-center justify-between py-2 border-b border-gray-100">
-                    <span className="text-sm text-gray-600">Platform</span>
-                    <span className="text-sm font-medium text-gray-900">{navigator.userAgent.includes('Mobile') ? 'Mobile' : 'Desktop'} — {navigator.platform || 'Unknown'}</span>
+                  <div className="flex items-center justify-between py-2 border-b border-[#1E2D4D]/5">
+                    <span className="text-sm text-[#1E2D4D]/70">Platform</span>
+                    <span className="text-sm font-medium text-[#1E2D4D]">{navigator.userAgent.includes('Mobile') ? 'Mobile' : 'Desktop'} — {navigator.platform || 'Unknown'}</span>
                   </div>
-                  <div className="flex items-center justify-between py-2 border-b border-gray-100">
-                    <span className="text-sm text-gray-600">Service Worker</span>
-                    <span className={`text-sm font-medium ${('serviceWorker' in navigator) ? 'text-green-700' : 'text-gray-500'}`}>
+                  <div className="flex items-center justify-between py-2 border-b border-[#1E2D4D]/5">
+                    <span className="text-sm text-[#1E2D4D]/70">Service Worker</span>
+                    <span className={`text-sm font-medium ${('serviceWorker' in navigator) ? 'text-green-700' : 'text-[#1E2D4D]/50'}`}>
                       {('serviceWorker' in navigator) ? 'Supported' : 'Not Available'}
                     </span>
                   </div>
                   <div className="flex items-center justify-between py-2">
-                    <span className="text-sm text-gray-600">IndexedDB</span>
-                    <span className={`text-sm font-medium ${('indexedDB' in window) ? 'text-green-700' : 'text-gray-500'}`}>
+                    <span className="text-sm text-[#1E2D4D]/70">IndexedDB</span>
+                    <span className={`text-sm font-medium ${('indexedDB' in window) ? 'text-green-700' : 'text-[#1E2D4D]/50'}`}>
                       {('indexedDB' in window) ? 'Available' : 'Not Available'}
                     </span>
                   </div>
@@ -2073,39 +2075,39 @@ export function Settings() {
               </div>
 
               {/* Storage Usage */}
-              <div className="border border-gray-200 rounded-lg p-4 sm:p-5">
+              <div className="border border-[#1E2D4D]/10 rounded-xl p-4 sm:p-5">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
-                    <HardDrive className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+                    <HardDrive className="h-5 w-5" style={{ color: '#1E2D4D' }} />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">Storage Usage</h4>
-                    <p className="text-xs text-gray-500">Local storage used by offline data and cache</p>
+                    <h4 className="font-semibold text-[#1E2D4D]">Storage Usage</h4>
+                    <p className="text-xs text-[#1E2D4D]/50">Local storage used by offline data and cache</p>
                   </div>
                 </div>
                 {storageEstimate ? (
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-[#1E2D4D]/70">
                         {(storageEstimate.usage / (1024 * 1024)).toFixed(1)} MB used
                       </span>
-                      <span className="text-sm text-gray-500">
+                      <span className="text-sm text-[#1E2D4D]/50">
                         of {(storageEstimate.quota / (1024 * 1024)).toFixed(0)} MB available
                       </span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2.5">
+                    <div className="w-full bg-[#1E2D4D]/8 rounded-full h-2.5">
                       <div
                         className="h-2.5 rounded-full"
                         style={{
                           width: `${Math.min((storageEstimate.usage / storageEstimate.quota) * 100, 100).toFixed(1)}%`,
-                          backgroundColor: '#1e4d6b',
+                          backgroundColor: '#1E2D4D',
                           minWidth: '4px',
                         }}
                       />
                     </div>
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-500">Storage estimate not available in this browser.</p>
+                  <p className="text-sm text-[#1E2D4D]/50">Storage estimate not available in this browser.</p>
                 )}
                 <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
                   {[
@@ -2113,10 +2115,10 @@ export function Settings() {
                     { label: 'Offline Actions', value: `${pendingCount} pending`, icon: '📝' },
                     { label: 'Cached Photos', value: '0 photos', icon: '📷' },
                   ].map(item => (
-                    <div key={item.label} className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div key={item.label} className="bg-[#FAF7F0] rounded-lg p-3 text-center">
                       <span className="text-lg">{item.icon}</span>
-                      <p className="text-xs text-gray-500 mt-1">{item.label}</p>
-                      <p className="text-sm font-medium text-gray-900">{item.value}</p>
+                      <p className="text-xs text-[#1E2D4D]/50 mt-1">{item.label}</p>
+                      <p className="text-sm font-medium text-[#1E2D4D]">{item.value}</p>
                     </div>
                   ))}
                 </div>
@@ -2127,12 +2129,12 @@ export function Settings() {
       </div>
       {/* Presenter mode toggle — only visible in demo mode */}
       {isDemoMode && (
-        <div className="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between">
+        <div className="mt-6 pt-4 border-t border-[#1E2D4D]/5 flex items-center justify-between">
           <button
             onClick={togglePresenterMode}
-            className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-xs text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 transition-colors"
           >
-            Presenter Mode: <span className={presenterMode ? 'font-bold text-[#d4af37]' : 'font-medium'}>{presenterMode ? 'ON' : 'OFF'}</span>
+            Presenter Mode: <span className={presenterMode ? 'font-bold text-[#A08C5A]' : 'font-medium'}>{presenterMode ? 'ON' : 'OFF'}</span>
           </button>
         </div>
       )}

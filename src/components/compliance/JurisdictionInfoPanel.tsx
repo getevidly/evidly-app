@@ -38,7 +38,7 @@ const SCORING_LABELS: Record<string, string> = {
 };
 
 const GRADING_LABELS: Record<string, string> = {
-  letter_grade: 'Letter Grade (A/B/C)',
+  letter_grade: 'Letter Grade (A / B / C)',
   letter_grade_strict: 'Letter Grade - Strict (Only A passes)',
   color_placard: 'Color Placard (Green/Yellow/Red)',
   score_100: 'Numeric Score (0-100)',
@@ -102,13 +102,13 @@ function FireAuthoritySection({ fireAhjName, fireConfig }: { fireAhjName: string
             <div style={{ display: 'flex', gap: '12px', marginTop: '4px' }}>
               <div style={{ flex: 1, backgroundColor: '#FFF3E0', borderRadius: '6px', padding: '6px 10px' }}>
                 <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#E65100' }}>
-                  {fireConfig.nfpa_96_cleaning_frequencies.type_i_hood}
+                  {fireConfig.nfpa_96_table_12_4.type_i_moderate_volume}
                 </div>
                 <div style={{ fontSize: '0.7rem', color: '#BF360C' }}>Type I Hood</div>
               </div>
               <div style={{ flex: 1, backgroundColor: '#FFF8E1', borderRadius: '6px', padding: '6px 10px' }}>
                 <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#F57F17' }}>
-                  {fireConfig.nfpa_96_cleaning_frequencies.type_ii_hood}
+                  {fireConfig.nfpa_96_table_12_4.type_ii}
                 </div>
                 <div style={{ fontSize: '0.7rem', color: '#F57F17' }}>Type II Hood</div>
               </div>
@@ -137,7 +137,7 @@ function FireAuthoritySection({ fireAhjName, fireConfig }: { fireAhjName: string
               Types: {fireConfig.fire_extinguisher.types.join(', ')} — inspected {fireConfig.fire_extinguisher.inspection_interval}
             </p>
             <p style={{ margin: '1px 0 0', fontSize: '0.75rem', color: '#9E9E9E' }}>
-              Hydrostatic test: {fireConfig.fire_extinguisher.hydrostatic_interval}
+              Hydrostatic test: {fireConfig.fire_extinguisher.hydrostatic_test}
             </p>
           </div>
 
@@ -225,7 +225,7 @@ export const JurisdictionInfoPanel: React.FC<JurisdictionInfoPanelProps> = ({
     }}>
       {/* Header */}
       <div style={{ marginBottom: '16px' }}>
-        <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 600, color: '#1e4d6b' }}>
+        <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 600, color: '#1E2D4D' }}>
           Your Jurisdiction
         </h3>
         <p style={{ margin: '4px 0 0', fontSize: '0.95rem', color: '#424242' }}>

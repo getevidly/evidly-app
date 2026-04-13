@@ -84,20 +84,20 @@ export function EquipmentOverview({ equipment, onPrintQR }: EquipmentOverviewPro
           <div className="flex gap-2">
             <button
               onClick={onPrintQR}
-              className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-semibold rounded-lg border hover:bg-gray-50 transition-colors"
+              className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-semibold rounded-xl border hover:bg-[#FAF7F0] transition-colors"
               style={{ borderColor: CARD_BORDER, color: NAVY }}
             >
               <Printer className="w-3.5 h-3.5" /> Print
             </button>
             <button
               onClick={() => alert('QR download (demo)')}
-              className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-semibold rounded-lg border hover:bg-gray-50 transition-colors"
+              className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-semibold rounded-xl border hover:bg-[#FAF7F0] transition-colors"
               style={{ borderColor: CARD_BORDER, color: NAVY }}
             >
               <Download className="w-3.5 h-3.5" /> Download
             </button>
           </div>
-          <p className="text-[10px] text-center mt-3" style={{ color: TEXT_TERTIARY }}>
+          <p className="text-xs text-center mt-3" style={{ color: TEXT_TERTIARY }}>
             Scan this code to view equipment details and report issues.
           </p>
         </Card>
@@ -107,7 +107,7 @@ export function EquipmentOverview({ equipment, onPrintQR }: EquipmentOverviewPro
           <InfoRow label="Last Condition" value={equipment.condition} capitalize />
           <InfoRow label="Open Deficiencies" value={String(equipment.deficiencyCount)} />
           {equipment.deficiencyCount > 0 && (
-            <p className="text-xs mt-2 text-[#1e4d6b] hover:underline cursor-pointer">View Deficiencies</p>
+            <p className="text-xs mt-2 text-[#1E2D4D] hover:underline cursor-pointer">View Deficiencies</p>
           )}
         </Card>
 
@@ -119,20 +119,20 @@ export function EquipmentOverview({ equipment, onPrintQR }: EquipmentOverviewPro
                 value={notes}
                 onChange={e => setNotes(e.target.value)}
                 rows={4}
-                className="w-full px-3 py-2 text-sm rounded-lg border resize-none focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/30"
+                className="w-full px-3 py-2 text-sm rounded-xl border resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30"
                 style={{ borderColor: CARD_BORDER, color: NAVY }}
               />
               <div className="flex gap-2">
                 <button
                   onClick={() => { setEditingNotes(false); alert('Notes saved (demo)'); }}
                   className="px-3 py-1.5 text-xs font-semibold text-white rounded-lg"
-                  style={{ background: '#1e4d6b' }}
+                  style={{ background: '#1E2D4D' }}
                 >
                   Save
                 </button>
                 <button
                   onClick={() => { setNotes(equipment.notes || ''); setEditingNotes(false); }}
-                  className="px-3 py-1.5 text-xs font-medium rounded-lg border"
+                  className="px-3 py-1.5 text-xs font-medium rounded-xl border"
                   style={{ borderColor: CARD_BORDER, color: TEXT_TERTIARY }}
                 >
                   Cancel
@@ -144,7 +144,7 @@ export function EquipmentOverview({ equipment, onPrintQR }: EquipmentOverviewPro
               <p className="text-sm" style={{ color: notes ? NAVY : TEXT_TERTIARY }}>
                 {notes || 'No notes for this equipment.'}
               </p>
-              <button onClick={() => setEditingNotes(true)} className="text-xs mt-2 text-[#1e4d6b] hover:underline">
+              <button onClick={() => setEditingNotes(true)} className="text-xs mt-2 text-[#1E2D4D] hover:underline">
                 {notes ? 'Edit Notes' : 'Add Notes'}
               </button>
             </>
@@ -159,7 +159,7 @@ function Card({ title, icon: Icon, children }: { title: string; icon: typeof Map
   return (
     <div className="rounded-xl p-5" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
       <div className="flex items-center gap-2 mb-4">
-        <Icon className="w-4 h-4" style={{ color: '#1e4d6b' }} />
+        <Icon className="w-4 h-4" style={{ color: '#1E2D4D' }} />
         <h3 className="text-sm font-bold" style={{ color: NAVY }}>{title}</h3>
       </div>
       {children}

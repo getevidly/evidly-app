@@ -456,7 +456,7 @@ export default function SupportTickets() {
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Support Tickets</h1>
+          <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Support Tickets</h1>
           <p style={{ fontSize: 13, color: TEXT_SEC, marginTop: 4 }}>
             Manage customer support requests, track SLAs, and monitor satisfaction.
           </p>
@@ -952,7 +952,7 @@ function TicketDrawer({
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                         {reply.reply_type === 'internal_note' && (
-                          <span style={{ fontSize: 12 }}>&#128274;</span>
+                          <span className="text-xs">&#128274;</span>
                         )}
                         <span style={{ fontSize: 11, fontWeight: 700, color: NAVY }}>
                           {reply.author_name || reply.author_email}

@@ -242,7 +242,7 @@ export default function AdminDashboard() {
     <div className="space-y-6">
       <AdminBreadcrumb crumbs={[{ label: 'Dashboard' }]} />
       {isDemoMode && (
-        <div className="rounded-lg px-4 py-2 text-sm font-medium" style={{ backgroundColor: '#fef3c7', color: '#92400e', border: '1px solid #fde68a' }}>
+        <div className="rounded-xl px-4 py-2 text-sm font-medium" style={{ backgroundColor: '#fef3c7', color: '#92400e', border: '1px solid #fde68a' }}>
           Demo Mode — displaying sample data
         </div>
       )}
@@ -250,7 +250,7 @@ export default function AdminDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-bold" style={{ color: BRAND }}>Admin Dashboard</h1>
+          <h1 className="text-2xl font-bold tracking-tight" style={{ color: BRAND }}>Admin Dashboard</h1>
           <p className="text-sm mt-1" style={{ color: TEXT_TERT }}>
             Platform metrics, crawl health, and operational monitoring
           </p>
@@ -261,7 +261,7 @@ export default function AdminDashboard() {
             disabled={crawlRunning}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white transition-colors disabled:opacity-50"
             style={{ backgroundColor: BRAND }}
-            onMouseEnter={e => { if (!crawlRunning) e.currentTarget.style.backgroundColor = '#2a6a8f'; }}
+            onMouseEnter={e => { if (!crawlRunning) e.currentTarget.style.backgroundColor = '#2A3F6B'; }}
             onMouseLeave={e => e.currentTarget.style.backgroundColor = BRAND}
           >
             {crawlRunning ? <Loader2 size={15} className="animate-spin" /> : <Activity size={15} />}
@@ -343,7 +343,7 @@ function KpiCard({ label, value, icon, color }: { label: string; value: string |
         <span style={{ color: color || BRAND }}>{icon}</span>
         <span className="text-xs font-medium" style={{ color: TEXT_TERT }}>{label}</span>
       </div>
-      <p className="text-2xl font-bold" style={{ color: color || '#0B1628' }}>{value}</p>
+      <p className="text-2xl font-bold tracking-tight" style={{ color: color || '#0B1628' }}>{value}</p>
     </div>
   );
 }
@@ -368,7 +368,7 @@ function CommandCenterTab({ crawlStats, latestRun, orgCount, locCount, recentErr
 }) {
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-semibold" style={{ color: BRAND }}>Platform Overview</h3>
+      <h3 className="text-lg font-semibold tracking-tight" style={{ color: BRAND }}>Platform Overview</h3>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <MiniStat label="Feeds Live" value={crawlStats.live} total={crawlStats.total} color="#16a34a" />
         <MiniStat label="Feeds Failed" value={crawlStats.failed} color="#dc2626" />
@@ -406,7 +406,7 @@ function CommandCenterTab({ crawlStats, latestRun, orgCount, locCount, recentErr
 function MiniStat({ label, value, total, color }: { label: string; value: number; total?: number; color: string }) {
   return (
     <div className="rounded-lg p-3" style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
-      <p className="text-[11px] font-medium" style={{ color: TEXT_TERT }}>{label}</p>
+      <p className="text-xs font-medium" style={{ color: TEXT_TERT }}>{label}</p>
       <p className="text-xl font-bold" style={{ color }}>
         {value}{total !== undefined && <span className="text-sm font-normal" style={{ color: TEXT_TERT }}>/{total}</span>}
       </p>
@@ -423,7 +423,7 @@ function CrawlMonitorTab({ feeds, runs }: { feeds: CrawlHealthRow[]; runs: Crawl
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-2">
-        <h3 className="text-lg font-semibold" style={{ color: BRAND }}>Crawl Health ({feeds.length} feeds)</h3>
+        <h3 className="text-lg font-semibold tracking-tight" style={{ color: BRAND }}>Crawl Health ({feeds.length} feeds)</h3>
         <div className="flex gap-1">
           {(['all', 'food_safety', 'facility_safety'] as const).map(p => (
             <button
@@ -444,7 +444,7 @@ function CrawlMonitorTab({ feeds, runs }: { feeds: CrawlHealthRow[]; runs: Crawl
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b" style={{ borderColor: '#e2e8f0' }}>
+            <tr className="border-b hover:bg-[#1E2D4D]/[0.02] transition-colors" style={{ borderColor: '#e2e8f0' }}>
               <th className="text-left py-2 px-2 text-xs font-medium" style={{ color: TEXT_TERT }}>Status</th>
               <th className="text-left py-2 px-2 text-xs font-medium" style={{ color: TEXT_TERT }}>Feed</th>
               <th className="text-left py-2 px-2 text-xs font-medium hidden sm:table-cell" style={{ color: TEXT_TERT }}>Pillar</th>
@@ -456,7 +456,7 @@ function CrawlMonitorTab({ feeds, runs }: { feeds: CrawlHealthRow[]; runs: Crawl
           </thead>
           <tbody>
             {filtered.map(f => (
-              <tr key={f.id} className="border-b hover:bg-gray-50" style={{ borderColor: '#f1f5f9' }}>
+              <tr key={f.id} className="border-b hover:bg-[#FAF7F0]" style={{ borderColor: '#f1f5f9' }}>
                 <td className="py-2 px-2"><StatusDot status={f.status} /> <span className="text-xs ml-1">{f.status}</span></td>
                 <td className="py-2 px-2 font-medium" style={{ color: '#0B1628' }}>{f.feed_name}</td>
                 <td className="py-2 px-2 hidden sm:table-cell">
@@ -514,7 +514,7 @@ function EventLogTab({ events }: { events: EventRow[] }) {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2 flex-wrap">
-        <h3 className="text-lg font-semibold" style={{ color: BRAND }}>Event Log</h3>
+        <h3 className="text-lg font-semibold tracking-tight" style={{ color: BRAND }}>Event Log</h3>
         <select
           value={levelFilter}
           onChange={e => setLevelFilter(e.target.value)}
@@ -537,10 +537,10 @@ function EventLogTab({ events }: { events: EventRow[] }) {
 
       <div className="space-y-0.5 max-h-[60vh] overflow-y-auto">
         {filtered.map(e => (
-          <div key={e.id} className="flex items-start gap-2 text-xs py-1.5 px-2 rounded hover:bg-gray-50">
+          <div key={e.id} className="flex items-start gap-2 text-xs py-1.5 px-2 rounded hover:bg-[#FAF7F0]">
             <LevelBadge level={e.level} />
             <span className="flex-shrink-0" style={{ color: TEXT_TERT }}>{fmtDate(e.event_time)}</span>
-            {e.category && <span className="px-1.5 py-0.5 rounded text-[10px] font-medium" style={{ backgroundColor: '#f1f5f9', color: TEXT_SEC }}>{e.category}</span>}
+            {e.category && <span className="px-1.5 py-0.5 rounded text-xs font-medium" style={{ backgroundColor: '#f1f5f9', color: TEXT_SEC }}>{e.category}</span>}
             <span style={{ color: '#374151' }} className="break-all">{e.message}</span>
           </div>
         ))}
@@ -558,7 +558,7 @@ function LevelBadge({ level }: { level: string }) {
     DEBUG: { bg: '#f3f4f6', text: '#6b7280' },
   };
   const s = styles[level] || styles.DEBUG;
-  return <span className="px-1.5 py-0.5 rounded text-[10px] font-bold flex-shrink-0" style={{ backgroundColor: s.bg, color: s.text }}>{level}</span>;
+  return <span className="px-1.5 py-0.5 rounded text-xs font-bold flex-shrink-0" style={{ backgroundColor: s.bg, color: s.text }}>{level}</span>;
 }
 
 // ── API Keys ────────────────────────────────────────────────
@@ -566,13 +566,13 @@ function LevelBadge({ level }: { level: string }) {
 function ApiKeysTab({ keys }: { keys: ApiKeyRow[] }) {
   return (
     <div className="space-y-3">
-      <h3 className="text-lg font-semibold" style={{ color: BRAND }}>API Keys ({keys.length})</h3>
+      <h3 className="text-lg font-semibold tracking-tight" style={{ color: BRAND }}>API Keys ({keys.length})</h3>
       {keys.length === 0 ? (
         <p className="text-sm py-8 text-center" style={{ color: TEXT_TERT }}>No API keys configured</p>
       ) : (
         <div className="space-y-2">
           {keys.map(k => (
-            <div key={k.id} className="flex items-center gap-3 p-3 rounded-lg border" style={{ borderColor: '#e2e8f0' }}>
+            <div key={k.id} className="flex items-center gap-3 p-3 rounded-xl border" style={{ borderColor: '#e2e8f0' }}>
               <Key size={16} style={{ color: GOLD }} />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium">{k.name}</p>
@@ -602,11 +602,11 @@ function LeadsTab({ leads }: { leads: LeadRow[] }) {
 
   return (
     <div className="space-y-3">
-      <h3 className="text-lg font-semibold" style={{ color: BRAND }}>Assessment Leads ({leads.length})</h3>
+      <h3 className="text-lg font-semibold tracking-tight" style={{ color: BRAND }}>Assessment Leads ({leads.length})</h3>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b" style={{ borderColor: '#e2e8f0' }}>
+            <tr className="border-b hover:bg-[#1E2D4D]/[0.02] transition-colors" style={{ borderColor: '#e2e8f0' }}>
               <th className="text-left py-2 px-2 text-xs font-medium" style={{ color: TEXT_TERT }}>Business</th>
               <th className="text-left py-2 px-2 text-xs font-medium hidden sm:table-cell" style={{ color: TEXT_TERT }}>County</th>
               <th className="text-left py-2 px-2 text-xs font-medium" style={{ color: TEXT_TERT }}>Status</th>
@@ -619,7 +619,7 @@ function LeadsTab({ leads }: { leads: LeadRow[] }) {
             {leads.map(l => {
               const sc = statusColors[l.status] || statusColors.new;
               return (
-                <tr key={l.id} className="border-b hover:bg-gray-50" style={{ borderColor: '#f1f5f9' }}>
+                <tr key={l.id} className="border-b hover:bg-[#FAF7F0]" style={{ borderColor: '#f1f5f9' }}>
                   <td className="py-2 px-2 font-medium">{l.business_name}</td>
                   <td className="py-2 px-2 hidden sm:table-cell" style={{ color: TEXT_SEC }}>{l.county || '—'}</td>
                   <td className="py-2 px-2">
@@ -656,15 +656,15 @@ function EdgeFunctionsTab({ events }: { events: EventRow[] }) {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold" style={{ color: BRAND }}>Edge Functions ({KNOWN_FUNCTIONS.length})</h3>
+      <h3 className="text-lg font-semibold tracking-tight" style={{ color: BRAND }}>Edge Functions ({KNOWN_FUNCTIONS.length})</h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
         {KNOWN_FUNCTIONS.map(fn => {
           const errCount = edgeErrors.filter(e => e.message?.includes(fn) || e.metadata?.feedId === fn).length;
           return (
-            <div key={fn} className="flex items-center gap-2 p-3 rounded-lg border" style={{ borderColor: '#e2e8f0' }}>
+            <div key={fn} className="flex items-center gap-2 p-3 rounded-xl border" style={{ borderColor: '#e2e8f0' }}>
               <Zap size={14} style={{ color: errCount > 0 ? '#dc2626' : '#16a34a' }} />
               <span className="text-sm font-medium flex-1">{fn}</span>
-              {errCount > 0 && <span className="text-xs px-1.5 py-0.5 rounded-full bg-red-100 text-red-800">{errCount} err</span>}
+              {errCount > 0 && <span className="text-xs px-1.5 py-0.5 rounded-full bg-red-50 text-red-700">{errCount} err</span>}
             </div>
           );
         })}
@@ -678,13 +678,13 @@ function EdgeFunctionsTab({ events }: { events: EventRow[] }) {
 function DemoSessionsTab({ sessions }: { sessions: DemoSessionRow[] }) {
   return (
     <div className="space-y-3">
-      <h3 className="text-lg font-semibold" style={{ color: BRAND }}>Demo Sessions ({sessions.length})</h3>
+      <h3 className="text-lg font-semibold tracking-tight" style={{ color: BRAND }}>Demo Sessions ({sessions.length})</h3>
       {sessions.length === 0 ? (
         <p className="text-sm py-8 text-center" style={{ color: TEXT_TERT }}>No demo sessions recorded</p>
       ) : (
         <div className="space-y-2">
           {sessions.map(s => (
-            <div key={s.id} className="flex items-center gap-3 p-3 rounded-lg border" style={{ borderColor: '#e2e8f0' }}>
+            <div key={s.id} className="flex items-center gap-3 p-3 rounded-xl border" style={{ borderColor: '#e2e8f0' }}>
               <Play size={14} style={{ color: BRAND }} />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium">{s.account_name}</p>
@@ -732,7 +732,7 @@ function K2CTab({ donations, onRefresh, isDemoMode }: { donations: K2CRow[]; onR
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold" style={{ color: BRAND }}>Kitchen to Community</h3>
+        <h3 className="text-lg font-semibold tracking-tight" style={{ color: BRAND }}>Kitchen to Community</h3>
         <button
           onClick={processK2C}
           disabled={processing}
@@ -751,7 +751,7 @@ function K2CTab({ donations, onRefresh, isDemoMode }: { donations: K2CRow[]; onR
       </div>
       <div className="space-y-2">
         {donations.map(d => (
-          <div key={d.id} className="flex items-center gap-3 p-3 rounded-lg border" style={{ borderColor: '#e2e8f0' }}>
+          <div key={d.id} className="flex items-center gap-3 p-3 rounded-xl border" style={{ borderColor: '#e2e8f0' }}>
             <Heart size={14} style={{ color: '#dc2626' }} />
             <div className="flex-1">
               <p className="text-sm font-medium">{d.account_name}</p>
@@ -849,7 +849,7 @@ function UsageTab({ orgCount, locCount, isDemoMode }: { orgCount: number; locCou
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold" style={{ color: BRAND }}>Platform Usage</h3>
+        <h3 className="text-lg font-semibold tracking-tight" style={{ color: BRAND }}>Platform Usage</h3>
         <button
           onClick={refreshMetrics}
           disabled={refreshing}
@@ -877,7 +877,7 @@ function UsageTab({ orgCount, locCount, isDemoMode }: { orgCount: number; locCou
           <div className="relative group">
             <MiniStat label="Time Saved" value={`${metrics.time_saved_hours.toLocaleString()} hrs`} color="#8b5cf6" />
             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-10">
-              <div className="bg-gray-900 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-lg">
+              <div className="bg-[#1E2D4D]/90 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-lg">
                 8 min/temp log + 12 min/checklist + 20 min/doc + 25 min/corrective action
               </div>
             </div>
@@ -885,7 +885,7 @@ function UsageTab({ orgCount, locCount, isDemoMode }: { orgCount: number; locCou
           <div className="relative group">
             <MiniStat label="Est. Money Saved" value={`$${metrics.money_saved_dollars.toLocaleString()}`} color={GOLD} />
             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-10">
-              <div className="bg-gray-900 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-lg">
+              <div className="bg-[#1E2D4D]/90 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-lg">
                 $28/hr labor + $500 x 15% fine avoidance + $200/loc/yr insurance
               </div>
             </div>
@@ -914,7 +914,7 @@ function WebAnalyticsTab({ leads }: { leads: LeadRow[] }) {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold" style={{ color: BRAND }}>Web Analytics</h3>
+      <h3 className="text-lg font-semibold tracking-tight" style={{ color: BRAND }}>Web Analytics</h3>
       {sourceBreakdown.length > 0 ? (
         <div>
           <h4 className="text-sm font-medium mb-2" style={{ color: TEXT_SEC }}>Lead Sources</h4>

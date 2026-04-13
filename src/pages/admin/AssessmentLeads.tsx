@@ -20,6 +20,7 @@ import {
   ChevronUp,
 } from 'lucide-react';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
+import { usePageTitle } from '../../hooks/usePageTitle';
 
 const NAVY = '#0B1628';
 const BRAND = '#1E2D4D';
@@ -59,6 +60,7 @@ function AssessmentLeadsPage() {
   const { isEvidlyAdmin } = useAuth();
   const { isDemoMode } = useDemo();
   const { userRole } = useRole();
+  usePageTitle('Admin | Assessment Leads');
 
   const [leads, setLeads] = useState<AssessmentLeadRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -156,7 +158,7 @@ function AssessmentLeadsPage() {
   }, [leads]);
 
   if (!allowed) {
-    return <div className="p-8 text-center text-gray-500">Access restricted to admin users.</div>;
+    return <div className="p-8 text-center text-[#1E2D4D]/50">Access restricted to admin users.</div>;
   }
 
   return (
@@ -178,12 +180,12 @@ function AssessmentLeadsPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-4 bg-white rounded-lg p-1 shadow-sm border border-gray-200">
+      <div className="flex gap-1 mb-4 bg-white rounded-xl p-1 border border-[#1E2D4D]/10">
         {(['leads', 'analytics'] as const).map(t => (
           <button
             key={t} onClick={() => setTab(t)}
             className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors ${
-              tab === t ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:text-gray-700'
+              tab === t ? 'bg-[#1E2D4D]/5 text-[#1E2D4D]' : 'text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
             }`}
           >
             {t === 'leads' ? 'Leads' : 'Analytics'}
@@ -197,22 +199,22 @@ function AssessmentLeadsPage() {
           {/* Filters */}
           <div className="flex flex-col sm:flex-row gap-3 mb-4" data-demo-allow>
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#1E2D4D]/30" />
               <input
                 type="text" value={search} onChange={e => setSearch(e.target.value)}
                 placeholder="Search leads..." data-demo-allow
-                className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-9 pr-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
               />
             </div>
             <select value={gradeFilter} onChange={e => setGradeFilter(e.target.value)}
               data-demo-allow
-              className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white">
+              className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm bg-white">
               <option value="all">All Grades</option>
               {['A', 'B', 'C', 'D', 'F'].map(g => <option key={g} value={g}>Grade {g}</option>)}
             </select>
             <select value={sortBy} onChange={e => setSortBy(e.target.value as any)}
               data-demo-allow
-              className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white">
+              className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm bg-white">
               <option value="date">Newest First</option>
               <option value="grade">Highest Risk First</option>
               <option value="exposure">Highest Exposure First</option>
@@ -227,18 +229,18 @@ function AssessmentLeadsPage() {
               </button>
             </div>
           ) : loading ? (
-            <div className="text-center py-12 text-gray-500">Loading...</div>
+            <div className="text-center py-12 text-[#1E2D4D]/50">Loading...</div>
           ) : filtered.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">No leads found.</div>
+            <div className="text-center py-12 text-[#1E2D4D]/50">No leads found.</div>
           ) : (
             <div className="space-y-2">
               {filtered.map(lead => (
-                <div key={lead.id} className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+                <div key={lead.id} className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
                   {/* Row */}
                   <button
                     onClick={() => setExpandedId(expandedId === lead.id ? null : lead.id)}
                     data-demo-allow
-                    className="w-full text-left p-4 flex items-center gap-4 hover:bg-gray-50 transition-colors"
+                    className="w-full text-left p-4 flex items-center gap-4 hover:bg-[#FAF7F0] transition-colors"
                   >
                     {/* Grade badge */}
                     <div
@@ -251,7 +253,7 @@ function AssessmentLeadsPage() {
                     {/* Info */}
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-sm truncate" style={{ color: NAVY }}>{lead.business_name}</p>
-                      <p className="text-xs text-gray-500 truncate">{lead.contact_name} · {lead.email} · {lead.city}</p>
+                      <p className="text-xs text-[#1E2D4D]/50 truncate">{lead.contact_name} · {lead.email} · {lead.city}</p>
                     </div>
 
                     {/* Risk mini bars (desktop) */}
@@ -263,8 +265,8 @@ function AssessmentLeadsPage() {
                         { label: 'Ops', val: lead.operational_risk },
                       ].map(r => (
                         <div key={r.label} className="text-center">
-                          <div className="text-[10px] text-gray-400">{r.label}</div>
-                          <div className="w-12 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                          <div className="text-xs text-[#1E2D4D]/30">{r.label}</div>
+                          <div className="w-12 h-1.5 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
                             <div className="h-full rounded-full" style={{
                               width: `${r.val || 0}%`,
                               backgroundColor: r.val && r.val > 60 ? '#ef4444' : r.val && r.val > 40 ? '#f59e0b' : '#22c55e',
@@ -276,7 +278,7 @@ function AssessmentLeadsPage() {
 
                     {/* Exposure */}
                     <div className="hidden sm:block text-right flex-shrink-0">
-                      <p className="text-xs text-gray-400">Exposure</p>
+                      <p className="text-xs text-[#1E2D4D]/30">Exposure</p>
                       <p className="text-sm font-semibold" style={{ color: GOLD }}>
                         {lead.total_estimated_exposure_high ? formatDollars(lead.total_estimated_exposure_high) : '—'}
                       </p>
@@ -284,35 +286,35 @@ function AssessmentLeadsPage() {
 
                     {/* Date */}
                     <div className="text-right flex-shrink-0 hidden lg:block">
-                      <p className="text-xs text-gray-400">
+                      <p className="text-xs text-[#1E2D4D]/30">
                         {new Date(lead.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                       </p>
                     </div>
 
-                    {expandedId === lead.id ? <ChevronUp className="h-4 w-4 text-gray-400" /> : <ChevronDown className="h-4 w-4 text-gray-400" />}
+                    {expandedId === lead.id ? <ChevronUp className="h-4 w-4 text-[#1E2D4D]/30" /> : <ChevronDown className="h-4 w-4 text-[#1E2D4D]/30" />}
                   </button>
 
                   {/* Expanded details */}
                   {expandedId === lead.id && (
-                    <div className="px-4 pb-4 border-t border-gray-100 pt-3">
+                    <div className="px-4 pb-4 border-t border-[#1E2D4D]/5 pt-3">
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
                         <div>
-                          <p className="text-xs text-gray-400 mb-1">Contact Info</p>
+                          <p className="text-xs text-[#1E2D4D]/30 mb-1">Contact Info</p>
                           <p className="text-sm" style={{ color: NAVY }}>{lead.contact_name}</p>
-                          <p className="text-xs text-gray-500">{lead.email}</p>
-                          {lead.phone && <p className="text-xs text-gray-500">{lead.phone}</p>}
-                          <p className="text-xs text-gray-500">{lead.city}, {lead.zip_code}</p>
+                          <p className="text-xs text-[#1E2D4D]/50">{lead.email}</p>
+                          {lead.phone && <p className="text-xs text-[#1E2D4D]/50">{lead.phone}</p>}
+                          <p className="text-xs text-[#1E2D4D]/50">{lead.city}, {lead.zip_code}</p>
                         </div>
                         <div>
-                          <p className="text-xs text-gray-400 mb-1">Category Scores</p>
+                          <p className="text-xs text-[#1E2D4D]/30 mb-1">Category Scores</p>
                           {[
                             { label: 'Facility Safety', val: lead.facility_safety_score },
                             { label: 'Food Safety', val: lead.food_safety_score },
                             { label: 'Documentation', val: lead.documentation_score },
                           ].map(s => (
                             <div key={s.label} className="flex items-center gap-2 mb-1">
-                              <span className="text-xs text-gray-500 w-24">{s.label}</span>
-                              <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                              <span className="text-xs text-[#1E2D4D]/50 w-24">{s.label}</span>
+                              <div className="flex-1 h-1.5 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
                                 <div className="h-full rounded-full" style={{
                                   width: `${s.val || 0}%`,
                                   backgroundColor: s.val && s.val > 60 ? '#ef4444' : s.val && s.val > 40 ? '#f59e0b' : '#22c55e',
@@ -323,11 +325,11 @@ function AssessmentLeadsPage() {
                           ))}
                         </div>
                         <div>
-                          <p className="text-xs text-gray-400 mb-1">Referral Source</p>
+                          <p className="text-xs text-[#1E2D4D]/30 mb-1">Referral Source</p>
                           <p className="text-sm capitalize" style={{ color: NAVY }}>
                             {(lead.referral_source || 'Unknown').replace('_', ' ')}
                           </p>
-                          <p className="text-xs text-gray-400 mt-2 mb-1">Exposure Range</p>
+                          <p className="text-xs text-[#1E2D4D]/30 mt-2 mb-1">Exposure Range</p>
                           <p className="text-sm font-semibold" style={{ color: GOLD }}>
                             {formatDollars(lead.total_estimated_exposure_low || 0)} – {formatDollars(lead.total_estimated_exposure_high || 0)}
                           </p>
@@ -336,7 +338,7 @@ function AssessmentLeadsPage() {
                       {/* Findings */}
                       {lead.findings_json && lead.findings_json.length > 0 && (
                         <div>
-                          <p className="text-xs text-gray-400 mb-1.5">Top Findings</p>
+                          <p className="text-xs text-[#1E2D4D]/30 mb-1.5">Top Findings</p>
                           <div className="space-y-1">
                             {(lead.findings_json as any[]).filter(f => !f.isPositive).slice(0, 5).map((f: any, i: number) => (
                               <div key={i} className="flex items-center gap-2 text-xs">
@@ -362,7 +364,7 @@ function AssessmentLeadsPage() {
       {tab === 'analytics' && (
         <div className="space-y-6">
           {/* Grade Distribution */}
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
             <h3 className="text-sm font-semibold uppercase tracking-wider mb-4" style={{ color: NAVY }}>Grade Distribution</h3>
             <div className="flex items-end gap-3 h-32">
               {['A', 'B', 'C', 'D', 'F'].map(g => {
@@ -384,7 +386,7 @@ function AssessmentLeadsPage() {
           </div>
 
           {/* Referral Sources */}
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
             <h3 className="text-sm font-semibold uppercase tracking-wider mb-4" style={{ color: NAVY }}>Referral Sources</h3>
             <div className="space-y-2">
               {Object.entries(
@@ -395,8 +397,8 @@ function AssessmentLeadsPage() {
                 }, {} as Record<string, number>)
               ).sort((a, b) => b[1] - a[1]).map(([src, count]) => (
                 <div key={src} className="flex items-center gap-3">
-                  <span className="text-sm capitalize w-32 text-gray-600">{src}</span>
-                  <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <span className="text-sm capitalize w-32 text-[#1E2D4D]/70">{src}</span>
+                  <div className="flex-1 h-2 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
                     <div className="h-full rounded-full" style={{
                       width: `${(count / stats.total) * 100}%`,
                       backgroundColor: BRAND,
@@ -409,7 +411,7 @@ function AssessmentLeadsPage() {
           </div>
 
           {/* Top Risk Findings */}
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
             <h3 className="text-sm font-semibold uppercase tracking-wider mb-4" style={{ color: NAVY }}>Most Common Findings</h3>
             <div className="space-y-2">
               {Object.entries(
@@ -417,8 +419,8 @@ function AssessmentLeadsPage() {
                   .reduce((acc, title) => { acc[title] = (acc[title] || 0) + 1; return acc; }, {} as Record<string, number>)
               ).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([title, count]) => (
                 <div key={title} className="flex items-center gap-3">
-                  <span className="text-xs text-gray-600 flex-1 truncate">{title}</span>
-                  <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-gray-100" style={{ color: NAVY }}>
+                  <span className="text-xs text-[#1E2D4D]/70 flex-1 truncate">{title}</span>
+                  <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-[#1E2D4D]/5" style={{ color: NAVY }}>
                     {count}
                   </span>
                 </div>

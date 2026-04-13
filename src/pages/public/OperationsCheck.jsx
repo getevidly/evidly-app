@@ -101,7 +101,7 @@ const GROUPS = [
         pillar: "Team Always Current", startState: "Cert Gaps Hidden",
         icon: "\u{1F465}", color: C.purple, bg: C.purpleBg, bd: C.purpleBd, tx: "#581c87",
         question: "When a new employee is hired, does your process capture their food handler card expiration and flag it automatically before it lapses?",
-        hint: "Turnover without cert tracking creates gaps you won\u2019t know exist until they surface \u2014 often at the worst possible time.",
+        hint: "Turnover without cert tracking creates gaps you won\u2019t know exist until they show up \u2014 often at the worst possible time.",
         riskIfNo: "Hidden", riskLabel: "certification gaps accumulating with every new hire",
         yesSignal: "Onboarding captures cert expirations from day one. You won\u2019t be blindsided by a gap you didn\u2019t know about.",
         noSignal: "Without a tracking system, every new hire is a potential unknown violation. You won\u2019t know until it costs you.",

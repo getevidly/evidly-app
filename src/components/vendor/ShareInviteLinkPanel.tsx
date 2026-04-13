@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { X, Copy, Mail, MessageSquare, Link2, Check } from 'lucide-react';
 import { toast } from 'sonner';
 
-const NAVY = '#1e4d6b';
+const NAVY = '#1E2D4D';
 
 interface ShareInviteLinkPanelProps {
   isOpen: boolean;
@@ -40,11 +40,11 @@ export function ShareInviteLinkPanel({ isOpen, onClose, providerName, inviteCode
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 modal-backdrop-enter"
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 overflow-hidden"
+        className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 overflow-hidden modal-content-enter"
         onClick={e => e.stopPropagation()}
         style={{ fontFamily: 'Inter, sans-serif' }}
       >
@@ -113,7 +113,7 @@ export function ShareInviteLinkPanel({ isOpen, onClose, providerName, inviteCode
                   border: `1.5px solid ${NAVY}`,
                   color: NAVY,
                 }}
-                onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#1e4d6b12'; }}
+                onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#1E2D4D12'; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = 'transparent'; }}
               >
                 <Mail size={16} />
@@ -128,7 +128,7 @@ export function ShareInviteLinkPanel({ isOpen, onClose, providerName, inviteCode
                   border: `1.5px solid ${NAVY}`,
                   color: NAVY,
                 }}
-                onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#1e4d6b12'; }}
+                onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#1E2D4D12'; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = 'transparent'; }}
               >
                 <MessageSquare size={16} />
@@ -144,7 +144,7 @@ export function ShareInviteLinkPanel({ isOpen, onClose, providerName, inviteCode
                   border: `1.5px solid ${NAVY}`,
                   color: NAVY,
                 }}
-                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#1e4d6b12'; }}
+                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#1E2D4D12'; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'transparent'; }}
               >
                 {justCopied ? <Check size={16} /> : <Copy size={16} />}

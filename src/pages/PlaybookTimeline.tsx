@@ -94,7 +94,7 @@ export function PlaybookTimeline() {
     return (
       <div style={{ ...font, padding: 40, textAlign: 'center' }}>
         <Clock size={48} color="#d1d5db" style={{ marginBottom: 16 }} />
-        <h2 style={{ color: '#1e4d6b', fontSize: 20, fontWeight: 700, margin: '0 0 8px' }}>
+        <h2 style={{ color: '#1E2D4D', fontSize: 20, fontWeight: 700, margin: '0 0 8px' }}>
           Playbook Timeline
         </h2>
         <p style={{ color: 'var(--text-secondary, #3D5068)', fontSize: 14, marginBottom: 24 }}>
@@ -103,7 +103,7 @@ export function PlaybookTimeline() {
         <button
           onClick={() => navigate('/playbooks')}
           style={{
-            ...font, background: '#1e4d6b', color: '#fff', border: 'none',
+            ...font, background: '#1E2D4D', color: '#fff', border: 'none',
             borderRadius: 8, padding: '10px 24px', fontSize: 14, fontWeight: 600, cursor: 'pointer',
           }}
         >
@@ -120,8 +120,8 @@ export function PlaybookTimeline() {
   if (!incident || !template) {
     return (
       <div style={{ ...font, padding: 40, textAlign: 'center' }}>
-        <AlertTriangle size={48} color="#d4af37" style={{ marginBottom: 16 }} />
-        <h2 style={{ color: '#1e4d6b', fontSize: 24, fontWeight: 700, margin: '0 0 8px' }}>
+        <AlertTriangle size={48} color="#A08C5A" style={{ marginBottom: 16 }} />
+        <h2 style={{ color: '#1E2D4D', fontSize: 24, fontWeight: 700, margin: '0 0 8px' }}>
           Incident Not Found
         </h2>
         <p style={{ color: 'var(--text-secondary, #3D5068)', fontSize: 15, marginBottom: 24 }}>
@@ -130,7 +130,7 @@ export function PlaybookTimeline() {
         <button
           onClick={() => navigate('/playbooks')}
           style={{
-            ...font, background: '#1e4d6b', color: '#fff', border: 'none',
+            ...font, background: '#1E2D4D', color: '#fff', border: 'none',
             borderRadius: 8, padding: '10px 24px', fontSize: 15, fontWeight: 600, cursor: 'pointer',
           }}
         >
@@ -151,7 +151,7 @@ export function PlaybookTimeline() {
         onClick={() => navigate('/playbooks')}
         style={{
           ...font, display: 'inline-flex', alignItems: 'center', gap: 6, background: 'none',
-          border: 'none', color: '#1e4d6b', fontSize: 14, fontWeight: 600, cursor: 'pointer',
+          border: 'none', color: '#1E2D4D', fontSize: 14, fontWeight: 600, cursor: 'pointer',
           padding: 0, marginBottom: 20,
         }}
       >
@@ -161,7 +161,7 @@ export function PlaybookTimeline() {
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <div style={{ marginBottom: 32 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginBottom: 8 }}>
-          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: '#1e4d6b' }}>
+          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: '#1E2D4D' }}>
             {incident.templateTitle}
           </h1>
           <span style={{
@@ -200,14 +200,14 @@ export function PlaybookTimeline() {
       </div>
 
       {/* ── Vertical Timeline ──────────────────────────────────────────────── */}
-      <h2 style={{ fontSize: 18, fontWeight: 700, color: '#1e4d6b', margin: '0 0 20px' }}>
+      <h2 style={{ fontSize: 18, fontWeight: 700, color: '#1E2D4D', margin: '0 0 20px' }}>
         Step-by-Step Timeline
       </h2>
       <div style={{ position: 'relative', paddingLeft: 36, marginBottom: 40 }}>
         {/* Vertical line */}
         <div style={{
           position: 'absolute', left: 13, top: 4, bottom: 4, width: 2,
-          background: '#1e4d6b', borderRadius: 1,
+          background: '#1E2D4D', borderRadius: 1,
         }} />
 
         {template.steps.map((step, idx) => {
@@ -237,7 +237,7 @@ export function PlaybookTimeline() {
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
                   <span style={{
-                    fontSize: 11, fontWeight: 700, color: '#fff', background: '#1e4d6b',
+                    fontSize: 11, fontWeight: 700, color: '#fff', background: '#1E2D4D',
                     borderRadius: 999, width: 22, height: 22, display: 'inline-flex',
                     alignItems: 'center', justifyContent: 'center',
                   }}>
@@ -286,7 +286,7 @@ export function PlaybookTimeline() {
                   {log && log.photosTaken > 0 && (
                     <span style={{
                       display: 'inline-flex', alignItems: 'center', gap: 4,
-                      color: '#1e4d6b', fontWeight: 600,
+                      color: '#1E2D4D', fontWeight: 600,
                     }}>
                       <Camera size={14} /> {log.photosTaken} photo{log.photosTaken > 1 ? 's' : ''}
                     </span>
@@ -308,10 +308,10 @@ export function PlaybookTimeline() {
       {/* ── Food Disposition Summary ──────────────────────────────────────── */}
       <div style={{
         background: '#fff', borderRadius: 12, border: '1px solid #e2e8f0',
-        borderTop: `4px solid #d4af37`, padding: '16px 16px', marginBottom: 28,
+        borderTop: `4px solid #A08C5A`, padding: '16px 16px', marginBottom: 28,
       }}>
-        <h3 style={{ fontSize: 17, fontWeight: 700, color: '#1e4d6b', margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Thermometer size={18} color="#d4af37" /> Food Disposition Summary
+        <h3 style={{ fontSize: 17, fontWeight: 700, color: '#1E2D4D', margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Thermometer size={18} color="#A08C5A" /> Food Disposition Summary
         </h3>
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
@@ -389,8 +389,8 @@ export function PlaybookTimeline() {
         background: '#fff', borderRadius: 12, border: '1px solid #e2e8f0',
         padding: '16px 16px', marginBottom: 28,
       }}>
-        <h3 style={{ fontSize: 17, fontWeight: 700, color: '#1e4d6b', margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Phone size={18} color="#1e4d6b" /> Vendor Contact Log
+        <h3 style={{ fontSize: 17, fontWeight: 700, color: '#1E2D4D', margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Phone size={18} color="#1E2D4D" /> Vendor Contact Log
         </h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           {demoVendorContacts.map(vc => (
@@ -399,7 +399,7 @@ export function PlaybookTimeline() {
               border: '1px solid #e2e8f0',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                <Truck size={16} color="#1e4d6b" />
+                <Truck size={16} color="#1E2D4D" />
                 <span style={{ fontSize: 15, fontWeight: 700, color: '#0f172a' }}>{vc.vendorName}</span>
                 <span style={{
                   fontSize: 11, fontWeight: 600, color: 'var(--text-secondary, #3D5068)', background: '#e2e8f0',
@@ -417,7 +417,7 @@ export function PlaybookTimeline() {
                 {vc.response}
               </div>
               <div style={{ fontSize: 12, color: 'var(--text-secondary, #3D5068)', marginTop: 6 }}>
-                Ticket #: <strong style={{ color: '#1e4d6b' }}>{vc.ticketNumber}</strong>
+                Ticket #: <strong style={{ color: '#1E2D4D' }}>{vc.ticketNumber}</strong>
               </div>
             </div>
           ))}
@@ -429,8 +429,8 @@ export function PlaybookTimeline() {
         background: '#fff', borderRadius: 12, border: '1px solid #e2e8f0',
         padding: '16px 16px', marginBottom: 28,
       }}>
-        <h3 style={{ fontSize: 17, fontWeight: 700, color: '#1e4d6b', margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
-          <DollarSign size={18} color="#d4af37" /> Insurance Claim
+        <h3 style={{ fontSize: 17, fontWeight: 700, color: '#1E2D4D', margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
+          <DollarSign size={18} color="#A08C5A" /> Insurance Claim
         </h3>
         {(() => {
           const ic = demoInsuranceClaim;
@@ -478,7 +478,7 @@ export function PlaybookTimeline() {
         <button
           onClick={() => toast.info('PDF report generation coming soon')}
           style={{
-            ...font, display: 'inline-flex', alignItems: 'center', gap: 6, background: '#1e4d6b',
+            ...font, display: 'inline-flex', alignItems: 'center', gap: 6, background: '#1E2D4D',
             color: '#fff', border: 'none', borderRadius: 8, padding: '10px 20px',
             fontSize: 14, fontWeight: 600, cursor: 'pointer', minHeight: 44,
           }}
@@ -488,7 +488,7 @@ export function PlaybookTimeline() {
         <button
           onClick={() => toast.info('Insurance claim package coming soon')}
           style={{
-            ...font, display: 'inline-flex', alignItems: 'center', gap: 6, background: '#d4af37',
+            ...font, display: 'inline-flex', alignItems: 'center', gap: 6, background: '#A08C5A',
             color: '#fff', border: 'none', borderRadius: 8, padding: '10px 20px',
             fontSize: 14, fontWeight: 600, cursor: 'pointer', minHeight: 44,
           }}
@@ -499,7 +499,7 @@ export function PlaybookTimeline() {
           onClick={() => toast.info('Health dept report coming soon')}
           style={{
             ...font, display: 'inline-flex', alignItems: 'center', gap: 6, background: '#fff',
-            color: '#1e4d6b', border: '2px solid #1e4d6b', borderRadius: 8, padding: '10px 20px',
+            color: '#1E2D4D', border: '2px solid #1E2D4D', borderRadius: 8, padding: '10px 20px',
             fontSize: 14, fontWeight: 600, cursor: 'pointer', minHeight: 44,
           }}
         >
@@ -509,7 +509,7 @@ export function PlaybookTimeline() {
           onClick={() => toast.info('Legal summary coming soon')}
           style={{
             ...font, display: 'inline-flex', alignItems: 'center', gap: 6, background: '#fff',
-            color: '#1e4d6b', border: '2px solid #1e4d6b', borderRadius: 8, padding: '10px 20px',
+            color: '#1E2D4D', border: '2px solid #1E2D4D', borderRadius: 8, padding: '10px 20px',
             fontSize: 14, fontWeight: 600, cursor: 'pointer', minHeight: 44,
           }}
         >
@@ -522,7 +522,7 @@ export function PlaybookTimeline() {
         <button
           onClick={() => toast.info('Insurance sharing coming soon')}
           style={{
-            ...font, display: 'inline-flex', alignItems: 'center', gap: 8, background: '#d4af37',
+            ...font, display: 'inline-flex', alignItems: 'center', gap: 8, background: '#A08C5A',
             color: '#fff', border: 'none', borderRadius: 8, padding: '12px 28px',
             fontSize: 15, fontWeight: 700, cursor: 'pointer', minHeight: 44,
           }}
@@ -536,7 +536,7 @@ export function PlaybookTimeline() {
         background: '#eef4f8', border: '1px solid #b8d4e8', borderRadius: 12,
         padding: '16px 16px',
       }}>
-        <h3 style={{ fontSize: 17, fontWeight: 700, color: '#1e4d6b', margin: '0 0 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
+        <h3 style={{ fontSize: 17, fontWeight: 700, color: '#1E2D4D', margin: '0 0 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
           <EvidlyIcon size={18} /> Compliance Narrative
         </h3>
         <div style={{ fontSize: 14, color: 'var(--text-secondary, #3D5068)', lineHeight: 1.7 }}>

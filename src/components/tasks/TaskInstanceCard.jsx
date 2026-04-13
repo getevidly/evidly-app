@@ -112,13 +112,13 @@ export function TaskInstanceCard({ task, onStart, onComplete, onSkip }) {
           <div className="flex items-center gap-2 flex-wrap mb-1">
             <h3 className="text-sm font-semibold text-[var(--text-primary)] truncate">{task.title}</h3>
             <span
-              className="text-[10px] font-medium px-2 py-0.5 rounded-full"
+              className="text-xs font-medium px-2 py-0.5 rounded-full"
               style={{ backgroundColor: style.labelBg, color: style.labelColor }}
             >
               {style.label}
             </span>
             {task.status === 'escalated' && task.escalation_level > 0 && (
-              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-red-100 text-red-800">
+              <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-red-50 text-red-700">
                 Level {task.escalation_level}
               </span>
             )}
@@ -164,7 +164,7 @@ export function TaskInstanceCard({ task, onStart, onComplete, onSkip }) {
             </button>
             <button
               onClick={() => onSkip?.(task.id)}
-              className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+              className="p-1.5 rounded-lg hover:bg-[#1E2D4D]/5 transition-colors"
               title="Skip"
             >
               <SkipForward className="w-4 h-4 text-[var(--text-tertiary)]" />
@@ -180,7 +180,7 @@ export function TaskInstanceCard({ task, onStart, onComplete, onSkip }) {
             value={note}
             onChange={(e) => setNote(e.target.value)}
             placeholder="Add a note..."
-            className="flex-1 text-sm px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[#1E2D4D]"
+            className="flex-1 text-sm px-3 py-1.5 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
             onKeyDown={(e) => { if (e.key === 'Enter') handleComplete(); }}
           />
           <button

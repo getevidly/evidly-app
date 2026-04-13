@@ -51,7 +51,7 @@ export const ServiceCostPanel: React.FC<Props> = ({ onStateChange }) => {
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span style={{ fontSize: '18px' }}>&#x1F525;</span>
+          <span className="text-lg">&#x1F525;</span>
           <div style={{ textAlign: 'left' }}>
             <p style={{ color: '#0B1628', fontSize: '14px', fontWeight: 700, margin: 0, fontFamily: 'system-ui' }}>
               Facility Safety Service Status — Cleaning Pros Plus

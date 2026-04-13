@@ -1,0 +1,217 @@
+═══════════════════════════════════════════
+  EDGE FUNCTION INVENTORY
+  Total: 171 functions
+═══════════════════════════════════════════
+
+── AI (15) ──
+  ai-chat                                       7.1KB ✓
+  ai-corrective-action-draft                    8.8KB ✓
+  ai-document-analysis                          6.1KB ✓
+  ai-estimate-submit                            3.7KB ✓
+  ai-flag-suggest                               2.9KB ✓
+  ai-pattern-analysis                           9.5KB ✓
+  ai-photo-analysis                             14.4KB ✓
+  ai-predictive-alerts                          9.3KB ✓
+  ai-text-assist                                4.2KB ✓
+  ai-voice-transcription                        11.7KB ✓
+  ai-weekly-digest                              13.4KB ✓
+  copilot-analyze                               17.3KB ✓
+  landing-chat                                  4.7KB ✓
+  ops-intelligence-coach                        4.2KB ✓
+  ops-intelligence-generate                     26.2KB ✓
+
+── API_PUBLIC (13) ──
+  api-marketplace-publish                       2.6KB ✓
+  api-oauth-authorize                           6.5KB ✓
+  api-oauth-token                               0.4KB ✓
+  api-rate-limiter                              2.0KB ✓
+  api-token-validate                            2.1KB ✓
+  api-usage-aggregate                           2.5KB ✓
+  api-v1-locations-certificates                 1.8KB ✓
+  api-v1-locations-compliance                   2.7KB ✓
+  api-v1-locations-schedule                     2.3KB ✓
+  api-v1-locations-services                     2.5KB ✓
+  api-v1-services-photos                        1.7KB ✓
+  api-webhook-dispatch                          3.1KB ✓
+  api-webhook-retry                             2.4KB ✓
+
+── BENCHMARK (4) ──
+  benchmark-aggregate                           6.5KB ✓
+  benchmark-badge-check                         6.3KB ✓
+  benchmark-quarterly-report                    10.1KB ✓
+  benchmark-snapshot                            6.7KB ✓
+
+── DEMO (3) ──
+  cleanup-demo-tour                             7.0KB ✓
+  demo-account-convert                          4.4KB ✓
+  demo-account-create                           8.9KB ✓
+
+── EMAIL_NOTIFICATION (16) ──
+  assessment-notify                             7.2KB ✓
+  availability-reminders                        4.4KB ✓
+  check-equipment-alerts                        10.9KB ✓
+  check-expiries                                3.9KB ✓
+  client-invite-send                            2.8KB ✓
+  generate-alerts                               32.1KB ✓
+  notify-qa-review                              5.2KB ✓
+  process-service-reminders                     20.1KB ✓
+  send-document-alerts                          13.1KB ✓
+  send-missing-doc-reminders                    9.4KB ✓
+  send-reminders                                5.6KB ✓
+  send-sms-invite                               1.8KB ✓
+  send-team-invite                              2.5KB ✓
+  send-welcome-email                            2.5KB ✓
+  task-notifications                            7.1KB ✓
+  trial-email-sender                            33.8KB ✓
+
+── ENTERPRISE (7) ──
+  enterprise-alert-rollup                       4.1KB ✓
+  enterprise-audit-export                       2.5KB ✓
+  enterprise-report-generate                    3.5KB ✓
+  enterprise-rollup-calculate                   4.4KB ✓
+  enterprise-scim-users                         6.7KB ✓
+  enterprise-sso-callback                       4.4KB ✓
+  enterprise-tenant-provision                   5.2KB ✓
+
+── GENERATE (12) ──
+  generate-agreement-pdf                        11.2KB ✓
+  generate-api-key                              4.6KB ✓
+  generate-certificate                          3.0KB ✓
+  generate-compliance-package                   12.5KB ✓
+  generate-demo-template                        15.4KB ✓
+  generate-haccp-from-checklists                11.2KB ✓
+  generate-job-report                           24.8KB ✓
+  generate-kec-report                           23.8KB ✓
+  generate-outreach                             7.1KB ✓
+  generate-partner-demo                         29.2KB ✓
+  generate-service-report                       2.4KB ✓
+  generate-task-instances                       4.3KB ✓
+
+── INSURANCE (6) ──
+  insurance-export                              11.5KB ✓
+  insurance-risk-calculate                      17.6KB ✓
+  insurance-risk-fire-safety                    6.7KB ✓
+  insurance-risk-history                        6.1KB ✓
+  insurance-risk-incidents                      7.3KB ✓
+  insurance-risk-verify                         6.0KB ✓
+
+── INTEGRATION (5) ──
+  integration-conflict-resolver                 2.6KB ✓
+  integration-data-mapper                       2.8KB ✓
+  integration-health-check                      3.7KB ✓
+  integration-oauth-callback                    3.8KB ✓
+  integration-sync-engine                       3.7KB ✓
+
+── INTELLIGENCE (17) ──
+  canonical-correlate                           3.7KB ✓
+  classify-signals                              9.6KB ✓
+  correlation-engine                            15.6KB ✓
+  crawl-monitor                                 9.0KB ✓
+  intelligence-approve                          11.1KB ✓
+  intelligence-auto-publish                     7.6KB ✓
+  intelligence-bridge-proxy                     2.1KB ✓
+  intelligence-collect                          53.0KB ✓
+  intelligence-deliver                          26.5KB ✓
+  intelligence-feed                             2.9KB ✓
+  intelligence-webhook                          6.1KB ✓
+  jurisdiction-drift-alert                      6.4KB ✓
+  monitor-regulations                           11.0KB ✓
+  rfp-classify                                  14.1KB ✓
+  rfp-crawl                                     14.3KB ✓
+  trigger-crawl                                 7.0KB ✓
+  violation-crawl                               8.6KB ✓
+
+── K2C_REFERRAL (3) ──
+  evidly-referral-signup                        3.3KB ✓
+  k2c-processor                                 3.0KB ✓
+  k2c-referral-invite                           3.5KB ✓
+
+── OFFLINE (5) ──
+  offline-conflict-resolver                     3.7KB ✓
+  offline-device-manager                        4.4KB ✓
+  offline-photo-batch-upload                    3.9KB ✓
+  offline-sync-handler                          4.4KB ✓
+  offline-sync-pull                             3.5KB ✓
+
+── OTHER (13) ──
+  auto-request-documents                        14.8KB ✓
+  calculate-compliance-score                    29.2KB ✓
+  check-onboarding-progress                     11.7KB ✓
+  classify-document                             6.4KB ✓
+  cloud-file-import                             5.3KB ✓
+  document-scan                                 9.1KB ✓
+  evidly-service-request                        2.5KB ✓
+  get-jurisdictions                             4.2KB ✓
+  process-service-request                       13.1KB ✓
+  risk-score-api                                5.6KB ✓
+  security-headers-check                        2.9KB ✓
+  snapshot-readiness                            3.6KB ✓
+  validate-vendor-document                      13.1KB ✓
+
+── PLATFORM (2) ──
+  platform-metrics-refresh                      4.0KB ✓
+  platform-stats                                2.1KB ✓
+
+── PLAYBOOK (6) ──
+  playbook-ai-assistant                         7.9KB ✓
+  playbook-auto-trigger                         5.9KB ✓
+  playbook-completion-handler                   8.0KB ✓
+  playbook-escalation-monitor                   6.9KB ✓
+  playbook-food-loss-calculator                 7.5KB ✓
+  playbook-report-generator                     15.1KB ✓
+
+── POS (4) ──
+  pos-connect                                   6.8KB ✓
+  pos-sync-all                                  2.2KB ✓
+  pos-sync-employees                            9.2KB ✓
+  pos-sync-locations                            12.3KB ✓
+
+── SENSOR_IOT (8) ──
+  iot-process-reading                           7.3KB ✓
+  iot-sensor-alerts                             6.2KB ✓
+  iot-sensor-pull                               13.6KB ✓
+  sensor-alert-escalate                         8.7KB ✓
+  sensor-compliance-aggregate                   9.5KB ✓
+  sensor-defrost-detect                         9.9KB ✓
+  sensor-device-health                          8.8KB ✓
+  sensor-threshold-evaluate                     8.6KB ✓
+
+── STRIPE_BILLING (3) ──
+  stripe-create-checkout                        5.3KB ✓
+  stripe-customer-portal                        3.0KB ✓
+  stripe-webhook                                10.6KB ✓
+
+── TRAINING (11) ──
+  training-ai-companion                         6.3KB ✓
+  training-ai-quiz-gen                          4.4KB ✓
+  training-analytics-aggregate                  6.2KB ✓
+  training-auto-enroll                          8.2KB ✓
+  training-certificate-gen                      4.1KB ✓
+  training-completion-handler                   7.9KB ✓
+  training-content-translate                    4.4KB ✓
+  training-enroll                               3.2KB ✓
+  training-progress-reminder                    5.2KB ✓
+  training-quiz-score                           4.6KB ✓
+  training-sb476-report                         4.2KB ✓
+
+── VENDOR (14) ──
+  vendor-analytics-snapshot                     4.3KB ✓
+  vendor-certification-evaluate                 5.7KB ✓
+  vendor-connect-apply                          5.4KB ✓
+  vendor-contact                                7.0KB ✓
+  vendor-credential-check                       4.1KB ✓
+  vendor-document-notify                        6.4KB ✓
+  vendor-document-reminders                     10.4KB ✓
+  vendor-lead-notify                            4.4KB ✓
+  vendor-notification-sender                    16.4KB ✓
+  vendor-partner-outreach                       9.8KB ✓
+  vendor-recommendation-engine                  5.9KB ✓
+  vendor-schedule-response                      12.7KB ✓
+  vendor-secure-upload                          11.3KB ✓
+  vendor-service-token                          5.5KB ✓
+
+── WEBHOOK (4) ──
+  hoodops-webhook                               15.2KB ✓
+  iot-sensor-webhook                            8.9KB ✓
+  resend-webhook                                3.4KB ✓
+  webhook-dispatch                              3.0KB ✓

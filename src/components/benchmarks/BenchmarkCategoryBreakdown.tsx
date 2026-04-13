@@ -24,35 +24,35 @@ export function BenchmarkCategoryBreakdown({ locationId }: Props) {
   ];
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
-      <h3 className="text-lg font-semibold text-gray-900 mb-1">Category Breakdown</h3>
-      <p className="text-sm text-gray-500 mb-4">Compare your compliance domains against peers</p>
+    <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
+      <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-1">Category Breakdown</h3>
+      <p className="text-sm text-[#1E2D4D]/50 mb-4">Compare your compliance domains against peers</p>
 
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-gray-200">
-              <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider pb-3 pr-4">Category</th>
-              <th className="text-center text-xs font-semibold text-gray-500 uppercase tracking-wider pb-3 px-3">Your Score</th>
-              <th className="text-center text-xs font-semibold text-gray-500 uppercase tracking-wider pb-3 px-3">Vertical Avg</th>
-              <th className="text-center text-xs font-semibold text-gray-500 uppercase tracking-wider pb-3 px-3">Industry Avg</th>
-              <th className="text-center text-xs font-semibold text-gray-500 uppercase tracking-wider pb-3 px-3">Delta</th>
-              <th className="text-center text-xs font-semibold text-gray-500 uppercase tracking-wider pb-3 pl-3">Percentile</th>
+            <tr className="border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors">
+              <th className="text-left text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wider pb-3 pr-4">Category</th>
+              <th className="text-center text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wider pb-3 px-3">Your Score</th>
+              <th className="text-center text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wider pb-3 px-3">Vertical Avg</th>
+              <th className="text-center text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wider pb-3 px-3">Industry Avg</th>
+              <th className="text-center text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wider pb-3 px-3">Delta</th>
+              <th className="text-center text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wider pb-3 pl-3">Percentile</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((row, i) => {
               const delta = row.yours - row.verticalAvg;
               return (
-                <tr key={row.category} className={i < rows.length - 1 ? 'border-b border-gray-50' : ''}>
-                  <td className="py-3 pr-4 text-sm text-gray-900">{row.category}</td>
+                <tr key={row.category} className={i < rows.length - 1 ? 'border-b border-[#1E2D4D]/3' : ''}>
+                  <td className="py-3 pr-4 text-sm text-[#1E2D4D]">{row.category}</td>
                   <td className="py-3 px-3 text-center">
                     <span className="text-sm font-bold" style={{
                       color: row.yours >= 90 ? '#22c55e' : row.yours >= 75 ? '#eab308' : row.yours >= 60 ? '#f59e0b' : '#ef4444'
                     }}>{row.yours}</span>
                   </td>
-                  <td className="py-3 px-3 text-center text-sm text-gray-500">{row.verticalAvg}</td>
-                  <td className="py-3 px-3 text-center text-sm text-gray-400">{row.industryAvg}</td>
+                  <td className="py-3 px-3 text-center text-sm text-[#1E2D4D]/50">{row.verticalAvg}</td>
+                  <td className="py-3 px-3 text-center text-sm text-[#1E2D4D]/30">{row.industryAvg}</td>
                   <td className="py-3 px-3 text-center">
                     <span className="text-sm font-semibold" style={{ color: delta >= 0 ? '#16a34a' : '#dc2626' }}>
                       {delta >= 0 ? '+' : ''}{delta}

@@ -17,7 +17,7 @@ const iconMap = {
   temp: { icon: Thermometer, color: '#3b82f6', bg: '#eff6ff' },
   checklist: { icon: CheckSquare, color: '#22c55e', bg: '#f0fdf4' },
   document: { icon: FileText, color: '#8b5cf6', bg: '#f5f3ff' },
-  upload: { icon: Upload, color: '#d4af37', bg: '#fefce8' },
+  upload: { icon: Upload, color: '#A08C5A', bg: '#fefce8' },
   alert: { icon: AlertCircle, color: '#ef4444', bg: '#fef2f2' },
 };
 
@@ -55,10 +55,10 @@ export function LiveActivityFeed() {
   }, [activities.length]);
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
-      <div className="flex items-center justify-between p-4 border-b border-gray-100">
+    <div className="bg-white rounded-xl border border-[#1E2D4D]/10">
+      <div className="flex items-center justify-between p-4 border-b border-[#1E2D4D]/5">
         <div className="flex items-center gap-2">
-          <h3 className="text-lg font-semibold text-gray-900">Activity Feed</h3>
+          <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">Activity Feed</h3>
           <div className="flex items-center gap-1.5 px-2 py-0.5 bg-green-50 rounded-full">
             <div className="w-2 h-2 rounded-full bg-green-500 animate-live-dot" />
             <span className="text-xs font-medium text-green-700">Live</span>
@@ -66,14 +66,14 @@ export function LiveActivityFeed() {
         </div>
         <button
           onClick={() => navigate('/alerts')}
-          className="text-sm font-medium text-[#1e4d6b] hover:text-[#2a6a8f] transition-colors"
+          className="text-sm font-medium text-[#1E2D4D] hover:text-[#2A3F6B] transition-colors"
         >
           View All →
         </button>
       </div>
-      <div className="divide-y divide-gray-50 max-h-[420px] overflow-y-auto">
+      <div className="divide-y divide-[#1E2D4D]/3 max-h-[420px] overflow-y-auto">
         {activities.length === 0 ? (
-          <div className="py-10 text-center text-sm text-gray-400">No recent activity</div>
+          <div className="py-10 text-center text-sm text-[#1E2D4D]/30">No recent activity</div>
         ) : activities.map((activity, index) => {
           const { icon: Icon, color, bg } = iconMap[activity.icon];
           const isVisible = index < visibleItems;
@@ -82,7 +82,7 @@ export function LiveActivityFeed() {
             <div
               key={activity.id}
               onClick={() => navigate(activity.url)}
-              className={`flex items-start gap-3 p-4 hover:bg-gray-50 cursor-pointer transition-all duration-300 ${
+              className={`flex items-start gap-3 p-4 hover:bg-[#FAF7F0] cursor-pointer transition-all duration-300 ${
                 isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-2'
               }`}
               style={{
@@ -97,16 +97,16 @@ export function LiveActivityFeed() {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-sm font-semibold text-gray-900">{activity.user}</span>
+                  <span className="text-sm font-semibold text-[#1E2D4D]">{activity.user}</span>
                   {index === 0 && (
-                    <span className="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-[10px] font-bold rounded uppercase">New</span>
+                    <span className="px-1.5 py-0.5 bg-blue-50 text-blue-700 text-xs font-bold rounded uppercase">New</span>
                   )}
                 </div>
-                <p className="text-sm text-gray-600 mt-0.5">{activity.action}</p>
+                <p className="text-sm text-[#1E2D4D]/70 mt-0.5">{activity.action}</p>
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="text-xs text-gray-400">{activity.location}</span>
-                  <span className="text-xs text-gray-300">•</span>
-                  <span className="text-xs text-gray-400">{activity.time}</span>
+                  <span className="text-xs text-[#1E2D4D]/30">{activity.location}</span>
+                  <span className="text-xs text-[#1E2D4D]/30">•</span>
+                  <span className="text-xs text-[#1E2D4D]/30">{activity.time}</span>
                 </div>
               </div>
             </div>

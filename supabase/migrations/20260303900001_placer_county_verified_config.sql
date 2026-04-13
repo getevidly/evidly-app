@@ -10,7 +10,7 @@
 -- Portal: placer.ca.gov/3337/Food-Protection-Program
 -- Inspection results: placer.ca.gov/3361/Restaurant-Inspections
 -- Regulatory basis: CalCode
--- Transparency: HIGH — GYR placard posted + online results
+-- Transparency: HIGH — Green / Yellow / Red placard posted + online results
 -- Verified: March 2026
 --
 -- Verified facts:
@@ -34,7 +34,7 @@ UPDATE jurisdictions SET
   -- Verified agency details
   agency_name = 'Placer County Health and Human Services — Environmental Health Division, Food Protection Program',
 
-  -- Verified scoring/grading (GYR placard)
+  -- Verified scoring/grading (Green / Yellow / Red placard)
   scoring_type = 'color_placard',
   grading_type = 'green_yellow_red',
   grading_config = '{
@@ -69,7 +69,7 @@ UPDATE jurisdictions SET
     "grading_note": "Yellow threshold differs from Sacramento — failure to correct even a single major violation triggers Yellow, as does a Compliance Agreement violation. Two offices serve the county: Auburn HQ and Tahoe branch.",
     "public_portal": "https://www.placer.ca.gov/3361/Restaurant-Inspections"
   }'::jsonb,
-  scoring_methodology = 'GYR placard based on major violation compliance. Green=pass (no uncorrected majors). Yellow=conditional (failure to correct/mitigate ANY major, or compliance agreement violation). Red=closure (imminent danger, cannot correct during inspection). No numeric score. Two offices: Auburn and Tahoe.',
+  scoring_methodology = 'Green / Yellow / Red placard based on major violation compliance. Green=pass (no uncorrected majors). Yellow=conditional (failure to correct/mitigate ANY major, or compliance agreement violation). Red=closure (imminent danger, cannot correct during inspection). No numeric score. Two offices: Auburn and Tahoe.',
 
   -- NO numeric thresholds — violation-based placard system
   pass_threshold = NULL,
@@ -80,7 +80,7 @@ UPDATE jurisdictions SET
   fire_ahj_name = 'CAL FIRE / Placer Hills Fire / City Fire Departments / South Placer Fire District',
   fire_ahj_type = 'mixed_cal_fire_city',
   has_local_amendments = false,
-  local_amendment_notes = 'No local amendments identified beyond CalCode. Placard program modeled after Sacramento County GYR system.',
+  local_amendment_notes = 'No local amendments identified beyond CalCode. Placard program modeled after Sacramento County Green / Yellow / Red system.',
 
   -- Verified data source
   data_source_type = 'portal',
@@ -92,7 +92,7 @@ UPDATE jurisdictions SET
   population_rank = 22,
 
   -- Updated notes with verification info
-  notes = 'STANDARDIZED March 2026. GYR placard system. HIGH transparency. Two offices: Auburn HQ (530-889-7141) and Tahoe branch (530-546-1912). Yellow definition differs from Sacramento — single uncorrected major can trigger Yellow. Inspections target CDC five critical risk factors. Placard posted near front door.'
+  notes = 'STANDARDIZED March 2026. Green / Yellow / Red placard system. HIGH transparency. Two offices: Auburn HQ (530-889-7141) and Tahoe branch (530-546-1912). Yellow definition differs from Sacramento — single uncorrected major can trigger Yellow. Inspections target CDC five critical risk factors. Placard posted near front door.'
 WHERE county = 'Placer'
   AND city IS NULL
   AND state = 'CA';

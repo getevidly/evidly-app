@@ -77,7 +77,7 @@ export function TempPatternInsights() {
       padding: 20, marginTop: 16,
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-        <span style={{ fontSize: 16 }}>📊</span>
+        <span className="text-base">📊</span>
         <span style={{ fontSize: 14, fontWeight: 700, color: '#1E2D4D' }}>AI Pattern Insights — 30 Days</span>
       </div>
       {loading ? (

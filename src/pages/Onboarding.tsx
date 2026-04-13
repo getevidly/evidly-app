@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { lookupJurisdiction, linkJurisdictionToLocation } from '../utils/jurisdictionLookup';
 import { GhostInput } from '../components/ai/GhostInput';
 import { useCrispHide } from '../hooks/useCrisp';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 const steps = [
   { id: 1, name: 'Welcome', icon: () => <EvidlyIcon size={20} /> },
@@ -27,6 +28,7 @@ const steps = [
 
 export function Onboarding() {
   useCrispHide();
+  usePageTitle('Get Started');
   const [currentStep, setCurrentStep] = useState(1);
   const [locationName, setLocationName] = useState('');
   const [locationAddress, setLocationAddress] = useState('');
@@ -236,8 +238,8 @@ export function Onboarding() {
         return (
           <div className="text-center">
             <EvidlyIcon size={96} className="mx-auto mb-6" />
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Welcome to EvidLY</h2>
-            <p className="text-lg text-gray-600 mb-8">
+            <h2 className="text-3xl font-bold tracking-tight text-[#1E2D4D] mb-4">Welcome to EvidLY</h2>
+            <p className="text-lg text-[#1E2D4D]/70 mb-8">
               Let's get your food safety compliance system set up. This will only take a few minutes.
             </p>
           </div>
@@ -246,38 +248,38 @@ export function Onboarding() {
       case 2:
         return (
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Organization Details</h2>
-            <p className="text-gray-600 mb-6">Your organization is already set up. Let's continue with your locations.</p>
+            <h2 className="text-2xl font-bold tracking-tight text-[#1E2D4D] mb-4">Organization Details</h2>
+            <p className="text-[#1E2D4D]/70 mb-6">Your organization is already set up. Let's continue with your locations.</p>
           </div>
         );
 
       case 3:
         return (
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Add Your First Location</h2>
-            <p className="text-gray-600 mb-6">Add a restaurant, kitchen, or facility to get started.</p>
+            <h2 className="text-2xl font-bold tracking-tight text-[#1E2D4D] mb-4">Add Your First Location</h2>
+            <p className="text-[#1E2D4D]/70 mb-6">Add a restaurant, kitchen, or facility to get started.</p>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Location Name</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">Location Name</label>
                 <GhostInput
                   type="text"
                   value={locationName}
                   onChange={(e) => setLocationName(e.target.value)}
                   placeholder="e.g., Main Street Restaurant"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   fieldLabel="Location Name"
                   formContext={{ address: locationAddress || '' }}
                   entityType="location"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Address (Optional)</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">Address (Optional)</label>
                 <input
                   type="text"
                   value={locationAddress}
                   onChange={(e) => setLocationAddress(e.target.value)}
                   placeholder="123 Main St, City, State"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                 />
               </div>
             </div>
@@ -287,18 +289,18 @@ export function Onboarding() {
       case 4:
         return (
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Configure Shifts</h2>
-            <p className="text-gray-600 mb-6">
+            <h2 className="text-2xl font-bold tracking-tight text-[#1E2D4D] mb-4">Configure Shifts</h2>
+            <p className="text-[#1E2D4D]/70 mb-6">
               Set your operating hours and shift changeover time. This determines when temperature checks and tasks are assigned.
             </p>
             <div className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Opening Time</label>
+                  <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">Opening Time</label>
                   <select
                     value={shiftOpenTime}
                     onChange={(e) => setShiftOpenTime(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                    className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   >
                     {allTimes.filter(t => {
                       const h = parseInt(t.value.split(':')[0]);
@@ -309,11 +311,11 @@ export function Onboarding() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Closing Time</label>
+                  <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">Closing Time</label>
                   <select
                     value={shiftCloseTime}
                     onChange={(e) => setShiftCloseTime(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                    className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   >
                     {allTimes.filter(t => {
                       const h = parseInt(t.value.split(':')[0]);
@@ -326,12 +328,12 @@ export function Onboarding() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Shift Changeover Time</label>
-                <p className="text-xs text-gray-500 mb-2">This is when your Morning shift ends and Evening shift begins.</p>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">Shift Changeover Time</label>
+                <p className="text-xs text-[#1E2D4D]/50 mb-2">This is when your Morning shift ends and Evening shift begins.</p>
                 <select
                   value={shiftChangeover}
                   onChange={(e) => setShiftChangeover(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                 >
                   {allTimes.filter(t => {
                     const h = parseInt(t.value.split(':')[0]);
@@ -342,19 +344,19 @@ export function Onboarding() {
                 </select>
               </div>
 
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h3 className="text-sm font-semibold text-gray-900 mb-3">Shift Preview</h3>
+              <div className="bg-[#FAF7F0] rounded-xl p-4">
+                <h3 className="text-sm font-semibold text-[#1E2D4D] mb-3">Shift Preview</h3>
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-md">
-                    <span className="font-medium text-gray-900">Morning Shift</span>
-                    <span className="text-gray-600">{formatTime24to12(shiftOpenTime)} — {formatTime24to12(shiftChangeover)}</span>
+                  <div className="flex items-center justify-between p-3 bg-white border border-[#1E2D4D]/10 rounded-md">
+                    <span className="font-medium text-[#1E2D4D]">Morning Shift</span>
+                    <span className="text-[#1E2D4D]/70">{formatTime24to12(shiftOpenTime)} — {formatTime24to12(shiftChangeover)}</span>
                   </div>
-                  <div className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-md">
-                    <span className="font-medium text-gray-900">Evening Shift</span>
-                    <span className="text-gray-600">{formatTime24to12(shiftChangeover)} — {formatTime24to12(shiftCloseTime)}</span>
+                  <div className="flex items-center justify-between p-3 bg-white border border-[#1E2D4D]/10 rounded-md">
+                    <span className="font-medium text-[#1E2D4D]">Evening Shift</span>
+                    <span className="text-[#1E2D4D]/70">{formatTime24to12(shiftChangeover)} — {formatTime24to12(shiftCloseTime)}</span>
                   </div>
                 </div>
-                <p className="text-xs text-gray-500 mt-3">You can add more shifts and adjust days later in Settings.</p>
+                <p className="text-xs text-[#1E2D4D]/50 mt-3">You can add more shifts and adjust days later in Settings.</p>
               </div>
             </div>
           </div>
@@ -386,36 +388,36 @@ export function Onboarding() {
 
         return (
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">{stepTitles[currentStep]}</h2>
+            <h2 className="text-2xl font-bold tracking-tight text-[#1E2D4D] mb-2">{stepTitles[currentStep]}</h2>
             {industryType && (
-              <p className="text-sm text-[#d4af37] font-medium mb-4">
+              <p className="text-sm text-[#A08C5A] font-medium mb-4">
                 {industryType} Template
               </p>
             )}
-            <p className="text-gray-600 mb-6">{stepDescriptions[currentStep]}</p>
+            <p className="text-[#1E2D4D]/70 mb-6">{stepDescriptions[currentStep]}</p>
 
             <div className="space-y-6 max-h-[400px] overflow-y-auto">
               {displayCategories.map(category => (
-                <div key={category} className="bg-gray-50 rounded-lg p-4">
-                  <h3 className="font-semibold text-gray-900 mb-3">{getCategoryLabel(category)}</h3>
+                <div key={category} className="bg-[#FAF7F0] rounded-xl p-4">
+                  <h3 className="font-semibold text-[#1E2D4D] mb-3">{getCategoryLabel(category)}</h3>
                   <div className="space-y-2">
                     {groupedItems[category].map((item, index) => {
                       const globalIndex = templateItems.findIndex(t => t.name === item.name && t.category === item.category);
                       return (
                         <label
                           key={index}
-                          className="flex items-start space-x-3 p-3 bg-white border border-gray-200 rounded-md hover:bg-gray-50 cursor-pointer"
+                          className="flex items-start space-x-3 p-3 bg-white border border-[#1E2D4D]/10 rounded-md hover:bg-[#FAF7F0] cursor-pointer"
                         >
                           <input
                             type="checkbox"
                             checked={item.enabled}
                             onChange={() => toggleTemplateItem(globalIndex)}
-                            className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] mt-1"
+                            className="h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] mt-1"
                           />
-                          <span className={`flex-1 ${!item.required ? 'text-gray-500' : 'text-gray-900'}`}>
+                          <span className={`flex-1 ${!item.required ? 'text-[#1E2D4D]/50' : 'text-[#1E2D4D]'}`}>
                             {item.name}
                             {item.custom && (
-                              <span className="ml-2 text-xs px-2 py-0.5 rounded" style={{ backgroundColor: '#eef4f8', color: '#1e4d6b' }}>
+                              <span className="ml-2 text-xs px-2 py-0.5 rounded" style={{ backgroundColor: '#eef4f8', color: '#1E2D4D' }}>
                                 Custom
                               </span>
                             )}
@@ -431,7 +433,7 @@ export function Onboarding() {
                         value={customItems[category] || ''}
                         onChange={(e) => setCustomItems({ ...customItems, [category]: e.target.value })}
                         onKeyPress={(e) => e.key === 'Enter' && addCustomItem(category)}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37] text-sm"
+                        className="flex-1 px-3 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] text-sm"
                         fieldLabel="Custom Item"
                         formContext={{}}
                         entityType="checklist"
@@ -439,9 +441,9 @@ export function Onboarding() {
                       <button
                         type="button"
                         onClick={() => addCustomItem(category)}
-                        className="px-3 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                        className="px-3 py-2 bg-white border border-[#1E2D4D]/15 rounded-md hover:bg-[#FAF7F0] transition-colors"
                       >
-                        <Plus className="w-4 h-4 text-gray-600" />
+                        <Plus className="w-4 h-4 text-[#1E2D4D]/70" />
                       </button>
                     </div>
                   </div>
@@ -454,7 +456,7 @@ export function Onboarding() {
                 <button
                   type="button"
                   onClick={handleSkip}
-                  className="text-sm text-gray-600 hover:text-gray-800"
+                  className="text-sm text-[#1E2D4D]/70 hover:text-[#1E2D4D]/90"
                 >
                   I'll set this up later →
                 </button>
@@ -467,12 +469,12 @@ export function Onboarding() {
       case 8:
         return (
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Invite Team Members</h2>
-            <p className="text-gray-600 mb-6">Add your team to collaborate on compliance tasks.</p>
+            <h2 className="text-2xl font-bold tracking-tight text-[#1E2D4D] mb-4">Invite Team Members</h2>
+            <p className="text-[#1E2D4D]/70 mb-6">Add your team to collaborate on compliance tasks.</p>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">
                     Email (optional)
                   </label>
                   <input
@@ -480,11 +482,11 @@ export function Onboarding() {
                     value={teamEmail}
                     onChange={(e) => setTeamEmail(e.target.value)}
                     placeholder="email@example.com"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]"
+                    className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">
                     Phone (optional)
                   </label>
                   <input
@@ -492,13 +494,13 @@ export function Onboarding() {
                     value={teamPhone}
                     onChange={(e) => setTeamPhone(e.target.value)}
                     placeholder="+1 (555) 000-0000"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]"
+                    className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">
                   Send invite via
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
@@ -507,8 +509,8 @@ export function Onboarding() {
                     onClick={() => setInviteMethod('sms')}
                     className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                       inviteMethod === 'sms'
-                        ? 'bg-[#1e4d6b] text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        ? 'bg-[#1E2D4D] text-white'
+                        : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/10'
                     }`}
                   >
                     SMS
@@ -518,8 +520,8 @@ export function Onboarding() {
                     onClick={() => setInviteMethod('email')}
                     className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                       inviteMethod === 'email'
-                        ? 'bg-[#1e4d6b] text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        ? 'bg-[#1E2D4D] text-white'
+                        : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/10'
                     }`}
                   >
                     Email
@@ -529,8 +531,8 @@ export function Onboarding() {
                     onClick={() => setInviteMethod('both')}
                     className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                       inviteMethod === 'both'
-                        ? 'bg-[#1e4d6b] text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        ? 'bg-[#1E2D4D] text-white'
+                        : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/10'
                     }`}
                   >
                     Both
@@ -538,7 +540,7 @@ export function Onboarding() {
                 </div>
               </div>
 
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-[#1E2D4D]/50">
                 SMS is recommended for kitchen staff who rarely check email
               </p>
             </div>
@@ -548,12 +550,12 @@ export function Onboarding() {
       case 9:
         return (
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Print QR Codes</h2>
-            <p className="text-gray-600 mb-6">Generate QR codes for equipment and locations for easy mobile access.</p>
-            <div className="bg-white p-4 sm:p-5 rounded-xl border border-gray-300 text-center">
-              <QrCode className="h-32 w-32 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600 mb-4">Your QR codes will be generated after setup</p>
-              <button onClick={() => toast.info('QR codes generated after setup is complete')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-md hover:bg-[#2a6a8f]">
+            <h2 className="text-2xl font-bold tracking-tight text-[#1E2D4D] mb-4">Print QR Codes</h2>
+            <p className="text-[#1E2D4D]/70 mb-6">Generate QR codes for equipment and locations for easy mobile access.</p>
+            <div className="bg-white p-4 sm:p-5 rounded-xl border border-[#1E2D4D]/15 text-center">
+              <QrCode className="h-32 w-32 text-[#1E2D4D]/30 mx-auto mb-4" />
+              <p className="text-[#1E2D4D]/70 mb-4">Your QR codes will be generated after setup</p>
+              <button onClick={() => toast.info('QR codes generated after setup is complete')} className="px-6 py-2 bg-[#1E2D4D] text-white rounded-md hover:bg-[#162340]">
                 Preview QR Codes
               </button>
             </div>
@@ -563,9 +565,9 @@ export function Onboarding() {
       case 10:
         return (
           <div className="text-center">
-            <PartyPopper className="h-24 w-24 text-[#d4af37] mx-auto mb-6" />
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">You're All Set!</h2>
-            <p className="text-lg text-gray-600 mb-8">
+            <PartyPopper className="h-24 w-24 text-[#A08C5A] mx-auto mb-6" />
+            <h2 className="text-3xl font-bold tracking-tight text-[#1E2D4D] mb-4">You're All Set!</h2>
+            <p className="text-lg text-[#1E2D4D]/70 mb-8">
               Your EvidLY account is ready. Start logging temperatures, completing checklists, and staying compliant.
             </p>
           </div>
@@ -577,7 +579,7 @@ export function Onboarding() {
   };
 
   return (
-    <div className="min-h-screen bg-[#faf8f3] py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-cream py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
@@ -588,8 +590,8 @@ export function Onboarding() {
                     step.id < currentStep
                       ? 'bg-green-500 text-white'
                       : step.id === currentStep
-                      ? 'bg-[#d4af37] text-white'
-                      : 'bg-gray-200 text-gray-500'
+                      ? 'bg-[#A08C5A] text-white'
+                      : 'bg-[#1E2D4D]/10 text-[#1E2D4D]/50'
                   }`}
                 >
                   {step.id < currentStep ? <Check className="h-5 w-5" /> : <step.icon className="h-5 w-5" />}
@@ -597,14 +599,14 @@ export function Onboarding() {
                 {index < steps.length - 1 && (
                   <div
                     className={`h-1 w-8 ${
-                      step.id < currentStep ? 'bg-green-500' : 'bg-gray-200'
+                      step.id < currentStep ? 'bg-green-500' : 'bg-[#1E2D4D]/8'
                     }`}
                   ></div>
                 )}
               </div>
             ))}
           </div>
-          <div className="flex justify-between text-xs text-gray-600">
+          <div className="flex justify-between text-xs text-[#1E2D4D]/70">
             {steps.map((step) => (
               <span key={step.id} className="w-10 text-center">
                 {step.name.split(' ')[0]}
@@ -613,13 +615,13 @@ export function Onboarding() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-6">{renderStepContent()}</div>
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8 mb-6">{renderStepContent()}</div>
 
         <div className="flex justify-between">
           {currentStep !== 4 ? (
             <button
               onClick={handleSkip}
-              className="px-6 py-2 border-2 border-[#1e4d6b] text-[#1e4d6b] rounded-md hover:bg-gray-50 bg-white"
+              className="px-6 py-2 border-2 border-[#1E2D4D] text-[#1E2D4D] rounded-md hover:bg-[#FAF7F0] bg-white"
             >
               Skip
             </button>
@@ -631,8 +633,8 @@ export function Onboarding() {
             disabled={currentStep === 3 && !locationName}
             className={`px-8 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed shadow-sm ${
               currentStep === 10
-                ? 'bg-[#1e4d6b] text-white hover:bg-[#2a6a8f] font-bold'
-                : 'bg-[#1e4d6b] text-white hover:bg-[#2a6a8f]'
+                ? 'bg-[#1E2D4D] text-white hover:bg-[#162340] font-bold'
+                : 'bg-[#1E2D4D] text-white hover:bg-[#162340]'
             }`}
           >
             {currentStep === 10 ? 'Get Started' : 'Next'}

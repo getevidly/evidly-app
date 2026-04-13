@@ -30,7 +30,7 @@ function XPBar({ xp, xpMax, level }: { xp: number; xpMax: number; level: number 
     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
       <span style={{ fontSize: 11, fontWeight: 700, color: '#A08C5A', minWidth: 38 }}>Lv.{level}</span>
       <div style={{ flex: 1, height: 8, backgroundColor: '#e5e7eb', borderRadius: 4, overflow: 'hidden' }}>
-        <div style={{ height: '100%', width: `${pct}%`, background: 'linear-gradient(90deg, #A08C5A, #d4af37)', borderRadius: 4, transition: 'width 1s ease' }} />
+        <div style={{ height: '100%', width: `${pct}%`, background: 'linear-gradient(90deg, #A08C5A, #A08C5A)', borderRadius: 4, transition: 'width 1s ease' }} />
       </div>
       <span style={{ fontSize: 10, color: '#6b7280', minWidth: 50, textAlign: 'right' }}>{xp}/{xpMax} XP</span>
     </div>
@@ -75,7 +75,7 @@ export function LeaderboardPreview() {
       <div style={{ maxWidth: 960, margin: '0 auto', padding: '32px 20px' }}>
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <div style={{ fontSize: 48 }}>{'🏆'}</div>
+          <div className="text-5xl">{'🏆'}</div>
           <h1 style={{ fontSize: 32, fontWeight: 900, color: '#1E2D4D', margin: '12px 0 8px' }}>
             EvidLY Compliance Leaderboard
           </h1>
@@ -91,7 +91,7 @@ export function LeaderboardPreview() {
           border: '2px solid #A08C5A', color: 'white',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-            <Star size={24} style={{ color: '#d4af37' }} />
+            <Star size={24} style={{ color: '#A08C5A' }} />
             <h3 style={{ fontSize: 18, fontWeight: 800 }}>Monthly Rewards Program</h3>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16 }}>
@@ -102,7 +102,7 @@ export function LeaderboardPreview() {
               { icon: '🌟', title: 'Top 10', desc: 'Featured badge on your Compliance Passport' },
             ].map(r => (
               <div key={r.title} style={{ backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 12, padding: '16px', textAlign: 'center' }}>
-                <div style={{ fontSize: 28 }}>{r.icon}</div>
+                <div className="text-[28px]">{r.icon}</div>
                 <h4 style={{ fontSize: 13, fontWeight: 700, marginTop: 8 }}>{r.title}</h4>
                 <p style={{ fontSize: 11, opacity: 0.7, marginTop: 4, lineHeight: 1.5 }}>{r.desc}</p>
               </div>
@@ -139,7 +139,7 @@ export function LeaderboardPreview() {
                 <div key={loc.rank} style={{
                   background: 'white', borderRadius: 16, padding: '24px 16px', textAlign: 'center',
                   boxShadow: isFirst ? '0 8px 32px rgba(30,77,107,0.15)' : '0 2px 8px rgba(0,0,0,0.06)',
-                  border: isFirst ? '2px solid #d4af37' : '1px solid #e5e7eb',
+                  border: isFirst ? '2px solid #A08C5A' : '1px solid #e5e7eb',
                   minHeight: height,
                   display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
                   transform: isFirst ? 'scale(1.05)' : 'scale(1)',
@@ -154,7 +154,7 @@ export function LeaderboardPreview() {
                   </div>
                   <div style={{ display: 'flex', gap: 4, marginTop: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
                     {loc.badges.slice(0, 4).map((b, i) => (
-                      <span key={i} style={{ fontSize: 16 }}>{b}</span>
+                      <span key={i} className="text-base">{b}</span>
                     ))}
                   </div>
                 </div>
@@ -215,7 +215,7 @@ export function LeaderboardPreview() {
                 {loc.streak}d
               </span>
               <div style={{ display: 'flex', gap: 2 }}>
-                {loc.badges.slice(0, 3).map((b, i) => <span key={i} style={{ fontSize: 14 }}>{b}</span>)}
+                {loc.badges.slice(0, 3).map((b, i) => <span key={i} className="text-sm">{b}</span>)}
                 {loc.badges.length > 3 && <span style={{ fontSize: 10, color: '#6b7280', fontWeight: 600 }}>+{loc.badges.length - 3}</span>}
               </div>
               <div style={{ textAlign: 'right' }}>
@@ -268,7 +268,7 @@ export function LeaderboardPreview() {
 
       {/* Bottom CTA */}
       <div style={{ background: '#1E2D4D', padding: '60px 40px', textAlign: 'center' }}>
-        <div style={{ fontSize: 36 }}>{'🏆'}</div>
+        <div className="text-4xl">{'🏆'}</div>
         <h2 style={{ color: 'white', fontSize: 28, fontWeight: 900, margin: '16px 0 8px' }}>
           Is your kitchen ready to compete?
         </h2>

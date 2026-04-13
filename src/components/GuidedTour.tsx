@@ -200,7 +200,7 @@ export function GuidedTour({ onComplete, onActiveChange }: GuidedTourProps) {
     return (
       <button
         onClick={startTour}
-        className="fixed z-[1040] flex items-center gap-2 px-4 py-3 bg-[#1e4d6b] text-white rounded-full shadow-sm hover:bg-[#163a52] transition-all hover:scale-105"
+        className="fixed z-[1040] flex items-center gap-2 px-4 py-3 bg-[#1E2D4D] text-white rounded-full shadow-sm hover:bg-[#162340] transition-all hover:scale-105"
         style={{ bottom: '80px', right: '92px' }}
         title="Start guided tour"
       >
@@ -219,7 +219,7 @@ export function GuidedTour({ onComplete, onActiveChange }: GuidedTourProps) {
         <div className="absolute inset-0 bg-black/50" />
         {/* Spotlight cutout */}
         <div
-          className="absolute border-2 border-[#d4af37] rounded-lg"
+          className="absolute border-2 border-[#A08C5A] rounded-lg"
           style={{
             top: highlightRect.top,
             left: highlightRect.left,
@@ -233,37 +233,37 @@ export function GuidedTour({ onComplete, onActiveChange }: GuidedTourProps) {
 
       {/* Tooltip */}
       <div
-        className="fixed z-[99999] w-[360px] max-h-[70vh] overflow-y-auto bg-white rounded-xl shadow-sm border border-gray-200 animate-slide-up"
+        className="fixed z-[99999] w-[360px] max-h-[70vh] overflow-y-auto bg-white rounded-xl border border-[#1E2D4D]/10 animate-slide-up"
         style={{ top: tooltipPosition.top, left: tooltipPosition.left }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-5">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-lg font-bold text-gray-900">{step.title}</h3>
-            <button onClick={endTour} className="p-2.5 -m-1 hover:bg-gray-100 rounded-full transition-colors" aria-label="Close">
-              <X className="w-4 h-4 text-gray-400" />
+            <h3 className="text-lg font-bold text-[#1E2D4D]">{step.title}</h3>
+            <button onClick={endTour} className="p-2.5 -m-1 hover:bg-[#1E2D4D]/5 rounded-full transition-colors" aria-label="Close">
+              <X className="w-4 h-4 text-[#1E2D4D]/30" />
             </button>
           </div>
-          <p className="text-sm text-gray-600 leading-relaxed">{step.content}</p>
+          <p className="text-sm text-[#1E2D4D]/70 leading-relaxed">{step.content}</p>
         </div>
-        <div className="flex items-center justify-between px-5 py-3 bg-gray-50 rounded-b-xl border-t border-gray-100">
-          <span className="text-xs text-gray-400">Step {currentStep + 1} of {TOUR_STEPS.length}</span>
+        <div className="flex items-center justify-between px-5 py-3 bg-[#FAF7F0] rounded-b-xl border-t border-[#1E2D4D]/5">
+          <span className="text-xs text-[#1E2D4D]/30">Step {currentStep + 1} of {TOUR_STEPS.length}</span>
           <div className="flex items-center gap-2">
             <button
               onClick={endTour}
-              className="px-3 py-1.5 text-xs text-gray-400 hover:text-gray-600 transition-colors"
+              className="px-3 py-1.5 text-xs text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 transition-colors"
             >
               Skip Tour
             </button>
             {currentStep > 0 && (
-              <button onClick={prev} className="flex items-center gap-1 px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 transition-colors">
+              <button onClick={prev} className="flex items-center gap-1 px-3 py-1.5 text-sm text-[#1E2D4D]/70 hover:text-[#1E2D4D] transition-colors">
                 <ChevronLeft className="w-4 h-4" />
                 Back
               </button>
             )}
             <button
               onClick={next}
-              className="flex items-center gap-1 px-4 py-1.5 text-sm font-medium text-white bg-[#1e4d6b] rounded-lg hover:bg-[#163a52] transition-colors"
+              className="flex items-center gap-1 px-4 py-1.5 text-sm font-medium text-white bg-[#1E2D4D] rounded-lg hover:bg-[#162340] transition-colors"
             >
               {currentStep === TOUR_STEPS.length - 1 ? 'Finish' : 'Next'}
               {currentStep < TOUR_STEPS.length - 1 && <ChevronRight className="w-4 h-4" />}

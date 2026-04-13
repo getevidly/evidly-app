@@ -52,11 +52,11 @@ export function LocationComparisonChart({ locationData }: Props) {
   });
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 shadow-sm">
+    <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">Location Comparison</h3>
-          <p className="text-sm text-gray-500">Compare compliance trajectories across locations</p>
+          <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">Location Comparison</h3>
+          <p className="text-sm text-[#1E2D4D]/50">Compare compliance trajectories across locations</p>
         </div>
         <div className="flex items-center gap-1">
           {(Object.keys(METRIC_LABELS) as Metric[]).map((m) => (
@@ -65,7 +65,7 @@ export function LocationComparisonChart({ locationData }: Props) {
               onClick={() => setMetric(m)}
               className="px-3 py-1 text-xs font-medium rounded-lg transition-colors"
               style={{
-                backgroundColor: metric === m ? '#1e4d6b' : 'transparent',
+                backgroundColor: metric === m ? '#1E2D4D' : 'transparent',
                 color: metric === m ? 'white' : 'var(--text-secondary, #3D5068)',
               }}
             >
@@ -101,8 +101,8 @@ export function LocationComparisonChart({ locationData }: Props) {
                 key={locId}
                 type="monotone"
                 dataKey={locId}
-                stroke={LOCATION_COLORS[locId] || '#1e4d6b'}
-                fill={LOCATION_COLORS[locId] || '#1e4d6b'}
+                stroke={LOCATION_COLORS[locId] || '#1E2D4D'}
+                fill={LOCATION_COLORS[locId] || '#1E2D4D'}
                 fillOpacity={0.1}
                 strokeWidth={2}
                 dot={false}

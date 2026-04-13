@@ -110,7 +110,7 @@ export default function VendorDocumentReview() {
       {/* Loading */}
       {loading && (
         <div className="flex justify-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-2 border-gray-300" style={{ borderTopColor: NAVY }} />
+          <div className="animate-spin rounded-full h-8 w-8 border-2 border-[#1E2D4D]/15" style={{ borderTopColor: NAVY }} />
         </div>
       )}
 
@@ -164,7 +164,7 @@ export default function VendorDocumentReview() {
             <button
               type="button"
               onClick={() => setExpandedId(isExpanded ? null : sub.id)}
-              className="w-full px-4 py-3 flex items-center gap-3 text-left hover:bg-gray-50 transition-colors"
+              className="w-full px-4 py-3 flex items-center gap-3 text-left hover:bg-[#FAF7F0] transition-colors"
             >
               <div
                 className="shrink-0 w-9 h-9 rounded-lg flex items-center justify-center"
@@ -178,7 +178,7 @@ export default function VendorDocumentReview() {
                     {vendorName}
                   </p>
                   <span
-                    className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0"
+                    className="text-xs font-bold px-1.5 py-0.5 rounded shrink-0"
                     style={{ backgroundColor: status.bg, color: status.color }}
                   >
                     {status.label}
@@ -190,13 +190,13 @@ export default function VendorDocumentReview() {
               </div>
               <div className="flex items-center gap-2 shrink-0">
                 <span
-                  className="text-[10px] font-medium px-1.5 py-0.5 rounded flex items-center gap-1"
+                  className="text-xs font-medium px-1.5 py-0.5 rounded flex items-center gap-1"
                   style={{ color: aiStatus.color, backgroundColor: `${aiStatus.color}10` }}
                 >
                   <AIIcon size={10} />
                   {aiStatus.label}
                 </span>
-                {isExpanded ? <ChevronUp size={16} className="text-gray-400" /> : <ChevronDown size={16} className="text-gray-400" />}
+                {isExpanded ? <ChevronUp size={16} className="text-[#1E2D4D]/30" /> : <ChevronDown size={16} className="text-[#1E2D4D]/30" />}
               </div>
             </button>
 
@@ -210,10 +210,10 @@ export default function VendorDocumentReview() {
                       <img
                         src={sub.vendor_documents.file_url}
                         alt={docType}
-                        className="w-full max-h-[300px] object-contain bg-gray-50"
+                        className="w-full max-h-[300px] object-contain bg-[#FAF7F0]"
                       />
                     ) : sub.vendor_documents.file_type === 'application/pdf' ? (
-                      <div className="bg-gray-50 p-4 text-center">
+                      <div className="bg-[#FAF7F0] p-4 text-center">
                         <FileText className="mx-auto mb-2" size={32} style={{ color: TEXT_TERTIARY }} />
                         <a
                           href={sub.vendor_documents.file_url}
@@ -224,7 +224,7 @@ export default function VendorDocumentReview() {
                         >
                           <Eye size={14} /> View PDF Document
                         </a>
-                        <p className="text-[11px] mt-1" style={{ color: TEXT_TERTIARY }}>
+                        <p className="text-xs mt-1" style={{ color: TEXT_TERTIARY }}>
                           {sub.vendor_documents.file_size
                             ? `${(sub.vendor_documents.file_size / 1024).toFixed(0)} KB`
                             : ''
@@ -232,7 +232,7 @@ export default function VendorDocumentReview() {
                         </p>
                       </div>
                     ) : (
-                      <div className="bg-gray-50 p-4 text-center">
+                      <div className="bg-[#FAF7F0] p-4 text-center">
                         <FileText className="mx-auto mb-2" size={32} style={{ color: TEXT_TERTIARY }} />
                         <a
                           href={sub.vendor_documents.file_url}
@@ -251,7 +251,7 @@ export default function VendorDocumentReview() {
                 {/* Vendor notes */}
                 {sub.vendor_documents?.vendor_notes && (
                   <div className="mt-3 p-3 rounded-lg" style={{ backgroundColor: '#F4F6FA' }}>
-                    <p className="text-[11px] font-semibold uppercase mb-1" style={{ color: TEXT_TERTIARY }}>
+                    <p className="text-xs font-semibold uppercase mb-1" style={{ color: TEXT_TERTIARY }}>
                       Vendor Notes
                     </p>
                     <p className="text-sm" style={{ color: BODY_TEXT }}>
@@ -265,12 +265,12 @@ export default function VendorDocumentReview() {
                   <div className="mt-3 p-3 rounded-lg" style={{ backgroundColor: '#F4F6FA' }}>
                     <div className="flex items-center gap-2 mb-2">
                       <Brain size={14} style={{ color: NAVY }} />
-                      <p className="text-[11px] font-semibold uppercase" style={{ color: TEXT_TERTIARY }}>
+                      <p className="text-xs font-semibold uppercase" style={{ color: TEXT_TERTIARY }}>
                         AI Analysis
                       </p>
                       {sub.ai_validation_result.confidence != null && (
                         <span
-                          className="text-[10px] font-bold px-1.5 py-0.5 rounded ml-auto"
+                          className="text-xs font-bold px-1.5 py-0.5 rounded ml-auto"
                           style={{
                             backgroundColor: sub.ai_validation_result.confidence >= 0.9 ? '#dcfce7' : sub.ai_validation_result.confidence >= 0.7 ? '#fef3c7' : '#fee2e2',
                             color: sub.ai_validation_result.confidence >= 0.9 ? '#166534' : sub.ai_validation_result.confidence >= 0.7 ? '#92400e' : '#991b1b',
@@ -283,7 +283,7 @@ export default function VendorDocumentReview() {
 
                     <div className="space-y-1.5">
                       {sub.ai_validation_result.summary && (
-                        <p className="text-[13px]" style={{ color: BODY_TEXT }}>
+                        <p className="text-sm" style={{ color: BODY_TEXT }}>
                           {sub.ai_validation_result.summary}
                         </p>
                       )}
@@ -294,7 +294,7 @@ export default function VendorDocumentReview() {
                             ? <CheckCircle2 size={12} className="text-green-600" />
                             : <XCircle size={12} className="text-red-600" />
                           }
-                          <span className="text-[11px]" style={{ color: BODY_TEXT }}>
+                          <span className="text-xs" style={{ color: BODY_TEXT }}>
                             Type Match: {sub.ai_validation_result.detected_type || 'Unknown'}
                           </span>
                         </div>
@@ -302,7 +302,7 @@ export default function VendorDocumentReview() {
                         {sub.ai_validation_result.expiry_detected && (
                           <div className="flex items-center gap-1.5">
                             <Clock size={12} style={{ color: TEXT_TERTIARY }} />
-                            <span className="text-[11px]" style={{ color: BODY_TEXT }}>
+                            <span className="text-xs" style={{ color: BODY_TEXT }}>
                               Expires: {sub.ai_validation_result.expiry_date || 'Unknown'}
                             </span>
                           </div>
@@ -311,12 +311,12 @@ export default function VendorDocumentReview() {
 
                       {sub.ai_validation_result.issues?.length > 0 && (
                         <div className="mt-2">
-                          <p className="text-[11px] font-semibold mb-1" style={{ color: '#991b1b' }}>
+                          <p className="text-xs font-semibold mb-1" style={{ color: '#991b1b' }}>
                             Issues Found:
                           </p>
                           <ul className="space-y-0.5">
                             {sub.ai_validation_result.issues.map((issue, i) => (
-                              <li key={i} className="text-[11px] flex items-start gap-1" style={{ color: '#991b1b' }}>
+                              <li key={i} className="text-xs flex items-start gap-1" style={{ color: '#991b1b' }}>
                                 <AlertTriangle size={10} className="mt-0.5 shrink-0" />
                                 {issue}
                               </li>
@@ -327,7 +327,7 @@ export default function VendorDocumentReview() {
                     </div>
 
                     {sub.auto_approved && (
-                      <div className="mt-2 flex items-center gap-1.5 text-[11px] font-medium" style={{ color: '#166534' }}>
+                      <div className="mt-2 flex items-center gap-1.5 text-xs font-medium" style={{ color: '#166534' }}>
                         <Shield size={12} />
                         Auto-approved by AI (high confidence, no issues)
                       </div>
@@ -338,7 +338,7 @@ export default function VendorDocumentReview() {
                 {/* Decline reason (if declined) */}
                 {sub.review_status === 'declined' && sub.decline_reason && (
                   <div className="mt-3 p-3 rounded-lg" style={{ backgroundColor: '#FEF2F2' }}>
-                    <p className="text-[11px] font-semibold uppercase mb-1" style={{ color: '#991b1b' }}>
+                    <p className="text-xs font-semibold uppercase mb-1" style={{ color: '#991b1b' }}>
                       Decline Reason
                     </p>
                     <p className="text-sm" style={{ color: '#991b1b' }}>
@@ -386,12 +386,12 @@ export default function VendorDocumentReview() {
 
       {/* Decline modal */}
       {declineModal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 modal-backdrop-enter">
           <div
             className="rounded-xl p-6 w-full max-w-md"
             style={{ backgroundColor: CARD_BG }}
           >
-            <h3 className="text-lg font-semibold mb-3" style={{ color: BODY_TEXT }}>
+            <h3 className="text-lg font-semibold tracking-tight mb-3" style={{ color: BODY_TEXT }}>
               Decline Document
             </h3>
             <p className="text-sm mb-3" style={{ color: TEXT_TERTIARY }}>
@@ -427,10 +427,10 @@ export default function VendorDocumentReview() {
 
       {/* Demo upgrade modal */}
       {showUpgrade && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl p-6 max-w-sm w-full text-center">
-            <h3 className="text-lg font-semibold mb-2">{upgradeFeature || 'Feature'}</h3>
-            <p className="text-sm text-gray-500 mb-4">This feature requires a live account.</p>
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 modal-backdrop-enter">
+          <div className="bg-white rounded-xl p-6 max-w-sm w-full text-center modal-content-enter">
+            <h3 className="text-lg font-semibold tracking-tight mb-2">{upgradeFeature || 'Feature'}</h3>
+            <p className="text-sm text-[#1E2D4D]/50 mb-4">This feature requires a live account.</p>
             <button
               onClick={() => setShowUpgrade(false)}
               className="px-6 py-2 rounded-lg text-sm font-semibold text-white"

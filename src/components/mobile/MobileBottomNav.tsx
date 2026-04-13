@@ -20,7 +20,7 @@ export function MobileBottomNav({ tabs, onMorePress }: MobileBottomNavProps) {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 lg:hidden"
+      className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#1E2D4D]/10 z-50 lg:hidden"
       style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 8px)' }}
     >
       <div className="grid grid-cols-4 h-14">
@@ -38,7 +38,7 @@ export function MobileBottomNav({ tabs, onMorePress }: MobileBottomNavProps) {
                 {tab.icon}
               </span>
               <span
-                className={`text-[10px] font-semibold ${
+                className={`text-xs font-semibold ${
                   isActive ? 'text-[#1E2D4D]' : 'text-[#6B7280]'
                 }`}
               >

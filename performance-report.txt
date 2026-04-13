@@ -1,0 +1,69 @@
+═══════════════════════════════════════════════════════════════════════════
+  PERFORMANCE REPORT — EvidLY
+  Date: 2026-04-12
+═══════════════════════════════════════════════════════════════════════════
+
+── Bundle Summary ────────────────────────
+  Total: 9.6MB
+  JavaScript: 9.5MB across 526 chunks
+  CSS: 128.7KB across 1 files
+  Source maps: DISABLED (production)
+
+── Top 20 Largest Chunks ─────────────────
+  CHUNK NAME                                                  SIZE
+  ──────────────────────────────────────────────────────────────────────
+  vendor-pdf-ClW1xxjP.js                                       580.3KB
+  index-VYfhKcF5.js                                            453.7KB
+  vendor-charts-BOtS_vl9.js                                    427.7KB
+  ImportData-DWi7o90M.js                                       350.5KB
+  Dashboard-C9nDiFsx.js                                        250.1KB
+  demoData-BQ6pGqjR.js                                         209.8KB
+  JurisdictionSettings-mbKqBhQn.js                             204.5KB
+  ComplianceIntelligence-D4RFbcRw.js                           175.9KB
+  vendor-react-Dz7rwSx8.js                                     175.1KB
+  vendor-supabase-BaC8S9h6.js                                  172.6KB
+  index.es-Bhxm9vdz.js                                         147.0KB
+  TempLogs-DqAjieze.js                                         141.3KB
+  HACCP-93g8oQY_.js                                            119.0KB
+  Vendors-djfUU2NP.js                                          108.8KB
+  sanityClient-DsOqWTWe.js                                     94.5KB
+  Equipment-BitNsGKC.js                                        87.4KB
+  ScoreTableCountyPage-CmAhz6CB.js                             84.3KB
+  CountyLandingPage-3YbCQvwj.js                                82.4KB
+  i18n-CqJuSH_N.js                                             82.2KB
+  demoIntelligenceData-CB9kreMb.js                             82.1KB
+
+── Chunks > 500KB (needs attention) ──────
+  vendor-pdf-ClW1xxjP.js: 580.3KB
+
+── Vendor Splitting ──────────────────────
+  vendor-pdf-ClW1xxjP.js: 580.3KB
+  vendor-charts-BOtS_vl9.js: 427.7KB
+  vendor-react-Dz7rwSx8.js: 175.1KB
+  vendor-supabase-BaC8S9h6.js: 172.6KB
+  vendor-sonner-C9P1ubtf.js: 33.0KB
+
+── Code Splitting ───────────────────────
+  Lazy imports in App.tsx: 264
+  Total JS chunks: 526
+  Effective code splitting: ✓
+
+── Edge Functions (Top 5 by Size) ────────
+  intelligence-collect                     53.0KB
+  trial-email-sender                       33.8KB
+  generate-alerts                          32.1KB
+  generate-partner-demo                    29.2KB
+  calculate-compliance-score               29.2KB
+
+── Image Assets ─────────────────────────
+  public\dashboard-overview.png                 133.0KB
+  public\dashboard-hero.png                     99.3KB
+  public\temp-logs.png                          71.3KB
+  public\dashboard-location.png                 35.9KB
+  public\image.png                              23.9KB
+  public\icon-512.png                           17.0KB
+  public\tasks-card.png                         16.4KB
+  public\icon-192.png                           4.9KB
+  public\favicon.svg                            0.4KB
+
+═══════════════════════════════════════════════════════════════════════════

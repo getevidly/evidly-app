@@ -194,12 +194,12 @@ export function PhotoGallery({ photos, title = 'Photo Evidence' }: PhotoGalleryP
               color: 'white', fontSize: '13px', flexWrap: 'wrap', justifyContent: 'center', ...F,
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <Clock className="h-4 w-4" style={{ color: '#d4af37' }} />
+                <Clock className="h-4 w-4" style={{ color: '#A08C5A' }} />
                 {selected.displayTime}
               </div>
               {selected.lat && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <MapPin className="h-4 w-4" style={{ color: '#d4af37' }} />
+                  <MapPin className="h-4 w-4" style={{ color: '#A08C5A' }} />
                   {selected.address}
                 </div>
               )}

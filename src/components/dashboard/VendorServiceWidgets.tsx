@@ -69,7 +69,7 @@ export function AnnualVendorSpendWidget({
 
   return (
     <div
-      className="bg-white rounded-lg overflow-hidden"
+      className="bg-white rounded-xl overflow-hidden"
       style={{ border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}
     >
       {/* Header */}
@@ -79,7 +79,7 @@ export function AnnualVendorSpendWidget({
       >
         <div className="flex items-center gap-2">
           <DollarSign size={16} style={{ color: NAVY }} />
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-[#1E2D4D]/50">
             Annual Vendor Spend
           </h3>
         </div>
@@ -90,7 +90,7 @@ export function AnnualVendorSpendWidget({
         {serviceCount === 0 ? (
           /* Empty state */
           <div className="text-center py-2">
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-[#1E2D4D]/50">
               No vendor services on file — add services to track spend.
             </p>
             <button
@@ -104,10 +104,10 @@ export function AnnualVendorSpendWidget({
           </div>
         ) : (
           <>
-            <div className="text-2xl font-bold" style={{ color: NAVY }}>
+            <div className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>
               ${totalAnnualSpend.toLocaleString('en-US', { minimumFractionDigits: 0 })}
             </div>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-[#1E2D4D]/50 mt-1">
               {serviceCount} service{serviceCount !== 1 ? 's' : ''} across{' '}
               {locationCount} location{locationCount !== 1 ? 's' : ''}
             </p>
@@ -120,7 +120,7 @@ export function AnnualVendorSpendWidget({
         <button
           type="button"
           onClick={() => navigate('/vendors')}
-          className="w-full px-4 py-2.5 text-center text-xs font-semibold transition-colors hover:bg-gray-50"
+          className="w-full px-4 py-2.5 text-center text-xs font-semibold transition-colors hover:bg-[#FAF7F0]"
           style={{ color: NAVY, borderTop: '1px solid #F0F0F0' }}
         >
           View All Vendors <ArrowRight size={12} className="inline ml-0.5" />
@@ -185,7 +185,7 @@ export function ServicesDueSoonWidget({ services: externalServices }: ServicesDu
 
   return (
     <div
-      className="bg-white rounded-lg overflow-hidden"
+      className="bg-white rounded-xl overflow-hidden"
       style={{ border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}
     >
       {/* Header */}
@@ -195,7 +195,7 @@ export function ServicesDueSoonWidget({ services: externalServices }: ServicesDu
       >
         <div className="flex items-center gap-2">
           <Calendar size={16} style={{ color: NAVY }} />
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-[#1E2D4D]/50">
             Services Due Soon
           </h3>
           {servicesDue.length > 0 && (
@@ -210,7 +210,7 @@ export function ServicesDueSoonWidget({ services: externalServices }: ServicesDu
       {servicesDue.length === 0 ? (
         /* Empty state */
         <div className="px-4 py-4 text-center">
-          <p className="text-sm text-gray-500">No upcoming services in the next 30 days. Records appear automatically when HoodOps completes work.</p>
+          <p className="text-sm text-[#1E2D4D]/50">No upcoming services in the next 30 days. Records appear automatically when HoodOps completes work.</p>
           <button
             type="button"
             onClick={() => navigate('/vendors')}
@@ -230,7 +230,7 @@ export function ServicesDueSoonWidget({ services: externalServices }: ServicesDu
                 key={s.id}
                 type="button"
                 onClick={() => navigate('/vendors')}
-                className="w-full flex items-center justify-between px-4 py-3 text-left transition-colors hover:bg-gray-50"
+                className="w-full flex items-center justify-between px-4 py-3 text-left transition-colors hover:bg-[#FAF7F0]"
                 style={{
                   borderBottom: i < servicesDue.length - 1 ? '1px solid #F0F0F0' : 'none',
                 }}
@@ -244,16 +244,16 @@ export function ServicesDueSoonWidget({ services: externalServices }: ServicesDu
                     return <IconComp size={14} style={{ color: iconColor, flexShrink: 0 }} />;
                   })()}
                   <div className="min-w-0">
-                    <p className="text-[13px] font-medium text-gray-800 truncate">
+                    <p className="text-sm font-medium text-[#1E2D4D]/90 truncate">
                       {s.service_type}
                     </p>
-                    <p className="text-[11px] text-gray-500 truncate">
+                    <p className="text-xs text-[#1E2D4D]/50 truncate">
                       {s.vendor_name} · {s.location_name}
                     </p>
                   </div>
                 </div>
                 <span
-                  className="text-[11px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0 ml-2"
+                  className="text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0 ml-2"
                   style={{ background: colors.bg, color: colors.text }}
                 >
                   {status.label}
@@ -271,7 +271,7 @@ export function ServicesDueSoonWidget({ services: externalServices }: ServicesDu
             <button
               type="button"
               onClick={() => navigate('/vendors?tab=requests&action=new')}
-              className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs font-semibold transition-colors hover:bg-gray-50"
+              className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs font-semibold transition-colors hover:bg-[#FAF7F0]"
               style={{ color: NAVY, borderRight: '1px solid #F0F0F0' }}
             >
               <Send size={11} /> Request Service
@@ -279,7 +279,7 @@ export function ServicesDueSoonWidget({ services: externalServices }: ServicesDu
             <button
               type="button"
               onClick={() => navigate('/vendors')}
-              className="flex-1 px-4 py-2.5 text-center text-xs font-semibold transition-colors hover:bg-gray-50"
+              className="flex-1 px-4 py-2.5 text-center text-xs font-semibold transition-colors hover:bg-[#FAF7F0]"
               style={{ color: NAVY }}
             >
               View Full Schedule <ArrowRight size={12} className="inline ml-0.5" />

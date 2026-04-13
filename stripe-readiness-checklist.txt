@@ -1,0 +1,47 @@
+═══════════════════════════════════════════
+  STRIPE READINESS CHECKLIST — EvidLY
+  Date: 2026-04-12
+═══════════════════════════════════════════
+
+  [✓] Founder Single price ID: OK
+  [✓] Founder Multi price ID: OK
+  [✓] Checkout session creation: OK
+  [✓] Customer portal: OK
+  [✓] Webhook events (6): OK
+  [✓] 45-day guarantee: OK
+  [✓] K2C donation on invoice.paid: OK
+  [✓] HMAC signature verification: OK
+  [✓] 30-day trial period: OK
+  [✓] Subscription DB upsert: OK
+  [✓] Trial ending notification: OK
+  [✓] Payment failed notification: OK
+  [✓] Cancellation handling: OK
+  [✓] Founder deadline (2026-07-04): OK
+  [✓] Price locked for life: OK
+  [✓] Countdown timer: OK
+  [✓] $99/mo + $49/location: OK
+  [✓] K2C processor edge function: OK
+  [✓] K2C $10/loc, 100 meals/loc: OK
+  [✓] K2C deduplication: OK
+  [✓] K2C admin dashboard: OK
+
+═══════════════════════════════════════════
+  PRICING MODEL:
+    Founder Single: $99/mo (1 location)
+    Founder Multi: $99/mo + $49/additional location (2-10)
+    Enterprise: Custom (11+ locations)
+    Deadline: July 4, 2026 — locked for life
+
+  SUBSCRIPTION LIFECYCLE:
+    1. Signup → Stripe Checkout (30-day trial)
+    2. checkout.session.completed → subscription DB
+    3. trial_will_end → in-app notification
+    4. invoice.paid → guarantee + K2C donation
+    5. invoice.payment_failed → payment failed notification
+    6. subscription.deleted → status canceled
+
+  K2C DONATION:
+    $10/location/month → 100 meals/location
+    Dedup: donation_period + billing_event_id
+    Admin: /admin/k2c dashboard
+═══════════════════════════════════════════

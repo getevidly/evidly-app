@@ -16,14 +16,14 @@ const VARIANTS: Record<TouchpointVariant, { icon: typeof Gift; title: string; me
     title: 'You earned a badge!',
     message: 'Share your Compliance Champion badge and earn a free month when someone signs up.',
     cta: 'Share Badge',
-    color: '#d4af37',
+    color: '#A08C5A',
   },
   score_improved: {
     icon: Share2,
     title: 'Score improved!',
     message: "Your compliance score went up. Tell a fellow kitchen manager about EvidLY — you'll both benefit.",
     cta: 'Invite a Peer',
-    color: '#1e4d6b',
+    color: '#1E2D4D',
   },
   k2c_impact: {
     icon: Heart,
@@ -63,10 +63,10 @@ export function ReferralTouchpoint() {
 
   return (
     <div className="fixed z-[1030] animate-in slide-in-from-bottom-4 max-w-sm" style={{ bottom: '148px', right: '20px' }}>
-      <div className="bg-white rounded-xl shadow-xl border border-gray-200 p-4 relative">
+      <div className="bg-white rounded-xl shadow-xl border border-[#1E2D4D]/10 p-4 relative">
         <button
           onClick={() => setVisible(false)}
-          className="absolute top-2 right-2 p-1 text-gray-300 hover:text-gray-500 cursor-pointer"
+          className="absolute top-2 right-2 p-1 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/60 cursor-pointer"
         >
           <X className="h-4 w-4" />
         </button>
@@ -76,8 +76,8 @@ export function ReferralTouchpoint() {
             <Icon className="h-5 w-5" style={{ color: v.color }} />
           </div>
           <div className="flex-1 pr-4">
-            <h4 className="text-sm font-semibold text-gray-900 mb-0.5">{v.title}</h4>
-            <p className="text-xs text-gray-500 mb-3">{v.message}</p>
+            <h4 className="text-sm font-semibold text-[#1E2D4D] mb-0.5">{v.title}</h4>
+            <p className="text-xs text-[#1E2D4D]/50 mb-3">{v.message}</p>
             <button
               onClick={() => {
                 setVisible(false);

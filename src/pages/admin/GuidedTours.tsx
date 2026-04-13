@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 
-const NAVY = '#1e4d6b';
+const NAVY = '#1E2D4D';
 const GOLD = '#A08C5A';
 const DARK = '#1E2D4D';
 
@@ -259,7 +259,7 @@ export default function GuidedTours() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#d4af37]" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#A08C5A]" />
       </div>
     );
   }
@@ -275,7 +275,7 @@ export default function GuidedTours() {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
         <div>
           <h1 style={{ fontSize: 22, fontWeight: 700, color: '#1E2D4D', margin: 0, fontFamily: 'Outfit, sans-serif' }}>Guided Tours</h1>
-          <p style={{ fontSize: 13, color: '#6B7280', margin: '4px 0 0 0', fontFamily: 'Inter, sans-serif' }}>In-product onboarding for new customers — guides them through first location setup, jurisdiction configuration, and compliance pillars</p>
+          <p style={{ fontSize: 13, color: '#6B7280', margin: '4px 0 0 0', fontFamily: 'Inter, sans-serif' }}>In-product onboarding for new customers — guides them through first location setup, jurisdiction configuration, and compliance categorys</p>
         </div>
         <button
           onClick={() => setActiveTab('setup')}
@@ -287,15 +287,15 @@ export default function GuidedTours() {
       </div>
 
       {/* Tab bar */}
-      <div className="flex items-center gap-1 mb-6 border-b border-gray-200">
+      <div className="flex items-center gap-1 mb-6 border-b border-[#1E2D4D]/10">
         {TABS.map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${
               activeTab === tab.id
-                ? 'border-[#1e4d6b] text-[#1e4d6b]'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+                ? 'border-[#1E2D4D] text-[#1E2D4D]'
+                : 'border-transparent text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
             }`}
           >
             {tab.label}
@@ -382,8 +382,8 @@ function OverviewTab({ sessions, pipeline, campaigns, touchpoints }: {
   return (
     <div className="space-y-6">
       {/* Funnel */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
-        <h3 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wide">Sales Funnel</h3>
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
+        <h3 className="text-sm font-bold text-[#1E2D4D] mb-4 uppercase tracking-wide">Sales Funnel</h3>
         <div className="flex items-center gap-2 overflow-x-auto pb-2">
           {funnelStages.map((stage, i) => {
             const count = stageCounts[stage] || 0;
@@ -391,12 +391,12 @@ function OverviewTab({ sessions, pipeline, campaigns, touchpoints }: {
             const rate = prev > 0 ? Math.round(count / prev * 100) : 0;
             return (
               <div key={stage} className="flex items-center gap-2">
-                <div className="bg-gray-50 rounded-lg px-4 py-3 text-center min-w-[120px]">
+                <div className="bg-[#FAF7F0] rounded-xl px-4 py-3 text-center min-w-[120px]">
                   <div className="text-lg font-bold" style={{ color: DARK }}>{count}</div>
-                  <div className="text-[10px] text-gray-500 font-medium uppercase">{STAGE_LABELS[stage] || stage}</div>
-                  {i > 0 && <div className="text-[10px] text-green-600 font-semibold mt-1">{rate}% conv</div>}
+                  <div className="text-xs text-[#1E2D4D]/50 font-medium uppercase">{STAGE_LABELS[stage] || stage}</div>
+                  {i > 0 && <div className="text-xs text-green-600 font-semibold mt-1">{rate}% conv</div>}
                 </div>
-                {i < funnelStages.length - 1 && <ChevronRight className="h-4 w-4 text-gray-300 flex-shrink-0" />}
+                {i < funnelStages.length - 1 && <ChevronRight className="h-4 w-4 text-[#1E2D4D]/30 flex-shrink-0" />}
               </div>
             );
           })}
@@ -416,43 +416,43 @@ function OverviewTab({ sessions, pipeline, campaigns, touchpoints }: {
       ]} />
 
       {/* Source breakdown */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
-        <h3 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wide">Tour Source Breakdown</h3>
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
+        <h3 className="text-sm font-bold text-[#1E2D4D] mb-4 uppercase tracking-wide">Tour Source Breakdown</h3>
         <div className="space-y-2">
           {Object.entries(sourceBreakdown).sort((a, b) => b[1] - a[1]).map(([source, count]) => (
             <div key={source} className="flex items-center gap-3">
-              <span className="text-xs font-medium text-gray-600 w-28 truncate">{source.replace(/_/g, ' ')}</span>
-              <div className="flex-1 bg-gray-100 rounded-full h-5 overflow-hidden">
+              <span className="text-xs font-medium text-[#1E2D4D]/70 w-28 truncate">{source.replace(/_/g, ' ')}</span>
+              <div className="flex-1 bg-[#1E2D4D]/5 rounded-full h-5 overflow-hidden">
                 <div className="h-full rounded-full transition-all" style={{ width: `${(count as number) / maxSource * 100}%`, backgroundColor: NAVY }} />
               </div>
-              <span className="text-xs font-bold text-gray-700 w-8 text-right">{count as number}</span>
+              <span className="text-xs font-bold text-[#1E2D4D]/80 w-8 text-right">{count as number}</span>
             </div>
           ))}
           {Object.keys(sourceBreakdown).length === 0 && (
-            <p className="text-sm text-gray-400">No tours yet — launch your first tour to see source data.</p>
+            <p className="text-sm text-[#1E2D4D]/30">No tours yet — launch your first tour to see source data.</p>
           )}
         </div>
       </div>
 
       {/* Revenue impact */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
-        <h3 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wide">Revenue Impact</h3>
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
+        <h3 className="text-sm font-bold text-[#1E2D4D] mb-4 uppercase tracking-wide">Revenue Impact</h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
           <div>
-            <span className="text-xs text-gray-500">Tours Won</span>
+            <span className="text-xs text-[#1E2D4D]/50">Tours Won</span>
             <div className="text-lg font-bold" style={{ color: DARK }}>{wonTotal} accounts = {formatCents(wonMRR)} MRR</div>
           </div>
           <div>
-            <span className="text-xs text-gray-500">Pipeline (open)</span>
+            <span className="text-xs text-[#1E2D4D]/50">Pipeline (open)</span>
             <div className="text-lg font-bold" style={{ color: DARK }}>{openDeals.length} accounts = {formatCents(openMRR)} projected MRR</div>
           </div>
           <div>
-            <span className="text-xs text-gray-500">Launch Goal</span>
+            <span className="text-xs text-[#1E2D4D]/50">Launch Goal</span>
             <div className="text-lg font-bold" style={{ color: DARK }}>{launchGoalAccounts} accounts</div>
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <div className="flex-1 bg-gray-100 rounded-full h-4 overflow-hidden">
+          <div className="flex-1 bg-[#1E2D4D]/5 rounded-full h-4 overflow-hidden">
             <div className="h-full rounded-full transition-all" style={{ width: `${progress}%`, backgroundColor: GOLD }} />
           </div>
           <span className="text-sm font-bold" style={{ color: GOLD }}>{progress}%</span>
@@ -460,21 +460,21 @@ function OverviewTab({ sessions, pipeline, campaigns, touchpoints }: {
       </div>
 
       {/* Active campaigns */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
-        <h3 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wide">Active Campaigns</h3>
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
+        <h3 className="text-sm font-bold text-[#1E2D4D] mb-4 uppercase tracking-wide">Active Campaigns</h3>
         {activeCampaigns.length === 0 ? (
-          <p className="text-sm text-gray-400">No active campaigns. Create one in Marketing Campaigns.</p>
+          <p className="text-sm text-[#1E2D4D]/30">No active campaigns. Create one in Marketing Campaigns.</p>
         ) : (
           <div className="space-y-2">
             {activeCampaigns.map(c => {
               const campTouches = touchpoints.filter(t => t.campaign_id === c.id).length;
               return (
-                <div key={c.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+                <div key={c.id} className="flex items-center justify-between py-2 border-b border-[#1E2D4D]/5 last:border-0">
                   <div>
-                    <span className="text-sm font-semibold text-gray-900">{c.name}</span>
-                    <span className="ml-2 text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">{c.channel}</span>
+                    <span className="text-sm font-semibold text-[#1E2D4D]">{c.name}</span>
+                    <span className="ml-2 text-xs font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">{c.channel}</span>
                   </div>
-                  <span className="text-xs text-gray-500">{campTouches} touch{campTouches !== 1 ? 'es' : ''}</span>
+                  <span className="text-xs text-[#1E2D4D]/50">{campTouches} touch{campTouches !== 1 ? 'es' : ''}</span>
                 </div>
               );
             })}
@@ -639,10 +639,10 @@ function SetupTourTab({ templates, campaigns, orgs, onLaunch }: {
 
   return (
     <div className="max-w-2xl">
-      <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-6">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 space-y-6">
         {/* ── Prospect info ── */}
         <div>
-          <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-3">Prospect Information</h3>
+          <h3 className="text-sm font-bold text-[#1E2D4D] uppercase tracking-wide mb-3">Prospect Information</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <OrgCombobox
               label="Company Name *"
@@ -702,7 +702,7 @@ function SetupTourTab({ templates, campaigns, orgs, onLaunch }: {
 
         {/* ── Source ── */}
         <div>
-          <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-3">How Did They Find Us?</h3>
+          <h3 className="text-sm font-bold text-[#1E2D4D] uppercase tracking-wide mb-3">How Did They Find Us?</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Select label="Source" value={source} onChange={setSource} options={SOURCES.map(s => ({ value: s, label: s.replace(/_/g, ' ') }))} />
             <Select label="Campaign" value={campaignId} onChange={setCampaignId}
@@ -803,7 +803,7 @@ function SetupTourTab({ templates, campaigns, orgs, onLaunch }: {
 
         {/* ── Tour config ── */}
         <div>
-          <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-3">Tour Configuration</h3>
+          <h3 className="text-sm font-bold text-[#1E2D4D] uppercase tracking-wide mb-3">Tour Configuration</h3>
           <Select label="Template" value={templateId} onChange={setTemplateId}
             options={[{ value: '', label: '— No template —' }, ...templates.filter(t => t.is_active).map(t => ({ value: t.id, label: `${t.name} (${t.duration_minutes}m)` }))]} />
 
@@ -872,28 +872,28 @@ function SetupTourTab({ templates, campaigns, orgs, onLaunch }: {
 
         {/* ── Scheduling ── */}
         <div>
-          <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-3">Scheduling</h3>
+          <h3 className="text-sm font-bold text-[#1E2D4D] uppercase tracking-wide mb-3">Scheduling</h3>
           <div className="flex gap-4 mb-3">
             <label className="flex items-center gap-2 cursor-pointer">
               <input type="radio" name="schedule" checked={scheduleType === 'now'} onChange={() => setScheduleType('now')} className="h-4 w-4" />
-              <span className="text-sm font-medium text-gray-700">Launch Now</span>
+              <span className="text-sm font-medium text-[#1E2D4D]/80">Launch Now</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input type="radio" name="schedule" checked={scheduleType === 'later'} onChange={() => setScheduleType('later')} className="h-4 w-4" />
-              <span className="text-sm font-medium text-gray-700">Schedule for Later</span>
+              <span className="text-sm font-medium text-[#1E2D4D]/80">Schedule for Later</span>
             </label>
           </div>
           {scheduleType === 'later' && (
             <input type="datetime-local" value={scheduleDate} onChange={e => setScheduleDate(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
           )}
         </div>
 
         {/* ── Notes ── */}
         <div>
-          <label className="block text-xs font-medium text-gray-700 mb-1">Notes (internal)</label>
+          <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Notes (internal)</label>
           <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={3} placeholder="Internal notes — not shown to prospect"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] resize-none" />
+            className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] resize-none" />
         </div>
 
         {/* ── MRR bar ── */}
@@ -1025,14 +1025,14 @@ function HistoryTab({ sessions, pipeline, onRefresh }: {
           </h3>
           <div className="space-y-2">
             {followUps.map(s => (
-              <div key={s.id} className="flex items-center justify-between bg-white rounded-lg px-3 py-2 border border-amber-100">
+              <div key={s.id} className="flex items-center justify-between bg-white rounded-xl px-3 py-2 border border-amber-100">
                 <div>
-                  <span className="text-sm font-semibold text-gray-900">{s.account_name}</span>
-                  <span className="ml-2 text-xs text-gray-500">{s.prospect_name || s.user_email}</span>
+                  <span className="text-sm font-semibold text-[#1E2D4D]">{s.account_name}</span>
+                  <span className="ml-2 text-xs text-[#1E2D4D]/50">{s.prospect_name || s.user_email}</span>
                   <span className="ml-2 text-xs text-amber-600 font-medium">{formatDate(s.follow_up_at)}</span>
                 </div>
                 <div className="flex gap-1">
-                  <button onClick={() => handleAddNote(s.id)} className="px-2 py-1 text-xs border border-gray-200 rounded text-gray-600 hover:bg-gray-50">Log Contact</button>
+                  <button onClick={() => handleAddNote(s.id)} className="px-2 py-1 text-xs border border-[#1E2D4D]/10 rounded text-[#1E2D4D]/70 hover:bg-[#FAF7F0]">Log Contact</button>
                 </div>
               </div>
             ))}
@@ -1040,26 +1040,26 @@ function HistoryTab({ sessions, pipeline, onRefresh }: {
         </div>
       )}
 
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide">Active Tours ({activeSessions.length})</h3>
-          <button onClick={onRefresh} className="text-xs text-gray-500 hover:text-gray-700 flex items-center gap-1">
+          <h3 className="text-sm font-bold text-[#1E2D4D] uppercase tracking-wide">Active Tours ({activeSessions.length})</h3>
+          <button onClick={onRefresh} className="text-xs text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80 flex items-center gap-1">
             <RefreshCw className="h-3 w-3" /> Refresh
           </button>
         </div>
         {activeSessions.length === 0 ? (
-          <p className="text-sm text-gray-400">No active tours right now.</p>
+          <p className="text-sm text-[#1E2D4D]/30">No active tours right now.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-200">
-                  <th className="text-left px-3 py-2 font-semibold text-gray-700">Company</th>
-                  <th className="text-left px-3 py-2 font-semibold text-gray-700">Contact</th>
-                  <th className="text-left px-3 py-2 font-semibold text-gray-700">County</th>
-                  <th className="text-left px-3 py-2 font-semibold text-gray-700">Started</th>
-                  <th className="text-left px-3 py-2 font-semibold text-gray-700">Stage</th>
-                  <th className="text-right px-3 py-2 font-semibold text-gray-700">Actions</th>
+                <tr className="bg-[#FAF7F0] border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors">
+                  <th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/80">Company</th>
+                  <th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/80">Contact</th>
+                  <th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/80">County</th>
+                  <th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/80">Started</th>
+                  <th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/80">Stage</th>
+                  <th className="text-right px-3 py-2 font-semibold text-[#1E2D4D]/80">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -1073,23 +1073,23 @@ function HistoryTab({ sessions, pipeline, onRefresh }: {
         )}
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
-        <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4">Tour History ({completedSessions.length})</h3>
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
+        <h3 className="text-sm font-bold text-[#1E2D4D] uppercase tracking-wide mb-4">Tour History ({completedSessions.length})</h3>
         {completedSessions.length === 0 ? (
-          <p className="text-sm text-gray-400">No completed tours yet.</p>
+          <p className="text-sm text-[#1E2D4D]/30">No completed tours yet.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-200">
-                  <th className="text-left px-3 py-2 font-semibold text-gray-700">Company</th>
-                  <th className="text-left px-3 py-2 font-semibold text-gray-700">Contact</th>
-                  <th className="text-left px-3 py-2 font-semibold text-gray-700">Industry</th>
-                  <th className="text-center px-3 py-2 font-semibold text-gray-700">Loc</th>
-                  <th className="text-left px-3 py-2 font-semibold text-gray-700">Source</th>
-                  <th className="text-left px-3 py-2 font-semibold text-gray-700">Stage</th>
-                  <th className="text-left px-3 py-2 font-semibold text-gray-700">Date</th>
-                  <th className="text-right px-3 py-2 font-semibold text-gray-700">Actions</th>
+                <tr className="bg-[#FAF7F0] border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors">
+                  <th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/80">Company</th>
+                  <th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/80">Contact</th>
+                  <th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/80">Industry</th>
+                  <th className="text-center px-3 py-2 font-semibold text-[#1E2D4D]/80">Loc</th>
+                  <th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/80">Source</th>
+                  <th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/80">Stage</th>
+                  <th className="text-left px-3 py-2 font-semibold text-[#1E2D4D]/80">Date</th>
+                  <th className="text-right px-3 py-2 font-semibold text-[#1E2D4D]/80">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -1113,29 +1113,29 @@ function SessionRow({ session: s, updatingId, onStageUpdate, onFollowUp, onAddNo
   onAddNote: (id: string) => void;
 }) {
   return (
-    <tr className="border-b border-gray-100 hover:bg-gray-50">
-      <td className="px-3 py-2 font-medium text-gray-900">{s.account_name}</td>
-      <td className="px-3 py-2 text-gray-600">{s.prospect_name || s.user_email || '—'}</td>
-      <td className="px-3 py-2 text-gray-500 text-xs">{s.industry || s.county || '—'}</td>
-      <td className="px-3 py-2 text-center text-gray-500">{s.location_count || '—'}</td>
-      <td className="px-3 py-2 text-xs text-gray-500">{(s.source || '—').replace(/_/g, ' ')}</td>
+    <tr className="border-b border-[#1E2D4D]/5 hover:bg-[#FAF7F0]">
+      <td className="px-3 py-2 font-medium text-[#1E2D4D]">{s.account_name}</td>
+      <td className="px-3 py-2 text-[#1E2D4D]/70">{s.prospect_name || s.user_email || '—'}</td>
+      <td className="px-3 py-2 text-[#1E2D4D]/50 text-xs">{s.industry || s.county || '—'}</td>
+      <td className="px-3 py-2 text-center text-[#1E2D4D]/50">{s.location_count || '—'}</td>
+      <td className="px-3 py-2 text-xs text-[#1E2D4D]/50">{(s.source || '—').replace(/_/g, ' ')}</td>
       <td className="px-3 py-2">
         <select
           value={s.sales_stage || 'tour_scheduled'}
           onChange={e => onStageUpdate(s.id, e.target.value)}
           disabled={updatingId === s.id}
-          className="text-xs border border-gray-200 rounded px-2 py-1 bg-white focus:outline-none"
+          className="text-xs border border-[#1E2D4D]/10 rounded px-2 py-1 bg-white focus:outline-none"
         >
           {STAGES.map(st => <option key={st} value={st}>{STAGE_LABELS[st]}</option>)}
         </select>
       </td>
-      <td className="px-3 py-2 text-xs text-gray-500">{formatDate(s.started_at)}</td>
+      <td className="px-3 py-2 text-xs text-[#1E2D4D]/50">{formatDate(s.started_at)}</td>
       <td className="px-3 py-2 text-right">
         <div className="flex items-center gap-1 justify-end">
-          <button onClick={() => onFollowUp(s.id)} className="px-2 py-1 text-[10px] border border-gray-200 rounded hover:bg-gray-50" title="Set follow-up">
+          <button onClick={() => onFollowUp(s.id)} className="px-2 py-1 text-xs border border-[#1E2D4D]/10 rounded hover:bg-[#FAF7F0]" title="Set follow-up">
             <Calendar className="h-3 w-3" />
           </button>
-          <button onClick={() => onAddNote(s.id)} className="px-2 py-1 text-[10px] border border-gray-200 rounded hover:bg-gray-50" title="Add note">
+          <button onClick={() => onAddNote(s.id)} className="px-2 py-1 text-xs border border-[#1E2D4D]/10 rounded hover:bg-[#FAF7F0]" title="Add note">
             <MessageSquare className="h-3 w-3" />
           </button>
         </div>
@@ -1175,7 +1175,7 @@ function TemplatesTab({ templates, onRefresh }: { templates: any[]; onRefresh: (
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between mb-2">
-        <h3 className="text-sm font-bold text-gray-900">{templates.length} Templates</h3>
+        <h3 className="text-sm font-bold text-[#1E2D4D]">{templates.length} Templates</h3>
         <button
           onClick={() => setShowCreate(true)}
           className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white rounded-lg"
@@ -1189,25 +1189,25 @@ function TemplatesTab({ templates, onRefresh }: { templates: any[]; onRefresh: (
         {templates.map(t => {
           const moduleCount = (t.modules_enabled || []).length;
           return (
-            <div key={t.id} className="bg-white rounded-xl border border-gray-200 p-5">
+            <div key={t.id} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
               <div className="flex items-start justify-between mb-2">
                 <div>
-                  <span className="font-semibold text-gray-900">{t.name}</span>
+                  <span className="font-semibold text-[#1E2D4D]">{t.name}</span>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">{t.target_segment?.replace(/_/g, ' ')}</span>
-                    <span className="text-xs text-gray-400">{t.duration_minutes} min</span>
-                    <span className="text-xs text-gray-400">{moduleCount} module{moduleCount !== 1 ? 's' : ''}</span>
-                    {!t.is_active && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">Inactive</span>}
+                    <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">{t.target_segment?.replace(/_/g, ' ')}</span>
+                    <span className="text-xs text-[#1E2D4D]/30">{t.duration_minutes} min</span>
+                    <span className="text-xs text-[#1E2D4D]/30">{moduleCount} module{moduleCount !== 1 ? 's' : ''}</span>
+                    {!t.is_active && <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-[#1E2D4D]/5 text-[#1E2D4D]/50">Inactive</span>}
                   </div>
                 </div>
                 <button
                   onClick={() => handleToggleActive(t.id, t.is_active)}
-                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${t.is_active ? 'border-green-300 text-green-700 bg-green-50' : 'border-gray-300 text-gray-500'}`}
+                  className={`text-xs font-bold px-2 py-0.5 rounded-full border ${t.is_active ? 'border-green-300 text-green-700 bg-green-50' : 'border-[#1E2D4D]/15 text-[#1E2D4D]/50'}`}
                 >
                   {t.is_active ? 'Active' : 'Inactive'}
                 </button>
               </div>
-              {t.description && <p className="text-xs text-gray-500 mb-2">{t.description}</p>}
+              {t.description && <p className="text-xs text-[#1E2D4D]/50 mb-2">{t.description}</p>}
               {/* Module pills grouped */}
               <div className="mb-3">
                 {ALL_MODULES.map(group => {
@@ -1225,14 +1225,14 @@ function TemplatesTab({ templates, onRefresh }: { templates: any[]; onRefresh: (
                   );
                 })}
                 {moduleCount === 0 && (
-                  <span className="text-xs text-gray-400">No modules selected</span>
+                  <span className="text-xs text-[#1E2D4D]/30">No modules selected</span>
                 )}
               </div>
               <div className="flex gap-2">
-                <button onClick={() => setEditId(t.id)} className="px-2 py-1 text-xs border border-gray-200 rounded hover:bg-gray-50 flex items-center gap-1">
+                <button onClick={() => setEditId(t.id)} className="px-2 py-1 text-xs border border-[#1E2D4D]/10 rounded hover:bg-[#FAF7F0] flex items-center gap-1">
                   <Edit2 className="h-3 w-3" /> Edit
                 </button>
-                <button onClick={() => handleDuplicate(t)} className="px-2 py-1 text-xs border border-gray-200 rounded hover:bg-gray-50 flex items-center gap-1">
+                <button onClick={() => handleDuplicate(t)} className="px-2 py-1 text-xs border border-[#1E2D4D]/10 rounded hover:bg-[#FAF7F0] flex items-center gap-1">
                   <Copy className="h-3 w-3" /> Duplicate
                 </button>
                 <button onClick={() => handleDelete(t.id)} className="px-2 py-1 text-xs border border-red-200 rounded hover:bg-red-50 text-red-600 flex items-center gap-1">
@@ -1295,22 +1295,22 @@ function TemplateModal({ template, onClose, onSave }: {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">{template ? 'Edit Template' : 'New Template'}</h3>
+      <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto modal-content-enter">
+        <h3 className="text-lg font-bold text-[#1E2D4D] mb-4">{template ? 'Edit Template' : 'New Template'}</h3>
         <div className="space-y-4">
           <Input label="Name *" value={form.name} onChange={v => setForm(p => ({ ...p, name: v }))} />
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">Description</label>
+            <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Description</label>
             <textarea value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} rows={2}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm resize-none focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
           </div>
           <Select label="Target Segment" value={form.target_segment} onChange={v => setForm(p => ({ ...p, target_segment: v }))}
             options={[{ value: 'default', label: 'Default' }, ...SEGMENTS.map(s => ({ value: s, label: s.replace(/_/g, ' ') }))]} />
           <Input label="County (optional)" value={form.county} onChange={v => setForm(p => ({ ...p, county: v }))} />
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">Duration (minutes)</label>
+            <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Duration (minutes)</label>
             <input type="number" min={5} value={form.duration_minutes} onChange={e => setForm(p => ({ ...p, duration_minutes: parseInt(e.target.value) || 20 }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
           </div>
 
           {/* Module group toggles — replaces flat pill list */}
@@ -1320,7 +1320,7 @@ function TemplateModal({ template, onClose, onSave }: {
             </label>
             <div style={{ fontSize: 11, color: '#9CA3AF', marginBottom: 12 }}>
               Select which features are highlighted during a tour using this template.
-              Grouped by how staff use the platform — start with daily tasks, end with admin.
+              Grouped by how staff use EvidLY — start with daily tasks, end with admin.
             </div>
             <ModuleGroupToggles
               enabled={form.modules_enabled}
@@ -1333,11 +1333,11 @@ function TemplateModal({ template, onClose, onSave }: {
 
           <label className="flex items-center gap-2 cursor-pointer">
             <input type="checkbox" checked={form.is_active} onChange={e => setForm(p => ({ ...p, is_active: e.target.checked }))} className="h-4 w-4 rounded" />
-            <span className="text-sm text-gray-700">Active</span>
+            <span className="text-sm text-[#1E2D4D]/80">Active</span>
           </label>
         </div>
         <div className="flex gap-3 mt-6">
-          <button onClick={onClose} className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</button>
+          <button onClick={onClose} className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-[#FAF7F0]">Cancel</button>
           <button onClick={handleSave} disabled={!form.name.trim() || saving}
             className="flex-1 px-4 py-2.5 min-h-[44px] text-white rounded-lg text-sm font-bold disabled:opacity-40" style={{ backgroundColor: NAVY }}>
             {saving ? 'Saving...' : 'Save Template'}
@@ -1355,9 +1355,9 @@ function Input({ label, value, onChange, placeholder, type = 'text' }: {
 }) {
   return (
     <div>
-      <label className="block text-xs font-medium text-gray-700 mb-1">{label}</label>
+      <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">{label}</label>
       <input type={type} value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder}
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+        className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
     </div>
   );
 }
@@ -1368,9 +1368,9 @@ function Select({ label, value, onChange, options }: {
 }) {
   return (
     <div>
-      <label className="block text-xs font-medium text-gray-700 mb-1">{label}</label>
+      <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">{label}</label>
       <select value={value} onChange={e => onChange(e.target.value)}
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] bg-white">
+        className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] bg-white">
         {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
       </select>
     </div>

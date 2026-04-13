@@ -132,8 +132,8 @@ export function generateTempDemoHistory(now: Date): TempHistoryEntry[] {
 
 // Color map for chart lines
 export const equipmentColors: Record<string, string> = {
-  'Walk-in Cooler #1': '#1e4d6b',
-  'Walk-in Cooler #2': '#2a6a8f',
+  'Walk-in Cooler #1': '#1E2D4D',
+  'Walk-in Cooler #2': '#2A3F6B',
   'Walk-in Freezer': '#6366f1',
   'Prep Table Cooler': '#059669',
   'Hot Holding Unit': '#dc2626',

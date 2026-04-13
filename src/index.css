@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import 'leaflet/dist/leaflet.css';
 
 @tailwind base;
@@ -7,11 +7,11 @@
 
 :root {
   --color-white: #FFFFFF;
-  --color-blue: #1e4d6b;
-  --color-blue-light: #2a6a8a;
-  --color-blue-dark: #163a52;
-  --color-gold: #c9a227;
-  --color-gold-light: #d4af37;
+  --color-blue: #1E2D4D;
+  --color-blue-light: #2A3F6B;
+  --color-blue-dark: #141E33;
+  --color-gold: #A08C5A;
+  --color-gold-light: #A08C5A;
   --color-gold-dark: #a68a1f;
   --color-gold-bg: #f9f6ef;
   --color-gold-border: #e8dcc4;
@@ -26,7 +26,7 @@
   --color-text-light: #666666;
 
   /* ── MAIN CONTENT BACKGROUNDS ── */
-  --bg-main:        #F4F6FA;
+  --bg-main:        #FAF7F0;
   --bg-card:        #FFFFFF;
   --bg-panel:       #EEF1F7;
   --bg-input:       #F8F9FC;
@@ -64,7 +64,7 @@
 
   /* ── BRAND (never change) ── */
   --gold:           #A08C5A;
-  --gold-light:     #C4A96E;
+  --gold-light:     #C4AE7A;
   --gold-bg:        rgba(160,140,90,.1);
   --gold-border:    rgba(160,140,90,.3);
   --navy:           #0B1628;
@@ -106,6 +106,29 @@ body {
   color: var(--text-primary);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'cv11', 'ss01';
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Page Enter Animation ───────────────────────────��──── */
+
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.page-enter {
+  animation: page-enter 0.3s ease-out both;
+}
+
+/* ── Scroll Shadows ─���──────────────────────────────────── */
+
+.scroll-shadow-top {
+  box-shadow: inset 0 8px 6px -6px rgba(30,45,77,0.06);
+}
+
+.scroll-shadow-bottom {
+  box-shadow: inset 0 -8px 6px -6px rgba(30,45,77,0.06);
 }
 
 @keyframes pulse {
@@ -270,7 +293,7 @@ body {
 }
 
 .animate-gold-shimmer {
-  background: linear-gradient(90deg, #d4af37 0%, #f5e6a3 25%, #d4af37 50%, #f5e6a3 75%, #d4af37 100%);
+  background: linear-gradient(90deg, #A08C5A 0%, #C4AE7A 25%, #A08C5A 50%, #C4AE7A 75%, #A08C5A 100%);
   background-size: 200% auto;
   animation: gold-shimmer 3s linear infinite;
   -webkit-background-clip: text;
@@ -303,7 +326,7 @@ body {
 }
 
 .badge-shimmer {
-  background: linear-gradient(135deg, #d4af37 0%, #f5e6a3 30%, #d4af37 50%, #f5e6a3 70%, #d4af37 100%);
+  background: linear-gradient(135deg, #A08C5A 0%, #C4AE7A 30%, #A08C5A 50%, #C4AE7A 70%, #A08C5A 100%);
   background-size: 300% 300%;
   animation: gold-shimmer 3s linear infinite;
 }
@@ -318,16 +341,94 @@ body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 .btn-primary:active {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.98);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .card-hover {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s cubic-bezier(0.4,0,0.2,1), box-shadow 0.2s cubic-bezier(0.4,0,0.2,1);
 }
 .card-hover:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 25px rgba(11,22,40,0.08);
+}
+
+/* ── Focus Visible — gold ring for keyboard navigation ── */
+
+.focus-gold:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #FAF7F0, 0 0 0 4px rgba(160,140,90,0.5);
+}
+
+/* ── Table Row Hover ── */
+
+.table-row-hover {
+  transition: background-color 0.15s ease;
+}
+.table-row-hover:hover {
+  background-color: rgba(30,45,77,0.03);
+}
+
+/* ── Link Underline on Hover ── */
+
+.link-underline {
+  text-decoration: none;
+  text-underline-offset: 4px;
+  transition: color 0.15s ease;
+}
+.link-underline:hover {
+  text-decoration: underline;
+  text-decoration-color: rgba(160,140,90,0.4);
+}
+
+/* ── Stagger Children Animation ── */
+
+.stagger-children > * {
+  opacity: 0;
+  animation: page-enter 0.3s ease-out both;
+}
+.stagger-children > *:nth-child(1) { animation-delay: 0ms; }
+.stagger-children > *:nth-child(2) { animation-delay: 50ms; }
+.stagger-children > *:nth-child(3) { animation-delay: 100ms; }
+.stagger-children > *:nth-child(4) { animation-delay: 150ms; }
+.stagger-children > *:nth-child(5) { animation-delay: 200ms; }
+.stagger-children > *:nth-child(6) { animation-delay: 250ms; }
+.stagger-children > *:nth-child(7) { animation-delay: 300ms; }
+.stagger-children > *:nth-child(8) { animation-delay: 350ms; }
+
+/* ── Modal Animations ── */
+
+@keyframes modal-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modal-content-in {
+  from { opacity: 0; transform: scale(0.95) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.modal-backdrop-enter {
+  animation: modal-backdrop-in 0.2s ease-out both;
+}
+
+.modal-content-enter {
+  animation: modal-content-in 0.2s ease-out both;
+}
+
+/* ── Skeleton Loading ── */
+
+@keyframes skeleton-pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 0.3; }
+  100% { opacity: 0.6; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #E8EDF5 25%, #D1D9E6 50%, #E8EDF5 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 6px;
 }
 
 .nav-item-active {
@@ -341,7 +442,7 @@ body {
   bottom: 4px;
   width: 3px;
   border-radius: 0 3px 3px 0;
-  background-color: #d4af37;
+  background-color: #A08C5A;
 }
 
 /* ── Safe Area (iOS notch / home indicator) ──────────── */
@@ -372,5 +473,69 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* ── Print Styles ──────────────────────────────────────────── */
+
+@media print {
+  /* Hide non-content elements */
+  nav, aside, footer,
+  .sidebar, .topbar, .mobile-bar, .mobile-tab-bar,
+  #crisp-chatbox,
+  [data-demo-banner], [data-quick-actions], [data-ai-chat], [data-topbar], [data-sidebar],
+  [role="navigation"],
+  button[aria-label="Open chat"],
+  .quick-actions-bar, .toast, .no-print,
+  button:not([data-print-keep]) {
+    display: none !important;
+  }
+
+  /* Full-width content */
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 12pt;
+    line-height: 1.5;
+  }
+
+  main, [data-main-content], .page-content {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .lg\:pl-60 {
+    padding-left: 0 !important;
+  }
+
+  /* Clean card/section backgrounds */
+  .card, section, div[class*="bg-"] {
+    background: white !important;
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+  }
+
+  /* Page breaks */
+  .card, .section, table {
+    page-break-inside: avoid;
+  }
+
+  h1, h2, h3 {
+    page-break-after: avoid;
+  }
+
+  /* Show URLs for links */
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #666;
+  }
+
+  /* Remove animations */
+  * {
+    animation: none !important;
+    transition: none !important;
   }
 }

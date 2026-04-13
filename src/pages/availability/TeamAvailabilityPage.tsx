@@ -67,13 +67,13 @@ export function TeamAvailabilityPage() {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <Users className="w-6 h-6" style={{ color: NAVY }} />
-            <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Team Availability</h1>
+            <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Team Availability</h1>
           </div>
           <p className="text-sm" style={{ color: TEXT_TERTIARY }}>View and manage team availability submissions.</p>
         </div>
         <button
           onClick={handleExport}
-          className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg border hover:bg-gray-50"
+          className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-xl border hover:bg-[#FAF7F0]"
           style={{ borderColor: CARD_BORDER, color: NAVY }}
         >
           <Download className="w-4 h-4" /> Export CSV
@@ -82,13 +82,13 @@ export function TeamAvailabilityPage() {
 
       {/* Week selector */}
       <div className="flex items-center justify-between">
-        <button onClick={() => setWeekOffset(o => o - 1)} className="p-2 rounded-lg hover:bg-gray-100">
+        <button onClick={() => setWeekOffset(o => o - 1)} className="p-2 rounded-lg hover:bg-[#1E2D4D]/5">
           <ChevronLeft className="w-5 h-5" style={{ color: NAVY }} />
         </button>
         <span className="text-sm font-semibold" style={{ color: NAVY }}>
           {formatDate(adjustedDates[0])} — {formatDate(adjustedDates[6])}
         </span>
-        <button onClick={() => setWeekOffset(o => o + 1)} className="p-2 rounded-lg hover:bg-gray-100">
+        <button onClick={() => setWeekOffset(o => o + 1)} className="p-2 rounded-lg hover:bg-[#1E2D4D]/5">
           <ChevronRight className="w-5 h-5" style={{ color: NAVY }} />
         </button>
       </div>
@@ -99,7 +99,7 @@ export function TeamAvailabilityPage() {
         <select
           value={filter}
           onChange={e => setFilter(e.target.value as 'all' | 'submitted')}
-          className="text-sm border rounded-lg px-3 py-1.5"
+          className="text-sm border rounded-xl px-3 py-1.5"
           style={{ borderColor: CARD_BORDER, color: NAVY }}
         >
           <option value="all">Show All</option>
@@ -111,7 +111,7 @@ export function TeamAvailabilityPage() {
       {isLoading ? (
         <div className="space-y-3">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="h-14 bg-gray-200 rounded-lg animate-pulse" />
+            <div key={i} className="h-14 bg-[#1E2D4D]/8 rounded-lg animate-pulse" />
           ))}
         </div>
       ) : filtered.length === 0 ? (
@@ -130,7 +130,7 @@ export function TeamAvailabilityPage() {
                 {DAY_SHORT.map((d, i) => (
                   <th key={d} className="text-center px-2 py-3 font-semibold" style={{ color: NAVY }}>
                     <div>{d}</div>
-                    <div className="text-[10px] font-normal" style={{ color: TEXT_TERTIARY }}>
+                    <div className="text-xs font-normal" style={{ color: TEXT_TERTIARY }}>
                       {formatDate(adjustedDates[i])}
                     </div>
                   </th>

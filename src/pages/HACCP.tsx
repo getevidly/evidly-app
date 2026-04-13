@@ -16,6 +16,7 @@ import { toast } from 'sonner';
 import { getJurisdictionForLocation } from '../data/jurisdictionChecklistData';
 import { exportHACCPPlanPdf } from '../lib/haccpPdf';
 import type { ParsedCCP } from '../lib/haccpParser';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -371,6 +372,7 @@ export function HACCP() {
   const urlLocation = searchParams.get('location') || '';
   const [selectedLocation, setSelectedLocation] = useState(urlLocation || 'all');
   const { getAccessibleLocations, userRole } = useRole();
+  usePageTitle('HACCP Plans');
   const ttActivePlans = useTooltip('haccpActivePlans', userRole);
   const ttOverallCompliance = useTooltip('haccpOverallCompliance', userRole);
   const ttCCPsInCompliance = useTooltip('haccpCCPsInCompliance', userRole);
@@ -1011,40 +1013,40 @@ export function HACCP() {
           {/* Header */}
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <Shield className="h-5 w-5" style={{ color: '#1e4d6b' }} />
-              <h1 className="text-2xl font-bold text-gray-900">HACCP Status</h1>
+              <Shield className="h-5 w-5" style={{ color: '#1E2D4D' }} />
+              <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">HACCP Status</h1>
             </div>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-[#1E2D4D]/50">
               {haccpAccessibleLocs.length > 1 ? 'All Locations' : haccpAccessibleLocs[0]?.locationName} — {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
             </p>
           </div>
 
           {/* Summary stats */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="bg-white rounded-xl shadow-sm p-5 text-center" style={{ borderLeft: '4px solid #1e4d6b' }}>
-              <p className="text-sm text-gray-500 font-medium mb-1">Active CCPs</p>
-              <p className="text-2xl font-bold" style={{ color: '#1e4d6b' }}>{allPlans.flatMap(p => p.ccps).length}</p>
+            <div className="bg-white rounded-xl shadow-sm p-5 text-center" style={{ borderLeft: '4px solid #1E2D4D' }}>
+              <p className="text-sm text-[#1E2D4D]/50 font-medium mb-1">Active CCPs</p>
+              <p className="text-2xl font-bold tracking-tight" style={{ color: '#1E2D4D' }}>{allPlans.flatMap(p => p.ccps).length}</p>
             </div>
             <div className="bg-white rounded-xl shadow-sm p-5 text-center" style={{ borderLeft: `4px solid ${totalDeviations > 0 ? '#DC2626' : '#22c55e'}` }}>
-              <p className="text-sm text-gray-500 font-medium mb-1">Deviations</p>
-              <p className="text-2xl font-bold" style={{ color: totalDeviations > 0 ? '#DC2626' : '#22c55e' }}>{totalDeviations}</p>
+              <p className="text-sm text-[#1E2D4D]/50 font-medium mb-1">Deviations</p>
+              <p className="text-2xl font-bold tracking-tight" style={{ color: totalDeviations > 0 ? '#DC2626' : '#22c55e' }}>{totalDeviations}</p>
             </div>
             <div className="bg-white rounded-xl shadow-sm p-5 text-center" style={{ borderLeft: `4px solid ${totalOpenCAs > 0 ? '#f59e0b' : '#22c55e'}` }}>
-              <p className="text-sm text-gray-500 font-medium mb-1">Open Corrective Actions</p>
-              <p className="text-2xl font-bold" style={{ color: totalOpenCAs > 0 ? '#f59e0b' : '#22c55e' }}>{totalOpenCAs}</p>
+              <p className="text-sm text-[#1E2D4D]/50 font-medium mb-1">Open Corrective Actions</p>
+              <p className="text-2xl font-bold tracking-tight" style={{ color: totalOpenCAs > 0 ? '#f59e0b' : '#22c55e' }}>{totalOpenCAs}</p>
             </div>
           </div>
 
           {/* Per-location rows */}
           <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-            <div className="px-5 py-3 border-b border-gray-100">
-              <h2 className="text-sm font-semibold text-gray-700">Location Status</h2>
+            <div className="px-5 py-3 border-b border-[#1E2D4D]/5">
+              <h2 className="text-sm font-semibold text-[#1E2D4D]/80">Location Status</h2>
             </div>
-            <div className="divide-y divide-gray-50">
+            <div className="divide-y divide-[#1E2D4D]/3">
               {locationSummaries.map(loc => (
                 <div
                   key={loc.locationUrlId}
-                  className="flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition-colors"
+                  className="flex items-center justify-between px-5 py-4 hover:bg-[#FAF7F0] transition-colors"
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     {loc.allClear ? (
@@ -1053,8 +1055,8 @@ export function HACCP() {
                       <AlertTriangle className="h-5 w-5 shrink-0" style={{ color: '#DC2626' }} />
                     )}
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold text-gray-900">{loc.locationName}</p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-sm font-semibold text-[#1E2D4D]">{loc.locationName}</p>
+                      <p className="text-xs text-[#1E2D4D]/50">
                         {loc.allClear
                           ? 'All CCPs in limit'
                           : `${loc.deviationCount} deviation${loc.deviationCount !== 1 ? 's' : ''} — ${loc.deviations.map(d => d.hazard.split(' (')[0].split(' from ')[0].split(' in ')[0].split(' during ')[0]).join(', ')}`
@@ -1066,9 +1068,9 @@ export function HACCP() {
                     type="button"
                     onClick={() => navigate(`/haccp?location=${loc.locationUrlId}`)}
                     className="text-xs font-semibold px-3 py-1.5 rounded-md shrink-0 transition-colors"
-                    style={{ backgroundColor: '#1e4d6b', color: '#fff' }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = '#2a6a8f'; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = '#1e4d6b'; }}
+                    style={{ backgroundColor: '#1E2D4D', color: '#fff' }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = '#2A3F6B'; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = '#1E2D4D'; }}
                   >
                     View Details
                   </button>
@@ -1080,10 +1082,10 @@ export function HACCP() {
           {/* Open corrective actions (if any) */}
           {totalOpenCAs > 0 && (
             <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-              <div className="px-5 py-3 border-b border-gray-100">
-                <h2 className="text-sm font-semibold text-gray-700">Open Corrective Actions</h2>
+              <div className="px-5 py-3 border-b border-[#1E2D4D]/5">
+                <h2 className="text-sm font-semibold text-[#1E2D4D]/80">Open Corrective Actions</h2>
               </div>
-              <div className="divide-y divide-gray-50">
+              <div className="divide-y divide-[#1E2D4D]/3">
                 {allCorrectiveActions
                   .filter(a => a.status === 'open' || a.status === 'in_progress')
                   .map(ca => {
@@ -1092,12 +1094,12 @@ export function HACCP() {
                       <div key={ca.id} className="px-5 py-4">
                         <div className="flex items-start justify-between gap-3">
                           <div className="min-w-0">
-                            <p className="text-sm font-semibold text-gray-900">{ca.ccpNumber}: {ca.ccpHazard.split(' (')[0]}</p>
-                            <p className="text-xs text-gray-500 mt-0.5">{locName} — {ca.deviation}</p>
-                            <p className="text-xs mt-1" style={{ color: '#1e4d6b' }}>Action: {ca.actionTaken.substring(0, 120)}{ca.actionTaken.length > 120 ? '...' : ''}</p>
+                            <p className="text-sm font-semibold text-[#1E2D4D]">{ca.ccpNumber}: {ca.ccpHazard.split(' (')[0]}</p>
+                            <p className="text-xs text-[#1E2D4D]/50 mt-0.5">{locName} — {ca.deviation}</p>
+                            <p className="text-xs mt-1" style={{ color: '#1E2D4D' }}>Action: {ca.actionTaken.substring(0, 120)}{ca.actionTaken.length > 120 ? '...' : ''}</p>
                           </div>
                           <span
-                            className="text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0"
+                            className="text-xs font-semibold px-2 py-0.5 rounded-full shrink-0"
                             style={{
                               backgroundColor: ca.status === 'open' ? '#fef2f2' : '#fef9c3',
                               color: ca.status === 'open' ? '#991b1b' : '#854d0e',
@@ -1120,9 +1122,9 @@ export function HACCP() {
               <button
                 onClick={handleExportInspectorPackage}
                 className="inline-flex items-center px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors"
-                style={{ backgroundColor: '#1e4d6b' }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+                style={{ backgroundColor: '#1E2D4D' }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2A3F6B')}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
               >
                 <Download className="h-4 w-4 mr-2" />
                 Export Inspector Package
@@ -1141,20 +1143,20 @@ export function HACCP() {
         {/* Header */}
         <div className="flex items-start justify-between flex-wrap gap-2">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">HACCP Management</h1>
-            <p className="text-sm text-gray-600 mt-1">
+            <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">HACCP Management</h1>
+            <p className="text-sm text-[#1E2D4D]/70 mt-1">
               Roll-up view — data pulled from Temperature Logs and Checklists
             </p>
           </div>
           {/* Jurisdiction Header */}
           {jurisdictionConfig && (
             <div className="flex items-start gap-3 px-4 py-3 rounded-lg bg-[#eef4f8] border border-[#b8d4e8] w-full order-last">
-              <Building2 size={18} className="text-[#1e4d6b] mt-0.5 shrink-0" />
+              <Building2 size={18} className="text-[#1E2D4D] mt-0.5 shrink-0" />
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                  <span className="text-sm font-semibold text-[#1e4d6b]">{jurisdictionConfig.ehdName}</span>
-                  <span className="text-xs text-gray-400">·</span>
-                  <span className="text-xs text-gray-600">{jurisdictionConfig.foodCodeVersion}</span>
+                  <span className="text-sm font-semibold text-[#1E2D4D]">{jurisdictionConfig.ehdName}</span>
+                  <span className="text-xs text-[#1E2D4D]/30">·</span>
+                  <span className="text-xs text-[#1E2D4D]/70">{jurisdictionConfig.foodCodeVersion}</span>
                 </div>
                 <div className="flex flex-wrap gap-1.5 mt-1.5">
                   {jurisdictionConfig.enforcementFocus
@@ -1162,7 +1164,7 @@ export function HACCP() {
                     .map(f => (
                       <span
                         key={f.codeSection}
-                        className="text-[10px] font-semibold px-1.5 py-0.5 rounded"
+                        className="text-xs font-semibold px-1.5 py-0.5 rounded"
                         style={{ color: '#0369a1', backgroundColor: '#e0f2fe' }}
                       >
                         {f.description} ({f.codeSection})
@@ -1177,7 +1179,7 @@ export function HACCP() {
               <select
                 value={exportRange}
                 onChange={(e) => setExportRange(e.target.value as typeof exportRange)}
-                className="border border-gray-300 rounded-lg px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                className="border border-[#1E2D4D]/15 rounded-xl px-2 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
               >
                 <option value="7">Last 7 days</option>
                 <option value="30">Last 30 days</option>
@@ -1187,19 +1189,19 @@ export function HACCP() {
               <button
                 onClick={handleExportInspectorPackage}
                 className="inline-flex items-center px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors"
-                style={{ backgroundColor: '#1e4d6b' }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+                style={{ backgroundColor: '#1E2D4D' }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2A3F6B')}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
               >
                 <Download className="h-4 w-4 mr-2" />
                 Export Inspector Package
               </button>
             </>)}
-            <MapPin className="h-4 w-4 text-gray-500" />
+            <MapPin className="h-4 w-4 text-[#1E2D4D]/50" />
             <select
               value={selectedLocation}
               onChange={(e) => setSelectedLocation(e.target.value)}
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+              className="border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
             >
               {haccpAccessibleLocs.length > 1 && <option value="all">All Locations</option>}
               {haccpAccessibleLocs.map(loc => (
@@ -1211,46 +1213,46 @@ export function HACCP() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #1e4d6b' }}>
+          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #1E2D4D' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <EvidlyIcon size={16} />
-              <span className="text-sm text-gray-500 font-medium">Active Plans<InfoTooltip content={ttActivePlans} /></span>
+              <span className="text-sm text-[#1E2D4D]/50 font-medium">Active Plans<InfoTooltip content={ttActivePlans} /></span>
             </div>
-            <p className="text-xl sm:text-3xl font-bold text-[#1e4d6b] text-center">{filteredPlans.length}</p>
+            <p className="text-xl sm:text-3xl font-bold tracking-tight text-[#1E2D4D] text-center">{filteredPlans.length}</p>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: `4px solid ${overallCompliance >= 90 ? '#22c55e' : overallCompliance >= 75 ? '#eab308' : overallCompliance >= 60 ? '#f59e0b' : '#ef4444'}` }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <Activity className="h-4 w-4" style={{ color: overallCompliance >= 90 ? '#22c55e' : overallCompliance >= 75 ? '#eab308' : overallCompliance >= 60 ? '#f59e0b' : '#ef4444' }} />
-              <span className="text-sm text-gray-500 font-medium">Overall Compliance<InfoTooltip content={ttOverallCompliance} /></span>
+              <span className="text-sm text-[#1E2D4D]/50 font-medium">Overall Compliance<InfoTooltip content={ttOverallCompliance} /></span>
             </div>
-            <p className={`text-xl sm:text-3xl font-bold text-center ${overallCompliance >= 90 ? 'text-green-600' : overallCompliance >= 75 ? 'text-yellow-600' : overallCompliance >= 60 ? 'text-amber-600' : 'text-red-600'}`}>
+            <p className={`text-xl sm:text-3xl font-bold tracking-tight text-center ${overallCompliance >= 90 ? 'text-green-600' : overallCompliance >= 75 ? 'text-yellow-600' : overallCompliance >= 60 ? 'text-amber-600' : 'text-red-600'}`}>
               {overallCompliance}%
             </p>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #16a34a' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <CheckCircle className="h-4 w-4 text-green-600" />
-              <span className="text-sm text-gray-500 font-medium">CCPs in Compliance<InfoTooltip content={ttCCPsInCompliance} /></span>
+              <span className="text-sm text-[#1E2D4D]/50 font-medium">CCPs in Compliance<InfoTooltip content={ttCCPsInCompliance} /></span>
             </div>
-            <p className="text-xl sm:text-3xl font-bold text-green-600 text-center">{passingCCPs}/{totalCCPs}</p>
+            <p className="text-xl sm:text-3xl font-bold tracking-tight text-green-600 text-center">{passingCCPs}/{totalCCPs}</p>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: `4px solid ${openActions > 0 ? '#ef4444' : '#16a34a'}` }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <AlertTriangle className="h-4 w-4" style={{ color: openActions > 0 ? '#ef4444' : '#16a34a' }} />
-              <span className="text-sm text-gray-500 font-medium">Open Actions<InfoTooltip content={ttOpenActions} /></span>
+              <span className="text-sm text-[#1E2D4D]/50 font-medium">Open Actions<InfoTooltip content={ttOpenActions} /></span>
             </div>
-            <p className={`text-xl sm:text-3xl font-bold text-center ${openActions > 0 ? 'text-red-600' : 'text-green-600'}`}>{openActions}</p>
+            <p className={`text-xl sm:text-3xl font-bold tracking-tight text-center ${openActions > 0 ? 'text-red-600' : 'text-green-600'}`}>{openActions}</p>
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="flex space-x-2 border-b border-gray-200 overflow-x-auto">
+        <div className="flex space-x-2 border-b border-[#1E2D4D]/10 overflow-x-auto">
           <button
             onClick={() => { setActiveTab('plans'); setSelectedPlan(null); }}
             className={`px-6 py-3 font-medium whitespace-nowrap ${
               activeTab === 'plans'
-                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
+                : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
             }`}
           >
             Plans ({filteredPlans.length})
@@ -1259,8 +1261,8 @@ export function HACCP() {
             onClick={() => setActiveTab('monitoring')}
             className={`px-6 py-3 font-medium whitespace-nowrap ${
               activeTab === 'monitoring'
-                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
+                : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
             }`}
           >
             Monitoring ({totalCCPs} CCPs)
@@ -1269,8 +1271,8 @@ export function HACCP() {
             onClick={() => setActiveTab('corrective')}
             className={`px-6 py-3 font-medium flex items-center space-x-2 whitespace-nowrap ${
               activeTab === 'corrective'
-                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
+                : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
             }`}
           >
             <span>Corrective Actions</span>
@@ -1282,8 +1284,8 @@ export function HACCP() {
             onClick={() => setActiveTab('template')}
             className={`px-6 py-3 font-medium flex items-center space-x-2 whitespace-nowrap ${
               activeTab === 'template'
-                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
+                : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
             }`}
           >
             <FileText className="h-4 w-4" />
@@ -1293,8 +1295,8 @@ export function HACCP() {
             onClick={() => setActiveTab('ai-create')}
             className={`px-6 py-3 font-medium flex items-center space-x-2 whitespace-nowrap ${
               activeTab === 'ai-create'
-                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
+                : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
             }`}
           >
             <Sparkles className="h-4 w-4" />
@@ -1305,17 +1307,17 @@ export function HACCP() {
         {/* Loading state */}
         {loading && (
           <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-[#1e4d6b]" />
-            <span className="ml-3 text-gray-600">Loading HACCP data...</span>
+            <Loader2 className="h-8 w-8 animate-spin text-[#1E2D4D]" />
+            <span className="ml-3 text-[#1E2D4D]/70">Loading HACCP data...</span>
           </div>
         )}
 
         {/* ── Plans Tab ─────────────────────────────────────── */}
         {!loading && activeTab === 'plans' && !selectedPlan && filteredPlans.length === 0 && (
           <div className="bg-white rounded-xl shadow-sm p-8 text-center">
-            <Shield className="h-10 w-10 mx-auto mb-3 text-gray-300" />
-            <p className="text-sm font-semibold text-gray-700">No HACCP monitoring data yet</p>
-            <p className="text-xs text-gray-500 mt-1">Complete a checklist to populate control points for this location.</p>
+            <Shield className="h-10 w-10 mx-auto mb-3 text-[#1E2D4D]/30" />
+            <p className="text-sm font-semibold text-[#1E2D4D]/80">No HACCP monitoring data yet</p>
+            <p className="text-xs text-[#1E2D4D]/50 mt-1">Complete a checklist to populate control points for this location.</p>
           </div>
         )}
 
@@ -1340,26 +1342,26 @@ export function HACCP() {
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div>
-                      <h3 className="text-lg font-bold text-gray-900">{plan.name}</h3>
-                      <p className="text-sm text-gray-600 mt-0.5">{plan.description}</p>
+                      <h3 className="text-lg font-bold text-[#1E2D4D]">{plan.name}</h3>
+                      <p className="text-sm text-[#1E2D4D]/70 mt-0.5">{plan.description}</p>
                     </div>
-                    <ChevronRight className="h-5 w-5 text-gray-400 flex-shrink-0 mt-1" />
+                    <ChevronRight className="h-5 w-5 text-[#1E2D4D]/30 flex-shrink-0 mt-1" />
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
                     <div>
-                      <p className="text-xs text-gray-500 text-center">CCPs</p>
-                      <p className="text-lg font-bold text-[#1e4d6b] text-center">{plan.ccps.length}</p>
+                      <p className="text-xs text-[#1E2D4D]/50 text-center">CCPs</p>
+                      <p className="text-lg font-bold text-[#1E2D4D] text-center">{plan.ccps.length}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500 text-center">Compliance</p>
+                      <p className="text-xs text-[#1E2D4D]/50 text-center">Compliance</p>
                       <p className={`text-lg font-bold text-center ${compliance >= 90 ? 'text-green-600' : compliance >= 70 ? 'text-yellow-600' : 'text-red-600'}`}>
                         {compliance}%
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500 text-center">Last Check</p>
-                      <p className="text-sm font-medium text-gray-700 text-center">{getRelativeTime(new Date(lastMonitored).toISOString())}</p>
+                      <p className="text-xs text-[#1E2D4D]/50 text-center">Last Check</p>
+                      <p className="text-sm font-medium text-[#1E2D4D]/80 text-center">{getRelativeTime(new Date(lastMonitored).toISOString())}</p>
                     </div>
                   </div>
 
@@ -1367,7 +1369,7 @@ export function HACCP() {
                   <div className="flex flex-col space-y-1.5">
                     <div className="flex items-center space-x-2">
                       {planStatus === 'critical' && (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-700">
                           <AlertTriangle className="h-3 w-3 mr-1" />
                           CCP Out of Limit
                         </span>
@@ -1379,12 +1381,12 @@ export function HACCP() {
                         </span>
                       )}
                       {planStatus === 'good' && (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700">
                           <CheckCircle className="h-3 w-3 mr-1" />
                           All CCPs Passing
                         </span>
                       )}
-                      <span className="text-xs text-gray-400">
+                      <span className="text-xs text-[#1E2D4D]/30">
                         Reviewed {new Date(plan.lastReviewed).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                       </span>
                     </div>
@@ -1398,7 +1400,7 @@ export function HACCP() {
                     {planStatus === 'review' && ['owner_operator', 'executive'].includes(userRole) && (
                       <button
                         onClick={(e) => { e.stopPropagation(); handleMarkReviewed(plan.id); }}
-                        className="mt-2 text-xs font-medium text-[#1e4d6b] hover:text-[#2a6a8f] underline"
+                        className="mt-2 text-xs font-medium text-[#1E2D4D] hover:text-[#2A3F6B] underline"
                       >
                         Mark as Reviewed
                       </button>
@@ -1417,20 +1419,20 @@ export function HACCP() {
             <div className="flex items-center space-x-2 text-sm mb-4">
               <span
                 onClick={() => setSelectedPlan(null)}
-                className="text-[#1e4d6b] hover:text-[#163a52] cursor-pointer font-medium"
+                className="text-[#1E2D4D] hover:text-[#141E33] cursor-pointer font-medium"
               >
                 HACCP Plans
               </span>
-              <span className="text-gray-400">›</span>
-              <span className="text-gray-600">{selectedPlan.name}</span>
+              <span className="text-[#1E2D4D]/30">›</span>
+              <span className="text-[#1E2D4D]/70">{selectedPlan.name}</span>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
+            <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6 mb-6">
               <div className="flex items-start justify-between flex-wrap gap-2 mb-4">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900">{selectedPlan.name}</h2>
-                  <p className="text-gray-600 mt-1">{selectedPlan.description}</p>
-                  <p className="text-xs text-gray-400 mt-1">Last reviewed: {new Date(selectedPlan.lastReviewed).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+                  <h2 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">{selectedPlan.name}</h2>
+                  <p className="text-[#1E2D4D]/70 mt-1">{selectedPlan.description}</p>
+                  <p className="text-xs text-[#1E2D4D]/30 mt-1">Last reviewed: {new Date(selectedPlan.lastReviewed).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
                 </div>
                 <div className="flex items-center gap-3">
                   <button
@@ -1455,24 +1457,24 @@ export function HACCP() {
                       toast.success('PDF downloaded');
                     }}
                     className="inline-flex items-center px-3 py-1.5 rounded-lg text-white text-xs font-medium transition-colors"
-                    style={{ backgroundColor: '#1e4d6b' }}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+                    style={{ backgroundColor: '#1E2D4D' }}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2A3F6B')}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
                   >
                     <Download className="h-3.5 w-3.5 mr-1.5" />
                     Export PDF
                   </button>
                   <div className="text-center">
-                    <p className={`text-xl sm:text-3xl font-bold text-center ${getPlanCompliance(selectedPlan) === 100 ? 'text-green-600' : 'text-amber-600'}`}>
+                    <p className={`text-xl sm:text-3xl font-bold tracking-tight text-center ${getPlanCompliance(selectedPlan) === 100 ? 'text-green-600' : 'text-amber-600'}`}>
                       {getPlanCompliance(selectedPlan)}%
                     </p>
-                    <p className="text-xs text-gray-500 text-center">Compliance</p>
+                    <p className="text-xs text-[#1E2D4D]/50 text-center">Compliance</p>
                   </div>
                 </div>
               </div>
             </div>
 
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Critical Control Points</h3>
+            <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-4">Critical Control Points</h3>
             <div className="space-y-4">
               {selectedPlan.ccps.map((ccp) => (
                 <div
@@ -1485,22 +1487,22 @@ export function HACCP() {
                         {ccp.isWithinLimit ? <CheckCircle className="h-5 w-5" /> : <XCircle className="h-5 w-5" />}
                       </div>
                       <div>
-                        <h4 className="text-lg font-semibold text-gray-900">{ccp.ccpNumber}: {ccp.hazard}</h4>
+                        <h4 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">{ccp.ccpNumber}: {ccp.hazard}</h4>
                         {ccp.equipmentName && (
-                          <p className="text-sm text-gray-500">Source: {ccp.equipmentName} (Temperature Log)</p>
+                          <p className="text-sm text-[#1E2D4D]/50">Source: {ccp.equipmentName} (Temperature Log)</p>
                         )}
                         {!ccp.equipmentName && (
-                          <p className="text-sm text-gray-500">Source: {ccp.source === 'checklist' ? 'Checklist' : 'Temperature Log'}</p>
+                          <p className="text-sm text-[#1E2D4D]/50">Source: {ccp.source === 'checklist' ? 'Checklist' : 'Temperature Log'}</p>
                         )}
                       </div>
                     </div>
                     <div className="text-right">
                       {ccp.isWithinLimit ? (
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700">
                           <CheckCircle className="h-3 w-3 mr-1" /> Pass
                         </span>
                       ) : (
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800">
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-red-50 text-red-700">
                           <AlertTriangle className="h-3 w-3 mr-1" /> Fail
                         </span>
                       )}
@@ -1509,28 +1511,28 @@ export function HACCP() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-3">
                     <div>
-                      <p className="font-medium text-gray-700 mb-1">Critical Limit</p>
-                      <p className="text-gray-600">{ccp.criticalLimit}</p>
+                      <p className="font-medium text-[#1E2D4D]/80 mb-1">Critical Limit</p>
+                      <p className="text-[#1E2D4D]/70">{ccp.criticalLimit}</p>
                     </div>
                     <div>
-                      <p className="font-medium text-gray-700 mb-1">Last Reading</p>
+                      <p className="font-medium text-[#1E2D4D]/80 mb-1">Last Reading</p>
                       <p className={`font-semibold ${ccp.isWithinLimit ? 'text-green-700' : 'text-red-700'}`}>
                         {ccp.lastReading || 'N/A'}
                       </p>
-                      <p className="text-xs text-gray-500">{ccp.lastMonitoredBy} · {getRelativeTime(ccp.lastMonitoredAt)}</p>
+                      <p className="text-xs text-[#1E2D4D]/50">{ccp.lastMonitoredBy} · {getRelativeTime(ccp.lastMonitoredAt)}</p>
                     </div>
                     <div>
-                      <p className="font-medium text-gray-700 mb-1">Monitoring Procedure</p>
-                      <p className="text-gray-600">{ccp.monitoringProcedure}</p>
+                      <p className="font-medium text-[#1E2D4D]/80 mb-1">Monitoring Procedure</p>
+                      <p className="text-[#1E2D4D]/70">{ccp.monitoringProcedure}</p>
                     </div>
                     <div>
-                      <p className="font-medium text-gray-700 mb-1">Corrective Action (if limit exceeded)</p>
-                      <p className="text-gray-600">{ccp.correctiveAction}</p>
+                      <p className="font-medium text-[#1E2D4D]/80 mb-1">Corrective Action (if limit exceeded)</p>
+                      <p className="text-[#1E2D4D]/70">{ccp.correctiveAction}</p>
                     </div>
                   </div>
 
-                  <div className="border-t border-gray-100 pt-3">
-                    <p className="text-xs text-gray-500">
+                  <div className="border-t border-[#1E2D4D]/5 pt-3">
+                    <p className="text-xs text-[#1E2D4D]/50">
                       <span className="font-medium">Verification:</span> {ccp.verification}
                     </p>
                   </div>
@@ -1544,7 +1546,7 @@ export function HACCP() {
         {!loading && activeTab === 'monitoring' && (
           <div>
             <div className="mb-4">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-[#1E2D4D]/70">
                 Real-time status of all Critical Control Points across HACCP plans. Readings pulled from Temperature Logs and Checklists.
               </p>
             </div>
@@ -1558,8 +1560,8 @@ export function HACCP() {
                   >
                     <div className="flex items-start justify-between flex-wrap gap-2 mb-3">
                       <div>
-                        <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">{plan.name}</p>
-                        <h4 className="text-sm font-bold text-gray-900 mt-0.5">{ccp.ccpNumber}: {ccp.hazard}</h4>
+                        <p className="text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wide">{plan.name}</p>
+                        <h4 className="text-sm font-bold text-[#1E2D4D] mt-0.5">{ccp.ccpNumber}: {ccp.hazard}</h4>
                       </div>
                       {ccp.isWithinLimit ? (
                         <CheckCircle className="h-6 w-6 text-green-500 flex-shrink-0" />
@@ -1569,16 +1571,16 @@ export function HACCP() {
                     </div>
 
                     {/* Reading */}
-                    <div className="bg-gray-50 rounded-lg p-3 mb-3">
+                    <div className="bg-[#FAF7F0] rounded-lg p-3 mb-3">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-xs text-gray-500">Last Reading</p>
+                          <p className="text-xs text-[#1E2D4D]/50">Last Reading</p>
                           <p className={`text-lg font-bold ${ccp.isWithinLimit ? 'text-green-700' : 'text-red-700'}`}>
                             {ccp.lastReading || 'N/A'}
                           </p>
                         </div>
                         <div className="text-right">
-                          <p className="text-xs text-gray-500">Status</p>
+                          <p className="text-xs text-[#1E2D4D]/50">Status</p>
                           {ccp.isWithinLimit ? (
                             <span className="text-sm font-semibold text-green-700">PASS</span>
                           ) : (
@@ -1591,22 +1593,22 @@ export function HACCP() {
                     {/* Details */}
                     <div className="space-y-1.5 text-xs">
                       <div className="flex justify-between">
-                        <span className="text-gray-500">Critical Limit</span>
-                        <span className="text-gray-700 font-medium text-right" style={{ maxWidth: '60%' }}>{ccp.criticalLimit}</span>
+                        <span className="text-[#1E2D4D]/50">Critical Limit</span>
+                        <span className="text-[#1E2D4D]/80 font-medium text-right" style={{ maxWidth: '60%' }}>{ccp.criticalLimit}</span>
                       </div>
                       {ccp.equipmentName && (
                         <div className="flex justify-between">
-                          <span className="text-gray-500">Equipment</span>
-                          <span className="text-gray-700 font-medium">{ccp.equipmentName}</span>
+                          <span className="text-[#1E2D4D]/50">Equipment</span>
+                          <span className="text-[#1E2D4D]/80 font-medium">{ccp.equipmentName}</span>
                         </div>
                       )}
                       <div className="flex justify-between items-center">
-                        <span className="text-gray-500">Source</span>
-                        <span className="text-gray-700 font-medium inline-flex items-center gap-1">
+                        <span className="text-[#1E2D4D]/50">Source</span>
+                        <span className="text-[#1E2D4D]/80 font-medium inline-flex items-center gap-1">
                           {ccp.source === 'iot_sensor' ? (
                             <><Wifi className="h-3 w-3 text-green-600" /> IoT Auto-Logged</>
                           ) : ccp.source === 'temp_log' ? (
-                            <><Pencil className="h-3 w-3 text-gray-500" /> Temperature Log</>
+                            <><Pencil className="h-3 w-3 text-[#1E2D4D]/50" /> Temperature Log</>
                           ) : (
                             <>Checklist</>
                           )}
@@ -1614,17 +1616,17 @@ export function HACCP() {
                       </div>
                       {ccp.source === 'iot_sensor' && ccp.sensorName && (
                         <div className="flex justify-between">
-                          <span className="text-gray-500">Sensor</span>
-                          <span className="text-gray-700 font-medium">{ccp.sensorName}</span>
+                          <span className="text-[#1E2D4D]/50">Sensor</span>
+                          <span className="text-[#1E2D4D]/80 font-medium">{ccp.sensorName}</span>
                         </div>
                       )}
                       <div className="flex justify-between">
-                        <span className="text-gray-500">Monitored By</span>
-                        <span className="text-gray-700 font-medium">{ccp.lastMonitoredBy}</span>
+                        <span className="text-[#1E2D4D]/50">Monitored By</span>
+                        <span className="text-[#1E2D4D]/80 font-medium">{ccp.lastMonitoredBy}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-500">Last Checked</span>
-                        <span className="text-gray-700 font-medium">{getRelativeTime(ccp.lastMonitoredAt)}</span>
+                        <span className="text-[#1E2D4D]/50">Last Checked</span>
+                        <span className="text-[#1E2D4D]/80 font-medium">{getRelativeTime(ccp.lastMonitoredAt)}</span>
                       </div>
                     </div>
                   </div>
@@ -1638,7 +1640,7 @@ export function HACCP() {
         {!loading && activeTab === 'corrective' && (
           <div>
             <div className="mb-4">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-[#1E2D4D]/70">
                 Auto-generated when critical limits are exceeded. Actions are linked to the source monitoring data.
               </p>
             </div>
@@ -1659,18 +1661,18 @@ export function HACCP() {
                         <div className="flex items-start space-x-3">
                           <AlertTriangle className="h-6 w-6 text-red-600 mt-0.5 flex-shrink-0" />
                           <div>
-                            <h4 className="font-semibold text-gray-900">{action.planName} — {action.ccpNumber}</h4>
-                            <p className="text-sm text-gray-600">{action.ccpHazard}</p>
-                            <p className="text-xs text-gray-400 mt-0.5">{getRelativeTime(action.createdAt)} · Source: {action.source}</p>
+                            <h4 className="font-semibold text-[#1E2D4D]">{action.planName} — {action.ccpNumber}</h4>
+                            <p className="text-sm text-[#1E2D4D]/70">{action.ccpHazard}</p>
+                            <p className="text-xs text-[#1E2D4D]/30 mt-0.5">{getRelativeTime(action.createdAt)} · Source: {action.source}</p>
                           </div>
                         </div>
-                        <span className={`px-3 py-1 text-xs font-semibold rounded-full flex-shrink-0 ${action.status === 'in_progress' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'}`}>
+                        <span className={`px-3 py-1 text-xs font-semibold rounded-full flex-shrink-0 ${action.status === 'in_progress' ? 'bg-amber-100 text-amber-800' : 'bg-red-50 text-red-700'}`}>
                           {action.status === 'open' ? 'Open' : 'In Progress'}
                         </span>
                       </div>
 
                       {/* Workflow Progress */}
-                      <div className="mb-4 bg-gray-50 rounded-lg p-3 overflow-x-auto">
+                      <div className="mb-4 bg-[#FAF7F0] rounded-lg p-3 overflow-x-auto">
                         <div className="flex items-center justify-between min-w-[320px]">
                           {workflowSteps.map((step, i) => (
                             <div key={step} className="flex items-center" style={{ flex: i < workflowSteps.length - 1 ? 1 : 'none' }}>
@@ -1678,16 +1680,16 @@ export function HACCP() {
                                 <div
                                   className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
                                     i < currentStep ? 'bg-green-500 text-white' :
-                                    i === currentStep ? 'bg-[#1e4d6b] text-white' :
-                                    'bg-gray-300 text-gray-500'
+                                    i === currentStep ? 'bg-[#1E2D4D] text-white' :
+                                    'bg-[#1E2D4D]/15 text-[#1E2D4D]/50'
                                   }`}
                                 >
                                   {i < currentStep ? '✓' : i + 1}
                                 </div>
-                                <span className={`text-xs mt-1 ${i <= currentStep ? 'text-gray-900 font-medium' : 'text-gray-400'}`}>{step}</span>
+                                <span className={`text-xs mt-1 ${i <= currentStep ? 'text-[#1E2D4D] font-medium' : 'text-[#1E2D4D]/30'}`}>{step}</span>
                               </div>
                               {i < workflowSteps.length - 1 && (
-                                <div className={`h-0.5 flex-1 mx-2 mt-[-14px] ${i < currentStep ? 'bg-green-500' : 'bg-gray-300'}`} />
+                                <div className={`h-0.5 flex-1 mx-2 mt-[-14px] ${i < currentStep ? 'bg-green-500' : 'bg-[#1E2D4D]/15'}`} />
                               )}
                             </div>
                           ))}
@@ -1699,28 +1701,28 @@ export function HACCP() {
                           <p className="text-xs font-medium text-red-700">Deviation</p>
                           <p className="text-red-900 mt-1">{action.deviation}</p>
                         </div>
-                        <div className="bg-gray-50 rounded-lg p-3">
-                          <p className="text-xs font-medium text-gray-600">Critical Limit</p>
-                          <p className="text-gray-900 mt-1">{action.criticalLimit}</p>
+                        <div className="bg-[#FAF7F0] rounded-lg p-3">
+                          <p className="text-xs font-medium text-[#1E2D4D]/70">Critical Limit</p>
+                          <p className="text-[#1E2D4D] mt-1">{action.criticalLimit}</p>
                         </div>
-                        <div className="bg-gray-50 rounded-lg p-3">
-                          <p className="text-xs font-medium text-gray-600">Recorded Value</p>
+                        <div className="bg-[#FAF7F0] rounded-lg p-3">
+                          <p className="text-xs font-medium text-[#1E2D4D]/70">Recorded Value</p>
                           <p className="text-red-700 font-semibold mt-1">{action.recordedValue}</p>
                         </div>
                       </div>
 
                       <div className="text-sm">
-                        <p className="font-medium text-gray-700 mb-1">Action Taken:</p>
-                        <p className="text-gray-900">{action.actionTaken}</p>
-                        <p className="text-xs text-gray-500 mt-1">By: {action.actionBy}</p>
+                        <p className="font-medium text-[#1E2D4D]/80 mb-1">Action Taken:</p>
+                        <p className="text-[#1E2D4D]">{action.actionTaken}</p>
+                        <p className="text-xs text-[#1E2D4D]/50 mt-1">By: {action.actionBy}</p>
                       </div>
                       {!action.verifiedBy && ['owner_operator', 'executive', 'kitchen_manager'].includes(userRole) && (
                         <button
                           onClick={() => handleVerifyAction(action.id)}
                           className="mt-3 inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium text-white transition-colors"
-                          style={{ backgroundColor: '#1e4d6b' }}
-                          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
-                          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+                          style={{ backgroundColor: '#1E2D4D' }}
+                          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2A3F6B')}
+                          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
                         >
                           <CheckCircle className="h-3 w-3 mr-1" /> Mark Verified
                         </button>
@@ -1739,39 +1741,39 @@ export function HACCP() {
                   <button
                     onClick={() => setShowNewCAForm(true)}
                     className="inline-flex items-center px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors"
-                    style={{ backgroundColor: '#1e4d6b' }}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+                    style={{ backgroundColor: '#1E2D4D' }}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2A3F6B')}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
                   >
                     <Plus className="h-4 w-4 mr-2" /> New Corrective Action
                   </button>
                 ) : (
-                  <div className="bg-white rounded-xl shadow-sm p-5 border border-gray-200">
-                    <h4 className="font-semibold text-gray-900 mb-3">New Corrective Action</h4>
+                  <div className="bg-white rounded-xl p-6 border border-[#1E2D4D]/10">
+                    <h4 className="font-semibold text-[#1E2D4D] mb-3">New Corrective Action</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
                       <div>
-                        <label className="block text-xs font-medium text-gray-600 mb-1">Plan Name</label>
-                        <select value={newCA.planName} onChange={(e) => setNewCA({ ...newCA, planName: e.target.value })} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                        <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Plan Name</label>
+                        <select value={newCA.planName} onChange={(e) => setNewCA({ ...newCA, planName: e.target.value })} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm">
                           <option value="">Select plan...</option>
                           {filteredPlans.map(p => <option key={p.id} value={p.name}>{p.name}</option>)}
                         </select>
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-gray-600 mb-1">CCP Number</label>
-                        <input type="text" value={newCA.ccpNumber} onChange={(e) => setNewCA({ ...newCA, ccpNumber: e.target.value })} placeholder="CCP-1" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+                        <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">CCP Number</label>
+                        <input type="text" value={newCA.ccpNumber} onChange={(e) => setNewCA({ ...newCA, ccpNumber: e.target.value })} placeholder="CCP-1" className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm" />
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-gray-600 mb-1">Critical Limit</label>
-                        <input type="text" value={newCA.criticalLimit} onChange={(e) => setNewCA({ ...newCA, criticalLimit: e.target.value })} placeholder="e.g., ≤41°F" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+                        <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Critical Limit</label>
+                        <input type="text" value={newCA.criticalLimit} onChange={(e) => setNewCA({ ...newCA, criticalLimit: e.target.value })} placeholder="e.g., ≤41°F" className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm" />
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-gray-600 mb-1">Recorded Value</label>
-                        <input type="text" value={newCA.recordedValue} onChange={(e) => setNewCA({ ...newCA, recordedValue: e.target.value })} placeholder="e.g., 44°F" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+                        <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Recorded Value</label>
+                        <input type="text" value={newCA.recordedValue} onChange={(e) => setNewCA({ ...newCA, recordedValue: e.target.value })} placeholder="e.g., 44°F" className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm" />
                       </div>
                     </div>
                     <div className="mb-3">
                       <div className="flex items-center justify-between mb-1">
-                        <label className="text-xs font-medium text-gray-600">Deviation Description</label>
+                        <label className="text-xs font-medium text-[#1E2D4D]/70">Deviation Description</label>
                         <AIAssistButton
                           fieldLabel="Deviation Description"
                           context={{ title: 'HACCP Deviation', planName: newCA.planName, ccpNumber: newCA.ccpNumber, criticalLimit: newCA.criticalLimit, recordedValue: newCA.recordedValue }}
@@ -1779,12 +1781,12 @@ export function HACCP() {
                           onGenerated={(text) => { setNewCA({ ...newCA, deviation: text }); setAiFields(prev => new Set(prev).add('deviation')); }}
                         />
                       </div>
-                      <textarea value={newCA.deviation} onChange={(e) => { setNewCA({ ...newCA, deviation: e.target.value }); setAiFields(prev => { const n = new Set(prev); n.delete('deviation'); return n; }); }} rows={2} placeholder="Describe the deviation from the critical limit..." className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+                      <textarea value={newCA.deviation} onChange={(e) => { setNewCA({ ...newCA, deviation: e.target.value }); setAiFields(prev => { const n = new Set(prev); n.delete('deviation'); return n; }); }} rows={2} placeholder="Describe the deviation from the critical limit..." className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm" />
                       {aiFields.has('deviation') && <AIGeneratedIndicator />}
                     </div>
                     <div className="mb-4">
                       <div className="flex items-center justify-between mb-1">
-                        <label className="text-xs font-medium text-gray-600">Action Taken</label>
+                        <label className="text-xs font-medium text-[#1E2D4D]/70">Action Taken</label>
                         <AIAssistButton
                           fieldLabel="Action Taken"
                           context={{ title: 'HACCP Corrective Action', planName: newCA.planName, ccpNumber: newCA.ccpNumber, criticalLimit: newCA.criticalLimit, recordedValue: newCA.recordedValue, deviation: newCA.deviation }}
@@ -1792,7 +1794,7 @@ export function HACCP() {
                           onGenerated={(text) => { setNewCA({ ...newCA, actionTaken: text }); setAiFields(prev => new Set(prev).add('actionTaken')); }}
                         />
                       </div>
-                      <textarea value={newCA.actionTaken} onChange={(e) => { setNewCA({ ...newCA, actionTaken: e.target.value }); setAiFields(prev => { const n = new Set(prev); n.delete('actionTaken'); return n; }); }} rows={2} placeholder="Describe the corrective action taken..." className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+                      <textarea value={newCA.actionTaken} onChange={(e) => { setNewCA({ ...newCA, actionTaken: e.target.value }); setAiFields(prev => { const n = new Set(prev); n.delete('actionTaken'); return n; }); }} rows={2} placeholder="Describe the corrective action taken..." className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm" />
                       {aiFields.has('actionTaken') && <AIGeneratedIndicator />}
                     </div>
                     <div className="flex space-x-3">
@@ -1825,13 +1827,13 @@ export function HACCP() {
                           toast.success('Corrective action created');
                         }}
                         className="px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors"
-                        style={{ backgroundColor: '#1e4d6b' }}
-                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
-                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+                        style={{ backgroundColor: '#1E2D4D' }}
+                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2A3F6B')}
+                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
                       >
                         Save
                       </button>
-                      <button onClick={() => setShowNewCAForm(false)} className="px-4 py-2 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                      <button onClick={() => setShowNewCAForm(false)} className="px-4 py-2 rounded-xl border border-[#1E2D4D]/15 text-sm font-medium text-[#1E2D4D]/80 hover:bg-[#FAF7F0]">
                         Cancel
                       </button>
                     </div>
@@ -1842,7 +1844,7 @@ export function HACCP() {
 
             {/* Resolved Actions */}
             <div>
-              <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-3">
+              <h3 className="text-sm font-semibold text-[#1E2D4D]/70 uppercase tracking-wide mb-3">
                 Resolved ({filteredCorrectiveActions.filter((a) => a.status === 'resolved').length})
               </h3>
               <div className="space-y-4">
@@ -1852,35 +1854,35 @@ export function HACCP() {
                       <div className="flex items-start space-x-3">
                         <CheckCircle className="h-6 w-6 text-green-600 mt-0.5 flex-shrink-0" />
                         <div>
-                          <h4 className="font-semibold text-gray-900">{action.planName} — {action.ccpNumber}</h4>
-                          <p className="text-sm text-gray-600">{action.ccpHazard}</p>
-                          <p className="text-xs text-gray-400 mt-0.5">{getRelativeTime(action.createdAt)} · Source: {action.source}</p>
+                          <h4 className="font-semibold text-[#1E2D4D]">{action.planName} — {action.ccpNumber}</h4>
+                          <p className="text-sm text-[#1E2D4D]/70">{action.ccpHazard}</p>
+                          <p className="text-xs text-[#1E2D4D]/30 mt-0.5">{getRelativeTime(action.createdAt)} · Source: {action.source}</p>
                         </div>
                       </div>
-                      <span className="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 flex-shrink-0">
+                      <span className="px-3 py-1 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-700 flex-shrink-0">
                         Resolved
                       </span>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm mb-3">
-                      <div className="bg-gray-50 rounded-lg p-3">
-                        <p className="text-xs font-medium text-gray-600">Deviation</p>
-                        <p className="text-gray-900 mt-1">{action.deviation}</p>
+                      <div className="bg-[#FAF7F0] rounded-lg p-3">
+                        <p className="text-xs font-medium text-[#1E2D4D]/70">Deviation</p>
+                        <p className="text-[#1E2D4D] mt-1">{action.deviation}</p>
                       </div>
-                      <div className="bg-gray-50 rounded-lg p-3">
-                        <p className="text-xs font-medium text-gray-600">Critical Limit</p>
-                        <p className="text-gray-900 mt-1">{action.criticalLimit}</p>
+                      <div className="bg-[#FAF7F0] rounded-lg p-3">
+                        <p className="text-xs font-medium text-[#1E2D4D]/70">Critical Limit</p>
+                        <p className="text-[#1E2D4D] mt-1">{action.criticalLimit}</p>
                       </div>
-                      <div className="bg-gray-50 rounded-lg p-3">
-                        <p className="text-xs font-medium text-gray-600">Recorded Value</p>
-                        <p className="text-gray-900 mt-1">{action.recordedValue}</p>
+                      <div className="bg-[#FAF7F0] rounded-lg p-3">
+                        <p className="text-xs font-medium text-[#1E2D4D]/70">Recorded Value</p>
+                        <p className="text-[#1E2D4D] mt-1">{action.recordedValue}</p>
                       </div>
                     </div>
 
                     <div className="text-sm">
-                      <p className="font-medium text-gray-700 mb-1">Action Taken:</p>
-                      <p className="text-gray-900">{action.actionTaken}</p>
-                      <div className="flex items-center space-x-4 mt-2 text-xs text-gray-500 flex-wrap gap-y-1">
+                      <p className="font-medium text-[#1E2D4D]/80 mb-1">Action Taken:</p>
+                      <p className="text-[#1E2D4D]">{action.actionTaken}</p>
+                      <div className="flex items-center space-x-4 mt-2 text-xs text-[#1E2D4D]/50 flex-wrap gap-y-1">
                         <span>By: {action.actionBy}</span>
                         {action.verifiedBy && <span>Verified by: {action.verifiedBy}</span>}
                       </div>
@@ -1914,7 +1916,7 @@ export function HACCP() {
           <div>
             {/* Auto-Generate Option */}
             <div className="mb-4 flex items-start justify-between flex-wrap gap-2">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-[#1E2D4D]/70">
                 Build a HACCP plan step by step, or auto-generate from your checklist templates.
               </p>
               <button
@@ -1948,8 +1950,8 @@ export function HACCP() {
                     toast.error('Failed to auto-generate — please fill manually');
                   }
                 }}
-                className="inline-flex items-center px-4 py-2 rounded-lg border-2 text-sm font-medium transition-colors"
-                style={{ borderColor: '#1e4d6b', color: '#1e4d6b' }}
+                className="inline-flex items-center px-4 py-2 rounded-xl border-2 text-sm font-medium transition-colors"
+                style={{ borderColor: '#1E2D4D', color: '#1E2D4D' }}
               >
                 <Activity className="h-4 w-4 mr-2" />
                 Auto-Generate from Checklists
@@ -1966,17 +1968,17 @@ export function HACCP() {
                         className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold cursor-pointer transition-colors ${
                           step.id < wizardStepNum ? 'bg-green-500 text-white' :
                           step.id === wizardStepNum ? 'text-white' :
-                          'bg-gray-300 text-gray-500'
+                          'bg-[#1E2D4D]/15 text-[#1E2D4D]/50'
                         }`}
-                        style={step.id === wizardStepNum ? { backgroundColor: '#1e4d6b' } : undefined}
+                        style={step.id === wizardStepNum ? { backgroundColor: '#1E2D4D' } : undefined}
                         onClick={() => setWizardStep(step.id)}
                       >
                         {step.id < wizardStepNum ? '✓' : step.id}
                       </div>
-                      <span className={`text-xs mt-1 whitespace-nowrap ${step.id <= wizardStepNum ? 'text-gray-900 font-medium' : 'text-gray-400'}`}>{step.label}</span>
+                      <span className={`text-xs mt-1 whitespace-nowrap ${step.id <= wizardStepNum ? 'text-[#1E2D4D] font-medium' : 'text-[#1E2D4D]/30'}`}>{step.label}</span>
                     </div>
                     {i < WIZARD_STEPS.length - 1 && (
-                      <div className={`h-0.5 flex-1 mx-2 mt-[-14px] ${step.id < wizardStepNum ? 'bg-green-500' : 'bg-gray-300'}`} />
+                      <div className={`h-0.5 flex-1 mx-2 mt-[-14px] ${step.id < wizardStepNum ? 'bg-green-500' : 'bg-[#1E2D4D]/15'}`} />
                     )}
                   </div>
                 ))}
@@ -1984,19 +1986,19 @@ export function HACCP() {
             </div>
 
             {/* Step Content */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+            <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
 
               {/* Step 1: Product Info */}
               {wizardStepNum === 1 && (
                 <div className="space-y-4">
-                  <h3 className="text-lg font-bold text-gray-900">Describe the Food Product</h3>
+                  <h3 className="text-lg font-bold text-[#1E2D4D]">Describe the Food Product</h3>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Product Name *</label>
-                    <input type="text" value={tplProductName} onChange={(e) => setTplProductName(e.target.value)} placeholder="e.g., Grilled Chicken Sandwich" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Product Name *</label>
+                    <input type="text" value={tplProductName} onChange={(e) => setTplProductName(e.target.value)} placeholder="e.g., Grilled Chicken Sandwich" className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent" />
                   </div>
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <label className="text-sm font-medium text-gray-700">Product Description</label>
+                      <label className="text-sm font-medium text-[#1E2D4D]/80">Product Description</label>
                       <AIAssistButton
                         fieldLabel="Product Description"
                         context={{ title: 'HACCP Plan', productName: tplProductName, intendedUse: tplIntendedUse, distribution: tplDistribution, targetConsumer: tplTargetConsumer }}
@@ -2004,20 +2006,20 @@ export function HACCP() {
                         onGenerated={(text) => { setTplProductDesc(text); setAiFields(prev => new Set(prev).add('productDescription')); }}
                       />
                     </div>
-                    <textarea value={tplProductDesc} onChange={(e) => { setTplProductDesc(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('productDescription'); return n; }); }} placeholder="Describe the food product, including how it is processed, stored, and served..." rows={3} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    <textarea value={tplProductDesc} onChange={(e) => { setTplProductDesc(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('productDescription'); return n; }); }} placeholder="Describe the food product, including how it is processed, stored, and served..." rows={3} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent" />
                     {aiFields.has('productDescription') && <AIGeneratedIndicator />}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Intended Use</label>
-                    <input type="text" value={tplIntendedUse} onChange={(e) => setTplIntendedUse(e.target.value)} placeholder="e.g., Ready-to-eat, served hot" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Intended Use</label>
+                    <input type="text" value={tplIntendedUse} onChange={(e) => setTplIntendedUse(e.target.value)} placeholder="e.g., Ready-to-eat, served hot" className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Distribution Method</label>
-                    <input type="text" value={tplDistribution} onChange={(e) => setTplDistribution(e.target.value)} placeholder="e.g., On-site consumption, catering delivery, retail" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Distribution Method</label>
+                    <input type="text" value={tplDistribution} onChange={(e) => setTplDistribution(e.target.value)} placeholder="e.g., On-site consumption, catering delivery, retail" className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Target Consumer</label>
-                    <input type="text" value={tplTargetConsumer} onChange={(e) => setTplTargetConsumer(e.target.value)} placeholder="e.g., General public, including children and elderly" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Target Consumer</label>
+                    <input type="text" value={tplTargetConsumer} onChange={(e) => setTplTargetConsumer(e.target.value)} placeholder="e.g., General public, including children and elderly" className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent" />
                   </div>
                 </div>
               )}
@@ -2025,10 +2027,10 @@ export function HACCP() {
               {/* Step 2: Ingredients */}
               {wizardStepNum === 2 && (
                 <div className="space-y-4">
-                  <h3 className="text-lg font-bold text-gray-900">Ingredients and Materials</h3>
+                  <h3 className="text-lg font-bold text-[#1E2D4D]">Ingredients and Materials</h3>
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <label className="text-sm font-medium text-gray-700">Raw Materials</label>
+                      <label className="text-sm font-medium text-[#1E2D4D]/80">Raw Materials</label>
                       <AIAssistButton
                         fieldLabel="Raw Materials"
                         context={{ title: 'HACCP Plan', productName: tplProductName, productDescription: tplProductDesc }}
@@ -2036,12 +2038,12 @@ export function HACCP() {
                         onGenerated={(text) => { setTplRawMaterials(text); setAiFields(prev => new Set(prev).add('rawMaterials')); }}
                       />
                     </div>
-                    <textarea value={tplRawMaterials} onChange={(e) => { setTplRawMaterials(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('rawMaterials'); return n; }); }} placeholder="List all raw materials and ingredients (one per line)" rows={5} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    <textarea value={tplRawMaterials} onChange={(e) => { setTplRawMaterials(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('rawMaterials'); return n; }); }} placeholder="List all raw materials and ingredients (one per line)" rows={5} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent" />
                     {aiFields.has('rawMaterials') && <AIGeneratedIndicator />}
                   </div>
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <label className="text-sm font-medium text-gray-700">Processing Aids</label>
+                      <label className="text-sm font-medium text-[#1E2D4D]/80">Processing Aids</label>
                       <AIAssistButton
                         fieldLabel="Processing Aids"
                         context={{ title: 'HACCP Plan', productName: tplProductName, productDescription: tplProductDesc, rawMaterials: tplRawMaterials }}
@@ -2049,12 +2051,12 @@ export function HACCP() {
                         onGenerated={(text) => { setTplProcessingAids(text); setAiFields(prev => new Set(prev).add('processingAids')); }}
                       />
                     </div>
-                    <textarea value={tplProcessingAids} onChange={(e) => { setTplProcessingAids(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('processingAids'); return n; }); }} placeholder="List any processing aids used" rows={3} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    <textarea value={tplProcessingAids} onChange={(e) => { setTplProcessingAids(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('processingAids'); return n; }); }} placeholder="List any processing aids used" rows={3} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent" />
                     {aiFields.has('processingAids') && <AIGeneratedIndicator />}
                   </div>
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <label className="text-sm font-medium text-gray-700">Packaging Materials</label>
+                      <label className="text-sm font-medium text-[#1E2D4D]/80">Packaging Materials</label>
                       <AIAssistButton
                         fieldLabel="Packaging Materials"
                         context={{ title: 'HACCP Plan', productName: tplProductName, productDescription: tplProductDesc, rawMaterials: tplRawMaterials }}
@@ -2062,7 +2064,7 @@ export function HACCP() {
                         onGenerated={(text) => { setTplPackagingMaterials(text); setAiFields(prev => new Set(prev).add('packagingMaterials')); }}
                       />
                     </div>
-                    <textarea value={tplPackagingMaterials} onChange={(e) => { setTplPackagingMaterials(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('packagingMaterials'); return n; }); }} placeholder="List packaging materials" rows={3} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    <textarea value={tplPackagingMaterials} onChange={(e) => { setTplPackagingMaterials(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('packagingMaterials'); return n; }); }} placeholder="List packaging materials" rows={3} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent" />
                     {aiFields.has('packagingMaterials') && <AIGeneratedIndicator />}
                   </div>
                 </div>
@@ -2071,10 +2073,10 @@ export function HACCP() {
               {/* Step 3: Intended Use */}
               {wizardStepNum === 3 && (
                 <div className="space-y-4">
-                  <h3 className="text-lg font-bold text-gray-900">Intended Use and Consumers</h3>
+                  <h3 className="text-lg font-bold text-[#1E2D4D]">Intended Use and Consumers</h3>
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <label className="text-sm font-medium text-gray-700">Intended Use</label>
+                      <label className="text-sm font-medium text-[#1E2D4D]/80">Intended Use</label>
                       <AIAssistButton
                         fieldLabel="Intended Use"
                         context={{ title: 'HACCP Plan', productName: tplProductName, productDescription: tplProductDesc, distribution: tplDistribution, targetConsumer: tplTargetConsumer }}
@@ -2082,12 +2084,12 @@ export function HACCP() {
                         onGenerated={(text) => { setTplUseDescription(text); setAiFields(prev => new Set(prev).add('intendedUse')); }}
                       />
                     </div>
-                    <textarea value={tplUseDescription} onChange={(e) => { setTplUseDescription(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('intendedUse'); return n; }); }} placeholder="Describe how the product is intended to be used by the end consumer" rows={3} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    <textarea value={tplUseDescription} onChange={(e) => { setTplUseDescription(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('intendedUse'); return n; }); }} placeholder="Describe how the product is intended to be used by the end consumer" rows={3} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent" />
                     {aiFields.has('intendedUse') && <AIGeneratedIndicator />}
                   </div>
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <label className="text-sm font-medium text-gray-700">Target Population</label>
+                      <label className="text-sm font-medium text-[#1E2D4D]/80">Target Population</label>
                       <AIAssistButton
                         fieldLabel="Target Population"
                         context={{ title: 'HACCP Plan', productName: tplProductName, productDescription: tplProductDesc, intendedUse: tplUseDescription }}
@@ -2095,12 +2097,12 @@ export function HACCP() {
                         onGenerated={(text) => { setTplTargetPopulation(text); setAiFields(prev => new Set(prev).add('targetPopulation')); }}
                       />
                     </div>
-                    <textarea value={tplTargetPopulation} onChange={(e) => { setTplTargetPopulation(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('targetPopulation'); return n; }); }} placeholder="Identify the target population" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    <textarea value={tplTargetPopulation} onChange={(e) => { setTplTargetPopulation(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('targetPopulation'); return n; }); }} placeholder="Identify the target population" rows={2} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent" />
                     {aiFields.has('targetPopulation') && <AIGeneratedIndicator />}
                   </div>
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <label className="text-sm font-medium text-gray-700">Special Considerations</label>
+                      <label className="text-sm font-medium text-[#1E2D4D]/80">Special Considerations</label>
                       <AIAssistButton
                         fieldLabel="Special Considerations"
                         context={{ title: 'HACCP Plan', productName: tplProductName, productDescription: tplProductDesc, targetPopulation: tplTargetPopulation, intendedUse: tplUseDescription }}
@@ -2108,7 +2110,7 @@ export function HACCP() {
                         onGenerated={(text) => { setTplSpecialConsiderations(text); setAiFields(prev => new Set(prev).add('specialConsiderations')); }}
                       />
                     </div>
-                    <textarea value={tplSpecialConsiderations} onChange={(e) => { setTplSpecialConsiderations(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('specialConsiderations'); return n; }); }} placeholder="Note any special considerations (allergens, vulnerable populations)" rows={3} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    <textarea value={tplSpecialConsiderations} onChange={(e) => { setTplSpecialConsiderations(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('specialConsiderations'); return n; }); }} placeholder="Note any special considerations (allergens, vulnerable populations)" rows={3} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent" />
                     {aiFields.has('specialConsiderations') && <AIGeneratedIndicator />}
                   </div>
                 </div>
@@ -2117,20 +2119,20 @@ export function HACCP() {
               {/* Step 4: Flow Diagram */}
               {wizardStepNum === 4 && (
                 <div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">Process Flow Diagram</h3>
-                  <p className="text-sm text-gray-600 mb-4">Define the process steps from receiving raw materials through to serving the final product.</p>
+                  <h3 className="text-lg font-bold text-[#1E2D4D] mb-2">Process Flow Diagram</h3>
+                  <p className="text-sm text-[#1E2D4D]/70 mb-4">Define the process steps from receiving raw materials through to serving the final product.</p>
                   <div className="space-y-2">
                     {tplFlowSteps.map((step, idx) => (
                       <div key={idx} className="flex items-center space-x-2">
-                        <div className="flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold text-white flex-shrink-0" style={{ backgroundColor: '#d4af37' }}>{idx + 1}</div>
-                        <input type="text" value={step} onChange={(e) => updateFlowStep(idx, e.target.value)} placeholder={`Step ${idx + 1}`} className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                        <div className="flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold text-white flex-shrink-0" style={{ backgroundColor: '#A08C5A' }}>{idx + 1}</div>
+                        <input type="text" value={step} onChange={(e) => updateFlowStep(idx, e.target.value)} placeholder={`Step ${idx + 1}`} className="flex-1 border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent" />
                         {tplFlowSteps.length > 1 && (
                           <button onClick={() => removeFlowStep(idx)} className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"><Trash2 className="h-4 w-4" /></button>
                         )}
                       </div>
                     ))}
                   </div>
-                  <button onClick={addFlowStep} className="mt-3 inline-flex items-center text-sm font-medium" style={{ color: '#1e4d6b' }}>
+                  <button onClick={addFlowStep} className="mt-3 inline-flex items-center text-sm font-medium" style={{ color: '#1E2D4D' }}>
                     <Plus className="h-4 w-4 mr-1" /> Add Step
                   </button>
                 </div>
@@ -2139,21 +2141,21 @@ export function HACCP() {
               {/* Step 5: Hazard Analysis */}
               {wizardStepNum === 5 && (
                 <div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">Hazard Analysis</h3>
-                  <p className="text-sm text-gray-600 mb-4">Identify all potential biological, chemical, and physical hazards.</p>
+                  <h3 className="text-lg font-bold text-[#1E2D4D] mb-2">Hazard Analysis</h3>
+                  <p className="text-sm text-[#1E2D4D]/70 mb-4">Identify all potential biological, chemical, and physical hazards.</p>
                   <div className="space-y-4">
                     {tplHazards.map((hazard, idx) => (
-                      <div key={idx} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                      <div key={idx} className="bg-[#FAF7F0] rounded-xl p-4 border border-[#1E2D4D]/10">
                         <div className="flex items-center justify-between mb-3">
-                          <span className="text-sm font-semibold text-gray-700">Hazard #{idx + 1}</span>
+                          <span className="text-sm font-semibold text-[#1E2D4D]/80">Hazard #{idx + 1}</span>
                           {tplHazards.length > 1 && (
                             <button onClick={() => removeHazardRow(idx)} className="p-1 text-red-400 hover:text-red-600 hover:bg-red-100 rounded"><Trash2 className="h-4 w-4" /></button>
                           )}
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                           <div>
-                            <label className="block text-xs font-medium text-gray-600 mb-1">Hazard Type</label>
-                            <select value={hazard.type} onChange={(e) => updateHazard(idx, 'type', e.target.value)} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
+                            <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Hazard Type</label>
+                            <select value={hazard.type} onChange={(e) => updateHazard(idx, 'type', e.target.value)} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
                               <option value="">Select type...</option>
                               <option value="Biological">Biological</option>
                               <option value="Chemical">Chemical</option>
@@ -2161,8 +2163,8 @@ export function HACCP() {
                             </select>
                           </div>
                           <div>
-                            <label className="block text-xs font-medium text-gray-600 mb-1">Significance</label>
-                            <select value={hazard.significance} onChange={(e) => updateHazard(idx, 'significance', e.target.value)} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
+                            <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Significance</label>
+                            <select value={hazard.significance} onChange={(e) => updateHazard(idx, 'significance', e.target.value)} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
                               <option value="">Select...</option>
                               <option value="High">High</option>
                               <option value="Medium">Medium</option>
@@ -2171,7 +2173,7 @@ export function HACCP() {
                           </div>
                           <div className="md:col-span-2">
                             <div className="flex items-center justify-between mb-1">
-                              <label className="text-xs font-medium text-gray-600">Description</label>
+                              <label className="text-xs font-medium text-[#1E2D4D]/70">Description</label>
                               <AIAssistButton
                                 fieldLabel="Description"
                                 context={{ title: 'Hazard Description', hazardType: hazard.type, significance: hazard.significance, productName: tplProductName }}
@@ -2179,12 +2181,12 @@ export function HACCP() {
                                 onGenerated={(text) => { updateHazard(idx, 'description', text); setAiFields(prev => new Set(prev).add(`hazardDescription_${idx}`)); }}
                               />
                             </div>
-                            <textarea value={hazard.description} onChange={(e) => { updateHazard(idx, 'description', e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete(`hazardDescription_${idx}`); return n; }); }} placeholder="Describe the specific hazard" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                            <textarea value={hazard.description} onChange={(e) => { updateHazard(idx, 'description', e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete(`hazardDescription_${idx}`); return n; }); }} placeholder="Describe the specific hazard" rows={2} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
                             {aiFields.has(`hazardDescription_${idx}`) && <AIGeneratedIndicator />}
                           </div>
                           <div className="md:col-span-2">
                             <div className="flex items-center justify-between mb-1">
-                              <label className="text-xs font-medium text-gray-600">Preventive Measures</label>
+                              <label className="text-xs font-medium text-[#1E2D4D]/70">Preventive Measures</label>
                               <AIAssistButton
                                 fieldLabel="Preventive Measures"
                                 context={{ title: 'HACCP Preventive Measure', hazardType: hazard.type, hazardDescription: hazard.description, significance: hazard.significance, productName: tplProductName }}
@@ -2192,14 +2194,14 @@ export function HACCP() {
                                 onGenerated={(text) => { updateHazard(idx, 'preventive', text); setAiFields(prev => new Set(prev).add(`preventiveMeasures_${idx}`)); }}
                               />
                             </div>
-                            <textarea value={hazard.preventive} onChange={(e) => { updateHazard(idx, 'preventive', e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete(`preventiveMeasures_${idx}`); return n; }); }} placeholder="Describe preventive measures" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                            <textarea value={hazard.preventive} onChange={(e) => { updateHazard(idx, 'preventive', e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete(`preventiveMeasures_${idx}`); return n; }); }} placeholder="Describe preventive measures" rows={2} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
                             {aiFields.has(`preventiveMeasures_${idx}`) && <AIGeneratedIndicator />}
                           </div>
                         </div>
                       </div>
                     ))}
                   </div>
-                  <button onClick={addHazardRow} className="mt-3 inline-flex items-center text-sm font-medium" style={{ color: '#1e4d6b' }}>
+                  <button onClick={addHazardRow} className="mt-3 inline-flex items-center text-sm font-medium" style={{ color: '#1E2D4D' }}>
                     <Plus className="h-4 w-4 mr-1" /> Add Hazard
                   </button>
                 </div>
@@ -2208,13 +2210,13 @@ export function HACCP() {
               {/* Step 6: CCPs */}
               {wizardStepNum === 6 && (
                 <div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">Critical Control Points *</h3>
-                  <p className="text-sm text-gray-600 mb-4">At least one CCP is required. Define monitoring, limits, and corrective actions for each.</p>
+                  <h3 className="text-lg font-bold text-[#1E2D4D] mb-2">Critical Control Points *</h3>
+                  <p className="text-sm text-[#1E2D4D]/70 mb-4">At least one CCP is required. Define monitoring, limits, and corrective actions for each.</p>
                   <div className="space-y-4">
                     {tplCCPs.map((ccp, idx) => (
-                      <div key={idx} className="rounded-lg border-2 border-[#1e4d6b]/20 overflow-hidden">
+                      <div key={idx} className="rounded-xl border-2 border-[#1E2D4D]/20 overflow-hidden">
                         <div className="px-4 py-3 flex items-center justify-between" style={{ backgroundColor: '#eef4f8' }}>
-                          <span className="text-sm font-bold" style={{ color: '#1e4d6b' }}>{ccp.ccpNum || `CCP-${idx + 1}`}</span>
+                          <span className="text-sm font-bold" style={{ color: '#1E2D4D' }}>{ccp.ccpNum || `CCP-${idx + 1}`}</span>
                           {tplCCPs.length > 1 && (
                             <button onClick={() => removeCCPRow(idx)} className="p-1 text-red-400 hover:text-red-600 hover:bg-red-100 rounded"><Trash2 className="h-4 w-4" /></button>
                           )}
@@ -2222,25 +2224,25 @@ export function HACCP() {
                         <div className="p-4 space-y-3">
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <div>
-                              <label className="block text-xs font-medium text-gray-600 mb-1">CCP Number</label>
-                              <input type="text" value={ccp.ccpNum} onChange={(e) => updateCCP(idx, 'ccpNum', e.target.value)} placeholder="CCP-1" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                              <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">CCP Number</label>
+                              <input type="text" value={ccp.ccpNum} onChange={(e) => updateCCP(idx, 'ccpNum', e.target.value)} placeholder="CCP-1" className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
                             </div>
                             <div>
-                              <label className="block text-xs font-medium text-gray-600 mb-1">Process Step</label>
-                              <input type="text" value={ccp.step} onChange={(e) => updateCCP(idx, 'step', e.target.value)} placeholder="e.g., Cooking" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                              <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Process Step</label>
+                              <input type="text" value={ccp.step} onChange={(e) => updateCCP(idx, 'step', e.target.value)} placeholder="e.g., Cooking" className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
                             </div>
                           </div>
                           <div>
-                            <label className="block text-xs font-medium text-gray-600 mb-1">Hazard</label>
-                            <input type="text" value={ccp.hazard} onChange={(e) => updateCCP(idx, 'hazard', e.target.value)} placeholder="e.g., Survival of bacterial pathogens" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                            <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Hazard</label>
+                            <input type="text" value={ccp.hazard} onChange={(e) => updateCCP(idx, 'hazard', e.target.value)} placeholder="e.g., Survival of bacterial pathogens" className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
                           </div>
                           <div>
-                            <label className="block text-xs font-medium text-gray-600 mb-1">Critical Limit</label>
-                            <input type="text" value={ccp.criticalLimit} onChange={(e) => updateCCP(idx, 'criticalLimit', e.target.value)} placeholder="e.g., >= 165F for poultry" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                            <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Critical Limit</label>
+                            <input type="text" value={ccp.criticalLimit} onChange={(e) => updateCCP(idx, 'criticalLimit', e.target.value)} placeholder="e.g., >= 165F for poultry" className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
                           </div>
                           <div>
                             <div className="flex items-center justify-between mb-1">
-                              <label className="text-xs font-medium text-gray-600">Monitoring Procedure</label>
+                              <label className="text-xs font-medium text-[#1E2D4D]/70">Monitoring Procedure</label>
                               <AIAssistButton
                                 fieldLabel="Monitoring Procedure"
                                 context={{ title: 'HACCP Monitoring Procedure', ccpNumber: ccp.ccpNum, processStep: ccp.step, hazard: ccp.hazard, criticalLimit: ccp.criticalLimit, productName: tplProductName }}
@@ -2248,12 +2250,12 @@ export function HACCP() {
                                 onGenerated={(text) => { updateCCP(idx, 'monitoring', text); setAiFields(prev => new Set(prev).add(`monitoringProcedure_${idx}`)); }}
                               />
                             </div>
-                            <textarea value={ccp.monitoring} onChange={(e) => { updateCCP(idx, 'monitoring', e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete(`monitoringProcedure_${idx}`); return n; }); }} placeholder="What, how, frequency, who" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                            <textarea value={ccp.monitoring} onChange={(e) => { updateCCP(idx, 'monitoring', e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete(`monitoringProcedure_${idx}`); return n; }); }} placeholder="What, how, frequency, who" rows={2} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
                             {aiFields.has(`monitoringProcedure_${idx}`) && <AIGeneratedIndicator />}
                           </div>
                           <div>
                             <div className="flex items-center justify-between mb-1">
-                              <label className="text-xs font-medium text-gray-600">Corrective Action</label>
+                              <label className="text-xs font-medium text-[#1E2D4D]/70">Corrective Action</label>
                               <AIAssistButton
                                 fieldLabel="Corrective Action"
                                 context={{ title: 'HACCP Corrective Action', ccpNumber: ccp.ccpNum, processStep: ccp.step, hazard: ccp.hazard, criticalLimit: ccp.criticalLimit, productName: tplProductName }}
@@ -2261,12 +2263,12 @@ export function HACCP() {
                                 onGenerated={(text) => { updateCCP(idx, 'corrective', text); setAiFields(prev => new Set(prev).add(`correctiveAction_${idx}`)); }}
                               />
                             </div>
-                            <textarea value={ccp.corrective} onChange={(e) => { updateCCP(idx, 'corrective', e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete(`correctiveAction_${idx}`); return n; }); }} placeholder="Actions when limit not met" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                            <textarea value={ccp.corrective} onChange={(e) => { updateCCP(idx, 'corrective', e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete(`correctiveAction_${idx}`); return n; }); }} placeholder="Actions when limit not met" rows={2} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
                             {aiFields.has(`correctiveAction_${idx}`) && <AIGeneratedIndicator />}
                           </div>
                           <div>
                             <div className="flex items-center justify-between mb-1">
-                              <label className="text-xs font-medium text-gray-600">Verification</label>
+                              <label className="text-xs font-medium text-[#1E2D4D]/70">Verification</label>
                               <AIAssistButton
                                 fieldLabel="Verification"
                                 context={{ title: 'HACCP Verification', ccpNumber: ccp.ccpNum, processStep: ccp.step, hazard: ccp.hazard, criticalLimit: ccp.criticalLimit, monitoringProcedure: ccp.monitoring, productName: tplProductName }}
@@ -2274,18 +2276,18 @@ export function HACCP() {
                                 onGenerated={(text) => { updateCCP(idx, 'verification', text); setAiFields(prev => new Set(prev).add(`verification_${idx}`)); }}
                               />
                             </div>
-                            <textarea value={ccp.verification} onChange={(e) => { updateCCP(idx, 'verification', e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete(`verification_${idx}`); return n; }); }} placeholder="Verification activities" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                            <textarea value={ccp.verification} onChange={(e) => { updateCCP(idx, 'verification', e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete(`verification_${idx}`); return n; }); }} placeholder="Verification activities" rows={2} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
                             {aiFields.has(`verification_${idx}`) && <AIGeneratedIndicator />}
                           </div>
                           <div>
-                            <label className="block text-xs font-medium text-gray-600 mb-1">Records</label>
-                            <input type="text" value={ccp.records} onChange={(e) => updateCCP(idx, 'records', e.target.value)} placeholder="e.g., Cooking temperature log" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                            <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Records</label>
+                            <input type="text" value={ccp.records} onChange={(e) => updateCCP(idx, 'records', e.target.value)} placeholder="e.g., Cooking temperature log" className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
                           </div>
                         </div>
                       </div>
                     ))}
                   </div>
-                  <button onClick={addCCPRow} className="mt-3 inline-flex items-center text-sm font-medium" style={{ color: '#1e4d6b' }}>
+                  <button onClick={addCCPRow} className="mt-3 inline-flex items-center text-sm font-medium" style={{ color: '#1E2D4D' }}>
                     <Plus className="h-4 w-4 mr-1" /> Add Critical Control Point
                   </button>
                 </div>
@@ -2294,30 +2296,30 @@ export function HACCP() {
               {/* Step 7: Review & Save */}
               {wizardStepNum === 7 && (
                 <div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-4">Review & Save</h3>
+                  <h3 className="text-lg font-bold text-[#1E2D4D] mb-4">Review & Save</h3>
                   <div className="space-y-3 text-sm">
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <p className="font-semibold text-gray-700">Product</p>
-                      <p className="text-gray-900">{tplProductName || '(not set)'}</p>
-                      {tplProductDesc && <p className="text-gray-600 mt-1">{tplProductDesc}</p>}
+                    <div className="bg-[#FAF7F0] rounded-xl p-4">
+                      <p className="font-semibold text-[#1E2D4D]/80">Product</p>
+                      <p className="text-[#1E2D4D]">{tplProductName || '(not set)'}</p>
+                      {tplProductDesc && <p className="text-[#1E2D4D]/70 mt-1">{tplProductDesc}</p>}
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <p className="font-semibold text-gray-700">Flow Diagram</p>
-                      <p className="text-gray-900">{tplFlowSteps.filter(s => s.trim()).join(' → ') || '(not set)'}</p>
+                    <div className="bg-[#FAF7F0] rounded-xl p-4">
+                      <p className="font-semibold text-[#1E2D4D]/80">Flow Diagram</p>
+                      <p className="text-[#1E2D4D]">{tplFlowSteps.filter(s => s.trim()).join(' → ') || '(not set)'}</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <p className="font-semibold text-gray-700">Hazards</p>
-                      <p className="text-gray-900">{tplHazards.filter(h => h.type).length} hazard(s) identified</p>
+                    <div className="bg-[#FAF7F0] rounded-xl p-4">
+                      <p className="font-semibold text-[#1E2D4D]/80">Hazards</p>
+                      <p className="text-[#1E2D4D]">{tplHazards.filter(h => h.type).length} hazard(s) identified</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <p className="font-semibold text-gray-700">Critical Control Points</p>
-                      <p className="text-gray-900">{tplCCPs.length} CCP(s): {tplCCPs.map(c => c.ccpNum).join(', ')}</p>
+                    <div className="bg-[#FAF7F0] rounded-xl p-4">
+                      <p className="font-semibold text-[#1E2D4D]/80">Critical Control Points</p>
+                      <p className="text-[#1E2D4D]">{tplCCPs.length} CCP(s): {tplCCPs.map(c => c.ccpNum).join(', ')}</p>
                     </div>
                     {tplCriticalLimits.filter(l => l.limitDesc.trim()).length > 0 && (
-                      <div className="bg-gray-50 rounded-lg p-4">
-                        <p className="font-semibold text-gray-700">Critical Limits</p>
+                      <div className="bg-[#FAF7F0] rounded-xl p-4">
+                        <p className="font-semibold text-[#1E2D4D]/80">Critical Limits</p>
                         {tplCriticalLimits.filter(l => l.limitDesc.trim()).map((l, i) => (
-                          <p key={i} className="text-gray-900">{l.ccpNum}: {l.limitDesc}</p>
+                          <p key={i} className="text-[#1E2D4D]">{l.ccpNum}: {l.limitDesc}</p>
                         ))}
                       </div>
                     )}
@@ -2331,8 +2333,8 @@ export function HACCP() {
               <button
                 onClick={() => wizardStepNum > 1 && setWizardStep(wizardStepNum - 1)}
                 disabled={wizardStepNum === 1}
-                className="px-5 py-2.5 rounded-lg border-2 text-sm font-medium transition-colors disabled:opacity-40"
-                style={{ borderColor: '#1e4d6b', color: '#1e4d6b' }}
+                className="px-5 py-2.5 rounded-xl border-2 text-sm font-medium transition-colors disabled:opacity-40"
+                style={{ borderColor: '#1E2D4D', color: '#1E2D4D' }}
               >
                 Previous
               </button>
@@ -2346,9 +2348,9 @@ export function HACCP() {
                     setWizardStep(wizardStepNum + 1);
                   }}
                   className="px-5 py-2.5 rounded-lg text-white text-sm font-medium transition-colors"
-                  style={{ backgroundColor: '#1e4d6b' }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
-                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+                  style={{ backgroundColor: '#1E2D4D' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2A3F6B')}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
                 >
                   Next
                 </button>
@@ -2356,9 +2358,9 @@ export function HACCP() {
                 <button
                   onClick={handleTemplateSave}
                   className="inline-flex items-center px-6 py-2.5 rounded-lg text-white text-sm font-medium transition-colors"
-                  style={{ backgroundColor: '#1e4d6b' }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
-                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+                  style={{ backgroundColor: '#1E2D4D' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2A3F6B')}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
                 >
                   <Save className="h-4 w-4 mr-2" />
                   Save HACCP Plan
@@ -2373,9 +2375,9 @@ export function HACCP() {
         {!loading && activeTab === 'ai-create' && (
           <>
             <HACCPAICreate />
-            <div className="mt-4 flex items-start gap-3 px-4 py-3 rounded-lg border" style={{ borderColor: '#d4af37', backgroundColor: '#fffbeb' }}>
-              <AlertTriangle size={16} className="shrink-0 mt-0.5" style={{ color: '#d4af37' }} />
-              <div className="text-xs text-gray-700 leading-relaxed">
+            <div className="mt-4 flex items-start gap-3 px-4 py-3 rounded-xl border" style={{ borderColor: '#A08C5A', backgroundColor: '#fffbeb' }}>
+              <AlertTriangle size={16} className="shrink-0 mt-0.5" style={{ color: '#A08C5A' }} />
+              <div className="text-xs text-[#1E2D4D]/80 leading-relaxed">
                 <span className="font-semibold" style={{ color: '#92400e' }}>AI-generated</span> — review with a qualified food safety professional before implementation.
                 This is not an official HACCP plan and does not replace FDA/CalCode required documentation.
               </div>

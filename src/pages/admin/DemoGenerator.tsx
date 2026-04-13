@@ -289,23 +289,23 @@ export function DemoGenerator() {
   if (success) {
     return (
       <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8">
-        <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8 text-center">
           <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ backgroundColor: '#dcfce7' }}>
             <CheckCircle2 className="w-8 h-8 text-green-600" />
           </div>
           <h2 className="text-xl font-bold mb-2" style={{ color: NAVY }}>
             {form.generateNow ? 'Demo Account Ready!' : 'Demo Scheduled!'}
           </h2>
-          <p className="text-gray-600 mb-1">
+          <p className="text-[#1E2D4D]/70 mb-1">
             Personalized demo for <span className="font-semibold">{form.companyName}</span>
           </p>
-          <p className="text-gray-500 text-sm mb-4">
+          <p className="text-[#1E2D4D]/50 text-sm mb-4">
             {form.city}, {form.state} | {KITCHEN_TYPES.find(t => t.value === form.companyType)?.label} | {OPERATION_VOLUMES.find(v => v.value === form.operationVolume)?.label} Volume
           </p>
 
           {/* Login URL */}
           {credentials && (
-            <div className="bg-blue-50 rounded-lg border border-blue-200 p-4 mb-4 text-left">
+            <div className="bg-blue-50 rounded-xl border border-blue-200 p-4 mb-4 text-left">
               <h3 className="text-sm font-semibold mb-2" style={{ color: NAVY }}>Login URL</h3>
               <div className="flex items-center gap-2">
                 <code className="flex-1 font-mono text-sm text-blue-800 bg-white px-3 py-1.5 rounded border border-blue-200 truncate">{LOGIN_URL}</code>
@@ -322,27 +322,27 @@ export function DemoGenerator() {
 
           {/* Credentials display */}
           {credentials && (
-            <div className="bg-gray-50 rounded-lg border border-gray-200 p-4 mb-4 text-left">
+            <div className="bg-[#FAF7F0] rounded-xl border border-[#1E2D4D]/10 p-4 mb-4 text-left">
               <h3 className="text-sm font-semibold mb-3" style={{ color: NAVY }}>Login Credentials</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-500">Email:</span>
-                  <code className="font-mono text-gray-800 bg-white px-2 py-0.5 rounded border border-gray-200">{credentials.email}</code>
+                  <span className="text-[#1E2D4D]/50">Email:</span>
+                  <code className="font-mono text-[#1E2D4D]/90 bg-white px-2 py-0.5 rounded border border-[#1E2D4D]/10">{credentials.email}</code>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-500">Password:</span>
-                  <code className="font-mono text-gray-800 bg-white px-2 py-0.5 rounded border border-gray-200">{credentials.temp_password}</code>
+                  <span className="text-[#1E2D4D]/50">Password:</span>
+                  <code className="font-mono text-[#1E2D4D]/90 bg-white px-2 py-0.5 rounded border border-[#1E2D4D]/10">{credentials.temp_password}</code>
                 </div>
                 {demoExpiresAt && (
-                  <div className="flex items-center justify-between pt-1 border-t border-gray-200">
-                    <span className="text-gray-500">Expires:</span>
-                    <span className="text-gray-700">{new Date(demoExpiresAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                  <div className="flex items-center justify-between pt-1 border-t border-[#1E2D4D]/10">
+                    <span className="text-[#1E2D4D]/50">Expires:</span>
+                    <span className="text-[#1E2D4D]/80">{new Date(demoExpiresAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                   </div>
                 )}
               </div>
               <button
                 onClick={copyCredentials}
-                className="mt-3 w-full px-3 py-2 rounded-md text-sm font-medium border border-gray-300 hover:bg-gray-100 transition-colors flex items-center justify-center gap-2"
+                className="mt-3 w-full px-3 py-2 rounded-md text-sm font-medium border border-[#1E2D4D]/15 hover:bg-[#1E2D4D]/5 transition-colors flex items-center justify-center gap-2"
               >
                 {copied ? <><Check className="w-4 h-4 text-green-600" /> Copied!</> : <><Copy className="w-4 h-4" /> Copy Credentials</>}
               </button>
@@ -354,9 +354,9 @@ export function DemoGenerator() {
             <button
               onClick={sendViaEmail}
               className="w-full mb-6 px-4 py-2.5 rounded-lg font-medium text-sm text-white transition-colors flex items-center justify-center gap-2"
-              style={{ backgroundColor: '#d4af37' }}
+              style={{ backgroundColor: '#A08C5A' }}
               onMouseEnter={e => (e.target as HTMLButtonElement).style.backgroundColor = '#b8982e'}
-              onMouseLeave={e => (e.target as HTMLButtonElement).style.backgroundColor = '#d4af37'}
+              onMouseLeave={e => (e.target as HTMLButtonElement).style.backgroundColor = '#A08C5A'}
             >
               <Mail className="w-4 h-4" /> Send Credentials via Email
             </button>
@@ -372,7 +372,7 @@ export function DemoGenerator() {
             </button>
             <button
               onClick={() => { setSuccess(false); setCredentials(null); setDemoExpiresAt(null); setLinkCopied(false); setForm(f => ({ ...f, prospectName: '', prospectEmail: '', prospectPhone: '', companyName: '', address: '', city: '', zipCode: '' })); }}
-              className="px-6 py-2.5 rounded-lg font-medium text-sm border border-gray-300 text-gray-700 hover:bg-gray-50"
+              className="px-6 py-2.5 rounded-lg font-medium text-sm border border-[#1E2D4D]/15 text-[#1E2D4D]/80 hover:bg-[#FAF7F0]"
             >
               Generate Another
             </button>
@@ -382,8 +382,8 @@ export function DemoGenerator() {
     );
   }
 
-  const inputClass = 'w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-[#1E2D4D] focus:ring-2 focus:ring-[#1E2D4D]/20 outline-none transition-colors text-sm';
-  const labelClass = 'block text-sm font-medium text-gray-700 mb-1';
+  const inputClass = 'w-full px-4 py-2.5 rounded-xl border border-[#1E2D4D]/15 focus:border-[#1E2D4D] focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 outline-none transition-colors text-sm';
+  const labelClass = 'block text-sm font-medium text-[#1E2D4D]/80 mb-1';
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6">
@@ -394,13 +394,13 @@ export function DemoGenerator() {
         </div>
         <div>
           <h1 className="text-xl font-bold" style={{ color: NAVY }}>Generate Custom Demo for Prospect</h1>
-          <p className="text-sm text-gray-500">Build a personalized, jurisdiction-accurate demo environment</p>
+          <p className="text-sm text-[#1E2D4D]/50">Build a personalized, jurisdiction-accurate demo environment</p>
         </div>
       </div>
 
       <form onSubmit={handleGenerate} className="space-y-0">
         {/* Prospect Information */}
-        <div className="bg-white rounded-t-xl border border-gray-200 p-6">
+        <div className="bg-white rounded-t-xl border border-[#1E2D4D]/10 p-6">
           <div className="flex items-center gap-2 mb-4">
             <Users className="w-5 h-5" style={{ color: NAVY }} />
             <h2 className="font-semibold text-sm" style={{ color: NAVY }}>PROSPECT INFORMATION</h2>
@@ -430,7 +430,7 @@ export function DemoGenerator() {
         </div>
 
         {/* Kitchen Details */}
-        <div className="bg-white border-x border-b border-gray-200 p-6">
+        <div className="bg-white border-x border-b border-[#1E2D4D]/10 p-6">
           <div className="flex items-center gap-2 mb-4">
             <Building2 className="w-5 h-5" style={{ color: NAVY }} />
             <h2 className="font-semibold text-sm" style={{ color: NAVY }}>KITCHEN DETAILS</h2>
@@ -454,7 +454,7 @@ export function DemoGenerator() {
         </div>
 
         {/* Location */}
-        <div className="bg-white border-x border-b border-gray-200 p-6">
+        <div className="bg-white border-x border-b border-[#1E2D4D]/10 p-6">
           <div className="flex items-center gap-2 mb-4">
             <MapPin className="w-5 h-5" style={{ color: NAVY }} />
             <h2 className="font-semibold text-sm" style={{ color: NAVY }}>LOCATION</h2>
@@ -495,7 +495,7 @@ export function DemoGenerator() {
         </div>
 
         {/* Demo Options */}
-        <div className="bg-white border-x border-b border-gray-200 p-6">
+        <div className="bg-white border-x border-b border-[#1E2D4D]/10 p-6">
           <div className="flex items-center gap-2 mb-4">
             <Settings2 className="w-5 h-5" style={{ color: NAVY }} />
             <h2 className="font-semibold text-sm" style={{ color: NAVY }}>DEMO OPTIONS</h2>
@@ -520,12 +520,12 @@ export function DemoGenerator() {
                   { key: 'includeVendors', label: 'Vendor service reminders' },
                   { key: 'includeCorrectiveActions', label: 'Sample corrective actions' },
                 ].map(opt => (
-                  <label key={opt.key} className="flex items-center gap-2 text-sm text-gray-700">
+                  <label key={opt.key} className="flex items-center gap-2 text-sm text-[#1E2D4D]/80">
                     <input
                       type="checkbox"
                       checked={form[opt.key as keyof FormData] as boolean}
                       onChange={e => update(opt.key as keyof FormData, e.target.checked)}
-                      className="rounded border-gray-300"
+                      className="rounded border-[#1E2D4D]/15"
                     />
                     {opt.label}
                   </label>
@@ -536,18 +536,18 @@ export function DemoGenerator() {
         </div>
 
         {/* Demo Timing */}
-        <div className="bg-white border-x border-b border-gray-200 rounded-b-xl p-6">
+        <div className="bg-white border-x border-b border-[#1E2D4D]/10 rounded-b-xl p-6">
           <div className="flex items-center gap-2 mb-4">
             <Clock className="w-5 h-5" style={{ color: NAVY }} />
             <h2 className="font-semibold text-sm" style={{ color: NAVY }}>DEMO TIMING</h2>
           </div>
           <div className="space-y-3">
-            <label className="flex items-center gap-2 text-sm text-gray-700">
+            <label className="flex items-center gap-2 text-sm text-[#1E2D4D]/80">
               <input type="radio" name="timing" checked={form.generateNow}
                 onChange={() => update('generateNow', true)} className="text-[#1E2D4D]" />
               Generate demo now (ready immediately)
             </label>
-            <label className="flex items-center gap-2 text-sm text-gray-700">
+            <label className="flex items-center gap-2 text-sm text-[#1E2D4D]/80">
               <input type="radio" name="timing" checked={!form.generateNow}
                 onChange={() => update('generateNow', false)} className="text-[#1E2D4D]" />
               Schedule meeting first
@@ -575,7 +575,7 @@ export function DemoGenerator() {
             type="submit"
             className="px-8 py-3 rounded-lg font-semibold text-white transition-colors flex items-center gap-2"
             style={{ backgroundColor: NAVY }}
-            onMouseEnter={e => (e.target as HTMLButtonElement).style.backgroundColor = '#2a6a8f'}
+            onMouseEnter={e => (e.target as HTMLButtonElement).style.backgroundColor = '#2A3F6B'}
             onMouseLeave={e => (e.target as HTMLButtonElement).style.backgroundColor = NAVY}
           >
             <Sparkles className="w-4 h-4" />

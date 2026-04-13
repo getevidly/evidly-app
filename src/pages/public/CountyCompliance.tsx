@@ -54,6 +54,12 @@ const GRADING_TYPE_LABELS: Record<string, string> = {
   pass_fail: 'Pass / Fail',
   report_only: 'Report Only (no public grade)',
   score_only: 'Score Only',
+  letter_grade_abc: 'Letter Grade (A/B/C)',
+  green_yellow_red: 'Color Placard (Green/Yellow/Red)',
+  numeric_score_no_letter: 'Numeric Score',
+  point_accumulation_tiered: 'Point Accumulation (Tiered)',
+  green_yellow_red_numeric: 'Color Placard with Numeric Score',
+  inspection_report: 'Inspection Report',
 };
 
 const SCORING_TYPE_LABELS: Record<string, string> = {
@@ -65,14 +71,22 @@ const SCORING_TYPE_LABELS: Record<string, string> = {
   violation_point_accumulation: 'Violation Point Accumulation',
   pass_fail: 'Pass / Fail',
   report_only: 'Report Only',
+  numeric_score: 'Numeric Score',
+  violation_report: 'Violation Report',
+  color_placard: 'Color Placard',
+  color_placard_and_numeric: 'Color Placard & Numeric Score',
+  inspection_report: 'Inspection Report',
+  point_accumulation: 'Point Accumulation',
 };
 
 const FIRE_AHJ_TYPE_LABELS: Record<string, string> = {
+  municipal_fire: 'Municipal Fire Department',
   county_fire: 'County Fire Department',
-  city_fire: 'City Fire Department',
-  cal_fire: 'CAL FIRE',
   fire_district: 'Fire Protection District',
-  federal: 'Federal (NPS / Military)',
+  cal_fire_contract: 'CAL FIRE (Contract)',
+  state_fire_marshal: 'State Fire Marshal',
+  mixed: 'Mixed (Multiple AHJs)',
+  tribal_fire: 'Tribal Fire Department',
 };
 
 const TIER_LABELS: Record<number, string> = {
@@ -91,14 +105,14 @@ function renderGradingConfig(config: Record<string, any>, gradingType: string) {
     return (
       <table className="w-full text-sm mt-2">
         <thead>
-          <tr className="text-left text-gray-500 border-b">
+          <tr className="text-left text-[#1E2D4D]/50 border-b hover:bg-[#1E2D4D]/[0.02] transition-colors">
             <th className="pb-2 font-medium">Grade</th>
             <th className="pb-2 font-medium">Score Range</th>
           </tr>
         </thead>
         <tbody>
           {letterKeys.filter(k => config[k]).map(k => (
-            <tr key={k} className="border-b border-gray-100">
+            <tr key={k} className="border-b border-[#1E2D4D]/5">
               <td className="py-1.5 font-semibold">{k}</td>
               <td className="py-1.5">{config[k][0]} &ndash; {config[k][1]}</td>
             </tr>
@@ -138,7 +152,7 @@ function renderGradingConfig(config: Record<string, any>, gradingType: string) {
                 color === 'yellow' ? 'bg-yellow-400' : 'bg-red-500'
               }`} />
               <span className="capitalize font-medium">{color}</span>
-              <span className="text-gray-500">{desc}</span>
+              <span className="text-[#1E2D4D]/50">{desc}</span>
             </div>
           );
         })}
@@ -161,11 +175,11 @@ function renderGradingConfig(config: Record<string, any>, gradingType: string) {
   if (config.description) {
     return (
       <div className="text-sm mt-2 space-y-1">
-        <p className="text-gray-600">{config.description}</p>
+        <p className="text-[#1E2D4D]/70">{config.description}</p>
         {config.letter_grades && (
           <div className="mt-2">
             {Object.entries(config.letter_grades).map(([grade, range]: [string, any]) => (
-              <p key={grade} className="text-gray-700">
+              <p key={grade} className="text-[#1E2D4D]/80">
                 <span className="font-semibold">{grade}</span>: {typeof range === 'string' ? range : JSON.stringify(range)}
               </p>
             ))}
@@ -174,7 +188,7 @@ function renderGradingConfig(config: Record<string, any>, gradingType: string) {
         {config.grade_thresholds && (
           <div className="mt-2">
             {Object.entries(config.grade_thresholds).map(([grade, threshold]: [string, any]) => (
-              <p key={grade} className="text-gray-700">
+              <p key={grade} className="text-[#1E2D4D]/80">
                 <span className="font-semibold">{grade}</span>: {typeof threshold === 'number' ? `${threshold}+` : String(threshold)}
               </p>
             ))}
@@ -187,13 +201,13 @@ function renderGradingConfig(config: Record<string, any>, gradingType: string) {
   // Fallback: show raw config
   if (Object.keys(config).length > 0) {
     return (
-      <pre className="text-xs text-gray-500 mt-2 bg-gray-50 p-2 rounded overflow-x-auto">
+      <pre className="text-xs text-[#1E2D4D]/50 mt-2 bg-[#FAF7F0] p-2 rounded overflow-x-auto">
         {JSON.stringify(config, null, 2)}
       </pre>
     );
   }
 
-  return <p className="text-sm text-gray-500 mt-2">No grading configuration available.</p>;
+  return <p className="text-sm text-[#1E2D4D]/50 mt-2">No grading configuration available.</p>;
 }
 
 export function CountyCompliance() {
@@ -229,8 +243,8 @@ export function CountyCompliance() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+      <div className="min-h-screen bg-[#FAF7F0] flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-[#1E2D4D]/30" />
       </div>
     );
   }
@@ -242,25 +256,25 @@ export function CountyCompliance() {
           <title>{countyName} County Food Safety — Not Yet Available | EvidLY</title>
           <meta name="robots" content="noindex" />
         </Helmet>
-        <div className="min-h-screen bg-gray-50">
-          <header className="bg-white border-b border-gray-200">
+        <div className="min-h-screen bg-[#FAF7F0]">
+          <header className="bg-white border-b border-[#1E2D4D]/10">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-              <Link to="/" className="text-sm font-semibold tracking-wide" style={{ color: '#1e4d6b' }}>EvidLY</Link>
+              <Link to="/" className="text-sm font-semibold tracking-wide" style={{ color: '#1E2D4D' }}>EvidLY</Link>
             </div>
           </header>
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
             <AlertTriangle className="w-12 h-12 mx-auto mb-4 text-amber-500" />
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D] mb-2">
               {countyName} County isn't covered yet
             </h1>
-            <p className="text-gray-600 mb-6 max-w-md mx-auto">
+            <p className="text-[#1E2D4D]/70 mb-6 max-w-md mx-auto">
               We're expanding our jurisdiction coverage across California. Sign up to be notified when {countyName} County data becomes available.
             </p>
             <div className="flex justify-center gap-3">
-              <Link to="/compliance/california" className="px-5 py-2 rounded-lg text-sm font-medium border border-gray-300 text-gray-700 hover:bg-gray-50">
+              <Link to="/compliance/california" className="px-5 py-2 rounded-lg text-sm font-medium border border-[#1E2D4D]/15 text-[#1E2D4D]/80 hover:bg-[#FAF7F0]">
                 Browse All Counties
               </Link>
-              <Link to="/signup" className="px-5 py-2 rounded-lg text-sm font-medium text-white" style={{ backgroundColor: '#1e4d6b' }}>
+              <Link to="/signup" className="px-5 py-2 rounded-lg text-sm font-medium text-white" style={{ backgroundColor: '#1E2D4D' }}>
                 Sign Up
               </Link>
             </div>
@@ -285,42 +299,42 @@ export function CountyCompliance() {
         <meta property="og:url" content={`https://evidly.com/compliance/california/${slug}`} />
       </Helmet>
 
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-[#FAF7F0]">
         {/* Header */}
-        <header className="bg-white border-b border-gray-200">
+        <header className="bg-white border-b border-[#1E2D4D]/10">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <Link to="/" className="text-sm font-semibold tracking-wide" style={{ color: '#1e4d6b' }}>EvidLY</Link>
+            <Link to="/" className="text-sm font-semibold tracking-wide" style={{ color: '#1E2D4D' }}>EvidLY</Link>
           </div>
         </header>
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Breadcrumb */}
-          <nav className="text-sm text-gray-500 mb-6 flex items-center gap-1 flex-wrap">
-            <Link to="/" className="hover:text-gray-700">Home</Link>
+          <nav className="text-sm text-[#1E2D4D]/50 mb-6 flex items-center gap-1 flex-wrap">
+            <Link to="/" className="hover:text-[#1E2D4D]/80">Home</Link>
             <ChevronRight className="w-3.5 h-3.5" />
-            <Link to="/compliance/california" className="hover:text-gray-700">California</Link>
+            <Link to="/compliance/california" className="hover:text-[#1E2D4D]/80">California</Link>
             <ChevronRight className="w-3.5 h-3.5" />
-            <span className="text-gray-900 font-medium">{j.county} County</span>
+            <span className="text-[#1E2D4D] font-medium">{j.county} County</span>
           </nav>
 
           {/* Page header */}
           <div className="mb-8">
             <div className="flex items-start justify-between flex-wrap gap-3">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">
+                <h1 className="text-3xl font-bold tracking-tight text-[#1E2D4D]">
                   {j.county} County
-                  {j.city && <span className="text-xl font-normal text-gray-500 ml-2">({j.city})</span>}
+                  {j.city && <span className="text-xl font-normal text-[#1E2D4D]/50 ml-2">({j.city})</span>}
                 </h1>
-                <p className="text-lg text-gray-600 mt-1">{j.agency_name}</p>
+                <p className="text-lg text-[#1E2D4D]/70 mt-1">{j.agency_name}</p>
               </div>
               {j.data_source_tier && (
-                <span className="text-xs font-medium px-3 py-1 rounded-full bg-gray-100 text-gray-600">
+                <span className="text-xs font-medium px-3 py-1 rounded-full bg-[#1E2D4D]/5 text-[#1E2D4D]/70">
                   {TIER_LABELS[j.data_source_tier]}
                 </span>
               )}
             </div>
             {j.facility_count && (
-              <p className="text-sm text-gray-500 mt-2 flex items-center gap-1.5">
+              <p className="text-sm text-[#1E2D4D]/50 mt-2 flex items-center gap-1.5">
                 <Building2 className="w-4 h-4" />
                 {j.facility_count.toLocaleString()} food facilities
               </p>
@@ -329,83 +343,83 @@ export function CountyCompliance() {
 
           <div className="space-y-6">
             {/* Grading System */}
-            <section className="bg-white border border-gray-200 rounded-lg p-6">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2 mb-3">
-                <Shield className="w-5 h-5" style={{ color: '#1e4d6b' }} />
+            <section className="bg-white border border-[#1E2D4D]/10 rounded-xl p-6">
+              <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D] flex items-center gap-2 mb-3">
+                <Shield className="w-5 h-5" style={{ color: '#1E2D4D' }} />
                 Grading System
               </h2>
-              <p className="text-sm text-gray-700 font-medium">
+              <p className="text-sm text-[#1E2D4D]/80 font-medium">
                 {GRADING_TYPE_LABELS[j.grading_type] || j.grading_type}
               </p>
               {renderGradingConfig(j.grading_config || {}, j.grading_type)}
             </section>
 
             {/* Scoring Methodology */}
-            <section className="bg-white border border-gray-200 rounded-lg p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-3">Scoring Methodology</h2>
+            <section className="bg-white border border-[#1E2D4D]/10 rounded-xl p-6">
+              <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-3">Scoring Methodology</h2>
               <div className="grid sm:grid-cols-2 gap-4 text-sm">
                 <div>
-                  <p className="text-gray-500">Method</p>
-                  <p className="font-medium text-gray-900">{SCORING_TYPE_LABELS[j.scoring_type] || j.scoring_type}</p>
+                  <p className="text-[#1E2D4D]/50">Method</p>
+                  <p className="font-medium text-[#1E2D4D]">{SCORING_TYPE_LABELS[j.scoring_type] || j.scoring_type}</p>
                 </div>
                 {j.pass_threshold != null && (
                   <div>
-                    <p className="text-gray-500">Pass Threshold</p>
-                    <p className="font-medium text-gray-900">{j.pass_threshold}</p>
+                    <p className="text-[#1E2D4D]/50">Pass Threshold</p>
+                    <p className="font-medium text-[#1E2D4D]">{j.pass_threshold}</p>
                   </div>
                 )}
                 {j.warning_threshold != null && (
                   <div>
-                    <p className="text-gray-500">Warning Threshold</p>
+                    <p className="text-[#1E2D4D]/50">Warning Threshold</p>
                     <p className="font-medium text-amber-700">{j.warning_threshold}</p>
                   </div>
                 )}
                 {j.critical_threshold != null && (
                   <div>
-                    <p className="text-gray-500">Critical Threshold</p>
+                    <p className="text-[#1E2D4D]/50">Critical Threshold</p>
                     <p className="font-medium text-red-700">{j.critical_threshold}</p>
                   </div>
                 )}
               </div>
               {j.scoring_methodology && (
-                <p className="text-sm text-gray-600 mt-4 leading-relaxed">{j.scoring_methodology}</p>
+                <p className="text-sm text-[#1E2D4D]/70 mt-4 leading-relaxed">{j.scoring_methodology}</p>
               )}
             </section>
 
             {/* Facility Safety AHJ */}
             {j.fire_ahj_name && (
-              <section className="bg-white border border-gray-200 rounded-lg p-6">
-                <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2 mb-3">
+              <section className="bg-white border border-[#1E2D4D]/10 rounded-xl p-6">
+                <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D] flex items-center gap-2 mb-3">
                   <Flame className="w-5 h-5 text-orange-500" />
                   Facility Safety Authority (AHJ)
                 </h2>
                 <div className="grid sm:grid-cols-2 gap-4 text-sm">
                   <div>
-                    <p className="text-gray-500">Authority Having Jurisdiction</p>
-                    <p className="font-medium text-gray-900">{j.fire_ahj_name}</p>
+                    <p className="text-[#1E2D4D]/50">Authority Having Jurisdiction</p>
+                    <p className="font-medium text-[#1E2D4D]">{j.fire_ahj_name}</p>
                   </div>
                   {j.fire_ahj_type && (
                     <div>
-                      <p className="text-gray-500">Type</p>
-                      <p className="font-medium text-gray-900">{FIRE_AHJ_TYPE_LABELS[j.fire_ahj_type] || j.fire_ahj_type}</p>
+                      <p className="text-[#1E2D4D]/50">Type</p>
+                      <p className="font-medium text-[#1E2D4D]">{FIRE_AHJ_TYPE_LABELS[j.fire_ahj_type] || j.fire_ahj_type}</p>
                     </div>
                   )}
                   {j.fire_code_edition && (
                     <div>
-                      <p className="text-gray-500">Fire Code Edition</p>
-                      <p className="font-medium text-gray-900">{j.fire_code_edition}</p>
+                      <p className="text-[#1E2D4D]/50">Fire Code Edition</p>
+                      <p className="font-medium text-[#1E2D4D]">{j.fire_code_edition}</p>
                     </div>
                   )}
                   {j.nfpa96_edition && (
                     <div>
-                      <p className="text-gray-500">NFPA 96 Edition</p>
-                      <p className="font-medium text-gray-900">{j.nfpa96_edition}</p>
+                      <p className="text-[#1E2D4D]/50">NFPA 96 Edition</p>
+                      <p className="font-medium text-[#1E2D4D]">{j.nfpa96_edition}</p>
                     </div>
                   )}
                   {j.hood_cleaning_default && (
                     <div>
-                      <p className="text-gray-500">Default Hood Cleaning</p>
-                      <p className="font-medium text-gray-900 capitalize">{j.hood_cleaning_default}</p>
+                      <p className="text-[#1E2D4D]/50">Default Hood Cleaning</p>
+                      <p className="font-medium text-[#1E2D4D] capitalize">{j.hood_cleaning_default}</p>
                     </div>
                   )}
                 </div>
@@ -421,28 +435,28 @@ export function CountyCompliance() {
             )}
 
             {/* Data Freshness */}
-            <section className="bg-white border border-gray-200 rounded-lg p-6">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2 mb-3">
-                <Database className="w-5 h-5 text-gray-500" />
+            <section className="bg-white border border-[#1E2D4D]/10 rounded-xl p-6">
+              <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D] flex items-center gap-2 mb-3">
+                <Database className="w-5 h-5 text-[#1E2D4D]/50" />
                 Data Information
               </h2>
               <div className="grid sm:grid-cols-2 gap-4 text-sm">
                 {j.data_source_tier && (
                   <div>
-                    <p className="text-gray-500">Data Source</p>
-                    <p className="font-medium text-gray-900">{TIER_LABELS[j.data_source_tier]}</p>
+                    <p className="text-[#1E2D4D]/50">Data Source</p>
+                    <p className="font-medium text-[#1E2D4D]">{TIER_LABELS[j.data_source_tier]}</p>
                   </div>
                 )}
                 {j.data_version != null && (
                   <div>
-                    <p className="text-gray-500">Data Version</p>
-                    <p className="font-medium text-gray-900">v{j.data_version}</p>
+                    <p className="text-[#1E2D4D]/50">Data Version</p>
+                    <p className="font-medium text-[#1E2D4D]">v{j.data_version}</p>
                   </div>
                 )}
                 {j.last_crawled_at && (
                   <div>
-                    <p className="text-gray-500">Last Updated</p>
-                    <p className="font-medium text-gray-900 flex items-center gap-1">
+                    <p className="text-[#1E2D4D]/50">Last Updated</p>
+                    <p className="font-medium text-[#1E2D4D] flex items-center gap-1">
                       <Calendar className="w-3.5 h-3.5" />
                       {new Date(j.last_crawled_at).toLocaleDateString()}
                     </p>
@@ -450,7 +464,7 @@ export function CountyCompliance() {
                 )}
                 {j.data_source_url && (
                   <div>
-                    <p className="text-gray-500">Source URL</p>
+                    <p className="text-[#1E2D4D]/50">Source URL</p>
                     <a
                       href={j.data_source_url}
                       target="_blank"
@@ -463,13 +477,13 @@ export function CountyCompliance() {
                 )}
               </div>
               {j.notes && (
-                <p className="text-xs text-gray-500 mt-4 leading-relaxed">{j.notes}</p>
+                <p className="text-xs text-[#1E2D4D]/50 mt-4 leading-relaxed">{j.notes}</p>
               )}
             </section>
           </div>
 
           {/* CTA */}
-          <div className="mt-12 rounded-xl p-8 text-center" style={{ backgroundColor: '#1e4d6b' }}>
+          <div className="mt-12 rounded-xl p-8 text-center" style={{ backgroundColor: '#1E2D4D' }}>
             <Shield className="w-10 h-10 mx-auto mb-3 text-white/80" />
             <h2 className="text-xl font-bold text-white mb-2">
               Stay compliant in {j.county} County
@@ -482,14 +496,14 @@ export function CountyCompliance() {
               <Link
                 to="/demo"
                 className="px-6 py-2.5 rounded-lg font-medium text-sm text-white"
-                style={{ backgroundColor: '#d4af37' }}
+                style={{ backgroundColor: '#A08C5A' }}
               >
                 Try Free Demo
               </Link>
               <Link
                 to="/signup"
                 className="px-6 py-2.5 rounded-lg font-medium text-sm bg-white"
-                style={{ color: '#1e4d6b' }}
+                style={{ color: '#1E2D4D' }}
               >
                 Start Free Trial
               </Link>
@@ -497,13 +511,13 @@ export function CountyCompliance() {
           </div>
 
           {/* Footer */}
-          <footer className="mt-12 pt-8 border-t border-gray-200 text-center text-sm text-gray-500 pb-8">
+          <footer className="mt-12 pt-8 border-t border-[#1E2D4D]/10 text-center text-sm text-[#1E2D4D]/50 pb-8">
             <p>Data sourced from {j.agency_name} and California Department of Public Health.</p>
             <div className="flex justify-center gap-4 mt-3">
-              <Link to="/compliance/california" className="hover:text-gray-700">All CA Counties</Link>
-              <Link to="/terms" className="hover:text-gray-700">Terms</Link>
-              <Link to="/privacy" className="hover:text-gray-700">Privacy</Link>
-              <Link to="/" className="hover:text-gray-700">EvidLY.com</Link>
+              <Link to="/compliance/california" className="hover:text-[#1E2D4D]/80">All CA Counties</Link>
+              <Link to="/terms" className="hover:text-[#1E2D4D]/80">Terms</Link>
+              <Link to="/privacy" className="hover:text-[#1E2D4D]/80">Privacy</Link>
+              <Link to="/" className="hover:text-[#1E2D4D]/80">EvidLY.com</Link>
             </div>
           </footer>
         </div>

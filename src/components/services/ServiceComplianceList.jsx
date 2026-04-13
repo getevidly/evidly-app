@@ -1,12 +1,13 @@
 /**
- * ServiceComplianceList — HOODOPS-SERVICES-01
+ * ServiceComplianceList — HOODOPS-SERVICES-01 + RESCHEDULE-EVIDLY-01
  *
  * Shows all 5 service types with compliance status per location.
  * KEC is parent row; FPM/GFX/RGC are indented children; FS is standalone.
+ * Reschedule button on due_soon/overdue rows for authorized roles.
  */
 import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Flame, Fan, Filter, Shield, ShieldAlert, ChevronDown, ChevronRight, Plus } from 'lucide-react';
+import { Flame, Fan, Filter, Shield, ShieldAlert, ChevronDown, ChevronRight, Plus, CalendarClock } from 'lucide-react';
 import { useDemo } from '../../contexts/DemoContext';
 import { useRole } from '../../contexts/RoleContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -21,6 +22,9 @@ import {
   STATUS_COLORS,
   projectAnnualCost,
 } from '../../constants/serviceTypes';
+import { useRescheduleRequests } from '../../hooks/useRescheduleRequests';
+import { RescheduleServiceModal } from './RescheduleServiceModal';
+
 const ICON_MAP = { Flame, Fan, Filter, Shield, ShieldAlert };
 const CAN_LOG = ['owner_operator', 'compliance_manager', 'facilities_manager'];
 
@@ -32,6 +36,10 @@ export function ServiceComplianceList({ onLogService }) {
   const { profile } = useAuth();
   const [kecExpanded, setKecExpanded] = useState(true);
   const [schedules, setSchedules] = useState([]);
+  const [rescheduleTarget, setRescheduleTarget] = useState(null);
+
+  const effectiveLocationId = (locationFilter && locationFilter !== 'all') ? locationFilter : undefined;
+  const { hasPendingReschedule, refetch: refetchReschedules } = useRescheduleRequests(effectiveLocationId);
 
   // Production: query location_service_schedules from Supabase.
   useEffect(() => {
@@ -59,6 +67,8 @@ export function ServiceComplianceList({ onLogService }) {
     return map;
   }, [schedules]);
 
+  const canReschedule = CAN_LOG.includes(userRole);
+
   function renderRow(code, indent = false) {
     const st = SERVICE_TYPES[code];
     const items = byType[code] || [];
@@ -66,14 +76,19 @@ export function ServiceComplianceList({ onLogService }) {
 
     // Aggregate status: worst across locations
     let worstStatus = 'not_tracked';
+    let worstItem = null;
     for (const item of items) {
       const s = getServiceStatus(item.next_due_date);
-      if (s === 'overdue') { worstStatus = 'overdue'; break; }
-      if (s === 'due_soon' && worstStatus !== 'overdue') worstStatus = 'due_soon';
-      if (s === 'current' && worstStatus === 'not_tracked') worstStatus = 'current';
+      if (s === 'overdue') { worstStatus = 'overdue'; worstItem = item; break; }
+      if (s === 'due_soon' && worstStatus !== 'overdue') { worstStatus = 'due_soon'; worstItem = item; }
+      if (s === 'current' && worstStatus === 'not_tracked') { worstStatus = 'current'; worstItem = item; }
     }
     const statusColor = STATUS_COLORS[worstStatus];
     const totalAnnual = items.reduce((sum, i) => sum + projectAnnualCost(i.price, i.frequency), 0);
+
+    const showReschedule = canReschedule && items.length > 0
+      && (worstStatus === 'due_soon' || worstStatus === 'overdue');
+    const isPending = hasPendingReschedule(code, effectiveLocationId);
 
     return (
       <div
@@ -85,6 +100,7 @@ export function ServiceComplianceList({ onLogService }) {
           borderBottom: '1px solid var(--border, #D1D9E6)',
           marginLeft: indent ? 32 : 0,
           gap: 12,
+          flexWrap: 'wrap',
         }}
       >
         <div style={{
@@ -113,6 +129,38 @@ export function ServiceComplianceList({ onLogService }) {
           {STATUS_LABELS[worstStatus]}
         </div>
 
+        {/* Reschedule button or pending badge */}
+        {showReschedule && !isPending && (
+          <button
+            onClick={() => setRescheduleTarget({
+              code,
+              name: st.name,
+              dueDate: worstItem?.next_due_date || '',
+              scheduleId: worstItem?.id || null,
+            })}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 4,
+              padding: '4px 10px', borderRadius: 8,
+              background: 'none', border: '1px solid #D1D9E6',
+              fontSize: 11, fontWeight: 600, color: '#1E2D4D',
+              cursor: 'pointer',
+            }}
+          >
+            <CalendarClock style={{ width: 12, height: 12 }} />
+            Reschedule
+          </button>
+        )}
+        {showReschedule && isPending && (
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 4,
+            padding: '4px 10px', borderRadius: 12,
+            background: '#FFFBEB', fontSize: 11, fontWeight: 600, color: '#92400E',
+          }}>
+            <CalendarClock style={{ width: 12, height: 12 }} />
+            Reschedule Pending
+          </div>
+        )}
+
         {/* Annual cost */}
         {items.length > 0 && (
           <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary, #3D5068)', minWidth: 70, textAlign: 'right' }}>
@@ -122,6 +170,11 @@ export function ServiceComplianceList({ onLogService }) {
       </div>
     );
   }
+
+  const handleRescheduleClose = () => {
+    setRescheduleTarget(null);
+    refetchReschedules();
+  };
 
   return (
     <div style={{
@@ -149,7 +202,7 @@ export function ServiceComplianceList({ onLogService }) {
             style={{
               display: 'flex', alignItems: 'center', gap: 5,
               padding: '7px 14px', borderRadius: 8,
-              background: '#1e4d6b', border: 'none',
+              background: '#1E2D4D', border: 'none',
               fontSize: 12, fontWeight: 600, color: '#fff', cursor: 'pointer',
             }}
           >
@@ -222,6 +275,20 @@ export function ServiceComplianceList({ onLogService }) {
             Add services manually or connect your HoodOps account to auto-sync.
           </div>
         </div>
+      )}
+
+      {/* Reschedule modal */}
+      {rescheduleTarget && profile && (
+        <RescheduleServiceModal
+          isOpen={!!rescheduleTarget}
+          onClose={handleRescheduleClose}
+          locationId={effectiveLocationId || ''}
+          organizationId={profile.organization_id}
+          serviceTypeCode={rescheduleTarget.code}
+          serviceName={rescheduleTarget.name}
+          currentDueDate={rescheduleTarget.dueDate}
+          scheduleId={rescheduleTarget.scheduleId}
+        />
       )}
     </div>
   );

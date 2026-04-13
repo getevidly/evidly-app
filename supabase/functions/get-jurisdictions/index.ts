@@ -13,6 +13,8 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 const ALLOWED_ORIGINS = [
   "https://getevidly.com",
   "https://www.getevidly.com",
+  "https://app.gethoodops.com",
+  "https://hoodops-staging.vercel.app",
   "http://localhost:5173",
   "http://localhost:3000",
 ];

@@ -40,7 +40,7 @@ export function JobBlock({ job, compact, onClick }: JobBlockProps) {
     <div
       ref={setNodeRef}
       style={{ ...style, background: colors.bg, borderColor: colors.border }}
-      className={`rounded-lg border px-2.5 py-2 cursor-pointer hover:shadow-sm transition-shadow ${compact ? 'text-[10px]' : 'text-xs'}`}
+      className={`rounded-xl border px-2.5 py-2 cursor-pointer transition-shadow ${compact ? 'text-xs' : 'text-xs'}`}
       onClick={() => onClick?.(job)}
       {...attributes}
       {...listeners}
@@ -87,12 +87,12 @@ export function JobBlock({ job, compact, onClick }: JobBlockProps) {
       {/* Priority indicator */}
       {job.priority === 'urgent' && (
         <div className="mt-1">
-          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-red-100 text-red-700">URGENT</span>
+          <span className="text-[11px] font-bold px-1.5 py-0.5 rounded bg-red-50 text-red-700">URGENT</span>
         </div>
       )}
       {job.priority === 'high' && (
         <div className="mt-1">
-          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-orange-100 text-orange-700">HIGH</span>
+          <span className="text-[11px] font-bold px-1.5 py-0.5 rounded bg-orange-100 text-orange-700">HIGH</span>
         </div>
       )}
     </div>

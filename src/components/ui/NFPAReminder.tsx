@@ -102,7 +102,7 @@ export const NFPAReminder: React.FC = () => {
     }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '10px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '16px' }}>&#x1F525;</span>
+          <span className="text-base">&#x1F525;</span>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <p style={{ color: 'var(--text-primary)', fontSize: '13px', fontWeight: 700, margin: 0, fontFamily: 'system-ui' }}>{reminder.title}</p>

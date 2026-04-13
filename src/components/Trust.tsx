@@ -6,7 +6,7 @@ export default function Trust() {
   ];
 
   return (
-    <section className="py-12 sm:py-20 px-4 sm:px-6 bg-[var(--color-gray-50)]">
+    <section className="py-12 sm:py-20 px-4 sm:px-6 bg-[#FAF7F0]">
       <div className="max-w-[1000px] mx-auto text-center">
         <h2 className="font-['Outfit'] text-[2rem] font-bold text-[var(--color-blue)] mb-4">
           Built by operators, for operators

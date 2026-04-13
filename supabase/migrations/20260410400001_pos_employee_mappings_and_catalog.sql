@@ -30,7 +30,7 @@ CREATE POLICY "pos_employees_org_access" ON pos_employee_mappings
     EXISTS (
       SELECT 1 FROM user_profiles
       WHERE user_profiles.id = auth.uid()
-        AND user_profiles.org_id = pos_employee_mappings.organization_id
+        AND user_profiles.organization_id = pos_employee_mappings.organization_id
         AND user_profiles.role IN ('platform_admin', 'owner_operator', 'executive')
     )
   );
@@ -39,14 +39,17 @@ CREATE INDEX idx_pos_employee_org ON pos_employee_mappings(organization_id);
 CREATE INDEX idx_pos_employee_conn ON pos_employee_mappings(pos_connection_id);
 
 -- ── 2. Add missing POS systems to integrations catalog ──────────
--- Toast, Square, Clover, Aloha already seeded. Add: Lightspeed, Revel, SpotOn, Heartland.
-
-INSERT INTO integrations (name, slug, description, category, status, is_featured) VALUES
-  ('Lightspeed Restaurant', 'lightspeed-pos', 'Lightspeed Restaurant POS for menu management, table service, and reporting.',          'pos', 'available',   false),
-  ('Revel Systems',         'revel-pos',      'Revel iPad POS with employee management, inventory, and multi-location support.',       'pos', 'available',   false),
-  ('SpotOn',                'spoton-pos',     'SpotOn restaurant POS with online ordering, reservations, and loyalty integration.',     'pos', 'available',   false),
-  ('Heartland',             'heartland-pos',  'Heartland payment and POS solutions for restaurants and hospitality.',                   'pos', 'coming_soon', false)
-ON CONFLICT (slug) DO NOTHING;
+-- Only if the integrations table has the expected schema
+DO $$ BEGIN
+IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'integrations' AND column_name = 'category') THEN
+  INSERT INTO integrations (name, slug, description, category, status, is_featured) VALUES
+    ('Lightspeed Restaurant', 'lightspeed-pos', 'Lightspeed Restaurant POS for menu management, table service, and reporting.',          'pos', 'available',   false),
+    ('Revel Systems',         'revel-pos',      'Revel iPad POS with employee management, inventory, and multi-location support.',       'pos', 'available',   false),
+    ('SpotOn',                'spoton-pos',     'SpotOn restaurant POS with online ordering, reservations, and loyalty integration.',     'pos', 'available',   false),
+    ('Heartland',             'heartland-pos',  'Heartland payment and POS solutions for restaurants and hospitality.',                   'pos', 'coming_soon', false)
+  ON CONFLICT (slug) DO NOTHING;
+END IF;
+END $$;
 
 -- ── 3. Nightly POS sync cron (2am daily) ────────────────────────
 -- Requires pg_cron and pg_net extensions (enabled in Supabase by default).

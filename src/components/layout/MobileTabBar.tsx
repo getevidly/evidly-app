@@ -177,19 +177,19 @@ export function MobileTabBar() {
           }`}
           style={{ maxHeight: '70vh' }}
         >
-          <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-[#1e4d6b]">More Options</h3>
+          <div className="p-4 border-b border-[#1E2D4D]/10 flex items-center justify-between">
+            <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">More Options</h3>
             <button
               onClick={() => setShowMoreMenu(false)}
-              className="p-2 hover:bg-gray-100 rounded-full min-h-[44px] min-w-[44px] flex items-center justify-center"
+              className="p-2 hover:bg-[#1E2D4D]/5 rounded-full min-h-[44px] min-w-[44px] flex items-center justify-center"
             >
-              <X className="h-6 w-6 text-gray-500" />
+              <X className="h-6 w-6 text-[#1E2D4D]/50" />
             </button>
           </div>
           <div className="p-4 overflow-y-auto" style={{ maxHeight: 'calc(70vh - 140px)' }}>
             {moreSections.map((sec) => (
               <div key={sec.id} className="mb-4">
-                <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2 px-1">
+                <p className="text-xs font-semibold text-[#1E2D4D]/30 uppercase tracking-wider mb-2 px-1">
                   {sec.label}
                 </p>
                 <div className="grid grid-cols-3 gap-2">
@@ -201,16 +201,16 @@ export function MobileTabBar() {
                         key={item.id}
                         onClick={() => handleNavigation(item.path)}
                         className={`flex flex-col items-center justify-center p-3 rounded-lg min-h-[72px] transition-all duration-150 ${
-                          active ? 'bg-[#d4af37]/10' : 'hover:bg-gray-100'
+                          active ? 'bg-[#A08C5A]/10' : 'hover:bg-[#1E2D4D]/5'
                         }`}
-                        style={active ? { boxShadow: 'inset 0 -2px 0 #d4af37' } : undefined}
+                        style={active ? { boxShadow: 'inset 0 -2px 0 #A08C5A' } : undefined}
                       >
                         <Icon
-                          className={`h-5 w-5 mb-1.5 ${active ? 'text-[#d4af37]' : 'text-gray-400'}`}
+                          className={`h-5 w-5 mb-1.5 ${active ? 'text-[#A08C5A]' : 'text-[#1E2D4D]/30'}`}
                         />
                         <span
-                          className={`text-[10px] font-medium text-center leading-tight ${
-                            active ? 'text-[#d4af37]' : 'text-gray-500'
+                          className={`text-xs font-medium text-center leading-tight ${
+                            active ? 'text-[#A08C5A]' : 'text-[#1E2D4D]/50'
                           }`}
                         >
                           {item.label}
@@ -222,7 +222,7 @@ export function MobileTabBar() {
               </div>
             ))}
           </div>
-          <div className="p-4 border-t border-gray-200">
+          <div className="p-4 border-t border-[#1E2D4D]/10">
             <button
               onClick={handleSignOut}
               className="w-full flex items-center justify-center gap-2 py-3 text-red-600 font-medium rounded-lg hover:bg-red-50 transition-colors duration-150"
@@ -238,12 +238,12 @@ export function MobileTabBar() {
       {isVoiceRole && !isKeyboardOpen && (
         <div className="fixed bottom-[60px] left-1/2 -translate-x-1/2 z-50 lg:hidden flex flex-col items-center">
           <VoiceButton orgId={orgId} locationId={locationId} size="lg" />
-          <span className="text-[10px] text-[#A08C5A] mt-1 font-medium">Voice</span>
+          <span className="text-xs text-[#A08C5A] mt-1 font-medium">Voice</span>
         </div>
       )}
 
       {/* Bottom tab bar — visible below lg (1024px), hidden when keyboard is open */}
-      <nav className={`fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40 lg:hidden h-14 safe-area-bottom ${isKeyboardOpen ? 'hidden' : ''}`}>
+      <nav className={`fixed bottom-0 left-0 right-0 bg-white border-t border-[#1E2D4D]/10 z-40 lg:hidden h-14 safe-area-bottom ${isKeyboardOpen ? 'hidden' : ''}`}>
         <div className="grid grid-cols-5 h-full">
           {mainTabs.map((tab) => {
             const Icon = tab.icon;
@@ -252,16 +252,16 @@ export function MobileTabBar() {
               <button
                 key={tab.path}
                 onClick={() => handleNavigation(tab.path)}
-                className={`flex flex-col items-center justify-center min-h-[44px] min-w-[44px] transition-colors duration-150 active:bg-gray-50 ${
-                  active ? 'bg-[#d4af37]/10' : ''
+                className={`flex flex-col items-center justify-center min-h-[44px] min-w-[44px] transition-colors duration-150 active:bg-[#FAF7F0] ${
+                  active ? 'bg-[#A08C5A]/10' : ''
                 }`}
-                style={active ? { boxShadow: 'inset 0 2px 0 #d4af37' } : undefined}
+                style={active ? { boxShadow: 'inset 0 2px 0 #A08C5A' } : undefined}
               >
                 <Icon
-                  className={`h-5 w-5 ${active ? 'text-[#d4af37]' : 'text-gray-400'}`}
+                  className={`h-5 w-5 ${active ? 'text-[#A08C5A]' : 'text-[#1E2D4D]/30'}`}
                 />
                 <span
-                  className={`text-[10px] mt-0.5 ${active ? 'text-[#d4af37] font-semibold' : 'text-gray-500'}`}
+                  className={`text-xs mt-0.5 ${active ? 'text-[#A08C5A] font-semibold' : 'text-[#1E2D4D]/50'}`}
                 >
                   {tab.label}
                 </span>
@@ -272,13 +272,13 @@ export function MobileTabBar() {
           {!isKitchen && (
             <button
               onClick={() => setShowMoreMenu(!showMoreMenu)}
-              className={`flex flex-col items-center justify-center min-h-[44px] min-w-[44px] transition-colors duration-150 active:bg-gray-50 ${
-                showMoreMenu ? 'bg-[#d4af37]/10' : ''
+              className={`flex flex-col items-center justify-center min-h-[44px] min-w-[44px] transition-colors duration-150 active:bg-[#FAF7F0] ${
+                showMoreMenu ? 'bg-[#A08C5A]/10' : ''
               }`}
-              style={showMoreMenu ? { boxShadow: 'inset 0 2px 0 #d4af37' } : undefined}
+              style={showMoreMenu ? { boxShadow: 'inset 0 2px 0 #A08C5A' } : undefined}
             >
-              <MoreHorizontal className={`h-5 w-5 ${showMoreMenu ? 'text-[#d4af37]' : 'text-gray-400'}`} />
-              <span className={`text-[10px] mt-0.5 ${showMoreMenu ? 'text-[#d4af37] font-semibold' : 'text-gray-500'}`}>More</span>
+              <MoreHorizontal className={`h-5 w-5 ${showMoreMenu ? 'text-[#A08C5A]' : 'text-[#1E2D4D]/30'}`} />
+              <span className={`text-xs mt-0.5 ${showMoreMenu ? 'text-[#A08C5A] font-semibold' : 'text-[#1E2D4D]/50'}`}>More</span>
             </button>
           )}
         </div>

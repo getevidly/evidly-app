@@ -200,6 +200,11 @@ const I: Record<string, NavItem> = {
     roles: [], description: 'Staff ranked by compliance task performance — checklists, temp logs, and corrective actions.',
     badge: 'NEW',
   },
+  operationsIntelligence: {
+    id: 'operations-intelligence', label: 'Ops Intelligence', path: '/insights/operations-intelligence', icon: '✨',
+    roles: [], description: 'Proactive insights from all your data sources — answers before you ask.',
+    badge: 'NEW',
+  },
   jurisdictionIntelligence: {
     id: 'jurisdiction-intelligence', label: 'Know Your Inspector', path: '/jurisdiction', icon: '⚖️',
     roles: [], description: "Your jurisdiction's scoring system, inspector priorities, and violation patterns.",
@@ -216,7 +221,7 @@ const I: Record<string, NavItem> = {
   },
   inspectorArrival: {
     id: 'inspector-arrival', label: 'Inspector Arrival Mode', path: '/inspector-view', icon: '🏛️',
-    roles: [], description: 'Instant access mode when an inspector arrives — surfaces documents, recent logs, and compliance status.',
+    roles: [], description: 'Instant access mode when an inspector arrives — shows documents, recent logs, and compliance status.',
   },
   iotSensors: {
     id: 'iot-sensors', label: 'Manage Sensors', path: '/sensors', icon: '📡',
@@ -516,6 +521,10 @@ const I: Record<string, NavItem> = {
     id: 'demo-launcher', label: 'Demo Launcher', path: '/admin/demo-launcher', icon: '🚀',
     roles: [], description: 'Pre-demo control panel: configure prospect, launch emotional trigger flows, fire demo signals.',
   },
+  partnerDemos: {
+    id: 'partner-demos', label: 'Partner Demos', path: '/admin/partner-demos', icon: '🤝',
+    roles: [], description: 'Create and manage partner demo environments for vendor, association, carrier, and integration partners.',
+  },
 
   // ── Growth ──
   adminTestimonials: {
@@ -571,7 +580,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('insights', 'Insights', '💡',
         'Insights', 'Artificial Intelligence advisor, analytics, compliance trends, audit logs, benchmarks, compliance intelligence, and Internet of Things.',
-        [I.aiInsights, I.copilotInsights, I.analytics, I.complianceTrends, I.auditLog, I.benchmarks, I.intelligence, I.clientIntelligence, I.clientReports, I.predictions, I.iotDashboard, I.inspectionForecast, I.violationRadar, I.complianceTrajectory, I.vendorPerformance, I.jurisdictionSignals, I.teamLeaderboard],
+        [I.aiInsights, I.copilotInsights, I.analytics, I.complianceTrends, I.auditLog, I.benchmarks, I.intelligence, I.clientIntelligence, I.clientReports, I.predictions, I.iotDashboard, I.inspectionForecast, I.violationRadar, I.complianceTrajectory, I.vendorPerformance, I.jurisdictionSignals, I.teamLeaderboard, I.operationsIntelligence],
         '/insights',
       ),
       section('tools', 'Tools', '🔧',
@@ -589,7 +598,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('administration', 'Administration', '⚙️',
         'Administration', 'Equipment, Internet of Things sensors, integrations, locations, settings, team, vendors, and role permissions.',
-        [I.equipment, I.fleet, I.insurance, I.bonuses, I.performanceMetrics, I.myAvailability, I.teamAvailability, I.availabilityApprovals, I.clockReminders, I.timecardAlterations, I.integrations, I.iotSensors, I.connectSensors, I.importData, I.locations, I.settings, I.rolesPermissions, I.team, I.timecards, I.employees, I.trainingRecords, I.trainingCatalog, I.vendors, I.vendorDocReview, I.emergencyInfo, I.demoLauncher, I.adminTestimonials],
+        [I.equipment, I.fleet, I.insurance, I.bonuses, I.performanceMetrics, I.myAvailability, I.teamAvailability, I.availabilityApprovals, I.clockReminders, I.timecardAlterations, I.integrations, I.iotSensors, I.connectSensors, I.importData, I.locations, I.settings, I.rolesPermissions, I.team, I.timecards, I.employees, I.trainingRecords, I.trainingCatalog, I.vendors, I.vendorDocReview, I.emergencyInfo, I.demoLauncher, I.partnerDemos, I.adminTestimonials],
         '/admin',
       ),
       // System section removed — admin tools accessed via AdminShell (/admin) outside demo mode.
@@ -647,7 +656,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('insights', 'Insights', '💡',
         'Insights', 'Artificial Intelligence-powered analysis and recommendations.',
-        [I.aiInsights, I.copilotInsights, I.inspectionForecast, I.violationRadar],
+        [I.aiInsights, I.copilotInsights, I.inspectionForecast, I.violationRadar, I.operationsIntelligence],
         '/insights',
       ),
       section('tools', 'Tools', '🔧',
@@ -697,7 +706,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('insights', 'Insights', '💡',
         'Insights', 'Artificial Intelligence-powered analysis, analytics, compliance trends, and recommendations.',
-        [I.aiInsights, I.copilotInsights, I.analytics, I.complianceTrends, I.predictions, I.inspectionForecast, I.violationRadar, I.complianceTrajectory, I.teamLeaderboard],
+        [I.aiInsights, I.copilotInsights, I.analytics, I.complianceTrends, I.predictions, I.inspectionForecast, I.violationRadar, I.complianceTrajectory, I.teamLeaderboard, I.operationsIntelligence],
         '/insights',
       ),
       section('tools', 'Tools', '🔧',
@@ -751,7 +760,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('insights', 'Insights', '💡',
         'Insights', 'Artificial Intelligence-powered analysis — audit logs, compliance intelligence, and Internet of Things monitoring.',
-        [I.aiInsights, I.copilotInsights, I.auditLog, I.intelligence, I.clientIntelligence, I.clientReports, I.predictions, I.iotDashboard, I.inspectionForecast, I.violationRadar, I.complianceTrajectory, I.vendorPerformance, I.jurisdictionSignals, I.teamLeaderboard],
+        [I.aiInsights, I.copilotInsights, I.auditLog, I.intelligence, I.clientIntelligence, I.clientReports, I.predictions, I.iotDashboard, I.inspectionForecast, I.violationRadar, I.complianceTrajectory, I.vendorPerformance, I.jurisdictionSignals, I.teamLeaderboard, I.operationsIntelligence],
         '/insights',
       ),
       section('tools', 'Tools', '🔧',
@@ -810,7 +819,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('insights', 'Insights', '💡',
         'Insights', 'Internet of Things sensor monitoring and vendor performance.',
-        [I.iotDashboard, I.inspectionForecast, I.vendorPerformance],
+        [I.iotDashboard, I.inspectionForecast, I.vendorPerformance, I.operationsIntelligence],
         '/insights',
       ),
       section('operations', 'Operations', '📦',
@@ -859,7 +868,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('insights', 'Insights', '💡',
         'Insights', 'Artificial Intelligence-powered analysis, analytics, compliance trends, audit logs, benchmarks, compliance intelligence, and Internet of Things monitoring.',
-        [I.aiInsights, I.copilotInsights, I.analytics, I.complianceTrends, I.auditLog, I.benchmarks, I.intelligence, I.clientIntelligence, I.clientReports, I.predictions, I.iotDashboard, I.inspectionForecast, I.violationRadar, I.complianceTrajectory, I.vendorPerformance, I.jurisdictionSignals, I.teamLeaderboard],
+        [I.aiInsights, I.copilotInsights, I.analytics, I.complianceTrends, I.auditLog, I.benchmarks, I.intelligence, I.clientIntelligence, I.clientReports, I.predictions, I.iotDashboard, I.inspectionForecast, I.violationRadar, I.complianceTrajectory, I.vendorPerformance, I.jurisdictionSignals, I.teamLeaderboard, I.operationsIntelligence],
         '/insights',
       ),
       section('tools', 'Tools', '🔧',
@@ -908,7 +917,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('insights', 'Insights', '💡',
         'Insights', 'Artificial Intelligence-powered analysis — analytics, compliance trends, audit logs, benchmarks, compliance intelligence, and Internet of Things monitoring.',
-        [I.aiInsights, I.copilotInsights, I.analytics, I.complianceTrends, I.auditLog, I.benchmarks, I.intelligence, I.clientIntelligence, I.clientReports, I.predictions, I.iotDashboard, I.inspectionForecast, I.violationRadar, I.complianceTrajectory, I.vendorPerformance, I.jurisdictionSignals, I.teamLeaderboard],
+        [I.aiInsights, I.copilotInsights, I.analytics, I.complianceTrends, I.auditLog, I.benchmarks, I.intelligence, I.clientIntelligence, I.clientReports, I.predictions, I.iotDashboard, I.inspectionForecast, I.violationRadar, I.complianceTrajectory, I.vendorPerformance, I.jurisdictionSignals, I.teamLeaderboard, I.operationsIntelligence],
         '/insights',
       ),
       section('compliance', 'Compliance', '📋',

@@ -41,8 +41,8 @@ export function EquipmentServiceHistory({ equipmentId }: EquipmentServiceHistory
       <div className="space-y-3">
         {Array.from({ length: 3 }).map((_, i) => (
           <div key={i} className="rounded-xl p-4 animate-pulse" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
-            <div className="h-4 w-48 bg-gray-200 rounded mb-2" />
-            <div className="h-3 w-32 bg-gray-200 rounded" />
+            <div className="h-4 w-48 bg-[#1E2D4D]/8 rounded mb-2" />
+            <div className="h-3 w-32 bg-[#1E2D4D]/8 rounded" />
           </div>
         ))}
       </div>
@@ -98,12 +98,12 @@ export function EquipmentServiceHistory({ equipmentId }: EquipmentServiceHistory
         <div className="flex items-center gap-2">
           <label className="text-xs font-medium" style={{ color: MUTED }}>From</label>
           <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)}
-            className="px-2 py-1.5 text-sm rounded-lg border" style={{ borderColor: CARD_BORDER, color: NAVY }} />
+            className="px-2 py-1.5 text-sm rounded-xl border" style={{ borderColor: CARD_BORDER, color: NAVY }} />
         </div>
         <div className="flex items-center gap-2">
           <label className="text-xs font-medium" style={{ color: MUTED }}>To</label>
           <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)}
-            className="px-2 py-1.5 text-sm rounded-lg border" style={{ borderColor: CARD_BORDER, color: NAVY }} />
+            className="px-2 py-1.5 text-sm rounded-xl border" style={{ borderColor: CARD_BORDER, color: NAVY }} />
         </div>
         <span className="text-xs" style={{ color: TEXT_TERTIARY }}>{filtered.length} record{filtered.length !== 1 ? 's' : ''}</span>
       </div>
@@ -123,7 +123,7 @@ export function EquipmentServiceHistory({ equipmentId }: EquipmentServiceHistory
                 {/* Timeline dot — color-coded by service type */}
                 {(() => {
                   const stCode = (record as any).serviceTypeCode as ServiceTypeCode;
-                  const stColor = stCode && SERVICE_TYPES[stCode] ? SERVICE_TYPES[stCode].color : '#1e4d6b';
+                  const stColor = stCode && SERVICE_TYPES[stCode] ? SERVICE_TYPES[stCode].color : '#1E2D4D';
                   return <div className="absolute left-3.5 top-4 w-3 h-3 rounded-full border-2" style={{ background: CARD_BG, borderColor: stColor }} />;
                 })()}
 
@@ -150,11 +150,11 @@ export function EquipmentServiceHistory({ equipmentId }: EquipmentServiceHistory
                     <div className="flex items-center gap-3">
                       {/* Condition change */}
                       <div className="flex items-center gap-1">
-                        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded capitalize" style={{ background: beforeStyle.bg, color: beforeStyle.text }}>
+                        <span className="text-xs font-semibold px-1.5 py-0.5 rounded capitalize" style={{ background: beforeStyle.bg, color: beforeStyle.text }}>
                           {record.conditionBefore}
                         </span>
                         <span className="text-xs" style={{ color: TEXT_TERTIARY }}>&rarr;</span>
-                        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded capitalize" style={{ background: afterStyle.bg, color: afterStyle.text }}>
+                        <span className="text-xs font-semibold px-1.5 py-0.5 rounded capitalize" style={{ background: afterStyle.bg, color: afterStyle.text }}>
                           {record.conditionAfter}
                         </span>
                       </div>
@@ -183,7 +183,7 @@ export function EquipmentServiceHistory({ equipmentId }: EquipmentServiceHistory
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center gap-1 text-xs hover:underline"
-                          style={{ color: '#1e4d6b' }}
+                          style={{ color: '#1E2D4D' }}
                         >
                           <ExternalLink className="w-3 h-3" /> View Certificate (from HoodOps)
                         </a>

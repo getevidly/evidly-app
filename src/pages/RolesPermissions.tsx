@@ -223,7 +223,7 @@ function RolesPermissionsInner() {
             <Shield className="w-5 h-5" style={{ color: '#A08C5A' }} />
           </div>
           <div>
-            <h1 className="text-2xl font-bold" style={{ color: '#1E2D4D' }}>
+            <h1 className="text-2xl font-bold tracking-tight" style={{ color: '#1E2D4D' }}>
               Role Permissions
             </h1>
             <p className="text-sm" style={{ color: '#6B7F96' }}>
@@ -247,7 +247,7 @@ function RolesPermissionsInner() {
               <button
                 type="button"
                 onClick={() => setRoleDropdownOpen(o => !o)}
-                className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg border transition-colors hover:bg-gray-50 min-w-[240px] justify-between"
+                className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-xl border transition-colors hover:bg-[#FAF7F0] min-w-[240px] justify-between"
                 style={{ borderColor: 'var(--border)', color: '#1E2D4D' }}
               >
                 <span>{formatRoleName(selectedRole)}</span>
@@ -258,7 +258,7 @@ function RolesPermissionsInner() {
                 <>
                   <div className="fixed inset-0 z-10" onClick={() => setRoleDropdownOpen(false)} />
                   <div
-                    className="absolute top-full left-0 mt-1 w-full rounded-lg border shadow-lg z-20 overflow-hidden"
+                    className="absolute top-full left-0 mt-1 w-full rounded-xl border shadow-lg z-20 overflow-hidden"
                     style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border)' }}
                   >
                     {MANAGEABLE_ROLES.map(role => (
@@ -269,14 +269,14 @@ function RolesPermissionsInner() {
                           setSelectedRole(role);
                           setRoleDropdownOpen(false);
                         }}
-                        className={`w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50 transition-colors flex items-center justify-between ${
+                        className={`w-full px-4 py-2.5 text-left text-sm hover:bg-[#FAF7F0] transition-colors flex items-center justify-between ${
                           role === selectedRole ? 'font-semibold' : ''
                         }`}
                         style={{ color: '#1E2D4D' }}
                       >
                         <span>{formatRoleName(role)}</span>
                         {role === selectedRole && (
-                          <span className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: 'rgba(30, 77, 107, 0.1)', color: '#1e4d6b' }}>
+                          <span className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: 'rgba(30, 77, 107, 0.1)', color: '#1E2D4D' }}>
                             Selected
                           </span>
                         )}
@@ -290,7 +290,7 @@ function RolesPermissionsInner() {
 
           <div className="flex items-center gap-3">
             <div
-              className="flex items-center gap-2 px-4 py-2.5 rounded-lg border"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl border"
               style={{ backgroundColor: 'var(--bg-panel, #EEF1F7)', borderColor: 'var(--border)' }}
             >
               <Info className="w-4 h-4" style={{ color: '#6B7F96' }} />
@@ -304,7 +304,7 @@ function RolesPermissionsInner() {
 
       {/* ── Permission Grid ──────────────────────────────────────── */}
       <div>
-        <h2 className="text-lg font-semibold mb-4" style={{ color: '#1E2D4D' }}>
+        <h2 className="text-lg font-semibold tracking-tight mb-4" style={{ color: '#1E2D4D' }}>
           Role Default Permissions
         </h2>
         <p className="text-sm mb-5" style={{ color: '#6B7F96' }}>
@@ -342,7 +342,7 @@ function RolesPermissionsInner() {
           style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border)' }}
         >
           <div className="px-6 py-4 border-b" style={{ borderColor: 'var(--border)' }}>
-            <h3 className="text-lg font-semibold" style={{ color: '#1E2D4D' }}>
+            <h3 className="text-lg font-semibold tracking-tight" style={{ color: '#1E2D4D' }}>
               Recent Permission Changes
             </h3>
           </div>

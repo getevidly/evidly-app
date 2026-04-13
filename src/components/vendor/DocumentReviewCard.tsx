@@ -78,11 +78,11 @@ export function DocumentReviewCard({ document: doc, vendorName, onAccept, onFlag
                 <h4 className="text-sm font-semibold" style={{ color: NAVY }}>
                   {doc.document_type}
                 </h4>
-                <span className="text-xs text-gray-500">— {vendorName}</span>
+                <span className="text-xs text-[#1E2D4D]/50">— {vendorName}</span>
                 {doc.version > 1 && (
                   <button
                     onClick={() => setShowVersionHistory(!showVersionHistory)}
-                    className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-bold transition-colors hover:bg-gray-100"
+                    className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-xs font-bold transition-colors hover:bg-[#1E2D4D]/5"
                     style={{ backgroundColor: '#F3F4F6', color: '#6B7280' }}
                   >
                     v{doc.version}
@@ -91,7 +91,7 @@ export function DocumentReviewCard({ document: doc, vendorName, onAccept, onFlag
                 )}
               </div>
               {/* Metadata row */}
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-xs text-gray-500">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-xs text-[#1E2D4D]/50">
                 <span className="flex items-center gap-1">
                   <Clock size={11} />
                   {timeAgo(doc.created_at)}
@@ -121,7 +121,7 @@ export function DocumentReviewCard({ document: doc, vendorName, onAccept, onFlag
         {/* Vendor notes */}
         {doc.vendor_notes && (
           <div className="mt-3 ml-[52px] px-3 py-2 rounded-md text-xs" style={{ backgroundColor: '#F9FAFB', color: '#4B5563' }}>
-            <span className="font-medium text-gray-600">Vendor Notes: </span>
+            <span className="font-medium text-[#1E2D4D]/70">Vendor Notes: </span>
             {doc.vendor_notes}
           </div>
         )}
@@ -139,7 +139,7 @@ export function DocumentReviewCard({ document: doc, vendorName, onAccept, onFlag
             <button
               onClick={() => onAccept(doc.id)}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold text-white transition-colors hover:opacity-90"
-              style={{ backgroundColor: '#1e4d6b' }}
+              style={{ backgroundColor: '#1E2D4D' }}
             >
               <Check size={14} />
               Accept & File
@@ -157,7 +157,7 @@ export function DocumentReviewCard({ document: doc, vendorName, onAccept, onFlag
 
         {/* Review info for accepted/flagged */}
         {(doc.status === 'accepted' || doc.status === 'flagged') && doc.reviewed_at && (
-          <div className="mt-3 ml-[52px] text-xs text-gray-500">
+          <div className="mt-3 ml-[52px] text-xs text-[#1E2D4D]/50">
             {doc.status === 'accepted' ? 'Accepted' : 'Flagged'} {timeAgo(doc.reviewed_at)}
             {doc.review_notes && <span> — {doc.review_notes}</span>}
           </div>

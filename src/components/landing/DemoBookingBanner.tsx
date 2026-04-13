@@ -13,26 +13,26 @@ export default function DemoBookingBanner() {
 
   return (
     <div className="fixed z-[1030] w-[360px] max-w-[calc(100vw-2rem)] animate-slide-up" style={{ bottom: '148px', right: '20px', maxHeight: '70vh', overflowY: 'auto' }}>
-      <div className="bg-white rounded-xl shadow-xl border border-gray-200 p-4 relative">
+      <div className="bg-white rounded-xl shadow-xl border border-[#1E2D4D]/10 p-4 relative">
         <button
           onClick={dismiss}
-          className="absolute top-3 right-3 p-2.5 -m-1 text-gray-400 hover:text-gray-600 transition-colors bg-transparent border-none cursor-pointer"
+          className="absolute top-3 right-3 p-2.5 -m-1 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 transition-colors bg-transparent border-none cursor-pointer"
           aria-label="Dismiss"
         >
           <X className="w-4 h-4" />
         </button>
 
-        <h3 className="text-base font-bold mb-1 pr-6" style={{ color: '#1e4d6b' }}>
+        <h3 className="text-base font-bold mb-1 pr-6" style={{ color: '#1E2D4D' }}>
           Like what you see?
         </h3>
-        <p className="text-sm text-gray-600 mb-3">
+        <p className="text-sm text-[#1E2D4D]/70 mb-3">
           Book a 15-minute live walkthrough with Arthur, EvidLY's founder.
         </p>
         <div className="flex items-center gap-3">
           <CalendlyButton text="Book Walkthrough" variant="gold" />
           <button
             onClick={dismiss}
-            className="px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors bg-transparent border-none cursor-pointer"
+            className="px-3 py-2 text-sm font-medium text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80 transition-colors bg-transparent border-none cursor-pointer"
           >
             Maybe Later
           </button>

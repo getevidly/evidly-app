@@ -31,7 +31,7 @@ export function SelfDiagCard() {
       onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(160,140,90,.35)')}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-        <span style={{ fontSize: '28px' }}>{'🔧'}</span>
+        <span className="text-[28px]">{'🔧'}</span>
         <div>
           <p style={{
             color: 'var(--text-primary)', fontSize: '15px', fontWeight: 800,

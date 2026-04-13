@@ -61,7 +61,7 @@ UPDATE jurisdictions SET
   critical_threshold = NULL,
 
   fire_ahj_name = 'Modesto Fire Department (City of Modesto); CAL FIRE / Tuolumne-Calaveras Unit (unincorporated)',
-  fire_ahj_type = 'city_fd',
+  fire_ahj_type = 'municipal_fire',
   has_local_amendments = false,
   local_amendment_notes = 'No local amendments to CalCode grading. Standard CalCode enforcement only.',
 

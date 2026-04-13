@@ -62,10 +62,10 @@ export function RecurringScheduleModal({ technicians, onClose }: RecurringSchedu
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b sticky top-0 z-10" style={{ borderColor: CARD_BORDER, background: CARD_BG }}>
           <div className="flex items-center gap-2">
-            <RotateCcw className="w-4 h-4" style={{ color: '#1e4d6b' }} />
+            <RotateCcw className="w-4 h-4" style={{ color: '#1E2D4D' }} />
             <h2 className="text-base font-bold" style={{ color: NAVY }}>Recurring Schedule</h2>
           </div>
-          <button onClick={onClose} className="p-2.5 -m-1 rounded hover:bg-gray-100" aria-label="Close">
+          <button onClick={onClose} className="p-2.5 -m-1 rounded hover:bg-[#1E2D4D]/5" aria-label="Close">
             <X className="w-4 h-4" style={{ color: TEXT_TERTIARY }} />
           </button>
         </div>
@@ -80,7 +80,7 @@ export function RecurringScheduleModal({ technicians, onClose }: RecurringSchedu
               onChange={e => setCustomerName(e.target.value)}
               required
               placeholder="Enter customer name"
-              className="w-full px-3 py-2 text-sm rounded-lg border"
+              className="w-full px-3 py-2 text-sm rounded-xl border"
               style={{ borderColor: CARD_BORDER, color: NAVY }}
             />
           </div>
@@ -97,7 +97,7 @@ export function RecurringScheduleModal({ technicians, onClose }: RecurringSchedu
               onChange={e => setLocationName(e.target.value)}
               required
               placeholder="Enter location"
-              className="w-full px-3 py-2 text-sm rounded-lg border"
+              className="w-full px-3 py-2 text-sm rounded-xl border"
               style={{ borderColor: CARD_BORDER, color: NAVY }}
             />
           </div>
@@ -114,10 +114,10 @@ export function RecurringScheduleModal({ technicians, onClose }: RecurringSchedu
                   key={f.value}
                   type="button"
                   onClick={() => setFrequency(f.value)}
-                  className="px-2 py-2 text-xs font-semibold rounded-lg border transition-colors"
+                  className="px-2 py-2 text-xs font-semibold rounded-xl border transition-colors"
                   style={{
-                    borderColor: frequency === f.value ? '#1e4d6b' : CARD_BORDER,
-                    background: frequency === f.value ? '#1e4d6b' : 'white',
+                    borderColor: frequency === f.value ? '#1E2D4D' : CARD_BORDER,
+                    background: frequency === f.value ? '#1E2D4D' : 'white',
                     color: frequency === f.value ? 'white' : TEXT_TERTIARY,
                   }}
                 >
@@ -136,10 +136,10 @@ export function RecurringScheduleModal({ technicians, onClose }: RecurringSchedu
                   key={day}
                   type="button"
                   onClick={() => setPreferredDay(i)}
-                  className="flex-1 py-1.5 text-[10px] font-semibold rounded-lg border transition-colors"
+                  className="flex-1 py-1.5 text-xs font-semibold rounded-xl border transition-colors"
                   style={{
-                    borderColor: preferredDay === i ? '#1e4d6b' : CARD_BORDER,
-                    background: preferredDay === i ? '#1e4d6b' : 'white',
+                    borderColor: preferredDay === i ? '#1E2D4D' : CARD_BORDER,
+                    background: preferredDay === i ? '#1E2D4D' : 'white',
                     color: preferredDay === i ? 'white' : TEXT_TERTIARY,
                   }}
                 >
@@ -161,7 +161,7 @@ export function RecurringScheduleModal({ technicians, onClose }: RecurringSchedu
                 value={startTime}
                 onChange={e => setStartTime(e.target.value)}
                 required
-                className="w-full px-3 py-2 text-sm rounded-lg border"
+                className="w-full px-3 py-2 text-sm rounded-xl border"
                 style={{ borderColor: CARD_BORDER, color: NAVY }}
               />
             </div>
@@ -172,7 +172,7 @@ export function RecurringScheduleModal({ technicians, onClose }: RecurringSchedu
                 value={endTime}
                 onChange={e => setEndTime(e.target.value)}
                 required
-                className="w-full px-3 py-2 text-sm rounded-lg border"
+                className="w-full px-3 py-2 text-sm rounded-xl border"
                 style={{ borderColor: CARD_BORDER, color: NAVY }}
               />
             </div>
@@ -187,7 +187,7 @@ export function RecurringScheduleModal({ technicians, onClose }: RecurringSchedu
             <select
               value={techId}
               onChange={e => setTechId(e.target.value)}
-              className="w-full px-3 py-2 text-sm rounded-lg border"
+              className="w-full px-3 py-2 text-sm rounded-xl border"
               style={{ borderColor: CARD_BORDER, color: NAVY }}
             >
               <option value="">Auto-assign</option>
@@ -205,10 +205,10 @@ export function RecurringScheduleModal({ technicians, onClose }: RecurringSchedu
               value={serviceTypes}
               onChange={e => setServiceTypes(e.target.value)}
               placeholder="e.g. Hood Cleaning, Fan Hinge"
-              className="w-full px-3 py-2 text-sm rounded-lg border"
+              className="w-full px-3 py-2 text-sm rounded-xl border"
               style={{ borderColor: CARD_BORDER, color: NAVY }}
             />
-            <p className="text-[10px] mt-1" style={{ color: TEXT_TERTIARY }}>Comma-separated</p>
+            <p className="text-xs mt-1" style={{ color: TEXT_TERTIARY }}>Comma-separated</p>
           </div>
 
           {/* Date range */}
@@ -223,7 +223,7 @@ export function RecurringScheduleModal({ technicians, onClose }: RecurringSchedu
                 value={startDate}
                 onChange={e => setStartDate(e.target.value)}
                 required
-                className="w-full px-3 py-2 text-sm rounded-lg border"
+                className="w-full px-3 py-2 text-sm rounded-xl border"
                 style={{ borderColor: CARD_BORDER, color: NAVY }}
               />
             </div>
@@ -233,10 +233,10 @@ export function RecurringScheduleModal({ technicians, onClose }: RecurringSchedu
                 type="date"
                 value={endDate}
                 onChange={e => setEndDate(e.target.value)}
-                className="w-full px-3 py-2 text-sm rounded-lg border"
+                className="w-full px-3 py-2 text-sm rounded-xl border"
                 style={{ borderColor: CARD_BORDER, color: NAVY }}
               />
-              <p className="text-[10px] mt-1" style={{ color: TEXT_TERTIARY }}>Optional — leave blank for ongoing</p>
+              <p className="text-xs mt-1" style={{ color: TEXT_TERTIARY }}>Optional — leave blank for ongoing</p>
             </div>
           </div>
 
@@ -245,7 +245,7 @@ export function RecurringScheduleModal({ technicians, onClose }: RecurringSchedu
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-xs font-semibold rounded-lg border hover:bg-gray-50"
+              className="px-4 py-2 text-xs font-semibold rounded-xl border hover:bg-[#FAF7F0]"
               style={{ borderColor: CARD_BORDER, color: NAVY }}
             >
               Cancel
@@ -253,7 +253,7 @@ export function RecurringScheduleModal({ technicians, onClose }: RecurringSchedu
             <button
               type="submit"
               className="px-4 py-2 text-xs font-semibold rounded-lg text-white"
-              style={{ background: '#1e4d6b' }}
+              style={{ background: '#1E2D4D' }}
             >
               Create Schedule
             </button>

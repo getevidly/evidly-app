@@ -30,7 +30,7 @@ CREATE POLICY "api_keys_admin_all" ON public.api_keys
       SELECT 1 FROM public.user_profiles
       WHERE user_profiles.id = auth.uid()
         AND user_profiles.role IN ('platform_admin','owner_operator','executive')
-        AND user_profiles.org_id = api_keys.org_id
+        AND user_profiles.organization_id = api_keys.org_id
     )
   );
 
@@ -51,19 +51,24 @@ CREATE TABLE IF NOT EXISTS public.api_request_log (
 
 ALTER TABLE public.api_request_log ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "api_request_log_admin_read" ON public.api_request_log
-  FOR SELECT USING (
-    EXISTS (
-      SELECT 1 FROM public.api_keys ak
-      JOIN public.user_profiles up ON up.org_id = ak.org_id
-      WHERE ak.id = api_request_log.api_key_id
-        AND up.id = auth.uid()
-        AND up.role IN ('platform_admin','owner_operator','executive')
-    )
-  );
-
-CREATE INDEX idx_api_request_log_key ON public.api_request_log(api_key_id);
-CREATE INDEX idx_api_request_log_ts ON public.api_request_log(requested_at DESC);
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'api_request_log' AND column_name = 'api_key_id') THEN
+    CREATE POLICY "api_request_log_admin_read" ON public.api_request_log
+      FOR SELECT USING (
+        EXISTS (
+          SELECT 1 FROM public.api_keys ak
+          JOIN public.user_profiles up ON up.organization_id = ak.org_id
+          WHERE ak.id = api_request_log.api_key_id
+            AND up.id = auth.uid()
+            AND up.role IN ('platform_admin','owner_operator','executive')
+        )
+      );
+    CREATE INDEX IF NOT EXISTS idx_api_request_log_key ON public.api_request_log(api_key_id);
+  END IF;
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'api_request_log' AND column_name = 'requested_at') THEN
+    CREATE INDEX IF NOT EXISTS idx_api_request_log_ts ON public.api_request_log(requested_at DESC);
+  END IF;
+END $$;
 
 -- ── 3. integrations ─────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.integrations (
@@ -83,21 +88,30 @@ CREATE TABLE IF NOT EXISTS public.integrations (
 ALTER TABLE public.integrations ENABLE ROW LEVEL SECURITY;
 
 -- Everyone can read integrations (it's a catalog)
-CREATE POLICY "integrations_public_read" ON public.integrations
-  FOR SELECT USING (true);
+DO $$ BEGIN
+  CREATE POLICY "integrations_public_read" ON public.integrations FOR SELECT USING (true);
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- Only platform_admin can manage
-CREATE POLICY "integrations_admin_write" ON public.integrations
-  FOR ALL USING (
-    EXISTS (
-      SELECT 1 FROM public.user_profiles
-      WHERE user_profiles.id = auth.uid()
-        AND user_profiles.role = 'platform_admin'
-    )
-  );
+DO $$ BEGIN
+  CREATE POLICY "integrations_admin_write" ON public.integrations
+    FOR ALL USING (
+      EXISTS (
+        SELECT 1 FROM public.user_profiles
+        WHERE user_profiles.id = auth.uid()
+          AND user_profiles.role = 'platform_admin'
+      )
+    );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
-CREATE INDEX idx_integrations_category ON public.integrations(category);
-CREATE INDEX idx_integrations_status ON public.integrations(status);
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'integrations' AND column_name = 'category') THEN
+    CREATE INDEX IF NOT EXISTS idx_integrations_category ON public.integrations(category);
+  END IF;
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'integrations' AND column_name = 'status') THEN
+    CREATE INDEX IF NOT EXISTS idx_integrations_status ON public.integrations(status);
+  END IF;
+END $$;
 
 -- ── 4. integration_connections ──────────────────────────────
 CREATE TABLE IF NOT EXISTS public.integration_connections (
@@ -119,14 +133,17 @@ CREATE POLICY "integration_connections_org_access" ON public.integration_connect
     EXISTS (
       SELECT 1 FROM public.user_profiles
       WHERE user_profiles.id = auth.uid()
-        AND user_profiles.org_id = integration_connections.org_id
+        AND user_profiles.organization_id = integration_connections.org_id
         AND user_profiles.role IN ('platform_admin','owner_operator','executive')
     )
   );
 
 CREATE INDEX idx_integration_connections_org ON public.integration_connections(org_id);
 
--- ── 5. Seed 25 integrations ────────────────────────────────
+-- ── 5. Seed 25 integrations (only if category column exists) ──
+DO $$ BEGIN
+IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'integrations' AND column_name = 'category') THEN
+
 INSERT INTO public.integrations (name, slug, description, category, status, is_featured) VALUES
   -- POS Systems
   ('Toast POS',           'toast-pos',          'Real-time sales data, menu sync, and location management from Toast.',                       'pos',              'available',    true),
@@ -164,6 +181,9 @@ INSERT INTO public.integrations (name, slug, description, category, status, is_f
   -- Government & Regulatory
   ('CalRecycle SB 1383',  'calrecycle',          'Automated SB 1383 organic waste diversion reporting for California.',                       'government',       'beta',         false)
 ON CONFLICT (slug) DO NOTHING;
+
+END IF;
+END $$;
 
 -- ── 6. Seed 2 demo API keys (hashes are dummy SHA-256) ─────
 INSERT INTO public.api_keys (org_id, label, key_type, key_hash, key_preview, permissions, facility_scope, expires_at, request_count, last_used_at, is_active)

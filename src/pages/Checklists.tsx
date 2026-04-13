@@ -19,6 +19,7 @@ import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistB
 import { ErrorState, PageEmptyState } from '../components/shared/PageStates';
 import { getJurisdictionForLocation } from '../data/jurisdictionChecklistData';
 import { addPendingAction } from '../lib/offlineDb';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 interface ChecklistTemplate {
   id: string;
@@ -56,7 +57,7 @@ const AUTHORITY_LABELS: Record<string, { label: string; color: string; bg: strin
   nfpa_96: { label: 'NFPA 96', color: '#b91c1c', bg: '#fef2f2' },
   nfpa_10: { label: 'NFPA 10', color: '#b91c1c', bg: '#fef2f2' },
   cfc: { label: 'NFPA 96', color: '#c2410c', bg: '#fff7ed' },
-  evidly_best_practice: { label: 'Best Practice', color: '#1e4d6b', bg: '#eef4f8' },
+  evidly_best_practice: { label: 'Best Practice', color: '#1E2D4D', bg: '#eef4f8' },
 };
 
 interface ChecklistCompletion {
@@ -580,7 +581,7 @@ function HACCPSummaryCard({ isDemoMode }: { isDemoMode: boolean }) {
 
   return (
     <div
-      className="bg-white rounded-lg overflow-hidden"
+      className="bg-white rounded-xl overflow-hidden"
       style={{ border: '1px solid #e5e7eb' }}
     >
       {/* Header */}
@@ -589,12 +590,12 @@ function HACCPSummaryCard({ isDemoMode }: { isDemoMode: boolean }) {
         style={{ borderBottom: '1px solid #F0F0F0' }}
       >
         <div className="flex items-center gap-2">
-          <Shield size={16} style={{ color: '#1e4d6b' }} />
+          <Shield size={16} style={{ color: '#1E2D4D' }} />
           <h3 className="text-sm font-semibold" style={{ color: '#0B1628' }}>
             HACCP Control Points
           </h3>
         </div>
-        <span className="text-xs text-gray-500">Today, {todayStr.split(', ').slice(1).join(', ')}</span>
+        <span className="text-xs text-[#1E2D4D]/50">Today, {todayStr.split(', ').slice(1).join(', ')}</span>
       </div>
 
       {/* CCP rows */}
@@ -612,17 +613,17 @@ function HACCPSummaryCard({ isDemoMode }: { isDemoMode: boolean }) {
                   ? <AlertTriangle size={14} className="text-red-500 shrink-0" />
                   : <CheckCircle size={14} className="text-green-500 shrink-0" />
                 }
-                <span className={`text-[13px] ${isDev ? 'font-semibold text-red-700' : 'text-gray-800'}`}>
+                <span className={`text-sm ${isDev ? 'font-semibold text-red-700' : 'text-[#1E2D4D]/90'}`}>
                   {ccp.name}
                 </span>
               </div>
               <div className="flex items-center gap-3">
-                <span className="text-xs text-gray-500 w-16 text-right">{ccp.limit}</span>
+                <span className="text-xs text-[#1E2D4D]/50 w-16 text-right">{ccp.limit}</span>
                 <span className={`text-xs font-semibold w-20 text-right ${isDev ? 'text-red-600' : 'text-green-600'}`}>
                   {isDev ? 'DEVIATION' : 'IN LIMIT'}
                 </span>
                 {isDev && (
-                  <span className="text-[11px] text-gray-500 whitespace-nowrap">
+                  <span className="text-xs text-[#1E2D4D]/50 whitespace-nowrap">
                     {ccp.locationName && <>{ccp.locationName} · </>}
                     {ccp.deviationTime && <>{ccp.deviationTime} · </>}
                     {ccp.caCreated
@@ -657,7 +658,7 @@ function HACCPSummaryCard({ isDemoMode }: { isDemoMode: boolean }) {
           type="button"
           onClick={() => nav('/haccp')}
           className="text-xs font-semibold transition-colors hover:underline"
-          style={{ color: '#1e4d6b' }}
+          style={{ color: '#1E2D4D' }}
         >
           View &rarr;
         </button>
@@ -671,6 +672,7 @@ export function Checklists() {
   const { isDemoMode } = useDemo();
   const { t } = useTranslation();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  usePageTitle('Checklists');
   const [searchParams] = useSearchParams();
   const locationParam = searchParams.get('location') || '';
   // Enforcement emphasis data is demo-only; production operators get jurisdiction from DB
@@ -1361,19 +1363,19 @@ export function Checklists() {
       {item.authority_source && (() => {
         const auth = AUTHORITY_LABELS[item.authority_source!];
         return auth ? (
-          <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded"
+          <span className="text-xs font-semibold px-1.5 py-0.5 rounded"
             style={{ color: auth.color, backgroundColor: auth.bg }}>
             {auth.label}{item.authority_section ? ` ${item.authority_section}` : ''}
           </span>
         ) : null;
       })()}
       {item.haccp_ccp && (
-        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-amber-100 text-amber-800">
+        <span className="text-xs font-semibold px-1.5 py-0.5 rounded bg-amber-100 text-amber-800">
           {item.haccp_ccp}
         </span>
       )}
       {item.is_critical && (
-        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-red-100 text-red-700">Critical</span>
+        <span className="text-xs font-semibold px-1.5 py-0.5 rounded bg-red-50 text-red-700">Critical</span>
       )}
     </span>
   );
@@ -1392,16 +1394,16 @@ export function Checklists() {
                 onChange={(e) =>
                   handleItemResponse(item.id, e.target.checked ? 'checked' : 'unchecked', e.target.checked, '')
                 }
-                className="h-7 w-7 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded"
+                className="h-7 w-7 text-[#A08C5A] focus:ring-[#A08C5A] border-[#1E2D4D]/15 rounded"
               />
-              <span className="text-lg text-gray-900">
+              <span className="text-lg text-[#1E2D4D]">
                 {checklistItemMap[item.title] || item.title}
                 {renderAuthBadges(item)}
               </span>
               {item.is_required && <span className="text-red-600">*</span>}
             </label>
             {item.authority_note && (
-              <p className="text-xs text-gray-400 mt-1 ml-9">{item.authority_note}</p>
+              <p className="text-xs text-[#1E2D4D]/30 mt-1 ml-9">{item.authority_note}</p>
             )}
             <div className="mt-2">
               <PhotoButton
@@ -1415,13 +1417,13 @@ export function Checklists() {
       case 'yes_no':
         return (
           <div>
-            <p className="text-lg text-gray-900 mb-1">
+            <p className="text-lg text-[#1E2D4D] mb-1">
               {checklistItemMap[item.title] || item.title}
               {renderAuthBadges(item)}
               {item.is_required && <span className="text-red-600 ml-1">*</span>}
             </p>
             {item.authority_note && (
-              <p className="text-xs text-gray-400 mb-3">{item.authority_note}</p>
+              <p className="text-xs text-[#1E2D4D]/30 mb-3">{item.authority_note}</p>
             )}
             <div className="flex space-x-4">
               <button
@@ -1430,7 +1432,7 @@ export function Checklists() {
                 className={`flex-1 px-6 py-4 rounded-lg font-medium transition-all ${
                   response?.response_value === 'yes'
                     ? 'bg-green-500 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/10'
                 }`}
               >
                 {t('common.yes')}
@@ -1441,7 +1443,7 @@ export function Checklists() {
                 className={`flex-1 px-6 py-4 rounded-lg font-medium transition-all ${
                   response?.response_value === 'no'
                     ? 'bg-red-500 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/10'
                 }`}
               >
                 {t('common.no')}
@@ -1450,7 +1452,7 @@ export function Checklists() {
             {response?.response_value === 'no' && (
               <div className="mt-3">
                 <div className="flex items-center justify-between mb-2">
-                  <label className="text-sm font-medium text-gray-700">{t('common.correctiveActionRequired')}</label>
+                  <label className="text-sm font-medium text-[#1E2D4D]/80">{t('common.correctiveActionRequired')}</label>
                   <AIAssistButton
                     fieldLabel="Corrective Action"
                     context={{ itemName: checklistItemMap[item.title] || item.title, checklistName: selectedTemplate?.name || '', jurisdictionName: jurisdictionConfig?.ehdName, enforcementNote: jurisdictionConfig?.aiContextNote, codeSection: item.authority_section }}
@@ -1465,7 +1467,7 @@ export function Checklists() {
                     setAiFields(prev => { const s = new Set(prev); s.delete(`corrective_${item.id}`); return s; });
                   }}
                   rows={2}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                   placeholder="Describe the corrective action..."
                 />
                 {aiFields.has(`corrective_${item.id}`) && <AIGeneratedIndicator />}
@@ -1485,20 +1487,20 @@ export function Checklists() {
       case 'temperature':
         return (
           <div>
-            <label className="block text-lg text-gray-900 mb-1">
+            <label className="block text-lg text-[#1E2D4D] mb-1">
               {checklistItemMap[item.title] || item.title}
               {renderAuthBadges(item)}
               {item.is_required && <span className="text-red-600 ml-1">*</span>}
             </label>
             {item.authority_note && (
-              <p className="text-xs text-gray-400 mb-3">{item.authority_note}</p>
+              <p className="text-xs text-[#1E2D4D]/30 mb-3">{item.authority_note}</p>
             )}
             <input
               type="number"
               step="0.1"
               value={response?.response_value || ''}
               onChange={(e) => handleItemResponse(item.id, e.target.value, null, '')}
-              className="w-full px-4 py-3 text-2xl font-bold border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+              className="w-full px-4 py-3 text-2xl font-bold tracking-tight border-2 border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
               placeholder="00.0°F"
             />
             {/* Pass/Fail feedback for temperature items */}
@@ -1535,7 +1537,7 @@ export function Checklists() {
                     setAiFields(prev => { const s = new Set(prev); s.delete(`ccp_corrective_${item.id}`); return s; });
                   }}
                   rows={2}
-                  className="w-full px-3 py-2 border border-red-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-400 text-sm"
+                  className="w-full px-3 py-2 border border-red-300 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-red-400 text-sm"
                   placeholder="Describe corrective action taken..."
                 />
                 {aiFields.has(`ccp_corrective_${item.id}`) && <AIGeneratedIndicator />}
@@ -1555,19 +1557,19 @@ export function Checklists() {
       case 'text_input':
         return (
           <div>
-            <label className="block text-lg text-gray-900 mb-1">
+            <label className="block text-lg text-[#1E2D4D] mb-1">
               {checklistItemMap[item.title] || item.title}
               {renderAuthBadges(item)}
               {item.is_required && <span className="text-red-600 ml-1">*</span>}
             </label>
             {item.authority_note && (
-              <p className="text-xs text-gray-400 mb-3">{item.authority_note}</p>
+              <p className="text-xs text-[#1E2D4D]/30 mb-3">{item.authority_note}</p>
             )}
             <input
               type="text"
               value={response?.response_value || ''}
               onChange={(e) => handleItemResponse(item.id, e.target.value, null, '')}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+              className="w-full px-4 py-3 border-2 border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
               placeholder="Enter your response..."
             />
             <div className="mt-2">
@@ -1582,13 +1584,13 @@ export function Checklists() {
       case 'photo':
         return (
           <div>
-            <p className="text-lg text-gray-900 mb-1">
+            <p className="text-lg text-[#1E2D4D] mb-1">
               {checklistItemMap[item.title] || item.title}
               {renderAuthBadges(item)}
               {item.is_required && <span className="text-red-600 ml-1">*</span>}
             </p>
             {item.authority_note && (
-              <p className="text-xs text-gray-400 mb-3">{item.authority_note}</p>
+              <p className="text-xs text-[#1E2D4D]/30 mb-3">{item.authority_note}</p>
             )}
             <PhotoButton
               photos={itemPhotos[item.id] || []}
@@ -1632,19 +1634,19 @@ export function Checklists() {
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: t('checklists.title') }]} />
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{t('checklists.title')}</h1>
-          <p className="text-sm text-gray-600 mt-1">{t('checklists.subtitle')}</p>
+          <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">{t('checklists.title')}</h1>
+          <p className="text-sm text-[#1E2D4D]/70 mt-1">{t('checklists.subtitle')}</p>
         </div>
 
         {/* Jurisdiction Header */}
         {jurisdictionConfig && (
           <div className="flex items-start gap-3 px-4 py-3 rounded-lg bg-[#eef4f8] border border-[#b8d4e8]">
-            <Building2 size={18} className="text-[#1e4d6b] mt-0.5 shrink-0" />
+            <Building2 size={18} className="text-[#1E2D4D] mt-0.5 shrink-0" />
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                <span className="text-sm font-semibold text-[#1e4d6b]">{jurisdictionConfig.ehdName}</span>
-                <span className="text-xs text-gray-400">·</span>
-                <span className="text-xs text-gray-600">{jurisdictionConfig.foodCodeVersion}</span>
+                <span className="text-sm font-semibold text-[#1E2D4D]">{jurisdictionConfig.ehdName}</span>
+                <span className="text-xs text-[#1E2D4D]/30">·</span>
+                <span className="text-xs text-[#1E2D4D]/70">{jurisdictionConfig.foodCodeVersion}</span>
               </div>
               <div className="flex flex-wrap gap-1.5 mt-1.5">
                 {jurisdictionConfig.enforcementFocus
@@ -1652,7 +1654,7 @@ export function Checklists() {
                   .map(f => (
                     <span
                       key={f.codeSection}
-                      className="text-[10px] font-semibold px-1.5 py-0.5 rounded"
+                      className="text-xs font-semibold px-1.5 py-0.5 rounded"
                       style={{ color: '#0369a1', backgroundColor: '#e0f2fe' }}
                     >
                       {f.description} ({f.codeSection})
@@ -1664,13 +1666,13 @@ export function Checklists() {
         )}
 
         {/* View Tabs */}
-        <div className="flex space-x-2 border-b border-gray-200 overflow-x-auto">
+        <div className="flex space-x-2 border-b border-[#1E2D4D]/10 overflow-x-auto">
           <button
             onClick={() => setActiveView('today')}
             className={`px-4 py-2 font-medium whitespace-nowrap ${
               activeView === 'today'
-                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
+                : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
             }`}
           >
             {t('checklists.todaysChecklists')}
@@ -1679,8 +1681,8 @@ export function Checklists() {
             onClick={() => setActiveView('templates')}
             className={`px-4 py-2 font-medium whitespace-nowrap ${
               activeView === 'templates'
-                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
+                : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
             }`}
           >
             {t('checklists.templates')}
@@ -1689,8 +1691,8 @@ export function Checklists() {
             onClick={() => setActiveView('history')}
             className={`px-4 py-2 font-medium whitespace-nowrap ${
               activeView === 'history'
-                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
+                : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
             }`}
           >
             History
@@ -1704,10 +1706,10 @@ export function Checklists() {
             {ccpMappingResults.length > 0 && (
               <div className="bg-[#eef4f8] border border-[#b8d4e8] rounded-xl p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-sm font-bold text-[#1e4d6b] flex items-center gap-1.5">
+                  <h3 className="text-sm font-bold text-[#1E2D4D] flex items-center gap-1.5">
                     <EvidlyIcon size={14} /> HACCP Logs Auto-Populated
                   </h3>
-                  <button onClick={() => setCcpMappingResults([])} className="text-gray-400 hover:text-gray-600"><X size={16} /></button>
+                  <button onClick={() => setCcpMappingResults([])} className="text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70"><X size={16} /></button>
                 </div>
                 <div className="space-y-1">
                   {ccpMappingResults.map((r, i) => (
@@ -1715,10 +1717,10 @@ export function Checklists() {
                       {r.pass
                         ? <CheckCircle size={14} className="text-green-600 shrink-0" />
                         : <AlertTriangle size={14} className="text-red-600 shrink-0" />}
-                      <span className="font-semibold text-[#1e4d6b]">{r.ccp}</span>
-                      <span className="text-gray-600">
+                      <span className="font-semibold text-[#1E2D4D]">{r.ccp}</span>
+                      <span className="text-[#1E2D4D]/70">
                         {r.value}°F — {r.pass ? 'Within limit' : <span className="text-red-600 font-semibold">OUT OF LIMIT</span>}
-                        {r.limit && <span className="text-gray-400 ml-1">({r.limit})</span>}
+                        {r.limit && <span className="text-[#1E2D4D]/30 ml-1">({r.limit})</span>}
                       </span>
                     </div>
                   ))}
@@ -1727,8 +1729,8 @@ export function Checklists() {
             )}
 
             <div className="flex justify-between items-center flex-wrap gap-2">
-              <h2 className="text-xl font-bold text-gray-900">{t('checklists.todaysChecklists')}</h2>
-              <span className="text-sm text-gray-500">{format(new Date(), 'EEEE, MMMM d, yyyy')}</span>
+              <h2 className="text-xl font-bold text-[#1E2D4D]">{t('checklists.todaysChecklists')}</h2>
+              <span className="text-sm text-[#1E2D4D]/50">{format(new Date(), 'EEEE, MMMM d, yyyy')}</span>
             </div>
 
             {todayChecklists.length === 0 && (
@@ -1744,15 +1746,15 @@ export function Checklists() {
                 const pct = cl.total > 0 ? Math.round((cl.completed / cl.total) * 100) : 0;
                 const statusColor = cl.status === 'complete' ? 'green' : cl.status === 'in_progress' ? 'yellow' : 'gray';
                 const statusLabel = cl.status === 'complete' ? t('common.completed') : cl.status === 'in_progress' ? t('common.inProgress') : t('common.notStarted');
-                const statusBg = cl.status === 'complete' ? 'bg-green-100 text-green-800' : cl.status === 'in_progress' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-600';
+                const statusBg = cl.status === 'complete' ? 'bg-emerald-50 text-emerald-700' : cl.status === 'in_progress' ? 'bg-amber-50 text-amber-700' : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/70';
                 const barColor = cl.status === 'complete' ? '#22c55e' : cl.status === 'in_progress' ? '#eab308' : '#d1d5db';
-                const iconBg = cl.status === 'complete' ? 'bg-green-100' : cl.status === 'in_progress' ? 'bg-yellow-100' : 'bg-gray-100';
-                const iconColor = cl.status === 'complete' ? 'text-green-600' : cl.status === 'in_progress' ? 'text-yellow-600' : 'text-gray-400';
+                const iconBg = cl.status === 'complete' ? 'bg-green-100' : cl.status === 'in_progress' ? 'bg-yellow-100' : 'bg-[#1E2D4D]/5';
+                const iconColor = cl.status === 'complete' ? 'text-green-600' : cl.status === 'in_progress' ? 'text-yellow-600' : 'text-[#1E2D4D]/30';
 
                 return (
                   <div
                     key={cl.id}
-                    className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 cursor-pointer transition-all hover:shadow-md hover:border-gray-300"
+                    className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 cursor-pointer transition-all hover:shadow-md hover:border-[#1E2D4D]/15"
                     onClick={() => {
                       // Find a matching template from user templates or demo items map
                       const match = templates.find(t => t.name === cl.name);
@@ -1775,23 +1777,23 @@ export function Checklists() {
                           {cl.status === 'complete' ? <Check className={`h-6 w-6 ${iconColor}`} /> : <CheckSquare className={`h-6 w-6 ${iconColor}`} />}
                         </div>
                         <div>
-                          <h3 className="text-lg font-semibold text-gray-900">{templateNameMap[cl.name] || cl.name}</h3>
-                          <p className="text-sm text-gray-500">{cl.location}</p>
+                          <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">{templateNameMap[cl.name] || cl.name}</h3>
+                          <p className="text-sm text-[#1E2D4D]/50">{cl.location}</p>
                         </div>
                       </div>
                     </div>
 
                     <div className="mb-3">
                       <div className="flex justify-between text-sm mb-1">
-                        <span className="text-gray-600">{cl.completed}/{cl.total} {t('common.items')}</span>
+                        <span className="text-[#1E2D4D]/70">{cl.completed}/{cl.total} {t('common.items')}</span>
                         <span className="font-semibold" style={{ color: barColor }}>{pct}%</span>
                       </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2.5">
+                      <div className="w-full bg-[#1E2D4D]/8 rounded-full h-2.5">
                         <div className="h-2.5 rounded-full transition-all" style={{ width: `${pct}%`, backgroundColor: barColor }} />
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between text-sm text-gray-600 mb-4">
+                    <div className="flex items-center justify-between text-sm text-[#1E2D4D]/70 mb-4">
                       <div className="flex items-center space-x-1">
                         <User className="h-4 w-4" />
                         <span>{cl.assignee}</span>
@@ -1808,7 +1810,7 @@ export function Checklists() {
                       <div className="flex items-center gap-2">
                         <span className={`px-3 py-1 text-xs font-semibold rounded-full ${statusBg}`}>{statusLabel}</span>
                         {cl.status === 'complete' && (
-                          <span className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-600">
+                          <span className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full bg-[#1E2D4D]/5 text-[#1E2D4D]/70">
                             <Camera className="h-3 w-3" />
                             {cl.completed > 3 ? 3 : 2} {t('common.photos')}
                           </span>
@@ -1830,7 +1832,7 @@ export function Checklists() {
                               }
                             }
                           }}
-                          className="px-4 py-2 bg-[#1e4d6b] text-white text-sm rounded-lg hover:bg-[#163a52] transition-colors font-medium"
+                          className="px-4 py-2 bg-[#1E2D4D] text-white text-sm rounded-lg hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] font-medium"
                         >
                           {cl.status === 'in_progress' ? t('common.continue') : t('common.start')}
                         </button>
@@ -1847,10 +1849,10 @@ export function Checklists() {
         {activeView === 'templates' && (
           <div className="space-y-6">
             <div className="flex justify-between items-center flex-wrap gap-2">
-              <h2 className="text-xl font-bold text-gray-900">{t('checklists.checklistTemplates')}</h2>
+              <h2 className="text-xl font-bold text-[#1E2D4D]">{t('checklists.checklistTemplates')}</h2>
               <button
                 onClick={() => setShowTemplateModal(true)}
-                className="flex items-center space-x-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors font-medium shadow-sm"
+                className="flex items-center space-x-2 px-4 py-2 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] font-medium shadow-sm"
               >
                 <Plus className="h-5 w-5" />
                 <span>{t('checklists.newTemplate')}</span>
@@ -1859,20 +1861,20 @@ export function Checklists() {
 
             {TEMPLATE_CATEGORIES.map((cat) => (
               <div key={cat.category}>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center space-x-2">
-                  <CheckSquare className="h-5 w-5 text-[#1e4d6b]" />
+                <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-4 flex items-center space-x-2">
+                  <CheckSquare className="h-5 w-5 text-[#1E2D4D]" />
                   <span>{categoryMap[cat.category] || cat.category}</span>
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {cat.templates.map((tmpl) => {
-                    const roleBg = tmpl.role === 'Manager' ? 'bg-purple-100 text-purple-700' : tmpl.role === 'Facilities' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700';
+                    const roleBg = tmpl.role === 'Manager' ? 'bg-purple-100 text-purple-700' : tmpl.role === 'Facilities' ? 'bg-blue-50 text-blue-700' : 'bg-emerald-50 text-emerald-700';
                     return (
-                      <div key={tmpl.key} className="bg-white rounded-xl shadow-sm p-5 border border-gray-200 hover:border-[#1e4d6b] transition-colors">
+                      <div key={tmpl.key} className="bg-white rounded-xl p-6 border border-[#1E2D4D]/10 hover:border-[#1E2D4D] transition-colors">
                         <div className="flex items-start justify-between mb-3">
-                          <h4 className="font-semibold text-gray-900 text-base">{templateNameMap[tmpl.name] || tmpl.name}</h4>
+                          <h4 className="font-semibold text-[#1E2D4D] text-base">{templateNameMap[tmpl.name] || tmpl.name}</h4>
                           <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${roleBg}`}>{roleMap[tmpl.role] || tmpl.role}</span>
                         </div>
-                        <div className="flex items-center space-x-3 text-sm text-gray-500 mb-4">
+                        <div className="flex items-center space-x-3 text-sm text-[#1E2D4D]/50 mb-4">
                           <span>{tmpl.itemCount} {t('common.items')}</span>
                           <span>·</span>
                           <div className="flex items-center space-x-1">
@@ -1885,21 +1887,21 @@ export function Checklists() {
                             const title = getItemTitle(item);
                             const def = getItemDef(item);
                             return (
-                              <div key={idx} className="flex items-start space-x-2 text-sm text-gray-600">
-                                <span className="text-gray-400 flex-shrink-0 mt-0.5">○</span>
+                              <div key={idx} className="flex items-start space-x-2 text-sm text-[#1E2D4D]/70">
+                                <span className="text-[#1E2D4D]/30 flex-shrink-0 mt-0.5">○</span>
                                 <span>
                                   {checklistItemMap[title] || title}
                                   {def.authority_source && (() => {
                                     const auth = AUTHORITY_LABELS[def.authority_source!];
                                     return auth ? (
-                                      <span className="text-[9px] font-semibold px-1 py-0.5 rounded ml-1.5 inline-block"
+                                      <span className="text-[11px] font-semibold px-1 py-0.5 rounded ml-1.5 inline-block"
                                         style={{ color: auth.color, backgroundColor: auth.bg }}>
                                         {auth.label}{def.authority_section ? ` ${def.authority_section}` : ''}
                                       </span>
                                     ) : null;
                                   })()}
                                   {def.haccp_ccp && (
-                                    <span className="text-[9px] font-semibold px-1 py-0.5 rounded bg-amber-100 text-amber-800 ml-1 inline-block">
+                                    <span className="text-[11px] font-semibold px-1 py-0.5 rounded bg-amber-100 text-amber-800 ml-1 inline-block">
                                       {def.haccp_ccp}
                                     </span>
                                   )}
@@ -1912,7 +1914,7 @@ export function Checklists() {
                           <button
                             onClick={() => createPrebuiltTemplate(tmpl.key as keyof typeof PREBUILT_TEMPLATES)}
                             disabled={loading}
-                            className="w-full px-4 py-2 border-2 border-[#1e4d6b] text-[#1e4d6b] rounded-lg hover:bg-[#1e4d6b] hover:text-white transition-colors font-medium text-sm disabled:opacity-50"
+                            className="w-full px-4 py-2 border-2 border-[#1E2D4D] text-[#1E2D4D] rounded-lg hover:bg-[#1E2D4D] hover:text-white transition-colors font-medium text-sm disabled:opacity-50"
                           >
                             {t('checklists.useTemplate')}
                           </button>
@@ -1931,7 +1933,7 @@ export function Checklists() {
                                 const ccpItem = ccpItems.find(item => getItemDef(item).haccp_ccp === ccp);
                                 const def = ccpItem ? getItemDef(ccpItem) : null;
                                 return (
-                                  <span key={ccp} className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-md bg-amber-50 text-amber-800 border border-amber-200" title={def?.haccp_critical_limit || ''}>
+                                  <span key={ccp} className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-md bg-amber-50 text-amber-800 border border-amber-200" title={def?.haccp_critical_limit || ''}>
                                     <Shield size={10} />
                                     {ccp}
                                     {def?.haccp_critical_limit && <span className="text-amber-600 font-normal ml-0.5">{def.haccp_critical_limit}</span>}
@@ -1945,7 +1947,7 @@ export function Checklists() {
                         {tmpl.key === 'cooling_log' && (() => {
                           const isActive = new Date() >= new Date('2026-04-01');
                           return (
-                            <div className={`mt-2 text-[11px] rounded-lg px-3 py-2 ${isActive ? 'bg-red-50 border border-red-200 text-red-800' : 'bg-amber-50 border border-amber-200 text-amber-800'}`}>
+                            <div className={`mt-2 text-xs rounded-lg px-3 py-2 ${isActive ? 'bg-red-50 border border-red-200 text-red-800' : 'bg-amber-50 border border-amber-200 text-amber-800'}`}>
                               <span className="font-bold">{isActive ? 'NOW IN EFFECT' : 'Effective Apr 1, 2026'}:</span>{' '}
                               CA Stage 1 — cooling clock starts at actual cooked temp, not 135°F. Stricter than FDA rule.
                               {isActive && <span className="font-semibold"> This template reflects the CA requirement.</span>}
@@ -1962,35 +1964,35 @@ export function Checklists() {
             {/* Custom Templates */}
             {templates.length > 0 && (
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Your Templates</h3>
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
+                <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-4">Your Templates</h3>
+                <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden overflow-x-auto">
+                  <table className="min-w-full divide-y divide-[#1E2D4D]/10">
+                    <thead className="bg-[#FAF7F0]">
                       <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">{t('common.type')}</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">{t('common.items')}</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">{t('common.status')}</th>
-                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase">Name</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase hidden sm:table-cell">{t('common.type')}</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase hidden sm:table-cell">{t('common.items')}</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase hidden sm:table-cell">{t('common.status')}</th>
+                        <th className="px-6 py-3 text-right text-xs font-medium text-[#1E2D4D]/50 uppercase">Actions</th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="bg-white divide-y divide-[#1E2D4D]/10">
                       {templates.map((template) => (
-                        <tr key={template.id} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{templateNameMap[template.name] || template.name}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 capitalize hidden sm:table-cell">{template.checklist_type.replace('_', ' ')}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 hidden sm:table-cell">{template.items_count}</td>
+                        <tr key={template.id} className="hover:bg-[#FAF7F0]">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#1E2D4D]">{templateNameMap[template.name] || template.name}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1E2D4D]/70 capitalize hidden sm:table-cell">{template.checklist_type.replace('_', ' ')}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1E2D4D]/70 hidden sm:table-cell">{template.items_count}</td>
                           <td className="px-6 py-4 whitespace-nowrap hidden sm:table-cell">
-                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${template.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${template.is_active ? 'bg-emerald-50 text-emerald-700' : 'bg-[#1E2D4D]/5 text-[#1E2D4D]/70'}`}>
                               {template.is_active ? 'Active' : 'Inactive'}
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <div className="flex items-center justify-end gap-2">
-                              <button onClick={() => handleStartChecklist(template)} className="text-[#1e4d6b] hover:text-[#163a52]" title="Start checklist">
+                              <button onClick={() => handleStartChecklist(template)} className="text-[#1E2D4D] hover:text-[#141E33]" title="Start checklist">
                                 <Play className="h-4 w-4" />
                               </button>
-                              <button onClick={() => handleEditTemplate(template)} className="text-gray-500 hover:text-gray-700" title="Edit template">
+                              <button onClick={() => handleEditTemplate(template)} className="text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80" title="Edit template">
                                 <Edit2 className="h-4 w-4" />
                               </button>
                               <button onClick={() => handleDeleteTemplate(template.id)} className="text-red-600 hover:text-red-900" title="Delete template">
@@ -2040,14 +2042,14 @@ export function Checklists() {
           return (
           <div className="space-y-4">
             <div className="flex flex-wrap items-end justify-between gap-4">
-              <h2 className="text-xl font-bold text-gray-900">{t('checklists.checklistHistory')} — {rangeLabel}</h2>
+              <h2 className="text-xl font-bold text-[#1E2D4D]">{t('checklists.checklistHistory')} — {rangeLabel}</h2>
               <div data-demo-allow className="flex flex-wrap items-end gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
+                  <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Date Range</label>
                   <select
                     value={historyRange}
                     onChange={(e) => setHistoryRange(e.target.value)}
-                    className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37] text-sm min-h-[44px]"
+                    className="px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] text-sm min-h-[44px]"
                   >
                     <option value="today">Today</option>
                     <option value="7days">{t('checklists.last7Days')}</option>
@@ -2060,50 +2062,50 @@ export function Checklists() {
                 {historyRange === 'custom' && (
                   <>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">From</label>
-                      <input type="date" value={historyFrom} onChange={(e) => setHistoryFrom(e.target.value)} className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37] text-sm min-h-[44px]" />
+                      <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">From</label>
+                      <input type="date" value={historyFrom} onChange={(e) => setHistoryFrom(e.target.value)} className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] text-sm min-h-[44px]" />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">To</label>
-                      <input type="date" value={historyTo} onChange={(e) => setHistoryTo(e.target.value)} className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37] text-sm min-h-[44px]" />
+                      <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">To</label>
+                      <input type="date" value={historyTo} onChange={(e) => setHistoryTo(e.target.value)} className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] text-sm min-h-[44px]" />
                     </div>
                   </>
                 )}
               </div>
             </div>
 
-            <div className="text-sm text-gray-500">{filteredEntries.length} {t('checklists.entries')}</div>
+            <div className="text-sm text-[#1E2D4D]/50">{filteredEntries.length} {t('checklists.entries')}</div>
 
-            <div className="bg-white shadow-sm border border-gray-200 rounded-xl overflow-hidden overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+            <div className="bg-white border border-[#1E2D4D]/10 rounded-xl overflow-hidden overflow-x-auto">
+              <table className="min-w-full divide-y divide-[#1E2D4D]/10">
+                <thead className="bg-[#FAF7F0]">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('common.date')}</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('checklists.checklist')}</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">{t('common.completedBy')}</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">{t('common.status')}</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('checklists.score')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase">{t('common.date')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase">{t('checklists.checklist')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase hidden sm:table-cell">{t('common.completedBy')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase hidden sm:table-cell">{t('common.status')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[#1E2D4D]/50 uppercase">{t('checklists.score')}</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white divide-y divide-[#1E2D4D]/10">
                   {filteredEntries.map((entry) => {
                     const statusBadge = entry.status === 'missed'
-                      ? 'bg-red-100 text-red-800'
+                      ? 'bg-red-50 text-red-700'
                       : entry.status === 'incomplete'
-                      ? 'bg-yellow-100 text-yellow-800'
-                      : 'bg-green-100 text-green-800';
+                      ? 'bg-amber-50 text-amber-700'
+                      : 'bg-emerald-50 text-emerald-700';
                     const statusLabel = entry.status === 'missed' ? t('checklists.missed') : entry.status === 'incomplete' ? t('checklists.incomplete') : t('common.completed');
                     return (
-                    <tr key={entry.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <tr key={entry.id} className="hover:bg-[#FAF7F0]">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1E2D4D]">
                         {format(new Date(entry.date), 'MMM d, yyyy')}
-                        <span className="text-gray-400 ml-1 text-xs">{format(new Date(entry.date), 'h:mm a')}</span>
+                        <span className="text-[#1E2D4D]/30 ml-1 text-xs">{format(new Date(entry.date), 'h:mm a')}</span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#1E2D4D]">
                         {templateNameMap[entry.name] || entry.name}
-                        {entry.detail && <span className="block text-xs text-gray-500">{entry.detail}</span>}
+                        {entry.detail && <span className="block text-xs text-[#1E2D4D]/50">{entry.detail}</span>}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 hidden sm:table-cell">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1E2D4D]/70 hidden sm:table-cell">
                         {entry.completedBy}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap hidden sm:table-cell">
@@ -2114,7 +2116,7 @@ export function Checklists() {
                           <span className="text-sm font-medium text-red-600">--</span>
                         ) : (
                         <div className="flex items-center space-x-2">
-                          <div className="w-16 bg-gray-200 rounded-full h-2">
+                          <div className="w-16 bg-[#1E2D4D]/8 rounded-full h-2">
                             <div
                               className={`h-2 rounded-full ${
                                 entry.score >= 90 ? 'bg-green-500' : entry.score >= 70 ? 'bg-yellow-500' : 'bg-red-500' /* thresholds: 90/70 */
@@ -2122,7 +2124,7 @@ export function Checklists() {
                               style={{ width: `${entry.score}%` }}
                             />
                           </div>
-                          <span className="text-sm font-medium text-gray-900">{entry.score}%</span>
+                          <span className="text-sm font-medium text-[#1E2D4D]">{entry.score}%</span>
                         </div>
                         )}
                       </td>
@@ -2153,30 +2155,30 @@ export function Checklists() {
       {/* Create Template Modal */}
       {showTemplateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
-          <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <h3 className="text-2xl font-bold mb-6">{t('checklists.createTemplate')}</h3>
+          <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto modal-content-enter">
+            <h3 className="text-2xl font-bold tracking-tight mb-6">{t('checklists.createTemplate')}</h3>
 
             <form onSubmit={handleCreateTemplate} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">{t('checklists.templateName')}</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('checklists.templateName')}</label>
                 <input
                   type="text"
                   value={templateName}
                   onChange={(e) => setTemplateName(e.target.value)}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37] min-h-[44px]"
+                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] min-h-[44px]"
                   placeholder="e.g., Morning Opening Checklist"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('common.type')}</label>
+                  <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('common.type')}</label>
                   <select
                     value={templateType}
                     onChange={(e) => setTemplateType(e.target.value)}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37] min-h-[44px]"
+                    className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] min-h-[44px]"
                   >
                     <option value="">Select type...</option>
                     {CHECKLIST_TYPES.map((type) => (
@@ -2188,12 +2190,12 @@ export function Checklists() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('checklists.frequency')}</label>
+                  <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('checklists.frequency')}</label>
                   <select
                     value={templateFrequency}
                     onChange={(e) => setTemplateFrequency(e.target.value)}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37] min-h-[44px]"
+                    className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] min-h-[44px]"
                   >
                     {FREQUENCIES.map((freq) => (
                       <option key={freq.value} value={freq.value}>
@@ -2205,12 +2207,12 @@ export function Checklists() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">{t('checklists.checklistItems')}</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">{t('checklists.checklistItems')}</label>
                 <div className="space-y-2 mb-3">
                   {items.map((item, index) => (
-                    <div key={index} className="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg">
-                      <span className="text-sm text-gray-900 flex-1">{item.title}</span>
-                      <span className="text-xs text-gray-500 capitalize">{item.type.replace('_', ' ')}</span>
+                    <div key={index} className="flex items-center space-x-2 p-3 bg-[#FAF7F0] rounded-lg">
+                      <span className="text-sm text-[#1E2D4D] flex-1">{item.title}</span>
+                      <span className="text-xs text-[#1E2D4D]/50 capitalize">{item.type.replace('_', ' ')}</span>
                       <button
                         type="button"
                         onClick={() => handleRemoveItem(index)}
@@ -2227,13 +2229,13 @@ export function Checklists() {
                     type="text"
                     value={newItemTitle}
                     onChange={(e) => setNewItemTitle(e.target.value)}
-                    className="flex-1 min-w-0 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37] min-h-[44px]"
+                    className="flex-1 min-w-0 px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] min-h-[44px]"
                     placeholder={t('checklists.itemTitle')}
                   />
                   <select
                     value={newItemType}
                     onChange={(e) => setNewItemType(e.target.value)}
-                    className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37] min-h-[44px]"
+                    className="px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] min-h-[44px]"
                   >
                     {ITEM_TYPES.map((type) => (
                       <option key={type.value} value={type.value}>
@@ -2244,7 +2246,7 @@ export function Checklists() {
                   <button
                     type="button"
                     onClick={handleAddItem}
-                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors min-h-[44px]"
+                    className="px-4 py-2 bg-[#1E2D4D]/10 text-[#1E2D4D]/80 rounded-lg hover:bg-[#1E2D4D]/15 transition-colors min-h-[44px]"
                   >
                     <Plus className="h-5 w-5" />
                   </button>
@@ -2255,14 +2257,14 @@ export function Checklists() {
                 <button
                   type="button"
                   onClick={() => setShowTemplateModal(false)}
-                  className="px-6 py-3 border-2 border-[#1e4d6b] rounded-xl text-lg font-medium text-[#1e4d6b] hover:bg-gray-50 transition-colors bg-white min-h-[44px]"
+                  className="px-6 py-3 border-2 border-[#1E2D4D] rounded-xl text-lg font-medium text-[#1E2D4D] hover:bg-[#FAF7F0] transition-colors bg-white min-h-[44px]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-6 py-3 bg-[#1e4d6b] text-white rounded-lg text-lg font-bold hover:bg-[#163a52] transition-colors disabled:opacity-50 shadow-sm min-h-[44px]"
+                  className="px-6 py-3 bg-[#1E2D4D] text-white rounded-lg text-lg font-bold hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] disabled:opacity-50 shadow-sm min-h-[44px]"
                 >
                   {loading ? t('checklists.creating') : t('checklists.createTemplate')}
                 </button>
@@ -2275,17 +2277,17 @@ export function Checklists() {
       {/* Complete Checklist Modal */}
       {showCompleteModal && selectedTemplate && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
-          <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto modal-content-enter">
             <div className="mb-6">
-              <h3 className="text-2xl font-bold text-gray-900">{templateNameMap[selectedTemplate.name] || selectedTemplate.name}</h3>
+              <h3 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">{templateNameMap[selectedTemplate.name] || selectedTemplate.name}</h3>
               <div className="mt-2">
-                <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
+                <div className="flex items-center justify-between text-sm text-[#1E2D4D]/70 mb-2">
                   <span>{t('checklists.progress')}</span>
                   <span className="font-medium">{currentProgress}%</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-3">
+                <div className="w-full bg-[#1E2D4D]/8 rounded-full h-3">
                   <div
-                    className="bg-[#d4af37] h-3 rounded-full transition-all duration-300"
+                    className="bg-[#A08C5A] h-3 rounded-full transition-all duration-300"
                     style={{ width: `${currentProgress}%` }}
                   />
                 </div>
@@ -2294,9 +2296,9 @@ export function Checklists() {
 
             <div className="space-y-6">
               {templateItems.map((item, index) => (
-                <div key={item.id} className="p-4 border border-gray-200 rounded-lg">
+                <div key={item.id} className="p-4 border border-[#1E2D4D]/10 rounded-xl">
                   <div className="flex items-start space-x-3 mb-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-[#1e4d6b] text-white rounded-full flex items-center justify-center font-bold">
+                    <div className="flex-shrink-0 w-8 h-8 bg-[#1E2D4D] text-white rounded-full flex items-center justify-center font-bold">
                       {index + 1}
                     </div>
                     <div className="flex-1">{renderItemInput(item)}</div>
@@ -2309,14 +2311,14 @@ export function Checklists() {
               <button
                 type="button"
                 onClick={() => setShowCompleteModal(false)}
-                className="px-6 py-3 border-2 border-[#1e4d6b] rounded-xl text-lg font-medium text-[#1e4d6b] hover:bg-gray-50 transition-colors bg-white min-h-[44px]"
+                className="px-6 py-3 border-2 border-[#1E2D4D] rounded-xl text-lg font-medium text-[#1E2D4D] hover:bg-[#FAF7F0] transition-colors bg-white min-h-[44px]"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSubmitCompletion}
                 disabled={loading || currentProgress < 100}
-                className="px-6 py-3 bg-[#1e4d6b] text-white rounded-lg text-lg font-bold hover:bg-[#163a52] transition-colors disabled:opacity-50 shadow-sm min-h-[44px]"
+                className="px-6 py-3 bg-[#1E2D4D] text-white rounded-lg text-lg font-bold hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] disabled:opacity-50 shadow-sm min-h-[44px]"
               >
                 {loading ? t('common.submitting') : t('checklists.submitChecklist')}
               </button>

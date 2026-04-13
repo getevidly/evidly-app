@@ -250,7 +250,7 @@ export const HIERARCHY_COMMON_ISSUES: Record<string, HierarchyIssue[]> = {
 
 export const LEVEL_COLORS: Record<string, string> = {
   corporate: '#6b21a8',
-  division: '#1e4d6b',
+  division: '#1E2D4D',
   region: '#0e7490',
   district: '#d4af37',
   location: '#22c55e',

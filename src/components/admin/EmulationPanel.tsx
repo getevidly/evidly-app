@@ -13,7 +13,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useRole, type UserRole } from '../../contexts/RoleContext';
 import { supabase } from '../../lib/supabase';
 
-const BRAND = '#1e4d6b';
+const BRAND = '#1E2D4D';
 const F = { fontFamily: "'DM Sans', 'Inter', system-ui, sans-serif" };
 
 const ROLE_LABELS: Record<string, string> = {
@@ -29,7 +29,7 @@ const ROLE_LABELS: Record<string, string> = {
 
 const ROLE_COLORS: Record<string, string> = {
   platform_admin: '#7c3aed',
-  owner_operator: '#1e4d6b',
+  owner_operator: '#1E2D4D',
   executive: '#0d9488',
   compliance_manager: '#2563eb',
   chef: '#d97706',
@@ -174,7 +174,7 @@ export function EmulationPanel() {
   if (isEmulating && emulatedUser) {
     return (
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold" style={{ color: BRAND, ...F }}>User Emulation</h3>
+        <h3 className="text-lg font-semibold tracking-tight" style={{ color: BRAND, ...F }}>User Emulation</h3>
 
         <div className="rounded-xl p-5" style={{ background: '#fef2f2', border: '2px solid #fecaca' }}>
           <div className="flex items-center gap-3 mb-4">
@@ -224,7 +224,7 @@ export function EmulationPanel() {
   // ── Normal view: search + select ──
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold" style={{ color: BRAND, ...F }}>User Emulation</h3>
+      <h3 className="text-lg font-semibold tracking-tight" style={{ color: BRAND, ...F }}>User Emulation</h3>
       <p className="text-sm" style={{ color: '#6B7F96', ...F }}>
         View EvidLY as any user to debug issues, verify permissions, or demonstrate features. Sessions are fully logged.
       </p>
@@ -237,7 +237,7 @@ export function EmulationPanel() {
           value={searchQuery}
           onChange={(e) => { setSearchQuery(e.target.value); setSelectedOrg(null); }}
           placeholder="Search by org name..."
-          className="w-full pl-10 pr-4 py-2.5 rounded-lg border text-sm"
+          className="w-full pl-10 pr-4 py-2.5 rounded-xl border text-sm"
           style={{ borderColor: '#D1D9E6', ...F }}
         />
       </div>
@@ -350,9 +350,9 @@ export function EmulationPanel() {
       {/* ── Confirm Modal ── */}
       {confirmUser && (
         <>
-          <div className="fixed inset-0 z-[60] bg-black/50" onClick={() => setConfirmUser(null)} />
+          <div className="fixed inset-0 z-[60] bg-black/50 modal-backdrop-enter" onClick={() => setConfirmUser(null)} />
           <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md" style={{ ...F }} onClick={(e) => e.stopPropagation()}>
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md modal-content-enter" style={{ ...F }} onClick={(e) => e.stopPropagation()}>
               <div className="px-6 pt-6 pb-4 border-b" style={{ borderColor: '#e5e7eb' }}>
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: '#fef2f2' }}>

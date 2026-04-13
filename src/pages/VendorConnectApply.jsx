@@ -147,7 +147,7 @@ export function VendorConnectApply() {
             VENDOR CONNECT — BY INVITATION ONLY
           </p>
           <h1 className="text-xl font-bold text-white">Apply to Vendor Connect</h1>
-          <p className="text-sm text-gray-400 mt-1">
+          <p className="text-sm text-[#1E2D4D]/30 mt-1">
             We accept a limited number of partners per service area. Applications are reviewed by Cleaning Pros Plus.
           </p>
         </div>
@@ -159,8 +159,8 @@ export function VendorConnectApply() {
             <div className="w-16 h-16 rounded-full bg-green-50 flex items-center justify-center mx-auto mb-4">
               <CheckCircle className="w-8 h-8 text-green-500" />
             </div>
-            <h2 className="text-lg font-bold text-gray-900 mb-2">Application Received</h2>
-            <p className="text-sm text-gray-500 max-w-sm mx-auto">
+            <h2 className="text-lg font-bold text-[#1E2D4D] mb-2">Application Received</h2>
+            <p className="text-sm text-[#1E2D4D]/50 max-w-sm mx-auto">
               Thank you for your interest in Vendor Connect. CPP will review your application within 3 business days.
               You'll receive an email at <strong>{email}</strong> with the outcome.
             </p>
@@ -168,70 +168,70 @@ export function VendorConnectApply() {
         ) : (
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Company Info */}
-            <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
-              <h2 className="text-sm font-semibold text-gray-900">Company Information</h2>
+            <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 space-y-4">
+              <h2 className="text-sm font-semibold text-[#1E2D4D]">Company Information</h2>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">Company Name *</label>
+                  <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Company Name *</label>
                   <input
                     type="text" required value={companyName}
                     onChange={e => setCompanyName(e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
+                    className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">Contact Name *</label>
+                  <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Contact Name *</label>
                   <input
                     type="text" required value={contactName}
                     onChange={e => setContactName(e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
+                    className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">Email *</label>
+                  <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Email *</label>
                   <input
                     type="email" required value={email}
                     onChange={e => setEmail(e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
+                    className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">Phone</label>
+                  <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Phone</label>
                   <input
                     type="tel" value={phone}
                     onChange={e => setPhone(e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
+                    className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
                   />
                 </div>
               </div>
             </div>
 
             {/* Services */}
-            <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
-              <h2 className="text-sm font-semibold text-gray-900">Services Offered *</h2>
+            <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 space-y-4">
+              <h2 className="text-sm font-semibold text-[#1E2D4D]">Services Offered *</h2>
               <div className="space-y-2">
                 {SERVICE_OPTIONS.map(svc => (
                   <button
                     key={svc.id} type="button"
                     onClick={() => toggleService(svc.id)}
                     className={`w-full flex items-center gap-3 p-3 rounded-xl border-2 text-left transition-colors ${
-                      selectedServices.includes(svc.id) ? 'border-[#A08C5A] bg-amber-50/50' : 'border-gray-200 hover:border-gray-300'
+                      selectedServices.includes(svc.id) ? 'border-[#A08C5A] bg-amber-50/50' : 'border-[#1E2D4D]/10 hover:border-[#1E2D4D]/15'
                     }`}
                   >
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                      selectedServices.includes(svc.id) ? 'border-[#A08C5A] bg-[#A08C5A]' : 'border-gray-300'
+                      selectedServices.includes(svc.id) ? 'border-[#A08C5A] bg-[#A08C5A]' : 'border-[#1E2D4D]/15'
                     }`}>
                       {selectedServices.includes(svc.id) && <div className="w-2 h-2 bg-white rounded-full" />}
                     </div>
-                    <span className="text-sm font-medium text-gray-900">{svc.label}</span>
+                    <span className="text-sm font-medium text-[#1E2D4D]">{svc.label}</span>
                   </button>
                 ))}
               </div>
             </div>
 
             {/* Counties */}
-            <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
-              <h2 className="text-sm font-semibold text-gray-900">Counties Served *</h2>
+            <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 space-y-4">
+              <h2 className="text-sm font-semibold text-[#1E2D4D]">Counties Served *</h2>
               <div className="flex flex-wrap gap-2">
                 {CA_COUNTIES.map(county => (
                   <button
@@ -240,7 +240,7 @@ export function VendorConnectApply() {
                     className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                       selectedCounties.includes(county)
                         ? 'border-[#A08C5A] bg-amber-50 text-[#A08C5A]'
-                        : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                        : 'border-[#1E2D4D]/10 text-[#1E2D4D]/70 hover:border-[#1E2D4D]/15'
                     }`}
                   >
                     {county}
@@ -258,7 +258,7 @@ export function VendorConnectApply() {
                 </div>
                 {spotIndicators.map((s, i) => (
                   <div key={i} className="flex items-center justify-between text-xs">
-                    <span className="text-gray-700">
+                    <span className="text-[#1E2D4D]/80">
                       {s.service.replace(/_/g, ' ')} — {s.county} County
                     </span>
                     <span className={`font-semibold ${s.remaining > 0 ? 'text-green-700' : 'text-red-600'}`}>
@@ -273,15 +273,15 @@ export function VendorConnectApply() {
             )}
 
             {/* Qualifications */}
-            <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
-              <h2 className="text-sm font-semibold text-gray-900">Qualifications</h2>
+            <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 space-y-4">
+              <h2 className="text-sm font-semibold text-[#1E2D4D]">Qualifications</h2>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">Years in Business</label>
+                  <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Years in Business</label>
                   <input
                     type="number" min="0" value={yearsInBusiness}
                     onChange={e => setYearsInBusiness(e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
+                    className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
                   />
                 </div>
                 <div className="flex items-center gap-3 pt-5">
@@ -289,7 +289,7 @@ export function VendorConnectApply() {
                     type="button"
                     onClick={() => setIkecaCertified(!ikecaCertified)}
                     className={`relative w-10 h-5 rounded-full transition-colors ${
-                      ikecaCertified ? 'bg-[#A08C5A]' : 'bg-gray-300'
+                      ikecaCertified ? 'bg-[#A08C5A]' : 'bg-[#1E2D4D]/15'
                     }`}
                   >
                     <span
@@ -298,15 +298,15 @@ export function VendorConnectApply() {
                       }`}
                     />
                   </button>
-                  <span className="text-sm text-gray-700">IKECA Certified</span>
+                  <span className="text-sm text-[#1E2D4D]/80">IKECA Certified</span>
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">How did you hear about Vendor Connect?</label>
+                <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">How did you hear about Vendor Connect?</label>
                 <select
                   value={referredBy}
                   onChange={e => setReferredBy(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
+                  className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
                 >
                   <option value="">Select...</option>
                   {REFERRAL_OPTIONS.map(r => <option key={r} value={r}>{r}</option>)}
@@ -315,14 +315,14 @@ export function VendorConnectApply() {
             </div>
 
             {/* Why Apply */}
-            <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
-              <h2 className="text-sm font-semibold text-gray-900">Why do you want to join Vendor Connect?</h2>
+            <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 space-y-4">
+              <h2 className="text-sm font-semibold text-[#1E2D4D]">Why do you want to join Vendor Connect?</h2>
               <textarea
                 rows={4}
                 value={whyApply}
                 onChange={e => setWhyApply(e.target.value)}
                 placeholder="Tell us about your business and why you'd be a great Vendor Connect partner..."
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm resize-none focus:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
+                className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm resize-none focus:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
               />
             </div>
 
@@ -336,7 +336,7 @@ export function VendorConnectApply() {
               {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Submit Application'}
             </button>
 
-            <p className="text-center text-xs text-gray-400">
+            <p className="text-center text-xs text-[#1E2D4D]/30">
               Applications are reviewed within 3 business days. Not everyone is accepted.
             </p>
           </form>
@@ -344,7 +344,7 @@ export function VendorConnectApply() {
       </div>
 
       {/* Footer */}
-      <div className="text-center py-6 text-xs text-gray-400">
+      <div className="text-center py-6 text-xs text-[#1E2D4D]/30">
         Powered by <span className="font-semibold" style={{ color: '#1E2D4D' }}>EvidLY</span>
       </div>
     </div>

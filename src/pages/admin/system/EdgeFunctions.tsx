@@ -55,8 +55,8 @@ import {
 // ── Constants ────────────────────────────────────────────────
 
 const MIDNIGHT_NAVY = '#0B1628';
-const BRAND_BLUE = '#1e4d6b';
-const BRAND_BLUE_HOVER = '#2a6a8f';
+const BRAND_BLUE = '#1E2D4D';
+const BRAND_BLUE_HOVER = '#2A3F6B';
 const BRAND_GOLD = '#A08C5A';
 const PAGE_BG = '#F4F6FA';
 const CARD_BG = '#FFFFFF';

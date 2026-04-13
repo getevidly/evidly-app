@@ -11,7 +11,7 @@ import { DemoConversionModal } from '../../components/demo/DemoConversionModal';
 import { supabase } from '../../lib/supabase';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#d4af37';
+const GOLD = '#A08C5A';
 
 type PipelineTab = 'active' | 'expiring_soon' | 'expired' | 'converted' | 'scheduled';
 
@@ -45,12 +45,12 @@ function StatusBadge({ status, expiresAt }: { status: string; expiresAt?: string
     ready: 'bg-green-50 text-green-700 border-green-200',
     active: isExpiringSoon ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-green-50 text-green-700 border-green-200',
     converted: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    expired: 'bg-gray-50 text-gray-500 border-gray-200',
+    expired: 'bg-[#FAF7F0] text-[#1E2D4D]/50 border-[#1E2D4D]/10',
     generating: 'bg-blue-50 text-blue-700 border-blue-200',
   };
   const label = isExpiringSoon ? 'Expiring Soon' : status.charAt(0).toUpperCase() + status.slice(1);
   return (
-    <span className={`text-xs font-medium px-2 py-0.5 rounded-full border ${colors[status] || 'bg-gray-50 text-gray-500 border-gray-200'}`}>
+    <span className={`text-xs font-medium px-2 py-0.5 rounded-full border ${colors[status] || 'bg-[#FAF7F0] text-[#1E2D4D]/50 border-[#1E2D4D]/10'}`}>
       {label}
     </span>
   );
@@ -60,7 +60,7 @@ function DemoCard({ session, onAction }: { session: DemoSession; onAction: (acti
   const remaining = daysUntil(session.expires_at);
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4 hover:border-gray-300 transition-colors">
+    <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 hover:border-[#1E2D4D]/15 transition-colors">
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1 min-w-0">
@@ -68,7 +68,7 @@ function DemoCard({ session, onAction }: { session: DemoSession; onAction: (acti
             <h3 className="font-semibold text-sm truncate" style={{ color: NAVY }}>{session.company_name}</h3>
             <StatusBadge status={session.status} expiresAt={session.expires_at} />
           </div>
-          <div className="flex items-center gap-3 text-xs text-gray-500">
+          <div className="flex items-center gap-3 text-xs text-[#1E2D4D]/50">
             <span className="flex items-center gap-1">
               <MapPin className="w-3 h-3" />
               {session.city}, {session.state}
@@ -85,7 +85,7 @@ function DemoCard({ session, onAction }: { session: DemoSession; onAction: (acti
       </div>
 
       {/* Contact */}
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-600 mb-3">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#1E2D4D]/70 mb-3">
         <span className="flex items-center gap-1">
           <Users className="w-3 h-3" />
           {session.prospect_name}
@@ -103,17 +103,17 @@ function DemoCard({ session, onAction }: { session: DemoSession; onAction: (acti
       </div>
 
       {/* Meta */}
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500 mb-3">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[#1E2D4D]/50 mb-3">
         <span>{getKitchenTypeLabel(session.company_type)}</span>
-        <span className="text-gray-300">|</span>
+        <span className="text-[#1E2D4D]/30">|</span>
         <span>{getOperationLabel(session.operation_type)} volume</span>
-        <span className="text-gray-300">|</span>
+        <span className="text-[#1E2D4D]/30">|</span>
         <span>{session.num_locations} location{session.num_locations > 1 ? 's' : ''}</span>
       </div>
 
       {/* Schedule / Jurisdiction info */}
       {session.scheduled_at && session.status === 'scheduled' && (
-        <div className="flex items-center gap-1.5 text-xs text-gray-600 mb-3">
+        <div className="flex items-center gap-1.5 text-xs text-[#1E2D4D]/70 mb-3">
           <Calendar className="w-3.5 h-3.5" />
           <span>Meeting: {formatDateTime(session.scheduled_at)}</span>
         </div>
@@ -124,14 +124,14 @@ function DemoCard({ session, onAction }: { session: DemoSession; onAction: (acti
           <span className="text-green-700 font-medium">Demo ready</span>
           {session.health_authority && (
             <>
-              <span className="text-gray-400 mx-1">|</span>
-              <span className="text-gray-500">{session.health_authority} configured</span>
+              <span className="text-[#1E2D4D]/30 mx-1">|</span>
+              <span className="text-[#1E2D4D]/50">{session.health_authority} configured</span>
             </>
           )}
         </div>
       )}
       {session.status === 'active' && session.total_logins > 0 && (
-        <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-3">
+        <div className="flex items-center gap-1.5 text-xs text-[#1E2D4D]/50 mb-3">
           <Eye className="w-3.5 h-3.5" />
           <span>{session.total_logins} logins, {session.pages_visited.length} pages visited</span>
         </div>
@@ -143,14 +143,14 @@ function DemoCard({ session, onAction }: { session: DemoSession; onAction: (acti
         </div>
       )}
       {session.status === 'expired' && session.expires_at && (
-        <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-3">
+        <div className="flex items-center gap-1.5 text-xs text-[#1E2D4D]/50 mb-3">
           <Clock className="w-3.5 h-3.5" />
           <span>Expired on {formatDate(session.expires_at)}</span>
         </div>
       )}
 
       {/* Actions */}
-      <div className="flex flex-wrap gap-2 pt-2 border-t border-gray-100">
+      <div className="flex flex-wrap gap-2 pt-2 border-t border-[#1E2D4D]/5">
         {session.status === 'scheduled' && (
           <>
             <button onClick={() => onAction('generate', session)}
@@ -159,7 +159,7 @@ function DemoCard({ session, onAction }: { session: DemoSession; onAction: (acti
               <Sparkles className="w-3 h-3" /> Generate Demo
             </button>
             <button onClick={() => onAction('reschedule', session)}
-              className="px-3 py-1.5 rounded-md text-xs font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 flex items-center gap-1">
+              className="px-3 py-1.5 rounded-md text-xs font-medium text-[#1E2D4D]/70 border border-[#1E2D4D]/15 hover:bg-[#FAF7F0] flex items-center gap-1">
               <RefreshCw className="w-3 h-3" /> Reschedule
             </button>
             <button onClick={() => onAction('cancel', session)}
@@ -176,11 +176,11 @@ function DemoCard({ session, onAction }: { session: DemoSession; onAction: (acti
               <CheckCircle2 className="w-3 h-3" /> Convert to Live
             </button>
             <button onClick={() => onAction('extend', session)}
-              className="px-3 py-1.5 rounded-md text-xs font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 flex items-center gap-1">
+              className="px-3 py-1.5 rounded-md text-xs font-medium text-[#1E2D4D]/70 border border-[#1E2D4D]/15 hover:bg-[#FAF7F0] flex items-center gap-1">
               <Clock className="w-3 h-3" /> Extend 7 Days
             </button>
             <button onClick={() => onAction('preview', session)}
-              className="px-3 py-1.5 rounded-md text-xs font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 flex items-center gap-1">
+              className="px-3 py-1.5 rounded-md text-xs font-medium text-[#1E2D4D]/70 border border-[#1E2D4D]/15 hover:bg-[#FAF7F0] flex items-center gap-1">
               <Eye className="w-3 h-3" /> View Demo
             </button>
           </>
@@ -188,7 +188,7 @@ function DemoCard({ session, onAction }: { session: DemoSession; onAction: (acti
         {session.status === 'expired' && (
           <>
             <button onClick={() => onAction('extend', session)}
-              className="px-3 py-1.5 rounded-md text-xs font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 flex items-center gap-1">
+              className="px-3 py-1.5 rounded-md text-xs font-medium text-[#1E2D4D]/70 border border-[#1E2D4D]/15 hover:bg-[#FAF7F0] flex items-center gap-1">
               <RefreshCw className="w-3 h-3" /> Re-activate
             </button>
             <button onClick={() => onAction('reengage', session)}
@@ -196,14 +196,14 @@ function DemoCard({ session, onAction }: { session: DemoSession; onAction: (acti
               <Mail className="w-3 h-3" /> Re-engage Email
             </button>
             <button onClick={() => onAction('delete', session)}
-              className="px-3 py-1.5 rounded-md text-xs font-medium text-gray-500 border border-gray-200 hover:bg-gray-50 flex items-center gap-1">
+              className="px-3 py-1.5 rounded-md text-xs font-medium text-[#1E2D4D]/50 border border-[#1E2D4D]/10 hover:bg-[#FAF7F0] flex items-center gap-1">
               <Trash2 className="w-3 h-3" /> Archive
             </button>
           </>
         )}
         {session.status === 'converted' && (
           <button onClick={() => onAction('delete', session)}
-            className="px-3 py-1.5 rounded-md text-xs font-medium text-gray-500 border border-gray-200 hover:bg-gray-50 flex items-center gap-1">
+            className="px-3 py-1.5 rounded-md text-xs font-medium text-[#1E2D4D]/50 border border-[#1E2D4D]/10 hover:bg-[#FAF7F0] flex items-center gap-1">
             <Trash2 className="w-3 h-3" /> Archive
           </button>
         )}
@@ -373,7 +373,7 @@ export function DemoPipeline() {
           </div>
           <div>
             <h1 className="text-xl font-bold" style={{ color: NAVY }}>Demo Pipeline</h1>
-            <p className="text-sm text-gray-500">Manage personalized prospect demos</p>
+            <p className="text-sm text-[#1E2D4D]/50">Manage personalized prospect demos</p>
           </div>
         </div>
         <div className="flex gap-2">
@@ -399,13 +399,13 @@ export function DemoPipeline() {
       </div>
 
       {/* Tab selector */}
-      <div className="flex items-center gap-1 mb-4 border-b border-gray-200">
+      <div className="flex items-center gap-1 mb-4 border-b border-[#1E2D4D]/10">
         {TABS.map(tab => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
             className={`px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${
-              activeTab === tab.key ? 'border-[#1E2D4D] text-[#1E2D4D]' : 'border-transparent text-gray-500 hover:text-gray-700'
+              activeTab === tab.key ? 'border-[#1E2D4D] text-[#1E2D4D]' : 'border-transparent text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
             }`}
           >
             {tab.label}
@@ -415,10 +415,10 @@ export function DemoPipeline() {
 
       {/* Tab heading */}
       <div className="flex items-center gap-2 mb-4">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-[#1E2D4D]/50">
           {TABS.find(t => t.key === activeTab)?.label}
         </h2>
-        <span className="text-xs text-gray-400">
+        <span className="text-xs text-[#1E2D4D]/30">
           — {TABS.find(t => t.key === activeTab)?.description}
         </span>
       </div>
@@ -426,13 +426,13 @@ export function DemoPipeline() {
       {/* Cards */}
       <div className="space-y-3">
         {loading ? (
-          <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-400 mx-auto mb-2" />
-            <p className="text-sm text-gray-500">Loading demo pipeline...</p>
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8 text-center">
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#1E2D4D]/20 mx-auto mb-2" />
+            <p className="text-sm text-[#1E2D4D]/50">Loading demo pipeline...</p>
           </div>
         ) : filtered.length === 0 ? (
-          <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
-            <p className="text-sm text-gray-500">No demos in this stage.</p>
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8 text-center">
+            <p className="text-sm text-[#1E2D4D]/50">No demos in this stage.</p>
           </div>
         ) : (
           filtered.map(session => (

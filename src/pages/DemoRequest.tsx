@@ -4,7 +4,7 @@ import { Building2, MapPin, Users, ArrowRight, AlertTriangle, Shield } from 'luc
 import { isBlockedDomain, KITCHEN_TYPES, OPERATION_VOLUMES, US_STATES } from '../data/demoGeneratorData';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#d4af37';
+const GOLD = '#A08C5A';
 
 interface FormData {
   name: string;
@@ -89,13 +89,13 @@ export function DemoRequest() {
     }, 500);
   };
 
-  const inputClass = 'w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-[#1e4d6b] focus:ring-2 focus:ring-[#1e4d6b]/20 outline-none transition-colors text-sm';
-  const labelClass = 'block text-sm font-medium text-gray-700 mb-1';
+  const inputClass = 'w-full px-4 py-2.5 rounded-xl border border-[#1E2D4D]/15 focus:border-[#1E2D4D] focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 outline-none transition-colors text-sm';
+  const labelClass = 'block text-sm font-medium text-[#1E2D4D]/80 mb-1';
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#F4F6FA' }}>
       {/* Header */}
-      <header className="border-b border-gray-200 bg-white">
+      <header className="border-b border-[#1E2D4D]/10 bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-4 flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: NAVY }}>
             <Shield className="w-5 h-5 text-white" />
@@ -107,22 +107,22 @@ export function DemoRequest() {
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         {/* Hero */}
         <div className="text-center mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold mb-3" style={{ color: NAVY }}>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight mb-3" style={{ color: NAVY }}>
             See EvidLY With YOUR Kitchen's Data
           </h1>
-          <p className="text-gray-600 max-w-xl mx-auto text-sm sm:text-base">
+          <p className="text-[#1E2D4D]/70 max-w-xl mx-auto text-sm sm:text-base">
             We'll build a personalized demo showing exactly what compliance management
             looks like for your operation — using your real jurisdiction requirements.
           </p>
-          <p className="text-gray-500 mt-2 text-sm">
+          <p className="text-[#1E2D4D]/50 mt-2 text-sm">
             An EvidLY specialist will walk you through it live.
           </p>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-200 shadow-sm">
+        <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-[#1E2D4D]/10">
           {/* Contact Info */}
-          <div className="p-6 border-b border-gray-100">
+          <div className="p-6 border-b border-[#1E2D4D]/5">
             <div className="flex items-center gap-2 mb-4">
               <Users className="w-5 h-5" style={{ color: NAVY }} />
               <h2 className="font-semibold" style={{ color: NAVY }}>Your Information</h2>
@@ -147,7 +147,7 @@ export function DemoRequest() {
           </div>
 
           {/* Company Info */}
-          <div className="p-6 border-b border-gray-100">
+          <div className="p-6 border-b border-[#1E2D4D]/5">
             <div className="flex items-center gap-2 mb-4">
               <Building2 className="w-5 h-5" style={{ color: NAVY }} />
               <h2 className="font-semibold" style={{ color: NAVY }}>Company Details</h2>
@@ -180,7 +180,7 @@ export function DemoRequest() {
           </div>
 
           {/* Location Info */}
-          <div className="p-6 border-b border-gray-100">
+          <div className="p-6 border-b border-[#1E2D4D]/5">
             <div className="flex items-center gap-2 mb-4">
               <MapPin className="w-5 h-5" style={{ color: NAVY }} />
               <h2 className="font-semibold" style={{ color: NAVY }}>Kitchen Location</h2>
@@ -237,7 +237,7 @@ export function DemoRequest() {
               disabled={submitting}
               className="w-full sm:w-auto px-8 py-3 rounded-lg font-semibold text-white transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
               style={{ backgroundColor: NAVY }}
-              onMouseEnter={e => { if (!submitting) (e.target as HTMLButtonElement).style.backgroundColor = '#2a6a8f'; }}
+              onMouseEnter={e => { if (!submitting) (e.target as HTMLButtonElement).style.backgroundColor = '#2A3F6B'; }}
               onMouseLeave={e => (e.target as HTMLButtonElement).style.backgroundColor = NAVY}
             >
               {submitting ? (
@@ -256,7 +256,7 @@ export function DemoRequest() {
         </form>
 
         {/* Trust footer */}
-        <div className="text-center mt-6 text-xs text-gray-400">
+        <div className="text-center mt-6 text-xs text-[#1E2D4D]/30">
           Your information is secure and will only be used to prepare your demo.
         </div>
       </div>

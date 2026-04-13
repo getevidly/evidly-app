@@ -72,7 +72,7 @@ export default function InsuranceDocumentation({ config }: { config: ReportTypeC
                   <td className="py-2 px-3 font-medium" style={{ color: BODY_TEXT }}>{item.item}</td>
                   <td className="py-2 px-3 text-xs" style={{ color: MUTED }}>{item.provider}</td>
                   <td className="py-2 px-3">
-                    <span className="px-2 py-0.5 rounded text-[11px] font-semibold" style={{
+                    <span className="px-2 py-0.5 rounded text-xs font-semibold" style={{
                       backgroundColor: item.status === 'Current' ? '#f0fdf4' : '#fffbeb',
                       color: item.status === 'Current' ? '#166534' : '#92400e',
                     }}>{item.status}</span>
@@ -121,7 +121,7 @@ export default function InsuranceDocumentation({ config }: { config: ReportTypeC
                     const isWarn = s === 'Coming Due';
                     return (
                       <td key={j} className="py-2 px-3">
-                        <span className="px-2 py-0.5 rounded text-[11px] font-semibold" style={{
+                        <span className="px-2 py-0.5 rounded text-xs font-semibold" style={{
                           backgroundColor: isGood ? '#f0fdf4' : isWarn ? '#fffbeb' : '#fef2f2',
                           color: isGood ? '#166534' : isWarn ? '#92400e' : '#991b1b',
                         }}>{s}</span>

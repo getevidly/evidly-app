@@ -14,7 +14,7 @@ import {
 } from '../data/trainingRecordsDemoData';
 import { CARD_BG, CARD_BORDER, CARD_SHADOW, PANEL_BG, BODY_TEXT, MUTED, TEXT_TERTIARY } from '../components/dashboard/shared/constants';
 
-const NAVY = '#1e4d6b';
+const NAVY = '#1E2D4D';
 const F: React.CSSProperties = { fontFamily: "'DM Sans', 'Inter', sans-serif" };
 
 const CATEGORY_COLORS: Record<string, { bg: string; text: string }> = {

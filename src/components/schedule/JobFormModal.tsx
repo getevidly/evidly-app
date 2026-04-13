@@ -71,10 +71,10 @@ export function JobFormModal({ job, onClose, onSave }: JobFormModalProps) {
     });
   }
 
-  const inputClass = 'w-full px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-200';
+  const inputClass = 'w-full px-3 py-2 text-sm rounded-xl border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 modal-backdrop-enter">
       <div
         className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-xl shadow-xl"
         style={{ background: CARD_BG }}
@@ -84,7 +84,7 @@ export function JobFormModal({ job, onClose, onSave }: JobFormModalProps) {
           <h2 className="text-base font-bold" style={{ color: NAVY }}>
             {isEdit ? 'Edit Job' : 'New Job'}
           </h2>
-          <button onClick={onClose} className="p-2.5 -m-1 rounded hover:bg-gray-100" aria-label="Close">
+          <button onClick={onClose} className="p-2.5 -m-1 rounded hover:bg-[#1E2D4D]/5" aria-label="Close">
             <X className="w-4 h-4" style={{ color: TEXT_TERTIARY }} />
           </button>
         </div>
@@ -234,7 +234,7 @@ export function JobFormModal({ job, onClose, onSave }: JobFormModalProps) {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2.5 text-xs font-semibold rounded-lg border hover:bg-gray-50 transition-colors"
+              className="flex-1 px-4 py-2.5 text-xs font-semibold rounded-xl border hover:bg-[#FAF7F0] transition-colors"
               style={{ borderColor: CARD_BORDER, color: NAVY }}
             >
               Cancel
@@ -242,7 +242,7 @@ export function JobFormModal({ job, onClose, onSave }: JobFormModalProps) {
             <button
               type="submit"
               className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold rounded-lg text-white transition-colors"
-              style={{ background: '#1e4d6b' }}
+              style={{ background: '#1E2D4D' }}
             >
               <Save className="w-3.5 h-3.5" />
               {isEdit ? 'Update Job' : 'Create Job'}

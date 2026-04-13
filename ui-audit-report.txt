@@ -1,0 +1,374 @@
+================================================================================
+  EVIDLY UI-POLISH AUDIT — FULL REPORT
+  Generated: 2026-04-12 (re-synthesized from direct codebase analysis)
+  Codebase: React 18.3 + TypeScript + Vite + Tailwind + Supabase
+  Branch: staging-mirror
+  Total Pages: 272 files in src/pages/
+  Total Components: ~200+ files in src/components/
+================================================================================
+
+
+================================================================================
+SECTION 1: DESIGN SYSTEM INVENTORY
+================================================================================
+
+1.1 COLORS
+--------------------------------------------------------------------------------
+Brand Primary (tailwind.config.js + index.css):
+  Navy:       #1E2D4D (dominant — 1946+ bg-[#...] usages across 325 files)
+  Navy Light: #2A3F6B
+  Navy Dark:  #141E33 / #0B1628 (two different dark navies)
+  Gold:       #A08C5A (accent, focus rings, badges)
+  Gold Light: #C4AE7A (tailwind) vs #C4A96E (CSS var --gold-light) -- CONFLICT
+  Gold Dark:  #7A6840
+  Cream:      #FAF7F0 (main bg, hover states)
+
+CSS Variable Layer (index.css :root):
+  --color-gold:       #c9a227 (CONFLICTS with everywhere #A08C5A is used)
+  --color-gold-light: #A08C5A (confusingly, this IS the main gold)
+  --color-gold-dark:  #a68a1f
+  --bg-main:          #FAF7F0
+  --border:           #D1D9E6
+  --text-primary:     #0B1628
+  --text-secondary:   #3D5068
+  --text-tertiary:    #6B7F96
+
+Tailwind Config Aliases (REDUNDANT — 3 ways to reference same color):
+  brand.navy, navy.DEFAULT, brand-navy — all resolve to #1E2D4D
+  brand.gold, gold.DEFAULT, brand-gold — all resolve to #A08C5A
+
+Status/Semantic Colors:
+  Green:   #166534 (components) vs #34D399 (CSS var) — 2 completely different greens
+  Red:     #991B1B (components) vs #F87171 (CSS var) — 2 completely different reds
+  Yellow:  #FBBF24
+  Blue:    #60A5FA
+  Violet:  #A78BFA
+
+CRITICAL INCONSISTENCIES:
+  [C-1] Gold light: #C4AE7A vs #C4A96E (Tailwind vs CSS var)
+  [C-2] --color-gold is #c9a227 but gold is #A08C5A everywhere — CSS var is WRONG
+  [C-3] bg-[#faf8f3] used in App.tsx loading states vs #FAF7F0 cream — different hex
+  [C-4] Green: #166534 (MEMORY.md/components) vs #34D399 (CSS var) — very different
+  [C-5] Red: #991B1B (outbreak banner) vs #F87171 (CSS var) — very different
+  [C-6] 3 redundant Tailwind color aliases for navy and gold
+  [C-7] 1946+ hardcoded bg-[#hex] values instead of Tailwind tokens
+
+
+1.2 TYPOGRAPHY
+--------------------------------------------------------------------------------
+Font Imports:
+  index.css:  @import Outfit (400-800) + Inter (400-700)
+  index.html: DM Mono (400,500) + Syne (800) — loaded async
+
+Body Default:
+  font-family: 'Inter', system fallbacks
+  font-size: 15px (non-standard — Tailwind assumes 16px)
+  line-height: 1.6
+  font-feature-settings: 'cv11', 'ss01'
+  font-variant-numeric: tabular-nums
+
+INCONSISTENCIES:
+  [T-1] 'Outfit' font loaded (~40KB) but NEVER referenced in any component
+  [T-2] Base 15px conflicts with Tailwind's rem-based sizing (text-sm = 14px = 0.875rem of 16)
+  [T-3] H1 sizes: text-4xl (Login), text-2xl (dashboard header), text-xl (admin) — no hierarchy
+  [T-4] Custom text-[13px] used in Dashboard banners — not a Tailwind token
+  [T-5] Subtitle opacity: text-[#1E2D4D]/50 vs /70 vs /30 — used inconsistently
+  [T-6] No heading scale tokens defined in tailwind.config extends
+
+
+1.3 SPACING
+--------------------------------------------------------------------------------
+Page-level padding patterns:
+  p-6 (most pages), p-4 sm:p-6 (responsive), p-8 (Login forms),
+  p-12 xl:p-16 (Login hero)
+
+Card internal padding:
+  p-3 (compact), p-4 sm:p-6 (standard), p-5 (audit sections),
+  p-8 (onboarding), p-12 (AdminHub) — 5+ DIFFERENT values
+
+Form field spacing:
+  space-y-5 (Login), space-y-4 (AdminClientOnboarding, most forms)
+
+Gap patterns:
+  gap-2, gap-3, gap-4, gap-6, gap-8 all used with no clear semantic rule
+
+INCONSISTENCIES:
+  [S-1] Card padding: 5 different values for same visual element type
+  [S-2] Form spacing: space-y-4 vs space-y-5 (no standard)
+  [S-3] Section bottom margin: mb-3, mb-4, mb-6, mb-8, mb-12 all used
+  [S-4] No spacing tokens in tailwind.config extends
+
+
+1.4 BORDER RADIUS
+--------------------------------------------------------------------------------
+Values found:
+  rounded-md       (AdminLogin inputs, AdminClientOnboarding inputs)
+  rounded-lg       (some buttons, badges, tooltips)
+  rounded-xl       (DOMINANT — cards, modals, inputs on Login, most buttons)
+  rounded-2xl      (EmulationPanel modal, JurisdictionScoreDisplay)
+  rounded-full     (avatars, pill badges)
+  rounded-card     (12px — defined in tailwind.config, same as rounded-xl)
+  rounded-[24px]   (DailyOperations — one-off)
+
+INCONSISTENCIES:
+  [R-1] rounded-card token (12px) = rounded-xl (12px) — redundant definition
+  [R-2] Inputs: rounded-md (AdminLogin) vs rounded-xl (Login) — CRITICAL mismatch
+  [R-3] CTA buttons: rounded-lg (EmptyState) vs rounded-xl (PageStates) — same purpose
+  [R-4] SSO button: rounded-lg vs main button: rounded-xl — same page
+
+
+1.5 SHADOWS
+--------------------------------------------------------------------------------
+Tailwind Config Custom Shadows (DEFINED but NEVER USED):
+  shadow-card:       0 1px 3px rgba(11,22,40,0.06), 0 1px 2px rgba(11,22,40,0.04)
+  shadow-card-hover: 0 10px 25px rgba(11,22,40,0.08), 0 4px 10px rgba(11,22,40,0.04)
+  shadow-elevated:   0 20px 40px rgba(11,22,40,0.1), 0 8px 16px rgba(11,22,40,0.06)
+
+Actually Used (default Tailwind):
+  shadow-sm (most common — buttons, compact cards)
+  shadow-md (hover states)
+  shadow-lg (modals, dropdowns, sticky bars)
+  shadow-xl (modal content: deficiency, inventory)
+  shadow-2xl (EmulationPanel)
+
+One-offs:
+  Toaster: '0 8px 30px rgba(0,0,0,0.12)' — uses black instead of navy
+  DailyOperations: shadow-[0_20px_50px_-10px_rgba(0,0,0,0.2)] — one-off
+
+INCONSISTENCIES:
+  [SH-1] 3 custom shadow tokens defined, 0 used — dead config
+  [SH-2] Toaster shadow uses rgba(0,0,0) instead of brand navy rgba(11,22,40)
+
+
+1.6 BUTTONS
+--------------------------------------------------------------------------------
+Shared Component: src/components/ui/Button.jsx
+  Variants: primary, gold, secondary, destructive, ghost, outline (6 total)
+  Sizes: sm (h-8), md (h-10 min-h-[44px]), lg (h-12), icon (h-10 w-10)
+  Base: rounded-xl, transition-all 150ms, focus-visible ring, disabled states
+
+ADOPTION: Estimated <20% — most pages inline button styles
+
+INCONSISTENCIES:
+  [B-1] Login submit: inline styles matching primary but NOT using Button.jsx
+  [B-2] AdminLogin submit: rounded-md (vs Button.jsx rounded-xl) — MISMATCH
+  [B-3] AuditReport CTA: "rounded-lg font-bold text-lg" — unique non-standard variant
+  [B-4] EmptyState CTA: rounded-lg (differs from PageStates CTA: rounded-xl)
+  [B-5] Many buttons omit min-h-[44px] — touch target compliance inconsistent
+  [B-6] Hover navy: #2a3d5d (Login) vs #162340 (PageStates) — different shades
+
+
+1.7 ICONS
+--------------------------------------------------------------------------------
+Library: lucide-react — 462 import statements across 457 files
+Sidebar: Emoji icons exclusively (70+ unique emojis in sidebarConfig.ts)
+
+Size patterns:
+  size={14}/size={16} (inline), h-4 w-4 / h-5 w-5 (standard),
+  h-8 w-8 (loading), h-10 w-10 / h-12 w-12 (empty states)
+
+INCONSISTENCIES:
+  [I-1] Sidebar emojis vs lucide-react everywhere else — visual mismatch
+  [I-2] No icon size tokens — every usage picks ad-hoc
+  [I-3] Password toggle uses h-5 w-5 but most inline icons use h-4 w-4
+
+
+1.8 CARDS
+--------------------------------------------------------------------------------
+Dominant pattern:
+  bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6
+
+Variations:
+  - border-l-4 accent (Dashboard banners)
+  - shadow-sm (AdminDashboard)
+  - No border (some admin panels)
+  - style={{ borderColor: '#D1D9E6' }} (AdminDashboard — inline style)
+
+INCONSISTENCIES:
+  [CD-1] Border color: border-[#1E2D4D]/10 (most) vs border-[#1E2D4D]/15 (inputs)
+         vs inline '#D1D9E6' (AdminDashboard) — 3 DIFFERENT border approaches
+  [CD-2] No shared Card component — pattern is copy-pasted per page
+  [CD-3] AdminHub uses p-12 text-center — massively different from standard p-4
+
+
+1.9 TABLES
+--------------------------------------------------------------------------------
+  No shared Table component exists.
+  Each page builds table markup inline with varying header styles,
+  row hover states, and cell padding.
+
+  INCONSISTENCY: [TB-1] Zero table standardization across the entire app
+
+
+1.10 FORMS
+--------------------------------------------------------------------------------
+Login Input Pattern:
+  border border-[#1E2D4D]/15 rounded-xl shadow-sm
+  focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40
+
+AdminLogin Input Pattern:
+  border border-[#1E2D4D]/15 rounded-md shadow-sm
+  focus:outline-none focus-visible:ring-[#A08C5A]/50
+
+AdminClientOnboarding:
+  border border-[#1E2D4D]/15 rounded-md focus-visible:outline-none focus-visible:ring-2
+
+INCONSISTENCIES:
+  [F-1] Input radius: rounded-xl (Login) vs rounded-md (AdminLogin, Onboarding) — CRITICAL
+  [F-2] Focus pseudo: focus:ring vs focus-visible:ring — mixed usage
+  [F-3] No shared Input component
+
+
+1.11 MODALS
+--------------------------------------------------------------------------------
+Common Pattern:
+  Fixed overlay (bg-black/50) + centered content
+  rounded-xl shadow-xl border, max-w-md or max-w-lg
+
+INCONSISTENCIES:
+  [M-1] EmulationPanel: rounded-2xl shadow-2xl — unique
+  [M-2] DemoConversionModal: custom modal-content-enter animation
+  [M-3] No shared Modal shell — each modal rebuilds overlay positioning
+  [M-4] Max-width varies: max-w-md, max-w-lg, max-w-xl — no content-type rule
+
+
+1.12 TOASTS
+--------------------------------------------------------------------------------
+Library: sonner, configured centrally in App.tsx
+  Position: top-right
+  richColors: true, closeButton: true
+  duration: 4000ms
+  Custom: borderRadius 12px, boxShadow '0 8px 30px rgba(0,0,0,0.12)'
+
+STATUS: GOOD — this is the ONE centralized UI element. Minor issue: shadow uses black.
+
+
+================================================================================
+SECTION 2: PAGE-BY-PAGE GRADES
+================================================================================
+
+See page-grades.txt for the complete listing.
+
+Summary:
+  A grades:  0
+  B+ grades: 2 (Login, CountyLandingPage)
+  B grades:  ~55 pages
+  B- grades: ~45 pages
+  C+ grades: ~30 pages
+  C grades:  ~15 pages
+  D grades:  0
+  F grades:  0
+
+  OVERALL AVERAGE: B- (functional and professional, but inconsistent)
+
+
+================================================================================
+SECTION 3: INTERACTIONS & ANIMATIONS
+================================================================================
+
+3.1 PAGE TRANSITIONS
+  - Framer Motion via PageTransition component: opacity 0->1, y 8->0, 200ms
+  - CSS .page-enter class: translateY(4px), 300ms — REDUNDANT with Framer Motion
+  - Suspense shows generic spinner, not skeleton loading
+
+3.2 HOVER STATES
+  - Buttons: hover background varies (at least 3 different navy hover shades)
+  - Cards: hover:shadow-md hover:-translate-y-0.5 (DashboardToday)
+  - Links: hover:underline underline-offset-2
+  - active:scale-[0.98] on Button.jsx — excellent micro-interaction
+  - AllFeatures: hover:border-[#A08C5A] + hover:shadow-md — gold border on hover
+
+3.3 FOCUS STATES
+  - focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 (standard — GOOD)
+  - Some elements mix focus:ring with focus-visible:ring — inconsistent
+  - focus-visible:outline-none prevents default focus ring — GOOD
+
+3.4 LOADING
+  - Spinner: animate-spin rounded-full border-b-2 border-[#A08C5A]
+  - Size varies: h-12 w-12, h-8 w-8 — no standard
+  - LoadingSkeleton component exists (src/components/shared/PageStates.tsx)
+  - StaggeredList component exists for list animations — underutilized
+  - CountUp component for animated numbers — nice touch
+
+3.5 ANIMATIONS INVENTORY (index.css):
+  @keyframes page-enter (300ms)
+  @keyframes pulse, shimmer, bounce-in, pulse-glow
+  @keyframes slide-down (300ms), slide-up (400ms), slide-in-left (400ms)
+  @keyframes slide-in-right, slideInRight (DUPLICATE — 2 versions of same)
+  @keyframes fade-in (500ms), spin-slow, scan-bar
+
+  Utility classes:
+  .animate-shimmer, .animate-bounce-in, .animate-pulse-glow
+  .animate-slide-down, .animate-slide-up, .animate-slide-in-left
+  .animate-fade-in
+
+ISSUES:
+  [AN-1] Two page transition systems: Framer Motion + CSS .page-enter
+  [AN-2] slide-in-right and slideInRight are duplicate keyframes
+  [AN-3] Loading spinner size not standardized
+  [AN-4] Skeleton loading underutilized — most pages show spinner
+
+
+================================================================================
+SECTION 4: PROFESSIONAL POLISH
+================================================================================
+
+4.1 WHAT EVIDLY DOES WELL
+  - Strong brand identity: Navy + Gold + Cream is distinctive and professional
+  - Login page: split-panel design is competitive with top SaaS
+  - Role-based sidebar: well-architected with 8 role configs in sidebarConfig.ts
+  - Touch targets: min-h-[44px] on most interactive elements
+  - Accessibility basics: focus-visible rings, aria-labels on toggles
+  - Page transitions: Framer Motion provides smooth route changes
+  - Error boundaries: at both page and app level
+  - Localization: Spanish translations for sidebar items
+  - Cookie consent: present
+  - Toasts: centralized via Sonner
+  - Empty states: consistent icon + title + description + CTA pattern
+  - Active scale micro-interaction on buttons
+
+4.2 WHAT NEEDS WORK
+  - Component library adoption: Button.jsx exists, <20% used it
+  - No shared Card, Input, Modal, Table, Badge, Select components
+  - 1946+ hardcoded hex colors — should be Tailwind tokens
+  - Dead font: Outfit loaded (~40KB) but never used
+  - 2 conflicting gold-light values
+  - 3 custom shadow tokens defined but 0 used
+  - Input radius inconsistency: rounded-md vs rounded-xl
+  - No heading hierarchy system
+  - No spacing scale tokens
+  - Duplicate animation keyframes
+  - Some pages are 1000+ lines (should be decomposed)
+  - Admin pages use different border colors than tenant pages
+
+4.3 ACCESSIBILITY GAPS
+  - No skip-to-content link
+  - No ARIA landmarks consistency
+  - Gold (#A08C5A) on white likely fails WCAG AA 4.5:1 contrast
+  - Some interactive elements may lack proper ARIA roles
+
+4.4 PERFORMANCE CONSIDERATIONS
+  - Dead font load (Outfit) adds ~40KB
+  - 272 page files all lazy-loaded — good
+  - Leaflet loaded unconditionally in index.html — should be dynamic
+  - No image optimization strategy visible
+
+
+================================================================================
+SECTION 5: COMPETITIVE COMPARISON
+================================================================================
+
+See competitive-scorecard.txt for detailed scoring.
+
+Executive Summary:
+  EvidLY sits at B-/C+ overall polish level — professional and functional
+  but lacks the systematic design discipline of top-tier SaaS. The primary
+  gap is component library adoption. The brand identity (Navy+Gold+Cream)
+  is distinctive and the Login page is competitive. Interior pages need
+  consistency work. Estimated 15-25 hours to reach solid B+, 40-60 hours
+  to approach A-tier.
+
+
+================================================================================
+END OF AUDIT REPORT
+================================================================================

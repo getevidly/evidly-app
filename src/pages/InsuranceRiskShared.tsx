@@ -173,21 +173,21 @@ export default function InsuranceRiskShared() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#FAF7F0]">
       {/* Top Bar */}
-      <div className="bg-[#1e4d6b] text-white px-4 sm:px-8 py-4">
+      <div className="bg-[#1E2D4D] text-white px-4 sm:px-8 py-4">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <EvidlyIcon size={28} />
             <div>
               <span className="text-lg font-bold">
                 <span className="text-white">Evid</span>
-                <span style={{ color: '#d4af37' }}>LY</span>
+                <span style={{ color: '#A08C5A' }}>LY</span>
               </span>
-              <p className="text-[10px] text-gray-300 -mt-0.5">Lead with Confidence</p>
+              <p className="text-xs text-[#1E2D4D]/30 -mt-0.5">Lead with Confidence</p>
             </div>
           </div>
-          <span className="text-xs text-gray-300 hidden sm:block">Insurance Risk Assessment</span>
+          <span className="text-xs text-[#1E2D4D]/30 hidden sm:block">Insurance Risk Assessment</span>
         </div>
       </div>
 
@@ -195,25 +195,25 @@ export default function InsuranceRiskShared() {
       <div className="max-w-3xl mx-auto px-4 sm:px-8 py-8 space-y-6">
         {/* Title */}
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Insurance Risk Assessment</h1>
-          <p className="text-sm text-gray-500 mt-1">Powered by EvidLY</p>
+          <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">Insurance Risk Assessment</h1>
+          <p className="text-sm text-[#1E2D4D]/50 mt-1">Powered by EvidLY</p>
         </div>
 
         {/* Location Info */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-2">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6 space-y-2">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 text-sm">
-            <div><span className="text-gray-500">Location:</span> <span className="font-medium text-gray-900">{d.locationName}</span></div>
-            <div><span className="text-gray-500">Organization:</span> <span className="font-medium text-gray-900">{d.orgName}</span></div>
-            <div><span className="text-gray-500">Address:</span> <span className="font-medium text-gray-900">{d.address}</span></div>
-            <div><span className="text-gray-500">Industry:</span> <span className="font-medium text-gray-900">{d.industrySegment}</span></div>
-            <div><span className="text-gray-500">Jurisdiction:</span> <span className="font-medium text-gray-900">{d.jurisdiction}</span></div>
-            <div><span className="text-gray-500">Data Period:</span> <span className="font-medium text-gray-900">{d.dataPeriod}</span></div>
+            <div><span className="text-[#1E2D4D]/50">Location:</span> <span className="font-medium text-[#1E2D4D]">{d.locationName}</span></div>
+            <div><span className="text-[#1E2D4D]/50">Organization:</span> <span className="font-medium text-[#1E2D4D]">{d.orgName}</span></div>
+            <div><span className="text-[#1E2D4D]/50">Address:</span> <span className="font-medium text-[#1E2D4D]">{d.address}</span></div>
+            <div><span className="text-[#1E2D4D]/50">Industry:</span> <span className="font-medium text-[#1E2D4D]">{d.industrySegment}</span></div>
+            <div><span className="text-[#1E2D4D]/50">Jurisdiction:</span> <span className="font-medium text-[#1E2D4D]">{d.jurisdiction}</span></div>
+            <div><span className="text-[#1E2D4D]/50">Data Period:</span> <span className="font-medium text-[#1E2D4D]">{d.dataPeriod}</span></div>
           </div>
         </div>
 
         {/* Risk Score Hero */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Risk Score</h2>
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
+          <h2 className="text-sm font-semibold text-[#1E2D4D]/50 uppercase tracking-wider mb-4">Risk Score</h2>
           <div className="flex flex-col sm:flex-row items-center gap-6">
             <div
               className="w-32 h-32 rounded-full flex items-center justify-center border-4 flex-shrink-0"
@@ -221,7 +221,7 @@ export default function InsuranceRiskShared() {
             >
               <div className="text-center">
                 <div className="text-4xl font-bold" style={{ color: d.tierColor }}>{d.overallScore}</div>
-                <div className="text-xs text-gray-500">of 100</div>
+                <div className="text-xs text-[#1E2D4D]/50">of 100</div>
               </div>
             </div>
             <div className="flex-1 text-center sm:text-left">
@@ -232,17 +232,17 @@ export default function InsuranceRiskShared() {
                 {d.riskTier}
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
-                <div className="p-2 rounded-lg bg-gray-50">
-                  <div className="text-lg font-bold" style={{ color: '#1e4d6b' }}>{d.industryPercentile}nd</div>
-                  <div className="text-[10px] text-gray-500">Percentile</div>
+                <div className="p-2 rounded-lg bg-[#FAF7F0]">
+                  <div className="text-lg font-bold" style={{ color: '#1E2D4D' }}>{d.industryPercentile}nd</div>
+                  <div className="text-xs text-[#1E2D4D]/50">Percentile</div>
                 </div>
-                <div className="p-2 rounded-lg bg-gray-50">
+                <div className="p-2 rounded-lg bg-[#FAF7F0]">
                   <div className="text-lg font-bold text-green-600">{d.trendDelta}</div>
-                  <div className="text-[10px] text-gray-500">12mo Change</div>
+                  <div className="text-xs text-[#1E2D4D]/50">12mo Change</div>
                 </div>
-                <div className="p-2 rounded-lg bg-gray-50">
-                  <div className="text-lg font-bold" style={{ color: '#1e4d6b' }}>{d.dataPoints.toLocaleString()}</div>
-                  <div className="text-[10px] text-gray-500">Data Points</div>
+                <div className="p-2 rounded-lg bg-[#FAF7F0]">
+                  <div className="text-lg font-bold" style={{ color: '#1E2D4D' }}>{d.dataPoints.toLocaleString()}</div>
+                  <div className="text-xs text-[#1E2D4D]/50">Data Points</div>
                 </div>
               </div>
             </div>
@@ -250,25 +250,25 @@ export default function InsuranceRiskShared() {
         </div>
 
         {/* Factor Breakdown */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Factor Breakdown</h2>
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
+          <h2 className="text-sm font-semibold text-[#1E2D4D]/50 uppercase tracking-wider mb-4">Factor Breakdown</h2>
           <div className="space-y-4">
             {d.factors.map(f => (
-              <div key={f.name} className="flex items-start gap-4 p-3 rounded-lg bg-gray-50">
+              <div key={f.name} className="flex items-start gap-4 p-3 rounded-lg bg-[#FAF7F0]">
                 <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: f.color + '15' }}>
                   <f.icon className="h-5 w-5" style={{ color: f.color }} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-semibold text-gray-900">{f.name}</span>
+                    <span className="text-sm font-semibold text-[#1E2D4D]">{f.name}</span>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-medium text-gray-400">{f.weight}</span>
+                      <span className="text-xs font-medium text-[#1E2D4D]/30">{f.weight}</span>
                       <span className="text-lg font-bold" style={{ color: f.score >= 90 ? '#22c55e' : f.score >= 75 ? '#eab308' : '#ef4444' }}>{f.score}</span>
                       <span className="px-1.5 py-0.5 rounded text-xs font-bold" style={{ backgroundColor: f.score >= 90 ? '#f0fdf4' : '#fefce8', color: f.score >= 90 ? '#22c55e' : '#eab308' }}>{f.grade}</span>
                     </div>
                   </div>
-                  <p className="text-xs text-gray-600">{f.detail}</p>
-                  <p className="text-[10px] text-gray-400 mt-1">{f.dataPoints.toLocaleString()} data points</p>
+                  <p className="text-xs text-[#1E2D4D]/70">{f.detail}</p>
+                  <p className="text-xs text-[#1E2D4D]/30 mt-1">{f.dataPoints.toLocaleString()} data points</p>
                 </div>
               </div>
             ))}
@@ -276,27 +276,27 @@ export default function InsuranceRiskShared() {
         </div>
 
         {/* 12-Month Trend */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">12-Month Trend</h2>
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
+          <h2 className="text-sm font-semibold text-[#1E2D4D]/50 uppercase tracking-wider mb-4">12-Month Trend</h2>
           <svg viewBox="0 0 600 160" className="w-full" style={{ maxHeight: 180 }}>
             {[60, 70, 80, 90, 100].map((v, i) => {
               const y2 = 140 - ((v - 55) / 50) * 120;
               return (
                 <g key={i}>
                   <line x1={40} x2={570} y1={y2} y2={y2} stroke="#f1f5f9" strokeWidth={1} />
-                  <text x={32} y={y2 + 4} textAnchor="end" className="text-[10px] fill-gray-400">{v}</text>
+                  <text x={32} y={y2 + 4} textAnchor="end" className="text-xs fill-[#1E2D4D]/40">{v}</text>
                 </g>
               );
             })}
             {d.trendData.map((pt, i) => (
-              <text key={i} x={40 + (i / 11) * 530} y={155} textAnchor="middle" className="text-[9px] fill-gray-400">{pt.month}</text>
+              <text key={i} x={40 + (i / 11) * 530} y={155} textAnchor="middle" className="text-[11px] fill-[#1E2D4D]/40">{pt.month}</text>
             ))}
             <path
               d={d.trendData.map((pt, i) => `${i === 0 ? 'M' : 'L'}${40 + (i / 11) * 530},${140 - ((pt.score - 55) / 50) * 120}`).join(' ')}
-              fill="none" stroke="#1e4d6b" strokeWidth={2.5}
+              fill="none" stroke="#1E2D4D" strokeWidth={2.5}
             />
             {d.trendData.map((pt, i) => (
-              <circle key={i} cx={40 + (i / 11) * 530} cy={140 - ((pt.score - 55) / 50) * 120} r={3.5} fill="#1e4d6b" stroke="#fff" strokeWidth={1.5} />
+              <circle key={i} cx={40 + (i / 11) * 530} cy={140 - ((pt.score - 55) / 50) * 120} r={3.5} fill="#1E2D4D" stroke="#fff" strokeWidth={1.5} />
             ))}
           </svg>
           <div className="flex items-center justify-center gap-1 mt-2 text-xs text-green-600 font-medium">
@@ -306,35 +306,35 @@ export default function InsuranceRiskShared() {
         </div>
 
         {/* About This Score */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">About This Score</h2>
-          <p className="text-sm text-gray-700 leading-relaxed">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
+          <h2 className="text-sm font-semibold text-[#1E2D4D]/50 uppercase tracking-wider mb-3">About This Score</h2>
+          <p className="text-sm text-[#1E2D4D]/80 leading-relaxed">
             This score is based on <strong>{d.dataPoints.toLocaleString()}</strong> verified data points collected over 12 months of continuous compliance monitoring via EvidLY.
             Data includes temperature readings, daily checklists, incident reports, equipment service records, and document management. {/* demo */}
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4 text-center text-xs">
-            <div className="p-2 rounded-lg bg-gray-50">
-              <div className="font-semibold text-gray-900">{d.generatedAt}</div>
-              <div className="text-gray-400">Generated</div>
+            <div className="p-2 rounded-lg bg-[#FAF7F0]">
+              <div className="font-semibold text-[#1E2D4D]">{d.generatedAt}</div>
+              <div className="text-[#1E2D4D]/30">Generated</div>
             </div>
-            <div className="p-2 rounded-lg bg-gray-50">
-              <div className="font-semibold text-gray-900">{d.validUntil}</div>
-              <div className="text-gray-400">Valid Until</div>
+            <div className="p-2 rounded-lg bg-[#FAF7F0]">
+              <div className="font-semibold text-[#1E2D4D]">{d.validUntil}</div>
+              <div className="text-[#1E2D4D]/30">Valid Until</div>
             </div>
-            <div className="p-2 rounded-lg bg-gray-50">
-              <div className="font-semibold text-gray-900">{d.reportId}</div>
-              <div className="text-gray-400">Report ID</div>
+            <div className="p-2 rounded-lg bg-[#FAF7F0]">
+              <div className="font-semibold text-[#1E2D4D]">{d.reportId}</div>
+              <div className="text-[#1E2D4D]/30">Report ID</div>
             </div>
-            <div className="p-2 rounded-lg bg-gray-50">
-              <div className="font-semibold text-gray-900">{d.dataPeriod}</div>
-              <div className="text-gray-400">Data Period</div>
+            <div className="p-2 rounded-lg bg-[#FAF7F0]">
+              <div className="font-semibold text-[#1E2D4D]">{d.dataPeriod}</div>
+              <div className="text-[#1E2D4D]/30">Data Period</div>
             </div>
           </div>
           <div className="mt-4">
             <button
               onClick={handleDownloadPDF}
               className="px-4 py-2 rounded-lg text-sm font-medium text-white flex items-center gap-2 min-h-[44px]"
-              style={{ backgroundColor: '#1e4d6b' }}
+              style={{ backgroundColor: '#1E2D4D' }}
             >
               <Download className="h-4 w-4" /> Download PDF Report
             </button>
@@ -343,33 +343,33 @@ export default function InsuranceRiskShared() {
 
         {/* For Insurance Professionals */}
         <div className="rounded-xl p-5" style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}>
-          <h3 className="text-sm font-bold text-gray-900 mb-2 flex items-center gap-2">
+          <h3 className="text-sm font-bold text-[#1E2D4D] mb-2 flex items-center gap-2">
             <EvidlyIcon size={16} />
             For Insurance Professionals
           </h3>
-          <p className="text-sm text-gray-700 mb-3">
+          <p className="text-sm text-[#1E2D4D]/80 mb-3">
             Interested in integrating EvidLY risk scores into your underwriting process?
             Our API provides real-time, continuous compliance data to support evidence-based premium decisions.
           </p>
           <a
             href="mailto:partnerships@evidly.com"
             className="inline-flex items-center gap-2 text-sm font-medium hover:underline"
-            style={{ color: '#1e4d6b' }}
+            style={{ color: '#1E2D4D' }}
           >
             partnerships@evidly.com <ExternalLink className="h-3.5 w-3.5" />
           </a>
         </div>
 
         {/* Footer */}
-        <div className="text-center py-4 border-t border-gray-200">
+        <div className="text-center py-4 border-t border-[#1E2D4D]/10">
           <div className="flex items-center justify-center gap-2 mb-1">
             <EvidlyIcon size={16} />
             <span className="text-sm font-bold">
-              <span className="text-gray-900">Evid</span>
-              <span style={{ color: '#d4af37' }}>LY</span>
+              <span className="text-[#1E2D4D]">Evid</span>
+              <span style={{ color: '#A08C5A' }}>LY</span>
             </span>
           </div>
-          <p className="text-xs text-gray-400">Lead with Confidence · evidly.com</p>
+          <p className="text-xs text-[#1E2D4D]/30">Lead with Confidence · evidly.com</p>
         </div>
       </div>
     </div>

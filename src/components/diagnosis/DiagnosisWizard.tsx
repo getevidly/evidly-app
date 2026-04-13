@@ -146,7 +146,7 @@ export const DiagnosisWizard: React.FC = () => {
                   transition: 'all 0.15s ease',
                 }}
                 onMouseEnter={e => {
-                  (e.currentTarget as HTMLElement).style.borderColor = '#d4af37';
+                  (e.currentTarget as HTMLElement).style.borderColor = '#A08C5A';
                   (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 8px rgba(212,175,55,0.15)';
                 }}
                 onMouseLeave={e => {
@@ -183,7 +183,7 @@ export const DiagnosisWizard: React.FC = () => {
                   transition: 'all 0.15s ease',
                 }}
                 onMouseEnter={e => {
-                  (e.currentTarget as HTMLElement).style.borderColor = '#1e4d6b';
+                  (e.currentTarget as HTMLElement).style.borderColor = '#1E2D4D';
                   (e.currentTarget as HTMLElement).style.backgroundColor = '#f8fafb';
                 }}
                 onMouseLeave={e => {
@@ -286,7 +286,7 @@ export const DiagnosisWizard: React.FC = () => {
             background: '#eff6ff', border: '1px solid #bfdbfe',
             borderRadius: 10, padding: 14, marginBottom: 12,
           }}>
-            <p style={{ fontSize: 10, fontWeight: 700, color: '#1e4d6b', textTransform: 'uppercase', marginBottom: 4, fontFamily: 'system-ui' }}>When to Call a Professional</p>
+            <p style={{ fontSize: 10, fontWeight: 700, color: '#1E2D4D', textTransform: 'uppercase', marginBottom: 4, fontFamily: 'system-ui' }}>When to Call a Professional</p>
             <p style={{ fontSize: 13, color: '#1e3a5f', margin: 0, fontFamily: 'system-ui', lineHeight: 1.5 }}>{result.whenToCallProfessional}</p>
           </div>
 
@@ -390,7 +390,7 @@ export const DiagnosisWizard: React.FC = () => {
                 toast.info('Incident logged in EvidLY. In production, this creates a corrective action record with the diagnosis details and any attached evidence.');
               }}
               style={{
-                flex: 1, background: '#1e4d6b', border: 'none',
+                flex: 1, background: '#1E2D4D', border: 'none',
                 borderRadius: 8, padding: '12px 20px',
                 color: '#ffffff', fontSize: 13, fontWeight: 700,
                 cursor: 'pointer', fontFamily: 'system-ui',

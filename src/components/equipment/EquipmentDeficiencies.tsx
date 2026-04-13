@@ -25,8 +25,8 @@ export function EquipmentDeficiencies({ equipmentId }: EquipmentDeficienciesProp
       <div className="space-y-3">
         {Array.from({ length: 3 }).map((_, i) => (
           <div key={i} className="rounded-xl p-4 animate-pulse" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
-            <div className="h-4 w-48 bg-gray-200 rounded mb-2" />
-            <div className="h-3 w-32 bg-gray-200 rounded" />
+            <div className="h-4 w-48 bg-[#1E2D4D]/8 rounded mb-2" />
+            <div className="h-3 w-32 bg-[#1E2D4D]/8 rounded" />
           </div>
         ))}
       </div>
@@ -45,7 +45,7 @@ export function EquipmentDeficiencies({ equipmentId }: EquipmentDeficienciesProp
         <button
           onClick={() => alert('Add deficiency (demo)')}
           className="mt-4 flex items-center gap-1.5 mx-auto px-4 py-2 text-sm font-semibold text-white rounded-lg"
-          style={{ background: '#1e4d6b' }}
+          style={{ background: '#1E2D4D' }}
         >
           <Plus className="w-4 h-4" /> Add Deficiency
         </button>
@@ -77,7 +77,7 @@ export function EquipmentDeficiencies({ equipmentId }: EquipmentDeficienciesProp
         <button
           onClick={() => alert('Add deficiency (demo)')}
           className="flex items-center gap-1.5 px-3 py-2 text-sm font-semibold text-white rounded-lg"
-          style={{ background: '#1e4d6b' }}
+          style={{ background: '#1E2D4D' }}
         >
           <Plus className="w-4 h-4" /> Add Deficiency
         </button>
@@ -96,12 +96,12 @@ export function EquipmentDeficiencies({ equipmentId }: EquipmentDeficienciesProp
             >
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full capitalize" style={{ background: sevStyle.bg, color: sevStyle.text }}>
+                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full capitalize" style={{ background: sevStyle.bg, color: sevStyle.text }}>
                     {def.severity}
                   </span>
                   <span className="text-xs font-mono" style={{ color: TEXT_TERTIARY }}>{def.code}</span>
                 </div>
-                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full capitalize" style={{
+                <span className="text-xs font-semibold px-2 py-0.5 rounded-full capitalize" style={{
                   background: def.status === 'open' ? '#FEF2F2' : '#F0FFF4',
                   color: def.status === 'open' ? '#DC2626' : '#059669',
                 }}>

@@ -19,8 +19,9 @@ import {
   type TrainingEmployee, type TrainingStatus,
 } from '../data/trainingRecordsDemoData';
 import { CARD_BG, CARD_BORDER, CARD_SHADOW, PANEL_BG, BODY_TEXT, MUTED, TEXT_TERTIARY } from '../components/dashboard/shared/constants';
+import { usePageTitle } from '../hooks/usePageTitle';
 
-const NAVY = '#1e4d6b';
+const NAVY = '#1E2D4D';
 const F: React.CSSProperties = { fontFamily: "'DM Sans', 'Inter', sans-serif" };
 
 type SortKey = 'name' | 'status' | 'expiration' | 'role';
@@ -37,6 +38,7 @@ export function TrainingRecords() {
   const { isDemoMode } = useDemo();
   const { userRole } = useRole();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  usePageTitle('Training Records');
 
   const [search, setSearch] = useState('');
   const [locationFilter, setLocationFilter] = useState('all');

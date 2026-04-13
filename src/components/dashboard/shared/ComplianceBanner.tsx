@@ -102,10 +102,10 @@ export function ComplianceBanner({ isSingleLocation }: { isSingleLocation?: bool
               style={{ color: borderColor }}
             />
             <div className="flex-1 min-w-0">
-              <p className="text-[13px] font-semibold" style={{ color: isWarning ? '#92400e' : '#991b1b' }}>
+              <p className="text-sm font-semibold" style={{ color: isWarning ? '#92400e' : '#991b1b' }}>
                 {title}
               </p>
-              <p className="text-[11px]" style={{ color: isWarning ? '#a16207' : '#b91c1c' }}>
+              <p className="text-xs" style={{ color: isWarning ? '#a16207' : '#b91c1c' }}>
                 Score: {alert.score} — {isWarning ? 'action recommended' : 'immediate action required'}
               </p>
             </div>

@@ -36,7 +36,7 @@ export function AlertsBanner({ alerts }: AlertsBannerProps) {
             <span className="text-[12px] font-semibold text-[#1E2D4D] flex-1 leading-tight">
               {alert.text}
             </span>
-            <ChevronRight className="h-4 w-4 text-gray-400 flex-shrink-0" />
+            <ChevronRight className="h-4 w-4 text-[#1E2D4D]/30 flex-shrink-0" />
           </button>
         );
       })}

@@ -48,7 +48,7 @@ export default function VendorServiceSummary({ config }: { config: ReportTypeCon
         ].map(s => (
           <div key={s.label} className="rounded-xl p-4 text-center" style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
             <p className="text-xl font-bold" style={{ color: BODY_TEXT }}>{s.value}</p>
-            <p className="text-[11px] mt-1" style={{ color: MUTED }}>{s.label}</p>
+            <p className="text-xs mt-1" style={{ color: MUTED }}>{s.label}</p>
           </div>
         ))}
       </div>
@@ -73,7 +73,7 @@ export default function VendorServiceSummary({ config }: { config: ReportTypeCon
                   <td className="py-2 px-3 text-xs" style={{ color: MUTED }}>{r.serviceDate}</td>
                   <td className="py-2 px-3 text-xs" style={{ color: MUTED }}>{r.locationName}</td>
                   <td className="py-2 px-3">
-                    <span className="px-2 py-0.5 rounded text-[11px] font-semibold" style={{
+                    <span className="px-2 py-0.5 rounded text-xs font-semibold" style={{
                       backgroundColor: r.result === 'pass' ? '#f0fdf4' : '#fef2f2',
                       color: r.result === 'pass' ? '#166534' : '#991b1b',
                     }}>{r.result === 'pass' ? 'Pass' : 'Fail'}</span>

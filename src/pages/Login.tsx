@@ -133,7 +133,7 @@ export function Login() {
                 <circle cx="17.5" cy="31" r="3" fill="#A08C5A"/>
                 <circle cx="13.5" cy="19" r="3" fill="#A08C5A"/>
               </svg>
-              <span className="ml-3 text-2xl font-bold">
+              <span className="ml-3 text-2xl font-bold tracking-tight">
                 <span className="text-[#A08C5A]">E</span>
                 <span className="text-white">vid</span>
                 <span className="text-[#A08C5A]">LY</span>
@@ -151,7 +151,7 @@ export function Login() {
             <div className="flex gap-8">
               {TRUST_ITEMS.map((item) => (
                 <div key={item.value}>
-                  <p className="text-2xl font-bold text-white">{item.value}</p>
+                  <p className="text-2xl font-bold tracking-tight text-white">{item.value}</p>
                   <p className="text-xs text-white/50 font-medium mt-0.5">{item.label}</p>
                 </div>
               ))}
@@ -190,13 +190,13 @@ export function Login() {
                 <circle cx="13.5" cy="19" r="3" fill="#A08C5A"/>
               </svg>
               {branding.brandName === 'EvidLY' ? (
-                <span className="ml-3 text-3xl font-bold">
+                <span className="ml-3 text-3xl font-bold tracking-tight">
                   <span style={{ color: '#A08C5A' }}>E</span>
                   <span style={{ color: '#1E2D4D' }}>vid</span>
                   <span style={{ color: '#A08C5A' }}>LY</span>
                 </span>
               ) : (
-                <span className="ml-3 text-2xl font-bold" style={{ color: branding.colors.primary }}>
+                <span className="ml-3 text-2xl font-bold tracking-tight" style={{ color: branding.colors.primary }}>
                   {branding.brandName}
                 </span>
               )}
@@ -204,11 +204,11 @@ export function Login() {
           </div>
 
           {/* Mobile trust bar (hidden on desktop) */}
-          <div className="lg:hidden flex justify-center gap-6 mb-6 pb-6 border-b border-gray-100">
+          <div className="lg:hidden flex justify-center gap-6 mb-6 pb-6 border-b border-[#1E2D4D]/5">
             {TRUST_ITEMS.map((item) => (
               <div key={item.value} className="text-center">
                 <p className="text-base font-bold text-[#1E2D4D]">{item.value}</p>
-                <p className="text-[10px] text-gray-500 font-medium mt-0.5">{item.label}</p>
+                <p className="text-xs text-[#1E2D4D]/50 font-medium mt-0.5">{item.label}</p>
               </div>
             ))}
           </div>
@@ -218,7 +218,7 @@ export function Login() {
             <p className="text-center lg:text-left text-sm font-semibold mb-1" style={{ color: '#A08C5A' }}>
               {branding.tagline}
             </p>
-            <h2 className="text-center lg:text-left text-2xl font-bold text-gray-900">
+            <h2 className="text-center lg:text-left text-2xl font-bold tracking-tight text-[#1E2D4D]">
               Sign in to your account
             </h2>
           </div>
@@ -233,7 +233,7 @@ export function Login() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="email" className="block text-sm font-medium text-[#1E2D4D]/80">
                 Email address
               </label>
               <input
@@ -244,12 +244,12 @@ export function Login() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 block w-full px-3 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
+                className="mt-1 block w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="password" className="block text-sm font-medium text-[#1E2D4D]/80">
                 Password
               </label>
               <div className="relative mt-1">
@@ -261,7 +261,7 @@ export function Login() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full px-3 py-2.5 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
+                  className="block w-full px-3 py-2.5 pr-10 border border-[#1E2D4D]/15 rounded-xl shadow-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]/40 focus:border-[#A08C5A] transition-colors"
                 />
                 <button
                   type="button"
@@ -270,9 +270,9 @@ export function Login() {
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                    <EyeOff className="h-5 w-5 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70" />
                   ) : (
-                    <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                    <Eye className="h-5 w-5 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70" />
                   )}
                 </button>
               </div>
@@ -286,14 +286,14 @@ export function Login() {
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] border-gray-300 rounded"
+                  className="h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] border-[#1E2D4D]/15 rounded"
                 />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-600">
+                <label htmlFor="remember-me" className="ml-2 block text-sm text-[#1E2D4D]/70">
                   Remember me
                 </label>
               </div>
 
-              <Link to="/forgot-password" className="text-sm font-medium text-[#1e4d6b] hover:text-[#2a6a8f]">
+              <Link to="/forgot-password" className="text-sm font-medium text-[#1E2D4D] hover:text-[#2A3F6B]">
                 Forgot password?
               </Link>
             </div>
@@ -312,7 +312,7 @@ export function Login() {
             <button
               type="submit"
               disabled={loading || (captchaEnabled && !captchaToken)}
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-[#1E2D4D] hover:bg-[#2a3d5d] disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1E2D4D] transition-colors"
+              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-[#1E2D4D] hover:bg-[#162340] disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus:ring-offset-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 transition-colors"
             >
               {loading ? 'Signing in...' : 'Sign in'}
             </button>
@@ -322,19 +322,19 @@ export function Login() {
           {branding.sso.enabled && (
             <div className="mt-4">
               <div className="relative mb-4">
-                <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200" /></div>
-                <div className="relative flex justify-center text-sm"><span className="bg-white px-3 text-gray-500">or</span></div>
+                <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-[#1E2D4D]/10" /></div>
+                <div className="relative flex justify-center text-sm"><span className="bg-white px-3 text-[#1E2D4D]/50">or</span></div>
               </div>
               <button
                 onClick={() => toast.info('SSO login is a demo placeholder. In production, this redirects to your identity provider.')}
-                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 border-2 rounded-lg text-sm font-semibold transition-colors"
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 border-2 rounded-xl text-sm font-semibold transition-colors"
                 style={{ borderColor: branding.colors.primary, color: branding.colors.primary }}
               >
                 <EvidlyIcon size={16} />
                 Sign in with {branding.sso.provider === 'saml' ? 'SAML SSO' : branding.sso.provider === 'oidc' ? 'OpenID Connect' : 'SSO'}
               </button>
               {branding.sso.enforce && (
-                <p className="text-xs text-center text-gray-500 mt-2">
+                <p className="text-xs text-center text-[#1E2D4D]/50 mt-2">
                   Your organization requires SSO sign-in
                 </p>
               )}
@@ -342,9 +342,9 @@ export function Login() {
           )}
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-[#1E2D4D]/70">
               Don't have an account?{' '}
-              <Link to="/signup" className="font-semibold text-[#1e4d6b] hover:text-[#2a6a8f]">
+              <Link to="/signup" className="font-semibold text-[#1E2D4D] hover:text-[#2A3F6B]">
                 Sign up
               </Link>
             </p>
@@ -357,17 +357,17 @@ export function Login() {
                 href="https://evidly.com?ref=powered-by"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-600 transition-colors"
+                className="flex items-center gap-1.5 text-xs text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 transition-colors"
               >
                 <EvidlyIcon size={14} />
-                <span>Powered by <span className="font-semibold text-gray-500">EvidLY</span></span>
+                <span>Powered by <span className="font-semibold text-[#1E2D4D]/50">EvidLY</span></span>
               </a>
             </div>
           )}
 
           {/* Mobile jurisdiction detection */}
           {detectedJurisdiction && (
-            <div className="lg:hidden mt-6 flex items-center justify-center gap-2 text-gray-400 text-xs">
+            <div className="lg:hidden mt-6 flex items-center justify-center gap-2 text-[#1E2D4D]/30 text-xs">
               <MapPin size={12} />
               <span>{detectedJurisdiction} County, CA</span>
             </div>

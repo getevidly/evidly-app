@@ -1,0 +1,29 @@
+═══════════════════════════════════════════
+  DAY18-AUTO — Full Report
+  Date: 2026-04-12 | Tests: 18
+═══════════════════════════════════════════
+
+TEST    | RESULT           | DETAIL
+--------|------------------|------
+18.01   | PASS             | Table inventory: 388 tables found | Core tables: 28/28 present | Migrations: 281 files
+18.02   | PASS             | Column alignment: 9/9 key columns verified | Tables: user_profiles=✓, sales_pipeline=✓, feature_flags=✓, federal_overlay=✓, irr_submissions=✓
+18.03   | PASS             | Trigger alignment: 60 triggers, 54 functions | Key triggers: 8/8 verified
+18.04   | PASS             | RLS policies: 396 tables with RLS enabled | 749 policies | Core RLS: 10/10 (all present)
+18.05   | PASS             | Seed data: Feature flags=✓ (always_on refs: 15) | County configs: 57 files | CalCode map=✓ | Regulatory sources=✓ | Intel sources=✓
+18.06   | PASS             | Migration completeness: 281 files | Ordered=✓ | Empty=0 | Total size=1535KB | Cron migrations: 9 (2 reference prod URL) | Dangerous drops: 0
+18.07   | PASS             | Edge functions: 171/171 | All have index.ts=✓ | Categories: AI=11, API=13, Intel=7, Training=11, Enterprise=7, Vendor=14, Insurance=6, Sensor=9, Benchmark=4, Stripe=3
+18.08   | PASS             | Cron jobs: 8 pg_cron schedules | Registry cron entries: 11 | Key crons: 6/6 (trial-email-daily, vendor-notifications-daily, generate-predictive-alerts, daily-violation-crawl, generate-task-instances-daily, task-notifications-check) | Migrations with cron: 5
+18.09   | PASS             | Secrets: 6/6 referenced | RESEND=5 fns | ANTHROPIC=24 fns | STRIPE_SECRET=3 fns | STRIPE_WEBHOOK=1 fns | TWILIO=3 fns | INTEL_WEBHOOK=2 fns
+18.10   | PASS             | Env vars: 6/6 in .env.example | .env.production APP_ENV=production ✓ | Sentry DSN ref=✓ | Edge secrets: RESEND, ANTHROPIC, STRIPE, TWILIO, INTELLIGENCE_WEBHOOK documented in .env.example
+18.11   | PASS             | vercel.json: 13/13 checks | SPA rewrite=✓ | Security headers: 7/7 | SEO noindex admin=✓ | CSP: supabase=✓, sentry=✓, calendly=✓ | Header blocks: 20
+18.12   | PASS             | Production build: SUCCESS | dist/index.html=✓ | Assets: 527 files | Build script=✓ | vite.config.ts=✓ | main.tsx=✓
+18.13   | PASS             | index.html smoke: 16/16 | Title=✓ | OG tags=✓ | Twitter=✓ | Structured data=✓ | $99 price=✓ | Navy theme=✓ | AI training block=✓ | Leaflet=✓ | Fonts async=✓
+18.14   | PASS             | Routes: Public 11/11 (login, operations-check, kitchen-to-community, scoretable, kitchen-check, enterprise, providers, terms, privacy, county-detail, city-seo) | Admin 7/7 (command-center, gtm, sales, onboarding, feature-flags, support-tickets, intelligence) | All present
+18.15   | PASS             | ScoreTable: FILTA_COUNTIES in 3 files | County data: 22 files | City pages: 10 files | Wave 1 county refs: 102 files
+18.16   | PASS             | Login page: 11/11 | Auth=✓ | reCAPTCHA=✓ | Social login=✓ | Vendor redirect=✓ | Admin redirect=✓ | Error/loading=✓ | Password visibility=✓
+18.17   | PASS             | Critical edge fns: 10/10 exist | Supabase imports: 10 | CORS: 10 | Error handling: 10 | Functions: assessment-notify, send-welcome-email, check-onboarding-progress, benchmark-badge-check, intelligence-collect, calculate-compliance-score, stripe-webhook, stripe-create-checkout, generate-alerts, trial-email-sender
+18.18   | PASS             | Pre-launch: 9/9 | Blend violations=0 | Auth=✓ | Roles=✓ | Sentry=✓ | ErrorBoundary=7 | FeatureFlags=✓ | No HoodOps tables=✓ | Dual authority=✓ | Open items: GA4 not configured; ZoomInfo not configured; RB2B not yet added (May 5); HubSpot 24-week drip: future; Golden Table branding: Q4 2026
+
+═══════════════════════════════════════════
+  PASS: 18 | FAIL: 0 | TOTAL: 18
+═══════════════════════════════════════════

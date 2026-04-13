@@ -1,7 +1,7 @@
 /**
  * InspectorMode — MOBILE-EMOTIONAL-01
  *
- * Emergency "Inspector is here" screen that surfaces compliance documents
+ * Emergency "Inspector is here" screen that shows compliance documents
  * in one tap. Quick access cards link to real data pages.
  *
  * Route: /inspector-mode

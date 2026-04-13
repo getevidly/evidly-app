@@ -39,9 +39,9 @@ const TABS: { id: Tab; label: string; icon: typeof BookOpen }[] = [
 
 const CATEGORY_CONFIG: Record<TrainingCategory, { label: string; icon: typeof EvidlyIcon; color: string; bg: string }> = {
   food_safety_handler: { label: 'Food Safety – Handler', icon: EvidlyIcon, color: '#15803d', bg: '#dcfce7' },
-  food_safety_manager: { label: 'Food Safety – Manager', icon: BookOpenCheck, color: '#1e4d6b', bg: '#e0f2fe' },
+  food_safety_manager: { label: 'Food Safety – Manager', icon: BookOpenCheck, color: '#1E2D4D', bg: '#e0f2fe' },
   facility_safety: { label: 'Facility Safety', icon: Flame, color: '#dc2626', bg: '#fee2e2' },
-  compliance_ops: { label: 'Compliance Ops', icon: Settings2, color: '#d4af37', bg: '#fef3c7' },
+  compliance_ops: { label: 'Compliance Ops', icon: Settings2, color: '#A08C5A', bg: '#fef3c7' },
   custom: { label: 'Custom', icon: Brain, color: '#7c3aed', bg: '#ede9fe' },
 };
 
@@ -78,9 +78,9 @@ function CourseCatalogTab() {
       {/* Stats Row */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 160px), 1fr))', gap: 12, marginBottom: 24 }}>
         {[
-          { label: 'Active Courses', value: trainingCourses.filter(c => c.isActive).length, icon: BookOpen, color: '#1e4d6b' },
+          { label: 'Active Courses', value: trainingCourses.filter(c => c.isActive).length, icon: BookOpen, color: '#1E2D4D' },
           { label: 'Total Enrolled', value: trainingEnrollments.length, icon: Users, color: '#15803d' },
-          { label: 'Completed', value: trainingEnrollments.filter(e => e.status === 'completed').length, icon: CheckCircle2, color: '#d4af37' },
+          { label: 'Completed', value: trainingEnrollments.filter(e => e.status === 'completed').length, icon: CheckCircle2, color: '#A08C5A' },
           { label: 'Certificates Issued', value: trainingCertificates.length, icon: Award, color: '#7c3aed' },
         ].map(s => (
           <div key={s.label} style={{ background: '#fff', borderRadius: 10, padding: 16, border: '1px solid #e5e7eb' }}>
@@ -146,7 +146,7 @@ function CourseCatalogTab() {
                     </span>
                   )}
                   {course.isSystemCourse && (
-                    <span style={{ padding: '3px 8px', borderRadius: 20, fontSize: 11, fontWeight: 600, background: '#eef4f8', color: '#1e4d6b' }}>System</span>
+                    <span style={{ padding: '3px 8px', borderRadius: 20, fontSize: 11, fontWeight: 600, background: '#eef4f8', color: '#1E2D4D' }}>System</span>
                   )}
                 </div>
                 {/* Title + Description */}
@@ -184,7 +184,7 @@ function CourseCatalogTab() {
                   <span style={{ fontSize: 12, color: '#9ca3af' }}>Pass: {course.passingScorePercent}%</span>
                   <button
                     onClick={e => { e.stopPropagation(); guardAction('enroll', 'Training Hub', () => toast.success(`Enrolled in "${course.title}"`)); }}
-                    style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
+                    style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 8, border: 'none', background: '#1E2D4D', color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
                     <Play size={14} /> Enroll
                   </button>
                 </div>
@@ -297,11 +297,11 @@ function MyLearningTab() {
                   {/* Progress Bar */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                     <div style={{ flex: 1, minWidth: 100, height: 8, background: '#f3f4f6', borderRadius: 4, overflow: 'hidden' }}>
-                      <div style={{ width: `${e.progressPercent}%`, height: '100%', background: isUrgent ? '#dc2626' : '#1e4d6b', borderRadius: 4, transition: 'width 0.3s' }} />
+                      <div style={{ width: `${e.progressPercent}%`, height: '100%', background: isUrgent ? '#dc2626' : '#1E2D4D', borderRadius: 4, transition: 'width 0.3s' }} />
                     </div>
-                    <span style={{ fontSize: 13, fontWeight: 600, color: isUrgent ? '#dc2626' : '#1e4d6b', minWidth: 36 }}>{e.progressPercent}%</span>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: isUrgent ? '#dc2626' : '#1E2D4D', minWidth: 36 }}>{e.progressPercent}%</span>
                     <button onClick={ev => { ev.stopPropagation(); guardAction('resume', 'Training Hub', () => toast.info('Resume learning (demo)')); }}
-                      style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 14px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
+                      style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 14px', borderRadius: 8, border: 'none', background: '#1E2D4D', color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
                       <Play size={12} /> Resume
                     </button>
                   </div>
@@ -337,7 +337,7 @@ function MyLearningTab() {
                       </span>
                     )}
                     <button onClick={() => guardAction('start', 'Training Hub', () => toast.info(`Start "${e.courseTitle}" (demo)`))}
-                      style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 14px', borderRadius: 8, border: '1px solid #1e4d6b', background: '#fff', color: '#1e4d6b', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
+                      style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 14px', borderRadius: 8, border: '1px solid #1E2D4D', background: '#fff', color: '#1E2D4D', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
                       <Play size={12} /> Start
                     </button>
                   </div>
@@ -475,7 +475,7 @@ function CertificationsTab() {
                 return (
                   <tr key={cert.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
                     <td style={{ padding: '12px 14px' }}>
-                      <div style={{ fontWeight: 600, color: '#1e4d6b', cursor: 'pointer', textDecoration: 'none' }}
+                      <div style={{ fontWeight: 600, color: '#1E2D4D', cursor: 'pointer', textDecoration: 'none' }}
                         onClick={() => { const uid = EMP_ID_MAP[cert.employeeId]; if (uid) navigate(`/training/employee/${uid}`); }}
                         onMouseEnter={e => (e.currentTarget.style.textDecoration = 'underline')}
                         onMouseLeave={e => (e.currentTarget.style.textDecoration = 'none')}>
@@ -534,8 +534,8 @@ function SB476TrackerTab() {
       {/* Info Banner */}
       <div style={{ background: '#eef4f8', border: '1px solid #b8d4e8', borderRadius: 10, padding: 16, marginBottom: 24 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-          <Scale size={18} color="#1e4d6b" />
-          <span style={{ fontWeight: 700, color: '#1e4d6b', fontSize: 14 }}>California SB 476 — Food Handler Training Requirements</span>
+          <Scale size={18} color="#1E2D4D" />
+          <span style={{ fontWeight: 700, color: '#1E2D4D', fontSize: 14 }}>California SB 476 — Food Handler Training Requirements</span>
         </div>
         <div style={{ fontSize: 13, color: '#374151', lineHeight: 1.6 }}>
           Employers must: <strong>(1)</strong> Pay all training costs, <strong>(2)</strong> Compensate employees for training time at their regular rate,
@@ -546,7 +546,7 @@ function SB476TrackerTab() {
       {/* Compliance Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 160px), 1fr))', gap: 12, marginBottom: 24 }}>
         {[
-          { label: 'Total Training Costs', value: `$${cents(totalCost)}`, icon: DollarSign, color: '#1e4d6b' },
+          { label: 'Total Training Costs', value: `$${cents(totalCost)}`, icon: DollarSign, color: '#1E2D4D' },
           { label: 'Total Compensation', value: `$${cents(totalCompensation)}`, icon: DollarSign, color: '#15803d' },
           { label: 'Compensable Hours', value: totalHours.toFixed(1) + 'h', icon: Clock, color: '#0369a1' },
           { label: 'Within 30 Days', value: `${compliant}/${trainingSB476Log.length}`, icon: CheckCircle2, color: '#15803d' },
@@ -672,15 +672,15 @@ function AdminTab() {
       {/* Admin Actions */}
       <div style={{ display: 'flex', gap: 12, marginBottom: 24, flexWrap: 'wrap' }}>
         <button onClick={() => setShowAssignModal(true)}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
+          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 8, border: 'none', background: '#1E2D4D', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
           <Send size={16} /> Assign Training
         </button>
         <button onClick={() => guardAction('enroll', 'Training Hub', () => toast.info('Bulk enroll employees (demo)'))}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 8, border: '1px solid #1e4d6b', background: '#fff', color: '#1e4d6b', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
+          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 8, border: '1px solid #1E2D4D', background: '#fff', color: '#1E2D4D', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
           <Plus size={16} /> Bulk Enroll
         </button>
         <button onClick={() => navigate('/training/courses/builder')}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 8, border: '1px solid #1e4d6b', background: '#fff', color: '#1e4d6b', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
+          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 8, border: '1px solid #1E2D4D', background: '#fff', color: '#1E2D4D', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
           <BookOpen size={16} /> Create Course
         </button>
         <button onClick={() => guardAction('download', 'Training Records', () => toast.info('Download all training records (demo)'))}
@@ -693,7 +693,7 @@ function AdminTab() {
       {/* Location Breakdown */}
       <div style={{ marginBottom: 28 }}>
         <h3 style={{ fontSize: 15, fontWeight: 700, color: '#111827', margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Building2 size={16} color="#1e4d6b" /> Enrollment by Location
+          <Building2 size={16} color="#1E2D4D" /> Enrollment by Location
         </h3>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: 12 }}>
           {enrollmentsByLocation.map(loc => (
@@ -729,7 +729,7 @@ function AdminTab() {
       {/* Course Completion Rates */}
       <div style={{ marginBottom: 28 }}>
         <h3 style={{ fontSize: 15, fontWeight: 700, color: '#111827', margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: 8 }}>
-          <BarChart3 size={16} color="#1e4d6b" /> Course Completion Rates
+          <BarChart3 size={16} color="#1E2D4D" /> Course Completion Rates
         </h3>
         <div style={{ background: '#fff', borderRadius: 10, border: '1px solid #e5e7eb', padding: 12 }}>
           {courseStats.map(c => (
@@ -739,7 +739,7 @@ function AdminTab() {
                 <div style={{ fontSize: 14, fontWeight: 600, color: '#111827', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.title}</div>
               </div>
               <div style={{ width: 100, height: 6, background: '#f3f4f6', borderRadius: 3, overflow: 'hidden', flexShrink: 0 }}>
-                <div style={{ width: `${c.rate}%`, height: '100%', background: c.rate >= 75 ? '#15803d' : c.rate >= 50 ? '#d4af37' : '#dc2626', borderRadius: 3 }} />
+                <div style={{ width: `${c.rate}%`, height: '100%', background: c.rate >= 75 ? '#15803d' : c.rate >= 50 ? '#A08C5A' : '#dc2626', borderRadius: 3 }} />
               </div>
               <span style={{ fontSize: 13, fontWeight: 600, color: '#374151', minWidth: 70, textAlign: 'right' }}>{c.completedCount}/{c.enrolledCount} ({c.rate}%)</span>
             </div>
@@ -750,7 +750,7 @@ function AdminTab() {
       {/* Recent Quiz Activity */}
       <div>
         <h3 style={{ fontSize: 15, fontWeight: 700, color: '#111827', margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: 8 }}>
-          <FileText size={16} color="#1e4d6b" /> Recent Quiz Activity
+          <FileText size={16} color="#1E2D4D" /> Recent Quiz Activity
         </h3>
         <div style={{ background: '#fff', borderRadius: 10, border: '1px solid #e5e7eb', overflow: 'hidden' }}>
           <div style={{ overflowX: 'auto' }}>
@@ -823,7 +823,7 @@ const PRICING_TIERS = [
     name: 'Professional',
     price: '$249',
     period: '/mo per location',
-    color: '#1e4d6b',
+    color: '#1E2D4D',
     popular: true,
     features: [
       { name: 'System courses (food handler, facility safety, compliance ops)', included: true, note: 'Up to 50 employees' },
@@ -842,7 +842,7 @@ const PRICING_TIERS = [
     name: 'Enterprise',
     price: 'Custom',
     period: 'per location',
-    color: '#d4af37',
+    color: '#A08C5A',
     features: [
       { name: 'System courses (food handler, facility safety, compliance ops)', included: true, note: 'Unlimited' },
       { name: 'CFPM prep modules', included: true },
@@ -863,7 +863,7 @@ function PricingTab() {
     <div>
       {/* Value Prop */}
       <div style={{ background: '#eef4f8', border: '1px solid #b8d4e8', borderRadius: 12, padding: 16, marginBottom: 28, textAlign: 'center' }}>
-        <h3 style={{ fontSize: 18, fontWeight: 700, color: '#1e4d6b', margin: '0 0 8px' }}>Training Bundled with Your EvidLY Subscription</h3>
+        <h3 style={{ fontSize: 18, fontWeight: 700, color: '#1E2D4D', margin: '0 0 8px' }}>Training Bundled with Your EvidLY Subscription</h3>
         <p style={{ fontSize: 14, color: '#374151', margin: 0, lineHeight: 1.6 }}>
           Operators currently pay $10–20 per employee for food handler certification at third-party providers.
           EvidLY bundles training into your subscription — saving $100–$200/year for a 10-person team while keeping everything in one platform.
@@ -920,7 +920,7 @@ function PricingTab() {
             { icon: Zap, title: 'One Platform', desc: 'Enterprise restaurant groups eliminate one more vendor. Training + compliance + operations in one tool.' },
           ].map(item => (
             <div key={item.title} style={{ display: 'flex', gap: 12 }}>
-              <item.icon size={20} color="#1e4d6b" style={{ flexShrink: 0, marginTop: 2 }} />
+              <item.icon size={20} color="#1E2D4D" style={{ flexShrink: 0, marginTop: 2 }} />
               <div>
                 <div style={{ fontWeight: 700, color: '#111827', fontSize: 14, marginBottom: 4 }}>{item.title}</div>
                 <div style={{ fontSize: 13, color: '#6b7280', lineHeight: 1.5 }}>{item.desc}</div>
@@ -937,7 +937,7 @@ function PricingTab() {
 
 function AchievementBadges() {
   const badges = [
-    { id: 'fast-learner', name: 'Fast Learner', desc: 'Completed under estimated time', icon: Zap, color: '#d4af37', bg: '#fffbeb', earned: true },
+    { id: 'fast-learner', name: 'Fast Learner', desc: 'Completed under estimated time', icon: Zap, color: '#A08C5A', bg: '#fffbeb', earned: true },
     { id: 'perfect-score', name: 'Perfect Score', desc: '100% on first attempt', icon: Star, color: '#7c3aed', bg: '#ede9fe', earned: false },
     { id: 'streak', name: '5-Lesson Streak', desc: 'Completed 5 lessons in a row', icon: Flame, color: '#dc2626', bg: '#fee2e2', earned: true },
     { id: 'team-player', name: 'Team Player', desc: 'All team members certified', icon: Users, color: '#15803d', bg: '#dcfce7', earned: false },
@@ -945,7 +945,7 @@ function AchievementBadges() {
   return (
     <div style={{ marginBottom: 24 }}>
       <h3 style={{ fontSize: 15, fontWeight: 700, color: '#111827', margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: 8 }}>
-        <Star size={16} color="#d4af37" /> Achievement Badges
+        <Star size={16} color="#A08C5A" /> Achievement Badges
       </h3>
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
         {badges.map(b => (
@@ -1030,7 +1030,7 @@ function AssignTrainingModal({ onClose }: { onClose: () => void }) {
             Cancel
           </button>
           <button onClick={() => guardAction('assign', 'Training Hub', () => { toast.success(`Assigned training to ${selected.size} employees`); onClose(); })}
-            style={{ padding: '8px 16px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+            style={{ padding: '8px 16px', borderRadius: 8, border: 'none', background: '#1E2D4D', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
             <Send size={14} style={{ marginRight: 6 }} /> Assign
           </button>
         </div>
@@ -1051,14 +1051,14 @@ export function TrainingDashboardWidget() {
   const overdue = trainingEnrollments.filter(e => (e.status === 'in_progress' || e.status === 'not_started') && e.expiresAt && new Date(e.expiresAt) < new Date()).length;
   const total = trainingEnrollments.length;
 
-  const statusColor = overdue > 0 ? '#dc2626' : inProgress > 0 ? '#d4af37' : '#15803d';
+  const statusColor = overdue > 0 ? '#dc2626' : inProgress > 0 ? '#A08C5A' : '#15803d';
 
   return (
     <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #e5e7eb', padding: 20, cursor: 'pointer' }}
       onClick={() => navigate('/training')}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <GraduationCap size={18} color="#1e4d6b" />
+          <GraduationCap size={18} color="#1E2D4D" />
           <span style={{ fontSize: 14, fontWeight: 700, color: '#111827' }}>Training Status</span>
         </div>
         {overdue > 0 && (
@@ -1073,7 +1073,7 @@ export function TrainingDashboardWidget() {
           <div style={{ fontSize: 11, color: '#6b7280' }}>Up to Date</div>
         </div>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 22, fontWeight: 700, color: '#d4af37' }}>{inProgress}</div>
+          <div style={{ fontSize: 22, fontWeight: 700, color: '#A08C5A' }}>{inProgress}</div>
           <div style={{ fontSize: 11, color: '#6b7280' }}>In Progress</div>
         </div>
         <div style={{ textAlign: 'center' }}>
@@ -1084,10 +1084,10 @@ export function TrainingDashboardWidget() {
       {/* Mini progress bar */}
       <div style={{ height: 6, background: '#f3f4f6', borderRadius: 3, overflow: 'hidden', display: 'flex' }}>
         <div style={{ width: `${(upToDate / total) * 100}%`, background: '#15803d' }} />
-        <div style={{ width: `${(inProgress / total) * 100}%`, background: '#d4af37' }} />
+        <div style={{ width: `${(inProgress / total) * 100}%`, background: '#A08C5A' }} />
         <div style={{ width: `${(overdue / total) * 100}%`, background: '#dc2626' }} />
       </div>
-      <div style={{ marginTop: 8, fontSize: 12, color: '#1e4d6b', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
+      <div style={{ marginTop: 8, fontSize: 12, color: '#1E2D4D', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
         View Training Hub <ChevronRight size={12} />
       </div>
     </div>
@@ -1132,12 +1132,12 @@ function RequirementsTab() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12, marginBottom: 24 }}>
         <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 10, padding: 16 }}>
           <div style={{ fontSize: 12, color: '#6b7280', fontWeight: 500 }}>Required Certifications</div>
-          <div style={{ fontSize: 28, fontWeight: 700, color: '#1e4d6b' }}>{requiredCount}</div>
+          <div style={{ fontSize: 28, fontWeight: 700, color: '#1E2D4D' }}>{requiredCount}</div>
           <div style={{ fontSize: 12, color: '#6b7280' }}>mandated by law</div>
         </div>
         <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 10, padding: 16 }}>
           <div style={{ fontSize: 12, color: '#6b7280', fontWeight: 500 }}>Recommended</div>
-          <div style={{ fontSize: 28, fontWeight: 700, color: '#d4af37' }}>{recommendedCount}</div>
+          <div style={{ fontSize: 28, fontWeight: 700, color: '#A08C5A' }}>{recommendedCount}</div>
           <div style={{ fontSize: 12, color: '#6b7280' }}>best practice</div>
         </div>
         <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 10, padding: 16 }}>
@@ -1284,7 +1284,7 @@ function ComplianceOverviewTab() {
   return (
     <div>
       {/* Headline Metric */}
-      <div style={{ background: `linear-gradient(135deg, #1e4d6b, #2c5f7f)`, borderRadius: 12, padding: '24px 28px', color: '#fff', marginBottom: 24 }}>
+      <div style={{ background: `linear-gradient(135deg, #1E2D4D, #2c5f7f)`, borderRadius: 12, padding: '24px 28px', color: '#fff', marginBottom: 24 }}>
         <div style={{ fontSize: 13, fontWeight: 500, opacity: 0.8, marginBottom: 4 }}>Workforce Certification Compliance</div>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
           <span style={{ fontSize: 48, fontWeight: 700 }}>{compliancePct}%</span>
@@ -1326,7 +1326,7 @@ function ComplianceOverviewTab() {
             )}
             {/* Mini progress bar */}
             <div style={{ height: 4, background: '#f3f4f6', borderRadius: 2, overflow: 'hidden', marginTop: 8 }}>
-              <div style={{ width: `${loc.pct}%`, height: '100%', background: loc.pct >= 80 ? '#15803d' : loc.pct >= 50 ? '#d4af37' : '#dc2626', borderRadius: 2 }} />
+              <div style={{ width: `${loc.pct}%`, height: '100%', background: loc.pct >= 80 ? '#15803d' : loc.pct >= 50 ? '#A08C5A' : '#dc2626', borderRadius: 2 }} />
             </div>
           </div>
         ))}
@@ -1439,7 +1439,7 @@ export function TrainingHub() {
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
             <button onClick={() => guardAction('chat', 'AI Study Companion', () => toast.info('AI Study Companion (Demo)'))}
-              style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 8, border: '1px solid #d4af37', background: '#fffbeb', color: '#92400e', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+              style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 8, border: '1px solid #A08C5A', background: '#fffbeb', color: '#92400e', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
               <Brain size={14} /> AI Study Companion
             </button>
           </div>
@@ -1454,8 +1454,8 @@ export function TrainingHub() {
             <button key={tab.id} onClick={() => setActiveTab(tab.id)}
               style={{
                 display: 'flex', alignItems: 'center', gap: 6, padding: '10px 14px',
-                background: 'none', border: 'none', borderBottom: isActive ? '2px solid #1e4d6b' : '2px solid transparent',
-                marginBottom: -2, color: isActive ? '#1e4d6b' : '#6b7280',
+                background: 'none', border: 'none', borderBottom: isActive ? '2px solid #1E2D4D' : '2px solid transparent',
+                marginBottom: -2, color: isActive ? '#1E2D4D' : '#6b7280',
                 fontWeight: isActive ? 700 : 500, fontSize: 14, cursor: 'pointer',
                 fontFamily: "'DM Sans', sans-serif", transition: 'all 0.15s',
                 whiteSpace: 'nowrap', minHeight: 44,

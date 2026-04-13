@@ -139,7 +139,7 @@ export default function GtmDashboard() {
     return (
       <div className="p-8 text-center">
         <p className="text-red-600 font-medium">Failed to load data</p>
-        <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2 bg-[#1E2D4D] text-white rounded text-sm">Retry</button>
+        <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2.5 bg-[#1E2D4D] text-white rounded-lg text-sm font-medium hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]">Retry</button>
       </div>
     );
   }
@@ -164,26 +164,26 @@ export default function GtmDashboard() {
       </div>
 
       {/* Channel performance table */}
-      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden mb-8">
-        <div className="px-5 py-3 border-b border-gray-100">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-500">Channel Performance</h2>
+      <div className="bg-white border border-[#1E2D4D]/10 rounded-xl overflow-hidden mb-8">
+        <div className="px-5 py-3 border-b border-[#1E2D4D]/5">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-[#1E2D4D]/50">Channel Performance</h2>
         </div>
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-100">
-              <th className="text-left px-5 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Channel</th>
-              <th className="text-right px-5 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Leads</th>
-              <th className="text-right px-5 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Demos</th>
-              <th className="text-right px-5 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Conversions</th>
+            <tr className="border-b border-[#1E2D4D]/5 hover:bg-[#1E2D4D]/[0.02] transition-colors">
+              <th className="text-left px-5 py-2.5 text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wider">Channel</th>
+              <th className="text-right px-5 py-2.5 text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wider">Leads</th>
+              <th className="text-right px-5 py-2.5 text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wider">Demos</th>
+              <th className="text-right px-5 py-2.5 text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wider">Conversions</th>
             </tr>
           </thead>
           <tbody>
             {channels.map(row => (
-              <tr key={row.channel} className="border-b border-gray-50 last:border-0">
+              <tr key={row.channel} className="border-b border-[#1E2D4D]/3 last:border-0">
                 <td className="px-5 py-3 font-medium" style={{ color: NAVY }}>{row.channel}</td>
-                <td className="px-5 py-3 text-right text-gray-500">{row.leads}</td>
-                <td className="px-5 py-3 text-right text-gray-500">{row.demos}</td>
-                <td className="px-5 py-3 text-right text-gray-500">{row.conversions}</td>
+                <td className="px-5 py-3 text-right text-[#1E2D4D]/50">{row.leads}</td>
+                <td className="px-5 py-3 text-right text-[#1E2D4D]/50">{row.demos}</td>
+                <td className="px-5 py-3 text-right text-[#1E2D4D]/50">{row.conversions}</td>
               </tr>
             ))}
           </tbody>
@@ -191,9 +191,9 @@ export default function GtmDashboard() {
       </div>
 
       {/* Status banner */}
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-5 text-center">
-        <p className="text-sm font-medium text-gray-500">Metrics populate automatically as demos are launched and prospects convert.</p>
-        <p className="text-xs text-gray-400 mt-1">Connect data sources in Settings to enable live tracking.</p>
+      <div className="bg-[#FAF7F0] border border-[#1E2D4D]/10 rounded-xl p-5 text-center">
+        <p className="text-sm font-medium text-[#1E2D4D]/50">Metrics populate automatically as demos are launched and prospects convert.</p>
+        <p className="text-xs text-[#1E2D4D]/30 mt-1">Connect data sources in Settings to enable live tracking.</p>
       </div>
     </div>
   );

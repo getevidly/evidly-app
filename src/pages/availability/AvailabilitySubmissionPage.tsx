@@ -80,7 +80,7 @@ export function AvailabilitySubmissionPage() {
     return (
       <div className="space-y-4 max-w-2xl mx-auto">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="h-24 bg-gray-200 rounded-xl animate-pulse" />
+          <div key={i} className="h-24 bg-[#1E2D4D]/8 rounded-xl animate-pulse" />
         ))}
       </div>
     );
@@ -92,7 +92,7 @@ export function AvailabilitySubmissionPage() {
       <div>
         <div className="flex items-center gap-2 mb-1">
           <CalendarCheck className="w-6 h-6" style={{ color: NAVY }} />
-          <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Submit Availability</h1>
+          <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Submit Availability</h1>
         </div>
         <p className="text-sm" style={{ color: TEXT_TERTIARY }}>
           Set your availability for the week of {formatDate(dates[0])} — {formatDate(dates[6])}
@@ -172,7 +172,7 @@ export function AvailabilitySubmissionPage() {
                     type="time"
                     value={days[i].startTime}
                     onChange={e => updateDay(i, { startTime: e.target.value })}
-                    className="px-2 py-1 text-sm border rounded-lg"
+                    className="px-2 py-1 text-sm border rounded-xl"
                     style={{ borderColor: CARD_BORDER, color: NAVY }}
                   />
                 </div>
@@ -182,7 +182,7 @@ export function AvailabilitySubmissionPage() {
                     type="time"
                     value={days[i].endTime}
                     onChange={e => updateDay(i, { endTime: e.target.value })}
-                    className="px-2 py-1 text-sm border rounded-lg"
+                    className="px-2 py-1 text-sm border rounded-xl"
                     style={{ borderColor: CARD_BORDER, color: NAVY }}
                   />
                 </div>
@@ -190,7 +190,7 @@ export function AvailabilitySubmissionPage() {
                   value={days[i].notes}
                   onChange={e => updateDay(i, { notes: e.target.value })}
                   placeholder="Notes (optional)"
-                  className="flex-1 min-w-[140px] px-2 py-1 text-sm border rounded-lg"
+                  className="flex-1 min-w-[140px] px-2 py-1 text-sm border rounded-xl"
                   style={{ borderColor: CARD_BORDER, color: NAVY }}
                 />
               </div>
@@ -208,7 +208,7 @@ export function AvailabilitySubmissionPage() {
           value={preferredAreas}
           onChange={e => setPreferredAreas(e.target.value)}
           placeholder="e.g., Downtown area, restaurants only"
-          className="w-full px-3 py-2 text-sm border rounded-lg"
+          className="w-full px-3 py-2 text-sm border rounded-xl"
           style={{ borderColor: CARD_BORDER, color: NAVY }}
         />
       </div>
@@ -232,8 +232,8 @@ export function AvailabilitySubmissionPage() {
 
       {/* Confirmation modal */}
       {showConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm mx-4 p-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 modal-backdrop-enter">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm mx-4 p-6 modal-content-enter">
             <h3 className="text-lg font-bold mb-2" style={{ color: NAVY }}>Confirm Submission</h3>
             <p className="text-sm mb-1" style={{ color: TEXT_TERTIARY }}>
               Week of {formatDate(dates[0])} — {formatDate(dates[6])}
@@ -247,7 +247,7 @@ export function AvailabilitySubmissionPage() {
               </p>
             )}
             <div className="flex gap-3">
-              <button onClick={() => setShowConfirm(false)} className="flex-1 px-4 py-2 text-sm font-medium rounded-lg border" style={{ borderColor: CARD_BORDER, color: NAVY }}>
+              <button onClick={() => setShowConfirm(false)} className="flex-1 px-4 py-2 text-sm font-medium rounded-xl border" style={{ borderColor: CARD_BORDER, color: NAVY }}>
                 Cancel
               </button>
               <button onClick={handleSubmit} className="flex-1 px-4 py-2 text-sm font-semibold text-white rounded-lg" style={{ background: NAVY }}>

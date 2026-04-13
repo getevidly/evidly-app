@@ -83,32 +83,32 @@ export function TempLogQuick() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 max-w-sm w-full text-center">
+      <div className="min-h-screen bg-cream flex items-center justify-center p-4">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8 max-w-sm w-full text-center modal-content-enter">
           <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Temperature Logged!</h2>
+          <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Temperature Logged!</h2>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium mb-3"
-            style={{ backgroundColor: '#eef4f8', color: '#1e4d6b' }}>
+            style={{ backgroundColor: '#eef4f8', color: '#1E2D4D' }}>
             {inputMethod === 'qr_scan' ? <QrCode className="h-3 w-3" /> : <Pencil className="h-3 w-3" />}
             {inputMethod === 'qr_scan' ? 'Logged via QR Scan' : 'Logged via Manual Entry'}
           </div>
-          <p className="text-sm text-gray-600 mb-1">{selected?.name}</p>
-          <p className="text-2xl font-bold mb-4" style={{ color: isInRange ? '#22c55e' : '#ef4444' }}>
+          <p className="text-sm text-[#1E2D4D]/70 mb-1">{selected?.name}</p>
+          <p className="text-2xl font-bold tracking-tight mb-4" style={{ color: isInRange ? '#22c55e' : '#ef4444' }}>
             {temperature}°F
           </p>
-          <p className="text-xs text-gray-400 mb-6">
+          <p className="text-xs text-[#1E2D4D]/30 mb-6">
             {new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
           </p>
           <div className="space-y-2">
             <button
               onClick={() => { setSubmitted(false); setTemperature(''); setNotes(''); }}
-              className="w-full px-4 py-3 bg-[#1e4d6b] text-white font-semibold rounded-lg hover:bg-[#163a52] transition-colors"
+              className="w-full px-4 py-3 bg-[#1E2D4D] text-white font-semibold rounded-lg hover:bg-[#162340] transition-all duration-150 active:scale-[0.98]"
             >
               Log Another Reading
             </button>
             <button
               onClick={() => navigate('/temp-logs')}
-              className="w-full px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+              className="w-full px-4 py-2 text-sm text-[#1E2D4D]/70 hover:text-[#1E2D4D] transition-colors"
             >
               View All Temperature Logs
             </button>
@@ -119,25 +119,25 @@ export function TempLogQuick() {
   }
 
   return (
-    <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-full max-w-sm overflow-hidden">
-        <div className="px-6 py-5" style={{ backgroundColor: '#1e4d6b' }}>
+    <div className="min-h-screen bg-cream flex items-center justify-center p-4">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 w-full max-w-sm overflow-hidden modal-content-enter">
+        <div className="px-6 py-5" style={{ backgroundColor: '#1E2D4D' }}>
           <div className="flex items-center gap-3">
-            <Thermometer className="h-8 w-8 text-[#d4af37]" />
+            <Thermometer className="h-8 w-8 text-[#A08C5A]" />
             <div>
               <h1 className="text-lg font-bold text-white">Log Temperature</h1>
-              <p className="text-xs text-gray-300">Quick entry via QR code</p>
+              <p className="text-xs text-[#1E2D4D]/30">Quick entry via QR code</p>
             </div>
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Equipment</label>
+            <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Equipment</label>
             <select
               value={selectedEquipment}
               onChange={e => setSelectedEquipment(e.target.value)}
-              className="w-full px-3 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1e4d6b] focus:border-[#1e4d6b] bg-white"
+              className="w-full px-3 py-3 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D] bg-white"
             >
               <option value="">Select equipment...</option>
               {equipment.map(eq => (
@@ -147,7 +147,7 @@ export function TempLogQuick() {
           </div>
 
           {selected && (
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-[#1E2D4D]/50">
               {selected.type === 'freezer'
                 ? `Must remain: ${selected.maxTemp}°F or below`
                 : `Acceptable range: ${selected.minTemp}°F – ${selected.maxTemp}°F`
@@ -156,7 +156,7 @@ export function TempLogQuick() {
           )}
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Temperature (°F)</label>
+            <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Temperature (°F)</label>
             <input
               type="number"
               inputMode="decimal"
@@ -165,10 +165,9 @@ export function TempLogQuick() {
               onChange={e => setTemperature(e.target.value)}
               onFocus={e => { setTimeout(() => { e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 300); }}
               placeholder="Enter temperature..."
-              className={`w-full px-3 py-3 border rounded-lg text-lg font-semibold focus:ring-2 focus:ring-[#1e4d6b] focus:border-[#1e4d6b] ${
-                isInRange === false ? 'border-red-300 bg-red-50' : 'border-gray-300'
+              className={`w-full px-3 py-3 border rounded-xl text-base font-semibold tracking-tight focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D] ${
+                isInRange === false ? 'border-red-300 bg-red-50' : 'border-[#1E2D4D]/15'
               }`}
-              style={{ fontSize: 16 }}
               autoFocus={!!preselectedId}
             />
             {isInRange === false && (
@@ -178,7 +177,7 @@ export function TempLogQuick() {
 
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="text-sm font-medium text-gray-700">Notes (optional)</label>
+              <label className="text-sm font-medium text-[#1E2D4D]/80">Notes (optional)</label>
               <AIAssistButton
                 fieldLabel="Notes"
                 context={{ temperature, equipmentName: selected?.name || '' }}
@@ -192,7 +191,7 @@ export function TempLogQuick() {
               onFocus={e => { setTimeout(() => { e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 300); }}
               placeholder="Any observations..."
               rows={2}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1e4d6b] focus:border-[#1e4d6b]"
+              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
             />
             {aiFields.has('notes') && <AIGeneratedIndicator />}
           </div>
@@ -201,13 +200,13 @@ export function TempLogQuick() {
             <button
               type="button"
               onClick={() => navigate('/temp-logs')}
-              className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors text-sm"
+              className="flex-1 px-4 py-3 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 font-semibold rounded-lg hover:bg-[#FAF7F0] transition-colors text-sm"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-3 bg-[#1e4d6b] text-white font-semibold rounded-lg hover:bg-[#163a52] transition-colors text-sm"
+              className="flex-1 px-4 py-3 bg-[#1E2D4D] text-white font-semibold rounded-lg hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] text-sm"
             >
               Save Temperature Reading
             </button>

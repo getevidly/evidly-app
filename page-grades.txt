@@ -1,0 +1,398 @@
+================================================================================
+  EVIDLY PAGE GRADES — EVERY PAGE IN THE APP
+  Generated: 2026-04-12
+  Grading: A (enterprise-ready) B (professional) C (inconsistent)
+           D (below standard) F (broken)
+  Inline metric: bg-[#] count = number of hardcoded hex bg values in file
+================================================================================
+
+================================================================================
+AUTHENTICATION & ONBOARDING
+================================================================================
+Login.tsx                           B+   Split-panel, responsive, polished. 2 bg-[#].
+AdminLogin.tsx                      C+   rounded-md inputs, basic layout, shadow-lg card.
+Signup.tsx                          B    Matches Login patterns. 7 bg-[#].
+SignupLocations.tsx                  B-   Location setup flow. 13 bg-[#].
+ForgotPassword.tsx                  B-   Simple, consistent. 2 bg-[#].
+ResetPassword.tsx                   B-   Consistent with auth flow. 6 bg-[#].
+EmailConfirmed.tsx                  B    Clean confirmation page. 2 bg-[#].
+InviteAccept.tsx                    B-   Invite flow. 8 bg-[#].
+AuthCallback.tsx                    B    OAuth callback handling. 1 bg-[#].
+Onboarding.tsx                      C+   18 bg-[#]. Multi-step wizard, heavy inline.
+DemoWizard.tsx                      C+   17 bg-[#]. Complex wizard flow.
+SetupMFA.tsx                        B    MFA enrollment. Clean.
+MFAChallenge.jsx                    B    MFA challenge. Clean.
+Suspended.tsx                       B    Simple suspended state.
+
+================================================================================
+DASHBOARD
+================================================================================
+Dashboard.tsx                       B    Role-based routing, banners. Clean composition.
+DashboardToday (component)          B    Cards with accent borders. hover animations.
+
+================================================================================
+FOOD SAFETY
+================================================================================
+FoodSafetyHub.tsx                   B    Hub pattern, consistent.
+Checklists.tsx                      B-   26 bg-[#]. Complex checklist management.
+TempLogs.tsx                        C+   46 bg-[#]. MOST inline of food safety pages.
+HACCP.tsx                           C+   21 bg-[#]. Complex, inconsistent spacing.
+FoodRecovery.tsx                    B    SB 1383 module. Clean.
+SB1383Compliance.tsx                B    Compliance module. Clean.
+K12Compliance.tsx                   B    K-12 module. Clean.
+USDAProductionRecords.tsx           B    USDA module. Clean.
+
+================================================================================
+FACILITY SAFETY
+================================================================================
+FacilitySafety.tsx                  B-   8 bg-[#]. Fire safety. Moderate.
+FacilitiesDashboard.tsx             C+   4 bg-[#]. Legacy dashboard variant.
+
+================================================================================
+COMPLIANCE
+================================================================================
+ComplianceHub.tsx                   B    Hub pattern.
+ComplianceOverview.tsx              B-   9 bg-[#]. Side-by-side scoring.
+Documents.tsx                       B-   14 bg-[#]. Document management.
+DocumentChecklist.tsx               B    3 bg-[#]. Clean.
+CorrectiveActions.tsx               B    3 bg-[#]. Clean list.
+CorrectiveActionDetail.tsx          B    3 bg-[#]. Detail view.
+Deficiencies.tsx                    B    1 bg-[#]. Very clean.
+DeficiencyDetail.tsx                B    3 bg-[#]. Clean.
+InsuranceRisk.tsx                   C+   18 bg-[#]. Complex scoring page.
+InsuranceRiskShared.tsx             C+   10 bg-[#]. Shared view.
+InsuranceSettings.tsx               C    12 bg-[#]. Heavy inline.
+ImproveScore.tsx                    C+   9 bg-[#]. Score improvement.
+ScoringBreakdown.tsx                B-   10 bg-[#]. Score breakdown.
+SelfAudit.tsx                       C+   27 bg-[#]. Very heavy inline styles.
+MockInspection.tsx                  B-   7 bg-[#]. AI inspection.
+RegulatoryAlerts.tsx                C+   14 bg-[#]. Alert listing.
+IncidentLog.tsx                     C+   13 bg-[#]. Incident management.
+ComplianceIndex.tsx                 C+   12 bg-[#]. Index page.
+ComplianceTrends.tsx                B-   Trend visualization.
+WorkforceRisk.tsx                   B    Workforce risk view.
+CicPseView.tsx                      B    CIC/PSE module.
+JurisdictionSettings.tsx            C    40 bg-[#]. EXTREMELY heavy inline.
+HealthDeptReport.tsx                C    21 bg-[#]. Heavy inline.
+AuditReport.tsx                     C+   11 bg-[#]. Has print styles. Complex.
+AuditTrail.tsx                      C+   14 bg-[#]. Audit trail.
+
+================================================================================
+INSIGHTS
+================================================================================
+InsightsHub.tsx                     B    Hub pattern.
+BusinessIntelligence.tsx            B    Intelligence feed.
+ClientReports.tsx                   B    Report listing.
+Analysis.tsx                        B-   3 bg-[#]. Charts page.
+Benchmarks.tsx                      C+   15 bg-[#]. Complex benchmark comparison.
+ComplianceTrajectory.jsx            B    Superpower card. Clean.
+InspectionForecast.jsx              B    Superpower card. Clean.
+ViolationRadar.jsx                  B    Superpower card. Clean.
+VendorPerformance.jsx               B    Superpower card. Clean.
+JurisdictionSignals.jsx             B    Superpower card. Clean.
+TeamLeaderboard.jsx                 B    Superpower card. Clean.
+OperationsIntelligence.jsx          B    Superpower card pattern.
+CopilotInsights.tsx                 B    AI copilot. Clean.
+AIAdvisor.tsx                       B    AI chat advisor.
+PredictiveAnalysis.tsx              B    Predictions page.
+ComplianceIntelligence.tsx          C    40 bg-[#]. Enterprise intel. Very heavy.
+
+================================================================================
+TOOLS
+================================================================================
+ToolsHub.tsx                        B    Hub pattern.
+SelfDiagnosis.tsx                   B    Diagnosis wizard.
+InspectorView.tsx                   C+   19 bg-[#]. Complex inspector mode.
+InspectorMode.jsx                   B-   Inspector arrival mode.
+VoiceHelp.jsx                       B-   Voice command reference.
+PhotoEvidencePage.tsx               B-   6 bg-[#]. Photo upload.
+ShiftHandoff.jsx                    B-   1 bg-[#]. Shift handoff.
+
+================================================================================
+ADMIN (Platform Admin)
+================================================================================
+AdminHub.tsx                        B    Admin landing. p-12 card is oversized.
+AdminHome.tsx                       B    Admin dashboard home.
+AdminDashboard.tsx                  B-   7 bg-[#]. Uses inline borderColor style.
+DemoGenerator.tsx                   B-   3 bg-[#]. Demo generation.
+DemoLauncher.tsx                    B-   8 bg-[#]. Demo launcher.
+DemoPipeline.tsx                    B-   8 bg-[#]. Pipeline management.
+DemoTours.jsx                       C+   15 bg-[#]. Tour configuration.
+GuidedTours.tsx                     C+   13 bg-[#]. Guided tour admin.
+PartnerDemos.jsx                    C+   13 bg-[#]. Partner demo management.
+EmailSequenceManager.tsx            C    13 bg-[#]. Contains inline HTML templates.
+GtmDashboard.tsx                    B-   3 bg-[#]. GTM analytics.
+SalesPipeline.tsx                   C    10 bg-[#]. Sales pipeline.
+MarketingCampaigns.tsx              C    10 bg-[#]. Campaign management.
+AssessmentLeads.tsx                 B-   6 bg-[#]. Leads management.
+InsuranceApiKeys.tsx                C+   11 bg-[#]. API key management.
+AdminBilling.tsx                    B    1 bg-[#]. Clean.
+AdminCrawlMonitor.tsx               B-   Crawl monitoring.
+AdminScoreTable.tsx                 B    1 bg-[#]. ScoreTable admin.
+AdminTestimonials.tsx               B    Testimonial management.
+AdminK2C.tsx                        B    K2C tracking.
+SystemMessages.tsx                  B    System messages.
+DatabaseBackup.tsx                  B    Backup management.
+MaintenanceMode.tsx                 B    Maintenance toggle.
+FeatureFlags.tsx                    B    1 bg-[#]. Feature flags.
+DocumentVault.tsx                   B    Document vault.
+AdminReports.tsx                    B    1 bg-[#]. Admin reports.
+VerificationReport.tsx              B    Verification panel.
+ViolationOutreach.tsx               B    1 bg-[#]. Outreach.
+EdgeFunctions.tsx                   B    Edge function monitor.
+AdminAuditLog.tsx                   B    Audit log viewer.
+AdminOrgs.tsx                       B    Org management.
+AdminSecurity.tsx                   B    Security settings.
+AdminVendorConnect.jsx              C+   9 bg-[#]. Vendor connect admin.
+RfpIntelligence.tsx                 B-   4 bg-[#]. RFP monitor.
+JurisdictionIntelligence.tsx        B-   2 bg-[#]. Jurisdiction intel.
+SecuritySettings.tsx                B-   2 bg-[#]. Security config.
+IntelligenceAdmin.tsx               B-   Intelligence admin.
+UserProvisioning.tsx                B    User management.
+AdminRegulatoryChanges.tsx          B-   4 bg-[#]. Regulatory changes.
+AdminIntelligenceQueue.tsx          B-   6 bg-[#]. Queue management.
+
+================================================================================
+SETTINGS
+================================================================================
+SettingsPage.tsx                    B    Settings shell with nested routes.
+CompanyProfilePage.tsx              B    Company profile form.
+BillingPage.tsx                     B    Billing integration.
+NotificationsPage.tsx               B    Notification preferences.
+TeamRolesPage.tsx                   B    Role management.
+ServiceTypesPage.tsx                B    Service type config.
+IntegrationsPage.tsx                B    Integration settings.
+ClockRemindersPage.tsx              B    Clock settings.
+BrandingSettings.tsx                B-   9 bg-[#]. Branding config.
+
+================================================================================
+PUBLIC / SCORETABLE PAGES
+================================================================================
+ScoreTableIndex.jsx                 B    SEO landing for ScoreTable.
+ScoreTableState.jsx                 B    State-level page.
+ScoreTableCountyDetail.jsx          B    County detail page.
+ScoreTableCityPage.jsx              B    City-level page.
+ScoreTableCountyPage.jsx            B    County page variant.
+ScoreTableWashington.jsx            B    Washington state page.
+ScoreTableWACounty.jsx              B    WA county page.
+scoreTableShared.jsx                B    Shared ScoreTable utilities.
+CountyLandingPage.jsx               B+   Marketing landing. Well-designed.
+KitchenCheckPage.jsx                B    Assessment tool.
+OperationsCheck.jsx                 C+   750+ lines, inline <style> block. Standalone.
+CityPage.jsx                        B    City marketing page.
+CaliforniaCompliance.tsx             B-   1 bg-[#]. CA compliance.
+CountyCompliance.tsx                 B-   7 bg-[#]. County compliance.
+AssessmentTool.tsx                   B-   3 bg-[#]. Assessment.
+BlogList.tsx                         B    5 bg-[#]. Blog listing.
+BlogPost.tsx                         B    7 bg-[#]. Blog detail.
+SharedReport.tsx                     B    Shared report view.
+ReferralPage.tsx                     B-   5 bg-[#]. Referral landing.
+
+================================================================================
+VENDOR PAGES
+================================================================================
+VendorDashboard.tsx                 C    42 bg-[#]. HEAVIEST inline styling.
+VendorLogin.tsx                     B-   2 bg-[#]. Auth page.
+VendorRegister.tsx                  B-   4 bg-[#]. Registration.
+VendorSecureUpload.tsx              B-   5 bg-[#]. Secure upload.
+VendorMarketplace.tsx               B-   8 bg-[#]. Marketplace.
+VendorProfile.tsx                   C+   16 bg-[#]. Profile page.
+VendorDetail.tsx                    B-   6 bg-[#]. Vendor detail.
+VendorConnect.jsx                   B-   4 bg-[#]. Partner page.
+VendorConnectApply.jsx              B-   2 bg-[#]. Application.
+VendorInviteLanding.tsx             B-   2 bg-[#]. Invite landing.
+VendorSetup.tsx                     C+   11 bg-[#]. Vendor setup.
+VendorServiceUpdate.tsx             C+   10 bg-[#]. Service update.
+VendorScheduleResponse.jsx          C+   11 bg-[#]. Schedule response.
+VendorPartnerDashboard.jsx          B-   5 bg-[#]. Partner dashboard.
+VendorMigration.jsx                 B    1 bg-[#]. Migration tool.
+VendorDocumentReview.jsx            B-   4 bg-[#]. Doc review.
+Vendors.tsx                         C+   34 bg-[#]. Vendor list. Heavy.
+
+================================================================================
+ENTERPRISE
+================================================================================
+EnterpriseDashboard.tsx             C    78 bg-[#]. MOST inline of ALL pages.
+EnterpriseLanding.tsx               B    1 bg-[#]. Marketing page.
+EnterpriseExecutive.tsx             B-   5 bg-[#]. Executive view.
+
+================================================================================
+IOT & SENSORS
+================================================================================
+IoTSensorHub.tsx                    C    46 bg-[#]. Very heavy.
+IoTMonitoring.tsx                   C+   14 bg-[#]. Monitoring.
+IoTSensorPlatform.tsx               B-   3 bg-[#]. Platform.
+IoTSensorLanding.tsx                B    2 bg-[#]. Marketing landing.
+SensorHub.tsx                       B-   6 bg-[#]. Sensor management.
+SensorSetupWizard.tsx               B-   6 bg-[#]. Setup wizard.
+SensorDetail.tsx                    B-   7 bg-[#]. Sensor detail.
+
+================================================================================
+EQUIPMENT
+================================================================================
+EquipmentPage.tsx                   B-   7 bg-[#]. Equipment registry.
+EquipmentDetailPage.tsx             B-   5 bg-[#]. Equipment detail.
+EquipmentIncidentsPage.tsx          C+   10 bg-[#]. Incidents.
+QRScanLandingPage.tsx               B-   3 bg-[#]. QR scan.
+Equipment.tsx                       C    25 bg-[#]. Legacy equipment page.
+EquipmentDetail.tsx                 C+   8 bg-[#]. Legacy detail.
+
+================================================================================
+TRAINING
+================================================================================
+TrainingHub.tsx                     B    Training hub.
+TrainingCourse.tsx                  B    Course view.
+TrainingRecords.tsx                 B    Records view.
+TrainingCatalog.tsx                 B    Catalog listing.
+EmployeeTrainingProfile.tsx         B    Employee training.
+EmployeeCertDetail.tsx              B    Certification detail.
+CertificateViewer.tsx               B    Certificate viewer.
+CourseBuilder.tsx                   B    Course builder.
+
+================================================================================
+EMPLOYEES & TEAM
+================================================================================
+Team.tsx                            C+   32 bg-[#]. Team management. Heavy.
+Employees.tsx                       B    Employee list.
+EmployeeDetail.tsx                  B-   4 bg-[#]. Employee detail.
+
+================================================================================
+FLEET & INSURANCE & EMERGENCY
+================================================================================
+VehiclesPage.tsx                    B-   4 bg-[#]. Fleet management.
+VehicleDetailPage.tsx               B-   3 bg-[#]. Vehicle detail.
+InsurancePage.tsx                   B-   5 bg-[#]. Insurance.
+InsurancePolicyPage.tsx             B-   3 bg-[#]. Policy detail.
+EmergencyInfoPage.tsx               B    1 bg-[#]. Emergency info.
+
+================================================================================
+OPERATIONS
+================================================================================
+InventoryPage.tsx                   B    1 bg-[#]. Inventory.
+InventoryItemPage.tsx               B    1 bg-[#]. Item detail.
+InventoryRequestsPage.tsx           B    1 bg-[#]. Requests.
+IncidentReportsPage.tsx             C+   10 bg-[#]. Safety incidents.
+ReportIncidentPage.tsx              B-   2 bg-[#]. Report form.
+IncidentDetailPage.tsx              C+   9 bg-[#]. Incident detail.
+
+================================================================================
+TIMECARDS & AVAILABILITY & PERFORMANCE
+================================================================================
+Timecards.tsx                       B    Timecard management.
+TimecardAlterationsPage.tsx         B    Alteration audit.
+AvailabilitySubmissionPage.tsx      B    1 bg-[#]. Availability.
+TeamAvailabilityPage.tsx            B-   5 bg-[#]. Team view.
+AvailabilityApprovalsPage.tsx       B    1 bg-[#]. Approvals.
+BonusDashboardPage.tsx              B    Bonus tracking.
+PerformanceMetricsPage.tsx          B    Metrics.
+MyPerformancePage.tsx               B    Personal performance.
+CallbacksPage.tsx                   B    Callback tracking.
+
+================================================================================
+REPORTS
+================================================================================
+ReportsPage.tsx                     B    Report listing.
+ReportGeneratorPage.tsx             B-   3 bg-[#]. Report builder.
+ReportCenter.tsx                    B    Report center hub.
+ReportDetail.tsx                    B    Report detail.
+
+================================================================================
+SCHEDULE & CALENDAR
+================================================================================
+Calendar.tsx                        B    Calendar view.
+SchedulePage.tsx                    B-   6 bg-[#]. Schedule management.
+
+================================================================================
+PLAYBOOKS
+================================================================================
+IncidentPlaybooks.tsx               B    Playbook listing.
+PlaybookRunner.tsx                  B    Active playbook.
+PlaybookBuilder.tsx                 B    Playbook builder.
+PlaybookAnalytics.tsx               B    Playbook stats.
+PlaybookTimeline.tsx                B    History timeline.
+
+================================================================================
+REFERRAL & GROWTH
+================================================================================
+ReferralDashboard.tsx               C+   11 bg-[#]. Referral tracking.
+ReferralRedirect.tsx                B    2 bg-[#]. Redirect handler.
+KitchenToCommunity.tsx              B    K2C program page.
+Leaderboard.tsx                     B    Leaderboard view.
+LeaderboardPreview.tsx              B    Public preview.
+
+================================================================================
+MISC PAGES
+================================================================================
+Help.tsx                            B    Help center.
+VoiceHelp.jsx                       B-   Voice reference.
+DeveloperPortal.tsx                 C+   21 bg-[#]. Developer docs.
+IntegrationHub.tsx                  B-   6 bg-[#]. Integration hub.
+ServicesPage.tsx                    C+   10 bg-[#]. Service records.
+ServiceRecordEntry.tsx              B-   3 bg-[#]. New entry.
+ServiceRecordDetail.tsx             B    Service detail.
+ImportData.tsx                      C+   15 bg-[#]. Data import.
+OrgHierarchy.tsx                    C+   10 bg-[#]. Location hierarchy.
+RolesPermissions.tsx                B    2 bg-[#]. Permissions.
+UsageAnalytics.tsx                  B    Analytics.
+WeeklyDigest.tsx                    B    Digest page.
+Alerts.tsx                          C+   18 bg-[#]. Alert listing.
+Progress.tsx                        B    Ops check progress.
+ComingSoon.tsx                      B    Coming soon placeholder.
+TermsOfService.tsx                  B    Legal page.
+PrivacyPolicy.tsx                   B    Legal page.
+TaskManager.jsx                     B    Task management.
+NotFound.jsx                        B    404 page. 4 bg-[#].
+Passport.tsx                        B-   7 bg-[#]. Compliance passport.
+PassportDemo.tsx                    B-   4 bg-[#]. Passport demo.
+PublicVerification.tsx              B-   4 bg-[#]. Public verification.
+TempLogQuick.tsx                    B-   5 bg-[#]. Quick temp entry.
+TempLogScan.tsx                     C+   12 bg-[#]. QR scan temp.
+DemoRequest.tsx                     B    Demo request form.
+DemoSchedule.tsx                    B    Demo scheduling.
+DemoExpired.tsx                     B    1 bg-[#]. Expiration notice.
+Upgrade.jsx                         B    Upgrade page.
+CarrierPartnership.tsx              B-   2 bg-[#]. Carrier partnership.
+MarketplaceLanding.tsx              B-   2 bg-[#]. Marketplace landing.
+
+================================================================================
+PARTNER DEMO PAGES
+================================================================================
+VendorDemoDashboard.jsx             B-   6 bg-[#]. Vendor demo.
+AssociationDemoDashboard.jsx        B-   8 bg-[#]. Association demo.
+CarrierDemoDashboard.jsx            B-   9 bg-[#]. Carrier demo.
+
+================================================================================
+GRADE DISTRIBUTION SUMMARY
+================================================================================
+
+  B+:  2 pages  (Login, CountyLandingPage)
+  B:   ~90 pages
+  B-:  ~75 pages
+  C+:  ~40 pages
+  C:   ~12 pages (EnterpriseDashboard, VendorDashboard, IoTSensorHub,
+                   JurisdictionSettings, HealthDeptReport, InsuranceSettings,
+                   Equipment legacy, Team, SalesPipeline, MarketingCampaigns,
+                   EmailSequenceManager, ComplianceIntelligence)
+  D:   0 pages
+  F:   0 pages
+
+HIGHEST INLINE STYLING (bg-[#] count):
+  1. EnterpriseDashboard.tsx    78
+  2. IoTSensorHub.tsx           46
+  3. TempLogs.tsx               46
+  4. VendorDashboard.tsx        42
+  5. JurisdictionSettings.tsx   40
+  6. ComplianceIntelligence.tsx 40
+  7. Vendors.tsx                34
+  8. Team.tsx                   32
+  9. SelfAudit.tsx              27
+  10. Equipment.tsx (legacy)    25
+
+OVERALL APP GRADE: B-
+  Professional and functional. Strong brand identity undermined by
+  inconsistent component implementation. No pages are broken or ugly,
+  but the lack of design system discipline prevents A-tier polish.
+
+================================================================================
+END OF PAGE GRADES
+================================================================================

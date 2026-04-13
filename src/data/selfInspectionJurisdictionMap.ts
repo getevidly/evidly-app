@@ -183,7 +183,7 @@ function buildJurisdictionMap(): Record<string, JurisdictionScoringConfig> {
     'Merced': ['Point accumulation upward \u2014 Good/Satisfactory/Unsatisfactory'],
     'Napa': ['Rescore available 1x/year (fee required)'],
     'Orange': ['Pass/Reinspection Due-Pass/Closed placard \u2014 no letter grade'],
-    'Santa Clara': ['GYR + numeric score \u2014 Major=8pts, Moderate=3pts, Minor=2pts'],
+    'Santa Clara': ['Green / Yellow / Red + numeric score \u2014 Major=8pts, Moderate=3pts, Minor=2pts'],
     'Placer': ['Single uncorrected major = Yellow placard'],
     'Mariposa': ['Dual jurisdiction \u2014 Mariposa County CalCode + NPS FDA Food Code 2022'],
     'Los Angeles|Long Beach': ['Independent city \u2014 NOT under LA County DPH'],

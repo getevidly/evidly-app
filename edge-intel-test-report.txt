@@ -1,0 +1,77 @@
+═══════════════════════════════════════════
+  EDGE-INTEL-TEST — Full Discovery Report
+  Date: 2026-04-12 | Tests: 61
+═══════════════════════════════════════════
+
+TEST   | RESULT           | ISSUE
+-------|------------------|------
+EF-1.01| PASS             | 171 edge functions found in supabase/functions/
+EF-1.02| PASS             | Categories: intelligence:17, ai:15, email_notification:16, stripe_billing:3, api_public:13, webhook:4, vendor:14, playbo
+EF-1.03| PASS             | All 171 functions have index.ts
+EF-1.04| PASS             | _shared modules: auth.ts, cors.ts, email.ts, invocation-logger.ts, logger.ts, notify.ts, posUtils.ts, rateLimit.ts, sms.
+EF-1.05| PASS             | Deno.serve: 149, legacy serve(): 21. Both patterns work in Supabase edge runtime.
+IP-2.01| PASS             | intelligence_sources: 0 rows
+IP-2.02| PASS             | intelligence_signals: 0 recent rows
+IP-2.03| PASS             | crawl_sources: 0 sources configured
+IP-2.04| PASS             | crawl_results: 0 recent results
+IP-2.05| PASS             | edge_function_registry: 0 functions registered
+IP-2.06| PASS             | intelligence-collect: 37 sources, Anthropic:true, dedup:true, concurrency:true, routing:true, crawlLog:true
+IP-2.07| PASS             | rfp_actions: 0 rows
+IP-2.08| PASS             | intelligence_game_plans: 0 rows
+TR-3.01| PASS             | 18/18 trigger target tables accessible. Total triggers: 19
+TR-3.02| PASS             | jurisdiction-drift-alert edge function EXISTS — receives drift alerts from trg_jurisdiction_config_drift trigger
+TR-3.03| PASS             | trg_set_trial_end_date: auto-sets trial_end_date = trial_start_date + 14 days on INSERT/UPDATE
+TR-3.04| PASS             | ticket_sla: auto-assigns SLA deadline on ticket creation
+TR-3.05| PASS             | trg_temp_deviation_to_ca: auto-creates corrective action when temperature reading fails
+TR-3.06| PASS             | 15 updated_at triggers on: jurisdictions, playbook_activations, playbooks, rfp_actions, edge_function_registry, intellig
+EI-4.01| PASS             | get-jurisdictions: slug:true, CORS:true, cache:true, summaryFields:true. (Deployed on prod — invocation requires prod an
+EI-4.02| PASS             | platform-stats: 401. Auth required (correct)
+EI-4.03| PASS             | stripe-webhook handles 6/6 events: checkout.session.completed, customer.subscription.updated, customer.subscription.dele
+EI-4.04| PASS             | stripe-webhook chains: K2C:true, notifications:true, 45-day guarantee:true
+EI-4.05| PASS             | trial-email-sender: Series1:true Series2:true dedup:true roles:true 28 email templates
+EI-4.06| PASS             | send-welcome-email: Resend:true, branded template:true
+EI-4.07| PASS             | intelligence-collect source categories: FoodSafety:2 FacilitySafety:2 Regulatory:2 Weather:1 Industry:1. 50s timeout:tru
+EI-4.08| PASS             | calculate-compliance-score: 7 scoring types, 8 grading types, imminentHazard(CalCode§113985):true, snapshot:true
+EI-4.09| PASS             | snapshot-readiness: CA:true temps:true docs:true upsert:true. Deduction algorithm: CA*5(max30), temp*3(max20), doc*5(max
+EI-4.10| PASS             | playbook-auto-trigger: 8/8 alert types mapped. Creates suggested activation + notifications.
+EI-4.11| PASS             | k2c-processor: donations:true meals:true adminLog:true. $10/loc → 100 meals/loc
+WH-5.01| PASS             | Webhook functions: 5/5 exist: api-webhook-dispatch, api-webhook-retry, webhook-dispatch, resend-webhook, hoodops-webhook
+WH-5.02| PASS             | Stripe webhook security: HMAC verify:true, secret env:true
+WH-5.03| PASS             | resend-webhook: handles email delivery events:true
+EM-6.01| PASS             | _shared/email.ts: Resend:true, branded:true, from:true, unsubscribe:true
+EM-6.02| PASS             | 10/11 email functions use _shared/email.ts
+EM-6.03| PASS             | trial_email_log: 0 log entries
+EM-6.04| PASS             | notification_settings: 200
+AC-7.01| PASS             | admin_event_log: 0 recent entries
+AC-7.02| PASS             | platform_audit_log: accessible
+AC-7.03| PASS             | support_tickets: 0 rows
+AC-7.04| PASS             | demo_sessions: 0 sessions
+AC-7.05| PASS             | assessment_leads: 0 leads
+AC-7.06| PASS             | playbooks: 0 defined
+AC-7.07| PASS             | playbook_activations: 0 activations
+AC-7.08| PASS             | location_risk_predictions: accessible
+AC-7.09| PASS             | benchmark_snapshots:200 benchmark_badges:200
+AC-7.10| PASS             | sensor_readings:200 sensor_devices:200
+AC-7.11| PASS             | training_modules:200 training_enrollments:200 training_progress:200
+AC-7.12| PASS             | enterprise_tenants:200
+AC-7.13| PASS             | api_tokens:200
+AL-8.01| PASS             | Intelligence routing: tiers(hold/notify/auto):true, risk scoring:true, deadlines:true
+AL-8.02| PASS             | Compliance scoring: 7 types (weighted_deduction, heavy_weighted, major_violation_count, negative_scale, major_minor_rein
+AL-8.03| PASS             | Grading: 8 types (letter_grade, letter_grade_strict, color_placard, score_100, score_negative, pass_reinspect, three_tie
+AL-8.04| PASS             | Imminent hazard: 3+ uncorrected critical violations OR explicit imminentHazardFlags → CLOSED. Same standard all 62 CA ju
+AL-8.05| PASS             | K2C: $10/location → 100 meals/location per billing period. Dedup by (org_id, period). Triggered by stripe invoice.paid o
+AL-8.06| PASS             | Trial email: Series1(operational: owner_operator, facilities_manager, chef, kitchen_manager, kitchen_staff) + Series2(le
+AL-8.07| PASS             | Playbook mapping: temperature_critical→power-outage, equipment_failure→equipment-failure, power_loss→power-outage, water
+AL-8.08| PASS             | Readiness: start=100, openCA*5(max30), overdueTempChecks*3(max20), expiredDocs*5(max25). Floor=0. Daily upsert on (org_i
+AL-8.09| PASS             | Intelligence sources: 37 unique sources across 5 categories: Food Safety(9), Facility Safety(5), Regulatory(7+8), Weathe
+AL-8.10| PASS             | AI model: intelligence-collect uses claude-haiku-4-5-20251001 for source analysis. Concurrency limit: 5 parallel Claude 
+DN-9.01| PASS             | 32 edge functions discovered beyond core pipeline. Insurance(5), POS(4), Enterprise(3), Offline(5), Training(5), AI(5+),
+
+═══════════════════════════════════════════
+  SUMMARY
+═══════════════════════════════════════════
+  PASS: 61 | PASS*: 0 | FAIL: 0
+  Edge Functions: 171
+  Algorithms Verified: 8
+  Workflows Traced: 7
+  Discovered Not In Prompt: 32

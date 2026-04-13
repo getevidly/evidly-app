@@ -1,0 +1,54 @@
+E2E JOURNEY TRACES
+═══════════════════════════════════════════
+
+JOURNEY: New Visitor → Conversion
+  Step 1: Landing page loads              ✓
+  Step 2: Find /operations-check          ✓
+  Step 3: Complete assessment questions    ✓
+  Step 4: Report generated                ✓
+  Step 5: CTA to Calendly/signup          ✓
+  Step 6: Signup flow                     ✓
+  Step 7: Onboarding → guided tour        ✓
+  DEAD ENDS: none detected
+  MISSING GUIDANCE: none — each step has clear next action
+  VERDICT: CONNECTED
+
+JOURNEY: New Client First Day
+  Step 1: Login page                      ✓
+  Step 2: Dashboard loads                 ✓
+  Step 3: Quick Actions visible           ✓
+  Step 4: Temperature logging             ✓
+  Step 5: Checklist completion            ✓
+  Step 6: Document upload                 ✓
+  Step 7: Jurisdiction profile            ✓
+  Step 8: PSE coverage                    ✓
+  Step 9: Superpower exploration          ✓
+  DEAD ENDS: none
+  VERDICT: CONNECTED
+
+JOURNEY: Admin Onboard Client
+  Step 1: Admin login                     ✓
+  Step 2: /admin/onboarding route         ✓
+  Step 3: Admin clients list              ✓
+  Step 4: Welcome email function          ✓
+  Step 5: Demo account create             ✓
+  VERDICT: CONNECTED
+
+JOURNEY: Daily Ops Workflow
+  Step 1: Login                           ✓
+  Step 2: Dashboard summary               ✓
+  Step 3: Quick Actions: Log Temp         ✓
+  Step 4: Quick Actions: Checklist        ✓
+  Step 5: Notification bell               ✓
+  Step 6: SP6 Signals                     ✓
+  Step 7: Shift handoff                   ✓
+  VERDICT: CONNECTED
+
+JOURNEY: Admin Daily Workflow
+  Step 1: Admin login                     ✓
+  Step 2: Command center                  ✓
+  Step 3: Admin clients                   ✓
+  Step 4: Admin intelligence              ✓
+  Step 5: Admin CAs                       ✓
+  Step 6: Feature flags                   ✓
+  VERDICT: CONNECTED

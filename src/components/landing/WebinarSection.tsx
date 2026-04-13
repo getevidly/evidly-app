@@ -6,15 +6,15 @@ export default function WebinarSection() {
   const navigate = useNavigate();
 
   return (
-    <section className="py-16 sm:py-24 px-4 sm:px-6 bg-gradient-to-b from-white to-gray-50">
+    <section className="py-16 sm:py-24 px-4 sm:px-6 bg-gradient-to-b from-white to-[#FAF7F0]">
       <div className="max-w-4xl mx-auto text-center">
-        <span className="inline-block text-sm font-bold uppercase tracking-wider mb-4" style={{ color: '#d4af37' }}>
+        <span className="inline-block text-sm font-bold uppercase tracking-wider mb-4" style={{ color: '#A08C5A' }}>
           Live Walkthrough
         </span>
-        <h2 className="font-['Outfit'] text-3xl sm:text-4xl font-bold mb-4" style={{ color: '#1e4d6b' }}>
+        <h2 className="font-['Outfit'] text-3xl sm:text-4xl font-bold mb-4" style={{ color: '#1E2D4D' }}>
           See EvidLY in Action
         </h2>
-        <p className="text-lg text-gray-600 leading-relaxed mb-8 max-w-2xl mx-auto">
+        <p className="text-lg text-[#1E2D4D]/70 leading-relaxed mb-8 max-w-2xl mx-auto">
           Join a free 15-minute walkthrough with Arthur Haggerty, EvidLY's founder.
           He'll show you exactly how EvidLY works for your type of kitchen.
         </p>
@@ -26,8 +26,8 @@ export default function WebinarSection() {
               'Q&A about compliance in your jurisdiction',
               'See Founder pricing (limited to 100 customers)',
             ].map((item, i) => (
-              <li key={i} className="flex items-start gap-3 text-gray-700">
-                <Check className="w-5 h-5 flex-shrink-0 mt-0.5" strokeWidth={3} style={{ color: '#d4af37' }} />
+              <li key={i} className="flex items-start gap-3 text-[#1E2D4D]/80">
+                <Check className="w-5 h-5 flex-shrink-0 mt-0.5" strokeWidth={3} style={{ color: '#A08C5A' }} />
                 <span>{item}</span>
               </li>
             ))}
@@ -39,7 +39,7 @@ export default function WebinarSection() {
           <button
             onClick={() => navigate('/demo')}
             className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-base transition-all hover:-translate-y-0.5 border-2 min-h-[44px] bg-white"
-            style={{ color: '#1e4d6b', borderColor: '#1e4d6b' }}
+            style={{ color: '#1E2D4D', borderColor: '#1E2D4D' }}
           >
             Try the Demo Now &rarr;
           </button>

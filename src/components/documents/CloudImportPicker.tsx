@@ -337,7 +337,7 @@ export function CloudImportPicker({ onFilesImported, disabled }: CloudImportPick
 
   return (
     <div className="space-y-2">
-      <p className="text-xs font-medium text-gray-500 flex items-center gap-1.5">
+      <p className="text-xs font-medium text-[#1E2D4D]/50 flex items-center gap-1.5">
         <Cloud size={13} />
         Import from Cloud
       </p>
@@ -350,7 +350,7 @@ export function CloudImportPicker({ onFilesImported, disabled }: CloudImportPick
               type="button"
               disabled={disabled || importing !== null}
               onClick={() => handleProviderClick(provider.id)}
-              className="inline-flex items-center gap-2 px-3 py-2 text-sm rounded-lg border transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex items-center gap-2 px-3 py-2 text-sm rounded-xl border transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               style={{
                 borderColor: '#d1d5db',
                 color: '#374151',

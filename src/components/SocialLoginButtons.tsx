@@ -91,10 +91,10 @@ export function SocialLoginButtons({ mode }: Props) {
         type="button"
         onClick={handleGoogleAuth}
         disabled={googleLoading || appleLoading}
-        className="w-full flex items-center justify-center gap-3 px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-800 font-medium text-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#d4af37] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="w-full flex items-center justify-center gap-3 px-4 py-2.5 border border-[#1E2D4D]/15 rounded-xl bg-white text-[#1E2D4D]/90 font-medium text-sm hover:bg-[#FAF7F0] focus-visible:outline-none focus-visible:ring-2 focus:ring-offset-2 focus:ring-[#A08C5A] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
         {googleLoading ? (
-          <Loader2 className="h-5 w-5 animate-spin text-gray-500" />
+          <Loader2 className="h-5 w-5 animate-spin text-[#1E2D4D]/50" />
         ) : (
           <GoogleIcon />
         )}
@@ -106,7 +106,7 @@ export function SocialLoginButtons({ mode }: Props) {
         type="button"
         onClick={handleAppleAuth}
         disabled={googleLoading || appleLoading}
-        className="w-full flex items-center justify-center gap-3 px-4 py-2.5 border border-transparent rounded-lg bg-black text-white font-medium text-sm hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="w-full flex items-center justify-center gap-3 px-4 py-2.5 border border-transparent rounded-xl bg-black text-white font-medium text-sm hover:bg-[#1E2D4D]/90 focus-visible:outline-none focus-visible:ring-2 focus:ring-offset-2 focus:ring-[#1E2D4D]/70 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
         {appleLoading ? (
           <Loader2 className="h-5 w-5 animate-spin" />
@@ -118,9 +118,9 @@ export function SocialLoginButtons({ mode }: Props) {
 
       {/* Divider */}
       <div className="flex items-center gap-3 my-2">
-        <div className="flex-1 h-px bg-gray-200" />
-        <span className="text-sm text-gray-500">or</span>
-        <div className="flex-1 h-px bg-gray-200" />
+        <div className="flex-1 h-px bg-[#1E2D4D]/8" />
+        <span className="text-sm text-[#1E2D4D]/50">or</span>
+        <div className="flex-1 h-px bg-[#1E2D4D]/8" />
       </div>
     </div>
   );

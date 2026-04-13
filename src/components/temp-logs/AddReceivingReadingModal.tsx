@@ -101,7 +101,7 @@ export function AddReceivingReadingModal({ open, onClose, locationId, categoryCo
             ))}
           </select>
           {cfg && (
-            <div className={`mt-2 p-2.5 rounded-lg text-xs font-medium ${tempRequired ? 'bg-[#eef4f8] text-[#1e4d6b] border border-[#D1D9E6]' : 'bg-gray-50 text-gray-500 border border-gray-200'}`}>
+            <div className={`mt-2 p-2.5 rounded-lg text-xs font-medium ${tempRequired ? 'bg-[#eef4f8] text-[#1E2D4D] border border-[#D1D9E6]' : 'bg-[#FAF7F0] text-[#1E2D4D]/50 border border-[#1E2D4D]/10'}`}>
               {tempRequired ? `Required: Must be ≤${maxTemp}°F` : 'No temperature check required for this category'}
             </div>
           )}
@@ -122,8 +122,8 @@ export function AddReceivingReadingModal({ open, onClose, locationId, categoryCo
                 onChange={e => setTemperature(e.target.value)}
                 required
                 placeholder="00.0"
-                className={`w-full px-4 py-4 text-3xl font-bold text-center border-3 rounded-lg focus:outline-none focus:ring-4 transition-all ${
-                  !temperature ? 'border-gray-300 focus:ring-[#d4af37]'
+                className={`w-full px-4 py-4 text-3xl font-bold tracking-tight text-center border-3 rounded-lg focus:outline-none focus:ring-4 transition-all ${
+                  !temperature ? 'border-[#1E2D4D]/15 focus:ring-[#A08C5A]'
                   : isPass ? 'border-green-500 focus:ring-green-200 bg-green-50'
                   : 'border-red-500 focus:ring-red-200 bg-red-50'
                 }`}
@@ -151,7 +151,7 @@ export function AddReceivingReadingModal({ open, onClose, locationId, categoryCo
 
         <div>
           <div className="flex items-center justify-between mb-2">
-            <label className="text-sm font-medium text-gray-700">Notes</label>
+            <label className="text-sm font-medium text-[#1E2D4D]/80">Notes</label>
             <AIAssistButton
               fieldLabel="Notes"
               context={{ equipmentName: itemDescription, temperature }}

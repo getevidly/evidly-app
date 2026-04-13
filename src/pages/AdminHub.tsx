@@ -24,7 +24,7 @@ export function AdminHub() {
       {/* Header */}
       <div>
         <h1
-          className="text-2xl font-bold"
+          className="text-2xl font-bold tracking-tight"
           style={{ color: 'var(--text-primary, #0B1628)' }}
         >
           Administration

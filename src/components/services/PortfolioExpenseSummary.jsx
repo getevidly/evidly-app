@@ -96,9 +96,9 @@ export function PortfolioExpenseSummary() {
         padding: '14px 16px', borderBottom: '1px solid var(--border, #D1D9E6)',
       }}>
         {[
-          { label: `${period.label} Total`, value: `$${totals.periodTotal.toLocaleString()}`, icon: DollarSign, color: '#1e4d6b' },
+          { label: `${period.label} Total`, value: `$${totals.periodTotal.toLocaleString()}`, icon: DollarSign, color: '#1E2D4D' },
           { label: 'Annual Projected', value: `$${totals.annualTotal.toLocaleString()}`, icon: TrendingUp, color: '#166534' },
-          { label: 'Locations', value: String(totals.locationCount), icon: MapPin, color: '#d4af37' },
+          { label: 'Locations', value: String(totals.locationCount), icon: MapPin, color: '#A08C5A' },
         ].map(card => (
           <div key={card.label} style={{ textAlign: 'center' }}>
             <card.icon style={{ width: 18, height: 18, color: card.color, margin: '0 auto 4px' }} />

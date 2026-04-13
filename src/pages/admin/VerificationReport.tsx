@@ -230,7 +230,7 @@ export default function VerificationReport() {
     <div className="space-y-6">
       <AdminBreadcrumb crumbs={[{ label: 'Verification Report' }]} />
       <div>
-        <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Verification Report</h1>
+        <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Verification Report</h1>
         <p style={{ fontSize: 13, color: TEXT_SEC, marginTop: 4 }}>
           Platform-wide verification coverage, audit trail, and source health.
         </p>

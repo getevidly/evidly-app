@@ -53,7 +53,7 @@ UPDATE jurisdictions SET
 
   -- Verified fire AHJ
   fire_ahj_name = 'Los Angeles County Fire Department',
-  fire_ahj_type = 'county_fd',
+  fire_ahj_type = 'county_fire',
   has_local_amendments = true,
   local_amendment_notes = 'LA County Code Title 8 - Consumer Protection, Business and Wage Regulations. Exceptions: Long Beach, Pasadena, Vernon have own health departments.',
 
@@ -63,7 +63,7 @@ UPDATE jurisdictions SET
   data_source_tier = 1,
 
   -- Updated notes with verification info
-  notes = 'VERIFIED (2026-02-19). Confidence: HIGH (100/100). Hybrid grading: letter grades A/B/C for 70%+, numerical score cards below 70%. CRFC (CA Health & Safety Code) basis. Fire: LACoFD serves unincorporated + 60 contract cities; LAFD serves City of LA. Hood suppression: semi-annual per NFPA 96, UL-300 compliance required. Largest dataset in CA (Socrata API, 5 years, bulk CSV/JSON).'
+  notes = 'VERIFIED (2026-02-19). Confidence: HIGH (100/100). Hybrid grading: letter grades A / B / C for 70%+, numerical score cards below 70%. CRFC (CA Health & Safety Code) basis. Fire: LACoFD serves unincorporated + 60 contract cities; LAFD serves City of LA. Hood suppression: semi-annual per NFPA 96, UL-300 compliance required. Largest dataset in CA (Socrata API, 5 years, bulk CSV/JSON).'
 WHERE county = 'Los Angeles'
   AND city IS NULL
   AND state = 'CA';

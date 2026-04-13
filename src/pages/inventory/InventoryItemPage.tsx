@@ -101,7 +101,7 @@ export function InventoryItemPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => alert('Log Usage (not yet implemented)')}
-            className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg border hover:bg-gray-50 transition-colors"
+            className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-xl border hover:bg-[#FAF7F0] transition-colors"
             style={{ borderColor: CARD_BORDER, color: NAVY }}
           >
             <Plus className="w-4 h-4" /> Log Usage
@@ -256,7 +256,7 @@ export function InventoryItemPage() {
                       </td>
                       <td className="px-4 py-3">
                         <span
-                          className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                          className="text-xs font-semibold px-2 py-0.5 rounded-full"
                           style={{ color: typeInfo.color, background: `${typeInfo.color}14` }}
                         >
                           {typeInfo.label}

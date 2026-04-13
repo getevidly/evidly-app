@@ -92,7 +92,7 @@ export function WeeklyDigest() {
     return (
       <div style={{ fontFamily: "'DM Sans', 'Inter', system-ui, sans-serif" }}>
         <div style={{ marginBottom: '24px' }}>
-          <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#1e4d6b', margin: 0 }}>Weekly Digest</h1>
+          <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#1E2D4D', margin: 0 }}>Weekly Digest</h1>
           <p style={{ fontSize: '14px', color: '#6b7280', margin: '4px 0 0' }}>
             Automated weekly compliance summary delivered to your inbox
           </p>
@@ -112,7 +112,7 @@ export function WeeklyDigest() {
             href="/dashboard"
             style={{
               display: 'inline-block', padding: '10px 20px', borderRadius: '8px',
-              backgroundColor: '#1e4d6b', color: '#fff', fontSize: '13px',
+              backgroundColor: '#1E2D4D', color: '#fff', fontSize: '13px',
               fontWeight: 600, textDecoration: 'none',
             }}
           >
@@ -183,7 +183,7 @@ export function WeeklyDigest() {
       {/* HEADER */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
         <div>
-          <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#1e4d6b', margin: 0 }}>Weekly Digest</h1>
+          <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#1E2D4D', margin: 0 }}>Weekly Digest</h1>
           <p style={{ fontSize: '14px', color: '#6b7280', margin: '4px 0 0' }}>
             Automated weekly compliance summary delivered to your inbox
           </p>
@@ -204,7 +204,7 @@ export function WeeklyDigest() {
             disabled={sendingTest || recipients.length === 0}
             style={{
               padding: '10px 18px', borderRadius: '8px', border: 'none',
-              background: sendingTest ? '#3D5068' : '#1e4d6b', color: '#fff',
+              background: sendingTest ? '#3D5068' : '#1E2D4D', color: '#fff',
               fontSize: '13px', fontWeight: 600, cursor: sendingTest ? 'default' : 'pointer',
               display: 'flex', alignItems: 'center', gap: '6px',
             }}
@@ -235,7 +235,7 @@ export function WeeklyDigest() {
         <div style={{ width: '340px', flexShrink: 0 }}>
           {/* Schedule */}
           <div style={{ background: '#fff', borderRadius: '12px', border: '1px solid #e5e7eb', padding: '20px', marginBottom: '16px' }}>
-            <div style={{ fontSize: '14px', fontWeight: 700, color: '#1e4d6b', marginBottom: '12px' }}>Schedule</div>
+            <div style={{ fontSize: '14px', fontWeight: 700, color: '#1E2D4D', marginBottom: '12px' }}>Schedule</div>
             <label style={{ fontSize: '12px', fontWeight: 600, color: '#6b7280', display: 'block', marginBottom: '6px' }}>
               Delivery time
             </label>
@@ -253,13 +253,13 @@ export function WeeklyDigest() {
             </select>
             <div style={{ marginTop: '10px', background: '#eef4f8', borderRadius: '8px', padding: '10px 12px' }}>
               <div style={{ fontSize: '11px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Next digest</div>
-              <div style={{ fontSize: '13px', fontWeight: 600, color: '#1e4d6b', marginTop: '2px' }}>{nextDigest}</div>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: '#1E2D4D', marginTop: '2px' }}>{nextDigest}</div>
             </div>
           </div>
 
           {/* Recipients */}
           <div style={{ background: '#fff', borderRadius: '12px', border: '1px solid #e5e7eb', padding: '20px', marginBottom: '16px' }}>
-            <div style={{ fontSize: '14px', fontWeight: 700, color: '#1e4d6b', marginBottom: '12px' }}>Recipients</div>
+            <div style={{ fontSize: '14px', fontWeight: 700, color: '#1E2D4D', marginBottom: '12px' }}>Recipients</div>
             <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
               <input
                 type="email"
@@ -276,7 +276,7 @@ export function WeeklyDigest() {
                 onClick={addRecipient}
                 style={{
                   padding: '9px 14px', borderRadius: '8px', border: 'none',
-                  background: '#1e4d6b', color: '#fff', fontSize: '13px', fontWeight: 600,
+                  background: '#1E2D4D', color: '#fff', fontSize: '13px', fontWeight: 600,
                   cursor: 'pointer', whiteSpace: 'nowrap',
                 }}
               >
@@ -313,7 +313,7 @@ export function WeeklyDigest() {
 
           {/* Content Toggles */}
           <div style={{ background: '#fff', borderRadius: '12px', border: '1px solid #e5e7eb', padding: '20px', marginBottom: '16px' }}>
-            <div style={{ fontSize: '14px', fontWeight: 700, color: '#1e4d6b', marginBottom: '12px' }}>Content</div>
+            <div style={{ fontSize: '14px', fontWeight: 700, color: '#1E2D4D', marginBottom: '12px' }}>Content</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {CONTENT_TOGGLES_INIT.map((toggle) => (
                 <label key={toggle.key} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: toggle.locked ? 'default' : 'pointer' }}>
@@ -326,7 +326,7 @@ export function WeeklyDigest() {
                       setContentToggles((prev) => ({ ...prev, [toggle.key]: e.target.checked }));
                     }}
                     style={{
-                      width: '16px', height: '16px', accentColor: '#1e4d6b',
+                      width: '16px', height: '16px', accentColor: '#1E2D4D',
                       cursor: toggle.locked ? 'default' : 'pointer',
                     }}
                   />
@@ -365,7 +365,7 @@ export function WeeklyDigest() {
             ) : (
               <>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                  <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#d4af37' }} />
+                  <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#A08C5A' }} />
                   <span style={{ fontSize: '14px', fontWeight: 700, color: '#92400e' }}>Setup Required</span>
                 </div>
                 <div style={{ fontSize: '12px', color: '#6b7280' }}>

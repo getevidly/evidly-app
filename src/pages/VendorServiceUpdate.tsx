@@ -121,10 +121,10 @@ export function VendorServiceUpdate() {
   // ── Loading ──
   if (phase === 'loading') {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#FAF7F0] flex items-center justify-center">
         <div className="text-center">
-          <Loader className="w-8 h-8 text-[#1e4d6b] animate-spin mx-auto mb-3" />
-          <p className="text-sm text-gray-500">Validating your link...</p>
+          <Loader className="w-8 h-8 text-[#1E2D4D] animate-spin mx-auto mb-3" />
+          <p className="text-sm text-[#1E2D4D]/50">Validating your link...</p>
         </div>
       </div>
     );
@@ -133,12 +133,12 @@ export function VendorServiceUpdate() {
   // ── Error ──
   if (phase === 'error') {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 max-w-md w-full text-center">
+      <div className="min-h-screen bg-[#FAF7F0] flex items-center justify-center p-4">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8 max-w-md w-full text-center">
           <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-          <h1 className="text-xl font-bold text-gray-900 mb-2">Link Not Valid</h1>
-          <p className="text-gray-600 mb-6">{error}</p>
-          <p className="text-sm text-gray-400">
+          <h1 className="text-xl font-bold text-[#1E2D4D] mb-2">Link Not Valid</h1>
+          <p className="text-[#1E2D4D]/70 mb-6">{error}</p>
+          <p className="text-sm text-[#1E2D4D]/30">
             If you believe this is an error, please contact your client directly.
           </p>
         </div>
@@ -156,28 +156,28 @@ export function VendorServiceUpdate() {
         color: 'text-green-600',
       },
       rescheduled: {
-        icon: <CalendarDays className="w-16 h-16 mx-auto mb-4" style={{ color: '#1e4d6b' }} />,
+        icon: <CalendarDays className="w-16 h-16 mx-auto mb-4" style={{ color: '#1E2D4D' }} />,
         title: 'Service Rescheduled',
         message: `Your ${tokenData?.serviceName} at ${tokenData?.locationName} has been rescheduled to ${rescheduleDate ? formatDate(rescheduleDate) : 'the new date'}. The client will be notified.`,
-        color: 'text-[#1e4d6b]',
+        color: 'text-[#1E2D4D]',
       },
       canceled: {
-        icon: <XCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />,
+        icon: <XCircle className="w-16 h-16 text-[#1E2D4D]/30 mx-auto mb-4" />,
         title: 'Service Canceled',
         message: `Your ${tokenData?.serviceName} at ${tokenData?.locationName} has been canceled. The client will be notified and may follow up.`,
-        color: 'text-gray-600',
+        color: 'text-[#1E2D4D]/70',
       },
     };
     const cfg = successConfig[submittedType];
 
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 max-w-md w-full text-center">
+      <div className="min-h-screen bg-[#FAF7F0] flex items-center justify-center p-4">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8 max-w-md w-full text-center">
           {cfg.icon}
           <h1 className={`text-xl font-bold mb-3 ${cfg.color}`}>{cfg.title}</h1>
-          <p className="text-gray-600 text-sm mb-6">{cfg.message}</p>
-          <div className="border-t border-gray-100 pt-4">
-            <div className="flex items-center justify-center gap-2 text-gray-400">
+          <p className="text-[#1E2D4D]/70 text-sm mb-6">{cfg.message}</p>
+          <div className="border-t border-[#1E2D4D]/5 pt-4">
+            <div className="flex items-center justify-center gap-2 text-[#1E2D4D]/30">
               <EvidlyIcon size={20} />
               <span className="text-xs font-medium">Powered by EvidLY</span>
             </div>
@@ -190,10 +190,10 @@ export function VendorServiceUpdate() {
   // ── Submitting ──
   if (phase === 'submitting') {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#FAF7F0] flex items-center justify-center">
         <div className="text-center">
-          <Loader className="w-8 h-8 text-[#1e4d6b] animate-spin mx-auto mb-3" />
-          <p className="text-sm text-gray-500">Submitting your update...</p>
+          <Loader className="w-8 h-8 text-[#1E2D4D] animate-spin mx-auto mb-3" />
+          <p className="text-sm text-[#1E2D4D]/50">Submitting your update...</p>
         </div>
       </div>
     );
@@ -203,16 +203,16 @@ export function VendorServiceUpdate() {
 
   // ── Service Info + Forms ──
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
+    <div className="min-h-screen bg-[#FAF7F0] p-4">
       <div className="max-w-lg mx-auto space-y-4">
         {/* Header */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          <div className="px-6 py-5" style={{ backgroundColor: '#1e4d6b' }}>
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
+          <div className="px-6 py-5" style={{ backgroundColor: '#1E2D4D' }}>
             <div className="flex items-center gap-3">
               <EvidlyIcon size={36} />
               <div>
                 <h1 className="text-lg font-bold text-white">Service Update</h1>
-                <p className="text-xs text-gray-300">Update your service status for {tokenData.organizationName}</p>
+                <p className="text-xs text-[#1E2D4D]/30">Update your service status for {tokenData.organizationName}</p>
               </div>
             </div>
           </div>
@@ -223,35 +223,35 @@ export function VendorServiceUpdate() {
               <div className="flex items-start gap-3">
                 <Wrench className="h-5 w-5 mt-0.5 flex-shrink-0" style={{ color: '#A08C5A' }} />
                 <div>
-                  <p className="text-xs text-gray-500 font-medium">Service</p>
-                  <p className="text-sm font-semibold text-gray-900">{tokenData.serviceName}</p>
+                  <p className="text-xs text-[#1E2D4D]/50 font-medium">Service</p>
+                  <p className="text-sm font-semibold text-[#1E2D4D]">{tokenData.serviceName}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 mt-0.5 flex-shrink-0" style={{ color: '#A08C5A' }} />
                 <div>
-                  <p className="text-xs text-gray-500 font-medium">Location</p>
-                  <p className="text-sm font-semibold text-gray-900">{tokenData.locationName}</p>
+                  <p className="text-xs text-[#1E2D4D]/50 font-medium">Location</p>
+                  <p className="text-sm font-semibold text-[#1E2D4D]">{tokenData.locationName}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <CalendarDays className="h-5 w-5 mt-0.5 flex-shrink-0" style={{ color: '#A08C5A' }} />
                 <div>
-                  <p className="text-xs text-gray-500 font-medium">Due Date</p>
-                  <p className="text-sm font-semibold text-gray-900">{formatDate(tokenData.dueDate)}</p>
+                  <p className="text-xs text-[#1E2D4D]/50 font-medium">Due Date</p>
+                  <p className="text-sm font-semibold text-[#1E2D4D]">{formatDate(tokenData.dueDate)}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <Building2 className="h-5 w-5 mt-0.5 flex-shrink-0" style={{ color: '#A08C5A' }} />
                 <div>
-                  <p className="text-xs text-gray-500 font-medium">Client</p>
-                  <p className="text-sm font-semibold text-gray-900">{tokenData.organizationName}</p>
+                  <p className="text-xs text-[#1E2D4D]/50 font-medium">Client</p>
+                  <p className="text-sm font-semibold text-[#1E2D4D]">{tokenData.organizationName}</p>
                 </div>
               </div>
             </div>
 
             {/* Link expiration notice */}
-            <div className="mt-4 flex items-center gap-2 text-xs text-gray-400">
+            <div className="mt-4 flex items-center gap-2 text-xs text-[#1E2D4D]/30">
               <Clock className="h-3.5 w-3.5" />
               <span>This link expires {formatDate(tokenData.expiresAt)}</span>
             </div>
@@ -260,12 +260,12 @@ export function VendorServiceUpdate() {
 
         {/* Action buttons (service-info phase) */}
         {phase === 'service-info' && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h2 className="text-base font-semibold text-gray-900 mb-4">Update Service Status</h2>
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
+            <h2 className="text-base font-semibold text-[#1E2D4D] mb-4">Update Service Status</h2>
             <div className="space-y-3">
               <button
                 onClick={() => setPhase('form-completed')}
-                className="w-full flex items-center justify-between px-4 py-3.5 rounded-lg border-2 border-green-200 bg-green-50 hover:bg-green-100 transition-colors group"
+                className="w-full flex items-center justify-between px-4 py-3.5 rounded-xl border-2 border-green-200 bg-green-50 hover:bg-green-100 transition-colors group"
               >
                 <div className="flex items-center gap-3">
                   <CheckCircle className="h-5 w-5 text-green-600" />
@@ -279,7 +279,7 @@ export function VendorServiceUpdate() {
 
               <button
                 onClick={() => setPhase('form-rescheduled')}
-                className="w-full flex items-center justify-between px-4 py-3.5 rounded-lg border-2 border-blue-200 bg-blue-50 hover:bg-blue-100 transition-colors group"
+                className="w-full flex items-center justify-between px-4 py-3.5 rounded-xl border-2 border-blue-200 bg-blue-50 hover:bg-blue-100 transition-colors group"
               >
                 <div className="flex items-center gap-3">
                   <CalendarDays className="h-5 w-5 text-blue-600" />
@@ -293,16 +293,16 @@ export function VendorServiceUpdate() {
 
               <button
                 onClick={() => setPhase('form-canceled')}
-                className="w-full flex items-center justify-between px-4 py-3.5 rounded-lg border-2 border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors group"
+                className="w-full flex items-center justify-between px-4 py-3.5 rounded-xl border-2 border-[#1E2D4D]/10 bg-[#FAF7F0] hover:bg-[#1E2D4D]/5 transition-colors group"
               >
                 <div className="flex items-center gap-3">
-                  <XCircle className="h-5 w-5 text-gray-500" />
+                  <XCircle className="h-5 w-5 text-[#1E2D4D]/50" />
                   <div className="text-left">
-                    <p className="text-sm font-semibold text-gray-700">Cancel Service</p>
-                    <p className="text-xs text-gray-500">Service will not be performed</p>
+                    <p className="text-sm font-semibold text-[#1E2D4D]/80">Cancel Service</p>
+                    <p className="text-xs text-[#1E2D4D]/50">Service will not be performed</p>
                   </div>
                 </div>
-                <ChevronRight className="h-4 w-4 text-gray-400 group-hover:translate-x-0.5 transition-transform" />
+                <ChevronRight className="h-4 w-4 text-[#1E2D4D]/30 group-hover:translate-x-0.5 transition-transform" />
               </button>
             </div>
           </div>
@@ -310,39 +310,39 @@ export function VendorServiceUpdate() {
 
         {/* ── Completed Form ── */}
         {phase === 'form-completed' && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
             <div className="flex items-center gap-2 mb-4">
               <CheckCircle className="h-5 w-5 text-green-600" />
-              <h2 className="text-base font-semibold text-gray-900">Service Completion Details</h2>
+              <h2 className="text-base font-semibold text-[#1E2D4D]">Service Completion Details</h2>
             </div>
             <form
               onSubmit={(e) => { e.preventDefault(); handleSubmit('completed'); }}
               className="space-y-4"
             >
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Technician Name *</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Technician Name *</label>
                 <input
                   type="text"
                   value={technicianName}
                   onChange={(e) => setTechnicianName(e.target.value)}
                   required
                   placeholder="e.g., John Smith"
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1e4d6b] focus:border-[#1e4d6b]"
+                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Completion Date & Time *</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Completion Date & Time *</label>
                 <input
                   type="datetime-local"
                   value={completionDate}
                   onChange={(e) => setCompletionDate(e.target.value)}
                   required
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1e4d6b] focus:border-[#1e4d6b]"
+                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
                 />
               </div>
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="text-sm font-medium text-gray-700">Notes (optional)</label>
+                  <label className="text-sm font-medium text-[#1E2D4D]/80">Notes (optional)</label>
                   <AIAssistButton
                     fieldLabel="Notes"
                     context={{ vendorName: tokenData?.organizationName || '', serviceName: tokenData?.serviceName || '' }}
@@ -355,7 +355,7 @@ export function VendorServiceUpdate() {
                   onChange={(e) => { setCompletionNotes(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('completionNotes'); return s; }); }}
                   rows={3}
                   placeholder="Any observations or notes about the service performed..."
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1e4d6b] focus:border-[#1e4d6b]"
+                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
                 />
                 {aiFields.has('completionNotes') && <AIGeneratedIndicator />}
               </div>
@@ -363,7 +363,7 @@ export function VendorServiceUpdate() {
                 <button
                   type="button"
                   onClick={() => setPhase('service-info')}
-                  className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors text-sm"
+                  className="flex-1 px-4 py-2.5 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 font-medium rounded-lg hover:bg-[#FAF7F0] transition-colors text-sm"
                 >
                   Back
                 </button>
@@ -381,33 +381,33 @@ export function VendorServiceUpdate() {
 
         {/* ── Rescheduled Form ── */}
         {phase === 'form-rescheduled' && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
             <div className="flex items-center gap-2 mb-4">
               <CalendarDays className="h-5 w-5 text-blue-600" />
-              <h2 className="text-base font-semibold text-gray-900">Reschedule Service</h2>
+              <h2 className="text-base font-semibold text-[#1E2D4D]">Reschedule Service</h2>
             </div>
             <form
               onSubmit={(e) => { e.preventDefault(); handleSubmit('rescheduled'); }}
               className="space-y-4"
             >
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">New Service Date *</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">New Service Date *</label>
                 <input
                   type="date"
                   value={rescheduleDate}
                   onChange={(e) => setRescheduleDate(e.target.value)}
                   required
                   min={new Date().toISOString().slice(0, 10)}
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1e4d6b] focus:border-[#1e4d6b]"
+                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Reason for Rescheduling *</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Reason for Rescheduling *</label>
                 <select
                   value={rescheduleReason}
                   onChange={(e) => setRescheduleReason(e.target.value)}
                   required
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1e4d6b] focus:border-[#1e4d6b] bg-white"
+                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D] bg-white"
                 >
                   <option value="">Select reason...</option>
                   {RESCHEDULE_REASONS.map((r) => (
@@ -417,7 +417,7 @@ export function VendorServiceUpdate() {
               </div>
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="text-sm font-medium text-gray-700">Additional Notes (optional)</label>
+                  <label className="text-sm font-medium text-[#1E2D4D]/80">Additional Notes (optional)</label>
                   <AIAssistButton
                     fieldLabel="Additional Notes"
                     context={{ vendorName: tokenData?.organizationName || '' }}
@@ -430,7 +430,7 @@ export function VendorServiceUpdate() {
                   onChange={(e) => { setRescheduleNotes(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('rescheduleNotes'); return s; }); }}
                   rows={3}
                   placeholder="Any details about the schedule change..."
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1e4d6b] focus:border-[#1e4d6b]"
+                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
                 />
                 {aiFields.has('rescheduleNotes') && <AIGeneratedIndicator />}
               </div>
@@ -438,14 +438,14 @@ export function VendorServiceUpdate() {
                 <button
                   type="button"
                   onClick={() => setPhase('service-info')}
-                  className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors text-sm"
+                  className="flex-1 px-4 py-2.5 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 font-medium rounded-lg hover:bg-[#FAF7F0] transition-colors text-sm"
                 >
                   Back
                 </button>
                 <button
                   type="submit"
                   disabled={!rescheduleDate || !rescheduleReason}
-                  className="flex-1 px-4 py-2.5 bg-[#1e4d6b] text-white font-semibold rounded-lg hover:bg-[#163a52] transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-4 py-2.5 bg-[#1E2D4D] text-white font-semibold rounded-lg hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Confirm Reschedule
                 </button>
@@ -456,22 +456,22 @@ export function VendorServiceUpdate() {
 
         {/* ── Canceled Form ── */}
         {phase === 'form-canceled' && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
             <div className="flex items-center gap-2 mb-4">
-              <XCircle className="h-5 w-5 text-gray-500" />
-              <h2 className="text-base font-semibold text-gray-900">Cancel Service</h2>
+              <XCircle className="h-5 w-5 text-[#1E2D4D]/50" />
+              <h2 className="text-base font-semibold text-[#1E2D4D]">Cancel Service</h2>
             </div>
             <form
               onSubmit={(e) => { e.preventDefault(); handleSubmit('canceled'); }}
               className="space-y-4"
             >
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Reason for Cancellation *</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Reason for Cancellation *</label>
                 <select
                   value={cancelReason}
                   onChange={(e) => setCancelReason(e.target.value)}
                   required
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1e4d6b] focus:border-[#1e4d6b] bg-white"
+                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D] bg-white"
                 >
                   <option value="">Select reason...</option>
                   {CANCEL_REASONS.map((r) => (
@@ -481,7 +481,7 @@ export function VendorServiceUpdate() {
               </div>
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="text-sm font-medium text-gray-700">Additional Notes (optional)</label>
+                  <label className="text-sm font-medium text-[#1E2D4D]/80">Additional Notes (optional)</label>
                   <AIAssistButton
                     fieldLabel="Additional Notes"
                     context={{ vendorName: tokenData?.organizationName || '' }}
@@ -494,11 +494,11 @@ export function VendorServiceUpdate() {
                   onChange={(e) => { setCancelNotes(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('cancelNotes'); return s; }); }}
                   rows={3}
                   placeholder="Any details about the cancellation..."
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1e4d6b] focus:border-[#1e4d6b]"
+                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
                 />
                 {aiFields.has('cancelNotes') && <AIGeneratedIndicator />}
               </div>
-              <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl">
                 <p className="text-xs text-amber-700">
                   Canceling this service will notify the client. They may contact you to discuss alternatives.
                 </p>
@@ -507,7 +507,7 @@ export function VendorServiceUpdate() {
                 <button
                   type="button"
                   onClick={() => setPhase('service-info')}
-                  className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors text-sm"
+                  className="flex-1 px-4 py-2.5 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 font-medium rounded-lg hover:bg-[#FAF7F0] transition-colors text-sm"
                 >
                   Back
                 </button>
@@ -525,7 +525,7 @@ export function VendorServiceUpdate() {
 
         {/* Footer */}
         <div className="text-center py-4">
-          <div className="flex items-center justify-center gap-2 text-gray-400">
+          <div className="flex items-center justify-center gap-2 text-[#1E2D4D]/30">
             <EvidlyIcon size={18} />
             <span className="text-xs font-medium">Powered by EvidLY</span>
           </div>

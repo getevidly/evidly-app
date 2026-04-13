@@ -12,8 +12,9 @@ import {
 import { EmployeesList } from '../components/employees/EmployeesList';
 import { InviteEmployeeModal } from '../components/employees/InviteEmployeeModal';
 import { ErrorState } from '../components/shared/PageStates';
+import { usePageTitle } from '../hooks/usePageTitle';
 
-const NAVY = '#1e4d6b';
+const NAVY = '#1E2D4D';
 const F: React.CSSProperties = { fontFamily: "'DM Sans', 'Inter', sans-serif" };
 
 const ROLE_OPTIONS: { value: EmployeeRole | 'all'; label: string }[] = [
@@ -36,6 +37,7 @@ export function Employees() {
   const navigate = useNavigate();
   const { userRole } = useRole();
   const isAdmin = ['owner_operator', 'platform_admin', 'executive'].includes(userRole);
+  usePageTitle('Team');
 
   const [pageError, setPageError] = useState<string | null>(null);
   const [employees, setEmployees] = useState<Employee[]>(() => {
@@ -114,7 +116,7 @@ export function Employees() {
         <div>
           <div className="flex items-center gap-2.5 mb-1">
             <Users className="w-6 h-6" style={{ color: NAVY }} />
-            <h1 className="text-xl lg:text-2xl font-bold" style={{ color: '#0B1628' }}>HoodOps Employees</h1>
+            <h1 className="text-xl lg:text-2xl font-bold tracking-tight" style={{ color: '#0B1628' }}>HoodOps Employees</h1>
           </div>
           <p className="text-sm" style={{ color: '#6B7F96' }}>Manage your team, certifications, and performance</p>
         </div>
@@ -135,22 +137,22 @@ export function Employees() {
         ].map(s => (
           <div key={s.label} className="rounded-xl border p-4 text-center" style={{ backgroundColor: '#FFFFFF', borderColor: '#D1D9E6', boxShadow: '0 1px 3px rgba(11,22,40,.06)' }}>
             <p className="text-xs" style={{ color: '#6B7F96' }}>{s.label}</p>
-            <p className="text-2xl font-bold mt-1" style={{ color: s.color }}>{s.value}</p>
+            <p className="text-2xl font-bold tracking-tight mt-1" style={{ color: s.color }}>{s.value}</p>
           </div>
         ))}
       </div>
 
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3 mb-5">
-        <select value={roleFilter} onChange={e => setRoleFilter(e.target.value as EmployeeRole | 'all')} className="text-sm border rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#d4af37]" style={{ borderColor: '#D1D9E6', color: '#0B1628' }}>
+        <select value={roleFilter} onChange={e => setRoleFilter(e.target.value as EmployeeRole | 'all')} className="text-sm border rounded-xl px-3 py-1.5 focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" style={{ borderColor: '#D1D9E6', color: '#0B1628' }}>
           {ROLE_OPTIONS.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
         </select>
-        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value as EmployeeStatus | 'all')} className="text-sm border rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#d4af37]" style={{ borderColor: '#D1D9E6', color: '#0B1628' }}>
+        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value as EmployeeStatus | 'all')} className="text-sm border rounded-xl px-3 py-1.5 focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" style={{ borderColor: '#D1D9E6', color: '#0B1628' }}>
           {STATUS_OPTIONS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
         </select>
         <div className="relative flex-1 min-w-[200px] max-w-[320px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#6B7F96' }} />
-          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by name or email..." className="w-full pl-9 pr-3 py-1.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]" style={{ borderColor: '#D1D9E6', color: '#0B1628' }} />
+          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by name or email..." className="w-full pl-9 pr-3 py-1.5 text-sm border rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" style={{ borderColor: '#D1D9E6', color: '#0B1628' }} />
         </div>
       </div>
 

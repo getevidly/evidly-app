@@ -73,7 +73,7 @@ export function ComplianceTrajectoryCard({ snapshots }) {
           <div className="p-2 bg-[#F4F6FA] rounded-lg">
             <BarChart3 className="h-5 w-5 text-[#1E2D4D]" />
           </div>
-          <h3 className="text-lg font-semibold text-[#0B1628]">Compliance Trajectory</h3>
+          <h3 className="text-lg font-semibold tracking-tight text-[#0B1628]">Compliance Trajectory</h3>
         </div>
         <div className="text-center py-8">
           <BarChart3 className="h-10 w-10 text-[#D1D9E6] mx-auto mb-3" />
@@ -94,7 +94,7 @@ export function ComplianceTrajectoryCard({ snapshots }) {
           <div className="p-2 bg-[#F4F6FA] rounded-lg">
             <BarChart3 className="h-5 w-5 text-[#1E2D4D]" />
           </div>
-          <h3 className="text-lg font-semibold text-[#0B1628]">Compliance Trajectory</h3>
+          <h3 className="text-lg font-semibold tracking-tight text-[#0B1628]">Compliance Trajectory</h3>
         </div>
         <div className="flex items-center gap-2">
           <span className={`px-2.5 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${trendStyle.bg} ${trendStyle.text}`}>
@@ -106,7 +106,7 @@ export function ComplianceTrajectoryCard({ snapshots }) {
 
       {/* Current Score */}
       <div className="flex items-baseline gap-2 mb-4">
-        <span className="text-3xl font-bold text-[#0B1628]">{current}</span>
+        <span className="text-3xl font-bold tracking-tight text-[#0B1628]">{current}</span>
         <span className="text-sm text-[#6B7F96]">/ 100 current readiness</span>
       </div>
 
@@ -146,15 +146,15 @@ export function ComplianceTrajectoryCard({ snapshots }) {
       <div className="flex items-center gap-4 mb-3">
         <div className="flex items-center gap-1.5">
           <div className="w-4 h-0.5 bg-[#1E2D4D]" />
-          <span className="text-[10px] text-[#6B7F96]">Historical</span>
+          <span className="text-xs text-[#6B7F96]">Historical</span>
         </div>
         <div className="flex items-center gap-1.5">
           <div className="w-4 h-0.5 bg-[#A08C5A]" style={{ borderTop: '2px dashed #A08C5A', height: 0 }} />
-          <span className="text-[10px] text-[#6B7F96]">Projected</span>
+          <span className="text-xs text-[#6B7F96]">Projected</span>
         </div>
       </div>
 
-      <p className="text-[10px] text-[#6B7F96] border-t border-[#E8EDF5] pt-3">
+      <p className="text-xs text-[#6B7F96] border-t border-[#E8EDF5] pt-3">
         Projected trajectory is based on historical readiness patterns and may not reflect future compliance outcomes. Actual scores depend on operational performance.
       </p>
     </div>

@@ -49,7 +49,7 @@ export function useConfetti() {
       hasTriggeredRef.current.add(triggerKey);
     }
 
-    const colors = ['#1e4d6b', '#d4af37'];
+    const colors = ['#1E2D4D', '#d4af37'];
     const pieceCount = 50;
 
     for (let i = 0; i < pieceCount; i++) {

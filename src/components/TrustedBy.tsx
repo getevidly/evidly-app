@@ -1,8 +1,8 @@
 export default function TrustedBy() {
   return (
-    <section className="py-[60px] px-6 bg-white border-b border-[var(--color-gray-200)]">
+    <section className="py-[60px] px-6 bg-white border-b border-[#1E2D4D]/10">
       <div className="max-w-[1000px] mx-auto text-center">
-        <p className="text-[0.8rem] font-semibold text-[var(--color-gray-400)] uppercase tracking-[0.15em] mb-8">
+        <p className="text-[0.8rem] font-semibold text-[#1E2D4D]/40 uppercase tracking-[0.15em] mb-8">
           Trusted by industry leaders
         </p>
         <div className="flex items-center justify-center gap-12 flex-wrap">

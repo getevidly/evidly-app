@@ -32,7 +32,7 @@ function InspectionReadiness({ signals }: { signals: ReadinessSignal[] }) {
   if (signals.length === 0) return null;
 
   return (
-    <div className="bg-white rounded-lg" style={{ border: '1px solid #e5e7eb' }}>
+    <div className="bg-white rounded-xl border border-[#1E2D4D]/10">
       <div className="px-4 py-3" style={{ borderBottom: '1px solid #F0F0F0' }}>
         <h3 className="text-sm font-semibold" style={{ color: BODY_TEXT }}>Inspection Readiness</h3>
       </div>
@@ -50,11 +50,11 @@ function InspectionReadiness({ signals }: { signals: ReadinessSignal[] }) {
                 : <AlertCircle size={16} className="text-red-500 shrink-0" />
               }
               <div className="flex-1 min-w-0">
-                <p className="text-[13px] font-medium" style={{ color: BODY_TEXT }}>{signal.label}</p>
-                <p className="text-[11px] text-gray-500">{signal.detail}</p>
+                <p className="text-sm font-medium" style={{ color: BODY_TEXT }}>{signal.label}</p>
+                <p className="text-xs text-[#1E2D4D]/50">{signal.detail}</p>
               </div>
               <span
-                className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0"
+                className="text-xs font-bold px-1.5 py-0.5 rounded shrink-0"
                 style={{
                   backgroundColor: isCurrent ? '#dcfce7' : signal.status === 'overdue' ? '#fef2f2' : '#f3f4f6',
                   color: isCurrent ? '#16a34a' : signal.status === 'overdue' ? '#dc2626' : '#6b7280',
@@ -107,10 +107,10 @@ export default function KitchenManagerDashboard() {
           firstName={DEMO_ROLE_NAMES[userRole]?.firstName || 'Manager'}
           orgName={companyName || 'Your Organization'}
         />
-        <div className="bg-white rounded-lg p-4" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
           <div className="text-center py-8">
-            <p className="text-sm font-medium text-gray-500">No data yet. Set up your locations and team to see your kitchen dashboard.</p>
-            <button type="button" onClick={() => navigate('/checklists')} className="mt-3 text-sm font-semibold px-4 py-2 rounded-lg text-white" style={{ backgroundColor: '#1e4d6b' }}>
+            <p className="text-sm font-medium text-[#1E2D4D]/50">No data yet. Set up your locations and team to see your kitchen dashboard.</p>
+            <button type="button" onClick={() => navigate('/checklists')} className="mt-3 text-sm font-semibold px-4 py-2 rounded-lg text-white" style={{ backgroundColor: '#1E2D4D' }}>
               Set Up Checklists
             </button>
           </div>

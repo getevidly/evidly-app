@@ -134,7 +134,7 @@ export const RiskScenarioEngine: React.FC = () => {
       boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)',
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-        <span style={{ fontSize: '18px' }}>{'⚡'}</span>
+        <span className="text-lg">{'⚡'}</span>
         <div>
           <p style={{ color: '#0B1628', fontSize: '14px', fontWeight: 700, margin: 0, fontFamily: 'system-ui' }}>
             Risk Scenario Engine
@@ -164,7 +164,7 @@ export const RiskScenarioEngine: React.FC = () => {
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                  <span style={{ fontSize: '14px' }}>{s.icon}</span>
+                  <span className="text-sm">{s.icon}</span>
                   <p style={{ color: '#0B1628', fontSize: '12px', fontWeight: 700, margin: 0, fontFamily: 'system-ui' }}>{s.label}</p>
                 </div>
                 <p style={{ color: '#3D5068', fontSize: '11px', margin: 0, fontFamily: 'system-ui' }}>{s.description}</p>
@@ -181,7 +181,7 @@ export const RiskScenarioEngine: React.FC = () => {
           borderRadius: '10px', padding: '16px', marginTop: '12px',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
-            <span style={{ fontSize: '16px' }}>{selected.icon}</span>
+            <span className="text-base">{selected.icon}</span>
             <div>
               <p style={{ color: '#0B1628', fontSize: '13px', fontWeight: 700, margin: 0, fontFamily: 'system-ui' }}>{selected.label}</p>
               <p style={{ color: '#3D5068', fontSize: '11px', margin: '1px 0 0', fontFamily: 'system-ui' }}>{selected.description}</p>

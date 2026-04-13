@@ -12,6 +12,7 @@ import { locations } from '../data/demoData';
 import { JURISDICTION_DATABASE } from '../data/jurisdictionData';
 import { useDemo } from '../contexts/DemoContext';
 import { ErrorState } from '../components/shared/PageStates';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 // ── Location-to-override-key mapping ─────────────────────────
 
@@ -78,19 +79,19 @@ function CollapsibleSection({ title, icon, badge, defaultOpen = false, children 
 }) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   return (
-    <div className="border border-gray-200 rounded-xl bg-white overflow-hidden">
+    <div className="border border-[#1E2D4D]/10 rounded-xl bg-white overflow-hidden">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between px-3 sm:px-5 py-4 hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-3 sm:px-5 py-4 hover:bg-[#FAF7F0] transition-colors"
       >
         <div className="flex items-center gap-3">
           {icon}
-          <span className="font-semibold text-gray-900">{title}</span>
+          <span className="font-semibold text-[#1E2D4D]">{title}</span>
           {badge}
         </div>
-        {isOpen ? <ChevronUp className="w-5 h-5 text-gray-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
+        {isOpen ? <ChevronUp className="w-5 h-5 text-[#1E2D4D]/30" /> : <ChevronDown className="w-5 h-5 text-[#1E2D4D]/30" />}
       </button>
-      {isOpen && <div className="px-3 sm:px-5 pb-4 sm:pb-5 border-t border-gray-100">{children}</div>}
+      {isOpen && <div className="px-3 sm:px-5 pb-4 sm:pb-5 border-t border-[#1E2D4D]/5">{children}</div>}
     </div>
   );
 }
@@ -114,6 +115,7 @@ function StatusIcon({ status }: { status: string }) {
 export function ScoringBreakdown() {
   const navigate = useNavigate();
   const { isDemoMode } = useDemo();
+  usePageTitle('Scoring Breakdown');
   const [pageError, setPageError] = useState<string | null>(null);
   const params = new URLSearchParams(window.location.search);
   const locationParam = params.get('location') || 'downtown';
@@ -131,15 +133,15 @@ export function ScoringBreakdown() {
   if (!isDemoMode) {
     return (
       <div className="space-y-6">
-        <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
-          <ClipboardCheck className="mx-auto h-12 w-12 text-gray-300 mb-4" />
-          <h2 className="text-lg font-semibold text-gray-700 mb-2">No food safety data yet</h2>
-          <p className="text-sm text-gray-500 mb-6">Add locations and complete checklists to see your food safety scoring breakdown.</p>
-          <button onClick={() => navigate('/org-hierarchy')} className="px-5 py-2.5 text-sm font-medium text-white rounded-lg mb-3" style={{ backgroundColor: '#1e4d6b' }}>
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-12 text-center">
+          <ClipboardCheck className="mx-auto h-12 w-12 text-[#1E2D4D]/30 mb-4" />
+          <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D]/80 mb-2">No food safety data yet</h2>
+          <p className="text-sm text-[#1E2D4D]/50 mb-6">Add locations and complete checklists to see your food safety scoring breakdown.</p>
+          <button onClick={() => navigate('/org-hierarchy')} className="px-5 py-2.5 text-sm font-medium text-white rounded-lg mb-3" style={{ backgroundColor: '#1E2D4D' }}>
             Add Location
           </button>
           <br />
-          <button onClick={() => navigate('/dashboard')} className="text-sm font-medium text-[#1e4d6b] hover:underline">
+          <button onClick={() => navigate('/dashboard')} className="text-sm font-medium text-[#1E2D4D] hover:underline">
             Back to Dashboard
           </button>
         </div>
@@ -176,27 +178,27 @@ export function ScoringBreakdown() {
       <div>
         <button
           onClick={() => navigate(`/dashboard?location=${locationParam}`)}
-          className="flex items-center gap-1 text-sm font-medium text-[#1e4d6b] hover:text-[#163a52] transition-colors mb-2 min-h-[44px]"
+          className="flex items-center gap-1 text-sm font-medium text-[#1E2D4D] hover:text-[#141E33] transition-colors mb-2 min-h-[44px]"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Dashboard
         </button>
-        <h1 className="text-2xl font-bold text-gray-900">Food Safety Overview</h1>
-        <p className="text-gray-500 text-sm mt-1">
+        <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">Food Safety Overview</h1>
+        <p className="text-[#1E2D4D]/50 text-sm mt-1">
           {selectedLocation.name} &mdash; {county}
         </p>
       </div>
 
       {/* Location Tabs */}
-      <div className="flex gap-1 bg-gray-100 rounded-lg p-1 w-fit">
+      <div className="flex gap-1 bg-[#1E2D4D]/5 rounded-lg p-1 w-fit">
         {locations.map(loc => (
           <button
             key={loc.urlId}
             onClick={() => navigate(`/scoring-breakdown?location=${loc.urlId}`)}
             className={`px-4 py-2 text-sm font-medium rounded-md transition-colors min-h-[44px] ${
               loc.urlId === locationParam
-                ? 'bg-white text-[#1e4d6b] shadow-sm'
-                : 'text-gray-500 hover:text-gray-700'
+                ? 'bg-white text-[#1E2D4D] shadow-sm'
+                : 'text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
             }`}
           >
             {loc.name}
@@ -206,11 +208,11 @@ export function ScoringBreakdown() {
 
       {/* ─── Section 1: Jurisdiction Status ─── */}
       <div className="space-y-3">
-        <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+        <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
           <EvidlyIcon size={20} />
           Jurisdiction Status
         </h2>
-        <p className="text-sm text-gray-500 -mt-1">What the authorities see &mdash; official grades from your inspecting agencies.</p>
+        <p className="text-sm text-[#1E2D4D]/50 -mt-1">What the authorities see &mdash; official grades from your inspecting agencies.</p>
 
         {/* Food Safety */}
         <CollapsibleSection
@@ -225,7 +227,7 @@ export function ScoringBreakdown() {
         >
           <div className="mt-4 space-y-4">
             {/* Grade Display */}
-            <div className={`rounded-lg p-4 border ${foodStatus.bg} ${foodStatus.border}`}>
+            <div className={`rounded-xl p-4 border ${foodStatus.bg} ${foodStatus.border}`}>
               <div className="flex items-start gap-3">
                 <div
                   className="w-3 h-3 rounded-full mt-1 flex-shrink-0"
@@ -235,10 +237,10 @@ export function ScoringBreakdown() {
                   <div className={`text-lg font-bold ${foodStatus.text}`}>
                     {gradeData.foodSafety.gradeDisplay}
                   </div>
-                  <div className="text-sm text-gray-600 mt-1">
+                  <div className="text-sm text-[#1E2D4D]/70 mt-1">
                     {gradeData.foodSafety.summary}
                   </div>
-                  <div className="text-xs text-gray-400 mt-2">
+                  <div className="text-xs text-[#1E2D4D]/30 mt-2">
                     Authority: {jurisdictionInfo.name}
                   </div>
                 </div>
@@ -248,17 +250,17 @@ export function ScoringBreakdown() {
             {/* Details if available */}
             {gradeData.foodSafety.details && (
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="text-center p-3 rounded-lg bg-gray-50">
-                  <div className="text-lg font-bold text-gray-900">{gradeData.foodSafety.details.majorViolations}</div>
-                  <div className="text-xs text-gray-500">Major Violations</div>
+                <div className="text-center p-3 rounded-lg bg-[#FAF7F0]">
+                  <div className="text-lg font-bold text-[#1E2D4D]">{gradeData.foodSafety.details.majorViolations}</div>
+                  <div className="text-xs text-[#1E2D4D]/50">Major Violations</div>
                 </div>
-                <div className="text-center p-3 rounded-lg bg-gray-50">
-                  <div className="text-lg font-bold text-gray-900">{gradeData.foodSafety.details.minorViolations}</div>
-                  <div className="text-xs text-gray-500">Minor Violations</div>
+                <div className="text-center p-3 rounded-lg bg-[#FAF7F0]">
+                  <div className="text-lg font-bold text-[#1E2D4D]">{gradeData.foodSafety.details.minorViolations}</div>
+                  <div className="text-xs text-[#1E2D4D]/50">Minor Violations</div>
                 </div>
-                <div className="text-center p-3 rounded-lg bg-gray-50">
-                  <div className="text-lg font-bold text-gray-900">{gradeData.foodSafety.details.uncorrectedMajors}</div>
-                  <div className="text-xs text-gray-500">Uncorrected Majors</div>
+                <div className="text-center p-3 rounded-lg bg-[#FAF7F0]">
+                  <div className="text-lg font-bold text-[#1E2D4D]">{gradeData.foodSafety.details.uncorrectedMajors}</div>
+                  <div className="text-xs text-[#1E2D4D]/50">Uncorrected Majors</div>
                 </div>
               </div>
             )}
@@ -278,7 +280,7 @@ export function ScoringBreakdown() {
         >
           <div className="mt-4 space-y-4">
             {/* Grade Display */}
-            <div className={`rounded-lg p-4 border ${fireStatus.bg} ${fireStatus.border}`}>
+            <div className={`rounded-xl p-4 border ${fireStatus.bg} ${fireStatus.border}`}>
               <div className="flex items-start gap-3">
                 <div
                   className="w-3 h-3 rounded-full mt-1 flex-shrink-0"
@@ -288,7 +290,7 @@ export function ScoringBreakdown() {
                   <div className={`text-lg font-bold ${fireStatus.text}`}>
                     {gradeData.facilitySafety.gradeDisplay}
                   </div>
-                  <div className="text-sm text-gray-600 mt-1">
+                  <div className="text-sm text-[#1E2D4D]/70 mt-1">
                     {gradeData.facilitySafety.summary}
                   </div>
                 </div>
@@ -297,7 +299,7 @@ export function ScoringBreakdown() {
 
             {/* Fire Status Bars */}
             <div>
-              <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Equipment &amp; Permit Status</div>
+              <div className="text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider mb-2">Equipment &amp; Permit Status</div>
               <FireStatusBars
                 permitStatus={gradeData.facilitySafety.permitStatus}
                 hoodStatus={gradeData.facilitySafety.hoodStatus}
@@ -321,24 +323,24 @@ export function ScoringBreakdown() {
       {/* ─── Section 2: Operational Readiness ─── */}
       <div className="space-y-3">
         <div className="flex items-center gap-2">
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-            <ClipboardCheck className="w-5 h-5 text-[#1e4d6b]" />
+          <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
+            <ClipboardCheck className="w-5 h-5 text-[#1E2D4D]" />
             Operational Readiness
           </h2>
-          <span className="text-[10px] font-semibold text-[#1e4d6b] bg-[#eef4f8] border border-[#b8d4e8] px-2 py-0.5 rounded-full uppercase tracking-wider">
+          <span className="text-xs font-semibold text-[#1E2D4D] bg-[#eef4f8] border border-[#b8d4e8] px-2 py-0.5 rounded-full uppercase tracking-wider">
             EvidLY Internal
           </span>
         </div>
-        <p className="text-sm text-gray-500 -mt-1">Internal operational metrics tracked by EvidLY &mdash; these are not jurisdiction grades.</p>
+        <p className="text-sm text-[#1E2D4D]/50 -mt-1">Internal operational metrics tracked by EvidLY &mdash; these are not jurisdiction grades.</p>
 
-        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
-          <div className="divide-y divide-gray-100">
+        <div className="bg-white border border-[#1E2D4D]/10 rounded-xl overflow-hidden">
+          <div className="divide-y divide-[#1E2D4D]/5">
             {OPERATIONAL_METRICS.map((metric, idx) => {
               const isWarning = metric.status === 'warning';
               return (
                 <div
                   key={idx}
-                  className="flex items-center gap-3 px-4 sm:px-5 py-3.5 hover:bg-gray-50 transition-colors"
+                  className="flex items-center gap-3 px-4 sm:px-5 py-3.5 hover:bg-[#FAF7F0] transition-colors"
                 >
                   {isWarning ? (
                     <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0" />
@@ -346,14 +348,14 @@ export function ScoringBreakdown() {
                     <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />
                   )}
                   <div className="flex-1 min-w-0">
-                    <span className="text-sm text-gray-800 font-medium">{metric.label}</span>
+                    <span className="text-sm text-[#1E2D4D]/90 font-medium">{metric.label}</span>
                   </div>
                   <div className="flex items-center gap-3 flex-shrink-0">
-                    <span className={`text-sm font-semibold ${isWarning ? 'text-amber-600' : 'text-gray-700'}`}>
+                    <span className={`text-sm font-semibold ${isWarning ? 'text-amber-600' : 'text-[#1E2D4D]/80'}`}>
                       {metric.value}
                     </span>
                     {metric.pct !== null && (
-                      <div className="w-20 sm:w-28 h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="w-20 sm:w-28 h-2 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
                         <div
                           className="h-full rounded-full transition-all"
                           style={{
@@ -373,25 +375,25 @@ export function ScoringBreakdown() {
 
       {/* ─── Section 3: Jurisdiction Methodology ─── */}
       <div className="space-y-3">
-        <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-          <Info className="w-5 h-5 text-[#1e4d6b]" />
+        <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
+          <Info className="w-5 h-5 text-[#1E2D4D]" />
           Jurisdiction Methodology
         </h2>
-        <p className="text-sm text-gray-500 -mt-1">How {jurisdictionInfo.name} grades food facilities.</p>
+        <p className="text-sm text-[#1E2D4D]/50 -mt-1">How {jurisdictionInfo.name} grades food facilities.</p>
 
-        <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-6">
+        <div className="bg-white border border-[#1E2D4D]/10 rounded-xl p-4 sm:p-6">
           <div className="flex items-start gap-4">
             <div className="w-10 h-10 rounded-lg bg-[#eef4f8] border border-[#b8d4e8] flex items-center justify-center flex-shrink-0">
               <EvidlyIcon size={20} />
             </div>
             <div className="flex-1">
-              <div className="text-base font-bold text-gray-900">{jurisdictionInfo.name}</div>
+              <div className="text-base font-bold text-[#1E2D4D]">{jurisdictionInfo.name}</div>
               <div className="mt-1">
-                <span className="text-xs font-semibold text-[#1e4d6b] bg-[#eef4f8] border border-[#b8d4e8] px-2 py-0.5 rounded-full">
+                <span className="text-xs font-semibold text-[#1E2D4D] bg-[#eef4f8] border border-[#b8d4e8] px-2 py-0.5 rounded-full">
                   {jurisdictionInfo.system}
                 </span>
               </div>
-              <p className="text-sm text-gray-600 mt-3 leading-relaxed">
+              <p className="text-sm text-[#1E2D4D]/70 mt-3 leading-relaxed">
                 {jurisdictionInfo.description}
               </p>
             </div>

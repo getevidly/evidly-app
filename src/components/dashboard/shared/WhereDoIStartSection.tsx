@@ -81,7 +81,7 @@ export function WhereDoIStartSection({ items, staggerOffset = 0, tooltipContent 
           return (
             <div
               key={item.id}
-              className="flex items-center gap-3 rounded-lg px-4 py-3 cursor-pointer transition-all hover:shadow-sm"
+              className="flex items-center gap-3 rounded-xl px-4 py-3 cursor-pointer transition-all hover:shadow-sm"
               style={{
                 backgroundColor: config.bg,
                 border: `1px solid ${config.border}`,
@@ -93,7 +93,7 @@ export function WhereDoIStartSection({ items, staggerOffset = 0, tooltipContent 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <span
-                    className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded"
+                    className="text-xs font-bold uppercase px-1.5 py-0.5 rounded"
                     style={{ backgroundColor: config.badgeBg, color: config.badgeText }}
                   >
                     {t(config.labelKey)}
@@ -103,12 +103,12 @@ export function WhereDoIStartSection({ items, staggerOffset = 0, tooltipContent 
                   </span>
                 </div>
                 {item.detail && (
-                  <p className="text-xs text-gray-500 mt-0.5 truncate">{item.detail}</p>
+                  <p className="text-xs text-[#1E2D4D]/50 mt-0.5 truncate">{item.detail}</p>
                 )}
               </div>
               <span
                 className="flex items-center gap-1 text-xs font-semibold flex-shrink-0 px-2.5 py-1 rounded-md transition-colors"
-                style={{ color: '#1e4d6b', backgroundColor: 'rgba(30,77,107,0.08)' }}
+                style={{ color: '#1E2D4D', backgroundColor: 'rgba(30,77,107,0.08)' }}
               >
                 {item.actionLabel}
                 <ChevronRight className="w-3.5 h-3.5" />

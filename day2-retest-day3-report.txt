@@ -1,0 +1,71 @@
+═════��═════════════════════════════════════
+  DAY 2 RE-VERIFICATION (post TESTING-DB-FIX-01)
+  Tests re-run: 2.03, 2.04, 2.05, 2.06, 2.07, 2.08, 2.09, 2.11
+══════════���═════════════════════��══════════
+
+TEST   | RESULT           | ISSUE
+-------|------------------|------
+2.03   | PASS             | Route /temp-logs OK. temperature_logs has facility_id, temperature, temp_pass, equipment_id, input_method. Schema verified.
+2.04   | PASS             | Route OK. 7 templates, 26 items. Enhanced columns verified (pillar, category, authority_source, authority_section). completions table: exists.
+2.05   | PASS             | Route /documents OK. documents table has title (not name), category, organization_id, status. Schema verified.
+2.06   | PASS             | Route /incidents OK. incidents table verified (title, severity, status, type, reported_by). incident_timeline: exists. incident_comments: exists.
+2.07   | PASS             | jurisdictions table verified (agency_name, fire_ahj_name, scoring_type, grading_type). 0 locations, 0 linked to jurisdictions.
+2.08   | PASS             | location_service_schedules verified. 0 schedules, 5 service types. Columns OK: service_type_code, frequency, next_due_date. service_type_definitions: exists.
+2.09   | PASS             | Route /jurisdiction OK. Sample: Apache. Populated: agency_name, scoring_type, grading_type. Schema uses agency_name + fire_ahj_name (correct).
+2.11   | PASS             | 5 jurisdictions with fire_ahj_name. 5 have fire_jurisdiction_config JSONB. Correct column verified.
+
+Day 2 Re-verify: 8 PASS | 0 PASS* | 0 FAIL
+
+═��═════════════════════════════════════════
+  DAY 3 — Food Safety, Fire Safety & Checklists
+  Date: Apr 11 | Tests: 13
+��═════════��════════════════════════════════
+
+TEST   | RESULT           | ISSUE
+-------|------------------|------
+3.01   | PASS             | Route /food-safety OK. FoodSafetyHub is a category landing page — builds cards from sidebarConfig. Uses useDemoGuard().
+3.02   | PASS             | Route OK. temperature_equipment: exists (0 records). temperature_logs: 0 records. All 9 key columns verified. Uses useDemoGuard().
+3.03   | PASS             | Route OK. 7 templates (4 food, 3 fire). Types: opening, fire_daily, receiving, mid_shift, closing, fire_weekly, fire_monthly. Uses useDemoGuard().
+3.04   | PASS             | 26 items. Authority sources: calcode, cfc, nfpa_96, evidly_best_practice. Categories: employee_health, sanitation, temperature, storage, extinguisher, hood_system, egress, suppression, general, equipment. 1 critical, 5 temperature type.
+3.05   | PASS             | Route OK. corrective_actions table: exists (0 records). Uses useDemoGuard(). Page is demo-only with localStorage state.
+3.06   | PASS             | Route /facility-safety OK. FacilitySafety page uses useDemoGuard(). Fire safety checklists (daily/weekly/monthly), NFPA compliance, hood system checks. Demo-only with localStorage.
+3.07   | PASS             | incidents: 26 columns verified. RLS select: OK. incident_timeline: 7 cols OK. incident_comments: 4 cols OK.
+3.08   | PASS             | Route /self-audit OK. self_inspection_sessions table: exists. Uses useDemoGuard(). Multi-section inspection walkthrough with jurisdiction-specific scoring.
+3.09   | PASS             | Route OK. documents: 0 records. Core cols (title, category, status, file_url, scan_status) verified. AI analysis cols: OK. Uses useDemoGuard().
+3.10   | PASS             | 5 service types: FPM, FS, GFX, KEC, RGC. 5 with NFPA citations. PSE backbone verified.
+3.11   | PASS*            | receiving_temp_logs: exists. cooldown_temp_checks: exists. haccp_monitoring_logs: exists. These are used by TempLogs.tsx for specialized logging.
+3.12   | PASS             | checklist_template_completions: exists. checklist_responses: exists. alerts: exists. Full checklist workflow tables verified.
+3.13   | PASS             | Dual-pillar separation confirmed in templates. Food (4): Opening Checklist — Food Safety, Receiving Checklist, Mid-Shift Checklist, Closing Checklist — Food Safety. Fire (3): Opening Checklist — Fire Safety, Fire Safety Weekly Checklist, Fire Safety Monthly Checklist. Pillars are independent.
+
+Day 3: 12 PASS | 1 PASS* | 0 FAIL
+
+═════════════���══════════════════��══════════
+  REGRESSION (Day 1 + Day 2)
+══════���════════════════════════════════════
+
+TEST   | RESULT   | ISSUE
+-------|----------|------
+1.01   | PASS     | 
+1.02   | PASS     | Session obtained
+1.03   | PASS     | All 11 routes OK
+1.06   | PASS     | Session refresh OK
+1.17   | PASS     | Sidebar role-gating verified in sidebarConfig.ts
+2.01   | PASS     | Dashboard OK
+2.12   | PASS     | Dual-pillar: pillars independent, no aggregate score
+
+REGRESSION STATUS: ALL PASS
+
+═══════════════════════════════════════════
+  COMBINED SUMMARY
+══════════════════════════════════���════════
+
+Day 2 Re-verify: 8 PASS | 0 PASS* | 0 FAIL (8 tests re-run)
+Day 3:           12 PASS | 1 PASS* | 0 FAIL (13 tests)
+Regression:      7/7 PASS
+
+ISSUES FOUND: 0
+
+DB FIXES APPLIED: TESTING-DB-FIX-01 (before this run)
+- Issue 3: incidents + incident_timeline + incident_comments tables created
+- Issue 5: checklist_templates +5 cols, checklist_template_items +17 cols, 7 templates + 26 items seeded
+- Issue 6: service_type_definitions (5 types) + location_service_schedules created

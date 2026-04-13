@@ -48,7 +48,7 @@ export function MonthView({ date, jobs, onJobClick }: MonthViewProps) {
       {/* Weekday headers */}
       <div className="grid grid-cols-7 border-b" style={{ borderColor: CARD_BORDER }}>
         {WEEKDAYS.map(d => (
-          <div key={d} className="px-2 py-2 text-center text-[10px] font-semibold uppercase border-r last:border-r-0" style={{ color: TEXT_TERTIARY, borderColor: CARD_BORDER }}>
+          <div key={d} className="px-2 py-2 text-center text-xs font-semibold uppercase border-r last:border-r-0" style={{ color: TEXT_TERTIARY, borderColor: CARD_BORDER }}>
             {d}
           </div>
         ))}
@@ -109,7 +109,7 @@ function MonthDayCell({ dayKey, dayNumber, jobs, overflow, isCurrentMonth, isTod
       <div className="mb-1">
         <span className={`text-xs font-bold inline-flex items-center justify-center`} style={{
           color: today ? 'white' : isCurrentMonth ? NAVY : TEXT_TERTIARY,
-          background: today ? '#1e4d6b' : 'transparent',
+          background: today ? '#1E2D4D' : 'transparent',
           borderRadius: '50%',
           width: today ? 22 : undefined,
           height: today ? 22 : undefined,
@@ -124,7 +124,7 @@ function MonthDayCell({ dayKey, dayNumber, jobs, overflow, isCurrentMonth, isTod
           <JobBlock key={job.id} job={job} compact onClick={onJobClick} />
         ))}
         {overflow > 0 && !isExpanded && (
-          <button onClick={onToggleExpand} className="w-full text-[10px] font-semibold py-0.5 rounded hover:bg-gray-100" style={{ color: '#1e4d6b' }}>
+          <button onClick={onToggleExpand} className="w-full text-xs font-semibold py-0.5 rounded hover:bg-[#1E2D4D]/5" style={{ color: '#1E2D4D' }}>
             +{overflow} more
           </button>
         )}

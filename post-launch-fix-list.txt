@@ -1,0 +1,26 @@
+POST-LAUNCH FIX LIST
+═══════════════════════════════════════════
+
+Priority 1 (fix day of launch):
+  - GA4: Replace YOUR_GA4_ID with G-BW4VZSHE11 in index.html and uncomment script
+  - Verify Stripe live keys configured on production Vercel
+  - Verify Supabase production secrets set (STRIPE_SECRET_KEY, RESEND_API_KEY, ANTHROPIC_API_KEY)
+  - Run supabase db push on production DB to align schema
+
+Priority 2 (fix within 3 days):
+  - ZoomInfo: Replace YOUR_ZOOMINFO_ID with real pixel ID and uncomment
+  - Title/meta: Update from "California" to "California, Nevada, Oregon, Washington & Arizona"
+  - Sitemap: Update all lastmod dates from 2026-03-04 to launch date
+  - Manifest theme_color: Change #1e4d6b to #1E2D4D to match index.html
+
+Priority 3 (fix within week 1):
+  - Console.log: Remove 11 console.log statements across 7 files
+  - BillingPage.tsx: Update stale PLAN_FEATURES from $49/$149/$399 to founder pricing
+  - Structured data: Update from California-only to multi-state description
+  - Visual test: Android device verification of mobile UI
+
+Deferred (post week 1):
+  - CSP: Evaluate removing unsafe-inline and unsafe-eval if possible
+  - Session timeout: Implement explicit inactivity logout beyond JWT expiry
+  - Console.log: Gate remaining logs behind development-only flag
+  - Performance: Audit RLS policy subquery performance at scale

@@ -1,0 +1,72 @@
+═══════════════════════════════════════════════════════════════
+  MAY 5, 2026 — LAUNCH DAY RUNBOOK
+  EvidLY — Operations Intelligence for Commercial Kitchens
+═══════════════════════════════════════════════════════════════
+
+06:00 PT — PRE-LAUNCH CHECKS
+  [ ] Verify https://app.getevidly.com loads
+  [ ] Verify https://www.getevidly.com loads
+  [ ] Verify ScoreTable pages load (/scoretable/merced-county)
+  [ ] Verify /operations-check loads (public)
+  [ ] Check Sentry dashboard: zero errors
+  [ ] Check Supabase edge function logs: no failures
+  [ ] Check Vercel deployment status: healthy
+  [ ] Log in as arthur@getevidly.com → admin dashboard
+  [ ] Verify /admin/command-center KPI dashboard loads
+  [ ] Verify /admin/feature-flags all core flags enabled
+
+07:00 PT — GO LIVE
+  [ ] Post LinkedIn announcement
+  [ ] Activate RB2B script (if not done in Week 1 prep)
+  [ ] Send launch email to early access list
+  [ ] Publish blog post on getevidly.com
+  [ ] Notify Wave 1 county contacts
+
+08:00 PT — FIRST CLIENT ONBOARDING
+  [ ] Navigate to /admin/onboarding
+  [ ] Create first client org (name, industry, owner contact)
+  [ ] Set location count + jurisdiction matching
+  [ ] Verify welcome email received (Resend → client inbox)
+  [ ] Verify guided tour auto-activates on first login
+  [ ] Verify onboarding checklist shows on dashboard
+  [ ] Monitor Sentry for any errors during onboarding
+
+10:00 PT — SALES PIPELINE CHECK
+  [ ] Review /admin/sales → leads from launch email
+  [ ] Review /admin/gtm → channel metrics
+  [ ] Check assessment-notify: any IRR submissions?
+  [ ] Review Operations Check submissions at /admin/intelligence
+
+12:00 PT — MIDDAY CHECK
+  [ ] Review GA4 Realtime: page views, user flow
+  [ ] Review Sentry: any new errors?
+  [ ] Review /admin/command-center KPIs
+  [ ] Check support tickets: any incoming?
+  [ ] Verify Stripe: any checkout attempts?
+
+15:00 PT — AFTERNOON CHECK
+  [ ] Review ScoreTable traffic
+  [ ] Review county landing page traffic
+  [ ] Check email delivery: Resend dashboard
+  [ ] Monitor edge function invocations
+
+18:00 PT — END OF DAY REVIEW
+  [ ] Compile Day 1 metrics:
+      - Total page views
+      - Unique visitors
+      - Sign-ups / trials started
+      - IRR submissions
+      - Support tickets
+      - Errors (Sentry)
+  [ ] Document any issues found
+  [ ] Plan Day 2 fixes if needed
+  [ ] Send internal launch summary to team
+
+EMERGENCY CONTACTS:
+  Arthur Haggerty: arthur@getevidly.com
+  Sentry: https://sentry.io (PII scrubbed)
+  Supabase: dashboard.supabase.com
+  Vercel: vercel.com/dashboard
+  Stripe: dashboard.stripe.com
+
+═══════════════════════════════════════════════════════════════

@@ -1,0 +1,66 @@
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════
+  RBAC ROLE MATRIX — EvidLY Route Access Control
+  Date: 2026-04-12 | Routes: 50 | Roles: 8
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+  Key: ✓ = Access Allowed | ✗ = Access Denied | platform_admin always ✓ (bypasses all guards)
+
+ROUTE                                   plat_admin  own_operatorexecutive   comp_managerchef        facil_managerkit_manager kit_staff   
+----------------------------------------------------------------------------------------------------------------------------------------
+/analysis                               ✓           ✓           ✓           ✓           ✗           ✗           ✓           ✗           
+/audit-trail                            ✓           ✓           ✓           ✓           ✗           ✗           ✗           ✗           
+/benchmarks                             ✓           ✓           ✓           ✗           ✗           ✗           ✗           ✗           
+/compliance-trends                      ✓           ✓           ✓           ✓           ✗           ✗           ✓           ✗           
+/intelligence                           ✓           ✓           ✓           ✓           ✗           ✗           ✗           ✗           
+/insights/intelligence                  ✓           ✓           ✓           ✓           ✗           ✗           ✗           ✗           
+/insights/reports                       ✓           ✓           ✓           ✓           ✗           ✗           ✗           ✗           
+/insights/inspection-forecast           ✓           ✓           ✓           ✓           ✓           ✓           ✓           ✗           
+/insights/violation-radar               ✓           ✓           ✓           ✓           ✓           ✗           ✓           ✗           
+/insights/trajectory                    ✓           ✓           ✓           ✓           ✗           ✗           ✓           ✗           
+/insights/vendor-performance            ✓           ✓           ✓           ✓           ✗           ✓           ✗           ✗           
+/insights/signals                       ✓           ✓           ✓           ✓           ✗           ✗           ✗           ✗           
+/insights/leaderboard                   ✓           ✓           ✓           ✓           ✗           ✗           ✓           ✗           
+/insights/operations-intelligence       ✓           ✓           ✓           ✓           ✓           ✓           ✓           ✗           
+/iot-monitoring                         ✓           ✓           ✓           ✓           ✗           ✓           ✗           ✗           
+/jurisdiction                           ✓           ✓           ✓           ✓           ✗           ✗           ✗           ✗           
+/scoring-breakdown                      ✓           ✓           ✓           ✓           ✗           ✗           ✓           ✗           
+/violation-trends                       ✓           ✓           ✗           ✓           ✗           ✗           ✗           ✗           
+/tasks                                  ✓           ✓           ✓           ✓           ✓           ✓           ✓           ✓           
+/corrective-actions                     ✓           ✓           ✓           ✓           ✓           ✓           ✓           ✓           
+/vendor-certifications                  ✓           ✓           ✗           ✓           ✗           ✗           ✗           ✗           
+/export-center                          ✓           ✗           ✗           ✓           ✗           ✗           ✗           ✗           
+/workforce-risk                         ✓           ✓           ✓           ✓           ✗           ✓           ✗           ✗           
+/cic-pse                                ✓           ✓           ✓           ✓           ✗           ✗           ✗           ✗           
+/vendor-connect                         ✓           ✓           ✓           ✓           ✗           ✓           ✗           ✗           
+/admin/vendor-connect                   ✓           ✗           ✗           ✗           ✗           ✗           ✗           ✗           
+/equipment                              ✓           ✓           ✓           ✓           ✗           ✓           ✓           ✗           
+/incidents                              ✓           ✓           ✓           ✓           ✓           ✓           ✓           ✓           
+/vendors                                ✓           ✓           ✓           ✗           ✗           ✓           ✗           ✗           
+/vendors/review                         ✓           ✓           ✓           ✓           ✗           ✗           ✓           ✗           
+/calendar                               ✓           ✓           ✓           ✓           ✓           ✓           ✓           ✗           
+/dashboard/training                     ✓           ✓           ✓           ✓           ✓           ✗           ✓           ✓           
+/reports                                ✓           ✓           ✓           ✓           ✓           ✓           ✓           ✗           
+/billing                                ✓           ✓           ✓           ✗           ✗           ✗           ✗           ✗           
+/org-hierarchy                          ✓           ✓           ✓           ✗           ✗           ✗           ✗           ✗           
+/team                                   ✓           ✓           ✓           ✗           ✓           ✓           ✓           ✗           
+/admin/api-keys                         ✓           ✗           ✗           ✗           ✗           ✗           ✗           ✗           
+/admin/demo-generator                   ✓           ✗           ✗           ✗           ✗           ✗           ✗           ✗           
+/admin/demo-pipeline                    ✓           ✗           ✗           ✗           ✗           ✗           ✗           ✗           
+/admin/demo-tours                       ✓           ✗           ✗           ✗           ✗           ✗           ✗           ✗           
+/admin/partner-demos                    ✓           ✗           ✗           ✗           ✗           ✗           ✗           ✗           
+/admin/demos                            ✓           ✗           ✗           ✗           ✗           ✗           ✗           ✗           
+/partner/                               ✓           ✗           ✗           ✗           ✗           ✗           ✗           ✗           
+/admin/                                 ✓           ✓           ✓           ✗           ✗           ✗           ✗           ✗           
+/enterprise/                            ✓           ✓           ✓           ✗           ✗           ✗           ✗           ✗           
+/settings/roles-permissions             ✓           ✓           ✓           ✗           ✗           ✗           ✗           ✗           
+/settings/team-roles                    ✓           ✓           ✓           ✗           ✗           ✗           ✗           ✗           
+/settings/service-types                 ✓           ✓           ✓           ✗           ✗           ✗           ✗           ✗           
+/settings/billing                       ✓           ✓           ✗           ✗           ✗           ✗           ✗           ✗           
+/iot/hub                                ✓           ✓           ✓           ✓           ✗           ✗           ✗           ✗           
+
+========================================================================================================================================
+  TOTAL ROUTES: 50
+  ADMIN-ONLY (empty []): routes where only platform_admin has access
+  Source: src/lib/routeGuards.ts — ROUTE_ROLE_MAP
+  Guard: isRouteAllowedForRole() — platform_admin bypasses all checks
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════

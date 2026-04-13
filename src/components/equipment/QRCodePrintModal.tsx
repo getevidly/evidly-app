@@ -67,7 +67,7 @@ export function QRCodePrintModal({ equipment, onClose }: QRCodePrintModalProps) 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 modal-backdrop-enter" onClick={onClose}>
       <div
         className="rounded-xl w-full max-w-md mx-4"
         style={{ background: CARD_BG, boxShadow: '0 20px 60px rgba(0,0,0,0.2)' }}
@@ -76,7 +76,7 @@ export function QRCodePrintModal({ equipment, onClose }: QRCodePrintModalProps) 
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b" style={{ borderColor: CARD_BORDER }}>
           <h2 className="text-base font-bold" style={{ color: NAVY }}>Print QR Code</h2>
-          <button onClick={onClose} className="p-2.5 -m-1 rounded hover:bg-gray-100" aria-label="Close"><X className="w-5 h-5" style={{ color: TEXT_TERTIARY }} /></button>
+          <button onClick={onClose} className="p-2.5 -m-1 rounded hover:bg-[#1E2D4D]/5" aria-label="Close"><X className="w-5 h-5" style={{ color: TEXT_TERTIARY }} /></button>
         </div>
 
         <div className="p-5 space-y-4">
@@ -99,14 +99,14 @@ export function QRCodePrintModal({ equipment, onClose }: QRCodePrintModalProps) 
                 <button
                   key={opt.key}
                   onClick={() => setLayout(opt.key)}
-                  className="p-3 rounded-lg border text-left transition-all"
+                  className="p-3 rounded-xl border text-left transition-all"
                   style={{
-                    borderColor: layout === opt.key ? '#1e4d6b' : CARD_BORDER,
+                    borderColor: layout === opt.key ? '#1E2D4D' : CARD_BORDER,
                     background: layout === opt.key ? '#eef4f8' : CARD_BG,
                   }}
                 >
                   <p className="text-xs font-semibold" style={{ color: NAVY }}>{opt.label}</p>
-                  <p className="text-[10px] mt-0.5" style={{ color: TEXT_TERTIARY }}>{opt.desc}</p>
+                  <p className="text-xs mt-0.5" style={{ color: TEXT_TERTIARY }}>{opt.desc}</p>
                 </button>
               ))}
             </div>
@@ -126,13 +126,13 @@ export function QRCodePrintModal({ equipment, onClose }: QRCodePrintModalProps) 
 
         {/* Footer */}
         <div className="flex justify-end gap-3 p-5 border-t" style={{ borderColor: CARD_BORDER }}>
-          <button onClick={onClose} className="px-4 py-2 text-sm font-medium rounded-lg border hover:bg-gray-50" style={{ borderColor: CARD_BORDER, color: NAVY }}>
+          <button onClick={onClose} className="px-4 py-2 text-sm font-medium rounded-xl border hover:bg-[#FAF7F0]" style={{ borderColor: CARD_BORDER, color: NAVY }}>
             Cancel
           </button>
           <button
             onClick={handlePrint}
             className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white rounded-lg"
-            style={{ background: '#1e4d6b' }}
+            style={{ background: '#1E2D4D' }}
           >
             <Printer className="w-4 h-4" /> Print
           </button>

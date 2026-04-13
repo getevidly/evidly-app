@@ -125,7 +125,7 @@ function StatusBadge({ status }: { status: string }) {
     'Unsatisfactory':  'bg-red-50 text-red-700 border-red-300',
   };
   return (
-    <span className={`text-[10px] px-1.5 py-0.5 rounded border ${styles[status] ?? 'bg-gray-100 text-gray-600 border-gray-300'}`}>
+    <span className={`text-xs px-1.5 py-0.5 rounded border ${styles[status] ?? 'bg-[#1E2D4D]/5 text-[#1E2D4D]/70 border-[#1E2D4D]/15'}`}>
       {status}
     </span>
   );
@@ -133,7 +133,7 @@ function StatusBadge({ status }: { status: string }) {
 
 function FireVerdictBadge({ verdict }: { verdict: 'Pass' | 'Fail' }) {
   return (
-    <span className={`text-[10px] px-1.5 py-0.5 rounded border ${
+    <span className={`text-xs px-1.5 py-0.5 rounded border ${
       verdict === 'Pass'
         ? 'bg-green-50 text-green-700 border-green-300'
         : 'bg-red-50 text-red-700 border-red-300'
@@ -159,21 +159,21 @@ function TreeNodeRow({ node, depth = 0, selectedId, onSelect }: {
         className={`w-full flex items-center gap-2 py-2 px-3 rounded-lg text-left transition-colors cursor-pointer ${
           isSelected
             ? 'bg-[#EEF1F7] border-l-2 border-yellow-600'
-            : 'hover:bg-gray-100'
+            : 'hover:bg-[#1E2D4D]/5'
         }`}
         style={{ marginLeft: depth * 20 }}
       >
         {hasChildren ? (
           open
-            ? <ChevronDown className="h-3.5 w-3.5 text-gray-400 flex-shrink-0" />
-            : <ChevronRight className="h-3.5 w-3.5 text-gray-400 flex-shrink-0" />
+            ? <ChevronDown className="h-3.5 w-3.5 text-[#1E2D4D]/30 flex-shrink-0" />
+            : <ChevronRight className="h-3.5 w-3.5 text-[#1E2D4D]/30 flex-shrink-0" />
         ) : (
           <div className="w-3.5 flex-shrink-0" />
         )}
 
         <div className="flex-1 min-w-0 flex items-center gap-2">
-          <span className="text-sm font-medium text-gray-900 truncate">{node.name}</span>
-          <span className="text-[10px] text-gray-400 flex-shrink-0">{node.code}</span>
+          <span className="text-sm font-medium text-[#1E2D4D] truncate">{node.name}</span>
+          <span className="text-xs text-[#1E2D4D]/30 flex-shrink-0">{node.code}</span>
         </div>
 
         <div className="flex items-center gap-2 flex-shrink-0">
@@ -187,8 +187,8 @@ function TreeNodeRow({ node, depth = 0, selectedId, onSelect }: {
             </>
           ) : (
             <>
-              <span className="text-xs text-gray-500">{node.locationCount} loc</span>
-              <span className="text-xs text-gray-400">&middot;</span>
+              <span className="text-xs text-[#1E2D4D]/50">{node.locationCount} loc</span>
+              <span className="text-xs text-[#1E2D4D]/30">&middot;</span>
               <span className="text-xs text-amber-600">{node.openItems} open items</span>
             </>
           )}
@@ -210,14 +210,14 @@ function TreeNodeRow({ node, depth = 0, selectedId, onSelect }: {
 function FireEquipmentBar({ label, pass }: { label: string; pass: boolean }) {
   return (
     <div className="flex items-center gap-2">
-      <span className="text-xs text-gray-500 w-14">{label}</span>
-      <div className="flex-1 h-2 rounded-full bg-gray-200">
+      <span className="text-xs text-[#1E2D4D]/50 w-14">{label}</span>
+      <div className="flex-1 h-2 rounded-full bg-[#1E2D4D]/8">
         <div
           className={`h-2 rounded-full ${pass ? 'bg-green-500' : 'bg-red-500'}`}
           style={{ width: pass ? '100%' : '30%' }}
         />
       </div>
-      <span className={`text-[10px] ${pass ? 'text-green-600' : 'text-red-600'}`}>
+      <span className={`text-xs ${pass ? 'text-green-600' : 'text-red-600'}`}>
         {pass ? 'Current' : 'Overdue'}
       </span>
     </div>
@@ -234,43 +234,43 @@ function LocationDetail({ node }: { node: OrgTreeNode }) {
     <div className="space-y-5">
       {/* Header */}
       <div>
-        <h2 className="text-gray-900 font-bold text-xl">{node.name}</h2>
-        <p className="text-gray-500 text-sm">{node.code} &middot; Location</p>
+        <h2 className="text-[#1E2D4D] font-bold text-xl">{node.name}</h2>
+        <p className="text-[#1E2D4D]/50 text-sm">{node.code} &middot; Location</p>
       </div>
 
       {/* Food Safety */}
-      <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-2" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
+      <div className="rounded-xl border border-[#1E2D4D]/10 bg-white p-4 space-y-2" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
         <div className="flex items-center gap-2 mb-1">
-          <span className="text-sm font-semibold text-gray-900">🍽 Food Safety</span>
+          <span className="text-sm font-semibold text-[#1E2D4D]">🍽 Food Safety</span>
         </div>
-        <p className="text-gray-500 text-xs">{node.foodSafetyJurisdiction}</p>
+        <p className="text-[#1E2D4D]/50 text-xs">{node.foodSafetyJurisdiction}</p>
         <div className="flex items-center gap-3">
           {node.foodSafetyStatus && <StatusBadge status={node.foodSafetyStatus} />}
-          <span className="text-xs text-gray-600">
+          <span className="text-xs text-[#1E2D4D]/70">
             {node.foodSafetyStatus === 'Compliant' && 'No critical violations on last inspection'}
             {node.foodSafetyStatus === 'Satisfactory' && 'Minor violations noted — corrective actions in progress'}
             {node.foodSafetyStatus === 'Action Required' && 'Critical violations require immediate correction'}
           </span>
         </div>
         {node.foodSafetyStatus === 'Compliant' && (
-          <p className="text-gray-400 text-xs italic">Last inspected Jan 2026 — next due Jul 2026</p>
+          <p className="text-[#1E2D4D]/30 text-xs italic">Last inspected Jan 2026 — next due Jul 2026</p>
         )}
         {node.foodSafetyStatus === 'Satisfactory' && (
-          <p className="text-gray-400 text-xs italic">Re-inspection scheduled within 60 days</p>
+          <p className="text-[#1E2D4D]/30 text-xs italic">Re-inspection scheduled within 60 days</p>
         )}
         {node.foodSafetyStatus === 'Action Required' && (
-          <p className="text-gray-400 text-xs italic">Compliance deadline: 30 days from last inspection</p>
+          <p className="text-[#1E2D4D]/30 text-xs italic">Compliance deadline: 30 days from last inspection</p>
         )}
       </div>
 
       {/* Facility Safety */}
-      <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-3" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
+      <div className="rounded-xl border border-[#1E2D4D]/10 bg-white p-4 space-y-3" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
         <div className="flex items-center gap-2 mb-1">
-          <span className="text-sm font-semibold text-gray-900">🔥 Facility Safety</span>
+          <span className="text-sm font-semibold text-[#1E2D4D]">🔥 Facility Safety</span>
         </div>
         <div className="flex items-center justify-between">
-          <p className="text-gray-500 text-xs">{node.facilitySafetyAhj}</p>
-          <p className="text-gray-400 text-[10px]">NFPA 96</p>
+          <p className="text-[#1E2D4D]/50 text-xs">{node.facilitySafetyAhj}</p>
+          <p className="text-[#1E2D4D]/30 text-xs">NFPA 96</p>
         </div>
         <div className="space-y-2">
           <FireEquipmentBar label="Permit" pass={equip.permit} />
@@ -282,16 +282,16 @@ function LocationDetail({ node }: { node: OrgTreeNode }) {
       </div>
 
       {/* Open Items */}
-      <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-2" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
+      <div className="rounded-xl border border-[#1E2D4D]/10 bg-white p-4 space-y-2" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
         <div className="flex items-center gap-2 mb-1">
           <AlertTriangle className="h-4 w-4 text-amber-500" />
-          <span className="text-sm font-semibold text-gray-900">Open Items</span>
+          <span className="text-sm font-semibold text-[#1E2D4D]">Open Items</span>
         </div>
-        <p className="text-gray-500 text-xs">{node.openItems} item{node.openItems !== 1 ? 's' : ''} requiring attention</p>
+        <p className="text-[#1E2D4D]/50 text-xs">{node.openItems} item{node.openItems !== 1 ? 's' : ''} requiring attention</p>
         {items.length > 0 && (
           <ul className="space-y-1">
             {items.map((item, i) => (
-              <li key={i} className="flex items-start gap-2 text-xs text-gray-700">
+              <li key={i} className="flex items-start gap-2 text-xs text-[#1E2D4D]/80">
                 <span className="text-amber-500 mt-0.5">•</span>
                 {item}
               </li>
@@ -316,19 +316,19 @@ function RegionDetail({ node }: { node: OrgTreeNode }) {
     <div className="space-y-5">
       {/* Header */}
       <div>
-        <h2 className="text-gray-900 font-bold text-xl">{node.name}</h2>
-        <p className="text-gray-500 text-sm">{node.code} &middot; {node.type === 'corporate' ? 'Corporate' : 'Region'} &middot; {node.locationCount} location{node.locationCount !== 1 ? 's' : ''}</p>
+        <h2 className="text-[#1E2D4D] font-bold text-xl">{node.name}</h2>
+        <p className="text-[#1E2D4D]/50 text-sm">{node.code} &middot; {node.type === 'corporate' ? 'Corporate' : 'Region'} &middot; {node.locationCount} location{node.locationCount !== 1 ? 's' : ''}</p>
       </div>
 
       {/* Location list */}
-      <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-2" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
-        <h3 className="text-sm font-semibold text-gray-900 mb-3">Locations</h3>
+      <div className="rounded-xl border border-[#1E2D4D]/10 bg-white p-4 space-y-2" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
+        <h3 className="text-sm font-semibold text-[#1E2D4D] mb-3">Locations</h3>
         <div className="space-y-2">
           {locations.map(loc => (
-            <div key={loc.id} className="flex items-center justify-between py-2 px-3 rounded-lg bg-gray-50">
+            <div key={loc.id} className="flex items-center justify-between py-2 px-3 rounded-lg bg-[#FAF7F0]">
               <div className="flex items-center gap-2 min-w-0">
-                <span className="text-sm text-gray-900 truncate">{loc.name}</span>
-                <span className="text-[10px] text-gray-400">{loc.code}</span>
+                <span className="text-sm text-[#1E2D4D] truncate">{loc.name}</span>
+                <span className="text-xs text-[#1E2D4D]/30">{loc.code}</span>
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
                 {loc.foodSafetyStatus && <StatusBadge status={loc.foodSafetyStatus} />}
@@ -343,8 +343,8 @@ function RegionDetail({ node }: { node: OrgTreeNode }) {
       </div>
 
       {/* Summary */}
-      <div className="rounded-lg border border-gray-200 bg-white p-4" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
-        <p className="text-sm text-gray-700">
+      <div className="rounded-xl border border-[#1E2D4D]/10 bg-white p-4" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
+        <p className="text-sm text-[#1E2D4D]/80">
           <span className={foodSafeCount === locations.length ? 'text-green-600' : 'text-amber-600'}>
             {foodSafeCount} of {locations.length}
           </span>
@@ -357,12 +357,12 @@ function RegionDetail({ node }: { node: OrgTreeNode }) {
       </div>
 
       {/* Open Items */}
-      <div className="rounded-lg border border-gray-200 bg-white p-4" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
+      <div className="rounded-xl border border-[#1E2D4D]/10 bg-white p-4" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
         <div className="flex items-center gap-2 mb-2">
           <AlertTriangle className="h-4 w-4 text-amber-500" />
-          <span className="text-sm font-semibold text-gray-900">Open Items</span>
+          <span className="text-sm font-semibold text-[#1E2D4D]">Open Items</span>
         </div>
-        <p className="text-gray-500 text-xs">{node.openItems} total items requiring attention across {node.locationCount} location{node.locationCount !== 1 ? 's' : ''}</p>
+        <p className="text-[#1E2D4D]/50 text-xs">{node.openItems} total items requiring attention across {node.locationCount} location{node.locationCount !== 1 ? 's' : ''}</p>
       </div>
     </div>
   );
@@ -474,27 +474,27 @@ export function OrgHierarchy() {
       {/* Page Header */}
       <div className="flex items-center justify-between flex-wrap gap-2 mb-5">
         <div>
-          <h1 className="text-gray-900 font-bold text-2xl">Locations</h1>
-          <p className="text-gray-500 text-sm mt-1">Compliance status across your locations</p>
+          <h1 className="text-[#1E2D4D] font-bold text-2xl tracking-tight">Locations</h1>
+          <p className="text-[#1E2D4D]/50 text-sm mt-1">Compliance status across your locations</p>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#1e4d6b] text-sm font-medium text-white hover:bg-[#163a52] transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#1E2D4D] text-sm font-medium text-white hover:bg-[#162340] transition-colors cursor-pointer"
           >
             <Plus className="h-4 w-4" />
             Add Location
           </button>
           <button
             onClick={() => navigate('/import?type=locations')}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-[#1e4d6b] text-sm font-medium text-[#1e4d6b] hover:bg-[#eef4f8] transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[#1E2D4D] text-sm font-medium text-[#1E2D4D] hover:bg-[#eef4f8] transition-colors cursor-pointer"
           >
             <Upload className="h-4 w-4" />
             Import
           </button>
           <button
             onClick={() => toast.info('Hierarchy configuration')}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-300 text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[#1E2D4D]/15 text-sm font-medium text-[#1E2D4D]/70 hover:bg-[#1E2D4D]/5 transition-colors cursor-pointer"
           >
             <Settings className="h-4 w-4" />
             Hierarchy Config
@@ -504,13 +504,13 @@ export function OrgHierarchy() {
 
       {/* Empty state for live mode */}
       {!isDemoMode ? (
-        <div className="rounded-xl border border-gray-200 bg-white p-12 flex flex-col items-center justify-center text-center" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
-          <MapPin className="h-12 w-12 text-gray-300 mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">No locations added yet</h3>
-          <p className="text-sm text-gray-500 max-w-md mb-4">Add your first location to get started.</p>
+        <div className="rounded-xl border border-[#1E2D4D]/10 bg-white p-12 flex flex-col items-center justify-center text-center" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
+          <MapPin className="h-12 w-12 text-[#1E2D4D]/30 mb-4" />
+          <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-2">No locations added yet</h3>
+          <p className="text-sm text-[#1E2D4D]/50 max-w-md mb-4">Add your first location to get started.</p>
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-[#1e4d6b] text-sm font-medium text-white hover:bg-[#163a52] transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-[#1E2D4D] text-sm font-medium text-white hover:bg-[#162340] transition-colors cursor-pointer"
           >
             <Plus className="h-4 w-4" />
             Add Location
@@ -520,7 +520,7 @@ export function OrgHierarchy() {
       ) : isDemoMode && isSingleLocation ? (
         /* Single-location flat view — location IS the organization */
         <div className="max-w-2xl">
-          <div className="rounded-xl border border-gray-200 bg-white p-5" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
+          <div className="rounded-xl border border-[#1E2D4D]/10 bg-white p-5" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
             <LocationDetail node={allLocations[0]} />
           </div>
         </div>
@@ -531,8 +531,8 @@ export function OrgHierarchy() {
       <div className="grid grid-cols-1 lg:grid-cols-[40%_1px_1fr] gap-5 items-stretch">
         {/* Left column — Tree */}
         <div className="min-h-[400px]">
-          <div className="rounded-xl border border-gray-200 bg-white p-4 h-full" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
-            <h3 className="text-sm font-semibold text-gray-900 mb-3">Organization Tree</h3>
+          <div className="rounded-xl border border-[#1E2D4D]/10 bg-white p-4 h-full" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
+            <h3 className="text-sm font-semibold text-[#1E2D4D] mb-3">Organization Tree</h3>
             <div className="space-y-0.5">
               <TreeNodeRow node={orgTreeState} selectedId={selectedId} onSelect={handleSelect} />
             </div>
@@ -540,19 +540,19 @@ export function OrgHierarchy() {
         </div>
 
         {/* Divider (desktop) */}
-        <div className="hidden lg:block bg-gray-200" />
+        <div className="hidden lg:block bg-[#1E2D4D]/8" />
 
         {/* Right column — Detail */}
         <div className="min-w-0 min-h-[400px]">
-          <div className="rounded-xl border border-gray-200 bg-white p-5 h-full" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
+          <div className="rounded-xl border border-[#1E2D4D]/10 bg-white p-5 h-full" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
             {selectedNode ? (
               selectedNode.type === 'location'
                 ? <LocationDetail node={selectedNode} />
                 : <RegionDetail node={selectedNode} />
             ) : (
               <div className="flex flex-col items-center justify-center h-full text-center">
-                <Building2 className="h-10 w-10 text-gray-400 mb-3" />
-                <p className="text-gray-500 text-sm">Select a location or region to view details</p>
+                <Building2 className="h-10 w-10 text-[#1E2D4D]/30 mb-3" />
+                <p className="text-[#1E2D4D]/50 text-sm">Select a location or region to view details</p>
               </div>
             )}
           </div>

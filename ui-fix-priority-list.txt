@@ -1,0 +1,299 @@
+================================================================================
+  EVIDLY UI FIX PRIORITY LIST
+  Generated: 2026-04-12 (from direct codebase analysis)
+================================================================================
+
+CRITICAL (looks broken):      6 items
+HIGH (looks amateur):        14 items
+MEDIUM (inconsistent):       22 items
+LOW (polish opportunity):    16 items
+                             --------
+TOTAL:                       58 items
+
+================================================================================
+CRITICAL — Looks Broken / Violates Design System
+================================================================================
+
+CR-1  CONFLICTING GOLD CSS VARIABLE
+      File:  src/index.css (line 14)
+      Issue: --color-gold is #c9a227 but ALL components use #A08C5A
+      Fix:   Change --color-gold to #A08C5A to match actual brand gold
+
+CR-2  TWO DIFFERENT CREAM BACKGROUNDS
+      File:  src/App.tsx (lines 347, 382, 435)
+      Issue: Loading states use bg-[#faf8f3], rest of app uses #FAF7F0 (cream)
+      Fix:   Replace all bg-[#faf8f3] with bg-cream or bg-[#FAF7F0]
+
+CR-3  CONFLICTING GOLD-LIGHT VALUES
+      File:  tailwind.config.js (line 9) vs src/index.css (line 67)
+      Issue: goldLight is #C4AE7A in Tailwind but --gold-light is #C4A96E in CSS
+      Fix:   Unify to one value (recommend #C4AE7A)
+
+CR-4  INPUT BORDER-RADIUS MISMATCH ACROSS AUTH PAGES
+      File:  src/pages/AdminLogin.tsx (lines 112, 129, 154) — rounded-md
+      File:  src/pages/Login.tsx (lines 247, 264) — rounded-xl
+      Issue: Same element type (text input) has different radii on auth pages
+      Fix:   Standardize all inputs to rounded-xl to match Login.tsx
+
+CR-5  ADMIN ONBOARDING INPUT RADIUS MISMATCH
+      File:  src/pages/AdminClientOnboarding.tsx (lines 240, 254, 274, etc.)
+      Issue: All inputs use rounded-md instead of app standard rounded-xl
+      Fix:   Replace rounded-md with rounded-xl on all inputs
+
+CR-6  DEAD FONT LOADING — OUTFIT NEVER USED
+      File:  src/index.css (line 1)
+      Issue: @import loads Outfit font (400-800 weights, ~40KB) but zero components reference it
+      Fix:   Remove Outfit from the @import to save ~40KB on every page load
+
+
+================================================================================
+HIGH — Looks Amateur / Below SaaS Standard
+================================================================================
+
+HI-1  NO SHARED INPUT COMPONENT
+      Files: All form pages (Login, AdminLogin, Onboarding, Settings, etc.)
+      Issue: Input styles copy-pasted per page; radius, padding, focus vary
+      Fix:   Create src/components/ui/Input.tsx with standard props
+
+HI-2  NO SHARED CARD COMPONENT
+      Files: ~150+ pages use inline card styles
+      Issue: bg-white rounded-xl border border-[#1E2D4D]/10 p-4 repeated everywhere
+      Fix:   Create src/components/ui/Card.tsx
+
+HI-3  NO SHARED MODAL COMPONENT
+      Files: 20+ modal components each rebuild overlay + centering
+      Issue: Modal max-width, shadow, radius all vary per implementation
+      Fix:   Create src/components/ui/Modal.tsx shell
+
+HI-4  NO SHARED TABLE COMPONENT
+      Files: All list/data pages
+      Issue: Tables rebuilt inline every time with different header/row styles
+      Fix:   Create src/components/ui/Table.tsx
+
+HI-5  BUTTON.JSX ADOPTION AT <20%
+      File:  src/components/ui/Button.jsx (good component, barely used)
+      Issue: Most pages inline button styles — wastes component
+      Fix:   Migrate all inline buttons to Button.jsx (phased)
+
+HI-6  BUTTON HOVER NAVY INCONSISTENCY
+      File:  src/pages/Login.tsx (hover:bg-[#2a3d5d])
+      File:  src/components/shared/PageStates.tsx (hover:bg-[#162340])
+      Issue: Two different hover shades for primary navy buttons
+      Fix:   Standardize to hover:bg-[#2A3F6B] (navyLight from config)
+
+HI-7  EMPTY STATE BUTTON RADIUS MISMATCH
+      File:  src/components/EmptyState.tsx — rounded-lg
+      File:  src/components/shared/PageStates.tsx — rounded-xl
+      Issue: Two empty state components with different button radii
+      Fix:   Standardize both to rounded-xl
+
+HI-8  1946+ HARDCODED HEX VALUES
+      Files: 325 source files
+      Issue: bg-[#1E2D4D], text-[#1E2D4D], etc. used instead of tokens
+      Fix:   Replace with bg-navy, text-navy, bg-gold, etc. (phased)
+
+HI-9  CUSTOM SHADOW TOKENS UNUSED
+      File:  tailwind.config.js (lines 30-32)
+      Issue: shadow-card, shadow-card-hover, shadow-elevated defined but 0 usages
+      Fix:   Either adopt them in components or remove dead config
+
+HI-10 3 REDUNDANT COLOR ALIASES
+      File:  tailwind.config.js (lines 7-27)
+      Issue: brand.navy, navy.DEFAULT, brand-navy all = #1E2D4D
+      Fix:   Remove brand-navy and brand-gold aliases; use navy and gold
+
+HI-11 NON-STANDARD BASE FONT SIZE
+      File:  src/index.css (line 104)
+      Issue: font-size: 15px — Tailwind rem values assume 16px base
+      Fix:   Change to 16px or keep 15px and document the intentional choice
+
+HI-12 EMOJI ICONS IN SIDEBAR VS LUCIDE EVERYWHERE ELSE
+      File:  src/config/sidebarConfig.ts (entire icon field uses emojis)
+      Issue: Sidebar is only place emojis appear; rest of app uses lucide-react
+      Fix:   Replace emoji icons with lucide-react icons for visual consistency
+
+HI-13 SSO BUTTON RADIUS MISMATCH ON LOGIN
+      File:  src/pages/Login.tsx (line 330)
+      Issue: SSO button uses rounded-lg while main submit uses rounded-xl
+      Fix:   Change SSO button to rounded-xl
+
+HI-14 ADMIN DASHBOARD USES INLINE BORDER STYLE
+      File:  src/pages/admin/AdminDashboard.tsx (line 310)
+      Issue: style={{ borderColor: '#D1D9E6' }} instead of Tailwind class
+      Fix:   Replace with border-[#D1D9E6] or use CSS var --border
+
+
+================================================================================
+MEDIUM — Inconsistent but Functional
+================================================================================
+
+MD-1  FOCUS PSEUDO-CLASS MIXED USAGE
+      Files: Login.tsx, AdminLogin.tsx, various forms
+      Issue: Some use focus:ring, others focus-visible:ring
+      Fix:   Standardize to focus-visible:ring everywhere
+
+MD-2  HEADING SIZE HIERARCHY UNDEFINED
+      Files: All pages
+      Issue: H1 ranges from text-xl to text-5xl with no consistent rule
+      Fix:   Define heading tokens: page-title=text-2xl, section=text-lg, etc.
+
+MD-3  SUBTITLE TEXT OPACITY VARIES
+      Files: Multiple pages
+      Issue: text-[#1E2D4D]/30, /50, /70 used for same visual purpose
+      Fix:   Standardize: muted=/50, subtle=/30, secondary=/70
+
+MD-4  FORM FIELD SPACING VARIES
+      Files: Login (space-y-5), AdminClientOnboarding (space-y-4)
+      Issue: Same form layout pattern uses different vertical spacing
+      Fix:   Standardize to space-y-5 for auth forms, space-y-4 for settings
+
+MD-5  CARD INTERNAL PADDING — 5 DIFFERENT VALUES
+      Files: All card-containing pages
+      Issue: p-3, p-4, p-5, p-6, p-8, p-12 for same card visual
+      Fix:   Define: compact=p-3, standard=p-4 sm:p-6, spacious=p-8
+
+MD-6  DUPLICATE PAGE TRANSITION SYSTEMS
+      File:  src/components/PageTransition.tsx (Framer Motion)
+      File:  src/index.css (CSS .page-enter keyframe)
+      Issue: Two systems doing the same thing
+      Fix:   Remove CSS .page-enter; Framer Motion is sufficient
+
+MD-7  DUPLICATE SLIDE-IN-RIGHT KEYFRAMES
+      File:  src/index.css (slide-in-right AND slideInRight)
+      Issue: Two keyframes with same effect, different naming
+      Fix:   Remove slideInRight; keep slide-in-right (kebab-case convention)
+
+MD-8  LOADING SPINNER SIZE NOT STANDARDIZED
+      Files: App.tsx (h-12 w-12), Suspense fallback (h-8 w-8)
+      Issue: Different spinner sizes in different loading contexts
+      Fix:   Standardize: page-level=h-10 w-10, inline=h-6 w-6
+
+MD-9  SECTION BOTTOM MARGIN VARIES
+      Files: All pages with sections
+      Issue: mb-3, mb-4, mb-6, mb-8, mb-12 used for section separation
+      Fix:   Standardize to mb-6 (section gap) and mb-3 (subsection gap)
+
+MD-10 BORDER COLOR VARIES FOR SAME ELEMENT TYPE
+      Files: Inputs, cards, admin panels
+      Issue: border-[#1E2D4D]/10, /15, style={{ borderColor: '#D1D9E6' }}
+      Fix:   Standardize: cards=/10, inputs=/15, dividers=CSS var --border
+
+MD-11 TOASTER SHADOW USES BLACK INSTEAD OF BRAND
+      File:  src/App.tsx (line 913)
+      Issue: rgba(0,0,0,0.12) instead of rgba(30,45,77,0.12)
+      Fix:   Change to rgba(30,45,77,0.12) to match brand shadow approach
+
+MD-12 ROUNDED-CARD TOKEN REDUNDANT WITH ROUNDED-XL
+      File:  tailwind.config.js (line 35)
+      Issue: rounded-card: '12px' is identical to Tailwind's rounded-xl
+      Fix:   Remove rounded-card or document semantic distinction
+
+MD-13 GREEN/RED CSS VARS CONFLICT WITH COMPONENT USAGE
+      File:  src/index.css (lines 74, 80)
+      Issue: --green=#34D399 vs #166534 used in components; --red=#F87171 vs #991B1B
+      Fix:   Define semantic tokens: --success, --danger with component-used values
+
+MD-14 SCORETABLE GREEN UNIQUE TO THAT FEATURE
+      File:  src/index.css (line 87)
+      Issue: --scoretable: #00D4AA is a unique green not used elsewhere
+      Fix:   Document as intentional ScoreTable brand color (no fix needed if intentional)
+
+MD-15 MODAL MAX-WIDTH HAS NO SEMANTIC RULE
+      Files: All modal components
+      Issue: max-w-md, max-w-lg, max-w-xl used without content-type convention
+      Fix:   Define: confirmation=max-w-md, form=max-w-lg, complex=max-w-xl
+
+MD-16 EMULATIONPANEL MODAL USES UNIQUE SHADOW/RADIUS
+      File:  src/components/admin/EmulationPanel.tsx (line 355)
+      Issue: rounded-2xl shadow-2xl when all other modals use rounded-xl shadow-xl
+      Fix:   Align to standard rounded-xl shadow-xl
+
+MD-17 DAILYOPERATIONS ONE-OFF RADIUS AND SHADOW
+      File:  src/components/DailyOperations.tsx (line 54)
+      Issue: rounded-[24px] shadow-[0_20px_50px_-10px_rgba(0,0,0,0.2)] — unique
+      Fix:   Replace with rounded-2xl shadow-elevated (if token adopted)
+
+MD-18 AUDIT REPORT CTA USES UNIQUE BUTTON STYLE
+      File:  src/pages/AuditReport.tsx (line 671)
+      Issue: "rounded-lg font-bold text-lg" — larger than standard button
+      Fix:   Use Button.jsx size="lg" variant
+
+MD-19 SOME BUTTONS LACK MIN-H-[44px] TOUCH TARGET
+      Files: Various — especially text buttons and icon buttons
+      Issue: Touch target may be < 44px on mobile
+      Fix:   Add min-h-[44px] to all clickable elements
+
+MD-20 PRINT STYLES INCONSISTENT
+      Files: AuditReport.tsx has .no-print; most pages lack print consideration
+      Issue: Only one page has print styling
+      Fix:   Add @media print styles to index.css for global print support
+
+MD-21 ADMIN PAGES VS TENANT PAGES USE DIFFERENT BORDER APPROACH
+      Files: Admin pages use style={{ borderColor: '#D1D9E6' }}; tenant use Tailwind
+      Issue: Two styling paradigms in same app
+      Fix:   Migrate admin inline styles to Tailwind classes
+
+MD-22 SKELETON LOADING UNDERUTILIZED
+      File:  src/components/shared/PageStates.tsx (LoadingSkeleton exists)
+      Issue: Most pages show spinner instead of skeleton
+      Fix:   Replace spinner Suspense fallbacks with PageSkeleton per page
+
+
+================================================================================
+LOW — Polish Opportunities
+================================================================================
+
+LO-1  Add skip-to-content link for keyboard accessibility
+      File: src/App.tsx or Layout component
+
+LO-2  Verify gold-on-white WCAG AA contrast (4.5:1 minimum)
+      Color: #A08C5A on #FFFFFF — likely fails for small text
+
+LO-3  Add ARIA landmarks to Layout (main, nav, aside)
+      File: src/components/layout/Layout.tsx
+
+LO-4  Move Leaflet to dynamic import (currently in index.html unconditionally)
+      File: index.html (lines 58, 102)
+
+LO-5  Add heading hierarchy tokens to tailwind.config
+      File: tailwind.config.js
+
+LO-6  Add spacing scale tokens to tailwind.config
+      File: tailwind.config.js
+
+LO-7  Create Badge shared component
+      Files: Multiple badge patterns across pages
+
+LO-8  Create Select/Dropdown shared component
+      Files: Various form pages with select elements
+
+LO-9  StaggeredList component exists but is underutilized
+      File: src/components/ui/StaggeredList.tsx
+      Fix: Use for list page renders (team, documents, vendors)
+
+LO-10 CountUp component exists — use for dashboard metric animations
+      File: src/components/ui/CountUp.tsx
+
+LO-11 AnimatedScoreRing exists — ensure all score displays use it
+      File: src/components/ui/AnimatedScoreRing.tsx
+
+LO-12 Add dark mode media query support (prefers-color-scheme)
+      Low priority — dark sidebar/topbar already provides dark chrome
+
+LO-13 Decompose pages over 500 lines into sub-components
+      Files: EnterpriseDashboard (78 bg usages), VendorDashboard (42),
+             IoTSensorHub (46), TempLogs (46), JurisdictionSettings (40)
+
+LO-14 Add transition-colors to all hover state elements
+      Some elements jump between colors without smooth transition
+
+LO-15 Standardize Breadcrumb usage across all pages
+      File: src/components/Breadcrumb.tsx (exists but adoption varies)
+
+LO-16 Consider Inter variable font to reduce font payload
+      Currently loading fixed weights 400-700
+
+
+================================================================================
+END OF PRIORITY LIST
+================================================================================

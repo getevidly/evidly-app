@@ -137,7 +137,7 @@ export function ServiceExpenseTracker() {
         padding: '14px 16px', borderBottom: '1px solid var(--border, #D1D9E6)',
       }}>
         {[
-          { label: `${period.label} Total`, value: `$${metrics.periodTotal.toLocaleString()}`, icon: DollarSign, color: '#1e4d6b' },
+          { label: `${period.label} Total`, value: `$${metrics.periodTotal.toLocaleString()}`, icon: DollarSign, color: '#1E2D4D' },
           { label: 'Annual Projected', value: `$${metrics.annualTotal.toLocaleString()}`, icon: TrendingUp, color: '#166534' },
           { label: 'Completed', value: String(metrics.completed), icon: CheckCircle, color: '#22C55E' },
           { label: 'Pending', value: String(metrics.pending), icon: Clock, color: '#F59E0B' },

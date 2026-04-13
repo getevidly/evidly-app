@@ -84,7 +84,7 @@ export default function UserEmulation() {
     try {
       const [orgRes, userRes, auditRes] = await Promise.all([
         supabase.from('organizations').select('id, name, created_at').order('name'),
-        supabase.from('profiles').select('id, full_name, email, role, organization_id').order('full_name'),
+        supabase.from('user_profiles').select('id, full_name, email, role, organization_id').order('full_name'),
         supabase.from('emulation_audit_log').select('*').order('started_at', { ascending: false }).limit(20),
       ]);
       if (orgRes.data) setOrgs(orgRes.data);
@@ -143,9 +143,9 @@ export default function UserEmulation() {
       <AdminBreadcrumb crumbs={[{ label: 'User Emulation' }]} />
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <h1 className="text-2xl font-bold" style={{ color: NAVY }}>User Emulation</h1>
+          <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>User Emulation</h1>
           <p style={{ fontSize: 13, color: TEXT_SEC, marginTop: 4 }}>
-            View the platform as any user — read-only, fully audited
+            View EvidLY as any user — read-only, fully audited
           </p>
         </div>
         {isEmulating && emulatedUser && (

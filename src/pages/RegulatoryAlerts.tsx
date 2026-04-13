@@ -80,12 +80,12 @@ export function RegulatoryAlerts() {
   // Source badge colors
   const getSourceBadgeClasses = (source: RegulatorySource): string => {
     switch (source) {
-      case 'FDA': return 'bg-blue-100 text-blue-700 border-blue-200';
+      case 'FDA': return 'bg-blue-50 text-blue-700 border-blue-200';
       case 'California': return 'bg-amber-100 text-amber-700 border-amber-200';
-      case 'County': return 'bg-green-100 text-green-700 border-green-200';
-      case 'NFPA': return 'bg-red-100 text-red-700 border-red-200';
+      case 'County': return 'bg-emerald-50 text-emerald-700 border-green-200';
+      case 'NFPA': return 'bg-red-50 text-red-700 border-red-200';
       case 'OSHA': return 'bg-orange-100 text-orange-700 border-orange-200';
-      default: return 'bg-gray-100 text-gray-700 border-gray-200';
+      default: return 'bg-[#1E2D4D]/5 text-[#1E2D4D]/80 border-[#1E2D4D]/10';
     }
   };
 
@@ -103,11 +103,11 @@ export function RegulatoryAlerts() {
   const getImpactBadge = (level: ImpactLevel) => {
     switch (level) {
       case 'action_required':
-        return <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full border bg-red-100 text-red-700 border-red-200">Action Required</span>;
+        return <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full border bg-red-50 text-red-700 border-red-200">Action Required</span>;
       case 'awareness':
         return <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full border bg-amber-100 text-amber-700 border-amber-200">Awareness</span>;
       case 'informational':
-        return <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full border bg-blue-100 text-blue-700 border-blue-200">Informational</span>;
+        return <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full border bg-blue-50 text-blue-700 border-blue-200">Informational</span>;
     }
   };
 
@@ -128,7 +128,7 @@ export function RegulatoryAlerts() {
         return (
           <div className="flex items-center gap-1.5 ml-auto">
             <CheckCircle2 className="w-4 h-4 text-green-500" />
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-[#1E2D4D]/50">
               Reviewed{alert.reviewedBy ? ` by ${alert.reviewedBy}` : ''}{alert.reviewedAt ? ` on ${formatDate(alert.reviewedAt.split('T')[0])}` : ''}
             </span>
           </div>
@@ -146,11 +146,11 @@ export function RegulatoryAlerts() {
   // Monitoring source type badge colors
   const getSourceTypeBadge = (type: string) => {
     switch (type) {
-      case 'federal': return 'bg-blue-100 text-blue-700';
+      case 'federal': return 'bg-blue-50 text-blue-700';
       case 'state': return 'bg-amber-100 text-amber-700';
-      case 'county': return 'bg-green-100 text-green-700';
-      case 'industry': return 'bg-red-100 text-red-700';
-      default: return 'bg-gray-100 text-gray-600';
+      case 'county': return 'bg-emerald-50 text-emerald-700';
+      case 'industry': return 'bg-red-50 text-red-700';
+      default: return 'bg-[#1E2D4D]/5 text-[#1E2D4D]/70';
     }
   };
 
@@ -168,26 +168,26 @@ export function RegulatoryAlerts() {
 
       {!isDemoMode && loading && (
         <div className="flex justify-center py-12">
-          <div className="h-8 w-8 border-2 border-gray-300 border-t-[#1e4d6b] rounded-full animate-spin" />
+          <div className="h-8 w-8 border-2 border-[#1E2D4D]/15 border-t-[#1E2D4D] rounded-full animate-spin" />
         </div>
       )}
       {!isDemoMode && error && !loading && (
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-700 mb-4">
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-700 mb-4">
           Unable to connect to regulatory monitoring service. Showing cached data if available.
         </div>
       )}
 
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Regulatory Change Alerts</h1>
-          <p className="text-sm text-gray-600 mt-1">Stay ahead of compliance changes — we monitor so you don't have to</p>
+          <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">Regulatory Change Alerts</h1>
+          <p className="text-sm text-[#1E2D4D]/70 mt-1">Stay ahead of compliance changes — we monitor so you don't have to</p>
 
           {/* Filter dropdowns */}
           <div data-demo-allow className="flex flex-wrap gap-3 mt-4">
             <select
               value={sourceFilter}
               onChange={e => setSourceFilter(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+              className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
             >
               <option value="all">All Sources</option>
               <option value="FDA">FDA</option>
@@ -200,7 +200,7 @@ export function RegulatoryAlerts() {
             <select
               value={impactFilter}
               onChange={e => setImpactFilter(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+              className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
             >
               <option value="all">All Impact Levels</option>
               <option value="action_required">Action Required</option>
@@ -211,7 +211,7 @@ export function RegulatoryAlerts() {
             <select
               value={statusFilter}
               onChange={e => setStatusFilter(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+              className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
             >
               <option value="all">All Status</option>
               <option value="new">New</option>
@@ -222,7 +222,7 @@ export function RegulatoryAlerts() {
             <select
               value={dateFilter}
               onChange={e => setDateFilter(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+              className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
             >
               <option value="all">All Time</option>
               <option value="7">Last 7 Days</option>
@@ -234,7 +234,7 @@ export function RegulatoryAlerts() {
 
         {/* Alert Banner */}
         {actionRequiredCount > 0 && !dismissedBanner && (
-          <div className="bg-gradient-to-r from-red-600 to-amber-500 text-white rounded-lg p-4 mt-4 flex items-center justify-between flex-wrap gap-2">
+          <div className="bg-gradient-to-r from-red-600 to-amber-500 text-white rounded-xl p-4 mt-4 flex items-center justify-between flex-wrap gap-2">
             <div className="flex items-center gap-3">
               <AlertTriangle className="w-5 h-5 flex-shrink-0" />
               <span className="font-medium">{actionRequiredCount} regulatory change{actionRequiredCount !== 1 ? 's' : ''} require{actionRequiredCount === 1 ? 's' : ''} your action</span>
@@ -245,7 +245,7 @@ export function RegulatoryAlerts() {
                   setImpactFilter('action_required');
                   setStatusFilter('new');
                 }}
-                className="bg-white text-red-600 font-semibold px-4 py-2 rounded-lg hover:bg-gray-50 text-sm min-h-[44px]"
+                className="bg-white text-red-600 font-semibold px-4 py-2 rounded-lg hover:bg-[#FAF7F0] text-sm min-h-[44px]"
               >
                 Review Now
               </button>
@@ -261,9 +261,9 @@ export function RegulatoryAlerts() {
           {/* Left: Alert Feed */}
           <div className="flex-1 space-y-4">
             {filteredAlerts.length === 0 && (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-5 text-center">
-                <Filter className="w-8 h-8 text-gray-300 mx-auto mb-3" />
-                <p className="text-sm text-gray-500">
+              <div className="bg-white rounded-xl border border-[#1E2D4D]/5 p-4 sm:p-5 text-center">
+                <Filter className="w-8 h-8 text-[#1E2D4D]/30 mx-auto mb-3" />
+                <p className="text-sm text-[#1E2D4D]/50">
                   {sourceAlerts.length === 0
                     ? 'No regulatory alerts at this time. We’ll notify you when updates affect your jurisdictions.'
                     : 'No alerts match your current filters.'}
@@ -276,7 +276,7 @@ export function RegulatoryAlerts() {
               const isExpanded = expandedId === alert.id;
 
               return (
-                <div key={alert.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 space-y-4">
+                <div key={alert.id} className="bg-white rounded-xl border border-[#1E2D4D]/5 p-4 sm:p-6 space-y-4">
                   {/* Top row: badges */}
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className={`px-2.5 py-0.5 text-xs font-semibold rounded-full border ${getSourceBadgeClasses(alert.source)}`}>
@@ -287,10 +287,10 @@ export function RegulatoryAlerts() {
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-lg font-semibold text-gray-900 mt-1">{alert.title}</h3>
+                  <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mt-1">{alert.title}</h3>
 
                   {/* Dates row */}
-                  <div className="flex gap-4 text-sm text-gray-500">
+                  <div className="flex gap-4 text-sm text-[#1E2D4D]/50">
                     <span className="flex items-center gap-1">
                       <Calendar className="w-3.5 h-3.5" />
                       Effective: {formatDate(alert.effectiveDate)}
@@ -303,21 +303,21 @@ export function RegulatoryAlerts() {
 
                   {/* AI Summary */}
                   {/* TODO: Wire to /api/regulatory-alert-summary edge function for AI summaries */}
-                  <div className="bg-[#eef4f8] rounded-lg p-4 border border-[#b8d4e8]">
+                  <div className="bg-[#eef4f8] rounded-xl p-4 border border-[#b8d4e8]">
                     <div className="flex items-center gap-1.5">
                       <EvidlyIcon size={16} />
-                      <span className="text-sm font-semibold text-[#1e4d6b]">AI Summary</span>
+                      <span className="text-sm font-semibold text-[#1E2D4D]">AI Summary</span>
                     </div>
-                    <p className="text-sm text-gray-700 mt-2">{alert.summary}</p>
+                    <p className="text-sm text-[#1E2D4D]/80 mt-2">{alert.summary}</p>
                   </div>
 
                   {/* What You Need to Do */}
                   {alert.actionItems.length > 0 && (
                     <div>
-                      <h4 className="text-sm font-semibold text-gray-900 mb-2">What You Need to Do</h4>
+                      <h4 className="text-sm font-semibold text-[#1E2D4D] mb-2">What You Need to Do</h4>
                       <ol className="list-decimal list-inside space-y-1">
                         {alert.actionItems.map((item, i) => (
-                          <li key={i} className="text-sm text-gray-700">{item}</li>
+                          <li key={i} className="text-sm text-[#1E2D4D]/80">{item}</li>
                         ))}
                       </ol>
                     </div>
@@ -327,7 +327,7 @@ export function RegulatoryAlerts() {
                   {alert.affectedAreas.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {alert.affectedAreas.map(area => (
-                        <span key={area} className="px-2.5 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-700">
+                        <span key={area} className="px-2.5 py-1 text-xs font-medium rounded-full bg-[#1E2D4D]/5 text-[#1E2D4D]/80">
                           {area}
                         </span>
                       ))}
@@ -337,9 +337,9 @@ export function RegulatoryAlerts() {
                   {/* Affected Locations */}
                   {alert.affectedLocations.length > 0 && (
                     <div className="flex items-center flex-wrap gap-2">
-                      <MapPin className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
+                      <MapPin className="w-3.5 h-3.5 text-[#1E2D4D]/30 flex-shrink-0" />
                       {alert.affectedLocations.map(loc => (
-                        <span key={loc} className="px-2.5 py-1 text-xs font-medium rounded-full bg-[#eef4f8] text-[#1e4d6b]">
+                        <span key={loc} className="px-2.5 py-1 text-xs font-medium rounded-full bg-[#eef4f8] text-[#1E2D4D]">
                           {loc}
                         </span>
                       ))}
@@ -349,20 +349,20 @@ export function RegulatoryAlerts() {
                   {/* EvidLY Auto-Actions */}
                   {alert.autoActions.length > 0 && (
                     <div>
-                      <h4 className="text-sm font-semibold text-gray-900 mb-2">EvidLY Auto-Actions</h4>
+                      <h4 className="text-sm font-semibold text-[#1E2D4D] mb-2">EvidLY Auto-Actions</h4>
                       <div className="space-y-2">
                         {alert.autoActions.map((action, i) => (
                           <div key={i} className="flex items-center gap-2 text-sm">
                             {action.completed ? (
                               <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />
                             ) : (
-                              <Square className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                              <Square className="w-4 h-4 text-[#1E2D4D]/30 flex-shrink-0" />
                             )}
-                            <span className={action.completed ? 'text-gray-500' : 'text-gray-700'}>{action.text}</span>
+                            <span className={action.completed ? 'text-[#1E2D4D]/50' : 'text-[#1E2D4D]/80'}>{action.text}</span>
                             {!action.completed && action.actionType === 'upload' && (
                               <button
                                 onClick={() => guardAction('upload', 'Regulatory Alerts', () => toast.info('File Upload'))}
-                                className="ml-auto flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-[#1e4d6b] border border-[#b8d4e8] rounded-lg hover:bg-[#eef4f8]"
+                                className="ml-auto flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-[#1E2D4D] border border-[#b8d4e8] rounded-xl hover:bg-[#eef4f8]"
                               >
                                 <Upload className="w-3 h-3" />
                                 Upload
@@ -371,7 +371,7 @@ export function RegulatoryAlerts() {
                             {!action.completed && action.actionType === 'link' && action.linkTo && (
                               <button
                                 onClick={() => navigate(action.linkTo!)}
-                                className="ml-auto flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-[#1e4d6b] border border-[#b8d4e8] rounded-lg hover:bg-[#eef4f8]"
+                                className="ml-auto flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-[#1E2D4D] border border-[#b8d4e8] rounded-xl hover:bg-[#eef4f8]"
                               >
                                 Schedule
                               </button>
@@ -383,7 +383,7 @@ export function RegulatoryAlerts() {
                   )}
 
                   {/* Button row */}
-                  <div className="flex items-center gap-3 pt-3 border-t border-gray-100 flex-wrap">
+                  <div className="flex items-center gap-3 pt-3 border-t border-[#1E2D4D]/5 flex-wrap">
                     {status === 'new' && (
                       <button
                         onClick={() => {
@@ -393,7 +393,7 @@ export function RegulatoryAlerts() {
                             markAsRead(alert.id);
                           }
                         }}
-                        className="px-4 py-2 bg-[#1e4d6b] text-white text-sm font-medium rounded-lg hover:bg-[#163a52] min-h-[44px]"
+                        className="px-4 py-2 bg-[#1E2D4D] text-white text-sm font-medium rounded-lg hover:bg-[#162340] min-h-[44px]"
                       >
                         Mark as Reviewed
                       </button>
@@ -401,14 +401,14 @@ export function RegulatoryAlerts() {
                     {/* TODO: Wire to Resend for team share emails */}
                     <button
                       onClick={() => guardAction('notify', 'Regulatory Alerts', () => toast.success('Team notification sent'))}
-                      className="px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1.5 min-h-[44px]"
+                      className="px-4 py-2 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 text-sm font-medium rounded-lg hover:bg-[#FAF7F0] flex items-center gap-1.5 min-h-[44px]"
                     >
                       <Share2 className="w-3.5 h-3.5" />
                       Share with Team
                     </button>
                     <button
                       onClick={() => setExpandedId(isExpanded ? null : alert.id)}
-                      className="px-4 py-2 text-gray-500 text-sm font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1.5 ml-auto"
+                      className="px-4 py-2 text-[#1E2D4D]/50 text-sm font-medium rounded-lg hover:bg-[#FAF7F0] flex items-center gap-1.5 ml-auto"
                     >
                       {isExpanded ? (
                         <>
@@ -427,14 +427,14 @@ export function RegulatoryAlerts() {
                   {/* Expanded section */}
                   {isExpanded && (
                     <div className="mt-3">
-                      <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-600 font-mono">
+                      <div className="bg-[#FAF7F0] rounded-xl p-4 text-sm text-[#1E2D4D]/70 font-mono">
                         {alert.fullRegulatoryText}
                       </div>
                       <a
                         href={alert.sourceUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 mt-3 text-[#1e4d6b] hover:text-[#2a6a8f] text-sm font-medium"
+                        className="inline-flex items-center gap-1.5 mt-3 text-[#1E2D4D] hover:text-[#2A3F6B] text-sm font-medium"
                       >
                         View Source
                         <ExternalLink className="w-3.5 h-3.5" />
@@ -449,20 +449,20 @@ export function RegulatoryAlerts() {
           {/* Right Sidebar */}
           <div className="w-full lg:w-[280px] flex-shrink-0">
             {/* Your Jurisdictions */}
-            <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5 border border-gray-100">
+            <div className="bg-white rounded-xl p-4 sm:p-6 border border-[#1E2D4D]/5">
               <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-[#1e4d6b]" />
-                <h3 className="font-semibold text-gray-900">Your Jurisdictions</h3>
+                <MapPin className="w-4 h-4 text-[#1E2D4D]" />
+                <h3 className="font-semibold text-[#1E2D4D]">Your Jurisdictions</h3>
               </div>
-              <p className="text-xs text-gray-500 mt-1">Monitoring based on your location addresses</p>
+              <p className="text-xs text-[#1E2D4D]/50 mt-1">Monitoring based on your location addresses</p>
               <div className="mt-3">
                 {jurisdictions.length === 0 ? (
-                  <p className="text-xs text-gray-400 py-2">Add a location to see your jurisdictions.</p>
+                  <p className="text-xs text-[#1E2D4D]/30 py-2">Add a location to see your jurisdictions.</p>
                 ) : (
                   jurisdictions.map((j, i) => (
-                    <div key={i} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
-                      <span className="text-sm text-gray-700">{j.name}, {j.state}</span>
-                      <span className="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">{j.type}</span>
+                    <div key={i} className="flex items-center justify-between py-2 border-b border-[#1E2D4D]/3 last:border-0">
+                      <span className="text-sm text-[#1E2D4D]/80">{j.name}, {j.state}</span>
+                      <span className="px-2 py-0.5 text-xs rounded-full bg-[#1E2D4D]/5 text-[#1E2D4D]/70">{j.type}</span>
                     </div>
                   ))
                 )}
@@ -470,22 +470,22 @@ export function RegulatoryAlerts() {
             </div>
 
             {/* Monitoring Sources */}
-            <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5 border border-gray-100 mt-4">
+            <div className="bg-white rounded-xl p-4 sm:p-6 border border-[#1E2D4D]/5 mt-4">
               <div className="flex items-center gap-2">
                 <EvidlyIcon size={16} />
-                <h3 className="font-semibold text-gray-900">Monitoring Sources</h3>
+                <h3 className="font-semibold text-[#1E2D4D]">Monitoring Sources</h3>
               </div>
               <div className="mt-3 space-y-3">
                 {monitoringSources.length === 0 ? (
-                  <p className="text-xs text-gray-400 py-2">No monitoring sources configured.</p>
+                  <p className="text-xs text-[#1E2D4D]/30 py-2">No monitoring sources configured.</p>
                 ) : (
                   monitoringSources.map((src, i) => (
                     <div key={i}>
                       <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-gray-700">{src.name}</span>
+                        <span className="text-sm font-medium text-[#1E2D4D]/80">{src.name}</span>
                         <span className={`px-2 py-0.5 text-xs rounded-full ${getSourceTypeBadge(src.type)}`}>{src.type}</span>
                       </div>
-                      <p className="text-xs text-gray-400 mt-0.5">Last checked: {formatDate(src.lastChecked)}</p>
+                      <p className="text-xs text-[#1E2D4D]/30 mt-0.5">Last checked: {formatDate(src.lastChecked)}</p>
                     </div>
                   ))
                 )}
@@ -493,19 +493,19 @@ export function RegulatoryAlerts() {
             </div>
 
             {/* Compliance Calendar mini card */}
-            <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5 border border-gray-100 mt-4">
+            <div className="bg-white rounded-xl p-4 sm:p-6 border border-[#1E2D4D]/5 mt-4">
               <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-[#1e4d6b]" />
-                <h3 className="font-semibold text-gray-900">Upcoming Effective Dates</h3>
+                <Calendar className="w-4 h-4 text-[#1E2D4D]" />
+                <h3 className="font-semibold text-[#1E2D4D]">Upcoming Effective Dates</h3>
               </div>
               <div className="mt-3">
                 {upcomingDates.length === 0 && (
-                  <p className="text-xs text-gray-400">No upcoming effective dates.</p>
+                  <p className="text-xs text-[#1E2D4D]/30">No upcoming effective dates.</p>
                 )}
                 {upcomingDates.map((alert) => (
-                  <div key={alert.id} className="text-sm py-2 border-b border-gray-50 last:border-0">
-                    <p className="text-xs font-semibold text-[#1e4d6b]">{formatDate(alert.effectiveDate)}</p>
-                    <p className="text-xs text-gray-600 mt-0.5">
+                  <div key={alert.id} className="text-sm py-2 border-b border-[#1E2D4D]/3 last:border-0">
+                    <p className="text-xs font-semibold text-[#1E2D4D]">{formatDate(alert.effectiveDate)}</p>
+                    <p className="text-xs text-[#1E2D4D]/70 mt-0.5">
                       {alert.title.length > 50 ? alert.title.slice(0, 50) + '...' : alert.title}
                     </p>
                   </div>
@@ -516,7 +516,7 @@ export function RegulatoryAlerts() {
             {/* Alert Preferences link */}
             <button
               onClick={() => navigate('/settings')}
-              className="mt-4 w-full text-center px-4 py-2 border border-gray-300 text-gray-700 text-sm rounded-lg hover:bg-gray-50 flex items-center justify-center gap-2"
+              className="mt-4 w-full text-center px-4 py-2 border border-[#1E2D4D]/15 text-[#1E2D4D]/80 text-sm rounded-lg hover:bg-[#FAF7F0] flex items-center justify-center gap-2"
             >
               <Bell className="w-4 h-4" />
               Alert Preferences

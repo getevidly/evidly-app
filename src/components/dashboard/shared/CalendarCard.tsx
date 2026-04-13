@@ -96,13 +96,13 @@ export function CalendarCard({ events, typeColors, typeLabels, navigate, tooltip
 
   return (
     <div
-      className="bg-white rounded-lg p-4"
-      style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.1)', fontFamily: 'Inter, sans-serif' }}
+      className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4"
+      style={{ fontFamily: 'Inter, sans-serif' }}
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <CalendarDays size={16} className="text-gray-400" />
+          <CalendarDays size={16} className="text-[#1E2D4D]/30" />
           <h3
             className="text-xs font-semibold uppercase"
             style={{ letterSpacing: '0.1em', color: '#6b7280', fontFamily: 'Inter, sans-serif' }}
@@ -112,12 +112,12 @@ export function CalendarCard({ events, typeColors, typeLabels, navigate, tooltip
           {tooltipContent && <SectionTooltip content={tooltipContent} />}
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-gray-700">{formatMonthYear(viewYear, viewMonth, locale)}</span>
-          <button type="button" onClick={prevMonth} className="p-2 -m-1 rounded-full hover:bg-gray-100 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center">
-            <ChevronLeft size={16} className="text-gray-500" />
+          <span className="text-sm font-medium text-[#1E2D4D]/80">{formatMonthYear(viewYear, viewMonth, locale)}</span>
+          <button type="button" onClick={prevMonth} className="p-2 -m-1 rounded-full hover:bg-[#1E2D4D]/5 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center">
+            <ChevronLeft size={16} className="text-[#1E2D4D]/50" />
           </button>
-          <button type="button" onClick={nextMonth} className="p-2 -m-1 rounded-full hover:bg-gray-100 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center">
-            <ChevronRight size={16} className="text-gray-500" />
+          <button type="button" onClick={nextMonth} className="p-2 -m-1 rounded-full hover:bg-[#1E2D4D]/5 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center">
+            <ChevronRight size={16} className="text-[#1E2D4D]/50" />
           </button>
         </div>
       </div>
@@ -125,7 +125,7 @@ export function CalendarCard({ events, typeColors, typeLabels, navigate, tooltip
       {/* Weekday headers */}
       <div className="grid grid-cols-7 gap-0 mb-1">
         {(locale === 'es' ? WEEKDAY_LABELS_ES : WEEKDAY_LABELS_EN).map(d => (
-          <div key={d} className="text-center text-[10px] font-semibold text-gray-400 py-1">{d}</div>
+          <div key={d} className="text-center text-xs font-semibold text-[#1E2D4D]/30 py-1">{d}</div>
         ))}
       </div>
 
@@ -144,15 +144,15 @@ export function CalendarCard({ events, typeColors, typeLabels, navigate, tooltip
               type="button"
               onClick={() => setSelectedDay(isSelected ? null : day)}
               className={`relative flex flex-col items-center py-1.5 rounded-md transition-colors ${
-                isSelected ? 'bg-[#eef4f8]' : 'hover:bg-gray-50'
+                isSelected ? 'bg-[#eef4f8]' : 'hover:bg-[#FAF7F0]'
               }`}
             >
               <span
                 className={`text-xs font-medium leading-none ${
-                  isToday ? 'text-white' : isSelected ? 'text-[#1e4d6b]' : 'text-gray-700'
+                  isToday ? 'text-white' : isSelected ? 'text-[#1E2D4D]' : 'text-[#1E2D4D]/80'
                 }`}
                 style={isToday ? {
-                  backgroundColor: '#1e4d6b',
+                  backgroundColor: '#1E2D4D',
                   borderRadius: '50%',
                   width: 20,
                   height: 20,
@@ -185,23 +185,23 @@ export function CalendarCard({ events, typeColors, typeLabels, navigate, tooltip
       </div>
 
       {/* Legend */}
-      <div className="flex items-center gap-3 mt-3 pt-3 border-t border-gray-100 flex-wrap">
+      <div className="flex items-center gap-3 mt-3 pt-3 border-t border-[#1E2D4D]/5 flex-wrap">
         {Object.keys(typeColors).map(type => (
           <div key={type} className="flex items-center gap-1">
             <span className="rounded-full" style={{ width: 6, height: 6, backgroundColor: typeColors[type] }} />
-            <span className="text-[10px] text-gray-500">{typeLabels[type] || type}</span>
+            <span className="text-xs text-[#1E2D4D]/50">{typeLabels[type] || type}</span>
           </div>
         ))}
       </div>
 
       {/* Selected day events */}
       {selectedDay !== null && (
-        <div className="mt-3 pt-3 border-t border-gray-100">
-          <p className="text-[11px] font-semibold text-gray-500 mb-2">
+        <div className="mt-3 pt-3 border-t border-[#1E2D4D]/5">
+          <p className="text-xs font-semibold text-[#1E2D4D]/50 mb-2">
             {new Date(viewYear, viewMonth, selectedDay).toLocaleDateString(locale === 'es' ? 'es-ES' : 'en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
           </p>
           {selectedEvents.length === 0 ? (
-            <p className="text-xs text-gray-400">{t('cards.noEventsScheduled')}</p>
+            <p className="text-xs text-[#1E2D4D]/30">{t('cards.noEventsScheduled')}</p>
           ) : (
             <div className="space-y-1.5">
               {selectedEvents.map((evt, i) => (
@@ -209,15 +209,15 @@ export function CalendarCard({ events, typeColors, typeLabels, navigate, tooltip
                   key={i}
                   type="button"
                   onClick={() => navigate('/calendar')}
-                  className="w-full flex items-center gap-2.5 p-2.5 rounded-lg text-left hover:bg-gray-50 transition-colors"
+                  className="w-full flex items-center gap-2.5 p-2.5 rounded-lg text-left hover:bg-[#FAF7F0] transition-colors"
                   style={{ borderLeft: `3px solid ${typeColors[evt.type] || '#6b7280'}` }}
                 >
                   <div className="flex-1 min-w-0">
-                    <p className="text-[13px] font-medium text-gray-800 truncate">{evt.title}</p>
-                    <p className="text-[11px] text-gray-500">{evt.location}</p>
+                    <p className="text-sm font-medium text-[#1E2D4D]/90 truncate">{evt.title}</p>
+                    <p className="text-xs text-[#1E2D4D]/50">{evt.location}</p>
                   </div>
                   <span
-                    className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0"
+                    className="text-xs font-bold px-1.5 py-0.5 rounded shrink-0"
                     style={{
                       backgroundColor: evt.priority === 'critical' ? '#fef2f2' : evt.priority === 'high' ? '#fef3c7' : '#f1f5f9',
                       color: evt.priority === 'critical' ? '#dc2626' : evt.priority === 'high' ? '#b45309' : '#6b7280',
@@ -236,8 +236,8 @@ export function CalendarCard({ events, typeColors, typeLabels, navigate, tooltip
       <button
         type="button"
         onClick={() => navigate('/calendar')}
-        className="mt-3 w-full text-center text-xs font-medium py-2 rounded-lg hover:bg-gray-50 transition-colors"
-        style={{ color: '#1e4d6b' }}
+        className="mt-3 w-full text-center text-xs font-medium py-2 rounded-lg hover:bg-[#FAF7F0] transition-colors"
+        style={{ color: '#1E2D4D' }}
       >
         {t('cards.viewFullCalendar')} &rarr;
       </button>

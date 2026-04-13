@@ -153,7 +153,7 @@ export default function Configure() {
       <AdminBreadcrumb crumbs={[{ label: 'Configure' }]} />
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Configure</h1>
+          <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Configure</h1>
           <p style={{ fontSize: 13, color: TEXT_SEC, marginTop: 4 }}>Manage organizations, locations, users, and vendors.</p>
         </div>
         <button onClick={openModal} style={{
@@ -298,7 +298,7 @@ function UsersTable({ users, orgs, search, onAdd, onSelect }: { users: UserProfi
 function VendorsTable({ vendors, search, onAdd, onSelect }: { vendors: Vendor[]; search: string; onAdd: () => void; onSelect: (v: Vendor) => void }) {
   const q = search.toLowerCase();
   const filtered = vendors.filter(v => !q || v.company_name.toLowerCase().includes(q) || (v.service_type || '').toLowerCase().includes(q));
-  if (filtered.length === 0) return <EmptyAction icon="🔧" title="No vendors yet" subtitle="Add vendors to the platform below." actionLabel="+ Add Vendor" onAction={onAdd} />;
+  if (filtered.length === 0) return <EmptyAction icon="🔧" title="No vendors yet" subtitle="Add vendors to EvidLY below." actionLabel="+ Add Vendor" onAction={onAdd} />;
   return (
     <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
       <thead><tr style={{ borderBottom: `1px solid ${BORDER}` }}><TH>Company</TH><TH>Service</TH><TH>Primary Contact</TH><TH>Phone</TH><TH>Partner</TH><TH>Status</TH></tr></thead>
@@ -922,7 +922,7 @@ function LocDrawer({ loc, onClose, onRefresh }: { loc: Location; onClose: () => 
       }
       if (loc.county) {
         queries.push(
-          supabase.from('jurisdictions').select('name, county, scoring_method, grading_method, inspection_frequency, fire_ahj_name, fire_ahj_type')
+          supabase.from('jurisdictions').select('agency_name, county, scoring_type, grading_type, inspection_frequency, fire_ahj_name, fire_ahj_type')
             .eq('county', loc.county).maybeSingle(),
         );
       }
@@ -1007,10 +1007,10 @@ function LocDrawer({ loc, onClose, onRefresh }: { loc: Location; onClose: () => 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 <div>
                   <h4 style={{ fontSize: 12, fontWeight: 700, color: NAVY, marginBottom: 8 }}>Food Safety Jurisdiction</h4>
-                  <DetailRow label="Authority" value={jurisdiction.name} />
+                  <DetailRow label="Authority" value={jurisdiction.agency_name} />
                   <DetailRow label="County" value={jurisdiction.county} />
-                  <DetailRow label="Scoring Method" value={jurisdiction.scoring_method?.replace(/_/g, ' ')} />
-                  <DetailRow label="Grading Method" value={jurisdiction.grading_method?.replace(/_/g, ' ')} />
+                  <DetailRow label="Scoring Method" value={jurisdiction.scoring_type?.replace(/_/g, ' ')} />
+                  <DetailRow label="Grading Method" value={jurisdiction.grading_type?.replace(/_/g, ' ')} />
                   <DetailRow label="Inspection Frequency" value={jurisdiction.inspection_frequency} />
                 </div>
                 <div>

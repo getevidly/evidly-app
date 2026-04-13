@@ -38,7 +38,7 @@ function Toggle({ enabled, onChange, label }: { enabled: boolean; onChange: (v: 
     <button onClick={() => onChange(!enabled)} className="flex items-center gap-2">
       <div
         className="w-8 h-4.5 rounded-full p-0.5 transition-colors"
-        style={{ backgroundColor: enabled ? '#1e4d6b' : '#d1d5db' }}
+        style={{ backgroundColor: enabled ? '#1E2D4D' : '#d1d5db' }}
       >
         <div
           className="w-3.5 h-3.5 rounded-full bg-white transition-transform"
@@ -72,7 +72,7 @@ export function IntelligenceSubscriptionSettings({ subscription, sourceStatus, o
         <div className="space-y-3">
           <div>
             <span className="text-sm font-bold" style={{ color: BODY_TEXT }}>{DEMO_CLIENT_PROFILE.organization_name}</span>
-            <span className="ml-2 px-2 py-0.5 rounded text-[9px] font-bold uppercase" style={{ backgroundColor: '#fef3c7', color: '#92400e' }}>
+            <span className="ml-2 px-2 py-0.5 rounded text-[11px] font-bold uppercase" style={{ backgroundColor: '#fef3c7', color: '#92400e' }}>
               {DEMO_CLIENT_PROFILE.segment.replace(/_/g, ' ')}
             </span>
           </div>
@@ -83,30 +83,30 @@ export function IntelligenceSubscriptionSettings({ subscription, sourceStatus, o
             <div><span className="font-semibold" style={{ color: BODY_TEXT }}>Peak Season:</span> {DEMO_CLIENT_PROFILE.peak_season_months.map(m => ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][m-1]).join(', ')}</div>
           </div>
           <div>
-            <span className="text-[10px] font-semibold mb-1 block" style={{ color: TEXT_TERTIARY }}>Monitored Locations</span>
+            <span className="text-xs font-semibold mb-1 block" style={{ color: TEXT_TERTIARY }}>Monitored Locations</span>
             <div className="flex flex-wrap gap-1.5">
               {DEMO_CLIENT_PROFILE.locations.map(loc => (
-                <span key={loc.id} className="px-2 py-1 rounded text-[10px] font-medium" style={{ backgroundColor: PANEL_BG, color: MUTED }}>
+                <span key={loc.id} className="px-2 py-1 rounded text-xs font-medium" style={{ backgroundColor: PANEL_BG, color: MUTED }}>
                   {loc.name}
                 </span>
               ))}
             </div>
           </div>
           <div>
-            <span className="text-[10px] font-semibold mb-1 block" style={{ color: TEXT_TERTIARY }}>Key Suppliers</span>
+            <span className="text-xs font-semibold mb-1 block" style={{ color: TEXT_TERTIARY }}>Key Suppliers</span>
             <div className="flex flex-wrap gap-1.5">
               {DEMO_CLIENT_PROFILE.key_suppliers.map(s => (
-                <span key={s} className="px-2 py-1 rounded text-[10px] font-medium" style={{ backgroundColor: PANEL_BG, color: MUTED }}>
+                <span key={s} className="px-2 py-1 rounded text-xs font-medium" style={{ backgroundColor: PANEL_BG, color: MUTED }}>
                   {s}
                 </span>
               ))}
             </div>
           </div>
           <div>
-            <span className="text-[10px] font-semibold mb-1 block" style={{ color: TEXT_TERTIARY }}>Active Compliance Priorities</span>
+            <span className="text-xs font-semibold mb-1 block" style={{ color: TEXT_TERTIARY }}>Active Compliance Priorities</span>
             <div className="flex flex-wrap gap-1.5">
               {DEMO_CLIENT_PROFILE.compliance_priorities.map(p => (
-                <span key={p} className="px-2 py-1 rounded text-[10px] font-medium" style={{ backgroundColor: '#fef3c7', color: '#92400e' }}>
+                <span key={p} className="px-2 py-1 rounded text-xs font-medium" style={{ backgroundColor: '#fef3c7', color: '#92400e' }}>
                   {p}
                 </span>
               ))}
@@ -121,7 +121,7 @@ export function IntelligenceSubscriptionSettings({ subscription, sourceStatus, o
         <div className="space-y-3">
           {Object.entries(sourceGroups).map(([type, sources]) => (
             <div key={type}>
-              <div className="text-[10px] font-bold uppercase tracking-wider mb-2 capitalize" style={{ color: TEXT_TERTIARY }}>{type}</div>
+              <div className="text-xs font-bold uppercase tracking-wider mb-2 capitalize" style={{ color: TEXT_TERTIARY }}>{type}</div>
               <div className="space-y-1.5">
                 {sources.map(src => {
                   const active = subscription.active_sources.includes(src.id);
@@ -129,7 +129,7 @@ export function IntelligenceSubscriptionSettings({ subscription, sourceStatus, o
                     <div key={src.id} className="flex items-center justify-between py-1">
                       <div className="flex-1">
                         <span className="text-xs font-medium" style={{ color: BODY_TEXT }}>{src.name}</span>
-                        <span className="text-[10px] ml-2" style={{ color: TEXT_TERTIARY }}>{(src.jurisdictions || []).join(', ')}</span>
+                        <span className="text-xs ml-2" style={{ color: TEXT_TERTIARY }}>{(src.jurisdictions || []).join(', ')}</span>
                       </div>
                       <button
                         onClick={() => {
@@ -139,7 +139,7 @@ export function IntelligenceSubscriptionSettings({ subscription, sourceStatus, o
                           onUpdate({ active_sources: next });
                         }}
                         className="w-8 h-4 rounded-full p-0.5 transition-colors"
-                        style={{ backgroundColor: active ? '#1e4d6b' : '#d1d5db' }}
+                        style={{ backgroundColor: active ? '#1E2D4D' : '#d1d5db' }}
                       >
                         <div className="w-3 h-3 rounded-full bg-white transition-transform" style={{ transform: active ? 'translateX(16px)' : 'translateX(0)' }} />
                       </button>
@@ -165,7 +165,7 @@ export function IntelligenceSubscriptionSettings({ subscription, sourceStatus, o
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full" style={{ backgroundColor: colors[sev] }} />
                   <span className="text-xs font-medium capitalize" style={{ color: BODY_TEXT }}>{sev}</span>
-                  <span className="text-[10px]" style={{ color: TEXT_TERTIARY }}>{estimates[sev]}</span>
+                  <span className="text-xs" style={{ color: TEXT_TERTIARY }}>{estimates[sev]}</span>
                 </div>
                 <button
                   onClick={() => {
@@ -175,7 +175,7 @@ export function IntelligenceSubscriptionSettings({ subscription, sourceStatus, o
                     onUpdate({ alert_severity: next });
                   }}
                   className="w-8 h-4 rounded-full p-0.5 transition-colors"
-                  style={{ backgroundColor: active ? '#1e4d6b' : '#d1d5db' }}
+                  style={{ backgroundColor: active ? '#1E2D4D' : '#d1d5db' }}
                 >
                   <div className="w-3 h-3 rounded-full bg-white transition-transform" style={{ transform: active ? 'translateX(16px)' : 'translateX(0)' }} />
                 </button>
@@ -199,9 +199,9 @@ export function IntelligenceSubscriptionSettings({ subscription, sourceStatus, o
               onClick={() => onUpdate({ pillar_focus: opt.key })}
               className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-all flex-1 justify-center"
               style={{
-                backgroundColor: subscription.pillar_focus === opt.key ? '#1e4d6b' : PANEL_BG,
+                backgroundColor: subscription.pillar_focus === opt.key ? '#1E2D4D' : PANEL_BG,
                 color: subscription.pillar_focus === opt.key ? '#fff' : MUTED,
-                border: `1px solid ${subscription.pillar_focus === opt.key ? '#1e4d6b' : BORDER_SUBTLE}`,
+                border: `1px solid ${subscription.pillar_focus === opt.key ? '#1E2D4D' : BORDER_SUBTLE}`,
               }}
             >
               <opt.icon className="h-3.5 w-3.5" />
@@ -221,9 +221,9 @@ export function IntelligenceSubscriptionSettings({ subscription, sourceStatus, o
               onClick={() => onUpdate({ competitor_radius_miles: mi })}
               className="px-3 py-2 rounded-lg text-xs font-medium transition-all flex-1 text-center"
               style={{
-                backgroundColor: subscription.competitor_radius_miles === mi ? '#1e4d6b' : PANEL_BG,
+                backgroundColor: subscription.competitor_radius_miles === mi ? '#1E2D4D' : PANEL_BG,
                 color: subscription.competitor_radius_miles === mi ? '#fff' : MUTED,
-                border: `1px solid ${subscription.competitor_radius_miles === mi ? '#1e4d6b' : BORDER_SUBTLE}`,
+                border: `1px solid ${subscription.competitor_radius_miles === mi ? '#1E2D4D' : BORDER_SUBTLE}`,
               }}
             >
               {mi} mi
@@ -242,7 +242,7 @@ export function IntelligenceSubscriptionSettings({ subscription, sourceStatus, o
               <Bell className="h-3.5 w-3.5" style={{ color: MUTED }} />
               <span className="text-xs font-medium" style={{ color: BODY_TEXT }}>In-App Notifications</span>
             </div>
-            <span className="text-[10px] px-2 py-0.5 rounded" style={{ backgroundColor: '#f0fdf4', color: '#166534' }}>Always On</span>
+            <span className="text-xs px-2 py-0.5 rounded" style={{ backgroundColor: '#f0fdf4', color: '#166534' }}>Always On</span>
           </div>
 
           {/* Email */}
@@ -255,7 +255,7 @@ export function IntelligenceSubscriptionSettings({ subscription, sourceStatus, o
               <button
                 onClick={() => onUpdate({ delivery_email: !subscription.delivery_email })}
                 className="w-8 h-4 rounded-full p-0.5 transition-colors"
-                style={{ backgroundColor: subscription.delivery_email ? '#1e4d6b' : '#d1d5db' }}
+                style={{ backgroundColor: subscription.delivery_email ? '#1E2D4D' : '#d1d5db' }}
               >
                 <div className="w-3 h-3 rounded-full bg-white transition-transform" style={{ transform: subscription.delivery_email ? 'translateX(16px)' : 'translateX(0)' }} />
               </button>
@@ -266,9 +266,9 @@ export function IntelligenceSubscriptionSettings({ subscription, sourceStatus, o
                   <button
                     key={freq}
                     onClick={() => onUpdate({ delivery_email_frequency: freq })}
-                    className="px-2.5 py-1 rounded text-[10px] font-medium capitalize"
+                    className="px-2.5 py-1 rounded text-xs font-medium capitalize"
                     style={{
-                      backgroundColor: subscription.delivery_email_frequency === freq ? '#1e4d6b' : PANEL_BG,
+                      backgroundColor: subscription.delivery_email_frequency === freq ? '#1E2D4D' : PANEL_BG,
                       color: subscription.delivery_email_frequency === freq ? '#fff' : MUTED,
                     }}
                   >
@@ -289,7 +289,7 @@ export function IntelligenceSubscriptionSettings({ subscription, sourceStatus, o
               <button
                 onClick={() => onUpdate({ delivery_sms: !subscription.delivery_sms })}
                 className="w-8 h-4 rounded-full p-0.5 transition-colors"
-                style={{ backgroundColor: subscription.delivery_sms ? '#1e4d6b' : '#d1d5db' }}
+                style={{ backgroundColor: subscription.delivery_sms ? '#1E2D4D' : '#d1d5db' }}
               >
                 <div className="w-3 h-3 rounded-full bg-white transition-transform" style={{ transform: subscription.delivery_sms ? 'translateX(16px)' : 'translateX(0)' }} />
               </button>
@@ -300,9 +300,9 @@ export function IntelligenceSubscriptionSettings({ subscription, sourceStatus, o
                   <button
                     key={thr}
                     onClick={() => onUpdate({ delivery_sms_threshold: thr })}
-                    className="px-2.5 py-1 rounded text-[10px] font-medium capitalize"
+                    className="px-2.5 py-1 rounded text-xs font-medium capitalize"
                     style={{
-                      backgroundColor: subscription.delivery_sms_threshold === thr ? '#1e4d6b' : PANEL_BG,
+                      backgroundColor: subscription.delivery_sms_threshold === thr ? '#1E2D4D' : PANEL_BG,
                       color: subscription.delivery_sms_threshold === thr ? '#fff' : MUTED,
                     }}
                   >
@@ -320,7 +320,7 @@ export function IntelligenceSubscriptionSettings({ subscription, sourceStatus, o
         <SectionHeader title="Executive Snapshots" icon={Clock} />
         <div className="space-y-3">
           <div>
-            <span className="text-[10px] font-semibold mb-1 block" style={{ color: TEXT_TERTIARY }}>Frequency</span>
+            <span className="text-xs font-semibold mb-1 block" style={{ color: TEXT_TERTIARY }}>Frequency</span>
             <div className="flex gap-1.5">
               {(['daily', 'weekly', 'monthly'] as const).map(freq => (
                 <button
@@ -328,9 +328,9 @@ export function IntelligenceSubscriptionSettings({ subscription, sourceStatus, o
                   onClick={() => onUpdate({ executive_snapshot_frequency: freq })}
                   className="px-3 py-1.5 rounded text-xs font-medium capitalize flex-1 text-center"
                   style={{
-                    backgroundColor: subscription.executive_snapshot_frequency === freq ? '#1e4d6b' : PANEL_BG,
+                    backgroundColor: subscription.executive_snapshot_frequency === freq ? '#1E2D4D' : PANEL_BG,
                     color: subscription.executive_snapshot_frequency === freq ? '#fff' : MUTED,
-                    border: `1px solid ${subscription.executive_snapshot_frequency === freq ? '#1e4d6b' : BORDER_SUBTLE}`,
+                    border: `1px solid ${subscription.executive_snapshot_frequency === freq ? '#1E2D4D' : BORDER_SUBTLE}`,
                   }}
                 >
                   {freq}
@@ -339,10 +339,10 @@ export function IntelligenceSubscriptionSettings({ subscription, sourceStatus, o
             </div>
           </div>
           <div>
-            <span className="text-[10px] font-semibold mb-1 block" style={{ color: TEXT_TERTIARY }}>Recipients</span>
+            <span className="text-xs font-semibold mb-1 block" style={{ color: TEXT_TERTIARY }}>Recipients</span>
             <div className="flex flex-wrap gap-1.5">
               {(subscription.executive_snapshot_recipients || []).map(email => (
-                <span key={email} className="px-2 py-1 rounded text-[10px] font-medium" style={{ backgroundColor: PANEL_BG, color: MUTED }}>
+                <span key={email} className="px-2 py-1 rounded text-xs font-medium" style={{ backgroundColor: PANEL_BG, color: MUTED }}>
                   {email}
                 </span>
               ))}
@@ -355,7 +355,7 @@ export function IntelligenceSubscriptionSettings({ subscription, sourceStatus, o
       <div className="rounded-xl p-4 mb-4" style={{ backgroundColor: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
         <SectionHeader title="Escalation Policy" icon={Users} />
         <div className="overflow-x-auto">
-          <table className="w-full text-[10px]">
+          <table className="w-full text-xs">
             <thead>
               <tr style={{ backgroundColor: PANEL_BG }}>
                 <th className="text-left px-2 py-1.5 font-semibold" style={{ color: MUTED }}>Severity</th>

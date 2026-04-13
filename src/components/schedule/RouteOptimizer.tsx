@@ -42,15 +42,15 @@ export function RouteOptimizer({ technician, jobs, date }: RouteOptimizerProps) 
       {/* Header */}
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-3 hover:bg-[#FAF7F0] transition-colors"
       >
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: '#EFF6FF' }}>
-            <Route className="w-4 h-4" style={{ color: '#1e4d6b' }} />
+            <Route className="w-4 h-4" style={{ color: '#1E2D4D' }} />
           </div>
           <div className="text-left">
             <p className="text-xs font-bold" style={{ color: NAVY }}>{technician.name}'s Route</p>
-            <p className="text-[10px]" style={{ color: TEXT_TERTIARY }}>
+            <p className="text-xs" style={{ color: TEXT_TERTIARY }}>
               {jobs.length} stop{jobs.length !== 1 ? 's' : ''} · {hours}h{mins > 0 ? ` ${mins}m` : ''} total
             </p>
           </div>
@@ -71,7 +71,7 @@ export function RouteOptimizer({ technician, jobs, date }: RouteOptimizerProps) 
               disabled={isPending || optimized}
               className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs font-semibold rounded-lg transition-colors disabled:opacity-50"
               style={{
-                background: optimized ? '#F0FFF4' : '#1e4d6b',
+                background: optimized ? '#F0FFF4' : '#1E2D4D',
                 color: optimized ? '#16A34A' : 'white',
                 border: optimized ? '1px solid #BBF7D0' : 'none',
               }}
@@ -102,8 +102,8 @@ export function RouteOptimizer({ technician, jobs, date }: RouteOptimizerProps) 
                 {/* Timeline connector */}
                 <div className="flex flex-col items-center">
                   <div
-                    className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0"
-                    style={{ background: '#1e4d6b' }}
+                    className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
+                    style={{ background: '#1E2D4D' }}
                   >
                     {idx + 1}
                   </div>
@@ -119,14 +119,14 @@ export function RouteOptimizer({ technician, jobs, date }: RouteOptimizerProps) 
                   </p>
                   <div className="flex items-center gap-1 mt-0.5" style={{ color: TEXT_TERTIARY }}>
                     <Clock className="w-3 h-3 flex-shrink-0" />
-                    <span className="text-[10px]">{job.startTime} – {job.endTime}</span>
+                    <span className="text-xs">{job.startTime} – {job.endTime}</span>
                   </div>
                   <div className="flex items-center gap-1 mt-0.5" style={{ color: TEXT_TERTIARY }}>
                     <MapPin className="w-3 h-3 flex-shrink-0" />
-                    <span className="text-[10px] truncate">{job.locationName}</span>
+                    <span className="text-xs truncate">{job.locationName}</span>
                   </div>
                   {job.serviceTypes.length > 0 && (
-                    <p className="text-[10px] mt-0.5 truncate" style={{ color: TEXT_TERTIARY }}>
+                    <p className="text-xs mt-0.5 truncate" style={{ color: TEXT_TERTIARY }}>
                       {job.serviceTypes.join(', ')}
                     </p>
                   )}
@@ -135,7 +135,7 @@ export function RouteOptimizer({ technician, jobs, date }: RouteOptimizerProps) 
                   {idx < sortedJobs.length - 1 && (
                     <div className="flex items-center gap-1 mt-1.5 px-2 py-1 rounded" style={{ background: '#F8FAFC' }}>
                       <ArrowRight className="w-3 h-3" style={{ color: TEXT_TERTIARY }} />
-                      <span className="text-[9px] font-medium" style={{ color: TEXT_TERTIARY }}>
+                      <span className="text-[11px] font-medium" style={{ color: TEXT_TERTIARY }}>
                         Travel to next stop
                       </span>
                     </div>

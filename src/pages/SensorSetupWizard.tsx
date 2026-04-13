@@ -13,8 +13,8 @@ import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { supabase } from '../lib/supabase';
 
 const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
-const PRIMARY = '#1e4d6b';
-const GOLD = '#d4af37';
+const PRIMARY = '#1E2D4D';
+const GOLD = '#A08C5A';
 const LIGHT_BG = '#eef4f8';
 
 type Step = 1 | 2 | 3 | 4 | 5;
@@ -160,22 +160,22 @@ export function SensorSetupWizard() {
   if (complete) {
     return (
       <div className="p-6 max-w-2xl mx-auto" style={F}>
-        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-12 text-center">
           <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: '#ecfdf5' }}>
             <Check className="h-8 w-8 text-green-600" />
           </div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Your sensor is live!</h2>
-          <p className="text-sm text-gray-500 mb-2">
+          <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Your sensor is live!</h2>
+          <p className="text-sm text-[#1E2D4D]/50 mb-2">
             <strong>{sensorLabel}</strong> is now connected to <strong>{selectedEquipObj?.name}</strong>.
           </p>
-          <p className="text-xs text-gray-400 mb-6">
+          <p className="text-xs text-[#1E2D4D]/30 mb-6">
             Manual logging continues as backup until you disable it.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <button onClick={() => navigate('/iot/hub')} className="px-5 py-2.5 rounded-xl text-sm font-bold text-white" style={{ backgroundColor: PRIMARY }}>
               View Sensor Dashboard
             </button>
-            <button onClick={() => navigate('/iot/platform')} className="px-5 py-2.5 rounded-xl text-sm font-bold border border-gray-200 text-gray-600">
+            <button onClick={() => navigate('/iot/platform')} className="px-5 py-2.5 rounded-xl text-sm font-bold border border-[#1E2D4D]/10 text-[#1E2D4D]/70">
               Back to Platform
             </button>
           </div>
@@ -189,7 +189,7 @@ export function SensorSetupWizard() {
       {/* Back */}
       <button
         onClick={() => step === 1 ? navigate('/iot/platform') : setStep((step - 1) as Step)}
-        className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-4"
+        className="flex items-center gap-1 text-sm text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80 mb-4"
       >
         <ArrowLeft className="h-4 w-4" /> {step === 1 ? 'Back to Sensor Platform' : 'Previous Step'}
       </button>
@@ -212,7 +212,7 @@ export function SensorSetupWizard() {
                 >
                   {done ? <Check className="h-3.5 w-3.5" /> : stepNum}
                 </div>
-                <span className={`text-xs font-medium hidden md:block ${active ? 'text-gray-900' : 'text-gray-400'}`}>{label}</span>
+                <span className={`text-xs font-medium hidden md:block ${active ? 'text-[#1E2D4D]' : 'text-[#1E2D4D]/30'}`}>{label}</span>
               </div>
               {i < 4 && <div className="flex-1 h-px" style={{ backgroundColor: done ? '#22c55e' : '#e5e7eb' }} />}
             </div>
@@ -220,20 +220,20 @@ export function SensorSetupWizard() {
         })}
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6">
 
         {/* ── Step 1: Choose Equipment ─────────────────────── */}
         {step === 1 && (
           <div>
-            <h2 className="text-lg font-bold text-gray-900 mb-1">Choose Equipment</h2>
-            <p className="text-sm text-gray-500 mb-6">Select the equipment you want to pair with a sensor.</p>
+            <h2 className="text-lg font-bold text-[#1E2D4D] mb-1">Choose Equipment</h2>
+            <p className="text-sm text-[#1E2D4D]/50 mb-6">Select the equipment you want to pair with a sensor.</p>
 
             {loadingEquipment ? (
-              <div className="py-8 text-center text-sm text-gray-400">Loading equipment...</div>
+              <div className="py-8 text-center text-sm text-[#1E2D4D]/30">Loading equipment...</div>
             ) : equipment.length === 0 ? (
               <div className="py-8 text-center">
-                <Thermometer className="h-10 w-10 text-gray-300 mx-auto mb-3" />
-                <p className="text-sm text-gray-500 mb-3">No equipment configured yet.</p>
+                <Thermometer className="h-10 w-10 text-[#1E2D4D]/30 mx-auto mb-3" />
+                <p className="text-sm text-[#1E2D4D]/50 mb-3">No equipment configured yet.</p>
                 <button onClick={() => navigate('/equipment')} className="px-4 py-2 rounded-lg text-sm font-bold text-white" style={{ backgroundColor: PRIMARY }}>
                   Add Equipment First
                 </button>
@@ -256,8 +256,8 @@ export function SensorSetupWizard() {
                         <Thermometer className="h-5 w-5" style={{ color: selected ? 'white' : '#9ca3af' }} />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="text-sm font-bold text-gray-900">{eq.name}</div>
-                        <div className="text-xs text-gray-400">
+                        <div className="text-sm font-bold text-[#1E2D4D]">{eq.name}</div>
+                        <div className="text-xs text-[#1E2D4D]/30">
                           {eq.equipment_type.replace(/_/g, ' ')}
                           {eq.last_check_count > 0 && <> &middot; {eq.last_check_count} manual checks today</>}
                         </div>
@@ -274,8 +274,8 @@ export function SensorSetupWizard() {
         {/* ── Step 2: Choose Sensor Type ───────────────────── */}
         {step === 2 && (
           <div>
-            <h2 className="text-lg font-bold text-gray-900 mb-1">Choose Sensor Type</h2>
-            <p className="text-sm text-gray-500 mb-6">How does your sensor connect to the network?</p>
+            <h2 className="text-lg font-bold text-[#1E2D4D] mb-1">Choose Sensor Type</h2>
+            <p className="text-sm text-[#1E2D4D]/50 mb-6">How does your sensor connect to the network?</p>
 
             <div className="space-y-3">
               {SENSOR_TYPES.map(st => {
@@ -295,14 +295,14 @@ export function SensorSetupWizard() {
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-gray-900">{st.label}</span>
+                        <span className="text-sm font-bold text-[#1E2D4D]">{st.label}</span>
                         {st.recommended && (
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ backgroundColor: GOLD + '20', color: GOLD }}>
+                          <span className="px-2 py-0.5 rounded-full text-xs font-bold" style={{ backgroundColor: GOLD + '20', color: GOLD }}>
                             RECOMMENDED
                           </span>
                         )}
                       </div>
-                      <div className="text-xs text-gray-400">{st.desc}</div>
+                      <div className="text-xs text-[#1E2D4D]/30">{st.desc}</div>
                     </div>
                     {selected && <CheckCircle className="h-5 w-5 flex-shrink-0" style={{ color: PRIMARY }} />}
                   </button>
@@ -315,23 +315,23 @@ export function SensorSetupWizard() {
         {/* ── Step 3: Connection Setup ─────────────────────── */}
         {step === 3 && (
           <div>
-            <h2 className="text-lg font-bold text-gray-900 mb-1">Connection Setup</h2>
+            <h2 className="text-lg font-bold text-[#1E2D4D] mb-1">Connection Setup</h2>
 
             {sensorType === 'wifi' ? (
               <>
-                <p className="text-sm text-gray-500 mb-6">Configure your WiFi sensor to push data to this webhook URL.</p>
+                <p className="text-sm text-[#1E2D4D]/50 mb-6">Configure your WiFi sensor to push data to this webhook URL.</p>
 
                 {/* Webhook URL */}
                 <div className="mb-6">
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">Your Webhook URL</label>
+                  <label className="block text-xs font-semibold text-[#1E2D4D]/80 mb-1">Your Webhook URL</label>
                   <div className="flex items-center gap-2">
                     <input
                       type="text"
                       value={webhookUrl}
                       readOnly
-                      className="flex-1 px-3 py-2.5 rounded-lg border border-gray-200 text-sm font-mono bg-gray-50 text-gray-600 truncate"
+                      className="flex-1 px-3 py-2.5 rounded-xl border border-[#1E2D4D]/10 text-sm font-mono bg-[#FAF7F0] text-[#1E2D4D]/70 truncate"
                     />
-                    <button onClick={handleCopyWebhook} className="flex items-center gap-1 px-3 py-2.5 rounded-lg text-sm font-medium border border-gray-200 hover:bg-gray-50 flex-shrink-0">
+                    <button onClick={handleCopyWebhook} className="flex items-center gap-1 px-3 py-2.5 rounded-lg text-sm font-medium border border-[#1E2D4D]/10 hover:bg-[#FAF7F0] flex-shrink-0">
                       <Copy className="h-3.5 w-3.5" /> Copy
                     </button>
                   </div>
@@ -340,12 +340,12 @@ export function SensorSetupWizard() {
                 {/* Payload Format */}
                 <div className="mb-6">
                   <div className="flex items-center justify-between mb-1">
-                    <label className="text-xs font-semibold text-gray-700">Required Payload Format</label>
-                    <button onClick={handleCopyPayload} className="text-xs text-gray-400 hover:text-gray-600 flex items-center gap-1">
+                    <label className="text-xs font-semibold text-[#1E2D4D]/80">Required Payload Format</label>
+                    <button onClick={handleCopyPayload} className="text-xs text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 flex items-center gap-1">
                       <Copy className="h-3 w-3" /> Copy
                     </button>
                   </div>
-                  <pre className="p-4 rounded-lg bg-gray-900 text-green-400 text-xs font-mono overflow-x-auto">
+                  <pre className="p-4 rounded-xl bg-[#1E2D4D]/90 text-green-400 text-xs font-mono overflow-x-auto">
                     {payloadExample}
                   </pre>
                 </div>
@@ -353,13 +353,13 @@ export function SensorSetupWizard() {
                 {/* Test Connection */}
                 <div className="flex items-center gap-3">
                   {testStatus === 'idle' && (
-                    <button onClick={handleTestConnection} className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white" style={{ backgroundColor: PRIMARY }}>
+                    <button onClick={handleTestConnection} className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-[#1E2D4D] hover:bg-[#162340] transition-colors min-h-[44px]">
                       <Zap className="h-4 w-4" /> Test Connection
                     </button>
                   )}
                   {testStatus === 'testing' && (
-                    <div className="flex items-center gap-2 text-sm text-gray-500">
-                      <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+                    <div className="flex items-center gap-2 text-sm text-[#1E2D4D]/50">
+                      <div className="w-4 h-4 border-2 border-[#1E2D4D]/20 border-t-transparent rounded-full animate-spin" />
                       Testing connection...
                     </div>
                   )}
@@ -381,8 +381,8 @@ export function SensorSetupWizard() {
             ) : sensorType === 'bluetooth' ? (
               <div className="py-8 text-center">
                 <Bluetooth className="h-12 w-12 mx-auto mb-3 text-purple-400" />
-                <h3 className="text-sm font-bold text-gray-900 mb-2">Bluetooth Pairing</h3>
-                <p className="text-sm text-gray-500 max-w-md mx-auto mb-4">
+                <h3 className="text-sm font-bold text-[#1E2D4D] mb-2">Bluetooth Pairing</h3>
+                <p className="text-sm text-[#1E2D4D]/50 max-w-md mx-auto mb-4">
                   Open the EvidLY mobile app and hold your Bluetooth sensor nearby to pair. The sensor will appear automatically.
                 </p>
                 <button onClick={() => setTestStatus('success')} className="px-4 py-2 rounded-lg text-sm font-medium" style={{ color: PRIMARY }}>
@@ -392,30 +392,30 @@ export function SensorSetupWizard() {
             ) : sensorType === 'lorawan' ? (
               <div className="py-8 text-center">
                 <Radio className="h-12 w-12 mx-auto mb-3 text-green-400" />
-                <h3 className="text-sm font-bold text-gray-900 mb-2">LoRaWAN Enterprise Setup</h3>
-                <p className="text-sm text-gray-500 max-w-md mx-auto mb-4">
+                <h3 className="text-sm font-bold text-[#1E2D4D] mb-2">LoRaWAN Enterprise Setup</h3>
+                <p className="text-sm text-[#1E2D4D]/50 max-w-md mx-auto mb-4">
                   LoRaWAN sensors require gateway configuration and network server setup. Our team will help you configure your deployment.
                 </p>
                 <a href="mailto:arthur@getevidly.com" className="px-5 py-2.5 rounded-xl text-sm font-bold text-white inline-block" style={{ backgroundColor: PRIMARY }}>
                   Contact Support
                 </a>
-                <button onClick={() => setTestStatus('success')} className="block mx-auto mt-3 text-xs text-gray-400 hover:text-gray-600">
+                <button onClick={() => setTestStatus('success')} className="block mx-auto mt-3 text-xs text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70">
                   Skip — configure later
                 </button>
               </div>
             ) : (
               <>
-                <p className="text-sm text-gray-500 mb-6">Configure your device to publish to this MQTT topic.</p>
+                <p className="text-sm text-[#1E2D4D]/50 mb-6">Configure your device to publish to this MQTT topic.</p>
                 <div className="mb-4">
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">MQTT Topic</label>
+                  <label className="block text-xs font-semibold text-[#1E2D4D]/80 mb-1">MQTT Topic</label>
                   <div className="flex items-center gap-2">
                     <input
                       type="text"
                       value={`evidly/${profile?.organization_id || '<org_id>'}/${selectedEquipment}/temperature`}
                       readOnly
-                      className="flex-1 px-3 py-2.5 rounded-lg border border-gray-200 text-sm font-mono bg-gray-50 text-gray-600 truncate"
+                      className="flex-1 px-3 py-2.5 rounded-xl border border-[#1E2D4D]/10 text-sm font-mono bg-[#FAF7F0] text-[#1E2D4D]/70 truncate"
                     />
-                    <button onClick={() => { navigator.clipboard.writeText(`evidly/${profile?.organization_id}/${selectedEquipment}/temperature`); toast.success('Topic copied'); }} className="flex items-center gap-1 px-3 py-2.5 rounded-lg text-sm font-medium border border-gray-200 hover:bg-gray-50 flex-shrink-0">
+                    <button onClick={() => { navigator.clipboard.writeText(`evidly/${profile?.organization_id}/${selectedEquipment}/temperature`); toast.success('Topic copied'); }} className="flex items-center gap-1 px-3 py-2.5 rounded-lg text-sm font-medium border border-[#1E2D4D]/10 hover:bg-[#FAF7F0] flex-shrink-0">
                       <Copy className="h-3.5 w-3.5" /> Copy
                     </button>
                   </div>
@@ -436,12 +436,12 @@ export function SensorSetupWizard() {
         {/* ── Step 4: Alert Configuration ──────────────────── */}
         {step === 4 && (
           <div>
-            <h2 className="text-lg font-bold text-gray-900 mb-1">Alert Configuration</h2>
-            <p className="text-sm text-gray-500 mb-6">Configure when and how you get notified about temperature issues.</p>
+            <h2 className="text-lg font-bold text-[#1E2D4D] mb-1">Alert Configuration</h2>
+            <p className="text-sm text-[#1E2D4D]/50 mb-6">Configure when and how you get notified about temperature issues.</p>
 
             {/* Alert Threshold */}
             <div className="mb-6">
-              <label className="block text-xs font-semibold text-gray-700 mb-2">Alert trigger</label>
+              <label className="block text-xs font-semibold text-[#1E2D4D]/80 mb-2">Alert trigger</label>
               <div className="space-y-2">
                 {[
                   { key: 'out_of_range' as const, label: 'Out of range only', desc: 'Alert only when temperature exceeds equipment thresholds' },
@@ -451,7 +451,7 @@ export function SensorSetupWizard() {
                   <button
                     key={opt.key}
                     onClick={() => setAlertThreshold(opt.key)}
-                    className="w-full text-left flex items-center gap-3 p-3 rounded-lg border-2 transition-all"
+                    className="w-full text-left flex items-center gap-3 p-3 rounded-xl border-2 transition-all"
                     style={{
                       borderColor: alertThreshold === opt.key ? PRIMARY : '#e5e7eb',
                       backgroundColor: alertThreshold === opt.key ? LIGHT_BG : 'white',
@@ -461,8 +461,8 @@ export function SensorSetupWizard() {
                       {alertThreshold === opt.key && <div className="w-2 h-2 rounded-full" style={{ backgroundColor: PRIMARY }} />}
                     </div>
                     <div>
-                      <div className="text-sm font-medium text-gray-900">{opt.label}</div>
-                      <div className="text-xs text-gray-400">{opt.desc}</div>
+                      <div className="text-sm font-medium text-[#1E2D4D]">{opt.label}</div>
+                      <div className="text-xs text-[#1E2D4D]/30">{opt.desc}</div>
                     </div>
                   </button>
                 ))}
@@ -471,8 +471,8 @@ export function SensorSetupWizard() {
 
             {/* Alert Delay */}
             <div className="mb-6">
-              <label className="block text-xs font-semibold text-gray-700 mb-2">
-                Alert delay <span className="font-normal text-gray-400">(prevents false alarms from door openings)</span>
+              <label className="block text-xs font-semibold text-[#1E2D4D]/80 mb-2">
+                Alert delay <span className="font-normal text-[#1E2D4D]/30">(prevents false alarms from door openings)</span>
               </label>
               <div className="flex flex-wrap gap-2">
                 {[
@@ -483,7 +483,7 @@ export function SensorSetupWizard() {
                   <button
                     key={opt.value}
                     onClick={() => setAlertDelay(opt.value)}
-                    className="px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all"
+                    className="px-4 py-2 rounded-xl border-2 text-sm font-medium transition-all"
                     style={{
                       borderColor: alertDelay === opt.value ? PRIMARY : '#e5e7eb',
                       backgroundColor: alertDelay === opt.value ? LIGHT_BG : 'white',
@@ -498,17 +498,17 @@ export function SensorSetupWizard() {
 
             {/* Notification Channels */}
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-2">Notification channels</label>
+              <label className="block text-xs font-semibold text-[#1E2D4D]/80 mb-2">Notification channels</label>
               <div className="space-y-2">
                 {[
                   { key: 'inApp' as const, label: 'In-App', desc: 'Always on — push notifications in EvidLY', locked: true },
                   { key: 'email' as const, label: 'Email', desc: 'Detailed alert with temperature history', locked: false },
                   { key: 'sms' as const, label: 'SMS', desc: 'Critical alerts via text message', locked: false },
                 ].map(ch => (
-                  <div key={ch.key} className="flex items-center justify-between p-3 rounded-lg border border-gray-200">
+                  <div key={ch.key} className="flex items-center justify-between p-3 rounded-xl border border-[#1E2D4D]/10">
                     <div>
-                      <div className="text-sm font-medium text-gray-900">{ch.label}</div>
-                      <div className="text-xs text-gray-400">{ch.desc}</div>
+                      <div className="text-sm font-medium text-[#1E2D4D]">{ch.label}</div>
+                      <div className="text-xs text-[#1E2D4D]/30">{ch.desc}</div>
                     </div>
                     <button
                       onClick={() => !ch.locked && setAlertChannels(prev => ({ ...prev, [ch.key]: !prev[ch.key] }))}
@@ -530,17 +530,17 @@ export function SensorSetupWizard() {
         {/* ── Step 5: Name & Confirm ───────────────────────── */}
         {step === 5 && (
           <div>
-            <h2 className="text-lg font-bold text-gray-900 mb-1">Name Your Sensor</h2>
-            <p className="text-sm text-gray-500 mb-6">Give this sensor a descriptive label so your team knows where it is.</p>
+            <h2 className="text-lg font-bold text-[#1E2D4D] mb-1">Name Your Sensor</h2>
+            <p className="text-sm text-[#1E2D4D]/50 mb-6">Give this sensor a descriptive label so your team knows where it is.</p>
 
             <div className="mb-6">
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Sensor Label</label>
+              <label className="block text-xs font-semibold text-[#1E2D4D]/80 mb-1">Sensor Label</label>
               <input
                 type="text"
                 value={sensorLabel}
                 onChange={e => setSensorLabel(e.target.value)}
                 placeholder="e.g., Walk-in Cooler #1 — North Wall Sensor"
-                className="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#1e4d6b]"
+                className="w-full px-3 py-2.5 rounded-xl border border-[#1E2D4D]/10 text-sm focus:outline-none focus:border-[#1E2D4D]"
               />
             </div>
 
@@ -548,18 +548,18 @@ export function SensorSetupWizard() {
             <div className="p-4 rounded-xl mb-4" style={{ backgroundColor: LIGHT_BG }}>
               <h3 className="text-sm font-bold mb-3" style={{ color: PRIMARY }}>Setup Summary</h3>
               <div className="grid grid-cols-2 gap-2 text-xs">
-                <div className="text-gray-500">Equipment:</div>
-                <div className="font-medium text-gray-900">{selectedEquipObj?.name}</div>
-                <div className="text-gray-500">Sensor type:</div>
-                <div className="font-medium text-gray-900">{SENSOR_TYPES.find(t => t.key === sensorType)?.label}</div>
-                <div className="text-gray-500">Alert trigger:</div>
-                <div className="font-medium text-gray-900">
+                <div className="text-[#1E2D4D]/50">Equipment:</div>
+                <div className="font-medium text-[#1E2D4D]">{selectedEquipObj?.name}</div>
+                <div className="text-[#1E2D4D]/50">Sensor type:</div>
+                <div className="font-medium text-[#1E2D4D]">{SENSOR_TYPES.find(t => t.key === sensorType)?.label}</div>
+                <div className="text-[#1E2D4D]/50">Alert trigger:</div>
+                <div className="font-medium text-[#1E2D4D]">
                   {alertThreshold === 'out_of_range' ? 'Out of range' : alertThreshold === 'near_threshold' ? 'Near threshold' : 'Every reading'}
                 </div>
-                <div className="text-gray-500">Alert delay:</div>
-                <div className="font-medium text-gray-900">{alertDelay === 0 ? 'Immediate' : `${alertDelay} min`}</div>
-                <div className="text-gray-500">Channels:</div>
-                <div className="font-medium text-gray-900">
+                <div className="text-[#1E2D4D]/50">Alert delay:</div>
+                <div className="font-medium text-[#1E2D4D]">{alertDelay === 0 ? 'Immediate' : `${alertDelay} min`}</div>
+                <div className="text-[#1E2D4D]/50">Channels:</div>
+                <div className="font-medium text-[#1E2D4D]">
                   {[alertChannels.inApp && 'In-App', alertChannels.email && 'Email', alertChannels.sms && 'SMS'].filter(Boolean).join(', ')}
                 </div>
               </div>
@@ -568,10 +568,10 @@ export function SensorSetupWizard() {
         )}
 
         {/* ── Navigation ──────────────────────────────────── */}
-        <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-100">
+        <div className="flex items-center justify-between mt-8 pt-6 border-t border-[#1E2D4D]/5">
           <button
             onClick={() => step > 1 ? setStep((step - 1) as Step) : navigate('/iot/platform')}
-            className="text-sm text-gray-500 hover:text-gray-700"
+            className="text-sm text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80"
           >
             {step === 1 ? 'Cancel' : 'Back'}
           </button>

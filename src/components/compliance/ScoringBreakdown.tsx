@@ -85,7 +85,7 @@ export const ScoringBreakdown: React.FC<ScoringBreakdownProps> = ({
         padding: '20px',
       }}>
         <div style={{ marginBottom: '16px' }}>
-          <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 600, color: '#1e4d6b' }}>
+          <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 600, color: '#1E2D4D' }}>
             Inspection Breakdown
           </h3>
           <p style={{ margin: '2px 0 0', fontSize: '0.85rem', color: '#757575' }}>
@@ -204,7 +204,7 @@ export const ScoringBreakdown: React.FC<ScoringBreakdownProps> = ({
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
           <div>
-            <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 600, color: '#1e4d6b' }}>
+            <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 600, color: '#1E2D4D' }}>
               Inspection Rating
             </h3>
             <p style={{ margin: '2px 0 0', fontSize: '0.85rem', color: '#757575' }}>
@@ -275,7 +275,7 @@ export const ScoringBreakdown: React.FC<ScoringBreakdownProps> = ({
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
         <div>
-          <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 600, color: '#1e4d6b' }}>
+          <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 600, color: '#1E2D4D' }}>
             Score Breakdown
           </h3>
           <p style={{ margin: '2px 0 0', fontSize: '0.85rem', color: '#757575' }}>

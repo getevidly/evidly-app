@@ -1,0 +1,132 @@
+═══════════════════════════════════════════
+  DISCOVERED BUT NOT IN PROMPT
+  32 edge functions found beyond core pipeline
+═══════════════════════════════════════════
+
+── landing-chat ──
+  AI chat widget for landing page — uses Claude to answer visitor questions
+  Size: 4.7KB | AI:true | Email:false | Stripe:false
+
+── copilot-analyze ──
+  AI copilot analysis for in-app compliance questions
+  Size: 16.8KB | AI:true | Email:false | Stripe:false
+
+── insurance-risk-calculate ──
+  Insurance risk score calculation for carrier partnerships
+  Size: 17.5KB | AI:false | Email:false | Stripe:false
+
+── insurance-risk-fire-safety ──
+  Fire safety risk component for insurance scoring
+  Size: 6.7KB | AI:false | Email:false | Stripe:false
+
+── insurance-risk-history ──
+  Historical risk data for insurance scoring
+  Size: 6.0KB | AI:false | Email:false | Stripe:false
+
+── insurance-risk-incidents ──
+  Incident history component for insurance risk
+  Size: 7.3KB | AI:false | Email:false | Stripe:false
+
+── insurance-risk-verify ──
+  Insurance risk verification endpoint
+  Size: 6.0KB | AI:false | Email:false | Stripe:false
+
+── risk-score-api ──
+  Public risk score API for external consumption
+  Size: 5.5KB | AI:false | Email:false | Stripe:false
+
+── security-headers-check ──
+  Security headers validation for the platform
+  Size: 2.9KB | AI:false | Email:false | Stripe:false
+
+── pos-connect ──
+  Point-of-sale integration connection
+  Size: 6.7KB | AI:false | Email:false | Stripe:false
+
+── pos-sync-all ──
+  POS full sync — locations, employees, data
+  Size: 2.2KB | AI:false | Email:false | Stripe:false
+
+── pos-sync-employees ──
+  POS employee data sync
+  Size: 9.1KB | AI:false | Email:false | Stripe:false
+
+── pos-sync-locations ──
+  POS location data sync
+  Size: 12.2KB | AI:false | Email:false | Stripe:false
+
+── enterprise-scim-users ──
+  SCIM user provisioning for enterprise SSO
+  Size: 6.7KB | AI:false | Email:false | Stripe:false
+
+── enterprise-sso-callback ──
+  Enterprise SSO callback handler
+  Size: 4.4KB | AI:false | Email:false | Stripe:false
+
+── enterprise-tenant-provision ──
+  Enterprise tenant auto-provisioning
+  Size: 5.2KB | AI:false | Email:false | Stripe:false
+
+── offline-sync-handler ──
+  Offline-first sync for field operations
+  Size: 4.4KB | AI:false | Email:false | Stripe:false
+
+── offline-sync-pull ──
+  Offline data pull for mobile
+  Size: 3.5KB | AI:false | Email:false | Stripe:false
+
+── offline-conflict-resolver ──
+  Conflict resolution for offline sync
+  Size: 3.7KB | AI:false | Email:false | Stripe:false
+
+── offline-device-manager ──
+  Device management for offline mode
+  Size: 4.4KB | AI:false | Email:false | Stripe:false
+
+── offline-photo-batch-upload ──
+  Batch photo upload from offline cache
+  Size: 3.9KB | AI:false | Email:false | Stripe:false
+
+── sensor-defrost-detect ──
+  Defrost cycle detection in sensor readings
+  Size: 9.9KB | AI:false | Email:false | Stripe:false
+
+── sensor-compliance-aggregate ──
+  Aggregate sensor data for compliance reporting
+  Size: 9.4KB | AI:false | Email:false | Stripe:false
+
+── training-ai-companion ──
+  AI training companion for staff education
+  Size: 5.9KB | AI:true | Email:false | Stripe:false
+
+── training-ai-quiz-gen ──
+  AI-generated quizzes for training modules
+  Size: 4.4KB | AI:true | Email:false | Stripe:false
+
+── training-content-translate ──
+  Content translation for multilingual training
+  Size: 4.4KB | AI:true | Email:false | Stripe:false
+
+── training-sb476-report ──
+  SB 476 compliance reporting for training
+  Size: 4.2KB | AI:false | Email:false | Stripe:false
+
+── generate-haccp-from-checklists ──
+  AI-generated HACCP plans from checklist data
+  Size: 10.9KB | AI:false | Email:false | Stripe:false
+
+── ai-voice-transcription ──
+  Voice transcription for hands-free temp logging
+  Size: 11.3KB | AI:true | Email:false | Stripe:false
+
+── ai-weekly-digest ──
+  AI-generated weekly compliance digest email
+  Size: 13.4KB | AI:true | Email:true | Stripe:false
+
+── canonical-correlate ──
+  Cross-source intelligence correlation engine
+  Size: 3.7KB | AI:false | Email:false | Stripe:false
+
+── notify-qa-review ──
+  QA review notification for intelligence pipeline
+  Size: 5.2KB | AI:false | Email:false | Stripe:false

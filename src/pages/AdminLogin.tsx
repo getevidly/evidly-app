@@ -70,7 +70,7 @@ export function AdminLogin() {
                 <circle cx="17.5" cy="31" r="3" fill="#A08C5A"/>
                 <circle cx="13.5" cy="19" r="3" fill="#A08C5A"/>
               </svg>
-              <span className="ml-3 text-3xl font-bold">
+              <span className="ml-3 text-3xl font-bold tracking-tight">
                 <span style={{ color: '#A08C5A' }}>E</span>
                 <span style={{ color: '#1E2D4D' }}>vid</span>
                 <span style={{ color: '#A08C5A' }}>LY</span>
@@ -79,7 +79,7 @@ export function AdminLogin() {
             <div style={{ fontSize: '10px', letterSpacing: '0.15em', color: '#A08C5A', fontWeight: 600, marginTop: '4px' }}>
               LEAD WITH CONFIDENCE
             </div>
-            <span className="mt-3 inline-block px-3 py-1 text-xs font-semibold rounded-full" style={{ backgroundColor: '#d4af37', color: '#1E2D4D' }}>
+            <span className="mt-3 inline-block px-3 py-1 text-xs font-semibold rounded-full" style={{ backgroundColor: '#A08C5A', color: '#1E2D4D' }}>
               Admin Access
             </span>
           </div>
@@ -98,7 +98,7 @@ export function AdminLogin() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label htmlFor="admin-email" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="admin-email" className="block text-sm font-medium text-[#1E2D4D]/80">
                 Email address
               </label>
               <input
@@ -109,12 +109,12 @@ export function AdminLogin() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#1E2D4D] focus:border-[#1E2D4D]"
+                className="mt-1 block w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl shadow-sm focus:outline-none focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
               />
             </div>
 
             <div>
-              <label htmlFor="admin-password" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="admin-password" className="block text-sm font-medium text-[#1E2D4D]/80">
                 Password
               </label>
               <div className="relative mt-1">
@@ -126,7 +126,7 @@ export function AdminLogin() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#1E2D4D] focus:border-[#1E2D4D]"
+                  className="block w-full px-3 py-2 pr-10 border border-[#1E2D4D]/15 rounded-xl shadow-sm focus:outline-none focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
                 />
                 <button
                   type="button"
@@ -134,9 +134,9 @@ export function AdminLogin() {
                   className="absolute inset-y-0 right-0 flex items-center pr-3"
                 >
                   {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                    <EyeOff className="h-5 w-5 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70" />
                   ) : (
-                    <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                    <Eye className="h-5 w-5 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70" />
                   )}
                 </button>
               </div>
@@ -151,7 +151,7 @@ export function AdminLogin() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1E2D4D]"
+              className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus:ring-offset-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
               style={{ backgroundColor: '#1E2D4D' }}
             >
               {loading ? 'Signing in...' : 'Sign in'}

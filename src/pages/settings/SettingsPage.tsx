@@ -48,7 +48,7 @@ export function SettingsPage() {
           Settings
         </h1>
         <p style={{ color: MUTED, fontSize: 14, margin: 0 }}>
-          Manage your HoodOps workspace
+          Manage your EvidLY workspace
         </p>
       </div>
 

@@ -115,7 +115,7 @@ export default function SystemMessages() {
     <div className="space-y-6">
       <AdminBreadcrumb crumbs={[{ label: 'System Messages' }]} />
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <h1 className="text-2xl font-bold" style={{ color: NAVY }}>System Messages</h1>
+        <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>System Messages</h1>
         <button onClick={() => setShowCompose(!showCompose)}
           style={{ padding: '8px 20px', background: GOLD, border: 'none', borderRadius: 8, color: '#FFFFFF', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
           {showCompose ? 'Cancel' : '+ Compose Message'}

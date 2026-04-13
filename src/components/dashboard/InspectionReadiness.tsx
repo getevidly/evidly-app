@@ -33,7 +33,7 @@ export default function InspectionReadiness({ score, jurisdiction, trend, subtit
       </div>
 
       <div className="w-full max-w-xs mx-auto mt-3">
-        <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+        <div className="w-full h-2 bg-[#1E2D4D]/5 rounded-full overflow-hidden">
           <div
             className="h-full rounded-full transition-all duration-700"
             style={{ width: `${Math.min(100, Math.max(0, score))}%`, backgroundColor: color }}
@@ -42,7 +42,7 @@ export default function InspectionReadiness({ score, jurisdiction, trend, subtit
       </div>
 
       {(subtitle || jurisdiction) && (
-        <p className="text-xs text-gray-400 mt-2">
+        <p className="text-xs text-[#1E2D4D]/30 mt-2">
           {subtitle || jurisdiction}
         </p>
       )}

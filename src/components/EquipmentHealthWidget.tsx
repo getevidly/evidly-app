@@ -103,35 +103,35 @@ export function EquipmentHealthWidget({ locationId }: Props) {
 
   if (data.total === 0) {
     return (
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
+      <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
-            <Wrench className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+            <Wrench className="h-5 w-5" style={{ color: '#1E2D4D' }} />
           </div>
-          <h3 className="text-lg font-semibold text-gray-900">Equipment Health</h3>
+          <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">Equipment Health</h3>
         </div>
-        <p className="text-sm text-gray-500 text-center py-4">No equipment registered. Add equipment to track maintenance.</p>
+        <p className="text-sm text-[#1E2D4D]/50 text-center py-4">No equipment registered. Add equipment to track maintenance.</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
+    <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
-            <Wrench className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+            <Wrench className="h-5 w-5" style={{ color: '#1E2D4D' }} />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">Equipment Health</h3>
-            <p className="text-xs text-gray-500">{data.total} items tracked</p>
+            <h3 className="text-lg font-semibold tracking-tight text-[#1E2D4D]">Equipment Health</h3>
+            <p className="text-xs text-[#1E2D4D]/50">{data.total} items tracked</p>
           </div>
         </div>
         <button
           onClick={() => navigate(locationId === 'all' ? '/equipment' : `/equipment?location=${locationId}`)}
           className="text-sm font-medium flex items-center gap-1 hover:underline"
-          style={{ color: '#1e4d6b' }}
+          style={{ color: '#1E2D4D' }}
         >
           View <ArrowRight className="h-3.5 w-3.5" />
         </button>
@@ -139,14 +139,14 @@ export function EquipmentHealthWidget({ locationId }: Props) {
 
       {/* Status summary row */}
       <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg mb-4" style={{ backgroundColor: '#eef4f8' }}>
-        <span className="text-sm font-semibold text-gray-900">{data.total} Total</span>
-        <span className="text-gray-300">|</span>
+        <span className="text-sm font-semibold text-[#1E2D4D]">{data.total} Total</span>
+        <span className="text-[#1E2D4D]/30">|</span>
         <span className="flex items-center gap-1 text-sm font-medium" style={{ color: '#16a34a' }}>
           {data.operational} OK
         </span>
         {data.needsRepair > 0 && (
           <>
-            <span className="text-gray-300">|</span>
+            <span className="text-[#1E2D4D]/30">|</span>
             <span className="flex items-center gap-1 text-sm font-medium" style={{ color: '#d97706' }}>
               {data.needsRepair} Repair
             </span>
@@ -154,7 +154,7 @@ export function EquipmentHealthWidget({ locationId }: Props) {
         )}
         {data.outOfService > 0 && (
           <>
-            <span className="text-gray-300">|</span>
+            <span className="text-[#1E2D4D]/30">|</span>
             <span className="flex items-center gap-1 text-sm font-medium" style={{ color: '#dc2626' }}>
               {data.outOfService} Down
             </span>
@@ -165,12 +165,12 @@ export function EquipmentHealthWidget({ locationId }: Props) {
       {/* Warranty summary */}
       <div className="flex items-center gap-2 mb-4">
         <EvidlyIcon size={14} className="flex-shrink-0" />
-        <span className="text-xs text-gray-500">Warranty:</span>
+        <span className="text-xs text-[#1E2D4D]/50">Warranty:</span>
         <span className="text-xs font-medium" style={{ color: '#16a34a' }}>{data.warrantyActive} active</span>
         {data.warrantyExpiringSoon > 0 && (
           <span className="text-xs font-medium" style={{ color: '#d97706' }}>{data.warrantyExpiringSoon} expiring</span>
         )}
-        <span className="text-xs font-medium text-gray-400">{data.warrantyExpired} expired</span>
+        <span className="text-xs font-medium text-[#1E2D4D]/30">{data.warrantyExpired} expired</span>
       </div>
 
       {/* Alerts */}
@@ -193,16 +193,16 @@ export function EquipmentHealthWidget({ locationId }: Props) {
       )}
 
       {/* Footer stats */}
-      <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+      <div className="flex items-center justify-between pt-3 border-t border-[#1E2D4D]/5">
         <div className="flex items-center gap-1.5 text-sm">
-          <DollarSign className="h-4 w-4 text-gray-400" />
-          <span className="text-gray-500">YTD Maintenance:</span>
-          <span className="font-semibold text-gray-900">${data.ytdSpend.toLocaleString()}</span>
+          <DollarSign className="h-4 w-4 text-[#1E2D4D]/30" />
+          <span className="text-[#1E2D4D]/50">YTD Maintenance:</span>
+          <span className="font-semibold text-[#1E2D4D]">${data.ytdSpend.toLocaleString()}</span>
         </div>
         <div className="flex items-center gap-1.5 text-sm">
-          <Calendar className="h-4 w-4 text-gray-400" />
-          <span className="text-gray-500">Next service:</span>
-          <span className="font-semibold text-gray-900">{data.nextServiceDue}</span>
+          <Calendar className="h-4 w-4 text-[#1E2D4D]/30" />
+          <span className="text-[#1E2D4D]/50">Next service:</span>
+          <span className="font-semibold text-[#1E2D4D]">{data.nextServiceDue}</span>
         </div>
       </div>
     </div>

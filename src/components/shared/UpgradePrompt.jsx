@@ -20,7 +20,7 @@ export function UpgradePrompt({ heading, subtext, cta }) {
       <h3 className="text-sm font-semibold mb-1" style={{ color: '#1E2D4D' }}>
         {heading || 'Upgrade to unlock this feature'}
       </h3>
-      <p className="text-xs text-gray-500 mb-4 max-w-xs mx-auto">
+      <p className="text-xs text-[#1E2D4D]/50 mb-4 max-w-xs mx-auto">
         {subtext || 'This feature requires an EvidLY subscription. Upgrade to get full platform access.'}
       </p>
       <Link
@@ -32,7 +32,7 @@ export function UpgradePrompt({ heading, subtext, cta }) {
       >
         {cta || 'Upgrade Now'} →
       </Link>
-      <p className="text-xs text-gray-400 mt-3">
+      <p className="text-xs text-[#1E2D4D]/30 mt-3">
         $99/mo · Founder pricing · Locked through July 4, 2026
       </p>
     </div>

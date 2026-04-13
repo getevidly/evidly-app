@@ -122,17 +122,17 @@ export function UserExceptionModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 modal-backdrop-enter">
       <div
         className="w-full max-w-2xl max-h-[85vh] flex flex-col rounded-xl shadow-xl border"
         style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border)' }}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b flex-shrink-0" style={{ borderColor: 'var(--border)' }}>
-          <h3 className="text-lg font-semibold" style={{ color: '#1E2D4D' }}>
+          <h3 className="text-lg font-semibold tracking-tight" style={{ color: '#1E2D4D' }}>
             {editUserId ? 'Edit User Permissions' : 'Add User Exception'}
           </h3>
-          <button onClick={onClose} className="p-2.5 -m-1 rounded-lg hover:bg-gray-100 transition-colors" aria-label="Close">
+          <button onClick={onClose} className="p-2.5 -m-1 rounded-lg hover:bg-[#1E2D4D]/5 transition-colors" aria-label="Close">
             <X className="w-5 h-5" style={{ color: '#6B7F96' }} />
           </button>
         </div>
@@ -152,11 +152,11 @@ export function UserExceptionModal({
                   placeholder="Search team members..."
                   value={userSearch}
                   onChange={e => setUserSearch(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 text-sm rounded-lg border focus:outline-none focus:ring-2"
+                  className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border focus-visible:outline-none focus-visible:ring-2"
                   style={{ borderColor: 'var(--border)', color: '#1E2D4D' }}
                 />
               </div>
-              <div className="max-h-48 overflow-y-auto rounded-lg border" style={{ borderColor: 'var(--border)' }}>
+              <div className="max-h-48 overflow-y-auto rounded-xl border" style={{ borderColor: 'var(--border)' }}>
                 {selectableUsers.length === 0 ? (
                   <p className="px-4 py-3 text-sm" style={{ color: '#6B7F96' }}>
                     No matching team members
@@ -167,7 +167,7 @@ export function UserExceptionModal({
                       key={member.id}
                       type="button"
                       onClick={() => setSelectedUserId(member.id)}
-                      className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50 transition-colors border-b last:border-b-0"
+                      className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-[#FAF7F0] transition-colors border-b last:border-b-0"
                       style={{ borderColor: 'var(--border-subtle, #E8EDF5)' }}
                     >
                       <div>
@@ -180,7 +180,7 @@ export function UserExceptionModal({
                       </div>
                       {existingExceptions.some(e => e.userId === member.id) && (
                         <span
-                          className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                          className="text-xs font-semibold px-2 py-0.5 rounded-full"
                           style={{ backgroundColor: 'rgba(160, 140, 90, 0.15)', color: '#A08C5A' }}
                         >
                           HAS OVERRIDES
@@ -195,7 +195,7 @@ export function UserExceptionModal({
             <>
               {/* Selected user header */}
               <div
-                className="flex items-center justify-between px-4 py-3 rounded-lg border"
+                className="flex items-center justify-between px-4 py-3 rounded-xl border"
                 style={{ backgroundColor: 'var(--bg-panel, #EEF1F7)', borderColor: 'var(--border)' }}
               >
                 <div>
@@ -210,7 +210,7 @@ export function UserExceptionModal({
                   {userExceptions.length > 0 && (
                     <button
                       onClick={handleResetUser}
-                      className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1.5 rounded-lg border transition-colors hover:bg-red-50"
+                      className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1.5 rounded-xl border transition-colors hover:bg-red-50"
                       style={{ borderColor: 'var(--border)', color: '#dc2626' }}
                     >
                       <RotateCcw className="w-3 h-3" />
@@ -220,7 +220,7 @@ export function UserExceptionModal({
                   {!editUserId && (
                     <button
                       onClick={() => setSelectedUserId(null)}
-                      className="text-xs font-medium px-2.5 py-1.5 rounded-lg border transition-colors hover:bg-gray-50"
+                      className="text-xs font-medium px-2.5 py-1.5 rounded-xl border transition-colors hover:bg-[#FAF7F0]"
                       style={{ borderColor: 'var(--border)', color: '#3D5068' }}
                     >
                       Change User
@@ -239,7 +239,7 @@ export function UserExceptionModal({
                   placeholder="e.g., Temporary access for Q1 review"
                   value={reason}
                   onChange={e => setReason(e.target.value)}
-                  className="w-full px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2"
+                  className="w-full px-3 py-2 text-sm rounded-xl border focus-visible:outline-none focus-visible:ring-2"
                   style={{ borderColor: 'var(--border)', color: '#1E2D4D' }}
                 />
               </div>
@@ -281,7 +281,7 @@ export function UserExceptionModal({
         <div className="flex items-center justify-end gap-3 px-6 py-4 border-t flex-shrink-0" style={{ borderColor: 'var(--border)' }}>
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm font-medium rounded-lg border transition-colors hover:bg-gray-50"
+            className="px-4 py-2 text-sm font-medium rounded-xl border transition-colors hover:bg-[#FAF7F0]"
             style={{ borderColor: 'var(--border)', color: '#3D5068' }}
           >
             Close
@@ -315,11 +315,11 @@ function UserExceptionCategoryCard({
   const overrideCount = category.permissions.filter(p => exceptionMap.has(p.key)).length;
 
   return (
-    <div className="rounded-lg border overflow-hidden" style={{ borderColor: 'var(--border)' }}>
+    <div className="rounded-xl border overflow-hidden" style={{ borderColor: 'var(--border)' }}>
       <button
         type="button"
         onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-[#FAF7F0] transition-colors"
       >
         <div className="flex items-center gap-2">
           <span>{category.icon}</span>
@@ -328,7 +328,7 @@ function UserExceptionCategoryCard({
           </span>
           {overrideCount > 0 && (
             <span
-              className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full"
+              className="text-xs font-semibold px-1.5 py-0.5 rounded-full"
               style={{ backgroundColor: 'rgba(160, 140, 90, 0.15)', color: '#A08C5A' }}
             >
               {overrideCount} override{overrideCount > 1 ? 's' : ''}
@@ -366,7 +366,7 @@ function UserExceptionCategoryCard({
                   {isProtected && <Shield className="w-3 h-3 text-amber-500 flex-shrink-0" />}
                   {isOverridden && (
                     <span
-                      className="text-[9px] font-bold px-1 py-0 rounded"
+                      className="text-[11px] font-bold px-1 py-0 rounded"
                       style={{ backgroundColor: 'rgba(160, 140, 90, 0.2)', color: '#A08C5A' }}
                     >
                       CUSTOM
@@ -387,7 +387,7 @@ function UserExceptionCategoryCard({
                   `}
                   style={{
                     backgroundColor: effectiveValue
-                      ? isOverridden ? '#A08C5A' : '#1e4d6b'
+                      ? isOverridden ? '#A08C5A' : '#1E2D4D'
                       : '#D1D9E6',
                   }}
                 >

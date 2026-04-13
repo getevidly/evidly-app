@@ -30,26 +30,26 @@ export function IoTSensorLanding() {
 
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: '#1e4d6b' }}>
+          <div className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: '#1E2D4D' }}>
             <Thermometer className="h-10 w-10 text-white" />
           </div>
           <div className="flex items-center justify-center gap-2 mb-3">
-            <span className="text-2xl font-bold text-gray-900">Evid</span>
-            <span className="text-2xl font-bold" style={{ color: '#d4af37' }}>LY</span>
+            <span className="text-2xl font-bold tracking-tight text-[#1E2D4D]">Evid</span>
+            <span className="text-2xl font-bold tracking-tight" style={{ color: '#A08C5A' }}>LY</span>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-3">IoT Sensor Hub</h1>
-          <p className="text-lg text-gray-600 max-w-xl mx-auto">
+          <h1 className="text-3xl font-bold tracking-tight text-[#1E2D4D] mb-3">IoT Sensor Hub</h1>
+          <p className="text-lg text-[#1E2D4D]/70 max-w-xl mx-auto">
             Your sensors. Our intelligence. Zero manual logging.
           </p>
-          <div className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-full" style={{ backgroundColor: '#fdf8e8', border: '1px solid #d4af37' }}>
-            <Lock className="h-4 w-4" style={{ color: '#d4af37' }} />
-            <span className="text-sm font-semibold" style={{ color: '#d4af37' }}>Coming Soon</span>
+          <div className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-full" style={{ backgroundColor: '#fdf8e8', border: '1px solid #A08C5A' }}>
+            <Lock className="h-4 w-4" style={{ color: '#A08C5A' }} />
+            <span className="text-sm font-semibold" style={{ color: '#A08C5A' }}>Coming Soon</span>
           </div>
         </div>
 
         {/* How It Works */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 mb-8">
-          <h2 className="text-xl font-bold text-gray-900 mb-6 text-center">How It Works</h2>
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5 mb-8">
+          <h2 className="text-xl font-bold text-[#1E2D4D] mb-6 text-center">How It Works</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {[
               { step: '1', icon: Wifi, title: 'Connect Your Sensors', desc: 'Link your existing WiFi and Bluetooth temperature sensors — SensorPush, Temp Stick, Monnit, and more.' },
@@ -58,45 +58,45 @@ export function IoTSensorLanding() {
             ].map(item => (
               <div key={item.step} className="text-center">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3" style={{ backgroundColor: '#eef4f8' }}>
-                  <item.icon className="h-6 w-6" style={{ color: '#1e4d6b' }} />
+                  <item.icon className="h-6 w-6" style={{ color: '#1E2D4D' }} />
                 </div>
-                <div className="w-7 h-7 rounded-full flex items-center justify-center mx-auto mb-2" style={{ backgroundColor: '#1e4d6b', color: 'white', fontSize: '12px', fontWeight: 700 }}>{item.step}</div>
-                <h3 className="text-sm font-bold text-gray-900 mb-1">{item.title}</h3>
-                <p className="text-xs text-gray-500">{item.desc}</p>
+                <div className="w-7 h-7 rounded-full flex items-center justify-center mx-auto mb-2" style={{ backgroundColor: '#1E2D4D', color: 'white', fontWeight: 700 }}>{item.step}</div>
+                <h3 className="text-sm font-bold text-[#1E2D4D] mb-1">{item.title}</h3>
+                <p className="text-xs text-[#1E2D4D]/50">{item.desc}</p>
               </div>
             ))}
           </div>
         </div>
 
         {/* Supported Sensors */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 mb-8">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">Supported Sensor Ecosystem</h2>
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5 mb-8">
+          <h2 className="text-xl font-bold text-[#1E2D4D] mb-6">Supported Sensor Ecosystem</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {PROVIDERS.map(p => (
-              <div key={p.name} className="p-3 rounded-xl border border-gray-200 hover:border-[#1e4d6b] transition-colors">
+              <div key={p.name} className="p-3 rounded-xl border border-[#1E2D4D]/10 hover:border-[#1E2D4D] transition-colors">
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center mb-2" style={{ backgroundColor: p.color + '15' }}>
                   <Thermometer className="h-4 w-4" style={{ color: p.color }} />
                 </div>
-                <div className="text-sm font-semibold text-gray-900">{p.name}</div>
-                <div className="text-xs text-gray-500">{p.auth}</div>
-                <div className="text-xs mt-1" style={{ color: '#1e4d6b' }}>{p.note}</div>
+                <div className="text-sm font-semibold text-[#1E2D4D]">{p.name}</div>
+                <div className="text-xs text-[#1E2D4D]/50">{p.auth}</div>
+                <div className="text-xs mt-1" style={{ color: '#1E2D4D' }}>{p.note}</div>
               </div>
             ))}
           </div>
         </div>
 
         {/* Three Ingestion Methods */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 mb-8">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">Three Ways to Ingest Data</h2>
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5 mb-8">
+          <h2 className="text-xl font-bold text-[#1E2D4D] mb-6">Three Ways to Ingest Data</h2>
           <div className="space-y-4">
             {METHODS.map(m => (
-              <div key={m.title} className="flex items-start gap-4 p-4 rounded-xl bg-gray-50">
+              <div key={m.title} className="flex items-start gap-4 p-4 rounded-xl bg-[#FAF7F0]">
                 <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: m.color + '15' }}>
                   <m.icon className="h-5 w-5" style={{ color: m.color }} />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-gray-900 mb-1">{m.title}</h3>
-                  <p className="text-xs text-gray-600">{m.desc}</p>
+                  <h3 className="text-sm font-bold text-[#1E2D4D] mb-1">{m.title}</h3>
+                  <p className="text-xs text-[#1E2D4D]/70">{m.desc}</p>
                 </div>
               </div>
             ))}
@@ -110,19 +110,19 @@ export function IoTSensorLanding() {
             { value: '2 min', label: 'Alert Response', desc: 'Real-time threshold monitoring with instant notifications' },
             { value: '100%', label: 'Reading Capture', desc: 'Every data point logged — no gaps, no missed checks' },
           ].map(item => (
-            <div key={item.label} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 text-center">
-              <div className="text-3xl font-bold mb-1" style={{ color: '#1e4d6b' }}>{item.value}</div>
-              <div className="text-sm font-semibold text-gray-900">{item.label}</div>
-              <div className="text-xs text-gray-500 mt-1">{item.desc}</div>
+            <div key={item.label} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5 text-center">
+              <div className="text-3xl font-bold tracking-tight mb-1" style={{ color: '#1E2D4D' }}>{item.value}</div>
+              <div className="text-sm font-semibold text-[#1E2D4D]">{item.label}</div>
+              <div className="text-xs text-[#1E2D4D]/50 mt-1">{item.desc}</div>
             </div>
           ))}
         </div>
 
         {/* Integration Preview */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 mb-8">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Webhook API Preview</h2>
-          <p className="text-sm text-gray-600 mb-4">Point any sensor platform to your EvidLY webhook endpoint. We normalize everything.</p>
-          <div className="rounded-xl bg-gray-900 p-5 overflow-x-auto">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5 mb-8">
+          <h2 className="text-xl font-bold text-[#1E2D4D] mb-4">Webhook API Preview</h2>
+          <p className="text-sm text-[#1E2D4D]/70 mb-4">Point any sensor platform to your EvidLY webhook endpoint. We normalize everything.</p>
+          <div className="rounded-xl bg-[#1E2D4D]/90 p-5 overflow-x-auto">
             <pre className="text-xs text-green-400 font-mono whitespace-pre">
 {`POST https://api.evidly.com/v1/iot/webhook/ingest
 X-API-Key: sk_live_your_api_key
@@ -152,21 +152,21 @@ Content-Type: application/json
 
         {/* CTA */}
         <div className="text-center mb-12">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
-            <Radio className="h-8 w-8 mx-auto mb-3" style={{ color: '#1e4d6b' }} />
-            <h2 className="text-xl font-bold text-gray-900 mb-2">Get Early Access</h2>
-            <p className="text-sm text-gray-600 mb-4">Already using temperature sensors? Let us connect them to your compliance system.</p>
-            <a href="mailto:iot@evidly.com" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold text-white" style={{ backgroundColor: '#1e4d6b' }}>
+          <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
+            <Radio className="h-8 w-8 mx-auto mb-3" style={{ color: '#1E2D4D' }} />
+            <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Get Early Access</h2>
+            <p className="text-sm text-[#1E2D4D]/70 mb-4">Already using temperature sensors? Let us connect them to your compliance system.</p>
+            <a href="mailto:iot@evidly.com" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold text-white" style={{ backgroundColor: '#1E2D4D' }}>
               Request Access <ArrowRight className="h-4 w-4" />
             </a>
-            <p className="text-xs text-gray-400 mt-3">Free for early partners. No hardware purchase required.</p>
+            <p className="text-xs text-[#1E2D4D]/30 mt-3">Free for early partners. No hardware purchase required.</p>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="text-center text-sm text-gray-400">
-          <a href="/" className="hover:text-gray-600 transition-colors">
-            Powered by <span className="font-semibold text-gray-500">Evid</span><span className="font-semibold" style={{ color: '#d4af37' }}>LY</span>
+        <div className="text-center text-sm text-[#1E2D4D]/30">
+          <a href="/" className="hover:text-[#1E2D4D]/70 transition-colors">
+            Powered by <span className="font-semibold text-[#1E2D4D]/50">Evid</span><span className="font-semibold" style={{ color: '#A08C5A' }}>LY</span>
           </a>
         </div>
       </div>

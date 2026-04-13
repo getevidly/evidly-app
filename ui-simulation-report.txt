@@ -1,0 +1,496 @@
+UI SIMULATION REPORT — EvidLY App
+Generated: 2026-04-13T00:12:47.254Z
+
+================================================================
+EXECUTIVE SUMMARY
+================================================================
+
+Total Routes Crawled:    189
+Total Screenshots:       378
+  Public pages:          28 routes (56 screenshots)
+  Authenticated pages:   110 routes (220 screenshots)
+  Admin pages:           51 routes (102 screenshots)
+
+Viewports:  Desktop (1440x900)  |  Mobile (390x844)
+
+STATUS:
+  OK:      378 (100%)
+  Warning: 0
+  Error:   0
+  Timeout: 0
+
+================================================================
+ISSUES FOUND
+================================================================
+
+CONSOLE ERRORS (91 pages):
+  - /admin
+  - /admin/api-keys
+  - /admin/audit-log
+  - /admin/backup
+  - /admin/billing
+  - /admin/campaigns
+  - /admin/command-center
+  - /admin/configure
+  - /admin/crawl-monitor
+  - /admin/demo-generator
+  - /admin/demo-launcher
+  - /admin/demo-pipeline
+  - /admin/demo-tours
+  - /admin/demo/dashboard
+  - /admin/email-sequences
+  - /admin/emulate
+  - /admin/event-log
+  - /admin/feature-flags
+  - /admin/gtm
+  - /admin/guided-tours
+  - /admin/intelligence
+  - /admin/intelligence-admin
+  - /admin/jurisdiction-intelligence
+  - /admin/k2c
+  - /admin/kitchen-checkup
+  - /admin/leads
+  - /admin/maintenance
+  - /admin/messages
+  - /admin/onboarding
+  - /admin/orgs
+  - /admin/partner-demos
+  - /admin/regulatory-changes
+  - /admin/remote-connect
+  - /admin/reports
+  - /admin/rfp-monitor
+  - /admin/sales
+  - /admin/scoretable
+  - /admin/security
+  - /admin/security-settings
+  - /admin/staff
+  - /admin/support
+  - /admin/system/edge-functions
+  - /admin/testimonials
+  - /admin/trial-health
+  - /admin/usage-analytics
+  - /admin/users
+  - /admin/vault
+  - /admin/vendor-connect
+  - /admin/verification
+  - /admin/violation-outreach
+  - /audit-trail
+  - /copilot
+  - /corrective-actions
+  - /deficiencies
+  - /developers
+  - /employees
+  - /insights/inspection-forecast
+  - /insights/intelligence
+  - /insights/leaderboard
+  - /insights/operations-intelligence
+  - /insights/predictions
+  - /insights/reports
+  - /insights/signals
+  - /insights/trajectory
+  - /insights/vendor-performance
+  - /insights/violation-radar
+  - /inspector-mode
+  - /inspector-view
+  - /integrations
+  - /intelligence
+  - /iot-monitoring
+  - /iot/platform
+  - /iot/setup
+  - /migrate
+  - /mock-inspection
+  - /photo-evidence
+  - /playbooks
+  - /self-audit
+  - /self-diagnosis
+  - /sensors
+  - /services
+  - /settings/clock-reminders
+  - /settings/integrations
+  - /settings/sensors
+  - /shift-handoff
+  - /tasks
+  - /timecards
+  - /timecards/alterations
+  - /training
+  - /upgrade
+  - /voice-help
+
+TINY TEXT <11px (62):
+  - /admin (desktop, 27)
+  - /admin (mobile, 27)
+  - /admin/api-keys (desktop, 29)
+  - /admin/api-keys (mobile, 29)
+  - /admin/demo-generator (desktop, 29)
+  - /admin/demo-generator (mobile, 29)
+  - /admin/demo-pipeline (desktop, 29)
+  - /admin/demo-pipeline (mobile, 29)
+  - /admin/demo-tours (desktop, 29)
+  - /admin/demo-tours (mobile, 29)
+  - /admin/onboarding (desktop, 27)
+  - /admin/onboarding (mobile, 27)
+  - /admin/partner-demos (desktop, 29)
+  - /admin/partner-demos (mobile, 29)
+  - /admin/role-preview (desktop, 51)
+  - /admin/role-preview (mobile, 51)
+  - /admin/vendor-connect (desktop, 29)
+  - /admin/vendor-connect (mobile, 29)
+  - /corrective-actions (desktop, 28)
+  - /corrective-actions (mobile, 28)
+  - /deficiencies (desktop, 20)
+  - /deficiencies (mobile, 20)
+  - /insights/inspection-forecast (desktop, 38)
+  - /insights/inspection-forecast (mobile, 38)
+  - /insights/intelligence (desktop, 62)
+  - /insights/intelligence (mobile, 62)
+  - /insights/leaderboard (desktop, 38)
+  - /insights/leaderboard (mobile, 38)
+  - /insights/operations-intelligence (desktop, 38)
+  - /insights/operations-intelligence (mobile, 38)
+  - /insights/predictions (desktop, 39)
+  - /insights/predictions (mobile, 39)
+  - /insights/reports (desktop, 38)
+  - /insights/reports (mobile, 38)
+  - /insights/signals (desktop, 38)
+  - /insights/signals (mobile, 38)
+  - /insights/trajectory (desktop, 38)
+  - /insights/trajectory (mobile, 38)
+  - /insights/vendor-performance (desktop, 38)
+  - /insights/vendor-performance (mobile, 38)
+  - /insights/violation-radar (desktop, 38)
+  - /insights/violation-radar (mobile, 38)
+  - /iot-monitoring (desktop, 28)
+  - /iot-monitoring (mobile, 28)
+  - /iot/platform (desktop, 19)
+  - /iot/platform (mobile, 19)
+  - /iot/setup (desktop, 27)
+  - /iot/setup (mobile, 27)
+  - /migrate (desktop, 19)
+  - /migrate (mobile, 19)
+  - /settings/clock-reminders (desktop, 29)
+  - /settings/clock-reminders (mobile, 29)
+  - /settings/sensors (desktop, 17)
+  - /settings/sensors (mobile, 17)
+  - /tasks (desktop, 28)
+  - /tasks (mobile, 28)
+  - /timecards/alterations (desktop, 29)
+  - /timecards/alterations (mobile, 29)
+  - /upgrade (desktop, 27)
+  - /upgrade (mobile, 27)
+  - /voice-help (desktop, 27)
+  - /voice-help (mobile, 27)
+
+SMALL TOUCH TARGETS <44px (92):
+  - /admin (13)
+  - /admin/api-keys (33)
+  - /admin/audit-log (7)
+  - /admin/backup (7)
+  - /admin/billing (7)
+  - /admin/campaigns (7)
+  - /admin/command-center (7)
+  - /admin/configure (7)
+  - /admin/crawl-monitor (7)
+  - /admin/demo-generator (33)
+  - /admin/demo-launcher (7)
+  - /admin/demo-pipeline (33)
+  - /admin/demo-tours (33)
+  - /admin/demo/dashboard (7)
+  - /admin/email-sequences (7)
+  - /admin/emulate (7)
+  - /admin/event-log (7)
+  - /admin/feature-flags (7)
+  - /admin/gtm (7)
+  - /admin/guided-tours (7)
+  - /admin/intelligence (7)
+  - /admin/intelligence-admin (7)
+  - /admin/jurisdiction-intelligence (7)
+  - /admin/k2c (7)
+  - /admin/kitchen-checkup (7)
+  - /admin/leads (7)
+  - /admin/maintenance (7)
+  - /admin/messages (7)
+  - /admin/onboarding (14)
+  - /admin/orgs (7)
+  - /admin/partner-demos (33)
+  - /admin/regulatory-changes (7)
+  - /admin/remote-connect (7)
+  - /admin/reports (7)
+  - /admin/rfp-monitor (7)
+  - /admin/role-preview (56)
+  - /admin/sales (7)
+  - /admin/scoretable (7)
+  - /admin/security (7)
+  - /admin/security-settings (7)
+  - /admin/staff (7)
+  - /admin/support (7)
+  - /admin/system/edge-functions (7)
+  - /admin/testimonials (7)
+  - /admin/trial-health (7)
+  - /admin/usage-analytics (7)
+  - /admin/users (7)
+  - /admin/vault (7)
+  - /admin/vendor-connect (33)
+  - /admin/verification (7)
+  - /admin/violation-outreach (7)
+  - /audit-trail (7)
+  - /copilot (7)
+  - /corrective-actions (16)
+  - /deficiencies (14)
+  - /developers (7)
+  - /employees (7)
+  - /insights/inspection-forecast (14)
+  - /insights/intelligence (18)
+  - /insights/leaderboard (14)
+  - /insights/operations-intelligence (20)
+  - /insights/predictions (14)
+  - /insights/reports (17)
+  - /insights/signals (14)
+  - /insights/trajectory (14)
+  - /insights/vendor-performance (14)
+  - /insights/violation-radar (14)
+  - /inspector-mode (7)
+  - /inspector-view (7)
+  - /integrations (7)
+  - /intelligence (7)
+  - /iot-monitoring (21)
+  - /iot/platform (14)
+  - /iot/setup (16)
+  - /migrate (14)
+  - /mock-inspection (7)
+  - /photo-evidence (7)
+  - /playbooks (7)
+  - /self-audit (7)
+  - /self-diagnosis (7)
+  - /sensors (7)
+  - /services (7)
+  - /settings/clock-reminders (16)
+  - /settings/integrations (7)
+  - /settings/sensors (15)
+  - /shift-handoff (7)
+  - /tasks (20)
+  - /timecards (7)
+  - /timecards/alterations (13)
+  - /training (7)
+  - /upgrade (13)
+  - /voice-help (13)
+
+================================================================
+PAGE-BY-PAGE RESULTS
+================================================================
+
+--- PUBLIC (28 routes) ---
+
+[OK     ] /admin-login
+[OK     ] /assessment
+[OK     ] /blog
+[OK     ] /compliance/california
+[OK     ] /demo
+[OK     ] /demo/request
+[OK     ] /enterprise
+[OK     ] /forgot-password
+[OK     ] /iot
+[OK     ] /kitchen-to-community
+[OK     ] /leaderboard-preview
+[OK     ] /login
+[OK     ] /los-angeles-county
+[OK     ] /operations-check
+[OK     ] /partners/insurance
+[OK     ] /passport/demo
+[OK     ] /privacy
+[OK     ] /providers
+[OK     ] /scoretable
+[OK     ] /scoretable/california
+[OK     ] /scoretable/california/los-angeles-county
+[OK     ] /scoretable/city/los-angeles
+[OK     ] /signup
+[OK     ] /suspended
+[OK     ] /terms
+[OK     ] /vendor-connect/apply
+[OK     ] /vendor/login
+[OK     ] /vendor/register
+
+--- AUTHENTICATED (110 routes) ---
+
+[OK     ] /ai-advisor
+[OK     ] /alerts
+[OK     ] /analysis
+[OK     ] /audit-report
+[OK     ] /audit-trail [SMALL-TOUCH]
+[OK     ] /availability
+[OK     ] /availability/approvals
+[OK     ] /availability/team
+[OK     ] /benchmarks
+[OK     ] /bonuses
+[OK     ] /calendar
+[OK     ] /checklists
+[OK     ] /cic-pse
+[OK     ] /compliance
+[OK     ] /compliance-index
+[OK     ] /compliance-overview
+[OK     ] /compliance-trends
+[OK     ] /copilot [SMALL-TOUCH]
+[OK     ] /corrective-actions [TINY-TEXT, SMALL-TOUCH]
+[OK     ] /dashboard
+[OK     ] /deficiencies [TINY-TEXT, SMALL-TOUCH]
+[OK     ] /developers [SMALL-TOUCH]
+[OK     ] /document-checklist
+[OK     ] /documents
+[OK     ] /emergency
+[OK     ] /employees [SMALL-TOUCH]
+[OK     ] /equipment
+[OK     ] /equipment/incidents
+[OK     ] /facility-safety
+[OK     ] /fleet
+[OK     ] /food-recovery
+[OK     ] /food-safety
+[OK     ] /haccp
+[OK     ] /health-dept-report
+[OK     ] /help
+[OK     ] /import
+[OK     ] /improve-score
+[OK     ] /incidents
+[OK     ] /insights
+[OK     ] /insights/inspection-forecast [TINY-TEXT, SMALL-TOUCH]
+[OK     ] /insights/intelligence [TINY-TEXT, SMALL-TOUCH]
+[OK     ] /insights/leaderboard [TINY-TEXT, SMALL-TOUCH]
+[OK     ] /insights/operations-intelligence [TINY-TEXT, SMALL-TOUCH]
+[OK     ] /insights/predictions [TINY-TEXT, SMALL-TOUCH]
+[OK     ] /insights/reports [TINY-TEXT, SMALL-TOUCH]
+[OK     ] /insights/signals [TINY-TEXT, SMALL-TOUCH]
+[OK     ] /insights/trajectory [TINY-TEXT, SMALL-TOUCH]
+[OK     ] /insights/vendor-performance [TINY-TEXT, SMALL-TOUCH]
+[OK     ] /insights/violation-radar [TINY-TEXT, SMALL-TOUCH]
+[OK     ] /inspector-mode [SMALL-TOUCH]
+[OK     ] /inspector-view [SMALL-TOUCH]
+[OK     ] /insurance
+[OK     ] /insurance-risk
+[OK     ] /insurance-settings
+[OK     ] /integrations [SMALL-TOUCH]
+[OK     ] /intelligence [SMALL-TOUCH]
+[OK     ] /inventory
+[OK     ] /inventory/requests
+[OK     ] /iot-monitoring [TINY-TEXT, SMALL-TOUCH]
+[OK     ] /iot/platform [TINY-TEXT, SMALL-TOUCH]
+[OK     ] /iot/setup [TINY-TEXT, SMALL-TOUCH]
+[OK     ] /jurisdiction
+[OK     ] /k12
+[OK     ] /leaderboard
+[OK     ] /marketplace
+[OK     ] /migrate [TINY-TEXT, SMALL-TOUCH]
+[OK     ] /mock-inspection [SMALL-TOUCH]
+[OK     ] /org-hierarchy
+[OK     ] /performance
+[OK     ] /performance/me
+[OK     ] /photo-evidence [SMALL-TOUCH]
+[OK     ] /playbooks [SMALL-TOUCH]
+[OK     ] /progress
+[OK     ] /quality/callbacks
+[OK     ] /referrals
+[OK     ] /regulatory-alerts
+[OK     ] /reports
+[OK     ] /safety/incidents
+[OK     ] /sb1383
+[OK     ] /schedule
+[OK     ] /scoring-breakdown
+[OK     ] /self-audit [SMALL-TOUCH]
+[OK     ] /self-diagnosis [SMALL-TOUCH]
+[OK     ] /sensors [SMALL-TOUCH]
+[OK     ] /services [SMALL-TOUCH]
+[OK     ] /settings/billing
+[OK     ] /settings/branding
+[OK     ] /settings/clock-reminders [TINY-TEXT, SMALL-TOUCH]
+[OK     ] /settings/company
+[OK     ] /settings/integrations [SMALL-TOUCH]
+[OK     ] /settings/notifications
+[OK     ] /settings/roles-permissions
+[OK     ] /settings/sensors [TINY-TEXT, SMALL-TOUCH]
+[OK     ] /settings/service-types
+[OK     ] /settings/team-roles
+[OK     ] /shift-handoff [SMALL-TOUCH]
+[OK     ] /tasks [TINY-TEXT, SMALL-TOUCH]
+[OK     ] /team
+[OK     ] /temp-logs
+[OK     ] /timecards [SMALL-TOUCH]
+[OK     ] /timecards/alterations [TINY-TEXT, SMALL-TOUCH]
+[OK     ] /tools
+[OK     ] /training [SMALL-TOUCH]
+[OK     ] /upgrade [TINY-TEXT, SMALL-TOUCH]
+[OK     ] /usda/production-records
+[OK     ] /vendor-connect
+[OK     ] /vendors
+[OK     ] /voice-help [TINY-TEXT, SMALL-TOUCH]
+[OK     ] /weekly-digest
+[OK     ] /workforce-risk
+
+--- ADMIN (51 routes) ---
+
+[OK     ] /admin [TINY-TEXT, SMALL-TOUCH]
+[OK     ] /admin/api-keys [TINY-TEXT, SMALL-TOUCH]
+[OK     ] /admin/audit-log [SMALL-TOUCH]
+[OK     ] /admin/backup [SMALL-TOUCH]
+[OK     ] /admin/billing [SMALL-TOUCH]
+[OK     ] /admin/campaigns [SMALL-TOUCH]
+[OK     ] /admin/command-center [SMALL-TOUCH]
+[OK     ] /admin/configure [SMALL-TOUCH]
+[OK     ] /admin/crawl-monitor [SMALL-TOUCH]
+[OK     ] /admin/demo-generator [TINY-TEXT, SMALL-TOUCH]
+[OK     ] /admin/demo-launcher [SMALL-TOUCH]
+[OK     ] /admin/demo-pipeline [TINY-TEXT, SMALL-TOUCH]
+[OK     ] /admin/demo-tours [TINY-TEXT, SMALL-TOUCH]
+[OK     ] /admin/demo/dashboard [SMALL-TOUCH]
+[OK     ] /admin/email-sequences [SMALL-TOUCH]
+[OK     ] /admin/emulate [SMALL-TOUCH]
+[OK     ] /admin/event-log [SMALL-TOUCH]
+[OK     ] /admin/feature-flags [SMALL-TOUCH]
+[OK     ] /admin/gtm [SMALL-TOUCH]
+[OK     ] /admin/guided-tours [SMALL-TOUCH]
+[OK     ] /admin/intelligence [SMALL-TOUCH]
+[OK     ] /admin/intelligence-admin [SMALL-TOUCH]
+[OK     ] /admin/jurisdiction-intelligence [SMALL-TOUCH]
+[OK     ] /admin/k2c [SMALL-TOUCH]
+[OK     ] /admin/kitchen-checkup [SMALL-TOUCH]
+[OK     ] /admin/leads [SMALL-TOUCH]
+[OK     ] /admin/maintenance [SMALL-TOUCH]
+[OK     ] /admin/messages [SMALL-TOUCH]
+[OK     ] /admin/onboarding [TINY-TEXT, SMALL-TOUCH]
+[OK     ] /admin/orgs [SMALL-TOUCH]
+[OK     ] /admin/partner-demos [TINY-TEXT, SMALL-TOUCH]
+[OK     ] /admin/regulatory-changes [SMALL-TOUCH]
+[OK     ] /admin/remote-connect [SMALL-TOUCH]
+[OK     ] /admin/reports [SMALL-TOUCH]
+[OK     ] /admin/rfp-monitor [SMALL-TOUCH]
+[OK     ] /admin/role-preview [TINY-TEXT, SMALL-TOUCH]
+[OK     ] /admin/sales [SMALL-TOUCH]
+[OK     ] /admin/scoretable [SMALL-TOUCH]
+[OK     ] /admin/security [SMALL-TOUCH]
+[OK     ] /admin/security-settings [SMALL-TOUCH]
+[OK     ] /admin/staff [SMALL-TOUCH]
+[OK     ] /admin/support [SMALL-TOUCH]
+[OK     ] /admin/system/edge-functions [SMALL-TOUCH]
+[OK     ] /admin/testimonials [SMALL-TOUCH]
+[OK     ] /admin/trial-health [SMALL-TOUCH]
+[OK     ] /admin/usage-analytics [SMALL-TOUCH]
+[OK     ] /admin/users [SMALL-TOUCH]
+[OK     ] /admin/vault [SMALL-TOUCH]
+[OK     ] /admin/vendor-connect [TINY-TEXT, SMALL-TOUCH]
+[OK     ] /admin/verification [SMALL-TOUCH]
+[OK     ] /admin/violation-outreach [SMALL-TOUCH]
+
+================================================================
+SCREENSHOT DIRECTORY STRUCTURE
+================================================================
+
+screenshots/
+  public/
+    desktop/   (28 files)
+    mobile/    (28 files)
+  authenticated/
+    desktop/   (110 files)
+    mobile/    (110 files)
+  admin/
+    desktop/   (51 files)
+    mobile/    (51 files)
+
+================================================================
+END OF REPORT
+================================================================

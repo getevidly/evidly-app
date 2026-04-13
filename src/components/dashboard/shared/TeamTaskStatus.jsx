@@ -89,7 +89,7 @@ export function TeamTaskStatus() {
             ].map((s) => (
               <div key={s.label} className="text-center">
                 <div className="text-lg font-bold" style={{ color: s.color }}>{s.count}</div>
-                <div className="text-[10px]" style={{ color: TEXT_TERTIARY }}>{s.label}</div>
+                <div className="text-xs" style={{ color: TEXT_TERTIARY }}>{s.label}</div>
               </div>
             ))}
           </div>

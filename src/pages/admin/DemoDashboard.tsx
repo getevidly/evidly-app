@@ -284,10 +284,10 @@ export default function DemoDashboard() {
         <SectionTitle title="30-Day Trend" />
         <Card title={`DEMO_TREND_DATA (${DEMO_TREND_DATA.length} points)`}>
           <div style={{ display: 'flex', gap: 24, marginBottom: 12 }}>
-            <div style={{ fontSize: 12 }}>
+            <div className="text-xs">
               <span style={{ color: '#16a34a', fontWeight: 600 }}>Food Safety</span>: {DEMO_TREND_DATA[0].foodSafety} → {DEMO_TREND_DATA[DEMO_TREND_DATA.length - 1].foodSafety}
             </div>
-            <div style={{ fontSize: 12 }}>
+            <div className="text-xs">
               <span style={{ color: '#2563eb', fontWeight: 600 }}>Facility Safety</span>: {DEMO_TREND_DATA[0].facilitySafety} → {DEMO_TREND_DATA[DEMO_TREND_DATA.length - 1].facilitySafety}
             </div>
           </div>

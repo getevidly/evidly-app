@@ -23,23 +23,23 @@ export function SidebarUpgradeBadge() {
   };
 
   return (
-    <div className="mx-3 mb-3 p-3 rounded-lg border border-[#d4af37]/40 bg-[#d4af37]/10">
+    <div className="mx-3 mb-3 p-3 rounded-xl border border-[#A08C5A]/40 bg-[#A08C5A]/10">
       <div className="flex items-center gap-2 mb-1.5">
-        <Sparkles className="h-4 w-4 text-[#d4af37]" />
+        <Sparkles className="h-4 w-4 text-[#A08C5A]" />
         <span className="text-sm font-bold text-white">Ready to start?</span>
       </div>
-      <p className="text-xs text-gray-300 mb-2.5">
+      <p className="text-xs text-[#1E2D4D]/30 mb-2.5">
         Founder Pricing<br />
-        <span className="text-[#d4af37] font-bold text-sm">$99/month</span>
+        <span className="text-[#1E2D4D] font-bold text-sm">$99/month</span>
       </p>
       <button
         onClick={handleClick}
         className="w-full py-2 px-3 rounded-md text-xs font-bold transition-colors hover:brightness-110"
-        style={{ backgroundColor: '#d4af37', color: '#1e4d6b' }}
+        style={{ backgroundColor: '#A08C5A', color: '#1E2D4D' }}
       >
         Start Free Trial
       </button>
-      <p className="text-[10px] text-gray-400 text-center mt-1.5">Limited time offer</p>
+      <p className="text-xs text-[#1E2D4D]/30 text-center mt-1.5">Limited time offer</p>
     </div>
   );
 }

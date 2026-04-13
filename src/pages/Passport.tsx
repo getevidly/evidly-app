@@ -8,6 +8,7 @@ import { locations, locationScores, LOCATION_JURISDICTION_STATUS } from '../data
 import { FACILITY_INFO } from '../lib/reportGenerator';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 // Static jurisdiction metadata keyed by county
 const JURISDICTION_META: Record<string, {
@@ -41,6 +42,7 @@ export default function Passport() {
   const navigate = useNavigate();
   const { isDemoMode } = useDemo();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  usePageTitle('EvidLY Passport');
   const passportRef = useRef<HTMLDivElement>(null);
   const [pdfLoading, setPdfLoading] = useState(false);
 
@@ -48,19 +50,19 @@ export default function Passport() {
   if (!isDemoMode) {
     return (
       <div className="min-h-screen bg-white">
-        <header className="bg-[#1e4d6b] text-white py-6 px-6">
+        <header className="bg-[#1E2D4D] text-white py-6 px-6">
           <div className="max-w-4xl mx-auto flex items-center gap-3">
             <EvidlyIcon size={40} />
             <div>
-              <h1 className="font-['Outfit'] text-2xl font-bold">Compliance Passport</h1>
-              <p className="text-sm text-gray-300">Live Compliance Status</p>
+              <h1 className="font-['Outfit'] text-2xl font-bold tracking-tight">Compliance Passport</h1>
+              <p className="text-sm text-[#1E2D4D]/30">Live Compliance Status</p>
             </div>
           </div>
         </header>
         <div className="max-w-4xl mx-auto px-6 py-16 text-center">
-          <ShieldCheck className="h-12 w-12 mx-auto text-gray-300 mb-3" />
-          <p className="text-gray-500 font-medium">Your compliance passport is not yet available.</p>
-          <p className="text-gray-400 text-sm mt-1">Complete your location setup to generate a compliance passport.</p>
+          <ShieldCheck className="h-12 w-12 mx-auto text-[#1E2D4D]/30 mb-3" />
+          <p className="text-[#1E2D4D]/50 font-medium">Your compliance passport is not yet available.</p>
+          <p className="text-[#1E2D4D]/30 text-sm mt-1">Complete your location setup to generate a compliance passport.</p>
         </div>
       </div>
     );
@@ -197,13 +199,13 @@ export default function Passport() {
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="bg-[#1e4d6b] text-white py-6 px-6">
+      <header className="bg-[#1E2D4D] text-white py-6 px-6">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <EvidlyIcon size={40} />
             <div>
-              <h1 className="font-['Outfit'] text-2xl font-bold">EvidLY Compliance Passport</h1>
-              <p className="text-sm text-gray-300">Live Compliance Status</p>
+              <h1 className="font-['Outfit'] text-2xl font-bold tracking-tight">EvidLY Compliance Passport</h1>
+              <p className="text-sm text-[#1E2D4D]/30">Live Compliance Status</p>
             </div>
           </div>
           <button
@@ -219,9 +221,9 @@ export default function Passport() {
       </header>
 
       <div style={{ padding: '12px 24px', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid #e2e8f0', backgroundColor: '#ffffff' }}>
-        <span onClick={() => navigate('/dashboard')} style={{ cursor: 'pointer', color: '#1e4d6b' }}>Dashboard</span>
+        <span onClick={() => navigate('/dashboard')} style={{ cursor: 'pointer', color: '#1E2D4D' }}>Dashboard</span>
         <span style={{ color: '#6B7F96' }}>&rsaquo;</span>
-        <span onClick={() => navigate('/dashboard?tab=passport')} style={{ cursor: 'pointer', color: '#1e4d6b' }}>QR Passport</span>
+        <span onClick={() => navigate('/dashboard?tab=passport')} style={{ cursor: 'pointer', color: '#1E2D4D' }}>QR Passport</span>
         <span style={{ color: '#6B7F96' }}>&rsaquo;</span>
         <span style={{ color: '#6B7F96' }}>{locationData.name}</span>
       </div>
@@ -230,11 +232,11 @@ export default function Passport() {
       <div ref={passportRef}>
         <main className="max-w-4xl mx-auto px-6 py-12">
           <div className="mb-12">
-            <h2 className="font-['Outfit'] text-3xl font-bold text-[#1e4d6b] mb-2">
+            <h2 className="font-['Outfit'] text-3xl font-bold tracking-tight text-[#1E2D4D] mb-2">
               {locationData.name}
             </h2>
-            <p className="text-gray-600 text-lg mb-1">{locationData.address}</p>
-            <p className="text-sm text-gray-500">Last updated: {today}</p>
+            <p className="text-[#1E2D4D]/70 text-lg mb-1">{locationData.address}</p>
+            <p className="text-sm text-[#1E2D4D]/50">Last updated: {today}</p>
           </div>
 
           {/* Pillar Score Rings */}
@@ -258,7 +260,7 @@ export default function Passport() {
                     <div className="text-4xl font-bold" style={{ color: getScoreColor(locationData.foodSafety) }}>{locationData.foodSafety}</div>
                   </div>
                 </div>
-                <div className="text-sm font-medium text-gray-600 mt-2">Food Safety</div>
+                <div className="text-sm font-medium text-[#1E2D4D]/70 mt-2">Food Safety</div>
               </div>
               {/* Facility Safety Ring */}
               <div className="flex flex-col items-center">
@@ -278,33 +280,33 @@ export default function Passport() {
                     <div className="text-4xl font-bold" style={{ color: getScoreColor(locationData.facilitySafety) }}>{locationData.facilitySafety}</div>
                   </div>
                 </div>
-                <div className="text-sm font-medium text-gray-600 mt-2">Facility Safety</div>
+                <div className="text-sm font-medium text-[#1E2D4D]/70 mt-2">Facility Safety</div>
               </div>
             </div>
           </div>
 
           {/* Compliance Breakdown */}
           <div className="mb-12">
-            <h3 className="font-['Outfit'] text-2xl font-bold text-[#1e4d6b] mb-6">
+            <h3 className="font-['Outfit'] text-2xl font-bold tracking-tight text-[#1E2D4D] mb-6">
               Compliance Breakdown
             </h3>
             <div className="space-y-6">
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <span className="font-semibold text-gray-700">Food Safety</span>
+                  <span className="font-semibold text-[#1E2D4D]/80">Food Safety</span>
                   <span className="font-bold" style={{ color: getScoreColor(locationData.foodSafety) }}>{locationData.foodSafety}</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-3">
+                <div className="w-full bg-[#1E2D4D]/8 rounded-full h-3">
                   <div className="h-3 rounded-full transition-all" style={{ width: `${locationData.foodSafety}%`, backgroundColor: getScoreColor(locationData.foodSafety) }} />
                 </div>
               </div>
 
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <span className="font-semibold text-gray-700">Facility Safety</span>
+                  <span className="font-semibold text-[#1E2D4D]/80">Facility Safety</span>
                   <span className="font-bold" style={{ color: getScoreColor(locationData.facilitySafety) }}>{locationData.facilitySafety}</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-3">
+                <div className="w-full bg-[#1E2D4D]/8 rounded-full h-3">
                   <div className="h-3 rounded-full transition-all" style={{ width: `${locationData.facilitySafety}%`, backgroundColor: getScoreColor(locationData.facilitySafety) }} />
                 </div>
               </div>
@@ -313,26 +315,26 @@ export default function Passport() {
 
           {/* Jurisdiction & Inspection Methodology */}
           <div className="mb-12">
-            <h3 className="font-['Outfit'] text-2xl font-bold text-[#1e4d6b] mb-6">
+            <h3 className="font-['Outfit'] text-2xl font-bold tracking-tight text-[#1E2D4D] mb-6">
               Jurisdiction & Inspection Methodology
             </h3>
-            <div className="bg-gray-50 rounded-xl border border-gray-200 overflow-hidden">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-gray-200">
+            <div className="bg-[#FAF7F0] rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-[#1E2D4D]/8">
                 <div className="bg-white p-4">
-                  <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Jurisdiction</div>
-                  <div className="text-sm font-semibold text-gray-900">{jurisdictionMeta.name}</div>
+                  <div className="text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider mb-1">Jurisdiction</div>
+                  <div className="text-sm font-semibold text-[#1E2D4D]">{jurisdictionMeta.name}</div>
                 </div>
                 <div className="bg-white p-4">
-                  <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Authority</div>
-                  <div className="text-sm font-semibold text-gray-900">{jurisdictionMeta.authority}</div>
+                  <div className="text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider mb-1">Authority</div>
+                  <div className="text-sm font-semibold text-[#1E2D4D]">{jurisdictionMeta.authority}</div>
                 </div>
                 <div className="bg-white p-4">
-                  <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Grading Methodology</div>
-                  <div className="text-sm font-semibold text-gray-900">{jurisdictionMeta.gradingMethodology}</div>
+                  <div className="text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider mb-1">Grading Methodology</div>
+                  <div className="text-sm font-semibold text-[#1E2D4D]">{jurisdictionMeta.gradingMethodology}</div>
                 </div>
                 <div className="bg-white p-4">
-                  <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Inspection Frequency</div>
-                  <div className="text-sm font-semibold text-gray-900">{jurisdictionMeta.inspectionFrequency}</div>
+                  <div className="text-xs font-medium text-[#1E2D4D]/50 uppercase tracking-wider mb-1">Inspection Frequency</div>
+                  <div className="text-sm font-semibold text-[#1E2D4D]">{jurisdictionMeta.inspectionFrequency}</div>
                 </div>
               </div>
             </div>
@@ -340,14 +342,14 @@ export default function Passport() {
 
           {/* Recent Compliance Activity */}
           <div className="mb-12">
-            <h3 className="font-['Outfit'] text-2xl font-bold text-[#1e4d6b] mb-6">
+            <h3 className="font-['Outfit'] text-2xl font-bold tracking-tight text-[#1E2D4D] mb-6">
               Recent Compliance Activity
             </h3>
             <div className="space-y-4">
               {recentActivity.map((item, index) => (
                 <div
                   key={index}
-                  className={`flex items-start gap-4 p-4 rounded-lg ${
+                  className={`flex items-start gap-4 p-4 rounded-xl ${
                     item.status === 'success'
                       ? 'bg-green-50 border border-green-200'
                       : 'bg-yellow-50 border border-yellow-200'
@@ -359,7 +361,7 @@ export default function Passport() {
                     }`}
                     strokeWidth={2}
                   />
-                  <span className="text-gray-800 font-medium">{item.text}</span>
+                  <span className="text-[#1E2D4D]/90 font-medium">{item.text}</span>
                 </div>
               ))}
             </div>
@@ -367,27 +369,27 @@ export default function Passport() {
 
           {/* QR Code Section */}
           <div className="mb-12 flex flex-col items-center">
-            <h3 className="font-['Outfit'] text-2xl font-bold text-[#1e4d6b] mb-6 self-start">
+            <h3 className="font-['Outfit'] text-2xl font-bold tracking-tight text-[#1E2D4D] mb-6 self-start">
               QR Passport Code
             </h3>
-            <div className="p-6 bg-white rounded-xl border border-gray-200 shadow-sm">
+            <div className="p-6 bg-white rounded-xl border border-[#1E2D4D]/10">
               <QRCodeSVG value={passportUrl} size={160} level="M" fgColor="#1E2D4D" />
             </div>
-            <p className="text-xs text-gray-500 mt-3">Scan to view this passport anytime</p>
+            <p className="text-xs text-[#1E2D4D]/50 mt-3">Scan to view this passport anytime</p>
           </div>
         </main>
       </div>
 
-      <footer className="bg-gray-50 border-t border-gray-200 py-8 px-6 mt-16">
+      <footer className="bg-[#FAF7F0] border-t border-[#1E2D4D]/10 py-8 px-6 mt-16">
         <div className="max-w-4xl mx-auto text-center">
-          <p className="text-gray-600 font-medium mb-2">
+          <p className="text-[#1E2D4D]/70 font-medium mb-2">
             Powered by EvidLY — Lead with Confidence
           </p>
           <a
             href="https://getevidly.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[#1e4d6b] hover:text-[#1e4d6b] font-semibold transition-colors"
+            className="text-[#1E2D4D] hover:text-[#1E2D4D] font-semibold transition-colors"
           >
             Learn more at getevidly.com
           </a>

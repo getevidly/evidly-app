@@ -26,7 +26,7 @@ export function SidebarTooltip({ content }: SidebarTooltipProps) {
       >
         <Info
           size={12}
-          className="text-gray-500 hover:text-gray-300 transition-colors"
+          className="text-[#1E2D4D]/50 hover:text-[#1E2D4D]/30 transition-colors"
         />
       </span>
       {visible && (

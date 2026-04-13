@@ -1,0 +1,362 @@
+-- ═══════════════════════════════════════════════════════════════
+-- PRODUCTION MIGRATION SQL — DO NOT EXECUTE DIRECTLY
+-- Generated: 2026-04-12 by DAY18-AUTO-TEST
+-- Source: 281 migration files from testing DB (uroawofnyjzcqbmgdiqq)
+-- Target: production DB (irxgmhxhmxtzfwuieblc)
+-- 
+-- INSTRUCTIONS:
+-- 1. Review each migration against production schema
+-- 2. Run migrations that have NOT been applied to production
+-- 3. Compare table counts after applying
+-- 4. Verify RLS policies are active
+-- ═══════════════════════════════════════════════════════════════
+
+-- Migration files in order:
+-- 20260204000000_reset_existing_schema.sql
+-- 20260204000001_reset_drop_tables_1.sql
+-- 20260204000002_reset_drop_tables_2.sql
+-- 20260204000003_reset_drop_tables_3.sql
+-- 20260204000004_reset_drop_tables_4.sql
+-- 20260204000005_reset_drop_tables_5.sql
+-- 20260204000006_reset_drop_tables_6.sql
+-- 20260204500000_create_core_tables.sql
+-- 20260205003451_create_evid_ly_tables.sql
+-- 20260205175243_add_vendor_tables_and_location_count.sql
+-- 20260205183747_create_user_profiles_with_phone.sql
+-- 20260205193618_create_invitations_and_templates.sql
+-- 20260205194556_create_reminder_and_notification_tables.sql
+-- 20260205201922_add_temperature_and_checklist_enhancements.sql
+-- 20260205203751_add_sms_invite_support.sql
+-- 20260205215132_add_cooldown_certifications_receiving_enhancements.sql
+-- 20260205215738_create_report_subscriptions_table.sql
+-- 20260205230751_add_tour_completed_to_profiles.sql
+-- 20260206000001_auto_request_system.sql
+-- 20260210120000_jurisdiction_scoring_tables.sql
+-- 20260210140000_ai_copilot_tables.sql
+-- 20260210160000_benchmark_tables.sql
+-- 20260210180000_insurance_risk_tables.sql
+-- 20260210200000_iot_sensor_tables.sql
+-- 20260211000000_insurance_api_foundation.sql
+-- 20260211100000_vendor_marketplace_tables.sql
+-- 20260212000000_vendor_experience_tables.sql
+-- 20260213000000_enterprise_tenant_tables.sql
+-- 20260214000000_enterprise_expanded_tables.sql
+-- 20260215000000_sensor_platform_tables.sql
+-- 20260216000000_api_integration_tables.sql
+-- 20260217000000_training_lms_tables.sql
+-- 20260218000000_playbook_tables.sql
+-- 20260219000000_offline_sync_tables.sql
+-- 20260219100000_compliance_photos.sql
+-- 20260219300000_audit_trail_reports.sql
+-- 20260220000000_onboarding_document_progress.sql
+-- 20260221000000_document_classifications.sql
+-- 20260222000000_fire_safety_equipment_tables.sql
+-- 20260222100000_equipment_lifecycle.sql
+-- 20260223000000_incident_log_tables.sql
+-- 20260224000000_regulatory_change_tables.sql
+-- 20260225000000_jurisdiction_profiles.sql
+-- 20260226000000_benchmark_scoring_tables.sql
+-- 20260227000000_insurance_risk_api_tables.sql
+-- 20260228000000_referral_system_tables.sql
+-- 20260228100000_training_records_module.sql
+-- 20260301000000_calendar_events.sql
+-- 20260301000001_calendar_vendor_columns.sql
+-- 20260301000002_frequency_change_log.sql
+-- 20260301000003_k2c_referral_invite_flow.sql
+-- 20260301000010_invite_flow_enhancements.sql
+-- 20260301000020_jurisdiction_intelligence.sql
+-- 20260301100000_vendor_marketplace_enhancements.sql
+-- 20260302000000_calcode_violation_map_seed.sql
+-- 20260302000010_service_provider_setup.sql
+-- 20260303000000_jurisdiction_weight_columns.sql
+-- 20260303100000_remove_default_weights.sql
+-- 20260303200000_la_county_verified_config.sql
+-- 20260303300000_san_bernardino_county_config.sql
+-- 20260303300001_san_diego_county_verified_config.sql
+-- 20260303400000_orange_county_verified_config.sql
+-- 20260303400001_stanislaus_county_config.sql
+-- 20260303500000_fresno_county_verified_config.sql
+-- 20260303500001_santa_clara_county_config.sql
+-- 20260303600000_merced_county_verified_config.sql
+-- 20260303600001_monterey_county_config.sql
+-- 20260303600002_riverside_county_verified_config.sql
+-- 20260303700000_el_dorado_county_config.sql
+-- 20260303700001_kern_county_verified_config.sql
+-- 20260303700002_san_joaquin_county_verified_config.sql
+-- 20260303800000_colusa_county_config.sql
+-- 20260303800001_madera_county_verified_config.sql
+-- 20260303800002_san_benito_county_verified_config.sql
+-- 20260303800003_tulare_county_verified_config.sql
+-- 20260303900000_kings_county_verified_config.sql
+-- 20260303900001_placer_county_verified_config.sql
+-- 20260303950000_santa_cruz_county_verified_config.sql
+-- 20260303960000_santa_barbara_county_verified_config.sql
+-- 20260303970000_butte_county_verified_config.sql
+-- 20260303980000_san_francisco_verified_config.sql
+-- 20260303990000_sutter_county_verified_config.sql
+-- 20260303990001_nevada_county_config.sql
+-- 20260303990002_lake_county_config.sql
+-- 20260303999999_jurisdiction_county_config_columns.sql
+-- 20260304000000_amador_county_verified_config.sql
+-- 20260304000001_daily_checklists_module.sql
+-- 20260304000002_glenn_county_verified_config.sql
+-- 20260304000003_solano_county_verified_config.sql
+-- 20260304000004_tehama_county_verified_config.sql
+-- 20260304000005_yolo_county_verified_config.sql
+-- 20260304010000_mendocino_county_verified_config.sql
+-- 20260304010001_tuolumne_county_verified_config.sql
+-- 20260304020000_admin_console_complete.sql
+-- 20260304020001_gap06_training_cert_enhancements.sql
+-- 20260304020002_del_norte_county_config.sql
+-- 20260304020003_trinity_county_config.sql
+-- 20260304020004_siskiyou_county_config.sql
+-- 20260304020005_modoc_county_config.sql
+-- 20260304020006_lassen_county_config.sql
+-- 20260304020007_gap07_equipment_calibration.sql
+-- 20260304020010_security_events_and_scan.sql
+-- 20260304020011_humboldt_county_config.sql
+-- 20260304020012_gap09_incident_regulatory_ca_link.sql
+-- 20260304030000_emulation_audit_log.sql
+-- 20260304030001_alpine_county_config.sql
+-- 20260304030002_gap08_insurance_api_keys.sql
+-- 20260304030003_sierra_county_config.sql
+-- 20260304030004_mono_county_config.sql
+-- 20260304030005_inyo_county_config.sql
+-- 20260304030006_imperial_county_config.sql
+-- 20260304030007_long_beach_city_config.sql
+-- 20260304030008_pasadena_city_config.sql
+-- 20260304030010_gap11_rescore_alerts.sql
+-- 20260304030012_plumas_county_config.sql
+-- 20260304030013_gap08_insurance_api_request_log.sql
+-- 20260304040000_vendor_document_rls_vendor_scoping.sql
+-- 20260304040001_long_beach_city_config.sql
+-- 20260304040002_pasadena_city_config.sql
+-- 20260304040003_vernon_city_config.sql
+-- 20260304040004_berkeley_city_config.sql
+-- 20260304050000_csat_survey_columns.sql
+-- 20260304100000_calaveras_county_verified_config.sql
+-- 20260304100001_document_ai_analysis_columns.sql
+-- 20260304100002_shasta_county_verified_config.sql
+-- 20260304200000_admin_dashboard_tables.sql
+-- 20260305000000_seed_regulatory_changes.sql
+-- 20260305000001_training_cert_requirements.sql
+-- 20260305100000_contact_fields.sql
+-- 20260305100001_seed_regulatory_sources.sql
+-- 20260306000000_temperature_qr_and_input_method.sql
+-- 20260307000000_temperature_monitoring_unified.sql
+-- 20260308000000_vendor_service_reminders.sql
+-- 20260308100000_vendor_service_workflow.sql
+-- 20260309000000_performance_indexes.sql
+-- 20260310000000_notifications_table.sql
+-- 20260311000000_document_categorization_source.sql
+-- 20260312000000_create_demo_leads.sql
+-- 20260312000001_signal_notifications.sql
+-- 20260312200000_top10_verified_weights.sql
+-- 20260313000000_create_feature_overrides.sql
+-- 20260313000001_hoodops_service_types.sql
+-- 20260313000002_trial_email_admin.sql
+-- 20260313100000_add_jurisdiction_slugs.sql
+-- 20260313100001_inspection_tools.sql
+-- 20260314000000_intelligence_pipeline.sql
+-- 20260315000000_auto_profile_on_signup.sql
+-- 20260316000000_fix_org_insert_rls.sql
+-- 20260316100000_ambassador_badge.sql
+-- 20260316100001_user_milestones.sql
+-- 20260316200000_testimonials.sql
+-- 20260317000001_permissions_tables.sql
+-- 20260318000000_canonical_scoring_phase1.sql
+-- 20260319000000_risk_translation_phase2.sql
+-- 20260320000000_intelligence_normalization_phase3.sql
+-- 20260325000000_intelligence_public_reads.sql
+-- 20260326000000_rfp_intelligence.sql
+-- 20260327000000_jurisdiction_seo.sql
+-- 20260328000000_enterprise_hardening.sql
+-- 20260328000001_fk_chain_backfill.sql
+-- 20260328000002_stripe_billing_tables.sql
+-- 20260328000003_haccp_tables.sql
+-- 20260328000004_haccp_builder_columns.sql
+-- 20260328100000_daily_checklists_haccp_columns.sql
+-- 20260329000000_insurance_share_links.sql
+-- 20260330000000_command_center.sql
+-- 20260331000000_edge_function_monitor.sql
+-- 20260401000000_data_wipe.sql
+-- 20260401000010_rename_fire_safety_to_facility_safety.sql
+-- 20260402000000_fog_compliance_and_solid_fuel.sql
+-- 20260403000000_assessment_tool.sql
+-- 20260404000000_kitchen_checkup.sql
+-- 20260405000000_training_catalog.sql
+-- 20260406000000_kitchen_checkup_internal.sql
+-- 20260407000000_vendor_document_notifications.sql
+-- 20260408000000_corrective_actions_templates.sql
+-- 20260409000000_custom_demo_generator.sql
+-- 20260410000000_compliance_engine_v2.sql
+-- 20260410000001_corrective_actions_gap01.sql
+-- 20260410100000_demo_account_architecture.sql
+-- 20260410200000_k2c_billing_and_platform_metrics.sql
+-- 20260410300000_api_keys_integrations_hub.sql
+-- 20260410400000_guided_tours_sales_pipeline.sql
+-- 20260410400001_pos_employee_mappings_and_catalog.sql
+-- 20260411000000_insurance_scoring_profiles.sql
+-- 20260411195711_admin_billing_tables.sql
+-- 20260412000000_user_profiles_self_read_policy.sql
+-- 20260415000000_benchmark_normalization.sql
+-- 20260415000001_corrective_action_lifecycle.sql
+-- 20260415100000_checklist_jurisdiction_awareness.sql
+-- 20260416000000_ventura_county_verified_config.sql
+-- 20260417000000_multi_ahj_support.sql
+-- 20260417000001_slo_county_verified_config.sql
+-- 20260418000000_napa_county_verified_config.sql
+-- 20260419000000_yuba_county_verified_config.sql
+-- 20260505000001_predictive_alerts_table.sql
+-- 20260505100000_leaderboard_optin_and_view.sql
+-- 20260505200000_k12_sb1383_qualification.sql
+-- 20260505300000_sb1383_compliance_table.sql
+-- 20260505400000_k12_food_safety_module.sql
+-- 20260505500000_demo_sessions_table.sql
+-- 20260505500002_vendor_service_cost_frequency.sql
+-- 20260505600000_storage_buckets.sql
+-- 20260506000000_intelligence_system.sql
+-- 20260506100000_client_intelligence_reporting.sql
+-- 20260506100001_intelligence_delivery_engine.sql
+-- 20260506100002_intelligence_feed_read_at.sql
+-- 20260506100003_intelligence_signals_schema_align.sql
+-- 20260506100004_intelligence_delivery_v2.sql
+-- 20260506200000_canonical_engine_upgrade.sql
+-- 20260506200001_fix_admin_sales_pipeline_perm.sql
+-- 20260507000000_intelligence_auto_routing.sql
+-- 20260507100000_platform_verification_architecture.sql
+-- 20260507200000_intelligence_dismiss_columns.sql
+-- 20260507200001_reseed_intelligence_sources.sql
+-- 20260508000000_add_crawl_status_columns.sql
+-- 20260508000001_cic_pillar_and_pse.sql
+-- 20260509000000_workforce_risk_signals.sql
+-- 20260510000000_business_intelligence.sql
+-- 20260510100000_crawl_runs_rls.sql
+-- 20260511000000_campaign_channel_update.sql
+-- 20260512000000_vendor_service_records.sql
+-- 20260513000000_crawl_runs_firecrawl_type.sql
+-- 20260513900000_predictive_intelligence_layer.sql
+-- 20260514000000_fix_intelligence_sources_status_check.sql
+-- 20260515000000_service_record_qa_review.sql
+-- 20260516000000_deficiencies.sql
+-- 20260517000000_add_imported_input_method.sql
+-- 20260517000001_violation_outreach.sql
+-- 20260517100000_violation_crawl_cron.sql
+-- 20260518000000_feature_flags.sql
+-- 20260519000000_feature_flag_notifications.sql
+-- 20260520000000_admin_security_hardening.sql
+-- 20260521000000_signal_reads_table.sql
+-- 20260521000001_signal_delivery_trigger.sql
+-- 20260521000002_vehicles_insurance.sql
+-- 20260522000000_availability_submissions.sql
+-- 20260523000000_bonuses_inventory_incidents.sql
+-- 20260524000000_clock_reminders_meeting_location.sql
+-- 20260526000000_safeguard_type_column.sql
+-- 20260526000001_signal_delivery_status.sql
+-- 20260527000000_irr_submissions.sql
+-- 20260527000001_org_settings_columns.sql
+-- 20260527000002_classification_cost_tracking.sql
+-- 20260527000003_webhook_idempotency.sql
+-- 20260527000004_irr_progress_rls.sql
+-- 20260528100000_qa_notification_columns.sql
+-- 20260529000000_marketing_sales_system.sql
+-- 20260530000000_trial_email_system.sql
+-- 20260530100000_trial_email_cron_schedule.sql
+-- 20260530200000_fix_inspection_rls_policies.sql
+-- 20260531000000_mfa_enforcement_operator_roles.sql
+-- 20260531100000_rls_verification.sql
+-- 20260601000000_notification_super_01.sql
+-- 20260602000000_signal_validation_01.sql
+-- 20260603000000_enable_predictive_cron.sql
+-- 20260604000000_mobile_emotional_01.sql
+-- 20260605000000_jurisdiction_drift_monitor_02.sql
+-- 20260606000000_voice_source_columns.sql
+-- 20260607000000_task_assignment_system.sql
+-- 20260620000000_vendor_compliance_automation.sql
+-- 20260621000000_service_request_system.sql
+-- 20260622000000_cpp_vendor_connect.sql
+-- 20260625000000_readiness_snapshots.sql
+-- 20260703000000_staging_demo_tours.sql
+-- 20260704000000_ops_intelligence.sql
+-- 20260705000000_tribal_casino_jurisdictions.sql
+-- 20260706000000_partner_demo_system.sql
+-- 20260707000000_fire_jurisdiction_config.sql
+-- 20260708000000_nv_jurisdictions_fire_config.sql
+-- 20260709000000_or_jurisdictions_fire_config.sql
+-- 20260710000000_wa_jurisdictions_fire_config.sql
+-- 20260711000000_az_jurisdictions_food_safety.sql
+-- 20260712000000_fire_fix_01.sql
+-- 20260713000000_fire_fix_02.sql
+-- 20260714000000_az_fire_jurisdiction_configs.sql
+-- 20260715000000_fire_fix_03.sql
+-- 20260716000000_scoretable_slugs.sql
+-- 20260717000000_fire_fix_04_remove_casino_override.sql
+-- 20260718000000_clean_stale_scoring_fields.sql
+-- 20260719000000_service_reschedule_requests.sql
+
+-- ═══════════════════════════════════════════════════════════════
+-- KEY TABLES (must exist in production)
+-- ═══════════════════════════════════════════════════════════════
+-- Required tables:
+-- [  ] organizations
+-- [  ] locations
+-- [  ] user_profiles
+-- [  ] user_location_access
+-- [  ] documents
+-- [  ] temp_logs
+-- [  ] checklists
+-- [  ] checklist_items
+-- [  ] checklist_responses
+-- [  ] vendors
+-- [  ] vendor_users
+-- [  ] vendor_client_relationships
+-- [  ] equipment
+-- [  ] equipment_service_records
+-- [  ] equipment_maintenance_schedule
+-- [  ] incidents
+-- [  ] incident_timeline
+-- [  ] incident_comments
+-- [  ] support_tickets
+-- [  ] support_ticket_replies
+-- [  ] feature_flags
+-- [  ] feature_flag_unlocks
+-- [  ] feature_flag_audit
+-- [  ] jurisdictions
+-- [  ] location_jurisdictions
+-- [  ] federal_overlay_jurisdictions
+-- [  ] intelligence_signals
+-- [  ] intelligence_sources
+-- [  ] sales_pipeline
+-- [  ] marketing_touchpoints
+-- [  ] irr_submissions
+-- [  ] compliance_badges
+-- [  ] benchmark_badges
+-- [  ] demo_sessions
+-- [  ] notifications
+-- [  ] calendar_events
+-- [  ] edge_function_registry
+-- [  ] edge_function_invocations
+-- [  ] predictive_alerts
+-- [  ] corrective_actions
+
+-- ═══════════════════════════════════════════════════════════════
+-- pg_cron SCHEDULES (must be set up in production)
+-- ═══════════════════════════════════════════════════════════════
+-- All cron jobs should reference production URL: irxgmhxhmxtzfwuieblc
+-- SELECT cron.schedule('trial-email-daily', '0 15 * * *', ...);
+-- SELECT cron.schedule('vendor-notifications-daily', '0 16 * * *', ...);
+-- SELECT cron.schedule('vendor-partner-outreach-daily', '0 17 * * *', ...);
+-- SELECT cron.schedule('generate-predictive-alerts', '0 6 * * *', ...);
+-- SELECT cron.schedule('daily-violation-crawl', '0 15 * * *', ...);
+-- SELECT cron.schedule('generate-task-instances-daily', '0 5 * * *', ...);
+-- SELECT cron.schedule('task-notifications-check', '*/5 * * * *', ...);
+
+-- ═══════════════════════════════════════════════════════════════
+-- SEED DATA (must be applied to production)
+-- ═══════════════════════════════════════════════════════════════
+-- [ ] Feature flags (15 flags from 20260518000000_feature_flags.sql)
+-- [ ] CalCode violation map (20260302000000_calcode_violation_map_seed.sql)
+-- [ ] County jurisdiction configs (40+ county files)
+-- [ ] Edge function registry (18 entries from 20260331000000_edge_function_monitor.sql)
+-- [ ] Regulatory sources (20260305000001_training_cert_requirements.sql)
+-- [ ] Intelligence sources (20260304020000_admin_console_complete.sql)

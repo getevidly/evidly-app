@@ -12,9 +12,10 @@ import { useDemoGuard } from '../../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../../components/DemoUpgradePrompt';
 import { EmptyState } from '../../components/EmptyState';
 import { supabase } from '../../lib/supabase';
+import { usePageTitle } from '../../hooks/usePageTitle';
 
-const NAVY = '#1e4d6b';
-const GOLD = '#d4af37';
+const NAVY = '#1E2D4D';
+const GOLD = '#A08C5A';
 
 // ── Types ──────────────────────────────────────────────────
 
@@ -92,6 +93,7 @@ const DEMO_REQUEST_LOG: RequestLogEntry[] = [
 export default function InsuranceApiKeys() {
   const { isDemoMode } = useDemo();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  usePageTitle('Admin | Insurance API Keys');
 
   const [keys, setKeys] = useState<ApiKey[]>([]);
   const [requestLog, setRequestLog] = useState<RequestLogEntry[]>([]);
@@ -237,7 +239,7 @@ export default function InsuranceApiKeys() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#d4af37]" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#A08C5A]" />
       </div>
     );
   }
@@ -248,43 +250,43 @@ export default function InsuranceApiKeys() {
       <div style={{ fontFamily: "'DM Sans', 'Inter', sans-serif" }}>
         <AdminBreadcrumb crumbs={[{ label: 'API Keys', path: '/admin/api-keys' }, { label: 'Request Log' }]} />
 
-        <button onClick={() => setShowRequestLog(false)} className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-4">
+        <button onClick={() => setShowRequestLog(false)} className="flex items-center gap-1 text-sm text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80 mb-4">
           <ArrowLeft size={16} /> Back to API Keys
         </button>
 
-        <h1 className="text-xl font-bold text-gray-900 mb-4">API Request Log</h1>
+        <h1 className="text-xl font-bold text-[#1E2D4D] mb-4">API Request Log</h1>
 
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="text-left px-4 py-3 font-semibold text-gray-700">Endpoint</th>
-                <th className="text-center px-4 py-3 font-semibold text-gray-700">Method</th>
-                <th className="text-center px-4 py-3 font-semibold text-gray-700">Status</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-700">Key</th>
-                <th className="text-right px-4 py-3 font-semibold text-gray-700">Timestamp</th>
+              <tr className="bg-[#FAF7F0] border-b border-[#1E2D4D]/10 hover:bg-[#1E2D4D]/[0.02] transition-colors">
+                <th className="text-left px-4 py-3 font-semibold text-[#1E2D4D]/80">Endpoint</th>
+                <th className="text-center px-4 py-3 font-semibold text-[#1E2D4D]/80">Method</th>
+                <th className="text-center px-4 py-3 font-semibold text-[#1E2D4D]/80">Status</th>
+                <th className="text-left px-4 py-3 font-semibold text-[#1E2D4D]/80">Key</th>
+                <th className="text-right px-4 py-3 font-semibold text-[#1E2D4D]/80">Timestamp</th>
               </tr>
             </thead>
             <tbody>
               {filteredLog.map(r => (
-                <tr key={r.id} className="border-b border-gray-100 hover:bg-gray-50">
-                  <td className="px-4 py-3 font-mono text-xs text-gray-800">{r.endpoint}</td>
+                <tr key={r.id} className="border-b border-[#1E2D4D]/5 hover:bg-[#FAF7F0]">
+                  <td className="px-4 py-3 font-mono text-xs text-[#1E2D4D]/90">{r.endpoint}</td>
                   <td className="px-4 py-3 text-center">
                     <span className="px-2 py-0.5 rounded text-xs font-semibold bg-blue-50 text-blue-700">{r.method}</span>
                   </td>
                   <td className="px-4 py-3 text-center">
-                    <span className={`px-2 py-0.5 rounded text-xs font-semibold ${r.response_code < 300 ? 'bg-green-50 text-green-700' : r.response_code < 500 ? 'bg-red-50 text-red-700' : 'bg-gray-50 text-gray-700'}`}>
+                    <span className={`px-2 py-0.5 rounded text-xs font-semibold ${r.response_code < 300 ? 'bg-green-50 text-green-700' : r.response_code < 500 ? 'bg-red-50 text-red-700' : 'bg-[#FAF7F0] text-[#1E2D4D]/80'}`}>
                       {r.response_code}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-xs text-gray-500">
+                  <td className="px-4 py-3 text-xs text-[#1E2D4D]/50">
                     {keys.find(k => k.id === r.api_key_id)?.key_preview || r.api_key_id}
                   </td>
-                  <td className="px-4 py-3 text-right text-xs text-gray-500">{formatDateTime(r.requested_at)}</td>
+                  <td className="px-4 py-3 text-right text-xs text-[#1E2D4D]/50">{formatDateTime(r.requested_at)}</td>
                 </tr>
               ))}
               {filteredLog.length === 0 && (
-                <tr><td colSpan={5} className="px-4 py-8 text-center text-gray-400">No requests logged yet.</td></tr>
+                <tr><td colSpan={5} className="px-4 py-8 text-center text-[#1E2D4D]/30">No requests logged yet.</td></tr>
               )}
             </tbody>
           </table>
@@ -300,13 +302,13 @@ export default function InsuranceApiKeys() {
 
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">API Keys</h1>
-          <p className="text-sm text-gray-600 mt-1">Create, manage, and monitor API keys for partner integrations</p>
+          <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">API Keys</h1>
+          <p className="text-sm text-[#1E2D4D]/70 mt-1">Create, manage, and monitor API keys for partner integrations</p>
         </div>
         <div className="flex gap-2">
           <button
             onClick={() => { setRequestLogKeyId(null); loadRequestLog(); setShowRequestLog(true); }}
-            className="flex items-center gap-2 px-4 py-2 min-h-[44px] border-2 border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+            className="flex items-center gap-2 px-4 py-2 min-h-[44px] border-2 border-[#1E2D4D]/10 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-[#FAF7F0]"
           >
             <Activity className="h-4 w-4" />
             Request Log
@@ -341,7 +343,7 @@ export default function InsuranceApiKeys() {
             <button onClick={() => handleCopyKey(newKeyRevealed)} className="px-3 py-2 bg-amber-600 text-white rounded text-sm font-medium hover:bg-amber-700">
               <Copy className="h-4 w-4" />
             </button>
-            <button onClick={() => setNewKeyRevealed(null)} className="px-3 py-2 bg-gray-200 text-gray-700 rounded text-sm font-medium hover:bg-gray-300">
+            <button onClick={() => setNewKeyRevealed(null)} className="px-3 py-2 bg-[#1E2D4D]/10 text-[#1E2D4D]/80 rounded text-sm font-medium hover:bg-[#1E2D4D]/15">
               <XCircle className="h-4 w-4" />
             </button>
           </div>
@@ -358,7 +360,7 @@ export default function InsuranceApiKeys() {
             return (
               <div
                 key={key.id}
-                className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5"
+                className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5"
                 style={!key.is_active ? { opacity: 0.6 } : undefined}
               >
                 <div className="flex flex-col md:flex-row md:items-center gap-3">
@@ -368,17 +370,17 @@ export default function InsuranceApiKeys() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-semibold text-gray-900">{key.label}</span>
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 uppercase">{key.key_type}</span>
+                        <span className="font-semibold text-[#1E2D4D]">{key.label}</span>
+                        <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-[#1E2D4D]/5 text-[#1E2D4D]/50 uppercase">{key.key_type}</span>
                         {key.is_active ? (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-green-50 text-green-700">Active</span>
+                          <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-green-50 text-green-700">Active</span>
                         ) : isExpired ? (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">Expired</span>
+                          <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-[#1E2D4D]/5 text-[#1E2D4D]/50">Expired</span>
                         ) : (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-50 text-red-600">Revoked</span>
+                          <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-red-50 text-red-600">Revoked</span>
                         )}
                       </div>
-                      <div className="flex items-center gap-3 text-xs text-gray-500 mt-1 flex-wrap">
+                      <div className="flex items-center gap-3 text-xs text-[#1E2D4D]/50 mt-1 flex-wrap">
                         <span className="font-mono">{key.key_preview}</span>
                         <span>·</span>
                         <span>Scope: {key.facility_scope === 'all' ? 'All facilities' : 'Selected'}</span>
@@ -393,7 +395,7 @@ export default function InsuranceApiKeys() {
                         <span>·</span>
                         <span>{key.request_count.toLocaleString()} requests</span>
                       </div>
-                      <div className="flex items-center gap-2 text-xs text-gray-400 mt-1">
+                      <div className="flex items-center gap-2 text-xs text-[#1E2D4D]/30 mt-1">
                         <span>Permissions:</span>
                         {key.permissions.facilities && <span className="px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 font-medium">Facilities</span>}
                         {key.permissions.risk_profile && <span className="px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 font-medium">Risk Profile</span>}
@@ -404,7 +406,7 @@ export default function InsuranceApiKeys() {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => { setRequestLogKeyId(key.id); loadRequestLog(key.id); setShowRequestLog(true); }}
-                      className="px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600"
+                      className="px-3 py-1.5 text-xs font-medium border border-[#1E2D4D]/10 rounded-xl hover:bg-[#FAF7F0] text-[#1E2D4D]/70"
                     >
                       <Activity className="h-3.5 w-3.5 inline mr-1" />
                       Log
@@ -412,7 +414,7 @@ export default function InsuranceApiKeys() {
                     {key.is_active && (
                       <button
                         onClick={() => handleRevokeKey(key.id)}
-                        className="px-3 py-1.5 text-xs font-medium border border-red-200 rounded-lg hover:bg-red-50 text-red-600"
+                        className="px-3 py-1.5 text-xs font-medium border border-red-200 rounded-xl hover:bg-red-50 text-red-600"
                       >
                         <Trash2 className="h-3.5 w-3.5 inline mr-1" />
                         Revoke
@@ -427,53 +429,53 @@ export default function InsuranceApiKeys() {
       )}
 
       {/* API Documentation Reference */}
-      <div className="mt-8 bg-gray-50 rounded-xl border border-gray-200 p-5">
-        <h3 className="text-sm font-bold text-gray-900 mb-3">API Endpoints</h3>
+      <div className="mt-8 bg-[#FAF7F0] rounded-xl border border-[#1E2D4D]/10 p-6">
+        <h3 className="text-sm font-bold text-[#1E2D4D] mb-3">API Endpoints</h3>
         <div className="space-y-2 font-mono text-xs">
           <div className="flex items-center gap-3">
-            <span className="px-2 py-0.5 rounded bg-blue-100 text-blue-700 font-bold">GET</span>
-            <span className="text-gray-700">/api/v1/insurance/facilities</span>
-            <span className="text-gray-400 font-sans">— List accessible facilities</span>
+            <span className="px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-bold">GET</span>
+            <span className="text-[#1E2D4D]/80">/api/v1/insurance/facilities</span>
+            <span className="text-[#1E2D4D]/30 font-sans">— List accessible facilities</span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="px-2 py-0.5 rounded bg-blue-100 text-blue-700 font-bold">GET</span>
-            <span className="text-gray-700">/api/v1/insurance/facilities/:id/risk-profile</span>
-            <span className="text-gray-400 font-sans">— Full compliance risk profile</span>
+            <span className="px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-bold">GET</span>
+            <span className="text-[#1E2D4D]/80">/api/v1/insurance/facilities/:id/risk-profile</span>
+            <span className="text-[#1E2D4D]/30 font-sans">— Full compliance risk profile</span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="px-2 py-0.5 rounded bg-blue-100 text-blue-700 font-bold">GET</span>
-            <span className="text-gray-700">/api/v1/insurance/facilities/:id/history?days=90</span>
-            <span className="text-gray-400 font-sans">— Compliance event history</span>
+            <span className="px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-bold">GET</span>
+            <span className="text-[#1E2D4D]/80">/api/v1/insurance/facilities/:id/history?days=90</span>
+            <span className="text-[#1E2D4D]/30 font-sans">— Compliance event history</span>
           </div>
         </div>
-        <div className="mt-3 text-xs text-gray-500">
-          Authentication: <code className="bg-white px-1.5 py-0.5 rounded border border-gray-200">Authorization: Bearer evd_...</code>
+        <div className="mt-3 text-xs text-[#1E2D4D]/50">
+          Authentication: <code className="bg-white px-1.5 py-0.5 rounded border border-[#1E2D4D]/10">Authorization: Bearer evd_...</code>
         </div>
       </div>
 
       {/* Create API Key Modal */}
       {showCreateForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-auto max-w-lg sm:w-full max-h-[90vh] overflow-y-auto">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Create API Key</h3>
+          <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-auto max-w-lg sm:w-full max-h-[90vh] overflow-y-auto modal-content-enter">
+            <h3 className="text-xl font-bold text-[#1E2D4D] mb-4">Create API Key</h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">
                   Label <span className="text-red-500">*</span>
                 </label>
                 <input
                   value={newLabel}
                   onChange={e => setNewLabel(e.target.value)}
                   placeholder="e.g., Carrier Partnership — Production"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Key Type</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Key Type</label>
                 <select
                   value={newKeyType}
                   onChange={e => setNewKeyType(e.target.value as 'live' | 'test' | 'insurance')}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                 >
                   <option value="live">Live</option>
                   <option value="test">Test</option>
@@ -481,45 +483,45 @@ export default function InsuranceApiKeys() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Facility Scope</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Facility Scope</label>
                 <select
                   value={newFacilityScope}
                   onChange={e => setNewFacilityScope(e.target.value as 'all' | 'selected')}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                 >
                   <option value="all">All Facilities</option>
                   <option value="selected">Selected Facilities Only</option>
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Data Permissions</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-2">Data Permissions</label>
                 <div className="space-y-2">
                   {[
                     { key: 'facilities', label: 'Facility List', desc: 'List of accessible facilities' },
                     { key: 'risk_profile', label: 'Risk Profile', desc: 'Full compliance risk profile data' },
                     { key: 'history', label: 'Event History', desc: 'Compliance event history (up to 365 days)' },
                   ].map(p => (
-                    <label key={p.key} className="flex items-start gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
+                    <label key={p.key} className="flex items-start gap-3 p-2 rounded-lg hover:bg-[#FAF7F0] cursor-pointer">
                       <input
                         type="checkbox"
                         checked={(newPerms as any)[p.key]}
                         onChange={e => setNewPerms(prev => ({ ...prev, [p.key]: e.target.checked }))}
-                        className="mt-0.5 h-4 w-4 rounded border-gray-300"
+                        className="mt-0.5 h-4 w-4 rounded border-[#1E2D4D]/15"
                       />
                       <div>
-                        <span className="text-sm font-medium text-gray-700">{p.label}</span>
-                        <p className="text-xs text-gray-500">{p.desc}</p>
+                        <span className="text-sm font-medium text-[#1E2D4D]/80">{p.label}</span>
+                        <p className="text-xs text-[#1E2D4D]/50">{p.desc}</p>
                       </div>
                     </label>
                   ))}
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Expiration</label>
+                <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Expiration</label>
                 <select
                   value={newExpiryDays}
                   onChange={e => setNewExpiryDays(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
                 >
                   <option value="90">90 days</option>
                   <option value="180">180 days</option>
@@ -530,7 +532,7 @@ export default function InsuranceApiKeys() {
             <div className="flex gap-3 mt-6">
               <button
                 onClick={() => setShowCreateForm(false)}
-                className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-[#1E2D4D]/15 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-[#FAF7F0]"
               >
                 Cancel
               </button>

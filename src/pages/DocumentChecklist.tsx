@@ -195,41 +195,41 @@ export function DocumentChecklist() {
       return (
         <div
           key={doc.id}
-          className="flex items-start gap-3 py-3 px-4 rounded-lg"
+          className="flex items-start gap-3 py-3 px-4 rounded-xl"
           style={{ backgroundColor: '#f0fdf4' }}
         >
           <CheckCircle size={20} className="mt-0.5 flex-shrink-0" style={{ color: '#16a34a' }} />
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-medium text-gray-900">{doc.name}</span>
+              <span className="font-medium text-[#1E2D4D]">{doc.name}</span>
               {entry.status === 'not_applicable' && (
-                <span className="text-xs px-2 py-0.5 rounded-full bg-gray-200 text-gray-600">
+                <span className="text-xs px-2 py-0.5 rounded-full bg-[#1E2D4D]/10 text-[#1E2D4D]/70">
                   N/A
                 </span>
               )}
             </div>
             {entry.uploadedAt && (
-              <p className="text-sm text-gray-500 mt-0.5">
+              <p className="text-sm text-[#1E2D4D]/50 mt-0.5">
                 Uploaded {entry.uploadedAt}
                 {entry.expiresAt && <span> &middot; Expires {entry.expiresAt}</span>}
               </p>
             )}
             {entry.status === 'not_applicable' && entry.reason && (
-              <p className="text-sm text-gray-500 mt-0.5">{entry.reason}</p>
+              <p className="text-sm text-[#1E2D4D]/50 mt-0.5">{entry.reason}</p>
             )}
           </div>
           {entry.status === 'uploaded' && (
             <div className="flex gap-2 flex-shrink-0">
               <button
                 className="text-sm font-medium hover:underline"
-                style={{ color: '#1e4d6b' }}
+                style={{ color: '#1E2D4D' }}
                 onClick={() => toast.info('View Document (Demo)')}
               >
                 View
               </button>
               <button
                 className="text-sm font-medium hover:underline"
-                style={{ color: '#1e4d6b' }}
+                style={{ color: '#1E2D4D' }}
                 onClick={() => openUpload(doc)}
               >
                 Replace
@@ -242,33 +242,33 @@ export function DocumentChecklist() {
 
     // Pending state
     return (
-      <div key={doc.id} className="flex items-start gap-3 py-3 px-4 rounded-lg bg-white border border-gray-200">
-        <Circle size={20} className="mt-0.5 flex-shrink-0 text-gray-300" />
+      <div key={doc.id} className="flex items-start gap-3 py-3 px-4 rounded-xl bg-white border border-[#1E2D4D]/10">
+        <Circle size={20} className="mt-0.5 flex-shrink-0 text-[#1E2D4D]/30" />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-medium text-gray-900">{doc.name}</span>
+            <span className="font-medium text-[#1E2D4D]">{doc.name}</span>
             {doc.required && <Star size={12} className="text-red-500 fill-red-500" />}
             <span
               className="text-xs px-2 py-0.5 rounded-full"
               style={
                 doc.required
                   ? { backgroundColor: '#fef2f2', color: '#dc2626' }
-                  : { backgroundColor: '#eef4f8', color: '#1e4d6b' }
+                  : { backgroundColor: '#eef4f8', color: '#1E2D4D' }
               }
             >
               {doc.required ? 'Required' : 'Recommended'}
             </span>
           </div>
-          <p className="text-sm text-gray-500 mt-1">{doc.helpText}</p>
-          <p className="text-xs text-gray-400 mt-0.5">
+          <p className="text-sm text-[#1E2D4D]/50 mt-1">{doc.helpText}</p>
+          <p className="text-xs text-[#1E2D4D]/30 mt-0.5">
             Provided by: {doc.whoProvides} &middot; Renewal: {doc.renewalFrequency}
           </p>
           <div className="flex items-center gap-3 mt-2">
             <button
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium text-white transition-colors"
-              style={{ backgroundColor: '#1e4d6b' }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+              style={{ backgroundColor: '#1E2D4D' }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2A3F6B')}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
               onClick={() => guardAction('upload', 'Document Checklist', () => openUpload(doc))}
             >
               <Upload size={14} />
@@ -276,7 +276,7 @@ export function DocumentChecklist() {
             </button>
             {CONDITIONAL_IDS.has(doc.id) && (
               <button
-                className="text-sm text-gray-500 hover:text-gray-700 underline"
+                className="text-sm text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80 underline"
                 onClick={() => guardAction('edit', 'Document Checklist', () => openNaModal(doc))}
               >
                 Not Applicable
@@ -295,10 +295,10 @@ export function DocumentChecklist() {
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold" style={{ color: '#1e4d6b' }}>
+        <h1 className="text-2xl font-bold tracking-tight" style={{ color: '#1E2D4D' }}>
           Get Your Kitchen Compliance-Ready
         </h1>
-        <p className="text-gray-600 mt-1">
+        <p className="text-[#1E2D4D]/70 mt-1">
           Upload your compliance documents to build a complete digital file. Required items are
           marked with a red star.
         </p>
@@ -307,7 +307,7 @@ export function DocumentChecklist() {
       {/* Celebration banner */}
       {allRequiredDone && (
         <div
-          className="rounded-lg p-4 flex items-start gap-3"
+          className="rounded-xl p-4 flex items-start gap-3"
           style={{ backgroundColor: '#dcfce7', border: '1px solid #86efac' }}
         >
           <span className="text-2xl" role="img" aria-label="party">
@@ -338,14 +338,14 @@ export function DocumentChecklist() {
 
       {/* Progress bar */}
       <div
-        className="rounded-lg p-4"
+        className="rounded-xl p-4"
         style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}
       >
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium" style={{ color: '#1e4d6b' }}>
+          <span className="text-sm font-medium" style={{ color: '#1E2D4D' }}>
             {requiredComplete} of {requiredDocs.length} required documents uploaded
           </span>
-          <span className="text-sm font-bold" style={{ color: allRequiredDone ? '#16a34a' : '#1e4d6b' }}>
+          <span className="text-sm font-bold" style={{ color: allRequiredDone ? '#16a34a' : '#1E2D4D' }}>
             {progressPct}%
           </span>
         </div>
@@ -356,7 +356,7 @@ export function DocumentChecklist() {
               width: `${progressPct}%`,
               background: allRequiredDone
                 ? '#16a34a'
-                : `linear-gradient(90deg, #d4af37, #16a34a)`,
+                : `linear-gradient(90deg, #A08C5A, #16a34a)`,
             }}
           />
         </div>
@@ -390,23 +390,23 @@ export function DocumentChecklist() {
             >
               <div className="flex items-center gap-2">
                 <span className="text-lg">{meta.icon}</span>
-                <span className="font-semibold" style={{ color: '#1e4d6b' }}>
+                <span className="font-semibold" style={{ color: '#1E2D4D' }}>
                   {meta.label}
                 </span>
-                <span className="text-sm text-gray-500">
+                <span className="text-sm text-[#1E2D4D]/50">
                   {done} of {total}
                 </span>
               </div>
               {expanded ? (
-                <ChevronDown size={18} style={{ color: '#1e4d6b' }} />
+                <ChevronDown size={18} style={{ color: '#1E2D4D' }} />
               ) : (
-                <ChevronRight size={18} style={{ color: '#1e4d6b' }} />
+                <ChevronRight size={18} style={{ color: '#1E2D4D' }} />
               )}
             </button>
 
             {/* Items */}
             {expanded && (
-              <div className="divide-y divide-gray-100 bg-white">
+              <div className="divide-y divide-[#1E2D4D]/5 bg-white">
                 {docs.map((doc) => (
                   <div key={doc.id} className="px-2 py-1">
                     {renderDocItem(doc)}
@@ -440,21 +440,21 @@ export function DocumentChecklist() {
       )}
 
       {naModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 p-6 space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 modal-backdrop-enter">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 p-6 space-y-4 modal-content-enter">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold" style={{ color: '#1e4d6b' }}>
+              <h2 className="text-lg font-semibold tracking-tight" style={{ color: '#1E2D4D' }}>
                 Not Applicable: {naModal.docName}
               </h2>
               <button
-                className="p-1 rounded hover:bg-gray-100"
+                className="p-1 rounded hover:bg-[#1E2D4D]/5"
                 onClick={() => setNaModal(null)}
               >
-                <X size={18} className="text-gray-500" />
+                <X size={18} className="text-[#1E2D4D]/50" />
               </button>
             </div>
 
-            <p className="text-sm text-gray-600">Why is this document not applicable?</p>
+            <p className="text-sm text-[#1E2D4D]/70">Why is this document not applicable?</p>
 
             <div className="space-y-2">
               {["We don't need this", "Health department doesn't require", 'Other'].map((opt) => (
@@ -464,9 +464,9 @@ export function DocumentChecklist() {
                     name="na-reason"
                     checked={naModal.reason === opt}
                     onChange={() => setNaModal({ ...naModal, reason: opt })}
-                    className="accent-[#1e4d6b]"
+                    className="accent-[#1E2D4D]"
                   />
-                  <span className="text-sm text-gray-700">{opt}</span>
+                  <span className="text-sm text-[#1E2D4D]/80">{opt}</span>
                 </label>
               ))}
             </div>
@@ -474,7 +474,7 @@ export function DocumentChecklist() {
             {naModal.reason === 'Other' && (
               <GhostInput
                 type="text"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2"
+                className="w-full border border-[#1E2D4D]/15 rounded-md px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
                 placeholder="Please explain..."
                 value={naModal.customReason}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNaModal({ ...naModal, customReason: e.target.value })}
@@ -486,16 +486,16 @@ export function DocumentChecklist() {
 
             <div className="flex justify-end gap-3 pt-2">
               <button
-                className="px-4 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors"
+                className="px-4 py-2 rounded-md text-sm font-medium text-[#1E2D4D]/70 hover:bg-[#1E2D4D]/5 transition-colors"
                 onClick={() => setNaModal(null)}
               >
                 Cancel
               </button>
               <button
                 className="px-4 py-2 rounded-md text-sm font-medium text-white transition-colors"
-                style={{ backgroundColor: '#1e4d6b' }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+                style={{ backgroundColor: '#1E2D4D' }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2A3F6B')}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
                 onClick={handleNaSave}
               >
                 Confirm Not Applicable

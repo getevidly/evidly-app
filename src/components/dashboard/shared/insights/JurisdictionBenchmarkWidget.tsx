@@ -20,17 +20,17 @@ export function JurisdictionBenchmarkWidget({ benchmarks }: Props) {
     >
       <div className="px-4 py-3" style={{ borderBottom: `1px solid ${CARD_BORDER}` }}>
         <h3 className="text-sm font-semibold" style={{ color: BODY_TEXT }}>Jurisdiction Benchmark</h3>
-        <p className="text-[11px] text-gray-500 mt-0.5">Your score vs. jurisdiction average</p>
+        <p className="text-xs text-[#1E2D4D]/50 mt-0.5">Your score vs. jurisdiction average</p>
       </div>
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-[#1E2D4D]/5">
         {benchmarks.map(b => {
           const isPositive = b.delta >= 0;
           return (
             <div key={b.locationName} className="px-4 py-3">
               <div className="flex items-center justify-between mb-1">
                 <div>
-                  <p className="text-[13px] font-semibold text-gray-800">{b.locationName}</p>
-                  <p className="text-[11px] text-gray-500">{b.jurisdictionName}</p>
+                  <p className="text-sm font-semibold text-[#1E2D4D]/90">{b.locationName}</p>
+                  <p className="text-xs text-[#1E2D4D]/50">{b.jurisdictionName}</p>
                 </div>
                 <span
                   className="text-xs font-bold px-2 py-0.5 rounded"
@@ -45,22 +45,22 @@ export function JurisdictionBenchmarkWidget({ benchmarks }: Props) {
               <div className="flex items-center gap-4 mt-2">
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-[10px] font-medium uppercase tracking-wider" style={{ color: '#6B7F96' }}>You</span>
+                    <span className="text-xs font-medium uppercase tracking-wider" style={{ color: '#6B7F96' }}>You</span>
                     <span className="text-xs font-bold" style={{ color: NAVY }}>{b.yourScore}</span>
                   </div>
-                  <div className="w-full h-1.5 rounded-full bg-gray-100 overflow-hidden">
+                  <div className="w-full h-1.5 rounded-full bg-[#1E2D4D]/5 overflow-hidden">
                     <div
                       className="h-full rounded-full"
-                      style={{ width: `${b.yourScore}%`, backgroundColor: '#1e4d6b' }}
+                      style={{ width: `${b.yourScore}%`, backgroundColor: '#1E2D4D' }}
                     />
                   </div>
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-[10px] font-medium uppercase tracking-wider" style={{ color: '#6B7F96' }}>Avg</span>
+                    <span className="text-xs font-medium uppercase tracking-wider" style={{ color: '#6B7F96' }}>Avg</span>
                     <span className="text-xs font-bold" style={{ color: '#6B7F96' }}>{b.jurisdictionAvg}</span>
                   </div>
-                  <div className="w-full h-1.5 rounded-full bg-gray-100 overflow-hidden">
+                  <div className="w-full h-1.5 rounded-full bg-[#1E2D4D]/5 overflow-hidden">
                     <div
                       className="h-full rounded-full"
                       style={{ width: `${b.jurisdictionAvg}%`, backgroundColor: '#94a3b8' }}

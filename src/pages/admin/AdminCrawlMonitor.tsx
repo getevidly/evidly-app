@@ -211,7 +211,7 @@ export default function AdminCrawlMonitor() {
       <AdminBreadcrumb crumbs={[{ label: 'Crawl Monitor' }]} />
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Crawl Monitor</h1>
+          <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Crawl Monitor</h1>
           <p style={{ fontSize: 13, color: TEXT_SEC, marginTop: 4 }}>
             {sources.length} intelligence sources tracked
           </p>

@@ -41,7 +41,7 @@ export function HeroJurisdictionSummary({ jieScores, jurisdictions, navigate, us
   if (locations.length === 0) {
     return (
       <div className="mt-2 rounded-xl p-4 text-center" style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}>
-        <p className="text-sm text-slate-300">No locations configured.</p>
+        <p className="text-sm text-[#1E2D4D]/30">No locations configured.</p>
       </div>
     );
   }
@@ -54,7 +54,7 @@ export function HeroJurisdictionSummary({ jieScores, jurisdictions, navigate, us
           <UtensilsCrossed size={16} style={{ color: '#e2e8f0' }} />
           <span className="text-sm font-semibold text-white">{t('cards.foodSafety')}</span>
           <SectionTooltip content={useTooltip('foodSafety', userRole)} />
-          <span className="text-[10px] text-slate-200 ml-auto">
+          <span className="text-xs text-slate-200 ml-auto">
             {Object.keys(jurisdictions).length > 0 ? `${new Set(Object.values(jurisdictions).map(j => j.county)).size} County Health Depts` : ''}
           </span>
         </div>
@@ -77,7 +77,7 @@ export function HeroJurisdictionSummary({ jieScores, jurisdictions, navigate, us
               >
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-xs text-white font-medium">{loc.name}</span>
-                  <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${
+                  <span className={`text-xs font-semibold px-1.5 py-0.5 rounded ${
                     isPassing ? 'bg-green-500/20 text-green-300'
                       : isFailing ? 'bg-red-500/20 text-red-300'
                       : 'bg-amber-500/20 text-amber-300'
@@ -86,15 +86,15 @@ export function HeroJurisdictionSummary({ jieScores, jurisdictions, navigate, us
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] text-slate-200">
+                  <span className="text-xs text-slate-200">
                     {jur?.county ? `${jur.county} County` : ''}
                   </span>
-                  <span className="text-[11px] font-semibold text-white">
+                  <span className="text-xs font-semibold text-white">
                     {override?.foodSafety?.gradeDisplay || score?.foodSafety?.gradeDisplay || 'Pending'}
                   </span>
                 </div>
                 {override?.foodSafety?.summary && (
-                  <p className="text-[10px] text-slate-200 mt-1">{override.foodSafety.summary}</p>
+                  <p className="text-xs text-slate-200 mt-1">{override.foodSafety.summary}</p>
                 )}
               </button>
             );
@@ -108,11 +108,11 @@ export function HeroJurisdictionSummary({ jieScores, jurisdictions, navigate, us
           <Flame size={16} style={{ color: '#e2e8f0' }} />
           <span className="text-sm font-semibold text-white">{t('cards.facilitySafety')}</span>
           <SectionTooltip content={useTooltip('facilitySafety', userRole)} />
-          <span className="text-[10px] text-slate-200 ml-auto">
+          <span className="text-xs text-slate-200 ml-auto">
             {(() => {
               const firstLoc = locations[0];
               const firstJur = firstLoc ? jurisdictions[firstLoc.id] : null;
-              return firstJur?.facilitySafety?.fire_jurisdiction_config?.fire_code_edition ?? '2022 CFC';
+              return firstJur?.facilitySafety?.fire_jurisdiction_config?.fire_code_edition ?? '2025 CFC';
             })()}
           </span>
         </div>
@@ -135,22 +135,22 @@ export function HeroJurisdictionSummary({ jieScores, jurisdictions, navigate, us
                   <span className="text-xs text-white font-medium">{loc.name}</span>
                   <div className="flex items-center gap-1.5">
                     {fireConfig?.federal_overlay && (
-                      <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 flex items-center gap-0.5">
+                      <span className="text-[11px] font-semibold px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 flex items-center gap-0.5">
                         <Shield size={9} />
                         {fireConfig.federal_overlay.agency}
                       </span>
                     )}
-                    <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${isPassing ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'}`}>
+                    <span className={`text-xs font-semibold px-1.5 py-0.5 rounded ${isPassing ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'}`}>
                       {isPassing ? t('status.pass') : t('status.fail')}
                     </span>
                   </div>
                 </div>
                 {fireConfig && (
                   <div className="flex items-center gap-1 mb-1.5">
-                    <span className="text-[10px] text-slate-200 truncate">{fireConfig.fire_ahj_name}</span>
+                    <span className="text-xs text-slate-200 truncate">{fireConfig.fire_ahj_name}</span>
                     {fireConfig.ahj_split_notes && (
                       <span title={fireConfig.ahj_split_notes}>
-                        <Info size={10} className="text-slate-400 shrink-0" />
+                        <Info size={10} className="text-[#1E2D4D]/40 shrink-0" />
                       </span>
                     )}
                   </div>

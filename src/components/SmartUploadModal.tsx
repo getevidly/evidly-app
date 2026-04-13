@@ -336,22 +336,22 @@ export function SmartUploadModal({
   // -----------------------------------------------------------------------
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl mx-4 max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 modal-backdrop-enter">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl mx-4 max-h-[90vh] flex flex-col modal-content-enter">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#1E2D4D]/10">
           <div className="flex items-center gap-2">
-            <Sparkles size={20} style={{ color: '#d4af37' }} />
-            <h2 className="text-lg font-semibold" style={{ color: '#1e4d6b' }}>
+            <Sparkles size={20} style={{ color: '#A08C5A' }} />
+            <h2 className="text-lg font-semibold tracking-tight" style={{ color: '#1E2D4D' }}>
               {presetDocLabel ? `Upload: ${presetDocLabel}` : 'Smart Document Upload'}
             </h2>
           </div>
           <button
-            className="p-2.5 -m-1 rounded hover:bg-gray-100"
+            className="p-2.5 -m-1 rounded hover:bg-[#1E2D4D]/5"
             onClick={handleClose}
             aria-label="Close"
           >
-            <X size={18} className="text-gray-500" />
+            <X size={18} className="text-[#1E2D4D]/50" />
           </button>
         </div>
 
@@ -360,19 +360,19 @@ export function SmartUploadModal({
           {/* Drop zone — always visible if under max files */}
           {files.length < maxFiles && (
             <div
-              className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
-                isDragging ? 'border-[#1e4d6b] bg-[#eef4f8]' : 'border-[#b8d4e8] hover:border-gray-400'
+              className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors ${
+                isDragging ? 'border-[#1E2D4D] bg-[#eef4f8]' : 'border-[#b8d4e8] hover:border-[#1E2D4D]/20'
               }`}
               onClick={() => fileInputRef.current?.click()}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
             >
-              <Upload size={28} className="mx-auto mb-2 text-gray-400" />
-              <p className="text-sm text-gray-600 font-medium">
+              <Upload size={28} className="mx-auto mb-2 text-[#1E2D4D]/30" />
+              <p className="text-sm text-[#1E2D4D]/70 font-medium">
                 Drag &amp; drop or click to browse
               </p>
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-xs text-[#1E2D4D]/30 mt-1">
                 PDF, DOCX, XLSX, JPG, PNG, CSV &middot; Max 10 MB
                 {batchMode && ' &middot; Multiple files OK'}
               </p>
@@ -421,7 +421,7 @@ export function SmartUploadModal({
           {files.length > 1 && (
             <div
               className="text-sm rounded-lg p-3"
-              style={{ backgroundColor: '#eef4f8', color: '#1e4d6b' }}
+              style={{ backgroundColor: '#eef4f8', color: '#1E2D4D' }}
             >
               {classifyingFiles.length > 0 && (
                 <span>
@@ -439,21 +439,21 @@ export function SmartUploadModal({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200">
+        <div className="flex items-center justify-between px-6 py-4 border-t border-[#1E2D4D]/10">
           <button
-            className="px-4 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors"
+            className="px-4 py-2 rounded-md text-sm font-medium text-[#1E2D4D]/70 hover:bg-[#1E2D4D]/5 transition-colors"
             onClick={handleClose}
           >
             Cancel
           </button>
           <button
             className="px-5 py-2 rounded-md text-sm font-medium text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{ backgroundColor: canSave ? '#1e4d6b' : '#3D5068' }}
+            style={{ backgroundColor: canSave ? '#1E2D4D' : '#3D5068' }}
             onMouseEnter={(e) => {
-              if (canSave) e.currentTarget.style.backgroundColor = '#2a6a8f';
+              if (canSave) e.currentTarget.style.backgroundColor = '#2A3F6B';
             }}
             onMouseLeave={(e) => {
-              if (canSave) e.currentTarget.style.backgroundColor = '#1e4d6b';
+              if (canSave) e.currentTarget.style.backgroundColor = '#1E2D4D';
             }}
             disabled={!canSave}
             onClick={handleSave}
@@ -498,21 +498,21 @@ function FileClassificationCard({
   // Status-based rendering
   if (entry.status === 'classifying') {
     return (
-      <div className="rounded-lg border border-gray-200 p-4">
+      <div className="rounded-xl border border-[#1E2D4D]/10 p-4">
         <div className="flex items-center gap-3">
-          <Loader2 size={18} className="animate-spin text-[#1e4d6b]" />
+          <Loader2 size={18} className="animate-spin text-[#1E2D4D]" />
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 truncate">
+            <p className="text-sm font-medium text-[#1E2D4D] truncate">
               {entry.file.name}
             </p>
-            <p className="text-xs text-gray-500">Analyzing with AI...</p>
+            <p className="text-xs text-[#1E2D4D]/50">Analyzing with AI...</p>
           </div>
-          <div className="w-32 h-2 rounded-full bg-gray-100 overflow-hidden">
+          <div className="w-32 h-2 rounded-full bg-[#1E2D4D]/5 overflow-hidden">
             <div
               className="h-full rounded-full animate-pulse"
               style={{
                 width: '60%',
-                background: 'linear-gradient(90deg, #1e4d6b, #d4af37)',
+                background: 'linear-gradient(90deg, #1E2D4D, #A08C5A)',
               }}
             />
           </div>
@@ -523,13 +523,13 @@ function FileClassificationCard({
 
   if (entry.status === 'pending') {
     return (
-      <div className="rounded-lg border border-gray-200 p-4">
+      <div className="rounded-xl border border-[#1E2D4D]/10 p-4">
         <div className="flex items-center gap-3">
-          <FileText size={18} className="text-gray-400" />
-          <p className="text-sm font-medium text-gray-900 truncate flex-1">
+          <FileText size={18} className="text-[#1E2D4D]/30" />
+          <p className="text-sm font-medium text-[#1E2D4D] truncate flex-1">
             {entry.file.name}
           </p>
-          <span className="text-xs text-gray-400">Queued</span>
+          <span className="text-xs text-[#1E2D4D]/30">Queued</span>
         </div>
       </div>
     );
@@ -542,14 +542,14 @@ function FileClassificationCard({
 
   return (
     <div
-      className="rounded-lg border overflow-hidden"
+      className="rounded-xl border overflow-hidden"
       style={{
         borderColor: level === 'high' ? '#86efac' : level === 'medium' ? '#fde68a' : '#fecaca',
       }}
     >
       {/* Summary row */}
       <button
-        className="w-full flex items-center gap-3 p-4 text-left hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center gap-3 p-4 text-left hover:bg-[#FAF7F0] transition-colors"
         onClick={onToggle}
       >
         {/* Confidence icon */}
@@ -559,10 +559,10 @@ function FileClassificationCard({
 
         {/* Info */}
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-gray-900 truncate">
+          <p className="text-sm font-medium text-[#1E2D4D] truncate">
             {entry.file.name}
           </p>
-          <p className="text-xs text-gray-600 truncate mt-0.5">
+          <p className="text-xs text-[#1E2D4D]/70 truncate mt-0.5">
             {entry.overrides.documentLabel || c?.documentLabel || 'Unknown'}
             {c?.vendorName && ` · ${c.vendorName}`}
           </p>
@@ -572,7 +572,7 @@ function FileClassificationCard({
         {pillarMeta && pillarMeta.value !== 'unknown' && (
           <span
             className="text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0"
-            style={{ backgroundColor: '#eef4f8', color: '#1e4d6b' }}
+            style={{ backgroundColor: '#eef4f8', color: '#1E2D4D' }}
           >
             {pillarMeta.icon} {pillarMeta.label}
           </span>
@@ -589,7 +589,7 @@ function FileClassificationCard({
         {/* Expand arrow */}
         <ChevronDown
           size={16}
-          className={`text-gray-400 flex-shrink-0 transition-transform ${
+          className={`text-[#1E2D4D]/30 flex-shrink-0 transition-transform ${
             expanded ? 'rotate-180' : ''
           }`}
         />
@@ -600,7 +600,7 @@ function FileClassificationCard({
         <button
           className="flex items-center gap-1 px-4 pb-2 text-xs transition-colors"
           style={{ color: '#6b7280' }}
-          onMouseEnter={(e) => e.currentTarget.style.color = '#1e4d6b'}
+          onMouseEnter={(e) => e.currentTarget.style.color = '#1E2D4D'}
           onMouseLeave={(e) => e.currentTarget.style.color = '#6b7280'}
           onClick={onToggle}
         >
@@ -611,7 +611,7 @@ function FileClassificationCard({
 
       {/* Expanded detail — edit form */}
       {expanded && (
-        <div className="px-4 pb-4 space-y-3 border-t border-gray-100 pt-3">
+        <div className="px-4 pb-4 space-y-3 border-t border-[#1E2D4D]/5 pt-3">
           {/* Low-confidence banner */}
           {confidence < 0.7 && (
             <div
@@ -641,11 +641,11 @@ function FileClassificationCard({
             {/* Document Type */}
             {!presetDocType && (
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">
+                <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">
                   Document Type
                 </label>
                 <select
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] bg-white"
+                  className="w-full border border-[#1E2D4D]/15 rounded-md px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 bg-white"
                   value={entry.overrides.documentType}
                   onChange={(e) => {
                     onUpdateOverride('documentType', e.target.value);
@@ -680,11 +680,11 @@ function FileClassificationCard({
             {/* Pillar */}
             {!presetDocType && (
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">
-                  Compliance Pillar
+                <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">
+                  compliance category
                 </label>
                 <select
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] bg-white"
+                  className="w-full border border-[#1E2D4D]/15 rounded-md px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 bg-white"
                   value={entry.overrides.pillar}
                   onChange={(e) => onUpdateOverride('pillar', e.target.value)}
                 >
@@ -700,12 +700,12 @@ function FileClassificationCard({
 
             {/* Vendor */}
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">
+              <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">
                 Vendor Name
               </label>
               <input
                 type="text"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]"
+                className="w-full border border-[#1E2D4D]/15 rounded-md px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
                 placeholder="e.g. Acme Hood Cleaning"
                 value={entry.overrides.vendorName}
                 onChange={(e) => onUpdateOverride('vendorName', e.target.value)}
@@ -714,12 +714,12 @@ function FileClassificationCard({
 
             {/* Service Date */}
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">
+              <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">
                 Service Date
               </label>
               <input
                 type="date"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]"
+                className="w-full border border-[#1E2D4D]/15 rounded-md px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
                 value={entry.overrides.serviceDate}
                 onChange={(e) => onUpdateOverride('serviceDate', e.target.value)}
               />
@@ -727,12 +727,12 @@ function FileClassificationCard({
 
             {/* Expiry Date */}
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">
+              <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">
                 Expiry / Due Date
               </label>
               <input
                 type="date"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]"
+                className="w-full border border-[#1E2D4D]/15 rounded-md px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
                 value={entry.overrides.expiryDate}
                 onChange={(e) => onUpdateOverride('expiryDate', e.target.value)}
               />
@@ -740,12 +740,12 @@ function FileClassificationCard({
 
             {/* Notes */}
             <div className="sm:col-span-2">
-              <label className="block text-xs font-medium text-gray-600 mb-1">
+              <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">
                 Notes
               </label>
               <input
                 type="text"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]"
+                className="w-full border border-[#1E2D4D]/15 rounded-md px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
                 placeholder="Optional notes..."
                 value={entry.overrides.notes}
                 onChange={(e) => onUpdateOverride('notes', e.target.value)}

@@ -148,23 +148,23 @@ export function QuickSwitcher() {
       />
 
       {/* Switcher panel */}
-      <div className="relative w-full max-w-lg mx-4 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden">
+      <div className="relative w-full max-w-lg mx-4 bg-white rounded-xl shadow-2xl border border-[#1E2D4D]/10 overflow-hidden">
         {/* Search input */}
-        <div className="flex items-center px-4 py-3 border-b border-gray-200">
-          <Search className="h-5 w-5 text-gray-400 mr-3 flex-shrink-0" />
+        <div className="flex items-center px-4 py-3 border-b border-[#1E2D4D]/10">
+          <Search className="h-5 w-5 text-[#1E2D4D]/30 mr-3 flex-shrink-0" />
           <input
             ref={inputRef}
             type="text"
             placeholder="Search locations, pages..."
-            className="flex-1 text-sm text-gray-900 placeholder-gray-400 outline-none bg-transparent"
+            className="flex-1 text-sm text-[#1E2D4D] placeholder-[#1E2D4D]/30 outline-none bg-transparent"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
           />
           <div className="flex items-center gap-2 ml-2">
-            <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-medium text-gray-400 bg-gray-100 rounded border border-gray-200">ESC</kbd>
+            <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-xs font-medium text-[#1E2D4D]/30 bg-[#1E2D4D]/5 rounded border border-[#1E2D4D]/10">ESC</kbd>
             <button onClick={() => setOpen(false)} className="sm:hidden">
-              <X className="h-4 w-4 text-gray-400" />
+              <X className="h-4 w-4 text-[#1E2D4D]/30" />
             </button>
           </div>
         </div>
@@ -172,12 +172,12 @@ export function QuickSwitcher() {
         {/* Results */}
         <div ref={listRef} className="max-h-[360px] overflow-y-auto py-2">
           {filtered.length === 0 && (
-            <div className="px-4 py-8 text-center text-sm text-gray-400">No results found</div>
+            <div className="px-4 py-8 text-center text-sm text-[#1E2D4D]/30">No results found</div>
           )}
 
           {locationResults.length > 0 && (
             <>
-              <div className="px-4 py-1.5 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Locations</div>
+              <div className="px-4 py-1.5 text-xs font-semibold text-[#1E2D4D]/30 uppercase tracking-wider">Locations</div>
               {locationResults.map((item, i) => {
                 const globalIndex = filtered.indexOf(item);
                 const scoreGrade = item.score ? getGrade(item.score) : null;
@@ -186,13 +186,13 @@ export function QuickSwitcher() {
                     key={item.id}
                     onClick={() => handleSelect(item)}
                     className={`flex items-center px-4 py-2.5 cursor-pointer transition-colors ${
-                      globalIndex === selectedIndex ? 'bg-[#eef4f8]' : 'hover:bg-gray-50'
+                      globalIndex === selectedIndex ? 'bg-[#eef4f8]' : 'hover:bg-[#FAF7F0]'
                     }`}
                   >
-                    <MapPin className="h-4 w-4 mr-3 flex-shrink-0" style={{ color: '#1e4d6b' }} />
+                    <MapPin className="h-4 w-4 mr-3 flex-shrink-0" style={{ color: '#1E2D4D' }} />
                     <div className="flex-1 min-w-0">
-                      <div className="text-sm font-medium text-gray-900 truncate">{item.label}</div>
-                      {item.sublabel && <div className="text-xs text-gray-400 truncate">{item.sublabel}</div>}
+                      <div className="text-sm font-medium text-[#1E2D4D] truncate">{item.label}</div>
+                      {item.sublabel && <div className="text-xs text-[#1E2D4D]/30 truncate">{item.sublabel}</div>}
                     </div>
                     {scoreGrade && (
                       <span
@@ -214,7 +214,7 @@ export function QuickSwitcher() {
 
           {pageResults.length > 0 && (
             <>
-              <div className="px-4 py-1.5 text-[10px] font-semibold text-gray-400 uppercase tracking-wider mt-1">Pages</div>
+              <div className="px-4 py-1.5 text-xs font-semibold text-[#1E2D4D]/30 uppercase tracking-wider mt-1">Pages</div>
               {pageResults.map((item) => {
                 const globalIndex = filtered.indexOf(item);
                 const Icon = item.icon;
@@ -223,11 +223,11 @@ export function QuickSwitcher() {
                     key={item.id}
                     onClick={() => handleSelect(item)}
                     className={`flex items-center px-4 py-2.5 cursor-pointer transition-colors ${
-                      globalIndex === selectedIndex ? 'bg-[#eef4f8]' : 'hover:bg-gray-50'
+                      globalIndex === selectedIndex ? 'bg-[#eef4f8]' : 'hover:bg-[#FAF7F0]'
                     }`}
                   >
-                    <Icon className="h-4 w-4 mr-3 flex-shrink-0 text-gray-400" />
-                    <span className="text-sm font-medium text-gray-900 truncate">{item.label}</span>
+                    <Icon className="h-4 w-4 mr-3 flex-shrink-0 text-[#1E2D4D]/30" />
+                    <span className="text-sm font-medium text-[#1E2D4D] truncate">{item.label}</span>
                   </div>
                 );
               })}
@@ -236,12 +236,12 @@ export function QuickSwitcher() {
         </div>
 
         {/* Footer hints */}
-        <div className="hidden sm:flex items-center justify-between px-4 py-2 bg-gray-50 border-t border-gray-100 text-[10px] text-gray-400">
+        <div className="hidden sm:flex items-center justify-between px-4 py-2 bg-[#FAF7F0] border-t border-[#1E2D4D]/5 text-xs text-[#1E2D4D]/30">
           <div className="flex items-center gap-3">
-            <span><kbd className="px-1 py-0.5 bg-white border border-gray-200 rounded text-[9px]">&uarr;</kbd> <kbd className="px-1 py-0.5 bg-white border border-gray-200 rounded text-[9px]">&darr;</kbd> Navigate</span>
-            <span><kbd className="px-1 py-0.5 bg-white border border-gray-200 rounded text-[9px]">Enter</kbd> Select</span>
+            <span><kbd className="px-1 py-0.5 bg-white border border-[#1E2D4D]/10 rounded text-[11px]">&uarr;</kbd> <kbd className="px-1 py-0.5 bg-white border border-[#1E2D4D]/10 rounded text-[11px]">&darr;</kbd> Navigate</span>
+            <span><kbd className="px-1 py-0.5 bg-white border border-[#1E2D4D]/10 rounded text-[11px]">Enter</kbd> Select</span>
           </div>
-          <span><kbd className="px-1 py-0.5 bg-white border border-gray-200 rounded text-[9px]">Ctrl</kbd>+<kbd className="px-1 py-0.5 bg-white border border-gray-200 rounded text-[9px]">K</kbd> Toggle</span>
+          <span><kbd className="px-1 py-0.5 bg-white border border-[#1E2D4D]/10 rounded text-[11px]">Ctrl</kbd>+<kbd className="px-1 py-0.5 bg-white border border-[#1E2D4D]/10 rounded text-[11px]">K</kbd> Toggle</span>
         </div>
       </div>
     </div>
