@@ -210,7 +210,6 @@ export function TempLogScan() {
                 className={`w-full px-4 py-4 border rounded-xl text-2xl font-bold tracking-tight text-center focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D] ${
                   isInRange === false ? 'border-red-300 bg-red-50' : 'border-[#1E2D4D]/15'
                 }`}
-                className="text-base"
                 autoFocus
               />
               {isInRange === false && (

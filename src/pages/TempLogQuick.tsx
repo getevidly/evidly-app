@@ -165,10 +165,9 @@ export function TempLogQuick() {
               onChange={e => setTemperature(e.target.value)}
               onFocus={e => { setTimeout(() => { e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 300); }}
               placeholder="Enter temperature..."
-              className={`w-full px-3 py-3 border rounded-xl text-lg font-semibold tracking-tight focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D] ${
+              className={`w-full px-3 py-3 border rounded-xl text-base font-semibold tracking-tight focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D] ${
                 isInRange === false ? 'border-red-300 bg-red-50' : 'border-[#1E2D4D]/15'
               }`}
-              className="text-base"
               autoFocus={!!preselectedId}
             />
             {isInRange === false && (
